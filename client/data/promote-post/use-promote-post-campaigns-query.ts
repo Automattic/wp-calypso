@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { requestDSP } from 'calypso/lib/promote-post';
 
 export enum CampaignStatus {
@@ -66,24 +66,22 @@ export type CampaignStats = {
 };
 
 const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
-	return useQuery(
-		[ 'promote-post-campaigns', siteId ],
-		async () => {
+	return useQuery( {
+		queryKey: [ 'promote-post-campaigns', siteId ],
+		queryFn: async () => {
 			const { results: campaigns } = await requestDSP< { results: Campaign[] } >(
 				siteId,
 				`/campaigns/site/${ siteId }/summary`
 			);
 			return campaigns;
 		},
-		{
-			...queryOptions,
-			enabled: !! siteId,
-			retryDelay: 3000,
-			meta: {
-				persist: false,
-			},
-		}
-	);
+		...queryOptions,
+		enabled: !! siteId,
+		retryDelay: 3000,
+		meta: {
+			persist: false,
+		},
+	} );
 };
 
 export default useCampaignsQuery;

@@ -101,7 +101,15 @@ export const clearValidationError = ( siteId ) => ( dispatch ) => {
 };
 
 export const requestSiteAddressChange =
-	( siteId, newBlogName, domain, oldDomain, siteType, discard = true ) =>
+	(
+		siteId,
+		newBlogName,
+		domain,
+		oldDomain,
+		siteType,
+		discard = true,
+		requireVerifiedEmail = true
+	) =>
 	async ( dispatch, getState ) => {
 		dispatch( {
 			type: SITE_ADDRESS_CHANGE_REQUEST,
@@ -115,6 +123,7 @@ export const requestSiteAddressChange =
 			old_domain: oldDomain,
 			site_type: siteType,
 			discard,
+			require_verified_email: requireVerifiedEmail,
 		};
 
 		dispatch( recordTracksEvent( 'calypso_siteaddresschange_request', eventProperties ) );
@@ -126,7 +135,15 @@ export const requestSiteAddressChange =
 					path: `/sites/${ siteId }/site-address-change`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ blogname: newBlogName, domain, old_domain: oldDomain, type: siteType, discard, nonce }
+				{
+					blogname: newBlogName,
+					domain,
+					old_domain: oldDomain,
+					type: siteType,
+					discard,
+					nonce,
+					require_verified_email: requireVerifiedEmail,
+				}
 			);
 
 			const newSlug = get( data, 'new_slug' );

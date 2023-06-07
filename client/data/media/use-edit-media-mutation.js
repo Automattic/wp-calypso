@@ -1,7 +1,7 @@
+import { useMutation } from '@tanstack/react-query';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useMutation } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { createTransientMedia } from 'calypso/lib/media/utils';
 import wp from 'calypso/lib/wp';
@@ -33,14 +33,14 @@ const startEditMediaItem = ( siteId, item ) => ( dispatch, getState ) => {
 export function useEditMediaMutation( queryOptions ) {
 	const dispatch = useDispatch();
 
-	const mutation = useMutation(
-		( { siteId, mediaId, payload } ) =>
+	const mutation = useMutation( {
+		...queryOptions,
+		mutationFn: ( { siteId, mediaId, payload } ) =>
 			wp.req.post( {
 				path: `/sites/${ siteId }/media/${ mediaId }/edit`,
 				formData: Object.entries( payload ),
 			} ),
-		queryOptions
-	);
+	} );
 
 	const { mutate } = mutation;
 

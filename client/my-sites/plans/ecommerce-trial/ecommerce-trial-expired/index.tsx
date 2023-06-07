@@ -3,23 +3,24 @@ import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { WooExpressPlans } from 'calypso/my-sites/plans/ecommerce-trial/wooexpress-plans';
+import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 const ECommerceTrialExpired = (): JSX.Element => {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = selectedSite?.ID ?? null;
+	const siteSlug = selectedSite?.slug ?? null;
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const siteIsAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 
@@ -48,6 +49,12 @@ const ECommerceTrialExpired = (): JSX.Element => {
 			plan_slug: planSlug,
 		} );
 	}, [] );
+
+	// Note that the Calypso URL always works, so we only want the wp-admin URL when we have the site's URL.
+	const exportUrl =
+		siteIsAtomic && selectedSite?.URL
+			? `${ selectedSite.URL }/wp-admin/export.php`
+			: `/export/${ siteSlug }`;
 
 	return (
 		<>
@@ -91,12 +98,10 @@ const ECommerceTrialExpired = (): JSX.Element => {
 				/>
 
 				<div className="ecommerce-trial-expired__footer">
-					{ ! siteIsAtomic && (
-						<Button href={ `/export/${ siteSlug }` }>
-							<Gridicon icon="cloud-download" />
-							<span>{ translate( 'Export your content' ) }</span>
-						</Button>
-					) }
+					<Button href={ exportUrl }>
+						<Gridicon icon="cloud-download" />
+						<span>{ translate( 'Export your content' ) }</span>
+					</Button>
 					<Button href={ `/settings/delete-site/${ siteSlug }` } scary>
 						<Gridicon icon="trash" />
 						<span>{ translate( 'Delete your site permanently' ) }</span>

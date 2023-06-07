@@ -41,6 +41,9 @@ export interface WPComPlan extends Plan {
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
 	getPlanTagline?: () => string;
+	getNewsletterTagLine?: () => string;
+	getLinkInBioTagLine?: () => string;
+	getBlogOnboardingTagLine?: () => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -55,6 +58,9 @@ export interface WPComPlan extends Plan {
 	getLinkInBioDescription?: () => string;
 	getLinkInBioSignupFeatures?: () => Feature[];
 	getLinkInBioHighlightedFeatures?: () => Feature[];
+	getBlogOnboardingSignupFeatures?: () => Feature[];
+	getBlogOnboardingHighlightedFeatures?: () => Feature[];
+	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
@@ -100,6 +106,13 @@ export interface JetpackTag {
 	tag: string;
 	label: TranslateResult;
 }
+
+export interface FAQ {
+	id: string;
+	question: TranslateResult;
+	answer: TranslateResult;
+}
+
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
@@ -248,10 +261,19 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
+	getNewsletterSignupFeatures?: () => Feature[];
+	getLinkInBioSignupFeatures?: () => Feature[];
+	getBlogOnboardingSignupFeatures?: () => Feature[];
+	getBlogOnboardingHighlightedFeatures?: () => Feature[];
+	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };
 export type WithCamelCaseSlug = { productSlug: string };
+
+export type WithSlugAndAmount = ( WithCamelCaseSlug | WithSnakeCaseSlug ) & {
+	amount: number;
+};
 
 export interface PlanMatchesQuery {
 	term?: string;

@@ -1,14 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import tipIcon from 'calypso/assets/images/jetpack/tip-icon.svg';
 import Banner from 'calypso/components/banner';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE,
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE as homePagePreferenceName,
-	getJetpackDashboardWelcomeBannerPreference as getPreference,
+	getJetpackDashboardPreference as getPreference,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import type { PreferenceType } from '../types';

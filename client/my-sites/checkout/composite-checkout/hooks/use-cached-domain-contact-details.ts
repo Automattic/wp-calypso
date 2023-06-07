@@ -4,11 +4,12 @@ import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { convertErrorToString } from '../lib/analytics';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import useCountryList from './use-country-list';
 import type {
@@ -123,7 +124,7 @@ function useCachedContactDetailsForCheckoutForm(
 					extra: {
 						env: config( 'env_id' ),
 						type: 'checkout_contact_details_autocomplete',
-						message: error.message + '; Stack: ' + error.stack,
+						message: convertErrorToString( error ),
 					},
 				} );
 			} );

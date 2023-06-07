@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial/index';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -19,10 +18,12 @@ import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-pay
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
+import { useSelector } from 'calypso/state';
 import getAvailableConciergeSessions from 'calypso/state/selectors/get-available-concierge-sessions';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { convertErrorToString } from '../checkout/composite-checkout/lib/analytics';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
@@ -43,7 +44,7 @@ function useLogPurchasesError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_purchases',
-					message: error.message + '; Stack: ' + error.stack,
+					message: convertErrorToString( error ),
 				},
 			} );
 		},

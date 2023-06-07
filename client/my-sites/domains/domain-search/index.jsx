@@ -1,6 +1,6 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { BackButton } from '@automattic/onboarding';
+import { BackButton, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -11,6 +11,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
@@ -30,8 +31,8 @@ import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
-	domainMapping,
 	domainManagementList,
+	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -45,6 +46,11 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import {
+	isSiteOnECommerceTrial,
+	isSiteOnWooExpress,
+	isSiteOnEcommerce,
+} from 'calypso/state/sites/plans/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -91,7 +97,11 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		const domainMappingUrl = domainMapping( this.props.selectedSiteSlug, domain );
+		const domainMappingUrl = domainUseMyDomain(
+			this.props.selectedSiteSlug,
+			domain,
+			useMyDomainInputMode.transferOrConnect
+		);
 		this.isMounted && page( domainMappingUrl );
 	};
 
@@ -236,6 +246,7 @@ class DomainSearch extends Component {
 			cart,
 			isDomainAndPlanPackageFlow,
 			isDomainUpsell,
+			isEcommerceSite,
 		} = this.props;
 
 		if ( ! selectedSite ) {
@@ -372,7 +383,9 @@ class DomainSearch extends Component {
 								selectedSite={ selectedSite }
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
-								vendor={ getSuggestionsVendor() }
+								vendor={ getSuggestionsVendor( {
+									flowName: isEcommerceSite ? ECOMMERCE_FLOW : '',
+								} ) }
 							/>
 						</EmailVerificationGate>
 					</div>
@@ -410,6 +423,10 @@ export default connect(
 				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
 				!! getCurrentQueryArguments( state )?.domain,
 			isSiteOnFreePlan: site && isFreePlanProduct( site.plan ),
+			isEcommerceSite:
+				isSiteOnECommerceTrial( state, siteId ) ||
+				isSiteOnWooExpress( state, siteId ) ||
+				isSiteOnEcommerce( state, siteId ),
 		};
 	},
 	{

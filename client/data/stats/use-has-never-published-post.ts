@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import type { QueryOptions, UseQueryResult } from 'react-query';
+import type { QueryOptions, UseQueryResult } from '@tanstack/react-query';
 
 export const useHasNeverPublishedPostCacheKey = (
 	siteId: number | null,
@@ -17,14 +17,12 @@ export const useHasNeverPublishedPost = (
 	queryOptions: Options
 ): UseQueryResult< boolean > => {
 	const { enabled = true } = queryOptions;
-	return useQuery(
-		useHasNeverPublishedPostCacheKey( siteId, includePages ),
-		() => fetchHasNeverPublishedPost( siteId, includePages ),
-		{
-			...queryOptions,
-			enabled: !! siteId && enabled,
-		}
-	);
+	return useQuery( {
+		queryKey: useHasNeverPublishedPostCacheKey( siteId, includePages ),
+		queryFn: () => fetchHasNeverPublishedPost( siteId, includePages ),
+		...queryOptions,
+		enabled: !! siteId && enabled,
+	} );
 };
 
 function fetchHasNeverPublishedPost(

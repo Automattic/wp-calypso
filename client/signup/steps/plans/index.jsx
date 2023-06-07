@@ -1,4 +1,4 @@
-import { is2023PricingGridActivePage, getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import { is2023PricingGridEnabled, getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
@@ -13,7 +13,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import wp from 'calypso/lib/wp';
 import PlansComparison, {
@@ -21,15 +21,13 @@ import PlansComparison, {
 	isStarterPlanEnabled,
 } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getDomainName, getIntervalType } from './util';
 import './style.scss';
@@ -73,11 +71,27 @@ export class PlansStep extends Component {
 			return this.props.customerType;
 		}
 
-		const customerType =
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) || 'personal';
-
-		return customerType;
+		return 'personal';
 	}
+
+	replacePaidDomainWithFreeDomain = ( freeDomainSuggestion ) => {
+		if ( freeDomainSuggestion?.product_slug ) {
+			return;
+		}
+		const domainItem = undefined;
+		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
+
+		this.props.submitSignupStep(
+			{
+				stepName: 'domains',
+				domainItem,
+				isPurchasingItem: false,
+				siteUrl,
+				stepSectionName: undefined,
+			},
+			{ domainItem }
+		);
+	};
 
 	plansFeaturesList() {
 		const {
@@ -87,7 +101,6 @@ export class PlansStep extends Component {
 			selectedSite,
 			planTypes,
 			flowName,
-			showTreatmentPlansReorderTest,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 			eligibleForProPlan,
@@ -132,33 +145,47 @@ export class PlansStep extends Component {
 			);
 		}
 
+		const domainName = getDomainName( this.props.signupDependencies.domainItem );
+
 		return (
 			<div>
 				{ errorDisplay }
-				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					showFAQ={ this.state.isDesktop }
-					hideFreePlan={ hideFreePlan }
-					hideEcommercePlan={ this.shouldHideEcommercePlan() }
-					isInSignup={ true }
-					isLaunchPage={ isLaunchPage }
-					intervalType={ intervalType }
-					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
-					domainName={ getDomainName( this.props.signupDependencies.domainItem ) }
-					customerType={ this.getCustomerType() }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-					plansWithScroll={ this.state.isDesktop }
-					planTypes={ planTypes }
-					flowName={ flowName }
-					showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-					isAllPaidPlansShown={ true }
-					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-					isReskinned={ isReskinned }
-					hidePremiumPlan={ this.props.hidePremiumPlan }
-					hidePersonalPlan={ this.props.hidePersonalPlan }
-					hideEnterprisePlan={ this.props.hideEnterprisePlan }
-				/>
+				<ProvideExperimentData
+					name="calypso_wpcom_onboarding_plans_hide_free_202305"
+					options={ { isEligible: 'onboarding' === flowName && !! domainName } }
+				>
+					{ ( isLoading, experimentAssignment ) => {
+						if ( isLoading ) {
+							return this.renderLoading();
+						}
+						return (
+							<PlansFeaturesMain
+								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+								showFAQ={ this.state.isDesktop }
+								hideFreePlan={ hideFreePlan || 'treatment' === experimentAssignment?.variationName }
+								hideEcommercePlan={ this.shouldHideEcommercePlan() }
+								isInSignup={ true }
+								isLaunchPage={ isLaunchPage }
+								intervalType={ intervalType }
+								onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
+								domainName={ domainName }
+								customerType={ this.getCustomerType() }
+								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+								plansWithScroll={ this.state.isDesktop }
+								planTypes={ planTypes }
+								flowName={ flowName }
+								isAllPaidPlansShown={ true }
+								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+								isReskinned={ isReskinned }
+								hidePremiumPlan={ this.props.hidePremiumPlan }
+								hidePersonalPlan={ this.props.hidePersonalPlan }
+								hideEnterprisePlan={ this.props.hideEnterprisePlan }
+								replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
+							/>
+						);
+					} }
+				</ProvideExperimentData>
 			</div>
 		);
 	}
@@ -356,7 +383,6 @@ PlansStep.propTypes = {
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
-	isTreatmentPlansReorderTest: PropTypes.bool,
 };
 
 /**
@@ -376,10 +402,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 };
 
 export default connect(
-	(
-		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
-	) => ( {
+	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -388,10 +411,7 @@ export default connect(
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
-		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		showTreatmentPlansReorderTest:
-			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
 		isLoadingExperiment: false,
 		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
 		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
@@ -399,7 +419,7 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-		is2023PricingGridVisible: is2023PricingGridActivePage( window ),
+		is2023PricingGridVisible: is2023PricingGridEnabled(),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

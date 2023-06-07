@@ -1,7 +1,7 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import useSiteMonitorSettingsQuery from 'calypso/data/site-monitor/use-site-monitor-settings-query';
 import useUpdateSiteMonitorSettingsMutation from 'calypso/data/site-monitor/use-update-site-monitor-settings-mutation';

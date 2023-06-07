@@ -1,3 +1,4 @@
+import { JETPACK_BACKUP_T0_PRODUCTS } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import slugToSelectorProduct from '../../slug-to-selector-product';
 import useItemPrice from '../../use-item-price';
@@ -26,7 +27,10 @@ export const usePricingBreakdown = ( {
 		let amountSaved = 0;
 
 		for ( const slug of includedProductSlugs ) {
-			const selectorProduct = slugToSelectorProduct( slug );
+			const slugOverride = ( JETPACK_BACKUP_T0_PRODUCTS as readonly string[] ).includes( slug )
+				? slug.replace( '_t0_', '_t1_' )
+				: slug;
+			const selectorProduct = slugToSelectorProduct( slugOverride );
 
 			if ( ! selectorProduct ) {
 				continue;
@@ -38,7 +42,7 @@ export const usePricingBreakdown = ( {
 
 			items.push( {
 				name: selectorProduct?.displayName,
-				slug,
+				slug: slugOverride,
 				originalPrice,
 				renderedPrice: <RenderPrice price={ originalPrice } />,
 			} );

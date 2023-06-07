@@ -1,9 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Notice from 'calypso/components/notice';
 import { preventWidows } from 'calypso/lib/formatting';
+import version_compare from 'calypso/lib/version-compare';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
@@ -39,7 +40,7 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 	);
 
 	const hideWarning = useMemo(
-		() => siteJetpackVersion >= minJetpackVersion || ! pluginUpgradeUrl,
+		() => version_compare( siteJetpackVersion, minJetpackVersion, '>=' ) || ! pluginUpgradeUrl,
 		[ minJetpackVersion, pluginUpgradeUrl, siteJetpackVersion ]
 	);
 

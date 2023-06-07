@@ -62,6 +62,7 @@ export { LocalizedCapture as Capture };
 
 type StepProps = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
+	disableImportListStep?: boolean;
 };
 
 const trackEventName = 'calypso_signup_step_start';
@@ -77,6 +78,7 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	isAnalyzing,
 	analyzerError,
 	recordTracksEvent,
+	disableImportListStep,
 } ) => {
 	/**
 	 ↓ Methods
@@ -121,6 +123,8 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 		recordTracksEvent( trackEventName, trackEventParams );
 	};
 
+	const onDontHaveSiteAddressClick = disableImportListStep ? undefined : () => goToStep( 'list' );
+
 	/**
 	 ↓ Effects
 	 */
@@ -133,7 +137,7 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 			{ ! isAnalyzing && (
 				<LocalizedCapture
 					onInputEnter={ runProcess }
-					onDontHaveSiteAddressClick={ () => goToStep( 'list' ) }
+					onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
 					hasError={ !! analyzerError }
 					onInputChange={ () => resetError() }
 				/>

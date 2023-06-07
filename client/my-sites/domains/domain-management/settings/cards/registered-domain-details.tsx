@@ -3,12 +3,12 @@
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import type { DetailsCardProps } from './types';
 
@@ -84,6 +84,10 @@ const RegisteredDomainDetails = ( {
 						},
 				  } )
 				: null;
+
+		if ( ! purchase ) {
+			return null;
+		}
 
 		return (
 			<>

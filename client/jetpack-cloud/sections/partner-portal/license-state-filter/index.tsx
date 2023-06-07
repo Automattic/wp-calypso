@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import Count from 'calypso/components/count';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
@@ -10,6 +9,7 @@ import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/li
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import UrlSearch from 'calypso/lib/url-search';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
 import './style.scss';
@@ -42,6 +42,10 @@ function LicenseStateFilter( { doSearch }: Props ) {
 		{
 			key: LicenseFilter.Revoked,
 			label: translate( 'Revoked' ),
+		},
+		{
+			key: LicenseFilter.Standard,
+			label: translate( 'Standard licenses' ),
 		},
 	].map( ( navItem ) => ( {
 		...navItem,

@@ -1,10 +1,11 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
 
 $font-sf-pro-display: "SF Pro Display", $sans;
 $font-sf-pro-text: "SF Pro Text", $sans;
 
-.main.promote-post {
+.main.promote-post-i2 {
 	.search {
 		height: 44px;
 	}
@@ -20,9 +21,13 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			justify-content: center;
 		}
 	}
+
+	.empty-promotion-list__title {
+		font-size: 1.5rem;
+	}
 }
 
-.promote-post__table {
+.promote-post-i2__table {
 	th {
 		font-family: $font-sf-pro-text;
 		font-style: normal;
@@ -38,14 +43,10 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		font-size: 1rem;
 	}
 
-	tr td:last-child {
-		border: 0;
-	}
-
 	td {
 		color: $studio-gray-60;
 		padding-top: 16px;
-		padding-bottom: 12px;
+		padding-bottom: 16px;
 		border-top: 1px solid #d8d8d8; /* #EEEEEE if bg is white */
 		font-size: 0.875rem;
 		vertical-align: middle;
@@ -53,19 +54,34 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		letter-spacing: -0.15px;
 	}
 
-	.promote-post__campaign-item-wrapper {
+	.promote-post-i2__campaign-item-wrapper {
 		color: $studio-gray-100;
 		display: flex;
 		align-items: center;
 		font-weight: 500;
+
+		.campaign-item__skeleton-text {
+			width: 142px;
+			height: 12px;
+			background-color: #f5f5f5;
+			border-radius: 100%;
+			margin-top: 8px;
+			&.campaign-item__skeleton-text2 {
+				width: 97px;
+				margin-top: 12px;
+			}
+		}
 	}
 
-	.campaign-item__header-image img {
+	.campaign-item__header-image img,
+	.campaign-item__header-image-skeleton {
 		border: 1px solid #eee;
 		border-radius: 4px;
 		width: 108px;
 		height: 78px;
 		margin-right: 16px;
+		display: block;
+		background-color: #f5f5f5;
 	}
 
 	.badge {
@@ -108,5 +124,34 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			color: var(--studio-woocommerce-purple-80);
 			background-color: var(--studio-woocommerce-purple-5);
 		}
+	}
+}
+
+@mixin blazepress-campaigns-table-mobile {
+	.promote-post-i2__table {
+		td {
+			padding-bottom: 14px;
+		}
+	}
+}
+
+// Show Mobile view for screens if window width <= 782px
+@media screen and (max-width: $break-medium) {
+	@include blazepress-campaigns-table-mobile;
+}
+
+// Show Mobile view if sidebar is collapsed and main content width <= 782px
+$break-medium-collapsed-menu: $break-medium + 36px;
+@media screen and (max-width: $break-medium-collapsed-menu) {
+	body.is-section-promote-post-i2.is-sidebar-collapsed {
+		@include blazepress-campaigns-table-mobile;
+	}
+}
+
+// Show Mobile view if sidebar is expanded and main content width <= 782px
+$break-medium-expanded-menu: $break-medium + 272px;
+@media screen and (max-width: $break-medium-expanded-menu) {
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
+		@include blazepress-campaigns-table-mobile;
 	}
 }

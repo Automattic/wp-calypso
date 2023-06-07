@@ -77,9 +77,11 @@
 	overflow-y: auto;
 	background-color: var(--studio-white);
 	border-radius: 8px 0 0 8px; /* stylelint-disable-line scales/radii */
+	max-height: 85vh;
 
 	hr {
-		margin: 0.75rem 0;
+		margin: 0.5rem 0 0 0;
+		background-color: var(--studio-gray-5);
 	}
 }
 
@@ -127,9 +129,10 @@
 }
 
 .product-lightbox__detail-tags {
-	background-color: #f6f7f7;
+	background-color: transparent;
 	margin-bottom: 16px;
 	padding: 5.5px 8px;
+	border: 1px solid var(--studio-gray-5);
 	border-radius: 4px;
 
 	&-label {
@@ -167,7 +170,7 @@
 		font-size: $font-body;
 		font-weight: 700;
 		width: 100%;
-		padding: 0.5rem 0;
+		padding: 1.5rem 0 1rem 0;
 		margin: 0;
 		line-height: 1.25;
 		color: #000;
@@ -178,13 +181,18 @@
 		margin: 0;
 	}
 
-	li {
+	&:not(.is-faq-list) li {
 		background: url(./icons/check.svg) no-repeat 0 2px;
 		padding-left: 20px;
 		font-weight: 400;
 		font-size: $font-body;
 		color: #3c434a;
 		background-position-y: 5px;
+	}
+
+	li.is-coming-soon {
+		background: url(./icons/tool.svg) no-repeat 1px 7px;
+		background-size: 12px;
 	}
 
 	.foldable-card.card {
@@ -214,6 +222,34 @@
 
 	.foldable-card.card.is-expanded {
 		margin: 0;
+	}
+
+	.foldable-faq {
+		padding: 0;
+		margin-bottom: 8px;
+	}
+
+	.foldable-faq__question {
+		padding: 0;
+		min-height: 24px;
+
+		.gridicon {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	.foldable-faq__question-text {
+		font-size: 1rem;
+		font-weight: 500;
+		padding: 0;
+		margin-inline-start: 4px;
+	}
+
+	.foldable-faq__answer {
+		border: none;
+		padding-inline-start: 24px;
+		padding-bottom: 0;
 	}
 }
 
@@ -421,18 +457,29 @@
 	.product-lightbox__content-wrapper {
 		padding: 0;
 		flex-direction: column;
+		overflow: hidden;
 	}
 
 	.product-lightbox__detail {
 		padding: 24px;
 		width: auto;
+		max-height: 100%;
 	}
 
 	.product-lightbox__sidebar {
+		width: 100%;
+		position: absolute;
+		bottom: 0;
+		left: 0;
 		border-radius: 0;
 		padding: 24px;
-		position: relative;
-		width: auto;
+		box-sizing: border-box;
+		transition: transform 0.2s;
+		transform: translateY(100%);
+
+		&.is-expanded {
+			transform: translateY(0);
+		}
 	}
 
 	.product-lightbox__variants-options {
@@ -502,26 +549,81 @@
 .product-lightbox__included-product-list-item {
 	display: flex;
 	gap: 12px;
+
+	@media ( max-width: $break-medium ) {
+		align-items: center;
+	}
+}
+
+.product-lightbox__included-product-list-item-header {
+	display: flex;
+	flex-direction: column;
+
+	@media ( min-width: $break-medium ) {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
 }
 
 .product-lightbox__included-product-list-item-title {
 	font-size: $font-body-small;
 	font-weight: 700;
+	line-height: 1.125;
 }
 
-p.product-lightbox__included-product-list-item-description {
+.product-lightbox__included-product-list-item-callout {
+	padding: 0.25rem 0 0 0;
+	box-sizing: border-box;
+	color: var(--studio-gray-70);
+	font-size: 0.875rem;
+	line-height: 1.125;
+
+	@media ( min-width: $break-medium ) {
+		padding: 0.25rem;
+		min-width: 160px;
+		background-color: #eaefef;
+		border-radius: 4px;
+		color: var(--studio-black);
+		text-align: center;
+	}
+}
+
+p.product-lightbox__included-product-list-item-description,
+p.product-lightbox__included-product-list-item-description--mobile {
 	font-size: $font-body-small;
 	font-weight: 400;
 	margin-bottom: 0;
+
+	span {
+		white-space: nowrap;
+	}
 }
 
-p.product-lightbox__included-product-list-item-description span {
-	white-space: nowrap;
+p.product-lightbox__included-product-list-item-description {
+	display: none;
+
+	@media ( min-width: $break-medium ) {
+		display: block;
+	}
+}
+
+p.product-lightbox__included-product-list-item-description--mobile {
+	display: block;
+	margin-top: 0.75rem;
+
+	@media ( min-width: $break-medium ) {
+		display: none;
+	}
+}
+
+.product-lightbox__included-product-list-item-content {
+	width: 100%;
 }
 
 .product-lightbox__included-product-list-item-icon {
-	min-width: 38px;
-	max-height: 38px;
+	width: 38px;
+	height: 38px;
 	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
 	border-radius: 4px;
 	display: flex;

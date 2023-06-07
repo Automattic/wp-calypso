@@ -9,12 +9,12 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { createElement, ReactNode } from 'react';
-import { useSelector } from 'react-redux';
 import successImageAntiSpam from 'calypso/assets/images/jetpack/licensing-activation-success-Anti-Spam.png';
 import successImageComplete from 'calypso/assets/images/jetpack/licensing-activation-success-Complete.png';
 import successImageDefault from 'calypso/assets/images/jetpack/licensing-activation-success-Default.png';
 import successImageScan from 'calypso/assets/images/jetpack/licensing-activation-success-Scan.png';
 import successImageSearch from 'calypso/assets/images/jetpack/licensing-activation-success-Search.png';
+import { useSelector } from 'calypso/state';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 
 type ActivationConfirmationInfo = {

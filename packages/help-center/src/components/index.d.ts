@@ -46,7 +46,7 @@ declare module 'calypso/data/support-article-alternates/use-support-article-alte
 	const useSupportArticleAlternatesQuery: (
 		blogId: number,
 		postId: number
-	) => { isLoading: boolean; data?: { blog_id: number; page_id: number } };
+	) => { isInitialLoading: boolean; data?: { blog_id: number; page_id: number } };
 	export default useSupportArticleAlternatesQuery;
 }
 
@@ -56,6 +56,11 @@ declare module 'calypso/data/help/use-active-support-tickets-query' {
 		email: string,
 		queryOptions?: unknown
 	) => { isLoading: boolean; data?: SupportTicket[] };
+}
+
+declare module 'calypso/state/data-layer/wpcom-api-middleware' {
+	const WpcomApiMiddleware = ( Function ) => Function;
+	export const WpcomApiMiddleware;
 }
 
 declare module 'calypso/state/reader/posts/selectors' {
@@ -68,7 +73,7 @@ declare module 'calypso/state/purchases/selectors' {
 
 declare module 'calypso/state/ui/selectors' {
 	export const getSelectedSiteId: ( state: unknown ) => number;
-	export const getSectionName: ( state: unknown ) => string;
+	export const getSectionName: ( state: unknown ) => SectionName;
 }
 
 declare module 'calypso/state/sites/selectors' {
@@ -140,10 +145,6 @@ declare module 'calypso/state/analytics/actions' {
 			}[];
 		};
 	};
-}
-
-declare module '@automattic/state-utils' {
-	export const createSelector = unknown;
 }
 
 declare module 'calypso/lib/mobile-app';

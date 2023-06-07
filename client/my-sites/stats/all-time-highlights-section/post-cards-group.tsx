@@ -3,13 +3,18 @@ import { PostStatsCard, ComponentSwapper } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import DotPager from 'calypso/components/dot-pager';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getSitePost, isRequestingSitePost } from 'calypso/state/posts/selectors';
+import {
+	getSitePost,
+	isRequestingSitePost,
+	getPostsForQuery,
+	isRequestingPostsForQuery,
+} from 'calypso/state/posts/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getTopPostAndPage,
@@ -83,29 +88,28 @@ export default function PostCardsGroup( {
 	const userLocale = useSelector( getCurrentUserLocale );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
-	const { topPostsQuery } = useSelector( ( state ) => getStatsQueries( state, siteId ) );
+	// Prepare the latest post card.
+	const posts = useSelector( ( state ) =>
+		getPostsForQuery( state, siteId, { status: 'publish', number: 1 } )
+	);
+	const isRequestingPosts = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, siteId, { status: 'publish', number: 1 } )
+	);
+	const latestPost = posts && posts.length ? posts[ 0 ] : null;
 
+	// Get the most `viewed` post from the past period defined in the `topPostsQuery`.
+	const { topPostsQuery } = useSelector( ( state ) => getStatsQueries( state, siteId ) );
 	const isTopViewedPostRequesting = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, 'statsTopPosts', topPostsQuery )
 	);
-
-	const hasTopViewedPostQueryFinished = useSelector( ( state ) =>
-		hasSiteStatsForQueryFinished( state, siteId, 'statsTopPosts', topPostsQuery )
-	);
-
-	// Get the most `viewed` post from the past period defined in the `topPostsQuery`.
 	const { topPost: topViewedPost } = useSelector( ( state ) =>
 		getStatsData( state, siteId, topPostsQuery, isTopViewedPostRequesting )
 	);
 
+	// Prepare the most popular post card.
 	const mostPopularPost = useSelector( ( state ) =>
 		getSitePost( state, siteId, topViewedPost?.id )
 	);
-
-	const isRequestingMostPopularPost = useSelector( ( state ) =>
-		isRequestingSitePost( state, siteId, topViewedPost?.id )
-	);
-
 	const mostPopularPostData = {
 		date: mostPopularPost?.date,
 		post_thumbnail: mostPopularPost?.post_thumbnail?.URL || null,
@@ -117,10 +121,32 @@ export default function PostCardsGroup( {
 		commentCount: mostPopularPost?.discussion?.comment_count,
 	};
 
-	const cards = [ <LatestPostCard key="latestPostCard" siteId={ siteId } siteSlug={ siteSlug } /> ];
-	const isLoadingMostPopularPost = ! hasTopViewedPostQueryFinished || isRequestingMostPopularPost;
+	// Check if the most popular post is ready to be displayed.
+	const hasTopViewedPostQueryFinished = useSelector( ( state ) =>
+		hasSiteStatsForQueryFinished( state, siteId, 'statsTopPosts', topPostsQuery )
+	);
+	const isRequestingMostPopularPost = useSelector( ( state ) =>
+		isRequestingSitePost( state, siteId, topViewedPost?.id )
+	);
+	const isPreparingMostPopularPost = ! hasTopViewedPostQueryFinished || isRequestingMostPopularPost;
 
-	if ( isLoadingMostPopularPost || mostPopularPost ) {
+	const cards = [];
+
+	// Show two cards when the latest post is not the most popular post or both cards are loading.
+	if ( isRequestingPosts || isPreparingMostPopularPost || latestPost?.ID !== mostPopularPost?.ID ) {
+		cards.push(
+			<LatestPostCard
+				key="latestPostCard"
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				isLoading={ isRequestingPosts }
+				latestPost={ latestPost }
+			/>
+		);
+	}
+
+	// Show the most popular post card when it's ready or loading.
+	if ( isPreparingMostPopularPost || mostPopularPost ) {
 		cards.push(
 			<PostStatsCard
 				key="mostPopularPostCard"
@@ -132,7 +158,7 @@ export default function PostCardsGroup( {
 				titleLink={ `/stats/post/${ mostPopularPost?.ID }/${ siteSlug }` }
 				uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost?.ID }` : undefined }
 				locale={ userLocale }
-				isLoading={ isLoadingMostPopularPost }
+				isLoading={ isPreparingMostPopularPost }
 			/>
 		);
 	}

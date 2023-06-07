@@ -1,5 +1,8 @@
 @import "../styles/typography.scss";
 
+$emerald-hover-color: #414141;
+$jp-gray: #dcdcde;
+
 .stats-widget-modules {
 	margin-top: 24px;
 	display: grid;
@@ -30,12 +33,40 @@
 
 .stats-widget-module__info {
 	margin-top: 16px;
-	button {
-		@include emerald-button-style;
-	}
 
 	a {
 		font-size: $font-body-extra-small;
 		line-height: 0.5;
+	}
+}
+
+// Use base component styling of `@automattic/components/Button`
+.button.jetpack-emerald-button {
+	font-weight: 600;
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	&.is-primary {
+		color: var(--studio-white);
+		background: var(--studio-black);
+	}
+
+	// Use `transparent` styling as secondary styles
+	&.is-transparent {
+		color: var(--studio-black);
+		background: inset 0 0 0 1.5px var(--studio-white);
+
+		&:hover:not(.is-busy) {
+			color: var(--studio-black);
+			background: var(--studio-gray-0);
+		}
+
+		&.is-busy {
+			background: $jp-gray;
+			color: var(--studio-gray-20);
+			border: 1px solid transparent;
+		}
 	}
 }

@@ -1,28 +1,50 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
-import { useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import ActivityCardList from 'calypso/components/activity-card-list';
-import AdvancedCredentials from 'calypso/components/advanced-credentials';
-import BackupSuccessful from 'calypso/components/jetpack/daily-backup-status/status-card/backup-successful';
+import { screen, fireEvent } from '@testing-library/react';
+import Modal from 'react-modal';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
+import documentHead from 'calypso/state/document-head/reducer';
+import preferences from 'calypso/state/preferences/reducer';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import Error from '../../rewind-flow/error';
-import Loading from '../../rewind-flow/loading';
-import ProgressBar from '../../rewind-flow/progress-bar';
-import RewindConfigEditor from '../../rewind-flow/rewind-config-editor';
+import ui from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import BackupCloneFlow from '../index';
-import CloneFlowStepProgress from '../step-progress';
 
-jest.mock( 'react', () => ( {
-	...jest.requireActual( 'react' ),
-	useState: jest.fn(),
-} ) );
+const initialState = {
+	currentUser: {
+		capabilities: {
+			[ 1 ]: {
+				publish_posts: true,
+			},
+		},
+	},
+	sites: {
+		plans: {
+			[ 1 ]: {},
+		},
+	},
+	ui: {
+		selectedSiteId: 1,
+		section: {
+			name: 'backup"',
+			paths: [ '/backup' ],
+			module: 'calypso/my-sites/backup',
+			group: 'sites',
+		},
+	},
+	preferences: {
+		remoteValues: {},
+	},
+	documentHead: { unreadCount: 1 },
+};
+
+const render = ( element ) =>
+	renderWithProvider( element, {
+		initialState,
+		reducers: { ui, documentHead, preferences },
+	} );
 
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
@@ -36,433 +58,179 @@ jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query', () =>
 		return { isLoading: true, data: null };
 	} )
 );
+jest.mock( 'calypso/state/rewind/selectors/get-backup-staging-sites', () =>
+	jest.fn().mockImplementation( () => [
+		{
+			blog_id: 'test',
+			siteurl: 'example.com',
+		},
+	] )
+);
 
+// Mock several data-fetching related selectors which may not be available.
+jest.mock( 'calypso/state/rewind/selectors/has-fetched-staging-sites-list' );
+jest.mock( 'calypso/state/rewind/selectors/is-fetching-staging-sites-list' );
 jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query' );
 jest.mock( 'calypso/state/selectors/get-in-progress-rewind-status' );
 jest.mock( 'calypso/state/selectors/get-rewind-state' );
+jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
+jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
+jest.mock( 'calypso/state/selectors/get-jetpack-credentials-test-status' );
+jest.mock( 'calypso/state/selectors/is-requesting-site-credentials' );
+jest.mock( 'calypso/state/jetpack/credentials/selectors' );
 
-jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () =>
-	jest.fn().mockImplementation( () => null )
-);
-
-jest.mock( 'calypso/state/selectors/get-site-timezone-value', () =>
-	jest.fn().mockImplementation( () => null )
-);
-
-jest.mock( 'calypso/components/activity-card-list', () =>
-	jest.fn().mockImplementation( () => null )
-);
-
-jest.mock( 'calypso/components/advanced-credentials', () =>
-	jest.fn().mockImplementation( () => null )
-);
-jest.mock( 'calypso/components/jetpack/daily-backup-status/status-card/backup-successful', () =>
-	jest.fn().mockImplementation( () => null )
-);
-
-jest.mock( '../step-progress', () => jest.fn().mockImplementation( () => null ) );
-jest.mock( '../../rewind-flow/error', () => jest.fn().mockImplementation( () => null ) );
-jest.mock( '../../rewind-flow/loading', () => jest.fn().mockImplementation( () => null ) );
-jest.mock( '../../rewind-flow/progress-bar', () => jest.fn().mockImplementation( () => null ) );
-jest.mock( '../../rewind-flow/rewind-config-editor', () =>
-	jest.fn().mockImplementation( () => null )
-);
-
-function createState( siteId = 1 ) {
-	return {
-		currentUser: {
-			capabilities: {
-				[ siteId ]: {
-					publish_posts: true,
+const mockLogData = {
+	data: [
+		{
+			actorAvatarUrl: 'https://www.gravatar.com/avatar/0',
+			actorName: 'Jetpack',
+			actorRemoteId: 0,
+			actorRole: '',
+			actorType: 'Application',
+			actorWpcomId: 0,
+			activityDate: '2023-03-28T23:28:03.804+00:00',
+			activityGroup: 'rewind',
+			activityIcon: 'cloud',
+			activityId: '111111111111',
+			activityIsRewindable: true,
+			activityName: 'rewind__backup_only_complete_full',
+			activityTitle: 'Backup complete',
+			activityTs: 1680046083805,
+			activityDescription: [
+				{
+					children: [
+						{
+							text: '17 plugins, 7 themes, 1467 uploads, 32 posts, 5 pages, 11 products, 80 orders',
+						},
+					],
 				},
+			],
+			activityMeta: {},
+			rewindId: '1680046083.805',
+			activityStatus: 'success',
+			activityType: 'Backup',
+			activityWarnings: {
+				themes: [],
+				plugins: [],
+				uploads: [],
+				roots: [],
+				contents: [],
+				tables: [],
 			},
+			activityErrors: [],
 		},
-		sites: {
-			plans: {
-				[ siteId ]: {},
-			},
-		},
-		ui: {
-			selectedSiteId: siteId,
-			section: {
-				name: 'backup"',
-				paths: [ '/backup' ],
-				module: 'calypso/my-sites/backup',
-				group: 'sites',
-			},
-		},
-		preferences: {
-			remoteValues: {},
-		},
-		documentHead: { unreadCount: 1 },
-	};
-}
-
-function getLogs() {
-	return {
-		data: [
-			{
-				actorAvatarUrl: 'https://www.gravatar.com/avatar/0',
-				actorName: 'Jetpack',
-				actorRemoteId: 0,
-				actorRole: '',
-				actorType: 'Application',
-				actorWpcomId: 0,
-				activityDate: '2023-03-28T23:28:03.804+00:00',
-				activityGroup: 'rewind',
-				activityIcon: 'cloud',
-				activityId: '111111111111',
-				activityIsRewindable: true,
-				activityName: 'rewind__backup_only_complete_full',
-				activityTitle: 'Backup complete',
-				activityTs: 1680046083805,
-				activityDescription: [
-					{
-						children: [
-							{
-								text: '17 plugins, 7 themes, 1467 uploads, 32 posts, 5 pages, 11 products, 80 orders',
-							},
-						],
-					},
-				],
-				activityMeta: {},
-				rewindId: '1680046083.805',
-				activityStatus: 'success',
-				activityType: 'Backup',
-				activityWarnings: {
-					themes: [],
-					plugins: [],
-					uploads: [],
-					roots: [],
-					contents: [],
-					tables: [],
+		{
+			actorAvatarUrl: 'https://www.gravatar.com/avatar/0',
+			actorName: 'actorTest',
+			actorRemoteId: 6,
+			actorRole: 'administrator',
+			actorType: 'Person',
+			actorWpcomId: 111222333,
+			activityDate: '2023-03-28T23:08:01.000+00:00',
+			activityGroup: 'attachment',
+			activityIcon: 'image',
+			activityId: '2222222222222',
+			activityIsRewindable: true,
+			activityName: 'attachment__uploaded',
+			activityTitle: 'Image uploaded',
+			activityTs: 1680044881009,
+			activityDescription: [
+				{
+					type: 'link',
+					url: 'https://wordpress.com/media/11111111/333',
+					intent: 'edit',
+					section: 'media',
+					children: [ 'wp-1111111111111.jpg' ],
 				},
-				activityErrors: [],
+			],
+			activityMedia: {
+				available: true,
+				type: 'Image',
+				name: 'wp-2222222222.jpg',
+				url: 'https://i0.wp.com/1.jpg',
+				thumbnail_url: 'https://i0.wp.com/2.jpg?',
+				medium_url: 'https://i0.wp.com/3.jpg',
 			},
-			{
-				actorAvatarUrl: 'https://www.gravatar.com/avatar/0',
-				actorName: 'actorTest',
-				actorRemoteId: 6,
-				actorRole: 'administrator',
-				actorType: 'Person',
-				actorWpcomId: 111222333,
-				activityDate: '2023-03-28T23:08:01.000+00:00',
-				activityGroup: 'attachment',
-				activityIcon: 'image',
-				activityId: '2222222222222',
-				activityIsRewindable: true,
-				activityName: 'attachment__uploaded',
-				activityTitle: 'Image uploaded',
-				activityTs: 1680044881009,
-				activityDescription: [
-					{
-						type: 'link',
-						url: 'https://wordpress.com/media/11111111/333',
-						intent: 'edit',
-						section: 'media',
-						children: [ 'wp-1111111111111.jpg' ],
-					},
-				],
-				activityMedia: {
-					available: true,
-					type: 'Image',
-					name: 'wp-2222222222.jpg',
-					url: 'https://i0.wp.com/1.jpg',
-					thumbnail_url: 'https://i0.wp.com/2.jpg?',
-					medium_url: 'https://i0.wp.com/3.jpg',
-				},
-				activityMeta: {},
-				rewindId: '1680044877.1830',
-				activityStatus: 'success',
-			},
-		],
-	};
-}
+			activityMeta: {},
+			rewindId: '1680044877.1830',
+			activityStatus: 'success',
+		},
+	],
+};
 
-function initializeUseStateMockCloneFlow( {
-	rewindConfig = {
-		themes: true,
-		plugins: true,
-		uploads: true,
-		sqls: true,
-		roots: true,
-		contents: true,
-	},
-	userHasRequestedRestore = false,
-	userHasSetDestination = false,
-	cloneDestination = '',
-	userHasSetBackupPeriod = false,
-	backupPeriod = '',
-	backupDisplayDate = '',
-} = {} ) {
-	useState
-		.mockReturnValueOnce( [ rewindConfig, jest.fn() ] )
-		.mockReturnValueOnce( [ userHasRequestedRestore, jest.fn() ] )
-		.mockReturnValueOnce( [ userHasSetDestination, jest.fn() ] )
-		.mockReturnValueOnce( [ cloneDestination, jest.fn() ] )
-		.mockReturnValueOnce( [ userHasSetBackupPeriod, jest.fn() ] )
-		.mockReturnValueOnce( [ backupPeriod, jest.fn() ] )
-		.mockReturnValueOnce( [ backupDisplayDate, jest.fn() ] );
+// This tests the user going through each step of the clone flow. Abstracted here
+// so that different behavior at the end of the flow can be tested without
+// duplicating everything.
+function progressThroughFlow() {
+	// 1: Search for the example staging site and click it.
+	const input = screen.getByPlaceholderText( 'Search for a destination', { exact: false } );
+	fireEvent.change( input, { target: { value: 'example.com' } } );
+	fireEvent.mouseDown( screen.getByRole( 'button', { name: 'example.com' } ) );
+
+	// 2: Check if backup period selector is shown and select a backup period.
+	expect( screen.getByText( 'What do you want to copy to', { exact: false } ) ).toBeInTheDocument();
+	fireEvent.click( screen.getByRole( 'button', { name: 'Clone from here' } ) );
+
+	// 3. Verify the editor is shown and click the continue buttons.
+	expect(
+		screen.getByText( 'Choose the items you wish to restore', { exact: false } )
+	).toBeInTheDocument();
+	fireEvent.click( screen.getByRole( 'button', { name: 'Confirm configuration' } ) );
+	fireEvent.click( screen.getByRole( 'button', { name: 'Yes, continue' } ) );
 }
 
 describe( 'BackupCloneFlow render', () => {
-	describe( 'Render components in flow', () => {
-		beforeEach( () => {
-			jest.clearAllMocks();
+	beforeEach( () => {
+		jest.clearAllMocks();
+		getInProgressRewindStatus.mockImplementation( () => undefined );
+	} );
 
-			getInProgressRewindStatus.mockImplementation( () => undefined );
-		} );
+	test( 'Render RewindFlowLoading if state is not initialized', () => {
+		getRewindState.mockImplementation( () => ( { state: 'uninitialized' } ) );
+		render( <BackupCloneFlow /> );
+		expect( screen.getByText( 'Loading restore', { exact: false } ) ).toBeInTheDocument();
+	} );
 
-		test( 'Render RewindFlowLoading if state is not initialized', () => {
-			getRewindState.mockImplementation( () => ( {
-				state: 'uninitialized',
-			} ) );
+	test( 'Render AdvancedCredentials if user has not set the destination', () => {
+		getRewindState.mockImplementation( () => ( { state: 'active' } ) );
+		render( <BackupCloneFlow /> );
 
-			const mockStore = configureStore();
-			const store = mockStore( createState() );
-			const queryClient = new QueryClient();
+		// Click the enter credentials button and verify the form opens:
+		const addCredentials = screen.getByText( 'Enter credentials', { exact: false } );
+		fireEvent.click( addCredentials );
+		expect( screen.getByText( 'Remote server credentials' ) ).toBeInTheDocument();
+	} );
 
-			// Initialize mock UseState on BackupCloneFlow
-			initializeUseStateMockCloneFlow();
+	test( 'Renders each step of the flow', () => {
+		getRewindState.mockImplementation( () => ( { state: 'active' } ) );
+		useRewindableActivityLogQuery.mockImplementation( () => mockLogData );
 
-			// Render component
-			render(
-				<Provider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<BackupCloneFlow />
-					</QueryClientProvider>
-				</Provider>
-			);
+		const { container } = render( <BackupCloneFlow /> );
+		Modal.setAppElement( container );
 
-			expect( Loading ).toHaveBeenCalledTimes( 1 );
-		} );
+		progressThroughFlow();
+		expect(
+			screen.getByText( 'Jetpack is copying your site', { exact: false } )
+		).toBeInTheDocument();
+	} );
 
-		test( 'Render AdvancedCredentials if user has not set the destination', () => {
-			getRewindState.mockImplementation( () => ( {
-				state: 'active',
-			} ) );
+	test( 'Render finished text if the clone is finished', () => {
+		getRewindState.mockImplementation( () => ( { state: 'active' } ) );
+		getInProgressRewindStatus.mockImplementation( () => 'finished' );
+		render( <BackupCloneFlow /> );
 
-			const mockStore = configureStore();
-			const store = mockStore( createState() );
-			const queryClient = new QueryClient();
+		progressThroughFlow();
+		expect( screen.queryByText( /Your site has been successfully copied./i ) ).toBeVisible();
+	} );
 
-			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
-			initializeUseStateMockCloneFlow( { userHasSetDestination: false } );
+	test( 'Render error if it is in the wrong status', () => {
+		getRewindState.mockImplementation( () => ( { state: 'active' } ) );
+		getInProgressRewindStatus.mockImplementation( () => 'wrong-status' );
+		render( <BackupCloneFlow /> );
 
-			// Render component
-			render(
-				<Provider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<BackupCloneFlow />
-					</QueryClientProvider>
-				</Provider>
-			);
-
-			expect( CloneFlowStepProgress ).toHaveBeenCalledTimes( 1 );
-			expect( AdvancedCredentials ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		test( 'Render ActivityCardList if user has not set the period to clone', () => {
-			getRewindState.mockImplementation( () => ( {
-				state: 'active',
-			} ) );
-			useRewindableActivityLogQuery.mockImplementation( () => getLogs() );
-
-			const mockStore = configureStore();
-			const store = mockStore( createState() );
-			const queryClient = new QueryClient();
-
-			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
-			initializeUseStateMockCloneFlow( {
-				userHasSetDestination: true,
-				userHasSetBackupPeriod: false,
-			} );
-
-			// Render component
-			render(
-				<Provider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<BackupCloneFlow />
-					</QueryClientProvider>
-				</Provider>
-			);
-
-			expect( CloneFlowStepProgress ).toHaveBeenCalledTimes( 1 );
-			expect( BackupSuccessful ).toHaveBeenCalledTimes( 1 );
-			expect( ActivityCardList ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		test( 'Render RewindConfigEditor if user has not requested the clone yet', () => {
-			getRewindState.mockImplementation( () => ( {
-				state: 'active',
-			} ) );
-
-			const mockStore = configureStore();
-			const store = mockStore( createState() );
-			const queryClient = new QueryClient();
-
-			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
-			initializeUseStateMockCloneFlow( {
-				userHasSetDestination: true,
-				userHasSetBackupPeriod: true,
-				userHasRequestedRestore: false,
-			} );
-
-			// Render component
-			render(
-				<Provider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<BackupCloneFlow />
-					</QueryClientProvider>
-				</Provider>
-			);
-
-			expect( CloneFlowStepProgress ).toHaveBeenCalledTimes( 1 );
-			expect( RewindConfigEditor ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		test( 'Render ProgressBar if uses requested the clone', () => {
-			getRewindState.mockImplementation( () => ( {
-				state: 'active',
-			} ) );
-
-			const mockStore = configureStore();
-			const store = mockStore( createState() );
-			const queryClient = new QueryClient();
-
-			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
-			initializeUseStateMockCloneFlow( {
-				userHasSetDestination: true,
-				userHasSetBackupPeriod: true,
-				userHasRequestedRestore: true,
-			} );
-			getInProgressRewindStatus.mockImplementation( () => undefined );
-
-			// Render component
-			render(
-				<Provider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<BackupCloneFlow />
-					</QueryClientProvider>
-				</Provider>
-			);
-
-			expect( ProgressBar ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		test( 'Render ProgressBar if inProgressRewindStatus is queued', () => {
-			getRewindState.mockImplementation( () => ( {
-				state: 'active',
-			} ) );
-
-			const mockStore = configureStore();
-			const store = mockStore( createState() );
-			const queryClient = new QueryClient();
-
-			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
-			initializeUseStateMockCloneFlow( {
-				userHasSetDestination: true,
-				userHasSetBackupPeriod: true,
-				userHasRequestedRestore: true,
-			} );
-			getInProgressRewindStatus.mockImplementation( () => 'queued' );
-
-			// Render component
-			render(
-				<Provider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<BackupCloneFlow />
-					</QueryClientProvider>
-				</Provider>
-			);
-
-			expect( ProgressBar ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		test( 'Render ProgressBar if inProgressRewindStatus is running', () => {
-			getRewindState.mockImplementation( () => ( {
-				state: 'active',
-			} ) );
-
-			const mockStore = configureStore();
-			const store = mockStore( createState() );
-			const queryClient = new QueryClient();
-
-			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
-			initializeUseStateMockCloneFlow( {
-				userHasSetDestination: true,
-				userHasSetBackupPeriod: true,
-				userHasRequestedRestore: true,
-			} );
-			getInProgressRewindStatus.mockImplementation( () => 'running' );
-
-			// Render component
-			render(
-				<Provider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<BackupCloneFlow />
-					</QueryClientProvider>
-				</Provider>
-			);
-
-			expect( ProgressBar ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		test( 'Render finished text if the clone is finished', () => {
-			getRewindState.mockImplementation( () => ( {
-				state: 'active',
-			} ) );
-
-			const mockStore = configureStore();
-			const store = mockStore( createState() );
-			const queryClient = new QueryClient();
-
-			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
-			initializeUseStateMockCloneFlow( {
-				userHasSetDestination: true,
-				userHasSetBackupPeriod: true,
-				userHasRequestedRestore: true,
-			} );
-			getInProgressRewindStatus.mockImplementation( () => 'finished' );
-
-			// Render component
-			render(
-				<Provider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<BackupCloneFlow />
-					</QueryClientProvider>
-				</Provider>
-			);
-
-			expect( screen.queryByText( /Your site has been successfully copied./i ) ).toBeVisible();
-		} );
-
-		test( 'Render error if it is in the wrong status', () => {
-			getRewindState.mockImplementation( () => ( {
-				state: 'active',
-			} ) );
-
-			const mockStore = configureStore();
-			const store = mockStore( createState() );
-			const queryClient = new QueryClient();
-
-			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
-			initializeUseStateMockCloneFlow( {
-				userHasSetDestination: true,
-				userHasSetBackupPeriod: true,
-				userHasRequestedRestore: true,
-			} );
-			getInProgressRewindStatus.mockImplementation( () => 'wrong-status' );
-
-			// Render component
-			render(
-				<Provider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<BackupCloneFlow />
-					</QueryClientProvider>
-				</Provider>
-			);
-			expect( Error ).toHaveBeenCalledTimes( 1 );
-		} );
+		progressThroughFlow();
+		expect(
+			screen.getByText( 'An error occurred while restoring your site', { exact: false } )
+		).toBeInTheDocument();
 	} );
 } );

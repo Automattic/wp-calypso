@@ -1,5 +1,5 @@
+import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
 import { SSH_KEY_QUERY_KEY } from './use-ssh-key-query';
 
@@ -21,8 +21,8 @@ export const useAddSSHKeyMutation = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		async ( { name, key }: MutationVariables ) =>
+	const mutation = useMutation( {
+		mutationFn: async ( { name, key }: MutationVariables ) =>
 			wp.req.post(
 				{ path: '/me/ssh-keys', apiNamespace: 'wpcom/v2' },
 				{
@@ -30,14 +30,12 @@ export const useAddSSHKeyMutation = (
 					key,
 				}
 			),
-		{
-			...options,
-			onSuccess: async ( ...args ) => {
-				await queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
-				options.onSuccess?.( ...args );
-			},
-		}
-	);
+		...options,
+		onSuccess: async ( ...args ) => {
+			await queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
+			options.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate, isLoading } = mutation;
 

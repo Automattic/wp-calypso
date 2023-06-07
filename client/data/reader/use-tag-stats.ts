@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 export interface TagStats {
@@ -9,14 +9,12 @@ export interface TagStats {
 }
 
 export const useTagStats = ( tag: string ): UseQueryResult< TagStats | null > =>
-	useQuery(
-		[ 'tag-stats', tag ],
-		() =>
+	useQuery( {
+		queryKey: [ 'tag-stats', tag ],
+		queryFn: () =>
 			wp.req.get( `/read/topics/${ encodeURIComponent( tag ) }/stats`, {
 				apiVersion: '1.3',
 			} ),
-		{
-			staleTime: 86400000, // 1 day
-			refetchOnMount: 'always',
-		}
-	);
+		staleTime: 86400000, // 1 day
+		refetchOnMount: 'always',
+	} );

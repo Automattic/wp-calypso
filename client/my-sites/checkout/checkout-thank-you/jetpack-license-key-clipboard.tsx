@@ -1,10 +1,10 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useUserLicenseByReceiptQuery from 'calypso/data/jetpack-licensing/use-user-license-by-receipt-query';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export interface JetpackLicenseKeyProps {

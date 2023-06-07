@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -24,10 +25,13 @@ class SocialSignupForm extends Component {
 		disableTosText: PropTypes.bool,
 		flowName: PropTypes.string,
 		redirectToAfterLoginUrl: PropTypes.string,
+		loginUrl: PropTypes.string,
+		isDevAccount: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		compact: false,
+		isDevAccount: false,
 	};
 
 	handleAppleResponse = ( response ) => {
@@ -35,9 +39,12 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		const extraUserData = response.user && {
-			user_name: response.user.name,
-			user_email: response.user.email,
+		const extraUserData = {
+			is_dev_account: this.props.isDevAccount,
+			...( response.user && {
+				user_name: response.user.name,
+				user_email: response.user.email,
+			} ),
 		};
 
 		this.props.handleResponse( 'apple', null, response.id_token, extraUserData );
@@ -52,7 +59,9 @@ class SocialSignupForm extends Component {
 			social_account_type: 'google',
 		} );
 
-		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
+		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token, {
+			is_dev_account: this.props.isDevAccount,
+		} );
 	};
 
 	trackSocialSignup = ( service ) => {
@@ -95,6 +104,17 @@ class SocialSignupForm extends Component {
 		}
 	};
 
+	renderWordPressLoginLink() {
+		return (
+			<a className="social-buttons__button button" href={ this.props.loginUrl }>
+				<WordPressLogo size={ 20 } className="social-icons" />
+				<span className="social-buttons__service-name">
+					{ this.props.translate( 'Continue with WordPress.com' ) }
+				</span>
+			</a>
+		);
+	}
+
 	render() {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
@@ -112,6 +132,11 @@ class SocialSignupForm extends Component {
 					) }
 
 					<div className="signup-form__social-buttons">
+						{
+							// To display the WordPress.com login link among the social buttons for OAuth2 clients (e.g. Gravatar), which can enhance the UX.
+							this.props.loginUrl && this.renderWordPressLoginLink()
+						}
+
 						<GoogleSocialButton
 							clientId={ config( 'google_oauth_client_id' ) }
 							responseHandler={ this.handleGoogleResponse }

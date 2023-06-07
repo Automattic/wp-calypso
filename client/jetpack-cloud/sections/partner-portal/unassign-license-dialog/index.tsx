@@ -1,9 +1,9 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';

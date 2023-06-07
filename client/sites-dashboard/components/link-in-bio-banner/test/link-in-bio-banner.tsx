@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 import * as viewport from '@automattic/viewport-react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createReduxStore } from 'calypso/state/index';
 import { LinkInBioBanner } from '../link-in-bio-banner';

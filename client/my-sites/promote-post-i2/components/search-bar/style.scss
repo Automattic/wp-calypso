@@ -1,10 +1,12 @@
-.promote-post__search-bar-wrapper {
+@import "@wordpress/base-styles/breakpoints";
+
+.promote-post-i2__search-bar-wrapper {
 	margin-bottom: 20px;
 	flex-wrap: wrap;
 	display: grid;
-	grid-template-columns: 70% 30%;
+	grid-template-columns: 1fr 300px;
 
-	.promote-post__search-bar-dropdown {
+	.promote-post-i2__search-bar-dropdown {
 		&.select-dropdown {
 			height: 50px;
 		}
@@ -16,5 +18,48 @@
 		.select-dropdown__header {
 			height: 50px;
 		}
+	}
+}
+
+@mixin blazepress-search-bar-mobile {
+	.promote-post-i2__search-bar-wrapper {
+		display: flex;
+		position: relative;
+
+		.promote-post-i2__search-bar-dropdown {
+			position: absolute;
+			right: 0;
+			top: 3.55rem;
+			z-index: 100; // Search dropdown should be above the post list.
+
+			.select-dropdown__header {
+				background: transparent;
+
+				&-text {
+					margin-right: 12px;
+				}
+			}
+		}
+	}
+}
+
+// Show Mobile view for screens if window width <= 782px
+@media screen and (max-width: $break-medium) {
+	@include blazepress-search-bar-mobile;
+}
+
+// Show Mobile view if sidebar is collapsed and main content width <= 782px
+$break-medium-collapsed-menu: $break-medium + 36px;
+@media screen and (max-width: $break-medium-collapsed-menu) {
+	body.is-section-promote-post-i2.is-sidebar-collapsed {
+		@include blazepress-search-bar-mobile;
+	}
+}
+
+// Show Mobile view if sidebar is expanded and main content width <= 782px
+$break-medium-expanded-menu: $break-medium + 272px;
+@media screen and (max-width: $break-medium-expanded-menu) {
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
+		@include blazepress-search-bar-mobile;
 	}
 }

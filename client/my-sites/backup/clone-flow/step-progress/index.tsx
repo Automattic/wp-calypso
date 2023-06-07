@@ -48,7 +48,7 @@ export default function CloneFlowStepProgress( { currentStep }: Props ) {
 
 	const steps: Step[] = [
 		{ key: 'destination', label: translate( 'Set destination' ) },
-		{ key: 'clonePoint', label: translate( 'Select clone point' ) },
+		{ key: 'clonePoint', label: translate( 'Select point to copy' ) },
 		{ key: 'configure', label: translate( 'Configure' ) },
 	];
 

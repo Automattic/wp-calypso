@@ -68,7 +68,7 @@ export default function CampaignItem( props: Props ) {
 	return (
 		<tr>
 			<td>
-				<div className="promote-post__campaign-item-wrapper">
+				<div className="promote-post-i2__campaign-item-wrapper">
 					{ adCreativeUrl && (
 						<div className="campaign-item__header-image">
 							<img src={ adCreativeUrl } alt="" />

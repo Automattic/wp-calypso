@@ -65,7 +65,12 @@ const setupStore = ( { site = defaultSite, theme = defaultTheme } = {} ) => {
 describe( 'thanks-modal', () => {
 	describe( 'when activating an FSE theme', () => {
 		test( 'displays the "Customize site" call to action and links it to the site editor', async () => {
+			const adminURL = 'https://example.wordpress.com/';
 			const store = setupStore( {
+				site: {
+					...defaultSite,
+					options: { admin_url: adminURL },
+				},
 				theme: {
 					...defaultTheme,
 					taxonomies: {
@@ -74,16 +79,17 @@ describe( 'thanks-modal', () => {
 				},
 			} );
 
+			const encodedURL = `${ adminURL }site-editor.php?calypso_origin=${ encodeURIComponent(
+				defaultSite?.URL
+			) }`;
+
 			render( <TestComponent store={ store } /> );
 
 			await waitFor( () => {
 				const editSiteCallToAction = screen.getByText( 'Customize site' );
 
 				expect( editSiteCallToAction ).toBeInTheDocument();
-				expect( editSiteCallToAction.closest( 'a' ) ).toHaveAttribute(
-					'href',
-					'/site-editor/example.com'
-				);
+				expect( editSiteCallToAction.closest( 'a' ) ).toHaveAttribute( 'href', encodedURL );
 			} );
 		} );
 	} );

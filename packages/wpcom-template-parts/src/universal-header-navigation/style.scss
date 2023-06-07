@@ -833,6 +833,16 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 			}
 		}
 	}
+
+	&.is-logged-in {
+		.masterbar-menu {
+			.masterbar {
+				.x-nav-list__right {
+					display: none;
+				}
+			}
+		}
+	}
 }
 
 /* End subscriptions section overrides */

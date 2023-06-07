@@ -24,6 +24,7 @@ export class RevisionsPage {
 	 */
 	async selectRevision( index: number ): Promise< void > {
 		const sliderTickmarks = this.page.locator( '.revisions-tickmarks > div' );
+		await sliderTickmarks.nth( 0 ).waitFor( { state: 'attached' } );
 		const revisionCount = ( await sliderTickmarks.count() ) + 1;
 
 		if ( index > revisionCount ) {
@@ -32,7 +33,7 @@ export class RevisionsPage {
 			);
 		}
 
-		const slider = this.page.locator( '.revisions-controls > .wp-slider' );
+		const slider = this.page.locator( '.wp-slider' );
 		const sliderWidth = ( await slider.boundingBox() )?.width as number;
 		// Calculate click position on the horizontal slider. For example, if
 		// there are 4 revisions, the second one should be at 25% of the total

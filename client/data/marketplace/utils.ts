@@ -1,4 +1,4 @@
-import { QueryKey } from 'react-query';
+import { QueryKey } from '@tanstack/react-query';
 import { PluginQueryOptions } from './types';
 
 const PLUGINS_CACHE_VERSION = 1;

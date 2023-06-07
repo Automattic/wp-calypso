@@ -102,6 +102,7 @@ class RegisterDomainStep extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		isCartPendingUpdate: PropTypes.bool,
+		isCartPendingUpdateDomain: PropTypes.object,
 		isDomainOnly: PropTypes.bool,
 		onDomainsAvailabilityChange: PropTypes.func,
 		products: PropTypes.object,
@@ -464,7 +465,11 @@ class RegisterDomainStep extends Component {
 					{ this.renderSideContent() }
 					<QueryContactDetailsCache />
 				</div>
-				{ showAlreadyOwnADomain && <AlreadyOwnADomain onClick={ this.useYourDomainFunction() } /> }
+				{ showAlreadyOwnADomain && (
+					<AlreadyOwnADomain
+						onClick={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
+					/>
+				) }
 			</>
 		);
 	}
@@ -1452,6 +1457,7 @@ class RegisterDomainStep extends Component {
 				isReskinned={ this.props.isReskinned }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
+				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 			>
 				{ ! this.props.isReskinned &&
 					hasResults &&

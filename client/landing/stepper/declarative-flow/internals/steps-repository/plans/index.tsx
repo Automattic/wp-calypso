@@ -1,56 +1,54 @@
-import { is2023PricingGridActivePage } from '@automattic/calypso-products';
-import { DOMAIN_UPSELL_FLOW, StepContainer } from '@automattic/onboarding';
-import { useI18n } from '@wordpress/react-i18n';
+import { is2023PricingGridEnabled } from '@automattic/calypso-products';
+import {
+	isBlogOnboardingFlow,
+	isDomainUpsellFlow,
+	isNewHostedSiteCreationFlow,
+	StepContainer,
+} from '@automattic/onboarding';
+import { useSelector } from 'react-redux';
+import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
 import type { ProvidedDependencies, Step } from '../../types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const plans: Step = function Plans( { navigation, flow } ) {
-	const { submit } = navigation;
-	const { __ } = useI18n();
+	const hostingFlow = useSelector( isInHostingFlow );
+	const { goBack, submit } = navigation;
 
-	const handleSubmit = () => {
-		const providedDependencies: ProvidedDependencies = {};
+	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
+		const providedDependencies: ProvidedDependencies = {
+			plan,
+		};
 
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
+		if ( isDomainUpsellFlow( flow ) || isBlogOnboardingFlow( flow ) ) {
 			providedDependencies.goToCheckout = true;
 		}
 
 		submit?.( providedDependencies );
 	};
-	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
+	const is2023PricingGridVisible = is2023PricingGridEnabled();
 
-	const handleGoBack = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
-			submit?.( { returnToDomainSelection: true } );
-		}
-	};
-
-	const getBackLabelText = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
-			return __( 'Back' );
-		}
-	};
-
-	const shouldHideBackButton = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
-			return false;
-		}
-		return true;
-	};
+	const isAllowedToGoBack =
+		isDomainUpsellFlow( flow ) || ( isNewHostedSiteCreationFlow( flow ) && hostingFlow );
 
 	return (
 		<StepContainer
 			stepName="plans"
-			goBack={ handleGoBack }
+			goBack={ goBack }
 			isHorizontalLayout={ false }
 			isWideLayout={ ! is2023PricingGridVisible }
 			isFullLayout={ is2023PricingGridVisible }
 			hideFormattedHeader={ true }
 			isLargeSkipLayout={ false }
-			backLabelText={ getBackLabelText() }
-			hideBack={ shouldHideBackButton() }
-			stepContent={ <PlansWrapper flowName={ flow } onSubmit={ handleSubmit } /> }
+			hideBack={ ! isAllowedToGoBack }
+			stepContent={
+				<PlansWrapper
+					flowName={ flow }
+					onSubmit={ handleSubmit }
+					is2023PricingGridVisible={ is2023PricingGridVisible }
+				/>
+			}
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

@@ -1,11 +1,10 @@
 import config from '@automattic/calypso-config';
 import { PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getPostsForQuery, isRequestingPostsForQuery } from 'calypso/state/posts/selectors';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 
 const POST_STATS_CARD_TITLE_LIMIT = 60;
@@ -22,36 +21,42 @@ const textTruncator = ( text: string, limit = 48 ) => {
 	return `${ truncatedText }${ text.length > limit ? '...' : '' } `;
 };
 
+interface LatestPost {
+	ID: number;
+	date: string;
+	post_thumbnail: {
+		URL: string;
+	};
+	title: string;
+	like_count: number;
+	discussion: {
+		comment_count: number;
+	};
+}
+
 export default function LatestPostCard( {
 	siteId,
 	siteSlug,
+	latestPost,
+	isLoading,
 }: {
 	siteId: number;
 	siteSlug: string;
+	latestPost: LatestPost;
+	isLoading: boolean;
 } ) {
 	const translate = useTranslate();
 	const userLocale = useSelector( getCurrentUserLocale );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
-	const posts = useSelector( ( state ) =>
-		getPostsForQuery( state, siteId, { status: 'publish', number: 1 } )
-	);
-
-	const isRequestingPosts = useSelector( ( state ) =>
-		isRequestingPostsForQuery( state, siteId, { status: 'publish', number: 1 } )
-	);
-
-	const latestPost = posts && posts.length ? posts[ 0 ] : null;
-
 	const lastesPostViewCount = useSelector( ( state ) =>
 		getPostStat( state, siteId, latestPost?.ID, 'views' )
 	);
-
 	const isRequestingLatestPostViewCount = useSelector( ( state ) =>
 		isRequestingPostStats( state, siteId, latestPost?.ID, [ 'views' ] )
 	);
 
-	const isLoadingLatestPost = isRequestingPosts || isRequestingLatestPostViewCount;
+	const isLoadingLatestPost = isLoading || isRequestingLatestPostViewCount;
 
 	const latestPostData = {
 		date: latestPost?.date,

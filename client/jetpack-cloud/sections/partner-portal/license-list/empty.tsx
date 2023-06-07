@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
 import './style.scss';
@@ -21,6 +21,7 @@ export default function LicenseListEmpty( { filter }: Props ) {
 		[ LicenseFilter.Attached ]: translate( 'No assigned licenses.' ),
 		[ LicenseFilter.Detached ]: translate( 'No unassigned licenses.' ),
 		[ LicenseFilter.Revoked ]: translate( 'No revoked licenses.' ),
+		[ LicenseFilter.Standard ]: translate( 'No standard licenses.' ),
 	};
 
 	const licenseFilterStatusTitle = licenseFilterStatusTitleMap[ filter ] as string;

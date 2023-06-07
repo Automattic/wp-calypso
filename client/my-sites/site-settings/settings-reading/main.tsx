@@ -5,8 +5,12 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import { getSiteUrl } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ReaderSettingsSection from '../reader-settings';
+import { FediverseSettingsSection } from '../reading-fediverse-settings';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
 import { SiteSettingsSection } from '../reading-site-settings';
@@ -33,6 +37,7 @@ type Fields = {
 	show_on_front?: 'posts' | 'page';
 	subscription_options?: SubscriptionOptions;
 	wpcom_featured_image_in_email?: boolean;
+	wpcom_reader_views_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 };
 
@@ -55,6 +60,7 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		show_on_front,
 		subscription_options,
 		wpcom_featured_image_in_email,
+		wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt,
 	} = settings;
 
@@ -72,26 +78,34 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		...( show_on_front && { show_on_front } ),
 		...( subscription_options && { subscription_options } ),
 		wpcom_featured_image_in_email: !! wpcom_featured_image_in_email,
+		wpcom_reader_views_enabled: !! wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 	};
 };
 
-const connectComponent = connect( ( state ) => {
+const connectComponent = connect( ( state: IAppState ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteUrl = siteId && getSiteUrl( state, siteId );
+	const siteIsJetpack = isJetpackSite( state, siteId );
+	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	return {
 		...( siteUrl && { siteUrl } ),
+		siteIsJetpack,
+		isAtomic,
 	};
 } );
 
 type ReadingSettingsFormProps = {
 	fields: Fields;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	handleAutosavingToggle: ( field: string ) => () => void;
 	handleToggle: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
+	isAtomic: boolean | null;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
 	settings: { subscription_options?: SubscriptionOptions };
+	siteIsJetpack: boolean | null;
 	siteUrl?: string;
 	updateFields: ( fields: Fields ) => void;
 };
@@ -101,11 +115,14 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 		( {
 			fields,
 			onChangeField,
+			handleAutosavingToggle,
 			handleSubmitForm,
 			handleToggle,
+			isAtomic,
 			isRequestingSettings,
 			isSavingSettings,
 			settings,
+			siteIsJetpack,
 			siteUrl,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
@@ -123,15 +140,6 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
 					/>
-					<RssFeedSettingsSection
-						fields={ fields }
-						onChangeField={ onChangeField }
-						handleSubmitForm={ handleSubmitForm }
-						updateFields={ updateFields }
-						disabled={ disabled }
-						isSavingSettings={ isSavingSettings }
-						siteUrl={ siteUrl }
-					/>
 					<NewsletterSettingsSection
 						fields={ fields }
 						handleToggle={ handleToggle }
@@ -140,6 +148,24 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						savedSubscriptionOptions={ savedSubscriptionOptions }
 						updateFields={ updateFields }
+					/>
+					<ReaderSettingsSection
+						fields={ fields }
+						handleAutosavingToggle={ handleAutosavingToggle }
+						isRequestingSettings={ isRequestingSettings }
+						isSavingSettings={ isSavingSettings }
+						isAtomic={ isAtomic }
+						siteIsJetpack={ siteIsJetpack }
+					/>
+					{ config.isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
+					<RssFeedSettingsSection
+						fields={ fields }
+						onChangeField={ onChangeField }
+						handleSubmitForm={ handleSubmitForm }
+						updateFields={ updateFields }
+						disabled={ disabled }
+						isSavingSettings={ isSavingSettings }
+						siteUrl={ siteUrl }
 					/>
 				</form>
 			);

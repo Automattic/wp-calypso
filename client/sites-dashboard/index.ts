@@ -1,7 +1,11 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
-import { sanitizeQueryParameters, sitesDashboard } from './controller';
+import {
+	maybeRemoveCheckoutSuccessNotice,
+	sanitizeQueryParameters,
+	maybeSitesDashboard,
+} from './controller';
 
 export default function () {
 	// Maintain old `/sites/:id` URLs by redirecting them to My Home
@@ -13,5 +17,12 @@ export default function () {
 		page.redirect( getSiteHomeUrl( state, siteId ) );
 	} );
 
-	page( '/sites', sanitizeQueryParameters, sitesDashboard, makeLayout, clientRender );
+	page(
+		'/sites',
+		maybeRemoveCheckoutSuccessNotice,
+		sanitizeQueryParameters,
+		maybeSitesDashboard,
+		makeLayout,
+		clientRender
+	);
 }

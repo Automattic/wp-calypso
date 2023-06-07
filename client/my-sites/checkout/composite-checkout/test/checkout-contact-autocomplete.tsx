@@ -22,6 +22,10 @@ import {
 	mockMatchMediaOnWindow,
 	mockGetVatInfoEndpoint,
 	countryList,
+	mockLogStashEndpoint,
+	mockGetSupportedCountriesEndpoint,
+	mockGetPaymentMethodsEndpoint,
+	mockUserSignupValidationEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -46,7 +50,6 @@ describe( 'Checkout contact step', () => {
 	const mainCartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
 	const defaultPropsForMockCheckout = {
-		mainCartKey,
 		initialCart,
 	};
 
@@ -57,17 +60,16 @@ describe( 'Checkout contact step', () => {
 	getDomainsBySiteId.mockImplementation( () => [] );
 	isMarketplaceProduct.mockImplementation( () => false );
 	isJetpackSite.mockImplementation( () => false );
-	useCartKey.mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
+		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
-		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/transactions/supported-countries' )
-			.reply( 200, countryList );
 		mockGetVatInfoEndpoint( {} );
+		mockGetPaymentMethodsEndpoint( [] );
+		mockLogStashEndpoint();
+		mockGetSupportedCountriesEndpoint( countryList );
 	} );
 
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
@@ -170,12 +172,6 @@ describe( 'Checkout contact step', () => {
 				country_code: 'US',
 				email: 'test@example.com',
 			};
-			nock.cleanAll();
-			nock( 'https://public-api.wordpress.com' )
-				.persist()
-				.post( '/rest/v1.1/logstash' )
-				.reply( 200 );
-			mockGetVatInfoEndpoint( {} );
 
 			const messages = ( () => {
 				if ( valid === 'valid' ) {
@@ -221,26 +217,29 @@ describe( 'Checkout contact step', () => {
 				}
 			);
 
-			nock( 'https://public-api.wordpress.com' )
-				.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
-					return (
-						body.locale === 'en' &&
-						body.is_from_registrationless_checkout === true &&
-						body.email === validContactDetails.email
-					);
-				} )
-				.reply( 200, () => {
-					if ( logged === 'out' && email === 'fails' ) {
-						return {
+			mockUserSignupValidationEndpoint( () => {
+				if ( logged === 'out' && email === 'fails' ) {
+					return [
+						200,
+						{
 							success: false,
 							messages: { email: { taken: 'An account with this email already exists.' } },
-						};
-					}
-
-					return {
+						},
+					];
+				}
+				return [
+					200,
+					{
 						success: email === 'passes',
-					};
-				} );
+					},
+				];
+			} ).mockImplementation( ( body ) => {
+				return (
+					body.locale === 'en' &&
+					body.is_from_registrationless_checkout === true &&
+					body.email === validContactDetails.email
+				);
+			} );
 
 			render(
 				<MockCheckout

@@ -30,6 +30,7 @@ import {
 	getDefaultPaymentMethodStep,
 	getDefaultOrderReviewStep,
 } from './components/default-steps';
+import LoadingContent from './components/loading-content';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
@@ -82,6 +83,7 @@ export {
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
 	InvalidPaymentProcessorResponseError,
+	LoadingContent,
 	MainContentWrapper,
 	OrderReviewLineItems,
 	OrderReviewSection,

@@ -7,13 +7,13 @@ import {
 import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { preventWidows } from 'calypso/lib/formatting';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useDispatch, useSelector } from 'calypso/state';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,

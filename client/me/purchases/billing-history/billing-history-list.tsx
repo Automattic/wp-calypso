@@ -22,7 +22,7 @@ import { filterTransactions, paginateTransactions } from './filter-transactions'
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
-	renderTransactionAmount,
+	TransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
 import type { MouseEvent } from 'react';
@@ -97,23 +97,16 @@ class BillingHistoryList extends Component<
 
 	serviceNameDescription = ( transaction: BillingTransactionItem ) => {
 		const plan = capitalPDangit( transaction.variation );
-		if ( transaction.domain ) {
-			const termLabel = getTransactionTermLabel( transaction, this.props.translate );
-			return (
-				<div>
-					<strong>{ plan }</strong>
-					<small>{ transaction.domain }</small>
-					{ termLabel ? <small>{ termLabel }</small> : null }
-					{ transaction.licensed_quantity && (
-						<small>{ renderTransactionQuantitySummary( transaction, this.props.translate ) }</small>
-					) }
-				</div>
-			);
-		}
+		const termLabel = getTransactionTermLabel( transaction, this.props.translate );
 		return (
-			<strong>
-				{ transaction.product } { plan }
-			</strong>
+			<div>
+				<strong>{ plan }</strong>
+				{ transaction.domain && <small>{ transaction.domain }</small> }
+				{ termLabel && <small>{ termLabel }</small> }
+				{ transaction.licensed_quantity && (
+					<small>{ renderTransactionQuantitySummary( transaction, this.props.translate ) }</small>
+				) }
+			</div>
 		);
 	};
 
@@ -249,10 +242,7 @@ class BillingHistoryList extends Component<
 						</div>
 					</td>
 					<td className="billing-history__amount">
-						{ renderTransactionAmount( transaction, {
-							addingTax: false,
-							translate,
-						} ) }
+						<TransactionAmount transaction={ transaction } />
 					</td>
 				</tr>
 			);

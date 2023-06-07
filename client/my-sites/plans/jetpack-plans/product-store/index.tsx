@@ -1,8 +1,8 @@
 import { useEffect, useRef } from '@wordpress/element';
-import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { ZendeskJetpackChat } from '../../../../components/jetpack/jetpack-presales-chat-widget';
 import OpenSourceSection from '../open-source';
 import PlanUpgradeSection from '../plan-upgrade';
 import StoreItemInfoContext from './context/store-item-info-context';
@@ -40,6 +40,8 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 
 	const showJetpackFree = useShowJetpackFree();
 
+	usePresalesChat( 'jpGeneral' );
+
 	useEffect( () => {
 		if ( ! didMount.current ) {
 			didMount.current = true;
@@ -74,7 +76,6 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			{ showJetpackFree && <JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } /> }
 
 			<Recommendations />
-			<ZendeskJetpackChat />
 			<OpenSourceSection />
 
 			<StoreFooter />

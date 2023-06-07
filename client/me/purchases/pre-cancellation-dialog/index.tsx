@@ -116,10 +116,10 @@ interface PreCancellationDialogProps {
 	closeDialog: () => void;
 	removePlan: () => void;
 	isDialogVisible: boolean;
-	isRemoving: boolean;
+	isRemoving?: boolean;
 	site: SiteExcerptData;
 	purchase: Purchase;
-	hasDomain: boolean;
+	hasDomain?: boolean;
 	primaryDomain: string;
 	wpcomURL: string;
 }
@@ -254,7 +254,7 @@ export const PreCancellationDialog = ( {
 						<FeaturesList
 							productSlug={ productSlug }
 							domainFeature={ domainFeature }
-							hasDomain={ hasDomain }
+							hasDomain={ hasDomain ?? false }
 							wpcomURL={ wpcomURL }
 							primaryDomain={ primaryDomain }
 						/>

@@ -1,8 +1,9 @@
-import { isMonthly, getPlanByPathSlug, TERM_MONTHLY } from '@automattic/calypso-products';
+import { isMonthly, getPlanByPathSlug, TERM_MONTHLY, Product } from '@automattic/calypso-products';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { isURL } from '@wordpress/url';
+import classnames from 'classnames';
 import debugFactory from 'debug';
 import { localize, useTranslate } from 'i18n-calypso';
 import { pick } from 'lodash';
@@ -49,7 +50,7 @@ import {
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSitePlan, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { updateCartContactDetailsForCheckout } from '../composite-checkout/lib/update-cart-contact-details-for-checkout';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
@@ -97,6 +98,7 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	planDiscountedRawPrice?: number | null;
 	isLoggedIn?: boolean;
 	siteSlug?: string | null;
+	currentProduct?: Product | Record< string, never >;
 	selectedSiteId: string | number | undefined | null;
 	hasSevenDayRefundPeriod?: boolean;
 	trackUpsellButtonClick: ( key: string ) => void;
@@ -216,11 +218,15 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType } = this.props;
 		const styleClass =
 			BUSINESS_PLAN_UPGRADE_UPSELL === upsellType
-				? 'business-plan-upgrade-upsell-new-design is-wide-layout'
+				? 'business-plan-upgrade-upsell-new-design'
 				: upsellType;
 
 		return (
-			<Main className={ styleClass }>
+			<Main
+				className={ classnames( styleClass, {
+					'is-wide-layout': BUSINESS_PLAN_UPGRADE_UPSELL === upsellType,
+				} ) }
+			>
 				<QueryPaymentCountries />
 				<QuerySites siteId={ selectedSiteId } />
 				{ ! hasProductsList && <QueryProductsList /> }
@@ -327,7 +333,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
 					/>
 				);
-
 			case PROFESSIONAL_EMAIL_UPSELL:
 				return (
 					<ProfessionalEmailUpsell
@@ -617,6 +622,8 @@ export default connect(
 		} );
 
 		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ?? 0 ) ?? TERM_MONTHLY;
+		const currentSitePlan = getSitePlan( state, selectedSiteId ?? 0 );
+		const currentProduct = getProductBySlug( state, currentSitePlan?.product_slug ?? '' ) || {};
 		const productSlug = getProductSlug( upsellType, upgradeItem ?? '', currentPlanTerm );
 		const productProperties = pick( getProductBySlug( state, productSlug ?? '' ), [
 			'product_slug',
@@ -634,6 +641,7 @@ export default connect(
 			countries: getCountries( state, 'payments' ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentPlanTerm,
+			currentProduct,
 			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans ? sitePlans.length > 0 : undefined,

@@ -1,8 +1,7 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
-
-$max-list-width: 1300px;
+@import "client/landing/subscriptions/styles/row-title-label";
 
 %ellipsis {
 	white-space: nowrap;
@@ -11,7 +10,6 @@ $max-list-width: 1300px;
 }
 
 .subscription-manager__comment-list {
-	max-width: $max-list-width;
 	min-width: 300px;
 
 	.row-wrapper {
@@ -85,7 +83,7 @@ $max-list-width: 1300px;
 			align-items: center;
 			min-width: 0;
 
-			.icon {
+			.site-icon {
 				fill: var(--color-text-subtle);
 				width: 40px;
 				height: 40px;
@@ -110,6 +108,14 @@ $max-list-width: 1300px;
 
 					&:hover {
 						text-decoration: underline;
+					}
+
+					.p2-label {
+						@extend %p2-label;
+					}
+
+					.paid-label {
+						@extend %paid-label;
 					}
 				}
 

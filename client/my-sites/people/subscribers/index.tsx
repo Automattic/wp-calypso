@@ -1,7 +1,6 @@
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -9,6 +8,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';

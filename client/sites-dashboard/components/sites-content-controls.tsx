@@ -18,6 +18,7 @@ export interface SitesDashboardQueryParams {
 	search?: string;
 	showHidden?: boolean;
 	status?: GroupableSiteLaunchStatuses;
+	newSiteID?: number;
 }
 
 const FilterBar = styled.div( {
@@ -82,6 +83,7 @@ type Statuses = ReturnType< typeof useSitesListGrouping >[ 'statuses' ];
 
 type SitesContentControlsProps = {
 	initialSearch?: string;
+	onQueryParamChange?: ( params: Partial< SitesDashboardQueryParams > ) => void;
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
 } & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher > &
@@ -110,6 +112,7 @@ export function handleQueryParamChange( queryParams: SitesDashboardQueryParams )
 
 export const SitesContentControls = ( {
 	initialSearch,
+	onQueryParamChange = handleQueryParamChange,
 	statuses,
 	selectedStatus,
 	displayMode,
@@ -129,7 +132,7 @@ export const SitesContentControls = ( {
 		<FilterBar>
 			<SitesSearch
 				searchIcon={ <SitesSearchIcon /> }
-				onSearch={ ( term ) => handleQueryParamChange( { search: term?.trim(), page: undefined } ) }
+				onSearch={ ( term ) => onQueryParamChange( { search: term?.trim(), page: undefined } ) }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }
@@ -165,7 +168,7 @@ export const SitesContentControls = ( {
 								count,
 							} ) }
 							onClick={ () =>
-								handleQueryParamChange( {
+								onQueryParamChange( {
 									status: 'all' !== name ? name : undefined,
 									page: undefined,
 								} )
@@ -181,10 +184,12 @@ export const SitesContentControls = ( {
 						sitesSorting={ sitesSorting }
 						onSitesSortingChange={ onSitesSortingChange }
 					/>
-					<SitesDisplayModeSwitcher
-						displayMode={ displayMode }
-						onDisplayModeChange={ onDisplayModeChange }
-					/>
+					{ onDisplayModeChange && (
+						<SitesDisplayModeSwitcher
+							displayMode={ displayMode }
+							onDisplayModeChange={ onDisplayModeChange }
+						/>
+					) }
 				</VisibilityControls>
 			</DisplayControls>
 		</FilterBar>

@@ -15,7 +15,7 @@ const getPostKey = ( blogId: number, postId: number ) => ( { blogId, postId } );
 
 const useSupportArticleAlternatePostKey = ( blogId: number, postId: number ) => {
 	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId );
-	if ( supportArticleAlternates.isLoading ) {
+	if ( supportArticleAlternates.isInitialLoading ) {
 		return null;
 	}
 
@@ -26,13 +26,13 @@ const useSupportArticleAlternatePostKey = ( blogId: number, postId: number ) => 
 	return getPostKey( supportArticleAlternates.data.blog_id, supportArticleAlternates.data.page_id );
 };
 
-interface ArticleFetchingContent {
+interface ArticleFetchingContentProps {
 	postId: number;
 	blogId?: string | null;
-	articleUrl?: string;
+	articleUrl?: string | null;
 }
 
-const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetchingContent ) => {
+const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetchingContentProps ) => {
 	const postKey = useSupportArticleAlternatePostKey( +( blogId ?? SUPPORT_BLOG_ID ), postId );
 	const post = useSelector( ( state ) => getPostByKey( state, postKey ) );
 	const isLoading = ! post?.content || ! postKey;

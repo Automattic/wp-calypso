@@ -2,7 +2,6 @@ import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, FunctionComponent, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import ActivityActor, { SIZE_S } from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
 import ActivityMedia from 'calypso/components/activity-card/activity-media';
@@ -12,6 +11,7 @@ import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/us
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

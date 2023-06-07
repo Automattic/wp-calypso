@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getProductIcon from '../../product-store/utils/get-product-icon';

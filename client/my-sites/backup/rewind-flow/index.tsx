@@ -1,7 +1,6 @@
 import { Card, Spinner } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -9,6 +8,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
 import { fromActivityApi } from 'calypso/state/data-layer/wpcom/sites/activity/from-api';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
@@ -43,17 +43,17 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	const siteId = useSelector( getSelectedSiteId );
 	const siteUrl = useSelector( ( state ) => ( siteId && getSiteUrl( state, siteId ) ) || '' );
 
-	const activityQuery = useQuery< Activity, ActivityError >(
-		[ 'activity', siteId, rewindId ],
-		() =>
+	const activityQuery = useQuery< Activity, ActivityError >( {
+		queryKey: [ 'activity', siteId, rewindId ],
+		queryFn: () =>
 			wpcom.req
 				.get( {
 					apiNamespace: 'wpcom/v2',
 					path: `/sites/${ siteId }/activity/${ rewindId }`,
 				} )
 				.then( fromActivityApi ),
-		{ retry: false }
-	);
+		retry: false,
+	} );
 
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ?? 0 ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ?? 0 ) );

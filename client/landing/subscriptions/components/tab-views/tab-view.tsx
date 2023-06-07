@@ -1,5 +1,5 @@
 import { Spinner } from '@wordpress/components';
-import { Notice } from '../notice';
+import { Notice, NoticeType } from '../notice';
 import './styles.scss';
 
 type TabViewProps = {
@@ -10,7 +10,7 @@ type TabViewProps = {
 
 const TabView = ( { children, errorMessage, isLoading = false }: TabViewProps ) => {
 	if ( errorMessage ) {
-		return <Notice type="error">{ errorMessage }</Notice>;
+		return <Notice type={ NoticeType.Error }>{ errorMessage }</Notice>;
 	}
 
 	if ( isLoading ) {
@@ -21,7 +21,7 @@ const TabView = ( { children, errorMessage, isLoading = false }: TabViewProps ) 
 		);
 	}
 
-	return <>{ children }</>;
+	return <div className="tab-view">{ children }</div>;
 };
 
 export default TabView;

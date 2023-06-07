@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { GITHUB_INTEGRATION_QUERY_KEY } from '../constants';
 
@@ -19,21 +19,19 @@ export const useGithubBranchesQuery = (
 	connectionId: number,
 	options?: UseQueryOptions< string[] >
 ) => {
-	return useQuery< string[] >(
-		[ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId, 'branches', repoName ],
-		(): string[] =>
+	return useQuery< string[] >( {
+		queryKey: [ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId, 'branches', repoName ],
+		queryFn: (): string[] =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/hosting/github/branches?repo=${ repoName }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			enabled: !! siteId && !! repoName,
-			select: ( data ) => data.sort( sortBranches ),
-			meta: {
-				persist: false,
-			},
-			...options,
-			cacheTime: CACHE_TIME,
-		}
-	);
+		enabled: !! siteId && !! repoName,
+		select: ( data ) => data.sort( sortBranches ),
+		meta: {
+			persist: false,
+		},
+		...options,
+		cacheTime: CACHE_TIME,
+	} );
 };

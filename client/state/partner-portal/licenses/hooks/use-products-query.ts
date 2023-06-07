@@ -1,8 +1,8 @@
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useQuery, UseQueryResult } from 'react-query';
-import { useDispatch } from 'react-redux';
 import { selectAlphabeticallySortedProductOptions } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
 import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { errorNotice } from '../../../notices/actions';
 
@@ -49,7 +49,9 @@ export default function useProductsQuery(): UseQueryResult< APIProductFamilyProd
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	return useQuery( [ 'partner-portal', 'licenses', 'products' ], queryProducts, {
+	return useQuery( {
+		queryKey: [ 'partner-portal', 'licenses', 'products' ],
+		queryFn: queryProducts,
 		select: selectAlphabeticallySortedProductOptions,
 		onError: () => {
 			dispatch(

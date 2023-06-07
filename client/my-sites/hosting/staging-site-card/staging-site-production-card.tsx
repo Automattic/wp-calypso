@@ -1,10 +1,11 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { localize } from 'i18n-calypso';
 import { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import SiteIcon from 'calypso/blocks/site-icon';
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { urlToSlug } from 'calypso/lib/url';
 import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
@@ -12,21 +13,10 @@ import {
 	useProductionSiteDetail,
 	ProductionSite,
 } from 'calypso/my-sites/hosting/staging-site-card/use-production-site-detail';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-
-const SiteRow = styled.div( {
-	display: 'flex',
-	alignItems: 'center',
-	marginBottom: 24,
-	'.site-icon': { flexShrink: 0 },
-} );
-
-const SiteInfo = styled.div( {
-	display: 'flex',
-	flexDirection: 'column',
-	marginLeft: 10,
-} );
+import { IAppState } from 'calypso/state/types';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
@@ -36,9 +26,10 @@ const ActionButtons = styled.div( {
 type CardProps = {
 	disabled: boolean;
 	siteId: number;
+	translate: ( text: string, args?: Record< string, unknown > ) => string;
 };
 
-function StagingSiteProductionCard( { disabled, siteId }: CardProps ) {
+function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ loadingError, setLoadingError ] = useState( null );
@@ -66,16 +57,16 @@ function StagingSiteProductionCard( { disabled, siteId }: CardProps ) {
 	const getManageStagingSiteContent = ( productionSite: ProductionSite ) => {
 		return (
 			<>
-				<p>{ __( 'The production site is available at:' ) }</p>
-				<SiteRow>
-					<SiteIcon siteId={ productionSite.id } size={ 40 } />
-					<SiteInfo>
-						<div>{ productionSite.name }</div>
-						<div>
-							<a href={ productionSite.url }>{ productionSite.url }</a>
-						</div>
-					</SiteInfo>
-				</SiteRow>
+				<p>
+					{ translate(
+						'This staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
+							},
+						}
+					) }
+				</p>
 				<ActionButtons>
 					<Button
 						primary
@@ -113,10 +104,10 @@ function StagingSiteProductionCard( { disabled, siteId }: CardProps ) {
 	);
 }
 
-export default connect( ( state ) => {
+export default connect( ( state: IAppState ) => {
 	const currentUserId = getCurrentUserId( state );
 
 	return {
 		currentUserId,
 	};
-} )( StagingSiteProductionCard );
+} )( localize( StagingSiteProductionCard ) );

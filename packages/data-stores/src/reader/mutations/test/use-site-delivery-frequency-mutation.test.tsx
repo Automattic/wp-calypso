@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
 import React, { useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { callApi } from '../../helpers';
 import useSiteDeliveryFrequencyMutation from '../../mutations/use-site-delivery-frequency-mutation';
 

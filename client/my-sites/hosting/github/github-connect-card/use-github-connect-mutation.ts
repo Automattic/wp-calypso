@@ -1,5 +1,5 @@
+import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
 import { GITHUB_INTEGRATION_QUERY_KEY } from '../constants';
 import { GITHUB_CONNECTION_QUERY_KEY } from '../use-github-connection-query';
@@ -24,9 +24,9 @@ export const useGithubConnectMutation = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
+	const mutation = useMutation( {
 		//todo sent basePath
-		async ( { repoName, branchName, basePath }: MutationVariables ) =>
+		mutationFn: async ( { repoName, branchName, basePath }: MutationVariables ) =>
 			wp.req.post(
 				{
 					path: `/sites/${ siteId }/hosting/github/connection`,
@@ -34,18 +34,16 @@ export const useGithubConnectMutation = (
 				},
 				{ repo: repoName, branch: branchName, base_path: basePath }
 			),
-		{
-			...options,
-			onSuccess: async ( ...args ) => {
-				await queryClient.invalidateQueries( [
-					GITHUB_INTEGRATION_QUERY_KEY,
-					siteId,
-					GITHUB_CONNECTION_QUERY_KEY,
-				] );
-				options.onSuccess?.( ...args );
-			},
-		}
-	);
+		...options,
+		onSuccess: async ( ...args ) => {
+			await queryClient.invalidateQueries( [
+				GITHUB_INTEGRATION_QUERY_KEY,
+				siteId,
+				GITHUB_CONNECTION_QUERY_KEY,
+			] );
+			options.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate, isLoading } = mutation;
 

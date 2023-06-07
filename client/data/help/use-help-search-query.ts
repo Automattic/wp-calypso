@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LinksForSection } from '@automattic/data-stores';
 export const useHelpSearchQuery = (
@@ -16,12 +16,11 @@ export const useHelpSearchQuery = (
 		params.append( 'query', search );
 	}
 
-	return useQuery< { wordpress_support_links: LinksForSection[] } >(
-		[ 'help', search ],
-		() => wpcomRequest( { path: '/help/search', query: params.toString(), apiVersion: '1.1' } ),
-		{
-			enabled: !! search,
-			...queryOptions,
-		}
-	);
+	return useQuery< { wordpress_support_links: LinksForSection[] } >( {
+		queryKey: [ 'help', search ],
+		queryFn: () =>
+			wpcomRequest( { path: '/help/search', query: params.toString(), apiVersion: '1.1' } ),
+		enabled: !! search,
+		...queryOptions,
+	} );
 };

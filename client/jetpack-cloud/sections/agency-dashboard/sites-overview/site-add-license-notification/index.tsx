@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
+import { useDispatch, useSelector } from 'calypso/state';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { getPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { ProductInfo } from '../types';

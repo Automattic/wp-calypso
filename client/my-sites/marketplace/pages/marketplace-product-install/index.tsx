@@ -4,7 +4,6 @@ import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo, useRef } from 'react';
-import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -20,6 +19,7 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
@@ -88,7 +88,7 @@ const MarketplaceProductInstall = ( {
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
-	const installedPlugin = useSelector( ( state: DefaultRootState ): InstalledPlugin | undefined =>
+	const installedPlugin = useSelector( ( state ): InstalledPlugin | undefined =>
 		getPluginOnSite( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
 	);
 	const pluginActive = useSelector( ( state ) =>
@@ -213,10 +213,10 @@ const MarketplaceProductInstall = ( {
 			} else if ( hasAtomicFeature ) {
 				// initialize atomic flow
 				if ( wpOrgTheme ) {
-					dispatch( initiateAtomicTransfer( siteId, { themeSlug } ) );
+					dispatch( initiateAtomicTransfer( siteId, { themeSlug, context: 'theme_install' } ) );
 				} else {
 					setAtomicFlow( true );
-					dispatch( initiateTransfer( siteId, null, pluginSlug ) );
+					dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugin_install' ) );
 				}
 
 				triggerInstallFlow();

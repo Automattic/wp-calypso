@@ -7,6 +7,7 @@ import type {
 	TERM_TRIENNIALLY,
 	JetpackProductCategory,
 	JetpackTag,
+	FAQ,
 } from '@automattic/calypso-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -132,11 +133,20 @@ export interface SelectorProduct extends SelectorProductCost {
 	lightboxDescription?: TranslateResult | string;
 	productsIncluded?: ReadonlyArray< string >;
 	whatIsIncluded?: Array< TranslateResult >;
+	whatIsIncludedComingSoon?: Array< TranslateResult >;
+	alsoIncluded?: Array< TranslateResult >;
 	benefits?: Array< TranslateResult >;
+	benefitsComingSoon?: Array< TranslateResult >;
+	faqs?: Array< FAQ >;
 	recommendedFor?: Array< JetpackTag >;
 	forceNoYearlyUpgrade?: boolean;
 }
 
 export type SiteProduct = {
 	tierUsage: number;
+};
+
+export type ProductDescription = {
+	value: TranslateResult;
+	calloutText?: TranslateResult;
 };

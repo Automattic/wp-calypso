@@ -1,7 +1,7 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckboxControl, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
@@ -27,14 +27,13 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 	const storedDetailsId = card.stored_details_id;
 	const initialIsBackup = !! card.is_backup;
 	const queryClient = useQueryClient();
-	const { isLoading, isError, data } = useQuery< { is_backup: boolean }, Error >(
-		[ 'payment-method-backup-toggle', storedDetailsId ],
-		() => fetchIsBackup( storedDetailsId ),
-		{
-			initialData: { is_backup: initialIsBackup },
-		}
-	);
-	const mutation = useMutation( ( isBackup: boolean ) => setIsBackup( storedDetailsId, isBackup ), {
+	const { isLoading, isError, data } = useQuery< { is_backup: boolean }, Error >( {
+		queryKey: [ 'payment-method-backup-toggle', storedDetailsId ],
+		queryFn: () => fetchIsBackup( storedDetailsId ),
+		initialData: { is_backup: initialIsBackup },
+	} );
+	const mutation = useMutation( {
+		mutationFn: ( isBackup: boolean ) => setIsBackup( storedDetailsId, isBackup ),
 		onMutate: ( isBackup ) => {
 			// Optimistically update the toggle
 			queryClient.setQueryData( [ 'payment-method-backup-toggle', storedDetailsId ], {
@@ -45,7 +44,7 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 			queryClient.setQueryData( [ 'payment-method-backup-toggle', storedDetailsId ], data );
 
 			// Invalidate queries made by `useStoredPaymentMethods`.
-			queryClient.invalidateQueries( storedPaymentMethodsQueryKey );
+			queryClient.invalidateQueries( [ storedPaymentMethodsQueryKey ] );
 		},
 	} );
 	const toggleIsBackup = useCallback(

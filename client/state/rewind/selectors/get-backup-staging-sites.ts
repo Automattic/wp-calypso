@@ -9,6 +9,6 @@ import type { AppState } from 'calypso/types';
  * @returns true if staging sites are being requested; otherwise, false.
  */
 const getBackupStagingSites = ( state: AppState, siteId: number ): APIRewindStagingSiteInfo[] =>
-	state.rewind[ siteId ]?.staging?.sites || [];
+	state.rewind[ siteId ]?.staging?.stagingSitesList?.sites || [];
 
 export default getBackupStagingSites;

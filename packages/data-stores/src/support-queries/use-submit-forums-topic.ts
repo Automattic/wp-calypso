@@ -1,5 +1,5 @@
+import { useMutation } from '@tanstack/react-query';
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
-import { useMutation } from 'react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { AnalysisReport } from '../queries/use-site-analysis';
 import { SiteDetails } from '../site';
@@ -21,8 +21,8 @@ export type ForumResponse = {
 };
 
 export function useSubmitForumsMutation() {
-	return useMutation(
-		( {
+	return useMutation( {
+		mutationFn: ( {
 			ownershipResult,
 			message,
 			subject,
@@ -70,6 +70,6 @@ export function useSubmitForumsMutation() {
 						method: 'POST',
 						data: requestData,
 				  } as APIFetchOptions );
-		}
-	);
+		},
+	} );
 }

@@ -18,7 +18,7 @@ export function useSitePreviewShareCode() {
 		site?.is_coming_soon && ( isBusinessPlan || isEcommercePlan ) && site?.is_wpcom_atomic;
 
 	// Retrieves site preview share code if it exists
-	const { data: previewLinks, isLoading: isPreviewLinksLoading } = useSitePreviewLinks( {
+	const { data: previewLinks, isInitialLoading: isPreviewLinksLoading } = useSitePreviewLinks( {
 		siteId: Number( site?.ID ),
 		isEnabled: usePreviewSiteLinksQueryEnabled ?? false,
 	} );

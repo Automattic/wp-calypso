@@ -7,14 +7,14 @@ import {
 	UseInfiniteQueryResult,
 	QueryKey,
 	QueryFunction,
-} from 'react-query';
-import { useSelector } from 'react-redux';
+} from '@tanstack/react-query';
 import {
 	extractSearchInformation,
 	normalizePluginsList,
 	normalizePluginData,
 } from 'calypso/lib/plugins/utils';
 import { fetchPluginsList } from 'calypso/lib/wporg';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 import { WPORG_CACHE_KEY } from './constants';
@@ -46,7 +46,11 @@ export const getWPORGPluginsQueryParams = (
 
 export const useWPORGPlugins = (
 	options: PluginQueryOptions,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: UseQueryOptions< any > = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -65,7 +69,11 @@ const extractPagination = ( pages: Array< { plugins: object; info: object } > = 
 
 export const useWPORGInfinitePlugins = (
 	options: PluginQueryOptions,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: UseQueryOptions< any > = {}
 ): UseInfiniteQueryResult => {
 	const [ search, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );

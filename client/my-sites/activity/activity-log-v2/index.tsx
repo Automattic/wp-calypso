@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector, useDispatch } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -17,6 +16,7 @@ import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-quer
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { backupClonePath } from 'calypso/my-sites/backup/paths';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
@@ -58,6 +58,9 @@ const ActivityLogV2: FunctionComponent = () => {
 						<Button
 							className="activity-log-v2__clone-button"
 							href={ backupClonePath( selectedSiteSlug ) }
+							onClick={ () =>
+								dispatch( recordTracksEvent( 'calypso_jetpack_activity_log_copy_site' ) )
+							}
 						>
 							{ translate( 'Copy this site' ) }
 						</Button>

@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import styled from '@emotion/styled';
 import { FunctionComponent, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ResponseCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 

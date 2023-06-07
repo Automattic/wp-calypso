@@ -1,5 +1,11 @@
-import config from '@automattic/calypso-config';
-import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	BLANK_CANVAS_DESIGN,
+	PREMIUM_THEME,
+	DOT_ORG_THEME,
+	WOOCOMMERCE_THEME,
+	MARKETPLACE_THEME,
+} from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { isDesktop } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
@@ -28,7 +34,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+	return dependencies.cartItem || dependencies.domainItem;
 }
 
 function getSiteDestination( dependencies ) {
@@ -111,11 +117,7 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
-	if (
-		isSiteAssemblerFlow( flowName ) &&
-		themeParameter === BLANK_CANVAS_DESIGN.slug &&
-		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
-	) {
+	if ( isSiteAssemblerFlow( flowName ) && themeParameter === BLANK_CANVAS_DESIGN.slug ) {
 		// Go to the site assembler flow if viewport width >= 960px as the layout doesn't support small
 		// screen for now
 		if ( isDesktop() ) {
@@ -123,6 +125,7 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 				{
 					theme: themeParameter,
 					siteSlug: siteSlug,
+					isNewSite: true,
 				},
 				`/setup/with-theme-assembler`
 			);
@@ -133,14 +136,27 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 	return `/home/${ siteSlug }`;
 }
 
-function getWithThemeDestination( { siteSlug, themeParameter, styleVariation, themeType } ) {
-	if ( 'dot-org' === themeType ) {
+function getWithThemeDestination( {
+	siteSlug,
+	themeParameter,
+	styleVariation,
+	themeType,
+	cartItem,
+} ) {
+	if (
+		! cartItem &&
+		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, WOOCOMMERCE_THEME ].includes( themeType )
+	) {
+		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
+	}
+
+	if ( DOT_ORG_THEME === themeType ) {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
 	}
 
 	const style = styleVariation ? `&style=${ styleVariation }` : '';
 
-	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }&hideBack=true`;
+	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
 }
 
 function getEditorDestination( dependencies ) {
@@ -179,8 +195,14 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHomeDestination( { siteSlug } ) {
-	return `/home/${ siteSlug }`;
+function getHostingFlowDestination( { siteId } ) {
+	return addQueryArgs(
+		{
+			'new-site': siteId,
+			'hosting-flow': isEnabled( 'hosting-onboarding-i2' ) ? true : null,
+		},
+		'/sites'
+	);
 }
 
 const flows = generateFlows( {
@@ -196,7 +218,7 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getHomeDestination,
+	getHostingFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

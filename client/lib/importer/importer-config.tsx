@@ -259,14 +259,15 @@ function getConfig(
 		weight: 0,
 	};
 
-	// For Jetpack sites, we don't support migration as destination,
-	// so we remove the override here.
-	if ( config.isEnabled( 'importer/unified' ) && args.isJetpack && ! args.isAtomic ) {
+	const hasUnifiedImporter = config.isEnabled( 'importer/unified' );
+
+	// For Jetpack sites, we don't support migration as destination, so we remove the override here.
+	if ( hasUnifiedImporter && args.isJetpack && ! args.isAtomic ) {
 		delete importerConfig.wordpress.overrideDestination;
 	}
 
-	// Filter out all importers except the WordPress ones for Atomic sites.
-	if ( ! config.isEnabled( 'importer/unified' ) && args.isAtomic ) {
+	// For atomic sites filter out all importers except the WordPress ones if the Unified Importer is disabled.
+	if ( ! hasUnifiedImporter && args.isAtomic ) {
 		importerConfig = { wordpress: importerConfig.wordpress };
 	}
 

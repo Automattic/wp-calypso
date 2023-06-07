@@ -1,7 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -19,6 +18,7 @@ import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-comparison/stacked';
 import { emailManagementTitanSetUpMailbox, emailManagement } from 'calypso/my-sites/email/paths';
+import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';

@@ -74,11 +74,6 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Select "Travel Agencies & Services" category', async function () {
-			await startSiteFlow.enterVertical( 'Travel Agencies & Services' );
-			await startSiteFlow.clickButton( 'Continue' );
-		} );
-
 		it( 'Enter blog name', async function () {
 			await startSiteFlow.enterBlogName( blogName );
 		} );
@@ -107,7 +102,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		} );
 
 		it( 'Editor loads', async function () {
-			editorPage = new EditorPage( page, { target: 'simple', blockTheme: true } );
+			editorPage = new EditorPage( page );
 			await editorPage.waitUntilLoaded();
 
 			const urlRegex = `/post/${ newSiteDetails.blog_details.site_slug }`;
@@ -123,14 +118,17 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		} );
 
 		it( 'First post congratulatory message is shown', async function () {
-			const locator = editorPage.getLocator( ':text("Your first post is published!")' );
-			await locator.waitFor();
+			const editorParent = await editorPage.getEditorParent();
+
+			await editorParent.locator( ':text("Your first post is published!")' ).waitFor();
 			await page.keyboard.press( 'Escape' );
 		} );
 
 		it( 'Dismiss Launchpad modal if shown', async function () {
+			const editorParent = await editorPage.getEditorParent();
+
 			const selector = '.launchpad__save-modal-buttons button';
-			const locator = editorPage.getLocator( selector );
+			const locator = editorParent.locator( selector );
 			try {
 				await locator.click( { timeout: 2000 } );
 			} catch {

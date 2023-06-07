@@ -2,14 +2,15 @@
  * @jest-environment jsdom
  */
 
+jest.mock( 'calypso/components/marketing-message', () => () => null );
 jest.mock( 'calypso/my-sites/plan-features', () => ( { visiblePlans, popularPlanSpec } ) => (
 	<div data-testid="plan-features">
 		<div data-testid="visible-plans">{ JSON.stringify( visiblePlans ) }</div>
 		<div data-testid="popular-plan-spec">{ JSON.stringify( popularPlanSpec ) }</div>
 	</div>
 ) );
-jest.mock( 'calypso/my-sites/plans-features-main/wpcom-faq', () => () => 'WpcomFAQ' );
-jest.mock( 'calypso/my-sites/plans-features-main/plan-type-selector', () => () => (
+jest.mock( 'calypso/my-sites/plans-features-main/components/wpcom-faq', () => () => 'WpcomFAQ' );
+jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector', () => () => (
 	<div>PlanTypeSelector</div>
 ) );
 
@@ -37,6 +38,9 @@ import {
 import { screen } from '@testing-library/react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { PlansFeaturesMain } from '../index';
+jest.mock( 'calypso/state/purchases/selectors', () => ( {
+	getByPurchaseId: jest.fn(),
+} ) );
 
 const props = {
 	selectedPlan: PLAN_FREE,
@@ -192,7 +196,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 	};
 
 	beforeEach( () => {
-		global.document = { location: { search: '' } };
+		global.document.location.search = '';
 	} );
 
 	test( 'Should render <PlanFeatures /> with tab picker when requested', () => {

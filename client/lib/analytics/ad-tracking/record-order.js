@@ -1,4 +1,5 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
+import { isPlan } from '@automattic/calypso-products';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
@@ -288,11 +289,43 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 	// WPCom
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD && wpcomJetpackCartInfo.wpcomCostUSD > 0 ) {
+			// This gives us the billing frequency as a string, and combines yearly and multi-yearly into one bucket.
+			// Due to tracking-constraints in Facebook, this is needed. But we also supply the bill_period separately
+			// as this is used for other tracking purposes in Facebook.
+			const getFrequencyTypeForProduct = ( product ) => {
+				switch ( product.bill_period ) {
+					case '31':
+						return 'monthly';
+					case '365':
+					case '730':
+					case '1095':
+						return 'yearly_or_higher';
+					default:
+						return 'other';
+				}
+			};
+			const cartItemsArray = wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => {
+				return {
+					product_slug: product.product_slug ?? '',
+					id: product.product_id ?? '',
+					product_name: product.product_name ?? '',
+					bill_period: product.bill_period ?? 0,
+					billing_frequency: getFrequencyTypeForProduct( product ),
+					is_sale_coupon_applied: product.is_sale_coupon_applied ?? false,
+					is_bundled: product.is_bundled ?? false,
+					is_domain_registration: product.is_domain_registration ?? false,
+					is_plan: isPlan( product ) ?? false,
+					value: costToUSD( product.cost, product.currency ) ?? 0,
+					quantity: product.volume ?? 1,
+				};
+			} );
 			const params = [
-				'trackSingle',
+				'trackSingle', // Allows sending to a single pixel when multiple are loaded on the page.
 				TRACKING_IDS.facebookInit,
 				'Purchase',
 				{
+					contents: cartItemsArray.length > 0 ? cartItemsArray : [],
+					content_type: 'product',
 					product_slug: wpcomJetpackCartInfo.wpcomProducts
 						.map( ( product ) => product.product_slug )
 						.join( ', ' ),
@@ -452,9 +485,9 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			'conversion',
 			{
 				send_to: TRACKING_IDS.akismetGoogleAdsGtagPurchase,
-				transactionTotal: wpcomJetpackCartInfo.akismetCost,
-				currencyCode: cart.currency,
-				transactionId: orderId,
+				value: wpcomJetpackCartInfo.akismetCost,
+				currency: cart.currency,
+				transaction_id: orderId,
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record Akismet Purchase', params );
@@ -646,44 +679,33 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
  */
 function recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
-		loadGTMContainer( TRACKING_IDS.akismetGoogleTagManagerId )
-			.then( () => initGTMContainer() )
-			.then( () => {
-				debug(
-					`recordOrderInAkismetGTM: Initialized GTM container ${ TRACKING_IDS.akismetGoogleTagManagerId }`
-				);
+		// We ensure that we can track with GTM
+		if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
+			return;
+		}
 
-				// We ensure that we can track with GTM
-				if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
-					return;
-				}
+		const purchaseEventMeta = {
+			event: 'purchase',
+			ecommerce: {
+				coupon: cart.coupon?.toString() ?? '',
+				transaction_id: orderId,
+				currency: 'USD',
+				items: wpcomJetpackCartInfo.akismetProducts.map(
+					( { product_id, product_name, cost, volume, bill_period } ) => ( {
+						id: product_id.toString(),
+						name: product_name.toString(),
+						quantity: parseInt( volume ),
+						price: costToUSD( cost, cart.currency ) ?? 0,
+						billing_term: bill_period === '365' ? 'yearly' : 'monthly',
+					} )
+				),
+				value: wpcomJetpackCartInfo.akismetCostUSD,
+			},
+		};
 
-				const purchaseEventMeta = {
-					event: 'purchase',
-					ecommerce: {
-						coupon: cart.coupon?.toString() ?? '',
-						transaction_id: orderId,
-						currency: 'USD',
-						items: wpcomJetpackCartInfo.akismetProducts.map(
-							( { product_id, product_name, cost, volume, bill_period } ) => ( {
-								id: product_id.toString(),
-								name: product_name.toString(),
-								quantity: parseInt( volume ),
-								price: costToUSD( cost, cart.currency ) ?? 0,
-								billing_term: bill_period === '365' ? 'yearly' : 'monthly',
-							} )
-						),
-						value: wpcomJetpackCartInfo.akismetCostUSD,
-					},
-				};
+		window.dataLayer.push( purchaseEventMeta );
 
-				window.dataLayer.push( purchaseEventMeta );
-
-				debug( `recordOrderInAkismetGTM: Record Akismet GTM purchase`, purchaseEventMeta );
-			} )
-			.catch( ( error ) => {
-				debug( 'recordOrderInAkismetGTM: Error loading GTM container', error );
-			} );
+		debug( `recordOrderInAkismetGTM: Record Akismet GTM purchase`, purchaseEventMeta );
 	}
 }
 

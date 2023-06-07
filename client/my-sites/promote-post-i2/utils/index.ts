@@ -1,9 +1,14 @@
+import config from '@automattic/calypso-config';
 import { __, sprintf } from '@wordpress/i18n';
 import moment from 'moment';
 import {
 	Campaign,
 	CampaignStats,
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import {
+	PagedBlazeContentData,
+	PagedBlazeSearchResponse,
+} from 'calypso/my-sites/promote-post-i2/main';
 
 export const campaignStatus = {
 	SCHEDULED: 'scheduled',
@@ -237,3 +242,39 @@ export const unifyCampaigns = ( campaigns: Campaign[], campaignsStats: CampaignS
 		};
 	} );
 };
+
+export const getPagedBlazeSearchData = (
+	mode: 'campaigns' | 'posts',
+	campaignsData?: PagedBlazeSearchResponse
+): PagedBlazeContentData => {
+	const lastPage = campaignsData?.pages?.[ campaignsData?.pages?.length - 1 ];
+	if ( lastPage ) {
+		const { has_more_pages, total_items } = lastPage;
+
+		const foundContent = campaignsData?.pages
+			?.map( ( page: any ) => page[ mode ] )
+			?.flat() as Campaign[];
+
+		return {
+			has_more_pages,
+			total_items,
+			items: foundContent,
+		};
+	}
+	return {
+		has_more_pages: false,
+		total_items: 0,
+		items: [],
+	};
+};
+
+/**
+ * Update the path by adding the advertising section URL prefix
+ *
+ * @param {string} path partial URL
+ * @returns pathname concatenated with the advertising configured path prefix
+ */
+export function getAdvertisingDashboardPath( path: string ) {
+	const pathPrefix = config( 'advertising_dashboard_path_prefix' ) || '/advertising';
+	return `${ pathPrefix }${ path }`;
+}

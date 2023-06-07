@@ -56,12 +56,13 @@ describe( `Gutenberg Upgrade: Sanity-Check Most Popular Blocks on (${ siteType }
 		await page.goto( postURL );
 	} );
 
-	// Both block invalidation and crash messages are wrapped by the same `Warning`
-	// component in Gutenberg. If we find at least one warning, then we fail the test.
-	skipItIf( ! envVariables.GUTENBERG_EDGE )(
+	// We only care about GB edge, and we don't have this post set up for CoBlocks edge sites yet.
+	skipItIf( ! envVariables.GUTENBERG_EDGE || envVariables.COBLOCKS_EDGE )(
+		// Both block invalidation and crash messages are wrapped by the same `Warning`
+		// component in Gutenberg. If we find at least one warning, then we fail the test.
 		`Block warnings are not obeserved for ${ siteType } editor`,
 		async () => {
-			editorPage = new EditorPage( page, { target: siteType } );
+			editorPage = new EditorPage( page );
 			await editorPage.waitUntilLoaded();
 
 			expect( await editorPage.editorHasBlockWarnings() ).toBe( false );

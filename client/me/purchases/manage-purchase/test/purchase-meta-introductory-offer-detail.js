@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import PurchaseMeta from '../purchase-meta';

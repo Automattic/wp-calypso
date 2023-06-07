@@ -103,11 +103,6 @@ function wpcom_global_styles_has_blog_sticker( $blog_sticker, $blog_id ) {
  * @return void
  */
 function wpcom_global_styles_enqueue_block_editor_assets() {
-	$screen = get_current_screen();
-	if ( ! $screen || 'site-editor' !== $screen->id ) {
-		return;
-	}
-
 	if ( ! wpcom_should_limit_global_styles() ) {
 		return;
 	}
@@ -152,7 +147,7 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		'wpcomGlobalStyles',
 		array(
 			'assetsUrl'   => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=advanced-design-customization",
+			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=style-customization",
 			'wpcomBlogId' => wpcom_global_styles_get_wpcom_current_blog_id(),
 		)
 	);
@@ -419,14 +414,12 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
 	}
 
-	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle&feature=advanced-design-customization';
+	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle&feature=style-customization';
 
 	if ( wpcom_is_previewing_global_styles() ) {
-		$preview_text     = __( 'Hide custom styles', 'full-site-editing' );
-		$preview_location = remove_query_arg( 'preview-global-styles' );
+		$preview_location = add_query_arg( 'hide-global-styles', '' );
 	} else {
-		$preview_text     = __( 'Preview custom styles', 'full-site-editing' );
-		$preview_location = add_query_arg( 'preview-global-styles', '' );
+		$preview_location = remove_query_arg( 'hide-global-styles' );
 	}
 
 	ob_start(); ?>
@@ -453,28 +446,60 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 				</script>
 			<?php endif; ?>
 			<div class="launch-bar-global-styles-popover hidden">
-				<div>
-					<?php echo esc_html__( 'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.', 'full-site-editing' ); ?>
+				<div class="launch-bar-global-styles-close">
+					<svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 96 960 960" width="48"><path d="m249 849-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"/></svg>
+				</div>
+				<div class="launch-bar-global-styles-message">
+					<?php
+					$message = sprintf(
+						/* translators: %s - documentation URL. */
+						__( 'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.', 'full-site-editing' ),
+						'https://wordpress.com/support/using-styles/'
+					);
+					echo sprintf(
+						wp_kses(
+							$message,
+							array(
+								'a' => array(
+									'href'   => array(),
+									'target' => array(),
+								),
+							)
+						)
+					);
+					?>
 				</div>
 				<a
-					class="launch-bar-global-styles-upgrade-button"
+					class="launch-bar-global-styles-upgrade"
 					href="<?php echo esc_url( $upgrade_url ); ?>"
 				>
-					<?php echo esc_html__( 'Upgrade your plan', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Upgrade now', 'full-site-editing' ); ?>
 				</a>
-				<a class="launch-bar-global-styles-preview-link" href="<?php echo esc_url( $preview_location ); ?>">
-					<?php echo esc_html( $preview_text ); ?>
+				<a
+					class="launch-bar-global-styles-reset"
+					href="https://wordpress.com/support/using-styles/#reset-all-styles"
+					target="_blank"
+				>
+					<svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M5.8125 5.6875C5.8125 4.75552 6.56802 4 7.5 4C8.43198 4 9.1875 4.75552 9.1875 5.6875C9.1875 6.55621 8.53108 7.2716 7.6872 7.36473C7.58427 7.37609 7.5 7.45895 7.5 7.5625V8.5M7.5 9.25V10.375M13.5 7C13.5 10.3137 10.8137 13 7.5 13C4.18629 13 1.5 10.3137 1.5 7C1.5 3.68629 4.18629 1 7.5 1C10.8137 1 13.5 3.68629 13.5 7Z" stroke="#1E1E1E" stroke-width="1.5"/>
+					</svg>
+					<?php echo esc_html__( 'Remove custom styles', 'full-site-editing' ); ?>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M18.2 17c0 .7-.6 1.2-1.2 1.2H7c-.7 0-1.2-.6-1.2-1.2V7c0-.7.6-1.2 1.2-1.2h3.2V4.2H7C5.5 4.2 4.2 5.5 4.2 7v10c0 1.5 1.2 2.8 2.8 2.8h10c1.5 0 2.8-1.2 2.8-2.8v-3.6h-1.5V17zM14.9 3v1.5h3.7l-6.4 6.4 1.1 1.1 6.4-6.4v3.7h1.5V3h-6.3z"></path></svg>
+				</a>
+				<a class="launch-bar-global-styles-preview" href="<?php echo esc_url( $preview_location ); ?>">
+					<label><input type="checkbox" <?php echo wpcom_is_previewing_global_styles() ? 'checked' : ''; ?>><span></span></label>
+					<?php echo esc_html__( 'Preview custom styles', 'full-site-editing' ); ?>
 				</a>
 			</div>
 			<a class="launch-bar-global-styles-toggle" href="#">
-				<svg width="25" height="25" viewBox="0 0 30 23" xmlns="http://www.w3.org/2000/svg">
-					<path d="M12 4c-4.4 0-8 3.6-8 8v.1c0 4.1 3.2 7.5 7.2 7.9h.8c4.4 0 8-3.6 8-8s-3.6-8-8-8zm0 15V5c3.9 0 7 3.1 7 7s-3.1 7-7 7z" style="fill: orange" />
+				<svg width="25" height="25" viewBox="0 96 960 960" xmlns="http://www.w3.org/2000/svg">
+					<path d="M479.982 776q14.018 0 23.518-9.482 9.5-9.483 9.5-23.5 0-14.018-9.482-23.518-9.483-9.5-23.5-9.5-14.018 0-23.518 9.482-9.5 9.483-9.5 23.5 0 14.018 9.482 23.518 9.483 9.5 23.5 9.5ZM453 623h60V370h-60v253Zm27.266 353q-82.734 0-155.5-31.5t-127.266-86q-54.5-54.5-86-127.341Q80 658.319 80 575.5q0-82.819 31.5-155.659Q143 347 197.5 293t127.341-85.5Q397.681 176 480.5 176q82.819 0 155.659 31.5Q709 239 763 293t85.5 127Q880 493 880 575.734q0 82.734-31.5 155.5T763 858.316q-54 54.316-127 86Q563 976 480.266 976Zm.234-60Q622 916 721 816.5t99-241Q820 434 721.188 335 622.375 236 480 236q-141 0-240.5 98.812Q140 433.625 140 576q0 141 99.5 240.5t241 99.5Zm-.5-340Z" style="fill: orange"/>
 				</svg>
 				<span class="is-mobile">
-					<?php echo esc_html__( 'Styles', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Upgrade', 'full-site-editing' ); ?>
 				</span>
 				<span class="is-desktop">
-					<?php echo esc_html__( 'Custom styles', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Upgrade required', 'full-site-editing' ); ?>
 				</span>
 			</a>
 		</div>
@@ -514,5 +539,5 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 	}
 
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	return isset( $_GET['preview-global-styles'] ) && user_can( $user_id, 'administrator' );
+	return ! isset( $_GET['hide-global-styles'] ) && user_can( $user_id, 'administrator' );
 }

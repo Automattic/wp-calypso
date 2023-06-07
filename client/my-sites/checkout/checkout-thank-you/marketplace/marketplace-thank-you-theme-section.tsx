@@ -3,10 +3,10 @@ import { Gridicon, Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import { useSelector, useDispatch } from 'calypso/state';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { activate } from 'calypso/state/themes/actions';
@@ -92,7 +92,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const isActive = useSelector( ( state ) => isThemeActive( state, theme.id, siteId ) );
 	const { data: activeThemeData, isLoading } = useActiveThemeQuery( siteId, true );
-	const isFSEActive = activeThemeData?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
+	const isFSEActive = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
 	const hasActivated = useSelector( ( state ) => hasActivatedTheme( state, siteId ) );
 	const isActivating = useSelector( ( state ) => isActivatingTheme( state, siteId ) );
 	const customizeUrl = useSelector( ( state ) =>

@@ -7,10 +7,12 @@ export enum SiteGoal {
 	DIFM = 'difm', // "Do It For Me"
 	Import = 'import',
 	Other = 'other',
+	PaidSubscribers = 'paid-subscribers',
 }
 
 export enum SiteIntent {
 	Write = 'write',
+	StartWriting = 'start-writing',
 	Sell = 'sell',
 	Build = 'build',
 	DIFM = 'difm', // "Do It For Me"

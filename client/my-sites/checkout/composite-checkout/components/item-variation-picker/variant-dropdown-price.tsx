@@ -4,6 +4,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import { preventWidows } from 'calypso/lib/formatting';
 import { getItemVariantDiscountPercentage, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
 
@@ -57,7 +58,7 @@ const Variant = styled.div`
 	justify-content: space-between;
 	line-height: 20px;
 	width: 100%;
-	column-gap: 10%;
+	column-gap: 20px;
 
 	.item-variant-option--selected & {
 		color: #fff;
@@ -66,6 +67,7 @@ const Variant = styled.div`
 
 const Label = styled.span`
 	display: flex;
+	white-space: nowrap;
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
 		flex-direction: column;
@@ -150,7 +152,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		//generic introductory offer to catch unexpected offer terms
 		if (
 			( introTerm !== 'month' && introTerm !== 'year' ) ||
-			( introCount > 1 && introTerm === 'year' )
+			( introCount > 2 && introTerm === 'year' )
 		) {
 			return translate( '%(formattedCurrentPrice)s introductory offer', { args } );
 			// translation example: $1 introductory offer
@@ -164,7 +166,9 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 					: translate( '%(formattedCurrentPrice)s first year', { args } );
 				// translation example: $1 first month
 			}
-			return translate( '%(formattedCurrentPrice)s first %(introCount)s months', { args } );
+			return introTerm === 'month'
+				? translate( '%(formattedCurrentPrice)s first %(introCount)s months', { args } )
+				: translate( '%(formattedCurrentPrice)s first %(introCount)s years', { args } );
 			// translation example: $1 first 3 months
 		}
 
@@ -202,10 +206,19 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 			// multiple period introductory offers (eg 3 months) there are no multi-year introductory offers
 		} else if ( introCount > 1 ) {
 			if ( productBillingTermInMonths > 12 ) {
-				return translate(
-					'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
-					{ args }
-				);
+				return introTerm === 'month'
+					? preventWidows(
+							translate(
+								'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
+								{ args }
+							)
+					  )
+					: preventWidows(
+							translate(
+								'%(formattedCurrentPrice)s for first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
+								{ args }
+							)
+					  );
 				// translation example: $1 first 3 months then $2 per 2 years
 			} else if ( productBillingTermInMonths === 12 ) {
 				return translate(
@@ -222,19 +235,24 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		}
 	};
 
+	const hasDiscount = discountPercentage > 0;
+	// Display the discount percentage if it's not an introductory offer
+	// or if it's a Jetpack 2 or 3-year plan
+	const canDisplayDiscountPercentage = ! isIntroductoryOffer || ( isJetpack && introCount > 1 );
+
 	return (
 		<Variant>
 			<Label>
 				{ variant.variantLabel }
-				{ discountPercentage > 0 && ! isJetpack && isMobile && (
+				{ hasDiscount && ! isJetpack && isMobile && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
 			</Label>
 			<PriceTextContainer>
-				{ discountPercentage > 0 && ! isJetpack && ! isMobile && ! isIntroductoryOffer && (
+				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ discountPercentage > 0 && ! isJetpack && ! isIntroductoryOffer && (
+				{ hasDiscount && ! isIntroductoryOffer && ! isJetpack && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
 				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>

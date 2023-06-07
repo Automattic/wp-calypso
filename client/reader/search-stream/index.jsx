@@ -36,11 +36,11 @@ const updateQueryArg = ( params ) =>
 
 const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-const SpacerDiv = withDimensions( ( { width, height } ) => (
+const SpacerDiv = withDimensions( ( { width } ) => (
 	<div
 		style={ {
 			width: `${ width }px`,
-			height: `${ height }px`,
+			height: `60px`,
 		} }
 	/>
 ) );
@@ -95,6 +95,11 @@ class SearchStream extends React.Component {
 			sort,
 		} );
 		updateQueryArg( { sort } );
+	};
+
+	trackTagsPageLinkClick = () => {
+		recordAction( 'clicked_reader_search_tags_page_link' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_search_tags_page_link_clicked' );
 	};
 
 	handleFixedAreaMounted = ( ref ) => ( this.fixedAreaRef = ref );
@@ -189,7 +194,12 @@ class SearchStream extends React.Component {
 							wideDisplay={ wideDisplay }
 						/>
 					) }
-					{ ! query && <BlankSuggestions suggestions={ suggestionList } /> }
+					{ ! query && (
+						<BlankSuggestions
+							suggestions={ suggestionList }
+							trackTagsPageLinkClick={ this.trackTagsPageLinkClick }
+						/>
+					) }
 				</div>
 				<SpacerDiv domTarget={ this.fixedAreaRef } />
 				{ ! hidePostsAndSites && wideDisplay && (

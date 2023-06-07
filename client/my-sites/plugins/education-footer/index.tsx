@@ -1,14 +1,14 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
 import Section, { SectionContainer } from 'calypso/components/section';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/route';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -28,7 +28,6 @@ const EducationFooterContainer = styled.div`
 
 	> div:first-child {
 		padding: 0;
-		margin-bottom: 60px;
 
 		.wp-brand-font {
 			font-size: var( --scss-font-title-medium );
@@ -74,6 +73,15 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	${ SectionContainer }::before {
 		background-color: #f6f7f7;
 	}
+`;
+
+const CardText = styled.span< { color: string } >`
+	color: ${ ( { color } ) => color };
+	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 20px;
 `;
 
 export const MarketplaceFooter = () => {
@@ -146,42 +154,67 @@ const EducationFooter = () => {
 				<ThreeColumnContainer>
 					<LinkCard
 						external
-						label={ __( 'Website Building' ) }
-						title={ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
-						cta={ __( 'Read More' ) }
+						target="_blank"
+						title={
+							<CardText color="var(--studio-gray-100)">
+								{ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
+							</CardText>
+						}
+						titleMarginBottom="16px"
+						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
 						) }
-						background="#e5f3f0"
+						border="var(--studio-gray-5)"
 						onClick={ () => onClickLinkCard( 'website_building' ) }
 					/>
 					<LinkCard
 						external
-						label={ __( 'Customization' ) }
-						title={ __( 'How to Choose WordPress Plugins for Your Website (7 Tips)' ) }
-						cta={ __( 'Read More' ) }
+						target="_blank"
+						title={
+							<CardText color="var(--studio-gray-100)">
+								{ __( 'How to Choose WordPress Plugins for Your Website (7 Tips)' ) }
+							</CardText>
+						}
+						titleMarginBottom="16px"
+						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
 						) }
-						background="#f9f0f6"
+						border="var(--studio-gray-5)"
 						onClick={ () => onClickLinkCard( 'customization' ) }
 					/>
 					<LinkCard
 						external
-						label={ __( 'SEO' ) }
-						title={ __( 'Do You Need to Use SEO Plugins on Your WordPress.com Site?' ) }
-						cta={ __( 'Read More' ) }
+						target="_blank"
+						title={
+							<CardText color="var(--studio-gray-100)">
+								{ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
+							</CardText>
+						}
+						titleMarginBottom="16px"
+						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
-							'https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/'
+							'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
 						) }
-						background="#e5f4ff"
+						border="var(--studio-gray-5)"
 						onClick={ () => onClickLinkCard( 'seo' ) }
 					/>
 				</ThreeColumnContainer>
 			</Section>
-			<MarketplaceFooter />
 		</EducationFooterContainer>
 	);
 };
+
+function ReadMoreLink() {
+	const { __ } = useI18n();
+
+	return (
+		<CardText color="var(--studio-blue-50)">
+			{ __( 'Read More' ) }
+			<Gridicon icon="external" size={ 12 } />
+		</CardText>
+	);
+}
 
 export default EducationFooter;

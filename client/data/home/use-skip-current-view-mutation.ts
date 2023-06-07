@@ -1,5 +1,5 @@
+import { useMutation, useQueryClient, UseMutationResult } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient, UseMutationResult } from 'react-query';
 import wp from 'calypso/lib/wp';
 import { fetchHomeLayout, getCacheKey } from './use-home-layout-query';
 import { useHomeLayoutQueryParams } from './use-home-layout-query-params';
@@ -20,8 +20,8 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 	const queryClient = useQueryClient();
 	const query = useHomeLayoutQueryParams();
 
-	const mutation = useMutation< TData, TError, Variables >(
-		async ( { reminder, card } ) => {
+	const mutation = useMutation< TData, TError, Variables >( {
+		mutationFn: async ( { reminder, card } ) => {
 			const data = await queryClient.fetchQuery(
 				getCacheKey( siteId ),
 				() => fetchHomeLayout( siteId, query ),
@@ -42,12 +42,10 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 				}
 			);
 		},
-		{
-			onSuccess( data ) {
-				queryClient.setQueryData( getCacheKey( siteId ), data );
-			},
-		}
-	);
+		onSuccess( data ) {
+			queryClient.setQueryData( getCacheKey( siteId ), data );
+		},
+	} );
 
 	const { mutate } = mutation;
 

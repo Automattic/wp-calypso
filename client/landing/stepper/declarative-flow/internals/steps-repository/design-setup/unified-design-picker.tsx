@@ -15,7 +15,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
-import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -24,6 +23,7 @@ import WebPreview from 'calypso/components/web-preview/content';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
@@ -43,7 +43,6 @@ import {
 	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import StepperLoader from '../../components/stepper-loader';
-import { PLACEHOLDER_SITE_ID } from '../pattern-assembler/constants';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -59,6 +58,7 @@ const SiteIntent = Onboard.SiteIntent;
 const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
+	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
 
 	const reduxDispatch = useReduxDispatch();
@@ -81,6 +81,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
+	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
 
 	const { goToCheckout } = useCheckout();
 
@@ -124,6 +125,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			}
 		}
 
+		if ( isDesignFirstFlow ) {
+			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
+
+			allDesigns.designs = allDesigns.designs.map( ( design ) => {
+				design.style_variations = design.style_variations?.filter(
+					( variation ) => variation.slug === 'default'
+				);
+				return design;
+			} );
+		}
+
 		return allDesigns;
 	};
 
@@ -131,7 +143,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		{
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
-			include_pattern_virtual_designs: true,
 		},
 		{
 			enabled: true,
@@ -174,6 +185,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 	} );
 
+	if ( isDesignFirstFlow && selectedDesignDetails?.style_variations ) {
+		selectedDesignDetails.style_variations = [];
+	}
+
 	const selectedStyleVariation = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedStyleVariation(),
 		[]
@@ -189,7 +204,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// When the theme or style query strings parameters are present,
 	// automatically switch to previewing that theme (if it's a valid theme)
 	// and that style variation (if it's a valid style variation).
-	const queryParams = useQuery();
 	const themeFromQueryString = queryParams.get( 'theme' );
 	const styleFromQueryString = queryParams.get( 'style' );
 	const hideBackFromQueryString = queryParams.get( 'hideBack' );
@@ -238,7 +252,23 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
+		// Virtual designs don't need to be previewed and can go directly to the site assembler.
+		const shouldGoToAssembler =
+			design.is_virtual && design.slug === BLANK_CANVAS_DESIGN.slug && isDesktop;
+
+		if ( shouldGoToAssembler ) {
+			design = {
+				...design,
+				design_type: BLANK_CANVAS_DESIGN.design_type,
+			} as Design;
+		}
+
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
+
+		if ( shouldGoToAssembler ) {
+			pickDesign( design );
+			return;
+		}
 
 		setSelectedDesign( design );
 		if ( styleVariation ) {
@@ -436,40 +466,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
-		const shouldGoToAssembler =
-			_selectedDesign?.is_virtual &&
-			_selectedDesign?.slug === BLANK_CANVAS_DESIGN.slug &&
-			isDesktop &&
-			isEnabled( 'pattern-assembler/dotcompatterns' );
-
-		if ( shouldGoToAssembler ) {
-			const assemblerDesign = {
-				..._selectedDesign,
-				design_type: BLANK_CANVAS_DESIGN.design_type,
-			} as Design;
-
-			setSelectedDesign( assemblerDesign );
-
-			handleSubmit( {
-				selectedDesign: assemblerDesign,
-				selectedSiteCategory: categorization.selection,
-			} );
-			return;
-		}
-
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
-			const positionIndex = designs.findIndex( ( design ) => design.slug === _selectedDesign.slug );
+			const positionIndex = designs.findIndex(
+				( design ) => design.slug === _selectedDesign?.slug
+			);
 
 			setPendingAction( () => {
-				if ( _selectedDesign.is_virtual ) {
-					return applyThemeWithPatterns(
-						siteSlugOrId,
-						_selectedDesign,
-						null,
-						PLACEHOLDER_SITE_ID
-					).then( ( theme: ActiveTheme ) =>
-						reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
+				if ( _selectedDesign?.is_virtual ) {
+					return applyThemeWithPatterns( siteSlugOrId, _selectedDesign ).then(
+						( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
 					);
 				}
 				return setDesignOnSite( siteSlugOrId, _selectedDesign, {
@@ -569,20 +575,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			);
 		}
 
-		if (
-			shouldLimitGlobalStyles &&
-			selectedStyleVariation &&
-			selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
-		) {
-			return (
-				<Button primary borderless={ false } onClick={ () => unlockPremiumGlobalStyles() }>
-					{ translate( 'Unlock this style' ) }
-				</Button>
-			);
-		}
+		const selectStyle = () => {
+			if (
+				shouldLimitGlobalStyles &&
+				selectedStyleVariation &&
+				selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
+			) {
+				unlockPremiumGlobalStyles();
+			} else {
+				pickDesign();
+			}
+		};
 
 		return (
-			<Button primary borderless={ false } onClick={ () => pickDesign() }>
+			<Button primary borderless={ false } onClick={ selectStyle }>
 				{ translate( 'Continue' ) }
 			</Button>
 		);
@@ -637,6 +643,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						require="@automattic/design-preview"
 						placeholder={ null }
 						previewUrl={ previewUrl }
+						splitPremiumVariations={
+							! selectedDesign.is_premium &&
+							! isBundledWithWooCommerce &&
+							! isPremiumThemeAvailable &&
+							! didPurchaseSelectedTheme &&
+							! isPluginBundleEligible
+						}
 						title={ headerDesignTitle }
 						description={ selectedDesign.description }
 						variations={ selectedDesignDetails?.style_variations }
@@ -644,7 +657,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
-						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 					/>
 				) : (
 					<WebPreview
@@ -714,6 +726,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const currentPlanFeatures = site?.plan?.features.active ?? [];
+
+	if ( isDesignFirstFlow ) {
+		categorization.categories = [];
+		categorization.selection = 'blog';
+	}
 
 	const stepContent = (
 		<UnifiedDesignPicker

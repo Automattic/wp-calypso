@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
 import SectionNav from 'calypso/components/section-nav';
@@ -14,7 +13,8 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
-import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
+import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
@@ -25,16 +25,17 @@ import {
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
+import DashboardDataContext from './dashboard-data-context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
+import SiteContentHeader from './site-content-header';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
+import SiteSurveyBanner from './site-survey-banner';
 import SiteWelcomeBanner from './site-welcome-banner';
 import { getProductSlugFromProductType } from './utils';
 import type { Site } from '../sites-overview/types';
 
 import './style.scss';
-
-const CALYPSO_MASTERBAR_HEIGHT = 47;
 
 export default function SitesOverview() {
 	const translate = useTranslate();
@@ -71,6 +72,12 @@ export default function SitesOverview() {
 		filter,
 		sort
 	);
+
+	const {
+		data: verifiedContacts,
+		refetch: refetchContacts,
+		isError: fetchContactFailed,
+	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
 
 	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
 
@@ -182,10 +189,6 @@ export default function SitesOverview() {
 		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
 
-	const [ divRef, hasCrossed ] = useDetectWindowBoundary( CALYPSO_MASTERBAR_HEIGHT );
-
-	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
-
 	const renderIssueLicenseButton = () => {
 		return (
 			<div className="sites-overview__licenses-buttons">
@@ -235,23 +238,13 @@ export default function SitesOverview() {
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
 						<SiteWelcomeBanner isDashboardView />
+						<SiteSurveyBanner />
 						{ data?.sites && <SiteAddLicenseNotification /> }
-						<div className="sites-overview__viewport" { ...outerDivProps }>
-							<div
-								className={ classNames( 'sites-overview__page-title-container', {
-									'is-sticky': showIssueLicenseButtonsLargeScreen && hasCrossed,
-								} ) }
-							>
-								<div className="sites-overview__page-heading">
-									<h2 className="sites-overview__page-title">{ pageTitle }</h2>
-									<div className="sites-overview__page-subtitle">
-										{ translate( 'Manage all your Jetpack sites from one location' ) }
-									</div>
-								</div>
-
-								{ showIssueLicenseButtonsLargeScreen && renderIssueLicenseButton() }
-							</div>
-						</div>
+						<SiteContentHeader
+							content={ renderIssueLicenseButton() }
+							pageTitle={ pageTitle }
+							showStickyContent={ !! showIssueLicenseButtonsLargeScreen }
+						/>
 						<SectionNav
 							applyUpdatedStyles
 							selectedText={
@@ -287,13 +280,27 @@ export default function SitesOverview() {
 						{ showEmptyState ? (
 							<div className="sites-overview__no-sites">{ emptyState }</div>
 						) : (
-							<SiteContent
-								data={ data }
-								isLoading={ isLoading }
-								currentPage={ currentPage }
-								isFavoritesTab={ isFavoritesTab }
-								ref={ containerRef }
-							/>
+							<DashboardDataContext.Provider
+								value={ {
+									verifiedContacts: {
+										emails: verifiedContacts?.emails ?? [],
+										refetchIfFailed: () => {
+											if ( fetchContactFailed ) {
+												refetchContacts();
+											}
+											return;
+										},
+									},
+								} }
+							>
+								<SiteContent
+									data={ data }
+									isLoading={ isLoading }
+									currentPage={ currentPage }
+									isFavoritesTab={ isFavoritesTab }
+									ref={ containerRef }
+								/>
+							</DashboardDataContext.Provider>
 						) }
 					</div>
 				</div>

@@ -1,5 +1,5 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 import type { TaxGetInfo, TaxInfo } from './types';
 
@@ -32,17 +32,16 @@ export function usePaymentMethodTaxInfo(
 		enabled: ! doNotFetch,
 	} );
 
-	const mutation = useMutation(
-		( mutationInputValues: TaxInfo ) => setTaxInfoOnServer( storedDetailsId, mutationInputValues ),
-		{
-			onSuccess: ( onSuccessInputValues: TaxInfo ) => {
-				queryClient.setQueryData( queryKey, {
-					...onSuccessInputValues,
-					is_tax_info_set: true,
-				} );
-			},
-		}
-	);
+	const mutation = useMutation( {
+		mutationFn: ( mutationInputValues: TaxInfo ) =>
+			setTaxInfoOnServer( storedDetailsId, mutationInputValues ),
+		onSuccess: ( onSuccessInputValues: TaxInfo ) => {
+			queryClient.setQueryData( queryKey, {
+				...onSuccessInputValues,
+				is_tax_info_set: true,
+			} );
+		},
+	} );
 
 	const setTaxInfo = useCallback(
 		( newInfo: TaxInfo ): Promise< void > => {

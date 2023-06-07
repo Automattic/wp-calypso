@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export interface GeoLocationData {
 	city: string;
@@ -10,8 +10,10 @@ export interface GeoLocationData {
 }
 
 export const useGeoLocationQuery = () =>
-	useQuery< GeoLocationData >( [ 'geo' ], () =>
-		globalThis
-			.fetch( 'https://public-api.wordpress.com/geo/' )
-			.then( ( response ) => response.json() )
-	);
+	useQuery< GeoLocationData >( {
+		queryKey: [ 'geo' ],
+		queryFn: () =>
+			globalThis
+				.fetch( 'https://public-api.wordpress.com/geo/' )
+				.then( ( response ) => response.json() ),
+	} );

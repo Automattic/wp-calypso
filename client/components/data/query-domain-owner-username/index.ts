@@ -1,10 +1,10 @@
-import { useSelector } from 'react-redux';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import useUsersQuery from 'calypso/data/users/use-users-query';
+import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { InfiniteData } from '@tanstack/react-query';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { InfiniteData } from 'react-query';
 
 type User = {
 	ID: number;

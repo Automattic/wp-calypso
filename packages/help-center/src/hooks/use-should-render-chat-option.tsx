@@ -1,53 +1,29 @@
-import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
-
 type Result = {
 	render: boolean;
-	state: 'AVAILABLE' | 'UNAVAILABLE' | 'CLOSED';
-	isLoading: boolean;
+	state: 'AVAILABLE' | 'UNAVAILABLE';
 	eligible: boolean;
-	env?: 'staging' | 'production';
 };
 
-export function useShouldRenderChatOption(): Result {
-	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	// when the user is looking at the help page, we want to be extra sure they don't start a chat without available operators
-	// so in this case, let's make stale time 1 minute.
-	const { data, isLoading } = useHappychatAvailable(
-		Boolean( chatStatus?.is_user_eligible ),
-		60 * 1000
-	);
-
-	if ( ! chatStatus?.is_user_eligible ) {
+export function useShouldRenderChatOption(
+	isChatAvailable: boolean,
+	isEligibleForChat: boolean
+): Result {
+	if ( ! isEligibleForChat ) {
 		return {
 			render: false,
-			isLoading,
-			state: chatStatus?.is_chat_closed ? 'CLOSED' : 'UNAVAILABLE',
+			state: 'UNAVAILABLE',
 			eligible: false,
-			env: data?.env,
 		};
-	} else if ( chatStatus?.is_chat_closed ) {
-		return {
-			render: true,
-			state: 'CLOSED',
-			isLoading,
-			eligible: true,
-			env: data?.env,
-		};
-	} else if ( data?.available ) {
+	} else if ( isChatAvailable ) {
 		return {
 			render: true,
 			state: 'AVAILABLE',
-			isLoading,
 			eligible: true,
-			env: data.env,
 		};
 	}
 	return {
 		render: true,
 		state: 'UNAVAILABLE',
-		isLoading,
 		eligible: true,
-		env: data?.env,
 	};
 }

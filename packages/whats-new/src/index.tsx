@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { useLocale } from '@automattic/i18n-utils';
+import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useQuery } from 'react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import Guide from './components/guide';
 import WhatsNewPage from './whats-new-page';
@@ -29,9 +29,9 @@ interface APIFetchOptions {
 const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 	const locale = useLocale();
 
-	const { data, isLoading } = useQuery< WhatsNewAnnouncement[] >(
-		[ 'WhatsNewAnnouncements' ],
-		async () =>
+	const { data, isLoading } = useQuery< WhatsNewAnnouncement[] >( {
+		queryKey: [ 'WhatsNewAnnouncements' ],
+		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
 						path: `/whats-new/list?_locale=${ locale }`,
@@ -41,10 +41,8 @@ const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 						global: true,
 						path: `/wpcom/v2/block-editor/whats-new-list?_locale=${ locale }`,
 				  } as APIFetchOptions ),
-		{
-			refetchOnWindowFocus: false,
-		}
-	);
+		refetchOnWindowFocus: false,
+	} );
 
 	if ( ! data || isLoading ) {
 		return null;

@@ -59,9 +59,12 @@ const initialState = {
 	jetpack: {},
 };
 
-function renderWithRedux( ui ) {
+function renderWithRedux( ui, customInitialState = {} ) {
 	return renderWithProvider( ui, {
-		initialState,
+		initialState: {
+			...initialState,
+			...customInitialState,
+		},
 		reducers: {
 			editor: editorReducer,
 			media: mediaReducer,
@@ -75,6 +78,7 @@ function renderWithRedux( ui ) {
 
 const props = {
 	site: {
+		ID: 1234,
 		plan: { product_slug: PLAN_FREE },
 		domain: 'example.wordpress.com',
 	},
@@ -102,7 +106,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					<SiteSettingsFormGeneral
 						{ ...props }
 						siteIsJetpack={ false }
-						site={ { plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
+						site={ { ID: 1234, plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
 					/>
 				);
 				expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
@@ -116,7 +120,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					<SiteSettingsFormGeneral
 						{ ...props }
 						siteIsJetpack={ false }
-						site={ { plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
+						site={ { ID: 1234, plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
 					/>
 				);
 				expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
@@ -125,7 +129,11 @@ describe( 'SiteSettingsFormGeneral', () => {
 		} );
 
 		test( 'No UpsellNudge for jetpack plans', () => {
-			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } /> );
+			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } />, {
+				ui: {
+					selectedSiteId: 1234,
+				},
+			} );
 			expect( screen.queryByTestId( 'upsell-nudge' ) ).not.toBeInTheDocument();
 		} );
 	} );
@@ -342,7 +350,12 @@ describe( 'SiteSettingsFormGeneral', () => {
 				},
 			};
 			const { container, getByLabelText } = renderWithRedux(
-				<SiteSettingsFormGeneral { ...testProps } />
+				<SiteSettingsFormGeneral { ...testProps } />,
+				{
+					ui: {
+						selectedSiteId: 1234,
+					},
+				}
 			);
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
@@ -541,7 +554,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			testProps = {
 				...props,
 				siteIsJetpack: false,
-				site: { plan: { product_slug: PLAN_PERSONAL }, domain: 'example.wordpress.com' },
+				site: { ID: 1234, plan: { product_slug: PLAN_PERSONAL }, domain: 'example.wordpress.com' },
 				fields: {
 					blog_public: 1,
 					wpcom_coming_soon: 0,

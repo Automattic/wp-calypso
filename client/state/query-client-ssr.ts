@@ -1,6 +1,6 @@
-import { QueryClient, QueryCache, dehydrate, QueryOptions, QueryKey } from 'react-query';
+import { QueryClient, QueryCache, dehydrate, QueryOptions, QueryKey } from '@tanstack/react-query';
 import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/initial-state';
-import type { Query, QueryState } from 'react-query/types/core/query';
+import type { Query, QueryState } from '@tanstack/react-query';
 
 const fetchedQueryHashes = new WeakMap< QueryClient, Set< string > >();
 

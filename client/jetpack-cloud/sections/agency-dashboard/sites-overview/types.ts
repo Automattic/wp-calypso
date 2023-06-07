@@ -22,6 +22,15 @@ export type AllowedStatusTypes =
 	| 'disabled'
 	| 'critical';
 
+interface MonitorContactEmail {
+	name: string;
+	email_address: string;
+	verified: boolean;
+}
+interface MonitorContacts {
+	emails: Array< MonitorContactEmail >;
+}
+
 export interface MonitorSettings {
 	monitor_active: boolean;
 	monitor_site_status: boolean;
@@ -30,6 +39,7 @@ export interface MonitorSettings {
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
 	monitor_user_wp_note_notifications: boolean;
+	monitor_notify_additional_user_emails: Array< MonitorContactEmail >;
 }
 
 interface StatsObject {
@@ -156,7 +166,13 @@ export type StatusTooltip = {
 	[ key in AllowedStatusTypes ]?: ReactChild;
 };
 
-export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site' | 'visit_wp_admin';
+export type AllowedActionTypes =
+	| 'issue_license'
+	| 'view_activity'
+	| 'view_site'
+	| 'visit_wp_admin'
+	| 'clone_site'
+	| 'site_settings';
 
 export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
@@ -178,6 +194,10 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	setIsBulkManagementActive: ( value: boolean ) => void;
 	selectedSites: Array< Site >;
 	setSelectedSites: ( value: Array< Site > ) => void;
+}
+
+export interface DashboardDataContextInterface {
+	verifiedContacts: { emails: Array< string >; refetchIfFailed: () => void };
 }
 
 export type AgencyDashboardFilterOption =
@@ -217,6 +237,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 		email_notifications: boolean;
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
+		contacts?: MonitorContacts;
 	};
 }
 
@@ -224,6 +245,7 @@ export interface UpdateMonitorSettingsParams {
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
 	jetmon_defer_status_down_minutes?: number;
+	contacts?: MonitorContacts;
 }
 export interface UpdateMonitorSettingsArgs {
 	siteId: number;
@@ -246,10 +268,53 @@ export interface ToggleActivateMonitorArgs {
 export interface Backup {
 	activityTitle: string;
 	activityDescription: { children: { text: string }[] }[];
+	activityName: string;
+	activityTs: number;
 }
 
 export type AllowedMonitorPeriods = 'day' | 'week' | '30 days' | '90 days';
 
 export interface MonitorUptimeAPIResponse {
 	[ key: string ]: { status: string; downtime_in_minutes?: number };
+}
+
+export interface MonitorSettingsEmail {
+	email: string;
+	name: string;
+	verified: boolean;
+}
+
+export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
+	isDefault?: boolean;
+}
+
+export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
+
+export interface RequestVerificationCodeParams {
+	type: 'email';
+	value: string;
+	site_ids: Array< number >;
+}
+
+export interface ValidateVerificationCodeParams {
+	type: 'email';
+	value: string;
+	verification_code: number;
+}
+
+export interface MonitorContactsResponse {
+	emails: [ { verified: boolean; email_address: string } ];
+}
+
+export type MonitorDuration = { label: string; time: number };
+
+export interface InitialMonitorSettings {
+	enableEmailNotification: boolean;
+	enableMobileNotification: boolean;
+	selectedDuration: MonitorDuration | undefined;
+	emailContacts?: MonitorSettingsEmail[] | [];
+}
+export interface ResendVerificationCodeParams {
+	type: 'email';
+	value: string;
 }

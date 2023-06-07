@@ -29,6 +29,7 @@ class DomainSearchResults extends Component {
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
 		isCartPendingUpdate: PropTypes.bool,
+		isCartPendingUpdateDomain: PropTypes.object,
 		premiumDomains: PropTypes.object,
 		products: PropTypes.object,
 		selectedSite: PropTypes.object,
@@ -282,6 +283,7 @@ class DomainSearchResults extends Component {
 					isReskinned={ this.props.isReskinned }
 					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 					products={ this.props.useProvidedProductsList ? this.props.products : undefined }
+					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 				/>
 			);
 
@@ -312,6 +314,7 @@ class DomainSearchResults extends Component {
 						isReskinned={ this.props.isReskinned }
 						domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 						products={ this.props.useProvidedProductsList ? this.props.products : undefined }
+						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 					/>
 				);
 			} );

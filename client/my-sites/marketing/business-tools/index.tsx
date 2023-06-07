@@ -11,6 +11,7 @@ import streakLogo from 'calypso/assets/images/illustrations/streak-logo.png';
 import todoistLogo from 'calypso/assets/images/illustrations/todoist-logo.svg';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
 import MarketingBusinessToolsFeature from './feature';
@@ -80,6 +81,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						"Create and track invoices, track expenses, generate profit & loss statements, and make tax time for your business a breeze with the world's #1 accounting software for small businesses!"
 					) }
 					imagePath={ quickbooksLogo }
+					imageAlt=""
 				>
 					<Button
 						onClick={ handleQuickBooksClick }
@@ -97,6 +99,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						'Evernote is the place to organize your work, declutter your life, and remember everything. Maintaining the important information you need to manage your work or your personal life has never been easier.'
 					) }
 					imagePath={ evernoteLogo }
+					imageAlt=""
 				>
 					<Button
 						onClick={ handleEvernoteClick }
@@ -114,6 +117,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						'monday.com is a centralized platform for teams to manage every detail of their work, from high-level roadmap planning to specifics tasks.'
 					) }
 					imagePath={ mondayLogo }
+					imageAlt=""
 				>
 					<Button
 						onClick={ handleMondayClick }
@@ -131,6 +135,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						'The to-do list to organize work & life. ✅ Trusted by over 20 million people, Todoist is an incredibly powerful and flexible task management app that can turn your to-do list into a got-it-done list.'
 					) }
 					imagePath={ todoistLogo }
+					imageAlt=""
 				>
 					<Button
 						onClick={ handleTodoistClick }
@@ -148,6 +153,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						'Bench gives you a professional bookkeeper at a price you can afford, and powerful financial reporting software with zero learning curve.'
 					) }
 					imagePath={ benchLogo }
+					imageAlt=""
 				>
 					<Button
 						onClick={ handleBenchClick }
@@ -165,6 +171,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						'Track everything and always have context, directly in your Gmail account. Keep your leads and sales pipeline moving with Streak.com.'
 					) }
 					imagePath={ streakLogo }
+					imageAlt=""
 				>
 					<Button
 						onClick={ handleStreakClick }
@@ -182,6 +189,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						'Bill.com is the intelligent way to create and pay bills, send invoices, and get paid.'
 					) }
 					imagePath={ billcomLogo }
+					imageAlt=""
 				>
 					<Button
 						onClick={ handleBillcomClick }
@@ -197,7 +205,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 };
 
 export default connect(
-	( state ) => ( {
+	( state: IAppState ) => ( {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{

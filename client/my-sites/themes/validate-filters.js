@@ -5,6 +5,7 @@ import {
 	getThemeFilterStringFromTerm,
 	getThemeFilterTerm,
 	getThemeFilterTermFromString,
+	isAmbiguousThemeFilterTerm,
 	isValidThemeFilterTerm,
 } from 'calypso/state/themes/selectors';
 import { fetchThemeFilters, redirectToThemeDetails } from './controller';
@@ -16,13 +17,28 @@ export function validateFilters( context, next ) {
 		return next();
 	}
 
-	// Page.js replaces + with \s
-	const filterParam = context.params.filter.replace( /\s/g, '+' );
+	const { params, store } = context;
+	const state = store.getState();
 
-	// Accept commas, which were previously used as canonical filter separators
-	const validFilters = filterParam
-		.split( /[,+]/ )
-		.filter( ( term ) => isValidThemeFilterTerm( context.store.getState(), term ) );
+	// Page.js replaces + with \s
+	// Accept commas, which were previously used as canonical filter separators.
+	const filterParam = params.filter.replace( /\s/g, '+' );
+	let filterArray = filterParam.split( /[,+]/ );
+
+	// Rewrite ambiguous filters.
+	const tryMatchPrefixes = [ 'subject', 'column', 'style', 'color', 'feature' ];
+	filterArray = filterArray.map( ( term ) => {
+		let matchedPrefix;
+		if ( isAmbiguousThemeFilterTerm( state, term ) ) {
+			matchedPrefix = tryMatchPrefixes.find( ( prefix ) =>
+				isValidThemeFilterTerm( state, `${ prefix }:${ term }` )
+			);
+		}
+
+		return matchedPrefix ? `${ matchedPrefix }:${ term }` : term;
+	} );
+
+	const validFilters = filterArray.filter( ( term ) => isValidThemeFilterTerm( state, term ) );
 	const sortedValidFilters = sortFilterTerms( context, validFilters ).join( '+' );
 
 	if ( sortedValidFilters !== filterParam ) {
@@ -31,9 +47,11 @@ export function validateFilters( context, next ) {
 			`/filter/${ filterParam }`,
 			sortedValidFilters ? `/filter/${ sortedValidFilters }` : ''
 		);
+
 		if ( context.isServerSide ) {
 			return context.res.redirect( newPath );
 		}
+
 		return page.redirect( newPath );
 	}
 

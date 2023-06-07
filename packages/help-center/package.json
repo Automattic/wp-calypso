@@ -27,7 +27,7 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook": "start-storybook"
+		"storybook": "sb dev"
 	},
 	"dependencies": {
 		"@automattic/components": "workspace:^",
@@ -37,6 +37,7 @@
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.10.2",
+		"@tanstack/react-query": "^4.29.1",
 		"@wordpress/base-styles": "^4.13.0",
 		"@wordpress/components": "^22.1.0",
 		"@wordpress/i18n": "^4.22.0",
@@ -51,8 +52,9 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-backgrounds": "^6.4.19",
-		"@storybook/react": "^6.4.19",
+		"@storybook/addon-backgrounds": "^7.0.18",
+		"@storybook/cli": "^7.0.18",
+		"@storybook/react": "^7.0.18",
 		"typescript": "^4.7.4"
 	},
 	"peerDependencies": {

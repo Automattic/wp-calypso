@@ -18,12 +18,12 @@ import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordp
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
-import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -39,7 +39,6 @@ import {
 	isCustomDomain,
 	isNotAtomicJetpack,
 	isP2Site,
-	isStagingSite,
 } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -136,7 +135,6 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 };
 
 const ModalContent = styled.div( {
-	padding: 16,
 	width: '80vw',
 	maxWidth: '480px',
 	minHeight: '100px',
@@ -264,8 +262,6 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
-	const isWpcomStagingSite = isStagingSite( site );
-	const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 	const hasStagingSitesFeature = useSafeSiteHasFeature( site.ID, FEATURE_SITE_STAGING_SITES );
 
 	useQueryReaderTeams();
@@ -284,13 +280,13 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'database_access',
 			},
 			{
-				condition: ! isWpcomStagingSite && isStagingSiteEnabled && hasStagingSitesFeature,
+				condition: hasStagingSitesFeature,
 				label: __( 'Staging site' ),
 				href: `/hosting-config/${ siteSlug }#staging-site`,
 				sectionName: 'staging_site',
 			},
 			{
-				condition: isA12n,
+				condition: isEnabled( 'github-integration-i1' ) && isA12n,
 				label: __( 'Deploy from GitHub' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
 				sectionName: 'connect_github',
@@ -305,14 +301,8 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				href: `/hosting-config/${ siteSlug }#cache`,
 				sectionName: 'cache',
 			},
-			{
-				condition: ! isEnabled( 'woa-logging-moved' ),
-				label: __( 'Web server logs' ),
-				href: `/hosting-config/${ siteSlug }#web-server-logs`,
-				sectionName: 'logs',
-			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, siteSlug, isWpcomStagingSite, isStagingSiteEnabled, hasStagingSitesFeature, isA12n ] );
+	}, [ __, siteSlug, hasStagingSitesFeature, isA12n ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
@@ -422,7 +412,7 @@ export const SitesEllipsisMenu = ( {
 					{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
-					{ hasHostingFeatures && isEnabled( 'woa-logging' ) && <SiteLogsItem { ...props } /> }
+					{ site.is_wpcom_atomic && <SiteLogsItem { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (

@@ -86,7 +86,7 @@ export default function JetpackUpsellCard( {
 			},
 			{
 				description: translate(
-					'Save time by auto-posting your content to social networks like Facebook, Twitter, and more.'
+					'Save time by auto-posting your content to social networks like Facebook, LinkedIn, and more.'
 				),
 				href: 'https://jetpack.com/social/',
 				iconUrl: SocialIcon,

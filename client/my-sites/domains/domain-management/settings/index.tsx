@@ -36,6 +36,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import { IAppState } from 'calypso/state/types';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
@@ -470,7 +471,7 @@ const Settings = ( {
 };
 
 export default connect(
-	( state, ownProps: SettingsPageProps ): SettingsPageConnectedProps => {
+	( state: IAppState, ownProps: SettingsPageProps ): SettingsPageConnectedProps => {
 		const domain = ownProps.domains && getSelectedDomain( ownProps );
 		const subscriptionId = domain && domain.subscriptionId;
 		const currentUserId = getCurrentUserId( state );

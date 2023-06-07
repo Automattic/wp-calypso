@@ -30,10 +30,6 @@ $font-family: "SF Pro Text", $sans;
 		display: flex;
 		flex-direction: row;
 		flex: 1;
-		outline: none;
-		position: relative;
-		height: 100vh;
-		margin-top: -60px;
 	}
 
 	.pattern-assembler__sidebar {
@@ -212,20 +208,15 @@ $font-family: "SF Pro Text", $sans;
 			position: relative;
 			margin-bottom: 32px;
 			padding: 2px;
-			overflow-y: scroll;
-			scrollbar-width: none;
 
 			&:last-child {
 				margin-bottom: 0;
-			}
-
-			&::-webkit-scrollbar {
-				display: none;
 			}
 		}
 
 		.pattern-selector__block-list {
 			button {
+				box-shadow: 0 15px 25px rgba(0, 0, 0, 0.07);
 				display: block;
 				border: 1px solid rgba(0, 0, 0, 5%);
 				border-radius: 4px;
@@ -240,7 +231,9 @@ $font-family: "SF Pro Text", $sans;
 				}
 
 				&.pattern-selector__block-list--selected-pattern {
-					box-shadow: 0 0 0 2px var(--studio-gray);
+					box-shadow:
+						0 15px 25px rgba(0, 0, 0, 0.07),
+						0 0 0 2px var(--studio-gray);
 				}
 
 				&:focus,
@@ -269,7 +262,6 @@ $font-family: "SF Pro Text", $sans;
 		margin: 0 -16px 32px;
 		margin-bottom: 32px;
 		overflow-y: auto;
-		flex-grow: 1;
 		// Reserve space for the scrollbar to prevent unwanted layout change
 		scrollbar-gutter: stable;
 	}
@@ -296,6 +288,25 @@ $font-family: "SF Pro Text", $sans;
 		color: var(--color-neutral-60);
 	}
 
+	.screen-container__notice {
+		padding: 11px 14px;
+		margin: 0;
+		border: none;
+		background-color: var(--studio-blue-0);
+
+		.components-notice__dismiss {
+			align-self: center;
+			min-width: 24px;
+			height: 24px;
+			padding: 0;
+
+			svg {
+				width: 20px;
+				height: 20px;
+			}
+		}
+	}
+
 	/**
 	 * The header of the stepper framework
 	 */
@@ -310,11 +321,24 @@ $font-family: "SF Pro Text", $sans;
 		border-color: rgba(0, 0, 0, 0.1);
 	}
 
+	.components-navigator-provider {
+		flex-grow: 1;
+		height: 100vh;
+		margin-top: -60px;
+	}
+
 	.components-navigator-screen {
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
 		overflow-x: visible;
+	}
+
+	/**
+	 * Calypso Components
+	 */
+	.components-button:focus:not(:disabled) {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
 }
 

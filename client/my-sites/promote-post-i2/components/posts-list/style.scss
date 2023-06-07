@@ -1,10 +1,10 @@
 @import "../../style.scss";
 
-.main.promote-post .search {
+.main.promote-post-i2 .search {
 	height: 42px;
 }
 
-.promote-post {
+.promote-post-i2 {
 	@include promote-post-i2-font;
 
 	.campaigns-list__loading-container {

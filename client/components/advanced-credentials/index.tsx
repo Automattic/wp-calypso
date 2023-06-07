@@ -2,11 +2,11 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FunctionComponent, useCallback, useMemo, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import StepProgress from 'calypso/components/step-progress';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { useSelector, useDispatch } from 'calypso/state';
 import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -288,7 +288,13 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				</Button>
 			) }
 			{ isAlternate && goBackPath !== '' && (
-				<Button disabled={ disableForm } href={ goBackPath }>
+				<Button
+					disabled={ disableForm }
+					href={ goBackPath }
+					onClick={ () => {
+						dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_go_back' ) );
+					} }
+				>
 					{ translate( 'Go back' ) }
 				</Button>
 			) }

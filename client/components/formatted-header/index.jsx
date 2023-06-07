@@ -14,6 +14,7 @@ function FormattedHeader( {
 	className,
 	compactOnMobile,
 	align,
+	subHeaderAlign,
 	isSecondary,
 	hasScreenOptions,
 	children,
@@ -27,6 +28,9 @@ function FormattedHeader( {
 	} );
 
 	const headerClasses = classNames( 'formatted-header__title', { 'wp-brand-font': brandFont } );
+	const subtitleClasses = classNames( 'formatted-header__subtitle', {
+		'is-center-align': 'center' === subHeaderAlign,
+	} );
 	const tooltip = tooltipText && (
 		<InfoPopover icon="help-outline" position="right" iconSize={ 18 } showOnHover={ true }>
 			{ tooltipText }
@@ -47,7 +51,7 @@ function FormattedHeader( {
 					</h2>
 				) }
 				{ subHeaderText && (
-					<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
+					<p className={ subtitleClasses }>{ preventWidows( subHeaderText, 2 ) }</p>
 				) }
 			</div>
 			{ children }
@@ -65,6 +69,7 @@ FormattedHeader.propTypes = {
 	compactOnMobile: PropTypes.bool,
 	isSecondary: PropTypes.bool,
 	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
+	subHeaderAlign: PropTypes.oneOf( [ 'center', null ] ),
 	hasScreenOptions: PropTypes.bool,
 	children: PropTypes.node,
 };
@@ -78,6 +83,7 @@ FormattedHeader.defaultProps = {
 	compactOnMobile: false,
 	isSecondary: false,
 	align: 'center',
+	subHeaderAlign: null,
 };
 
 export default FormattedHeader;

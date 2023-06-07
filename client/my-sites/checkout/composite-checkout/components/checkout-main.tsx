@@ -8,7 +8,6 @@ import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -25,6 +24,7 @@ import {
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -43,7 +43,7 @@ import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
-import { logStashLoadErrorEvent, logStashEvent } from '../lib/analytics';
+import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
@@ -55,6 +55,7 @@ import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
@@ -66,7 +67,7 @@ import type {
 } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
-const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
+const debug = debugFactory( 'calypso:checkout-main' );
 
 export default function CheckoutMain( {
 	siteSlug,
@@ -103,7 +104,7 @@ export default function CheckoutMain( {
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
 	plan?: string | undefined;
-	purchaseId?: number | undefined;
+	purchaseId?: number | string | undefined;
 	couponCode?: string | undefined;
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
@@ -179,6 +180,7 @@ export default function CheckoutMain( {
 		productsForCart,
 		isLoading: areCartProductsPreparing,
 		error: cartProductPrepError,
+		addingRenewals,
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
@@ -218,6 +220,7 @@ export default function CheckoutMain( {
 		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
+		addingRenewals,
 	} );
 
 	useRecordCartLoaded( {
@@ -491,25 +494,34 @@ export default function CheckoutMain( {
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
 	// This variable determines if we see the loading page or if checkout can
-	// render its steps. Note that this does not prevent everything inside
-	// `CheckoutProvider` from rendering, only everything inside
-	// `CheckoutStepGroup`. This is because this variable is used to set the
-	// `FormStatus` to `FormStatus::LOADING`. Be careful what you add to this
-	// variable because it will slow down checkout's load time.
-	const isCheckoutPageLoading: boolean =
-		isInitialCartLoading ||
-		arePaymentMethodsLoading ||
-		paymentMethods.length < 1 ||
-		responseCart.products.length < 1 ||
-		countriesList.length < 1;
+	// render its steps.
+	//
+	// Note that this does not prevent everything inside `CheckoutProvider` from
+	// rendering, only everything inside `CheckoutStepGroup`. This is because
+	// this variable is used to set the `FormStatus` to `FormStatus::LOADING`.
+	//
+	// These conditions do not need to be true if the cart is empty. The empty
+	// cart page will show itself based on `shouldShowEmptyCartPage()` which has
+	// its own set of conditions and is not affected by this list.
+	//
+	// Be careful what you add to this variable because it will slow down
+	// checkout's apparent load time. If something can be loaded async inside
+	// checkout, do that instead.
+	const checkoutLoadingConditions: Array< { name: string; isLoading: boolean } > = [
+		{ name: translate( 'Loading cart' ), isLoading: isInitialCartLoading },
+		{ name: translate( 'Loading saved payment methods' ), isLoading: arePaymentMethodsLoading },
+		{ name: translate( 'Initializing payment methods' ), isLoading: paymentMethods.length < 1 },
+		{
+			name: translate( 'Preparing products for cart' ),
+			isLoading: responseCart.products.length < 1,
+		},
+		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
+	];
+	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
+		( condition ) => condition.isLoading
+	);
 	if ( isCheckoutPageLoading ) {
-		debug( 'still loading because one of these is true', {
-			isInitialCartLoading,
-			paymentMethods: paymentMethods.length < 1,
-			arePaymentMethodsLoading: arePaymentMethodsLoading,
-			items: responseCart.products.length < 1,
-			countriesList: countriesList.length < 1,
-		} );
+		debug( 'still loading because one of these is true', checkoutLoadingConditions );
 	} else {
 		debug( 'no longer loading' );
 	}
@@ -544,7 +556,7 @@ export default function CheckoutMain( {
 			}
 			reduxDispatch(
 				recordTracksEvent( errorTypeToTracksEventName( errorType ), {
-					error_message: error.message + '; Stack: ' + error.stack,
+					error_message: convertErrorToString( error ),
 					...errorData,
 				} )
 			);
@@ -710,6 +722,9 @@ export default function CheckoutMain( {
 				selectFirstAvailablePaymentMethod
 			>
 				<WPCheckout
+					loadingContent={
+						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
+					}
 					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					customizedPreviousPath={ customizedPreviousPath }
 					isRemovingProductFromCart={ isRemovingProductFromCart }
@@ -733,7 +748,7 @@ export default function CheckoutMain( {
 }
 
 function getAnalyticsPath(
-	purchaseId: number | undefined,
+	purchaseId: number | string | undefined,
 	product: string | undefined,
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,

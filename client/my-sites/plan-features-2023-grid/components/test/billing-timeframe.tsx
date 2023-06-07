@@ -14,7 +14,7 @@ jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn( ( selector ) => selector() ),
 } ) );
-jest.mock( 'calypso/my-sites/plans/hooks/use-plan-prices', () => jest.fn() );
+jest.mock( '../../hooks/use-plan-prices-display', () => ( { usePlanPricesDisplay: jest.fn() } ) );
 
 import {
 	PLAN_ANNUAL_PERIOD,
@@ -27,10 +27,11 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { render } from '@testing-library/react';
 import React from 'react';
-import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { PlanPrices } from 'calypso/state/plans/types';
+import { usePlanPricesDisplay } from '../../hooks/use-plan-prices-display';
 import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
+
+type PlanPricesDisplay = ReturnType< typeof usePlanPricesDisplay >;
 
 describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 	const defaultProps = {
@@ -43,18 +44,16 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 	} );
 
 	test( `should show savings with yearly when plan is monthly`, () => {
-		const planMonthlyPrices: PlanPrices = {
-			planDiscountedRawPrice: 100,
-			discountedRawPrice: 150,
-			rawPrice: 200,
+		const planMonthlyPrices: PlanPricesDisplay = {
+			discountedPrice: 150,
+			originalPrice: 200,
 		};
-		const planYearlyPrices: PlanPrices = {
-			planDiscountedRawPrice: 50,
-			discountedRawPrice: 100,
-			rawPrice: 150,
+		const planYearlyPrices: PlanPricesDisplay = {
+			discountedPrice: 100,
+			originalPrice: 150,
 		};
 
-		usePlanPrices.mockImplementation(
+		usePlanPricesDisplay.mockImplementation(
 			jest.fn( ( { planSlug } ) => {
 				if ( planSlug === PLAN_BUSINESS_MONTHLY ) {
 					return planMonthlyPrices;
@@ -66,29 +65,30 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		const { container } = render(
 			<PlanFeatures2023GridBillingTimeframe
 				{ ...defaultProps }
+				currentSitePlanSlug=""
 				planName={ PLAN_BUSINESS_MONTHLY }
 				isMonthlyPlan={ true }
 				billingPeriod={ PLAN_MONTHLY_PERIOD }
 			/>
 		);
 		const savings =
-			( 100 * ( planMonthlyPrices.rawPrice - planYearlyPrices.discountedRawPrice ) ) /
-			planMonthlyPrices.rawPrice;
+			( 100 * ( planMonthlyPrices.originalPrice - planYearlyPrices.discountedPrice ) ) /
+			planMonthlyPrices.originalPrice;
 
 		expect( container ).toHaveTextContent( `Save ${ savings }%` );
 	} );
 
 	test( 'should show full-term discounted price when plan is yearly', () => {
-		const planPrices: PlanPrices = {
-			planDiscountedRawPrice: 100,
-			discountedRawPrice: 150,
-			rawPrice: 200,
+		const planPrices: PlanPricesDisplay = {
+			discountedPrice: 150,
+			originalPrice: 200,
 		};
 
-		usePlanPrices.mockImplementation( jest.fn( () => planPrices ) );
+		usePlanPricesDisplay.mockImplementation( jest.fn( () => planPrices ) );
 
 		const { container } = render(
 			<PlanFeatures2023GridBillingTimeframe
+				currentSitePlanSlug=""
 				{ ...defaultProps }
 				planName={ PLAN_BUSINESS }
 				isMonthlyPlan={ false }
@@ -96,39 +96,32 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 			/>
 		);
 
-		expect( container ).toHaveTextContent(
-			`per month, ${ formatCurrency(
-				planPrices.planDiscountedRawPrice,
-				getCurrentUserCurrencyCode(),
-				{ stripZeros: true }
-			) } billed annually`
-		);
+		const discountedPrice = formatCurrency( planPrices.discountedPrice, 'INR', {
+			stripZeros: true,
+		} );
+		expect( container ).toHaveTextContent( `per month, ${ discountedPrice } for the first year` );
 	} );
 
 	test( 'should show full-term discounted price when plan is 2-yearly', () => {
-		const planPrices: PlanPrices = {
-			planDiscountedRawPrice: 100,
-			discountedRawPrice: 150,
-			rawPrice: 200,
+		const planPrices: PlanPricesDisplay = {
+			discountedPrice: 150,
+			originalPrice: 200,
 		};
 
-		usePlanPrices.mockImplementation( jest.fn( () => planPrices ) );
+		usePlanPricesDisplay.mockImplementation( jest.fn( () => planPrices ) );
 
 		const { container } = render(
 			<PlanFeatures2023GridBillingTimeframe
+				currentSitePlanSlug=""
 				{ ...defaultProps }
 				planName={ PLAN_BUSINESS_2_YEARS }
 				isMonthlyPlan={ false }
 				billingPeriod={ PLAN_BIENNIAL_PERIOD }
 			/>
 		);
-
-		expect( container ).toHaveTextContent(
-			`per month, ${ formatCurrency(
-				planPrices.planDiscountedRawPrice,
-				getCurrentUserCurrencyCode(),
-				{ stripZeros: true }
-			) } billed every two years`
-		);
+		const discountedPrice = formatCurrency( planPrices.discountedPrice, 'INR', {
+			stripZeros: true,
+		} );
+		expect( container ).toHaveTextContent( `per month, ${ discountedPrice } for the first year` );
 	} );
 } );

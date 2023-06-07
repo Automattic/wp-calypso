@@ -17,7 +17,7 @@ const getPostKey = ( blogId, postId ) => ( { blogId, postId } );
 
 const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
 	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId );
-	if ( supportArticleAlternates.isLoading ) {
+	if ( supportArticleAlternates.isInitialLoading ) {
 		return null;
 	}
 

@@ -15,10 +15,10 @@ import {
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getRewindBytesAvailable, getRewindBytesUsed } from 'calypso/state/rewind/selectors';

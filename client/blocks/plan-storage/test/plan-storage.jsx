@@ -12,9 +12,9 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { PlanStorage } from '../index';
 

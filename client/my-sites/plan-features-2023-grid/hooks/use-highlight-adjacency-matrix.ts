@@ -1,7 +1,10 @@
-import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
-import { useSelector } from 'react-redux';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	isBusinessPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	planLevelsMatch,
+} from '@automattic/calypso-products';
+import { isNewsletterFlow, isLinkInBioFlow } from '@automattic/onboarding';
 import type { PlanProperties } from '../types';
 
 interface HighlightAdjacencyMatrix {
@@ -12,15 +15,36 @@ interface HighlightAdjacencyMatrix {
 	};
 }
 
-const useHighlightIndices = ( visiblePlans: PlanProperties[] ) => {
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
+interface Props {
+	visiblePlans: PlanProperties[];
+	flowName: string;
+	currentSitePlanSlug?: string;
+	selectedPlan?: string;
+}
 
+const useHighlightIndices = ( {
+	visiblePlans,
+	flowName,
+	currentSitePlanSlug,
+	selectedPlan,
+}: Props ) => {
 	return visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
-		const isHighlight =
-			isBusinessPlan( planName ) ||
-			isPremiumPlan( planName ) ||
-			currentPlan?.productSlug === planName;
+		let isHighlight = false;
+
+		const isCurrentPlan = currentSitePlanSlug === planName;
+		const isSuggestedPlan = !! ( selectedPlan && planLevelsMatch( planName, selectedPlan ) );
+
+		if ( flowName && isNewsletterFlow( flowName ) ) {
+			isHighlight = isPersonalPlan( planName ) || isCurrentPlan;
+		} else if ( flowName && isLinkInBioFlow( flowName ) ) {
+			isHighlight = isPremiumPlan( planName ) || isCurrentPlan;
+		} else {
+			isHighlight =
+				( isBusinessPlan( planName ) && ! selectedPlan ) ||
+				( isPremiumPlan( planName ) && ! selectedPlan ) ||
+				isCurrentPlan ||
+				isSuggestedPlan;
+		}
 
 		if ( isHighlight ) {
 			acc.push( index );
@@ -30,8 +54,18 @@ const useHighlightIndices = ( visiblePlans: PlanProperties[] ) => {
 	}, [] );
 };
 
-const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
-	const highlightIndices = useHighlightIndices( visiblePlans );
+const useHighlightAdjacencyMatrix = ( {
+	visiblePlans,
+	flowName,
+	currentSitePlanSlug,
+	selectedPlan,
+}: Props ) => {
+	const highlightIndices = useHighlightIndices( {
+		visiblePlans,
+		flowName,
+		currentSitePlanSlug,
+		selectedPlan,
+	} );
 	const adjacencyMatrix: HighlightAdjacencyMatrix = {};
 
 	visiblePlans.forEach( ( { planName }, index ) => {

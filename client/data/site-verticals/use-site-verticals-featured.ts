@@ -1,9 +1,11 @@
-import { useQuery, UseQueryResult, QueryKey } from 'react-query';
+import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import type { SiteVerticalsResponse } from './types';
 
 const useSiteVerticalsFeatured = (): UseQueryResult< SiteVerticalsResponse[] > => {
-	return useQuery( getCacheKey(), () => fetchSiteVerticalsFeatured(), {
+	return useQuery( {
+		queryKey: getCacheKey(),
+		queryFn: () => fetchSiteVerticalsFeatured(),
 		enabled: true,
 		staleTime: Infinity,
 		refetchInterval: false,

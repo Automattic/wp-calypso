@@ -5,16 +5,20 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Mastodon, isValidUsername } from '../mastodon';
 
-const props = {
-	service: {
-		ID: 'mastodon',
-		connect_URL: 'https://testurl.test/?param1=1&param2=2',
-	},
-	connectAnother: () => {},
-	connections: [],
-	action: () => {},
-	isConnecting: false,
-};
+let props = {};
+
+beforeEach( () => {
+	props = {
+		service: {
+			ID: 'mastodon',
+			connect_URL: 'https://testurl.test/?param1=1&param2=2',
+		},
+		connectAnother: () => {},
+		connections: [],
+		action: () => {},
+		isConnecting: false,
+	};
+} );
 
 describe( 'Mastodon', () => {
 	test( 'it displays the input form without errors', () => {
@@ -29,7 +33,7 @@ describe( 'Mastodon', () => {
 	} );
 
 	test( 'displays an error message when instance is invalid', async () => {
-		const { container } = render( <Mastodon { ...props } /> );
+		render( <Mastodon { ...props } /> );
 
 		await userEvent.type(
 			screen.getByLabelText( 'Enter your Mastodon username' ),
@@ -39,10 +43,23 @@ describe( 'Mastodon', () => {
 		// error message is displayed
 		expect( screen.getByRole( 'alert' ) ).toBeInTheDocument();
 
-		// spinner is shown
-		expect( container.getElementsByClassName( 'spinner' ).length ).toBe( 1 );
-
 		const btn = screen.getByRole( 'button', { name: /Connect account/i } );
+		expect( btn ).toBeDisabled();
+	} );
+
+	test( 'displays an error message when instance is already connected', async () => {
+		props.connections = [ { external_display: '@user@example.com' } ];
+		render( <Mastodon { ...props } /> );
+
+		await userEvent.type(
+			screen.getByLabelText( 'Enter your Mastodon username' ),
+			'@user@example.com'
+		);
+
+		// error message is displayed
+		expect( screen.getByRole( 'alert' ) ).toBeInTheDocument();
+
+		const btn = screen.getByRole( 'button', { name: /Connect one more account/i } );
 		expect( btn ).toBeDisabled();
 	} );
 

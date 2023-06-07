@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 type ISO_8601_Datetime = string;
@@ -44,14 +44,12 @@ type Response = {
 };
 
 const usePostsQuery = ( siteId?: number, params: PostsRequestParams = {}, queryOptions = {} ) => {
-	return useQuery(
-		[ 'sites', siteId, 'posts', params ],
-		(): Promise< Response > => wpcom.req.get( `/sites/${ siteId }/posts`, params ),
-		{
-			enabled: !! siteId,
-			...queryOptions,
-		}
-	);
+	return useQuery( {
+		queryKey: [ 'sites', siteId, 'posts', params ],
+		queryFn: (): Promise< Response > => wpcom.req.get( `/sites/${ siteId }/posts`, params ),
+		enabled: !! siteId,
+		...queryOptions,
+	} );
 };
 
 export default usePostsQuery;

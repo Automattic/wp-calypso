@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { INSTALL_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
@@ -9,6 +8,7 @@ import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-plugin';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {

@@ -58,6 +58,7 @@ const SetupForm = ( {
 }: SetupFormProps ) => {
 	const { __ } = useI18n();
 	const usesSite = !! useSiteSlugParam();
+	const isTitleEmpty = siteTitle.trim().length === 0;
 
 	const imageFileToBase64 = ( file: Blob ) => {
 		const reader = new FileReader();
@@ -92,6 +93,8 @@ const SetupForm = ( {
 					value={ siteTitle }
 					onChange={ ( value ) => setComponentSiteTitle( value ) }
 					placeholder={ translatedText?.titlePlaceholder || __( 'My Site Name' ) }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus
 				/>
 				{ invalidSiteTitle && (
 					<FormInputValidation
@@ -119,7 +122,11 @@ const SetupForm = ( {
 				/>
 			</FormFieldset>
 			{ children }
-			<Button className="setup-form__submit" disabled={ isLoading } type="submit">
+			<Button
+				className={ `setup-form__submit ${ isTitleEmpty && 'disabled' }` }
+				disabled={ isLoading }
+				type="submit"
+			>
 				{ isLoading ? __( 'Loading' ) : translatedText?.buttonText ?? __( 'Continue' ) }
 			</Button>
 			{ isSubmitError && (

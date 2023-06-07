@@ -26,6 +26,7 @@ const PatternRenderer = ( {
 	return (
 		<BlockRendererContainer
 			styles={ pattern?.styles ?? [] }
+			scripts={ pattern?.scripts ?? '' }
 			viewportWidth={ viewportWidth }
 			viewportHeight={ viewportHeight }
 			maxHeight={ maxHeight }

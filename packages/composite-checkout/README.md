@@ -126,7 +126,7 @@ It has the following props.
 - `onPaymentMethodChanged?: (method: string) => void`. A function to call when the active payment method is changed. The argument will be the method's id.
 - `paymentMethods: object[]`. An array of [Payment Method objects](#payment-methods). Can be disabled by [useTogglePaymentMethod](#useTogglePaymentMethod).
 - `paymentProcessors: object`. A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
-- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to [`.LOADING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
+- `isLoading?: boolean`. If set and true, the form will be replaced with a [loading placeholder](#LoadingContent) and the form status will be set to [`.LOADING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
 - `isValidating?: boolean`. If set and true, the form status will be set to [`.VALIDATING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
 - `redirectToUrl?: (url: string) => void`. Will be used by [useTransactionStatus](#useTransactionStatus) if it needs to redirect. If not set, it will change `window.location.href`.
 - `initiallySelectedPaymentMethodId?: string | null`. If set, is used to preselect a payment method on first load or when the `paymentMethods` array changes. Default is `null`, which yields no initial selection. To change the selection in code, see the [`usePaymentMethodId`](#usePaymentMethodId) hook. If a disabled payment method is chosen, it will appear that no payment method is selected.
@@ -205,6 +205,7 @@ Available props:
 
 - `areStepsActive?: boolean`. A boolean you can set to explicitly disable all the steps in the group.
 - `stepAreaHeader?: ReactNode`. A slot for additional components that can be injected at the top of the step group.
+- `loadingContent: ReactNode`. A component that will be displayed while checkout is loading. The default is [LoadingContent](#LoadingContent).
 - `store?: CheckoutStepGroupStore`. A way to inject a data store for the step group created by [createCheckoutStepGroupStore](#createCheckoutStepGroupStore). If not provided, a store will be created automatically.
 
 ### CheckoutSubmitButton
@@ -237,6 +238,10 @@ An enum that holds the values of the [form status](#useFormStatus).
 - `.SUBMITTING`
 - `.VALIDATING`
 - `.COMPLETE`
+
+### LoadingContent
+
+A placeholder used while checkout is initially loading (when [FormStatus](#FormStatus) is `LOADING`). Can be replaced using the `loadingContent` prop of [CheckoutStepGroup](#CheckoutStepGroup).
 
 ### MainContentWrapper
 

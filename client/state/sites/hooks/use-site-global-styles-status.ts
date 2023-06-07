@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 export type GlobalStylesStatus = {
@@ -37,14 +37,12 @@ export const getGlobalStylesInfoForSite = ( siteId: number | null ): GlobalStyle
 };
 
 export function useSiteGlobalStylesStatus( siteId: number ): GlobalStylesStatus {
-	const { data } = useQuery(
-		[ 'globalStylesInfo', siteId ],
-		() => getGlobalStylesInfoForSite( siteId ),
-		{
-			placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
-			refetchOnWindowFocus: false,
-		}
-	);
+	const { data } = useQuery( {
+		queryKey: [ 'globalStylesInfo', siteId ],
+		queryFn: () => getGlobalStylesInfoForSite( siteId ),
+		placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
+		refetchOnWindowFocus: false,
+	} );
 
 	return data ?? DEFAULT_GLOBAL_STYLES_INFO;
 }

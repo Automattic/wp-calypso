@@ -199,6 +199,7 @@
 	text-overflow: clip;
 	vertical-align: middle;
 	color: var(--studio-gray-100);
+	align-items: center;
 	@include break-zoomed-in {
 		width: calc(100% - 120px);
 		margin-inline-start: 8px;
@@ -444,4 +445,17 @@
 		position: relative;
 		left: 4px;
 	}
+}
+
+.fixed-site-column {
+	max-width: 140px !important;
+	min-width: 140px !important;
+}
+
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.is-loading {
+	opacity: 0.5;
 }

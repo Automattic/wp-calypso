@@ -1,10 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
+import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
+import { useComingFromThemeActivationParam } from '../hooks/use-coming-from-theme-activation';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -74,6 +75,7 @@ const pluginBundleFlow: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
+		const comingFromThemeActivation = useComingFromThemeActivationParam();
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -227,6 +229,9 @@ const pluginBundleFlow: Flow = {
 		}
 
 		const goBack = () => {
+			if ( comingFromThemeActivation ) {
+				return exitFlow( `/themes/${ siteSlug }` );
+			}
 			switch ( currentStep ) {
 				case 'businessInfo':
 					return navigate( 'storeAddress' );
