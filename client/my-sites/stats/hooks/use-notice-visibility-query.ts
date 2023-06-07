@@ -1,7 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-export function queryNotices( siteId: number | null ): Promise< any > {
+export type Notices = {
+	new_stats_feedback: boolean;
+	opt_in_new_stats: boolean;
+	opt_out_new_stats: boolean;
+	traffic_page_highlights_module_settings: boolean;
+	traffic_page_settings: boolean;
+};
+
+export function queryNotices( siteId: number | null ): Promise< Notices > {
 	return wpcom.req.get( {
 		method: 'GET',
 		apiNamespace: 'wpcom/v2',
