@@ -56,22 +56,50 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 	const quantity = 1;
 	const dates = cardIndices.map( calculateQueryDate );
 
+<<<<<<< HEAD
 	const { isLoading, isError, subscribersData } = useSubscribersQueries(
 		siteId,
 		period,
 		quantity,
 		dates
 	);
+=======
+<<<<<<< HEAD
+	const isLoading = subscribersQueries.some( ( result ) => result.isLoading );
+	const isError = subscribersQueries.some( ( result ) => result.isError );
+	const subscribersData = subscribersQueries.map( ( result ) => result.data?.data || [] );
+>>>>>>> d97a8b8aa8 (handle errors and loading status separately)
 
 	const overviewCardStats = SubscribersOverviewCardStats( subscribersData );
+=======
+	const subscribersQueries = useSubscribersQueries( siteId, period, quantity, dates );
+>>>>>>> 37a7f330e2 (handle errors and loading status separately)
 
 	return (
+<<<<<<< HEAD
 		<div className="stats-subscribers-overview highlight-cards">
 			{ isLoading && <div>Loading...</div> }
 			{ isError && <div>Error: Failed to load data.</div> }
 			{ ! isLoading && ! isError && (
 				<div className="highlight-cards-list">
 					{ overviewCardStats.map( ( overviewCardStat ) => (
+=======
+		<div className="subscribers-overview highlight-cards">
+			<div className="highlight-cards-list">
+				{ subscribersQueries.map( ( result, index ) => {
+					if ( result.isLoading ) {
+						return <div key={ index }>Loading...</div>;
+					}
+
+					if ( result.isError ) {
+						return <div key={ index }>Error: Failed to load data.</div>;
+					}
+
+					const subscribersData = result.data;
+					const overviewCardStat = SubscribersOverviewCardStats( [ subscribersData ] )[ 0 ];
+
+					return (
+>>>>>>> d97a8b8aa8 (handle errors and loading status separately)
 						<CountComparisonCard
 							key={ overviewCardStat.count }
 							heading={ overviewCardStat.heading }
@@ -79,9 +107,9 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 							showValueTooltip
 							icon={ false }
 						/>
-					) ) }
-				</div>
-			) }
+					);
+				} ) }
+			</div>
 		</div>
 	);
 };
