@@ -136,7 +136,7 @@ $happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 								</a>
 							</li>
 							<li>
-								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/newsletter/intro' ) ); ?>" title="<?php echo esc_attr( __( 'Newsletter', 'happy-blocks' ) ); ?>" tabindex="-1">
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/newsletter' ) ); ?>" title="<?php echo esc_attr( __( 'Newsletter', 'happy-blocks' ) ); ?>" tabindex="-1">
 									<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
 								</a>
 							</li>
@@ -316,7 +316,7 @@ $happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 									</a>
 								</li>
 								<li class="x-menu-grid-item">
-									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/newsletter/intro' ) ); ?>" title="<?php echo esc_attr( __( 'Newsletter', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/newsletter' ) ); ?>" title="<?php echo esc_attr( __( 'Newsletter', 'happy-blocks' ) ); ?>" tabindex="-1">
 										<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
 									</a>
 								</li>
