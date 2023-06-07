@@ -108,9 +108,10 @@ const UniversalNavbarHeader = ( {
 															titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
 															content={ __( 'Newsletter', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl(
-																'//wordpress.com/setup/newsletter/intro',
+																'//wordpress.com/setup/newsletter',
 																locale,
-																isLoggedIn
+																isLoggedIn,
+																true
 															) }
 															type="dropdown"
 															target="_self"
@@ -442,9 +443,10 @@ const UniversalNavbarHeader = ( {
 												titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
 												content={ __( 'Newsletter', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl(
-													'//wordpress.com/setup/newsletter/intro',
+													'//wordpress.com/setup/newsletter',
 													locale,
-													isLoggedIn
+													isLoggedIn,
+													true
 												) }
 												type="menu"
 											/>
