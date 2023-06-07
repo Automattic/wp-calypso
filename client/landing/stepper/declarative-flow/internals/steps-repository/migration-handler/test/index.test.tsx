@@ -3,7 +3,6 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import React from 'react';
 import { Provider } from 'react-redux';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import MigrationHandler from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-handler';
@@ -77,6 +76,8 @@ describe( 'MigrationHandlerStep', () => {
 	} );
 
 	test( 'should not run navigation submit', async () => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		useSourceMigrationStatusQuery.mockImplementation( () => ( {
 			data: {
 				status: 'inactive',
@@ -94,6 +95,8 @@ describe( 'MigrationHandlerStep', () => {
 	} );
 
 	test( 'should run navigation submit', async () => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		useSourceMigrationStatusQuery.mockImplementationOnce( () => ( {
 			data: {
 				status: 'inactive',
@@ -112,6 +115,8 @@ describe( 'MigrationHandlerStep', () => {
 	} );
 
 	test( 'should show non authorized screen', async () => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		useSourceMigrationStatusQuery.mockImplementationOnce( ( sourceIdOrSlug, onErrorCallback ) => {
 			onErrorCallback?.();
 			return { data: {}, isError: true };
