@@ -354,7 +354,6 @@ export default function WPCheckout( {
 								addItemToCart={ addItemToCart }
 								isCartPendingUpdate={ isCartPendingUpdate }
 							/>
-							<JetpackCheckoutSeals />
 							<CheckoutHelpLink />
 							<CheckoutNextSteps responseCart={ responseCart } />
 						</CheckoutSummaryBody>
@@ -505,6 +504,7 @@ export default function WPCheckout( {
 			<CheckoutFormSubmit
 				validateForm={ validateForm }
 				submitButtonHeader={ <SubmitButtonHeader /> }
+				submitButtonFooter={ <JetpackCheckoutSeals /> }
 			/>
 		</CheckoutStepGroup>
 	);
@@ -655,14 +655,6 @@ const JetpackCheckoutSeals = () => {
 				{ translate( '7 day money back guarantee on monthly subscriptions' ) }
 			</>
 		);
-	const moneybackGuaranteeBody =
-		show7DayGuarantee || show14DayGuarantee
-			? translate( 'Try Jetpack risk free with our %(dayCount)s-day money-back guarantee.', {
-					args: {
-						dayCount: show7DayGuarantee ? 7 : 14,
-					},
-			  } )
-			: translate( 'Try Jetpack risk free with our money-back guarantee.' );
 	let moneybackGuaranteeIcon = badgeGenericSrc;
 
 	if ( show7DayGuarantee ) {
@@ -676,29 +668,25 @@ const JetpackCheckoutSeals = () => {
 			<JetpackCheckoutSealsSection>
 				<img src={ moneybackGuaranteeIcon } alt="" />
 
-				<JetpackSealContent>
-					<span>{ moneybackGuaranteeHeader }</span>
-
-					<p>{ moneybackGuaranteeBody }</p>
-				</JetpackSealContent>
+				<JetpackSealText>{ moneybackGuaranteeHeader }</JetpackSealText>
 			</JetpackCheckoutSealsSection>
 
 			<JetpackCheckoutSealsSection>
 				<img src={ badgeSecurity } alt="" />
 
-				<JetpackSealContent>
-					<span>{ translate( 'SSL Secure checkout' ) }</span>
-
-					<p>{ translate( 'Your information is protected by 256-bit SSL encryption.' ) }</p>
-				</JetpackSealContent>
+				<JetpackSealText>{ translate( 'SSL Secure checkout' ) }</JetpackSealText>
 			</JetpackCheckoutSealsSection>
 		</JetpackCheckoutSealsWrapper>
 	);
 };
 
 const JetpackCheckoutSealsWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
-	padding: 0 1.5rem;
-	background: ${ ( props ) => props.theme.colors.surface };
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+
+	padding: 1.5rem 1.5rem 0;
 
 	img {
 		margin-right: 0.75rem;
@@ -709,26 +697,6 @@ const JetpackCheckoutSealsWrapper = styled.div< React.HTMLAttributes< HTMLDivEle
 
 		line-height: 1.12;
 	}
-
-	p {
-		font-size: 0.875rem;
-		font-weight: 500;
-
-		line-height: 1.29;
-		margin-top: 0.35rem;
-	}
-
-	@media ( min-width: 660px ) {
-		padding-top: 2rem;
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		border-bottom: none;
-	}
-
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding-left: 0;
-		background: none;
-		border: none;
-	}
 `;
 
 const JetpackCheckoutSealsSection = styled.div< React.HTMLAttributes< HTMLDivElement > >`
@@ -738,7 +706,7 @@ const JetpackCheckoutSealsSection = styled.div< React.HTMLAttributes< HTMLDivEle
 	color: ${ ( props ) => props.theme.colors.textColor };
 `;
 
-const JetpackSealContent = styled.div`
+const JetpackSealText = styled.span`
 	padding: 0.1875rem 0 0 0;
 `;
 
