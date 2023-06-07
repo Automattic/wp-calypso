@@ -558,7 +558,6 @@ export class LoginForm extends Component {
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
-
 		const isFormFilled =
 			this.state.usernameOrEmail.trim().length === 0 || this.state.password.trim().length === 0;
 		const isSubmitButtonDisabled = isWoo && ! isPartnerSignup ? isFormFilled : isFormDisabled;
