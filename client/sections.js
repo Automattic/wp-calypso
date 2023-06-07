@@ -394,7 +394,7 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [ '/read/subscriptions' ],
-		module: 'calypso/reader/subscriptions',
+		module: 'calypso/reader/site-subscriptions-manager',
 		group: 'reader',
 	},
 	{
