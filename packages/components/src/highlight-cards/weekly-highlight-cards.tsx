@@ -38,11 +38,15 @@ type WeeklyHighlightCardsProps = {
 	onClickVisitors: ( event: MouseEvent ) => void;
 	onTogglePeriod: ( period: string ) => void;
 	currentPeriod: string;
+	onSettingsTooltipDismiss: () => void;
+	showSettingsTooltip: boolean;
 };
 
 type HighlightCardsSettingsProps = {
 	onTogglePeriod: ( period: string ) => void;
 	currentPeriod: string;
+	onTooltipDismiss: () => void;
+	showTooltip: boolean;
 };
 
 export const PAST_SEVEN_DAYS = 'past_seven_days';
@@ -53,30 +57,20 @@ export const BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS = 'between_past_thirty_one_a
 const HighlightCardsSettings = function ( {
 	currentPeriod,
 	onTogglePeriod,
+	onTooltipDismiss,
+	showTooltip = false,
 }: HighlightCardsSettingsProps ) {
 	const translate = useTranslate();
 
-	// @TODO: Fetch the state from API to determine whether showing the settings tooltip.
-	const showSettingsTooltip =
-		sessionStorage.getItem( 'jp-stats-hide-traffic-highlights-tooltip' ) === '1' ? false : true;
-
 	const settingsActionRef = useRef( null );
-	const [ isSettingsTooltipVisible, setSettingsTooltipVisible ] = useState( showSettingsTooltip );
 	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
 
-	// @TODO: Update the state to the API endpoint when users dismiss the settings tooltip.
-	const dismissSettingsTooltip = useCallback( () => {
-		sessionStorage.setItem( 'jp-stats-hide-traffic-highlights-tooltip', '1' );
-		setSettingsTooltipVisible( false );
-	}, [] );
-
-	// @TODO: Set the popover to disappear when the users click outside of the popover.
 	const togglePopoverMenu = useCallback( () => {
-		dismissSettingsTooltip();
+		onTooltipDismiss();
 		setPopoverVisible( ( isVisible ) => {
 			return ! isVisible;
 		} );
-	}, [ dismissSettingsTooltip ] );
+	}, [ onTooltipDismiss ] );
 
 	return (
 		<div className="highlight-cards-heading__settings">
@@ -89,7 +83,7 @@ const HighlightCardsSettings = function ( {
 			</button>
 			<Popover
 				className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
-				isVisible={ isSettingsTooltipVisible }
+				isVisible={ showTooltip }
 				position="bottom left"
 				context={ settingsActionRef.current }
 			>
@@ -97,13 +91,7 @@ const HighlightCardsSettings = function ( {
 					<p>
 						{ translate( 'You can now tailor your site highlights by adjusting the time range.' ) }
 					</p>
-					<button
-						onClick={ () => {
-							dismissSettingsTooltip();
-						} }
-					>
-						{ translate( 'Got it' ) }
-					</button>
+					<button onClick={ onTooltipDismiss }>{ translate( 'Got it' ) }</button>
 				</div>
 			</Popover>
 			<Popover
@@ -145,6 +133,8 @@ export default function WeeklyHighlightCards( {
 	previousCounts,
 	showValueTooltip,
 	currentPeriod,
+	onSettingsTooltipDismiss,
+	showSettingsTooltip,
 }: WeeklyHighlightCardsProps ) {
 	const translate = useTranslate();
 
@@ -219,6 +209,8 @@ export default function WeeklyHighlightCards( {
 					<HighlightCardsSettings
 						currentPeriod={ currentPeriod }
 						onTogglePeriod={ onTogglePeriod }
+						onTooltipDismiss={ onSettingsTooltipDismiss }
+						showTooltip={ showSettingsTooltip }
 					/>
 				) }
 			</h3>
