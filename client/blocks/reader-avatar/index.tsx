@@ -46,7 +46,7 @@ const ReaderAvatar = ( {
 	const safeSiteIcon = safeImageUrl( siteIcon );
 	const safeFeedIcon = safeImageUrl(
 		// don't show the default favicon for some sites
-		feedIcon?.endsWith( 'wp.com/i/buttonw-com.png' ) ? undefined : feedIcon
+		feedIcon?.endsWith( 'wp.com/i/buttonw-com.png' ) ? null : feedIcon
 	);
 
 	if ( safeSiteIcon ) {
