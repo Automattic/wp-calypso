@@ -1,5 +1,6 @@
 import { CircularProgressBar } from '@automattic/components';
-import { Launchpad } from '@automattic/launchpad';
+import { useLaunchpad } from '@automattic/data-stores';
+import { Launchpad, Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -7,8 +8,18 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const LaunchpadKeepBuilding = ( { siteSlug } ) => {
+interface LaunchpadKeepBuildingProps {
+	siteSlug: string;
+}
+
+const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ) => {
 	const translate = useTranslate();
+	const {
+		data: { checklist },
+	} = useLaunchpad( siteSlug );
+
+	const numberOfSteps = checklist?.length || 0;
+	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 
 	return (
 		<div className="launchpad-keep-building">
@@ -20,8 +31,8 @@ const LaunchpadKeepBuilding = ( { siteSlug } ) => {
 					<CircularProgressBar
 						size={ 40 }
 						enableDesktopScaling
-						currentStep={ 2 }
-						numberOfSteps={ 5 }
+						numberOfSteps={ numberOfSteps }
+						currentStep={ completedSteps }
 					/>
 				</div>
 			</div>
