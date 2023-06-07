@@ -1,3 +1,4 @@
+// Feel free to adjust the type, if you find out a discrepancy between what the `/read/feed/${ encodeURIComponent( action.payload.ID ) }` endpoint returns and the type definition below
 export type Feed = {
 	URL: string;
 	blog_ID: number;
