@@ -59,11 +59,11 @@ export default function HighlightsSection( {
 
 	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
 		siteId,
-		'traffic_page_settings'
+		'traffic_page_highlights_module_settings'
 	);
 	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
 		siteId,
-		'traffic_page_settings'
+		'traffic_page_highlights_module_settings'
 	);
 	const [ settingsTooltipDismissed, setSettingsTooltipDismissed ] = useState( false );
 
