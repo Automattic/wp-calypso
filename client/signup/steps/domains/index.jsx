@@ -604,6 +604,7 @@ class DomainsStep extends Component {
 						showHeader={ false }
 						onTransfer={ this.handleAddTransfer }
 						onConnect={ this.onUseMyDomainConnect }
+						onSkip={ () => this.handleSkip( undefined, false ) }
 					/>
 				</CalypsoShoppingCartProvider>
 			</div>
