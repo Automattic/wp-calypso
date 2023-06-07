@@ -203,11 +203,7 @@ class StatsNavigation extends Component {
 							context={ this.settingsActionRef.current }
 						>
 							<div className="highlight-card-tooltip-content">
-								<p>
-									{ translate(
-										'You can now tailor your site highlights by adjusting the time range.'
-									) }
-								</p>
+								<p>{ translate( 'Here’s where you can find all your Jetpack Stats settings.' ) }</p>
 								<button onClick={ this.onTooltipDismiss }>{ translate( 'Got it' ) }</button>
 							</div>
 						</Popover>
