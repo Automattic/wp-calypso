@@ -146,7 +146,7 @@ class StatsNavigation extends Component {
 			'stats-navigation--modernized': ! isLegacy,
 		} );
 
-		const isHighlightsSettingsEnabled = config.isEnabled( 'stats/module-settings' );
+		const isModuleSettingsEnabled = config.isEnabled( 'stats/module-settings' );
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
@@ -185,7 +185,7 @@ class StatsNavigation extends Component {
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 
-				{ isHighlightsSettingsEnabled && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
+				{ isModuleSettingsEnabled && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
 					<div className="page-modules-settings">
 						<button
 							className="page-modules-settings-action"
