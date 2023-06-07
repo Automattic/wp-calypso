@@ -13,7 +13,6 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import wp from 'calypso/lib/wp';
 import PlansComparison, {
@@ -150,42 +149,30 @@ export class PlansStep extends Component {
 		return (
 			<div>
 				{ errorDisplay }
-				<ProvideExperimentData
-					name="calypso_wpcom_onboarding_plans_hide_free_202305"
-					options={ { isEligible: 'onboarding' === flowName && !! domainName } }
-				>
-					{ ( isLoading, experimentAssignment ) => {
-						if ( isLoading ) {
-							return this.renderLoading();
-						}
-						return (
-							<PlansFeaturesMain
-								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-								showFAQ={ this.state.isDesktop }
-								hideFreePlan={ hideFreePlan || 'treatment' === experimentAssignment?.variationName }
-								hideEcommercePlan={ this.shouldHideEcommercePlan() }
-								isInSignup={ true }
-								isLaunchPage={ isLaunchPage }
-								intervalType={ intervalType }
-								onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
-								domainName={ domainName }
-								customerType={ this.getCustomerType() }
-								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-								plansWithScroll={ this.state.isDesktop }
-								planTypes={ planTypes }
-								flowName={ flowName }
-								isAllPaidPlansShown={ true }
-								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-								isReskinned={ isReskinned }
-								hidePremiumPlan={ this.props.hidePremiumPlan }
-								hidePersonalPlan={ this.props.hidePersonalPlan }
-								hideEnterprisePlan={ this.props.hideEnterprisePlan }
-								replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
-							/>
-						);
-					} }
-				</ProvideExperimentData>
+				<PlansFeaturesMain
+					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					showFAQ={ this.state.isDesktop }
+					hideFreePlan={ hideFreePlan }
+					hideEcommercePlan={ this.shouldHideEcommercePlan() }
+					isInSignup={ true }
+					isLaunchPage={ isLaunchPage }
+					intervalType={ intervalType }
+					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
+					domainName={ domainName }
+					customerType={ this.getCustomerType() }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					plansWithScroll={ this.state.isDesktop }
+					planTypes={ planTypes }
+					flowName={ flowName }
+					isAllPaidPlansShown={ true }
+					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+					isReskinned={ isReskinned }
+					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hidePersonalPlan={ this.props.hidePersonalPlan }
+					hideEnterprisePlan={ this.props.hideEnterprisePlan }
+					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
+				/>
 			</div>
 		);
 	}
