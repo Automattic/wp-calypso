@@ -8,7 +8,7 @@ export function dismissNotice(
 	siteId: number | null,
 	noticeId: keyof Notices,
 	status: Status,
-	postponedFor: number | null = null
+	postponedFor = 0
 ): Promise< any > {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
@@ -25,7 +25,7 @@ export default function useNoticeVisibilityMutation(
 	siteId: number | null,
 	noticeId: keyof Notices,
 	status: Status = 'dismissed',
-	postponedFor: number | null = null
+	postponedFor = 0
 ) {
 	return useMutation( {
 		mutationKey: [ 'stats', 'notices-visibility', siteId, noticeId ],
