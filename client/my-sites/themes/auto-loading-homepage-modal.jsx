@@ -154,8 +154,10 @@ export class AutoLoadingHomepageModal extends Component {
 					<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
 				</Button>
 				<div className="themes__theme-preview-wrapper">
-					<h1>{ translate( 'Activate this theme' ) }</h1>
-					<p>
+					<h1 className="auto-loading-homepage-modal__heading">
+						{ translate( 'Activate this theme' ) }
+					</h1>
+					<p className="auto-loading-homepage-modal__description">
 						{ translate(
 							'After activation, this layout will replace your existing homepage. But you can still access your old content. {{a}}Learn more{{/a}}.',
 							{
@@ -172,6 +174,7 @@ export class AutoLoadingHomepageModal extends Component {
 						) }
 					</p>
 					<CheckboxControl
+						className="auto-loading-homepage-modal__checkbox"
 						label={ translate(
 							'I understand that this layout will replace my existing homepage.'
 						) }
