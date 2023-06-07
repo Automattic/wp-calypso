@@ -24,29 +24,39 @@ function calculateQueryDate( daysToSubtract: number ) {
 }
 
 // calculate the stats to display in the cards
+<<<<<<< HEAD
 function SubscribersOverviewCardStats( subscribersData: SubscribersData[] ) {
 	const getCount = ( index: number ) => {
 		return subscribersData[ index ]?.data?.[ 0 ]?.subscribers || 0;
+=======
+function SubscribersOverviewCardStats( subscribersData: SubscribersData, index: number ) {
+	const getCount = () => {
+		return subscribersData?.data[ 0 ]?.subscribers || 0;
+>>>>>>> fde9323cdb (use a switch for headings)
 	};
 
-	const overviewCardStats = [
-		{
-			heading: translate( 'Today' ),
-			count: getCount( 0 ),
-		},
-		{
-			heading: translate( '30 days ago' ),
-			count: getCount( 1 ),
-		},
-		{
-			heading: translate( '60 days ago' ),
-			count: getCount( 2 ),
-		},
-		{
-			heading: translate( '90 days ago' ),
-			count: getCount( 3 ),
-		},
-	];
+	let heading;
+	switch ( index ) {
+		case 0:
+			heading = translate( 'Today' );
+			break;
+		case 1:
+			heading = translate( '30 days ago' );
+			break;
+		case 2:
+			heading = translate( '60 days ago' );
+			break;
+		case 3:
+			heading = translate( '90 days ago' );
+			break;
+		default:
+			heading = '';
+	}
+
+	const overviewCardStat = {
+		heading,
+		count: getCount(),
+	};
 
 	return overviewCardStats;
 }
@@ -56,6 +66,7 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 	const quantity = 1;
 	const dates = cardIndices.map( calculateQueryDate );
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	const { isLoading, isError, subscribersData } = useSubscribersQueries(
 		siteId,
@@ -72,8 +83,9 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 
 	const overviewCardStats = SubscribersOverviewCardStats( subscribersData );
 =======
+=======
+>>>>>>> fde9323cdb (use a switch for headings)
 	const subscribersQueries = useSubscribersQueries( siteId, period, quantity, dates );
->>>>>>> 37a7f330e2 (handle errors and loading status separately)
 
 	return (
 <<<<<<< HEAD
