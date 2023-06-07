@@ -404,6 +404,7 @@ export class JetpackAuthorize extends Component {
 				'woocommerce-services-auto-authorize',
 				'woocommerce-setup-wizard',
 				'woocommerce-onboarding',
+				'woocommerce-core-profiler',
 			].includes( from ) || this.getWooDnaConfig( props ).isWooDnaFlow()
 		);
 	};
