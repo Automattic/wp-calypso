@@ -158,38 +158,33 @@ export class LoginForm extends Component {
 	};
 
 	isFullView() {
-		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking, isWooCoreProfilerFlow } =
-			this.props;
+		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
 		return (
 			socialAccountIsLinking ||
 			( hasAccountTypeLoaded && isRegularAccount( accountType ) ) ||
-			( this.props.isWoo && ! this.props.isPartnerSignup ) ||
-			isWooCoreProfilerFlow
+			( this.props.isWoo && ! this.props.isPartnerSignup )
 		);
 	}
 
 	isPasswordView() {
-		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking, isWooCoreProfilerFlow } =
-			this.props;
+		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
 		return (
 			! socialAccountIsLinking &&
 			hasAccountTypeLoaded &&
 			isRegularAccount( accountType ) &&
-			! ( this.props.isWoo && ! this.props.isPartnerSignup ) &&
-			! isWooCoreProfilerFlow
+			! ( this.props.isWoo && ! this.props.isPartnerSignup )
 		);
 	}
 
 	isUsernameOrEmailView() {
-		const { hasAccountTypeLoaded, socialAccountIsLinking, isWooCoreProfilerFlow } = this.props;
+		const { hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
 		return (
 			! socialAccountIsLinking &&
 			! hasAccountTypeLoaded &&
-			! ( this.props.isWoo && ! this.props.isPartnerSignup ) &&
-			! isWooCoreProfilerFlow
+			! ( this.props.isWoo && ! this.props.isPartnerSignup )
 		);
 	}
 
@@ -498,11 +493,7 @@ export class LoginForm extends Component {
 	}
 
 	renderUsernameorEmailLabel() {
-		if (
-			this.props.isP2Login ||
-			( this.props.isWoo && ! this.props.isPartnerSignup ) ||
-			this.props.isWooCoreProfilerFlow
-		) {
+		if ( this.props.isP2Login || ( this.props.isWoo && ! this.props.isPartnerSignup ) ) {
 			return this.props.translate( 'Your email address or username' );
 		}
 
@@ -564,15 +555,13 @@ export class LoginForm extends Component {
 			showSocialLoginFormOnly,
 			isWoo,
 			isPartnerSignup,
-			isWooCoreProfilerFlow,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
 		const isFormFilled =
 			this.state.usernameOrEmail.trim().length === 0 || this.state.password.trim().length === 0;
-		const isSubmitButtonDisabled =
-			( isWoo && ! isPartnerSignup ) || isWooCoreProfilerFlow ? isFormFilled : isFormDisabled;
+		const isSubmitButtonDisabled = isWoo && ! isPartnerSignup ? isFormFilled : isFormDisabled;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
@@ -741,8 +730,7 @@ export class LoginForm extends Component {
 					</div>
 
 					<p className="login__form-terms">{ socialToS }</p>
-					{ ( ( isWoo && ! isPartnerSignup ) || isWooCoreProfilerFlow ) &&
-						this.renderLostPasswordLink() }
+					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isSubmitButtonDisabled }>
 							{ this.getLoginButtonText() }
@@ -774,7 +762,7 @@ export class LoginForm extends Component {
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-							shouldRenderToS={ ( this.props.isWoo && ! isPartnerSignup ) || isWooCoreProfilerFlow }
+							shouldRenderToS={ this.props.isWoo && ! isPartnerSignup }
 						/>
 					</Fragment>
 				) }
@@ -804,10 +792,10 @@ export default connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-			isWooCoreProfilerFlow:
-				'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-			isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+			isWoo:
+				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
+				'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
 			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
