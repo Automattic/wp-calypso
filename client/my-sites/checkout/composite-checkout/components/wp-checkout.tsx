@@ -354,7 +354,6 @@ export default function WPCheckout( {
 								addItemToCart={ addItemToCart }
 								isCartPendingUpdate={ isCartPendingUpdate }
 							/>
-							<JetpackCheckoutSeals />
 							<CheckoutHelpLink />
 							<CheckoutNextSteps responseCart={ responseCart } />
 						</CheckoutSummaryBody>
