@@ -15,5 +15,7 @@ export default function useNoticeVisibilityQuery( siteId: number | null, noticeI
 		queryFn: () => queryNotices( siteId ),
 		select: ( payload: Record< string, boolean > ): boolean => !! payload?.[ noticeId ],
 		staleTime: 1000 * 60 * 1, // 1 minutes
+		retry: 1,
+		retryDelay: 3 * 1000, // 3 seconds
 	} );
 }

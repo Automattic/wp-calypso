@@ -24,5 +24,7 @@ export default function useNoticeVisibilityMutation(
 	return useMutation( {
 		mutationKey: [ 'stats', 'notices-visibility', siteId, noticeId ],
 		mutationFn: () => dismissNotice( siteId, noticeId, status ),
+		retry: 1,
+		retryDelay: 3 * 1000, // 3 seconds
 	} );
 }
