@@ -16,9 +16,8 @@ export interface MediaFileProps extends Omit< ProxiedImageProps, 'placeholder' >
 	component: RenderedComponent;
 	proxiedComponent?: RenderedComponent;
 
-	onLoad: () => any;
-	useProxy: boolean;
-	dispatch: any;
+	onLoad?: () => void;
+	useProxy?: boolean;
 }
 
 const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
@@ -29,8 +28,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	useProxy = false,
 	placeholder = null,
 	maxSize,
-	dispatch,
-	component: Component,
+	component: Component = 'img',
 	proxiedComponent,
 	...rest
 } ) {
@@ -52,18 +50,13 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	return <Component src={ src } { ...rest } />;
 };
 
-MediaFile.defaultProps = {
-	placeholder: null,
-	component: 'img',
-};
-
 export default connect( ( state: IAppState, { src }: Pick< MediaFileProps, 'src' > ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state ) as string;
 	const isAtomic = !! isSiteAutomatedTransfer( state, siteId as number );
 	const isPrivate = !! isPrivateSite( state, siteId ?? 0 );
 	const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
-	const useProxy = ( isAtomic && isPrivate && filePath && isRelativeToSiteRoot ) as boolean;
+	const useProxy = Boolean( isAtomic && isPrivate && filePath && isRelativeToSiteRoot );
 
 	return {
 		query,
