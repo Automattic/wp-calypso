@@ -103,19 +103,23 @@ export function HelpCenterGPT() {
 	} );
 
 	const doThumbsUp = ( source: string ) => {
-		setFeedbackGiven( true );
-		recordTracksEvent( 'calypso_helpcenter_gpt_response_thumbs_up', {
-			location: 'help-center',
-			answer_source: source,
-		} );
+		return () => {
+			setFeedbackGiven( true );
+			recordTracksEvent( 'calypso_helpcenter_gpt_response_thumbs_up', {
+				location: 'help-center',
+				answer_source: source,
+			} );
+		};
 	};
 
 	const doThumbsDown = ( source: string ) => {
-		setFeedbackGiven( true );
-		recordTracksEvent( 'calypso_helpcenter_gpt_response_thumbs_down', {
-			location: 'help-center',
-			answer_source: source,
-		} );
+		return () => {
+			setFeedbackGiven( true );
+			recordTracksEvent( 'calypso_helpcenter_gpt_response_thumbs_down', {
+				location: 'help-center',
+				answer_source: source,
+			} );
+		};
 	};
 
 	return (
@@ -178,12 +182,8 @@ export function HelpCenterGPT() {
 										</div>
 									) : (
 										<>
-											<Button onClick={ () => doThumbsUp( data?.source ?? 'sitebot' ) }>
-												&#128077;
-											</Button>
-											<Button onClick={ () => doThumbsDown( data?.source ?? 'sitebot' ) }>
-												&#128078;
-											</Button>
+											<Button onClick={ doThumbsUp( data?.source ) }>&#128077;</Button>
+											<Button onClick={ doThumbsDown( data?.source ) }>&#128078;</Button>
 										</>
 									) }
 								</div>
