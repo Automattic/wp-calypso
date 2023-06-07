@@ -9,11 +9,11 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
+import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
-import ImportWithSiteAddressStep from './internals/steps-repository/import-with-site-address';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -23,7 +23,7 @@ const importHostedSiteFlow: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'import', component: ImportWithSiteAddressStep },
+			{ slug: 'import', component: Import },
 			{ slug: 'importReady', component: ImportReady },
 			{ slug: 'importReadyNot', component: ImportReadyNot },
 			{ slug: 'importReadyWpcom', component: ImportReadyWpcom },
