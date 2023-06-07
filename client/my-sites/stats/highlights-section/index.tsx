@@ -5,7 +5,7 @@ import {
 	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
 } from '@automattic/components';
 import { useEffect, useMemo, useState } from 'react';
-import wpcom from 'calypso/lib/wp';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';
@@ -61,20 +61,15 @@ export default function HighlightsSection( {
 		siteId,
 		'traffic_page_settings'
 	);
+	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
+		siteId,
+		'traffic_page_settings'
+	);
 	const [ settingsTooltipDismissed, setSettingsTooltipDismissed ] = useState( false );
 
 	const dismissSettingsTooltip = () => {
 		setSettingsTooltipDismissed( true );
-		return wpcom.req
-			.post( {
-				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
-				body: {
-					id: 'traffic_page_settings',
-					status: 'dismissed',
-				},
-			} )
-			.finally( refetchNotices );
+		return mutateNoticeVisbilityAsync().finally( refetchNotices );
 	};
 
 	return (
