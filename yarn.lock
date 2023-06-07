@@ -1826,6 +1826,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@popperjs/core": ^2.10.2
     "@sentry/browser": ^7.54.0
+    "@tanstack/eslint-plugin-query": ^4.29.8
     "@tanstack/react-query": ^4.29.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3

@@ -124,6 +124,7 @@
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-jest": "workspace:^",
+		"@tanstack/eslint-plugin-query": "^4.29.8",
 		"@testing-library/jest-dom": "^5.16.2",
 		"@testing-library/react": "^12.1.3",
 		"@types/node": "^18.11.18",
