@@ -3,6 +3,10 @@
 @import "jetpack-connect/colors.scss";
 
 .blog.blogger-intent {
+	.step-container__header {
+		margin: 0;
+	}
+
 	.wordpress-logo {
 		position: absolute;
 		inset-block-start: 20px;
@@ -16,7 +20,7 @@
 	}
 
 	.step-container__content {
-		min-height: calc(100vh - 100px);
+		min-height: calc(100vh - 170px);
 	}
 
 	.blogger-intent__container {
@@ -66,10 +70,12 @@
 			align-items: center;
 			color: var(--color-neutral-100);
 			margin-top: 24px;
-
+			margin-right: 40px;
 			margin-left: 5px;
+
 			@include break-mobile {
 				margin-left: 0;
+				margin-right: 0;
 			}
 
 			.blogger-intent__icon {
