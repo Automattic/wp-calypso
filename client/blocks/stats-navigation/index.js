@@ -39,21 +39,19 @@ class StatsNavigation extends Component {
 
 	state = {
 		isPageSettingsPopoverVisible: false,
-		pageModules: {
-			// Only traffic page modules are supported for now.
-			traffic: Object.assign(
-				...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
-					return {
-						[ module.key ]: module.defaultValue,
-					};
-				} )
-			),
-		},
+		// Only traffic page modules are supported for now.
+		pageModules: Object.assign(
+			...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
+				return {
+					[ module.key ]: module.defaultValue,
+				};
+			} )
+		),
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( prevState.pageModules !== nextProps.moduleToggles ) {
-			return { pageModules: nextProps.moduleToggles };
+		if ( prevState.pageModules !== nextProps.pageModuleToggles ) {
+			return { pageModules: nextProps.pageModuleToggles };
 		}
 
 		return null;
@@ -212,7 +210,7 @@ export default connect(
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
 			siteId,
-			moduleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
+			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
