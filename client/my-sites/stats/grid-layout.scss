@@ -195,6 +195,7 @@ $grid-vertical-gutters: 32px;
 		10
 	);
 
+	// @TODO: Refactor hidden modules with a more flexible layout (e.g., Flexbox) to fit mass configuration to moduels in the future.
 	// Hide the Authors module.
 	&.stats__module-list--traffic-no-authors {
 		// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,

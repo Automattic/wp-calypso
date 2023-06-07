@@ -206,6 +206,7 @@ class StatsSite extends Component {
 			'stats__module-list',
 			'stats__module-list--traffic',
 			'stats__module--unified',
+			// @TODO: Refactor hidden modules with a more flexible layout (e.g., Flexbox) to fit mass configuration to moduels in the future.
 			{
 				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
 				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
