@@ -191,6 +191,7 @@ const PatternLargePreview = ( {
 			className="pattern-large-preview"
 			isShowDeviceSwitcherToolbar
 			isShowFrameBorder
+			isFixedViewport
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );

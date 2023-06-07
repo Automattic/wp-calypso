@@ -11,6 +11,7 @@ interface Props {
 	defaultDevice?: Device;
 	isShowDeviceSwitcherToolbar?: boolean;
 	isShowFrameBorder?: boolean;
+	isFixedViewport?: boolean;
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
 }
@@ -21,6 +22,7 @@ const DeviceSwitcher = ( {
 	defaultDevice = DEVICE_TYPES.COMPUTER,
 	isShowDeviceSwitcherToolbar,
 	isShowFrameBorder,
+	isFixedViewport,
 	frameRef,
 	onDeviceChange,
 }: Props ) => {
@@ -34,6 +36,7 @@ const DeviceSwitcher = ( {
 	return (
 		<div
 			className={ classnames( className, 'device-switcher__container', {
+				'device-switcher__container--fixed-viewport': isFixedViewport,
 				'device-switcher__container--frame-bordered': isShowFrameBorder,
 				'device-switcher__container--is-computer': device === 'computer',
 				'device-switcher__container--is-tablet': device === 'tablet',
