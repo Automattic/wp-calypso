@@ -82,7 +82,6 @@ export const DotPager = ( {
 	className = '',
 	onPageSelected = null,
 	isClickEnabled = false,
-	rotateTime = 0,
 	...props
 } ) => {
 	// Filter out the empty children
@@ -97,16 +96,6 @@ export const DotPager = ( {
 			setCurrentPage( numPages - 1 );
 		}
 	}, [ numPages, currentPage ] );
-
-	useEffect( () => {
-		if ( rotateTime > 0 && numPages > 1 ) {
-			const timerId = setTimeout( () => {
-				setCurrentPage( ( currentPage + 1 ) % numPages );
-			}, rotateTime );
-
-			return () => clearTimeout( timerId );
-		}
-	}, [ currentPage, numPages, rotateTime ] );
 
 	const handleSelectPage = ( index ) => {
 		setCurrentPage( index );
