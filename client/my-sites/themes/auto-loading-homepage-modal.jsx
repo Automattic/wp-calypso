@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog, Gridicon, Spinner } from '@automattic/components';
+import { Dialog, Gridicon, Spinner, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { CheckboxControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -193,6 +194,37 @@ export class AutoLoadingHomepageModal extends Component {
 					eventProperties={ { theme: themeId } }
 				/>
 				<div className="themes__theme-preview-wrapper">
+					<h1>{ translate( 'Activate this theme' ) }</h1>
+					<p>
+						{ translate(
+							'After activation, this layout will replace your existing homepage. But you can still access your old content. {{a}}Learn more{{/a}}.',
+							{
+								components: {
+									a: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/support/themes/changing-themes' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+					<CheckboxControl
+						label={ translate(
+							'I understand that this layout will replace my existing homepage.'
+						) }
+						// TODO:
+						checked={ true }
+						onChange={ () => {} }
+					/>
+					<div className="auto-loading-homepage-modal__actions">
+						<Button primary onClick={ this.closeModalHandler( 'activeTheme' ) }>
+							{ translate( 'Activate this theme' ) }
+						</Button>
+					</div>
+
 					<h1>
 						{ translate( 'How would you like to use %(themeName)s?', {
 							args: { themeName },
