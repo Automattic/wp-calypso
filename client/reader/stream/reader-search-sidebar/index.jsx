@@ -39,6 +39,8 @@ const ReaderSearchSidebar = ( { items } ) => {
 			site={ site }
 			url={ site.URL }
 			showLastUpdatedDate={ false }
+			showNotificationSettings={ false }
+			showFollowedOnDate={ false }
 			followSource={ READER_SEARCH_POPULAR_SITES }
 		/>
 	) );

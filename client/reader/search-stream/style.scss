@@ -267,8 +267,7 @@
 }
 
 // Site results
-.search-stream .search-stream__site-results,
-.search-stream .reader-two-column .reader-tag-sidebar-recommended-sites {
+.search-stream .search-stream__site-results {
 	max-width: 265px;
 	min-width: 265px;
 	margin-left: 40px;
@@ -276,6 +275,11 @@
 	.reader-infinite-stream__row-wrapper {
 		border: 0;
 	}
+}
+
+// Site results and Popular sites
+.search-stream .search-stream__site-results,
+.search-stream .reader-two-column .reader-tag-sidebar-recommended-sites {
 
 	.reader-subscription-list-item .follow-button__label,
 	.reader-subscription-list-item__settings-label {
@@ -298,6 +302,10 @@
 	max-width: 185px;
 }
 
+.search-stream__single-column-results .reader-infinite-stream__row-wrapper {
+	margin-top: 20px;
+}
+
 .search-stream__single-column-results .reader-subscription-list-item__options {
 	align-items: flex-end;
 	display: flex;
@@ -309,16 +317,6 @@
 		align-items: flex-start;
 		min-width: 90px;
 	}
-}
-
-// Hide settings on the search page. https://github.com/Automattic/wp-calypso/pull/77845
-.search-stream .reader-site-notification-settings__button {
-	display: none;
-}
-
-// Hide the last updated date for the moment - see https://github.com/Automattic/wp-calypso/issues/15121
-.search-stream__single-column-results .reader-subscription-list-item__timestamp {
-	display: none;
 }
 
 // Custom styling for cards in post results
