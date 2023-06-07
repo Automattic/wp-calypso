@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import ReaderListFollowingItem from 'calypso/reader/stream/reader-list-followed-sites/item';
+import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
+import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import '../style.scss';
 
 function unescape( str ) {
@@ -31,7 +32,17 @@ const ReaderSearchSidebar = ( { items } ) => {
 		.filter( ( site ) => site !== null );
 
 	const popularSitesLinks = sites.map( ( site ) => (
-		<ReaderListFollowingItem key={ site.feed_ID } site={ site } path="/" />
+		<ConnectedReaderSubscriptionListItem
+			key={ site.feed_ID }
+			feedId={ site.feed_ID }
+			siteId={ site.blog_ID }
+			site={ site }
+			url={ site.URL }
+			showLastUpdatedDate={ false }
+			showNotificationSettings={ false }
+			showFollowedOnDate={ false }
+			followSource={ READER_SEARCH_POPULAR_SITES }
+		/>
 	) );
 
 	if ( ! popularSitesLinks.length ) {

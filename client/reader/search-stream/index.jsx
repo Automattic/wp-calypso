@@ -212,7 +212,6 @@ class SearchStream extends React.Component {
 								<SiteResults
 									query={ query }
 									sort={ pickSort( sortOrder ) }
-									showLastUpdatedDate={ false }
 									onReceiveSearchResults={ this.setSearchFeed }
 								/>
 							</div>
@@ -227,7 +226,6 @@ class SearchStream extends React.Component {
 							<SiteResults
 								query={ query }
 								sort={ pickSort( sortOrder ) }
-								showLastUpdatedDate={ true }
 								onReceiveSearchResults={ this.setSearchFeed }
 							/>
 						) }
