@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import Launchpad from '../launchpad';
 import '@testing-library/jest-dom';
-import { Task } from '../types';
+import type { Task } from '../types';
 
 jest.mock( '@automattic/data-stores', () => {
 	const { buildTask } = require( './lib/fixtures' );
@@ -41,6 +41,9 @@ describe( 'Launchpad', () => {
 			render( <Launchpad siteSlug="any site" taskFilter={ filter } /> );
 			const checklistItems = screen.queryAllByRole( 'listitem' );
 			expect( checklistItems.length ).toBe( 1 );
+
+			const taskId = checklistItems[ 0 ].querySelector( 'button' )?.getAttribute( 'data-task' );
+			expect( taskId ).toBe( 'task1' );
 		} );
 	} );
 } );

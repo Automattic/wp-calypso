@@ -1,6 +1,6 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import Checklist from './checklist';
-import { Task } from './types';
+import type { Task } from './types';
 
 export interface LaunchpadProps {
 	siteSlug: string;
