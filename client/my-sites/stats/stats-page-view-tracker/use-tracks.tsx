@@ -11,7 +11,7 @@ import type { ThunkDispatch } from 'redux-thunk';
 const debug = debugFactory( 'calypso:my-sites:stats:StatsPageViewTracker:useTracks' );
 
 const CALYPSO_STATS_PAGE_VIEW_EVENT_NAME = 'calypso_stats_page_view';
-const ODYSSEY_STATS_PAGE_VIEW_EVENT_NAME = 'odyssey_stats_page_view';
+const ODYSSEY_STATS_PAGE_VIEW_EVENT_NAME = 'jetpack_odyssey_stats_page_view';
 
 interface useTracksProps extends StatsPageViewTrackerProps {
 	selectedSiteId: number | null;
