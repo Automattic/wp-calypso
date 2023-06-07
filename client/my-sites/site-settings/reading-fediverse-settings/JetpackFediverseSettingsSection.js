@@ -17,14 +17,12 @@ export const JetpackFediverseSettingsSection = ( { siteId } ) => {
 			<QueryPlugins siteId={ siteId } />
 			<Card className="site-settings__card">
 				<p>
-					{ translate(
-						'The fediverse is a network of social media sites like Mastodon and Pixelfed and Calckey and Peertube and Pleroma, oh my!'
-					) }
+					The fediverse is a network of social media sites like Mastodon and Pixelfed and Calckey
+					and Peertube and Pleroma, oh my!
 				</p>
 				<p>
-					{ translate(
-						'Your site can publish to the same ActivityPub protocol that powers all of them, just install the ActivityPub plugin!:'
-					) }
+					Your site can publish to the same ActivityPub protocol that powers all of them, just
+					install the ActivityPub plugin:
 				</p>
 				<p>
 					{ pluginIsActive ? (
