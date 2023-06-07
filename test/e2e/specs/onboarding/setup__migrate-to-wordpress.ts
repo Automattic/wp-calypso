@@ -13,14 +13,6 @@ describe( DataHelper.createSuiteTitle( 'Move to WordPress.com' ), () => {
 	let page: Page;
 	let startImportFlow: StartImportFlow;
 
-	beforeAll( async () => {
-		page = await browser.newPage();
-		startImportFlow = new StartImportFlow( page, 'migration' );
-
-		const testAccount = new TestAccount( 'defaultUser' );
-		await testAccount.authenticate( page );
-	} );
-
 	/**
 	 * Navigate to site picker page.
 	 *
@@ -30,15 +22,27 @@ describe( DataHelper.createSuiteTitle( 'Move to WordPress.com' ), () => {
 		siteSlug: string,
 		queryStrings: { [ key: string ]: string } = {}
 	) => {
-		it( `Navigate to Site Picker page from ${ siteSlug }`, async () => {
-			await startImportFlow.startMigrate( { from: siteSlug, ...queryStrings } );
+		test( `Navigate to Site Picker page from ${ siteSlug }`, async () => {
+			await startImportFlow.goToSitePickerPage( { from: siteSlug, ...queryStrings } );
 		} );
 	};
+
+	const initializeUser = async ( username: 'defaultUser' | 'atomicUser' = 'defaultUser' ) => {
+		const testAccount = new TestAccount( username );
+		await testAccount.authenticate( page );
+	};
+
+	beforeAll( async () => {
+		page = await browser.newPage();
+		startImportFlow = new StartImportFlow( page, 'migration' );
+
+		await initializeUser( 'defaultUser' );
+	} );
 
 	describe( 'Show the site selector', () => {
 		navigateToSitePicker( 'example.com' );
 
-		it( 'Has the first site to be selected', async () => {
+		test( 'Has the first site to be selected', async () => {
 			await startImportFlow.validateSitePickerHasSite(
 				credentials.testSites?.primary?.url as string
 			);
@@ -48,19 +52,32 @@ describe( DataHelper.createSuiteTitle( 'Move to WordPress.com' ), () => {
 	describe( 'Show an empty site selector with invalid search string', () => {
 		navigateToSitePicker( 'example.com', { search: 'notfound' } );
 
-		it( 'Has the first site to be selected', async () => {
+		test( 'Has the first site to be selected', async () => {
 			await startImportFlow.validateSitePickerHasNoSites();
 		} );
 	} );
 
-	describe( 'Select first element', () => {
+	describe( 'Select first site', () => {
 		navigateToSitePicker( 'example.com' );
 
-		it( 'A modal is shown when the user select the first element', async () => {
-			await startImportFlow.clickButton( 'Select this site' );
-			await page.waitForSelector( 'h1:text("Confirm your choice")' );
+		test( 'A modal is shown when the user select the first element', async () => {
+			await startImportFlow.selectMigrationSite();
 		} );
 	} );
 
-	// p2User
+	describe( 'Select first site and confirm', () => {
+		navigateToSitePicker( 'example.com' );
+
+		test( 'The importer error page is selected when using an invalid start site', async () => {
+			await startImportFlow.selectMigrationSite( true, false );
+		} );
+	} );
+
+	/* describe( 'Select site and confirm', () => {
+		navigateToSitePicker( 'make.wordpress.org' );
+
+		test( 'The importer success page is selected when using a valid start site', async () => {
+			await startImportFlow.selectMigrationSite( true, true );
+		} );
+	} );*/
 } );

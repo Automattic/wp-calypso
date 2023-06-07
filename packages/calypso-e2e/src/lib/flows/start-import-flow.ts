@@ -21,6 +21,7 @@ const selectors = {
 	// Site picker page
 	sitePickerPage: ( url: string ) => `a.components-external-link[href="https://${ url }"]`,
 	sitePickerNoSiteFound: 'h2:has-text("No sites match your search.")',
+	sitePickerConfirmButton: 'button:text("Continue")',
 
 	// Errors
 	analyzeError: ( text: string ) => `:text("${ text }")`,
@@ -80,10 +81,24 @@ export class StartImportFlow {
 	}
 
 	/**
-	 * Validates that we've landed on the 'Pick your destination' page.
+	 * Validates that we've landed on the WordPress importer page.
 	 */
-	async validateSitePickerPage(): Promise< void > {
-		await this.page.waitForURL( /.*setup\/import-focused\/sitePicker.+/ );
+	async validateURLWordPressImporterPage(): Promise< void > {
+		await this.page.waitForURL( /.*setup\/site-setup\/importerWordPress.*/ );
+	}
+
+	/**
+	 * Validates that we've landed on the URL importer page.
+	 */
+	async validateURLImporterPage(): Promise< void > {
+		await this.page.waitForURL( /.*setup\/import-focused\/import\?.*/ );
+	}
+
+	/**
+	 * Validates that we've landed on the URL "not ready" importer page.
+	 */
+	async validateURLImporterReadyNotPage(): Promise< void > {
+		await this.page.waitForURL( /.*setup\/import-focused\/importReadyNot.*/ );
 	}
 
 	/**
@@ -228,21 +243,37 @@ export class StartImportFlow {
 	}
 
 	/**
-	 * Go to first setup page.
-	 *
-	 * @param {Object} queryStrings Key/value pair of additional query to build into into the Calypso URL.
+	 * Go to first migration page.
 	 */
-	async startMigrate( queryStrings: { [ key: string ]: string } = {} ): Promise< void > {
+	async goToSitePickerPage( queryStrings: { [ key: string ]: string } = {} ): Promise< void > {
 		if ( this.framework !== 'migration' ) {
 			return;
 		}
 
 		const route = 'setup/import-focused/sitePicker';
-		console.log( queryStrings, DataHelper.getCalypsoURL( route, queryStrings ) );
 
 		await this.page.goto( DataHelper.getCalypsoURL( route, queryStrings ) );
-		await this.validateSitePickerPage();
-		// await this.page.click( selectors.startImportButton );
+		await this.page.waitForURL( /.*setup\/import-focused\/sitePicker.+/ );
+	}
+
+	/**
+	 * Select the fist site from the list.
+	 */
+	async selectMigrationSite( confirm = false, valid = true ): Promise< void > {
+		await this.clickButton( 'Select this site' );
+		await this.page.waitForSelector( 'h1:text("Confirm your choice")' );
+
+		// Confirm the selection.
+		if ( confirm ) {
+			await this.page.click( selectors.sitePickerConfirmButton );
+
+			if ( valid ) {
+				await this.validateURLWordPressImporterPage();
+			} else {
+				await this.validateURLImporterPage();
+				await this.validateURLImporterReadyNotPage();
+			}
+		}
 	}
 
 	/**
