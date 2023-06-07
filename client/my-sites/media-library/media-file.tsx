@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { mediaURLToProxyConfig } from 'calypso/lib/media/utils';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -18,6 +19,7 @@ export interface MediaFileProps extends Omit< ProxiedImageProps, 'placeholder' >
 
 	onLoad?: () => void;
 	useProxy?: boolean;
+	dispatch?: Dispatch;
 }
 
 const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
@@ -30,6 +32,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	maxSize,
 	component: Component = 'img',
 	proxiedComponent,
+	dispatch, // Destructure to avoid passing to children
 	...rest
 } ) {
 	if ( useProxy ) {
@@ -46,7 +49,6 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 		);
 	}
 
-	/* eslint-disable-next-line jsx-a11y/alt-text */
 	return <Component src={ src } { ...rest } />;
 };
 
