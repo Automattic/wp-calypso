@@ -3,7 +3,6 @@ import {
 	Card,
 	Flex,
 	__experimentalHStack as HStack,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { close } from '@wordpress/icons';
