@@ -7,24 +7,36 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_FREE,
 	PlanSlug,
+	isProPlan,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { useMarketingMessage } from 'calypso/components/marketing-message/use-marketing-message';
 import { getDiscountByName } from 'calypso/lib/discounts';
+import { Purchase } from 'calypso/lib/purchases/types';
 import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-calculate-max-plan-upgrade-credit';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
+jest.mock( '@automattic/calypso-products', () => ( {
+	isProPlan: jest.fn(),
+	isStarterPlan: jest.fn(),
+} ) );
+jest.mock( 'calypso/state/purchases/selectors', () => ( {
+	getByPurchaseId: jest.fn(),
+} ) );
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	isCurrentUserCurrentPlanOwner: jest.fn(),
+	getCurrentPlan: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isCurrentPlanPaid: jest.fn(),
+	getSitePlan: jest.fn(),
 } ) );
 jest.mock( 'calypso/components/marketing-message/use-marketing-message', () => ( {
 	useMarketingMessage: jest.fn(),
@@ -65,6 +77,8 @@ const mUseCalculateMaxPlanUpgradeCredit = useCalculateMaxPlanUpgradeCredit as je
 const mGetCurrentUserCurrencyCode = getCurrentUserCurrencyCode as jest.MockedFunction<
 	typeof getCurrentUserCurrencyCode
 >;
+const mGetByPurchaseId = getByPurchaseId as jest.MockedFunction< typeof getByPurchaseId >;
+const mIsProPlan = isProPlan as jest.MockedFunction< typeof isProPlan >;
 
 const plansList: PlanSlug[] = [
 	PLAN_FREE,
@@ -91,6 +105,8 @@ describe( '<PlanNotice /> Tests', () => {
 		mGetCurrentUserCurrencyCode.mockImplementation( () => 'USD' );
 		mUseIsPlanUpgradeCreditVisible.mockImplementation( () => true );
 		mUseCalculateMaxPlanUpgradeCredit.mockImplementation( () => 100 );
+		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } as Purchase ) );
+		mIsProPlan.mockImplementation( () => false );
 	} );
 
 	test( 'A contact site owner <PlanNotice /> should be shown no matter what other conditions are met, when the current site owner is not logged in, and the site plan is paid', () => {
@@ -195,5 +211,35 @@ describe( '<PlanNotice /> Tests', () => {
 			/>
 		);
 		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'Show retired plan <PlanNotice /> when the current site has the pro plan', () => {
+		mIsProPlan.mockImplementation( () => true );
+		renderWithProvider(
+			<PlanNotice
+				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
+				visiblePlans={ plansList }
+				isInSignup={ false }
+				siteId={ 32234 }
+			/>
+		);
+		expect( screen.getByRole( 'status' ).textContent ).toBe(
+			'Your current plan is no longer available for new subscriptions. You’re all set to continue with the plan for as long as you like. Alternatively, you can switch to any of our current plans by selecting it below. Please keep in mind that switching plans will be irreversible.'
+		);
+	} );
+
+	test( 'Show in app purchase <PlanNotice /> when the current site was purchased in an app', () => {
+		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: true } as Purchase ) );
+		renderWithProvider(
+			<PlanNotice
+				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
+				visiblePlans={ plansList }
+				isInSignup={ false }
+				siteId={ 32234 }
+			/>
+		);
+		expect( screen.getByRole( 'status' ).textContent ).toBe(
+			'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress app.'
+		);
 	} );
 } );

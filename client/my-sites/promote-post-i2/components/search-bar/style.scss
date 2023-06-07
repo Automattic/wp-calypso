@@ -6,18 +6,7 @@
 	display: grid;
 	grid-template-columns: 1fr 300px;
 
-	@media screen and (max-width: $break-mobile) {
-		display: flex;
-		position: relative;
-	}
-
 	.promote-post-i2__search-bar-dropdown {
-		@media screen and (max-width: $break-mobile) {
-			& {
-				z-index: 100; // For mobile version, Search dropdown should be above the post list.
-			}
-		}
-
 		&.select-dropdown {
 			height: 50px;
 		}
@@ -28,28 +17,49 @@
 
 		.select-dropdown__header {
 			height: 50px;
+		}
+	}
+}
 
-			&-text {
-				@media screen and (max-width: $break-mobile) {
-					& {
-						margin-right: 12px;
-					}
-				}
-			}
+@mixin blazepress-search-bar-mobile {
+	.promote-post-i2__search-bar-wrapper {
+		display: flex;
+		position: relative;
 
-			@media screen and (max-width: $break-mobile) {
-				& {
-					background: transparent;
+		.promote-post-i2__search-bar-dropdown {
+			position: absolute;
+			right: 0;
+			top: 3.55rem;
+			z-index: 100; // Search dropdown should be above the post list.
+
+			.select-dropdown__header {
+				background: transparent;
+
+				&-text {
+					margin-right: 12px;
 				}
 			}
 		}
+	}
+}
 
-		@media screen and (max-width: $break-mobile) {
-			& {
-				position: absolute;
-				right: 0;
-				top: 3.55rem;
-			}
-		}
+// Show Mobile view for screens if window width <= 782px
+@media screen and (max-width: $break-medium) {
+	@include blazepress-search-bar-mobile;
+}
+
+// Show Mobile view if sidebar is collapsed and main content width <= 782px
+$break-medium-collapsed-menu: $break-medium + 36px;
+@media screen and (max-width: $break-medium-collapsed-menu) {
+	body.is-section-promote-post-i2.is-sidebar-collapsed {
+		@include blazepress-search-bar-mobile;
+	}
+}
+
+// Show Mobile view if sidebar is expanded and main content width <= 782px
+$break-medium-expanded-menu: $break-medium + 272px;
+@media screen and (max-width: $break-medium-expanded-menu) {
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
+		@include blazepress-search-bar-mobile;
 	}
 }

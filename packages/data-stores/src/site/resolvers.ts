@@ -25,6 +25,7 @@ export const getSite =
 			const existingSite: SiteDetails | undefined = await wpcomRequest( {
 				path: '/sites/' + encodeURIComponent( siteId ),
 				apiVersion: '1.1',
+				query: 'force=wpcom',
 			} );
 			dispatch.receiveSite( siteId, existingSite );
 		} catch ( err ) {
