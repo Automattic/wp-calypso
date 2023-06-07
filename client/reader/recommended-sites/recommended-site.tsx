@@ -40,7 +40,7 @@ const RecommendedSite = ( {
 	return (
 		<Card className="recommended-site" as="li">
 			<Flex justify="flex-end">
-				<Button icon={ close } />
+				<Button className="recommended-site__close-button" icon={ close } iconSize={ 20 } />
 			</Flex>
 			<HStack justify="flex-start" spacing="4">
 				{
@@ -82,6 +82,7 @@ type ConnectSiteComponentProps = {
 
 const RecommendedSiteWithConnectedSite = ( { site, feed }: ConnectSiteComponentProps ) => {
 	if ( ! site ) {
+		// todo: display loading state
 		return <div>Site is required</div>;
 	}
 

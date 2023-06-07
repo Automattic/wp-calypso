@@ -29,14 +29,23 @@
 		width: 100%;
 		margin: 0 0 56px;
 		padding: 20px 24px 24px 24px;
+		border-radius: 4px;
 		list-style-type: none;
 
 		.reader-avatar {
 			margin: 0;
+			color: $studio-gray-50;
 
 			&.is-compact {
 				max-height: 40px;
 			}
+		}
+
+		&__close-button {
+			color: $studio-gray-60;
+			padding: 0;
+			min-height: unset;
+			height: fit-content;
 		}
 
 		&__site-title {
@@ -75,6 +84,9 @@
 
 		&__subscribe-button {
 			margin: 0;
+			border-radius: 4px;
+			padding-left: 24px;
+			padding-right: 24px;
 		}
 	}
 }
