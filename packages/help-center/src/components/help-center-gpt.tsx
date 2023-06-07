@@ -82,7 +82,7 @@ export function HelpCenterGPT() {
 		if ( data?.response ) {
 			recordTracksEvent( 'calypso_helpcenter_show_gpt_response', {
 				location: 'help-center',
-				answer_source: data?.source ?? 'sitebot',
+				answer_source: data?.source,
 			} );
 		}
 	}, [ data ] );
