@@ -4,6 +4,7 @@ import {
 	WPCOM_FEATURES_BACKUPS,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
+import { Spinner as WPSpinner } from '@wordpress/components';
 import { removeQueryArgs } from '@wordpress/url';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -997,13 +998,28 @@ export class JetpackAuthorize extends Component {
 			return null;
 		}
 
-		if (
+		const isLoading =
 			this.props.isFetchingAuthorizationSite ||
 			this.props.isRequestingSitePurchases ||
 			this.isAuthorizing() ||
 			this.retryingAuth ||
-			authorizeSuccess
-		) {
+			authorizeSuccess;
+
+		if ( this.isWooCoreProfiler() ) {
+			return (
+				<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
+					<Button
+						primary
+						disabled={ isLoading || this.isAuthorizing() || this.props.hasXmlrpcError }
+						onClick={ this.handleSubmit }
+					>
+						{ isLoading ? <WPSpinner /> : this.getButtonText() }
+					</Button>
+				</LoggedOutFormFooter>
+			);
+		}
+
+		if ( isLoading ) {
 			return (
 				<div className="jetpack-connect__logged-in-form-loading">
 					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
@@ -1012,10 +1028,9 @@ export class JetpackAuthorize extends Component {
 		}
 
 		const { blogname } = this.props.authQuery;
-
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				{ ! this.isWooCoreProfiler() && <Disclaimer siteName={ decodeEntities( blogname ) } /> }
+				<Disclaimer siteName={ decodeEntities( blogname ) } />
 				<Button
 					primary
 					disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
