@@ -36,7 +36,7 @@
 
 		&:hover {
 			background: $studio-gray-0;
-			box-shadow: 0 0 1px $studio-gray-80;
+			border: 1px solid $studio-gray-80;
 		}
 
 		&:last-child {
