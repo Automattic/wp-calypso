@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN,
 	BEST_VALUE_PLANS,
@@ -41,12 +40,3 @@ export function getTermDuration( term: string ): number | undefined {
 }
 
 export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
-
-/**
- * Returns if the 2023 Pricing grid feature has been enabled.
- * Currently this depends on the feature flag.
- *
- */
-export const is2023PricingGridEnabled = (): boolean => {
-	return isEnabled( 'onboarding/2023-pricing-grid' );
-};

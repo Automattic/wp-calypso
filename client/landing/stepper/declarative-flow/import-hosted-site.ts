@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect } from 'react';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
@@ -25,6 +26,12 @@ const importHostedSiteFlow: Flow = {
 	name: IMPORT_HOSTED_SITE_FLOW,
 
 	useSteps() {
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
+		useEffect( () => {
+			resetOnboardStore();
+		}, [] );
+
 		return [
 			{ slug: 'import', component: ImportWithSiteAddressStep },
 			{ slug: 'importReady', component: ImportReady },

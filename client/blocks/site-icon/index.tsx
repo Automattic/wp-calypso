@@ -1,7 +1,6 @@
 import { Gridicon, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { get } from 'lodash';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
 import Image from 'calypso/components/image';
@@ -14,8 +13,33 @@ import { getSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
-function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon, defaultIcon } ) {
-	const iconSrc = resizeImageUrl( iconUrl, imgSize );
+type Site = {
+	ID?: number;
+	icon?: {
+		img: string;
+	};
+};
+
+type SiteIconProps = {
+	siteId?: number;
+	site?: object;
+	iconUrl?: string | null;
+	size?: number;
+	imgSize?: number;
+	isTransientIcon?: boolean;
+	defaultIcon?: JSX.Element | null;
+};
+
+function SiteIcon( {
+	siteId,
+	site,
+	iconUrl,
+	size = 32,
+	imgSize = 120,
+	isTransientIcon,
+	defaultIcon = null,
+}: SiteIconProps ) {
+	const iconSrc = resizeImageUrl( iconUrl, imgSize, null );
 
 	const classes = classNames( 'site-icon', {
 		'is-blank': ! iconSrc,
@@ -33,7 +57,7 @@ function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon, defa
 
 	return (
 		<div className={ classes } style={ style }>
-			{ ! site && siteId > 0 && <QuerySites siteId={ siteId } /> }
+			{ ! site && typeof siteId === 'number' && siteId > 0 && <QuerySites siteId={ siteId } /> }
 			{ iconSrc ? (
 				<MediaImage component={ Image } className="site-icon__img" src={ iconSrc } alt="" />
 			) : (
@@ -44,27 +68,15 @@ function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon, defa
 	);
 }
 
-SiteIcon.propTypes = {
-	siteId: PropTypes.number,
-	site: PropTypes.object,
-	iconUrl: PropTypes.string,
-	size: PropTypes.number,
-	imgSize: PropTypes.number,
-	isTransientIcon: PropTypes.bool,
-	defaultIcon: PropTypes.element,
+type SiteIconContainerProps = {
+	siteId?: number;
+	site?: Site;
+	imgSize?: number;
 };
 
-SiteIcon.defaultProps = {
-	// Cache a larger image so there's no need to download different assets to
-	// display the site icons in different contexts.
-	imgSize: 120,
-	size: 32,
-	defaultIcon: null,
-};
-
-export default connect( ( state, { site, siteId, imgSize } ) => {
+export default connect( ( state, { site, siteId }: SiteIconContainerProps ) => {
 	// Always prefer site from Redux state if available
-	const stateSite = getSite( state, get( site, 'ID', siteId ) );
+	const stateSite = getSite( state as object, get( site, 'ID', siteId ) );
 
 	// Until all sites state is within Redux, we provide compatibility in cases
 	// where sites-list object is passed to use the icon.img property as URL.
@@ -72,15 +84,15 @@ export default connect( ( state, { site, siteId, imgSize } ) => {
 	// since only the selected site is currently received into state.
 	if ( ! stateSite ) {
 		return {
-			iconUrl: get( site, 'icon.img' ),
+			iconUrl: site?.icon?.img,
 		};
 	}
 
-	const iconId = getSiteIconId( state, stateSite.ID );
+	const iconId = getSiteIconId( state as object, stateSite.ID );
 
 	return {
 		site: stateSite,
-		iconUrl: getSiteIconUrl( state, stateSite.ID, imgSize ),
+		iconUrl: getSiteIconUrl( state as object, stateSite.ID ),
 		isTransientIcon: isTransientMedia( state, stateSite.ID, iconId ),
 	};
 } )( SiteIcon );

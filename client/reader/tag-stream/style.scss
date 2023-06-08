@@ -58,22 +58,6 @@
 	margin-top: 15px;
 }
 
-// specific rule to override existing rules
-.layout.has-header-section.is-section-reader .layout__header-section-content .tag-stream__page-header {
-	text-align: center;
-
-	h2 {
-		font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		font-weight: 500;
-		margin-bottom: 10px;
-	}
-
-	h1 {
-		font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		font-weight: 500;
-	}
-}
-
 // Tag page only shows site titles in the sidebar, so spacing needs to be tighter
 .tag-stream__main {
 	.stream__two-column .reader__content::before {
