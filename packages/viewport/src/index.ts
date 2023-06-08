@@ -43,6 +43,16 @@ const SERVER_WIDTH = 769;
 export const MOBILE_BREAKPOINT = '<480px';
 export const DESKTOP_BREAKPOINT = '>960px';
 
+export const enum BreakpointValues {
+	Px480 = 480,
+	Px660 = 660,
+	Px800 = 800,
+	Px960 = 960,
+	Px1040 = 1040,
+	Px1280 = 1280,
+	Px1400 = 1400,
+}
+
 const isServer = typeof window === 'undefined' || ! window.matchMedia;
 
 const noop = () => null;
