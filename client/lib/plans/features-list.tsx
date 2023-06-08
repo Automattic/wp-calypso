@@ -1706,23 +1706,37 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
 		getTitle: () =>
-			i18n.translate( '%d% transaction fee for payments + Stripe fees', { args: 10 } ),
+			i18n.translate( '%(commission)d% transaction fee for payments + Stripe fees', {
+				args: { commission: 2 },
+			} ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
-		getTitle: () => i18n.translate( '%d% transaction fee for payments + Stripe fees', { args: 8 } ),
+		getTitle: () =>
+			i18n.translate( '%(commission)d% transaction fee for payments + Stripe fees', {
+				args: { commission: 2 },
+			} ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
-		getTitle: () => i18n.translate( '%d% transaction fee for payments + Stripe fees', { args: 4 } ),
+		getTitle: () =>
+			i18n.translate( '%(commission)d% transaction fee for payments + Stripe fees', {
+				args: { commission: 2 },
+			} ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
-		getTitle: () => i18n.translate( '%d% transaction fee for payments + Stripe fees', { args: 2 } ),
+		getTitle: () =>
+			i18n.translate( '%(commission)d% transaction fee for payments + Stripe fees', {
+				args: { commission: 2 },
+			} ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
-		getTitle: () => i18n.translate( '0% transaction fee for payments + Stripe fees' ),
+		getTitle: () =>
+			i18n.translate( '%(commission)d% transaction fee for payments + Stripe fees', {
+				args: { commission: 0 },
+			} ),
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
