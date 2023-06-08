@@ -97,7 +97,6 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 			message = translate( 'This premium theme is included in your plan.' );
 		} else {
 			message = createInterpolateElement(
-				/* translators: the "price" is the price of the theme, example: US$50; */
 				translate( 'This premium theme is included in the <Link>Premium plan</Link>.' ),
 				{
 					Link: <LinkButton isLink onClick={ () => goToCheckout( 'premium' ) } />,
