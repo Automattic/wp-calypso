@@ -533,6 +533,7 @@ class SignupForm extends Component {
 		const userData = {
 			password: formState.getFieldValue( this.state.form, 'password' ),
 			email: formState.getFieldValue( this.state.form, 'email' ),
+			is_dev_account: this.state.isDevAccount,
 		};
 
 		if ( this.props.displayNameInput ) {
@@ -941,7 +942,12 @@ class SignupForm extends Component {
 			<SelectCardCheckbox
 				className="signup-form__is-dev-account-checkbox signup-form__span-columns"
 				checked={ this.state.isDevAccount }
-				onChange={ ( isDevAccount ) => this.setState( { isDevAccount } ) }
+				onChange={ ( isDevAccount ) => {
+					recordTracksEvent( 'calypso_signup_dev_account_toggle', {
+						is_dev_account: isDevAccount,
+					} );
+					this.setState( { isDevAccount } );
+				} }
 			>
 				{ preventWidows(
 					translate(
