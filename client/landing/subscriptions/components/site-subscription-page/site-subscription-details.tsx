@@ -2,7 +2,7 @@ import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
@@ -90,13 +90,37 @@ const SiteSubscriptionDetails = ( {
 		}
 	}, [ paymentDetails ] );
 
-	const subHeaderText = subscriberCount
+	const subscriberCountText = subscriberCount
 		? translate( '%s subscriber', '%s subscribers', {
 				count: subscriberCount,
 				args: [ numberFormat( subscriberCount, 0 ) ],
 				comment: '%s is the number of subscribers. For example: "12,000,000"',
 		  } )
 		: '';
+
+	const hostname = useMemo( () => {
+		try {
+			return new URL( url ).hostname;
+		} catch ( e ) {
+			return '';
+		}
+	}, [ url ] );
+
+	const urlLink = hostname ? (
+		<a href={ url } className="url" rel="noreferrer noopener" target="_blank">
+			{ hostname }
+		</a>
+	) : (
+		''
+	);
+
+	const subHeaderText = (
+		<>
+			{ subscriberCountText }
+			{ hostname ? ' · ' : '' }
+			{ urlLink }
+		</>
+	);
 
 	useEffect( () => {
 		// todo: style the button (underline, color?, etc.)

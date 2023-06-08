@@ -47,6 +47,15 @@
 				font-family: "SF Pro Text", $sans;
 				font-weight: 400;
 				color: $studio-gray-40;
+
+				.url {
+					color: $studio-gray-40;
+					white-space: nowrap;
+
+					&:hover {
+						text-decoration: underline;
+					}
+				}
 			}
 		}
 	}
