@@ -9,11 +9,10 @@ import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import AllTimelHighlightsSection from '../all-time-highlights-section';
+import AllTimeHighlightsSection from '../all-time-highlights-section';
 import AllTimeViewsSection from '../all-time-views-section';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import PostingActivity from '../post-trends';
@@ -21,6 +20,7 @@ import Comments from '../stats-comments';
 import Followers from '../stats-followers';
 import StatsModule from '../stats-module';
 import StatsPageHeader from '../stats-page-header';
+import PageViewTracker from '../stats-page-view-tracker';
 import Reach from '../stats-reach';
 import StatShares from '../stats-shares';
 import statsStrings from '../stats-strings';
@@ -64,7 +64,7 @@ const StatsInsights = ( props ) => {
 				) }
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
-				<AllTimelHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
+				<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
 				<PostingActivity siteId={ siteId } />
 				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
 				<div className={ statsModuleListClass }>
