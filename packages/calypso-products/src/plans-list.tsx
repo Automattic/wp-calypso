@@ -566,6 +566,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PlanComparisonJetpackFeatureOverride: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
+		FEATURE_DONATIONS_AND_TIPS_JP,
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
 		FEATURE_CONTACT_FORM_JP,
