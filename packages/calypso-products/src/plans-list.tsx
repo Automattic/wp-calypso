@@ -793,6 +793,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_SUPPORT_EMAIL,
+		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [ FEATURE_PREMIUM_CONTENT_JP ],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_6GB_STORAGE ],
@@ -990,6 +991,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STREAMLINED_CHECKOUT,
 		FEATURE_SELL_60_COUNTRIES,
 		FEATURE_SHIPPING_INTEGRATIONS,
+		FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
@@ -1349,6 +1351,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
 		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_VIDEOPRESS_JP,
@@ -1512,6 +1515,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_STAGING_SITES,
 		FEATURE_WP_UPDATES,
 		FEATURE_MULTI_SITE,
+		FEATURE_PAYMENT_TRANSACTION_FEES_2,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_REALTIME_BACKUPS_JP,
