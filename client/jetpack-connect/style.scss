@@ -1103,6 +1103,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				margin-right: 16px;
 				height: 40px !important;
 				width: 40px !important;
+				background: #f0f0f1;
+
+				svg {
+					fill: $gray-600;
+				}
 			}
 
 			.site__title {

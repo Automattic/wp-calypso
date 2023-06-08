@@ -1,5 +1,6 @@
 import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard } from '@automattic/components';
+import { Icon, globe } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -179,7 +180,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSiteCard() {
-		const { isWpcomMigration } = this.props;
+		const { isWpcomMigration, isWooCoreProfiler } = this.props;
 		const { jpVersion } = this.props.authQuery;
 		if ( ! versionCompare( jpVersion, '4.0.3', '>' ) ) {
 			return null;
@@ -207,7 +208,7 @@ export class AuthFormHeader extends Component {
 
 		return (
 			<CompactCard className="jetpack-connect__site">
-				<Site site={ site } />
+				<Site site={ site } defaultIcon={ isWooCoreProfiler ? <Icon icon={ globe } /> : null } />
 			</CompactCard>
 		);
 	}
