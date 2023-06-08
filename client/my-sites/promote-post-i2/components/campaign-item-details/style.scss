@@ -1,15 +1,16 @@
-@import "../../../../../node_modules/@wordpress/base-styles/breakpoints";
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
 
-.campaign-item__container {
-
+body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	margin: 0 64px;
-	max-width: 1040px;
-	width: calc(100% - 128px);
 
 	@media (max-width: $break-medium) {
 		margin: 0;
-		width: 100%;
 	}
+}
+
+.campaign-item__container {
+	width: 100%;
 
 	.campaign-item-breadcrumb {
 		@media (max-width: $break-medium) {
@@ -23,6 +24,7 @@
 	}
 
 	.campaign-item-header {
+		margin: 0 64px;
 		padding-bottom: 24px;
 		min-height: 85px;
 		display: flex;
@@ -64,6 +66,7 @@
 	.campaign-item__header-status {
 		display: flex;
 		flex: 1;
+		color: $studio-gray-40;
 
 		span {
 			margin: 0 11px;
@@ -132,11 +135,22 @@
 			.horizontal-bar-list-item {
 				padding: 0;
 				margin-bottom: 8px;
+				padding-right: 4px;
 
 				&:last-child {
 					.horizontal-bar-list-item-bar {
 						&::before {
 							background-color: #f6f7f7;
+						}
+					}
+				}
+
+				&:hover {
+					border-radius: 4px;
+
+					.horizontal-bar-list-item-bar {
+						&::before {
+							background-color: inherit;
 						}
 					}
 				}
@@ -379,6 +393,10 @@
 			> * {
 				margin-top: 4px;
 				margin-bottom: 4px;
+
+				&.campaign-item-details__powered-by {
+					margin-top: 28px;
+				}
 			}
 
 			.campaign-item-details__support-link {
@@ -420,6 +438,7 @@
 
 	.campaign-item-details__support-heading {
 		font-size: 0.875rem;
+		font-weight: 500;
 		margin-top: 24px;
 	}
 
@@ -428,7 +447,6 @@
 		color: var(--color-neutral-40);
 		display: flex;
 		font-size: 0.875rem;
-		margin-top: 48px;
 
 		svg {
 			margin-right: 10px;
@@ -457,3 +475,24 @@
 	}
 }
 
+@mixin blazepress-huge {
+	.campaign-item-header,
+	.campaign-item-details {
+		max-width: 1040px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+@media (min-width: $break-huge) {
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) .layout__content .main.is-wide-layout {
+		@include blazepress-huge;
+	}
+}
+
+$break-huge-collapsed-menu: $break-huge - 222px;
+@media (min-width: $break-huge-collapsed-menu) {
+	body.is-section-promote-post-i2.is-sidebar-collapsed .layout__content .main.is-wide-layout {
+		@include blazepress-huge;
+	}
+}

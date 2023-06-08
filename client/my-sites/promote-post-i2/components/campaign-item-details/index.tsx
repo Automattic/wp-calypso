@@ -21,7 +21,12 @@ import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-pos
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
-import { canCancelCampaign } from 'calypso/my-sites/promote-post-i2/utils';
+import {
+	canCancelCampaign,
+	getAdvertisingDashboardPath,
+} from 'calypso/my-sites/promote-post-i2/utils';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	formatCents,
 	formatNumber,
@@ -53,6 +58,8 @@ const getPostIdFromURN = ( targetUrn: string ) => {
 };
 
 export default function CampaignItemDetails( props: Props ) {
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+
 	const translate = useTranslate();
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
@@ -135,8 +142,14 @@ export default function CampaignItemDetails( props: Props ) {
 				},
 		  ]
 		: [
-				{ label: translate( 'Advertising' ), href: `/advertising` },
-				{ label: campaignTitleFormatted || '', href: `/campaigns/${ campaignId }` },
+				{
+					label: translate( 'Advertising' ),
+					href: getAdvertisingDashboardPath( `/${ selectedSiteSlug }/campaigns` ),
+				},
+				{
+					label: campaignTitleFormatted || '',
+					href: getAdvertisingDashboardPath( `${ selectedSiteSlug }/campaigns/${ campaignId }` ),
+				},
 		  ];
 
 	const icon = (
