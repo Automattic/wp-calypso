@@ -4,6 +4,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
+import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SenseiDomain from './internals/steps-repository/sensei-domain';
 import SenseiLaunch from './internals/steps-repository/sensei-launch';
@@ -17,10 +18,11 @@ import './internals/sensei.scss';
 const sensei: Flow = {
 	name: SENSEI_FLOW,
 	get title() {
-		return translate( 'Sensei' );
+		return translate( 'Course Creator' );
 	},
 	useSteps() {
 		return [
+			{ slug: 'intro', component: Intro },
 			{ slug: 'senseiSetup', component: SenseiSetup },
 			{ slug: 'senseiDomain', component: SenseiDomain },
 			{ slug: 'senseiPlan', component: SenseiPlan },
@@ -35,13 +37,17 @@ const sensei: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		const siteSlug = useSiteSlug();
+
 		setStepProgress( flowProgress );
 
 		const submit = ( deps: any, stepResult?: string ) => {
 			if ( stepResult ) {
 				return navigate( stepResult );
 			}
+
 			switch ( _currentStep ) {
+				case 'intro':
+					return navigate( 'senseiSetup' );
 				case 'senseiSetup':
 					return navigate( 'senseiDomain' );
 				case 'senseiDomain':
@@ -72,12 +78,15 @@ const sensei: Flow = {
 			locale && locale !== 'en'
 				? `/start/account/user/${ locale }?redirect_to=/setup/${ flowName }`
 				: `/start/account/user?redirect_to=/setup/${ flowName }`;
+
 		if ( ! userIsLoggedIn ) {
 			window.location.assign( logInUrl );
+
 			return {
 				state: AssertConditionState.FAILURE,
 			};
 		}
+
 		return {
 			state: AssertConditionState.SUCCESS,
 		};

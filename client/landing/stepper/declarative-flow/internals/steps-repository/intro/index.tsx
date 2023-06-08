@@ -1,9 +1,10 @@
 import { useLocale } from '@automattic/i18n-utils';
 import {
-	NEWSLETTER_FLOW,
 	ECOMMERCE_FLOW,
-	VIDEOPRESS_FLOW,
 	FREE_FLOW,
+	NEWSLETTER_FLOW,
+	SENSEI_FLOW,
+	VIDEOPRESS_FLOW,
 	isLinkInBioFlow,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
@@ -93,6 +94,17 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			};
 		}
 
+		if ( flowName === SENSEI_FLOW ) {
+			return {
+				title: createInterpolateElement(
+					__( 'You are minutes away from<br />being ready to launch your<br />first course.' ),
+					{ br: <br /> }
+				),
+				buttonText: __( 'Get started' ),
+				secondaryButtonText: __( 'Learn more' ),
+			};
+		}
+
 		if ( flowName === VIDEOPRESS_FLOW ) {
 			return {
 				title: createInterpolateElement(
@@ -148,6 +160,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ flow === NEWSLETTER_FLOW }
 			showHeaderWooCommercePowered={ flow === ECOMMERCE_FLOW }
+			showSenseiPowered={ flow === SENSEI_FLOW }
 			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);
