@@ -87,9 +87,7 @@ const newsletter: Flow = {
 		const locale = useLocale();
 
 		const getStartUrl = () => {
-			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`;
+			return locale && locale !== 'en' ? `/start/newsletter/${ locale }` : '/start/newsletter/';
 		};
 
 		// Unless showing intro step, send non-logged-in users to account screen.

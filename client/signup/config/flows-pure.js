@@ -42,6 +42,17 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'newsletter',
+			steps: [ 'user' ],
+			destination: () => '/setup/newsletter/newsletterSetup',
+			description: 'Create an account for the newsletter flow',
+			lastModified: '2023-6-08',
+			get pageTitle() {
+				return translate( 'Create an account' );
+			},
+			showRecaptcha: true,
+		},
+		{
 			name: 'business',
 			steps: [ 'user', 'domains', 'plans-business' ],
 			destination: getSignupDestination,
