@@ -28,6 +28,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	recordSignupStart,
@@ -135,6 +136,7 @@ class Signup extends Component {
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
 		stepSectionName: PropTypes.string,
+		hostingFlow: PropTypes.bool.isRequired,
 	};
 
 	state = {
@@ -312,7 +314,7 @@ class Signup extends Component {
 	};
 
 	getRecordProps() {
-		const { signupDependencies } = this.props;
+		const { signupDependencies, hostingFlow } = this.props;
 		let theme = get( signupDependencies, 'selectedDesign.theme' );
 
 		if ( ! theme && signupDependencies.themeParameter ) {
@@ -326,6 +328,7 @@ class Signup extends Component {
 			theme,
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
+			is_in_hosting_flow: hostingFlow,
 		};
 	}
 
@@ -921,6 +924,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const oauth2Client = getCurrentOAuth2Client( state );
+		const hostingFlow = isInHostingFlow( state );
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
@@ -941,6 +945,7 @@ export default connect(
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
+			hostingFlow,
 		};
 	},
 	{
