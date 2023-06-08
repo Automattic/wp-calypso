@@ -130,9 +130,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		const isReEnteringStep =
 			signupCompleteFlowName === flow.name && signupCompleteStepName === currentStepRoute;
 		if ( ! isReEnteringStep ) {
-			recordStepStart( flow.name, kebabCase( currentStepRoute ), {
-				intent,
-			} );
+			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
 		}
 
 		// Also record page view for data and analytics
