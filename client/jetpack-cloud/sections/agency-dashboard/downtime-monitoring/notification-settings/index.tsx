@@ -19,7 +19,7 @@ import EmailNotification from './form-content/email-notification';
 import NotificationSettingsFormFooter from './form-content/footer';
 import MobilePushNotification from './form-content/mobile-push-notification';
 import NotificationDuration from './form-content/notification-duration';
-import SmsNotification from './form-content/sms-notification';
+import SMSNotification from './form-content/sms-notification';
 import type {
 	MonitorSettings,
 	Site,

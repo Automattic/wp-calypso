@@ -1,14 +1,18 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 
-export default function SmsNotification() {
+export default function SMSNotification() {
 	const translate = useTranslate();
+
+	const handleToggleClick = () => {
+		return null;
+	};
 
 	return (
 		<>
 			<div className="notification-settings__toggle-container">
 				<div className="notification-settings__toggle">
-					<ToggleControl />
+					<ToggleControl onChange={ handleToggleClick } />
 				</div>
 				<div className="notification-settings__toggle-content">
 					<div className="notification-settings__content-heading-with-beta">
