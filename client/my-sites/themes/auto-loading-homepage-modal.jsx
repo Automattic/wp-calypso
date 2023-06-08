@@ -49,6 +49,7 @@ export class AutoLoadingHomepageModal extends Component {
 		this.state = {
 			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
 			wasVisible: props.isVisible,
+			hasConfirmed: false,
 		};
 	}
 
@@ -105,6 +106,9 @@ export class AutoLoadingHomepageModal extends Component {
 			isCurrentTheme,
 			isVisible = false,
 		} = this.props;
+
+		const { hasConfirmed } = this.state;
+
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
 			return null;
@@ -171,12 +175,15 @@ export class AutoLoadingHomepageModal extends Component {
 						label={ translate(
 							'I understand that this layout will replace my existing homepage.'
 						) }
-						// TODO:
-						checked={ true }
-						onChange={ () => {} }
+						checked={ hasConfirmed }
+						onChange={ () => this.setState( { hasConfirmed: ! hasConfirmed } ) }
 					/>
 					<div className="auto-loading-homepage-modal__actions">
-						<Button primary onClick={ this.closeModalHandler( 'activeTheme' ) }>
+						<Button
+							primary
+							onClick={ this.closeModalHandler( 'activeTheme' ) }
+							disabled={ ! hasConfirmed }
+						>
 							{ translate( 'Activate %(themeName)s', {
 								args: { themeName },
 							} ) }
