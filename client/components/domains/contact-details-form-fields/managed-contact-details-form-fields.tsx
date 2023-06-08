@@ -157,24 +157,18 @@ export class ManagedContactDetailsFormFields extends Component<
 
 	getFieldProps = ( name: string, { customErrorMessage = null } ) => {
 		const { eventFormName, getIsFieldDisabled } = this.props;
-		const form = getFormFromContactDetails(
-			this.props.contactDetails,
-			this.props.contactDetailsErrors
-		);
 		const camelName = camelCase( name );
 
-		const basicValue = form[ camelName ]?.value ?? '';
-		let value = basicValue;
-		if ( name === 'phone' ) {
-			value = { phoneNumber: basicValue, countryCode: this.state.phoneCountryCode };
-		}
+		const value = this.props.contactDetails[ camelName as keyof DomainContactDetailsData ];
 
 		return {
 			labelClass: 'contact-details-form-fields__label',
 			additionalClasses: 'contact-details-form-fields__field',
 			disabled: getIsFieldDisabled( name ),
-			isError: !! form[ camelName ]?.errors?.length,
-			errorMessage: customErrorMessage || getFirstError( form[ camelName ] ),
+			isError: !! this.props.contactDetailsErrors[ camelName as keyof DomainContactDetailsErrors ],
+			errorMessage:
+				customErrorMessage ||
+				this.props.contactDetailsErrors[ camelName as keyof DomainContactDetailsErrors ],
 			onChange: this.handleFieldChangeEvent,
 			onBlur: this.handleBlur( name ),
 			value,
