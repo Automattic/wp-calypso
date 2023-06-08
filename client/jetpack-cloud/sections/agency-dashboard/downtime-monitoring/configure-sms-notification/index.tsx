@@ -1,25 +1,44 @@
 import { Button } from '@automattic/components';
 import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import SMSItemContent from './sms-item-content';
 
-interface Props {
-	toggleModal: () => void;
+import './style.scss';
+
+interface StateMonitorSettingsPhoneNumber {
+	number: string;
+	name: string;
+	isDefault: boolean;
+	verified: boolean;
 }
 
-export default function ConfigureSMSNotification( { toggleModal }: Props ) {
+type AllowedMonitorContactActions = 'edit' | 'remove' | 'verify';
+
+interface Props {
+	toggleModal: (
+		item?: StateMonitorSettingsPhoneNumber,
+		action?: AllowedMonitorContactActions
+	) => void;
+	allPhoneItems: Array< StateMonitorSettingsPhoneNumber >;
+}
+
+export default function ConfigureSMSNotification( { toggleModal, allPhoneItems = [] }: Props ) {
 	const translate = useTranslate();
 
-	const handleAddEmailClick = () => {
+	const handleAddPhoneNumberClick = () => {
 		// Record event
 		toggleModal();
 	};
 
 	return (
 		<div className="configure-contact__card-container">
+			{ allPhoneItems.map( ( item ) => (
+				<SMSItemContent key={ item.number } item={ item } />
+			) ) }
 			<Button
 				compact
 				className="configure-contact__button"
-				onClick={ handleAddEmailClick }
+				onClick={ handleAddPhoneNumberClick }
 				aria-label={ translate( 'Add phone number' ) }
 			>
 				<Icon size={ 18 } icon={ plus } />

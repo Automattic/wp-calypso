@@ -21,7 +21,20 @@ export default function SMSNotification( {
 		setEnableSMSNotification( isEnabled );
 	};
 
-	const allPhoneNumbers = []; // TODO: Get all phone numbers from the API when it is ready
+	const allPhoneNumbers = [
+		{
+			number: '+1 1234567890',
+			name: 'John Smith',
+			isDefault: true,
+			verified: true,
+		},
+		{
+			number: '+1 9876543210',
+			name: 'Sally Jones',
+			isDefault: false,
+			verified: false,
+		},
+	]; // TODO: Get all phone numbers from the API when it is ready
 
 	return (
 		<>
@@ -46,8 +59,11 @@ export default function SMSNotification( {
 							{ translate( 'You need at least one phone number' ) }
 						</AlertBanner>
 					</div>
-					<ConfigureSMSNotification toggleModal={ toggleModal } />
+					<ConfigureSMSNotification toggleModal={ toggleModal } allPhoneItems={ allPhoneNumbers } />
 				</>
+			) }
+			{ enableSMSNotification && allPhoneNumbers.length > 0 && (
+				<ConfigureSMSNotification toggleModal={ toggleModal } allPhoneItems={ allPhoneNumbers } />
 			) }
 		</>
 	);
