@@ -13,7 +13,6 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
@@ -22,6 +21,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
+import PageViewTracker from '../stats-page-view-tracker';
 import PostSummary from '../stats-post-summary';
 
 class StatsPostDetail extends Component {
