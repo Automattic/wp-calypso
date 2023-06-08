@@ -47,26 +47,21 @@ export class AutoLoadingHomepageModal extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			homepageAction: 'keep_current_homepage',
 			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
 			wasVisible: props.isVisible,
 		};
 	}
+
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		// This component doesn't unmount when the dialog closes, so the state
 		// needs to be reset back to defaults each time it opens.
-		// Reseting `homepageAction` ensures the default option will be selected.
 		if ( nextProps.isVisible && ! prevState.wasVisible ) {
-			return { homepageAction: 'keep_current_homepage', wasVisible: true };
+			return { wasVisible: true };
 		} else if ( ! nextProps.isVisible && prevState.wasVisible ) {
 			return { wasVisible: false };
 		}
 		return null;
 	}
-
-	handleHomepageAction = ( event ) => {
-		this.setState( { homepageAction: event.currentTarget.value } );
-	};
 
 	closeModalHandler =
 		( action = 'dismiss' ) =>
@@ -74,7 +69,13 @@ export class AutoLoadingHomepageModal extends Component {
 			const { installingThemeId, siteId, source } = this.props;
 			if ( 'activeTheme' === action ) {
 				this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
-				const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
+
+				/**
+				 * We don't want to keep the current homepage since it's "broken" for now.
+				 * Update this when we find a way to improve the theme switch experience as a whole.
+				 */
+				const keepCurrentHomepage = false;
+
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
 					theme: installingThemeId,
 					keep_current_homepage: keepCurrentHomepage,
@@ -86,12 +87,6 @@ export class AutoLoadingHomepageModal extends Component {
 					false,
 					keepCurrentHomepage
 				);
-			} else if ( 'keepCurrentTheme' === action ) {
-				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
-					action: 'button',
-					theme: installingThemeId,
-				} );
-				return this.props.hideAutoLoadingHomepageWarning();
 			} else if ( 'dismiss' === action ) {
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
 					action: 'escape',
