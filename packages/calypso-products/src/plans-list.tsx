@@ -534,6 +534,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SECURITY_BRUTE_FORCE,
 		FEATURE_SMART_REDIRECTS,
 		FEATURE_ALWAYS_ONLINE,
+		FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	],
 
 	get2023PlanComparisonFeatureOverride: () => [
