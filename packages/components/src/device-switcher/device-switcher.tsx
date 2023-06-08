@@ -1,6 +1,6 @@
 import { useResizeObserver } from '@wordpress/compose';
 import classnames from 'classnames';
-import { useState, useEffect, useReducer, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DEVICE_TYPES } from './constants';
 import FixedViewport, { useViewportScale } from './fixed-viewport';
 import DeviceSwitcherToolbar from './toolbar';
@@ -17,7 +17,7 @@ interface Props {
 	isFixedViewport?: boolean;
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
-	onAnimationEnd?: ( scale: number ) => void;
+	onAnimationEnd?: ( height?: number ) => void;
 }
 
 // Transition animation delay
@@ -36,59 +36,45 @@ const DeviceSwitcher = ( {
 	onAnimationEnd,
 }: Props ) => {
 	const [ device, setDevice ] = useState< Device >( defaultDevice );
-	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
 	const [ containerResizeListener, { width, height } ] = useResizeObserver();
-	const animationRef = useRef< null | ReturnType< typeof setTimeout > >( null );
-	const requestRef = useRef< null | number >( null );
-	const frameWidth = frameRef?.current?.clientWidth ?? 0;
-	const viewportScale = useViewportScale( device, frameWidth );
+	const timerRef = useRef< null | ReturnType< typeof setTimeout > >( null );
+	const viewportElement = frameRef?.current?.parentElement;
+	const viewportWidth = viewportElement?.clientWidth as number;
+	const viewportHeight = viewportElement?.clientHeight as number;
+	const viewportScale = useViewportScale( device, viewportWidth );
 
 	const handleDeviceClick = ( nextDevice: Device ) => {
 		setDevice( nextDevice );
 		onDeviceChange?.( nextDevice );
-		setTimeout( () => {
-			// Callback on animation end
-			onAnimationEnd?.( viewportScale );
-		}, ANIMATION_DURATION );
 	};
 
-	const animation = () => {
-		// Update state to animate the viewport
-		if ( animationRef.current ) {
-			forceUpdate();
+	const clearAnimationEndTimer = () => {
+		if ( timerRef.current ) {
+			clearTimeout( timerRef.current );
 		}
-		// Continue animation loop
-		requestRef.current = requestAnimationFrame( animation );
 	};
 
+	// Animate on viewport size update
 	useEffect( () => {
-		if ( isFixedViewport ) {
-			// Start animation loop on mount
-			requestRef.current = requestAnimationFrame( animation );
-			return () => {
-				cancelAnimationFrame( requestRef.current as number );
-			};
-		}
-	}, [] );
+		clearAnimationEndTimer();
 
-	// Animate on width and height updates
-	useEffect( () => {
-		if ( animationRef.current ) {
-			clearTimeout( animationRef.current );
-		}
+		// Trigger animation end after the duration
+		timerRef.current = setTimeout( () => {
+			timerRef.current = null;
 
-		animationRef.current = setTimeout( () => {
-			// Stop animation after the duration
-			animationRef.current = null;
-			// Callback on animation end
-			onAnimationEnd?.( viewportScale );
-		}, ANIMATION_DURATION );
+			let height = frameRef?.current?.clientHeight;
 
-		return () => {
-			if ( animationRef.current ) {
-				clearTimeout( animationRef.current );
+			// Scale height including the border from --device-switcher-border-width
+			if ( isFixedViewport ) {
+				const deviceSwitcherBorder = 20;
+				const borderScaled = deviceSwitcherBorder * viewportScale;
+				height = ( viewportHeight - borderScaled ) / viewportScale;
 			}
-		};
+
+			onAnimationEnd?.( height );
+		}, ANIMATION_DURATION );
+
+		return clearAnimationEndTimer;
 	}, [ width, height, viewportScale ] );
 
 	return (
@@ -105,16 +91,12 @@ const DeviceSwitcher = ( {
 			{ isShowDeviceSwitcherToolbar && (
 				<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
 			) }
-			<div className="device-switcher__frame" ref={ frameRef }>
-				{ containerResizeListener }
-				{ isFixedViewport ? (
-					<FixedViewport device={ device } frameRef={ frameRef }>
-						{ children }
-					</FixedViewport>
-				) : (
-					children
-				) }
-			</div>
+			<FixedViewport device={ device } frameRef={ frameRef } enabled={ isFixedViewport }>
+				<div className="device-switcher__frame" ref={ frameRef }>
+					{ children }
+				</div>
+			</FixedViewport>
+			{ containerResizeListener }
 		</div>
 	);
 };

@@ -135,14 +135,8 @@ const PatternLargePreview = ( {
 		);
 	};
 
-	const updateViewportHeight = ( scale?: number ) => {
-		let height = frameRef.current?.clientHeight as number;
-
-		// Scale height is required for 100vh patterns
-		if ( scale ) {
-			height = height / scale;
-		}
-
+	const updateViewportHeight = ( height?: number ) => {
+		// Required for 100vh patterns
 		setViewportHeight( height );
 	};
 
@@ -177,14 +171,6 @@ const PatternLargePreview = ( {
 		};
 	}, [ activePosition, header, sections, footer ] );
 
-	// Update viewport height on window resize
-	useEffect( () => {
-		const handleResize = () => updateViewportHeight();
-		window.addEventListener( 'resize', handleResize, true );
-
-		return () => window.removeEventListener( 'resize', handleResize );
-	}, [] );
-
 	// Delay updating the styles to make the transition smooth
 	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
 	useEffect( () => {
@@ -206,7 +192,7 @@ const PatternLargePreview = ( {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
 				setDevice( device );
 			} }
-			onAnimationEnd={ ( scale ) => updateViewportHeight( scale ) }
+			onAnimationEnd={ updateViewportHeight }
 		>
 			{ hasSelectedPattern ? (
 				<ul

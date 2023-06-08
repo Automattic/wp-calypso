@@ -14,6 +14,19 @@
 	}
 }
 
+.device-switcher__container--frame-fixed-viewport {
+	.device-switcher__viewport {
+		position: relative;
+		display: flex;
+		flex: 1;
+		width: 100%;
+		max-width: 100%;
+		max-height: 100%;
+		justify-content: center;
+		justify-items: center;
+	}
+}
+
 .device-switcher__frame {
 	display: flex;
 	flex: 1;
@@ -25,10 +38,6 @@
 	// Create a new stacking context to fix border-radius with overflow hidden issue on safari
 	// See https://github.com/Automattic/wp-calypso/issues/71440
 	isolation: isolate;
-
-	.device-switcher__container--frame-fixed-viewport & {
-		position: relative;
-	}
 
 	.device-switcher__container--frame-bordered & {
 		--device-switcher-border-width: 10px;
@@ -61,12 +70,12 @@
 	}
 
 	.device-switcher__container--is-tablet & {
-		max-width: 783px;
+		max-width: 782px;
 	}
 
 	.device-switcher__container--is-phone & {
 		--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
-		max-width: 340px;
+		max-width: 480px;
 		max-height: 680px;
 
 		.device-switcher__container--frame-shadow & {
@@ -80,18 +89,17 @@
 		}
 	}
 
-	.device-switcher__viewport {
+	.device-switcher__container--frame-fixed-viewport & {
+		--viewport-width-px: calc(var(--viewport-width) * 1px);
 		--viewport-height: calc(100% / var(--viewport-scale));
-		display: flex;
 		position: absolute;
-		left: 0;
-		top: 0;
+		box-sizing: border-box;
+		transform-origin: top center;
 		transform: scale(var(--viewport-scale));
-		transform-origin: left top;
-		width: calc(var(--viewport-width) * 1px);
+		width: var(--viewport-width-px);
+		max-width: var(--viewport-width-px);
 		min-height: var(--viewport-height);
 		max-height: var(--viewport-height);
-		transition-property: width, min-height, transform;
-		transition-duration: 0.1s;
+		transition: width 0.2s ease-out, max-width 0.2s ease-out;
 	}
 }
