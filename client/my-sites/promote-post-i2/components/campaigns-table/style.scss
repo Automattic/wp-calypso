@@ -104,13 +104,19 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	}
 
 	td {
+		border-top: 1px solid #d8d8d8;
 		color: $studio-gray-60;
-		padding-top: 16px;
-		padding-bottom: 16px;
 		font-size: 0.875rem;
-		vertical-align: middle;
-		line-height: 1.43;
 		letter-spacing: -0.15px;
+		line-height: 1.43; /* #EEEEEE if bg is white */
+		padding-bottom: 16px;
+		padding-right: 16px;
+		padding-top: 16px;
+		vertical-align: middle;
+	}
+
+	td:last-child {
+		padding-right: 0;
 	}
 
 	.promote-post-i2__campaign-item-wrapper {
@@ -197,6 +203,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	.promote-post-i2__table {
 		td {
 			padding-bottom: 14px;
+			padding-right: 0;
 		}
 
 		.campaign-item {
