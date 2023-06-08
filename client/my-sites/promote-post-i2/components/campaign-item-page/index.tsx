@@ -43,10 +43,6 @@ export default function CampaignItemPage( props: Props ) {
 		return <CampaignItemDetails isLoading={ true } />;
 	}
 
-	if ( campaignsIsLoading ) {
-		return null;
-	}
-
 	return (
 		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising - Campaign details' ) } />

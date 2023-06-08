@@ -13,7 +13,7 @@ export default function AdPreview( { htmlCode, isLoading }: Props ) {
 		if ( ! isLoading && htmlCode && shadowHost.current ) {
 			const shadowRoot = shadowHost.current.attachShadow( { mode: 'open' } );
 			shadowRoot.innerHTML = `
-          <div class="viewer viewer--receipt}">
+          <div class="viewer viewer__receipt}">
             ${ htmlCode }
           </div>`;
 		}
