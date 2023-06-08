@@ -24,13 +24,13 @@ import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
+import { useHelpSearchQuery } from '../hooks';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 

@@ -1,4 +1,5 @@
 export { useContactFormTitle } from './use-contact-form-title';
+export { useHelpSearchQuery } from './use-help-search-query';
 export { useShouldRenderChatOption } from './use-should-render-chat-option';
 export { useShouldRenderEmailOption } from './use-should-render-email-option';
 export { useStillNeedHelpURL } from './use-still-need-help-url';

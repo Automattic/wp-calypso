@@ -1,20 +1,11 @@
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { SearchResult } from '../types';
 
 interface APIFetchOptions {
 	global: boolean;
 	path: string;
-}
-
-interface SearchResult {
-	link: string;
-	title: string | React.ReactChild;
-	content?: string;
-	icon?: string;
-	post_id?: number;
-	blog_id?: number;
-	source?: string;
 }
 
 export const useHelpSearchQuery = (
