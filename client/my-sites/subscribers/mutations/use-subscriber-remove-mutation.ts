@@ -1,21 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-
-type SubscriberEndpointResponse = {
-	per_page: number;
-	total: number;
-	page: number;
-	pages: number;
-	subscribers: Subscriber[];
-};
-
-type Subscriber = {
-	user_id: number;
-	subscription_id: number;
-	plans: {
-		paid_subscription_id: number;
-	}[];
-};
+import { getSubscribersCacheKey } from '../helpers';
+import type { SubscriberEndpointResponse, Subscriber } from '../types';
 
 const useSubscriberRemoveMutation = ( siteId: number, currentPage: number ) => {
 	const queryClient = useQueryClient();
@@ -54,33 +40,69 @@ const useSubscriberRemoveMutation = ( siteId: number, currentPage: number ) => {
 			return true;
 		},
 		onMutate: async ( subscriber ) => {
-			const cacheKey = [ 'subscribers', siteId, currentPage ];
-			await queryClient.cancelQueries( cacheKey );
+			await queryClient.cancelQueries( getSubscribersCacheKey( siteId ) );
+			let page = currentPage;
 
-			const previousSubscribers =
-				queryClient.getQueryData< SubscriberEndpointResponse >( cacheKey );
+			const previousData = queryClient.getQueryData< SubscriberEndpointResponse >(
+				getSubscribersCacheKey( siteId, currentPage )
+			);
+			const previousPages = [];
 
-			// remove blog from site subscriptions
-			if ( previousSubscribers ) {
-				queryClient.setQueryData( cacheKey, {
-					...previousSubscribers,
-					subscribers: previousSubscribers.subscribers.filter( ( prevSubscriber ) => {
-						return prevSubscriber.subscription_id !== subscriber.subscription_id;
-					} ),
-				} );
+			if ( previousData ) {
+				// This is some complicated logic to remove the subscriber from the list and shift the next page's first item into this page and so on
+				// This is done to avoid a flash of the next page's first item when the query is refetched
+				while ( page <= previousData?.pages ) {
+					const previousSubscribers = queryClient.getQueryData< SubscriberEndpointResponse >(
+						getSubscribersCacheKey( siteId, page )
+					);
+
+					if ( previousSubscribers ) {
+						// Save previous page data for when query fails and we have to restore
+						previousPages[ page ] = previousSubscribers;
+
+						// Alter pagination data
+						const total = previousSubscribers.total - 1;
+						const pages = Math.ceil( total / previousSubscribers.per_page );
+
+						// Remove subscriber from list
+						const subscribers = previousSubscribers.subscribers.filter( ( prevSubscriber ) => {
+							return prevSubscriber.subscription_id !== subscriber.subscription_id;
+						} );
+
+						// Take the first subscriber of the next page (if we have it cached) and append it to this list.
+						// The next page will briefly show this item
+						const nextPageQueryData = queryClient.getQueryData< SubscriberEndpointResponse >(
+							getSubscribersCacheKey( siteId, page + 1 )
+						);
+						if ( nextPageQueryData && nextPageQueryData.subscribers.length ) {
+							subscribers.push( nextPageQueryData.subscribers[ 0 ] );
+						}
+
+						queryClient.setQueryData( getSubscribersCacheKey( siteId, page ), {
+							...previousSubscribers,
+							subscribers,
+							total,
+							pages,
+						} );
+					}
+
+					page++;
+				}
 			}
 
 			return {
-				previousSubscribers,
+				previousPages,
 			};
 		},
 		onError: ( error, variables, context ) => {
-			if ( context?.previousSubscribers ) {
-				queryClient.setQueryData( [ 'subscribers', siteId ], context.previousSubscribers );
+			if ( context?.previousPages ) {
+				context.previousPages?.forEach( ( previousSubscribers, page ) => {
+					queryClient.setQueryData( getSubscribersCacheKey( siteId, page ), previousSubscribers );
+				} );
 			}
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries( [ 'subscribers', siteId ] );
+			queryClient.invalidateQueries( getSubscribersCacheKey( siteId ) );
 		},
 	} );
 };
