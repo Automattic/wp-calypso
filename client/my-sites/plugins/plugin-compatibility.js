@@ -109,7 +109,7 @@ const incompatiblePlugins = new Set( [
 	'wordfence',
 	'wp-hide-security-enhancer',
 	'wp-security-hardening',
-	'wp-simple-firewall',	
+	'wp-simple-firewall',
 
 	// spam
 	'e-mail-broadcasting',
@@ -156,10 +156,10 @@ const incompatiblePlugins = new Set( [
 	'wpematico',
 	'wpstagecoach',
 	'yuzo-related-post',
-	'zapp-proxy-server',														
-	
+	'zapp-proxy-server',
+
 	// crm
-	'civicrm',	
+	'civicrm',
 ] );
 
 export function isCompatiblePlugin( pluginSlug ) {
