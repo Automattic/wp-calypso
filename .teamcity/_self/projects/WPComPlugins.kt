@@ -330,7 +330,7 @@ private object HappyBlocks : WPComPluginBuild(
 private object GutenbergUploadSourceMapsToSentry: BuildType() {
 	init {
 		name = "Upload Source Maps";
-		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-comment by a WPCOM post-deploy job.";
+		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-commit by a WPCOM post-deploy job.";
 
 		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
 
