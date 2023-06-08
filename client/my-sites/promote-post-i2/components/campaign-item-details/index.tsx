@@ -82,6 +82,7 @@ export default function CampaignItemDetails( props: Props ) {
 		billing_data,
 		display_delivery_estimate = '',
 		target_urn,
+		delivery_percent,
 	} = campaign || {};
 
 	const {
@@ -94,7 +95,6 @@ export default function CampaignItemDetails( props: Props ) {
 		overall_spending,
 		visits_total = 0,
 		visits_organic,
-		delivery_percent,
 	} = campaign_stats || {};
 
 	const { card_name, payment_method, subtotal, credits, total } = billing_data || {};
@@ -418,7 +418,7 @@ export default function CampaignItemDetails( props: Props ) {
 												{ sprintf(
 													/* translators: %s: percentage of delivery (i.e. 30%) */
 													translate( 'Delivered %s more than estimated' ),
-													delivery_percent
+													`${ delivery_percent }%`
 												) }
 											</span>
 										) : null }

@@ -22,6 +22,7 @@ export type CampaignResponse = {
 	height: number;
 	status: string;
 	target_urn: string;
+	delivery_percent: number;
 	campaign_stats: {
 		impressions_total: number;
 		clicks_total: number;
@@ -31,7 +32,6 @@ export type CampaignResponse = {
 		total_budget_left: number;
 		overall_spending: number;
 		display_delivery_estimate: string;
-		delivery_percent: number;
 		visits_total: number;
 		visits_organic: number;
 		visits_organic_rate: number;
