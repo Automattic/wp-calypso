@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	commentContent,
 	Icon,
@@ -40,6 +39,7 @@ type WeeklyHighlightCardsProps = {
 	currentPeriod: string;
 	onSettingsTooltipDismiss: () => void;
 	showSettingsTooltip: boolean;
+	isHighlightsSettingsSupported?: boolean;
 };
 
 type HighlightCardsSettingsProps = {
@@ -135,13 +135,12 @@ export default function WeeklyHighlightCards( {
 	currentPeriod,
 	onSettingsTooltipDismiss,
 	showSettingsTooltip,
+	isHighlightsSettingsSupported = false,
 }: WeeklyHighlightCardsProps ) {
 	const translate = useTranslate();
 
 	const textRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
-
-	const isHighlightsSettingsEnabled = config.isEnabled( 'stats/highlights-settings' );
 
 	return (
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
@@ -152,7 +151,7 @@ export default function WeeklyHighlightCards( {
 						: translate( '7-day highlights' ) }
 				</span>
 
-				{ isHighlightsSettingsEnabled && (
+				{ isHighlightsSettingsSupported && (
 					<small className="highlight-cards-heading__description">
 						{ currentPeriod === PAST_THIRTY_DAYS
 							? translate( 'Compared to previous 30 days' )
@@ -160,7 +159,7 @@ export default function WeeklyHighlightCards( {
 					</small>
 				) }
 
-				{ ! isHighlightsSettingsEnabled && (
+				{ ! isHighlightsSettingsSupported && (
 					<div className="highlight-cards-heading__tooltip">
 						<span
 							className="highlight-cards-heading-icon"
@@ -205,7 +204,7 @@ export default function WeeklyHighlightCards( {
 					</div>
 				) }
 
-				{ isHighlightsSettingsEnabled && (
+				{ isHighlightsSettingsSupported && (
 					<HighlightCardsSettings
 						currentPeriod={ currentPeriod }
 						onTogglePeriod={ onTogglePeriod }

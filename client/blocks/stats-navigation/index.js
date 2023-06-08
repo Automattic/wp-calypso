@@ -112,7 +112,7 @@ class StatsNavigation extends Component {
 			'stats-navigation--modernized': ! isLegacy,
 		} );
 
-		const isHighlightsSettingsSupported = ! (
+		const isModuleSettingsSupported = ! (
 			config.isEnabled( 'is_running_in_jetpack_site' ) &&
 			version_compare( statsAdminVersion, '0.9.0-alpha', '<' )
 		);
@@ -154,7 +154,7 @@ class StatsNavigation extends Component {
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 
-				{ isHighlightsSettingsSupported && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
+				{ isModuleSettingsSupported && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
 					<div className="page-modules-settings">
 						<button
 							className="page-modules-settings-action"
