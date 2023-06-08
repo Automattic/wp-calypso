@@ -13,4 +13,9 @@ const getSubscribersCacheKey = (
 	return cacheKey;
 };
 
-export { getSubscribersCacheKey };
+const sanitizeInt = ( intString: string ) => {
+	const parsedInt = parseInt( intString, 10 );
+	return ! Number.isNaN( parsedInt ) && parsedInt > 0 ? parsedInt : undefined;
+};
+
+export { getSubscribersCacheKey, sanitizeInt };
