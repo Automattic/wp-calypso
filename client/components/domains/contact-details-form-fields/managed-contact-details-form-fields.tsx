@@ -348,9 +348,21 @@ export class ManagedContactDetailsFormFields extends Component<
 			<div className="contact-details-form-fields__row">
 				<Input
 					label={ this.props.translate( 'Alternate email address' ) }
-					{ ...this.getFieldProps( 'email', {
-						customErrorMessage: this.props.contactDetailsErrors?.email,
-					} ) }
+					description={
+						this.props.isLoggedOutCart
+							? this.props.translate( "You'll use this email address to access your account later" )
+							: undefined
+					}
+					labelClass="contact-details-form-fields__label"
+					additionalClasses="contact-details-form-fields__field"
+					disabled={ this.props.getIsFieldDisabled( 'email' ) }
+					isError={ !! this.props.contactDetailsErrors.email }
+					errorMessage={ this.props.contactDetailsErrors.email }
+					onChange={ this.handleFieldChangeEvent }
+					onBlur={ this.handleBlur( 'email' ) }
+					value={ this.props.contactDetails.email }
+					name="email"
+					eventFormName={ this.props.eventFormName }
 				/>
 			</div>
 		);
