@@ -14,6 +14,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
+import CountrySelectMenu from 'calypso/my-sites/checkout/composite-checkout/components/country-select-menu';
 import {
 	prepareDomainContactDetails,
 	convertDomainContactDetailsToManagedContactDetails,
@@ -88,38 +89,41 @@ export class ManagedContactDetailsFormFields extends Component<
 		};
 	}
 
-	updateParentState = ( form, phoneCountryCode ) => {
-		debug( 'setting parent state with', form );
+	updateParentState = ( newData: DomainContactDetailsData ) => {
 		this.props.onContactDetailsChange(
-			getMainFieldValues(
-				form,
-				this.props.countryCode,
-				phoneCountryCode,
-				this.props.hasCountryStates
-			)
+			formatDataForParent( {
+				data: newData,
+				phoneCountryCode: this.state.phoneCountryCode,
+				countryCode: this.props.countryCode,
+				hasCountryStates: this.props.hasCountryStates,
+			} )
 		);
 	};
 
-	handleFieldChangeEvent = ( event: { target: { name: string; value: string } } ): void => {
+	handleFieldChangeEvent = ( event: React.ChangeEvent< HTMLInputElement > ): void => {
 		const { name, value } = event.target;
 		this.handleFieldChange( name, value );
 	};
 
 	handleFieldChange = ( name: string, value: string ): void => {
-		let form = getFormFromContactDetails(
-			this.props.contactDetails,
-			this.props.contactDetailsErrors
-		);
-		let phoneCountryCode = this.state.phoneCountryCode;
-
-		if ( name === 'country-code' && value && ! form.phone?.value ) {
-			phoneCountryCode = value;
-			this.setState( { phoneCountryCode } );
+		if ( name === 'country-code' && value && ! this.props.contactDetails.phone ) {
+			this.setState( { phoneCountryCode: value }, () => {
+				// We have to wait for the phoneCountryCode to be updated because it is
+				// used by updateParentState.
+				const updatedParentState: DomainContactDetailsData = {
+					...this.props.contactDetails,
+					[ camelCase( name ) ]: value,
+				};
+				this.updateParentState( updatedParentState );
+			} );
+			return;
 		}
 
-		form = updateFormWithContactChange( form, name, value );
-
-		this.updateParentState( form, phoneCountryCode );
+		const updatedParentState: DomainContactDetailsData = {
+			...this.props.contactDetails,
+			[ camelCase( name ) ]: value,
+		};
+		this.updateParentState( updatedParentState );
 	};
 
 	handlePhoneChange = ( {
@@ -129,19 +133,27 @@ export class ManagedContactDetailsFormFields extends Component<
 		phoneNumber: string;
 		countryCode: string;
 	} ): void => {
-		let form = getFormFromContactDetails(
-			this.props.contactDetails,
-			this.props.contactDetailsErrors
-		);
 		let phoneCountryCode = this.state.phoneCountryCode;
 
-		if ( countries[ countryCode ] ) {
+		if ( countries[ countryCode as keyof typeof countries ] ) {
 			phoneCountryCode = countryCode;
-			this.setState( { phoneCountryCode } );
+			this.setState( { phoneCountryCode }, () => {
+				// We have to wait for the phoneCountryCode to be updated because it is
+				// used by updateParentState.
+				const updatedParentState: DomainContactDetailsData = {
+					...this.props.contactDetails,
+					phone: phoneNumber,
+				};
+				this.updateParentState( updatedParentState );
+			} );
+			return;
 		}
 
-		form = updateFormWithContactChange( form, 'phone', phoneNumber );
-		this.updateParentState( form, phoneCountryCode );
+		const updatedParentState: DomainContactDetailsData = {
+			...this.props.contactDetails,
+			phone: phoneNumber,
+		};
+		this.updateParentState( updatedParentState );
 	};
 
 	getFieldProps = ( name: string, { customErrorMessage = null } ) => {
@@ -172,55 +184,45 @@ export class ManagedContactDetailsFormFields extends Component<
 		};
 	};
 
-	// We must use this trick (the extra comma) to convince the TS compiler that this is a generic.
-	createField = < P, >(
-		name: string,
-		componentClass: ComponentType | FunctionComponent< P >,
-		// TODO: get a better type for this
-		additionalProps: any,
-		fieldPropOptions = {}
-	) => {
-		return createElement( componentClass, {
-			...this.getFieldProps( name, fieldPropOptions ),
-			...additionalProps,
-		} );
-	};
-
 	handleBlur = ( name: string ) => () => {
-		const form = getFormFromContactDetails(
-			this.props.contactDetails,
-			this.props.contactDetailsErrors
-		);
-
 		CONTACT_DETAILS_FORM_FIELDS.forEach( ( fieldName ) => {
 			if ( fieldName === 'postalCode' ) {
-				debug( 'reformatting postal code', form.postalCode?.value );
+				debug( 'reformatting postal code', this.props.contactDetails.postalCode );
 				const formattedPostalCode = tryToGuessPostalCodeFormat(
-					form.postalCode?.value.toUpperCase?.() ?? '',
-					form.countryCode?.value
+					this.props.contactDetails.postalCode?.toUpperCase() ?? '',
+					this.props.contactDetails.countryCode
 				);
 				this.handleFieldChange( 'postal-code', formattedPostalCode );
 			}
 		} );
 
 		// Strip leading and trailing whitespace
-		const sanitizedValue = deburr( form[ camelCase( name ) ]?.value.trim() );
+		const updatedValue =
+			this.props.contactDetails[ camelCase( name ) as keyof DomainContactDetailsData ];
+		const sanitizedValue = deburr( typeof updatedValue === 'string' ? updatedValue.trim() : '' );
 		this.handleFieldChange( name, sanitizedValue );
 	};
 
-	createEmailField( description?: string ) {
-		const { translate } = this.props;
-
-		return this.createField(
-			'email',
-			Input,
-			{
-				label: translate( 'Email' ),
-				description,
-			},
-			{
-				customErrorMessage: this.props.contactDetailsErrors?.email,
-			}
+	createEmailField() {
+		return (
+			<Input
+				label={ this.props.translate( 'Email' ) }
+				description={
+					this.props.isLoggedOutCart
+						? this.props.translate( "You'll use this email address to access your account later" )
+						: undefined
+				}
+				labelClass="contact-details-form-fields__label"
+				additionalClasses="contact-details-form-fields__field"
+				disabled={ this.props.getIsFieldDisabled( 'email' ) }
+				isError={ !! this.props.contactDetailsErrors.email }
+				errorMessage={ this.props.contactDetailsErrors.email }
+				onChange={ this.handleFieldChangeEvent }
+				onBlur={ this.handleBlur( 'email' ) }
+				value={ this.props.contactDetails.email }
+				name="email"
+				eventFormName={ this.props.eventFormName }
+			/>
 		);
 	}
 
@@ -233,99 +235,59 @@ export class ManagedContactDetailsFormFields extends Component<
 	}
 
 	renderContactDetailsEmailPhone() {
-		const { translate, isLoggedOutCart } = this.props;
-
-		if ( isLoggedOutCart ) {
-			return (
-				<>
-					<div className="contact-details-form-fields__row">
-						{ this.createEmailField(
-							translate( "You'll use this email address to access your account later" )
-						) }
-					</div>
-
-					<div className="contact-details-form-fields__row">
-						{ this.createField(
-							'country-code',
-							CountrySelect,
-							{
-								label: translate( 'Country' ),
-								countriesList: this.props.countriesList,
-							},
-							{
-								customErrorMessage: this.props.contactDetailsErrors?.countryCode,
-							}
-						) }
-						{ this.createField(
-							'phone',
-							FormPhoneMediaInput,
-							{
-								label: translate( 'Phone' ),
-								onChange: this.handlePhoneChange,
-								countriesList: this.props.countriesList,
-								enableStickyCountry: false,
-							},
-							{
-								customErrorMessage: this.props.contactDetailsErrors?.phone,
-							}
-						) }
-					</div>
-				</>
-			);
+		if ( ! this.props.countriesList ) {
+			return null;
 		}
 
 		return (
 			<>
-				<div className="contact-details-form-fields__row">
-					{ this.createEmailField() }
-
-					{ this.createField(
-						'phone',
-						FormPhoneMediaInput,
-						{
-							label: translate( 'Phone' ),
-							onChange: this.handlePhoneChange,
-							countriesList: this.props.countriesList,
-							enableStickyCountry: false,
-						},
-						{
-							customErrorMessage: this.props.contactDetailsErrors?.phone,
-						}
-					) }
-				</div>
+				<div className="contact-details-form-fields__row">{ this.createEmailField() }</div>
 
 				<div className="contact-details-form-fields__row">
-					{ this.createField(
-						'country-code',
-						CountrySelect,
-						{
-							label: translate( 'Country' ),
-							countriesList: this.props.countriesList,
-						},
-						{
-							customErrorMessage: this.props.contactDetailsErrors?.countryCode,
-						}
-					) }
+					<CountrySelectMenu
+						countriesList={ this.props.countriesList }
+						errorMessage={ this.props.contactDetailsErrors.countryCode }
+						isDisabled={ this.props.getIsFieldDisabled( 'country-code' ) }
+						isError={ !! this.props.contactDetailsErrors.countryCode }
+						onChange={ ( event ) => {
+							this.handleFieldChange( 'country-code', event.currentTarget.value );
+						} }
+						currentValue={ this.props.contactDetails.countryCode }
+					/>
+					<FormPhoneMediaInput
+						label={ this.props.translate( 'Phone' ) }
+						name="phone"
+						value={ {
+							phoneNumber: this.props.contactDetails.phone ?? '',
+							countryCode:
+								this.state.phoneCountryCode ??
+								this.props.contactDetails.countryCode ??
+								this.props.countryCode ??
+								'',
+						} }
+						disabled={ this.props.getIsFieldDisabled( 'phone' ) }
+						errorMessage={ this.props.contactDetailsErrors.phone }
+						isError={ !! this.props.contactDetailsErrors.phone }
+						onChange={ this.handlePhoneChange }
+						countriesList={ this.props.countriesList }
+						additionalClasses="contact-details-form-fields__field"
+					/>
 				</div>
 			</>
 		);
 	}
 
-	getCountryPostalCodeSupport = ( countryCode ) =>
+	getCountryPostalCodeSupport = ( countryCode: string ) =>
 		this.props.countriesList?.length && countryCode
 			? getCountryPostalCodeSupport( this.props.countriesList, countryCode )
 			: false;
 
 	renderContactDetailsFields() {
 		const { translate, hasCountryStates, countriesList } = this.props;
-		const form = getFormFromContactDetails(
-			this.props.contactDetails,
-			this.props.contactDetailsErrors
-		);
-		const countryCode = form.countryCode?.value ?? '';
+		const countryCode = this.props.contactDetails.countryCode ?? '';
 		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
 		const taxRequirements =
-			countriesList.length && countryCode
+			countriesList?.length && countryCode
 				? getCountryTaxRequirements( countriesList, countryCode )
 				: {};
 		const isOrganizationFieldRequired =
@@ -345,23 +307,25 @@ export class ManagedContactDetailsFormFields extends Component<
 				'INB',
 				'OMK',
 				'MAJ',
-			].includes( form.extra?.value?.ca?.legalType );
+			].includes( this.props.contactDetails.extra?.ca?.legalType ?? '' );
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
 				<div className="contact-details-form-fields__row">
-					{ this.createField(
-						'organization',
-						HiddenInput,
-						{
-							label: translate( 'Organization' ),
-							text: translate( '+ Add organization name' ),
-							toggled: form.organization?.value || isOrganizationFieldRequired,
-						},
-						{
-							customErrorMessage: this.props.contactDetailsErrors?.organization,
-						}
-					) }
+					<HiddenInput
+						label={ this.props.translate( 'Organization' ) }
+						labelClass="contact-details-form-fields__label"
+						additionalClasses="contact-details-form-fields__field"
+						disabled={ this.props.getIsFieldDisabled( 'organization' ) }
+						isError={ !! this.props.contactDetailsErrors.organization }
+						errorMessage={ this.props.contactDetailsErrors.organization }
+						onChange={ this.handleFieldChangeEvent }
+						onBlur={ this.handleBlur( 'organization' ) }
+						value={ this.props.contactDetails.organization }
+						name="organization"
+						text={ translate( '+ Add organization name' ) }
+						toggled={ this.props.contactDetails.organization || isOrganizationFieldRequired }
+					/>
 				</div>
 
 				{ this.renderContactDetailsEmailPhone() }
@@ -372,7 +336,6 @@ export class ManagedContactDetailsFormFields extends Component<
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
 						hasCountryStates={ hasCountryStates }
-						shouldAutoFocusAddressField={ this.shouldAutoFocusAddressField }
 						contactDetailsErrors={ this.props.contactDetailsErrors }
 					/>
 				) }
@@ -490,7 +453,10 @@ export default connect( ( state: IAppState, props: ManagedContactDetailsFormFiel
 	};
 } )( localize( ManagedContactDetailsFormFields ) );
 
-function getFormFromContactDetails( contactDetails, contactDetailsErrors ) {
+function getFormFromContactDetails(
+	contactDetails: DomainContactDetailsData,
+	contactDetailsErrors: DomainContactDetailsErrors
+): Record< string, { value: string; errors: string[] } > {
 	return Object.keys( contactDetails ).reduce( ( newForm, key ) => {
 		const value = contactDetails[ key ];
 		const error = contactDetailsErrors[ key ];
@@ -513,6 +479,41 @@ function updateFormWithContactChange( form, key, value, additionalProperties ) {
 			errors: [],
 			...( additionalProperties ?? {} ),
 		},
+	};
+}
+
+function formatDataForParent( {
+	data,
+	countryCode,
+	phoneCountryCode,
+	hasCountryStates,
+}: {
+	data: DomainContactDetailsData;
+	countryCode: string | undefined;
+	phoneCountryCode: string | undefined;
+	hasCountryStates: boolean;
+} ): DomainContactDetailsData {
+	let state = data.state;
+
+	// domains registered according to ancient validation rules may have state set even though not required
+	if (
+		! hasCountryStates &&
+		countryCode &&
+		( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ||
+			CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) )
+	) {
+		state = '';
+	}
+
+	const fax = '';
+
+	return {
+		...data,
+		fax,
+		state,
+		phone: data.phone
+			? toIcannFormat( data.phone, countries[ phoneCountryCode as keyof typeof countries ] )
+			: '',
 	};
 }
 
