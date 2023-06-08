@@ -124,11 +124,7 @@ export class AutoLoadingHomepageModal extends Component {
 			return null;
 		}
 
-		const {
-			// TODO: Show theme name in the modal
-			// name: themeName,
-			id: themeId,
-		} = this.props.theme;
+		const { name: themeName, id: themeId } = this.props.theme;
 
 		return (
 			<Dialog
@@ -150,7 +146,9 @@ export class AutoLoadingHomepageModal extends Component {
 				</Button>
 				<div className="themes__theme-preview-wrapper">
 					<h1 className="auto-loading-homepage-modal__heading">
-						{ translate( 'Activate this theme' ) }
+						{ translate( 'Activate %(themeName)s', {
+							args: { themeName },
+						} ) }
 					</h1>
 					<p className="auto-loading-homepage-modal__description">
 						{ translate(
@@ -179,7 +177,9 @@ export class AutoLoadingHomepageModal extends Component {
 					/>
 					<div className="auto-loading-homepage-modal__actions">
 						<Button primary onClick={ this.closeModalHandler( 'activeTheme' ) }>
-							{ translate( 'Activate this theme' ) }
+							{ translate( 'Activate %(themeName)s', {
+								args: { themeName },
+							} ) }
 						</Button>
 					</div>
 				</div>
