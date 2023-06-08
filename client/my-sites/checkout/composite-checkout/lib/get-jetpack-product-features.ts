@@ -54,6 +54,8 @@ function getFeatureStrings(
 				translate( 'Deferred non-essential JavaScript' ),
 				translate( 'Optimized CSS loading' ),
 				translate( 'Lazy image loading' ),
+				translate( 'CDN for images' ),
+				translate( 'Image optimaization guide' ),
 			];
 		case 'complete':
 			return [
