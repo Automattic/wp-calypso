@@ -86,7 +86,7 @@
 	line-height: 20px;
 }
 
-.checklist-item__task:nth-last-child(2) {
+.checklist__has-primary-action .checklist-item__task:nth-last-child(2) {
 
 	// remove bottom border for last checklist item before the primary button
 	.checklist-item__task-content,
