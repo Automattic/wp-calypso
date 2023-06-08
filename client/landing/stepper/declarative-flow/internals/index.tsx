@@ -13,11 +13,9 @@ import {
 	getSignupCompleteFlowNameAndClear,
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
-import { useSelector } from 'calypso/state';
 import { useSite } from '../../hooks/use-site';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
-import { isInHostingFlow } from '../../utils/is-in-hosting-flow';
 import kebabCase from '../../utils/kebabCase';
 import recordStepStart from './analytics/record-step-start';
 import StepRoute from './components/step-route';
@@ -51,7 +49,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
-	const hostingFlow = useSelector( isInHostingFlow );
 
 	const site = useSite();
 	const ref = useQuery().get( 'ref' ) || '';
@@ -135,7 +132,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		if ( ! isReEnteringStep ) {
 			recordStepStart( flow.name, kebabCase( currentStepRoute ), {
 				intent,
-				is_in_hosting_flow: hostingFlow,
 			} );
 		}
 
