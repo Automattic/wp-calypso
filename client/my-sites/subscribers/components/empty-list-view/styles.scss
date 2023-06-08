@@ -31,8 +31,9 @@
 		width: 571px;
 		height: 52px;
 		margin-bottom: 12px;
-		box-shadow: 0 0 1px $studio-gray-5;
+		border: 1px solid $studio-gray-5;
 		border-radius: 4px;
+		box-shadow: none;
 
 		&:hover {
 			background: $studio-gray-0;
