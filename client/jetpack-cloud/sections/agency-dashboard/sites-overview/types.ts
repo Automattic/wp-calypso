@@ -288,6 +288,14 @@ export interface MonitorSettingsEmail {
 	verified: boolean;
 }
 
+export interface StateMonitorSettingsSMS {
+	name: string;
+	countryCode: string;
+	phoneNumber: string;
+	phoneNumberFull: string;
+	verified: boolean;
+}
+
 export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
 	isDefault?: boolean;
 }
