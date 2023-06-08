@@ -558,7 +558,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SECURITY_DDOS,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
-		FEATURE_PAID_SUBSCRIBERS_JP,
 		FEATURE_DONATIONS_AND_TIPS_JP,
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
