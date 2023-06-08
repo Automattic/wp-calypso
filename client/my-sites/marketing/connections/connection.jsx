@@ -53,6 +53,8 @@ class SharingConnection extends Component {
 			tumblr: 'user',
 			google_photos: 'user',
 			facebook: 'user',
+			'instagram-business': 'user',
+			mastodon: 'user',
 		},
 	};
 
