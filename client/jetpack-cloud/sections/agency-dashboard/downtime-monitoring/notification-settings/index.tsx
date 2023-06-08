@@ -59,6 +59,7 @@ export default function NotificationSettings( {
 
 	const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
 
+	const [ enableSMSNotification, setEnableSMSNotification ] = useState< boolean >( false );
 	const [ enableMobileNotification, setEnableMobileNotification ] = useState< boolean >( false );
 	const [ enableEmailNotification, setEnableEmailNotification ] = useState< boolean >( false );
 	const [ selectedDuration, setSelectedDuration ] = useState< MonitorDuration | undefined >(
@@ -311,7 +312,12 @@ export default function NotificationSettings( {
 						selectedDuration={ selectedDuration }
 						selectDuration={ selectDuration }
 					/>
-					{ isSMSNotificationEnabled && <SMSNotification /> }
+					{ isSMSNotificationEnabled && (
+						<SMSNotification
+							enableSMSNotification={ enableSMSNotification }
+							setEnableSMSNotification={ setEnableSMSNotification }
+						/>
+					) }
 
 					<MobilePushNotification
 						recordEvent={ recordEvent }
