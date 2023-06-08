@@ -7,6 +7,8 @@ import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { StateMonitorSettingsSMS } from '../../sites-overview/types';
 
+import '../style.scss';
+
 interface Props {
 	item: StateMonitorSettingsSMS;
 }
@@ -42,11 +44,11 @@ export default function SMSItemContent( { item }: Props ) {
 	const isVerified = item.verified;
 
 	return (
-		<Card className="configure-sms-number__card" key={ item.phoneNumberFull } compact>
-			<div className="configure-sms-number__card-content-container">
-				<span className="configure-sms-number__card-content">
-					<div className="configure-sms-number__card-heading">{ item.phoneNumberFull }</div>
-					<div className="configure-sms-number__card-sub-heading">{ item.name }</div>
+		<Card className="configure-contact-info__card" key={ item.phoneNumberFull } compact>
+			<div className="configure-contact-info__card-content-container">
+				<span className="configure-contact-info__card-content">
+					<div className="configure-contact-info__card-heading">{ item.phoneNumberFull }</div>
+					<div className="configure-contact-info__card-sub-heading">{ item.name }</div>
 				</span>
 
 				<>
@@ -62,20 +64,20 @@ export default function SMSItemContent( { item }: Props ) {
 								//TODO add verification handling
 								return null;
 							} }
-							className="configure-sms-number__verification-status cursor-pointer"
+							className="configure-contact-info__verification-status cursor-pointer"
 						>
 							<Badge type="warning">{ translate( 'Pending' ) }</Badge>
 						</span>
 					) }
 					{ isVerified && (
-						<span className="configure-sms-number__verification-status">
+						<span className="configure-contact-info__verification-status">
 							<Badge type="success">{ translate( 'Verified' ) }</Badge>
 						</span>
 					) }
 					<Button
 						compact
 						borderless
-						className="configure-sms-number__action-icon"
+						className="configure-contact-info__action-icon"
 						onClick={ showActions }
 						aria-label={ translate( 'More actions' ) }
 						ref={ buttonActionRef }
@@ -83,7 +85,7 @@ export default function SMSItemContent( { item }: Props ) {
 						<Icon size={ 18 } icon={ moreHorizontal } />
 					</Button>
 					<PopoverMenu
-						className="configure-sms-number__popover-menu"
+						className="configure-contact-info__popover-menu"
 						context={ buttonActionRef.current }
 						isVisible={ isOpen }
 						onClose={ closeDropdown }
