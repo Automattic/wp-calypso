@@ -136,8 +136,10 @@ class StatsNavigation extends Component {
 	}
 
 	render() {
-		const { slug, selectedItem, interval, isLegacy, showSettingsTooltip, statsAdminVersion } = this.props;
-		const { pageModules, isPageSettingsPopoverVisible, isPageSettingsTooltipDismissed } = this.state;
+		const { slug, selectedItem, interval, isLegacy, showSettingsTooltip, statsAdminVersion } =
+			this.props;
+		const { pageModules, isPageSettingsPopoverVisible, isPageSettingsTooltipDismissed } =
+			this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
