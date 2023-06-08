@@ -30,12 +30,9 @@ import {
 	isImporterStatusHydrated as isImporterStatusHydratedSelector,
 } from 'calypso/state/imports/selectors';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
-import { getUrlData, isAnalyzing } from 'calypso/state/imports/url-analyzer/selectors';
+import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import {
-	hasAllSitesList,
-	isRequestingSite as isRequestingSiteSelector,
-} from 'calypso/state/sites/selectors';
+import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
@@ -65,9 +62,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
-		const isRequestingSite: boolean = useSelector( ( state ) =>
-			isRequestingSiteSelector( state, siteId )
-		);
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 		const isMigrateFromWp = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
@@ -75,7 +69,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		);
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
-		const fromSiteDataIsAnalyzing = useSelector( isAnalyzing );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
 
 		/**
@@ -140,12 +133,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		}
 
 		function isLoading(): boolean {
-			return (
-				! isImporterStatusHydrated ||
-				! hasAllSitesFetched ||
-				fromSiteDataIsAnalyzing ||
-				isRequestingSite
-			);
+			return ! isImporterStatusHydrated || ! hasAllSitesFetched;
 		}
 
 		function checkFromSiteData(): void {
@@ -161,7 +149,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Renders
 		 */
-		function renderStepContent() {
+		const renderStepContent = () => {
 			if ( isLoading() ) {
 				return <LoadingEllipsis />;
 			} else if ( ! siteSlug || ! site || ! siteId ) {
@@ -183,12 +171,12 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					site={ site }
 					siteSlug={ siteSlug }
 					fromSite={ fromSite }
-					urlData={ fromSiteData }
+					urlData={ fromSiteData ?? undefined }
 					stepNavigator={ stepNavigator }
 					showConfirmDialog={ ! isMigrateFromWp }
 				/>
 			);
-		}
+		};
 
 		return (
 			<>
