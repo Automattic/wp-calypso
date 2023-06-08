@@ -45,6 +45,7 @@ function calculateQueryDate( daysToSubtract: number ) {
 			break;
 		default:
 			heading = '';
+			break;
 	}
 
 	const overviewCardStat = {
