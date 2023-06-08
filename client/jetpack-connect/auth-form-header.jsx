@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { login } from 'calypso/lib/paths';
 import versionCompare from 'calypso/lib/version-compare';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors';
@@ -139,9 +140,32 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooCoreProfiler ) {
-			return translate(
-				"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack, you'll need to connect your store to your WordPress.com account."
-			);
+			switch ( currentState ) {
+				case 'logged-out':
+					return translate(
+						"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+						{
+							components: {
+								br: <br />,
+								a: (
+									<a
+										href={ login( {
+											isJetpack: true,
+											redirectTo: window.location.href,
+											from: this.props.authQuery.from,
+										} ) }
+									/>
+								),
+							},
+							comment:
+								'Link displayed on the Jetpack Connect signup page for users to log in with a WordPress.com account',
+						}
+					);
+				default:
+					return translate(
+						"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack, you'll need to connect your store to your WordPress.com account."
+					);
+			}
 		}
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {

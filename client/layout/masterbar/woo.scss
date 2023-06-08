@@ -233,6 +233,7 @@
 
 
 	.jetpack-connect__logged-in-form .formatted-header,
+	.jetpack-connect__authorize-form .formatted-header,
 	.login__form-header-wrapper,
 	.signup-form__woo-wrapper {
 		text-align: center;
@@ -766,7 +767,8 @@
 			}
 		}
 
-		.login form {
+		.login form,
+		.signup-form {
 			max-width: 405px;
 			margin: 0 auto;
 		}
@@ -794,10 +796,12 @@
 			}
 		}
 
-		.login__form-userdata label.form-label {
+		.login__form-userdata label.form-label,
+		.logged-out-form label.form-label {
 			font-weight: 500;
 			text-transform: uppercase;
 			font-size: rem(11px);
+			color: $gray-900;
 		}
 
 		.jetpack-connect__action-disclaimer .button.is-primary,
@@ -809,7 +813,7 @@
 			background-color: var(--wp-admin-theme-color);
 		}
 
-		.login__social-buttons .social-buttons__service-name {
+		span.social-buttons__service-name {
 			font-weight: 600;
 		}
 
@@ -836,6 +840,29 @@
 		.jetpack-connect__features_wrapper {
 			@media screen and ( max-width: 660px ) {
 				display: none !important;
+			}
+		}
+
+		.signup-form {
+			padding-top: 24px;
+		}
+
+		// Log in link on signup page
+		.formatted-header__subtitle a {
+			color: var(--wp-admin-theme-color);
+		}
+
+		.form-input-validation {
+			padding: 8px 0 11px;
+
+			p,
+			a {
+				line-height: 16px;
+			}
+
+			// Hide form validation icon
+			svg {
+				display: none;
 			}
 		}
 	}

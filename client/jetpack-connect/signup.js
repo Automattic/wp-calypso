@@ -48,6 +48,7 @@ import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
 import { authQueryPropTypes } from './utils';
 import wooDnaConfig from './woo-dna-config';
+import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 const noop = () => {};
@@ -119,9 +120,14 @@ export class JetpackSignup extends Component {
 		this.props.resetAuthAccountType();
 	};
 
-	isWoo() {
+	isWooOnboarding() {
 		const { authQuery } = this.props;
 		return 'woocommerce-onboarding' === authQuery.from;
+	}
+
+	isWooCoreProfiler( props = this.props ) {
+		const { from } = props.authQuery;
+		return 'woocommerce-core-profiler' === from;
 	}
 
 	getWooDnaConfig() {
@@ -261,6 +267,10 @@ export class JetpackSignup extends Component {
 
 	renderFooterLink() {
 		const { authQuery } = this.props;
+
+		if ( this.isWooCoreProfiler() ) {
+			return null;
+		}
 
 		return (
 			<LoggedOutFormLinks>
@@ -447,10 +457,17 @@ export class JetpackSignup extends Component {
 		}
 		const { isCreatingAccount } = this.state;
 		return (
-			<MainWrapper isWooOnboarding={ this.isWoo() }>
+			<MainWrapper
+				isWooOnboarding={ this.isWooOnboarding() }
+				isWooCoreProfiler={ this.isWooCoreProfiler() }
+			>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
-					<AuthFormHeader authQuery={ this.props.authQuery } isWooOnboarding={ this.isWoo() } />
+					<AuthFormHeader
+						authQuery={ this.props.authQuery }
+						isWooOnboarding={ this.isWooOnboarding() }
+						isWooCoreProfiler={ this.isWooCoreProfiler() }
+					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
 						email={ this.props.authQuery.userEmail }
@@ -470,6 +487,9 @@ export class JetpackSignup extends Component {
 
 					{ this.renderLoginUser() }
 				</div>
+				{ this.isWooCoreProfiler() && this.props.authQuery.installedExtSuccess && (
+					<WooInstallExtSuccessNotice />
+				) }
 			</MainWrapper>
 		);
 	}
