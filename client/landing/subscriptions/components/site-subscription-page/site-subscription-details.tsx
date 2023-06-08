@@ -3,6 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useEffect, useState, useMemo } from 'react';
+import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
@@ -107,9 +108,9 @@ const SiteSubscriptionDetails = ( {
 	}, [ url ] );
 
 	const urlLink = hostname ? (
-		<a href={ url } className="url" rel="noreferrer noopener" target="_blank">
+		<ExternalLink href={ url } rel="noreferrer noopener" target="_blank">
 			{ hostname }
-		</a>
+		</ExternalLink>
 	) : (
 		''
 	);
