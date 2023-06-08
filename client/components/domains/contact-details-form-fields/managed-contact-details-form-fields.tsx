@@ -7,7 +7,7 @@ import {
 import debugFactory from 'debug';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { camelCase, deburr } from 'lodash';
-import { Component, createElement } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -19,7 +19,7 @@ import {
 	prepareDomainContactDetails,
 	convertDomainContactDetailsToManagedContactDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
-import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
 import getCountries from 'calypso/state/selectors/get-countries';
 import {
@@ -32,7 +32,6 @@ import { GSuiteFields } from './g-suite-fields';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
 import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 import type { IAppState } from 'calypso/state/types';
-import type { ComponentType, FunctionComponent } from 'react';
 
 import './style.scss';
 
@@ -72,7 +71,7 @@ export class ManagedContactDetailsFormFields extends Component<
 		contactDetails: Object.fromEntries(
 			CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, '' ] )
 		),
-		getIsFieldDisabled: ( field: string ) => false,
+		getIsFieldDisabled: ( field: string ) => ( field ? false : false ),
 		onContactDetailsChange: () => undefined,
 		hasCountryStates: false,
 		userCountryCode: 'US',
@@ -369,37 +368,35 @@ export class ManagedContactDetailsFormFields extends Component<
 	}
 
 	renderFullForm() {
-		const { translate, contactDetailsErrors } = this.props;
-		const form = getFormFromContactDetails(
-			this.props.contactDetails,
-			this.props.contactDetailsErrors
-		);
-		debug( 'rendering with form', form );
-
 		return (
 			<>
 				<div className="contact-details-form-fields__row">
-					{ this.createField(
-						'first-name',
-						Input,
-						{
-							label: translate( 'First name' ),
-						},
-						{
-							customErrorMessage: contactDetailsErrors?.firstName,
-						}
-					) }
-
-					{ this.createField(
-						'last-name',
-						Input,
-						{
-							label: translate( 'Last name' ),
-						},
-						{
-							customErrorMessage: contactDetailsErrors?.lastName,
-						}
-					) }
+					<Input
+						label={ this.props.translate( 'First name' ) }
+						labelClass="contact-details-form-fields__label"
+						additionalClasses="contact-details-form-fields__field"
+						disabled={ this.props.getIsFieldDisabled( 'first-name' ) }
+						isError={ !! this.props.contactDetailsErrors.firstName }
+						errorMessage={ this.props.contactDetailsErrors.firstName }
+						onChange={ this.handleFieldChangeEvent }
+						onBlur={ this.handleBlur( 'first-name' ) }
+						value={ this.props.contactDetails.firstName }
+						name="first-name"
+						eventFormName={ this.props.eventFormName }
+					/>
+					<Input
+						label={ this.props.translate( 'Last name' ) }
+						labelClass="contact-details-form-fields__label"
+						additionalClasses="contact-details-form-fields__field"
+						disabled={ this.props.getIsFieldDisabled( 'last-name' ) }
+						isError={ !! this.props.contactDetailsErrors.lastName }
+						errorMessage={ this.props.contactDetailsErrors.lastName }
+						onChange={ this.handleFieldChangeEvent }
+						onBlur={ this.handleBlur( 'last-name' ) }
+						value={ this.props.contactDetails.lastName }
+						name="first-name"
+						eventFormName={ this.props.eventFormName }
+					/>
 				</div>
 				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
 
@@ -465,35 +462,6 @@ export default connect( ( state: IAppState, props: ManagedContactDetailsFormFiel
 	};
 } )( localize( ManagedContactDetailsFormFields ) );
 
-function getFormFromContactDetails(
-	contactDetails: DomainContactDetailsData,
-	contactDetailsErrors: DomainContactDetailsErrors
-): Record< string, { value: string; errors: string[] } > {
-	return Object.keys( contactDetails ).reduce( ( newForm, key ) => {
-		const value = contactDetails[ key ];
-		const error = contactDetailsErrors[ key ];
-		const errors = error ? [ error ] : [];
-		return {
-			...newForm,
-			[ key ]: {
-				value,
-				errors,
-			},
-		};
-	}, {} );
-}
-
-function updateFormWithContactChange( form, key, value, additionalProperties ) {
-	return {
-		...form,
-		[ camelCase( key ) ]: {
-			value,
-			errors: [],
-			...( additionalProperties ?? {} ),
-		},
-	};
-}
-
 function formatDataForParent( {
 	data,
 	countryCode,
@@ -527,38 +495,4 @@ function formatDataForParent( {
 			? toIcannFormat( data.phone, countries[ phoneCountryCode as keyof typeof countries ] )
 			: '',
 	};
-}
-
-function getMainFieldValues( form, countryCode, phoneCountryCode, hasCountryStates ) {
-	const mainFieldValues = Object.keys( form ).reduce( ( values, key ) => {
-		return { ...values, [ key ]: form[ key ].value };
-	}, {} );
-	let state = mainFieldValues.state;
-
-	// domains registered according to ancient validation rules may have state set even though not required
-	if (
-		! hasCountryStates &&
-		( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ||
-			CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) )
-	) {
-		state = '';
-	}
-
-	const fax = '';
-
-	return {
-		...mainFieldValues,
-		fax,
-		state,
-		phone: mainFieldValues.phone
-			? toIcannFormat( mainFieldValues.phone, countries[ phoneCountryCode ] )
-			: '',
-	};
-}
-
-function getFirstError( formData ) {
-	if ( ! formData?.errors?.length ) {
-		return '';
-	}
-	return formData.errors[ 0 ];
 }
