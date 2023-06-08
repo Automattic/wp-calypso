@@ -187,6 +187,12 @@ const importHostedSiteFlow: Flow = {
 					// remove the siteSlug in case they want to change the destination site
 					urlQueryParams.delete( 'siteSlug' );
 					return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+
+				case 'sitePicker':
+					// remove the from parameter to restart the flow
+					urlQueryParams.delete( 'from' );
+					return navigate( `import?${ urlQueryParams.toString() }` );
+
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
