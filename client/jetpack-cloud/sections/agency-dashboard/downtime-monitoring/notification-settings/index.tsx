@@ -311,7 +311,7 @@ export default function NotificationSettings( {
 						selectedDuration={ selectedDuration }
 						selectDuration={ selectDuration }
 					/>
-					{ isSMSNotificationEnabled && <SmsNotification /> }
+					{ isSMSNotificationEnabled && <SMSNotification /> }
 
 					<MobilePushNotification
 						recordEvent={ recordEvent }
