@@ -314,3 +314,7 @@ export interface InitialMonitorSettings {
 	selectedDuration: MonitorDuration | undefined;
 	emailContacts?: MonitorSettingsEmail[] | [];
 }
+export interface ResendVerificationCodeParams {
+	type: 'email';
+	value: string;
+}

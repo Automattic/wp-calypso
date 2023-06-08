@@ -211,6 +211,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 .tooltip.popover {
+	// @TODO: Refactor styling into the Popover component for more extensive usage. E.g., tooltip and popover in StatsNavigation.
 	&.highlight-card-tooltip,
 	&.highlight-card-popover { // overload tooltip's styles
 		.popover__inner {
@@ -218,6 +219,15 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 			width: 244px;
 			box-sizing: border-box;
 			border-radius: 5px; // stylelint-disable-line scales/radii
+		}
+	}
+
+	// Modules settings popover
+	&.page-modules-settings-popover {
+		// Make the popover be under `#header.masterbar`.
+		z-index: 1;
+		.popover__inner {
+			padding: 14px 16px;
 		}
 	}
 
@@ -258,9 +268,41 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 		.popover__inner {
 			background-color: var(--studio-white);
+			color: var(--studio-gray-50);
 			border: 1px solid var(--studio-gray-5);
 			box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+			font-family: $font-sf-pro-text;
+			font-weight: 500;
+			font-size: $font-body-small;
+			line-height: 24px;
+			letter-spacing: -0.02em;
 
+			// Modules settings controls
+			.page-modules-settings-toggle-wrapper {
+				color: var(--studio-gray-80);
+				margin-top: 10px;
+
+				.page-modules-settings-toggle {
+					display: flex;
+					align-items: center;
+					justify-content: flex-start;
+
+					&:not(:first-child) {
+						margin-top: 12px;
+					}
+
+					svg {
+						margin-right: 14px;
+					}
+				}
+
+				.page-modules-settings-toggle-control {
+					line-height: 18px;
+					margin-left: auto;
+				}
+			}
+
+			// Highlights settings controls
 			& > button {
 				width: 100%;
 				display: flex;

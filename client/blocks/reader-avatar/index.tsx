@@ -2,14 +2,32 @@ import { safeImageUrl } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { startsWith, get } from 'lodash';
-import PropTypes from 'prop-types';
 import SiteIcon from 'calypso/blocks/site-icon';
 import Gravatar from 'calypso/components/gravatar';
 
 import './style.scss';
 
-const noop = () => {};
+const noop = () => undefined;
+
+type Author = {
+	avatar_URL?: string;
+	has_avatar?: boolean;
+	display_name?: string;
+	name?: string;
+};
+
+type ReaderAvatarProps = {
+	author?: Author | null;
+	siteIcon?: string;
+	feedIcon?: string;
+	siteUrl?: string;
+	preferGravatar?: boolean;
+	preferBlavatar?: boolean;
+	showPlaceholder?: boolean;
+	isCompact?: boolean;
+	onClick?: () => void;
+	iconSize?: number | null;
+};
 
 const ReaderAvatar = ( {
 	author,
@@ -20,18 +38,16 @@ const ReaderAvatar = ( {
 	preferGravatar = false,
 	preferBlavatar = false,
 	showPlaceholder = false,
-	onClick,
+	onClick = noop,
 	iconSize = null,
-} ) => {
+}: ReaderAvatarProps ) => {
 	let fakeSite;
 
-	// don't show the default favicon for some sites
-	if ( feedIcon?.endsWith( 'wp.com/i/buttonw-com.png' ) ) {
-		feedIcon = null;
-	}
-
 	const safeSiteIcon = safeImageUrl( siteIcon );
-	const safeFeedIcon = safeImageUrl( feedIcon );
+	const safeFeedIcon = safeImageUrl(
+		// don't show the default favicon for some sites
+		feedIcon?.endsWith( 'wp.com/i/buttonw-com.png' ) ? null : feedIcon
+	);
 
 	if ( safeSiteIcon ) {
 		fakeSite = {
@@ -47,13 +63,13 @@ const ReaderAvatar = ( {
 		};
 	}
 
-	let hasSiteIcon = !! get( fakeSite, 'icon.img' );
-	let hasAvatar = !! ( author && author.has_avatar );
+	let hasSiteIcon = !! fakeSite?.icon?.img;
+	let hasAvatar = !! author?.has_avatar;
 
-	if ( hasSiteIcon && hasAvatar ) {
+	if ( fakeSite?.icon?.img && hasAvatar && typeof author?.avatar_URL === 'string' ) {
 		// Do these both reference the same image? Disregard query string params.
 		const [ withoutQuery ] = fakeSite.icon.img.split( '?' );
-		if ( startsWith( author.avatar_URL, withoutQuery ) ) {
+		if ( author.avatar_URL.startsWith( withoutQuery ) ) {
 			hasAvatar = false;
 		}
 	}
@@ -78,7 +94,7 @@ const ReaderAvatar = ( {
 		gravatarSize = hasBothIcons ? 32 : 96;
 	}
 
-	if ( iconSize > 0 ) {
+	if ( typeof iconSize === 'number' && iconSize > 0 ) {
 		siteIconSize = iconSize;
 		gravatarSize = iconSize;
 	}
@@ -106,22 +122,6 @@ const ReaderAvatar = ( {
 			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
 		</div>
 	);
-};
-
-ReaderAvatar.propTypes = {
-	author: PropTypes.object,
-	siteIcon: PropTypes.string,
-	feedIcon: PropTypes.string,
-	siteUrl: PropTypes.string,
-	preferGravatar: PropTypes.bool,
-	showPlaceholder: PropTypes.bool,
-	isCompact: PropTypes.bool,
-	onClick: PropTypes.func,
-	iconSize: PropTypes.number,
-};
-
-ReaderAvatar.defaultProps = {
-	onClick: noop,
 };
 
 export default localize( ReaderAvatar );

@@ -119,7 +119,9 @@ RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_
  	apt-get upgrade -y && \
 	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose && \
 	composer install && \
-	# Install sentry-cli.
-	wget -O - https://sentry.io/get-cli/ | bash
+	# Install sentry-cli. We pin it to a version to make it easier to know at a
+	# glance what is the version being used. It's important to keep the JS SDK and
+	# the CLI updated to their latest stable versions.
+	wget -O - https://sentry.io/get-cli/ | SENTRY_CLI_VERSION="2.18.1" bash
 
 ENTRYPOINT [ "/bin/bash" ]

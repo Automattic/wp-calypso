@@ -79,13 +79,23 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 
 	useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] );
 
-	const currentSite = window?.helpCenterData?.currentSite;
+	/**
+	 * This site is provided by the backed in Editing Toolkit.
+	 * It's difficult to get the site information on the client side in Atomic sites. So we moved this challenge to the backend,
+	 * and forwarded the data using `localize_script` to the client side.
+	 */
+	const backendProvidedSite = window?.helpCenterData?.currentSite;
+
 	const site = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( siteId || primarySiteId ),
 		[ siteId || primarySiteId ]
 	);
 
-	setSite( currentSite ? currentSite : site );
+	const usedSite = backendProvidedSite || site;
+
+	useEffect( () => {
+		setSite( usedSite );
+	}, [ usedSite, setSite ] );
 
 	useStillNeedHelpURL();
 

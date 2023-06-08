@@ -43,6 +43,10 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 	 ↓ Methods
 	 */
 	function goToImporterPage() {
+		if ( ! urlData ) {
+			return;
+		}
+
 		const url = getFinalImporterUrl(
 			siteSlug as string,
 			urlData.url,
