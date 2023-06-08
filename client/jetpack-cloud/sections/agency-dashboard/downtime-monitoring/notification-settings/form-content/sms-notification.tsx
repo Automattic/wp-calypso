@@ -1,15 +1,18 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
+import ConfigureSMSNotification from '../../configure-sms-notification';
 
 interface Props {
 	enableSMSNotification: boolean;
 	setEnableSMSNotification: ( isEnabled: boolean ) => void;
+	toggleModal: () => void;
 }
 
 export default function SMSNotification( {
 	enableSMSNotification,
 	setEnableSMSNotification,
+	toggleModal,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -37,11 +40,14 @@ export default function SMSNotification( {
 				</div>
 			</div>
 			{ enableSMSNotification && allPhoneNumbers.length === 0 && (
-				<div className="margin-top-16">
-					<AlertBanner type="warning">
-						{ translate( 'You need at least one phone number' ) }
-					</AlertBanner>
-				</div>
+				<>
+					<div className="margin-top-16">
+						<AlertBanner type="warning">
+							{ translate( 'You need at least one phone number' ) }
+						</AlertBanner>
+					</div>
+					<ConfigureSMSNotification toggleModal={ toggleModal } />
+				</>
 			) }
 		</>
 	);

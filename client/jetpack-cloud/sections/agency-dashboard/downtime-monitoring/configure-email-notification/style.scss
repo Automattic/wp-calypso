@@ -1,9 +1,5 @@
 $help-text-color: #757575;
 
-.configure-email-address__card-container {
-	margin: 16px 0 0;
-}
-
 .configure-email-address__card {
 	margin: 0;
 	height: 60px;
@@ -66,17 +62,6 @@ button.configure-email-address__action-icon {
 	font-size: 0.75rem;
 	line-height: 18px;
 	color: var(--studio-gray-50);
-}
-
-button.configure-email-address__button {
-	margin-block-start: 16px;
-	border-radius: 20px; /* stylelint-disable-line scales/radii */
-	color: var(--studio-gray-80) !important;
-	display: flex;
-	align-items: center;
-	width: fit-content;
-	border-color: var(--studio-gray-80);
-	padding: 4px 8px !important;
 }
 
 .configure-email-notification__help-text {
