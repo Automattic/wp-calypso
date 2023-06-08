@@ -18,18 +18,45 @@ export default {
 
 const Template = ( args ) => <AutoLoadingHomepageModal { ...args } />;
 
-export const isVisible = Template.bind( {} );
-isVisible.args = {
+const baseProps = {
 	hasActivated: false,
 	hasAutoLoadingHomepage: true,
 	hideAutoLoadingHomepageWarning: action( 'hideAutoLoadingHomepageWarning' ),
 	isActivating: false,
+	isCurrentTheme: false,
 	isVisible: true,
 	source: 'details',
 	theme: {
 		author: 'author',
 		author_uri: 'author_uri',
 		id: 'id',
-		name: 'name',
+		name: 'Sample Theme',
 	},
+};
+
+export const isVisible = Template.bind( {} );
+isVisible.args = {
+	...baseProps,
+};
+
+/**
+ * Don't show the modal in the patterns below.
+ */
+
+export const isCurrentTheme = Template.bind( {} );
+isCurrentTheme.args = {
+	...baseProps,
+	isCurrentTheme: true,
+};
+
+export const noAutoLoadingHomepage = Template.bind( {} );
+noAutoLoadingHomepage.args = {
+	...baseProps,
+	hasAutoLoadingHomepage: false,
+};
+
+export const isActivating = Template.bind( {} );
+isActivating.args = {
+	...baseProps,
+	isActivating: true,
 };
