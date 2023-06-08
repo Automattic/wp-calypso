@@ -27,7 +27,6 @@ class SiteResults extends Component {
 		searchResults: PropTypes.array,
 		searchResultsCount: PropTypes.number,
 		width: PropTypes.number.isRequired,
-		showLastUpdatedDate: PropTypes.bool,
 	};
 
 	fetchNextPage = ( offset ) => {
@@ -42,7 +41,7 @@ class SiteResults extends Component {
 	hasNextPage = ( offset ) => offset < this.props.searchResultsCount;
 
 	render() {
-		const { query, searchResults, width, sort, showLastUpdatedDate } = this.props;
+		const { query, searchResults, width, sort } = this.props;
 		const isEmpty = query?.length > 0 && searchResults?.length === 0;
 
 		if ( isEmpty ) {
@@ -63,7 +62,9 @@ class SiteResults extends Component {
 					hasNextPage={ this.hasNextPage }
 					rowRenderer={ siteRowRenderer }
 					extraRenderItemProps={ {
-						showLastUpdatedDate,
+						showLastUpdatedDate: false,
+						showNotificationSettings: false,
+						showFollowedOnDate: false,
 						followSource: SEARCH_RESULTS_SITES,
 					} }
 				/>

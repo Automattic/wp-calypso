@@ -197,7 +197,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						</p>
 					</div>
 				) }
-				{ isFetchedAfterMount ? <Checklist tasks={ enhancedTasks } /> : <Checklist.Placeholder /> }
+				{ isFetchedAfterMount ? (
+					<Checklist tasks={ enhancedTasks } makeLastTaskPrimaryAction={ true } />
+				) : (
+					<Checklist.Placeholder />
+				) }
 			</div>
 			<div className="launchpad__sidebar-admin-link">
 				<StepNavigationLink

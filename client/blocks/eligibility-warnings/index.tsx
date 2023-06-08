@@ -212,7 +212,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ showDataCenterPicker && (
+			{ showDataCenterPicker && isEligible && ! hasBlockingHold( listHolds ) && (
 				<CompactCard className="eligibility-warnings__data-center-picker">
 					<TrackComponentView eventName="calypso_automated_transfer_datacenter_picker_display" />
 					<DataCenterPicker

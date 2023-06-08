@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { commentAuthorAvatar, video } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -12,6 +13,18 @@ const year = { value: 'year', label: translate( 'Years' ) };
 
 export const intervals = [ day, week, month, year ];
 export const emailIntervals = [ hour, day ];
+
+export const AVAILABLE_PAGE_MODULES = {
+	traffic: [
+		{
+			key: 'authors',
+			label: translate( 'Authors' ),
+			icon: commentAuthorAvatar,
+			defaultValue: true,
+		},
+		{ key: 'videos', label: translate( 'Videos' ), icon: video, defaultValue: true },
+	],
+};
 
 /**
  * Nav items

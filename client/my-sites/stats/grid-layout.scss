@@ -161,6 +161,8 @@ $grid-vertical-gutters: 32px;
 }
 
 .is-section-stats .stats__module-list--traffic {
+	// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,
+	// which would make different gaps for sites.
 	@include stats-desktop-grid(
 		"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
 		"country country country country country country country country country country country country"
@@ -192,6 +194,112 @@ $grid-vertical-gutters: 32px;
 		"downloads downloads downloads downloads",
 		10
 	);
+
+	// @TODO: Refactor hidden modules with a more flexible layout (e.g., Flexbox) to fit mass configuration to moduels in the future.
+	// Hide the Authors module.
+	&.stats__module-list--traffic-no-authors {
+		// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,
+		// which would make different gaps for sites.
+		@include stats-desktop-grid(
+			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
+			"country country country country country country country country country country country country"
+			"search search search search clicks clicks clicks clicks videos videos videos videos"
+			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
+			5
+		);
+
+		// Keep Emails occupying the whole row.
+		@include stats-tablet-grid(
+			"posts posts posts posts referrers referrers referrers referrers"
+			"country country country country country country country country"
+			"search search search search clicks clicks clicks clicks"
+			"videos videos videos videos videos videos videos videos"
+			"emails emails emails emails emails emails emails emails"
+			"downloads downloads downloads downloads downloads downloads downloads downloads",
+			6
+		);
+
+		@include stats-mobile-grid(
+			"posts posts posts posts"
+			"referrers referrers referrers referrers"
+			"country country country country"
+			"search search search search"
+			"clicks clicks clicks clicks"
+			"videos videos videos videos"
+			"emails emails emails emails"
+			"downloads downloads downloads downloads",
+			8
+		);
+	}
+
+	// Hide the Videos module.
+	&.stats__module-list--traffic-no-videos {
+		// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,
+		// which would make different gaps for sites.
+		@include stats-desktop-grid(
+			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
+			"country country country country country country country country country country country country"
+			"authors authors authors authors search search search search clicks clicks clicks clicks"
+			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
+			5
+		);
+
+		// Keep Emails occupying the whole row.
+		@include stats-tablet-grid(
+			"posts posts posts posts referrers referrers referrers referrers"
+			"country country country country country country country country"
+			"authors authors authors authors search search search search"
+			"clicks clicks clicks clicks clicks clicks clicks clicks"
+			"emails emails emails emails emails emails emails emails"
+			"downloads downloads downloads downloads downloads downloads downloads downloads",
+			6
+		);
+
+		@include stats-mobile-grid(
+			"posts posts posts posts"
+			"referrers referrers referrers referrers"
+			"country country country country"
+			"authors authors authors authors"
+			"search search search search"
+			"clicks clicks clicks clicks"
+			"emails emails emails emails"
+			"downloads downloads downloads downloads",
+			8
+		);
+	}
+
+	// Hide Authors and Videos modules.
+	&.stats__module-list--traffic-no-authors.stats__module-list--traffic-no-videos {
+		// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,
+		// which would make different gaps for sites.
+		@include stats-desktop-grid(
+			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
+			"country country country country country country country country country country country country"
+			"search search search search search search clicks clicks clicks clicks clicks clicks"
+			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
+			5
+		);
+
+		@include stats-tablet-grid(
+			"posts posts posts posts referrers referrers referrers referrers"
+			"country country country country country country country country"
+			"search search search search clicks clicks clicks clicks"
+			"emails emails emails emails emails emails emails emails"
+			"downloads downloads downloads downloads downloads downloads downloads downloads",
+			5
+		);
+
+		@include stats-mobile-grid(
+			"posts posts posts posts"
+			"referrers referrers referrers referrers"
+			"country country country country"
+			"search search search search"
+			"clicks clicks clicks clicks"
+			"emails emails emails emails"
+			"downloads downloads downloads downloads",
+			7
+		);
+	}
 
 	.card.stats-module {
 		margin-bottom: 0;
