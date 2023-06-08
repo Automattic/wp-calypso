@@ -73,7 +73,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
 			has_site_title: hasChangedInput.current.title,
-			has_changed_geo_affinity: hasChangedInput.current.geoAffinity,
+			has_geo_affinity: hasChangedInput.current.geoAffinity,
 		} );
 
 		submit?.( { siteTitle, siteGeoAffinity } );
