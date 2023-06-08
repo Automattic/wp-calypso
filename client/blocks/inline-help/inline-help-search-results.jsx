@@ -67,6 +67,7 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
+
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const contextualResults = rawContextualResults.filter(
@@ -74,9 +75,14 @@ function HelpSearchResults( {
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchData, isInitialLoading: isSearching } = useHelpSearchQuery( searchQuery );
+	const { data: searchData, isInitialLoading: isSearching } = useHelpSearchQuery(
+		searchQuery,
+		'',
+		{},
+		sectionName
+	);
 
-	const searchResults = searchData?.wordpress_support_links ?? [];
+	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
 	useEffect( () => {
