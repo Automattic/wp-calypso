@@ -19,6 +19,8 @@ export default {
 const Template = ( args ) => <AutoLoadingHomepageModal { ...args } />;
 
 const baseProps = {
+	acceptAutoLoadingHomepageWarning: action( 'acceptAutoLoadingHomepageWarning' ),
+	activateTheme: action( 'activateTheme' ),
 	hasActivated: false,
 	hasAutoLoadingHomepage: true,
 	hideAutoLoadingHomepageWarning: action( 'hideAutoLoadingHomepageWarning' ),
