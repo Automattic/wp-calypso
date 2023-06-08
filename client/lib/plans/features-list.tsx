@@ -1722,7 +1722,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
-		getTitle: () => i18n.translate( '%d% transaction fee for payments + Stripe fees', { args: 0 } ),
+		getTitle: () => i18n.translate( '0% transaction fee for payments + Stripe fees' ),
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
