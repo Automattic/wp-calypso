@@ -83,6 +83,7 @@ function emptySites( context: PageJSContext, next: () => void ) {
 
 	context.primary = (
 		<>
+			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<Global styles={ emptySitesDashboardGlobalStyles } />
 			<EmptySitesDashboard />
 		</>

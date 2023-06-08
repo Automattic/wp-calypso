@@ -76,6 +76,8 @@ const LayoutLoggedOut = ( {
 
 	const isReaderTagPage =
 		sectionName === 'reader' && window.location.pathname.startsWith( '/tag/' );
+	const isReaderSearchPage =
+		sectionName === 'reader' && window.location.pathname.startsWith( '/read/search' );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -124,7 +126,8 @@ const LayoutLoggedOut = ( {
 		masterbar = null;
 	} else if (
 		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions' ].includes( sectionName ) &&
-		! isReaderTagPage
+		! isReaderTagPage &&
+		! isReaderSearchPage
 	) {
 		masterbar = (
 			<UniversalNavbarHeader

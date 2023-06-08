@@ -14,8 +14,7 @@ import classnames from 'classnames';
 import { useState, useRef, useMemo } from 'react';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { activateOrInstallThenActivate, setActiveTheme } from 'calypso/state/themes/actions';
 import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
 import { useQuery } from '../../../../hooks/use-query';
@@ -87,7 +86,6 @@ const PatternAssembler = ( {
 	const locale = useLocale();
 	// New sites are created from 'site-setup' and 'with-site-assembler' flows
 	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
-	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
@@ -393,13 +391,14 @@ const PatternAssembler = ( {
 		if ( isEnabled( 'pattern-assembler/logged-in-showcase' ) ) {
 			setPendingAction( () =>
 				Promise.resolve()
-					.then( () =>
-						reduxDispatch(
-							activateOrInstallThenActivate( themeId, site?.ID, 'assembler', false, false )
-						)
+					.then(
+						() =>
+							reduxDispatch(
+								activateOrInstallThenActivate( themeId, site?.ID, 'assembler', false, false )
+							) as PromiseLike< string >
 					)
-					.then( () =>
-						assembleSite( siteSlugOrId, isSiteJetpack ? themeId : stylesheet, {
+					.then( ( activeThemeStylesheet: string ) =>
+						assembleSite( siteSlugOrId, activeThemeStylesheet, {
 							homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
 							headerHtml: header?.html,
 							footerHtml: footer?.html,

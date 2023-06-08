@@ -314,7 +314,10 @@ export class UserStep extends Component {
 				oauth2Signup,
 				...data,
 			},
-			dependencies
+			dependencies,
+			{
+				is_dev_account: data.userData.is_dev_account ?? false,
+			}
 		);
 	};
 

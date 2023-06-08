@@ -8,6 +8,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -177,13 +178,15 @@ export default function WPCheckoutOrderReview( {
 				/>
 			</WPOrderReviewSection>
 
-			<CouponFieldArea
-				isCouponFieldVisible={ isCouponFieldVisible }
-				setCouponFieldVisible={ setCouponFieldVisible }
-				isPurchaseFree={ isPurchaseFree }
-				couponStatus={ couponStatus }
-				couponFieldStateProps={ couponFieldStateProps }
-			/>
+			{ ! isAkismetCheckout() && (
+				<CouponFieldArea
+					isCouponFieldVisible={ isCouponFieldVisible }
+					setCouponFieldVisible={ setCouponFieldVisible }
+					isPurchaseFree={ isPurchaseFree }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
+			) }
 		</div>
 	);
 }
