@@ -42,6 +42,15 @@ declare module 'calypso/components/embed-container' {
 	export default EmbedContainer;
 }
 
+declare module 'calypso/data/help/use-help-search-query' {
+	export const useHelpSearchQuery: (
+		search: string,
+		locale: string,
+		queryOptions: Record< string, unknown >,
+		sectionName: string
+	) => { data?: SearchResult[]; isLoading: boolean };
+}
+
 declare module 'calypso/data/support-article-alternates/use-support-article-alternates-query' {
 	const useSupportArticleAlternatesQuery: (
 		blogId: number,
