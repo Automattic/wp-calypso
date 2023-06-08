@@ -1,12 +1,13 @@
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
+import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import AutoDirection from 'calypso/components/auto-direction';
 import TimeSince from 'calypso/components/time-since';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import FeaturedAsset from './featured-asset';
 
-const TagPost = ( { post, isDiscover, expandCard, postKey, isExpanded, site } ) => {
+const TagPost = ( { post, isDiscover, expandCard, postKey, isExpanded, site, teams } ) => {
 	const onVideoThumbnailClick =
 		post.canonical_media?.mediaType === 'video'
 			? () => expandCard( { postKey, post, site } )
@@ -60,6 +61,12 @@ const TagPost = ( { post, isDiscover, expandCard, postKey, isExpanded, site } ) 
 							</span>
 						) }
 					</div>
+					<ReaderPostEllipsisMenu
+						site={ site }
+						teams={ teams }
+						post={ post }
+						showFollow={ false }
+					/>
 				</div>
 			</div>
 			<FeaturedAsset
