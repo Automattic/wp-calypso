@@ -11,10 +11,11 @@ import SubscribersCount from 'calypso/blocks/subscribers-count';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import version_compare from 'calypso/lib/version-compare';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	updateModuleToggles,
 	requestModuleToggles,
@@ -101,7 +102,7 @@ class StatsNavigation extends Component {
 	}
 
 	render() {
-		const { slug, selectedItem, interval, isLegacy } = this.props;
+		const { slug, selectedItem, interval, isLegacy, statsAdminVersion } = this.props;
 		const { pageModules, isPageSettingsPopoverVisible } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
@@ -111,7 +112,10 @@ class StatsNavigation extends Component {
 			'stats-navigation--modernized': ! isLegacy,
 		} );
 
-		const isHighlightsSettingsEnabled = config.isEnabled( 'stats/module-settings' );
+		const isHighlightsSettingsSupported = ! (
+			config.isEnabled( 'is_running_in_jetpack_site' ) &&
+			version_compare( statsAdminVersion, '0.9.0-alpha', '<' )
+		);
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
@@ -150,7 +154,7 @@ class StatsNavigation extends Component {
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 
-				{ isHighlightsSettingsEnabled && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
+				{ isHighlightsSettingsSupported && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
 					<div className="page-modules-settings">
 						<button
 							className="page-modules-settings-action"
@@ -211,6 +215,7 @@ export default connect(
 				canCurrentUser( state, siteId, 'manage_options' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
+			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
