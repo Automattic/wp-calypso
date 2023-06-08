@@ -23,15 +23,17 @@ export default function SMSNotification( {
 
 	const allPhoneNumbers = [
 		{
-			number: '+1 1234567890',
-			name: 'John Smith',
-			isDefault: true,
+			name: 'John Jones',
+			countryCode: '+1',
+			phoneNumber: '8657711717',
+			phoneNumberFull: '+1 8657711717',
 			verified: true,
 		},
 		{
-			number: '+1 9876543210',
-			name: 'Sally Jones',
-			isDefault: false,
+			name: 'Sarah Jones',
+			countryCode: '+1',
+			phoneNumber: '86573211111',
+			phoneNumberFull: '+1 8653211111',
 			verified: false,
 		},
 	]; // TODO: Get all phone numbers from the API when it is ready

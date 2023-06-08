@@ -1,25 +1,16 @@
 import { Button } from '@automattic/components';
 import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { StateMonitorSettingsSMS } from '../../sites-overview/types';
 import SMSItemContent from './sms-item-content';
 
 import './style.scss';
 
-interface StateMonitorSettingsPhoneNumber {
-	number: string;
-	name: string;
-	isDefault: boolean;
-	verified: boolean;
-}
-
 type AllowedMonitorContactActions = 'edit' | 'remove' | 'verify';
 
 interface Props {
-	toggleModal: (
-		item?: StateMonitorSettingsPhoneNumber,
-		action?: AllowedMonitorContactActions
-	) => void;
-	allPhoneItems: Array< StateMonitorSettingsPhoneNumber >;
+	toggleModal: ( item?: StateMonitorSettingsSMS, action?: AllowedMonitorContactActions ) => void;
+	allPhoneItems: Array< StateMonitorSettingsSMS >;
 }
 
 export default function ConfigureSMSNotification( { toggleModal, allPhoneItems = [] }: Props ) {
@@ -33,7 +24,7 @@ export default function ConfigureSMSNotification( { toggleModal, allPhoneItems =
 	return (
 		<div className="configure-contact__card-container">
 			{ allPhoneItems.map( ( item ) => (
-				<SMSItemContent key={ item.number } item={ item } />
+				<SMSItemContent key={ item.phoneNumberFull } item={ item } />
 			) ) }
 			<Button
 				compact

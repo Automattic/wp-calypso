@@ -5,13 +5,7 @@ import { useState, useRef } from 'react';
 import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-
-interface StateMonitorSettingsSMS {
-	number: string;
-	name: string;
-	isDefault: boolean;
-	verified: boolean;
-}
+import { StateMonitorSettingsSMS } from '../../sites-overview/types';
 
 interface Props {
 	item: StateMonitorSettingsSMS;
@@ -48,82 +42,80 @@ export default function SMSItemContent( { item }: Props ) {
 	const isVerified = item.verified;
 
 	return (
-		<Card className="configure-sms-number__card" key={ item.number } compact>
+		<Card className="configure-sms-number__card" key={ item.phoneNumberFull } compact>
 			<div className="configure-sms-number__card-content-container">
 				<span className="configure-sms-number__card-content">
-					<div className="configure-sms-number__card-heading">{ item.number }</div>
+					<div className="configure-sms-number__card-heading">{ item.phoneNumberFull }</div>
 					<div className="configure-sms-number__card-sub-heading">{ item.name }</div>
 				</span>
-				{ ! item.isDefault && (
-					<>
-						{ ! isVerified && (
-							<span
-								role="button"
-								tabIndex={ 0 }
-								onKeyPress={ () => {
-									//to do: add verification handling
-									return null;
-								} }
-								onClick={ () => {
-									//to do: add verification handling
-									return null;
-								} }
-								className="configure-sms-number__verification-status cursor-pointer"
-							>
-								<Badge type="warning">{ translate( 'Pending' ) }</Badge>
-							</span>
-						) }
-						{ isVerified && (
-							<span className="configure-sms-number__verification-status">
-								<Badge type="success">{ translate( 'Verified' ) }</Badge>
-							</span>
-						) }
-						<Button
-							compact
-							borderless
-							className="configure-sms-number__action-icon"
-							onClick={ showActions }
-							aria-label={ translate( 'More actions' ) }
-							ref={ buttonActionRef }
+
+				<>
+					{ ! isVerified && (
+						<span
+							role="button"
+							tabIndex={ 0 }
+							onKeyPress={ () => {
+								//TODO add verification handling
+								return null;
+							} }
+							onClick={ () => {
+								//TODO add verification handling
+								return null;
+							} }
+							className="configure-sms-number__verification-status cursor-pointer"
 						>
-							<Icon size={ 18 } icon={ moreHorizontal } />
-						</Button>
-						<PopoverMenu
-							className="configure-sms-number__popover-menu"
-							context={ buttonActionRef.current }
-							isVisible={ isOpen }
-							onClose={ closeDropdown }
-							position="bottom left"
+							<Badge type="warning">{ translate( 'Pending' ) }</Badge>
+						</span>
+					) }
+					{ isVerified && (
+						<span className="configure-sms-number__verification-status">
+							<Badge type="success">{ translate( 'Verified' ) }</Badge>
+						</span>
+					) }
+					<Button
+						compact
+						borderless
+						className="configure-sms-number__action-icon"
+						onClick={ showActions }
+						aria-label={ translate( 'More actions' ) }
+						ref={ buttonActionRef }
+					>
+						<Icon size={ 18 } icon={ moreHorizontal } />
+					</Button>
+					<PopoverMenu
+						className="configure-sms-number__popover-menu"
+						context={ buttonActionRef.current }
+						isVisible={ isOpen }
+						onClose={ closeDropdown }
+						position="bottom left"
+					>
+						<PopoverMenuItem
+							onClick={ () => {
+								//TODO handle actions
+								return null;
+							} }
 						>
-							{ ! item.verified && (
-								<PopoverMenuItem
-									onClick={ () => {
-										//to do: handle actions
-										return null;
-									} }
-								>
-									{ translate( 'Verify' ) }
-								</PopoverMenuItem>
-							) }
-							<PopoverMenuItem
-								onClick={ () => {
-									//to do: handle actions
-									return null;
-								} }
-							>
-								{ translate( 'Edit' ) }
-							</PopoverMenuItem>
-							<PopoverMenuItem
-								onClick={ () => {
-									//to do: handle actions
-									return null;
-								} }
-							>
-								{ translate( 'Remove' ) }
-							</PopoverMenuItem>
-						</PopoverMenu>
-					</>
-				) }
+							{ translate( 'Verify' ) }
+						</PopoverMenuItem>
+
+						<PopoverMenuItem
+							onClick={ () => {
+								//TODO handle actions
+								return null;
+							} }
+						>
+							{ translate( 'Edit' ) }
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							onClick={ () => {
+								//TODO handle actions
+								return null;
+							} }
+						>
+							{ translate( 'Remove' ) }
+						</PopoverMenuItem>
+					</PopoverMenu>
+				</>
 			</div>
 		</Card>
 	);
