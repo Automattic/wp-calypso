@@ -895,3 +895,13 @@
 .reader-post-card__featured-images-img {
 	vertical-align: middle;
 }
+
+.tag-stream__main .reader-post-card__byline-details {
+	display: flex;
+	justify-content: space-between;
+
+	.reader-post-options-menu__ellipsis-menu {
+		margin-top: -2px;
+		margin-left: 5px;
+	}
+}
