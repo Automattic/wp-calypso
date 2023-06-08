@@ -168,20 +168,20 @@ class StatsNavigation extends Component {
 					) }
 
 					{ ! config.isEnabled( 'stats/subscribers-section' ) && <SubscribersCount /> }
+
+					{ isModuleSettingsEnabled && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
+						<PageModuleToggler
+							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
+							pageModules={ pageModules }
+							onToggleModule={ this.onToggleModule }
+							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+							onTooltipDismiss={ this.onTooltipDismiss }
+						/>
+					) }
 				</SectionNav>
 
 				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
-				) }
-
-				{ isModuleSettingsEnabled && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
-					<PageModuleToggler
-						availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
-						pageModules={ pageModules }
-						onToggleModule={ this.onToggleModule }
-						isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-						onTooltipDismiss={ this.onTooltipDismiss }
-					/>
 				) }
 			</div>
 		);
