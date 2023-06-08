@@ -18,9 +18,16 @@ import Reach from '../stats-reach';
 import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
 import SubscribersOverview from '../stats-subscribers-overview';
 import SubscribersHighlightSection from './subscribers-highlight-section';
+import type { Moment } from 'moment';
 
 interface StatsSubscribersPageProps {
-	period: PeriodType;
+	period: {
+		// Subscribers page only use this period but other properties and this format is needed for StatsModule to construct a URL to email's summary page
+		period: PeriodType;
+		key: string;
+		startOf: Moment;
+		endOf: Moment;
+	};
 }
 
 const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
@@ -68,7 +75,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 				) }
 				{ isChartVisible && (
 					<>
-						<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period } />
+						<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period.period } />
 						<SubscribersOverview siteId={ siteId } />
 					</>
 				) }
