@@ -30,7 +30,7 @@ import {
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { GSuiteFields } from './g-suite-fields';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
-import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
+import type { DomainContactDetailsErrors, ManagedContactDetails } from '@automattic/wpcom-checkout';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
@@ -412,6 +412,10 @@ export class ManagedContactDetailsFormFields extends Component<
 	}
 
 	renderGoogleAppsDetails = () => {
+		if ( ! this.props.countriesList ) {
+			return null;
+		}
+
 		// Convert this.props.contactDetails (DomainContactDetails) back into
 		// ManagedContactDetails, originally changed by
 		// `prepareDomainContactDetails()` back up in ContactDetailsContainer.
@@ -421,7 +425,7 @@ export class ManagedContactDetailsFormFields extends Component<
 		);
 
 		// Convert the ManagedContactDetails back to DomainContactDetails for the update.
-		const onChange = ( updatedManagedContactInfo ) => {
+		const onChange = ( updatedManagedContactInfo: ManagedContactDetails ) => {
 			this.props.onContactDetailsChange( prepareDomainContactDetails( updatedManagedContactInfo ) );
 		};
 
