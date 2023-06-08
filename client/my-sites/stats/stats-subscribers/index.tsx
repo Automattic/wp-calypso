@@ -56,15 +56,17 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					page="subscribers"
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				/>
+				{ siteId && (
+					<div>
+						<DomainTip
+							siteId={ siteId }
+							event="stats_subscribers_domain"
+							vendor={ getSuggestionsVendor() }
+						/>
+					</div>
+				) }
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				<SubscribersHighlightSection siteId={ siteId } />
-				{ siteId && (
-					<DomainTip
-						siteId={ siteId }
-						event="stats_subscribers_domain"
-						vendor={ getSuggestionsVendor() }
-					/>
-				) }
 				<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period } />
 				<SubscribersOverview siteId={ siteId } />
 				<div className={ statsModuleListClass }>

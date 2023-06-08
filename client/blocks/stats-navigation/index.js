@@ -12,6 +12,8 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import version_compare from 'calypso/lib/version-compare';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
@@ -25,6 +27,30 @@ import { AVAILABLE_PAGE_MODULES, navItems, intervals as intervalConstants } from
 import Intervals from './intervals';
 
 import './style.scss';
+
+// Use HOC to wrap hooks of `react-query` for fetching the notice visibility state.
+function withNoticeHook( HookedComponent ) {
+	return function WrappedComponent( props ) {
+		const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
+			props.siteId,
+			'traffic_page_settings'
+		);
+
+		const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
+			props.siteId,
+			'traffic_page_settings'
+		);
+
+		return (
+			<HookedComponent
+				{ ...props }
+				showSettingsTooltip={ showSettingsTooltip }
+				refetchNotices={ refetchNotices }
+				mutateNoticeVisbilityAsync={ mutateNoticeVisbilityAsync }
+			/>
+		);
+	};
+}
 
 class StatsNavigation extends Component {
 	static propTypes = {
@@ -40,6 +66,8 @@ class StatsNavigation extends Component {
 
 	state = {
 		isPageSettingsPopoverVisible: false,
+		// Dismiss the tooltip before the API call is finished.
+		isPageSettingsTooltipDismissed: false,
 		// Only traffic page modules are supported for now.
 		pageModules: Object.assign(
 			...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
@@ -61,6 +89,7 @@ class StatsNavigation extends Component {
 	settingsActionRef = createRef();
 
 	togglePopoverMenu = ( isPageSettingsPopoverVisible ) => {
+		this.onTooltipDismiss();
 		this.setState( { isPageSettingsPopoverVisible } );
 	};
 
@@ -73,6 +102,11 @@ class StatsNavigation extends Component {
 		this.props.updateModuleToggles( this.props.siteId, {
 			[ page ]: seletedPageModules,
 		} );
+	};
+
+	onTooltipDismiss = () => {
+		this.setState( { isPageSettingsTooltipDismissed: true } );
+		this.props.mutateNoticeVisbilityAsync().finally( this.props.refetchNotices );
 	};
 
 	isValidItem = ( item ) => {
@@ -102,8 +136,8 @@ class StatsNavigation extends Component {
 	}
 
 	render() {
-		const { slug, selectedItem, interval, isLegacy, statsAdminVersion } = this.props;
-		const { pageModules, isPageSettingsPopoverVisible } = this.state;
+		const { slug, selectedItem, interval, isLegacy, showSettingsTooltip, statsAdminVersion } = this.props;
+		const { pageModules, isPageSettingsPopoverVisible, isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -166,6 +200,17 @@ class StatsNavigation extends Component {
 							<Icon className="gridicon" icon={ cog } />
 						</button>
 						<Popover
+							className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
+							isVisible={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+							position="bottom left"
+							context={ this.settingsActionRef.current }
+						>
+							<div className="highlight-card-tooltip-content">
+								<p>{ translate( 'Here’s where you can find all your Jetpack Stats settings.' ) }</p>
+								<button onClick={ this.onTooltipDismiss }>{ translate( 'Got it' ) }</button>
+							</div>
+						</Popover>
+						<Popover
 							className="tooltip highlight-card-popover page-modules-settings-popover"
 							isVisible={ isPageSettingsPopoverVisible }
 							position="bottom left"
@@ -219,4 +264,4 @@ export default connect(
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
-)( localize( StatsNavigation ) );
+)( localize( withNoticeHook( StatsNavigation ) ) );

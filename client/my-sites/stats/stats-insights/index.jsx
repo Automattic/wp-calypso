@@ -53,18 +53,20 @@ const StatsInsights = ( props ) => {
 					page="insights"
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				/>
+				{ siteId && (
+					<div>
+						<DomainTip
+							siteId={ siteId }
+							event="stats_insights_domain"
+							vendor={ getSuggestionsVendor() }
+						/>
+					</div>
+				) }
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
 				<AllTimelHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
 				<PostingActivity siteId={ siteId } />
 				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
-				{ siteId && (
-					<DomainTip
-						siteId={ siteId }
-						event="stats_insights_domain"
-						vendor={ getSuggestionsVendor() }
-					/>
-				) }
 				<div className={ statsModuleListClass }>
 					<StatsModule
 						path="tags-categories"
