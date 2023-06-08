@@ -79,6 +79,7 @@ export default function HighlightsSection( {
 		getJetpackStatsAdminVersion( state, siteId )
 	);
 
+	// Highlights settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
 	const isHighlightsSettingsSupported = useMemo(
 		() =>
 			! (

@@ -148,6 +148,7 @@ class StatsNavigation extends Component {
 			'stats-navigation--modernized': ! isLegacy,
 		} );
 
+		// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
 		const isModuleSettingsSupported = ! (
 			config.isEnabled( 'is_running_in_jetpack_site' ) &&
 			version_compare( statsAdminVersion, '0.9.0-alpha', '<' )
