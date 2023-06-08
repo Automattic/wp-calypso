@@ -181,7 +181,8 @@ const importHostedSiteFlow: Flow = {
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
 				case 'importerWordpress':
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
+					// reset the flow and remove query params
+					return navigate( `import?` );
 			}
 		};
 
