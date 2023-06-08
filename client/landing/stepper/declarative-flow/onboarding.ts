@@ -2,7 +2,6 @@ import { UserSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { ONBOARDING_FLOW, useFlowProgress } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -19,9 +18,6 @@ import type { Flow } from './internals/types';
 
 const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
-	get title() {
-		return translate( 'Onboarding' );
-	},
 	useSteps() {
 		return [
 			{
@@ -90,7 +86,7 @@ const onboarding: Flow = {
 					return navigate( 'processing' );
 				case 'processing': {
 					clearSignupDestinationCookie();
-					const destination = `/domains/mapping/${ providedDependencies.siteSlug }/setup/${ domain }?firstVisit=true`;
+					const destination = `/setup/site-setup/goals?siteSlug=${ providedDependencies.siteSlug }&notice=purchase-success`;
 					const returnUrl = encodeURIComponent( destination );
 
 					persistSignupDestination( destination ); // not sure if this is needed
