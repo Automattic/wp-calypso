@@ -83,6 +83,10 @@ export default function NotificationSettings( {
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
 	);
 
+	const isSMSNotificationEnabled: boolean = isEnabled(
+		'jetpack/pro-dashboard-monitor-sms-notification'
+	);
+
 	const mapAndStringifyEmails = ( emails: MonitorSettingsEmail[] ) => {
 		return JSON.stringify( emails.map( ( { name, email } ) => ( { name, email } ) ) );
 	};
@@ -306,6 +310,10 @@ export default function NotificationSettings( {
 						selectedDuration={ selectedDuration }
 						selectDuration={ selectDuration }
 					/>
+					{ isSMSNotificationEnabled && (
+						// Remove this when SMS notification is ready
+						<h3 style={ { marginTop: 16 } }>SMS Notification configuration goes here</h3>
+					) }
 					<MobilePushNotification
 						recordEvent={ recordEvent }
 						enableMobileNotification={ enableMobileNotification }
