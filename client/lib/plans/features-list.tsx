@@ -1706,37 +1706,42 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
 		getTitle: () =>
-			i18n.translate( '%(commission)d% transaction fee for payments + Stripe fees', {
-				args: { commission: 2 },
+			i18n.translate( '%(commission)d% transaction fee for payments', {
+				args: { commission: 10 },
 			} ),
+		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		getTitle: () =>
-			i18n.translate( '%(commission)d% transaction fee for payments + Stripe fees', {
-				args: { commission: 2 },
+			i18n.translate( '%(commission)d% transaction fee for payments', {
+				args: { commission: 8 },
 			} ),
+		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
 		getTitle: () =>
-			i18n.translate( '%(commission)d% transaction fee for payments + Stripe fees', {
-				args: { commission: 2 },
+			i18n.translate( '%(commission)d% transaction fee for payments', {
+				args: { commission: 4 },
 			} ),
+		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
 		getTitle: () =>
-			i18n.translate( '%(commission)d% transaction fee for payments + Stripe fees', {
+			i18n.translate( '%(commission)d% transaction fee for payments', {
 				args: { commission: 2 },
 			} ),
+		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		getTitle: () =>
-			i18n.translate( '%(commission)d% transaction fee for payments + Stripe fees', {
+			i18n.translate( '%(commission)d% transaction fee for payments', {
 				args: { commission: 0 },
 			} ),
+		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
