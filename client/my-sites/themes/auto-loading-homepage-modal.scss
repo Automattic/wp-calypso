@@ -3,7 +3,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.themes__auto-loading-homepage-modal {
+.dialog__content.themes__auto-loading-homepage-modal {
 	position: relative;
 	padding: 45px 45px 17px;
 	max-width: 640px;
@@ -35,7 +35,7 @@
 }
 
 .auto-loading-homepage-modal__checkbox {
-	margin-bottom: 60px;
+	margin-bottom: 52px;
 	.components-checkbox-control__label {
 		font-size: $font-body;
 	}
@@ -50,12 +50,15 @@
 		border-radius: 4px;
 		font-weight: 500;
 		&.is-primary {
-			background: var(--color-accent);
-			border-color: var(--color-accent);
-			&:hover,
+			background: var(--studio-blue-50);
+			border-color: var(--studio-blue-50);
+			&:hover {
+				background: var(--studio-blue-60);
+				border-color: var(--studio-blue-60);
+			}
 			&:focus {
-				background: var(--color-accent-60);
-				border-color: var(--color-accent-60);
+				box-shadow: 0 0 0 2px var(--color-primary-light);
+				outline: 0;
 			}
 		}
 	}
