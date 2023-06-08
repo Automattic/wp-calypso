@@ -183,11 +183,14 @@ const importHostedSiteFlow: Flow = {
 				case 'import':
 					return window.location.assign( '/sites' );
 
+				case 'importerWordpress':
+					// remove the siteSlug in case they want to change the destination site
+					urlQueryParams.delete( 'siteSlug' );
+					return navigate( `sitePicker?${ urlQueryParams.toString() }` );
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-				case 'importerWordpress':
 					// remove the siteSlug in case they want to change the
 					// destination site
 					urlQueryParams.delete( 'siteSlug' );
