@@ -7,6 +7,8 @@ import {
 	selectSubscribers,
 } from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 
+import './style.scss';
+
 // array of indices to use to calculate the dates to query for
 const cardIndices = [ 0, 30, 60, 90 ];
 
@@ -82,7 +84,7 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 	const overviewCardStats = SubscribersOverviewCardStats( subscribersData );
 
 	return (
-		<div className="subscribers-overview highlight-cards">
+		<div className="stats-subscribers-overview highlight-cards">
 			{ isLoading && <div>Loading...</div> }
 			{ isError && <div>Error: Failed to load data.</div> }
 			{ ! isLoading && ! isError && (
