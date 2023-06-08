@@ -53,6 +53,8 @@ class Site extends Component {
 		isSiteP2: false,
 
 		isReskinned: false,
+
+		defaultIcon: null,
 	};
 
 	static propTypes = {
@@ -72,6 +74,7 @@ class Site extends Component {
 		isP2Hub: PropTypes.bool,
 		isSiteP2: PropTypes.bool,
 		isReskinned: PropTypes.bool,
+		defaultIcon: PropTypes.node,
 	};
 
 	onSelect = ( event ) => {
@@ -179,7 +182,7 @@ class Site extends Component {
 					}
 				>
 					<SiteIcon
-						defaultIcon={ this.props.isReskinned ? layout : null }
+						defaultIcon={ this.props.isReskinned ? layout : this.props.defaultIcon }
 						site={ site }
 						// eslint-disable-next-line no-nested-ternary
 						size={ this.props.compact ? 24 : this.props.isReskinned ? 50 : 32 }
