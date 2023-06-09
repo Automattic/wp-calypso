@@ -39,6 +39,7 @@ const SubscriptionPopover = ( { onUnsubscribe, onView, className }: Subscription
 				isVisible={ isVisible }
 				context={ buttonRef.current }
 				className={ classNames( 'subscription-popover', className ) }
+				focusOnShow={ false }
 			>
 				<PopoverMenuItem onClick={ onView }>
 					<Icon icon={ seen } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
