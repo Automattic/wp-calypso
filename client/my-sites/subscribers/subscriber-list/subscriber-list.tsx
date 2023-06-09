@@ -6,10 +6,9 @@ import './styles.scss';
 
 type SubscriberListProps = {
 	subscribers: Subscriber[];
-	locale: string;
 };
 
-export const SubscriberList = ( { subscribers, locale }: SubscriberListProps ) => {
+export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
 	const translate = useTranslate();
 	return (
 		<ul className="subscriber-list" role="table">
@@ -37,7 +36,6 @@ export const SubscriberList = ( { subscribers, locale }: SubscriberListProps ) =
 					subscription_id,
 					display_name,
 					email_address,
-					subscriptions,
 					openRate,
 					date_subscribed,
 					avatar,
@@ -48,11 +46,9 @@ export const SubscriberList = ( { subscribers, locale }: SubscriberListProps ) =
 						subscription_id={ subscription_id }
 						display_name={ display_name }
 						email_address={ email_address }
-						subscriptions={ subscriptions }
 						openRate={ openRate }
 						date_subscribed={ date_subscribed }
 						avatar={ avatar }
-						locale={ locale }
 					/>
 				)
 			) }
