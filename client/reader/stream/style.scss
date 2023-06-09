@@ -592,6 +592,11 @@
 
 .reader__content {
 	position: relative;
+	width: 100%;
+
+	.stream__list {
+		width: 100%;
+	}
 }
 
 .stream__right-column {

@@ -500,6 +500,7 @@ class ReaderStream extends Component {
 					getItemRef={ this.getPostRef }
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+					className="stream__list"
 				/>
 			);
 

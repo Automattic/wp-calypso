@@ -153,6 +153,7 @@ const incompatiblePlugins = new Set( [
 	'wp-monero-miner-pro',
 	'wp-monero-miner-using-coin-hive',
 	'wp-optimize-by-xtraffic',
+	'wpcom-migration',
 	'wpematico',
 	'wpstagecoach',
 	'yuzo-related-post',
