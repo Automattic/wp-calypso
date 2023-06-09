@@ -8,8 +8,7 @@ type SubscriberListProps = {
 	subscribers: Subscriber[];
 };
 
-// eslint-disable-next-line
-const noop = () => {};
+const noop = () => undefined;
 
 export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
 	const translate = useTranslate();
