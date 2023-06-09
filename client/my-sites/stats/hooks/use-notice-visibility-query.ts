@@ -19,8 +19,8 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< keyof Notices > > = {
  * Only allow one notice in a conflict group to be active at a time.
  */
 const processConflictNotices = ( notices: Notices ): Notices => {
-	let foundActiveNotice = false;
 	for ( const conflictNoticeGroup in CONFLICT_NOTICE_ID_GROUPS ) {
+		let foundActiveNotice = false;
 		for ( const confilictNoticeId of CONFLICT_NOTICE_ID_GROUPS[ conflictNoticeGroup ] ) {
 			if ( foundActiveNotice ) {
 				notices[ confilictNoticeId ] = false;
