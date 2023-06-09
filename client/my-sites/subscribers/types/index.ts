@@ -24,5 +24,7 @@ export type Subscriber = {
 	email_address: string;
 	avatar: string;
 	display_name: string;
+	subscriptions: SubscriptionPlan[];
 	plans?: SubscriptionPlan[];
+	openRate?: number;
 };
