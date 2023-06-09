@@ -150,6 +150,13 @@ class StatsNavigation extends Component {
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
+		const buttonRefCallback = ( node ) => {
+			if ( this.settingsActionRef.current === null ) {
+				this.settingsActionRef.current = node;
+				this.forceUpdate();
+			}
+		};
+
 		return (
 			<div className={ wrapperClass }>
 				<SectionNav selectedText={ label }>
@@ -189,7 +196,7 @@ class StatsNavigation extends Component {
 					<div className="page-modules-settings">
 						<button
 							className="page-modules-settings-action"
-							ref={ this.settingsActionRef }
+							ref={ buttonRefCallback }
 							onClick={ () => {
 								this.togglePopoverMenu( ! isPageSettingsPopoverVisible );
 							} }
