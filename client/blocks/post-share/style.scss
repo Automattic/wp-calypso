@@ -190,6 +190,12 @@ $section-border: solid 1px var(--color-neutral-5);
 			width: 24px;
 		}
 	}
+
+	.instagram-business & {
+		&::before {
+			border-radius: 30%;
+		}
+	}
 }
 
 .post-share__service .social-logo {
