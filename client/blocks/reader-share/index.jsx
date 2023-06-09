@@ -152,6 +152,13 @@ class ReaderShare extends Component {
 		}
 	};
 
+	sitesFilter = ( site ) => {
+		if ( site.jetpack && ! site.is_wpcom_atomic ) {
+			return false;
+		}
+		return true;
+	};
+
 	render() {
 		const { onCopyLinkClick } = this.props;
 		const buttonClasses = classnames( {
@@ -220,6 +227,7 @@ class ReaderShare extends Component {
 								className="reader-share__site-selector"
 								onSiteSelect={ this.pickSiteToShareTo }
 								groups
+								filter={ this.sitesFilter }
 							/>
 						) }
 					</ReaderPopoverMenu>
