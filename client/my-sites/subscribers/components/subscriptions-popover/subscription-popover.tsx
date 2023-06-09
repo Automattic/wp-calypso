@@ -9,14 +9,11 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import './styles.scss';
 
 type SubscriptionPopoverProps = {
-	children?: React.ReactNode;
-	className?: string;
 	onUnsubscribe: () => void;
 	onView: () => void;
-	disableRemoveButton?: boolean;
 };
 
-const SubscriptionPopover = ( { onUnsubscribe, onView, className }: SubscriptionPopoverProps ) => {
+const SubscriptionPopover = ( { onUnsubscribe, onView }: SubscriptionPopoverProps ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
 	const buttonRef = useRef< HTMLButtonElement >( null );
@@ -38,7 +35,7 @@ const SubscriptionPopover = ( { onUnsubscribe, onView, className }: Subscription
 				onClose={ () => setIsVisible( false ) }
 				isVisible={ isVisible }
 				context={ buttonRef.current }
-				className={ classNames( 'subscription-popover', className ) }
+				className="subscription-popover"
 				focusOnShow={ false }
 			>
 				<PopoverMenuItem onClick={ onView }>
