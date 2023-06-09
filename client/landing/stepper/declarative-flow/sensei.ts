@@ -11,7 +11,7 @@ import SenseiLaunch from './internals/steps-repository/sensei-launch';
 import SenseiPlan from './internals/steps-repository/sensei-plan';
 import SenseiPurpose from './internals/steps-repository/sensei-purpose';
 import SenseiSetup from './internals/steps-repository/sensei-setup';
-import { AssertConditionState, Flow } from './internals/types';
+import { Flow } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 import './internals/sensei.scss';
 
@@ -34,9 +34,14 @@ const sensei: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
+		const locale = useLocale();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		const siteSlug = useSiteSlug();
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 
 		setStepProgress( flowProgress );
 
@@ -49,7 +54,15 @@ const sensei: Flow = {
 				case 'intro':
 					return navigate( 'senseiSetup' );
 				case 'senseiSetup':
-					return navigate( 'senseiDomain' );
+					if ( userIsLoggedIn ) {
+						return navigate( 'senseiDomain' );
+					}
+
+					return window.location.assign(
+						locale && locale !== 'en'
+							? `/start/account/user/${ locale }?redirect_to=/setup/${ flowName }`
+							: `/start/account/user?redirect_to=/setup/${ flowName }`
+					);
 				case 'senseiDomain':
 					return navigate( 'senseiPlan' );
 				case 'senseiPurpose':
@@ -65,31 +78,6 @@ const sensei: Flow = {
 		};
 
 		return { submit, goToStep };
-	},
-
-	useAssertConditions() {
-		const flowName = this.name;
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-		const locale = useLocale();
-		const logInUrl =
-			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?redirect_to=/setup/${ flowName }`
-				: `/start/account/user?redirect_to=/setup/${ flowName }`;
-
-		if ( ! userIsLoggedIn ) {
-			window.location.assign( logInUrl );
-
-			return {
-				state: AssertConditionState.FAILURE,
-			};
-		}
-
-		return {
-			state: AssertConditionState.SUCCESS,
-		};
 	},
 };
 
