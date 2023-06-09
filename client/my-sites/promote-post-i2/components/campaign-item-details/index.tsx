@@ -575,11 +575,6 @@ export default function CampaignItemDetails( props: Props ) {
 									{ ! isLoading ? (
 										<>
 											<span>{ `${ width }x${ height }` }</span>
-											<Gridicon
-												className="campaign-item-details__notice-icon"
-												size={ 16 }
-												icon="info-outline"
-											/>
 										</>
 									) : (
 										<FlexibleSkeleton />
