@@ -1,0 +1,17 @@
+@import "@automattic/color-studio/dist/color-variables";
+
+.subscription-popover__container {
+	height: 24px;
+}
+
+.subscription-popover__toggle {
+	cursor: pointer;
+
+	.gridicons-ellipsis {
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+
+	&.is-popover-visible .gridicons-ellipsis {
+		transform: rotate(90deg);
+	}
+}
