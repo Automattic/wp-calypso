@@ -60,8 +60,8 @@ const sensei: Flow = {
 
 					return window.location.assign(
 						locale && locale !== 'en'
-							? `/start/account/user/${ locale }?redirect_to=/setup/${ flowName }`
-							: `/start/account/user?redirect_to=/setup/${ flowName }`
+							? `/start/account/user/${ locale }?redirect_to=/setup/${ flowName }/senseiDomain`
+							: `/start/account/user?redirect_to=/setup/${ flowName }/senseiDomain`
 					);
 				case 'senseiDomain':
 					return navigate( 'senseiPlan' );
