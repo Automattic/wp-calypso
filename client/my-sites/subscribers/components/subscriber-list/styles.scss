@@ -107,11 +107,11 @@
 			}
 		}
 
-		.subscriber-list__popover-container {
+		.subscriber-popover__container {
 			height: 24px;
 		}
 
-		.subscriber-list__popover-toggle {
+		.subscriber-popover__toggle {
 			cursor: pointer;
 
 			.gridicons-ellipsis {
@@ -122,7 +122,6 @@
 				transform: rotate(90deg);
 			}
 		}
-
 
 		&:last-child {
 			border-bottom: none;

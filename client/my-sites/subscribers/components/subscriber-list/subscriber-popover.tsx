@@ -19,9 +19,9 @@ const SubscriberPopover = ( { onUnsubscribe, onView }: SubscriptionPopoverProps 
 	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	return (
-		<div className="subscriber-list__popover-container">
+		<div className="subscriber-popover__container">
 			<button
-				className={ classNames( 'subscriber-list__popover-toggle', {
+				className={ classNames( 'subscriber-popover__toggle', {
 					'is-popover-visible': isVisible,
 				} ) }
 				onClick={ onToggle }
