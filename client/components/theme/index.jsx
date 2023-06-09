@@ -8,7 +8,6 @@ import {
 } from '@automattic/design-picker';
 import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, isEqual } from 'lodash';
@@ -293,34 +292,12 @@ export class Theme extends Component {
 		}
 	};
 
-	parseThemePrice = ( price ) => {
-		/*
-		theme.price on "Recommended" themes tab
-		Premium theme: "$50"
-		Free theme:    undefined
-
-		theme.price on Trending themes tab
-		Premium theme: { value: 50, currency: "USD", display: "<abbr title=\"United States Dollars\">US$</abbr>50" }
-		Free theme:    { value: 0, currency: "USD", display: "Free" }
-
-		Try to correctly parse the price for both cases.
-		*/
-		if ( typeof price === 'object' && 'display' in price ) {
-			let parsedThemePrice = price.display;
-			// Remove all html tags from the price string
-			parsedThemePrice = parsedThemePrice.replace( /(<([^>]+)>)/gi, '' );
-			return parsedThemePrice;
-		}
-		return price;
-	};
-
 	getUpsellMessage = () => {
 		const {
 			didPurchaseTheme,
 			doesThemeBundleSoftwareSet,
 			hasMarketplaceThemeSubscription,
 			hasPremiumThemesFeature,
-			theme,
 			translate,
 			isSiteEligibleForBundledSoftware,
 			isExternallyManagedTheme,
@@ -408,15 +385,7 @@ export class Theme extends Component {
 		}
 
 		return createInterpolateElement(
-			sprintf(
-				/* translators: the "price" is the price of the theme, example: US$50; */
-				translate(
-					'This premium theme is included in the <Link>Premium plan</Link>, or you can purchase individually for %(price)s.'
-				),
-				{
-					price: this.parseThemePrice( theme.price ),
-				}
-			),
+			translate( 'This premium theme is included in the <Link>Premium plan</Link>.' ),
 			{
 				Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'premium' ) } />,
 			}
