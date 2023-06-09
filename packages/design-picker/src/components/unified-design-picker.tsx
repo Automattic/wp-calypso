@@ -202,10 +202,10 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 		}
 
 		return (
-			<>
+			<div className="theme-card__info-pricing">
 				{ badge }
 				<span>{ text }</span>
-			</>
+			</div>
 		);
 	}
 
