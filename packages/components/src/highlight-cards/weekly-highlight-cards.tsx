@@ -71,6 +71,7 @@ const HighlightCardsSettings = function ( {
 		} );
 	}, [ onTooltipDismiss ] );
 
+	// Use state to update the ref of the setting action button to avoid null element.
 	const [ settingsActionRef, setSettingsActionRef ] = useState( useRef( null ) );
 
 	const buttonRefCallback = useCallback( ( node ) => {
