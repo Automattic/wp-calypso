@@ -1,19 +1,33 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import Checklist from './checklist';
+import type { Task } from './types';
 
 export interface LaunchpadProps {
 	siteSlug: string;
 	checklistSlug?: string | 0 | null | undefined;
+	makeLastTaskPrimaryAction?: boolean;
+	taskFilter?: ( tasks: Task[] ) => Task[];
 }
 
-const Launchpad = ( { siteSlug, checklistSlug }: LaunchpadProps ) => {
-	const { isFetchedAfterMount, data } = useLaunchpad( siteSlug || '', checklistSlug );
+const Launchpad = ( {
+	siteSlug,
+	checklistSlug,
+	taskFilter,
+	makeLastTaskPrimaryAction,
+}: LaunchpadProps ) => {
+	const launchpadData = useLaunchpad( siteSlug || '', checklistSlug );
+	const { isFetchedAfterMount, data } = launchpadData;
 
-	const tasks = data.checklist || [];
+	const originalTasks = data.checklist || [];
+	const tasks = taskFilter ? taskFilter( originalTasks ) : originalTasks;
 
 	return (
 		<div className="launchpad__checklist-wrapper">
-			{ isFetchedAfterMount ? <Checklist tasks={ tasks } /> : <Checklist.Placeholder /> }
+			{ isFetchedAfterMount ? (
+				<Checklist tasks={ tasks } makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction } />
+			) : (
+				<Checklist.Placeholder />
+			) }
 		</div>
 	);
 };

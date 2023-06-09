@@ -15,6 +15,7 @@ import {
 	getSiteCountText,
 } from '../../sites-overview/utils';
 import EmailAddressEditor from '../configure-email-notification/email-address-editor';
+import PhoneNumberEditor from '../configure-sms-notification/phone-number-editor';
 import EmailNotification from './form-content/email-notification';
 import NotificationSettingsFormFooter from './form-content/footer';
 import MobilePushNotification from './form-content/mobile-push-notification';
@@ -32,6 +33,7 @@ import type {
 } from '../../sites-overview/types';
 
 import './style.scss';
+import '../style.scss';
 
 interface Props {
 	sites: Array< Site >;
@@ -71,6 +73,7 @@ export default function NotificationSettings( {
 	const [ allEmailItems, setAllEmailItems ] = useState< StateMonitorSettingsEmail[] | [] >( [] );
 	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
+	const [ isAddSMSModalOpen, setIsAddSMSModalOpen ] = useState< boolean >( false );
 	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
 	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
 	const [ initialSettings, setInitialSettings ] = useState< InitialMonitorSettings >( {
@@ -122,6 +125,10 @@ export default function NotificationSettings( {
 			setSelectedEmail( undefined );
 			setSelectedAction( undefined );
 		}
+	};
+
+	const toggleAddSMSModal = () => {
+		setIsAddSMSModalOpen( ( isAddSMSModalOpen ) => ! isAddSMSModalOpen );
 	};
 
 	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
@@ -292,6 +299,10 @@ export default function NotificationSettings( {
 		);
 	}
 
+	if ( isAddSMSModalOpen ) {
+		return <PhoneNumberEditor toggleModal={ toggleAddSMSModal } />;
+	}
+
 	return (
 		<Modal
 			open={ true }
@@ -316,6 +327,7 @@ export default function NotificationSettings( {
 						<SMSNotification
 							enableSMSNotification={ enableSMSNotification }
 							setEnableSMSNotification={ setEnableSMSNotification }
+							toggleModal={ toggleAddSMSModal }
 						/>
 					) }
 

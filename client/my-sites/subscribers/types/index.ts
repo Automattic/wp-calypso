@@ -12,6 +12,7 @@ export type SubscriptionPlan = {
 	title: string;
 	currency: string;
 	renewal_period: string;
+	renewal_price: number;
 	start_date: string;
 	end_date: string;
 };
@@ -24,4 +25,5 @@ export type Subscriber = {
 	avatar: string;
 	display_name: string;
 	plans?: SubscriptionPlan[];
+	open_rate?: number;
 };

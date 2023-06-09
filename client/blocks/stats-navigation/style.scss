@@ -7,6 +7,11 @@
 		display: flex;
 		align-items: center;
 
+		// For not open .section-nav on mobile.
+		@media ( max-width: $break-mobile ) {
+			padding-bottom: 8px;
+		}
+
 		button {
 			height: 24px;
 			cursor: pointer;
@@ -78,6 +83,10 @@
 							line-height: 24px;
 
 						}
+					}
+
+					.page-modules-settings {
+						padding: 8px 0 8px 4px;
 					}
 				}
 			}
