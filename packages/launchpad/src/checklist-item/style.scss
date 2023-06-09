@@ -96,6 +96,14 @@
 	}
 }
 
+.checklist-item__task:last-child {
+	.checklist-item__task-content,
+	.checklist-item__task-content:hover,
+	.checklist-item__task-content:focus {
+		border-bottom: none;
+	}
+}
+
 // completed tasks (both enabled and disabled)
 .checklist-item__task.completed.disabled,
 .checklist-item__task.completed.enabled {
