@@ -11,6 +11,7 @@ import {
 	getDesignPreviewUrl,
 	getMShotOptions,
 	isBlankCanvasDesign,
+	isDefaultGlobalStylesVariationSlug,
 	filterDesignsByCategory,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
@@ -159,7 +160,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 
 	const { style_variations = [] } = design;
 	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
-	const isDefaultVariation = ! selectedStyleVariation || selectedStyleVariation.slug === 'default';
+	const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
 
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
@@ -214,7 +215,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 			className="design-button-container"
 			ref={ trackingDivRef }
 			name={
-				isDefaultVariation ? design.title : `${ design.title } – ${ selectedStyleVariation.title }`
+				isDefaultVariation ? design.title : `${ design.title } – ${ selectedStyleVariation?.title }`
 			}
 			image={
 				<DesignPreviewImage

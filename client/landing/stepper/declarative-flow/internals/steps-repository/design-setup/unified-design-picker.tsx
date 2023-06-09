@@ -3,6 +3,7 @@ import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignBySlug, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
+	isDefaultGlobalStylesVariationSlug,
 	UnifiedDesignPicker,
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
@@ -44,7 +45,7 @@ import {
 } from '../../analytics/record-design';
 import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
-import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
+import { RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
@@ -129,8 +130,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
 
 			allDesigns.designs = allDesigns.designs.map( ( design ) => {
-				design.style_variations = design.style_variations?.filter(
-					( variation ) => variation.slug === 'default'
+				design.style_variations = design.style_variations?.filter( ( variation ) =>
+					isDefaultGlobalStylesVariationSlug( variation.slug )
 				);
 				return design;
 			} );
@@ -577,8 +578,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		const selectStyle = () => {
 			if (
 				shouldLimitGlobalStyles &&
-				selectedStyleVariation &&
-				selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
+				! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug )
 			) {
 				unlockPremiumGlobalStyles();
 			} else {
