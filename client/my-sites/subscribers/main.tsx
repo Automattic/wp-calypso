@@ -23,7 +23,7 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 	const isSubscribersPageEnabled = config.isEnabled( 'subscribers-page' );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const initialState = { data: { total: 0, subscribers: [], per_page: DEFAULT_PER_PAGE } };
-	const result = useSubscribersQuery( selectedSiteId );
+	const result = useSubscribersQuery( selectedSiteId, page, DEFAULT_PER_PAGE );
 	const {
 		data: { total, subscribers = [], per_page },
 	} = result && result.data ? result : initialState;
@@ -66,6 +66,7 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 				<span className="subscribers__title">{ translate( 'Total' ) }</span>{ ' ' }
 				<span className="subscribers__subscriber-count">{ total }</span>
 			</div>
+
 			<SubscriberList subscribers={ subscribers } />
 
 			<Pagination
