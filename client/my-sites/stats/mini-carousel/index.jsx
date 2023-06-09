@@ -78,9 +78,11 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const showYoastPromo =
 		! useSelector( isBlockDismissed( EVENT_YOAST_PROMO_DISMISS ) ) && ! jetpackNonAtomic;
 
+	// TODO: remove the false here once the translation is done
 	const showGoogleAnalyticsPromo =
 		! useSelector( isBlockDismissed( EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS ) ) &&
-		( isFreePlan( currentPlanSlug ) || isPersonalPlan( currentPlanSlug ) );
+		( isFreePlan( currentPlanSlug ) || isPersonalPlan( currentPlanSlug ) ) &&
+		false;
 
 	const viewEvents = useMemo( () => {
 		const events = [];
