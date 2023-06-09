@@ -2,7 +2,7 @@ import { Popover } from '@automattic/components';
 import { FormToggle } from '@wordpress/components';
 import { Icon, cog } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, ReactElement } from 'react';
+import { useState, useRef, ReactElement, useCallback } from 'react';
 
 type PageModuleTogglerProps = {
 	availableModules: ModuleToggleItem[];
@@ -27,8 +27,16 @@ export default function PageModuleToggler( {
 	onTooltipDismiss,
 }: PageModuleTogglerProps ) {
 	const translate = useTranslate();
-	const settingsActionRef = useRef( null );
+
+	// Use state to update the ref of the setting action button to avoid null element.
+	const [ settingsActionRef, setSettingsActionRef ] = useState( useRef( null ) );
 	const [ isSettingsMenuVisible, setIsSettingsMenuVisible ] = useState( false );
+
+	const buttonRefCallback = useCallback( ( node ) => {
+		if ( settingsActionRef.current === null ) {
+			setSettingsActionRef( { current: node } );
+		}
+	}, [] );
 
 	const toggleSettingsMenu = () => {
 		onTooltipDismiss();
@@ -41,7 +49,7 @@ export default function PageModuleToggler( {
 		<div className="page-modules-settings">
 			<button
 				className="page-modules-settings-action"
-				ref={ settingsActionRef }
+				ref={ buttonRefCallback }
 				onClick={ toggleSettingsMenu }
 			>
 				<Icon className="gridicon" icon={ cog } />
