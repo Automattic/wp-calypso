@@ -8,7 +8,7 @@ type SubscriberListProps = {
 	subscribers: Subscriber[];
 };
 
-export const SubscriberList = ( subscribers: SubscriberListProps ) => {
+export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
 	const translate = useTranslate();
 	return (
 		<ul className="subscriber-list" role="table">
