@@ -55,7 +55,7 @@ function getFeatureStrings(
 				translate( 'Optimized CSS loading' ),
 				translate( 'Lazy image loading' ),
 				translate( 'CDN for images' ),
-				translate( 'Image optimaization guide' ),
+				translate( 'Image optimization guide' ),
 			];
 		case 'complete':
 			return [
