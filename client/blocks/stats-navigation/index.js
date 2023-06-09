@@ -63,7 +63,9 @@ class StatsNavigation extends Component {
 
 	state = {
 		// Dismiss the tooltip before the API call is finished.
-		isPageSettingsTooltipDismissed: false,
+		isPageSettingsTooltipDismissed: !! localStorage.getItem(
+			'notices_dismissed__traffic_page_settings'
+		),
 		// Only traffic page modules are supported for now.
 		pageModules: Object.assign(
 			...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
@@ -95,6 +97,7 @@ class StatsNavigation extends Component {
 
 	onTooltipDismiss = () => {
 		this.setState( { isPageSettingsTooltipDismissed: true } );
+		localStorage.setItem( 'notices_dismissed__traffic_page_settings', 1 );
 		this.props.mutateNoticeVisbilityAsync().finally( this.props.refetchNotices );
 	};
 
