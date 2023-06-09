@@ -15,7 +15,7 @@ const useIntentFromSiteMeta = (): IntentFromSiteMeta => {
 	if ( intent.isFetching ) {
 		return {
 			processing: true,
-			intent: undefined, // undefined -> haven't observed any metadata yet
+			intent: undefined, // undefined -> we haven't observed any metadata yet
 		};
 	}
 
@@ -28,7 +28,7 @@ const useIntentFromSiteMeta = (): IntentFromSiteMeta => {
 
 	return {
 		processing: false,
-		intent: null, // null -> observed metadata but nothing we care about
+		intent: null, // null -> we've observed metadata but nothing we care about
 	};
 };
 
