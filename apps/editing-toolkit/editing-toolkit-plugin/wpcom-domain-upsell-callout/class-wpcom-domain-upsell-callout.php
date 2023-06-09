@@ -92,9 +92,9 @@ class WPCOM_Domain_Upsell_Callout {
 	private function has_unlaunched_launchpad() {
 		$site_intent      = get_option( 'site_intent' );
 		$task_statuses    = get_option( 'launchpad_checklist_tasks_statuses', array() );
-		$site_is_launched = ! isset( $task_statuses['site_launched'] ) || ! $task_statuses['site_launched'];
+		$site_is_launched = isset( $task_statuses['site_launched'] ) && $task_statuses['site_launched'];
 
-		if ( ! $site_intent || ! $site_is_launched ) {
+		if ( ! $site_intent || ( $site_intent && $site_is_launched ) ) {
 			return false;
 		}
 
