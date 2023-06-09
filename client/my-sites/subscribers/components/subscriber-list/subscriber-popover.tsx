@@ -8,20 +8,20 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
 import './styles.scss';
 
-type SubscriptionPopoverProps = {
+type SubscriberPopoverProps = {
 	onUnsubscribe: () => void;
 	onView: () => void;
 };
 
-const SubscriberPopover = ( { onUnsubscribe, onView }: SubscriptionPopoverProps ) => {
+const SubscriberPopover = ( { onUnsubscribe, onView }: SubscriberPopoverProps ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
 	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	return (
-		<div className="subscriber-list__popover-container">
+		<div className="subscriber-popover__container">
 			<button
-				className={ classNames( 'subscriber-list__popover-toggle', {
+				className={ classNames( 'subscriber-popover__toggle', {
 					'is-popover-visible': isVisible,
 				} ) }
 				onClick={ onToggle }
