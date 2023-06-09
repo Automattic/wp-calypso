@@ -992,7 +992,19 @@ class SignupForm extends Component {
 	}
 
 	hasFilledInputValues = () => {
-		return Object.values( this.getUserData() ).every( ( value ) => value.trim().length > 0 );
+		const userInputFields = [ 'email', 'username', 'password' ];
+		return userInputFields.every( ( field ) => {
+			const value = formState.getFieldValue( this.state.form, field );
+			if ( typeof value === 'string' ) {
+				return value.trim().length;
+			}
+			// eslint-disable-next-line no-console
+			console.warn(
+				`hasFilledInputValues: field ${ field } has a value of type ${ typeof value }. Expected string.`
+			);
+			// If we can't determine if the field is filled, we assume it is so that the user can submit the form.
+			return true;
+		} );
 	};
 
 	formFooter() {
