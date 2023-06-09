@@ -24,8 +24,6 @@ const useFetchMonitorVerfiedContacts = ( isPartnerOAuthTokenLoaded: boolean ) =>
 				};
 			},
 			enabled: isPartnerOAuthTokenLoaded && isMultipleEmailEnabled,
-			refetchOnWindowFocus: false,
-			staleTime: 1000 * 60 * 5,
 		}
 	);
 };

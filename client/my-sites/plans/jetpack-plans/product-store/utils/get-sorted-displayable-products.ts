@@ -7,6 +7,7 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_AI_PRODUCTS,
 } from '@automattic/calypso-products';
 import { SelectorProduct } from '../../types';
 
@@ -22,6 +23,7 @@ const DISPLAYABLE_PRODUCT_POSITION_MAP: Record< string, number > = {
 	...setProductsInPosition( JETPACK_ANTI_SPAM_PRODUCTS, 6 ),
 	...setProductsInPosition( JETPACK_SEARCH_PRODUCTS, 7 ),
 	...setProductsInPosition( JETPACK_CRM_PRODUCTS, 8 ),
+	...setProductsInPosition( JETPACK_AI_PRODUCTS, 9 ),
 };
 
 const sortByProductPosition = ( productA: SelectorProduct, productB: SelectorProduct ) => {

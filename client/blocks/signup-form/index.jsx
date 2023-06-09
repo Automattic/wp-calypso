@@ -533,6 +533,7 @@ class SignupForm extends Component {
 		const userData = {
 			password: formState.getFieldValue( this.state.form, 'password' ),
 			email: formState.getFieldValue( this.state.form, 'email' ),
+			is_dev_account: this.state.isDevAccount,
 		};
 
 		if ( this.props.displayNameInput ) {
@@ -941,7 +942,12 @@ class SignupForm extends Component {
 			<SelectCardCheckbox
 				className="signup-form__is-dev-account-checkbox signup-form__span-columns"
 				checked={ this.state.isDevAccount }
-				onChange={ ( isDevAccount ) => this.setState( { isDevAccount } ) }
+				onChange={ ( isDevAccount ) => {
+					recordTracksEvent( 'calypso_signup_dev_account_toggle', {
+						is_dev_account: isDevAccount,
+					} );
+					this.setState( { isDevAccount } );
+				} }
 			>
 				{ preventWidows(
 					translate(
@@ -986,7 +992,19 @@ class SignupForm extends Component {
 	}
 
 	hasFilledInputValues = () => {
-		return Object.values( this.getUserData() ).every( ( value ) => value.trim().length > 0 );
+		const userInputFields = [ 'email', 'username', 'password' ];
+		return userInputFields.every( ( field ) => {
+			const value = formState.getFieldValue( this.state.form, field );
+			if ( typeof value === 'string' ) {
+				return value.trim().length > 0;
+			}
+			// eslint-disable-next-line no-console
+			console.warn(
+				`hasFilledInputValues: field ${ field } has a value of type ${ typeof value }. Expected string.`
+			);
+			// If we can't determine if the field is filled, we assume it is so that the user can submit the form.
+			return true;
+		} );
 	};
 
 	formFooter() {

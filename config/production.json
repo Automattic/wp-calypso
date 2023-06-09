@@ -105,7 +105,6 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/import-light-url-screen": true,
 		"onboarding/import-redirect-to-themes": true,
-		"onboarding/2023-pricing-grid": true,
 		"p2/p2-plus": true,
 		"pattern-assembler/all-patterns-category": true,
 		"pattern-assembler/logged-in-showcase": false,
