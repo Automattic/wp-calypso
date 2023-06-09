@@ -30,7 +30,7 @@ export type CampaignResponse = {
 		duration_days: number;
 		total_budget: number;
 		total_budget_left: number;
-		overall_spending: number;
+		total_budget_used: number;
 		display_delivery_estimate: string;
 		visits_total: number;
 		visits_organic: number;

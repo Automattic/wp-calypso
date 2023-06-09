@@ -92,7 +92,7 @@ export default function CampaignItemDetails( props: Props ) {
 		duration_days,
 		total_budget_left,
 		total_budget,
-		overall_spending,
+		total_budget_used,
 		visits_total = 0,
 		visits_organic,
 	} = campaign_stats || {};
@@ -116,7 +116,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const durationFormatted = getCampaignDurationFormatted( start_date, end_date );
 	const totalBudgetFormatted = `$${ formatCents( total_budget || 0 ) }`;
 	const totalBudgetLeftFormatted = `$${ formatCents( total_budget_left || 0 ) } ${ __( 'left' ) }`;
-	const overallSpendingFormatted = `$${ formatCents( overall_spending || 0 ) }`;
+	const overallSpendingFormatted = `$${ formatCents( total_budget_used || 0 ) }`;
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( start_date ).format( 'MMMM DD, YYYY' );
