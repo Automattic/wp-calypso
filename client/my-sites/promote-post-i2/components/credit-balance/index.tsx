@@ -6,8 +6,9 @@ interface Props {
 	balance?: number;
 }
 
-const CreditBalance = ( { balance }: Props ) => {
-	if ( balance === undefined || balance === 0 ) {
+const CreditBalance = ( { balance = 0 }: Props ) => {
+	// Hide the section if balance is invalid or is 0
+	if ( ! balance || balance === 0 ) {
 		return null;
 	}
 

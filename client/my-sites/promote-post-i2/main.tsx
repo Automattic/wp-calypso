@@ -66,7 +66,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		entrypoint: 'promoted_posts-header',
 	} );
 
-	const { data: creditBalance } = useCreditBalanceQuery();
+	const { data: creditBalance = 0 } = useCreditBalanceQuery();
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
@@ -146,7 +146,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			className: 'pull-right',
 			itemCount: creditBalance,
 			isCountAmount: true,
-			enabled: creditBalance !== undefined && creditBalance !== 0,
+			enabled: creditBalance > 0,
 		},
 	];
 
@@ -265,7 +265,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				</>
 			) }
 
-			{ /* Render products tab */ }
+			{ /* Render posts tab */ }
 			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && (
 				<>
 					<PageViewTracker
