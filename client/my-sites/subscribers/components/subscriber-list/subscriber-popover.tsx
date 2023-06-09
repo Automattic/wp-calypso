@@ -13,15 +13,15 @@ type SubscriptionPopoverProps = {
 	onView: () => void;
 };
 
-const SubscriptionPopover = ( { onUnsubscribe, onView }: SubscriptionPopoverProps ) => {
+const SubscriberPopover = ( { onUnsubscribe, onView }: SubscriptionPopoverProps ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
 	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	return (
-		<div className="subscription-popover__container">
+		<div className="subscriber-list__popover-container">
 			<button
-				className={ classNames( 'subscription-popover__toggle', {
+				className={ classNames( 'subscriber-list__popover-toggle', {
 					'is-popover-visible': isVisible,
 				} ) }
 				onClick={ onToggle }
@@ -35,7 +35,7 @@ const SubscriptionPopover = ( { onUnsubscribe, onView }: SubscriptionPopoverProp
 				onClose={ () => setIsVisible( false ) }
 				isVisible={ isVisible }
 				context={ buttonRef.current }
-				className="subscription-popover"
+				className="subscriber-popover"
 				focusOnShow={ false }
 			>
 				<PopoverMenuItem onClick={ onView }>
@@ -51,4 +51,4 @@ const SubscriptionPopover = ( { onUnsubscribe, onView }: SubscriptionPopoverProp
 	);
 };
 
-export default SubscriptionPopover;
+export { SubscriberPopover };

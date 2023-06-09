@@ -7,8 +7,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SubscriberList } from './components/subscriber-list/subscriber-list';
 import { useSubscribersQuery } from './queries';
-import { SubscriberList } from './subscriber-list/subscriber-list';
 import './styles.scss';
 
 export const Subscribers = () => {

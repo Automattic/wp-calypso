@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import { Subscriber } from '../types';
+import { Subscriber } from '../../types';
 import { SubscriberRow } from './subscriber-row';
 import './styles.scss';
 
@@ -8,6 +8,9 @@ type SubscriberListProps = {
 	subscribers: Subscriber[];
 	locale: string;
 };
+
+// eslint-disable-next-line
+const noop = () => {};
 
 export const SubscriberList = ( { subscribers, locale }: SubscriberListProps ) => {
 	const translate = useTranslate();
@@ -31,31 +34,15 @@ export const SubscriberList = ( { subscribers, locale }: SubscriberListProps ) =
 				</span>
 				<span className="subscriber-list__menu-column" role="columnheader"></span>
 			</li>
-			{ subscribers.map(
-				( {
-					user_id,
-					subscription_id,
-					display_name,
-					email_address,
-					subscriptions,
-					openRate,
-					date_subscribed,
-					avatar,
-				}: Subscriber ) => (
-					<SubscriberRow
-						user_id={ user_id }
-						key={ subscription_id }
-						subscription_id={ subscription_id }
-						display_name={ display_name }
-						email_address={ email_address }
-						subscriptions={ subscriptions }
-						openRate={ openRate }
-						date_subscribed={ date_subscribed }
-						avatar={ avatar }
-						locale={ locale }
-					/>
-				)
-			) }
+			{ subscribers.map( ( subscriber ) => (
+				<SubscriberRow
+					key={ subscriber.subscription_id }
+					subscriber={ subscriber }
+					locale={ locale }
+					onView={ noop }
+					onUnsubscribe={ noop }
+				/>
+			) ) }
 		</ul>
 	);
 };
