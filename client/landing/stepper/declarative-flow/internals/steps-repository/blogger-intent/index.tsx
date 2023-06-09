@@ -14,6 +14,12 @@ import './style.scss';
 const BlogIntent: Step = function BlogIntent() {
 	const translate = useTranslate();
 
+	const handleButtonClick = ( intent: string ) => {
+		recordTracksEvent( 'calypso_blog_onboarding_selection_button_click', {
+			intent: intent,
+		} );
+	};
+
 	const currentUser = useSelect(
 		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
 		[]
@@ -41,7 +47,12 @@ const BlogIntent: Step = function BlogIntent() {
 									<FeatherIcon />
 									{ translate( 'Write your first post' ) }
 								</div>
-								<Button className="blogger-intent__button" primary href="/setup/start-writing">
+								<Button
+									onClick={ () => handleButtonClick( 'start-writing' ) }
+									className="blogger-intent__button"
+									primary
+									href="/setup/start-writing"
+								>
 									{ translate( 'Start Writing' ) }
 								</Button>
 							</div>
@@ -51,7 +62,12 @@ const BlogIntent: Step = function BlogIntent() {
 									<DesignIcon />
 									{ translate( 'Pick a design first' ) }
 								</div>
-								<Button className="blogger-intent__button" primary href="/setup/design-first">
+								<Button
+									onClick={ () => handleButtonClick( 'design-first' ) }
+									className="blogger-intent__button"
+									primary
+									href="/setup/design-first"
+								>
 									{ translate( 'View designs' ) }
 								</Button>
 							</div>
