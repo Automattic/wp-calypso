@@ -292,6 +292,7 @@ import {
 	isEcommercePlan,
 	isBusinessPlan,
 	isFreePlan,
+	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
@@ -315,6 +316,7 @@ export type FeatureObject = {
 	getCompareSubtitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
+	getFeatureGroup?: () => string;
 };
 export type FeatureList = {
 	[ key: string ]: FeatureObject;
@@ -1703,6 +1705,14 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
 		getTitle: () => i18n.translate( 'Import up to 100 subscribers' ),
 	},
+	[ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES ]: {
+		getSlug: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+		getTitle: () => i18n.translate( 'Transaction fees for payments' ),
+		getDescription: () =>
+			i18n.translate(
+				'Account for WordPress transaction fees. Additional charges apply for payments to your Stripe account.'
+			),
+	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
 		getTitle: () =>
@@ -1710,6 +1720,11 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 10 },
 			} ),
 		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
+		getAlternativeTitle: () =>
+			i18n.translate( '%(commission)d% WordPress fees + Stripe fees', {
+				args: { commission: 10 },
+			} ),
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
@@ -1718,6 +1733,9 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 8 },
 			} ),
 		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
+		getAlternativeTitle: () =>
+			i18n.translate( '%(commission)d% WordPress fees + Stripe fees', { args: { commission: 8 } } ),
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
@@ -1726,6 +1744,9 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 4 },
 			} ),
 		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
+		getAlternativeTitle: () =>
+			i18n.translate( '%(commission)d% WordPress fees + Stripe fees', { args: { commission: 4 } } ),
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
@@ -1734,6 +1755,9 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 2 },
 			} ),
 		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
+		getAlternativeTitle: () =>
+			i18n.translate( '%(commission)d% WordPress fees + Stripe fees', { args: { commission: 2 } } ),
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
@@ -1742,6 +1766,9 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 0 },
 			} ),
 		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
+		getAlternativeTitle: () =>
+			i18n.translate( '%(commission)d% WordPress fees + Stripe fees', { args: { commission: 0 } } ),
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
