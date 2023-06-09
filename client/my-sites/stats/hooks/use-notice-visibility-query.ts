@@ -24,7 +24,6 @@ const processConflictNotices = ( notices: Notices ): Notices => {
 		for ( const confilictNoticeId of CONFLICT_NOTICE_ID_GROUPS[ conflictNoticeGroup ] ) {
 			if ( foundActiveNotice ) {
 				notices[ confilictNoticeId ] = false;
-				continue;
 			} else if ( notices?.[ confilictNoticeId ] ) {
 				foundActiveNotice = true;
 			}
