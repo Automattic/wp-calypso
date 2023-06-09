@@ -191,7 +191,7 @@ const LayoutLoggedOut = ( {
 				</>
 			) }
 
-			{ [ 'themes', 'theme' ].includes( sectionName ) && (
+			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && (
 				<UniversalNavbarFooter
 					onLanguageChange={ ( e ) => {
 						navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
