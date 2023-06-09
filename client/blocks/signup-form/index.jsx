@@ -996,7 +996,7 @@ class SignupForm extends Component {
 		return userInputFields.every( ( field ) => {
 			const value = formState.getFieldValue( this.state.form, field );
 			if ( typeof value === 'string' ) {
-				return value.trim().length;
+				return value.trim().length > 0;
 			}
 			// eslint-disable-next-line no-console
 			console.warn(
