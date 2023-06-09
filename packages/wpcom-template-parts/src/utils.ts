@@ -18,7 +18,7 @@ export const getAutomatticBrandingNoun = ( translate: typeof translateMethod ) =
 	const branding = automatticRoger[ Math.floor( Math.random() * ( 10 - 0 + 1 ) + 0 ) ];
 
 	return {
-		article: branding.split( 'Automattic' )[ 0 ],
-		noun: branding.split( 'Automattic' )[ 1 ],
+		prefix: branding.split( 'Automattic' )[ 0 ],
+		suffix: branding.split( 'Automattic' )[ 1 ],
 	};
 };
