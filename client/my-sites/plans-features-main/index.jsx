@@ -61,6 +61,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import './style.scss';
+import useIntentFromSiteMeta from './hooks/use-intent-from-site-meta';
 import usePlanTypesWithIntent from './hooks/use-plan-types-with-intent';
 
 const OnboardingPricingGrid2023 = ( props ) => {
@@ -206,7 +207,6 @@ const SecondaryFormattedHeader = ( { siteSlug } ) => {
 	);
 };
 
-// plans, isDisplayingPlansNeededForFeature, onUpgradeClick
 const PricingView = ( props ) => {
 	const {
 		isDisplayingPlansNeededForFeature,
@@ -226,7 +226,7 @@ const PricingView = ( props ) => {
 		hideEcommercePlan,
 		sitePlanSlug,
 		hideEnterprisePlan,
-		intent,
+		intent: intentFromProps,
 		currentSitePlanSlug,
 	} = props;
 	const getPlanBillingPeriod = ( intervalType, defaultValue = null ) => {
@@ -313,6 +313,8 @@ const PricingView = ( props ) => {
 	};
 
 	const term = getPlanBillingPeriod( props.intervalType, getPlan( selectedPlan )?.term );
+	const intentFromSiteMeta = useIntentFromSiteMeta();
+	const intent = intentFromProps || intentFromSiteMeta.intent || 'default';
 	const defaultPlanTypes = usePlanTypesWithIntent( {
 		intent: 'default',
 		selectedPlan,
@@ -348,19 +350,23 @@ const PricingView = ( props ) => {
 				} }
 			/>
 			{ isDisplayingPlansNeededForFeature && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
-			{ ! hidePlanSelector && (
-				<PlanTypeSelector
-					{ ...planTypeSelectorProps }
-					kind={ planTypeSelector }
-					plans={ visiblePlans }
-				/>
+			{ ! intentFromSiteMeta.processing && (
+				<>
+					{ ! hidePlanSelector && (
+						<PlanTypeSelector
+							{ ...planTypeSelectorProps }
+							kind={ planTypeSelector }
+							plans={ visiblePlans }
+						/>
+					) }
+					<OnboardingPricingGrid2023
+						{ ...props }
+						plans={ plans }
+						visiblePlans={ visiblePlans }
+						intent={ visiblePlanTypes.intent }
+					/>
+				</>
 			) }
-			<OnboardingPricingGrid2023
-				{ ...props }
-				plans={ plans }
-				visiblePlans={ visiblePlans }
-				intent={ visiblePlanTypes.intent }
-			/>
 		</>
 	);
 };

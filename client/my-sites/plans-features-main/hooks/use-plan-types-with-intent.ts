@@ -9,9 +9,6 @@ import {
 	getPlan,
 	isBloggerPlan,
 } from '@automattic/calypso-products';
-import { useSiteIntent } from '@automattic/data-stores';
-import { useSelector } from 'react-redux';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export type Intent =
 	| 'blog-onboarding'
@@ -26,7 +23,7 @@ export type Intent =
 	| 'default';
 
 interface Props {
-	intent?: Intent | null | undefined;
+	intent: Intent;
 	selectedPlan: string;
 	sitePlanSlug: string;
 	hideEnterprisePlan: boolean;
@@ -38,23 +35,10 @@ interface PlanTypesWithIntent {
 	planTypes: string[];
 }
 
-const useIntentFromSiteMeta = (): Intent | null => {
-	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
-	const intent = useSiteIntent( selectedSiteId );
-
-	if ( 'newsletter' === ( intent.data?.site_intent as string ) ) {
-		return 'newsletter';
-	}
-
-	return null;
-};
-
 const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent | null => {
 	// TODO: refactor: sitePlanSlug === currentSitePlanSlug
 	// TODO: refactor: pass siteId
-	const { selectedPlan, sitePlanSlug, hideEnterprisePlan, currentSitePlanSlug } = props;
-	const intentFromSiteMeta = useIntentFromSiteMeta();
-	const intent = props.intent || intentFromSiteMeta || 'default';
+	const { selectedPlan, sitePlanSlug, hideEnterprisePlan, currentSitePlanSlug, intent } = props;
 	const isBloggerAvailable = isBloggerPlan( selectedPlan ) || isBloggerPlan( sitePlanSlug );
 
 	// TODO:
