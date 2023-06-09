@@ -771,6 +771,14 @@
 		.signup-form {
 			max-width: 405px;
 			margin: 0 auto;
+
+			input.form-text-input {
+				border-color: #bbb;
+
+				&.is-valid {
+					border-color: #bbb;
+				}
+			}
 		}
 
 		.login__form-header h3,
