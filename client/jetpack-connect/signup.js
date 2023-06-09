@@ -7,7 +7,7 @@
  */
 
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, JetpackLogo } from '@automattic/components';
 import { Button, Card } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -456,6 +456,7 @@ export class JetpackSignup extends Component {
 			return this.renderWooDna();
 		}
 		const { isCreatingAccount } = this.state;
+		const isWooCoreProfiler = this.isWooCoreProfiler();
 		return (
 			<MainWrapper
 				isWooOnboarding={ this.isWooOnboarding() }
@@ -479,7 +480,11 @@ export class JetpackSignup extends Component {
 							{ auth_approved: true },
 							window.location.href
 						) }
-						submitButtonText={ this.props.translate( 'Create your account' ) }
+						submitButtonText={
+							isWooCoreProfiler
+								? this.props.translate( 'Create an account' )
+								: this.props.translate( 'Create your account' )
+						}
 						submitForm={ this.handleSubmitSignup }
 						submitting={ isCreatingAccount }
 						suggestedUsername=""
@@ -487,8 +492,14 @@ export class JetpackSignup extends Component {
 
 					{ this.renderLoginUser() }
 				</div>
-				{ this.isWooCoreProfiler() && this.props.authQuery.installedExtSuccess && (
+				{ isWooCoreProfiler && this.props.authQuery.installedExtSuccess && (
 					<WooInstallExtSuccessNotice />
+				) }
+				{ isWooCoreProfiler && (
+					<div className="jetpack-connect__jetpack-logo-wrapper">
+						<JetpackLogo monochrome size={ 18 } />{ ' ' }
+						<span>{ this.props.translate( 'Jetpack powered' ) }</span>
+					</div>
 				) }
 			</MainWrapper>
 		);
