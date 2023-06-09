@@ -17,6 +17,13 @@ interface Props {
 	setAllPhoneItems: ( phoneNumbers: Array< StateMonitorSettingsSMS > ) => void;
 }
 
+interface FormPhoneInputChangeResult {
+	name: string;
+	countryCode: string;
+	phoneNumber: string;
+	phoneNumberFull: string;
+}
+
 export default function PhoneNumberEditor( {
 	toggleModal,
 	allPhoneItems,
@@ -37,12 +44,7 @@ export default function PhoneNumberEditor( {
 	const [ validationError, setValidationError ] = useState<
 		{ phone?: string; code?: string } | undefined
 	>();
-	const [ smsItem, setSMSItem ] = useState< {
-		name: string;
-		countryCode: string;
-		phoneNumber: string;
-		phoneNumberFull: string;
-	} >( {
+	const [ smsItem, setSMSItem ] = useState< FormPhoneInputChangeResult >( {
 		name: '',
 		countryCode: '',
 		phoneNumber: '',
