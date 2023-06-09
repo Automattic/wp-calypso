@@ -15,6 +15,35 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
+const SharingConnectionKeyringUserLabel = localize(
+	( { siteId, keyringUserId, translate, userId } ) => {
+		if ( ! keyringUserId ) {
+			return null;
+		}
+
+		const fetchOptions = {
+			search: keyringUserId,
+			search_columns: [ 'ID' ],
+		};
+
+		const { data } = useUsersQuery( siteId, fetchOptions );
+		const keyringUser = data?.users?.[ 0 ] ?? null;
+
+		if ( keyringUser && userId !== keyringUser.ID ) {
+			return (
+				<aside className="sharing-connection__keyring-user">
+					{ translate( 'Connected by %(username)s', {
+						args: { username: keyringUser.nice_name },
+						context: 'Sharing: connections',
+					} ) }
+				</aside>
+			);
+		}
+
+		return null;
+	}
+);
+
 class SharingConnection extends Component {
 	static propTypes = {
 		connection: PropTypes.object.isRequired, // The single connection object
@@ -244,35 +273,6 @@ class SharingConnection extends Component {
 		);
 	}
 }
-
-const SharingConnectionKeyringUserLabel = localize(
-	( { siteId, keyringUserId, translate, userId } ) => {
-		if ( ! keyringUserId ) {
-			return null;
-		}
-
-		const fetchOptions = {
-			search: keyringUserId,
-			search_columns: [ 'ID' ],
-		};
-
-		const { data } = useUsersQuery( siteId, fetchOptions );
-		const keyringUser = data?.users?.[ 0 ] ?? null;
-
-		if ( keyringUser && userId !== keyringUser.ID ) {
-			return (
-				<aside className="sharing-connection__keyring-user">
-					{ translate( 'Connected by %(username)s', {
-						args: { username: keyringUser.nice_name },
-						context: 'Sharing: connections',
-					} ) }
-				</aside>
-			);
-		}
-
-		return null;
-	}
-);
 
 export default connect(
 	( state ) => {
