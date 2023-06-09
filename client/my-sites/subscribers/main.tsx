@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { useLocale } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
@@ -13,7 +12,6 @@ import './styles.scss';
 
 export const Subscribers = () => {
 	const isSubscribersPageEnabled = config.isEnabled( 'subscribers-page' );
-	const locale = useLocale();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const initialState = { data: { total: 0, subscribers: [] } };
 	const result = useSubscribersQuery( selectedSiteId );
@@ -57,7 +55,7 @@ export const Subscribers = () => {
 				<span className="subscribers__title">{ translate( 'Total' ) }</span>{ ' ' }
 				<span className="subscribers__subscriber-count">{ total }</span>
 			</div>
-			<SubscriberList subscribers={ subscribers } locale={ locale } />
+			<SubscriberList subscribers={ subscribers } />
 		</Main>
 	);
 };

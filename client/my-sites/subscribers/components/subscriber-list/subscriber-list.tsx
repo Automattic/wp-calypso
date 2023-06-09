@@ -6,13 +6,12 @@ import './styles.scss';
 
 type SubscriberListProps = {
 	subscribers: Subscriber[];
-	locale: string;
 };
 
 // eslint-disable-next-line
 const noop = () => {};
 
-export const SubscriberList = ( { subscribers, locale }: SubscriberListProps ) => {
+export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
 	const translate = useTranslate();
 	return (
 		<ul className="subscriber-list" role="table">
@@ -38,7 +37,6 @@ export const SubscriberList = ( { subscribers, locale }: SubscriberListProps ) =
 				<SubscriberRow
 					key={ subscriber.subscription_id }
 					subscriber={ subscriber }
-					locale={ locale }
 					onView={ noop }
 					onUnsubscribe={ noop }
 				/>
