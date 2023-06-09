@@ -39,6 +39,7 @@ import {
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+	PRODUCT_JETPACK_AI_MONTHLY,
 	JETPACK_TAG_FOR_VIDEOGRAPHERS,
 	JETPACK_TAG_FOR_ALL_SITES,
 	JETPACK_TAG_FOR_BLOGGERS,
@@ -133,6 +134,7 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: translate( 'Social', {
 			context: 'Jetpack product name',
 		} ),
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI' ),
 	};
 };
 
@@ -164,6 +166,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const videoPress = translate( 'VideoPress' );
+	const aiAssistant = translate( 'AI' );
 	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 		components: {
 			s: <span style={ { whiteSpace: 'nowrap' } } />,
@@ -224,6 +227,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	} );
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
@@ -290,9 +294,11 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 		},
 	} );
 	const boost = translate( 'Get Boost' );
+	const aiAssistant = translate( 'Get AI' );
 	const social = translate( 'Get Social' );
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
@@ -329,6 +335,13 @@ export const getJetpackProductsTaglines = (): Record<
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
 	const boostTagLine = translate( "Improve your site's performance" );
 	const boostOwnedTagLine = translate( 'Your site is optimized with Boost' );
+	// TODO: may need copy update
+	const aiAssistantTagLine = translate(
+		'Experience the ease of crafting content with intuitive and powerful AI.'
+	);
+	const aiAssistantOwnedTagLine = translate(
+		'Your site is equipped with our intuitive and powerful AI.'
+	);
 	const searchTagline = translate( 'Recommended for sites with lots of products or content' );
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
@@ -348,6 +361,10 @@ export const getJetpackProductsTaglines = (): Record<
 		'Your site has additional storage for Jetpack VaultPress Backup.'
 	);
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: {
+			default: aiAssistantTagLine,
+			owned: aiAssistantOwnedTagLine,
+		},
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 			default: backupDailyTagline,
 			owned: backupOwnedTagline,
@@ -508,6 +525,10 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 	const backupDescription = translate(
 		'Save every change with real-time backups and get back online quickly with one-click restores.'
 	);
+	// TODO: may need copy update
+	const aiAssistantDescription = translate(
+		'Experience the ease of crafting content with intuitive and powerful AI.'
+	);
 	const boostDescription = translate(
 		"One-click optimizations that supercharge your WordPress site's performance and improve web vitals scores for better SEO."
 	);
@@ -537,6 +558,7 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 	);
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeDescription,
@@ -580,6 +602,9 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 			comment: '%s is a storage amount like 1TB or 10GB',
 		}
 	);
+	const aiAssistantShortDescription = translate(
+		'Experience the ease of crafting content with intuitive and powerful AI.'
+	);
 	const boostShortDescription = translate(
 		'Speed up your site and improve SEO - no developer required.'
 	);
@@ -596,6 +621,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const socialAdvancedShortDescription = translate( 'Write once, post everywhere.' );
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeShortDescription,
@@ -644,6 +670,10 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 	const searchFeaturedText = translate(
 		'Instant search helps your visitors actually find what they need and improves conversion.'
 	);
+	// TODO: may need alternate copy here
+	const aiAssistantFeaturedText = translate(
+		'Utilizing the potential of artificial intelligence, Jetpack AI brings a supportive layer to your content creation process.'
+	);
 	const boostFeaturedText = translate(
 		'Instant speed and SEO boost. Get the same advantages as the top sites, no developer required.'
 	);
@@ -656,6 +686,7 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 	);
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupFeaturedText,
@@ -703,6 +734,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const searchLightboxDescription = translate(
 		'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content - right when they need it.'
 	);
+	const aiAssistantLightboxDescription = translate(
+		'Utilizing the potential of artificial intelligence, Jetpack AI brings a supportive layer to your content creation process.'
+	);
 	const boostLightboxDescription = translate(
 		'Jetpack Boost gives your site the same performance advantages as the world’s leading websites, no developer required.'
 	);
@@ -714,6 +748,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	);
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupLightboxDescription,
@@ -860,8 +895,16 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Recycle content' ),
 		translate( 'Image generator' ),
 	];
+	const aiAssistantIncludesInfo = [
+		translate( 'Prompt based content generation' ),
+		translate( 'Generate text, tables, and lists' ),
+		translate( 'Adaptive Tone Adjustment' ),
+		translate( 'Superior spelling and Grammar Correction' ),
+		translate( 'Title & summary generation' ),
+	];
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1,
@@ -971,7 +1014,15 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Repurpose, reuse or republish already published content' ),
 	];
 
+	const aiAssistantBenefits = [
+		translate( 'Harness AI Power Directly from Your Editor' ),
+		translate( 'Unlock High‑Quality, Tailored Content at Your Command' ),
+		translate( 'Maintain Professional Standards with Ease' ),
+		translate( 'Best in-class support from WordPress experts' ),
+	];
+
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupBenefits,

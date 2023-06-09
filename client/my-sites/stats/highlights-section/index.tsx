@@ -1,16 +1,24 @@
 import {
 	WeeklyHighlightCards,
-	PAST_SEVEN_DAYS,
 	PAST_THIRTY_DAYS,
 	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
 	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
 } from '@automattic/components';
 import { useEffect, useMemo, useState } from 'react';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';
 import { getHighlights } from 'calypso/state/stats/highlights/selectors';
+import { updateModuleSettings } from 'calypso/state/stats/module-settings/actions';
 
-export default function HighlightsSection( { siteId }: { siteId: number } ) {
+export default function HighlightsSection( {
+	siteId,
+	currentPeriod,
+}: {
+	siteId: number;
+	currentPeriod: string;
+} ) {
 	const dispatch = useDispatch();
 
 	// Request new highlights whenever site ID changes.
@@ -18,7 +26,13 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 		dispatch( requestHighlights( siteId ) );
 	}, [ dispatch, siteId ] );
 
-	const [ currentPeriod, setCurrentPeriod ] = useState( PAST_SEVEN_DAYS );
+	const onUpdatePeriod = ( period: string ) => {
+		dispatch(
+			updateModuleSettings( siteId, {
+				traffic: { highlights: { period_in_days: period === PAST_THIRTY_DAYS ? 30 : 7 } },
+			} )
+		);
+	};
 
 	const highlights = useSelector( ( state ) => getHighlights( state, siteId ) );
 	const counts = useMemo(
@@ -43,6 +57,24 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 		};
 	}, [ highlights, currentPeriod ] );
 
+	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
+		siteId,
+		'traffic_page_highlights_module_settings'
+	);
+	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
+		siteId,
+		'traffic_page_highlights_module_settings'
+	);
+	const [ settingsTooltipDismissed, setSettingsTooltipDismissed ] = useState(
+		!! localStorage.getItem( 'notices_dismissed__traffic_page_highlights_module_settings' )
+	);
+
+	const dismissSettingsTooltip = () => {
+		setSettingsTooltipDismissed( true );
+		localStorage.setItem( 'notices_dismissed__traffic_page_highlights_module_settings', '1' );
+		return mutateNoticeVisbilityAsync().finally( refetchNotices );
+	};
+
 	return (
 		<WeeklyHighlightCards
 			className="has-odyssey-stats-bg-color"
@@ -53,8 +85,10 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 			onClickLikes={ () => null }
 			onClickViews={ () => null }
 			onClickVisitors={ () => null }
-			onTogglePeriod={ setCurrentPeriod }
+			onTogglePeriod={ onUpdatePeriod }
 			currentPeriod={ currentPeriod }
+			showSettingsTooltip={ !! showSettingsTooltip && ! settingsTooltipDismissed }
+			onSettingsTooltipDismiss={ dismissSettingsTooltip }
 		/>
 	);
 }

@@ -1,5 +1,6 @@
 @import "~calypso/blocks/import/style/base";
 
+.import-hosted-site.import,
 .site-setup.import,
 .import-focused.import {
 	.import__onboarding-page {
@@ -12,15 +13,3 @@
 	}
 }
 
-@media ( max-width: 1000px ) {
-	.step-container.import__onboarding-page.importer.import {
-		padding: 20px;
-	}
-
-	.step-container.import__onboarding-page.importer-step {
-		max-width: 100%;
-		.onboarding-title {
-			word-break: break-word;
-		}
-	}
-}

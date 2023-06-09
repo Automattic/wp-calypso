@@ -17,14 +17,6 @@ body.is-section-promote-post-i2 {
 .promote-post-i2 {
 	@include promote-post-i2-font;
 
-	.posts-list__table {
-		@media screen and (max-width: $break-mobile) {
-			& {
-				width: calc(100% - 32px);
-			}
-		}
-	}
-
 	.posts-list__header-column {
 		font-weight: normal;
 		padding-bottom: 8px;
@@ -35,21 +27,6 @@ body.is-section-promote-post-i2 {
 	}
 
 	.post-item__post {
-		// Do not show the rest of columns on mobiles
-		&-type,
-		&-publish-date,
-		&-views,
-		&-likes,
-		&-comments,
-		&-view,
-		&-promote {
-			@media screen and ( max-width: $break-mobile ) {
-				& {
-					display: none;
-				}
-			}
-		}
-
 		&-data,
 		&-type,
 		&-publish-date,
@@ -74,13 +51,6 @@ body.is-section-promote-post-i2 {
 						display: none;
 						margin-top: 20px;
 
-						@media screen and (max-width: $break-mobile) {
-							& {
-								display: flex;
-								justify-content: space-between;
-							}
-						}
-
 						.post-item__stats-mobile {
 							@include post-data-small-font-mobile;
 						}
@@ -93,20 +63,6 @@ body.is-section-promote-post-i2 {
 
 						.post-item__post-subheading-mobile {
 							display: none;
-						}
-
-						@media screen and (max-width: $break-mobile) {
-							.post-item__post-subheading-mobile {
-								@include post-data-small-font-mobile;
-
-								display: block;
-							}
-
-							.post-item__post-title-content {
-								font-size: 0.875rem;
-								font-weight: 600;
-								line-height: 1.47;
-							}
 						}
 					}
 				}
@@ -156,25 +112,6 @@ body.is-section-promote-post-i2 {
 		&:hover {
 			color: var(--studio-gray-60);
 		}
-
-		@media screen and (max-width: $break-mobile) {
-			& {
-				@include post-data-small-font-mobile;
-				margin-right: 4px;
-			}
-		}
-	}
-
-	// Promote link
-	.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
-		@media screen and (max-width: $break-mobile) {
-			& {
-				@include post-data-small-font-mobile;
-				color: #3858ea;
-				height: 16px;
-				padding: 0 12px;
-			}
-		}
 	}
 
 	.post-item {
@@ -204,6 +141,7 @@ body.is-section-promote-post-i2 {
 		position: relative;
 		height: 78px;
 		width: 108px;
+		min-width: 108px;
 		align-self: stretch;
 		border: 1px solid #eee;
 		border-radius: 4px;
@@ -223,4 +161,90 @@ body.is-section-promote-post-i2 {
 
 .post-item__mid-dot {
 	padding: 0 6px;
+}
+
+@mixin blazepress-post-item-mobile {
+	.promote-post-i2 {
+		.posts-list__table {
+			width: calc(100% - 32px);
+		}
+
+		.post-item__post {
+			// Do not show the rest of columns on mobiles
+			&-type,
+			&-publish-date,
+			&-views,
+			&-likes,
+			&-comments,
+			&-view,
+			&-promote {
+				display: none;
+			}
+
+			&-data {
+				.post-item__post {
+					&-data-row {
+						&-mobile {
+							display: flex;
+							justify-content: space-between;
+						}
+
+						.post-item__post-title {
+							.post-item__post-subheading-mobile {
+								@include post-data-small-font-mobile;
+
+								display: block;
+							}
+
+							.post-item__post-title-content {
+								font-size: 0.875rem;
+								font-weight: 600;
+								line-height: 1.47;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// View link
+		.post-item__post-view a.post-item__view-link,
+		.post-item__post-view a.post-item__view-link:visited,
+		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link,
+		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link:visited {
+			@include post-data-small-font-mobile;
+
+			margin-right: 4px;
+		}
+
+		// Promote link
+		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
+			@include post-data-small-font-mobile;
+
+			color: #3858ea;
+			height: 16px;
+			padding: 0 12px;
+		}
+	}
+}
+
+// Show Mobile view for screens if window width <= 782px
+@media screen and (max-width: $break-medium) {
+	@include blazepress-post-item-mobile;
+}
+
+// Show Mobile view if sidebar is collapsed and main content width <= 782px
+$break-medium-collapsed-menu: $break-medium + 36px;
+@media screen and (max-width: $break-medium-collapsed-menu) {
+	body.is-section-promote-post-i2.is-sidebar-collapsed {
+		@include blazepress-post-item-mobile;
+	}
+}
+
+// Show Mobile view if sidebar is expanded and main content width <= 782px
+$break-medium-expanded-menu: $break-medium + 272px;
+@media screen and (max-width: $break-medium-expanded-menu) {
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
+		@include blazepress-post-item-mobile;
+	}
 }

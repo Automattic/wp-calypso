@@ -2,11 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .wpcom-block-editor-post-published-sharing-modal {
-	border-radius: 4px;
-	@media only screen and (max-width: 600px) {
-		border-radius: 0;
-	}
-
 	.components-modal__content {
 		margin-top: 0;
 		padding-bottom: 0;
@@ -19,6 +14,7 @@
 				p a {
 					color: var(--color-text);
 					text-decoration: underline;
+					white-space: nowrap;
 
 					&:hover {
 						color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
@@ -46,13 +42,16 @@
 				flex-direction: column-reverse;
 
 				.wpcom-block-editor-post-published-sharing-modal__left {
-					padding: 52px 0;
+					padding: 44px 0 20px;
 					width: 100%;
 				}
 				.wpcom-block-editor-post-published-sharing-modal__right {
 					border-left: none;
-					padding: 52px 0;
+					padding: 52px 0 0;
 					width: 100%;
+				}
+				.wpcom-block-editor-post-published-sharing-modal__image {
+					height: 140px;
 				}
 			}
 		}
@@ -60,10 +59,18 @@
 			margin-top: 0;
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 26px;
+			@media only screen and (max-width: 600px) {
+				font-size: 2.25rem;
+				font-weight: 500;
+				line-height: 1;
+			}
 		}
 		p {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 18px;
+			@media only screen and (max-width: 600px) {
+				font-size: 1rem;
+			}
 		}
 		.link-button {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -131,7 +138,7 @@
 	margin: 8px 8px 0 0;
 	border-radius: 50%;
 	color: var(--color-neutral-80);
-	background: #fff;
+	background: var(--studio-white);
 	padding: 7px;
 
 	&:hover {

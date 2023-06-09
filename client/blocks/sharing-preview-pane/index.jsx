@@ -1,4 +1,7 @@
-import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
+import {
+	FEATURE_SOCIAL_INSTAGRAM_CONNECTION,
+	FEATURE_SOCIAL_MASTODON_CONNECTION,
+} from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { get, find, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -20,6 +23,7 @@ import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
 import { getSeoTitle, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import InstagramSharePreview from '../../components/share/instagram-share-preview';
 import {
 	getPostImage,
 	getExcerptForPost,
@@ -32,6 +36,7 @@ import './style.scss';
 
 const serviceNames = {
 	facebook: 'Facebook',
+	'instagram-business': 'Instagram',
 	twitter: 'Twitter',
 	linkedin: 'LinkedIn',
 	tumblr: 'Tumblr',
@@ -49,6 +54,7 @@ class SharingPreviewPane extends PureComponent {
 		post: PropTypes.object,
 		seoTitle: PropTypes.string,
 		selectedService: PropTypes.string,
+		disabledServices: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -67,11 +73,9 @@ class SharingPreviewPane extends PureComponent {
 	}
 
 	getAvailableServices() {
-		const { isMastodonEligible, services } = this.props;
-		if ( ! isMastodonEligible ) {
-			return services.filter( ( service ) => service !== 'mastodon' );
-		}
-		return services;
+		const { services, disabledServices } = this.props;
+
+		return services.filter( ( service ) => ! disabledServices.includes( service ) );
 	}
 
 	selectPreview = ( selectedService ) => {
@@ -146,6 +150,8 @@ class SharingPreviewPane extends PureComponent {
 						customImage={ customImage }
 					/>
 				);
+			case 'instagram-business':
+				return <InstagramSharePreview { ...previewProps } />;
 			case 'tumblr':
 				return (
 					<TumblrSharePreview
@@ -213,6 +219,15 @@ const mapStateToProps = ( state, ownProps ) => {
 	const siteSlug = getSiteSlug( state, siteId );
 	const siteIcon = getSiteIconUrl( state, siteId );
 
+	const disabledServices = [];
+
+	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_INSTAGRAM_CONNECTION ) ) {
+		disabledServices.push( 'instagram-business' );
+	}
+	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ) ) {
+		disabledServices.push( 'mastodon' );
+	}
+
 	return {
 		site,
 		post,
@@ -221,7 +236,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteSlug,
 		siteIcon,
 		siteName: site.name,
-		isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
+		disabledServices,
 	};
 };
 

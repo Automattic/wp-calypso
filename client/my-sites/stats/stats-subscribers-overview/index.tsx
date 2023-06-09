@@ -1,26 +1,13 @@
 import { CountComparisonCard } from '@automattic/components';
-import { UseQueryResult, useQueries } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import {
-	querySubscribers,
-	selectSubscribers,
+	useSubscribersQueries,
+	SubscribersData,
 } from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 
 // array of indices to use to calculate the dates to query for
 const cardIndices = [ 0, 30, 60, 90 ];
-
-interface SubscribersData {
-	period: string;
-	subscribers: number;
-	subscribers_change: number;
-}
-
-interface SubscribersDataResult {
-	data: SubscribersData[];
-	unit: string;
-	date: string;
-}
 
 interface SubscribersOverviewProps {
 	siteId: number | null;
@@ -35,9 +22,9 @@ function calculateQueryDate( daysToSubtract: number ) {
 }
 
 // calculate the stats to display in the cards
-function SubscribersOverviewCardStats( subscribersData: SubscribersData[][] ) {
+function SubscribersOverviewCardStats( subscribersData: SubscribersData[] ) {
 	const getCount = ( index: number ) => {
-		return subscribersData[ index ]?.[ 0 ]?.subscribers || 0;
+		return subscribersData[ index ]?.data[ 0 ]?.subscribers || 0;
 	};
 
 	const overviewCardStats = [
@@ -66,18 +53,13 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 	const period = 'day';
 	const quantity = 1;
 	const dates = cardIndices.map( calculateQueryDate );
-	const subscribersQueries = useQueries( {
-		queries: dates.map( ( date ) => ( {
-			queryKey: [ 'stats', 'subscribers', siteId, period, quantity, date ],
-			queryFn: () => querySubscribers( siteId, period, quantity, date ),
-			select: selectSubscribers,
-			staleTime: 1000 * 60 * 5, // 5 minutes
-		} ) ),
-	} ) as UseQueryResult< SubscribersDataResult >[];
 
-	const isLoading = subscribersQueries.some( ( result ) => result.isLoading );
-	const isError = subscribersQueries.some( ( result ) => result.isError );
-	const subscribersData = subscribersQueries.map( ( result ) => result.data?.data || [] );
+	const { isLoading, isError, subscribersData } = useSubscribersQueries(
+		siteId,
+		period,
+		quantity,
+		dates
+	);
 
 	const overviewCardStats = SubscribersOverviewCardStats( subscribersData );
 

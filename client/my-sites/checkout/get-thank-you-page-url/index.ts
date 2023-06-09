@@ -544,7 +544,10 @@ function getFallbackDestination( {
 		cart?.products?.filter( ( product ) => product?.extra?.is_marketplace_product ) || [];
 
 	const marketplacePluginSlugs = marketplaceProducts
-		.filter( ( { extra } ) => extra.product_type === 'marketplace_plugin' )
+		.filter(
+			( { extra } ) =>
+				extra.product_type === 'marketplace_plugin' || extra.product_type === 'saas_plugin'
+		)
 		.map( ( { extra } ) => extra.product_slug );
 
 	const marketplaceThemeSlugs = marketplaceProducts

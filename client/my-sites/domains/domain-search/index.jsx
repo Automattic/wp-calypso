@@ -11,6 +11,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
@@ -30,8 +31,8 @@ import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
-	domainMapping,
 	domainManagementList,
+	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -96,7 +97,11 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		const domainMappingUrl = domainMapping( this.props.selectedSiteSlug, domain );
+		const domainMappingUrl = domainUseMyDomain(
+			this.props.selectedSiteSlug,
+			domain,
+			useMyDomainInputMode.transferOrConnect
+		);
 		this.isMounted && page( domainMappingUrl );
 	};
 

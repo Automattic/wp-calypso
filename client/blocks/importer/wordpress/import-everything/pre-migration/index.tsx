@@ -79,7 +79,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			targetSite.ID,
 			sourceSiteSlug,
 			fetchMigrationEnabledOnMount,
-			isMigrateFromWp,
 			onfetchCallback
 		);
 

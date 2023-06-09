@@ -40,7 +40,7 @@ const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
 	return columnsPerRow;
 };
 
-export const ThemesList = ( props ) => {
+export const ThemesList = ( { tabFilter, ...props } ) => {
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
 	const updateShowSecondUpsellNudge = useCallback( () => {
@@ -148,7 +148,7 @@ export const ThemesList = ( props ) => {
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ isPatternAssemblerCTAEnabled && themes.length > 0 && (
+			{ isPatternAssemblerCTAEnabled && tabFilter !== 'my-themes' && themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
 			) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
