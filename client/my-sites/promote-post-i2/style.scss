@@ -289,6 +289,11 @@ body.is-section-promote-post-i2 {
 					margin: 0 16px !important;
 					width: calc(100% - 32px);
 				}
+
+				.promote-post-i2__top-bar {
+					margin: 16px;
+				}
+
 			}
 
 			.advertising__page-header {
@@ -303,8 +308,6 @@ body.is-section-promote-post-i2 {
 
 	.promote-post-i2 {
 		&__top-bar {
-			margin: 16px;
-
 			.posts-list-banner__learn-more {
 				display: none;
 			}
@@ -360,5 +363,31 @@ $break-medium-expanded-menu: $break-medium + 272px;
 @media screen and (max-width: $break-medium-expanded-menu) {
 	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
 		@include blazepress-mobile;
+	}
+}
+
+@mixin blazepress-huge {
+	.promote-post-i2__top-bar,
+	.section-nav-tabs .section-nav-tabs__list,
+	.promote-post-i2__search-bar-wrapper,
+	.promote-post-i2__table,
+	.promote-post-i2__aux-wrapper,
+	.posts-list-banner__container .posts-list-banner__content {
+		max-width: 1040px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+@media (min-width: $break-huge) {
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) .layout__content .main.is-wide-layout {
+		@include blazepress-huge;
+	}
+}
+
+$break-huge-collapsed-menu: $break-huge - 222px;
+@media (min-width: $break-huge-collapsed-menu) {
+	body.is-section-promote-post-i2.is-sidebar-collapsed .layout__content .main.is-wide-layout {
+		@include blazepress-huge;
 	}
 }

@@ -1,0 +1,14 @@
+.configure-contact__card-container {
+	margin: 16px 0 0;
+}
+
+button.configure-contact__button {
+	margin-block-start: 16px;
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+	color: var(--studio-gray-80) !important;
+	display: flex;
+	align-items: center;
+	width: fit-content;
+	border-color: var(--studio-gray-80);
+	padding: 4px 8px !important;
+}

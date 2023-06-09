@@ -12,6 +12,7 @@ import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { AVAILABLE_PAGE_MODULES } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -22,7 +23,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
 	recordGoogleEvent,
@@ -36,6 +36,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
+import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -47,10 +48,16 @@ import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import StatsPageHeader from './stats-page-header';
+import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
 import { getPathWithUpdatedQueryString } from './utils';
+
+// Sync hidable modules with StatsNavigation.
+const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
+	return module.key;
+} );
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
@@ -143,8 +150,15 @@ class StatsSite extends Component {
 		}
 	};
 
-	componentDidMount() {
-		this.props.requestModuleSettings( this.props.siteId );
+	isModuleHidden( moduleName ) {
+		// Determine which modules are hidden.
+		// @TODO: Rearrange the layout of modules to be more flexible with hidden blocks.
+		if (
+			HIDDABLE_MODULES.includes( moduleName ) &&
+			this.props.moduleToggles[ moduleName ] === false
+		) {
+			return true;
+		}
 	}
 
 	renderStats() {
@@ -186,6 +200,18 @@ class StatsSite extends Component {
 		const wrapperClass = classNames( 'stats-content', {
 			'is-period-year': period === 'year',
 		} );
+
+		const moduleListClasses = classNames(
+			'is-events',
+			'stats__module-list',
+			'stats__module-list--traffic',
+			'stats__module--unified',
+			// @TODO: Refactor hidden modules with a more flexible layout (e.g., Flexbox) to fit mass configuration to moduels in the future.
+			{
+				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
+				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
+			}
+		);
 
 		return (
 			<div className="stats">
@@ -250,7 +276,7 @@ class StatsSite extends Component {
 
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
-					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
+					<div className={ moduleListClasses }>
 						<StatsModule
 							path="posts"
 							moduleStrings={ moduleStrings.posts }
@@ -275,15 +301,18 @@ class StatsSite extends Component {
 							summary={ false }
 						/>
 
-						<StatsModule
-							path="authors"
-							moduleStrings={ moduleStrings.authors }
-							period={ this.props.period }
-							query={ query }
-							statType="statsTopAuthors"
-							className="stats__author-views"
-							showSummaryLink
-						/>
+						{ ! this.isModuleHidden( 'authors' ) && (
+							<StatsModule
+								path="authors"
+								moduleStrings={ moduleStrings.authors }
+								period={ this.props.period }
+								query={ query }
+								statType="statsTopAuthors"
+								className="stats__author-views"
+								showSummaryLink
+							/>
+						) }
+
 						<StatsModule
 							path="searchterms"
 							moduleStrings={ moduleStrings.search }
@@ -301,14 +330,16 @@ class StatsSite extends Component {
 							statType="statsClicks"
 							showSummaryLink
 						/>
-						<StatsModule
-							path="videoplays"
-							moduleStrings={ moduleStrings.videoplays }
-							period={ this.props.period }
-							query={ query }
-							statType="statsVideoPlays"
-							showSummaryLink
-						/>
+						{ ! this.isModuleHidden( 'videos' ) && (
+							<StatsModule
+								path="videoplays"
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								statType="statsVideoPlays"
+								showSummaryLink
+							/>
+						) }
 						{ ! isOdysseyStats && (
 							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
@@ -358,6 +389,10 @@ class StatsSite extends Component {
 				actionCallback={ this.enableStatsModule }
 			/>
 		);
+	}
+
+	componentDidMount() {
+		this.props.requestModuleSettings( this.props.siteId );
 	}
 
 	render() {
@@ -411,6 +446,7 @@ export default connect(
 			siteId &&
 			isJetpack &&
 			isJetpackModuleActive( state, siteId, 'stats' ) === false;
+
 		return {
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
@@ -420,6 +456,7 @@ export default connect(
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
 			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
+			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModuleSettings }

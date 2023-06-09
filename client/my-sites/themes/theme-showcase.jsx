@@ -455,6 +455,7 @@ class ThemeShowcase extends Component {
 			upsellBanner: this.props.upsellBanner,
 			search: search,
 			tier: this.props.tier,
+			tabFilter: this.state.tabFilter.key,
 			defaultOption: this.props.defaultOption,
 			secondaryOption: this.props.secondaryOption,
 			placeholderCount: this.props.placeholderCount,
