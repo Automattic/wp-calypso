@@ -1,4 +1,5 @@
 @import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
 .subscriber-list {
@@ -37,7 +38,6 @@
 		.subscriber-list__menu-column {
 			font-weight: 400;
 			font-size: $font-body-small;
-			font-size: rem(14px);
 			line-height: 20px;
 			letter-spacing: -0.15px;
 			color: $studio-gray-60;
@@ -76,14 +76,14 @@
 						font-weight: bold;
 						line-height: 17px;
 						min-width: 0;
-						font-size: rem(15px);
+						font-size: $font-code;
 					}
 
 					.subscriber-profile__email {
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
-						font-size: rem(12px);
+						font-size: $font-body-extra-small;
 						color: $studio-gray-60;
 						min-width: 0;
 					}

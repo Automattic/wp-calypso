@@ -1,10 +1,11 @@
 @import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
 .subscribers__header-count {
 	margin-top: 70px;
 	margin-bottom: 30px;
-	font-size: rem(20px);
+	font-size: $font-title-small;
 	line-height: 26px;
 
 	.subscribers__title {
