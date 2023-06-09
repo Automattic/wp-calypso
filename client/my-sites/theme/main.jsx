@@ -152,13 +152,7 @@ class ThemeSheet extends Component {
 		section: '',
 	};
 
-	/**
-	 * ssrLoadingTrigger is a flag to guarantee the isLoading method always starts with true
-	 * It allows the initial state to always be the same to make SSR work properly
-	 * It starts with true but is right way updated to false on componentDidMount
-	 */
 	state = {
-		ssrLoadingTrigger: true,
 		showUnlockStyleUpgradeModal: false,
 	};
 
@@ -173,10 +167,6 @@ class ThemeSheet extends Component {
 		if ( syncActiveTheme ) {
 			themeStartActivationSync( siteId, themeId );
 		}
-
-		// Actual value for the trigger, to not interfere with the loading check
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { ssrLoadingTrigger: false } );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -198,12 +188,8 @@ class ThemeSheet extends Component {
 
 	isLoading = () => {
 		const { isLoading, isThemeActivationSyncStarted } = this.props;
-		const { isAtomicTransferCompleted, ssrLoadingTrigger } = this.state;
-		return (
-			isLoading ||
-			( isThemeActivationSyncStarted && ! isAtomicTransferCompleted ) ||
-			ssrLoadingTrigger
-		);
+		const { isAtomicTransferCompleted } = this.state;
+		return isLoading || ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted );
 	};
 
 	// If a theme has been removed by a theme shop, then the theme will still exist and a8c will take over any support responsibilities.
