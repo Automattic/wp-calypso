@@ -235,7 +235,7 @@ export class ImportEverything extends SectionMigrate {
 						? this.renderDefaultHoorayScreen()
 						: this.renderHoorayScreenWithDomainInfo() }
 				</Hooray>
-				<GettingStartedVideo />
+				{ ! isEnabled( 'onboarding/import-redesign' ) && <GettingStartedVideo /> }
 			</>
 		);
 	}
