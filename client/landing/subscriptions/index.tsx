@@ -59,7 +59,10 @@ window.AppBoot = async () => {
 						<WindowLocaleEffectManager />
 						<BrowserRouter>
 							<Routes>
-								<Route path="/subscriptions/site/:blogId/*" element={ <SiteSubscriptionPage /> } />
+								<Route
+									path="/subscriptions/site/:blogIdOrUrl/*"
+									element={ <SiteSubscriptionPage /> }
+								/>
 								<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
 							</Routes>
 						</BrowserRouter>
