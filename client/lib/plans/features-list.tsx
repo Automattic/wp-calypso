@@ -1710,7 +1710,7 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Transaction fees for payments' ),
 		getDescription: () =>
 			i18n.translate(
-				'Credit card fees by apply on top of commission fees. No fixed monthly or annual fees charged.'
+				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
 			),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
