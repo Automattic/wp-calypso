@@ -12,15 +12,12 @@ import SiteSubscriptionDetails from './site-subscription-details';
 const SiteSubscriptionPage = () => {
 	const translate = useTranslate();
 	const navigate = useNavigate();
-	const { blogIdOrUrl = '' } = useParams();
-	const { data, isLoading, error } =
-		SubscriptionManager.useSiteSubscriptionDetailsQuery( blogIdOrUrl );
+	const { blogId = '' } = useParams();
+	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionDetailsQuery( blogId );
 
 	if ( isLoading ) {
 		return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
 	}
-
-	const blogId = data && 'blog_ID' in data ? data.blog_ID : null;
 
 	return (
 		<div className="site-subscription-page">
