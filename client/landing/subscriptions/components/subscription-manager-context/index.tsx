@@ -14,9 +14,9 @@ const SubscriptionManagerContext = createContext< SubscriptionManagerContext >(
 
 export const SubscriptionManagerContextProvider: React.FunctionComponent<
 	SubscriptionManagerContext
-> = ( { children, ...config } ) => {
+> = ( { children, ...context } ) => {
 	return (
-		<SubscriptionManagerContext.Provider value={ config }>
+		<SubscriptionManagerContext.Provider value={ context }>
 			{ children }
 		</SubscriptionManagerContext.Provider>
 	);
