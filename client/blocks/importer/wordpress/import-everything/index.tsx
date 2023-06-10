@@ -143,7 +143,21 @@ export class ImportEverything extends SectionMigrate {
 			showConfirmDialog = true,
 			isMigrateFromWp,
 			onContentOnlySelection,
+			translate,
+			recordTracksEvent,
 		} = this.props;
+
+		if ( targetSite.is_wpcom_staging_site ) {
+			return (
+				<NotAuthorized
+					onStartBuilding={ () => {
+						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard' );
+						stepNavigator.goToDashboardPage();
+					} }
+					onStartBuildingText={ translate( 'Skip to dashboard' ) }
+				/>
+			);
+		}
 
 		if ( isEnabled( 'onboarding/import-redesign' ) ) {
 			return (
