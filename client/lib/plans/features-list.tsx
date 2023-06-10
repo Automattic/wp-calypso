@@ -1710,7 +1710,7 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Transaction fees for payments' ),
 		getDescription: () =>
 			i18n.translate(
-				'Account for WordPress transaction fees. Additional charges apply for payments to your Stripe account.'
+				'Credit card fees by apply on top of commission fees. No fixed monthly or annual fees charged.'
 			),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
@@ -1719,11 +1719,11 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( '%(commission)d% transaction fee for payments', {
 				args: { commission: 10 },
 			} ),
-		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
-		getAlternativeTitle: () =>
-			i18n.translate( '%(commission)d% WordPress fees + Stripe fees', {
-				args: { commission: 10 },
-			} ),
+		getDescription: () =>
+			i18n.translate(
+				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
+			),
+		getAlternativeTitle: () => '10%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
@@ -1732,9 +1732,11 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( '%(commission)d% transaction fee for payments', {
 				args: { commission: 8 },
 			} ),
-		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
-		getAlternativeTitle: () =>
-			i18n.translate( '%(commission)d% WordPress fees + Stripe fees', { args: { commission: 8 } } ),
+		getDescription: () =>
+			i18n.translate(
+				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
+			),
+		getAlternativeTitle: () => '8%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
@@ -1743,9 +1745,11 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( '%(commission)d% transaction fee for payments', {
 				args: { commission: 4 },
 			} ),
-		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
-		getAlternativeTitle: () =>
-			i18n.translate( '%(commission)d% WordPress fees + Stripe fees', { args: { commission: 4 } } ),
+		getDescription: () =>
+			i18n.translate(
+				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
+			),
+		getAlternativeTitle: () => '4%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
@@ -1754,9 +1758,11 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( '%(commission)d% transaction fee for payments', {
 				args: { commission: 2 },
 			} ),
-		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
-		getAlternativeTitle: () =>
-			i18n.translate( '%(commission)d% WordPress fees + Stripe fees', { args: { commission: 2 } } ),
+		getDescription: () =>
+			i18n.translate(
+				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
+			),
+		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
@@ -1765,9 +1771,11 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( '%(commission)d% transaction fee for payments', {
 				args: { commission: 0 },
 			} ),
-		getDescription: () => i18n.translate( 'No fixed monthly or annual fees charged.' ),
-		getAlternativeTitle: () =>
-			i18n.translate( '%(commission)d% WordPress fees + Stripe fees', { args: { commission: 0 } } ),
+		getDescription: () =>
+			i18n.translate(
+				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
+			),
+		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
