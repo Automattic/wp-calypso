@@ -21,7 +21,7 @@ import {
 	getSiteDomain,
 } from 'calypso/reader/get-helpers';
 import { getStreamUrl } from 'calypso/reader/route';
-import { recordFollow as recordFollowTracks } from 'calypso/reader/stats';
+import { recordFollow } from 'calypso/reader/stats';
 import { Feed } from 'calypso/state/data-layer/wpcom/read/feed/types';
 import { Site } from 'calypso/state/data-layer/wpcom/read/sites/types';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -153,7 +153,7 @@ const RecommendedSite = ( {
 				disabled={ isSubscribeLoading }
 				className="recommended-site__subscribe-button"
 				onClick={ () => {
-					recordFollowTracks( siteUrl, railcar, {
+					recordFollow( siteUrl, railcar, {
 						follow_source: READER_FOLLOWING_MANAGE_RECOMMENDATION,
 					} );
 					dispatch(

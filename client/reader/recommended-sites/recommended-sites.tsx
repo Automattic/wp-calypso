@@ -38,7 +38,7 @@ const RecommendedSitesResponsiveContainer: React.FC = ( { children } ) => {
 	);
 };
 
-const RecommendedSitesSkeleton = ( { count }: { count: number } ) => {
+const RecommendedSitesPlaceholder = ( { count }: { count: number } ) => {
 	const items = [];
 
 	for ( let i = 0; i < count; i++ ) {
@@ -92,7 +92,7 @@ const RecommendedSites = () => {
 					);
 				} ) }
 				{ filteredRecommendedSites.length < displayRecommendedSitesTotal && (
-					<RecommendedSitesSkeleton
+					<RecommendedSitesPlaceholder
 						count={ displayRecommendedSitesTotal - filteredRecommendedSites.length }
 					/>
 				) }
