@@ -1,13 +1,16 @@
 import {
 	Button,
 	Card,
+	ExternalLink,
 	Flex,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AnyAction } from 'redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import { Railcar } from 'calypso/data/marketplace/types';
 import connectSite from 'calypso/lib/reader-connect-site';
@@ -17,41 +20,91 @@ import {
 	getSiteUrl,
 	getSiteDomain,
 } from 'calypso/reader/get-helpers';
+import { getStreamUrl } from 'calypso/reader/route';
+import { recordFollow as recordFollowTracks } from 'calypso/reader/stats';
 import { Feed } from 'calypso/state/data-layer/wpcom/read/feed/types';
 import { Site } from 'calypso/state/data-layer/wpcom/read/sites/types';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { follow } from 'calypso/state/reader/follows/actions';
+import isReaderFollowFeedLoading from 'calypso/state/reader/follows/selectors/is-reader-follow-feed-loading';
 import { dismissSite } from 'calypso/state/reader/site-dismissals/actions';
-import { recordAction, recordTrackWithRailcar } from '../stats';
+import { READER_FOLLOWING_MANAGE_RECOMMENDATION } from '../follow-sources';
+import {
+	recordAction,
+	recordRailcar,
+	recordTrackWithRailcar,
+	recordTracksRailcarRender,
+} from '../stats';
 import { RecommendedSitePlaceholder } from './placeholder';
+import { seed as recommendedSitesSeed } from './recommended-sites';
 
 const enum RecommendedSiteEvent {
 	Dismissed = 'calypso_reader_recommended_site_dismissed',
 }
 
+const enum ReaderEvent {
+	FeedLinkClicked = 'calypso_reader_feed_link_clicked',
+	SiteUrlClicked = 'calypso_reader_site_url_clicked',
+	AvatarClicked = 'calypso_reader_avatar_clicked',
+}
+
 type RecommendedSiteProps = {
 	siteId: number;
+	feedId?: number;
 	siteTitle: string;
-	siteUrl: string;
-	siteDomain: string;
 	siteDescription: string;
+	siteDomain: string;
+	siteUrl: string;
+	streamUrl: string;
 	siteIcon?: string;
 	feedIcon?: string;
 	railcar?: Railcar;
-	displayIndex?: number; // For analytics
+	uiPosition?: number; // For analytics
 };
 
 const RecommendedSite = ( {
 	siteId,
+	feedId,
 	siteTitle,
+	streamUrl,
 	siteDescription,
 	siteDomain,
 	siteUrl,
 	siteIcon,
 	feedIcon,
 	railcar,
-	displayIndex,
+	uiPosition,
 }: RecommendedSiteProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isSubscribeLoading: boolean = useSelector( ( state ) =>
+		isReaderFollowFeedLoading( state, siteUrl )
+	);
+
+	useEffect( () => {
+		if ( railcar ) {
+			recordTracksRailcarRender( 'recommended_site', railcar, {
+				ui_algo: 'following_manage_recommended_site',
+				ui_position: uiPosition,
+			} );
+		}
+	}, [ railcar, uiPosition ] );
+
+	const recordEvent = ( eventName: ReaderEvent ) => {
+		const eventProps = {
+			blog_id: siteId,
+			feed_id: feedId,
+			source: READER_FOLLOWING_MANAGE_RECOMMENDATION,
+		};
+
+		dispatch( recordReaderTracksEvent( eventName, eventProps ) as unknown as AnyAction );
+
+		if ( railcar ) {
+			recordRailcar( eventName, railcar, eventProps );
+		}
+	};
+
 	return (
 		<Card className="recommended-site" as="li">
 			<Flex justify="flex-end">
@@ -62,29 +115,53 @@ const RecommendedSite = ( {
 					title={ translate( 'Dismiss this recommendation' ) }
 					onClick={ () => {
 						recordTrackWithRailcar( RecommendedSiteEvent.Dismissed, railcar, {
-							ui_position: displayIndex,
+							ui_position: uiPosition,
 						} );
 						recordAction( RecommendedSiteEvent.Dismissed );
-						dispatch( dismissSite( siteId ) );
+						dispatch( dismissSite( { siteId, seed: recommendedSitesSeed } ) );
 					} }
 				/>
 			</Flex>
 			<HStack justify="flex-start" spacing="4">
-				<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } isCompact />
+				<ReaderAvatar
+					siteIcon={ siteIcon }
+					feedIcon={ feedIcon }
+					onClick={ () => recordEvent( ReaderEvent.AvatarClicked ) }
+					isCompact
+				/>
 				<VStack spacing={ 0 }>
-					<h3 className="recommended-site__site-title">{ siteTitle }</h3>
-					<a href={ siteUrl } className="recommended-site__site-url">
-						{ siteDomain }
+					<a
+						className="recommended-site__site-title"
+						href={ streamUrl }
+						onClick={ () => recordEvent( ReaderEvent.FeedLinkClicked ) }
+					>
+						{ siteTitle }
 					</a>
+					<ExternalLink
+						className="recommended-site__site-url"
+						href={ siteUrl }
+						onClick={ () => recordEvent( ReaderEvent.SiteUrlClicked ) }
+					>
+						{ siteDomain }
+					</ExternalLink>
 				</VStack>
 			</HStack>
 			<p className="recommended-site__site-description">{ siteDescription }</p>
 			<Button
 				isPrimary
+				isBusy={ isSubscribeLoading }
+				disabled={ isSubscribeLoading }
 				className="recommended-site__subscribe-button"
 				onClick={ () => {
-					// todo: subscribe to site
-					return undefined;
+					recordFollowTracks( siteUrl, railcar, {
+						follow_source: READER_FOLLOWING_MANAGE_RECOMMENDATION,
+					} );
+					dispatch(
+						follow( siteUrl, null, {
+							siteId,
+							seed: recommendedSitesSeed,
+						} ) as AnyAction
+					);
 				} }
 			>
 				{ translate( 'Subscribe' ) }
@@ -99,13 +176,16 @@ type ConnectSiteComponentProps = {
 	site?: Site;
 	feed?: Feed;
 	railcar?: Railcar;
+	uiPosition?: number; // For analytics
 };
 
 const RecommendedSiteWithConnectedSite = ( {
 	siteId,
+	feedId,
 	site,
 	feed,
 	railcar,
+	uiPosition,
 }: ConnectSiteComponentProps ) => {
 	if ( typeof siteId !== 'number' || ! site ) {
 		return <RecommendedSitePlaceholder />;
@@ -119,6 +199,7 @@ const RecommendedSiteWithConnectedSite = ( {
 	const siteDescription = getSiteDescription( { site, feed } );
 	const siteDomain = getSiteDomain( { site, feed } );
 	const siteUrl = getSiteUrl( { site, feed } );
+	const streamUrl = getStreamUrl( feedId, siteId );
 	const siteIcon = site.icon?.img;
 	const feedIcon = feed?.image;
 
@@ -129,9 +210,11 @@ const RecommendedSiteWithConnectedSite = ( {
 			siteDescription={ siteDescription }
 			siteDomain={ siteDomain }
 			siteUrl={ siteUrl }
+			streamUrl={ streamUrl }
 			siteIcon={ siteIcon }
 			feedIcon={ feedIcon }
 			railcar={ railcar }
+			uiPosition={ uiPosition }
 		/>
 	);
 };

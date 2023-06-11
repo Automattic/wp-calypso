@@ -10,15 +10,14 @@ import {
 	getReaderRecommendedSites,
 	getReaderRecommendedSitesPagingOffset,
 } from 'calypso/state/reader/recommended-sites/selectors';
-import './style.scss';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { getDismissedSites } from 'calypso/state/reader/site-dismissals/selectors';
 import { RecommendedSitePlaceholder } from './placeholder';
 import RecommendedSite from './recommended-site';
+import './style.scss';
 
 const displayRecommendedSitesTotal = 2;
 
-const seed = Math.floor( Math.random() * 10001 );
+export const seed = Math.floor( Math.random() * 10001 );
 
 type RecommendedSite = {
 	ID: number;
@@ -51,14 +50,14 @@ const RecommendedSitesSkeleton = ( { count }: { count: number } ) => {
 
 const RecommendedSites = () => {
 	const translate = useTranslate();
-
 	const dispatch = useDispatch();
+
 	const recommendedSites = useSelector(
 		( state ) => getReaderRecommendedSites( state, seed ) as RecommendedSite[]
 	);
+
 	const offset = useSelector( ( state ) => getReaderRecommendedSitesPagingOffset( state, seed ) );
 	const blockedSites = useSelector( ( state ) => getBlockedSites( state ) );
-	const dismissedSites = useSelector( ( state ) => getDismissedSites( state ) );
 
 	const filteredRecommendedSites = useMemo( () => {
 		if ( ! Array.isArray( recommendedSites ) || ! recommendedSites.length ) {
@@ -66,10 +65,10 @@ const RecommendedSites = () => {
 		}
 		return recommendedSites
 			.filter( ( { blogId } ) => {
-				return ! blockedSites.includes( blogId ) && ! dismissedSites.includes( blogId );
+				return ! blockedSites.includes( blogId );
 			} )
 			.slice( 0, displayRecommendedSitesTotal );
-	}, [ recommendedSites, blockedSites, dismissedSites ] );
+	}, [ recommendedSites, blockedSites ] );
 
 	useEffect( () => {
 		if ( filteredRecommendedSites.length <= 4 ) {
@@ -77,21 +76,18 @@ const RecommendedSites = () => {
 		}
 	}, [ dispatch, filteredRecommendedSites.length, offset ] );
 
-	if ( ! filteredRecommendedSites?.length ) {
-		return null;
-	}
-
 	return (
 		<div className="recommended-sites">
 			<h2 className="recommended-sites__heading">{ translate( 'Recommended sites' ) }</h2>
 			<RecommendedSitesResponsiveContainer>
-				{ filteredRecommendedSites.map( ( { blogId, feedId, railcar } ) => {
+				{ filteredRecommendedSites.map( ( { blogId, feedId, railcar }, index ) => {
 					return (
 						<RecommendedSite
 							key={ `${ blogId }-${ feedId }` }
 							siteId={ blogId }
 							feedId={ feedId }
 							railcar={ railcar }
+							uiPosition={ index }
 						/>
 					);
 				} ) }

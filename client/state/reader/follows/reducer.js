@@ -17,6 +17,7 @@ import {
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
+	READER_FOLLOW_COMPLETE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { items as itemsSchema } from './schema';
@@ -323,9 +324,24 @@ export const loading = ( state = null, action ) => {
 	return state;
 };
 
+export const followFeedLoading = ( state = [], action ) => {
+	switch ( action.type ) {
+		case READER_FOLLOW:
+			if ( state.includes( action.payload.feedUrl ) ) {
+				return state;
+			}
+			return [ ...state, action.payload.feedUrl ];
+		case READER_FOLLOW_COMPLETE:
+			return state.filter( ( feedUrl ) => feedUrl !== action.payload.feedUrl );
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	items,
 	itemsCount,
 	lastSyncTime,
 	loading,
+	followFeedLoading,
 } );
