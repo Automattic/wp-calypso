@@ -87,7 +87,7 @@ export default function HighlightsSection( {
 		() =>
 			! (
 				config.isEnabled( 'is_running_in_jetpack_site' ) &&
-				version_compare( statsAdminVersion, '0.9.0-alpha', '<' )
+				( ! statsAdminVersion || version_compare( statsAdminVersion, '0.9.0-alpha', '<' ) )
 			),
 		[ statsAdminVersion ]
 	);
