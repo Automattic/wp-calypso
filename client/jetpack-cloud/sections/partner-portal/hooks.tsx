@@ -550,6 +550,9 @@ export function useProductDescription( productSlug: string ): {
 			case 'jetpack-search':
 				description = translate( 'Help your site visitors find answers instantly.' );
 				break;
+			case 'jetpack-ai':
+				description = translate( 'Unleash the power of AI to boost your content creation.' );
+				break;
 		}
 
 		return {

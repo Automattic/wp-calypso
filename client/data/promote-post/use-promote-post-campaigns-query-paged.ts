@@ -41,26 +41,21 @@ export type Campaign = {
 	moderation_status: number | null;
 	type: string;
 	display_delivery_estimate: string;
-	impressions_total: number;
 	delivery_percent: number;
 	status: string;
 	target_url: string;
-	clicks_total: number;
-	spent_budget_cents: number;
 	deliver_margin_multiplier: number;
 	audience_list: AudienceList;
 	display_name: string;
 	avatar_url: string;
 	creative_html: string;
 	campaign_stats_loading: boolean;
+	campaign_stats?: CampaignStats;
 };
 
 export type CampaignStats = {
 	campaign_id: number;
-	display_delivery_estimate: string;
 	impressions_total: number;
-	delivery_percent: number;
-	target_url: string;
 	clicks_total: number;
 	spent_budget_cents: number;
 	deliver_margin_multiplier: number;

@@ -68,10 +68,13 @@ export default function HighlightsSection( {
 		siteId,
 		'traffic_page_highlights_module_settings'
 	);
-	const [ settingsTooltipDismissed, setSettingsTooltipDismissed ] = useState( false );
+	const [ settingsTooltipDismissed, setSettingsTooltipDismissed ] = useState(
+		!! localStorage.getItem( 'notices_dismissed__traffic_page_highlights_module_settings' )
+	);
 
 	const dismissSettingsTooltip = () => {
 		setSettingsTooltipDismissed( true );
+		localStorage.setItem( 'notices_dismissed__traffic_page_highlights_module_settings', '1' );
 		return mutateNoticeVisbilityAsync().finally( refetchNotices );
 	};
 

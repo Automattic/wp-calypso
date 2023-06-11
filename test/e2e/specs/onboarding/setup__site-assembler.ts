@@ -79,7 +79,7 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 				startSiteFlow.clickButton( 'Continue' ),
 			] );
 			await page.waitForURL( /site-editor/, {
-				timeout: 45 * 1000,
+				timeout: 60 * 1000,
 			} );
 		} );
 	} );

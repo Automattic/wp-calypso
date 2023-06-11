@@ -62,7 +62,6 @@ const HighlightCardsSettings = function ( {
 }: HighlightCardsSettingsProps ) {
 	const translate = useTranslate();
 
-	const settingsActionRef = useRef( null );
 	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
 
 	const togglePopoverMenu = useCallback( () => {
@@ -72,11 +71,20 @@ const HighlightCardsSettings = function ( {
 		} );
 	}, [ onTooltipDismiss ] );
 
+	// Use state to update the ref of the setting action button to avoid null element.
+	const [ settingsActionRef, setSettingsActionRef ] = useState( useRef( null ) );
+
+	const buttonRefCallback = useCallback( ( node ) => {
+		if ( settingsActionRef.current === null ) {
+			setSettingsActionRef( { current: node } );
+		}
+	}, [] );
+
 	return (
 		<div className="highlight-cards-heading__settings">
 			<button
 				className="highlight-cards-heading__settings-action"
-				ref={ settingsActionRef }
+				ref={ buttonRefCallback }
 				onClick={ togglePopoverMenu }
 			>
 				<Icon className="gridicon" icon={ moreVertical } />

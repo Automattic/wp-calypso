@@ -257,9 +257,6 @@ class VideoPressStatsModule extends Component {
 							) }
 						</SectionHeader>
 						<Card compact className={ cardClasses }>
-							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
-							{ hasError && <ErrorPanel /> }
-
 							<div className="videopress-stats-module__grid">
 								<div className="videopress-stats-module__header-row-wrapper">
 									<div className="videopress-stats-module__grid-header">Title</div>
@@ -323,6 +320,8 @@ class VideoPressStatsModule extends Component {
 									</div>
 								) ) }
 							</div>
+							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+							{ hasError && <ErrorPanel /> }
 							<StatsModulePlaceholder isLoading={ isLoading } />
 						</Card>
 					</div>
