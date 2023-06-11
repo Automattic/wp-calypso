@@ -30,10 +30,13 @@ export function fromApi( response ) {
 	return response;
 }
 
-export function receiveSiteDismiss( { payload: { siteId }, seed } ) {
+export function receiveSiteDismiss( { payload, seed } = {} ) {
 	if ( isReaderSubscriptionsManagerEnabled ) {
 		return [
-			dismissedRecommendedSite( { siteId, seed } ),
+			dismissedRecommendedSite( {
+				siteId: payload?.siteId,
+				seed,
+			} ),
 			successNotice( translate( "We won't recommend this site to you again." ), {
 				duration: 5000,
 			} ),
