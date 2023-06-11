@@ -70,13 +70,13 @@ export default function HighlightsSection( {
 	);
 
 	const dismissSettingsTooltip = useCallback( () => {
-		if ( settingsTooltipDismissed ) {
+		if ( settingsTooltipDismissed || ! showSettingsTooltip ) {
 			return;
 		}
 		setSettingsTooltipDismissed( true );
 		localStorage.setItem( 'notices_dismissed__traffic_page_highlights_module_settings', '1' );
 		return mutateNoticeVisbilityAsync().finally( refetchNotices );
-	}, [] );
+	}, [ settingsTooltipDismissed, showSettingsTooltip ] );
 
 	return (
 		<WeeklyHighlightCards

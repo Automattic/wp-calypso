@@ -96,7 +96,7 @@ class StatsNavigation extends Component {
 	};
 
 	onTooltipDismiss = () => {
-		if ( this.state.isPageSettingsTooltipDismissed ) {
+		if ( this.state.isPageSettingsTooltipDismissed || ! this.props.showSettingsTooltip ) {
 			return;
 		}
 		this.setState( { isPageSettingsTooltipDismissed: true } );
