@@ -70,11 +70,12 @@ export default function HighlightsSection( {
 	);
 
 	const dismissSettingsTooltip = useCallback( () => {
-		if ( ! settingsTooltipDismissed ) {
-			mutateNoticeVisbilityAsync().finally( refetchNotices );
+		if ( settingsTooltipDismissed ) {
+			return;
 		}
 		setSettingsTooltipDismissed( true );
 		localStorage.setItem( 'notices_dismissed__traffic_page_highlights_module_settings', '1' );
+		return mutateNoticeVisbilityAsync().finally( refetchNotices );
 	}, [] );
 
 	return (
