@@ -1,12 +1,13 @@
 import { Button } from '@automattic/components';
 import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { StateMonitorSettingsSMS } from '../../sites-overview/types';
 import SMSItemContent from './sms-item-content';
+import type {
+	StateMonitorSettingsSMS,
+	AllowedMonitorContactActions,
+} from '../../sites-overview/types';
 
-import './style.scss';
-
-type AllowedMonitorContactActions = 'edit' | 'remove' | 'verify';
+import '../style.scss';
 
 interface Props {
 	toggleModal: ( item?: StateMonitorSettingsSMS, action?: AllowedMonitorContactActions ) => void;

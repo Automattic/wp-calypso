@@ -54,18 +54,17 @@ export default function SMSNotification( {
 					</div>
 				</div>
 			</div>
-			{ enableSMSNotification && allPhoneNumbers.length === 0 && (
+			{ enableSMSNotification && (
 				<>
-					<div className="margin-top-16">
-						<AlertBanner type="warning">
-							{ translate( 'You need at least one phone number' ) }
-						</AlertBanner>
-					</div>
+					{ allPhoneNumbers.length === 0 && (
+						<div className="margin-top-16">
+							<AlertBanner type="warning">
+								{ translate( 'You need at least one phone number' ) }
+							</AlertBanner>
+						</div>
+					) }
 					<ConfigureSMSNotification toggleModal={ toggleModal } allPhoneItems={ allPhoneNumbers } />
 				</>
-			) }
-			{ enableSMSNotification && allPhoneNumbers.length > 0 && (
-				<ConfigureSMSNotification toggleModal={ toggleModal } allPhoneItems={ allPhoneNumbers } />
 			) }
 		</>
 	);
