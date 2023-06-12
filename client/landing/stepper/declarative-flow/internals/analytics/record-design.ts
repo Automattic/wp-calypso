@@ -92,3 +92,26 @@ export function getVirtualDesignProps( design: Design ) {
 		slug: design.is_virtual ? design.recipe?.slug : design.slug,
 	};
 }
+
+/**
+ * Tracks prop
+ *  name: assembler_source
+ *  values:
+ *		• virtual-theme
+ * 		• standard-theme
+ *		• blank-canvas-theme
+ */
+export function getAssemblerSource( design?: Design ) {
+	const { design_type, is_virtual } = design ?? {};
+
+	if ( is_virtual ) {
+		return 'virtual-theme';
+	}
+
+	if ( design_type === 'assembler' ) {
+		// blank-canvas-theme
+		return 'design-your-own';
+	}
+
+	return 'standard-theme';
+}

@@ -17,7 +17,7 @@ import { useSite } from '../../hooks/use-site';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
-import { getAssemblerSource } from '../internals/steps-repository/pattern-assembler/events';
+import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';

@@ -1,5 +1,3 @@
-import { Design } from '@automattic/design-picker/src';
-
 /**
  * See PekYwv-WG-p2
  */
@@ -73,26 +71,3 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	LARGE_PREVIEW_ADD_HEADER_BUTTON_CLICK:
 		'calypso_signup_pattern_assembler_large_preview_add_header_button_click',
 } as const;
-
-/**
- * Tracks prop
- *  name: assembler_source
- *  values:
- *		• virtual-theme
- * 		• standard-theme
- *		• blank-canvas-theme
- */
-export const getAssemblerSource = ( design?: Design ) => {
-	const { design_type, is_virtual } = design ?? {};
-
-	if ( is_virtual ) {
-		return 'virtual-theme';
-	}
-
-	if ( design_type === 'assembler' ) {
-		// blank-canvas-theme
-		return 'design-your-own';
-	}
-
-	return 'standard-theme';
-};
