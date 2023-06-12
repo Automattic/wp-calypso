@@ -2,15 +2,18 @@ import { safeImageUrl } from '@automattic/calypso-url';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	campaignStatus,
 	formatCents,
 	formatNumber,
+	getAdvertisingDashboardPath,
 	getCampaignBudgetData,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
@@ -53,6 +56,7 @@ export default function CampaignItem( props: Props ) {
 	const impressions_total = campaign_stats?.impressions_total ?? 0;
 
 	const moment = useLocalizedMoment();
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const safeUrl = safeImageUrl( content_config.imageUrl );
 	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
@@ -89,7 +93,17 @@ export default function CampaignItem( props: Props ) {
 			<td>{ budgetString }</td>
 			<td>{ formatNumber( impressions_total ) }</td>
 			<td>{ formatNumber( clicks_total ) }</td>
-			<td>{ campaignContainsData && <Button icon={ chevronRight } /> }</td>
+			<td>
+				{ campaignContainsData && (
+					<Button
+						href={ getAdvertisingDashboardPath(
+							`/${ selectedSiteSlug }/campaigns/${ campaign.campaign_id }`
+						) }
+						isLink
+						icon={ chevronRight }
+					/>
+				) }
+			</td>
 		</tr>
 	);
 }
