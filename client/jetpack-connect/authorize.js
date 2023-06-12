@@ -24,6 +24,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
+import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -40,6 +41,7 @@ import {
 	isRemoteSiteOnSitesList,
 	isSiteBlockedError as isSiteBlockedSelector,
 } from 'calypso/state/jetpack-connect/selectors';
+import { logoutUser } from 'calypso/state/logout/actions';
 import {
 	isFetchingSitePurchases,
 	siteHasJetpackProductPurchase,
@@ -429,11 +431,22 @@ export class JetpackAuthorize extends Component {
 		return partnerID && 'pressable' !== partnerSlug;
 	}
 
-	handleSignIn = () => {
+	handleSignIn = async () => {
 		const { recordTracksEvent } = this.props;
 		const { from } = this.props.authQuery;
 		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
+		}
+
+		try {
+			const { redirect_to: redirectTo } = await this.props.logoutUser( window.location.href );
+			disablePersistence();
+			await clearStore();
+			window.location.href = redirectTo || '/';
+		} catch ( error ) {
+			// The logout endpoint might fail if the nonce has expired.
+			// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+			this.props.redirectToLogout( window.location.href );
 		}
 	};
 
@@ -1010,6 +1023,7 @@ const connectComponent = connect(
 		recordTracksEvent: recordTracksEventAction,
 		redirectToLogout,
 		retryAuth: retryAuthAction,
+		logoutUser,
 	}
 );
 
