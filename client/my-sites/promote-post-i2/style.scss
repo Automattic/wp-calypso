@@ -329,11 +329,15 @@ body.is-section-promote-post-i2 {
 				.promote-post-i2__search-bar-wrapper,
 				.promote-post-i2__aux-wrapper,
 				.posts-list__table,
-				.campaigns-list__table,
 				.posts-list__loading-container,
 				.promote-post-i2__table,
 				.campaigns-list__loading-container {
 					margin: 0 16px !important;
+					width: calc(100% - 32px);
+				}
+
+				.campaigns-list__table {
+					margin: 16px 16px 0 16px !important;
 					width: calc(100% - 32px);
 				}
 			}

@@ -97,10 +97,6 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 	tr {
 		font-size: 1rem;
-
-		&:not(:last-child) td {
-			border-bottom: 1px solid #d8d8d8;
-		}
 	}
 
 	td {
@@ -201,7 +197,14 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 @mixin blazepress-campaigns-table-mobile {
 	.promote-post-i2__table {
+		tr {
+			&:not(:last-child) td {
+				border-bottom: 1px solid #d8d8d8;
+			}
+		}
+
 		td {
+			border-top: none;
 			padding-bottom: 14px;
 			padding-right: 0;
 		}
