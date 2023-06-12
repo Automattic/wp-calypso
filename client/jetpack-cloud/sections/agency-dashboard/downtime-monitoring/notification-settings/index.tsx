@@ -312,6 +312,8 @@ export default function NotificationSettings( {
 				toggleModal={ toggleAddSMSModal }
 				allPhoneItems={ allPhoneItems }
 				setAllPhoneItems={ handleSetAllPhoneItems }
+				setVerifiedPhoneNumber={ ( item ) => handleSetVerifiedItem( 'phone', item ) }
+				sites={ sites }
 			/>
 		);
 	}
@@ -342,6 +344,7 @@ export default function NotificationSettings( {
 							setEnableSMSNotification={ setEnableSMSNotification }
 							toggleModal={ toggleAddSMSModal }
 							allPhoneItems={ allPhoneItems }
+							verifiedItem={ verifiedItem }
 						/>
 					) }
 					<MobilePushNotification

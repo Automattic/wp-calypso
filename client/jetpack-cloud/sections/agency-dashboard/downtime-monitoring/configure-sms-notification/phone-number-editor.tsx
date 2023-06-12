@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useContext, useEffect } from 'react';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -9,12 +9,16 @@ import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useSelector } from 'calypso/state';
 import getCountries from 'calypso/state/selectors/get-countries';
-import type { StateMonitorSettingsSMS } from '../../sites-overview/types';
+import DashboardDataContext from '../../sites-overview/dashboard-data-context';
+import { useRequestVerificationCode } from '../hooks';
+import type { StateMonitorSettingsSMS, Site } from '../../sites-overview/types';
 
 interface Props {
 	toggleModal: () => void;
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
 	setAllPhoneItems: ( phoneNumbers: Array< StateMonitorSettingsSMS > ) => void;
+	setVerifiedPhoneNumber: ( item: string ) => void;
+	sites: Array< Site >;
 }
 
 interface FormPhoneInputChangeResult {
@@ -22,12 +26,15 @@ interface FormPhoneInputChangeResult {
 	countryCode: string;
 	phoneNumber: string;
 	phoneNumberFull: string;
+	verificationCode?: string;
 }
 
 export default function PhoneNumberEditor( {
 	toggleModal,
 	allPhoneItems,
 	setAllPhoneItems,
+	setVerifiedPhoneNumber,
+	sites,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -42,19 +49,23 @@ export default function PhoneNumberEditor( {
 		errorMessage: '',
 	} );
 	const [ validationError, setValidationError ] = useState<
-		{ phone?: string; code?: string } | undefined
+		{ phone?: string; verificationCode?: string } | undefined
 	>();
-	const [ smsItem, setSMSItem ] = useState< FormPhoneInputChangeResult >( {
+	const [ phoneItem, setPhoneItem ] = useState< FormPhoneInputChangeResult >( {
 		name: '',
 		countryCode: '',
 		phoneNumber: '',
 		phoneNumberFull: '',
 	} );
 
-	const handleSetSMSItems = useCallback(
+	const { verifiedContacts } = useContext( DashboardDataContext );
+
+	const requestVerificationCode = useRequestVerificationCode();
+
+	const handleSetPhoneItems = useCallback(
 		( isVerified = true ) => {
 			const updatedPhoneItem = {
-				...smsItem,
+				...phoneItem,
 				verified: isVerified,
 			};
 			// Check if exists when editing
@@ -62,34 +73,95 @@ export default function PhoneNumberEditor( {
 			setAllPhoneItems( allPhoneItems );
 			toggleModal();
 		},
-		[ allPhoneItems, smsItem, setAllPhoneItems, toggleModal ]
+		[ allPhoneItems, phoneItem, setAllPhoneItems, toggleModal ]
 	);
 
+	// Function to handle request verification code
 	const handleRequestVerificationCode = () => {
-		setShowCodeVerification( true );
-		// TODO: Make API call to request verification code
+		requestVerificationCode.mutate( {
+			type: 'sms',
+			value: Number( phoneItem.phoneNumber ),
+			site_ids: sites?.map( ( site ) => site.blog_id ) ?? [],
+			country_code: phoneItem.countryCode,
+		} );
+	};
+
+	// Show code input when verification code request is successful
+	useEffect( () => {
+		if ( requestVerificationCode.isSuccess ) {
+			setShowCodeVerification( true );
+		}
+	}, [ requestVerificationCode.isSuccess ] );
+
+	// Show error message when verification code request fails
+	useEffect( () => {
+		if ( requestVerificationCode.isError ) {
+			setValidationError( {
+				phone: translate( 'Something went wrong. Please try again.' ),
+			} );
+		}
+	}, [ requestVerificationCode.isError, translate ] );
+
+	// Function to handle resend code button click
+	const handleResendCodeClick = useCallback( () => {
+		setPhoneItem( { ...phoneItem, verificationCode: undefined } );
+		// TODO: Make API call to resend verification code
+	}, [ phoneItem ] );
+
+	// Add phone item to the list if the phone number is already verified
+	const handleAddVerifiedPhoneNumber = () => {
+		handleSetPhoneItems();
+		setVerifiedPhoneNumber( phoneItem.phoneNumberFull );
+	};
+
+	// Verify phone number when user clicks on Verify button
+	const handleVerifyPhoneNumber = () => {
+		if ( phoneItem?.verificationCode ) {
+			// Handle verify phone number API call
+		}
 	};
 
 	// Save unverified phone number to the list when user clicks on Later button
 	function onSaveLater() {
-		handleSetSMSItems( false );
+		handleSetPhoneItems( false );
 	}
 
 	const onSave = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 		setValidationError( undefined );
 		if ( validationStatus.isValid ) {
-			if ( showCodeVerification ) {
-				// TODO: Add code verification
+			if (
+				allPhoneItems.map( ( item ) => item.phoneNumberFull ).includes( phoneItem.phoneNumberFull )
+				// Handle case when editing
+			) {
+				return setValidationError( {
+					phone: translate( 'This phone number is already in use.' ),
+				} );
+			} else if ( showCodeVerification ) {
+				return handleVerifyPhoneNumber();
+			} else if ( verifiedContacts.phoneNumbers.includes( phoneItem.phoneNumberFull ) ) {
+				return handleAddVerifiedPhoneNumber();
 			}
 			return handleRequestVerificationCode();
 		}
 		setValidationError( { phone: validationStatus.errorMessage } );
 	};
 
+	const translationArgs = {
+		components: {
+			button: (
+				<Button
+					className="configure-contact__resend-code-button"
+					borderless
+					onClick={ handleResendCodeClick }
+				/>
+			),
+		},
+	};
+
 	const handleChange = useCallback(
 		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
-			setSMSItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
+			setPhoneItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
 		},
 		[]
 	);
@@ -118,15 +190,27 @@ export default function PhoneNumberEditor( {
 			isValid,
 			errorMessage: validation.message,
 		} );
-		setSMSItem( ( prevState ) => ( {
+		setPhoneItem( ( prevState ) => ( {
 			...prevState,
 			phoneNumberFull,
 			phoneNumber,
 			countryCode: countryData.code,
 		} ) );
+		if ( isValid ) {
+			setValidationError( {
+				phone: undefined,
+			} );
+		}
 	};
 
 	const noCountryList = countriesList.length === 0;
+
+	const isDisabled =
+		! phoneItem.name ||
+		! phoneItem.countryCode ||
+		! phoneItem.phoneNumber ||
+		( showCodeVerification && ! phoneItem.verificationCode ) ||
+		requestVerificationCode.isLoading;
 
 	return (
 		<Modal
@@ -144,7 +228,7 @@ export default function PhoneNumberEditor( {
 						<FormTextInput
 							id="name"
 							name="name"
-							value={ smsItem.name }
+							value={ phoneItem.name }
 							onChange={ handleChange( 'name' ) }
 							aria-describedby="name-help-text"
 							disabled={ showCodeVerification }
@@ -153,30 +237,51 @@ export default function PhoneNumberEditor( {
 							{ translate( 'Give this number a name for your personal reference.' ) }
 						</div>
 					</FormFieldset>
-					{
-						// Fetch countries list only if not available
-						noCountryList && <QuerySmsCountries />
-					}
-					<FormPhoneInput
-						isDisabled={ noCountryList || showCodeVerification }
-						countriesList={ countriesList }
-						initialCountryCode={ smsItem.countryCode }
-						initialPhoneNumber={ smsItem.phoneNumber }
-						onChange={ onChangePhoneInput }
-						className="configure-contact__phone-input"
-					/>
-					{ ! validationStatus.isValid && validationError?.phone && (
-						<div className="notification-settings__footer-validation-error" role="alert">
-							{ validationStatus.errorMessage }
+					<div className="configure-contact__phone-input-container">
+						{
+							// Fetch countries list only if not available
+							noCountryList && <QuerySmsCountries />
+						}
+						<FormPhoneInput
+							isDisabled={ noCountryList || showCodeVerification }
+							countriesList={ countriesList }
+							initialCountryCode={ phoneItem.countryCode }
+							initialPhoneNumber={ phoneItem.phoneNumber }
+							onChange={ onChangePhoneInput }
+							className="configure-contact__phone-input"
+						/>
+						{ validationError?.phone && (
+							<div className="notification-settings__footer-validation-error" role="alert">
+								{ validationError?.phone }
+							</div>
+						) }
+						<div className="configure-contact__help-text" id="phone-help-text">
+							{ translate( 'We’ll send a code to verify your phone number.' ) }
 						</div>
-					) }
-					<div className="configure-contact__help-text" id="phone-help-text">
-						{ translate( 'We’ll send a code to verify your phone number.' ) }
 					</div>
 					{ showCodeVerification && (
-						<h3 style={ { marginTop: 16 } }>
-							TODO: Allow users to verify their phone number by entering a code.
-						</h3>
+						<FormFieldset>
+							<FormLabel htmlFor="code">
+								{ translate( 'Please enter the code you received via SMS' ) }
+							</FormLabel>
+							<FormTextInput
+								id="code"
+								name="code"
+								value={ phoneItem.verificationCode || '' }
+								onChange={ handleChange( 'verificationCode' ) }
+							/>
+							{ validationError?.verificationCode && (
+								<div className="notification-settings__footer-validation-error" role="alert">
+									{ validationError.verificationCode }
+								</div>
+							) }
+							<div className="configure-contact__help-text" id="code-help-text">
+								{ translate(
+									'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
+									translationArgs
+								) }
+							</div>
+						</FormFieldset>
 					) }
 				</>
 				<div className="notification-settings__footer">
@@ -184,11 +289,7 @@ export default function PhoneNumberEditor( {
 						<Button onClick={ showCodeVerification ? onSaveLater : toggleModal }>
 							{ showCodeVerification ? translate( 'Later' ) : translate( 'Back' ) }
 						</Button>
-						<Button
-							disabled={ ! smsItem.name || ! smsItem.countryCode || ! smsItem.phoneNumber }
-							type="submit"
-							primary
-						>
+						<Button disabled={ isDisabled } type="submit" primary>
 							{ translate( 'Verify' ) }
 						</Button>
 					</div>

@@ -33,6 +33,12 @@ button.configure-contact__button {
 	padding: 0;
 	color: var(--studio-green-50) !important;
 	text-decoration: underline;
+	margin-block-start: 0;
+	line-height: 1.5;
+}
+
+.configure-contact__phone-input-container {
+	margin-block-end: 20px;
 }
 
 .configure-contact__phone-input {
