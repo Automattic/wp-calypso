@@ -49,7 +49,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	let isDomainSSLProcessing: boolean | null = false;
 	const translate = useTranslate();
 	const site = useSite();
-	const siteIntentOption = site?.options?.site_intent;
+	const siteIntentOption = site?.options?.site_intent ?? null;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
