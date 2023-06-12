@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import {
 	PagedBlazeContentData,
 	PagedBlazeSearchResponse,
@@ -180,15 +180,13 @@ export const canCancelCampaign = ( status: string ) => {
 
 export const getPagedBlazeSearchData = (
 	mode: 'campaigns' | 'posts',
-	campaignsData?: PagedBlazeSearchResponse
+	data?: PagedBlazeSearchResponse
 ): PagedBlazeContentData => {
-	const lastPage = campaignsData?.pages?.[ campaignsData?.pages?.length - 1 ];
+	const lastPage = data?.pages?.[ data?.pages?.length - 1 ];
 	if ( lastPage ) {
 		const { has_more_pages, total_items } = lastPage;
 
-		const foundContent = campaignsData?.pages
-			?.map( ( page: any ) => page[ mode ] )
-			?.flat() as Campaign[];
+		const foundContent = data?.pages?.map( ( page: any ) => page[ mode ] )?.flat() as Campaign[];
 
 		return {
 			has_more_pages,
