@@ -44,11 +44,13 @@ export default function CampaignItem( props: Props ) {
 		status,
 		end_date,
 		budget_cents,
-		impressions_total,
-		clicks_total,
-		spent_budget_cents,
 		start_date,
+		campaign_stats,
 	} = campaign;
+
+	const clicks_total = campaign_stats?.clicks_total ?? 0;
+	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
+	const impressions_total = campaign_stats?.impressions_total ?? 0;
 
 	const moment = useLocalizedMoment();
 

@@ -30,6 +30,7 @@ import type {
 	UpdateMonitorSettingsParams,
 	MonitorDuration,
 	InitialMonitorSettings,
+	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
 
 import './style.scss';
@@ -71,6 +72,7 @@ export default function NotificationSettings( {
 		[]
 	);
 	const [ allEmailItems, setAllEmailItems ] = useState< StateMonitorSettingsEmail[] | [] >( [] );
+	const [ allPhoneItems, setAllPhoneItems ] = useState< StateMonitorSettingsSMS[] | [] >( [] );
 	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
 	const [ isAddSMSModalOpen, setIsAddSMSModalOpen ] = useState< boolean >( false );
@@ -133,6 +135,11 @@ export default function NotificationSettings( {
 
 	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
 		setAllEmailItems( items );
+		setHasUnsavedChanges( false );
+	};
+
+	const handleSetAllPhoneItems = ( items: StateMonitorSettingsSMS[] ) => {
+		setAllPhoneItems( items );
 		setHasUnsavedChanges( false );
 	};
 
@@ -300,7 +307,13 @@ export default function NotificationSettings( {
 	}
 
 	if ( isAddSMSModalOpen ) {
-		return <PhoneNumberEditor toggleModal={ toggleAddSMSModal } />;
+		return (
+			<PhoneNumberEditor
+				toggleModal={ toggleAddSMSModal }
+				allPhoneItems={ allPhoneItems }
+				setAllPhoneItems={ handleSetAllPhoneItems }
+			/>
+		);
 	}
 
 	return (
@@ -328,9 +341,9 @@ export default function NotificationSettings( {
 							enableSMSNotification={ enableSMSNotification }
 							setEnableSMSNotification={ setEnableSMSNotification }
 							toggleModal={ toggleAddSMSModal }
+							allPhoneItems={ allPhoneItems }
 						/>
 					) }
-
 					<MobilePushNotification
 						recordEvent={ recordEvent }
 						enableMobileNotification={ enableMobileNotification }

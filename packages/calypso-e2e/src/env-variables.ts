@@ -17,6 +17,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	SLOW_MO: 0,
 	TIMEOUT: 10000,
 	GUTENBERG_EDGE: false,
+	GUTENBERG_NIGHTLY: false,
 	COBLOCKS_EDGE: false,
 	AUTHENTICATE_ACCOUNTS: [ 'simpleSitePersonalPlanUser', 'atomicUser', 'defaultUser' ],
 	COOKIES_PATH: path.join( process.cwd(), 'cookies' ),

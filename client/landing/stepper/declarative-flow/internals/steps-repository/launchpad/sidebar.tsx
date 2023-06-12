@@ -1,6 +1,6 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
-import { Checklist } from '@automattic/launchpad';
+import { Launchpad } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
@@ -57,7 +57,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const {
 		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
-		isFetchedAfterMount,
 	} = useLaunchpad( siteSlug, siteIntentOption );
 
 	const selectedDomain = useSelect(
@@ -197,11 +196,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						</p>
 					</div>
 				) }
-				{ isFetchedAfterMount ? (
-					<Checklist tasks={ enhancedTasks } makeLastTaskPrimaryAction={ true } />
-				) : (
-					<Checklist.Placeholder />
-				) }
+				<Launchpad
+					siteSlug={ siteSlug }
+					taskFilter={ () => enhancedTasks }
+					makeLastTaskPrimaryAction={ true }
+				/>
 			</div>
 			<div className="launchpad__sidebar-admin-link">
 				<StepNavigationLink

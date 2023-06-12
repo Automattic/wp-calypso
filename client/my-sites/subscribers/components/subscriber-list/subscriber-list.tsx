@@ -1,12 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import { Subscriber } from '../types';
+import { Subscriber } from '../../types';
 import { SubscriberRow } from './subscriber-row';
 import './styles.scss';
 
 type SubscriberListProps = {
 	subscribers: Subscriber[];
 };
+
+const noop = () => undefined;
 
 export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
 	const translate = useTranslate();
@@ -30,28 +32,14 @@ export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
 				</span>
 				<span className="subscriber-list__menu-column" role="columnheader"></span>
 			</li>
-			{ subscribers.map(
-				( {
-					user_id,
-					subscription_id,
-					display_name,
-					email_address,
-					openRate,
-					date_subscribed,
-					avatar,
-				}: Subscriber ) => (
-					<SubscriberRow
-						user_id={ user_id }
-						key={ subscription_id }
-						subscription_id={ subscription_id }
-						display_name={ display_name }
-						email_address={ email_address }
-						openRate={ openRate }
-						date_subscribed={ date_subscribed }
-						avatar={ avatar }
-					/>
-				)
-			) }
+			{ subscribers.map( ( subscriber ) => (
+				<SubscriberRow
+					key={ subscriber.subscription_id }
+					subscriber={ subscriber }
+					onView={ noop }
+					onUnsubscribe={ noop }
+				/>
+			) ) }
 		</ul>
 	);
 };

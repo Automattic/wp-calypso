@@ -318,3 +318,11 @@ export interface ResendVerificationCodeParams {
 	type: 'email';
 	value: string;
 }
+
+export interface StateMonitorSettingsSMS {
+	name: string;
+	countryCode: string;
+	phoneNumber: string;
+	phoneNumberFull: string;
+	verified: boolean;
+}
