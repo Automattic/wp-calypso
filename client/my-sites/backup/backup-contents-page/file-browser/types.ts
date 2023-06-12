@@ -19,6 +19,7 @@ export interface FileBrowserItem {
 	type: FileType;
 	hasChildren: boolean;
 	period?: string;
+	sort?: number;
 	children?: FileBrowserItem[];
 }
 
@@ -33,6 +34,7 @@ export interface BackupLsResponseContents {
 		type: ApiFileType;
 		has_children: boolean;
 		period?: string;
+		sort?: number;
 		manifest_path?: string;
 	};
 }

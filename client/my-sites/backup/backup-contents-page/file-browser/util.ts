@@ -75,14 +75,36 @@ export const parseBackupContentsData = ( payload: BackupLsResponse ): FileBrowse
 			type,
 			hasChildren: item.has_children ?? false,
 			...( item.period && { period: item.period } ),
+			...( item.sort && { sort: item.sort } ),
 		};
 	} );
 
 	return transformedData.sort( ( a, b ) => {
-		// Sort types (`dir` before `file`)
-		if ( a.type < b.type ) {
+		if ( a.sort !== undefined && b.sort !== undefined ) {
+			return a.sort - b.sort;
+		}
+
+		// If only one has 'sort', that comes first
+		if ( a.sort !== undefined ) {
 			return -1;
-		} else if ( a.type > b.type ) {
+		}
+		if ( b.sort !== undefined ) {
+			return 1;
+		}
+
+		// If 'sort' field doesn't exist in either, then 'dir' types come first
+		if ( a.type === 'dir' && b.type !== 'dir' ) {
+			return -1;
+		}
+		if ( b.type === 'dir' && a.type !== 'dir' ) {
+			return 1;
+		}
+
+		// If neither has 'sort' nor is 'dir', sort based on 'name'.
+		if ( a.name < b.name ) {
+			return -1;
+		}
+		if ( a.name > b.name ) {
 			return 1;
 		}
 
