@@ -1,5 +1,9 @@
 import { Card, Button, Gridicon } from '@automattic/components';
-import { DesignPreviewImage, ThemeCard } from '@automattic/design-picker';
+import {
+	DesignPreviewImage,
+	ThemeCard,
+	isDefaultGlobalStylesVariationSlug,
+} from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import { isEmpty, isEqual } from 'lodash';
 import photon from 'photon';
@@ -153,7 +157,10 @@ export class Theme extends Component {
 		//
 		// With that in mind, we only use mShots for non-default style variations to ensure
 		// that there is no flash of image transition from static image to mShots on page load.
-		if ( !! selectedStyleVariation && ! isExternallyManagedTheme ) {
+		if (
+			! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) &&
+			! isExternallyManagedTheme
+		) {
 			const { id: themeId, stylesheet } = theme;
 
 			return (
