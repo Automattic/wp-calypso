@@ -32,16 +32,11 @@ interface Props {
 	children: React.ReactNode;
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	device: string;
-	enabled?: boolean;
 }
 
-const FixedViewport = ( { children, frameRef, device, enabled }: Props ) => {
+const FixedViewport = ( { children, frameRef, device }: Props ) => {
 	const viewportWidth = frameRef?.current?.parentElement?.clientWidth as number;
 	const viewportScale = useViewportScale( device, viewportWidth );
-
-	if ( ! enabled ) {
-		return <>{ children }</>;
-	}
 
 	return (
 		<div

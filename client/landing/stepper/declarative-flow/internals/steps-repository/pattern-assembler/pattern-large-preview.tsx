@@ -192,7 +192,7 @@ const PatternLargePreview = ( {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
 				setDevice( device );
 			} }
-			onAnimationEnd={ updateViewportHeight }
+			onViewportChange={ updateViewportHeight }
 		>
 			{ hasSelectedPattern ? (
 				<ul

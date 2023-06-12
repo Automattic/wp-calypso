@@ -17,7 +17,7 @@ interface Props {
 	isFixedViewport?: boolean;
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
-	onAnimationEnd?: ( height?: number ) => void;
+	onViewportChange?: ( height?: number ) => void;
 }
 
 // Transition animation delay
@@ -33,7 +33,7 @@ const DeviceSwitcher = ( {
 	isFixedViewport,
 	frameRef,
 	onDeviceChange,
-	onAnimationEnd,
+	onViewportChange,
 }: Props ) => {
 	const [ device, setDevice ] = useState< Device >( defaultDevice );
 	const [ containerResizeListener, { width, height } ] = useResizeObserver();
@@ -71,7 +71,7 @@ const DeviceSwitcher = ( {
 				height = ( viewportHeight - borderScaled ) / viewportScale;
 			}
 
-			onAnimationEnd?.( height );
+			onViewportChange?.( height );
 		}, ANIMATION_DURATION );
 
 		return clearAnimationEndTimer;
@@ -91,11 +91,15 @@ const DeviceSwitcher = ( {
 			{ isShowDeviceSwitcherToolbar && (
 				<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
 			) }
-			<FixedViewport device={ device } frameRef={ frameRef } enabled={ isFixedViewport }>
-				<div className="device-switcher__frame" ref={ frameRef }>
-					{ children }
-				</div>
-			</FixedViewport>
+			{ isFixedViewport ? (
+				<FixedViewport device={ device } frameRef={ frameRef }>
+					<div className="device-switcher__frame" ref={ frameRef }>
+						{ children }
+					</div>
+				</FixedViewport>
+			) : (
+				children
+			) }
 			{ containerResizeListener }
 		</div>
 	);
