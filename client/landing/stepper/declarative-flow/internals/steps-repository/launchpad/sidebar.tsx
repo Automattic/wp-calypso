@@ -109,7 +109,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	}
 
 	function showDomainUpgradeBadge() {
-		if ( siteIntentOption === 'start-writing' || siteIntentOption === 'design-first' ) {
+		if ( isBlogOnboardingFlow( siteIntentOption ) ) {
 			return selectedDomain?.is_free;
 		}
 
