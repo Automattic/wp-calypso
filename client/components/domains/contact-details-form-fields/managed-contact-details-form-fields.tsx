@@ -234,19 +234,8 @@ export class ManagedContactDetailsFormFields extends Component<
 
 		return (
 			<>
-				<div className="contact-details-form-fields__row">{ this.createEmailField() }</div>
-
 				<div className="contact-details-form-fields__row">
-					<CountrySelectMenu
-						countriesList={ this.props.countriesList }
-						errorMessage={ this.props.contactDetailsErrors.countryCode }
-						isDisabled={ this.props.getIsFieldDisabled( 'country-code' ) }
-						isError={ !! this.props.contactDetailsErrors.countryCode }
-						onChange={ ( event ) => {
-							this.handleFieldChange( 'country-code', event.currentTarget.value );
-						} }
-						currentValue={ this.props.contactDetails.countryCode }
-					/>
+					{ this.createEmailField() }
 					<FormPhoneMediaInput
 						label={ this.props.translate( 'Phone' ) }
 						name="phone"
@@ -264,6 +253,19 @@ export class ManagedContactDetailsFormFields extends Component<
 						onChange={ this.handlePhoneChange }
 						countriesList={ this.props.countriesList }
 						additionalClasses="contact-details-form-fields__field"
+					/>
+				</div>
+
+				<div className="contact-details-form-fields__row">
+					<CountrySelectMenu
+						countriesList={ this.props.countriesList }
+						errorMessage={ this.props.contactDetailsErrors.countryCode }
+						isDisabled={ this.props.getIsFieldDisabled( 'country-code' ) }
+						isError={ !! this.props.contactDetailsErrors.countryCode }
+						onChange={ ( event ) => {
+							this.handleFieldChange( 'country-code', event.currentTarget.value );
+						} }
+						currentValue={ this.props.contactDetails.countryCode }
 					/>
 				</div>
 			</>
