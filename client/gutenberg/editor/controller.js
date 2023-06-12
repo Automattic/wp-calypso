@@ -158,6 +158,7 @@ export const authenticate = ( context, next ) => {
 		{ ...context.query, authWpAdmin: true },
 		`${ origin }${ context.path }`
 	);
+
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 
 	// If non-SSO Jetpack lets ensure return URL uses the sites native editor, as the dotcom
