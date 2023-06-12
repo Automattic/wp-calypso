@@ -53,7 +53,7 @@ export function recordSelectedDesign( {
 
 export function getDesignTypeProps( design: Design ) {
 	return {
-		goes_to_assembler_step: design?.design_type === 'assembler',
+		goes_to_assembler_step: design.design_type === 'assembler',
 		assembler_source: getAssemblerSource( design ),
 	};
 }
