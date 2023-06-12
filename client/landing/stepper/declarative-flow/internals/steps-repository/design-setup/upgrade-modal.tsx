@@ -9,13 +9,13 @@ import {
 	FEATURE_ISOLATED_INFRA,
 	FEATURE_LIVE_CHAT_SUPPORT,
 	FEATURE_PREMIUM_THEMES_V2,
-	FEATURE_SEO_JP,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_WAF_V2,
 	FEATURE_WORDADS,
 } from '@automattic/calypso-products';
 import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ExternalLink, Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
@@ -43,7 +43,7 @@ interface UpgradeModalContent {
 
 const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps ) => {
 	const translate = useTranslate();
-	const currentLocale = i18n.getLocaleSlug();
+	const isEnglishLocale = useIsEnglishLocale();
 	const theme = useThemeDetails( slug );
 	// Check current theme: Does it have a plugin bundled?
 	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
@@ -71,8 +71,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 			),
 			text: (
 				<p>
-					{ currentLocale === 'en' ||
-					currentLocale?.startsWith( 'en-' ) ||
+					{ isEnglishLocale ||
 					i18n.hasTranslation(
 						"Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It's {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee."
 					)
@@ -167,7 +166,6 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,
-			FEATURE_SEO_JP,
 			FEATURE_BANDWIDTH,
 			FEATURE_GLOBAL_EDGE_CACHING,
 			FEATURE_BURST,
@@ -180,13 +178,22 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 
 	let modalData = null;
 	let featureList = null;
+	let featureListHeader = null;
 
 	if ( showBundleVersion ) {
 		modalData = getBundledFirstPartyPurchaseModalData();
 		featureList = getBundledFirstPartyPurchaseFeatureList();
+		featureListHeader =
+			isEnglishLocale || i18n.hasTranslation( 'Included with your Business plan' )
+				? translate( 'Included with your Business plan' )
+				: translate( 'Included with your purchase' );
 	} else {
 		modalData = getStandardPurchaseModalData();
 		featureList = getStandardPurchaseFeatureList();
+		featureListHeader =
+			isEnglishLocale || i18n.hasTranslation( 'Included with your Premium plan' )
+				? translate( 'Included with your Premium plan' )
+				: translate( 'Included with your purchase' );
 	}
 
 	return (
@@ -207,11 +214,11 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 					</div>
 					<div className="upgrade-modal__col">
 						<div className="upgrade-modal__included">
-							<h2>{ translate( 'Included with your purchase' ) }</h2>
+							<h2>{ featureListHeader }</h2>
 							<ul>
 								{ featureList.map( ( feature, i ) => (
 									<li key={ i } className="upgrade-modal__included-item">
-										<Tooltip text={ feature.getDescription() } delay={ 0 }>
+										<Tooltip text={ feature.getDescription() } delay={ 300 } position="top">
 											<div>
 												<Gridicon icon="checkmark" size={ 16 } />
 												{ feature.getTitle() }
