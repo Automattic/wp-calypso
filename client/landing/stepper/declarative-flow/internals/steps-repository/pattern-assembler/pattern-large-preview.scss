@@ -78,10 +78,10 @@
 	&::after {
 		content: "";
 		position: absolute;
-		left: 2px;
-		right: 2px;
-		top: 2px;
-		bottom: 2px;
+		left: 1px;
+		right: 1px;
+		top: 1px;
+		bottom: 1px;
 		border-radius: 2px;
 	}
 
@@ -104,7 +104,7 @@
 
 		&::after {
 			// Scale up the border of a hovered pattern in fixed viewport
-			box-shadow: 0 0 0 calc(2px * (1 / var(--viewport-scale))) var(--color-primary-light);
+			border: calc(2px * (1 / var(--viewport-scale))) solid var(--color-primary-light);
 		}
 	}
 }
