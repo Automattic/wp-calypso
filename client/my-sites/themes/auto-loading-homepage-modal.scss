@@ -52,7 +52,8 @@
 		&.is-primary {
 			background: var(--studio-blue-50);
 			border-color: var(--studio-blue-50);
-			&:hover {
+			&:hover,
+			&:disabled {
 				background: var(--studio-blue-60);
 				border-color: var(--studio-blue-60);
 			}
