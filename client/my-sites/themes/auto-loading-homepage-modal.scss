@@ -49,18 +49,22 @@
 		padding: 9px 25px;
 		border-radius: 4px;
 		font-weight: 500;
-		&.is-primary {
-			background: var(--studio-blue-50);
+		&.is-primary:not(:disabled) {
+			background-color: var(--studio-blue-50);
 			border-color: var(--studio-blue-50);
-			&:hover,
-			&:disabled {
-				background: var(--studio-blue-60);
+			&:hover {
+				background-color: var(--studio-blue-60);
 				border-color: var(--studio-blue-60);
 			}
 			&:focus {
 				box-shadow: 0 0 0 2px var(--color-primary-light);
 				outline: 0;
 			}
+		}
+		&.is-primary:disabled {
+			color: var(--studio-white);
+			background-color: var(--studio-gray-5);
+			border-color: var(--studio-gray-5);
 		}
 	}
 }
