@@ -41,6 +41,10 @@
 		margin-bottom: 8px;
 	}
 
+	.grow-your-audience__card-icon {
+		flex-basis: 20px;
+	}
+
 	.grow-your-audience__card-text {
 		color: $studio-gray-60;
 		font-size: $font-body-extra-small;
@@ -55,10 +59,11 @@
 	}
 }
 
-@media screen and (max-width: $break-large) {
-	.is-sidebar-overflow {
+@media screen and (max-width: $break-xlarge) {
+	body:not(.is-sidebar-collapsed) {
 		.grow-your-audience__cards {
 			flex-direction: column;
+			gap: 16px !important;
 		}
 
 		.grow-your-audience__card {
@@ -70,6 +75,7 @@
 @media ( max-width: $break-medium ) {
 	.grow-your-audience__cards {
 		flex-direction: column;
+		gap: 16px !important;
 	}
 
 	.grow-your-audience__card {
