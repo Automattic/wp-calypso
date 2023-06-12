@@ -36,6 +36,10 @@
 
 .auto-loading-homepage-modal__checkbox {
 	margin-bottom: 22px;
+	.components-base-control__field {
+		display: flex;
+		align-items: center;
+	}
 	.components-checkbox-control__label {
 		font-size: $font-body;
 	}
