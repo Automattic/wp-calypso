@@ -2,9 +2,9 @@ import { translate as translateMethod } from 'i18n-calypso';
 
 export const getAutomatticBrandingNoun = ( translate: typeof translateMethod ) => {
 	const options = {
-		description:
+		comment:
 			'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
-		components: { Automattic: <AutomatticBrand /> },
+		args: { Automattic: <AutomatticBrand /> },
 	};
 	const automatticRoger = [
 		translate( 'An {{Automattic/}} brainchild', options ),
