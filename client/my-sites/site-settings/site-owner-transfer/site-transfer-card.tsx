@@ -7,13 +7,13 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
-const ActionPanelStyled = styled( ActionPanel )`
-	font-ize: 14px;
-	font-weight: 400;
-	.action-panel__body {
-		color: var( --studio-gray-70 );
-	}
-`;
+const ActionPanelStyled = styled( ActionPanel )( {
+	fontSize: '14px',
+	fontWeight: 400,
+	'.action-panel__body': {
+		color: 'var(--studio-gray-70)',
+	},
+} );
 
 export function SiteTransferCard( {
 	children,
