@@ -74,6 +74,8 @@ export class AutoLoadingHomepageModal extends Component {
 				/**
 				 * We don't want to keep the current homepage since it's "broken" for now.
 				 * Update this when we find a way to improve the theme switch experience as a whole.
+				 *
+				 * @see pbxlJb-3Uv-p2
 				 */
 				const keepCurrentHomepage = false;
 
