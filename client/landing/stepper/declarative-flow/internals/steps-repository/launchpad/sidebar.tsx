@@ -100,7 +100,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 
 	function getDomainUpgradeBadgeUrl() {
-		if ( siteIntentOption === 'start-writing' || siteIntentOption === 'design-first' ) {
+		if ( isBlogOnboardingFlow( siteIntentOption ) ) {
 			return `/setup/${ siteIntentOption }/domains?siteSlug=${ selectedDomain?.domain_name }&domainAndPlanPackage=true`;
 		}
 		return ! site?.plan?.is_free
