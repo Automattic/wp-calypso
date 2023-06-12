@@ -1239,12 +1239,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.jetpack-connect__woo-core-profiler-notice {
 		width: 262px;
 		height: 50px;
-		position: absolute;
+		position: fixed;
 		left: 36px;
 		bottom: 32px;
+		z-index: 999;
 
 		@include breakpoint-deprecated( "<660px" ) {
-			position: absolute;
 			left: 0;
 			bottom: 20px;
 			width: calc(100% - 40px);
