@@ -1,23 +1,62 @@
 import { translate as translateMethod } from 'i18n-calypso';
 
 export const getAutomatticBrandingNoun = ( translate: typeof translateMethod ) => {
-	const options = {
-		comment:
-			'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
-		args: { Automattic: <AutomatticBrand /> },
-	};
 	const automatticRoger = [
-		translate( 'An {{Automattic/}} brainchild', options ),
-		translate( 'An {{Automattic/}} contraption', options ),
-		translate( 'An {{Automattic/}} creation', options ),
-		translate( 'An {{Automattic/}} experiment', options ),
-		translate( 'An {{Automattic/}} invention', options ),
-		translate( 'An {{Automattic/}} joint', options ),
-		translate( 'An {{Automattic/}} medley', options ),
-		translate( 'An {{Automattic/}} opus', options ),
-		translate( 'An {{Automattic/}} production', options ),
-		translate( 'An {{Automattic/}} ruckus', options ),
-		translate( 'An {{Automattic/}} thingamajig', options ),
+		translate( 'An {{Automattic/}} brainchild', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
+		translate( 'An {{Automattic/}} contraption', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
+		translate( 'An {{Automattic/}} creation', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
+		translate( 'An {{Automattic/}} experiment', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
+		translate( 'An {{Automattic/}} invention', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
+		translate( 'An {{Automattic/}} joint', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
+		translate( 'An {{Automattic/}} medley', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
+		translate( 'An {{Automattic/}} opus', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
+		translate( 'An {{Automattic/}} production', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
+		translate( 'An {{Automattic/}} ruckus', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
+		translate( 'An {{Automattic/}} thingamajig', {
+			args: { Automattic: <AutomatticBrand /> },
+			comment:
+				'Branding to be shown on the Footer of the page, Automattic\'s variable will always contains the word "Automattic"',
+		} ),
 	];
 
 	const branding = automatticRoger[ Math.floor( Math.random() * ( 10 - 0 + 1 ) + 0 ) ];
