@@ -17,7 +17,8 @@
 	.file-browser-node {
 		&__loading {
 			&.placeholder {
-				height: 32px;
+				height: 16px;
+				margin: 8px;
 				@include placeholder();
 			}
 		}
