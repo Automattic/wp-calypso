@@ -145,7 +145,8 @@ export function getEnhancedTasks(
 						recordTaskClickTracksEvent( flow, task.completed, task.id );
 						if ( displayGlobalStylesWarning ) {
 							recordTracksEvent(
-								'calypso_launchpad_global_styles_gating_plan_selected_task_clicked'
+								'calypso_launchpad_global_styles_gating_plan_selected_task_clicked',
+								{ flow }
 							);
 						}
 						const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
@@ -173,7 +174,8 @@ export function getEnhancedTasks(
 										onClick={ ( event ) => {
 											event.stopPropagation();
 											recordTracksEvent(
-												'calypso_launchpad_global_styles_gating_plan_selected_reset_styles'
+												'calypso_launchpad_global_styles_gating_plan_selected_reset_styles',
+												{ flow }
 											);
 										} }
 									/>
