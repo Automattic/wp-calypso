@@ -38,7 +38,7 @@ import './style.scss';
 const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
 
 export interface ManagedContactDetailsFormFieldsProps {
-	eventFormName: string;
+	eventFormName?: string;
 	contactDetails: DomainContactDetailsData;
 	contactDetailsErrors: DomainContactDetailsErrors;
 	onContactDetailsChange: ( details: DomainContactDetailsData ) => void;
