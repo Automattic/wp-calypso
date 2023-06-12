@@ -57,14 +57,14 @@ export default function CampaignsTable( props: Props ) {
 			key: 'budget',
 			title: translate( 'Budget' ),
 		},
-		{
+		/* { TODO: Return these columns when backend is ready to populate the data
 			key: 'impressions',
 			title: translate( 'Impressions' ),
 		},
 		{
 			key: 'clicks',
 			title: translate( 'Clicks' ),
-		},
+		}, */
 		{
 			key: 'action',
 			title: '',
