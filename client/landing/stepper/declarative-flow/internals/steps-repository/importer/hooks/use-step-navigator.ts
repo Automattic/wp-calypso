@@ -43,6 +43,13 @@ export function useStepNavigator(
 		} );
 	}
 
+	function goToDashboardPage() {
+		navigation.submit?.( {
+			type: 'redirect',
+			url: '/',
+		} );
+	}
+
 	function goToWpAdminImportPage() {
 		navigation.submit?.( {
 			type: 'redirect',
@@ -94,6 +101,7 @@ export function useStepNavigator(
 		goToIntentPage,
 		goToImportCapturePage,
 		goToSiteViewPage,
+		goToDashboardPage,
 		goToCheckoutPage,
 		goToWpAdminImportPage,
 		goToWpAdminWordPressPluginPage,
