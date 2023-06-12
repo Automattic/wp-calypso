@@ -1,5 +1,16 @@
 import { Icon } from '@wordpress/components';
-import { file, pages } from '@wordpress/icons';
+import {
+	blockTable,
+	brush,
+	file,
+	image,
+	pages,
+	plugins,
+	preformatted,
+	typography,
+	video,
+	wordpress,
+} from '@wordpress/icons';
 import { FunctionComponent } from 'react';
 import { FileType } from './types';
 
@@ -7,14 +18,26 @@ interface FileTypeIconProps {
 	type: FileType;
 }
 
-// @TODO: Add a filename prop and use it to determine the icon for files
+const fileTypeToIcon: Record< FileType, JSX.Element > = {
+	dir: file,
+	image: image,
+	text: preformatted,
+	plugin: plugins,
+	theme: brush,
+	table: blockTable,
+	audio: video,
+	video: video,
+	fonts: typography,
+	translations: pages,
+	code: pages,
+	wordpress: wordpress,
+	other: pages,
+};
+
 const FileTypeIcon: FunctionComponent< FileTypeIconProps > = ( { type } ) => {
-	switch ( type ) {
-		case 'dir':
-			return <Icon icon={ file } />;
-		default:
-			return <Icon icon={ pages } />;
-	}
+	const icon = fileTypeToIcon[ type ] || pages;
+
+	return <Icon icon={ icon } />;
 };
 
 export default FileTypeIcon;
