@@ -24,7 +24,7 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PATTERN_TYPES, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
-import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { PATTERN_ASSEMBLER_EVENTS, getAssemblerSource } from './events';
 import useCategoryAll from './hooks/use-category-all';
 import useDotcomPatterns from './hooks/use-dotcom-patterns';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
@@ -197,12 +197,14 @@ const PatternAssembler = ( {
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
+			assembler_source: getAssemblerSource( selectedDesign ),
 		} );
 		patterns.forEach( ( { ID, name, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: ID,
 				pattern_name: name,
 				pattern_category: category?.name,
+				assembler_source: getAssemblerSource( selectedDesign ),
 			} );
 		} );
 	};
@@ -447,6 +449,7 @@ const PatternAssembler = ( {
 	const onPatternSelectorBack = ( type: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_BACK_CLICK, {
 			pattern_type: type,
+			assembler_source: getAssemblerSource( selectedDesign ),
 		} );
 	};
 
@@ -523,7 +526,9 @@ const PatternAssembler = ( {
 	};
 
 	const onScreenColorsDone = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_DONE_CLICK );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_DONE_CLICK, {
+			assembler_source: getAssemblerSource( selectedDesign ),
+		} );
 	};
 
 	const onScreenFontsSelect = ( variation: GlobalStylesObject | null ) => {
