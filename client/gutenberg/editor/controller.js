@@ -176,10 +176,10 @@ export const authenticate = ( context, next ) => {
 		} else {
 			returnUrl = `${ siteAdminUrl }site-editor.php`;
 		}
-	}
 
-	// pass along parameters, for example press-this
-	returnUrl = addQueryArgs( context.query, returnUrl );
+		// pass along parameters, for example press-this
+		returnUrl = addQueryArgs( context.query, returnUrl );
+	}
 
 	const wpAdminLoginUrl = addQueryArgs(
 		{ redirect_to: returnUrl },
