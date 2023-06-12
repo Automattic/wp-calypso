@@ -18,8 +18,7 @@ import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
-	let siteCreatedFlag: boolean;
+describe( 'Site Assembler', () => {
 	let newSiteDetails: NewSiteResponse;
 	let page: Page;
 	let selectedFreeDomain: string;
@@ -45,7 +44,6 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 		it( `Select WordPress.com Free plan`, async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
 			newSiteDetails = await signupPickPlanPage.selectPlan( 'Free' );
-			siteCreatedFlag = true;
 		} );
 	} );
 
@@ -115,13 +113,13 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 				startSiteFlow.clickButton( 'Continue' ),
 			] );
 			await page.waitForURL( /site-editor/, {
-				timeout: 60 * 1000,
+				timeout: 30 * 1000,
 			} );
 		} );
 	} );
 
 	afterAll( async function () {
-		if ( ! siteCreatedFlag ) {
+		if ( ! newSiteDetails ) {
 			return;
 		}
 
