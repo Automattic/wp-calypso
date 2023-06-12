@@ -7,6 +7,7 @@ import type { SiteSubscriptionDetails } from '../types';
 type SubscribeParams = {
 	blog_id?: number | string;
 	url?: string;
+	doNotInvalidateSiteSubscriptions?: boolean;
 };
 
 type SubscribeResponse = {
@@ -68,6 +69,7 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
+
 			if ( previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsCacheKey, {
 					...previousSiteSubscriptions,
@@ -106,8 +108,10 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 				);
 			}
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+		onSettled: ( _data, _error, params: SubscribeParams ) => {
+			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
+				queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+			}
 			queryClient.invalidateQueries( subscriptionsCountCacheKey );
 			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
 		},

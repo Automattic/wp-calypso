@@ -10,6 +10,7 @@ import {
 type UnsubscribeParams = {
 	blog_id: number | string;
 	url?: string;
+	doNotInvalidateSiteSubscriptions?: boolean;
 };
 
 type UnsubscribeResponse = {
@@ -141,8 +142,10 @@ const useSiteUnsubscribeMutation = ( blog_id?: string ) => {
 				);
 			}
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries( siteSubscriptionsCacheKey, { refetchType: 'inactive' } );
+		onSettled: ( _data, _error, params ) => {
+			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
+				queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+			}
 			queryClient.invalidateQueries( subscriptionsCountCacheKey );
 			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey, { refetchType: 'none' } );
 		},

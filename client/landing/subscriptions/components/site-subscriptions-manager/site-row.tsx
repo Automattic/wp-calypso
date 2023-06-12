@@ -175,10 +175,14 @@ export default function SiteRow( {
 						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
 					}
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID, url } ) }
+					onUnsubscribe={ () =>
+						unsubscribe( { blog_id: blog_ID, url, doNotInvalidateSiteSubscriptions: true } )
+					}
 					unsubscribing={ unsubscribing }
 					isDeleted={ isDeleted }
-					onResubscribe={ () => resubscribe( { blog_id: blog_ID, url } ) }
+					onResubscribe={ () =>
+						resubscribe( { blog_id: blog_ID, url, doNotInvalidateSiteSubscriptions: true } )
+					}
 					resubscribing={ resubscribing }
 				/>
 			</span>
