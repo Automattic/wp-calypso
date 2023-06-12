@@ -82,7 +82,9 @@ export const PATTERN_ASSEMBLER_EVENTS = {
  * 		• standard-theme
  *		• blank-canvas-theme
  */
-export const getAssemblerSource = ( { design_type, is_virtual }: Design ) => {
+export const getAssemblerSource = ( design?: Design ) => {
+	const { design_type, is_virtual } = design ?? {};
+
 	if ( is_virtual ) {
 		return 'virtual-theme';
 	}
