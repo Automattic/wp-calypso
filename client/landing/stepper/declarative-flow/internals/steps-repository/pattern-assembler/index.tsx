@@ -544,7 +544,9 @@ const PatternAssembler = ( {
 	};
 
 	const onScreenFontsDone = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_DONE_CLICK );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_DONE_CLICK, {
+			assembler_source: getAssemblerSource( selectedDesign ),
+		} );
 	};
 
 	if ( ! site?.ID || ! selectedDesign ) {
