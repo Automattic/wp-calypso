@@ -2,17 +2,22 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import ConfigureSMSNotification from '../../configure-sms-notification';
+import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
 interface Props {
 	enableSMSNotification: boolean;
 	setEnableSMSNotification: ( isEnabled: boolean ) => void;
 	toggleModal: () => void;
+	allPhoneItems: Array< StateMonitorSettingsSMS >;
+	verifiedItem?: { [ key: string ]: string };
 }
 
 export default function SMSNotification( {
 	enableSMSNotification,
 	setEnableSMSNotification,
 	toggleModal,
+	allPhoneItems,
+	verifiedItem,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -20,8 +25,6 @@ export default function SMSNotification( {
 		// Record event here
 		setEnableSMSNotification( isEnabled );
 	};
-
-	const allPhoneNumbers = []; // TODO: Get all phone numbers from the API when it is ready
 
 	return (
 		<>
@@ -39,14 +42,20 @@ export default function SMSNotification( {
 					</div>
 				</div>
 			</div>
-			{ enableSMSNotification && allPhoneNumbers.length === 0 && (
+			{ enableSMSNotification && (
 				<>
-					<div className="margin-top-16">
-						<AlertBanner type="warning">
-							{ translate( 'You need at least one phone number' ) }
-						</AlertBanner>
-					</div>
-					<ConfigureSMSNotification toggleModal={ toggleModal } />
+					{ allPhoneItems.length === 0 && (
+						<div className="margin-top-16">
+							<AlertBanner type="warning">
+								{ translate( 'You need at least one phone number' ) }
+							</AlertBanner>
+						</div>
+					) }
+					<ConfigureSMSNotification
+						toggleModal={ toggleModal }
+						allPhoneItems={ allPhoneItems }
+						verifiedPhoneNumber={ verifiedItem?.phone }
+					/>
 				</>
 			) }
 		</>

@@ -1,11 +1,8 @@
 import config from '@automattic/calypso-config';
-import { Popover } from '@automattic/components';
-import { FormToggle } from '@wordpress/components';
-import { Icon, cog } from '@wordpress/icons';
 import classNames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, createRef } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SubscribersCount from 'calypso/blocks/subscribers-count';
 import SectionNav from 'calypso/components/section-nav';
@@ -24,6 +21,7 @@ import {
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { AVAILABLE_PAGE_MODULES, navItems, intervals as intervalConstants } from './constants';
 import Intervals from './intervals';
+import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
 
@@ -64,9 +62,10 @@ class StatsNavigation extends Component {
 	};
 
 	state = {
-		isPageSettingsPopoverVisible: false,
 		// Dismiss the tooltip before the API call is finished.
-		isPageSettingsTooltipDismissed: false,
+		isPageSettingsTooltipDismissed: !! localStorage.getItem(
+			'notices_dismissed__traffic_page_settings'
+		),
 		// Only traffic page modules are supported for now.
 		pageModules: Object.assign(
 			...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
@@ -85,26 +84,23 @@ class StatsNavigation extends Component {
 		return null;
 	}
 
-	settingsActionRef = createRef();
-
-	togglePopoverMenu = ( isPageSettingsPopoverVisible ) => {
-		this.onTooltipDismiss();
-		this.setState( { isPageSettingsPopoverVisible } );
-	};
-
-	onToggleModule = ( page, module, isShow ) => {
+	onToggleModule = ( module, isShow ) => {
 		const seletedPageModules = Object.assign( {}, this.state.pageModules );
 		seletedPageModules[ module ] = isShow;
 
 		this.setState( { pageModules: seletedPageModules } );
 
 		this.props.updateModuleToggles( this.props.siteId, {
-			[ page ]: seletedPageModules,
+			[ this.props.selectedItem ]: seletedPageModules,
 		} );
 	};
 
 	onTooltipDismiss = () => {
+		if ( this.state.isPageSettingsTooltipDismissed || ! this.props.showSettingsTooltip ) {
+			return;
+		}
 		this.setState( { isPageSettingsTooltipDismissed: true } );
+		localStorage.setItem( 'notices_dismissed__traffic_page_settings', 1 );
 		this.props.mutateNoticeVisbilityAsync().finally( this.props.refetchNotices );
 	};
 
@@ -136,8 +132,7 @@ class StatsNavigation extends Component {
 
 	render() {
 		const { slug, selectedItem, interval, isLegacy, showSettingsTooltip } = this.props;
-		const { pageModules, isPageSettingsPopoverVisible, isPageSettingsTooltipDismissed } =
-			this.state;
+		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -179,65 +174,20 @@ class StatsNavigation extends Component {
 					) }
 
 					{ ! config.isEnabled( 'stats/subscribers-section' ) && <SubscribersCount /> }
+
+					{ isModuleSettingsEnabled && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
+						<PageModuleToggler
+							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
+							pageModules={ pageModules }
+							onToggleModule={ this.onToggleModule }
+							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+							onTooltipDismiss={ this.onTooltipDismiss }
+						/>
+					) }
 				</SectionNav>
 
 				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
-				) }
-
-				{ isModuleSettingsEnabled && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
-					<div className="page-modules-settings">
-						<button
-							className="page-modules-settings-action"
-							ref={ this.settingsActionRef }
-							onClick={ () => {
-								this.togglePopoverMenu( ! isPageSettingsPopoverVisible );
-							} }
-						>
-							<Icon className="gridicon" icon={ cog } />
-						</button>
-						<Popover
-							className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
-							isVisible={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-							position="bottom left"
-							context={ this.settingsActionRef.current }
-						>
-							<div className="highlight-card-tooltip-content">
-								<p>{ translate( 'Here’s where you can find all your Jetpack Stats settings.' ) }</p>
-								<button onClick={ this.onTooltipDismiss }>{ translate( 'Got it' ) }</button>
-							</div>
-						</Popover>
-						<Popover
-							className="tooltip highlight-card-popover page-modules-settings-popover"
-							isVisible={ isPageSettingsPopoverVisible }
-							position="bottom left"
-							context={ this.settingsActionRef.current }
-							focusOnShow={ false }
-						>
-							<div>{ translate( 'Modules visibility' ) }</div>
-							<div className="page-modules-settings-toggle-wrapper">
-								{ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ].map( ( toggleItem ) => {
-									return (
-										<div key={ toggleItem.key } className="page-modules-settings-toggle">
-											<Icon className="gridicon" icon={ toggleItem.icon } />
-											<span>{ toggleItem.label }</span>
-											<FormToggle
-												className="page-modules-settings-toggle-control"
-												checked={ pageModules[ toggleItem.key ] !== false }
-												onChange={ ( event ) => {
-													this.onToggleModule(
-														this.props.selectedItem,
-														toggleItem.key,
-														event.target.checked
-													);
-												} }
-											/>
-										</div>
-									);
-								} ) }
-							</div>
-						</Popover>
-					</div>
 				) }
 			</div>
 		);

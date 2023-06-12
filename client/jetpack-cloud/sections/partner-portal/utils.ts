@@ -180,6 +180,10 @@ export function formatApiPartner( partner: APIPartner ): Partner {
  * @returns Product title
  */
 export function getProductTitle( product: string ): string {
+	if ( 'Jetpack AI' === product ) {
+		return 'AI Assistant';
+	}
+
 	return product.replace( /(?:Jetpack\s|[)(])/gi, '' );
 }
 

@@ -4,7 +4,7 @@ import {
 	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
 	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
 } from '@automattic/components';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -65,12 +65,18 @@ export default function HighlightsSection( {
 		siteId,
 		'traffic_page_highlights_module_settings'
 	);
-	const [ settingsTooltipDismissed, setSettingsTooltipDismissed ] = useState( false );
+	const [ settingsTooltipDismissed, setSettingsTooltipDismissed ] = useState(
+		!! localStorage.getItem( 'notices_dismissed__traffic_page_highlights_module_settings' )
+	);
 
-	const dismissSettingsTooltip = () => {
+	const dismissSettingsTooltip = useCallback( () => {
+		if ( settingsTooltipDismissed || ! showSettingsTooltip ) {
+			return;
+		}
 		setSettingsTooltipDismissed( true );
+		localStorage.setItem( 'notices_dismissed__traffic_page_highlights_module_settings', '1' );
 		return mutateNoticeVisbilityAsync().finally( refetchNotices );
-	};
+	}, [ settingsTooltipDismissed, showSettingsTooltip ] );
 
 	return (
 		<WeeklyHighlightCards

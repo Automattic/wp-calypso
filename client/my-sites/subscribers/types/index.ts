@@ -25,4 +25,5 @@ export type Subscriber = {
 	avatar: string;
 	display_name: string;
 	plans?: SubscriptionPlan[];
+	open_rate?: number;
 };

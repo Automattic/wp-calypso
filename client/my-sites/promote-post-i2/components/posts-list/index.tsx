@@ -1,14 +1,10 @@
 import { translate, useTranslate } from 'i18n-calypso';
-import BlazePressWidget from 'calypso/components/blazepress-widget';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
 import { useInfiniteScroll } from 'calypso/data/promote-post/use-infinite-scroll';
-import usePromoteParams from 'calypso/data/promote-post/use-promote-params';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { BlazablePost } from 'calypso/my-sites/promote-post-i2/components/post-item';
 import { DSPMessage } from 'calypso/my-sites/promote-post-i2/main';
-import { useSelector } from 'calypso/state';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import './style.scss';
 import PostsTable from '../posts-table';
 import SearchBar, { SearchOptions } from '../search-bar';
@@ -51,11 +47,6 @@ export default function PostsList( props: Props ) {
 	const translate = useTranslate();
 
 	const hasLocalUser = ( isError as DSPMessage )?.errorCode !== ERROR_NO_LOCAL_USER;
-
-	const { isModalOpen, selectedSiteId, selectedPostId, keyValue } = usePromoteParams();
-	const currentQuery = useSelector( getCurrentQueryArguments );
-	const sourceQuery = currentQuery?.[ 'source' ];
-	const source = sourceQuery ? sourceQuery.toString() : undefined;
 
 	const { containerRef } = useInfiniteScroll( {
 		offset: '200px',
@@ -103,16 +94,6 @@ export default function PostsList( props: Props ) {
 						) }
 					</div>
 				</>
-			) }
-
-			{ selectedSiteId && selectedPostId && keyValue && (
-				<BlazePressWidget
-					isVisible={ isModalOpen }
-					siteId={ selectedSiteId }
-					postId={ selectedPostId }
-					keyValue={ keyValue }
-					source={ source }
-				/>
 			) }
 		</>
 	);

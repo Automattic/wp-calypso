@@ -21,10 +21,9 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: () => false,
-} ) );
+jest.mock( 'calypso/components/data/query-themes', () =>
+	require( 'calypso/components/empty-component' )
+);
 
 window.IntersectionObserver = jest.fn( () => ( { observe: jest.fn(), disconnect: jest.fn() } ) );
 

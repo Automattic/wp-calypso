@@ -50,7 +50,7 @@ const PatternLargePreview = ( {
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
-	const [ device, setDevice ] = useState< string >( 'desktop' );
+	const [ device, setDevice ] = useState< string >( 'computer' );
 	const [ blockGap ] = useStyle( 'spacing.blockGap' );
 	const [ backgroundColor ] = useStyle( 'color.background' );
 	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
@@ -169,12 +169,13 @@ const PatternLargePreview = ( {
 		};
 	}, [ activePosition, header, sections, footer ] );
 
+	// Update viewport height on window resize
 	useEffect( () => {
 		const handleResize = () => updateViewportHeight();
-		window.addEventListener( 'resize', handleResize );
+		window.addEventListener( 'resize', handleResize, true );
 
 		return () => window.removeEventListener( 'resize', handleResize );
-	} );
+	}, [] );
 
 	// Delay updating the styles to make the transition smooth
 	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
@@ -193,9 +194,10 @@ const PatternLargePreview = ( {
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
+				setDevice( device );
 				// Wait for the animation to end in 200ms
+				// The animation is triggered by the setDevice above
 				window.setTimeout( () => {
-					setDevice( device );
 					updateViewportHeight();
 				}, 205 );
 			} }

@@ -25,7 +25,6 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
-		"anchor/sunset-integration": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": false,
@@ -83,6 +82,7 @@
 		"post-list/qr-code-link": false,
 		"press-this": true,
 		"promote-post/redesign-i2": false,
+		"promote-post/widget-i2": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,

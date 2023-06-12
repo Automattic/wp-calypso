@@ -222,10 +222,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					subHeaderText={
 						<>
 							{ __( 'Help your blog stand out with a custom domain. Not sure yet?' ) }
-							<button
-								className="button navigation-link step-container__navigation-link has-underline is-borderless"
-								onClick={ onSkip }
-							>
+							<button className="formatted-header__subtitle has-underline" onClick={ onSkip }>
 								{ __( 'Decide later.' ) }
 							</button>
 						</>

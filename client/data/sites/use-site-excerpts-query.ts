@@ -27,13 +27,20 @@ const fetchSites = (
 	} );
 };
 
-export const useSiteExcerptsQuery = ( siteFilter?: string[] ) => {
+export const useSiteExcerptsQuery = (
+	fetchFilter?: string[],
+	sitesFilterFn?: ( site: SiteExcerptData ) => boolean
+) => {
 	const store = useStore();
 
 	return useQuery( {
 		queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ],
-		queryFn: () => fetchSites( siteFilter ),
-		select: ( data ) => data?.sites.map( computeFields( data?.sites ) ),
+		queryFn: () => fetchSites( fetchFilter ),
+		select: ( data ) => {
+			const sites = data?.sites.map( computeFields( data?.sites ) ) || [];
+
+			return sitesFilterFn ? sites.filter( sitesFilterFn ) : sites;
+		},
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we
 			// only want to get the initial state. We don't want to be updated when the

@@ -12,6 +12,7 @@ export type StepNavigator = {
 	goToIntentPage?: () => void;
 	goToImportCapturePage?: () => void;
 	goToSiteViewPage?: () => void;
+	goToDashboardPage?: () => void;
 	goToCheckoutPage?: () => void;
 	goToWpAdminImportPage?: () => void;
 	goToWpAdminWordPressPluginPage?: () => void;
