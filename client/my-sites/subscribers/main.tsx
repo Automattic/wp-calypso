@@ -8,6 +8,7 @@ import Main from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { EmptyListView } from './components/empty-list-view';
+import { GrowYourAudience } from './components/grow-your-audience';
 import { SubscriberList } from './components/subscriber-list/subscriber-list';
 import { usePagination } from './hooks';
 import { useSubscribersQuery } from './queries';
@@ -60,29 +61,39 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 	}
 
 	return (
-		<Main wideLayout className="subscribers">
-			<DocumentHead title={ translate( 'Subscribers' ) } />
-			<FixedNavigationHeader navigationItems={ navigationItems }></FixedNavigationHeader>
+		<div className="subscribers">
+			<Main wideLayout className="subscribers__main">
+				<DocumentHead title={ translate( 'Subscribers' ) } />
+				<FixedNavigationHeader navigationItems={ navigationItems }></FixedNavigationHeader>
 
-			{ total ? (
-				<>
-					<div className="subscribers__header-count">
-						<span className="subscribers__title">{ translate( 'Total' ) }</span>{ ' ' }
-						<span className="subscribers__subscriber-count">{ total }</span>
-					</div>
-					<SubscriberList subscribers={ subscribers } />
-				</>
-			) : (
-				<EmptyListView />
+				{ total ? (
+					<>
+						<div className="subscribers__header-count">
+							<span className="subscribers__title">{ translate( 'Total' ) }</span>{ ' ' }
+							<span className="subscribers__subscriber-count">{ total }</span>
+						</div>
+						<SubscriberList subscribers={ subscribers } />
+					</>
+				) : (
+					<EmptyListView />
+				) }
+
+				<Pagination
+					className="subscribers__pagination"
+					page={ page }
+					perPage={ per_page }
+					total={ total }
+					pageClick={ pageClickCallback }
+				/>
+			</Main>
+
+			{ !! total && (
+				<div className="subscribers__footer">
+					<Main wideLayout className="subscribers__footer-main">
+						<GrowYourAudience />
+					</Main>
+				</div>
 			) }
-
-			<Pagination
-				className="subscribers__pagination"
-				page={ page }
-				perPage={ per_page }
-				total={ total }
-				pageClick={ pageClickCallback }
-			/>
-		</Main>
+		</div>
 	);
 };

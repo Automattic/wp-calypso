@@ -2,6 +2,27 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
+.subscribers {
+	.subscribers__main {
+		margin-bottom: 68px;
+	}
+
+	.subscribers__footer {
+		background-color: $studio-gray-0;
+
+		.subscribers__footer-main {
+			padding-bottom: 0 !important;
+		}
+	}
+
+	.subscribers__main,
+	.subscribers__footer {
+		padding-bottom: 0 !important;
+		padding-left: 32px;
+		padding-right: 32px;
+	}
+}
+
 .subscribers__header-count {
 	margin-top: 70px;
 	margin-bottom: 30px;
@@ -19,11 +40,17 @@
 }
 
 @media ( max-width: $break-medium ) {
-	.subscribers__header-count {
-		padding-left: 16px;
-		padding-right: 16px;
-		margin-top: 85px;
-		margin-bottom: 6px;
+	.is-section-subscribers .layout__content {
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+		padding-bottom: 0 !important;
 	}
 }
 
+.is-section-subscribers .layout__content {
+	background-color: $studio-white;
+	padding-left: var(--sidebar-width-max);
+	padding-right: 0;
+	padding-top: calc(var(--masterbar-height) + 71px);
+	padding-bottom: 0;
+}
