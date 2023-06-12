@@ -102,12 +102,20 @@ const PluginsBrowserList = ( {
 					listName={ listName }
 				/>
 			) }
-			{ ( listName === 'paid' || listType === 'search' ) && (
+			{ listName === 'paid' && (
 				<AsyncLoad
 					require="calypso/blocks/jitm"
 					template="spotlight"
 					placeholder={ null }
 					messagePath="calypso:plugins:spotlight"
+				/>
+			) }
+			{ listType === 'search' && (
+				<AsyncLoad
+					require="calypso/blocks/jitm"
+					template="spotlight"
+					placeholder={ null }
+					messagePath="calypso:plugins:search"
 					searchQuery={ search }
 				/>
 			) }
