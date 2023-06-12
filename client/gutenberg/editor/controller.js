@@ -127,10 +127,7 @@ export const authenticate = ( context, next ) => {
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
-	let isJetpackNonSSO = false;
-	if ( isJetpack && ! isSSOEnabled( state, siteId ) ) {
-		isJetpackNonSSO = true;
-	}
+	const isJetpackNonSSO = isJetpack && ! isSSOEnabled( state, siteId );
 
 	if ( isDesktop && isJetpack && ! isSSOEnabled( state, siteId ) ) {
 		isAuthenticated = false;
