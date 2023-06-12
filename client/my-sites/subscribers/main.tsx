@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { useLocale } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
@@ -20,6 +21,7 @@ type SubscribersProps = {
 const DEFAULT_PER_PAGE = 10;
 
 export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
+	const locale = useLocale();
 	const isSubscribersPageEnabled = config.isEnabled( 'subscribers-page' );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const initialState = { data: { total: 0, subscribers: [], per_page: DEFAULT_PER_PAGE } };
@@ -54,7 +56,7 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 		},
 	];
 
-	if ( ! isSubscribersPageEnabled ) {
+	if ( ! isSubscribersPageEnabled || locale !== 'en' ) {
 		return null;
 	}
 
