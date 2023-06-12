@@ -431,7 +431,9 @@ export class JetpackAuthorize extends Component {
 		return partnerID && 'pressable' !== partnerSlug;
 	}
 
-	handleSignIn = async () => {
+	handleSignIn = async ( e, loginURL ) => {
+		e.preventDefault();
+
 		const { recordTracksEvent } = this.props;
 		const { from } = this.props.authQuery;
 		if ( 'woocommerce-onboarding' === from ) {
@@ -439,14 +441,14 @@ export class JetpackAuthorize extends Component {
 		}
 
 		try {
-			const { redirect_to: redirectTo } = await this.props.logoutUser( window.location.href );
+			const { redirect_to: redirectTo } = await this.props.logoutUser( loginURL );
 			disablePersistence();
 			await clearStore();
 			window.location.href = redirectTo || '/';
 		} catch ( error ) {
 			// The logout endpoint might fail if the nonce has expired.
 			// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
-			this.props.redirectToLogout( window.location.href );
+			this.props.redirectToLogout( loginURL );
 		}
 	};
 
@@ -840,12 +842,14 @@ export class JetpackAuthorize extends Component {
 			return wooDnaFooterLinks;
 		}
 
+		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+
 		return (
 			<LoggedOutFormLinks>
 				{ ! isJetpackMagicLinkSignUpFlow && this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
-					href={ login( { isJetpack: true, redirectTo: window.location.href, from } ) }
-					onClick={ this.handleSignIn }
+					href={ loginURL }
+					onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
