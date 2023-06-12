@@ -8,7 +8,12 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
-import { getDesignPreviewUrl, ThemePreview as ThemeWebPreview } from '@automattic/design-picker';
+import {
+	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
+	ThemePreview as ThemeWebPreview,
+	getDesignPreviewUrl,
+	isDefaultGlobalStylesVariationSlug,
+} from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
@@ -96,7 +101,6 @@ import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
 
-const DEFAULT_VARIATION_SLUG = 'default';
 const noop = () => {};
 
 class ThemeSheet extends Component {
@@ -368,8 +372,9 @@ class ThemeSheet extends Component {
 	shouldRenderUnlockStyleButton() {
 		const { defaultOption, selectedStyleVariationSlug, shouldLimitGlobalStyles, styleVariations } =
 			this.props;
-		const isNonDefaultStyleVariation =
-			selectedStyleVariationSlug && selectedStyleVariationSlug !== DEFAULT_VARIATION_SLUG;
+		const isNonDefaultStyleVariation = ! isDefaultGlobalStylesVariationSlug(
+			selectedStyleVariationSlug
+		);
 
 		return (
 			shouldLimitGlobalStyles &&
@@ -477,8 +482,8 @@ class ThemeSheet extends Component {
 
 	renderWebPreview = () => {
 		const { locale, stylesheet, styleVariations, themeId } = this.props;
-		const baseStyleVariation = styleVariations.find(
-			( style ) => style.slug === DEFAULT_VARIATION_SLUG
+		const baseStyleVariation = styleVariations.find( ( style ) =>
+			isDefaultGlobalStylesVariationSlug( style.slug )
 		);
 		const baseStyleVariationInlineCss = baseStyleVariation?.inline_css || '';
 		const selectedStyleVariationInlineCss = this.getSelectedStyleVariation()?.inline_css || '';
@@ -1042,7 +1047,7 @@ class ThemeSheet extends Component {
 		const { selectedStyleVariationSlug, themeId } = this.props;
 		return {
 			theme_name: themeId,
-			style_variation: selectedStyleVariationSlug ?? DEFAULT_VARIATION_SLUG,
+			style_variation: selectedStyleVariationSlug ?? DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 		};
 	};
 
