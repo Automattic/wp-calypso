@@ -158,6 +158,7 @@ describe( 'envToFeatureKey', () => {
 		COBLOCKS_EDGE: true,
 		GUTENBERG_EDGE: false,
 		TEST_ON_ATOMIC: false,
+		GUTENBERG_NIGHTLY: false,
 		JETPACK_TARGET: 'wpcom-production',
 	};
 
@@ -188,6 +189,12 @@ describe( 'envToFeatureKey', () => {
 	it( 'will return a `FeatureKey` object with `gutenberg: "edge"` if env.GUTENBERG_EDGE is `true`', () => {
 		expect( envToFeatureKey( { ...envVariables, GUTENBERG_EDGE: true } ) ).toMatchObject( {
 			gutenberg: 'edge',
+		} );
+	} );
+
+	it( 'will return a `FeatureKey` object with `gutenberg: "nightly"` if env.GUTENBERG_EDGE is `true`', () => {
+		expect( envToFeatureKey( { ...envVariables, GUTENBERG_NIGHTLY: true } ) ).toMatchObject( {
+			gutenberg: 'nightly',
 		} );
 	} );
 

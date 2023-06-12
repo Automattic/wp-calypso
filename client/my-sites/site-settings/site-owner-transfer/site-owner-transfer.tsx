@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ConfirmationTransfer } from './confirmation-transfer';
@@ -45,6 +46,8 @@ const SiteOwnerTransfer = () => {
 	const [ newSiteOwner, setNewSiteOwner ] = useState( '' );
 	const [ transferSiteSuccess, setSiteTransferSuccess ] = useState( false );
 
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const nonWpcomDomains = useSelector( ( state ) =>
 		getDomainsBySiteId( state, selectedSite?.ID )
 	)?.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -82,6 +85,7 @@ const SiteOwnerTransfer = () => {
 				<StartSiteOwnerTransfer
 					onSiteTransferSuccess={ () => {
 						setSiteTransferSuccess( true );
+						dispatch( successNotice( translate( 'Email sent successfully' ), { duration: 8000 } ) );
 					} }
 					onSiteTransferError={ () => {
 						setSiteTransferSuccess( false );

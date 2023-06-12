@@ -60,6 +60,7 @@ import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
+import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutHelpLink from './checkout-help-link';
 import CheckoutNextSteps from './checkout-next-steps';
@@ -503,7 +504,7 @@ export default function WPCheckout( {
 			<CheckoutFormSubmit
 				validateForm={ validateForm }
 				submitButtonHeader={ <SubmitButtonHeader /> }
-				submitButtonFooter={ <SubmitButtonFooter /> }
+				submitButtonFooter={ <JetpackCheckoutSeals /> }
 			/>
 		</CheckoutStepGroup>
 	);
@@ -623,7 +624,7 @@ function SubmitButtonHeader() {
 	);
 }
 
-const SubmitButtonFooter = () => {
+const JetpackCheckoutSeals = () => {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
@@ -640,7 +641,7 @@ const SubmitButtonFooter = () => {
 	const show14DayGuarantee = responseCart?.products?.every(
 		( product ) => isYearly( product ) || isBiennially( product ) || isTriennially( product )
 	);
-	const content =
+	const moneybackGuaranteeHeader =
 		show7DayGuarantee || show14DayGuarantee ? (
 			translate( '%(dayCount)s day money back guarantee', {
 				args: {
@@ -654,40 +655,59 @@ const SubmitButtonFooter = () => {
 				{ translate( '7 day money back guarantee on monthly subscriptions' ) }
 			</>
 		);
-	let imgSrc = badgeGenericSrc;
+	let moneybackGuaranteeIcon = badgeGenericSrc;
 
 	if ( show7DayGuarantee ) {
-		imgSrc = badge7Src;
+		moneybackGuaranteeIcon = badge7Src;
 	} else if ( show14DayGuarantee ) {
-		imgSrc = badge14Src;
+		moneybackGuaranteeIcon = badge14Src;
 	}
 
 	return (
-		<SubmitButtonFooterWrapper>
-			<img src={ imgSrc } alt="" />
-			<span>{ content }</span>
-		</SubmitButtonFooterWrapper>
+		<JetpackCheckoutSealsWrapper>
+			<JetpackCheckoutSealsSection>
+				<img src={ moneybackGuaranteeIcon } alt="" />
+
+				<JetpackSealText>{ moneybackGuaranteeHeader }</JetpackSealText>
+			</JetpackCheckoutSealsSection>
+
+			<JetpackCheckoutSealsSection>
+				<img src={ badgeSecurity } alt="" />
+
+				<JetpackSealText>{ translate( 'SSL Secure checkout' ) }</JetpackSealText>
+			</JetpackCheckoutSealsSection>
+		</JetpackCheckoutSealsWrapper>
 	);
 };
 
-const SubmitButtonFooterWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+const JetpackCheckoutSealsWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	display: flex;
-	justify-content: center;
-	align-items: flex-start;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
 
-	margin-top: 1.25rem;
-
-	color: ${ ( props ) => props.theme.colors.textColor };
-
-	font-weight: 500;
+	padding: 1.5rem 1.5rem 0;
 
 	img {
-		margin-right: 0.5rem;
+		margin-right: 0.75rem;
 	}
 
 	span {
-		padding-top: 3px;
+		font-weight: 700;
+
+		line-height: 1.12;
 	}
+`;
+
+const JetpackCheckoutSealsSection = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+	display: flex;
+	align-items: flex-start;
+
+	color: ${ ( props ) => props.theme.colors.textColor };
+`;
+
+const JetpackSealText = styled.span`
+	padding: 0.1875rem 0 0 0;
 `;
 
 const SubmitButtonHeaderWrapper = styled.div`

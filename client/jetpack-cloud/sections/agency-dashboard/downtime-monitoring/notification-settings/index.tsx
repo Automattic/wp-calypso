@@ -15,10 +15,12 @@ import {
 	getSiteCountText,
 } from '../../sites-overview/utils';
 import EmailAddressEditor from '../configure-email-notification/email-address-editor';
+import PhoneNumberEditor from '../configure-sms-notification/phone-number-editor';
 import EmailNotification from './form-content/email-notification';
 import NotificationSettingsFormFooter from './form-content/footer';
 import MobilePushNotification from './form-content/mobile-push-notification';
 import NotificationDuration from './form-content/notification-duration';
+import SMSNotification from './form-content/sms-notification';
 import type {
 	MonitorSettings,
 	Site,
@@ -28,9 +30,11 @@ import type {
 	UpdateMonitorSettingsParams,
 	MonitorDuration,
 	InitialMonitorSettings,
+	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
 
 import './style.scss';
+import '../style.scss';
 
 interface Props {
 	sites: Array< Site >;
@@ -58,6 +62,7 @@ export default function NotificationSettings( {
 
 	const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
 
+	const [ enableSMSNotification, setEnableSMSNotification ] = useState< boolean >( false );
 	const [ enableMobileNotification, setEnableMobileNotification ] = useState< boolean >( false );
 	const [ enableEmailNotification, setEnableEmailNotification ] = useState< boolean >( false );
 	const [ selectedDuration, setSelectedDuration ] = useState< MonitorDuration | undefined >(
@@ -67,8 +72,10 @@ export default function NotificationSettings( {
 		[]
 	);
 	const [ allEmailItems, setAllEmailItems ] = useState< StateMonitorSettingsEmail[] | [] >( [] );
+	const [ allPhoneItems, setAllPhoneItems ] = useState< StateMonitorSettingsSMS[] | [] >( [] );
 	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
+	const [ isAddSMSModalOpen, setIsAddSMSModalOpen ] = useState< boolean >( false );
 	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
 	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
 	const [ initialSettings, setInitialSettings ] = useState< InitialMonitorSettings >( {
@@ -81,6 +88,10 @@ export default function NotificationSettings( {
 
 	const isMultipleEmailEnabled: boolean = isEnabled(
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
+	);
+
+	const isSMSNotificationEnabled: boolean = isEnabled(
+		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
 
 	const mapAndStringifyEmails = ( emails: MonitorSettingsEmail[] ) => {
@@ -118,8 +129,17 @@ export default function NotificationSettings( {
 		}
 	};
 
+	const toggleAddSMSModal = () => {
+		setIsAddSMSModalOpen( ( isAddSMSModalOpen ) => ! isAddSMSModalOpen );
+	};
+
 	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
 		setAllEmailItems( items );
+		setHasUnsavedChanges( false );
+	};
+
+	const handleSetAllPhoneItems = ( items: StateMonitorSettingsSMS[] ) => {
+		setAllPhoneItems( items );
 		setHasUnsavedChanges( false );
 	};
 
@@ -286,6 +306,16 @@ export default function NotificationSettings( {
 		);
 	}
 
+	if ( isAddSMSModalOpen ) {
+		return (
+			<PhoneNumberEditor
+				toggleModal={ toggleAddSMSModal }
+				allPhoneItems={ allPhoneItems }
+				setAllPhoneItems={ handleSetAllPhoneItems }
+			/>
+		);
+	}
+
 	return (
 		<Modal
 			open={ true }
@@ -306,6 +336,14 @@ export default function NotificationSettings( {
 						selectedDuration={ selectedDuration }
 						selectDuration={ selectDuration }
 					/>
+					{ isSMSNotificationEnabled && (
+						<SMSNotification
+							enableSMSNotification={ enableSMSNotification }
+							setEnableSMSNotification={ setEnableSMSNotification }
+							toggleModal={ toggleAddSMSModal }
+							allPhoneItems={ allPhoneItems }
+						/>
+					) }
 					<MobilePushNotification
 						recordEvent={ recordEvent }
 						enableMobileNotification={ enableMobileNotification }

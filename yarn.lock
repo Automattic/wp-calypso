@@ -322,7 +322,7 @@ __metadata:
     mailosaur: ^8.4.0
     nock: ^12.0.3
     node-fetch: ^2.6.7
-    playwright: ^1.32
+    playwright: ^1.34
     totp-generator: ^0.0.12
     typescript: ^4.7.4
   languageName: unknown
@@ -1825,7 +1825,7 @@ __metadata:
     "@automattic/whats-new": "workspace:^"
     "@babel/core": ^7.17.5
     "@popperjs/core": ^2.10.2
-    "@sentry/browser": ^7.33.0
+    "@sentry/browser": ^7.54.0
     "@tanstack/react-query": ^4.29.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
@@ -4826,16 +4826,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.33.0, @sentry/browser@npm:^7.33.0":
-  version: 7.33.0
-  resolution: "@sentry/browser@npm:7.33.0"
+"@sentry-internal/tracing@npm:7.54.0":
+  version: 7.54.0
+  resolution: "@sentry-internal/tracing@npm:7.54.0"
   dependencies:
-    "@sentry/core": 7.33.0
-    "@sentry/replay": 7.33.0
-    "@sentry/types": 7.33.0
-    "@sentry/utils": 7.33.0
+    "@sentry/core": 7.54.0
+    "@sentry/types": 7.54.0
+    "@sentry/utils": 7.54.0
     tslib: ^1.9.3
-  checksum: 3ca26cd72d73e154c5e7550b52477271638c1491263f838c78ac9462e07102704571ffb19277cdad7c5800f3d8d49832cb4dc481619529a2cc13ef2d6208df9f
+  checksum: b4aca84e17c204f61b1791bd96be57b1c48f20afd2863b3ab29cc801fa09fe6fb8d56e76513bba9ebffbc0d0524ff334a0cc4459dfba95e85e0c2b12f8828bec
+  languageName: node
+  linkType: hard
+
+"@sentry/browser@npm:7.54.0, @sentry/browser@npm:^7.54.0":
+  version: 7.54.0
+  resolution: "@sentry/browser@npm:7.54.0"
+  dependencies:
+    "@sentry-internal/tracing": 7.54.0
+    "@sentry/core": 7.54.0
+    "@sentry/replay": 7.54.0
+    "@sentry/types": 7.54.0
+    "@sentry/utils": 7.54.0
+    tslib: ^1.9.3
+  checksum: e926aa5527a845ccb967b2a33632dd0110e0133c0b9e43d9e449cedd0c1b36761b3c1883a9a97076c640a4aea24fe23bbb4a61f3235660c893fc9f388df949e8
   languageName: node
   linkType: hard
 
@@ -4856,57 +4869,57 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.33.0":
-  version: 7.33.0
-  resolution: "@sentry/core@npm:7.33.0"
+"@sentry/core@npm:7.54.0":
+  version: 7.54.0
+  resolution: "@sentry/core@npm:7.54.0"
   dependencies:
-    "@sentry/types": 7.33.0
-    "@sentry/utils": 7.33.0
+    "@sentry/types": 7.54.0
+    "@sentry/utils": 7.54.0
     tslib: ^1.9.3
-  checksum: 39c6fc99146782a403e7216c72b0e0c9d7cdcaf11959bb83857b2a83b6aca64cb86f55c0e18271fc3bafcfd535723df2426caf8cb0466c7dbad831770141cd4c
+  checksum: 3b931d986aa5e28ec21cbdb4a425f890165b8b459c169a647d1b6fea0fe8a6bf788caf77a74d7f92b6984080404c537025e27c38aeb7245a80603b4e5d6ace94
   languageName: node
   linkType: hard
 
-"@sentry/react@npm:^7.33.0":
-  version: 7.33.0
-  resolution: "@sentry/react@npm:7.33.0"
+"@sentry/react@npm:^7.54.0":
+  version: 7.54.0
+  resolution: "@sentry/react@npm:7.54.0"
   dependencies:
-    "@sentry/browser": 7.33.0
-    "@sentry/types": 7.33.0
-    "@sentry/utils": 7.33.0
+    "@sentry/browser": 7.54.0
+    "@sentry/types": 7.54.0
+    "@sentry/utils": 7.54.0
     hoist-non-react-statics: ^3.3.2
     tslib: ^1.9.3
   peerDependencies:
     react: 15.x || 16.x || 17.x || 18.x
-  checksum: 0c38f964920b6a6a17ac30bcb9b0864aeb3ab0c55831ecf8d7d2fe7066490c7109d633c46ae197fe8044c0688eb5d63482ce81ebc37c7cff1a3b3c38ae5fa8ba
+  checksum: 9337a7edf85bc3cc10694015e7dac907eee20e07690609c38a4b011b4a0e435050d88d2f783fb6f431b861890379d706cf52726556885427eebbc578f54087f7
   languageName: node
   linkType: hard
 
-"@sentry/replay@npm:7.33.0":
-  version: 7.33.0
-  resolution: "@sentry/replay@npm:7.33.0"
+"@sentry/replay@npm:7.54.0":
+  version: 7.54.0
+  resolution: "@sentry/replay@npm:7.54.0"
   dependencies:
-    "@sentry/core": 7.33.0
-    "@sentry/types": 7.33.0
-    "@sentry/utils": 7.33.0
-  checksum: 1f99f941041e414466a2fc255a81bf116dd5d84a7f6fc40b688add17f6342749110664b84a7265e711b8c08587917e3668496e93f97e20e85f0cfbd26198da10
+    "@sentry/core": 7.54.0
+    "@sentry/types": 7.54.0
+    "@sentry/utils": 7.54.0
+  checksum: 7aa05b809e50410dd57df6a71d6e874a726b0574256a3d0e04cff01b22db06250b3bc72de802c3bb8247df7d0044a3cd8e3b6f193510aa3a0360afe9104e944f
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.33.0":
-  version: 7.33.0
-  resolution: "@sentry/types@npm:7.33.0"
-  checksum: 983116935033ac5598bdbc1bb89e22285dee9ac7d09249279c49e5f07c5bbb74df3e8d8d2ef2006e48e1644c6079e0d0f78dff1f2a9ba0bb945ec16760289765
+"@sentry/types@npm:7.54.0":
+  version: 7.54.0
+  resolution: "@sentry/types@npm:7.54.0"
+  checksum: ea0647b97758cd2a2b9e3c7d766e34c7654d2d0577d8dba72ec8800d2d79f23444b55b3e3ed36bfa7aba9bb61a303474cdea936c2ec8078bb9da6a54c49380d2
   languageName: node
   linkType: hard
 
-"@sentry/utils@npm:7.33.0":
-  version: 7.33.0
-  resolution: "@sentry/utils@npm:7.33.0"
+"@sentry/utils@npm:7.54.0":
+  version: 7.54.0
+  resolution: "@sentry/utils@npm:7.54.0"
   dependencies:
-    "@sentry/types": 7.33.0
+    "@sentry/types": 7.54.0
     tslib: ^1.9.3
-  checksum: 23c6386f31c5e66420b3003c649bd4907dc29421d9d42548e5e49f35bfc311a4f72bb76cf98d881afb2d5f69c54f73a60ec59d315038b9057661f7c4087bc3d1
+  checksum: c39af0747e70b8706ba56c6edf46150f20414d5a1e380c16121a5d93a306d733b30d8b5bda77572bdfbc36fd597eb99799d1f5245e1f679682e4a0d78b0f6b08
   languageName: node
   linkType: hard
 
@@ -9119,7 +9132,7 @@ __metadata:
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.32
+    playwright: ^1.34
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -11130,7 +11143,7 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
-    "@sentry/react": ^7.33.0
+    "@sentry/react": ^7.54.0
     "@sentry/webpack-plugin": ^1.18.8
     "@stripe/react-stripe-js": ^2.1.0
     "@stripe/stripe-js": ^1.53.0
@@ -23932,23 +23945,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.32.1":
-  version: 1.32.1
-  resolution: "playwright-core@npm:1.32.1"
+"playwright-core@npm:1.34.3":
+  version: 1.34.3
+  resolution: "playwright-core@npm:1.34.3"
   bin:
-    playwright: cli.js
-  checksum: 604d6eecadc274e099ceac7d55422ae29a5d9a1f9efeaab4fdd7fdc55f79dfd8ee8b9e9941ca2cb64f00003c5362a4f4571fb0ac79f875a08b30a74366528413
+    playwright-core: cli.js
+  checksum: 2e3ec8394b69bcd55db3a01a0a2cf63ee4b924bd79852c237d3eb045273f056b5784ab2147f60a7bb2db7998b8f7c5ec34d8554dd7648cc77d5affc9d91a85c8
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.32":
-  version: 1.32.1
-  resolution: "playwright@npm:1.32.1"
+"playwright@npm:^1.34":
+  version: 1.34.3
+  resolution: "playwright@npm:1.34.3"
   dependencies:
-    playwright-core: 1.32.1
+    playwright-core: 1.34.3
   bin:
     playwright: cli.js
-  checksum: 53a11132b833e1e7b474659b801cf77b2bdab466bf3d2a0009c46616ee70f9928bda6fa1d548e62903b21f0f80d4d26c7d69cd60f3a8415e829b652024a9db21
+  checksum: e17c0dbfc87f8764d1e34762b27d561d34a1e3dccc5d4e5d08edbf58e582d49e86ecf161f7f21af103a35045ae5a9cf0169204aa9c0a808046116cb2cc9f415c
   languageName: node
   linkType: hard
 
@@ -31724,7 +31737,7 @@ __metadata:
     lodash: ^4.17.20
     mailosaur: ^8.4.0
     node-fetch: ^2.6.1
-    playwright: ^1.32
+    playwright: ^1.34
     postcss: ^8.3.11
     webpack: ^5.63.0
   languageName: unknown

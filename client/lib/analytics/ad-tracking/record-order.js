@@ -679,44 +679,33 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
  */
 function recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
-		loadGTMContainer( TRACKING_IDS.akismetGoogleTagManagerId )
-			.then( () => initGTMContainer() )
-			.then( () => {
-				debug(
-					`recordOrderInAkismetGTM: Initialized GTM container ${ TRACKING_IDS.akismetGoogleTagManagerId }`
-				);
+		// We ensure that we can track with GTM
+		if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
+			return;
+		}
 
-				// We ensure that we can track with GTM
-				if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
-					return;
-				}
+		const purchaseEventMeta = {
+			event: 'purchase',
+			ecommerce: {
+				coupon: cart.coupon?.toString() ?? '',
+				transaction_id: orderId,
+				currency: 'USD',
+				items: wpcomJetpackCartInfo.akismetProducts.map(
+					( { product_id, product_name, cost, volume, bill_period } ) => ( {
+						id: product_id.toString(),
+						name: product_name.toString(),
+						quantity: parseInt( volume ),
+						price: costToUSD( cost, cart.currency ) ?? 0,
+						billing_term: bill_period === '365' ? 'yearly' : 'monthly',
+					} )
+				),
+				value: wpcomJetpackCartInfo.akismetCostUSD,
+			},
+		};
 
-				const purchaseEventMeta = {
-					event: 'purchase',
-					ecommerce: {
-						coupon: cart.coupon?.toString() ?? '',
-						transaction_id: orderId,
-						currency: 'USD',
-						items: wpcomJetpackCartInfo.akismetProducts.map(
-							( { product_id, product_name, cost, volume, bill_period } ) => ( {
-								id: product_id.toString(),
-								name: product_name.toString(),
-								quantity: parseInt( volume ),
-								price: costToUSD( cost, cart.currency ) ?? 0,
-								billing_term: bill_period === '365' ? 'yearly' : 'monthly',
-							} )
-						),
-						value: wpcomJetpackCartInfo.akismetCostUSD,
-					},
-				};
+		window.dataLayer.push( purchaseEventMeta );
 
-				window.dataLayer.push( purchaseEventMeta );
-
-				debug( `recordOrderInAkismetGTM: Record Akismet GTM purchase`, purchaseEventMeta );
-			} )
-			.catch( ( error ) => {
-				debug( 'recordOrderInAkismetGTM: Error loading GTM container', error );
-			} );
+		debug( `recordOrderInAkismetGTM: Record Akismet GTM purchase`, purchaseEventMeta );
 	}
 }
 

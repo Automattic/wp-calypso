@@ -77,7 +77,7 @@ export function useValidateVerificationCode(): {
 			await handleSetMonitoringContacts( data, params );
 		},
 		onError: async ( error, params ) => {
-			if ( error?.code === 'jetpack_agency_non_existent_contact' ) {
+			if ( error?.code === 'jetpack_agency_contact_is_verified' ) {
 				// Add the contact to the list of contacts if already verified
 				setIsAlreadyVerifed( true );
 				await handleSetMonitoringContacts( { verified: true }, params );

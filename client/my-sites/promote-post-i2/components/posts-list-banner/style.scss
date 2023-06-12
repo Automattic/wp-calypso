@@ -3,129 +3,132 @@
 
 .promote-post-i2 {
 	.posts-list-banner__container {
-		align-items: center;
-		border: none;
-		border-radius: 0;
 		background-color: #ecf3f9;
-		color: var(--color-text);
-		display: flex;
-		font-family: $font-sf-pro-text;
-		font-style: normal;
-		font-weight: 500;
-		height: 396px;
-		justify-content: space-between;
-		letter-spacing: -0.01em;
-		margin-bottom: 0;
-		padding: 0;
 
-		.posts-list-banner__title {
-			margin-bottom: 1rem;
-		}
-
-		.posts-list-banner__header {
+		.posts-list-banner__content {
 			align-items: center;
-			color: var(--studio-red-40);
+			border: none;
+			border-radius: 0;
+			color: var(--color-text);
 			display: flex;
-			font-size: 0.75rem;
+			font-family: $font-sf-pro-text;
 			font-style: normal;
-			font-weight: 600;
-			line-height: 1.67;
-			margin-bottom: 1rem;
-
-			svg {
-				margin-right: 0.5rem;
-			}
-		}
-
-		.posts-list-banner__text-section {
-			max-width: 414px;
-			padding-left: 64px;
+			font-weight: 500;
+			height: 396px;
+			justify-content: space-between;
+			letter-spacing: -0.01em;
+			margin-bottom: 0;
+			margin-left: 64px;
+			padding: 0;
 
 			.posts-list-banner__title {
-				color: #000;
+				margin-bottom: 1rem;
+			}
+
+			.posts-list-banner__header {
+				align-items: center;
+				color: var(--studio-red-40);
+				display: flex;
+				font-size: 0.75rem;
 				font-style: normal;
-				font-weight: 400;
-				font-size: 2.75rem;
-				letter-spacing: 0.2px;
-				line-height: 1.18;
-			}
-		}
+				font-weight: 600;
+				line-height: 1.67;
+				margin-bottom: 1rem;
 
-		.posts-list-banner__img-section {
-			position: relative;
-			height: 396px;
-
-			.posts-list-banner__wrapper {
-				background-color: #fff;
-				border-radius: 4px;
-				bottom: 46px;
-				color: var(--studio-gray-40);
-				display: none; // TODO: consider this change with connection to main section width
-				font-size: 0.75rem;
-				height: calc(268px - 24px);
-				padding: 12px;
-				position: absolute;
-				right: 246px;
-				width: calc(280px - 24px);
-				z-index: 10;
-
-				header {
-					margin-bottom: 4px;
+				svg {
+					margin-right: 0.5rem;
 				}
+			}
 
-				img {
+			.posts-list-banner__text-section {
+				max-width: 414px;
+
+				.posts-list-banner__title {
+					color: #000;
+					font-style: normal;
+					font-weight: 400;
+					font-size: 2.75rem;
+					letter-spacing: 0.2px;
+					line-height: 1.18;
+				}
+			}
+
+			.posts-list-banner__img-section {
+				position: relative;
+				height: 396px;
+
+				.posts-list-banner__wrapper {
+					background-color: #fff;
 					border-radius: 4px;
-				}
+					bottom: 46px;
+					color: var(--studio-gray-40);
+					display: none; // TODO: consider this change with connection to main section width
+					font-size: 0.75rem;
+					height: calc(268px - 24px);
+					padding: 12px;
+					position: absolute;
+					right: 246px;
+					width: calc(280px - 24px);
+					z-index: 10;
 
-				footer {
-					color: var(--studio-gray-90);
-					font-size: 1rem;
-					margin-top: 4px;
-				}
-			}
+					header {
+						margin-bottom: 4px;
+					}
 
-			.posts-list-banner__article {
-				background: #000;
-				bottom: 0;
-				color: rgba(255, 255, 255, 0.75);
-				display: none;
-				font-size: 0.75rem;
-				height: 234px;
-				line-height: 1.4;
-				padding-left: 234px;
-				position: absolute;
-				right: 0;
-				width: calc(454px - 234px);
-				z-index: 1;
+					img {
+						border-radius: 4px;
+					}
 
-				&-menu {
-					display: flex;
-					margin: 24px 0 43px 0;
-
-					&-item {
-						list-style: none;
-						margin-right: 15px;
-
-						&-active {
-							color: #fff;
-							text-decoration-line: underline;
-						}
+					footer {
+						color: var(--studio-gray-90);
+						font-size: 1rem;
+						margin-top: 4px;
 					}
 				}
 
-				&-title {
-					color: #fff;
-					font-family: $font-sf-pro-text;
-					font-size: 1.25rem;
-					line-height: 0.9;
-					margin: 4px 22px 4px 0;
-					font-weight: bolder;
-					letter-spacing: -0.08em;
-					width: 170px;
+				.posts-list-banner__article {
+					background: #000;
+					bottom: 0;
+					color: rgba(255, 255, 255, 0.75);
+					display: none;
+					font-size: 0.75rem;
+					height: 234px;
+					line-height: 1.4;
+					padding-left: 234px;
+					position: absolute;
+					right: 0;
+					width: calc(454px - 234px);
+					z-index: 1;
+
+					&-menu {
+						display: flex;
+						margin: 24px 0 43px 0;
+
+						&-item {
+							list-style: none;
+							margin-right: 15px;
+
+							&-active {
+								color: #fff;
+								text-decoration-line: underline;
+							}
+						}
+					}
+
+					&-title {
+						color: #fff;
+						font-family: $font-sf-pro-text;
+						font-size: 1.25rem;
+						line-height: 0.9;
+						margin: 4px 22px 4px 0;
+						font-weight: bolder;
+						letter-spacing: -0.08em;
+						width: 170px;
+					}
 				}
 			}
-		}
 
+		}
 	}
 
 	#primary .promote-post-i2 .posts-list-banner__container {
