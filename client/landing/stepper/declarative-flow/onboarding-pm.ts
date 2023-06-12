@@ -5,7 +5,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
-	clearSignupDestinationCookie,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
