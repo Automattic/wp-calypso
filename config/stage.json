@@ -102,7 +102,7 @@
 		"p2/p2-plus": true,
 		"page/export": true,
 		"pattern-assembler/all-patterns-category": true,
-		"pattern-assembler/logged-in-showcase": false,
+		"pattern-assembler/logged-in-showcase": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
