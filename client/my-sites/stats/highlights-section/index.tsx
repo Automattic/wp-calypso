@@ -85,10 +85,8 @@ export default function HighlightsSection( {
 	// Highlights settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
 	const isHighlightsSettingsSupported = useMemo(
 		() =>
-			! (
-				config.isEnabled( 'is_running_in_jetpack_site' ) &&
-				( ! statsAdminVersion || version_compare( statsAdminVersion, '0.9.0-alpha', '<' ) )
-			),
+			! config.isEnabled( 'is_running_in_jetpack_site' ) ||
+			!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) ),
 		[ statsAdminVersion ]
 	);
 
