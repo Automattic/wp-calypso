@@ -35,7 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Reader: View' ), function () {
 	it( 'Reader stream is present', async function () {
 		await Promise.any( [
 			page.getByRole( 'link', { name: 'Find sites to follow' } ),
-			page.getByRole( 'article' ),
+			page.getByRole( 'main' ).getByRole( 'article' ),
 		] );
 	} );
 } );
