@@ -24,6 +24,16 @@
 		margin-top: 15px;
 	}
 
+	.contact-details-form-fields__country {
+		flex-grow: 1;
+		flex-basis: 0;
+		margin-top: 15px;
+	}
+
+	.contact-details-form-fields__country label {
+		margin-bottom: 5px;
+	}
+
 	@include breakpoint-deprecated( ">660px" ) {
 		.contact-details-form-fields__field.last-name,
 		.contact-details-form-fields__field.phone {

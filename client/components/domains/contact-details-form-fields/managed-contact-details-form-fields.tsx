@@ -257,16 +257,18 @@ export class ManagedContactDetailsFormFields extends Component<
 				</div>
 
 				<div className="contact-details-form-fields__row">
-					<CountrySelectMenu
-						countriesList={ this.props.countriesList }
-						errorMessage={ this.props.contactDetailsErrors.countryCode }
-						isDisabled={ this.props.getIsFieldDisabled( 'country-code' ) }
-						isError={ !! this.props.contactDetailsErrors.countryCode }
-						onChange={ ( event ) => {
-							this.handleFieldChange( 'country-code', event.currentTarget.value );
-						} }
-						currentValue={ this.props.contactDetails.countryCode }
-					/>
+					<div className="contact-details-form-fields__country">
+						<CountrySelectMenu
+							countriesList={ this.props.countriesList }
+							errorMessage={ this.props.contactDetailsErrors.countryCode }
+							isDisabled={ this.props.getIsFieldDisabled( 'country-code' ) }
+							isError={ !! this.props.contactDetailsErrors.countryCode }
+							onChange={ ( event ) => {
+								this.handleFieldChange( 'country-code', event.currentTarget.value );
+							} }
+							currentValue={ this.props.contactDetails.countryCode }
+						/>
+					</div>
 				</div>
 			</>
 		);
