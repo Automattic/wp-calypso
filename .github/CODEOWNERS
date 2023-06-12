@@ -146,5 +146,12 @@
 /packages/wpcom.js/src/lib/domain.js @Automattic/nomado
 /packages/wpcom.js/src/lib/domains.js @Automattic/nomado
 
-#Plans
+# Plans
 /client/my-sites/plan-features-2023-grid @Automattic/martech-decepticons
+
+# Importing
+/client/my-sites/importer @Automattic/caribou
+/client/blocks/importer @Automattic/caribou
+/client/my-sites/migrate @Automattic/caribou
+/client/landing/stepper/declarative-flow/import-flow.ts @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/import @Automattic/caribou
