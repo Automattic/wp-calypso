@@ -1,6 +1,7 @@
 import { Design, StyleVariation } from '@automattic/design-picker/src';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getAssemblerSource } from '../steps-repository/pattern-assembler/events';
 
 export function recordPreviewedDesign( {
 	flow,
@@ -50,9 +51,10 @@ export function recordSelectedDesign( {
 	}
 }
 
-export function getDesignTypeProps( design?: Design ) {
+export function getDesignTypeProps( design: Design ) {
 	return {
 		goes_to_assembler_step: design?.design_type === 'assembler',
+		assembler_source: getAssemblerSource( design ),
 	};
 }
 
