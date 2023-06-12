@@ -127,8 +127,6 @@ export const authenticate = ( context, next ) => {
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
-	const isJetpackNonSSO = isJetpack && ! isSSOEnabled( state, siteId );
-
 	if ( isDesktop && isJetpack && ! isSSOEnabled( state, siteId ) ) {
 		isAuthenticated = false;
 	}
@@ -164,7 +162,7 @@ export const authenticate = ( context, next ) => {
 
 	// If non-SSO Jetpack lets ensure return URL uses the sites native editor, as the dotcom
 	// redirect does not happen.
-	if ( isJetpackNonSSO ) {
+	if ( isJetpack && ! isSSOEnabled( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 
