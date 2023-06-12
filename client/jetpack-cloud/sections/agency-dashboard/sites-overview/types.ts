@@ -197,7 +197,11 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 }
 
 export interface DashboardDataContextInterface {
-	verifiedContacts: { emails: Array< string >; refetchIfFailed: () => void };
+	verifiedContacts: {
+		emails: Array< string >;
+		phoneNumbers: Array< string >;
+		refetchIfFailed: () => void;
+	};
 }
 
 export type AgencyDashboardFilterOption =
@@ -291,9 +295,10 @@ export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
 export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
 
 export interface RequestVerificationCodeParams {
-	type: 'email';
-	value: string;
+	type: 'email' | 'sms';
+	value: string | number;
 	site_ids: Array< number >;
+	country_code?: string;
 }
 
 export interface ValidateVerificationCodeParams {
@@ -304,6 +309,7 @@ export interface ValidateVerificationCodeParams {
 
 export interface MonitorContactsResponse {
 	emails: [ { verified: boolean; email_address: string } ];
+	phone_numbers: [ { verified: boolean; phone_number: string } ];
 }
 
 export type MonitorDuration = { label: string; time: number };

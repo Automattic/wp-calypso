@@ -9,6 +9,7 @@ interface Props {
 	setEnableSMSNotification: ( isEnabled: boolean ) => void;
 	toggleModal: () => void;
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
+	verifiedItem?: { [ key: string ]: string };
 }
 
 export default function SMSNotification( {
@@ -16,6 +17,7 @@ export default function SMSNotification( {
 	setEnableSMSNotification,
 	toggleModal,
 	allPhoneItems,
+	verifiedItem,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -49,7 +51,11 @@ export default function SMSNotification( {
 							</AlertBanner>
 						</div>
 					) }
-					<ConfigureSMSNotification toggleModal={ toggleModal } allPhoneItems={ allPhoneItems } />
+					<ConfigureSMSNotification
+						toggleModal={ toggleModal }
+						allPhoneItems={ allPhoneItems }
+						verifiedPhoneNumber={ verifiedItem?.phone }
+					/>
 				</>
 			) }
 		</>
