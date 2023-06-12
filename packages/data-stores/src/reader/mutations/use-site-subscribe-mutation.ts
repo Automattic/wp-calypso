@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { callApi, getSubscriptionMutationParams } from '../helpers';
 import { useIsLoggedIn, useCacheKey } from '../hooks';
+import { SiteSubscriptionsPages } from '../types';
 import type { SiteSubscriptionDetails } from '../types';
 
 type SubscribeParams = {
@@ -62,8 +63,27 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 
 			return response;
 		},
-		onMutate: async () => {
+		onMutate: async ( params ) => {
 			await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
+
+			const previousSiteSubscriptions =
+				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
+			if ( previousSiteSubscriptions ) {
+				queryClient.setQueryData( siteSubscriptionsCacheKey, {
+					...previousSiteSubscriptions,
+					pages: previousSiteSubscriptions.pages.map( ( page ) => {
+						return {
+							...page,
+							total_subscriptions: page.total_subscriptions - 1,
+							subscriptions: page.subscriptions.map( ( siteSubscription ) => ( {
+								...siteSubscription,
+								isDeleted:
+									siteSubscription.blog_ID === params.blog_id ? false : siteSubscription.isDeleted,
+							} ) ),
+						};
+					} ),
+				} );
+			}
 
 			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
 				siteSubscriptionDetailsCacheKey

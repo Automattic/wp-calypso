@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
@@ -64,6 +65,7 @@ export default function SiteRow( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	onSiteTitleClick,
+	isDeleted,
 }: SiteRowProps ) {
 	const translate = useTranslate();
 	const hostname = useMemo( () => {
@@ -87,9 +89,11 @@ export default function SiteRow( {
 		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
+	const { mutate: resubscribe, isLoading: resubscribing } =
+		SubscriptionManager.useSiteSubscribeMutation();
 
 	return (
-		<li className="row" role="row">
+		<li className={ classnames( 'row', { deleted: isDeleted } ) } role="row">
 			<div className="title-cell" role="cell">
 				<Button
 					icon={ <SiteIcon iconUrl={ site_icon } siteName={ name } /> }
@@ -171,8 +175,11 @@ export default function SiteRow( {
 						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
 					}
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID, url: url } ) }
+					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID, url } ) }
 					unsubscribing={ unsubscribing }
+					isDeleted={ isDeleted }
+					onResubscribe={ () => resubscribe( { blog_id: blog_ID, url } ) }
+					resubscribing={ resubscribing }
 				/>
 			</span>
 		</li>

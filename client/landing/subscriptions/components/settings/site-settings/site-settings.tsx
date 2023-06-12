@@ -11,6 +11,8 @@ import NotifyMeOfNewPostsToggle from './notify-me-of-new-posts-toggle';
 import './styles.scss';
 import '../styles.scss';
 
+const ResubscribeIcon = UnsubscribeIcon;
+
 type SiteSettingsProps = {
 	notifyMeOfNewPosts: boolean;
 	onNotifyMeOfNewPostsChange: ( value: boolean ) => void;
@@ -79,28 +81,55 @@ const SiteSettings = ( {
 type SiteSettingsPopoverProps = SiteSettingsProps & {
 	onUnsubscribe: () => void;
 	unsubscribing: boolean;
+	onResubscribe: () => void;
+	resubscribing: boolean;
+	isDeleted: boolean;
 };
 
 export const SiteSettingsPopover = ( {
 	onUnsubscribe,
 	unsubscribing,
+	onResubscribe,
+	resubscribing,
+	isDeleted,
 	...props
 }: SiteSettingsPopoverProps ) => {
 	const translate = useTranslate();
 	return (
 		<SettingsPopover className="site-settings-popover">
-			<SiteSettings { ...props } />
+			{ ( close: () => void ) => (
+				<>
+					<SiteSettings { ...props } />
 
-			<hr className="subscriptions__separator" />
+					<hr className="subscriptions__separator" />
 
-			<Button
-				className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
-				disabled={ unsubscribing }
-				icon={ <UnsubscribeIcon className="settings-popover__item-icon" /> }
-				onClick={ onUnsubscribe }
-			>
-				{ translate( 'Unsubscribe' ) }
-			</Button>
+					{ isDeleted ? (
+						<Button
+							className={ classNames( 'resubscribe-button', { 'is-loading': resubscribing } ) }
+							disabled={ resubscribing }
+							icon={ <ResubscribeIcon className="settings-popover__item-icon" /> }
+							onClick={ () => {
+								onResubscribe();
+								close();
+							} }
+						>
+							{ translate( 'Resubscribe' ) }
+						</Button>
+					) : (
+						<Button
+							className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
+							disabled={ unsubscribing }
+							icon={ <UnsubscribeIcon className="settings-popover__item-icon" /> }
+							onClick={ () => {
+								onUnsubscribe();
+								close();
+							} }
+						>
+							{ translate( 'Unsubscribe' ) }
+						</Button>
+					) }
+				</>
+			) }
 		</SettingsPopover>
 	);
 };
