@@ -2,7 +2,6 @@ import { UserSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { ONBOARDING_PM_LOW, useFlowProgress } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
 	persistSignupDestination,
@@ -17,9 +16,6 @@ import type { Flow } from './internals/types';
 
 const onboarding: Flow = {
 	name: ONBOARDING_PM_LOW,
-	get title() {
-		return translate( 'Onboarding' );
-	},
 	useSteps() {
 		return [
 			{
