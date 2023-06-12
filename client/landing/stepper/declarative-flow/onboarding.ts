@@ -85,21 +85,29 @@ const onboarding: Flow = {
 				case 'plans':
 					return navigate( 'siteCreationStep' );
 				case 'siteCreationStep':
-					clearSignupDestinationCookie(); // not sure if this is needed and if it is, where it should go
+					// clearSignupDestinationCookie(); // not sure if this is needed and if it is, where it should go
 					return navigate( 'processing' );
 				case 'processing': {
-					clearSignupDestinationCookie();
-					const destination = `/setup/site-setup/goals?siteSlug=${ providedDependencies.siteSlug }&notice=purchase-success`;
-					const returnUrl = encodeURIComponent( destination );
+					// clearSignupDestinationCookie();
+					if ( providedDependencies?.goToCheckout ) {
+						const destination = `/setup/site-setup/goals?siteSlug=${ providedDependencies.siteSlug }&notice=purchase-success`;
+						const returnUrl = encodeURIComponent( destination );
 
-					persistSignupDestination( destination ); // not sure if this is needed
-					setSignupCompleteSlug( providedDependencies?.siteSlug );
-					setSignupCompleteFlowName( flowName );
+						persistSignupDestination( destination ); // not sure if this is needed
+						setSignupCompleteSlug( providedDependencies?.siteSlug );
+						setSignupCompleteFlowName( flowName );
+
+						return window.location.assign(
+							`/checkout/${ encodeURIComponent(
+								( providedDependencies?.siteSlug as string ) ?? ''
+							) }?redirect_to=${ returnUrl }&signup=1`
+						);
+					}
 
 					return window.location.assign(
-						`/checkout/${ encodeURIComponent(
-							( providedDependencies?.siteSlug as string ) ?? ''
-						) }?redirect_to=${ returnUrl }&signup=1`
+						`/setup/site-setup/goals?siteSlug=${
+							encodeURIComponent( providedDependencies?.siteSlug as string ) ?? ''
+						}`
 					);
 				}
 			}
