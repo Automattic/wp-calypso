@@ -27,7 +27,7 @@ export default function SMSItemContent( { item }: Props ) {
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
 	const showActions = () => {
-		setIsOpen( true );
+		setIsOpen( ! isOpen );
 	};
 
 	const closeDropdown = () => {
@@ -51,73 +51,71 @@ export default function SMSItemContent( { item }: Props ) {
 					<div className="configure-contact-info__card-sub-heading">{ item.name }</div>
 				</span>
 
-				<>
-					{ ! isVerified && (
-						<span
-							role="button"
-							tabIndex={ 0 }
-							onKeyPress={ () => {
-								//TODO add verification handling
-								return null;
-							} }
-							onClick={ () => {
-								//TODO add verification handling
-								return null;
-							} }
-							className="configure-contact-info__verification-status cursor-pointer"
-						>
-							<Badge type="warning">{ translate( 'Pending' ) }</Badge>
-						</span>
-					) }
-					{ isVerified && (
-						<span className="configure-contact-info__verification-status">
-							<Badge type="success">{ translate( 'Verified' ) }</Badge>
-						</span>
-					) }
-					<Button
-						compact
-						borderless
-						className="configure-contact-info__action-icon"
-						onClick={ showActions }
-						aria-label={ translate( 'More actions' ) }
-						ref={ buttonActionRef }
+				{ ! isVerified && (
+					<span
+						role="button"
+						tabIndex={ 0 }
+						onKeyPress={ () => {
+							//TODO add verification handling
+							return null;
+						} }
+						onClick={ () => {
+							//TODO add verification handling
+							return null;
+						} }
+						className="configure-contact-info__verification-status cursor-pointer"
 					>
-						<Icon size={ 18 } icon={ moreHorizontal } />
-					</Button>
-					<PopoverMenu
-						className="configure-contact-info__popover-menu"
-						context={ buttonActionRef.current }
-						isVisible={ isOpen }
-						onClose={ closeDropdown }
-						position="bottom left"
+						<Badge type="warning">{ translate( 'Pending' ) }</Badge>
+					</span>
+				) }
+				{ isVerified && (
+					<span className="configure-contact-info__verification-status">
+						<Badge type="success">{ translate( 'Verified' ) }</Badge>
+					</span>
+				) }
+				<Button
+					compact
+					borderless
+					className="configure-contact-info__action-icon"
+					onClick={ showActions }
+					aria-label={ translate( 'More actions' ) }
+					ref={ buttonActionRef }
+				>
+					<Icon size={ 18 } icon={ moreHorizontal } />
+				</Button>
+				<PopoverMenu
+					className="configure-contact-info__popover-menu"
+					context={ buttonActionRef.current }
+					isVisible={ isOpen }
+					onClose={ closeDropdown }
+					position="bottom left"
+				>
+					<PopoverMenuItem
+						onClick={ () => {
+							//TODO handle actions
+							return null;
+						} }
 					>
-						<PopoverMenuItem
-							onClick={ () => {
-								//TODO handle actions
-								return null;
-							} }
-						>
-							{ translate( 'Verify' ) }
-						</PopoverMenuItem>
+						{ translate( 'Verify' ) }
+					</PopoverMenuItem>
 
-						<PopoverMenuItem
-							onClick={ () => {
-								//TODO handle actions
-								return null;
-							} }
-						>
-							{ translate( 'Edit' ) }
-						</PopoverMenuItem>
-						<PopoverMenuItem
-							onClick={ () => {
-								//TODO handle actions
-								return null;
-							} }
-						>
-							{ translate( 'Remove' ) }
-						</PopoverMenuItem>
-					</PopoverMenu>
-				</>
+					<PopoverMenuItem
+						onClick={ () => {
+							//TODO handle actions
+							return null;
+						} }
+					>
+						{ translate( 'Edit' ) }
+					</PopoverMenuItem>
+					<PopoverMenuItem
+						onClick={ () => {
+							//TODO handle actions
+							return null;
+						} }
+					>
+						{ translate( 'Remove' ) }
+					</PopoverMenuItem>
+				</PopoverMenu>
 			</div>
 		</Card>
 	);
