@@ -83,7 +83,7 @@ describe( 'PreMigration', () => {
 		useSiteMigrateInfo.mockReturnValue( {
 			sourceSiteId: 777712,
 			sourceSite: sourceSite as SiteDetails,
-			fetchMigrationEnabledStatus: '',
+			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 		} );
 
@@ -114,7 +114,7 @@ describe( 'PreMigration', () => {
 				return {
 					sourceSiteId: 777712,
 					sourceSite: sourceSite as SiteDetails,
-					fetchMigrationEnabledStatus: '',
+					fetchMigrationEnabledStatus: jest.fn(),
 					isFetchingData: false,
 				};
 			}
@@ -141,7 +141,7 @@ describe( 'PreMigration', () => {
 				return {
 					sourceSiteId: 777712,
 					sourceSite: sourceSite as SiteDetails,
-					fetchMigrationEnabledStatus: '',
+					fetchMigrationEnabledStatus: jest.fn(),
 					isFetchingData: false,
 				};
 			}
@@ -165,7 +165,7 @@ describe( 'PreMigration', () => {
 		useSiteMigrateInfo.mockReturnValue( {
 			sourceSiteId: 777712,
 			sourceSite: sourceSite as SiteDetails,
-			fetchMigrationEnabledStatus: '',
+			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 		} );
 
