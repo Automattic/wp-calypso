@@ -388,7 +388,7 @@ export class ManagedContactDetailsFormFields extends Component<
 						onChange={ this.handleFieldChangeEvent }
 						onBlur={ this.handleBlur( 'last-name' ) }
 						value={ this.props.contactDetails.lastName }
-						name="first-name"
+						name="last-name"
 						eventFormName={ this.props.eventFormName }
 					/>
 				</div>
