@@ -1,16 +1,18 @@
-import { Gridicon } from '@automattic/components';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import TimeSince from 'calypso/components/time-since';
-import { Subscriber } from '../types';
+import { Subscriber } from '../../types';
+import { SubscriberPopover } from './subscriber-popover';
 import { SubscriberProfile } from './subscriber-profile';
 
-export const SubscriberRow = ( {
-	display_name,
-	email_address,
-	openRate,
-	date_subscribed,
-	avatar,
-}: Subscriber ) => {
+type SubscriberRowProps = {
+	onUnsubscribe: ( subscriber: Subscriber ) => void;
+	onView: ( subscriber: Subscriber ) => void;
+	subscriber: Subscriber;
+};
+
+export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: SubscriberRowProps ) => {
+	const { avatar, display_name, email_address, date_subscribed, open_rate } = subscriber;
+
 	return (
 		<li className="subscriber-row row" role="row">
 			<div className="subscriber-list__checkbox-column hidden" role="cell">
@@ -21,13 +23,16 @@ export const SubscriberRow = ( {
 			</span>
 			<span className="subscriber-list__subscription-type-column hidden" role="cell"></span>
 			<span className="subscriber-list__rate-column hidden" role="cell">
-				{ openRate }
+				{ open_rate }
 			</span>
 			<span className="subscriber-list__since-column" role="cell">
 				<TimeSince date={ date_subscribed } dateFormat="LL" />
 			</span>
 			<span className="subscriber-list__menu-column" role="cell">
-				<Gridicon icon="ellipsis" size={ 24 } />
+				<SubscriberPopover
+					onView={ () => onView( subscriber ) }
+					onUnsubscribe={ () => onUnsubscribe( subscriber ) }
+				/>
 			</span>
 		</li>
 	);

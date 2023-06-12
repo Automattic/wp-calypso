@@ -4,10 +4,10 @@ import type { JetpackTarget, SupportedEnvVariables } from '../../types/env-varia
 
 export type TestAccountEnvVariables = Pick<
 	SupportedEnvVariables,
-	'GUTENBERG_EDGE' | 'COBLOCKS_EDGE' | 'TEST_ON_ATOMIC' | 'JETPACK_TARGET'
+	'GUTENBERG_EDGE' | 'GUTENBERG_NIGHTLY' | 'COBLOCKS_EDGE' | 'TEST_ON_ATOMIC' | 'JETPACK_TARGET'
 >;
 
-type Env = 'edge' | 'stable';
+type Env = 'edge' | 'stable' | 'nightly';
 
 export type SiteType = 'simple' | 'atomic';
 
@@ -132,6 +132,18 @@ export function envToFeatureKey( envVariables: TestAccountEnvVariables ): Featur
 		siteType = envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple';
 	}
 
+	let gutenbergVersionType: Env;
+	switch ( true ) {
+		case envVariables.GUTENBERG_NIGHTLY:
+			gutenbergVersionType = 'nightly';
+			break;
+		case envVariables.GUTENBERG_EDGE:
+			gutenbergVersionType = 'edge';
+			break;
+		default:
+			gutenbergVersionType = 'stable';
+	}
+
 	return {
 		// CoBlocks doesn't have any rule for "stable" as it re-uses the regular
 		// Gutenberg stable test site, so we just pass `undefined` if the env
@@ -139,7 +151,7 @@ export function envToFeatureKey( envVariables: TestAccountEnvVariables ): Featur
 		// `defaultCriteria` table smaller (as we don't need to declare the
 		// criteria for CoBlocks stable)
 		coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
-		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+		gutenberg: gutenbergVersionType,
 		siteType: siteType,
 		jetpackTarget: jetpackTarget,
 	};

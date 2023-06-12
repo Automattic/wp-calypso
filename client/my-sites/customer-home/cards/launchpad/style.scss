@@ -1,0 +1,22 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+
+.launchpad-keep-building {
+	padding: 24px;
+
+	.launchpad-keep-building__header {
+		display: flex;
+
+		.launchpad-keep-building__progress-bar-container {
+			margin: 5px;
+		}
+
+		.launchpad-keep-building__title {
+			flex: 1;
+			font-size: $font-title-small;
+			font-weight: 500;
+			font-family: $font-sf-pro-display;
+		}
+	}
+}
