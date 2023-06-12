@@ -80,12 +80,15 @@ const onboarding: Flow = {
 
 			switch ( currentStep ) {
 				case 'domains':
-					return navigate( 'plans' );
+					navigate( 'plans' );
+					return;
 				case 'plans':
-					return navigate( 'siteCreationStep' );
+					navigate( 'siteCreationStep' );
+					return;
 				case 'siteCreationStep':
 					// clearSignupDestinationCookie(); // not sure if this is needed and if it is, where it should go
-					return navigate( 'processing' );
+					navigate( 'processing' );
+					return;
 				case 'processing': {
 					// clearSignupDestinationCookie();
 					if ( providedDependencies?.goToCheckout ) {
@@ -96,18 +99,20 @@ const onboarding: Flow = {
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
 
-						return window.location.assign(
+						window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								( providedDependencies?.siteSlug as string ) ?? ''
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
+						return;
 					}
 
-					return window.location.assign(
+					window.location.assign(
 						`/setup/site-setup/goals?siteSlug=${
 							encodeURIComponent( providedDependencies?.siteSlug as string ) ?? ''
 						}`
 					);
+					return;
 				}
 			}
 
