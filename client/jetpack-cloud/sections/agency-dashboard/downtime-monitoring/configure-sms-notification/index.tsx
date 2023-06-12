@@ -9,11 +9,7 @@ interface Props {
 	verifiedPhoneNumber?: string;
 }
 
-export default function ConfigureSMSNotification( {
-	toggleModal,
-	allPhoneItems,
-	verifiedPhoneNumber,
-}: Props ) {
+export default function ConfigureSMSNotification( { toggleModal, allPhoneItems }: Props ) {
 	const translate = useTranslate();
 
 	const handleAddPhoneClick = () => {
@@ -26,6 +22,7 @@ export default function ConfigureSMSNotification( {
 			{ allPhoneItems.map( ( item ) => (
 				<SMSItemContent key={ item.phoneNumberFull } item={ item } />
 			) ) }
+
 			<Button
 				compact
 				className="configure-contact__button"
