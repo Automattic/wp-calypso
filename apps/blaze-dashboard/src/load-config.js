@@ -11,7 +11,7 @@ productionConfig.features[ 'use-translation-chunks' ] = false;
 
 // Override the redesign feature
 productionConfig.features[ 'promote-post/redesign-i2' ] = true;
-productionConfig.dsp_widget_js_src = 'https://widgets.wp.com/promote-v2/widget.js';
+productionConfig.features[ 'promote-post/widget-i2' ] = true;
 
 // Note: configData is hydrated in Jetpack: projects/packages/blaze/src/class-dashboard-config-data.php - method `get_data`
 // TODO: link to Github when code in Jetpack is merged
