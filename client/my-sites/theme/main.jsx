@@ -159,6 +159,7 @@ class ThemeSheet extends Component {
 	state = {
 		disabledButton: true,
 		showUnlockStyleUpgradeModal: false,
+		isAtomicTransferCompleted: false,
 	};
 
 	scrollToTop = () => {
@@ -172,6 +173,9 @@ class ThemeSheet extends Component {
 		if ( syncActiveTheme ) {
 			themeStartActivationSync( siteId, themeId );
 		}
+
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { disabledButton: this.isLoading() } );
 	}
 
 	componentDidUpdate( prevProps ) {
