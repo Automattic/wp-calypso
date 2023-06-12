@@ -11,7 +11,7 @@ const WooInstallExtSuccessNotice = ( { translate }: LocalizeProps ) => {
 			showDismiss={ false }
 			text={ translate( 'Extensions successfully installed!' ) }
 			isCompact={ false }
-			duration={ 3000 }
+			duration={ 6000 }
 			onDismissClick={ () => {
 				page.replace(
 					removeQueryArgs(
