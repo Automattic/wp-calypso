@@ -1,3 +1,4 @@
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useQuery, useQueries, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
@@ -99,7 +100,7 @@ export function useSubscribersQueries(
 
 	const isLoading = results.some( ( result ) => result.isLoading );
 	const isError = results.some( ( result ) => result.isError );
-	const subscribersData = results.map( ( result ) => result.data );
+	const subscribersData = results.map( ( result ) => result.data ).filter( isValueTruthy );
 
 	return { isLoading, isError, subscribersData };
 }
