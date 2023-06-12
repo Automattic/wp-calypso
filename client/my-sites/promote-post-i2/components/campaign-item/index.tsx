@@ -75,7 +75,9 @@ export default function CampaignItem( props: Props ) {
 	const statusBadge = (
 		<Badge type={ getCampaignStatusBadgeColor( status ) }>{ getCampaignStatus( status ) }</Badge>
 	);
-	const openCampaignLink = 'javascript:void(0);'; // TODO: Provide a valid link for opening campaign details
+	const openCampaignURL = getAdvertisingDashboardPath(
+		`/${ selectedSiteSlug }/campaigns/${ campaign.campaign_id }`
+	);
 
 	function getMobileStats() {
 		const statElements = [];
@@ -134,7 +136,7 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row campaign-item__data-row-mobile">
 					<div className="campaign-item__stats-mobile">{ getMobileStats() }</div>
 					<div className="campaign-item__actions-mobile">
-						<a href={ openCampaignLink } className="campaign-item__view-link">
+						<a href={ openCampaignURL } className="campaign-item__view-link">
 							{ __( 'Open details' ) }
 						</a>
 					</div>
@@ -150,15 +152,7 @@ export default function CampaignItem( props: Props ) {
 			{ /* <td className="campaign-item__impressions">{ formatNumber( impressions_total ) }</td> */ }
 			{ /* <td className="campaign-item__clicks">{ formatNumber( clicks_total ) }</td> */ }
 			<td className="campaign-item__action">
-				{ campaignContainsData && (
-					<Button
-						href={ getAdvertisingDashboardPath(
-							`/${ selectedSiteSlug }/campaigns/${ campaign.campaign_id }`
-						) }
-						isLink
-						icon={ chevronRight }
-					/>
-				) }
+				{ campaignContainsData && <Button href={ openCampaignURL } isLink icon={ chevronRight } /> }
 			</td>
 		</tr>
 	);
