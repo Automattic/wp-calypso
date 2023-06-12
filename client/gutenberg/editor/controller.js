@@ -127,6 +127,11 @@ export const authenticate = ( context, next ) => {
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
+	let isJetpackNonSSO = false;
+	if ( isJetpack && ! isSSOEnabled( state, siteId ) ) {
+		isJetpackNonSSO = true;
+	}
+
 	if ( isDesktop && isJetpack && ! isSSOEnabled( state, siteId ) ) {
 		isAuthenticated = false;
 	}
@@ -154,12 +159,32 @@ export const authenticate = ( context, next ) => {
 	// can cause the browser to not update it before redirecting to WP Admin. To avoid that, we manually generate the
 	// URL from the relevant parts.
 	const origin = window.location.origin;
-	const returnUrl = addQueryArgs(
+	let returnUrl = addQueryArgs(
 		{ ...context.query, authWpAdmin: true },
 		`${ origin }${ context.path }`
 	);
-
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+
+	// If non-SSO Jetpack lets ensure return URL uses the sites native editor, as the dotcom
+	// redirect does not happen.
+	if ( isJetpackNonSSO ) {
+		const postType = determinePostType( context );
+		const postId = getPostID( context );
+
+		if ( postType ) {
+			returnUrl = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
+
+			if ( postId ) {
+				returnUrl = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
+			}
+		} else {
+			returnUrl = `${ siteAdminUrl }site-editor.php`;
+		}
+	}
+
+	// pass along parameters, for example press-this
+	returnUrl = addQueryArgs( context.query, returnUrl );
+
 	const wpAdminLoginUrl = addQueryArgs(
 		{ redirect_to: returnUrl },
 		`${ siteAdminUrl }../wp-login.php`
