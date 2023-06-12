@@ -1,6 +1,6 @@
 import './style.scss';
-import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -220,10 +220,12 @@ export default function PromotedPosts( { tab }: Props ) {
 				/>
 
 				<div className="promote-post-i2__top-bar-buttons">
-					<Button compact className="posts-list-banner__learn-more">
-						<InlineSupportLink supportContext="advertising" showIcon={ false } />
-					</Button>
-					<Button primary onClick={ onClickPromote }>
+					<InlineSupportLink
+						supportContext="advertising"
+						className="button posts-list-banner__learn-more"
+						showIcon={ false }
+					/>
+					<Button isPrimary onClick={ onClickPromote }>
 						{ translate( 'Promote' ) }
 					</Button>
 				</div>
