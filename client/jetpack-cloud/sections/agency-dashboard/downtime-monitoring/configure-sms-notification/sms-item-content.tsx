@@ -5,7 +5,7 @@ import { useState, useRef } from 'react';
 import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { StateMonitorSettingsSMS } from '../../sites-overview/types';
+import type { StateMonitorSettingsSMS } from '../../sites-overview/types';
 
 import '../style.scss';
 
