@@ -19,8 +19,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	rewindId,
 } ) => {
 	const isRoot = path === '/';
-	const isDirectory = item.type === 'dir';
-
+	const hasChildren = item.hasChildren;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 
@@ -31,7 +30,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	} = useBackupContentsQuery( siteId, rewindId, path, fetchContentsOnMount );
 
 	const handleClick = useCallback( () => {
-		if ( ! isDirectory ) {
+		if ( ! hasChildren ) {
 			return;
 		}
 
@@ -41,7 +40,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		}
 
 		setIsOpen( ! isOpen );
-	}, [ isDirectory, isOpen ] );
+	}, [ hasChildren, isOpen ] );
 
 	const renderChildren = () => {
 		if ( isInitialLoading ) {
@@ -67,7 +66,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const renderExpandIcon = () => {
-		if ( ! isDirectory ) {
+		if ( ! hasChildren ) {
 			return null;
 		}
 
