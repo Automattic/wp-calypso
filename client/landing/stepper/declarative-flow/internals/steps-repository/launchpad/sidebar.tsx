@@ -49,7 +49,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	let isDomainSSLProcessing: boolean | null = false;
 	const translate = useTranslate();
 	const site = useSite();
-	const siteIntentOption = site?.options?.site_intent;
+	const siteIntentOption = site?.options?.site_intent ?? null;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
@@ -98,12 +98,26 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
-	const domainUpgradeBadgeUrl = ! site?.plan?.is_free
-		? `/domains/manage/${ siteSlug }`
-		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
-	const showDomainUpgradeBadge =
-		sidebarDomain?.isWPCOMDomain &&
-		! enhancedTasks?.find( ( task ) => task.id === 'domain_upsell' );
+
+	function getDomainUpgradeBadgeUrl() {
+		if ( isBlogOnboardingFlow( siteIntentOption ) ) {
+			return `/setup/${ siteIntentOption }/domains?siteSlug=${ selectedDomain?.domain_name }&domainAndPlanPackage=true`;
+		}
+		return ! site?.plan?.is_free
+			? `/domains/manage/${ siteSlug }`
+			: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+	}
+
+	function showDomainUpgradeBadge() {
+		if ( isBlogOnboardingFlow( siteIntentOption ) ) {
+			return selectedDomain?.is_free;
+		}
+
+		return (
+			sidebarDomain?.isWPCOMDomain &&
+			! enhancedTasks?.find( ( task ) => task.id === 'domain_upsell' )
+		);
+	}
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
@@ -174,8 +188,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 								</>
 							) }
 						</div>
-						{ showDomainUpgradeBadge && (
-							<a href={ domainUpgradeBadgeUrl }>
+						{ showDomainUpgradeBadge() && (
+							<a href={ getDomainUpgradeBadgeUrl() }>
 								<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
 									{ translate( 'Customize' ) }
 								</Badge>

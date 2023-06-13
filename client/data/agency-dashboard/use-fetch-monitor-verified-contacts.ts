@@ -21,6 +21,9 @@ const useFetchMonitorVerfiedContacts = ( isPartnerOAuthTokenLoaded: boolean ) =>
 					emails: contacts?.emails
 						.filter( ( email ) => email.verified )
 						.map( ( email ) => email.email_address ),
+					phoneNumbers: contacts?.phone_numbers
+						?.filter( ( phone ) => phone.verified )
+						.map( ( phone ) => phone.phone_number ),
 				};
 			},
 			enabled: isPartnerOAuthTokenLoaded && isMultipleEmailEnabled,
