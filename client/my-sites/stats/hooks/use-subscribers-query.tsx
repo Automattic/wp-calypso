@@ -85,8 +85,8 @@ export function useSubscribersQueries(
 	quantity: number,
 	dates: string[]
 ): { isLoading: boolean; isError: boolean; subscribersData: SubscribersData[] } {
-	const queryConfigs = dates.map( ( date ) => ( {
-		queryKey: [ 'stats', 'subscribers', siteId, period, quantity, date ],
+	const queryConfigs = dates.map( ( date, index ) => ( {
+		queryKey: [ 'stats', 'subscribers', index, siteId, period, quantity, date ],
 		queryFn: () => querySubscribers( siteId, period, quantity, date ),
 		select: selectSubscribers,
 		staleTime: 1000 * 60 * 5, // 5 minutes

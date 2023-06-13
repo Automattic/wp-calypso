@@ -7,8 +7,10 @@ import {
 	useLocalizeUrl,
 } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
+import { useLayoutEffect, useState } from 'react';
 import SocialLogo from 'social-logos';
-import useAutomatticBrandingNoun from '../hooks/use-automattic-branding-noun';
+import { getAutomatticBrandingNoun } from '../utils';
 import type { FooterProps, PureFooterProps, LanguageOptions } from '../types';
 
 import './style.scss';
@@ -471,10 +473,15 @@ const UniversalNavbarFooter = ( {
 }: FooterProps ) => {
 	const localizeUrl = useLocalizeUrl();
 	const locale = useLocale();
+	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const pathNameWithoutLocale =
 		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
-	const automatticBranding = useAutomatticBrandingNoun();
+	const [ automatticBranding, setAutomatticBranding ] = useState( { article: '', noun: '' } );
+
+	useLayoutEffect( () => {
+		setAutomatticBranding( getAutomatticBrandingNoun( translate ) );
+	}, [ translate ] );
 
 	return (
 		<PureUniversalNavbarFooter

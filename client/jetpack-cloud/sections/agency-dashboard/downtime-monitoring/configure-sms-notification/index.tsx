@@ -6,9 +6,14 @@ import type { StateMonitorSettingsSMS } from '../../sites-overview/types';
 interface Props {
 	toggleModal: () => void;
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
+	verifiedPhoneNumber?: string;
 }
 
-export default function ConfigureSMSNotification( { toggleModal, allPhoneItems }: Props ) {
+export default function ConfigureSMSNotification( {
+	toggleModal,
+	allPhoneItems,
+	verifiedPhoneNumber,
+}: Props ) {
 	const translate = useTranslate();
 
 	const handleAddPhoneClick = () => {
@@ -20,7 +25,11 @@ export default function ConfigureSMSNotification( { toggleModal, allPhoneItems }
 		<div className="configure-contact__card-container">
 			{ allPhoneItems.map( ( item ) => (
 				// TODO: Replace with the correct component
-				<li key={ item.phoneNumberFull }>{ item.phoneNumberFull }</li>
+				<li key={ item.phoneNumberFull }>
+					{ item.phoneNumberFull }
+					{ item.phoneNumberFull === verifiedPhoneNumber && item.verified && ': Verified' }
+					{ ! item.verified && ': Pending' }
+				</li>
 			) ) }
 			<Button
 				compact

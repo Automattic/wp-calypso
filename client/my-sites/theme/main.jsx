@@ -156,8 +156,14 @@ class ThemeSheet extends Component {
 		section: '',
 	};
 
+	/**
+	 * Disabled button checks `isLoading` to determine if a the buttons should be disabled
+	 * Its assigned to state to guarantee the initial state will be the same for SSR
+	 */
 	state = {
+		disabledButton: true,
 		showUnlockStyleUpgradeModal: false,
+		isAtomicTransferCompleted: false,
 	};
 
 	scrollToTop = () => {
@@ -171,11 +177,19 @@ class ThemeSheet extends Component {
 		if ( syncActiveTheme ) {
 			themeStartActivationSync( siteId, themeId );
 		}
+
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { disabledButton: this.isLoading() } );
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.themeId !== prevProps.themeId ) {
 			this.scrollToTop();
+		}
+
+		if ( this.state.disabledButton !== this.isLoading() ) {
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( { disabledButton: this.isLoading() } );
 		}
 	}
 
@@ -950,7 +964,7 @@ class ThemeSheet extends Component {
 					this.onButtonClick();
 				} }
 				primary
-				disabled={ this.isLoading() }
+				disabled={ this.state.disabledButton }
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
@@ -1223,7 +1237,7 @@ class ThemeSheet extends Component {
 		}
 
 		const upsellNudgeClasses = classNames( 'theme__page-upsell-banner', {
-			'theme__page-upsell-disabled': this.isLoading(),
+			'theme__page-upsell-disabled': this.state.disabledButton,
 		} );
 
 		if ( hasWpComThemeUpsellBanner ) {

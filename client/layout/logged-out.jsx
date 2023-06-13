@@ -68,16 +68,14 @@ const LayoutLoggedOut = ( {
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
 	const isJetpackCheckout =
-		sectionName === 'checkout' && window.location.pathname.startsWith( '/checkout/jetpack' );
+		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack' );
 
 	const isJetpackThankYou =
-		sectionName === 'checkout' &&
-		window.location.pathname.startsWith( '/checkout/jetpack/thank-you' );
+		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
-	const isReaderTagPage =
-		sectionName === 'reader' && window.location.pathname.startsWith( '/tag/' );
-	const isReaderSearchPage =
-		sectionName === 'reader' && window.location.pathname.startsWith( '/read/search' );
+	const isReaderTagPage = sectionName === 'reader' && currentRoute.startsWith( '/tag/' );
+
+	const isReaderSearchPage = sectionName === 'reader' && currentRoute.startsWith( '/read/search' );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,

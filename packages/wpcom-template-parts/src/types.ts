@@ -1,4 +1,4 @@
-import type useAutomatticBrandingNoun from './hooks/use-automattic-branding-noun';
+import type { getAutomatticBrandingNoun } from './utils';
 import type { useLocalizeUrl } from '@automattic/i18n-utils';
 
 export interface HeaderProps {
@@ -19,7 +19,7 @@ export interface PureFooterProps extends FooterProps {
 	localizeUrl?: ReturnType< typeof useLocalizeUrl >;
 	locale?: string;
 	isEnglishLocale?: boolean;
-	automatticBranding?: ReturnType< typeof useAutomatticBrandingNoun >;
+	automatticBranding?: ReturnType< typeof getAutomatticBrandingNoun >;
 	languageOptions?: LanguageOptions;
 }
 

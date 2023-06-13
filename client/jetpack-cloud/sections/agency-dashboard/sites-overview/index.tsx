@@ -282,6 +282,7 @@ export default function SitesOverview() {
 								value={ {
 									verifiedContacts: {
 										emails: verifiedContacts?.emails ?? [],
+										phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
 										refetchIfFailed: () => {
 											if ( fetchContactFailed ) {
 												refetchContacts();
