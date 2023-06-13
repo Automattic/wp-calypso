@@ -78,6 +78,7 @@ export default function NotificationSettings( {
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
 	const [ isAddSMSModalOpen, setIsAddSMSModalOpen ] = useState< boolean >( false );
 	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
+	const [ selectedPhone, setSelectedPhone ] = useState< StateMonitorSettingsSMS | undefined >();
 	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
 	const [ initialSettings, setInitialSettings ] = useState< InitialMonitorSettings >( {
 		enableSMSNotification: false,
@@ -151,8 +152,19 @@ export default function NotificationSettings( {
 		}
 	};
 
-	const toggleAddSMSModal = () => {
+	const toggleAddSMSModal = (
+		item?: StateMonitorSettingsSMS,
+		action?: AllowedMonitorContactActions
+	) => {
+		if ( item && action ) {
+			setSelectedPhone( item );
+			setSelectedAction( action );
+		}
 		setIsAddSMSModalOpen( ( isAddSMSModalOpen ) => ! isAddSMSModalOpen );
+		if ( isAddSMSModalOpen ) {
+			setSelectedEmail( undefined );
+			setSelectedAction( undefined );
+		}
 	};
 
 	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
@@ -357,7 +369,9 @@ export default function NotificationSettings( {
 		return (
 			<PhoneNumberEditor
 				toggleModal={ toggleAddSMSModal }
+				selectedPhone={ selectedPhone }
 				allPhoneItems={ allPhoneItems }
+				selectedAction={ selectedAction }
 				setAllPhoneItems={ handleSetAllPhoneItems }
 				setVerifiedPhoneNumber={ ( item ) => handleSetVerifiedItem( 'phone', item ) }
 				sites={ sites }
