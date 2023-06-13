@@ -5,7 +5,7 @@
 
 .dialog__content.themes__auto-loading-homepage-modal {
 	position: relative;
-	padding: 45px 45px 35px;
+	padding: 48px 48px 16px;
 	max-width: 640px;
 	box-sizing: border-box;
 	.auto-loading-homepage-modal__heading {
@@ -13,7 +13,7 @@
 		font-size: $font-headline-small;
 		line-height: 1.1;
 		width: 100%;
-		margin-bottom: 15px;
+		margin-bottom: 16px;
 	}
 }
 
@@ -26,16 +26,16 @@
 	cursor: pointer;
 	color: var(--color-text-subtle);
 	position: absolute;
-	top: 1px;
-	right: 9px;
+	top: 4px;
+	right: 12px;
 }
 
 .auto-loading-homepage-modal__description {
-	margin-bottom: 60px;
+	margin-bottom: 56px;
 }
 
 .auto-loading-homepage-modal__checkbox {
-	margin-bottom: 22px;
+	margin-bottom: 16px;
 	.components-base-control__field {
 		display: flex;
 		align-items: center;
