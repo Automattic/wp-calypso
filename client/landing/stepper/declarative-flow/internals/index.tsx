@@ -137,7 +137,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		if ( ! isReEnteringStep ) {
 			recordStepStart( flow.name, kebabCase( currentStepRoute ), {
 				intent,
-				assembler_source: getAssemblerSource( design ),
+				...( design && { assembler_source: getAssemblerSource( design ) } ),
 			} );
 		}
 
