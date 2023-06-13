@@ -23,7 +23,7 @@ const Blog: Flow = {
 		];
 	},
 
-	useStepNavigation( navigate ) {
+	useStepNavigation( _currentStep, navigate ) {
 		const goBack = () => {
 			return;
 		};
