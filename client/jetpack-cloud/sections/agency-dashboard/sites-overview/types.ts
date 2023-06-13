@@ -288,6 +288,14 @@ export interface MonitorSettingsEmail {
 	verified: boolean;
 }
 
+export interface StateMonitorSettingsSMS {
+	name: string;
+	countryCode: string;
+	phoneNumber: string;
+	phoneNumberFull: string;
+	verified: boolean;
+}
+
 export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
 	isDefault?: boolean;
 }
@@ -299,6 +307,7 @@ export interface RequestVerificationCodeParams {
 	value: string | number;
 	site_ids: Array< number >;
 	country_code?: string;
+	country_numeric_code?: string;
 }
 
 export interface ValidateVerificationCodeParams {
@@ -309,7 +318,7 @@ export interface ValidateVerificationCodeParams {
 
 export interface MonitorContactsResponse {
 	emails: [ { verified: boolean; email_address: string } ];
-	phone_numbers: [ { verified: boolean; phone_number: string } ];
+	sms_numbers: [ { verified: boolean; sms_number: string; country_numeric_code: string } ];
 }
 
 export type MonitorDuration = { label: string; time: number };

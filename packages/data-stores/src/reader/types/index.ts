@@ -144,7 +144,7 @@ export type SiteSubscriptionDetails = {
 	date_subscribed: Date;
 	subscriber_count: number;
 	delivery_methods: SiteSubscriptionDeliveryMethods;
-	payment_details: SiteSubscriptionPaymentDetails;
+	payment_details: SiteSubscriptionPaymentDetails[];
 };
 
 export type SiteSubscriptionPaymentDetails = {

@@ -1826,6 +1826,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@popperjs/core": ^2.10.2
     "@sentry/browser": ^7.54.0
+    "@tanstack/eslint-plugin-query": ^4.29.8
     "@tanstack/react-query": ^4.29.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
@@ -6077,6 +6078,13 @@ __metadata:
   version: 1.1.0
   resolution: "@tannin/sprintf@npm:1.1.0"
   checksum: a1533f6a4ecf346affd4df112f69a839df5c75c58152b0a368d58be298a3bb491f1fa0a4a5c48f5a51d9cc1a0a6d2c0513430556b5388ae5551b8612a2356d11
+  languageName: node
+  linkType: hard
+
+"@tanstack/eslint-plugin-query@npm:^4.29.8":
+  version: 4.29.8
+  resolution: "@tanstack/eslint-plugin-query@npm:4.29.8"
+  checksum: 073913fa080a22446f9639bc232639be8728d9d4df7658cbbfaf3eec274146902d23f68cd7d7102712424b8c308d72efa8d726cf02683998143527343c9f55e5
   languageName: node
   linkType: hard
 
@@ -11117,6 +11125,7 @@ __metadata:
     "@automattic/language-picker": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/lasagna": ^0.6.1
+    "@automattic/launchpad": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@automattic/material-design-icons": "workspace:^"
     "@automattic/mini-cart": "workspace:^"
@@ -31580,6 +31589,7 @@ __metadata:
     "@signal-noise/stylelint-scales": ^2.0.3
     "@storybook/cli": ^7.0.18
     "@storybook/react": ^7.0.18
+    "@tanstack/eslint-plugin-query": ^4.29.8
     "@testing-library/jest-dom": ^5.16.2
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7

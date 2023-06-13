@@ -50,6 +50,8 @@ export default function PostItem( { post }: Props ) {
 	const likeCount = post?.like_count ?? 0;
 	const commentCount = post?.comment_count ?? 0;
 
+	const mobileStatsSeparator = <span className="blazepress-mobile-stats-mid-dot">&#183;</span>;
+
 	return (
 		<tr className="post-item__row">
 			<td className="post-item__post-data">
@@ -87,7 +89,7 @@ export default function PostItem( { post }: Props ) {
 					<div className="post-item__post-title">
 						<div className="post-item__post-subheading-mobile">
 							{ getPostType( post.type ) }
-							<span className="post-item__mid-dot">&#183;</span>
+							{ mobileStatsSeparator }
 							{ postDate }
 						</div>
 						<div className="post-item__post-title-content">{ post?.title || __( 'Untitled' ) }</div>
@@ -99,12 +101,12 @@ export default function PostItem( { post }: Props ) {
 							// translators: %d is number of post's views
 							sprintf( _n( '%d view', '%d views', viewCount ), viewCount )
 						}
-						<span className="post-item__mid-dot">&#183;</span>
+						{ mobileStatsSeparator }
 						{
 							// translators: %d is number of post's likes
 							sprintf( _n( '%d like', '%d likes', likeCount ), likeCount )
 						}
-						<span className="post-item__mid-dot">&#183;</span>
+						{ mobileStatsSeparator }
 						{
 							// translators: %d is number of post's comments
 							sprintf( _n( '%d comment', '%d comments', commentCount ), commentCount )

@@ -26,7 +26,7 @@ function calculateQueryDate( daysToSubtract: number ) {
 // calculate the stats to display in the cards
 function SubscribersOverviewCardStats( subscribersData: SubscribersData[] ) {
 	const getCount = ( index: number ) => {
-		return subscribersData[ index ]?.data[ 0 ]?.subscribers || 0;
+		return subscribersData[ index ]?.data?.[ 0 ]?.subscribers || 0;
 	};
 
 	const overviewCardStats = [
@@ -75,7 +75,7 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 						<CountComparisonCard
 							key={ overviewCardStat.count }
 							heading={ overviewCardStat.heading }
-							count={ overviewCardStat.count }
+							count={ overviewCardStat.count ? parseInt( String( overviewCardStat.count ) ) : null }
 							showValueTooltip
 							icon={ false }
 						/>
