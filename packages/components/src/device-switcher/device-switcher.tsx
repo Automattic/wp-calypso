@@ -77,6 +77,12 @@ const DeviceSwitcher = ( {
 		return clearAnimationEndTimer;
 	}, [ width, height, viewportScale ] );
 
+	const frame = (
+		<div className="device-switcher__frame" ref={ frameRef }>
+			{ children }
+		</div>
+	);
+
 	return (
 		<div
 			className={ classnames( className, 'device-switcher__container', {
@@ -93,12 +99,10 @@ const DeviceSwitcher = ( {
 			) }
 			{ isFixedViewport ? (
 				<FixedViewport device={ device } frameRef={ frameRef }>
-					<div className="device-switcher__frame" ref={ frameRef }>
-						{ children }
-					</div>
+					{ frame }
 				</FixedViewport>
 			) : (
-				children
+				frame
 			) }
 			{ containerResizeListener }
 		</div>
