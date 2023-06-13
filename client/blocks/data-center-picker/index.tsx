@@ -292,7 +292,9 @@ const DataCenterPicker = ( {
 								checked={ isRecommendedDataCenterPicked }
 								onChange={ () => onChange( RECOMMENDED_DATA_CENTER ) }
 							/>
-							<span>{ translate( 'Automatically place my site in the optimal data center' ) }</span>
+							<span>
+								{ translate( 'Automatically place my site in the optimal data center.' ) }
+							</span>
 						</AutomaticFormLabel>
 						<FormRadiosBar
 							isThumbnail
