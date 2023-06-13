@@ -5,19 +5,31 @@ import { Item } from 'calypso/components/breadcrumb';
 import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
+import Pagination from 'calypso/components/pagination';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { EmptyListView } from './components/empty-list-view';
+import { SubscriberList } from './components/subscriber-list/subscriber-list';
+import { usePagination } from './hooks';
 import { useSubscribersQuery } from './queries';
-import { SubscriberList } from './subscriber-list/subscriber-list';
 import './styles.scss';
 
-export const Subscribers = () => {
+type SubscribersProps = {
+	page: number;
+	pageChanged: ( page: number ) => void;
+};
+
+const DEFAULT_PER_PAGE = 10;
+
+export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 	const isSubscribersPageEnabled = config.isEnabled( 'subscribers-page' );
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const initialState = { data: { total: 0, subscribers: [] } };
-	const result = useSubscribersQuery( selectedSiteId );
+	const initialState = { data: { total: 0, subscribers: [], per_page: DEFAULT_PER_PAGE } };
+	const result = useSubscribersQuery( selectedSiteId, page, DEFAULT_PER_PAGE );
 	const {
-		data: { total, subscribers = [] },
+		data: { total, subscribers = [], per_page },
 	} = result && result.data ? result : initialState;
+	const { isFetching } = result;
+	const { pageClickCallback } = usePagination( page, pageChanged, isFetching );
 
 	const navigationItems: Item[] = [
 		{
@@ -51,11 +63,26 @@ export const Subscribers = () => {
 		<Main wideLayout className="subscribers">
 			<DocumentHead title={ translate( 'Subscribers' ) } />
 			<FixedNavigationHeader navigationItems={ navigationItems }></FixedNavigationHeader>
-			<div className="subscribers__header-count">
-				<span className="subscribers__title">{ translate( 'Total' ) }</span>{ ' ' }
-				<span className="subscribers__subscriber-count">{ total }</span>
-			</div>
-			<SubscriberList subscribers={ subscribers } />
+
+			{ total ? (
+				<>
+					<div className="subscribers__header-count">
+						<span className="subscribers__title">{ translate( 'Total' ) }</span>{ ' ' }
+						<span className="subscribers__subscriber-count">{ total }</span>
+					</div>
+					<SubscriberList subscribers={ subscribers } />
+				</>
+			) : (
+				<EmptyListView />
+			) }
+
+			<Pagination
+				className="subscribers__pagination"
+				page={ page }
+				perPage={ per_page }
+				total={ total }
+				pageClick={ pageClickCallback }
+			/>
 		</Main>
 	);
 };

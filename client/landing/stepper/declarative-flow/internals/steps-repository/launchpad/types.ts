@@ -3,7 +3,7 @@ export interface Task {
 	completed: boolean;
 	disabled: boolean;
 	title?: string;
-	subtitle?: string;
+	subtitle?: string | React.ReactNode;
 	badge_text?: string;
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;

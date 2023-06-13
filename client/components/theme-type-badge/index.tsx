@@ -18,12 +18,27 @@ import ThemeTypeBadgeTooltip from './tooltip';
 import './style.scss';
 
 interface Props {
+	canGoToCheckout?: boolean;
+	forcePremium?: boolean;
+	siteId: number | null;
+	siteSlug: string | null;
 	themeId: string;
+	tooltipHeader?: string;
+	tooltipMessage?: string;
 }
 
-const ThemeTypeBadge = ( { themeId }: Props ) => {
+const ThemeTypeBadge = ( {
+	canGoToCheckout,
+	forcePremium,
+	siteId,
+	siteSlug,
+	themeId,
+	tooltipHeader,
+	tooltipMessage,
+}: Props ) => {
 	const translate = useTranslate();
-	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
+	const _type = useSelector( ( state ) => getThemeType( state, themeId ) );
+	const type = forcePremium ? PREMIUM_THEME : _type;
 
 	useEffect( () => {
 		if ( type === FREE_THEME ) {
@@ -38,7 +53,17 @@ const ThemeTypeBadge = ( { themeId }: Props ) => {
 	const badgeContentProps = {
 		className: 'theme-type-badge__content',
 		tooltipClassName: 'theme-type-badge-tooltip',
-		tooltipContent: <ThemeTypeBadgeTooltip themeId={ themeId } />,
+		tooltipContent: (
+			<ThemeTypeBadgeTooltip
+				canGoToCheckout={ canGoToCheckout }
+				forcePremium={ forcePremium }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				themeId={ themeId }
+				tooltipHeader={ tooltipHeader }
+				tooltipMessage={ tooltipMessage }
+			/>
+		),
 		tooltipPosition: 'top',
 	};
 

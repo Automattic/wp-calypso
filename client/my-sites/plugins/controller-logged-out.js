@@ -30,7 +30,7 @@ function getQueryOptions( { path, lang } ) {
 function prefetchPluginsData( queryClient, fetchParams, infinite ) {
 	const queryType = infinite ? 'prefetchInfiniteQuery' : 'prefetchQuery';
 
-	return queryClient[ queryType ]( ...fetchParams );
+	return queryClient[ queryType ]( fetchParams );
 }
 
 const prefetchPaidPlugins = ( queryClient, options ) =>

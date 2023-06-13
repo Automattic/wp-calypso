@@ -56,12 +56,6 @@ $design-button-primary-color: rgb(17, 122, 201);
 			flex-grow: 1;
 			text-align: start;
 
-			&.anchor-fm-design-picker__header {
-				flex-basis: 100%;
-				margin-top: 80px;
-				margin-bottom: 64px;
-			}
-
 			.formatted-header__title {
 				@include onboarding-font-recoleta;
 				color: $gray-100;

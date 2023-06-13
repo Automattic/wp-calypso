@@ -17,18 +17,62 @@ import {
 	isMarketplaceThemeSubscribed,
 	getMarketplaceThemeSubscriptionPrices,
 } from 'calypso/state/themes/selectors';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
 interface Props {
+	canGoToCheckout?: boolean;
+	forcePremium?: boolean;
+	siteId: number | null;
+	siteSlug: string | null;
 	themeId: string;
+	tooltipHeader?: string;
+	tooltipMessage?: string;
 }
 
-const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
+const ThemeTypeBadgeTooltipUpgradeLink = ( {
+	canGoToCheckout,
+	children,
+	plan,
+	siteSlug,
+}: {
+	canGoToCheckout: boolean;
+	children?: React.ReactNode[];
+	plan: string;
+	siteSlug: string | null;
+} ) => {
+	if ( ! canGoToCheckout || ! siteSlug ) {
+		return <>{ children }</>;
+	}
+
+	const goToCheckout = () => {
+		recordTracksEvent( 'calypso_theme_tooltip_upgrade_nudge_click', { plan } );
+
+		const params = new URLSearchParams();
+		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
+
+		window.location.href = `/checkout/${ encodeURIComponent(
+			siteSlug
+		) }/${ plan }?${ params.toString() }`;
+	};
+
+	return (
+		<LinkButton isLink onClick={ () => goToCheckout() }>
+			{ children }
+		</LinkButton>
+	);
+};
+
+const ThemeTypeBadgeTooltip = ( {
+	canGoToCheckout = true,
+	forcePremium,
+	siteId,
+	siteSlug,
+	themeId,
+	tooltipHeader,
+	tooltipMessage,
+}: Props ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
-	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
+	const _type = useSelector( ( state ) => getThemeType( state, themeId ) );
+	const type = forcePremium ? PREMIUM_THEME : _type;
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
@@ -59,6 +103,10 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 	}, [ themeId ] );
 
 	const getHeader = (): string | null => {
+		if ( tooltipHeader ) {
+			return tooltipHeader;
+		}
+
 		const headers = {
 			[ PREMIUM_THEME ]: translate( 'Premium theme' ),
 			[ DOT_ORG_THEME ]: translate( 'Community theme', {
@@ -76,21 +124,10 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 		return headers[ type ];
 	};
 
-	const goToCheckout = ( plan: string ) => {
-		recordTracksEvent( 'calypso_theme_tooltip_upgrade_nudge_click', { plan } );
-
-		if ( siteSlug ) {
-			const params = new URLSearchParams();
-			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
-
-			window.location.href = `/checkout/${ encodeURIComponent(
-				siteSlug
-			) }/${ plan }?${ params.toString() }`;
-		}
-	};
-
 	let message;
-	if ( type === PREMIUM_THEME ) {
+	if ( tooltipMessage ) {
+		message = tooltipMessage;
+	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );
 		} else if ( isIncludedCurrentPlan ) {
@@ -99,7 +136,13 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 			message = createInterpolateElement(
 				translate( 'This premium theme is included in the <Link>Premium plan</Link>.' ),
 				{
-					Link: <LinkButton isLink onClick={ () => goToCheckout( 'premium' ) } />,
+					Link: (
+						<ThemeTypeBadgeTooltipUpgradeLink
+							canGoToCheckout={ canGoToCheckout }
+							plan="premium"
+							siteSlug={ siteSlug }
+						/>
+					),
 				}
 			);
 		}
@@ -111,7 +154,13 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 						'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
 					),
 					{
-						Link: <LinkButton isLink onClick={ () => goToCheckout( 'business' ) } />,
+						Link: (
+							<ThemeTypeBadgeTooltipUpgradeLink
+								canGoToCheckout={ canGoToCheckout }
+								plan="business"
+								siteSlug={ siteSlug }
+							/>
+						),
 					}
 			  );
 	} else if ( type === WOOCOMMERCE_THEME ) {
@@ -120,7 +169,13 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 			: createInterpolateElement(
 					translate( 'This WooCommerce theme is included in the <Link>Business plan</Link>.' ),
 					{
-						Link: <LinkButton isLink onClick={ () => goToCheckout( 'business' ) } />,
+						Link: (
+							<ThemeTypeBadgeTooltipUpgradeLink
+								canGoToCheckout={ canGoToCheckout }
+								plan="business"
+								siteSlug={ siteSlug }
+							/>
+						),
 					}
 			  );
 	} else if ( type === MARKETPLACE_THEME ) {
@@ -134,7 +189,13 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 					'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
 				),
 				{
-					link: <LinkButton isLink onClick={ () => goToCheckout( 'business' ) } />,
+					link: (
+						<ThemeTypeBadgeTooltipUpgradeLink
+							canGoToCheckout={ canGoToCheckout }
+							plan="business"
+							siteSlug={ siteSlug }
+						/>
+					),
 				}
 			);
 		} else if ( ! isPurchased && isIncludedCurrentPlan ) {
@@ -161,7 +222,13 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 					}
 				) as string,
 				{
-					Link: <LinkButton isLink onClick={ () => goToCheckout( 'business' ) } />,
+					Link: (
+						<ThemeTypeBadgeTooltipUpgradeLink
+							canGoToCheckout={ canGoToCheckout }
+							plan="business"
+							siteSlug={ siteSlug }
+						/>
+					),
 				}
 			);
 		}
