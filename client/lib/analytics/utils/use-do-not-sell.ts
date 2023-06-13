@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import isRegionInCcpaZone from './is-region-in-ccpa-zone';
-import { refreshCountryCodeCookieGdpr, setTrackingPrefs } from '.';
+import { getTrackingPrefs, refreshCountryCodeCookieGdpr, setTrackingPrefs } from '.';
 
 export default () => {
 	const [ shouldSeeDoNotSell, setShouldSeeDoNotSell ] = useState( false );
@@ -27,6 +27,11 @@ export default () => {
 
 		return () => controller.abort();
 	}, [ setShouldSeeDoNotSell ] );
+
+	useEffect( () => {
+		// We set initial `isDoNotSell` via hook to make sure it run only on client side (when SSR)
+		setIsDoNotSell( ! getTrackingPrefs().buckets.advertising );
+	}, [] );
 
 	const setUserAdvertisingOptOut = useCallback(
 		( isOptedOut: boolean ) => {
