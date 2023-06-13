@@ -7,7 +7,7 @@ import type {
 	AllowedMonitorContactActions,
 } from '../../sites-overview/types';
 
-import './style.scss';
+import '../style.scss';
 
 interface Props {
 	toggleModal: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;

@@ -38,7 +38,7 @@ const SubscriberPopover = ( { onUnsubscribe, onView }: SubscriberPopoverProps ) 
 				className="subscriber-popover"
 				focusOnShow={ false }
 			>
-				<PopoverMenuItem onClick={ onView }>
+				<PopoverMenuItem onClick={ onView } className="hidden">
 					<Icon icon={ seen } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 					{ translate( 'View' ) }
 				</PopoverMenuItem>

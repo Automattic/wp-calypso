@@ -184,8 +184,8 @@ export const HelpCenterContactForm = () => {
 		supportSite = currentSite as HelpCenterSite;
 	}
 
-	const [ debouncedMessage ] = useDebounce( message || '', 1000 );
-	const [ debouncedSubject ] = useDebounce( subject || '', 1000 );
+	const [ debouncedMessage ] = useDebounce( message || '', 3000 );
+	const [ debouncedSubject ] = useDebounce( subject || '', 3000 );
 
 	const enableGPTResponse =
 		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
@@ -462,11 +462,7 @@ export const HelpCenterContactForm = () => {
 		jpSearchAiQueryText = `${ debouncedSubject }\n\n${ debouncedMessage }`;
 	}
 
-	const {
-		isFetching: isFetchingGPTResponse,
-		isError: isGPTError,
-		data: gptResponse,
-	} = useJetpackSearchAIQuery( {
+	const { isFetching: isFetchingGPTResponse, isError: isGPTError } = useJetpackSearchAIQuery( {
 		siteId: '9619154',
 		query: jpSearchAiQueryText,
 		stopAt: 'response',
@@ -552,7 +548,10 @@ export const HelpCenterContactForm = () => {
 						/>
 					) }
 				</section>
-				{ gptResponse?.response && [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
+				{ ! isFetchingGPTResponse &&
+					showingGPTResponse &&
+					[ 'CHAT', 'EMAIL' ].includes( mode ) &&
+					getHEsTraySection() }
 			</div>
 		);
 	}

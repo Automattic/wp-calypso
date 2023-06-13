@@ -56,7 +56,7 @@ export default function ( pageBase = '/' ) {
 	statsPage( '/stats/insights/:site', insights );
 
 	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
-		// Stat Subscribers Page (do not cofuse with people/subscribers/)
+		// Stat Subscribers Page (do not confuse with people/subscribers/)
 		statsPage( '/stats/subscribers/:site', subscribers );
 	}
 

@@ -23,7 +23,7 @@ interface Props {
 	importer: Importer;
 	siteItem: SiteDetails | null | undefined;
 	siteSlug: string;
-	siteAnalyzedData: UrlData;
+	siteAnalyzedData: UrlData | null;
 	stepNavigator?: StepNavigator;
 }
 

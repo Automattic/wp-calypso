@@ -20,9 +20,7 @@ export default function () {
 	} );
 
 	page( '/marketing/ultimate-traffic-guide*', function redirectToWPCoursesPage() {
-		window.location.replace(
-			'https://wpcourses.com/course/intro-to-search-engine-optimization-seo/'
-		);
+		window.location.replace( 'https://wordpress.com/learn/courses/intro-to-seo/' );
 	} );
 
 	const paths = [

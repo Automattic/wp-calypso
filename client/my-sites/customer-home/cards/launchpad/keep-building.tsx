@@ -9,10 +9,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 interface LaunchpadKeepBuildingProps {
-	siteSlug: string;
+	siteSlug: string | null;
 }
 
-const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ) => {
+const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.Element => {
 	const translate = useTranslate();
 	const {
 		data: { checklist },
