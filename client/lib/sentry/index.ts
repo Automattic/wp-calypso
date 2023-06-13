@@ -120,7 +120,7 @@ function beforeBreadcrumb( breadcrumb: SentryApi.Breadcrumb ): SentryApi.Breadcr
 
 interface SentryOptions {
 	beforeSend: ( e: SentryApi.Event ) => SentryApi.Event | null;
-	userId?: number;
+	// userId?: number;
 }
 export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 	// Make sure we don't throw
