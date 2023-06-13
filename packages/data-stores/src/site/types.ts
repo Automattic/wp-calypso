@@ -68,7 +68,6 @@ export interface CreateSiteParams {
 		use_patterns?: boolean;
 		selected_features?: FeatureId[];
 		wpcom_public_coming_soon?: number;
-		anchor_fm_podcast_id?: string;
 		is_blank_canvas?: boolean;
 		is_videopress_initial_purchase?: boolean;
 	};
@@ -172,7 +171,6 @@ export interface SiteDetailsOptions {
 	advanced_seo_title_formats?: string[];
 	ak_vp_bundle_enabled?: boolean | null;
 	allowed_file_types?: string[];
-	anchor_podcast?: boolean;
 	background_color?: boolean;
 	blog_public?: number;
 	created_at?: string;

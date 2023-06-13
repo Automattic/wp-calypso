@@ -258,36 +258,6 @@ const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action )
 	return state;
 };
 
-const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_ID' ) {
-		return action.anchorPodcastId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const anchorEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_EPISODE_ID' ) {
-		return action.anchorEpisodeId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const anchorSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_SPOTIFY_URL' ) {
-		return action.anchorSpotifyUrl;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -582,9 +552,6 @@ const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, acti
 };
 
 const reducer = combineReducers( {
-	anchorPodcastId,
-	anchorEpisodeId,
-	anchorSpotifyUrl,
 	domain,
 	domainCartItem,
 	domainSearch,

@@ -32,7 +32,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'advanced_seo_front_page_description',
 	'advanced_seo_title_formats',
 	'allowed_file_types',
-	'anchor_podcast',
 	'created_at',
 	'default_comment_status',
 	'default_ping_status',

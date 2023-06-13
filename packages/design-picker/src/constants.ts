@@ -37,23 +37,6 @@ export const FONT_PAIRINGS = [
 ] as const;
 
 /**
- * Pairings of fontFamilies for AnchorFM onboarding
- *
- * To get the name of the font for display, use `getFontTitle( fontName )`.
- * (defined in the utils/ folder).
- */
-export const ANCHORFM_FONT_PAIRINGS = [
-	{
-		headings: 'Roboto',
-		base: 'Roboto',
-	},
-	{
-		headings: 'Raleway',
-		base: 'Cabin',
-	},
-] as const;
-
-/**
  * mShot options
  */
 export const DEFAULT_VIEWPORT_WIDTH = 1600;

@@ -31,7 +31,7 @@ import NavItem from './nav-item';
  */
 import './style.scss';
 
-const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodcastingSite ) => {
+const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
@@ -39,7 +39,7 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodca
 			location: 'checklist_show',
 			step_name: task.id,
 			completed: task.isCompleted,
-			is_podcasting_site: isPodcastingSite,
+			is_podcasting_site: false,
 		} )
 	);
 
@@ -60,15 +60,7 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodca
 	}
 };
 
-const skipTask = (
-	dispatch,
-	skipCurrentView,
-	task,
-	tasks,
-	siteId,
-	setIsLoading,
-	isPodcastingSite
-) => {
+const skipTask = ( dispatch, skipCurrentView, task, tasks, siteId, setIsLoading ) => {
 	const isLastTask = tasks.filter( ( t ) => ! t.isCompleted ).length === 1;
 
 	if ( isLastTask ) {
@@ -85,12 +77,12 @@ const skipTask = (
 			checklist_name: 'new_blog',
 			site_id: siteId,
 			step_name: task.id,
-			is_podcasting_site: isPodcastingSite,
+			is_podcasting_site: false,
 		} )
 	);
 };
 
-const trackTaskDisplay = ( dispatch, task, siteId, isPodcastingSite ) => {
+const trackTaskDisplay = ( dispatch, task, siteId ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_display', {
 			checklist_name: 'new_blog',
@@ -98,7 +90,7 @@ const trackTaskDisplay = ( dispatch, task, siteId, isPodcastingSite ) => {
 			step_name: task.id,
 			completed: task.isCompleted,
 			location: 'home',
-			is_podcasting_site: isPodcastingSite,
+			is_podcasting_site: false,
 		} )
 	);
 };
@@ -107,7 +99,6 @@ const SiteSetupList = ( {
 	emailVerificationStatus,
 	firstIncompleteTask,
 	isEmailUnverified,
-	isPodcastingSite,
 	isFSEActive,
 	menusUrl,
 	siteId,
@@ -195,7 +186,7 @@ const SiteSetupList = ( {
 				siteCount,
 			} );
 			setCurrentTask( newCurrentTask );
-			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
+			trackTaskDisplay( dispatch, newCurrentTask, siteId, false );
 		}
 	}, [
 		currentTaskId,
@@ -203,7 +194,6 @@ const SiteSetupList = ( {
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
-		isPodcastingSite,
 		menusUrl,
 		siteId,
 		siteSlug,
@@ -241,24 +231,10 @@ const SiteSetupList = ( {
 					currentTask={ currentTask }
 					skipTask={ () => {
 						setTaskIsManuallySelected( false );
-						skipTask(
-							dispatch,
-							skipCurrentView,
-							currentTask,
-							tasks,
-							siteId,
-							setIsLoading,
-							isPodcastingSite
-						);
+						skipTask( dispatch, skipCurrentView, currentTask, tasks, siteId, setIsLoading, false );
 					} }
 					startTask={ () =>
-						startTask(
-							dispatch,
-							currentTask,
-							siteId,
-							advanceToNextIncompleteTask,
-							isPodcastingSite
-						)
+						startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask, false )
 					}
 				/>
 			) }
@@ -318,17 +294,11 @@ const SiteSetupList = ( {
 												tasks,
 												siteId,
 												setIsLoading,
-												isPodcastingSite
+												false
 											);
 										} }
 										startTask={ () =>
-											startTask(
-												dispatch,
-												currentTask,
-												siteId,
-												advanceToNextIncompleteTask,
-												isPodcastingSite
-											)
+											startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask, false )
 										}
 										useAccordionLayout={ useAccordionLayout }
 									/>
@@ -366,7 +336,6 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
 		isFSEActive,
-		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getCustomizerUrl( state, siteId, null, null, 'add-menu' ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

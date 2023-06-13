@@ -69,11 +69,6 @@ interface Props {
 	postType: T.PostType;
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
 	pressThisData: any;
-	anchorFmData: {
-		anchor_podcast: string | undefined;
-		anchor_episode: string | undefined;
-		spotify_url: string | undefined;
-	};
 	siteAdminUrl: T.URL | null;
 	parentPostId: T.PostId;
 	stripeConnectSuccess: 'gutenberg' | null;
@@ -777,7 +772,6 @@ const mapStateToProps = (
 		creatingNewHomepage,
 		editorType = 'post',
 		stripeConnectSuccess,
-		anchorFmData,
 		showDraftPostModal,
 		pressThisData,
 		blockEditorSettings,
@@ -802,7 +796,6 @@ const mapStateToProps = (
 		'environment-id': config( 'env_id' ),
 		'new-homepage': creatingNewHomepage,
 		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
-		...anchorFmData,
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 		showDraftPostModal,
 		...pressThisData,

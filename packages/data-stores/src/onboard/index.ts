@@ -32,10 +32,6 @@ export function register(): typeof STORE_KEY {
 		reducer,
 		selectors,
 		persist: [
-			'anchorPodcastId',
-			'anchorEpisodeId',
-			'anchorSpotifyUrl',
-			'domainTransferNames',
 			'domain',
 			'domainSearch',
 			'domainForm',

@@ -304,7 +304,6 @@ export interface DesignPickerProps {
 	highResThumbnails?: boolean;
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
-	anchorHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
 	recommendedCategorySlug: string | null;
 	hideFullScreenPreview?: boolean;
@@ -332,7 +331,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	className,
 	highResThumbnails = false,
 	categoriesHeading,
-	anchorHeading,
 	categoriesFooter,
 	categorization,
 	hideFullScreenPreview,
@@ -362,7 +360,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				'design-picker--has-categories': hasCategories,
 			} ) }
 		>
-			{ anchorHeading }
 			{ categorization && hasCategories && (
 				<DesignPickerCategoryFilter
 					categories={ categorization.categories }

@@ -37,9 +37,6 @@ export interface CreateSiteBaseActionParameters {
 
 export interface CreateSiteActionParameters extends CreateSiteBaseActionParameters {
 	bearerToken?: string;
-	anchorFmPodcastId: string | null;
-	anchorFmEpisodeId: string | null;
-	anchorFmSpotifyUrl: string | null;
 }
 
 export function* createVideoPressSite( {
@@ -138,9 +135,6 @@ export function* createSite( {
 	languageSlug,
 	bearerToken = undefined,
 	visibility = Visibility.PublicNotIndexed,
-	anchorFmPodcastId = null,
-	anchorFmEpisodeId = null,
-	anchorFmSpotifyUrl = null,
 }: CreateSiteActionParameters ) {
 	const { domain, selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State =
 		yield select( STORE_KEY, 'getState' );
@@ -171,15 +165,6 @@ export function* createSite( {
 			use_patterns: true,
 			selected_features: selectedFeatures,
 			wpcom_public_coming_soon: 1,
-			...( anchorFmPodcastId && {
-				anchor_fm_podcast_id: anchorFmPodcastId,
-			} ),
-			...( anchorFmEpisodeId && {
-				anchor_fm_episode_id: anchorFmEpisodeId,
-			} ),
-			...( anchorFmSpotifyUrl && {
-				anchor_fm_spotify_url: anchorFmSpotifyUrl,
-			} ),
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
@@ -319,21 +304,6 @@ export const setSiteLogo = ( siteLogo: string | null ) => ( {
 export const setSiteAccentColor = ( siteAccentColor: string ) => ( {
 	type: 'SET_SITE_ACCENT_COLOR' as const,
 	siteAccentColor,
-} );
-
-export const setAnchorPodcastId = ( anchorPodcastId: string | null ) => ( {
-	type: 'SET_ANCHOR_PODCAST_ID' as const,
-	anchorPodcastId,
-} );
-
-export const setAnchorEpisodeId = ( anchorEpisodeId: string | null ) => ( {
-	type: 'SET_ANCHOR_PODCAST_EPISODE_ID' as const,
-	anchorEpisodeId,
-} );
-
-export const setAnchorSpotifyUrl = ( anchorSpotifyUrl: string | null ) => ( {
-	type: 'SET_ANCHOR_PODCAST_SPOTIFY_URL' as const,
-	anchorSpotifyUrl,
 } );
 
 export function updatePlan( planProductId: number ) {
@@ -512,9 +482,6 @@ export type OnboardAction = ReturnType<
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof setSiteGeoAffinity
-	| typeof setAnchorPodcastId
-	| typeof setAnchorEpisodeId
-	| typeof setAnchorSpotifyUrl
 	| typeof startOnboarding
 	| typeof setIntent
 	| typeof setStartingPoint

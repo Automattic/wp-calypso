@@ -786,7 +786,7 @@
 			},
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
-			"features": [ "anchorfm" ]
+			"features": []
 		},
 		{
 			"title": "Riley",
@@ -799,7 +799,7 @@
 			},
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
-			"features": [ "anchorfm" ]
+			"features": []
 		},
 		{
 			"title": "Balan",
@@ -854,7 +854,7 @@
 			},
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
-			"features": [ "anchorfm" ]
+			"features": []
 		},
 		{
 			"title": "Blank Canvas",

@@ -46,27 +46,6 @@ import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import './style.scss';
 
-/*
- * Parses the `anchor_podcast` parameter from a given URL.
- * Returns `true` if provided URL is an anchor FM signup URL.
- */
-function getIsAnchorFmSignup( urlString ) {
-	if ( ! urlString ) {
-		return false;
-	}
-
-	// Assemble search params if there is actually a query in the string.
-	const queryParamIndex = urlString.indexOf( '?' );
-	if ( queryParamIndex === -1 ) {
-		return false;
-	}
-	const searchParams = new URLSearchParams(
-		decodeURIComponent( urlString.slice( queryParamIndex ) )
-	);
-	const anchorFmPodcastId = searchParams.get( 'anchor_podcast' );
-	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
-}
-
 class Login extends Component {
 	static propTypes = {
 		disableAutoFocus: PropTypes.bool,
@@ -285,7 +264,6 @@ class Login extends Component {
 			translate,
 			twoStepNonce,
 			fromSite,
-			isAnchorFmSignup,
 			isPartnerSignup,
 			isWoo,
 			action,
@@ -513,14 +491,6 @@ class Login extends Component {
 						darkColorScheme
 					/>
 				</div>
-			);
-		} else if ( isAnchorFmSignup ) {
-			postHeader = (
-				<p className="login__header-subtitle">
-					{ translate(
-						'Log in to your WordPress.com account to transcribe and save your Anchor.fm podcasts.'
-					) }
-				</p>
 			);
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
@@ -774,9 +744,6 @@ export default connect(
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-		isAnchorFmSignup: getIsAnchorFmSignup(
-			get( getCurrentQueryArguments( state ), 'redirect_to' )
-		),
 		isFromMigrationPlugin: startsWith(
 			get( getCurrentQueryArguments( state ), 'from' ),
 			'wpcom-migration'
