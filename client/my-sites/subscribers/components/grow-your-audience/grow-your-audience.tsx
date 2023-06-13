@@ -1,6 +1,7 @@
 import { Card, CardBody, Icon } from '@wordpress/components';
 import { chartBar, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { SectionContainer } from 'calypso/components/section';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import './styles.scss';
@@ -36,7 +37,7 @@ const GrowYourAudience = () => {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	return (
-		<div className="grow-your-audience">
+		<SectionContainer className="grow-your-audience">
 			<h2 className="grow-your-audience__title">{ translate( 'Grow your audience' ) }</h2>
 
 			<div className="grow-your-audience__cards">
@@ -67,7 +68,7 @@ const GrowYourAudience = () => {
 					url={ `https://wordpress.com/earn/${ selectedSiteSlug }` }
 				/>
 			</div>
-		</div>
+		</SectionContainer>
 	);
 };
 

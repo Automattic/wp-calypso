@@ -2,24 +2,11 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
-.subscribers {
-	.subscribers__main {
-		margin-bottom: 68px;
-	}
+.subscribers.main {
+	padding: 0 32px;
 
-	.subscribers__footer {
-		background-color: $studio-gray-0;
-
-		.subscribers__footer-main {
-			padding-bottom: 0 !important;
-		}
-	}
-
-	.subscribers__main,
-	.subscribers__footer {
-		padding-bottom: 0 !important;
-		padding-left: 32px;
-		padding-right: 32px;
+	.subscribers__section {
+		margin-bottom: 64px;
 	}
 }
 

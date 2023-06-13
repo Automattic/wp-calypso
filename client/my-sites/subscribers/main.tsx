@@ -61,11 +61,11 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 	}
 
 	return (
-		<div className="subscribers">
-			<Main wideLayout className="subscribers__main">
-				<DocumentHead title={ translate( 'Subscribers' ) } />
-				<FixedNavigationHeader navigationItems={ navigationItems }></FixedNavigationHeader>
+		<Main wideLayout className="subscribers">
+			<DocumentHead title={ translate( 'Subscribers' ) } />
+			<FixedNavigationHeader navigationItems={ navigationItems }></FixedNavigationHeader>
 
+			<section className="subscribers__section">
 				{ total ? (
 					<>
 						<div className="subscribers__header-count">
@@ -85,15 +85,9 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 					total={ total }
 					pageClick={ pageClickCallback }
 				/>
-			</Main>
+			</section>
 
-			{ !! total && (
-				<div className="subscribers__footer">
-					<Main wideLayout className="subscribers__footer-main">
-						<GrowYourAudience />
-					</Main>
-				</div>
-			) }
-		</div>
+			{ !! total && <GrowYourAudience /> }
+		</Main>
 	);
 };
