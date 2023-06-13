@@ -10,6 +10,13 @@ const REGEXP_SERIALIZED_QUERY = /^(?:(\d+):)?(.*)$/;
 // we normalize to taxonomies.theme_feature to be consistent with results from WPCOM.)
 const SEARCH_TAXONOMIES = [ 'feature' ];
 
+// Used for client-side delisting of taxonomy terms. Note that these taxonomy terms often
+// have functional purposes, which is why they cannot be removed in the endpoint payload.
+//
+// As a rule of thumb, only add terms here if you want to hide them visually in the UI.
+// Otherwise, they should be delisted in the backend.
+const DELISTED_TAXONOMY_TERM_SLUGS = [ 'auto-loading-homepage' ];
+
 /**
  * Utility
  */
@@ -241,4 +248,33 @@ export function isThemeMatchingQuery( query, theme ) {
 export function getThemeTaxonomySlugs( theme, taxonomy ) {
 	const items = get( theme, [ 'taxonomies', taxonomy ], [] );
 	return items.map( ( { slug } ) => slug );
+}
+
+/**
+ * Returns true if a taxonomy term slug is delisted.
+ *
+ * @param  {string}  slug   The term slug to check for delisting
+ * @returns {boolean}       True if term slug is delisted
+ */
+export function isDelistedTaxonomyTermSlug( slug ) {
+	return DELISTED_TAXONOMY_TERM_SLUGS.includes( slug );
+}
+
+/**
+ * Returns the list of available theme filters, excluding the delisted taxonomy terms.
+ *
+ * @param {Object}  filters A list of filters.
+ * @returns {Object}        A nested list of theme filters, keyed by term slug
+ */
+export function filterDelistedTaxonomyTermSlugs( filters ) {
+	const result = {};
+	for ( const taxonomy in filters ) {
+		result[ taxonomy ] = Object.fromEntries(
+			Object.entries( filters[ taxonomy ] || {} ).filter(
+				( [ slug ] ) => ! isDelistedTaxonomyTermSlug( slug )
+			)
+		);
+	}
+
+	return result;
 }

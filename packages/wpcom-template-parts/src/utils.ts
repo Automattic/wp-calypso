@@ -1,7 +1,6 @@
-import { useTranslate } from 'i18n-calypso';
+import { translate as translateMethod } from 'i18n-calypso';
 
-const useAutomatticBrandingNoun = () => {
-	const translate = useTranslate();
+export const getAutomatticBrandingNoun = ( translate: typeof translateMethod ) => {
 	const automatticRoger = [
 		translate( 'An Automattic brainchild' ),
 		translate( 'An Automattic contraption' ),
@@ -23,5 +22,3 @@ const useAutomatticBrandingNoun = () => {
 		noun: branding.split( 'Automattic' )[ 1 ],
 	};
 };
-
-export default useAutomatticBrandingNoun;

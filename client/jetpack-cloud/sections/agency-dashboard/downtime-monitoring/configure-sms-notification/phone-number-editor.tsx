@@ -24,6 +24,7 @@ interface Props {
 interface FormPhoneInputChangeResult {
 	name: string;
 	countryCode: string;
+	countryNumericCode: string;
 	phoneNumber: string;
 	phoneNumberFull: string;
 	verificationCode?: string;
@@ -54,6 +55,7 @@ export default function PhoneNumberEditor( {
 	const [ phoneItem, setPhoneItem ] = useState< FormPhoneInputChangeResult >( {
 		name: '',
 		countryCode: '',
+		countryNumericCode: '',
 		phoneNumber: '',
 		phoneNumberFull: '',
 	} );
@@ -83,6 +85,7 @@ export default function PhoneNumberEditor( {
 			value: Number( phoneItem.phoneNumber ),
 			site_ids: sites?.map( ( site ) => site.blog_id ) ?? [],
 			country_code: phoneItem.countryCode,
+			country_numeric_code: phoneItem.countryNumericCode,
 		} );
 	};
 
@@ -180,6 +183,7 @@ export default function PhoneNumberEditor( {
 		phoneNumber: string;
 		countryData: {
 			code: string;
+			numeric_code: string;
 		};
 		isValid: boolean;
 		validation: {
@@ -195,6 +199,7 @@ export default function PhoneNumberEditor( {
 			phoneNumberFull,
 			phoneNumber,
 			countryCode: countryData.code,
+			countryNumericCode: countryData.numeric_code,
 		} ) );
 		if ( isValid ) {
 			setValidationError( {
