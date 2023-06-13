@@ -167,7 +167,7 @@ const DataCenterPicker = ( {
 		return (
 			<div className="data-center-picker">
 				<FormHeadingContainer>
-					<FormHeading>{ translate( 'Primary data center' ) }</FormHeading>
+					<FormHeading>{ translate( 'Pick your primary data center' ) }</FormHeading>
 				</FormHeadingContainer>
 				<FormDescription className="data-center-picker__description">
 					{ translate(
