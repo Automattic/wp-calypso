@@ -1,9 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import type { FC } from 'react';
 
-export default function TosText() {
+interface TosTextProps {
+	isAkismetPurchase: boolean;
+}
+
+const TosText: FC< TosTextProps > = ( { isAkismetPurchase } ) => {
 	const translate = useTranslate();
 	return (
 		<>
@@ -14,7 +18,7 @@ export default function TosText() {
 						tosLink: (
 							<a
 								href={
-									isAkismetCheckout()
+									isAkismetPurchase
 										? localizeUrl( 'https://akismet.com/tos/' )
 										: localizeUrl( 'https://wordpress.com/tos/' )
 								}
@@ -33,4 +37,6 @@ export default function TosText() {
 			) }
 		</>
 	);
-}
+};
+
+export default TosText;
