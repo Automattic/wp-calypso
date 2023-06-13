@@ -458,7 +458,7 @@ export const getPluginStatusesByType = createSelector(
  */
 export const isPluginActive = createSelector(
 	( state: AppState, siteId: number, pluginSlug: string ) => {
-		const sitePlugin = getAllPluginsIndexedBySiteId( state )?.[ siteId ]?.[ pluginSlug ];
+		const sitePlugin = getAllPluginsIndexedBySiteId( state )[ siteId ]?.[ pluginSlug ];
 
 		if ( ! sitePlugin ) {
 			return false;
