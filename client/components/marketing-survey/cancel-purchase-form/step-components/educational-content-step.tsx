@@ -338,10 +338,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 												/>
 											),
 											seo: (
-												<Button
-													href="https://wpcourses.com/course/intro-to-search-engine-optimization-seo/"
-													isLink
-												/>
+												<Button href="https://wordpress.com/learn/courses/intro-to-seo/" isLink />
 											),
 										},
 									}
