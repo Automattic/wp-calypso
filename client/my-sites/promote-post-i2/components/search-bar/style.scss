@@ -117,6 +117,10 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 					margin-right: 12px;
 				}
 			}
+
+			.select-dropdown__options {
+				border: 1px solid var(--color-neutral-10);
+			}
 		}
 	}
 

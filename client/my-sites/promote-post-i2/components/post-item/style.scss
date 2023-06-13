@@ -31,6 +31,12 @@ body.is-section-promote-post-i2 {
 			vertical-align: middle;
 		}
 
+		&-views,
+		&-likes,
+		&-comments {
+			text-align: center;
+		}
+
 		&-data {
 			flex-direction: column;
 
