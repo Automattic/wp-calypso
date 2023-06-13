@@ -330,8 +330,14 @@ body.is-section-promote-post-i2 {
 			.main {
 				padding-bottom: 0;
 
-				.promote-post-i2__search-bar-wrapper .search {
-					margin-top: 16px;
+				.promote-post-i2__search-bar-wrapper {
+					.search {
+						margin-top: 16px;
+					}
+
+					.promote-post-i2__search-bar-dropdown {
+						top: 4rem;
+					}
 				}
 			}
 		}
