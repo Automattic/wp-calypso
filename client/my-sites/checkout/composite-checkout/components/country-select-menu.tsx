@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormFieldAnnotation from 'calypso/my-sites/checkout/composite-checkout/components/form-field-annotation';
-import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { HTMLProps, ReactChild } from 'react';
 
 export default function CountrySelectMenu( {
@@ -19,7 +18,7 @@ export default function CountrySelectMenu( {
 	isError?: boolean;
 	errorMessage?: ReactChild;
 	currentValue: HTMLProps< HTMLSelectElement >[ 'value' ];
-	countriesList: CountryListItem[];
+	countriesList: string[];
 } ) {
 	const countrySelectorId = 'country-selector';
 	const countrySelectorLabelId = 'country-selector-label';
