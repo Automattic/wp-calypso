@@ -1,7 +1,16 @@
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { SearchResult } from '../types';
+
+export interface SearchResult {
+	link: string;
+	title: string | React.ReactChild;
+	content?: string;
+	icon?: string;
+	post_id?: number;
+	blog_id?: number;
+	source?: string;
+}
 
 interface APIFetchOptions {
 	global: boolean;
@@ -16,12 +25,12 @@ export const useHelpSearchQuery = (
 ) => {
 	const queryClient = useQueryClient();
 
-	return useQuery< SearchResult[] >( {
+	return useQuery< any >( {
 		queryKey: [ 'help-center-search', search, sectionName ],
 		queryFn: () =>
 			canAccessWpcomApis()
 				? wpcomRequest( {
-						path: `help/search/wpcom?query=${ encodeURIComponent(
+						path: `help/search/?query=${ encodeURIComponent(
 							search
 						) }&locale=${ encodeURIComponent( locale ) }&section=${ encodeURIComponent(
 							sectionName
@@ -38,8 +47,9 @@ export const useHelpSearchQuery = (
 						) }`,
 				  } as APIFetchOptions ),
 		onSuccess: async ( data ) => {
+			let newData = data;
 			if ( ! data[ 0 ]?.content ) {
-				const newData = await Promise.all(
+				newData = await Promise.all(
 					data.map( async ( result: SearchResult ) => {
 						const article: { [ content: string ]: string } = canAccessWpcomApis()
 							? await wpcomRequest( {
@@ -54,8 +64,11 @@ export const useHelpSearchQuery = (
 						return { ...result, content: article.content };
 					} )
 				);
-				queryClient.setQueryData( [ 'help', search ], newData );
 			}
+
+			console.log('setting query data to ', newData );
+
+			queryClient.setQueryData( [ 'help', search ], newData );
 		},
 		refetchOnWindowFocus: false,
 		refetchOnMount: true,
