@@ -96,7 +96,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 					'no-site-picker': ! shouldShowGeoAffinityPicker,
 				} ) }
 			>
-				<FormLabel htmlFor="siteTitle">{ translate( 'Site title' ) }</FormLabel>
+				<FormLabel htmlFor="siteTitle">{ translate( 'Give your site a name' ) }</FormLabel>
 				<FormInput
 					name="siteTitle"
 					id="siteTitle"
