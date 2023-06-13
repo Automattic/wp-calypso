@@ -39,8 +39,9 @@ export function ConfirmationTransfer( {
 			<Notice status="is-error" showDismiss={ false }>
 				<div data-testid="error">
 					<p>
-						{ translate( 'There was an error confirming the site transfer.' ) }
-						{ error.message && ` ${ error.message }` }
+						{ translate(
+							'There was an error confirming the site transfer. Please contact our support team for help.'
+						) }
 					</p>
 				</div>
 			</Notice>
