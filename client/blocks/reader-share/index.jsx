@@ -1,15 +1,16 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { defer } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
 import SiteSelector from 'calypso/components/site-selector';
+import { navigate } from 'calypso/lib/navigate';
 import ReaderFacebookIcon from 'calypso/reader/components/icons/facebook-icon';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
 import ReaderTwitterIcon from 'calypso/reader/components/icons/twitter-icon';
@@ -17,6 +18,7 @@ import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { infoNotice } from 'calypso/state/notices/actions';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 import './style.scss';
@@ -52,21 +54,23 @@ const actionMap = {
 	copy_link() {},
 };
 
-function buildQuerystringForPost( post ) {
+const shareInEditor = ( siteId, post ) => ( dispatch, getState ) => {
+	const state = getState();
+	const editorUrl = getEditorUrl( state, siteId );
+
 	const args = {};
 
 	if ( post.content_embeds && post.content_embeds.length ) {
 		args.embed = post.content_embeds[ 0 ].embedUrl || post.content_embeds[ 0 ].src;
 	}
 
-	args.title = `${ post.title } — ${ post.site_name }`;
-	args.text = post.excerpt;
+	args.title = encodeURIComponent( `${ post.title } — ${ post.site_name }` );
+	args.text = encodeURIComponent( post.excerpt );
 	args.url = post.URL;
 	args.is_post_share = true; // There is a dependency on this here https://github.com/Automattic/wp-calypso/blob/a69ded693a99fa6a957b590b1a538f32a581eb8a/client/gutenberg/editor/controller.js#L209
 
-	const params = new URLSearchParams( args );
-	return params.toString();
-}
+	navigate( addQueryArgs( editorUrl, args ) );
+};
 
 class ReaderShare extends Component {
 	static propTypes = {
@@ -131,11 +135,11 @@ class ReaderShare extends Component {
 		}
 	};
 
-	pickSiteToShareTo = ( slug ) => {
+	pickSiteToShareTo = ( siteId ) => {
 		stats.recordAction( 'share_wordpress' );
 		stats.recordGaEvent( 'Clicked on Share to WordPress' );
 		stats.recordTrack( 'calypso_reader_share_to_site' );
-		page( `/post/${ slug }?` + buildQuerystringForPost( this.props.post ) );
+		this.props.shareInEditor( siteId, this.props.post );
 		return true;
 	};
 
@@ -235,7 +239,7 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-const mapDispatchToProps = { infoNotice };
+const mapDispatchToProps = { infoNotice, shareInEditor };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const onCopyLinkClick = () => {
