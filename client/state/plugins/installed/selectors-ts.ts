@@ -448,8 +448,8 @@ export const getPluginStatusesByType = createSelector(
 );
 
 /**
- * Returns a Boolean indicating if a site has a particular plugin that
- * is active. This is useful for jetpack connected sites.
+ * Returns true if a particular plugin is installed and active for a specified site.
+ * This is useful for Jetpack connected sites.
  *
  * @param {Object} state - Global state tree
  * @param {number} siteId - Site ID
