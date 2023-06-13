@@ -160,7 +160,7 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 				// Sentry does this, presumably for browsers being browsers 🤷
 				// https://github.com/getsentry/sentry-javascript/blob/4793df5f515575703d9c83ebf4159ac145478410/packages/browser/src/loader.js#L205
 				// @ts-expect-error Fixing up browser weirdness
-				exceptionEvent.reason ?? exceptionEvent?.detail?.reason ?? exceptionEvent
+				exceptionEvent?.reason ?? exceptionEvent?.detail?.reason ?? exceptionEvent
 			);
 
 		window.addEventListener( 'error', errorHandler );
