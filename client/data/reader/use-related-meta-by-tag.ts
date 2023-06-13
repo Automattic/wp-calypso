@@ -104,6 +104,8 @@ const selectFromCards = ( response: {
 	related_tags: selectRelatedTags( response ),
 } );
 
+//TODO: this is the endpoint I need to use to get the related sites and tags for a given tag
+
 export const useRelatedMetaByTag = ( tag: string ): UseQueryResult< RelatedMetaByTag | null > => {
 	const tag_recs_per_card = 10;
 	const site_recs_per_card = 5;

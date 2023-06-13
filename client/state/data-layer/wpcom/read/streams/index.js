@@ -83,6 +83,7 @@ function getQueryStringForPoll( extraFields = [], extraQueryParams = {} ) {
 }
 const seed = random( 0, 1000 );
 
+//TODO: might need to update this
 const streamApis = {
 	following: {
 		path: () => '/read/following',
@@ -178,6 +179,11 @@ const streamApis = {
 			return `/read/list/${ owner }/${ slug }/posts`;
 		},
 		dateProperty: 'date',
+	},
+	discover: {
+		path: () => `/read/tags/cards`,
+		dateProperty: 'date',
+		query: ( extras ) => getQueryString( { ...extras } ),
 	},
 };
 
