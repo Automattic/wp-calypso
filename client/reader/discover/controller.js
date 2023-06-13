@@ -7,6 +7,7 @@ import {
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
+import { getReaderTags } from 'calypso/state/reader/tags/selectors';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -15,7 +16,15 @@ const exported = {
 		const blogId = config( 'discover_blog_id' );
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId;
-		const streamKey = `discover:${ blogId }`;
+		//TODO: use if user has tags
+		let streamKey = `discover:${ blogId }`;
+		const state = context.store.getState();
+		const tags = getReaderTags( state );
+
+		// need to show list of interests maybe - I think this is what is done in mobile if no tags found
+		if ( tags.length === 0 ) {
+			streamKey = `discover-no-tags:${ blogId }`;
+		}
 
 		const mcKey = 'discover';
 
