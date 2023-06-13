@@ -464,7 +464,7 @@ export const isPluginActive = createSelector(
 			return false;
 		}
 
-		return sitePlugin.sites[ siteId ].active;
+		return sitePlugin.sites[ siteId ]?.active;
 	},
 	( state: AppState ) => [ getAllPluginsIndexedBySiteId( state ) ]
 ) as ( state: AppState, siteId: number, pluginSlug: string ) => boolean;
