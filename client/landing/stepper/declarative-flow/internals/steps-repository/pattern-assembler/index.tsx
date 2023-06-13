@@ -52,6 +52,8 @@ import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import type { FC } from 'react';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 import './style.scss';
 
 const PatternAssembler = ( {
@@ -391,11 +393,16 @@ const PatternAssembler = ( {
 		if ( isEnabled( 'pattern-assembler/logged-in-showcase' ) ) {
 			setPendingAction( () =>
 				Promise.resolve()
-					.then(
-						() =>
-							reduxDispatch(
-								activateOrInstallThenActivate( themeId, site?.ID, 'assembler', false, false )
-							) as PromiseLike< string >
+					.then( () =>
+						reduxDispatch(
+							activateOrInstallThenActivate(
+								themeId,
+								site?.ID,
+								'assembler',
+								false,
+								false
+							) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+						)
 					)
 					.then( ( activeThemeStylesheet: string ) =>
 						assembleSite( siteSlugOrId, activeThemeStylesheet, {

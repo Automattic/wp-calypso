@@ -8,9 +8,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import useCampaignsQueryPaged, {
-	Campaign,
-} from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
+import { Campaign } from 'calypso/data/promote-post/types';
+import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import usePostsQueryPaged from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
