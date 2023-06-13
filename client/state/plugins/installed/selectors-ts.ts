@@ -454,7 +454,7 @@ export const getPluginStatusesByType = createSelector(
  * @param {Object} state - Global state tree
  * @param {number} siteId - Site ID
  * @param {string} pluginSlug - Plugin slug
- * @returns {boolean} - truthiness of a site having an active plugin
+ * @returns {boolean} - True if that plugin is active for that site, false otherwise.
  */
 export const isPluginActive = createSelector(
 	( state: AppState, siteId: number, pluginSlug: string ) => {
