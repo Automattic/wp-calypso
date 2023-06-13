@@ -65,6 +65,8 @@ export function recordSignupComplete(
 		);
 	}
 
+	const signUpDomainOrigin = window.localStorage.getItem( 'SIGNUP_DOMAIN_ORIGIN' );
+
 	// Tracks
 	// Note that Tracks expects blog_id to differntiate sites, hence using
 	// blog_id instead of site_id here. We keep using "siteId" otherwise since
@@ -83,7 +85,10 @@ export function recordSignupComplete(
 		starting_point: startingPoint,
 		is_transfer: isTransfer,
 		is_mapping: isMapping,
+		signup_domain_origin: signUpDomainOrigin,
 	} );
+
+	window.localStorage.removeItem( 'SIGNUP_DOMAIN_ORIGIN' );
 
 	// Google Analytics
 	const flags = [
