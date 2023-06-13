@@ -125,6 +125,7 @@ const PatternAssembler = ( {
 				color_variation_type: getVariationType( colorVariation ),
 				font_variation_title: getVariationTitle( fontVariation ),
 				font_variation_type: getVariationType( fontVariation ),
+				assembler_source: getAssemblerSource( selectedDesign ),
 			} ),
 		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
 	);
@@ -197,14 +198,12 @@ const PatternAssembler = ( {
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
-			assembler_source: getAssemblerSource( selectedDesign ),
 		} );
 		patterns.forEach( ( { ID, name, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: ID,
 				pattern_name: name,
 				pattern_category: category?.name,
-				assembler_source: getAssemblerSource( selectedDesign ),
 			} );
 		} );
 	};
@@ -449,7 +448,6 @@ const PatternAssembler = ( {
 	const onPatternSelectorBack = ( type: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_BACK_CLICK, {
 			pattern_type: type,
-			assembler_source: getAssemblerSource( selectedDesign ),
 		} );
 	};
 
@@ -526,9 +524,7 @@ const PatternAssembler = ( {
 	};
 
 	const onScreenColorsDone = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_DONE_CLICK, {
-			assembler_source: getAssemblerSource( selectedDesign ),
-		} );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_DONE_CLICK );
 	};
 
 	const onScreenFontsSelect = ( variation: GlobalStylesObject | null ) => {
@@ -544,9 +540,7 @@ const PatternAssembler = ( {
 	};
 
 	const onScreenFontsDone = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_DONE_CLICK, {
-			assembler_source: getAssemblerSource( selectedDesign ),
-		} );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_DONE_CLICK );
 	};
 
 	if ( ! site?.ID || ! selectedDesign ) {
