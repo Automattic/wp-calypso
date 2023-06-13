@@ -1709,9 +1709,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 		getTitle: () => i18n.translate( 'Transaction fees for payments' ),
 		getDescription: () =>
-			i18n.translate(
-				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
-			),
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
@@ -1720,9 +1718,7 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 10 },
 			} ),
 		getDescription: () =>
-			i18n.translate(
-				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
-			),
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 		getAlternativeTitle: () => '10%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1733,9 +1729,7 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 8 },
 			} ),
 		getDescription: () =>
-			i18n.translate(
-				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
-			),
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 		getAlternativeTitle: () => '8%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1746,9 +1740,7 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 4 },
 			} ),
 		getDescription: () =>
-			i18n.translate(
-				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
-			),
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 		getAlternativeTitle: () => '4%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1759,9 +1751,7 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 2 },
 			} ),
 		getDescription: () =>
-			i18n.translate(
-				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
-			),
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1772,9 +1762,7 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 0 },
 			} ),
 		getDescription: () =>
-			i18n.translate(
-				'Credit card fees apply on top of commission fees. No fixed monthly or annual fees charged.'
-			),
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
