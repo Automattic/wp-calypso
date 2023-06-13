@@ -14,7 +14,7 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
-import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
+import { useBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import spaceUpgradeIcon from '../icons/space-upgrade';
@@ -85,11 +85,12 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 	// if upgrade is bought - show as manage
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
+	const { billingTransactions } = useBillingTransactions( 'past' );
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
-		const transactions = getPastBillingTransactions( state );
 		const filter = getBillingTransactionFilters( state, 'past' );
-		const filteredTransactions = transactions && filterTransactions( transactions, filter, siteId );
+		const filteredTransactions =
+			billingTransactions && filterTransactions( billingTransactions, filter, siteId );
 
 		const spaceUpgradesPurchased: BillingTransactionItem[] = [];
 
