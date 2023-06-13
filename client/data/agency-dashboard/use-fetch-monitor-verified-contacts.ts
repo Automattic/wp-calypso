@@ -21,6 +21,9 @@ const useFetchMonitorVerfiedContacts = ( isPartnerOAuthTokenLoaded: boolean ) =>
 					emails: contacts?.emails
 						.filter( ( email ) => email.verified )
 						.map( ( email ) => email.email_address ),
+					phoneNumbers: contacts.sms_numbers
+						.filter( ( sms ) => sms.verified )
+						.map( ( sms ) => `${ sms.country_numeric_code }${ sms.sms_number }` ), // Add country code to phone number
 				};
 			},
 			enabled: isPartnerOAuthTokenLoaded && isMultipleEmailEnabled,

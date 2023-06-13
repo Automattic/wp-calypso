@@ -133,7 +133,6 @@ export const defaultSiteDetails: SiteDetails = {
 		is_wpforteams_site: false,
 		p2_hub_blog_id: null,
 		is_cloud_eligible: false,
-		anchor_podcast: false,
 		was_created_with_blank_canvas_design: false,
 		videopress_storage_used: 0,
 		is_difm_lite_in_progress: false,
