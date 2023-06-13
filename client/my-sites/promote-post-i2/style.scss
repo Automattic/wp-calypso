@@ -57,7 +57,9 @@ body.is-section-promote-post-i2 {
 					width: 100%;
 
 					.section-nav-tabs__list {
+						align-items: center;
 						display: flex;
+						height: 55px;
 						margin: 0 64px;
 						max-width: 1040px;
 						width: auto;
@@ -210,6 +212,10 @@ body.is-section-promote-post-i2 {
 				flex: none;
 				width: auto;
 
+				span {
+					vertical-align: middle; // Position tabs Posts and Campaigns vertically equal
+				}
+
 				.count {
 					border: none;
 					border-radius: 2px;
@@ -217,7 +223,7 @@ body.is-section-promote-post-i2 {
 					font-family: $font-sf-pro-text;
 					font-weight: 500;
 					font-size: 0.875rem;
-					line-height: 1.67;
+					line-height: 1.41; // Position tabs Posts and Campaigns vertically equal
 					padding: 0 8px;
 				}
 			}
@@ -234,7 +240,8 @@ body.is-section-promote-post-i2 {
 	}
 
 	.section-nav-tab.is-selected {
-		border-bottom: 2px solid var(--color-neutral-70);
+		border-bottom: 3px solid var(--color-neutral-70);
+		height: 53px;
 	}
 
 	.search {
@@ -249,7 +256,7 @@ body.is-section-promote-post-i2 {
 	&__search-bar-wrapper {
 		.form-text-input.search__input {
 			@include promote-post-i2-font;
-			// border-radius: 4px;
+
 			height: calc(100% - 4px) !important;
 			margin: 2px 2px 2px 0;
 		}
@@ -322,6 +329,7 @@ body.is-section-promote-post-i2 {
 		main.main.promote-post-i2 {
 			&.is-wide-layout {
 				.section-nav-tabs__list {
+					height: 54px;
 					margin: 0 16px;
 				}
 
@@ -437,5 +445,15 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 @media (min-width: $break-huge-collapsed-menu) {
 	body.is-section-promote-post-i2.is-sidebar-collapsed .layout__content .main.is-wide-layout {
 		@include blazepress-huge;
+	}
+}
+
+@media screen and (max-width: $break-mobile) {
+	.layout__content {
+		main.main.promote-post-i2 {
+			.section-nav-tab.is-selected {
+				height: 51px; // Reduce heights increased by adding the bottom border
+			}
+		}
 	}
 }
