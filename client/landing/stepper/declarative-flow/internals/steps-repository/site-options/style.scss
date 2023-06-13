@@ -157,6 +157,12 @@ body:has(.new-hosted-site.options) {
 
 .new-hosted-site.options {
 
+	@include break-small {
+		.step-container.is-horizontal-layout {
+			margin-top: 32px;
+		}
+	}
+
 	.step-container__content {
 		flex-basis: unset;
 		width: 100%;
@@ -229,5 +235,14 @@ body:has(.new-hosted-site.options) {
 
 	.site-options__submit-button {
 		margin-top: 24px;
+	}
+
+	@media ( max-width: $break-small ) {
+		.site-options__submit-button {
+			width: 100%;
+		}
+		.step-container__header {
+			align-self: flex-start;
+		}
 	}
 }
