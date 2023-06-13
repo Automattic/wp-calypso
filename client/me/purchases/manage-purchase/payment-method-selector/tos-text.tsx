@@ -2,7 +2,11 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
-export default function TosText( isAkismetPurchase: boolean ) {
+interface TosTextProps {
+	isAkismetPurchase: boolean;
+}
+
+export default function TosText( { isAkismetPurchase }: TosTextProps ) {
 	const translate = useTranslate();
 	return (
 		<>
