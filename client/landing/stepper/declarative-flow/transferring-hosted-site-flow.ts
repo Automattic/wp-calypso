@@ -1,6 +1,6 @@
 import { TRANSFERRING_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { useDispatch as dispatcher } from 'react-redux';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -30,7 +30,7 @@ const transferringHostedSite: Flow = {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const dispatch = dispatcher();
+		const dispatch = useReduxDispatch();
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, '' );
 		setStepProgress( flowProgress );
