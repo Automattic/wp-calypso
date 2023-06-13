@@ -1,8 +1,8 @@
 import { useTranslate, translate } from 'i18n-calypso';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import accept from 'calypso/lib/accept';
 import { Subscriber } from '../../types';
 import { SubscriberRow } from './subscriber-row';
-import accept from 'calypso/lib/accept';
 import './styles.scss';
 
 type SubscriberListProps = {
