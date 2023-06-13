@@ -140,10 +140,12 @@ body.is-section-promote-post-i2 {
 			display: flex;
 			margin-left: 10px;
 
+			.button,
 			.is-primary {
-				background: #3858ea;
-				border: none;
 				border-radius: 4px;
+			}
+
+			.is-primary {
 				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 			}
 		}
