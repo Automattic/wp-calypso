@@ -34,6 +34,19 @@
 		&:active {
 			background-color: var(--studio-blue-0);
 		}
+
+		&__checklist-item--checked {
+			color: var(--studio-gray-30);
+
+			&:hover,
+			&:focus-visible {
+				color: var(--studio-gray-100);
+			}
+
+			.navigator-button__icon {
+				fill: var(--studio-gray-30);
+			}
+		}
 	}
 }
 

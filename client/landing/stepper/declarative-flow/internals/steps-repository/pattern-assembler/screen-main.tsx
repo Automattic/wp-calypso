@@ -25,6 +25,10 @@ interface Props {
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
 	hasSections: boolean;
+	hasHeader: boolean;
+	hasFooter: boolean;
+	hasColor: boolean;
+	hasFont: boolean;
 }
 
 const ScreenMain = ( {
@@ -34,6 +38,10 @@ const ScreenMain = ( {
 	surveyDismissed,
 	setSurveyDismissed,
 	hasSections,
+	hasHeader,
+	hasFooter,
+	hasColor,
+	hasFont,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
@@ -100,6 +108,8 @@ const ScreenMain = ( {
 				<HStack direction="column" alignment="top" spacing="4">
 					<NavigatorItemGroup title={ translate( 'Layout' ) }>
 						<NavigationButtonAsItem
+							checklist
+							checked={ hasHeader }
 							path={ NAVIGATOR_PATHS.HEADER }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
@@ -108,6 +118,8 @@ const ScreenMain = ( {
 							<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
+							checklist
+							checked={ hasSections }
 							path={ hasSections ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
 							aria-label={ translate( 'Homepage' ) }
@@ -116,6 +128,8 @@ const ScreenMain = ( {
 							<span className="pattern-layout__list-item-text">{ translate( 'Homepage' ) }</span>
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
+							checklist
+							checked={ hasFooter }
 							path={ NAVIGATOR_PATHS.FOOTER }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
@@ -127,6 +141,8 @@ const ScreenMain = ( {
 					<NavigatorItemGroup title={ translate( 'Style' ) }>
 						<>
 							<NavigationButtonAsItem
+								checklist
+								checked={ hasColor }
 								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
 								icon={ color }
 								aria-label={ translate( 'Colors' ) }
@@ -135,6 +151,9 @@ const ScreenMain = ( {
 								<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
 							</NavigationButtonAsItem>
 							<NavigationButtonAsItem
+								key="font-pairings"
+								checklist
+								checked={ hasFont }
 								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
 								icon={ typography }
 								aria-label={ translate( 'Fonts' ) }
