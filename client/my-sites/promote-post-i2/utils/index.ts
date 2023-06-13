@@ -89,7 +89,7 @@ export const getCampaignStatus = ( status: string ) => {
 			return __( 'Canceled' );
 		}
 		case campaignStatus.FINISHED: {
-			return __( 'Finished' );
+			return __( 'Completed' );
 		}
 		case campaignStatus.PROCESSING: {
 			return __( 'Creating' );
