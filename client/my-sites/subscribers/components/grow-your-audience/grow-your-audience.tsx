@@ -22,7 +22,7 @@ const GrowYourAudienceCard = ( { icon, text, title, url }: GrowYourAudienceCardP
 					<Icon className="grow-your-audience__card-icon" icon={ icon } size={ 20 } />
 					{ title }
 				</h3>
-				<span className="grow-your-audience__card-text">{ text }</span>
+				<p className="grow-your-audience__card-text">{ text }</p>
 				<a className="grow-your-audience__card-link" href={ url } target="_blank" rel="noreferrer">
 					{ translate( 'Learn more' ) }
 				</a>
