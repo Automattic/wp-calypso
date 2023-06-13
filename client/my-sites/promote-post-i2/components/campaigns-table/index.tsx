@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/types';
 import CampaignItem from '../campaign-item';
 import './style.scss';
 
