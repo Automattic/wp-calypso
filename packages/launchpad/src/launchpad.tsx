@@ -3,10 +3,10 @@ import Checklist from './checklist';
 import type { Task } from './types';
 
 export interface LaunchpadProps {
-	siteSlug: string;
+	siteSlug: string | null;
 	checklistSlug?: string | 0 | null | undefined;
 	makeLastTaskPrimaryAction?: boolean;
-	taskFilter?: ( tasks: Task[] ) => Task[];
+	taskFilter?: ( tasks: Task[] ) => Task[] | null;
 }
 
 const Launchpad = ( {

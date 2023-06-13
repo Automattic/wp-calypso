@@ -27,6 +27,7 @@ import { MigrationStatus } from '../types';
 import { retrieveMigrateSource, clearMigrateSource } from '../utils';
 import { Confirm } from './confirm';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 interface Props {
@@ -37,6 +38,7 @@ interface Props {
 	targetSiteEligibleForProPlan: boolean;
 	stepNavigator?: StepNavigator;
 	showConfirmDialog: boolean;
+	sourceUrlAnalyzedData?: UrlData | null;
 }
 
 interface State {
