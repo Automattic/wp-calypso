@@ -3,6 +3,22 @@ import classNames from 'classnames';
 import SocialLogo from 'calypso/components/social-logo';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 
+function serviceToIconName( service ) {
+	switch ( service ) {
+		case 'google_plus':
+			return 'google-plus';
+		case 'instagram-business':
+			return 'instagram';
+
+		default:
+			return service;
+	}
+}
+
+function hasRoundIcon( service ) {
+	return [ 'facebook' ].includes( service );
+}
+
 const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 	const { external_display, external_profile_picture, keyring_connection_ID, service, status } =
 		connection;
@@ -31,8 +47,12 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 				&nbsp;
 			</div>
 
-			<div className="post-share__service-account-social-logo">
-				<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
+			<div
+				className={ classNames( 'post-share__service-account-social-logo', {
+					'is-round': hasRoundIcon( service ),
+				} ) }
+			>
+				<SocialLogo icon={ serviceToIconName( service ) } />
 			</div>
 
 			<div className="post-share__service-account-name">

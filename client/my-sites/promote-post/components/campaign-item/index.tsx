@@ -46,7 +46,6 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 		type,
 		content_config,
 		moderation_reason,
-		spent_budget_cents,
 		start_date,
 		end_date,
 		budget_cents,
@@ -54,11 +53,14 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 		display_delivery_estimate,
 		display_name,
 		creative_html,
-		impressions_total = 0,
-		clicks_total = 0,
 		target_url = '',
 		campaign_stats_loading,
+		campaign_stats,
 	} = campaign;
+
+	const clicks_total = campaign_stats?.clicks_total ?? 0;
+	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
+	const impressions_total = campaign_stats?.impressions_total ?? 0;
 
 	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign ] );
 

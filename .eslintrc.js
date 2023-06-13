@@ -468,6 +468,7 @@ module.exports = {
 				'@wordpress/components': [
 					'__experimentalDivider',
 					'__experimentalHStack',
+					'__experimentalVStack',
 					'__experimentalItem',
 					'__experimentalItemGroup',
 					'__experimentalNavigationBackButton',

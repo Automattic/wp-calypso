@@ -94,7 +94,7 @@ export default function EmailAddressEditor( {
 			components: {
 				button: (
 					<Button
-						className={ classNames( 'configure-email-notification__resend-code-button', {
+						className={ classNames( 'configure-contact__resend-code-button', {
 							'is-loading': resendCode.isLoading,
 						} ) }
 						borderless
@@ -336,7 +336,7 @@ export default function EmailAddressEditor( {
 		>
 			<div className="notification-settings__sub-title">{ subTitle }</div>
 
-			<form className="configure-email-notification__form" onSubmit={ onSave }>
+			<form className="configure-contact__form" onSubmit={ onSave }>
 				{ isRemoveAction ? (
 					selectedEmail && <EmailItemContent isRemoveAction item={ selectedEmail } />
 				) : (
@@ -352,7 +352,7 @@ export default function EmailAddressEditor( {
 								aria-describedby={ ! isVerifyAction ? 'name-help-text' : undefined }
 							/>
 							{ ! isVerifyAction && (
-								<div className="configure-email-notification__help-text" id="name-help-text">
+								<div className="configure-contact__help-text" id="name-help-text">
 									{ translate( 'Give this email a nickname for your personal reference.' ) }
 								</div>
 							) }
@@ -374,7 +374,7 @@ export default function EmailAddressEditor( {
 								</div>
 							) }
 							{ ! isVerifyAction && (
-								<div className="configure-email-notification__help-text" id="email-help-text">
+								<div className="configure-contact__help-text" id="email-help-text">
 									{ translate( 'We’ll send a code to verify your email address.' ) }
 								</div>
 							) }
@@ -396,7 +396,7 @@ export default function EmailAddressEditor( {
 										{ validationError.code }
 									</div>
 								) }
-								<div className="configure-email-notification__help-text" id="code-help-text">
+								<div className="configure-contact__help-text" id="code-help-text">
 									{ helpText ??
 										( resendCodeClicked && resendCode.isLoading
 											? translate( 'Sending code' )
