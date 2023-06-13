@@ -270,7 +270,7 @@ export function filterDelistedTaxonomyTermSlugs( filters ) {
 	const result = {};
 	for ( const taxonomy in filters ) {
 		result[ taxonomy ] = Object.fromEntries(
-			Object.entries( filters[ taxonomy ] ).filter(
+			Object.entries( filters[ taxonomy ] || {} ).filter(
 				( [ slug ] ) => ! isDelistedTaxonomyTermSlug( slug )
 			)
 		);
