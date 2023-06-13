@@ -50,9 +50,9 @@ export function recordSelectedDesign( {
 	}
 }
 
-export function getDesignTypeProps( design: Design ) {
+export function getDesignTypeProps( design?: Design ) {
 	return {
-		goes_to_assembler_step: design.design_type === 'assembler',
+		goes_to_assembler_step: design?.design_type === 'assembler',
 		assembler_source: getAssemblerSource( design ),
 	};
 }
@@ -97,8 +97,10 @@ export function getVirtualDesignProps( design: Design ) {
  *  name: assembler_source
  *  values:
  *		• virtual-theme
- * 		• standard-theme
  *		• blank-canvas-theme
+ * 		• standard
+ * 		• premium
+ * 		• default
  */
 export function getAssemblerSource( design?: Design ) {
 	const { design_type, is_virtual } = design ?? {};
@@ -112,5 +114,6 @@ export function getAssemblerSource( design?: Design ) {
 		return 'design-your-own';
 	}
 
-	return 'standard-theme';
+	// Standard, premium, default...
+	return design?.design_type;
 }
