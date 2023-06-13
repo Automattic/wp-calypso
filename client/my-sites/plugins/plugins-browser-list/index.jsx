@@ -2,6 +2,7 @@ import { Card } from '@automattic/components';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import AsyncLoad from 'calypso/components/async-load';
+import Spotlight from 'calypso/components/spotlight';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
@@ -91,6 +92,16 @@ const PluginsBrowserList = ( {
 		}
 	};
 
+	const SpotlightPlaceholder = (
+		<Spotlight
+			taglineText="Calypso placeholder"
+			illustrationSrc="https://wordpress.com/wp-content/lib/marketplace-images/sensei-pro.svg"
+			onClick={ () => {} }
+			titleText="This is the default placeholder rendered in Calypso"
+			ctaText="Click me"
+		/>
+	);
+
 	return (
 		<div className="plugins-browser-list">
 			{ ! noHeader && ( title || subtitle || resultCount || browseAllLink ) && (
@@ -114,7 +125,7 @@ const PluginsBrowserList = ( {
 				<AsyncLoad
 					require="calypso/blocks/jitm"
 					template="spotlight"
-					placeholder={ null }
+					jitmPlaceholder={ SpotlightPlaceholder }
 					messagePath="calypso:plugins:search"
 					searchQuery={ search }
 				/>

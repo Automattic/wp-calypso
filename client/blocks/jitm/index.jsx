@@ -116,7 +116,7 @@ function useDevTool( { currentSite }, dispatch ) {
 }
 
 export function JITM( props ) {
-	const { jitm, currentSite, messagePath, searchQuery, isJetpack } = props;
+	const { jitm, currentSite, messagePath, searchQuery, isJetpack, jitmPlaceholder } = props;
 	const dispatch = useDispatch();
 
 	useDevTool( props, dispatch );
@@ -138,12 +138,13 @@ export function JITM( props ) {
 				messagePath={ messagePath }
 				searchQuery={ searchQuery }
 			/>
-			{ jitm &&
-				renderTemplate( jitm.template || props.template, {
-					...jitm,
-					...getEventHandlers( props, dispatch ),
-					currentSite,
-				} ) }
+			{ jitm
+				? renderTemplate( jitm.template || props.template, {
+						...jitm,
+						...getEventHandlers( props, dispatch ),
+						currentSite,
+				  } )
+				: jitmPlaceholder }
 		</>
 	);
 }
@@ -152,6 +153,7 @@ JITM.propTypes = {
 	template: PropTypes.string,
 	messagePath: PropTypes.string.isRequired,
 	searchQuery: PropTypes.string,
+	jitmPlaceholder: PropTypes.node,
 };
 
 JITM.defaultProps = {
