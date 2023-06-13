@@ -253,7 +253,7 @@ const DataCenterPicker = ( {
 			{ isFormShowing && (
 				<Form>
 					<FormHeadingContainer>
-						<FormHeading>{ translate( 'Primary data center' ) }</FormHeading>
+						<FormHeading>{ translate( 'Pick your primary data center' ) }</FormHeading>
 						<Button isTertiary={ true } onClick={ onCancel }>
 							{ translate( 'Cancel' ) }
 						</Button>
