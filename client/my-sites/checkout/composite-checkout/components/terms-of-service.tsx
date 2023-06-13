@@ -1,6 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import TosText from 'calypso/me/purchases/manage-purchase/payment-method-selector/tos-text';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 
@@ -21,7 +22,11 @@ export const TermsOfService = ( {
 			components: {
 				link: (
 					<a
-						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						href={
+							isAkismetCheckout()
+								? localizeUrl( 'https://akismet.com/tos/' )
+								: localizeUrl( 'https://wordpress.com/tos/' )
+						}
 						target="_blank"
 						rel="noopener noreferrer"
 					/>

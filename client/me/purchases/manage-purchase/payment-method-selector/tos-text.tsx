@@ -1,5 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
 export default function TosText() {
@@ -12,7 +13,11 @@ export default function TosText() {
 					components: {
 						tosLink: (
 							<a
-								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+								href={
+									isAkismetCheckout()
+										? localizeUrl( 'https://akismet.com/tos/' )
+										: localizeUrl( 'https://wordpress.com/tos/' )
+								}
 								target="_blank"
 								rel="noopener noreferrer"
 							/>
