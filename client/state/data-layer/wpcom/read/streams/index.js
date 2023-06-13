@@ -83,7 +83,6 @@ function getQueryStringForPoll( extraFields = [], extraQueryParams = {} ) {
 }
 const seed = random( 0, 1000 );
 
-//TODO: might need to update this
 const streamApis = {
 	following: {
 		path: () => '/read/following',
@@ -100,6 +99,17 @@ const streamApis = {
 	feed: {
 		path: ( { streamKey } ) => `/read/feed/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
+	},
+	discover: {
+		path: () => '/read/tags/cards',
+		dateProperty: 'date',
+		query: ( extras ) => getQueryString( { ...extras, tags: [ 'cats' ] } ), //TODO: will need to figure out how to add tags here
+		apiNamespace: 'wpcom/v2',
+	},
+	'discover-no-tags': {
+		path: () => '/read/interests',
+		dateProperty: 'date',
+		apiNamespace: 'wpcom/v2',
 	},
 	site: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/posts`,
@@ -180,11 +190,6 @@ const streamApis = {
 		},
 		dateProperty: 'date',
 	},
-	discover: {
-		path: () => `/read/tags/cards`,
-		dateProperty: 'date',
-		query: ( extras ) => getQueryString( { ...extras } ),
-	},
 };
 
 /**
@@ -223,6 +228,7 @@ export function requestPage( action ) {
 		method: 'GET',
 		path: path( { ...action.payload } ),
 		apiVersion,
+		apiNamespace: api.apiNamespace ?? null,
 		query: isPoll
 			? pollQuery( [], { ...algorithm } )
 			: query( { ...pageHandle, ...algorithm, number }, action.payload ),
