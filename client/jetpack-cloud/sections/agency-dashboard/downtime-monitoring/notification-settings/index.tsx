@@ -31,6 +31,7 @@ import type {
 	MonitorDuration,
 	InitialMonitorSettings,
 	StateMonitorSettingsSMS,
+	MonitorSettingsContact,
 } from '../../sites-overview/types';
 
 import './style.scss';
@@ -79,10 +80,12 @@ export default function NotificationSettings( {
 	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
 	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
 	const [ initialSettings, setInitialSettings ] = useState< InitialMonitorSettings >( {
+		enableSMSNotification: false,
 		enableEmailNotification: false,
 		enableMobileNotification: false,
 		selectedDuration: defaultDuration,
 		emailContacts: [],
+		phoneContacts: [],
 	} );
 	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState< boolean >( false );
 
@@ -94,17 +97,36 @@ export default function NotificationSettings( {
 		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
 
-	const mapAndStringifyEmails = ( emails: MonitorSettingsEmail[] ) => {
-		return JSON.stringify( emails.map( ( { name, email } ) => ( { name, email } ) ) );
+	const isContactListMatch = (
+		list1: ReadonlyArray< MonitorSettingsContact >,
+		list2: ReadonlyArray< MonitorSettingsContact >
+	): boolean => {
+		const stringifyContacts = ( list: ReadonlyArray< MonitorSettingsContact > ): string => {
+			return JSON.stringify(
+				list.map( ( item: MonitorSettingsContact ) => {
+					const property = (
+						'email' in item ? 'email' : 'phoneNumberFull'
+					) as keyof MonitorSettingsContact;
+					return {
+						name: item.name,
+						[ property ]: item[ property ],
+					};
+				} )
+			);
+		};
+
+		return stringifyContacts( list1 ) === stringifyContacts( list2 );
 	};
 
 	const unsavedChangesExist =
+		enableSMSNotification !== initialSettings.enableSMSNotification ||
 		enableMobileNotification !== initialSettings.enableMobileNotification ||
 		enableEmailNotification !== initialSettings.enableEmailNotification ||
 		selectedDuration?.time !== initialSettings.selectedDuration?.time ||
 		( isMultipleEmailEnabled &&
-			mapAndStringifyEmails( allEmailItems ) !==
-				mapAndStringifyEmails( initialSettings?.emailContacts ?? [] ) );
+			! isContactListMatch( allEmailItems, initialSettings?.emailContacts ?? [] ) ) ||
+		( isSMSNotificationEnabled &&
+			! isContactListMatch( allPhoneItems, initialSettings?.phoneContacts ?? [] ) );
 
 	// Check if any unsaved changes are present and prompt user to confirm before closing the modal.
 	const handleOnClose = useCallback( () => {
@@ -206,6 +228,11 @@ export default function NotificationSettings( {
 		[ isBulkUpdate, translate ]
 	);
 
+	const getAllPhoneItems = useCallback( () => {
+		// TODO: Implement where we gonna pull phone list from MonitorSettings.
+		return [];
+	}, [] );
+
 	const handleSetEmailItems = useCallback(
 		( settings: MonitorSettings ) => {
 			const userEmails = settings.monitor_user_emails || [];
@@ -224,9 +251,11 @@ export default function NotificationSettings( {
 			// Set all email items
 			handleSetEmailItems( settings );
 
-			// Set email and mobile notification settings
+			// Set SMS, email and mobile notification settings
+			const isSMSEnabled = false; // TODO: Implement when we have SMS notification settings.
 			const isEmailEnabled = !! settings.monitor_user_email_notifications;
 			const isMobileEnabled = !! settings.monitor_user_wp_note_notifications;
+			setEnableSMSNotification( isSMSEnabled );
 			setEnableEmailNotification( isEmailEnabled );
 			setEnableMobileNotification( isMobileEnabled );
 
@@ -241,13 +270,22 @@ export default function NotificationSettings( {
 
 			// Set initial settings
 			setInitialSettings( {
+				enableSMSNotification: isSMSEnabled,
 				enableEmailNotification: isEmailEnabled,
 				enableMobileNotification: isMobileEnabled,
 				selectedDuration: foundDuration,
 				...( isMultipleEmailEnabled && { emailContacts: getAllEmailItems( settings ) } ),
+				...( isSMSNotificationEnabled && { phoneContacts: getAllPhoneItems() } ),
 			} );
 		},
-		[ defaultDuration, getAllEmailItems, handleSetEmailItems, isMultipleEmailEnabled ]
+		[
+			defaultDuration,
+			getAllEmailItems,
+			getAllPhoneItems,
+			handleSetEmailItems,
+			isMultipleEmailEnabled,
+			isSMSNotificationEnabled,
+		]
 	);
 
 	useEffect( () => {
@@ -263,13 +301,22 @@ export default function NotificationSettings( {
 
 			// Set initial settings
 			setInitialSettings( {
+				enableSMSNotification: false,
 				enableEmailNotification: false,
 				enableMobileNotification: false,
 				selectedDuration: defaultDuration,
 				...( isMultipleEmailEnabled && { emailContacts: getAllEmailItems( settings ) } ),
+				...( isSMSNotificationEnabled && { phoneContacts: getAllPhoneItems() } ),
 			} );
 		},
-		[ defaultDuration, getAllEmailItems, handleSetEmailItems, isMultipleEmailEnabled ]
+		[
+			defaultDuration,
+			getAllEmailItems,
+			getAllPhoneItems,
+			handleSetEmailItems,
+			isMultipleEmailEnabled,
+			isSMSNotificationEnabled,
+		]
 	);
 
 	useEffect( () => {

@@ -96,6 +96,9 @@ class StatsNavigation extends Component {
 	};
 
 	onTooltipDismiss = () => {
+		if ( this.state.isPageSettingsTooltipDismissed || ! this.props.showSettingsTooltip ) {
+			return;
+		}
 		this.setState( { isPageSettingsTooltipDismissed: true } );
 		localStorage.setItem( 'notices_dismissed__traffic_page_settings', 1 );
 		this.props.mutateNoticeVisbilityAsync().finally( this.props.refetchNotices );

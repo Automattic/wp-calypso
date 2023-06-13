@@ -1,6 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "../../style.scss";
 
 $font-sf-pro-display: "SF Pro Display", $sans;
 $font-sf-pro-text: "SF Pro Text", $sans;
@@ -29,6 +30,61 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 .promote-post-i2__table {
 	th {
+		@include promote-post-i2-font;
+		padding-bottom: 8px;
+	}
+
+	.campaign-item {
+		&__data,
+		&__user,
+		&__status,
+		&__ends,
+		&__budget,
+		&__impressions,
+		&__clicks {
+			padding-right: 5px;
+		}
+
+		&__data {
+			width: calc(32% - 5px);
+
+			.campaign-item__status-mobile {
+				display: none;
+			}
+		}
+
+		&__user {
+			width: calc(11% - 5px);
+		}
+
+		&__status {
+			width: calc(13% - 5px);
+		}
+
+		&__ends {
+			width: calc(11% - 5px);
+		}
+
+		&__budget {
+			width: calc(13% - 5px);
+		}
+
+		&__impressions {
+			width: calc(13% - 5px);
+		}
+
+		&__clicks {
+			width: calc(7% - 5px);
+		}
+
+		&__action {
+			width: 2%;
+		}
+
+		&__header-image-skeleton {
+			margin-right: 16px;
+		}
+
 		font-family: $font-sf-pro-text;
 		font-style: normal;
 		font-weight: 400;
@@ -78,15 +134,22 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 	}
 
-	.campaign-item__header-image img,
-	.campaign-item__header-image-skeleton {
-		border: 1px solid #eee;
-		border-radius: 4px;
-		width: 108px;
+	.campaign-item__header-image {
 		height: 78px;
 		margin-right: 16px;
-		display: block;
-		background-color: #f5f5f5;
+		min-width: 108px;
+		width: 108px; // TODO: adjust height and width for mobile devices as well.
+
+		img,
+		&-skeleton {
+			background-color: #f5f5f5;
+			border: 1px solid #eee;
+			border-radius: 4px;
+			display: block;
+			height: 78px;
+			min-width: 108px;
+			width: 108px; // TODO: adjust height and width for mobile devices as well.
+		}
 	}
 
 	.badge {
@@ -134,9 +197,37 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 @mixin blazepress-campaigns-table-mobile {
 	.promote-post-i2__table {
+		tr {
+			&:not(:last-child) td {
+				border-bottom: 1px solid #d8d8d8;
+			}
+		}
+
 		td {
+			border-top: none;
 			padding-bottom: 14px;
 			padding-right: 0;
+		}
+
+		.campaign-item {
+			&__user,
+			&__status,
+			&__ends,
+			&__budget,
+			&__impressions,
+			&__clicks,
+			&__action {
+				display: none;
+			}
+
+			&__status-mobile {
+				display: block;
+				margin-top: 8px;
+			}
+		}
+
+		th.campaign-item__data {
+			display: none; // Hide the column name according to the design
 		}
 	}
 }

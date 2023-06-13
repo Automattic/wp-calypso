@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/types';
 import { requestDSP } from 'calypso/lib/promote-post';
 
 export const useCancelCampaignMutation = ( onError: () => void ) => {

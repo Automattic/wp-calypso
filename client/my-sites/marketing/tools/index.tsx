@@ -250,7 +250,7 @@ export const MarketingTools: FunctionComponent = () => {
 					>
 						<Button
 							onClick={ handleSEOCourseClick }
-							href="https://wpcourses.com/course/intro-to-search-engine-optimization-seo/"
+							href="https://wordpress.com/learn/courses/intro-to-seo/"
 							target="_blank"
 						>
 							{ translate( 'Register now' ) }
