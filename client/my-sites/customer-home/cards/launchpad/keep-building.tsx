@@ -3,10 +3,18 @@ import { useLaunchpad } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
+
+function recordTaskClickTracksEvent( is_completed: boolean, task_id: string ) {
+	recordTracksEvent( 'calypso_launchpad_task_clicked', {
+		task_id,
+		is_completed,
+	} );
+}
 
 interface LaunchpadKeepBuildingProps {
 	siteSlug: string | null;
@@ -21,6 +29,38 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
+
+	const tasksWithActions = ( tasks: Task[] ) => {
+		return tasks.map( ( task: Task ) => {
+			let actionDispatch;
+
+			switch ( task.id ) {
+				case 'site_title':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task.completed, task.id );
+						window.location.assign( `/settings/general/${ siteSlug }` );
+					};
+					break;
+
+				case 'design_edited':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task.completed, task.id );
+						window.location.assign( `/site-editor/${ siteSlug }` );
+					};
+					break;
+
+				case 'domain_claim':
+				case 'domain_upsell':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task.completed, task.id );
+						window.location.assign( `/domains/add/${ siteSlug }` );
+					};
+					break;
+			}
+
+			return { ...task, actionDispatch };
+		} );
+	};
 
 	return (
 		<div className="launchpad-keep-building">
@@ -37,7 +77,11 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 					/>
 				</div>
 			</div>
-			<Launchpad siteSlug={ siteSlug } checklistSlug={ checklistSlug } />
+			<Launchpad
+				siteSlug={ siteSlug }
+				checklistSlug={ checklistSlug }
+				taskFilter={ tasksWithActions }
+			/>
 		</div>
 	);
 };
