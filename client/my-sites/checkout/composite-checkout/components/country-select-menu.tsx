@@ -27,7 +27,7 @@ export default function CountrySelectMenu( {
 
 	return (
 		<FormFieldAnnotation
-			labelText={ 1 }
+			labelText={ translate( 'Country' ) }
 			isError={ isError }
 			isDisabled={ isDisabled }
 			formFieldId={ countrySelectorId }
