@@ -218,7 +218,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 							<ul>
 								{ featureList.map( ( feature, i ) => (
 									<li key={ i } className="upgrade-modal__included-item">
-										<Tooltip text={ feature.getDescription() } delay={ 300 } position="top">
+										<Tooltip text={ feature.getDescription?.() } position="top left">
 											<div>
 												<Gridicon icon="checkmark" size={ 16 } />
 												{ feature.getTitle() }

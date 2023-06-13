@@ -52,8 +52,11 @@ export async function loadDSPWidgetJS(): Promise< void > {
 	if ( window.BlazePress ) {
 		return;
 	}
-	const src =
-		config( 'dsp_widget_js_src' ) + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
+	let dspWidgetJS: string = config( 'dsp_widget_js_src' );
+	if ( config.isEnabled( 'promote-post/widget-i2' ) ) {
+		dspWidgetJS = dspWidgetJS.replace( '/promote/', '/promote-v2/' );
+	}
+	const src = dspWidgetJS + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
 	await loadScript( src );
 	// Load the strings so that translations get associated with the module and loaded properly.
 	// The module will assign the placeholder component to `window.BlazePress.strings` as a side-effect,

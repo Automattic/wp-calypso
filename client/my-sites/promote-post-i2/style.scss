@@ -12,6 +12,31 @@
 	line-height: 1.43;
 }
 
+@mixin blazepress-data-row-font-mobile {
+	color: var(--studio-gray-40);
+	font-size: 0.75rem;
+	font-weight: 400;
+	line-height: 1.125;
+}
+
+@mixin blazepress-data-row {
+	&data-row {
+		align-items: center;
+		display: flex;
+		width: 100%;
+
+		&-mobile {
+			display: none;
+			margin-top: 20px;
+
+			.post-item__stats-mobile,
+			.campaign-item__stats-mobile {
+				@include blazepress-data-row-font-mobile;
+			}
+		}
+	}
+}
+
 .notouch .promote-post-i2 .section-nav-tab__link:hover {
 	background-color: transparent;
 }
@@ -103,16 +128,24 @@ body.is-section-promote-post-i2 {
 		.posts-list-banner__learn-more {
 			padding: 6px 12px;
 			margin-right: 8px;
+			border: 1px solid var(--studio-gray-10);
+			// padding: 13px 16px; // TODO: Make sure we need it this way
+
+			.inline-support-link__nowrap {
+				color: var(--studio-gray-80);
+			}
 		}
 
 		&-buttons {
 			display: flex;
 			margin-left: 10px;
 
+			.button,
 			.is-primary {
-				background: #3858ea;
-				border: none;
 				border-radius: 4px;
+			}
+
+			.is-primary {
 				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 			}
 		}
@@ -316,9 +349,7 @@ body.is-section-promote-post-i2 {
 
 				.promote-post-i2__header-subtitle_mobile,
 				.promote-post-i2__search-bar-wrapper,
-				.promote-post-i2__aux-wrapper,
 				.posts-list__table,
-				.campaigns-list__table,
 				.posts-list__loading-container,
 				.promote-post-i2__table,
 				.campaigns-list__loading-container {
@@ -326,10 +357,15 @@ body.is-section-promote-post-i2 {
 					width: calc(100% - 32px);
 				}
 
-				.promote-post-i2__top-bar {
-					margin: 16px;
+				.promote-post-i2__aux-wrapper {
+					margin: 24px 16px 0 16px !important;
+					width: calc(100% - 32px);
 				}
 
+				.campaigns-list__table {
+					margin: 16px 16px 0 16px !important;
+					width: calc(100% - 32px);
+				}
 			}
 
 			.advertising__page-header {
@@ -344,6 +380,8 @@ body.is-section-promote-post-i2 {
 
 	.promote-post-i2 {
 		&__top-bar {
+			margin: 16px;
+
 			.posts-list-banner__learn-more {
 				display: none;
 			}

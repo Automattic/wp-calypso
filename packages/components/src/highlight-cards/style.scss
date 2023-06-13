@@ -224,11 +224,16 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 	// Modules settings popover
 	&.page-modules-settings-popover {
-		// Make the popover be under `#header.masterbar`.
-		z-index: 1;
+		// Make the popover under `#header.masterbar` of z-index: 180.
+		z-index: z-index("root", ".tooltip.popover.page-modules-settings-popover");
 		.popover__inner {
 			padding: 14px 16px;
 		}
+	}
+
+	&.highlight-card__settings-tooltip {
+		// Make the popover under `.page-modules-settings-popover` of z-index: 175.
+		z-index: z-index("root", ".tooltip.popover.highlight-card__settings-tooltip");
 	}
 
 	// @TODO: Introduce the support for the border of white background arrows in the popover component.

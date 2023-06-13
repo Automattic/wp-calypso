@@ -129,28 +129,16 @@ export default function CampaignItemDetails( props: Props ) {
 	const creditsFormatted = `$${ formatCents( credits || 0 ) }`;
 	const totalFormatted = `$${ formatCents( total || 0 ) }`;
 
-	const navigationItems = isSmallScreen
-		? [
-				{
-					label: (
-						<>
-							<Gridicon icon="chevron-left" size={ 18 } />
-							{ translate( 'Back' ) }
-						</>
-					),
-					href: `/advertising`,
-				},
-		  ]
-		: [
-				{
-					label: translate( 'Advertising' ),
-					href: getAdvertisingDashboardPath( `/${ selectedSiteSlug }/campaigns` ),
-				},
-				{
-					label: campaignTitleFormatted || '',
-					href: getAdvertisingDashboardPath( `${ selectedSiteSlug }/campaigns/${ campaignId }` ),
-				},
-		  ];
+	const navigationItems = [
+		{
+			label: translate( 'Advertising' ),
+			href: getAdvertisingDashboardPath( `/${ selectedSiteSlug }/campaigns` ),
+		},
+		{
+			label: campaignTitleFormatted || '',
+			href: getAdvertisingDashboardPath( `${ selectedSiteSlug }/campaigns/${ campaignId }` ),
+		},
+	];
 
 	const icon = (
 		<span className="campaign-item-details__support-buttons-icon">
@@ -251,7 +239,7 @@ export default function CampaignItemDetails( props: Props ) {
 				<div>
 					<div className="campaign-item-breadcrumb">
 						{ ! isLoading ? (
-							<Breadcrumb items={ navigationItems as Item[] } />
+							<Breadcrumb items={ navigationItems as Item[] } compact={ isSmallScreen } />
 						) : (
 							<FlexibleSkeleton />
 						) }
