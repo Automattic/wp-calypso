@@ -15,7 +15,7 @@ const exported = {
 		const blogId = config( 'discover_blog_id' );
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId;
-		const streamKey = `site:${ blogId }`;
+		const streamKey = `discover:${ blogId }`;
 
 		const mcKey = 'discover';
 
