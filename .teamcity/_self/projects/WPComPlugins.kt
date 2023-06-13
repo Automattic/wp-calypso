@@ -234,15 +234,6 @@ private object OdysseyStats : WPComPluginBuild(
 	docsLink = "PejTkB-3N-p2",
 	buildSteps = {
 		bashNodeScript {
-			name = "Translate Odyssey Stats"
-			scriptContent = """
-				cd apps/odyssey-stats
-
-				# generate language files
-				yarn translate
-			"""
-		}
-		bashNodeScript {
 			name = "Run Unit Tests"
 			scriptContent = """
 				cd apps/odyssey-stats
