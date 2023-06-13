@@ -197,7 +197,9 @@ const DataCenterPicker = ( {
 						/>
 						<PickerOption>
 							<PickerOptionLabel>{ translate( 'Optimal data center' ) }</PickerOptionLabel>
-							<span>{ translate( 'Automatically place my site in the optimal data center' ) }</span>
+							<span>
+								{ translate( 'Automatically place my site in the optimal data center.' ) }
+							</span>
 						</PickerOption>
 					</CompactLabel>
 					<CompactLabel>
