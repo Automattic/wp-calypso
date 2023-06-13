@@ -56,38 +56,38 @@ const testWorkspaces = {
 	testId: 'check_storybook',
 };
 
-try {
-	// Since this task is so much larger than the others, we give it a large amount
-	// of CPU and run it by itself. We let other tasks complete in parallel with
-	// less CPU since they'll still finish much more quickly.
-	const testClientTask = runTask( testClient );
+// Since this task is so much larger than the others, we give it a large amount
+// of CPU and run it by itself. We let other tasks complete in parallel with
+// less CPU since they'll still finish much more quickly.
+const testClientTask = runTask( testClient );
 
-	// The async () wrapper is needed so that the Promise settles only after
-	// all tasks finish. If we instead use Promise.all with a chain of Promises,
-	// Promise.all would complete when the first Promise in the chain settles.
-	//
-	// One note about the tsc tasks is that tsc doesn't parallelize well. This means
-	// it doesn't expand to take advantage of more cores. As a result, it's the
-	// limiting factor for overall build speed. We need to give it just enough cores
-	// so that it runs as fast as possible, but leave enough to other tasks so that
-	// they can finish by the time tsc finishes. I found that using 12 cores for
-	// jest and the remaining for tsc and anything else accomplished this.
-	const tscTasks = ( async () => {
-		// This task is a prerequisite for the other tsc tasks, so it must run separately.
-		await runTask( tscPackages );
-		await Promise.allSettled( tscCommands.map( runTask ) );
-	} )();
+// The async () wrapper is needed so that the Promise settles only after
+// all tasks finish. If we instead use Promise.all with a chain of Promises,
+// Promise.all would complete when the first Promise in the chain settles.
+//
+// One note about the tsc tasks is that tsc doesn't parallelize well. This means
+// it doesn't expand to take advantage of more cores. As a result, it's the
+// limiting factor for overall build speed. We need to give it just enough cores
+// so that it runs as fast as possible, but leave enough to other tasks so that
+// they can finish by the time tsc finishes. I found that using 12 cores for
+// jest and the remaining for tsc and anything else accomplished this.
+const tscTasks = ( async () => {
+	// This task is a prerequisite for the other tsc tasks, so it must run separately.
+	await runTask( tscPackages );
+	await Promise.allSettled( tscCommands.map( runTask ) );
+} )();
 
-	// Run these smaller tasks in serial to keep a healthy amount of CPU available for the other tasks.
-	const otherTestTasks = ( async () => {
-		await runTask( testPackages );
-		await runTask( testServer );
-		await runTask( testBuildTools );
-		await runTask( testWorkspaces );
-	} )();
+// Run these smaller tasks in serial to keep a healthy amount of CPU available for the other tasks.
+const otherTestTasks = ( async () => {
+	await runTask( testPackages );
+	await runTask( testServer );
+	await runTask( testBuildTools );
+	await runTask( testWorkspaces );
+} )();
 
-	await Promise.allSettled( [ testClientTask, tscTasks, otherTestTasks ] );
-} catch ( exitCode ) {
-	console.log( `A task failed with exit code ${ exitCode }` );
-	process.exit( exitCode );
+const results = await Promise.allSettled( [ testClientTask, tscTasks, otherTestTasks ] );
+
+if ( results.some( ( { status } ) => status === 'rejected' ) ) {
+	console.log( 'One or more tasks failed.' );
+	process.exit( 1 );
 }
