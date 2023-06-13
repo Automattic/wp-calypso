@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import siteOptionsUrl from 'calypso/assets/images/onboarding/site-options.svg';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -142,7 +141,6 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 				backLabelText={ __( 'Back' ) }
 				hideBack={ hostingFlow }
 				goBack={ goBack }
-				headerImageUrl={ siteOptionsUrl }
 				hideSkip={ true }
 				isHorizontalLayout
 				formattedHeader={
