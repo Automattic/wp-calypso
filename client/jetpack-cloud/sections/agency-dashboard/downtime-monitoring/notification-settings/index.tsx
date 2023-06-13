@@ -387,6 +387,7 @@ export default function NotificationSettings( {
 					/>
 					{ isSMSNotificationEnabled && (
 						<SMSNotification
+							recordEvent={ recordEvent }
 							enableSMSNotification={ enableSMSNotification }
 							setEnableSMSNotification={ setEnableSMSNotification }
 							toggleModal={ toggleAddSMSModal }
