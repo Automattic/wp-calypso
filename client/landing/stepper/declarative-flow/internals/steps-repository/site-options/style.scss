@@ -157,10 +157,10 @@ body:has(.new-hosted-site.options) {
 
 .new-hosted-site.options {
 
-	@include break-small {
-		.step-container__content {
-			flex-basis: unset;
-		}
+	.step-container__content {
+		flex-basis: unset;
+		width: 100%;
+		max-width: 600px;
 	}
 
 	&.is-step-write {
