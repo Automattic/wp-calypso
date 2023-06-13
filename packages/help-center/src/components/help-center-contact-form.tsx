@@ -462,11 +462,7 @@ export const HelpCenterContactForm = () => {
 		jpSearchAiQueryText = `${ debouncedSubject }\n\n${ debouncedMessage }`;
 	}
 
-	const {
-		isFetching: isFetchingGPTResponse,
-		isError: isGPTError,
-		data: gptResponse,
-	} = useJetpackSearchAIQuery( {
+	const { isFetching: isFetchingGPTResponse, isError: isGPTError } = useJetpackSearchAIQuery( {
 		siteId: '9619154',
 		query: jpSearchAiQueryText,
 		stopAt: 'response',
@@ -552,7 +548,10 @@ export const HelpCenterContactForm = () => {
 						/>
 					) }
 				</section>
-				{ gptResponse?.response && [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
+				{ ! isFetchingGPTResponse &&
+					showingGPTResponse &&
+					[ 'CHAT', 'EMAIL' ].includes( mode ) &&
+					getHEsTraySection() }
 			</div>
 		);
 	}
