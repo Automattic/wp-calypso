@@ -25,48 +25,60 @@ export const useHelpSearchQuery = (
 ) => {
 	const queryClient = useQueryClient();
 
+	// set up article list fetching
+	let fetchArticlesAPI: () => Promise< unknown >;
+	const params = `?query=${ encodeURIComponent( search ) }&locale=${ encodeURIComponent(
+		locale
+	) }&section=${ encodeURIComponent( sectionName ) }`;
+	if ( canAccessWpcomApis() ) {
+		fetchArticlesAPI = () =>
+			wpcomRequest( {
+				path: `help/search/wpcom${ params }`,
+				apiNamespace: 'wpcom/v2/',
+				apiVersion: '2',
+			} );
+	} else {
+		fetchArticlesAPI = () =>
+			apiFetch( {
+				global: true,
+				path: `/help-center/search${ params }`,
+			} as APIFetchOptions );
+	}
+
+	// set up article fetching
+	let fetchArticleAPI: ( blogId: number, postId: number ) => Promise< { content: string } >;
+	if ( canAccessWpcomApis() ) {
+		fetchArticleAPI = ( blogId: number, postId: number ) =>
+			wpcomRequest( {
+				path: `help/article/${ blogId }/${ postId }`,
+				apiNamespace: 'wpcom/v2/',
+				apiVersion: '2',
+			} );
+	} else {
+		fetchArticleAPI = ( blogId: number, postId: number ) =>
+			apiFetch( {
+				global: true,
+				path: `/help-center/fetch-post?blog_id=${ blogId }&post_id=${ postId }`,
+			} as APIFetchOptions );
+	}
+
 	return useQuery< any >( {
 		queryKey: [ 'help-center-search', search, sectionName ],
-		queryFn: () =>
-			canAccessWpcomApis()
-				? wpcomRequest( {
-						path: `help/search/?query=${ encodeURIComponent(
-							search
-						) }&locale=${ encodeURIComponent( locale ) }&section=${ encodeURIComponent(
-							sectionName
-						) }`,
-						apiNamespace: 'wpcom/v2/',
-						apiVersion: '2',
-				  } )
-				: apiFetch( {
-						global: true,
-						path: `/help-center/search?query=${ encodeURIComponent(
-							search
-						) }&locale=${ encodeURIComponent( locale ) }&section=${ encodeURIComponent(
-							sectionName
-						) }`,
-				  } as APIFetchOptions ),
+		queryFn: fetchArticlesAPI,
 		onSuccess: async ( data ) => {
-			let newData = data;
-			if ( ! data[ 0 ]?.content ) {
-				newData = await Promise.all(
-					data.map( async ( result: SearchResult ) => {
-						const article: { [ content: string ]: string } = canAccessWpcomApis()
-							? await wpcomRequest( {
-									path: `help/article/${ result.blog_id }/${ result.post_id }`,
-									apiNamespace: 'wpcom/v2/',
-									apiVersion: '2',
-							  } )
-							: await apiFetch( {
-									global: true,
-									path: `/help-center/fetch-post?blog_id=${ result.blog_id }&post_id=${ result.post_id }`,
-							  } as APIFetchOptions );
+			const newData = await Promise.all(
+				data.map( async ( result: SearchResult ) => {
+					// add the content if we don't have it, and have enough info to fetch it
+					if ( ! result.content && result.blog_id && result.post_id ) {
+						const article: { [ content: string ]: string } = await fetchArticleAPI(
+							result.blog_id,
+							result.post_id
+						);
 						return { ...result, content: article.content };
-					} )
-				);
-			}
-
-			console.log('setting query data to ', newData );
+					}
+					return result;
+				} )
+			);
 
 			queryClient.setQueryData( [ 'help', search ], newData );
 		},
