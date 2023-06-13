@@ -11,7 +11,7 @@ references:
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 'true'
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
       SKIP_TSC: 'true'
       NODE_OPTIONS: --max-old-space-size=3072
       npm_config_cache: /home/circleci/.cache/yarn
@@ -126,7 +126,7 @@ references:
     command: |
       source $HOME/.nvm/nvm.sh
       nvm use
-      npm install -g yarn    
+      npm install -g yarn
       cd desktop && yarn ci:github:add-review
 
 commands:
