@@ -2,6 +2,7 @@ import { UserSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { ONBOARDING_PM_LOW, useFlowProgress } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp';
 import {
 	persistSignupDestination,
@@ -87,27 +88,29 @@ const onboarding: Flow = {
 					return;
 				case 'processing': {
 					// clearSignupDestinationCookie();
-					if ( providedDependencies?.goToCheckout ) {
-						const destination = `/setup/site-setup/goals?siteSlug=${ providedDependencies.siteSlug }&notice=purchase-success`;
-						const returnUrl = encodeURIComponent( destination );
+					const destination = addQueryArgs( '/setup/site-setup/goals', {
+						siteSlug: providedDependencies.siteSlug,
+					} );
 
-						persistSignupDestination( destination ); // not sure if this is needed
-						setSignupCompleteSlug( providedDependencies?.siteSlug );
-						setSignupCompleteFlowName( flowName );
+					persistSignupDestination( destination ); // not sure if this is needed
+					setSignupCompleteSlug( providedDependencies.siteSlug );
+					setSignupCompleteFlowName( flowName );
+
+					if ( providedDependencies.goToCheckout ) {
+						const returnUrl = addQueryArgs( destination, { notice: 'purchase-success' } );
 
 						window.location.assign(
-							`/checkout/${ encodeURIComponent(
-								( providedDependencies?.siteSlug as string ) ?? ''
-							) }?redirect_to=${ returnUrl }&signup=1`
+							addQueryArgs(
+								`/checkout/${ encodeURIComponent(
+									( providedDependencies.siteSlug as string ) ?? ''
+								) }`,
+								{ redirect_to: returnUrl, signup: 1 }
+							)
 						);
 						return;
 					}
 
-					window.location.assign(
-						`/setup/site-setup/goals?siteSlug=${
-							encodeURIComponent( providedDependencies?.siteSlug as string ) ?? ''
-						}`
-					);
+					window.location.assign( destination );
 					return;
 				}
 			}
