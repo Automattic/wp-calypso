@@ -17,15 +17,35 @@
 	.file-browser-node {
 		&__loading {
 			&.placeholder {
-				height: 16px;
-				margin: 8px;
+				height: 26px;
+				margin: 6px;
 				@include placeholder();
 			}
 		}
 
 		&__contents {
-			&:not(.is-directory) {
-				padding-left: 32px;
+			&:not(:first-child) {
+				padding-left: 26px;
+			}
+		}
+
+		.components-button.has-icon.has-text svg {
+			width: 22px;
+			height: 22px;
+			margin-right: 4px;
+		}
+
+		.components-button {
+			height: 32px;
+		}
+
+		&:not(:first-child) {
+			&:nth-child(even) {
+				background-color: var(--studio-gray-0);
+			}
+
+			&:nth-child(odd) {
+				background-color: #fff;
 			}
 		}
 	}
