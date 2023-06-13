@@ -23,20 +23,8 @@ const Blog: Flow = {
 		];
 	},
 
-	useStepNavigation( _currentStep, navigate ) {
-		const goBack = () => {
-			return;
-		};
-
-		const goNext = () => {
-			return;
-		};
-
-		const goToStep = ( step: string ) => {
-			navigate( step );
-		};
-
-		return { goNext, goBack, goToStep };
+	useStepNavigation() {
+		return {};
 	},
 
 	useAssertConditions(): AssertConditionResult {
