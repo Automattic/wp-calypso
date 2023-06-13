@@ -25,8 +25,8 @@ function mutationToggleFavoriteSite( {
 export default function useToggleFavoriteSiteMutation< TContext = unknown >(
 	options: UseMutationOptions< APIToggleFavorite, APIError, ToggleFavoriteOptions, TContext >
 ): UseMutationResult< APIToggleFavorite, APIError, ToggleFavoriteOptions, TContext > {
-	return useMutation< APIToggleFavorite, APIError, ToggleFavoriteOptions, TContext >(
-		mutationToggleFavoriteSite,
-		options
-	);
+	return useMutation< APIToggleFavorite, APIError, ToggleFavoriteOptions, TContext >( {
+		...options,
+		mutationFn: mutationToggleFavoriteSite,
+	} );
 }
