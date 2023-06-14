@@ -2,12 +2,18 @@
  * @group gutenberg
  */
 
-import { DataHelper, TestAccount, FullSiteEditorPage } from '@automattic/calypso-e2e';
+import { TestAccount, FullSiteEditorPage } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), function () {
+/**
+ * Note: test user for this spec requires the use of FSE theme with
+ * style variations (eg. Twenty Twenty-Three).
+ *
+ * @see https://github.com/Automattic/wp-calypso/issues/78107
+ */
+describe( 'Site Editor: Limited Global Styles', function () {
 	let page: Page;
 	let fullSiteEditorPage: FullSiteEditorPage;
 	let testAccount: TestAccount;
