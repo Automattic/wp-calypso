@@ -692,13 +692,6 @@ function wpcomPages( app ) {
 			next();
 		}
 	} );
-	app.get( '/read/search', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn && calypsoEnv === 'production' ) {
-			res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
-		} else {
-			next();
-		}
-	} );
 
 	app.get( '/plans', function ( req, res, next ) {
 		if ( ! req.context.isLoggedIn ) {
