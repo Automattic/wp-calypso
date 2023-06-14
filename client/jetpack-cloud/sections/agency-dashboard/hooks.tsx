@@ -1,5 +1,6 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useQueryClient } from '@tanstack/react-query';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useContext, useEffect, RefObject, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -475,11 +476,22 @@ export const useLicenseLightbox = () => {
 					: null,
 			onActivate: () => {
 				if ( selectedLicense ) {
-					dispatch( selectLicense( null, selectedLicense ) );
+					dispatch(
+						recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
+							site_id: null,
+							products: productSlug,
+						} )
+					);
+					dispatch( hideLicenseInfo() );
+					window.location.href = addQueryArgs( `/partner-portal/issue-license/`, {
+						site_id: null,
+						product_slug: productSlug,
+						source: 'dashboard',
+					} );
 				}
 			},
 			onClose: () => {
-				dispatch( hideLicenseInfo );
+				dispatch( hideLicenseInfo() );
 			},
 		};
 	}, [ dispatch, products, productSlug, selectedLicense ] );

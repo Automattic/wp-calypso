@@ -1,14 +1,17 @@
-import { Icon, starFilled } from '@wordpress/icons';
+import { Icon, starFilled, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useContext, useState, forwardRef, Ref } from 'react';
+import { useDispatch } from 'react-redux';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
+import { showLicenseInfo } from 'calypso/state/jetpack-agency-dashboard/actions';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteSort from '../site-sort';
 import SiteTableRow from '../site-table-row';
+import { getProductSlugFromProductType } from '../utils';
 import type { SiteData, SiteColumns } from '../types';
 
 interface Props {
@@ -19,6 +22,8 @@ interface Props {
 
 const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableElement > ) => {
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+
+	const dispatch = useDispatch();
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, true );
 
@@ -51,6 +56,15 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 										) }
 										<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
 											{ column.title }
+
+											{ !! getProductSlugFromProductType( column.key ) && (
+												<Icon
+													className="site-table__tooltip-icon"
+													size={ 16 }
+													icon={ info }
+													onClick={ () => dispatch( showLicenseInfo( column.key ) ) }
+												/>
+											) }
 										</span>
 									</SiteSort>
 								</th>

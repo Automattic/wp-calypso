@@ -109,7 +109,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 			{ selectedLicense && (
 				<LicenseLightbox
 					product={ selectedLicense }
-					ctaLabel={ translate( 'Select License' ) }
+					ctaLabel={ translate( 'Issue License' ) }
 					onActivate={ onActivate }
 					onClose={ onClose }
 				/>
