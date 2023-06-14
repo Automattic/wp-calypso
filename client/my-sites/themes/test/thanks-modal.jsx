@@ -8,7 +8,11 @@ import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setStore } from 'calypso/state/redux-store';
 import { receiveSite } from 'calypso/state/sites/actions';
-import { receiveTheme, themeActivated } from 'calypso/state/themes/actions';
+import {
+	receiveTheme,
+	themeActivated,
+	showAutoLoadingHomepageWarning,
+} from 'calypso/state/themes/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ThanksModal from '../thanks-modal';
 
@@ -90,6 +94,27 @@ describe( 'thanks-modal', () => {
 
 				expect( editSiteCallToAction ).toBeInTheDocument();
 				expect( editSiteCallToAction.closest( 'a' ) ).toHaveAttribute( 'href', encodedURL );
+			} );
+		} );
+	} );
+
+	describe( 'when activating an FSE AND Dotcom theme', () => {
+		test( 'does not display the modal since it will redirect to `/marketplace/thank-you`', async () => {
+			const store = setupStore( {
+				theme: {
+					...defaultTheme,
+					taxonomies: {
+						theme_feature: [ fseThemeFeature ],
+					},
+				},
+			} );
+			store.dispatch( showAutoLoadingHomepageWarning( defaultTheme.id ) );
+
+			render( <TestComponent store={ store } /> );
+
+			await waitFor( () => {
+				const editSiteCallToAction = screen.queryByText( 'Customize site' );
+				expect( editSiteCallToAction ).not.toBeInTheDocument();
 			} );
 		} );
 	} );
