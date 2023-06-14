@@ -392,6 +392,7 @@ class StatsSite extends Component {
 	}
 
 	componentDidMount() {
+		// TODO: Migrate to a query component pattern (i.e. <QueryStatsModuleSettings siteId={siteId} />).
 		this.props.requestModuleSettings( this.props.siteId );
 	}
 
