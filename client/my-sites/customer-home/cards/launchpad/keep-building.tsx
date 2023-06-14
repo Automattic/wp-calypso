@@ -13,7 +13,7 @@ const checklistSlug = 'keep-building';
 
 function recordTaskClickTracksEvent( task: Task ) {
 	recordTracksEvent( 'calypso_launchpad_task_clicked', {
-		checklistSlug,
+		checklist_slug: checklistSlug,
 		task_id: task.id,
 		is_completed: task.completed,
 		context: 'customer-home',
