@@ -226,7 +226,7 @@ class ThemesSelection extends Component {
 	};
 
 	getThemes = () => {
-		const { themes, wpOrgThemes, query, isLastPage } = this.props;
+		const { themes, wpOrgThemes, isLastPage } = this.props;
 
 		const themeSlugs = themes.map( ( theme ) => theme.id );
 		const validWpOrgThemes = wpOrgThemes.filter(
@@ -248,8 +248,8 @@ class ThemesSelection extends Component {
 			...( matchingTheme ? [ matchingTheme ] : [] ),
 			...( matchingWpOrgTheme ? [ matchingWpOrgTheme ] : [] ),
 			...restThemes,
-			// Only include WP.org themes when searching a term and after all previous themes are visible.
-			...( query.search && isLastPage ? restWpOrgThemes : [] ),
+			// Include WP.org themes after the last page of the default themes.
+			...( isLastPage ? restWpOrgThemes : [] ),
 		];
 	};
 
@@ -369,7 +369,7 @@ export const ConnectedThemesSelection = connect(
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
 
-		const includeWpOrgThemes = forceWpOrgSearch && sourceSiteId !== 'wporg';
+		const includeWpOrgThemes = forceWpOrgSearch && sourceSiteId !== 'wporg' && search; // Only display WP.org themes when searching a term.
 		const wpOrgQuery = { ...query, page: 1 }; // We limit the WP.org themes to one page only.
 		const wpOrgThemes = includeWpOrgThemes
 			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []
