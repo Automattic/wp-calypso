@@ -2,6 +2,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useCallback, useState, useContext, useEffect, RefObject, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -483,11 +484,13 @@ export const useLicenseLightbox = () => {
 						} )
 					);
 					dispatch( hideLicenseInfo() );
-					window.location.href = addQueryArgs( `/partner-portal/issue-license/`, {
-						site_id: null,
-						product_slug: productSlug,
-						source: 'dashboard',
-					} );
+					page.show(
+						addQueryArgs( `/partner-portal/issue-license/`, {
+							site_id: null,
+							product_slug: productSlug,
+							source: 'dashboard',
+						} )
+					);
 				}
 			},
 			onClose: () => {
