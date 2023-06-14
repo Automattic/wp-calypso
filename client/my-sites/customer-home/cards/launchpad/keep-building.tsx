@@ -2,13 +2,13 @@ import { CircularProgressBar } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
-import { useEffect } from 'react';
 
 function recordTaskClickTracksEvent( is_completed: boolean, task_id: string ) {
 	recordTracksEvent( 'calypso_launchpad_task_clicked', {
