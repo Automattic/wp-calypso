@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { SUPPORT_FORUM } from '@automattic/help-center';
 import { ResponseCartMessage, useShoppingCart } from '@automattic/shopping-cart';
@@ -8,14 +7,12 @@ import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data'
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
-import HappychatButtonUnstyled from 'calypso/components/happychat/button';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level';
 import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -28,60 +25,6 @@ const HELP_CENTER_STORE = HelpCenter.register();
 type StyledProps = {
 	theme?: Theme;
 };
-
-type HappychatButtonProps = {
-	onClick: () => void;
-	theme?: Theme;
-	openHelpCenter: boolean;
-};
-
-const HappychatButton: React.FC< HappychatButtonProps > = styled( HappychatButtonUnstyled )`
-	margin: 0;
-	padding: 0;
-
-	svg {
-		margin-right: 6px;
-		width: 20px;
-
-		.rtl & {
-			margin-right: 0;
-			margin-left: 6px;
-		}
-	}
-`;
-
-export function PaymentChatButton( {
-	plan,
-	openHelpCenter,
-}: {
-	plan: string | undefined;
-	openHelpCenter: boolean;
-} ) {
-	const reduxDispatch = useDispatch();
-	const translate = useTranslate();
-	const supportLevel = useSelector( getSupportLevel );
-	const section = useSelector( getSectionName );
-
-	const chatButtonClicked = () => {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_presales_chat_click', {
-				plan,
-				support_level: supportLevel,
-				location: openHelpCenter ? 'help-center' : 'inline-help-popover',
-				section,
-			} )
-		);
-	};
-
-	return (
-		<HappychatButton onClick={ chatButtonClicked } openHelpCenter={ openHelpCenter }>
-			<>
-				<Gridicon icon="chat" />
-				{ translate( 'Need help? Chat with us.' ) }
-			</>
-		</HappychatButton>
-	);
-}
 
 const CheckoutHelpLinkWrapper = styled.div< StyledProps >`
 	background: ${ ( props ) => props.theme.colors.surface };

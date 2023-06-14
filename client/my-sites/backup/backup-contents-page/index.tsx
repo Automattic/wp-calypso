@@ -11,6 +11,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import FileBrowser from './file-browser';
 import './style.scss';
 
 interface OwnProps {
@@ -40,7 +41,9 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 						<div className="status-card__title">{ displayDate }</div>
 						<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
 					</div>
-					<div className="backup-contents-page__body"></div>
+					<div className="backup-contents-page__body">
+						<FileBrowser siteId={ siteId } rewindId={ rewindId } />
+					</div>
 				</Card>
 			</Main>
 		</>

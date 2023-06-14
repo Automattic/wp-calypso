@@ -17,7 +17,7 @@ import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
-import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import { DEFAULT_THEME_QUERY, RETIRED_THEME_SLUGS_SET } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -108,6 +108,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 			props.wpOrgThemes?.filter(
 				( wpOrgTheme ) =>
 					! themeSlugs.includes( wpOrgTheme?.id?.toLowerCase() ) && // Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
+					! RETIRED_THEME_SLUGS_SET.has( wpOrgTheme?.id?.toLowerCase() ) && // Avoid retired themes.
 					( wpOrgTheme?.name?.toLowerCase() === props.searchTerm.toLowerCase() ||
 						wpOrgTheme?.id?.toLowerCase() === props.searchTerm.toLowerCase() )
 			) || []

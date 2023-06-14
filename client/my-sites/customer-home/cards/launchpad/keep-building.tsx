@@ -14,9 +14,10 @@ interface LaunchpadKeepBuildingProps {
 
 const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.Element => {
 	const translate = useTranslate();
+	const checklistSlug = 'keep-building';
 	const {
 		data: { checklist },
-	} = useLaunchpad( siteSlug );
+	} = useLaunchpad( siteSlug, checklistSlug );
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
@@ -36,7 +37,7 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 					/>
 				</div>
 			</div>
-			<Launchpad siteSlug={ siteSlug } />
+			<Launchpad siteSlug={ siteSlug } checklistSlug={ checklistSlug } />
 		</div>
 	);
 };
