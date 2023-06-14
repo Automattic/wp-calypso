@@ -383,9 +383,13 @@ class StatsSite extends Component {
 			<EmptyContent
 				illustration={ illustration404 }
 				title={ translate( 'Looking for stats?' ) }
-				line={ translate(
-					'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
-				) }
+				line={
+					<p>
+						{ translate(
+							'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
+						) }
+					</p>
+				}
 				action={ translate( 'Enable Jetpack Stats' ) }
 				actionCallback={ this.enableStatsModule }
 			/>
@@ -402,9 +406,14 @@ class StatsSite extends Component {
 			<EmptyContent
 				illustration={ illustration404 }
 				title={ translate( 'Looking for stats?' ) }
-				line={ translate(
-					'You have insufficient permissions for viewing the Jetpack Stats dashboard. Please contact your site administrator for access.'
-				) }
+				line={
+					<p>
+						<div>
+							{ translate( "We're sorry, but you do not have permission to access this page." ) }
+						</div>
+						<div>{ translate( "Please contact your site's administrator for access." ) }</div>
+					</p>
+				}
 			/>
 		);
 	}
