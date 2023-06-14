@@ -41,6 +41,9 @@ function SubscriberHighlightsHeader() {
 		comment: 'Heading for Subscribers page highlights section',
 	} );
 
+	// TODO: Add an explanation here if we're running an older version of Odyssey Stats
+	//       without support for subscriber highlights API endpoint support.
+
 	return <h1 className="highlight-cards-heading">{ localizedTitle }</h1>;
 }
 
