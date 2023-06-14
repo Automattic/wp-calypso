@@ -903,14 +903,28 @@ if (
 			const actions = { ...registry.dispatch( namespaceName ) };
 			const trackers = REDUX_TRACKING[ namespaceName ];
 
+			// Store rewrittenActions so we can return the same reference when the store updates.
 			if ( ! rewrittenActions[ namespaceName ] ) {
 				rewrittenActions[ namespaceName ] = {};
 			}
+			// Store originalActions so we can determine if these ever change and we need to update
+			// the corresponding item in rewrittenActions.
+			if ( ! originalActions[ namespaceName ] ) {
+				originalActions[ namespaceName ] = {};
+			}
+
 			if ( trackers ) {
 				Object.keys( trackers ).forEach( ( actionName ) => {
 					const originalAction = actions[ actionName ];
 					const tracker = trackers[ actionName ];
-					if ( ! rewrittenActions[ namespaceName ][ actionName ] ) {
+					// If we havent stored the originalAction, or it is no longer the same as the
+					// one we last wrote a corresponding rewrittenAction for, we need to update.
+					if (
+						! originalActions[ namespaceName ][ actionName ] ||
+						originalActions[ namespaceName ][ actionName ] !== originalAction
+					) {
+						// Save the originalAction and rewrittenAction for future reference.
+						originalActions[ namespaceName ][ actionName ] = originalAction;
 						rewrittenActions[ namespaceName ][ actionName ] = ( ...args ) => {
 							debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
 							// We use a try-catch here to make sure the `originalAction`
@@ -931,6 +945,7 @@ if (
 							return originalAction( ...args );
 						};
 					}
+					// Replace the action in the registry with the rewrittenAction.
 					actions[ actionName ] = rewrittenActions[ namespaceName ][ actionName ];
 				} );
 			}
@@ -970,3 +985,4 @@ if (
 }
 
 const rewrittenActions = {};
+const originalActions = {};
