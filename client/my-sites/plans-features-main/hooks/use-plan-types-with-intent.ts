@@ -27,7 +27,6 @@ interface Props {
 	selectedPlan: string;
 	sitePlanSlug: string;
 	hideEnterprisePlan: boolean;
-	currentSitePlanSlug?: string;
 }
 
 interface PlanTypesWithIntent {
@@ -36,9 +35,7 @@ interface PlanTypesWithIntent {
 }
 
 const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent | null => {
-	// TODO: refactor: sitePlanSlug === currentSitePlanSlug
-	// TODO: refactor: pass siteId
-	const { selectedPlan, sitePlanSlug, hideEnterprisePlan, currentSitePlanSlug, intent } = props;
+	const { selectedPlan, sitePlanSlug, hideEnterprisePlan, intent } = props;
 	const isBloggerAvailable = isBloggerPlan( selectedPlan ) || isBloggerPlan( sitePlanSlug );
 
 	// TODO:
@@ -48,8 +45,8 @@ const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent | null => {
 	const isEnterpriseAvailable = ! hideEnterprisePlan;
 
 	let currentSitePlanType = null;
-	if ( currentSitePlanSlug ) {
-		currentSitePlanType = getPlan( currentSitePlanSlug )?.type;
+	if ( sitePlanSlug ) {
+		currentSitePlanType = getPlan( sitePlanSlug )?.type;
 	}
 
 	const defaultPlanTypes = [
