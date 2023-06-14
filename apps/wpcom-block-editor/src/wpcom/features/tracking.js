@@ -903,29 +903,35 @@ if (
 			const actions = { ...registry.dispatch( namespaceName ) };
 			const trackers = REDUX_TRACKING[ namespaceName ];
 
+			if ( ! rewrittenActions[ namespaceName ] ) {
+				rewrittenActions[ namespaceName ] = {};
+			}
 			if ( trackers ) {
 				Object.keys( trackers ).forEach( ( actionName ) => {
 					const originalAction = actions[ actionName ];
 					const tracker = trackers[ actionName ];
-					actions[ actionName ] = ( ...args ) => {
-						debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
-						// We use a try-catch here to make sure the `originalAction`
-						// is always called. We don't want to break the original
-						// behaviour when our tracking throws an error.
-						try {
-							if ( typeof tracker === 'string' ) {
-								// Simple track - just based on the event name.
-								tracksRecordEvent( tracker );
-							} else if ( typeof tracker === 'function' ) {
-								// Advanced tracking - call function.
-								tracker( ...args );
+					if ( ! rewrittenActions[ namespaceName ][ actionName ] ) {
+						rewrittenActions[ namespaceName ][ actionName ] = ( ...args ) => {
+							debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
+							// We use a try-catch here to make sure the `originalAction`
+							// is always called. We don't want to break the original
+							// behaviour when our tracking throws an error.
+							try {
+								if ( typeof tracker === 'string' ) {
+									// Simple track - just based on the event name.
+									tracksRecordEvent( tracker );
+								} else if ( typeof tracker === 'function' ) {
+									// Advanced tracking - call function.
+									tracker( ...args );
+								}
+							} catch ( err ) {
+								// eslint-disable-next-line no-console
+								console.error( err );
 							}
-						} catch ( err ) {
-							// eslint-disable-next-line no-console
-							console.error( err );
-						}
-						return originalAction( ...args );
-					};
+							return originalAction( ...args );
+						};
+					}
+					actions[ actionName ] = rewrittenActions[ namespaceName ][ actionName ];
 				} );
 			}
 			return actions;
@@ -962,3 +968,5 @@ if (
 		}
 	);
 }
+
+const rewrittenActions = {};
