@@ -148,9 +148,8 @@ export default function CampaignItem( props: Props ) {
 				{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }
 			</td>
 			<td className="campaign-item__budget">{ budgetString }</td>
-			{ /* TODO: Return these columns back when backend is ready to provide the data */ }
-			{ /* <td className="campaign-item__impressions">{ formatNumber( impressions_total ) }</td> */ }
-			{ /* <td className="campaign-item__clicks">{ formatNumber( clicks_total ) }</td> */ }
+			<td className="campaign-item__impressions">{ formatNumber( impressions_total ) }</td>
+			<td className="campaign-item__clicks">{ formatNumber( clicks_total ) }</td>
 			<td className="campaign-item__action">
 				{ campaignContainsData && <Button href={ openCampaignURL } isLink icon={ chevronRight } /> }
 			</td>
