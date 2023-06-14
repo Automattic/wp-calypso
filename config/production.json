@@ -119,7 +119,7 @@
 		"pre-cancellation-modal": false,
 		"press-this": true,
 		"promote-post/redesign-i2": false,
-		"promote-post/widget-i2": false,
+		"promote-post/widget-i2": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
