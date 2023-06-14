@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Subscriber } from '../../types';
 import './styles.scss';
 
-enum UnsubscribeActionType {
+export enum UnsubscribeActionType {
 	Cancel = 'cancel',
 	Manage = 'manage',
 	Unsubscribe = 'unsubscribe',
@@ -77,5 +77,4 @@ const UnsubscribeModal = ( { subscriber, onClose }: UnsubscribeModalProps ) => {
 	);
 };
 
-export { UnsubscribeActionType };
 export default UnsubscribeModal;
