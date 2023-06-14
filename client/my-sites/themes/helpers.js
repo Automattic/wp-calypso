@@ -2,6 +2,7 @@ import { isMagnificentLocale, addLocaleToPath } from '@automattic/i18n-utils';
 import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { RETIRED_THEME_SLUGS_SET } from 'calypso/state/themes/constants';
 
 export function trackClick( componentName, eventName, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;
@@ -111,4 +112,45 @@ export function getSubjectsFromTermTable( filterToTermTable ) {
 			obj[ key ] = filterToTermTable[ key ];
 			return obj;
 		}, {} );
+}
+
+/**
+ * Interlace WP.com themes with WP.org themes.
+ *
+ * @param wpComThemes List of WP.com themes.
+ * @param wpOrgThemes List of WP.org themes.
+ * @param searchTerm Search term.
+ * @param isLastPage Whether the list of WP.com has reached the last page.
+ */
+export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPage ) {
+	const isMatchingTheme = ( theme ) => {
+		return (
+			theme.name?.toLowerCase() === searchTerm?.toLowerCase() ||
+			theme.id?.toLowerCase() === searchTerm?.toLowerCase()
+		);
+	};
+
+	const wpComThemesSlugs = wpComThemes.map( ( theme ) => theme.id );
+	const validWpOrgThemes = wpOrgThemes.filter(
+		( theme ) =>
+			! wpComThemesSlugs.includes( theme?.id?.toLowerCase() ) && // Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
+			! RETIRED_THEME_SLUGS_SET.has( theme?.id?.toLowerCase() ) // Avoid retired themes.
+	);
+
+	const matchingTheme = wpComThemes.find( isMatchingTheme );
+	const restWpComThemes = matchingTheme
+		? wpComThemes.filter( ( theme ) => theme.id !== matchingTheme.id )
+		: wpComThemes;
+	const matchingWpOrgTheme = validWpOrgThemes.find( isMatchingTheme );
+	const restWpOrgThemes = matchingWpOrgTheme
+		? validWpOrgThemes.filter( ( theme ) => theme.id !== matchingWpOrgTheme.id )
+		: validWpOrgThemes;
+
+	return [
+		...( matchingTheme ? [ matchingTheme ] : [] ),
+		...( matchingWpOrgTheme ? [ matchingWpOrgTheme ] : [] ),
+		...restWpComThemes,
+		// Include WP.org themes after the last page of the default themes.
+		...( isLastPage ? restWpOrgThemes : [] ),
+	];
 }

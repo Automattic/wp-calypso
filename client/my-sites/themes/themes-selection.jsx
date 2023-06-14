@@ -13,7 +13,6 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
-import { RETIRED_THEME_SLUGS_SET } from 'calypso/state/themes/constants';
 import {
 	arePremiumThemesEnabled,
 	getPremiumThemePrice,
@@ -25,7 +24,7 @@ import {
 	isInstallingTheme,
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
-import { addStyleVariation, trackClick } from './helpers';
+import { addStyleVariation, trackClick, interlaceThemes } from './helpers';
 import SearchThemesTracks from './search-themes-tracks';
 import './themes-selection.scss';
 
@@ -217,55 +216,22 @@ class ThemesSelection extends Component {
 		return options;
 	};
 
-	isMatchingTheme = ( theme ) => {
-		const { query } = this.props;
-		return (
-			theme.name?.toLowerCase() === query.search?.toLowerCase() ||
-			theme.id?.toLowerCase() === query.search?.toLowerCase()
-		);
-	};
-
-	getThemes = () => {
-		const { themes, wpOrgThemes, isLastPage } = this.props;
-
-		const themeSlugs = themes.map( ( theme ) => theme.id );
-		const validWpOrgThemes = wpOrgThemes.filter(
-			( wpOrgTheme ) =>
-				! themeSlugs.includes( wpOrgTheme?.id?.toLowerCase() ) && // Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
-				! RETIRED_THEME_SLUGS_SET.has( wpOrgTheme?.id?.toLowerCase() ) // Avoid retired themes.
-		);
-
-		const matchingTheme = themes.find( this.isMatchingTheme );
-		const restThemes = matchingTheme
-			? themes.filter( ( theme ) => theme.id !== matchingTheme.id )
-			: themes;
-		const matchingWpOrgTheme = validWpOrgThemes.find( this.isMatchingTheme );
-		const restWpOrgThemes = matchingWpOrgTheme
-			? validWpOrgThemes.filter( ( theme ) => theme.id !== matchingWpOrgTheme.id )
-			: validWpOrgThemes;
-
-		return [
-			...( matchingTheme ? [ matchingTheme ] : [] ),
-			...( matchingWpOrgTheme ? [ matchingWpOrgTheme ] : [] ),
-			...restThemes,
-			// Include WP.org themes after the last page of the default themes.
-			...( isLastPage ? restWpOrgThemes : [] ),
-		];
-	};
-
 	render() {
 		const {
+			themes,
 			source,
 			query,
 			upsellUrl,
 			upsellBanner,
 			siteId,
 			tabFilter,
+			isLastPage,
 			includeWpOrgThemes,
 			wpOrgQuery,
+			wpOrgThemes,
 		} = this.props;
 
-		const themes = this.getThemes();
+		const interlacedThemes = interlaceThemes( themes, wpOrgThemes, query.search, isLastPage );
 
 		return (
 			<div className="themes__selection">
@@ -274,7 +240,7 @@ class ThemesSelection extends Component {
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					upsellBanner={ upsellBanner }
-					themes={ themes }
+					themes={ interlacedThemes }
 					fetchNextPage={ this.fetchNextPage }
 					recordTracksEvent={ this.props.recordTracksEvent }
 					onMoreButtonClick={ this.recordSearchResultsClick }
@@ -295,7 +261,7 @@ class ThemesSelection extends Component {
 					searchTerm={ query.search }
 					tabFilter={ tabFilter }
 				/>
-				<SearchThemesTracks query={ query } themes={ themes } />
+				<SearchThemesTracks query={ query } themes={ interlacedThemes } />
 			</div>
 		);
 	}
