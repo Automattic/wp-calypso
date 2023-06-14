@@ -349,7 +349,7 @@ export const getTask = (
 				timing: 5,
 				title: translate( 'Install a custom plugin' ),
 				description: translate(
-					'Add new features to your site with plugins. Choose from thousands of free and premium plugins to make your site stand out.'
+					'Add new features to your site with plugins. Choose from thousands of free and premium plugins or upload your own to make your site stand out.'
 				),
 				actionText: translate( 'Install' ),
 				actionUrl: `/plugins/${ siteSlug }`,
