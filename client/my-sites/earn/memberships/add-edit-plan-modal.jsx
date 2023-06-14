@@ -187,7 +187,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 	const handlePriceChange = ( event ) => {
 		const value = parseFloat( event.currentTarget.value );
-		setCurrentPrice( value );
+		if ( ! isNaN( value ) ) {
+			setCurrentPrice( event.currentTarget.value );
+		}
 	};
 	const handlePayWhatYouWant = ( newValue ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue ) => setEditedMultiplePerUser( newValue );
