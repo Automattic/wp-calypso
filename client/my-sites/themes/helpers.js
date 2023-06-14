@@ -125,6 +125,9 @@ export function getSubjectsFromTermTable( filterToTermTable ) {
  */
 export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPage ) {
 	const isMatchingTheme = ( theme ) => {
+		if ( ! searchTerm ) {
+			return false;
+		}
 		return (
 			theme.name?.toLowerCase() === searchTerm?.toLowerCase() ||
 			theme.id?.toLowerCase() === searchTerm?.toLowerCase()
