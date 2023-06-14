@@ -35,14 +35,14 @@ function getHidePlanPropsBasedOnSignupDependencies(
 		signupDependencies.themeType === MARKETPLACE_THEME ||
 		signupDependencies.themeType === WOOCOMMERCE_THEME
 	) {
-		return { hidePremiumPlan: true, hidePersonalPlan: true };
+		return { hidePremiumPlan: true, hidePersonalPlan: true, hideFreePlan: true };
 	}
 
 	/**
 	 * Premium themes: Display Premium, Business and eCommerce
 	 */
 	if ( signupDependencies.themeType === PREMIUM_THEME ) {
-		return { hidePersonalPlan: true };
+		return { hidePersonalPlan: true, hideFreePlan: true };
 	}
 
 	return {};
