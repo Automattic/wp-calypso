@@ -51,7 +51,6 @@ class ThemesSelection extends Component {
 		isRequesting: PropTypes.bool,
 		isThemeActive: PropTypes.func,
 		placeholderCount: PropTypes.number,
-		customizedThemesList: PropTypes.array,
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
 		themesCount: PropTypes.number,
@@ -66,15 +65,14 @@ class ThemesSelection extends Component {
 
 	componentDidMount() {
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
-		const { query, customizedThemesList } = this.props;
-		if ( ! customizedThemesList && ! query.search && ! query.filter && ! query.tier ) {
+		const { query } = this.props;
+		if ( ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
 		}
 	}
 
 	recordSearchResultsClick = ( themeId, resultsRank, action, variation = '@theme' ) => {
-		const { query, filterString } = this.props;
-		const themes = this.props.customizedThemesList || this.props.themes;
+		const { query, filterString, themes } = this.props;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
 
@@ -166,9 +164,7 @@ class ThemesSelection extends Component {
 			this.trackScrollPage();
 		}
 
-		if ( ! this.props.customizedThemesList ) {
-			this.props.incrementPage();
-		}
+		this.props.incrementPage();
 	};
 
 	//intercept preview and add primary and secondary
@@ -223,9 +219,7 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl, upsellBanner, siteId, tabFilter } = this.props;
-
-		const themes = this.props.customizedThemesList || this.props.themes;
+		const { source, query, upsellUrl, upsellBanner, siteId, tabFilter, themes } = this.props;
 
 		return (
 			<div className="themes__selection">

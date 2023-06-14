@@ -89,7 +89,15 @@ const withThemeAssemblerFlow: Flow = {
 			}
 		};
 
-		return { submit };
+		const goBack = () => {
+			switch ( _currentStep ) {
+				case 'patternAssembler': {
+					return window.location.assign( `/themes/${ siteSlug }` );
+				}
+			}
+		};
+
+		return { submit, goBack };
 	},
 };
 

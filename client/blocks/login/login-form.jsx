@@ -539,12 +539,6 @@ export class LoginForm extends Component {
 	}
 
 	render() {
-		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
-
-		const isSubmitButtonDisabled =
-			this.props.isWoo && ! this.props.isPartnerSignup
-				? this.state.usernameOrEmail.trim().length === 0 || this.state.password.trim().length === 0
-				: isFormDisabled;
 		const {
 			accountType,
 			oauth2Client,
@@ -562,6 +556,11 @@ export class LoginForm extends Component {
 			isWoo,
 			isPartnerSignup,
 		} = this.props;
+
+		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
+		const isFormFilled =
+			this.state.usernameOrEmail.trim().length === 0 || this.state.password.trim().length === 0;
+		const isSubmitButtonDisabled = isWoo && ! isPartnerSignup ? isFormFilled : isFormDisabled;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
@@ -730,7 +729,7 @@ export class LoginForm extends Component {
 					</div>
 
 					<p className="login__form-terms">{ socialToS }</p>
-					{ this.props.isWoo && ! this.props.isPartnerSignup && this.renderLostPasswordLink() }
+					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isSubmitButtonDisabled }>
 							{ this.getLoginButtonText() }
@@ -793,7 +792,9 @@ export default connect(
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-			isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+			isWoo:
+				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
+				'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
 			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),

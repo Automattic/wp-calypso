@@ -167,7 +167,7 @@ const DataCenterPicker = ( {
 		return (
 			<div className="data-center-picker">
 				<FormHeadingContainer>
-					<FormHeading>{ translate( 'Primary data center' ) }</FormHeading>
+					<FormHeading>{ translate( 'Pick your primary data center' ) }</FormHeading>
 				</FormHeadingContainer>
 				<FormDescription className="data-center-picker__description">
 					{ translate(
@@ -197,7 +197,9 @@ const DataCenterPicker = ( {
 						/>
 						<PickerOption>
 							<PickerOptionLabel>{ translate( 'Optimal data center' ) }</PickerOptionLabel>
-							<span>{ translate( 'Automatically place my site in the optimal data center' ) }</span>
+							<span>
+								{ translate( 'Automatically place my site in the optimal data center.' ) }
+							</span>
 						</PickerOption>
 					</CompactLabel>
 					<CompactLabel>
@@ -253,7 +255,7 @@ const DataCenterPicker = ( {
 			{ isFormShowing && (
 				<Form>
 					<FormHeadingContainer>
-						<FormHeading>{ translate( 'Primary data center' ) }</FormHeading>
+						<FormHeading>{ translate( 'Pick your primary data center' ) }</FormHeading>
 						<Button isTertiary={ true } onClick={ onCancel }>
 							{ translate( 'Cancel' ) }
 						</Button>
@@ -292,7 +294,9 @@ const DataCenterPicker = ( {
 								checked={ isRecommendedDataCenterPicked }
 								onChange={ () => onChange( RECOMMENDED_DATA_CENTER ) }
 							/>
-							<span>{ translate( 'Automatically place my site in the optimal data center' ) }</span>
+							<span>
+								{ translate( 'Automatically place my site in the optimal data center.' ) }
+							</span>
 						</AutomaticFormLabel>
 						<FormRadiosBar
 							isThumbnail

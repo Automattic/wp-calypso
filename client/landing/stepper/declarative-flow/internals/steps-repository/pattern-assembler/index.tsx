@@ -11,6 +11,7 @@ import {
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -52,6 +53,8 @@ import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import type { FC } from 'react';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 import './style.scss';
 
 const PatternAssembler = ( {
@@ -61,6 +64,7 @@ const PatternAssembler = ( {
 	noticeList,
 	noticeOperations,
 }: StepProps & withNotices.Props ) => {
+	const translate = useTranslate();
 	const navigator = useNavigator();
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
@@ -391,11 +395,16 @@ const PatternAssembler = ( {
 		if ( isEnabled( 'pattern-assembler/logged-in-showcase' ) ) {
 			setPendingAction( () =>
 				Promise.resolve()
-					.then(
-						() =>
-							reduxDispatch(
-								activateOrInstallThenActivate( themeId, site?.ID, 'assembler', false, false )
-							) as PromiseLike< string >
+					.then( () =>
+						reduxDispatch(
+							activateOrInstallThenActivate(
+								themeId,
+								site?.ID,
+								'assembler',
+								false,
+								false
+							) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+						)
 					)
 					.then( ( activeThemeStylesheet: string ) =>
 						assembleSite( siteSlugOrId, activeThemeStylesheet, {
@@ -660,7 +669,12 @@ const PatternAssembler = ( {
 			stepName="pattern-assembler"
 			hideBack={
 				navigator.location.path !== NAVIGATOR_PATHS.ACTIVATION &&
-				( navigator.location.path !== NAVIGATOR_PATHS.MAIN || isSiteAssemblerFlow( flow ) )
+				navigator.location.path !== NAVIGATOR_PATHS.MAIN
+			}
+			backLabelText={
+				isSiteAssemblerFlow( flow ) && navigator.location.path === NAVIGATOR_PATHS.MAIN
+					? translate( 'Back to themes' )
+					: undefined
 			}
 			goBack={ onBack }
 			goNext={ goNext }

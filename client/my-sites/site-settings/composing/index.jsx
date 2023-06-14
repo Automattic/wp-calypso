@@ -5,7 +5,6 @@ import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import Latex from './latex';
 import Markdown from './markdown';
-import PublishConfirmation from './publish-confirmation';
 import Shortcodes from './shortcodes';
 
 const Composing = ( {
@@ -31,7 +30,6 @@ const Composing = ( {
 			title={ translate( 'Composing' ) }
 		/>
 		<CompactCard className="composing__card site-settings">
-			<PublishConfirmation />
 			<DefaultPostFormat
 				eventTracker={ eventTracker }
 				fields={ fields }
