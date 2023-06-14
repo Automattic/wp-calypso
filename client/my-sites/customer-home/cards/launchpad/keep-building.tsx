@@ -62,7 +62,7 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 					break;
 				case 'drive_traffic':
 					actionDispatch = () => {
-						recordTaskClickTracksEvent( task.completed, task.id );
+						recordTaskClickTracksEvent( task );
 						const url = isMobile()
 							? `/marketing/connections/${ siteSlug }`
 							: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
