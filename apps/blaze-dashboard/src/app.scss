@@ -2,23 +2,111 @@
 @import "./styles/layout.scss";
 @import "./styles/wp-admin.scss";
 @import "./styles/promote-widget.scss";
+@import "./styles/typography.scss";
 
 .jp-blaze-dashboard {
-	.promote-post-i2 .jetpack-header {
-		padding: 0;
+	.promote-post-i2 {
+		.jetpack-header {
+			padding: 0;
 
-		// Align with navigation.
-		@media (max-width: 660px) {
-			padding-left: 16px;
+			// Align with navigation.
+			@media (max-width: 660px) {
+				padding-left: 16px;
+			}
 		}
-	}
 
-	.promote-post-i2 .section-nav {
-		overflow: hidden;
-	}
+		// Header
+		.promote-post-i2__top-bar {
+			height: 40px;
+			display: flex;
+			align-items: center;
+			margin-bottom: 40px;
 
-	.promote-post-i2__top-bar-buttons button {
-		padding: 8px 14px;
-		line-height: 22px;
+			.promote-post-i2__top-bar-buttons {
+				height: 100%;
+
+				.inline-support-link {
+					font-weight: 600;
+					font-size: 1rem;
+
+					padding: 8px 24px;
+					line-height: 22px;
+					min-width: 110px;
+				}
+
+				button {
+					font-weight: 600;
+					font-size: 1rem;
+					padding: 8px 24px;
+					height: 100%;
+					min-width: 110px;
+					justify-content: center;
+				}
+			}
+		}
+		.promote-post-i2__header-subtitle.promote-post-i2__header-subtitle_mobile {
+			display: none !important;
+		}
+
+		// Navigation bar
+		.section-nav {
+			.section-nav-tabs__list {
+				overflow: visible;
+				height: auto !important;
+			}
+
+			.section-nav-tab {
+				&.is-selected {
+					height: 36px;
+				}
+
+				.section-nav-tab__link {
+					padding: 8px 0;
+				}
+			}
+		}
+
+		// Banner
+		.posts-list-banner__container {
+			margin-bottom: 40px;
+
+			.posts-list-banner__content {
+				.posts-list-banner__header {
+					display: none;
+				}
+				.posts-list-banner__text-section {
+					.posts-list-banner__title {
+						font-weight: 700;
+						font-size: 2.25rem;
+						line-height: 40px;
+					}
+					.posts-list-banner__description {
+						color: var(--studio-gray-70);
+						font-size: 1rem;
+						line-height: 24px;
+					}
+				}
+			}
+		}
+
+		// Post table
+		.post-item__post-promote-button {
+			color: var(--color-accent) !important;
+			border: 1.5px solid var(--color-accent);
+			border-radius: 4px;
+			font-weight: 600;
+			font-size: 0.75rem;
+
+			&:hover {
+				text-decoration: underline;
+				color: var(--color-accent);
+			}
+		}
+
+		.post-item__actions-mobile {
+			.post-item__view-link {
+				margin-right: 10px !important;
+			}
+		}
 	}
 }

@@ -53,7 +53,7 @@ export default () => {
 	);
 
 	page(
-		'/advertising/:site?/campaigns/:campaignId',
+		getAdvertisingDashboardPath( '/:site?/campaigns/:campaignId' ),
 		redirectToPrimarySite,
 		campaignDetails,
 		navigation,
