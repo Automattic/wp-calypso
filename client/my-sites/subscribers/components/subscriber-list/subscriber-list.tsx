@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import useAddSubcriptions from '../../hooks/use-add-subscriptions';
 import { Subscriber } from '../../types';
 import { SubscriberRow } from './subscriber-row';
 import './styles.scss';
@@ -10,8 +11,9 @@ type SubscriberListProps = {
 
 const noop = () => undefined;
 
-export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
+export const SubscriberList = ( { subscribers: rawSubscribers }: SubscriberListProps ) => {
 	const translate = useTranslate();
+	const subscribers = useAddSubcriptions( rawSubscribers );
 	return (
 		<ul className="subscriber-list" role="table">
 			<li className="row header" role="row">
@@ -21,7 +23,7 @@ export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
 				<span className="subscriber-list__profile-column" role="columnheader">
 					{ translate( 'Name' ) }
 				</span>
-				<span className="subscriber-list__subscription-type-column hidden" role="columnheader">
+				<span className="subscriber-list__subscription-type-column" role="columnheader">
 					{ translate( 'Subscription type' ) }
 				</span>
 				<span className="subscriber-list__rate-column hidden" role="columnheader">
@@ -32,7 +34,7 @@ export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
 				</span>
 				<span className="subscriber-list__menu-column" role="columnheader"></span>
 			</li>
-			{ subscribers.map( ( subscriber ) => (
+			{ subscribers.map( ( subscriber: Subscriber ) => (
 				<SubscriberRow
 					key={ subscriber.subscription_id }
 					subscriber={ subscriber }

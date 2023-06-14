@@ -11,7 +11,8 @@ type SubscriberRowProps = {
 };
 
 export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: SubscriberRowProps ) => {
-	const { avatar, display_name, email_address, date_subscribed, open_rate } = subscriber;
+	const { avatar, display_name, email_address, date_subscribed, open_rate, subscriptions } =
+		subscriber;
 
 	return (
 		<li className="subscriber-row row" role="row">
@@ -21,7 +22,12 @@ export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: Subscriber
 			<span className="subscriber-list__profile-column" role="cell">
 				<SubscriberProfile avatar={ avatar } displayName={ display_name } email={ email_address } />
 			</span>
-			<span className="subscriber-list__subscription-type-column hidden" role="cell"></span>
+			<span className="subscriber-list__subscription-type-column" role="cell">
+				{ subscriptions &&
+					subscriptions.map( ( subscription, index ) => (
+						<div key={ index }>{ subscription }</div>
+					) ) }
+			</span>
 			<span className="subscriber-list__rate-column hidden" role="cell">
 				{ open_rate }
 			</span>
