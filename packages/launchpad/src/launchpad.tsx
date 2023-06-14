@@ -19,12 +19,16 @@ const Launchpad = ( {
 	const { isFetchedAfterMount, data } = launchpadData;
 
 	const originalTasks = data.checklist || [];
-	const tasks = taskFilter ? taskFilter( originalTasks ) : originalTasks;
+	const tasks: Task[] | null = taskFilter ? taskFilter( originalTasks ) : originalTasks;
 
+	const completedTasks = tasks?.filter( ( task: Task ) => task.completed );
+	const incompleteTasks = tasks?.filter( ( task: Task ) => ! task.completed );
+
+	const sortedTasks = [ ...( completedTasks || [] ), ...( incompleteTasks || [] ) ];
 	return (
 		<div className="launchpad__checklist-wrapper">
 			{ isFetchedAfterMount ? (
-				<Checklist tasks={ tasks } makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction } />
+				<Checklist tasks={ sortedTasks } makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction } />
 			) : (
 				<Checklist.Placeholder />
 			) }
