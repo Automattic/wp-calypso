@@ -220,8 +220,8 @@ class ThemesSelection extends Component {
 	isMatchingTheme = ( theme ) => {
 		const { query } = this.props;
 		return (
-			theme.name?.toLowerCase() === query.search.toLowerCase() ||
-			theme.id?.toLowerCase() === query.search.toLowerCase()
+			theme.name?.toLowerCase() === query.search?.toLowerCase() ||
+			theme.id?.toLowerCase() === query.search?.toLowerCase()
 		);
 	};
 
