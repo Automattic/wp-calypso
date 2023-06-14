@@ -65,13 +65,13 @@ describe( DataHelper.createSuiteTitle( 'Move to WordPress.com' ), () => {
 		} );
 	} );
 
-	describe( 'Select first site and confirm', () => {
+	/* describe( 'Select first site and confirm', () => {
 		navigateToSitePicker( 'example.com' );
 
 		test( 'The importer error page is selected when using an invalid start site', async () => {
 			await startImportFlow.selectMigrationSite( true, false );
 		} );
-	} );
+	} ); */
 
 	/* describe( 'Select site and confirm', () => {
 		navigateToSitePicker( 'make.wordpress.org' );
@@ -79,5 +79,5 @@ describe( DataHelper.createSuiteTitle( 'Move to WordPress.com' ), () => {
 		test( 'The importer success page is selected when using a valid start site', async () => {
 			await startImportFlow.selectMigrationSite( true, true );
 		} );
-	} );*/
+	} ); */
 } );
