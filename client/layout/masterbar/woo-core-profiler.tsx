@@ -48,7 +48,7 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 							{ typeof redirectTo === 'string' && redirectTo.length && (
 								<Button
 									onClick={ () => {
-										recordTracksEvent( 'calypso_wc_coreprofiler_jpc_skip' );
+										recordTracksEvent( 'calypso_jpc_wc_coreprofiler_skip' );
 										window.location.href = redirectTo;
 									} }
 									className="masterbar__no-thanks-button"
