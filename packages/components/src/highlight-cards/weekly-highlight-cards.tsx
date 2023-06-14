@@ -108,6 +108,9 @@ const HighlightCardsSettings = function ( {
 				position="bottom left"
 				context={ settingsActionRef.current }
 				focusOnShow={ false }
+				onClose={ () => {
+					setPopoverVisible( false );
+				} }
 			>
 				<button
 					onClick={ () => {
