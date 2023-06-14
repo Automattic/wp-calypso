@@ -44,7 +44,7 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 							</a>
 						</li>
 						<li className="masterbar__woo-nav-item">
-							{ typeof redirectTo === 'string' && (
+							{ typeof redirectTo === 'string' && redirectTo.length && (
 								<Button href={ redirectTo } className="masterbar__no-thanks-button">
 									{ translate( 'No, Thanks' ) }
 								</Button>
