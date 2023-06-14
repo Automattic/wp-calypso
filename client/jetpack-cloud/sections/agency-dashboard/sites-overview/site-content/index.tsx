@@ -1,12 +1,14 @@
 import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useContext, forwardRef, createRef } from 'react';
 import Pagination from 'calypso/components/pagination';
+import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { addQueryArgs } from 'calypso/lib/route';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
-import { useDashboardShowLargeScreen } from '../../hooks';
+import { useDashboardShowLargeScreen, useLicenseLightbox } from '../../hooks';
 import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
@@ -32,6 +34,8 @@ interface Props {
 const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, ref: any ) => {
 	const isMobile = useMobileBreakpoint();
 
+	const translate = useTranslate();
+
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
 
 	const sites = formatSites( data?.sites );
@@ -45,6 +49,8 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 	const isLargeScreen = useDashboardShowLargeScreen( siteTableRef, ref );
 
 	const firstColumn = siteColumns[ 0 ];
+
+	const { license: selectedLicense, onActivate, onClose } = useLicenseLightbox();
 
 	return (
 		<>
@@ -97,6 +103,15 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 					perPage={ data.perPage }
 					total={ isFavoritesTab ? data.totalFavorites : data.total }
 					pageClick={ handlePageClick }
+				/>
+			) }
+
+			{ selectedLicense && (
+				<LicenseLightbox
+					product={ selectedLicense }
+					ctaLabel={ translate( 'Select License' ) }
+					onActivate={ onActivate }
+					onClose={ onClose }
 				/>
 			) }
 		</>

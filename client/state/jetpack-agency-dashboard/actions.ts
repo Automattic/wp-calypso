@@ -71,7 +71,7 @@ export function setPurchasedLicense( productsInfo?: PurchasedProductsInfo ): Any
 	return { type: JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE, payload: productsInfo };
 }
 
-export function selectLicense( siteId: number, license: string ): AnyAction {
+export function selectLicense( siteId: number | null, license: string ): AnyAction {
 	return { type: JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE, siteId: siteId, license: license };
 }
 
