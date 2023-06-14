@@ -13,9 +13,12 @@ const getSubscribersCacheKey = (
 	return cacheKey;
 };
 
+const getEarnPageUrl = ( siteSlug: string | null ) =>
+	`https://wordpress.com/earn/${ siteSlug ?? '' }`;
+
 const sanitizeInt = ( intString: string ) => {
 	const parsedInt = parseInt( intString, 10 );
 	return ! Number.isNaN( parsedInt ) && parsedInt > 0 ? parsedInt : undefined;
 };
 
-export { getSubscribersCacheKey, sanitizeInt };
+export { getSubscribersCacheKey, getEarnPageUrl, sanitizeInt };
