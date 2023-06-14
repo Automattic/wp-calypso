@@ -13,7 +13,7 @@ switch ( process.platform ) {
 	case 'darwin':
 		APP_PATH = path.join(
 			__dirname,
-			'../../../release/mac-arm64/WordPress.com.app/Contents/MacOS/WordPress.com'
+			'../../../release/mac/WordPress.com.app/Contents/MacOS/WordPress.com'
 		);
 		break;
 	default:
