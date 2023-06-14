@@ -1,6 +1,6 @@
 import debugModule from 'debug';
-import getEmbedMetadata from 'get-video-id';
 import { get } from 'lodash';
+import getEmbedMetadata from 'calypso/lib/get-video-id';
 import { READER_THUMBNAIL_RECEIVE } from 'calypso/state/reader/action-types';
 
 import 'calypso/state/reader/init';
