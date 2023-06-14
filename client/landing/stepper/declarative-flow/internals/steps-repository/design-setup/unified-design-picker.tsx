@@ -128,17 +128,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			}
 		}
 
-		if ( isDesignFirstFlow ) {
-			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
-
-			allDesigns.designs = allDesigns.designs.map( ( design ) => {
-				design.style_variations = design.style_variations?.filter( ( variation ) =>
-					isDefaultGlobalStylesVariationSlug( variation.slug )
-				);
-				return design;
-			} );
-		}
-
 		return allDesigns;
 	};
 
@@ -187,10 +176,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 	} );
-
-	if ( isDesignFirstFlow && selectedDesignDetails?.style_variations ) {
-		selectedDesignDetails.style_variations = [];
-	}
 
 	const selectedStyleVariation = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedStyleVariation(),
