@@ -5,12 +5,17 @@ import { useState, useRef } from 'react';
 import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import type { StateMonitorSettingsSMS } from '../../sites-overview/types';
+import type {
+	StateMonitorSettingsSMS,
+	AllowedMonitorContactActions,
+} from '../../sites-overview/types';
 
 import '../style.scss';
 
 interface Props {
 	item: StateMonitorSettingsSMS;
+	toggleModal?: ( item?: StateMonitorSettingsSMS, action?: AllowedMonitorContactActions ) => void;
+	isRemoveAction?: boolean;
 }
 
 // events actions have not yet been implemented, silencing this warning
@@ -21,7 +26,7 @@ const EVENT_NAMES = {
 	verify: 'downtime_monitoring_sms_number_verify_click',
 };
 
-export default function SMSItemContent( { item }: Props ) {
+export default function SMSItemContent( { item, toggleModal, isRemoveAction = false }: Props ) {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
@@ -36,9 +41,9 @@ export default function SMSItemContent( { item }: Props ) {
 
 	// silencing error until action handling is added
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleToggleModal = () => {
-		// Here you can handle actions
-		return null;
+	const handleToggleModal = ( action: AllowedMonitorContactActions ) => {
+		toggleModal?.( item, action );
+		// TODO: add tracks event
 	};
 
 	const isVerified = item.verified;
@@ -109,8 +114,7 @@ export default function SMSItemContent( { item }: Props ) {
 					</PopoverMenuItem>
 					<PopoverMenuItem
 						onClick={ () => {
-							//TODO handle actions
-							return null;
+							handleToggleModal( 'remove' );
 						} }
 					>
 						{ translate( 'Remove' ) }
