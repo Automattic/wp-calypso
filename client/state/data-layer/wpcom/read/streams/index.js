@@ -103,7 +103,11 @@ const streamApis = {
 	discover: {
 		path: () => '/read/tags/cards',
 		dateProperty: 'date',
-		query: ( extras, { tags } ) => getQueryString( { ...extras, tags: Object.values( tags )?.map( tag => tag.slug ) } ),
+		query: ( extras, { tags } ) =>
+			getQueryString( {
+				...extras,
+				tags: tags ? Object.values( tags )?.map( ( tag ) => tag.slug ) : [],
+			} ),
 		apiNamespace: 'wpcom/v2',
 	},
 	site: {
@@ -195,9 +199,8 @@ const streamApis = {
  */
 export function requestPage( action ) {
 	const {
-		payload: { streamKey, streamType, pageHandle, isPoll, gap, tags },
+		payload: { streamKey, streamType, pageHandle, isPoll, gap },
 	} = action;
-	console.log( 'requestPage', tags );
 	const api = streamApis[ streamType ];
 
 	if ( ! api ) {
@@ -234,8 +237,7 @@ export function requestPage( action ) {
 }
 
 export function handlePage( action, data ) {
-	console.log( 'handlePage', action, data );
-	const { posts, date_range, meta, next_page, sites } = data;
+	const { posts, date_range, meta, next_page, sites, cards, next_page_handle } = data;
 	const { streamKey, query, isPoll, gap, streamType } = action.payload;
 	const { dateProperty } = streamApis[ streamType ];
 	let pageHandle = {};
@@ -252,19 +254,40 @@ export function handlePage( action, data ) {
 		// and offsets must be used
 		const { after } = date_range;
 		pageHandle = { before: after };
+	} else if ( next_page_handle ) {
+		pageHandle = { page_handle: next_page_handle };
+	}
+
+	// Need to extract the posts from the cards
+	let cardPosts = null;
+	if ( cards ) {
+		cardPosts = cards.filter( ( card ) => card.type === 'post' ).map( ( card ) => card.data );
 	}
 
 	const actions = analyticsForStream( {
 		streamKey,
 		algorithm: data.algorithm,
-		items: posts || sites,
+		items: posts || sites || cardPosts,
 	} );
 
 	let streamItems = [];
-	let streamPosts = posts;
+	let streamPosts = posts || cardPosts;
 
 	if ( posts ) {
 		streamItems = posts.map( ( post ) => ( {
+			...keyForPost( post ),
+			date: post[ dateProperty ],
+			...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
+			url: post.URL,
+			site_icon: post.site_icon?.ico,
+			site_description: post.description,
+			site_name: post.site_name,
+			feed_URL: post.feed_URL,
+			feed_ID: post.feed_ID,
+			xPostMetadata: XPostHelper.getXPostMetadata( post ),
+		} ) );
+	} else if ( cardPosts ) {
+		streamItems = cardPosts.map( ( post ) => ( {
 			...keyForPost( post ),
 			date: post[ dateProperty ],
 			...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
