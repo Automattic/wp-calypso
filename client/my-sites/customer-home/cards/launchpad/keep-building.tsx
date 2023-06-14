@@ -8,6 +8,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
+import { useEffect } from 'react';
 
 function recordTaskClickTracksEvent( is_completed: boolean, task_id: string ) {
 	recordTracksEvent( 'calypso_launchpad_task_clicked', {
@@ -26,6 +27,17 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 	const {
 		data: { checklist },
 	} = useLaunchpad( siteSlug, checklistSlug );
+
+	const taskIds = checklist?.map( ( task: Task ) => task.id ).join( ', ' ) || false;
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_launchpad_task_list_view', {
+			checklist_slug: checklistSlug,
+			context: 'customer-home',
+			tasks: taskIds,
+			// @todo: Add `is_completed` once we've added it to the API endpoint.
+		} );
+	}, [] );
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
