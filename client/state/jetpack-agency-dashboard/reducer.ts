@@ -8,6 +8,8 @@ import {
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
 	JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE,
+	JETPACK_AGENCY_DASHBOARD_SHOW_LICENSE_INFO,
+	JETPACK_AGENCY_DASHBOARD_HIDE_LICENSE_INFO,
 } from './action-types';
 import type {
 	PurchasedProductsInfo,
@@ -33,6 +35,21 @@ const siteMonitorStatus: Reducer< { statuses: SiteMonitorStatus }, AnyAction > =
 		case JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE:
 			return { ...state, statuses: { ...state.statuses, [ action.siteId ]: action.status } };
 	}
+	return state;
+};
+
+const selectedLicenseInfo: Reducer< { license: null | string }, AnyAction > = (
+	state = { license: null },
+	action: AnyAction
+): AppState => {
+	if ( action?.type === JETPACK_AGENCY_DASHBOARD_SHOW_LICENSE_INFO ) {
+		return { ...state, license: action?.license };
+	}
+
+	if ( action?.type === JETPACK_AGENCY_DASHBOARD_HIDE_LICENSE_INFO ) {
+		return { ...state, license: null };
+	}
+
 	return state;
 };
 
@@ -73,6 +90,7 @@ const selectedLicenses: Reducer<
 };
 const combinedReducer = combineReducers( {
 	purchasedLicense,
+	selectedLicenseInfo,
 	selectedLicenses,
 	siteMonitorStatus,
 } );
