@@ -1,6 +1,7 @@
 import { CircularProgressBar } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
+import { isMobile } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -57,6 +58,15 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 					actionDispatch = () => {
 						recordTaskClickTracksEvent( task );
 						window.location.assign( `/domains/add/${ siteSlug }` );
+					};
+					break;
+				case 'drive_traffic':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task );
+						const url = isMobile()
+							? `/marketing/connections/${ siteSlug }`
+							: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
+						window.location.assign( url );
 					};
 					break;
 			}
