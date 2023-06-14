@@ -5,11 +5,9 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
 import { Spinner as WPSpinner } from '@wordpress/components';
-import { removeQueryArgs } from '@wordpress/url';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes, startsWith } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -22,7 +20,6 @@ import Gravatar from 'calypso/components/gravatar';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import Notice from 'calypso/components/notice';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
@@ -84,6 +81,7 @@ import {
 } from './persistence-utils';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
+import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
 
 /**
  * Constants
@@ -873,24 +871,7 @@ export class JetpackAuthorize extends Component {
 							</div>
 						</div>
 					</div>
-					{ authQuery.installedExtSuccess && (
-						<Notice
-							className="jetpack-connect__woo-core-profiler-notice"
-							status="is-success"
-							showDismiss={ false }
-							text={ translate( 'Extensions successfully installed!' ) }
-							isCompact={ false }
-							duration={ 3000 }
-							onDismissClick={ () => {
-								page.replace(
-									removeQueryArgs(
-										window.location.pathname + window.location.search,
-										'installed_ext_success'
-									)
-								);
-							} }
-						/>
-					) }
+					{ authQuery.installedExtSuccess && <WooInstallExtSuccessNotice /> }
 				</Fragment>
 			);
 		}
