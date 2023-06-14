@@ -24,7 +24,7 @@ export default function useChatStatus(
 	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
 		useMessagingAvailability( group, checkAgentAvailability && isEligibleForChat );
 
-	const { status: zendeskStatus } = useZendeskConfig();
+	const { status: zendeskStatus } = useZendeskConfig( isEligibleForChat );
 
 	return {
 		canConnectToZendesk: zendeskStatus !== 'error',
