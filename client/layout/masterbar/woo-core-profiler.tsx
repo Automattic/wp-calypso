@@ -47,15 +47,15 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 						<li className="masterbar__woo-nav-item">
 							{ typeof redirectTo === 'string' && redirectTo.length && (
 								<Button
-								onClick={ () => {
-									recordTracksEvent( 'calypso_wc_coreprofiler_jpc_skip' );
-									window.location.href = redirectTo;
-								} }
-								className="masterbar__no-thanks-button"
-							>
-								{ translate( 'No, Thanks' ) }
-							</Button>
-							)}
+									onClick={ () => {
+										recordTracksEvent( 'calypso_wc_coreprofiler_jpc_skip' );
+										window.location.href = redirectTo;
+									} }
+									className="masterbar__no-thanks-button"
+								>
+									{ translate( 'No, Thanks' ) }
+								</Button>
+							) }
 						</li>
 					</ul>
 				</nav>
