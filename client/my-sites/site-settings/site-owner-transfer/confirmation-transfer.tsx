@@ -40,7 +40,12 @@ export function ConfirmationTransfer( {
 				<div data-testid="error">
 					<p>
 						{ translate(
-							'There was an error confirming the site transfer. Please contact our support team for help.'
+							'There was an error confirming the site transfer. Please {{link}}contact our support team{{/link}} for help.',
+							{
+								components: {
+									link: <a href="/help" />,
+								},
+							}
 						) }
 					</p>
 				</div>
