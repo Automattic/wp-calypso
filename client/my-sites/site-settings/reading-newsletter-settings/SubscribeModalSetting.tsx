@@ -1,7 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export const SUBSCRIBE_MODAL_OPTION = 'wpcom_subscribe_modal';
 
@@ -23,6 +28,20 @@ export const SubscribeModalSetting = ( {
 	disabled,
 }: SubscribeModalSettingProps ) => {
 	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
+	const siteEditorUrl = useSelector( ( state ) =>
+		getSiteEditorUrl( state, selectedSite?.ID || null )
+	);
+	const themeSlug = useSelector( ( state ) =>
+		getSiteOption( state, selectedSite?.ID, 'theme_slug' )
+	);
+	const subscribeModalEditorUrl = themeSlug
+		? addQueryArgs( siteEditorUrl, {
+				postType: 'wp_template_part',
+				postId: `${ themeSlug }//subscribe-modal`,
+				canvas: 'edit',
+		  } )
+		: siteEditorUrl;
 
 	return (
 		<>
@@ -40,7 +59,7 @@ export const SubscribeModalSetting = ( {
 							link: (
 								<a
 									// TODO: add url to modal template
-									href={ localizeUrl( '#' ) }
+									href={ localizeUrl( subscribeModalEditorUrl ) }
 									target="_blank"
 									rel="noreferrer"
 								/>
