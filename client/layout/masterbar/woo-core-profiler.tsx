@@ -1,5 +1,6 @@
 import { ProgressBar } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { getQueryArg } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { Fragment } from 'react';
 import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
@@ -8,11 +9,21 @@ import './typekit';
 import './woo.scss';
 import { useSelector } from 'calypso/state';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 // Masterbar for WooCommerce Core Profiler Jetpack step
 const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) => string } ) => {
-	// Get the redirect URL from the state. It should be set by the Jetpack Connection screen
-	const redirectToSanitized = useSelector( ( state ) => getRedirectToOriginal( state ) );
+	const redirectTo = useSelector( ( state ) => {
+		switch ( getCurrentRoute( state ) ) {
+			case '/jetpack/connect/authorize':
+				return getCurrentQueryArguments( state )?.redirect_after_auth;
+			case '/log-in/jetpack':
+				return getQueryArg( getRedirectToOriginal( state ) || '', 'redirect_after_auth' );
+			default:
+				return null;
+		}
+	} );
 
 	return (
 		<Fragment>
@@ -33,8 +44,8 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 							</a>
 						</li>
 						<li className="masterbar__woo-nav-item">
-							{ redirectToSanitized && (
-								<Button href={ redirectToSanitized } className="masterbar__no-thanks-button">
+							{ typeof redirectTo === 'string' && (
+								<Button href={ redirectTo } className="masterbar__no-thanks-button">
 									{ translate( 'No, Thanks' ) }
 								</Button>
 							) }
