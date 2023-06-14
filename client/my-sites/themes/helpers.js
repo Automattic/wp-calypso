@@ -121,7 +121,7 @@ export function getSubjectsFromTermTable( filterToTermTable ) {
  * @param wpComThemes List of WP.com themes.
  * @param wpOrgThemes List of WP.org themes.
  * @param searchTerm Search term.
- * @param isLastPage Whether the list of WP.com has reached the last page.
+ * @param isLastPage Whether the list of WP.com themes has reached the last page.
  */
 export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPage ) {
 	const isMatchingTheme = ( theme ) => {
@@ -154,7 +154,7 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 		...( matchingTheme ? [ matchingTheme ] : [] ),
 		...( matchingWpOrgTheme ? [ matchingWpOrgTheme ] : [] ),
 		...restWpComThemes,
-		// Include WP.org themes after the last page of the default themes.
+		// Include WP.org themes after the last page of WP.com themes.
 		...( isEnabled( 'themes/interlaced-dotorg-themes' ) && isLastPage ? restWpOrgThemes : [] ),
 	];
 }
