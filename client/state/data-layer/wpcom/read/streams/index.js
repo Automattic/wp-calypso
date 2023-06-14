@@ -103,12 +103,7 @@ const streamApis = {
 	discover: {
 		path: () => '/read/tags/cards',
 		dateProperty: 'date',
-		query: ( extras ) => getQueryString( { ...extras, tags: [ 'cats' ] } ), //TODO: will need to figure out how to add tags here
-		apiNamespace: 'wpcom/v2',
-	},
-	'discover-no-tags': {
-		path: () => '/read/interests',
-		dateProperty: 'date',
+		query: ( extras, { tags } ) => getQueryString( { ...extras, tags: Object.values( tags )?.map( tag => tag.slug ) } ),
 		apiNamespace: 'wpcom/v2',
 	},
 	site: {
@@ -200,8 +195,9 @@ const streamApis = {
  */
 export function requestPage( action ) {
 	const {
-		payload: { streamKey, streamType, pageHandle, isPoll, gap },
+		payload: { streamKey, streamType, pageHandle, isPoll, gap, tags },
 	} = action;
+	console.log( 'requestPage', tags );
 	const api = streamApis[ streamType ];
 
 	if ( ! api ) {
@@ -238,6 +234,7 @@ export function requestPage( action ) {
 }
 
 export function handlePage( action, data ) {
+	console.log( 'handlePage', action, data );
 	const { posts, date_range, meta, next_page, sites } = data;
 	const { streamKey, query, isPoll, gap, streamType } = action.payload;
 	const { dateProperty } = streamApis[ streamType ];
