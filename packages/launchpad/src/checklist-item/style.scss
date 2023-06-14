@@ -84,11 +84,33 @@
 	text-align: left;
 	font-size: $font-body-small;
 	line-height: 20px;
+
+	a,
+	a:visited {
+		text-decoration: underline;
+		color: var(--color-text);
+
+		&:hover {
+			color: var(--studio-blue-50);
+		}
+	}
 }
 
-.checklist-item__task:nth-last-child(2) {
+.checklist-item__task-content:hover .checklist-item__subtext {
+	color: var(--color-text);
+}
+
+.checklist__has-primary-action .checklist-item__task:nth-last-child(2) {
 
 	// remove bottom border for last checklist item before the primary button
+	.checklist-item__task-content,
+	.checklist-item__task-content:hover,
+	.checklist-item__task-content:focus {
+		border-bottom: none;
+	}
+}
+
+.checklist-item__task:last-child {
 	.checklist-item__task-content,
 	.checklist-item__task-content:hover,
 	.checklist-item__task-content:focus {

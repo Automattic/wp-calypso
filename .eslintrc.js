@@ -16,6 +16,7 @@ module.exports = {
 		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
 		'plugin:prettier/recommended',
+		'plugin:@tanstack/eslint-plugin-query/recommended',
 		'plugin:md/prettier',
 		'plugin:@wordpress/eslint-plugin/i18n',
 	],
@@ -281,7 +282,7 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [ 'import', 'you-dont-need-lodash-underscore' ],
+	plugins: [ 'import', 'you-dont-need-lodash-underscore', '@tanstack/query' ],
 	settings: {
 		react: {
 			version: reactVersion,
@@ -468,6 +469,7 @@ module.exports = {
 				'@wordpress/components': [
 					'__experimentalDivider',
 					'__experimentalHStack',
+					'__experimentalVStack',
 					'__experimentalItem',
 					'__experimentalItemGroup',
 					'__experimentalNavigationBackButton',
@@ -533,5 +535,10 @@ module.exports = {
 		'you-dont-need-lodash-underscore/to-pairs': 'error',
 		'you-dont-need-lodash-underscore/to-upper': 'error',
 		'you-dont-need-lodash-underscore/uniq': 'error',
+
+		// @TODO remove these lines once we fixed the warnings so
+		// they'll become errors for new code added to the codebase
+		'@tanstack/query/exhaustive-deps': 'warn',
+		'@tanstack/query/prefer-query-object-syntax': 'warn',
 	},
 };

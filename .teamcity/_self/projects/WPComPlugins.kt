@@ -234,15 +234,6 @@ private object OdysseyStats : WPComPluginBuild(
 	docsLink = "PejTkB-3N-p2",
 	buildSteps = {
 		bashNodeScript {
-			name = "Translate Odyssey Stats"
-			scriptContent = """
-				cd apps/odyssey-stats
-
-				# generate language files
-				yarn translate
-			"""
-		}
-		bashNodeScript {
 			name = "Run Unit Tests"
 			scriptContent = """
 				cd apps/odyssey-stats
@@ -330,7 +321,7 @@ private object HappyBlocks : WPComPluginBuild(
 private object GutenbergUploadSourceMapsToSentry: BuildType() {
 	init {
 		name = "Upload Source Maps";
-		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-comment by a WPCOM post-deploy job.";
+		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-commit by a WPCOM post-deploy job.";
 
 		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
 

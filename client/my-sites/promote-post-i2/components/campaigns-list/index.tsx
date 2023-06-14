@@ -1,8 +1,7 @@
 import { translate, useTranslate } from 'i18n-calypso';
-import ListEnd from 'calypso/components/list-end';
 import Notice from 'calypso/components/notice';
+import { Campaign } from 'calypso/data/promote-post/types';
 import { useInfiniteScroll } from 'calypso/data/promote-post/use-infinite-scroll';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import './style.scss';
 import { DSPMessage } from 'calypso/my-sites/promote-post-i2/main';
@@ -56,8 +55,6 @@ export default function CampaignsList( props: Props ) {
 		},
 	} );
 
-	const isEmpty = campaigns?.length === 0;
-
 	if ( isError && hasLocalUser ) {
 		return (
 			<Notice className="promote-post-i2__aux-wrapper" status="is-error" icon="mention">
@@ -94,12 +91,6 @@ export default function CampaignsList( props: Props ) {
 							/>
 						) }
 					</div>
-
-					{ ! isEmpty && ! isError && (
-						<div className="promote-post-i2__aux-wrapper">
-							<ListEnd />
-						</div>
-					) }
 				</>
 			) }
 		</>

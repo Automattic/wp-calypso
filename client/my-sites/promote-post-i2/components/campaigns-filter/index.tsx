@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import SegmentedControl from 'calypso/components/segmented-control';
 
-export type CampaignsFilterType = 'all' | 'active' | 'created' | 'rejected';
+export type CampaignsFilterType = 'all' | 'active' | 'created' | 'finished' | 'rejected';
 
 interface Props {
 	campaignsFilter: CampaignsFilterType;
@@ -31,6 +31,12 @@ export default function CampaignsFilter( props: Props ) {
 				onClick={ () => handleChangeFilter( 'created' ) }
 			>
 				{ translate( 'In moderation', { context: 'comment status' } ) }
+			</SegmentedControl.Item>
+			<SegmentedControl.Item
+				selected={ campaignsFilter === 'finished' }
+				onClick={ () => handleChangeFilter( 'finished' ) }
+			>
+				{ translate( 'Completed', { context: 'comment status' } ) }
 			</SegmentedControl.Item>
 			<SegmentedControl.Item
 				selected={ campaignsFilter === 'rejected' }

@@ -1,10 +1,7 @@
 import config from '@automattic/calypso-config';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import {
-	Campaign,
-	CampaignStats,
-} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign, CampaignStats } from 'calypso/data/promote-post/types';
 import {
 	PagedBlazeContentData,
 	PagedBlazeSearchResponse,
@@ -92,7 +89,7 @@ export const getCampaignStatus = ( status: string ) => {
 			return __( 'Canceled' );
 		}
 		case campaignStatus.FINISHED: {
-			return __( 'Finished' );
+			return __( 'Completed' );
 		}
 		case campaignStatus.PROCESSING: {
 			return __( 'Creating' );
@@ -102,18 +99,6 @@ export const getCampaignStatus = ( status: string ) => {
 	}
 };
 
-export const normalizeCampaignStatus = ( campaign: Campaign ): string => {
-	// This is a transactional status, so we just alter this in calypso
-	if (
-		campaign.status === campaignStatus.ACTIVE &&
-		moment().isBefore( campaign.start_date, 'day' )
-	) {
-		return campaignStatus.SCHEDULED;
-	}
-
-	return campaign.status;
-};
-
 export const getCampaignDurationDays = ( start_date: string, end_date: string ) => {
 	const dateStart = new Date( start_date );
 	const dateEnd = new Date( end_date );
@@ -121,46 +106,11 @@ export const getCampaignDurationDays = ( start_date: string, end_date: string ) 
 	return Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
 };
 
-export const getCampaignOverallSpending = (
-	spent_budget_cents: number,
-	budget_cents: number,
-	start_date: string,
-	end_date: string
-) => {
-	if ( ! spent_budget_cents ) {
+export const getCampaignDurationFormatted = ( start_date?: string, end_date?: string ) => {
+	if ( ! start_date || ! end_date ) {
 		return '-';
 	}
-	const campaignDays = getCampaignDurationDays( start_date, end_date );
-	const spentBudgetCents =
-		spent_budget_cents > budget_cents * campaignDays
-			? budget_cents * campaignDays
-			: spent_budget_cents;
 
-	const totalBudgetUsed = ( spentBudgetCents / 100 ).toFixed( 2 );
-	let daysRun = moment().diff( moment( start_date ), 'days' );
-	daysRun = daysRun > campaignDays ? campaignDays : daysRun;
-
-	const daysText = daysRun === 1 ? 'day' : 'days';
-
-	if ( daysRun > 0 ) {
-		/* translators: %1$s: Amount, %2$s: Days. Singular or plural: Day(s) eg: $3 over 2 days */
-		return sprintf( __( '$%1$s over %2$s %3$s' ), totalBudgetUsed, daysRun, daysText );
-	}
-
-	/* translators: %1$s: Amount, eg: $3 today */
-	return sprintf( __( '$%1$s today' ), totalBudgetUsed );
-};
-
-export const getCampaignClickthroughRate = ( clicks_total: number, impressions_total: number ) => {
-	const clickthroughRate = ( clicks_total * 100 ) / impressions_total || 0;
-	return clickthroughRate.toLocaleString( undefined, {
-		useGrouping: true,
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 2,
-	} );
-};
-
-export const getCampaignDurationFormatted = ( start_date: string, end_date: string ) => {
 	const campaignDays = getCampaignDurationDays( start_date, end_date );
 
 	let durationFormatted;
@@ -169,9 +119,7 @@ export const getCampaignDurationFormatted = ( start_date: string, end_date: stri
 	} else {
 		const dateStartFormatted = moment.utc( start_date ).format( 'MMM D' );
 		const dateEndFormatted = moment.utc( end_date ).format( 'MMM D' );
-		durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
-			'days'
-		) })`;
+		durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted }`;
 	}
 
 	return durationFormatted;
@@ -230,19 +178,6 @@ export const canCancelCampaign = ( status: string ) => {
 	);
 };
 
-export const unifyCampaigns = ( campaigns: Campaign[], campaignsStats: CampaignStats[] ) => {
-	return campaigns.map( ( campaign ) => {
-		const campaignStats = campaignsStats.find(
-			( cs: CampaignStats ) => cs.campaign_id === campaign.campaign_id
-		);
-		return {
-			...campaign,
-			campaign_stats_loading: ! campaignsStats.length,
-			...( campaignStats ? campaignStats : {} ),
-		};
-	} );
-};
-
 export const getPagedBlazeSearchData = (
 	mode: 'campaigns' | 'posts',
 	campaignsData?: PagedBlazeSearchResponse
@@ -278,3 +213,23 @@ export function getAdvertisingDashboardPath( path: string ) {
 	const pathPrefix = config( 'advertising_dashboard_path_prefix' ) || '/advertising';
 	return `${ pathPrefix }${ path }`;
 }
+
+/**
+ * Unifies the campaign list with the stats list
+ *
+ * @param {Campaign[]} campaigns List of campaigns
+ * @param {CampaignStats[]} campaignsStats List of campaign stats
+ * @returns A unified list of campaign with the stats
+ */
+export const unifyCampaigns = (
+	campaigns: Campaign[] = [],
+	campaignsStats: CampaignStats[] = []
+) => {
+	return campaigns.map( ( campaign ) => {
+		const stats = campaignsStats.find( ( cs ) => cs.campaign_id === campaign.campaign_id );
+		return {
+			...campaign,
+			...( stats ? stats : {} ),
+		};
+	} );
+};

@@ -7,7 +7,7 @@ import type {
 	AllowedMonitorContactActions,
 } from '../../sites-overview/types';
 
-import './style.scss';
+import '../style.scss';
 
 interface Props {
 	toggleModal: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
@@ -30,7 +30,7 @@ export default function ConfigureEmailNotification( {
 	};
 
 	return (
-		<div className="configure-email-address__card-container">
+		<div className="configure-contact__card-container">
 			{ allEmailItems.map( ( item ) => (
 				<EmailItemContent
 					key={ item.email }
@@ -42,7 +42,7 @@ export default function ConfigureEmailNotification( {
 			) ) }
 			<Button
 				compact
-				className="configure-email-address__button"
+				className="configure-contact__button"
 				onClick={ handleAddEmailClick }
 				aria-label={ translate( 'Add email address' ) }
 			>

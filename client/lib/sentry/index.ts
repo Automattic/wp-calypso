@@ -159,15 +159,10 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 			void rejectionQueue.push(
 				// Sentry does this, presumably for browsers being browsers 🤷
 				// https://github.com/getsentry/sentry-javascript/blob/4793df5f515575703d9c83ebf4159ac145478410/packages/browser/src/loader.js#L205
-				// eslint-disable-next-line no-nested-ternary
-				'reason' in exceptionEvent
-					? exceptionEvent.reason
-					: // @ts-expect-error Fixing up browser weirdness
-					'detail' in exceptionEvent && 'reason' in exceptionEvent.detail
-					? // @ts-expect-error Fixing up browser weirdness
-					  exceptionEvent.detail.reason
-					: exceptionEvent
+				// @ts-expect-error Fixing up browser weirdness
+				exceptionEvent?.reason ?? exceptionEvent?.detail?.reason ?? exceptionEvent
 			);
+
 		window.addEventListener( 'error', errorHandler );
 		window.addEventListener( 'unhandledrejection', rejectionHandler );
 

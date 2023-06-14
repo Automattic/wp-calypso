@@ -16,6 +16,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import SearchFollowButton from 'calypso/reader/search-stream/search-follow-button';
 import { recordAction } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import {
 	SORT_BY_RELEVANCE,
@@ -107,7 +108,7 @@ class SearchStream extends React.Component {
 	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions } = this.props;
+		const { query, translate, searchType, suggestions, isLoggedIn } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const segmentedControlClass = wideDisplay
@@ -201,7 +202,7 @@ class SearchStream extends React.Component {
 						/>
 					) }
 				</div>
-				<SpacerDiv domTarget={ this.fixedAreaRef } />
+				{ isLoggedIn && <SpacerDiv domTarget={ this.fixedAreaRef } /> }
 				{ ! hidePostsAndSites && wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
@@ -251,6 +252,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		readerAliasedFollowFeedUrl:
 			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		recordReaderTracksEvent,

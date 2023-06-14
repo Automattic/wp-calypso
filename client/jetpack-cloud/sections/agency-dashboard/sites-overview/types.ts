@@ -197,7 +197,11 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 }
 
 export interface DashboardDataContextInterface {
-	verifiedContacts: { emails: Array< string >; refetchIfFailed: () => void };
+	verifiedContacts: {
+		emails: Array< string >;
+		phoneNumbers: Array< string >;
+		refetchIfFailed: () => void;
+	};
 }
 
 export type AgencyDashboardFilterOption =
@@ -284,16 +288,37 @@ export interface MonitorSettingsEmail {
 	verified: boolean;
 }
 
+export interface StateMonitorSettingsSMS {
+	name: string;
+	countryCode: string;
+	phoneNumber: string;
+	phoneNumberFull: string;
+	verified: boolean;
+}
+
 export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
 	isDefault?: boolean;
 }
 
+export interface StateMonitorSettingsSMS {
+	name: string;
+	countryCode: string;
+	phoneNumber: string;
+	phoneNumberFull: string;
+	verified: boolean;
+}
+
+export type MonitorSettingsContact = Partial< MonitorSettingsEmail > &
+	Partial< StateMonitorSettingsSMS >;
+
 export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
 
 export interface RequestVerificationCodeParams {
-	type: 'email';
-	value: string;
+	type: 'email' | 'sms';
+	value: string | number;
 	site_ids: Array< number >;
+	country_code?: string;
+	country_numeric_code?: string;
 }
 
 export interface ValidateVerificationCodeParams {
@@ -304,15 +329,18 @@ export interface ValidateVerificationCodeParams {
 
 export interface MonitorContactsResponse {
 	emails: [ { verified: boolean; email_address: string } ];
+	sms_numbers: [ { verified: boolean; sms_number: string; country_numeric_code: string } ];
 }
 
 export type MonitorDuration = { label: string; time: number };
 
 export interface InitialMonitorSettings {
+	enableSMSNotification: boolean;
 	enableEmailNotification: boolean;
 	enableMobileNotification: boolean;
 	selectedDuration: MonitorDuration | undefined;
 	emailContacts?: MonitorSettingsEmail[] | [];
+	phoneContacts?: StateMonitorSettingsSMS[] | [];
 }
 export interface ResendVerificationCodeParams {
 	type: 'email';
