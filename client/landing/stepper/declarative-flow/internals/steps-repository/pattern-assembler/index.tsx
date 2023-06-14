@@ -664,7 +664,11 @@ const PatternAssembler = ( {
 				navigator.location.path !== NAVIGATOR_PATHS.ACTIVATION &&
 				navigator.location.path !== NAVIGATOR_PATHS.MAIN
 			}
-			backLabelText={ isSiteAssemblerFlow( flow ) ? translate( 'Back to themes' ) : undefined }
+			backLabelText={
+				isSiteAssemblerFlow( flow ) && navigator.location.path === NAVIGATOR_PATHS.MAIN
+					? translate( 'Back to themes' )
+					: undefined
+			}
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
