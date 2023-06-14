@@ -111,7 +111,6 @@ const wooexpress: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
-			recordGTMDatalayerEvent( currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
 			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
@@ -135,6 +134,7 @@ const wooexpress: Flow = {
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
+						recordGTMDatalayerEvent( currentStep );
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
