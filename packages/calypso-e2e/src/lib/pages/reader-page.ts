@@ -1,4 +1,4 @@
-import { Page, Response } from 'playwright';
+import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
@@ -36,8 +36,9 @@ export class ReaderPage {
 	 *
 	 * Example {@link https://wordpress.com/read}
 	 */
-	async visit(): Promise< Response | null > {
-		return await this.page.goto( getCalypsoURL( 'read' ) );
+	async visit(): Promise< void > {
+		await this.page.goto( getCalypsoURL( 'read' ) );
+		await this.page.waitForURL( /read/ );
 	}
 
 	/**
