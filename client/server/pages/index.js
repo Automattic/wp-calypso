@@ -391,7 +391,9 @@ function setUpLoggedInRoute( req, res, next ) {
 				if ( req.path === '/' && req.query ) {
 					const searchParam = req.query.s || req.query.q;
 					if ( searchParam ) {
-						res.redirect( '/read/search?q=' + encodeURIComponent( searchParam ) );
+						res.redirect(
+							'https://wordpress.com/read/search?q=' + encodeURIComponent( searchParam )
+						);
 						return;
 					}
 
