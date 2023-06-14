@@ -17,7 +17,10 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
-import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
+import {
+	SORT_OPTIONS_DEFAULT,
+	SearchOptions,
+} from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { getPagedBlazeSearchData, unifyCampaigns } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -106,7 +109,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	/* query for posts */
-	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >( {} );
+	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >( {
+		order: SORT_OPTIONS_DEFAULT,
+	} );
 	const postsQuery = usePostsQueryPaged( selectedSiteId ?? 0, postsSearchOptions );
 
 	const {
