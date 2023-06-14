@@ -9,10 +9,14 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-function recordTaskClickTracksEvent( is_completed: boolean, task_id: string ) {
+const checklistSlug = 'keep-building';
+
+function recordTaskClickTracksEvent( task: Task ) {
 	recordTracksEvent( 'calypso_launchpad_task_clicked', {
-		task_id,
-		is_completed,
+		checklist_slug: checklistSlug,
+		task_id: task.id,
+		is_completed: task.completed,
+		context: 'customer-home',
 	} );
 }
 
@@ -22,7 +26,6 @@ interface LaunchpadKeepBuildingProps {
 
 const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.Element => {
 	const translate = useTranslate();
-	const checklistSlug = 'keep-building';
 	const {
 		data: { checklist },
 	} = useLaunchpad( siteSlug, checklistSlug );
@@ -37,14 +40,14 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 			switch ( task.id ) {
 				case 'site_title':
 					actionDispatch = () => {
-						recordTaskClickTracksEvent( task.completed, task.id );
+						recordTaskClickTracksEvent( task );
 						window.location.assign( `/settings/general/${ siteSlug }` );
 					};
 					break;
 
 				case 'design_edited':
 					actionDispatch = () => {
-						recordTaskClickTracksEvent( task.completed, task.id );
+						recordTaskClickTracksEvent( task );
 						window.location.assign( `/site-editor/${ siteSlug }` );
 					};
 					break;
@@ -52,7 +55,7 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 				case 'domain_claim':
 				case 'domain_upsell':
 					actionDispatch = () => {
-						recordTaskClickTracksEvent( task.completed, task.id );
+						recordTaskClickTracksEvent( task );
 						window.location.assign( `/domains/add/${ siteSlug }` );
 					};
 					break;
