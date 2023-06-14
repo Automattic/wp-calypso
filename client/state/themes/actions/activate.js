@@ -16,7 +16,7 @@ import {
 	isExternallyManagedTheme,
 } from 'calypso/state/themes/selectors';
 import 'calypso/state/themes/init';
-import { shouldRedirectToThankYouPage } from '../selectors/should-show-thank-you-page';
+import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/should-redirect-to-thank-you-page';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.

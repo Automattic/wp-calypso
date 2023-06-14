@@ -25,7 +25,7 @@ import {
 	isWpcomTheme,
 	getPreActivateThemeId,
 } from 'calypso/state/themes/selectors';
-import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/should-show-thank-you-page';
+import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/should-redirect-to-thank-you-page';
 import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { trackClick } from './helpers';

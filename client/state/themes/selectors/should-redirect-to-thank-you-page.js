@@ -1,6 +1,6 @@
 import 'calypso/state/themes/init';
 
-import { getTheme, doesThemeBundleSoftwareSet, isExternallyManagedTheme } from '../selectors';
+import { getTheme, doesThemeBundleSoftwareSet, isExternallyManagedTheme } from '.';
 
 /**
  * Returns whether it should redirect to thank you page
