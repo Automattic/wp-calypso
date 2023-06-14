@@ -20,6 +20,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import useCheckout from 'calypso/landing/stepper/hooks/use-checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
@@ -346,33 +347,36 @@ export function getEnhancedTasks(
 									! setupBlogCompleted ) ) ||
 							( isDesignFirstFlow( flow ) &&
 								( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ) ),
-						actionDispatch: async () => {
+						actionDispatch: () => {
 							if ( site?.ID ) {
-								// If user selected products during onboarding, update cart and redirect to checkout
-								const onboardingCartItems = [ planCartItem, domainCartItem ].filter(
-									Boolean
-								) as MinimalRequestCartProduct[];
-								if ( onboardingCartItems.length ) {
-									await replaceProductsInCart( siteSlug as string, onboardingCartItems );
-									return window.location.assign(
-										`/checkout/${ encodeURIComponent(
-											( siteSlug as string ) ?? ''
-										) }?cancel_to=/home&redirect_to=/some-new-launch-step`
-									);
-								}
-								// const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
-								// const { launchSite } = dispatch( SITE_STORE );
-
-								// setPendingAction( async () => {
-								// 	setProgressTitle( __( 'Launching blog' ) );
-								// 	await launchSite( site.ID );
-
-								// 	// Waits for half a second so that the loading screen doesn't flash away too quickly
-								// 	await new Promise( ( res ) => setTimeout( res, 500 ) );
-								// 	recordTaskClickTracksEvent( flow, task.completed, task.id );
-								// 	return { blogLaunched: true, siteSlug };
-								// } );
-
+								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
+								setPendingAction( async () => {
+									setProgressTitle( __( 'Directing to checkout' ) );
+									// If user selected products during onboarding, update cart and redirect to checkout
+									const onboardingCartItems = [ planCartItem, domainCartItem ].filter(
+										Boolean
+									) as MinimalRequestCartProduct[];
+									if ( onboardingCartItems.length ) {
+										await replaceProductsInCart( siteSlug as string, onboardingCartItems );
+										const { goToCheckout } = useCheckout();
+										goToCheckout( {
+											flowName: flow ?? '',
+											stepName: 'blog_launched',
+											siteSlug: siteSlug ?? '',
+											destination: `/setup/${ flow }/site-launch?siteSlug=${ siteSlug }`,
+											cancelDestination: '/home',
+										} );
+										return { goToCheckout: true };
+									}
+									// Launch blog if no items in cart
+									const { launchSite } = dispatch( SITE_STORE );
+									setProgressTitle( __( 'Launching blog' ) );
+									await launchSite( site.ID );
+									// Waits for half a second so that the loading screen doesn't flash away too quickly
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									recordTaskClickTracksEvent( flow, task.completed, task.id );
+									return { blogLaunched: true, siteSlug };
+								} );
 								submit?.();
 							}
 						},
