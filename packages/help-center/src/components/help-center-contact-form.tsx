@@ -309,7 +309,7 @@ export const HelpCenterContactForm = () => {
 						section: sectionName,
 					} );
 
-					openChatWidget( supportSite, message, () => setHasSubmittingError( true ) );
+					openChatWidget( message, supportSite.URL, () => setHasSubmittingError( true ) );
 					break;
 				}
 				break;
