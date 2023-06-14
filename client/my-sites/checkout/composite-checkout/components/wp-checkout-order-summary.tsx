@@ -14,6 +14,8 @@ import {
 	isJetpackProduct,
 	isJetpackPlan,
 	isAkismetProduct,
+	planHasFeature,
+	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -167,10 +169,14 @@ function CheckoutSummaryFeaturesWrapper( props: {
 } ) {
 	const { siteId, nextDomainIsFree } = props;
 	const signupFlowName = getSignupCompleteFlowName();
-	const shouldUseFlowFeatureList =
-		isNewsletterOrLinkInBioFlow( signupFlowName ) || isAHostingFlow( signupFlowName );
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const planHasHostingFeature = responseCart.products.some( ( product ) =>
+		planHasFeature( product.product_slug, WPCOM_FEATURES_ATOMIC )
+	);
+	const shouldUseFlowFeatureList =
+		isNewsletterOrLinkInBioFlow( signupFlowName ) ||
+		( isAHostingFlow( signupFlowName ) && planHasHostingFeature );
 	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;
 
 	if ( responseCart.is_gift_purchase && giftSiteSlug ) {
