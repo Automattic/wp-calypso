@@ -504,6 +504,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ renderEmptyFormValidationMsg() }
 
+					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
+
 					<NextButton
 						type="submit"
 						className="add-subscriber__form-submit-btn"
@@ -519,7 +521,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							</button>
 						</div>
 					) }
-					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
 				</form>
 			</div>
 		</div>
