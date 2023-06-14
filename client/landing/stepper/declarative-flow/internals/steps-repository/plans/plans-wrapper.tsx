@@ -220,6 +220,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return;
 		}
 
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate( 'Welcome to the best place for your WordPress website.' );
+		}
+
 		if ( ! hideFreePlan ) {
 			return translate(
 				`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
