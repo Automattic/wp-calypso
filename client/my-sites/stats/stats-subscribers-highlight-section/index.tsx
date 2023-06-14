@@ -1,7 +1,7 @@
 import { CountComparisonCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
-import './subscribers-highlight-section.scss';
+import './style.scss';
 
 interface SubscribersTotalsData {
 	total_email: number;
@@ -10,33 +10,31 @@ interface SubscribersTotalsData {
 	total_email_paid: number;
 }
 
+// TODO: Split this out into a separate file.
 function useSubscriberHighlights( subscribersTotals: SubscribersTotalsData ) {
 	const translate = useTranslate();
 	const highlights = [
 		{
 			heading: translate( 'Total email subscribers' ),
-			count: subscribersTotals?.total_email || 0,
-			// previousCount: 0, // TODO: get previous data
+			count: subscribersTotals?.total_email || null,
 		},
 		{
 			heading: translate( 'Free email subscribers' ),
-			count: subscribersTotals?.total_email_free || 0,
-			// previousCount: 0, // TODO: get previous data
+			count: subscribersTotals?.total_email_free || null,
 		},
 		{
 			heading: translate( 'Paid email subscribers' ),
-			count: subscribersTotals?.total_email_paid || 0,
-			// previousCount: 0, // TODO: get previous data
+			count: subscribersTotals?.total_email_paid || null,
 		},
 		{
 			heading: translate( 'WordPress.com subscribers' ),
-			count: subscribersTotals?.total_wpcom || 0,
-			// previousCount: 0, // TODO: get previous data
+			count: subscribersTotals?.total_wpcom || null,
 		},
 	];
 	return highlights;
 }
 
+// TODO: Split this out into a separate file.
 function SubscriberHighlightsHeader() {
 	const translate = useTranslate();
 	const localizedTitle = translate( 'All time stats', {
@@ -46,6 +44,7 @@ function SubscriberHighlightsHeader() {
 	return <h1 className="highlight-cards-heading">{ localizedTitle }</h1>;
 }
 
+// TODO: Split this out into a separate file.
 function SubscriberHighlightsListing( {
 	subscribersTotals,
 }: {
