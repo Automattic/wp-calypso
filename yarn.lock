@@ -11154,6 +11154,7 @@ __metadata:
     "@github/webauthn-json": ^0.4.1
     "@sentry/react": ^7.54.0
     "@sentry/webpack-plugin": ^1.18.8
+    "@storybook/addon-actions": ^7.0.18
     "@stripe/react-stripe-js": ^2.1.0
     "@stripe/stripe-js": ^1.53.0
     "@tanstack/query-sync-storage-persister": ^4.29.1
