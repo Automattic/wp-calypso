@@ -7,7 +7,6 @@ import {
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
-import { getReaderTags } from 'calypso/state/reader/tags/selectors';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
