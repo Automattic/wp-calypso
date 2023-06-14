@@ -326,9 +326,11 @@ export interface RequestVerificationCodeParams {
 }
 
 export interface ValidateVerificationCodeParams {
-	type: 'email';
+	type: 'email' | 'sms';
 	value: string;
 	verification_code: number;
+	country_code?: string;
+	country_numeric_code?: string;
 }
 
 export interface MonitorContactsResponse {
