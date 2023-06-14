@@ -13,12 +13,12 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
+import { RETIRED_THEME_SLUGS_SET } from 'calypso/state/themes/constants';
 import {
 	arePremiumThemesEnabled,
 	getPremiumThemePrice,
 	getThemeDetailsUrl,
 	getThemesForQueryIgnoringPage,
-	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
 	isThemeActive,
@@ -53,7 +53,6 @@ class ThemesSelection extends Component {
 		placeholderCount: PropTypes.number,
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
-		themesCount: PropTypes.number,
 		forceWpOrgSearch: PropTypes.bool,
 	};
 
@@ -218,20 +217,64 @@ class ThemesSelection extends Component {
 		return options;
 	};
 
+	isMatchingTheme = ( theme ) => {
+		const { query } = this.props;
+		return (
+			theme.name?.toLowerCase() === query.search.toLowerCase() ||
+			theme.id?.toLowerCase() === query.search.toLowerCase()
+		);
+	};
+
+	getThemes = () => {
+		const { themes, wpOrgThemes, query, isLastPage } = this.props;
+
+		const themeSlugs = themes.map( ( theme ) => theme.id );
+		const validWpOrgThemes = wpOrgThemes.filter(
+			( wpOrgTheme ) =>
+				! themeSlugs.includes( wpOrgTheme?.id?.toLowerCase() ) && // Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
+				! RETIRED_THEME_SLUGS_SET.has( wpOrgTheme?.id?.toLowerCase() ) // Avoid retired themes.
+		);
+
+		const matchingTheme = themes.find( this.isMatchingTheme );
+		const restThemes = matchingTheme
+			? themes.filter( ( theme ) => theme.id !== matchingTheme.id )
+			: themes;
+		const matchingWpOrgTheme = validWpOrgThemes.find( this.isMatchingTheme );
+		const restWpOrgThemes = matchingWpOrgTheme
+			? validWpOrgThemes.filter( ( theme ) => theme.id !== matchingWpOrgTheme.id )
+			: validWpOrgThemes;
+
+		return [
+			...( matchingTheme ? [ matchingTheme ] : [] ),
+			...( matchingWpOrgTheme ? [ matchingWpOrgTheme ] : [] ),
+			...restThemes,
+			// Only include WP.org themes when searching a term and after all previous themes are visible.
+			...( query.search && isLastPage ? restWpOrgThemes : [] ),
+		];
+	};
+
 	render() {
-		const { source, query, upsellUrl, upsellBanner, siteId, tabFilter, themes } = this.props;
+		const {
+			source,
+			query,
+			upsellUrl,
+			upsellBanner,
+			siteId,
+			tabFilter,
+			includeWpOrgThemes,
+			wpOrgQuery,
+		} = this.props;
+
+		const themes = this.getThemes();
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
-				{ this.props.forceWpOrgSearch && source !== 'wporg' && (
-					<QueryThemes query={ query } siteId="wporg" />
-				) }
+				{ includeWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					upsellBanner={ upsellBanner }
 					themes={ themes }
-					wpOrgThemes={ this.props.wpOrgThemes }
 					fetchNextPage={ this.fetchNextPage }
 					recordTracksEvent={ this.props.recordTracksEvent }
 					onMoreButtonClick={ this.recordSearchResultsClick }
@@ -252,11 +295,7 @@ class ThemesSelection extends Component {
 					searchTerm={ query.search }
 					tabFilter={ tabFilter }
 				/>
-				<SearchThemesTracks
-					query={ query }
-					themes={ themes }
-					wporgThemes={ this.props.wpOrgThemes }
-				/>
+				<SearchThemesTracks query={ query } themes={ themes } />
 			</div>
 		);
 	}
@@ -329,10 +368,12 @@ export const ConnectedThemesSelection = connect(
 		};
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
-		const wpOrgThemes =
-			forceWpOrgSearch && sourceSiteId !== 'wporg'
-				? getThemesForQueryIgnoringPage( state, 'wporg', query ) || []
-				: [];
+
+		const includeWpOrgThemes = forceWpOrgSearch && sourceSiteId !== 'wporg';
+		const wpOrgQuery = { ...query, page: 1 }; // We limit the WP.org themes to one page only.
+		const wpOrgThemes = includeWpOrgThemes
+			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []
+			: [];
 
 		return {
 			query,
@@ -340,9 +381,10 @@ export const ConnectedThemesSelection = connect(
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			themes,
-			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting:
-				isCustomizedThemeListLoading || isRequestingThemesForQuery( state, sourceSiteId, query ),
+				isCustomizedThemeListLoading ||
+				isRequestingThemesForQuery( state, sourceSiteId, query ) ||
+				( includeWpOrgThemes && isRequestingThemesForQuery( state, 'wporg', wpOrgQuery ) ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: isUserLoggedIn( state ),
 			isThemeActive: bindIsThemeActive( state, siteId ),
@@ -355,6 +397,8 @@ export const ConnectedThemesSelection = connect(
 			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
 			getThemeDetailsUrl: bindGetThemeDetailsUrl( state, siteId ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
+			includeWpOrgThemes,
+			wpOrgQuery,
 			wpOrgThemes,
 		};
 	},
