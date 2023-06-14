@@ -47,9 +47,9 @@ export default function PostItem( { post }: Props ) {
 		<PostRelativeTimeStatus showPublishedStatus={ false } post={ post } showGridIcon={ false } />
 	);
 
-	const viewCount = 1232424; // post?.monthly_view_count ?? 0;
-	const likeCount = 21231; // post?.like_count ?? 0;
-	const commentCount = 1213; // post?.comment_count ?? 0;
+	const viewCount = post?.monthly_view_count ?? 0;
+	const likeCount = post?.like_count ?? 0;
+	const commentCount = post?.comment_count ?? 0;
 
 	const mobileStatsSeparator = <span className="blazepress-mobile-stats-mid-dot">&#183;</span>;
 
