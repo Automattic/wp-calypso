@@ -19,7 +19,8 @@ export default function useChatWidget() {
 	const openChatWidget = (
 		message: string | undefined,
 		siteUrl = 'No site selected',
-		onError?: () => void
+		onError?: () => void,
+		onSuccess?: () => void
 	) => {
 		submitZendeskUserFields( {
 			messaging_source: sectionName,
@@ -28,6 +29,7 @@ export default function useChatWidget() {
 			messaging_url: siteUrl,
 		} )
 			.then( () => {
+				onSuccess?.();
 				setShowMessagingChat();
 			} )
 			.catch( () => {

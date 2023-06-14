@@ -1,4 +1,4 @@
-.happychat__button.is-floating {
+.chat-button.is-floating {
 	position: fixed;
 	right: 24px;
 	bottom: 24px;
@@ -27,7 +27,7 @@
 		border-color: var(--color-accent);
 	}
 
-	// Make happychat button appear above the FAB icon
+	// Make chat button appear above the FAB icon
 	// when the latter is already shown.
 	&.with-offset {
 		bottom: calc(24px + 60px);

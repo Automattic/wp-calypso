@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Spinner } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useChatStatus, useChatWidget } from '@automattic/help-center/src/hooks';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -89,26 +89,33 @@ const ChatButton: FC< Props > = ( {
 		}
 	}
 
-	const { openChatWidget } = useChatWidget();
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
 
 	const handleClick = () => {
 		if ( canConnectToZendesk ) {
-			openChatWidget( initialMessage, siteUrl, onError );
+			openChatWidget( initialMessage, siteUrl, onError, onClick );
 		} else {
 			setInitialRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );
+			onClick?.();
 		}
-
-		onClick?.();
 	};
 
-	const classes = classnames( 'happychat__button', className, {
+	const classes = classnames( 'chat-button', className, {
 		'is-floating': floating,
 		'with-offset': withOffset,
 	} );
 
 	if ( ! shouldShowChatButton() ) {
 		return null;
+	}
+
+	function getChildren() {
+		if ( isOpeningChatWidget ) {
+			return <Spinner />;
+		}
+
+		return children || <Gridicon icon="chat" />;
 	}
 
 	return (
@@ -119,7 +126,7 @@ const ChatButton: FC< Props > = ( {
 			onClick={ handleClick }
 			title={ __( 'Support Chat' ) }
 		>
-			{ children || <Gridicon icon="chat" /> }
+			{ getChildren() }
 		</Button>
 	);
 };
