@@ -358,7 +358,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						sprintf(
 							/* translators: the first string variable shows CTA button name */
 							translate(
-								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
+								'By clicking "%s," you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
 							),
 							submitBtnName
 						),
