@@ -23,7 +23,6 @@ import {
 	isActivatingTheme,
 	isInstallingTheme,
 	isWpcomTheme,
-	getPreActivateThemeId,
 } from 'calypso/state/themes/selectors';
 import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/should-redirect-to-thank-you-page';
 import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
@@ -355,7 +354,7 @@ const ConnectedThanksModal = connect(
 				  )
 				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive );
 
-		const installingThemeId = getPreActivateThemeId( state );
+		const activatingThemeId = state.themes.activationRequests?.themeId;
 
 		return {
 			siteId,
@@ -368,7 +367,7 @@ const ConnectedThanksModal = connect(
 				siteId
 			),
 			shouldEditHomepageWithGutenberg,
-			shouldRedirectToThankYouPage: shouldRedirectToThankYouPage( state, installingThemeId ),
+			shouldRedirectToThankYouPage: shouldRedirectToThankYouPage( state, activatingThemeId ),
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
