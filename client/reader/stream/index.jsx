@@ -41,6 +41,7 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
+import { getReaderTags } from 'calypso/state/reader/tags/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -50,7 +51,6 @@ import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import ReaderListFollowedSites from './reader-list-followed-sites';
 import './style.scss';
-import { getReaderTags } from 'calypso/state/reader/tags/selectors';
 
 const WIDE_DISPLAY_CUTOFF = 900;
 const GUESSED_POST_HEIGHT = 600;
@@ -462,7 +462,8 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag, tags } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag, tags } =
+			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
