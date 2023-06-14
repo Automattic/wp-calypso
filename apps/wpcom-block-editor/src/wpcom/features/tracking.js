@@ -887,6 +887,10 @@ const REDUX_TRACKING = {
  */
 const EVENT_TYPES = [ 'keyup', 'click' ];
 
+// Store original and rewritten redux actions locally so we can return the same references when
+// needed.
+const rewrittenActions = {};
+const originalActions = {};
 // Registering tracking handlers.
 if (
 	undefined === window ||
@@ -903,12 +907,10 @@ if (
 			const actions = { ...registry.dispatch( namespaceName ) };
 			const trackers = REDUX_TRACKING[ namespaceName ];
 
-			// Store rewrittenActions so we can return the same reference when the store updates.
+			// Initialize namespace level objects if not yet done.
 			if ( ! rewrittenActions[ namespaceName ] ) {
 				rewrittenActions[ namespaceName ] = {};
 			}
-			// Store originalActions so we can determine if these ever change and we need to update
-			// the corresponding item in rewrittenActions.
 			if ( ! originalActions[ namespaceName ] ) {
 				originalActions[ namespaceName ] = {};
 			}
@@ -983,6 +985,3 @@ if (
 		}
 	);
 }
-
-const rewrittenActions = {};
-const originalActions = {};
