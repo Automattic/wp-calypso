@@ -41,10 +41,11 @@ export class NavbarComponent {
 	}
 
 	/**
-	 * Click on `Me` on top right of the Home dashboard.
+	 * Click on `Me` on top right of the navbar.
 	 */
 	async clickMe(): Promise< void > {
-		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.meButton ) ] );
+		await this.page.getByRole( 'link', { name: 'My Profile' } ).click();
+		await this.page.waitForURL( /.*\/me/ );
 	}
 
 	/**
