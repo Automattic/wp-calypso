@@ -6,7 +6,7 @@ import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -15,6 +15,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
+import { useGetSiteSuggestionsQuery } from 'calypso/landing/stepper/hooks/use-get-site-suggestions-query';
 import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
@@ -40,6 +41,17 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 	const [ siteGeoAffinity, setSiteGeoAffinity ] = React.useState( currentSiteGeoAffinity ?? '' );
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const translate = useTranslate();
+
+	const [ shouldOverrideSiteTitle, setShouldOverrideSiteTitle ] = useState( false );
+
+	const { refetch } = useGetSiteSuggestionsQuery( {
+		enabled: shouldOverrideSiteTitle,
+		onSuccess: ( response ) => {
+			if ( response.success === true ) {
+				setSiteTitle( response.suggestions[ 0 ].title );
+			}
+		},
+	} );
 
 	const pickedPlanSlug = planCartItem?.product_slug;
 
@@ -86,16 +98,32 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 				} ) }
 			>
 				<FormLabel htmlFor="siteTitle">{ translate( 'Give your site a name' ) }</FormLabel>
-				<FormInput
-					name="siteTitle"
-					id="siteTitle"
-					value={ siteTitle }
-					isError={ siteTitleError }
-					onChange={ onChange }
-					placeholder={ translate( 'My Hosted Site' ) }
-					// eslint-disable-next-line jsx-a11y/no-autofocus
-					autoFocus
-				/>
+				<div css={ { position: 'relative' } }>
+					<FormInput
+						name="siteTitle"
+						id="siteTitle"
+						value={ siteTitle }
+						isError={ siteTitleError }
+						onChange={ onChange }
+						placeholder={ translate( 'My Hosted Site' ) }
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus
+					/>
+					<Button
+						tabIndex={ -1 }
+						css={ { position: 'absolute', top: 0, right: '1rem', height: '100%' } }
+						borderless
+						onClick={ () => {
+							if ( shouldOverrideSiteTitle ) {
+								refetch();
+							} else {
+								setShouldOverrideSiteTitle( true );
+							}
+						} }
+					>
+						{ translate( 'Generate random name' ) }
+					</Button>
+				</div>
 				{ siteTitleError ? (
 					<FormInputValidation isError text={ translate( 'Please provide a site title' ) } />
 				) : (
