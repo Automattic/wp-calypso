@@ -26,8 +26,11 @@ import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/sel
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { installPlugin, activatePlugin } from 'calypso/state/plugins/installed/actions';
-import { getPluginOnSite, getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
-import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
+import {
+	getPluginOnSite,
+	getStatusForPlugin,
+	isPluginActive,
+} from 'calypso/state/plugins/installed/selectors-ts';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -56,11 +59,6 @@ import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
 
-interface InstalledPlugin {
-	slug?: string;
-	id?: number;
-}
-
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
 	themeSlug = '',
@@ -88,7 +86,7 @@ const MarketplaceProductInstall = ( {
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
-	const installedPlugin = useSelector( ( state ): InstalledPlugin | undefined =>
+	const installedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
 	);
 	const pluginActive = useSelector( ( state ) =>
@@ -461,7 +459,7 @@ const MarketplaceProductInstall = ( {
 		// Catch the rest of the error cases.
 		if (
 			pluginUploadError ||
-			pluginInstallStatus.error ||
+			pluginInstallStatus?.error ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
 			return (
