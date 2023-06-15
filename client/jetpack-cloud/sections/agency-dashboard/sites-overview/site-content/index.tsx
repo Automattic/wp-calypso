@@ -71,8 +71,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 
 	const onIssueLicense = () => {
 		if ( currentLicenseProductSlug ) {
-			recordEvent( 'calypso_jetpack_agency_dashboard_license_select', {
-				site_id: null,
+			recordEvent( 'calypso_jetpack_agency_dashboard_issue_license_info', {
 				products: currentLicenseProductSlug,
 			} );
 			hideLicenseInfo();
@@ -89,6 +88,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 	};
 
 	const onHideLicenseInfo = () => {
+		recordEvent( 'calypso_jetpack_agency_dashboard_hide_license_info' );
 		hideLicenseInfo();
 	};
 
