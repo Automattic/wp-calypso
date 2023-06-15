@@ -335,7 +335,7 @@ export const ConnectedThemesSelection = connect(
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
 
-		const includeWpOrgThemes = forceWpOrgSearch && sourceSiteId !== 'wporg' && search; // Only display WP.org themes when searching a term.
+		const includeWpOrgThemes = forceWpOrgSearch && sourceSiteId !== 'wporg' && search; // Only request/include WP.org themes when searching a term.
 		const wpOrgQuery = { ...query, page: 1 }; // We limit the WP.org themes to one page only.
 		const wpOrgThemes = includeWpOrgThemes
 			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []
