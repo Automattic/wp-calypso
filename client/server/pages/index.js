@@ -296,6 +296,8 @@ function setUpLoggedOutRoute( req, res, next ) {
 			subscriptionManagementSubkey: req.cookies.subkey,
 		};
 	}
+	const acceptLang = req.get( 'Accept-Language' )?.split( ',' )[ 0 ];
+	req.context.lang = acceptLang || req.context.lang;
 
 	Promise.all( setupRequests )
 		.then( () => {
