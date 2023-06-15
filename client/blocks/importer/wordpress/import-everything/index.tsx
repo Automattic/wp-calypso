@@ -149,7 +149,7 @@ export class ImportEverything extends SectionMigrate {
 			recordTracksEvent,
 		} = this.props;
 
-		if ( targetSite.is_wpcom_staging_site ) {
+		if ( targetSite && targetSite.is_wpcom_staging_site ) {
 			return (
 				<NotAuthorized
 					onStartBuilding={ () => {
