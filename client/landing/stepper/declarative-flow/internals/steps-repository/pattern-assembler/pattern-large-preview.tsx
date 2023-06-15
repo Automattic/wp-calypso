@@ -2,6 +2,7 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { Button, DeviceSwitcher } from '@automattic/components';
 import { useStyle } from '@automattic/global-styles';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -57,6 +58,7 @@ const PatternLargePreview = ( {
 		'--pattern-large-preview-block-gap': blockGap,
 		'--pattern-large-preview-background': backgroundColor,
 	} as CSSProperties );
+	const isWideViewport = useViewportMatch( 'wide', '<' );
 
 	const goToSelectHeaderPattern = () => {
 		navigator.goTo( NAVIGATOR_PATHS.HEADER );
@@ -186,7 +188,7 @@ const PatternLargePreview = ( {
 			isShowDeviceSwitcherToolbar
 			isShowFrameBorder
 			isShowFrameShadow={ false }
-			isFixedViewport={ !! hasSelectedPattern }
+			isFixedViewport={ !! hasSelectedPattern && ! isWideViewport }
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
