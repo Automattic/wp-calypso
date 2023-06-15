@@ -135,10 +135,12 @@ const PatternLargePreview = ( {
 		);
 	};
 
-	const updateViewportHeight = () => {
-		setViewportHeight( frameRef.current?.clientHeight );
+	const updateViewportHeight = ( height?: number ) => {
+		// Required for 100vh patterns
+		setViewportHeight( height );
 	};
 
+	// Scroll to newly added patterns
 	useEffect( () => {
 		let timerId: number;
 		const scrollIntoView = () => {
@@ -169,14 +171,6 @@ const PatternLargePreview = ( {
 		};
 	}, [ activePosition, header, sections, footer ] );
 
-	// Update viewport height on window resize
-	useEffect( () => {
-		const handleResize = () => updateViewportHeight();
-		window.addEventListener( 'resize', handleResize, true );
-
-		return () => window.removeEventListener( 'resize', handleResize );
-	}, [] );
-
 	// Delay updating the styles to make the transition smooth
 	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
 	useEffect( () => {
@@ -191,16 +185,14 @@ const PatternLargePreview = ( {
 			className="pattern-large-preview"
 			isShowDeviceSwitcherToolbar
 			isShowFrameBorder
+			isShowFrameShadow={ false }
+			isFixedViewport={ !! hasSelectedPattern }
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
 				setDevice( device );
-				// Wait for the animation to end in 200ms
-				// The animation is triggered by the setDevice above
-				window.setTimeout( () => {
-					updateViewportHeight();
-				}, 205 );
 			} }
+			onViewportChange={ updateViewportHeight }
 		>
 			{ hasSelectedPattern ? (
 				<ul
