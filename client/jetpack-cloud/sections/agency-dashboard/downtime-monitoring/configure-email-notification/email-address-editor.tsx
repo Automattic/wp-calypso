@@ -12,8 +12,8 @@ import {
 	useRequestVerificationCode,
 	useValidateVerificationCode,
 	useResendVerificationCode,
+	useContactModalTitleAndSubtitle,
 } from '../hooks';
-import { getContactModalTitleAndSubTitle } from '../utils';
 import EmailItemContent from './email-item-content';
 import type {
 	AllowedMonitorContactActions,
@@ -69,6 +69,8 @@ export default function EmailAddressEditor( {
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyEmail = useValidateVerificationCode();
 	const resendCode = useResendVerificationCode();
+
+	const { title, subtitle } = useContactModalTitleAndSubtitle( 'email', selectedAction );
 
 	// Function to handle resending verification code
 	const handleResendCode = useCallback( () => {
@@ -298,8 +300,6 @@ export default function EmailAddressEditor( {
 		handleSetEmailItems( false );
 	}
 
-	const { title, subTitle } = getContactModalTitleAndSubTitle.email[ selectedAction ];
-
 	const handleChange = useCallback(
 		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setEmailItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
@@ -318,7 +318,7 @@ export default function EmailAddressEditor( {
 			title={ title }
 			className="notification-settings__modal"
 		>
-			<div className="notification-settings__sub-title">{ subTitle }</div>
+			<div className="notification-settings__sub-title">{ subtitle }</div>
 
 			<form className="configure-contact__form" onSubmit={ onSave }>
 				{ isRemoveAction ? (

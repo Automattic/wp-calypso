@@ -10,8 +10,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useSelector } from 'calypso/state';
 import getCountries from 'calypso/state/selectors/get-countries';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
-import { useRequestVerificationCode } from '../hooks';
-import { getContactModalTitleAndSubTitle } from '../utils';
+import { useContactModalTitleAndSubtitle, useRequestVerificationCode } from '../hooks';
 import type {
 	StateMonitorSettingsSMS,
 	Site,
@@ -76,6 +75,8 @@ export default function PhoneNumberEditor( {
 	const isVerifyAction = selectedAction === 'verify';
 
 	const requestVerificationCode = useRequestVerificationCode();
+
+	const { title, subtitle } = useContactModalTitleAndSubtitle( 'phone', selectedAction );
 
 	const handleSetPhoneItems = useCallback(
 		( isVerified = true ) => {
@@ -198,8 +199,6 @@ export default function PhoneNumberEditor( {
 		[]
 	);
 
-	const { title, subTitle } = getContactModalTitleAndSubTitle.phone[ selectedAction ];
-
 	const onChangePhoneInput = ( {
 		phoneNumberFull,
 		phoneNumber,
@@ -252,7 +251,7 @@ export default function PhoneNumberEditor( {
 			title={ title }
 			className="notification-settings__modal"
 		>
-			<div className="notification-settings__sub-title">{ subTitle }</div>
+			<div className="notification-settings__sub-title">{ subtitle }</div>
 
 			<form className="configure-contact__form" onSubmit={ onSave }>
 				<>
