@@ -12,6 +12,7 @@ import ConfirmModal from './ConfirmModal';
 
 The ConfirmModal component accepts the following props:
 
+- `isVisible`: Whether the modal is visible or not.
 - `cancelButtonLabel` (optional): Label or content for the cancel button.
 - `confirmButtonLabel` (optional): Label or content for the confirm button.
 - `text` (optional): Additional text to display in the modal.
@@ -23,6 +24,7 @@ The ConfirmModal component accepts the following props:
 
 ```jsx
 <ConfirmModal
+  isVisible={isVisible}
   cancelButtonLabel="Cancel"
   confirmButtonLabel="Confirm"
   text="Are you sure you want to proceed?"

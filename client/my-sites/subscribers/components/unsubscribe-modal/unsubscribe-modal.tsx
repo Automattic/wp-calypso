@@ -47,12 +47,9 @@ const UnsubscribeModal = ( { subscriber, onCancel, onConfirm }: UnsubscribeModal
 		? paidSubscriberProps
 		: freeSubscriberProps;
 
-	if ( ! subscriber ) {
-		return null;
-	}
-
 	return (
 		<ConfirmModal
+			isVisible={ !! subscriber }
 			confirmButtonLabel={ confirmButtonLabel }
 			text={ text }
 			title={ title }

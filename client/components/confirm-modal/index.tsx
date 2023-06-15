@@ -4,6 +4,7 @@ import './styles.scss';
 import { useTranslate } from 'i18n-calypso';
 
 type ConfirmModalProps = {
+	isVisible: boolean;
 	cancelButtonLabel?: string | React.ReactChild;
 	confirmButtonLabel?: string | React.ReactChild;
 	text?: string | React.ReactChild;
@@ -13,6 +14,7 @@ type ConfirmModalProps = {
 };
 
 const ConfirmModal = ( {
+	isVisible,
 	cancelButtonLabel,
 	confirmButtonLabel,
 	text,
@@ -21,6 +23,10 @@ const ConfirmModal = ( {
 	onConfirm,
 }: ConfirmModalProps ) => {
 	const translate = useTranslate();
+
+	if ( ! isVisible ) {
+		return null;
+	}
 
 	return (
 		<Modal overlayClassName="confirm-modal" title={ title } onRequestClose={ onCancel }>
