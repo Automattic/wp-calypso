@@ -6,8 +6,6 @@ import {
 	SubscribersData,
 } from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 
-import './style.scss';
-
 // array of indices to use to calculate the dates to query for
 const cardIndices = [ 0, 30, 60, 90 ];
 
@@ -24,10 +22,10 @@ function calculateQueryDate( daysToSubtract: number ) {
 }
 
 // calculate the stats to display in the cards
-	function SubscribersOverviewCardStats( subscribersData: SubscribersData, index: number ) {
-		const getCount = () => {
-			return subscribersData?.data?.[ 0 ]?.subscribers || 0;
-		};
+function SubscribersOverviewCardStats( subscribersData: SubscribersData, index: number ) {
+	const getCount = () => {
+		return subscribersData?.data?.[ 0 ]?.subscribers || 0;
+	};
 
 	let heading;
 	switch ( index ) {
@@ -61,13 +59,6 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 	const quantity = 1;
 	const dates = cardIndices.map( calculateQueryDate );
 
-	const { isLoading, isError, subscribersData } = useSubscribersQueries(
-		siteId,
-		period,
-		quantity,
-		dates
-	);
-
 	const subscribersQueries = useSubscribersQueries( siteId, period, quantity, dates );
 
 	return (
@@ -83,13 +74,13 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 					}
 
 					const subscribersData = result.data;
-					const overviewCardStat = getCountComparisonCardProps( result.data, index );
+					const overviewCardStat = SubscribersOverviewCardStats( subscribersData, index );
 
 					return (
 						<CountComparisonCard
-							key={ overviewCardStat.count }
+							key={ overviewCardStat.heading }
 							heading={ overviewCardStat.heading }
-							count={ overviewCardStat.count ? parseInt( String( overviewCardStat.count ) ) : null }
+							count={ overviewCardStat.count }
 							showValueTooltip
 							icon={ false }
 						/>
