@@ -47,6 +47,7 @@ const ScreenCategoryList = ( {
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
+	const firstCategory = categories[ 0 ];
 	const isWideViewport = useViewportMatch( 'wide', '<' );
 
 	const trackEventCategoryClick = ( name: string ) => {
@@ -56,6 +57,9 @@ const ScreenCategoryList = ( {
 	};
 
 	useEffect( () => {
+		// Open first category with a delay to avoid the top position flickering
+		setTimeout( () => setSelectedCategory( firstCategory?.name ?? null ), 200 );
+
 		// Notify the pattern panel list is open and closed
 		onTogglePatternPanelList?.( true );
 		return () => {
