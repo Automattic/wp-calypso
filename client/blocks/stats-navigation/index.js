@@ -176,16 +176,6 @@ class StatsNavigation extends Component {
 					{ isLegacy && showIntervals && (
 						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
 					) }
-
-					{ isModuleSettingsSupported && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
-						<PageModuleToggler
-							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
-							pageModules={ pageModules }
-							onToggleModule={ this.onToggleModule }
-							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-							onTooltipDismiss={ this.onTooltipDismiss }
-						/>
-					) }
 				</SectionNav>
 
 				{ isLegacy && showIntervals && (
