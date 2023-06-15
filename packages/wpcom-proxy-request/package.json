@@ -1,6 +1,6 @@
 {
 	"name": "wpcom-proxy-request",
-	"version": "6.0.0",
+	"version": "7.0.0",
 	"description": "Proxied cookie-authenticated REST API requests to WordPress.com.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -34,9 +34,7 @@
 	],
 	"types": "types",
 	"scripts": {
-		"clean": "rm -rf dist",
-		"build": "transpile",
-		"prepack": "yarn run clean && yarn run build"
+		"prepack": "Echo 'no need to prepack vanilla JS package'"
 	},
 	"dependencies": {
 		"debug": "^4.3.3",
