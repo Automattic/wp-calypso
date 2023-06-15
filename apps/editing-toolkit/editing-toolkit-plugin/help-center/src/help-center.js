@@ -5,7 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { useSelector } from 'react-redux';
@@ -45,6 +45,8 @@ function HelpCenterContent() {
 		return () => clearTimeout( timeout );
 	}, [] );
 
+	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
+
 	const content = (
 		<>
 			<Button
@@ -75,7 +77,7 @@ function HelpCenterContent() {
 					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
 				</>
 			) }
-			<HelpCenter handleClose={ () => setShowHelpCenter( false ) } />
+			<HelpCenter handleClose={ closeCallback } />
 		</>
 	);
 }
