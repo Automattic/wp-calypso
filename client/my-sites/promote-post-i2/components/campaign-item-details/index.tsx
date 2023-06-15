@@ -504,8 +504,7 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 							</div>
 						</div>
-
-						{ status === 'completed' && (
+						{ ( status === 'completed' || status === 'finished' ) && (
 							<div className="campaign-item-details__payment-container">
 								<div className="campaign-item-details__payment">
 									<div className="campaign-item-details__payment-row">
@@ -540,7 +539,7 @@ export default function CampaignItemDetails( props: Props ) {
 												) }
 												{ total ? (
 													<span className="campaign-item-details__label">
-														<div>{ translate( 'Paid' ) }</div>
+														<div>{ translate( 'Total paid' ) }</div>
 														<div>{ totalFormatted }</div>
 													</span>
 												) : (
