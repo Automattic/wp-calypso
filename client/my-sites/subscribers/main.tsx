@@ -9,7 +9,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { EmptyListView } from './components/empty-list-view';
 import { GrowYourAudience } from './components/grow-your-audience';
 import { SubscriberList } from './components/subscriber-list/subscriber-list';
-import { usePagination } from './hooks';
+import { UnsubscribeModal } from './components/unsubscribe-modal';
+import { usePagination, useUnsubscribeModal } from './hooks';
 import { useSubscribersQuery } from './queries';
 import './styles.scss';
 
@@ -29,6 +30,10 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 	} = result && result.data ? result : initialState;
 	const { isFetching } = result;
 	const { pageClickCallback } = usePagination( page, pageChanged, isFetching );
+	const { currentSubscriber, onClickUnsubscribe, onCloseModal } = useUnsubscribeModal(
+		selectedSiteId,
+		page
+	);
 
 	const navigationItems: Item[] = [
 		{
@@ -66,7 +71,7 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 							<span className="subscribers__title">{ translate( 'Total' ) }</span>{ ' ' }
 							<span className="subscribers__subscriber-count">{ total }</span>
 						</div>
-						<SubscriberList subscribers={ subscribers } />
+						<SubscriberList subscribers={ subscribers } onUnsubscribe={ onClickUnsubscribe } />
 					</>
 				) : (
 					<EmptyListView />
@@ -82,6 +87,8 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 			</section>
 
 			{ !! total && <GrowYourAudience /> }
+
+			<UnsubscribeModal subscriber={ currentSubscriber } onClose={ onCloseModal } />
 		</Main>
 	);
 };

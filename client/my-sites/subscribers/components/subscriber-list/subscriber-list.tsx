@@ -6,12 +6,14 @@ import './styles.scss';
 
 type SubscriberListProps = {
 	subscribers: Subscriber[];
+	onUnsubscribe: ( subscriber: Subscriber ) => void;
 };
 
 const noop = () => undefined;
 
-export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
+export const SubscriberList = ( { subscribers, onUnsubscribe }: SubscriberListProps ) => {
 	const translate = useTranslate();
+
 	return (
 		<ul className="subscriber-list" role="table">
 			<li className="row header" role="row">
@@ -37,7 +39,7 @@ export const SubscriberList = ( { subscribers }: SubscriberListProps ) => {
 					key={ subscriber.subscription_id }
 					subscriber={ subscriber }
 					onView={ noop }
-					onUnsubscribe={ noop }
+					onUnsubscribe={ onUnsubscribe }
 				/>
 			) ) }
 		</ul>
