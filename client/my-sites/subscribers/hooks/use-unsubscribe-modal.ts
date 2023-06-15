@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { UnsubscribeActionType } from '../components/unsubscribe-modal';
-import { getEarnPageUrl } from '../helpers';
+import { getEarnPaymentsPageUrl } from '../helpers';
 import { useSubscriberRemoveMutation } from '../mutations';
 import { Subscriber } from '../types';
 
@@ -17,7 +17,7 @@ const useUnsubscribeModal = ( siteId: number | null, currentPage: number ) => {
 
 	const onCloseModal = ( action: UnsubscribeActionType, subscriber?: Subscriber ) => {
 		if ( action === UnsubscribeActionType.Manage ) {
-			window.open( getEarnPageUrl( selectedSiteSlug ), '_blank' );
+			window.open( getEarnPaymentsPageUrl( selectedSiteSlug ), '_blank' );
 		} else if ( action === UnsubscribeActionType.Unsubscribe && subscriber ) {
 			mutate( subscriber );
 		}
