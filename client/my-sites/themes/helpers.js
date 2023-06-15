@@ -166,23 +166,25 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 
 	// 3. WP.org themes (only if the list of WP.com themes has reached the last page).
 	if ( isEnabled( 'themes/interlaced-dotorg-themes' ) && isLastPage ) {
-		const restWpOrgThemes = matchingTheme
-			? wpOrgThemes.filter( ( theme ) => theme.id !== matchingTheme.id )
-			: wpOrgThemes;
+		const restWpOrgBlockThemes = [];
+		const restWpOrgClassicThemes = [];
 
-		// 3.1. WP.org block themes.
-		const restWpOrgBlockThemes = restWpOrgThemes.filter( ( theme ) =>
-			theme.taxonomies?.theme_feature?.some( ( feature ) => feature?.slug === 'full-site-editing' )
-		);
+		validWpOrgThemes.forEach( ( theme ) => {
+			if ( theme.id === matchingTheme?.id ) {
+				return;
+			}
+			if (
+				theme.taxonomies?.theme_feature?.some(
+					( feature ) => feature?.slug === 'full-site-editing'
+				)
+			) {
+				restWpOrgBlockThemes.push( theme );
+			} else {
+				restWpOrgClassicThemes.push( theme );
+			}
+		} );
+
 		interlacedThemes.push( ...restWpOrgBlockThemes );
-
-		// 3.2. WP.org classic themes.
-		const restWpOrgClassicThemes = restWpOrgThemes.filter(
-			( theme ) =>
-				! theme.taxonomies ||
-				! theme.taxonomies.theme_feature ||
-				theme.taxonomies.theme_feature.every( ( feature ) => feature?.slug !== 'full-site-editing' )
-		);
 		interlacedThemes.push( ...restWpOrgClassicThemes );
 	}
 
