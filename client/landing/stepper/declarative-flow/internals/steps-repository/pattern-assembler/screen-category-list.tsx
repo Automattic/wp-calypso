@@ -44,10 +44,10 @@ const ScreenCategoryList = ( {
 	onTogglePatternPanelList,
 }: Props ) => {
 	const translate = useTranslate();
+	const firstCategory = categories[ 0 ];
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
-	const firstCategory = categories[ 0 ];
 	const isWideViewport = useViewportMatch( 'wide', '<' );
 
 	const trackEventCategoryClick = ( name: string ) => {
