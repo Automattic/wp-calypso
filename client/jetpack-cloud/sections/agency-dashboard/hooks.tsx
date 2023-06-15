@@ -486,7 +486,6 @@ export const useLicenseLightbox = () => {
 					dispatch( hideLicenseInfo() );
 					page.show(
 						addQueryArgs( `/partner-portal/issue-license/`, {
-							site_id: null,
 							product_slug: productSlug,
 							source: 'dashboard',
 						} )

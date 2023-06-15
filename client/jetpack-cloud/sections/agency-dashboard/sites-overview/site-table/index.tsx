@@ -4,6 +4,7 @@ import { useContext, useState, forwardRef, Ref } from 'react';
 import { useDispatch } from 'react-redux';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { showLicenseInfo } from 'calypso/state/jetpack-agency-dashboard/actions';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
@@ -37,6 +38,15 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 		setExpandedRow( expandedRow === blogId ? null : blogId );
 	};
 
+	const onShowLicenseInfo = ( license: string ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_dashboard_show_license_info', {
+				products: license,
+			} )
+		);
+		dispatch( showLicenseInfo( license ) );
+	};
+
 	return (
 		<table ref={ ref } className="site-table__table">
 			<thead>
@@ -62,7 +72,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 													className="site-table__tooltip-icon"
 													size={ 16 }
 													icon={ info }
-													onClick={ () => dispatch( showLicenseInfo( column.key ) ) }
+													onClick={ () => onShowLicenseInfo( column.key ) }
 												/>
 											) }
 										</span>
