@@ -66,10 +66,15 @@ export class ImportEverything extends SectionMigrate {
 	};
 
 	resetMigration = () => {
-		const { stepNavigator } = this.props;
+		const { stepNavigator, isMigrateFromWp } = this.props;
 
 		this.requestMigrationReset( this.props.targetSiteId ).finally( () => {
-			stepNavigator?.goToImportCapturePage?.();
+			if ( isMigrateFromWp ) {
+				stepNavigator?.goToSitePickerPage?.();
+			} else {
+				stepNavigator?.goToImportCapturePage?.();
+			}
+
 			/**
 			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
 			 * Call to updateFromAPI will update both local and non-local state.
