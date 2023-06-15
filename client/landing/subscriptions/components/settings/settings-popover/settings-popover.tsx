@@ -33,7 +33,7 @@ const SettingsPopover = ( { children, className }: SettingsPopoverProps ) => {
 				context={ buttonRef.current }
 				className={ classNames( 'settings-popover', className ) }
 			>
-				{ children }
+				{ typeof children === 'function' ? children( onClose ) : children }
 			</Popover>
 		</div>
 	);
