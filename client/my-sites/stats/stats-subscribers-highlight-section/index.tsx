@@ -3,11 +3,10 @@ import { useTranslate } from 'i18n-calypso';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 import './style.scss';
 
-// TODO: Split this out into a separate file.
 function useSubscriberHighlights( siteId: number | null ) {
 	const translate = useTranslate();
 
-	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId ); // TODO: isLoading, isError can be used to handle loading and an error state
+	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
 	const highlights = [
 		{
 			heading: translate( 'Total email subscribers' ),
@@ -34,7 +33,6 @@ function useSubscriberHighlights( siteId: number | null ) {
 	return highlights;
 }
 
-// TODO: Split this out into a separate file.
 function SubscriberHighlightsHeader() {
 	const translate = useTranslate();
 	const localizedTitle = translate( 'All time stats', {
@@ -47,7 +45,6 @@ function SubscriberHighlightsHeader() {
 	return <h1 className="highlight-cards-heading">{ localizedTitle }</h1>;
 }
 
-// TODO: Split this out into a separate file.
 function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	const highlights = useSubscriberHighlights( siteId );
 
