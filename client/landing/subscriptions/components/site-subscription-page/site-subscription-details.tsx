@@ -246,14 +246,16 @@ const SiteSubscriptionDetails = ( {
 					</div>
 
 					<div className="site-subscription-page__button-container">
-						<Button
-							className="site-subscription-page__manage-button"
-							isPrimary
-							href="/me/purchases"
-							disabled={ unsubscribing }
-						>
-							{ translate( 'Manage purchases' ) }
-						</Button>
+						{ paymentPlans && !! paymentPlans.length && (
+							<Button
+								className="site-subscription-page__manage-button"
+								isPrimary
+								href="/me/purchases"
+								disabled={ unsubscribing }
+							>
+								{ translate( 'Manage purchases' ) }
+							</Button>
+						) }
 						<Button
 							className="site-subscription-page__unsubscribe-button"
 							onClick={ () => confirmUnsubscribe( { blogId, url } ) }
