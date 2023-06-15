@@ -346,10 +346,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			);
 		}
 
-		recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
-			theme: selectedDesign?.slug,
-		} );
-		setShowUpgradeModal( true );
+		if ( isDesignFirstFlow ) {
+			// tofix
+		} else {
+			recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
+				theme: selectedDesign?.slug,
+			} );
+			setShowUpgradeModal( true );
+		}
 	}
 
 	function closeUpgradeModal() {
