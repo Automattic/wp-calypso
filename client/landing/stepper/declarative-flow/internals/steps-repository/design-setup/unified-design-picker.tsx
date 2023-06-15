@@ -587,7 +587,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		const selectStyle = () => {
 			if (
 				shouldLimitGlobalStyles &&
-				! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug )
+				! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) &&
+				! isDesignFirstFlow
 			) {
 				unlockPremiumGlobalStyles();
 			} else {
