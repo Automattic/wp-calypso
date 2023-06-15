@@ -165,8 +165,8 @@ export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string
 	return `${ ( +minEstimate ).toLocaleString() } - ${ ( +maxEstimate ).toLocaleString() }`;
 };
 
-export const formatNumber = ( number: number ) => {
-	if ( ! number ) {
+export const formatNumber = ( number: number, onlyPositives = false ): string => {
+	if ( ! number || ( onlyPositives && number < 0 ) ) {
 		return '-';
 	}
 	return number.toLocaleString();
