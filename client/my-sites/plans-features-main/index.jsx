@@ -62,6 +62,7 @@ import {
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import './style.scss';
 import useIntentFromSiteMeta from './hooks/use-intent-from-site-meta';
+import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanTypesWithIntent from './hooks/use-plan-types-with-intent';
 
 const OnboardingPricingGrid2023 = ( props ) => {
@@ -302,7 +303,10 @@ const PricingView = ( props ) => {
 
 	const term = getPlanBillingPeriod( props.intervalType, getPlan( selectedPlan )?.term );
 	const intentFromSiteMeta = useIntentFromSiteMeta();
-	const intent = intentFromProps || intentFromSiteMeta.intent || 'default';
+	const planFromUpsells = usePlanFromUpsells();
+	const intent = planFromUpsells
+		? 'default'
+		: intentFromProps || intentFromSiteMeta.intent || 'default';
 	const defaultPlanTypes = usePlanTypesWithIntent( {
 		intent: 'default',
 		selectedPlan,
