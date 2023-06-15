@@ -11,7 +11,6 @@ import Badge from 'calypso/components/badge';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import {
 	canCurrentUserAddEmail,
@@ -39,6 +38,7 @@ import {
 	emailManagement,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
+import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './domain-row.scss';
@@ -95,16 +95,7 @@ class DomainRow extends PureComponent {
 	}
 
 	renderSite() {
-		const { site, translate } = this.props;
-		if ( site?.options?.is_domain_only ) {
-			return (
-				<div className="domain-row__site-cell">
-					<Button href={ createSiteFromDomainOnly( site?.slug, site?.ID ) } plain>
-						<MaterialIcon icon="add" /> { translate( 'Create site' ) }
-					</Button>
-				</div>
-			);
-		}
+		const { site } = this.props;
 		return (
 			<div className="domain-row__site-cell">
 				<Button href={ domainManagementList( site?.slug ) } plain>
@@ -345,7 +336,8 @@ class DomainRow extends PureComponent {
 	};
 
 	goToDNSManagement = () => {
-		const { currentRoute, domain, site } = this.props;
+		const { currentRoute, domain, site, sendNudge } = this.props;
+		sendNudge( { nudge: 'dns-settings', context: { domain: domain.domain } } );
 		page( domainManagementDns( site.slug, domain.domain, currentRoute ) );
 	};
 
@@ -537,4 +529,11 @@ class DomainRow extends PureComponent {
 	}
 }
 
-export default connect()( localize( DomainRow ) );
+function withOdysseusAssistantContext( Component ) {
+	return function WrappedComponent( props ) {
+		const { sendNudge } = useOdysseusAssistantContext();
+		return <Component { ...props } sendNudge={ sendNudge } />;
+	};
+}
+
+export default connect()( withOdysseusAssistantContext( localize( DomainRow ) ) );

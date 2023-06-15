@@ -13,6 +13,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
+import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -68,12 +69,18 @@ export const QuickLinks = ( {
 	siteEditorUrl,
 } ) => {
 	const translate = useTranslate();
+	const { sendNudge } = useOdysseusAssistantContext();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
 		,
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
 	const isPromotePostActive = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+
+	const addNewDomain = () => {
+		sendNudge( { nudge: 'domains-add' } );
+		trackAddDomainAction();
+	};
 
 	const customizerLinks =
 		isStaticHomePage && canEditPages ? (
@@ -174,7 +181,7 @@ export const QuickLinks = ( {
 						<ActionBox
 							href={ `/domains/add/${ siteSlug }` }
 							hideLinkIndicator
-							onClick={ trackAddDomainAction }
+							onClick={ addNewDomain }
 							label={ translate( 'Add a domain' ) }
 							gridicon="add-outline"
 						/>
