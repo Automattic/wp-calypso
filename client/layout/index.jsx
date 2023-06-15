@@ -22,6 +22,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
+import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -228,6 +229,10 @@ class Layout extends Component {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
+		if ( this.props.isWooCoreProfilerFlow ) {
+			return <WooCoreProfilerMasterbar />;
+		}
+
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
@@ -256,6 +261,8 @@ class Layout extends Component {
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-wccom-oauth-flow': isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom,
+			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
+			woo: this.props.isWooCoreProfilerFlow,
 		} );
 
 		const optionalBodyProps = () => {
@@ -384,9 +391,13 @@ export default withCurrentRoute(
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
+		const isWooCoreProfilerFlow =
+			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
+			'woocommerce-core-profiler' === currentQuery?.from;
 		const noMasterbarForRoute =
 			isJetpackLogin || currentRoute === '/me/account/closed' || isDomainAndPlanPackageFlow;
-		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
+		const noMasterbarForSection =
+			! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
 			noMasterbarForSection ||
@@ -423,6 +434,7 @@ export default withCurrentRoute(
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
+			isWooCoreProfilerFlow,
 			isEligibleForJITM,
 			oauth2Client,
 			wccomFrom,
