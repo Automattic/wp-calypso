@@ -30,13 +30,6 @@ export function getPurchasedLicense( state: AppState ): PurchasedProductsInfo | 
 }
 
 /**
- * Returns the selected license information to be displayed in the dashboard.
- */
-export function getSelectedLicenseInfo( state: AppState ): string | null {
-	return state.agencyDashboard?.selectedLicenseInfo?.license;
-}
-
-/**
  * Returns the selected licenses from the dashboard.
  */
 export function getSelectedLicenses( state: AppState ): Array< string > {

@@ -2,19 +2,23 @@ import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useContext, forwardRef, createRef } from 'react';
+import { useContext, forwardRef, createRef, useMemo } from 'react';
 import Pagination from 'calypso/components/pagination';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { addQueryArgs } from 'calypso/lib/route';
+import { addQueryArgs } from 'calypso/lib/url';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
-import { useDashboardShowLargeScreen, useLicenseLightbox } from '../../hooks';
+import {
+	useDashboardShowLargeScreen,
+	useJetpackAgencyDashboardRecordTrackEvent,
+} from '../../hooks';
 import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
-import { formatSites, siteColumns } from '../utils';
+import { formatSites, getProductSlugFromProductType, siteColumns } from '../utils';
 
 import './style.scss';
 
@@ -36,7 +40,10 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 
 	const translate = useTranslate();
 
-	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+	const { isBulkManagementActive, currentLicenseInfo, hideLicenseInfo } =
+		useContext( SitesOverviewContext );
+
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, ! isMobile );
 
 	const sites = formatSites( data?.sites );
 
@@ -50,7 +57,40 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 
 	const firstColumn = siteColumns[ 0 ];
 
-	const { license: selectedLicense, onActivate, onClose } = useLicenseLightbox();
+	const { data: products } = useProductsQuery();
+
+	const currentLicenseProductSlug = currentLicenseInfo
+		? getProductSlugFromProductType( currentLicenseInfo )
+		: null;
+
+	const currentLicenseProduct = useMemo( () => {
+		return currentLicenseProductSlug && products
+			? products.find( ( product ) => product.slug === currentLicenseProductSlug )
+			: null;
+	}, [ currentLicenseProductSlug, products ] );
+
+	const onIssueLicense = () => {
+		if ( currentLicenseProductSlug ) {
+			recordEvent( 'calypso_jetpack_agency_dashboard_license_select', {
+				site_id: null,
+				products: currentLicenseProductSlug,
+			} );
+			hideLicenseInfo();
+			page(
+				addQueryArgs(
+					{
+						product_slug: currentLicenseProductSlug,
+						source: 'dashboard',
+					},
+					'/partner-portal/issue-license/'
+				)
+			);
+		}
+	};
+
+	const onHideLicenseInfo = () => {
+		hideLicenseInfo();
+	};
 
 	return (
 		<>
@@ -106,12 +146,12 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 				/>
 			) }
 
-			{ selectedLicense && (
+			{ currentLicenseProduct && (
 				<LicenseLightbox
-					product={ selectedLicense }
+					product={ currentLicenseProduct }
 					ctaLabel={ translate( 'Issue License' ) }
-					onActivate={ onActivate }
-					onClose={ onClose }
+					onActivate={ onIssueLicense }
+					onClose={ onHideLicenseInfo }
 				/>
 			) }
 		</>

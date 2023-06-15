@@ -1,27 +1,19 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useQueryClient } from '@tanstack/react-query';
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
-import { useCallback, useState, useContext, useEffect, RefObject, useRef, useMemo } from 'react';
+import { useCallback, useState, useContext, useEffect, RefObject, useRef } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
-	hideLicenseInfo,
 	selectLicense,
 	setSiteMonitorStatus,
 	unselectLicense,
 } from 'calypso/state/jetpack-agency-dashboard/actions';
 import useToggleActivateMonitorMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-toggle-activate-monitor-mutation';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
-import {
-	getSelectedLicenseInfo,
-	hasSelectedLicensesOfType,
-} from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import SitesOverviewContext from './sites-overview/context';
-import { getProductSlugFromProductType } from './sites-overview/utils';
 import type { AllowedTypes, Site, UpdateMonitorSettingsParams } from './sites-overview/types';
 
 const NOTIFICATION_DURATION = 3000;
@@ -460,41 +452,4 @@ export const useShowVerifiedBadge = () => {
 	);
 
 	return { verifiedItem, handleSetVerifiedItem };
-};
-
-export const useLicenseLightbox = () => {
-	const dispatch = useDispatch();
-	const { data: products } = useProductsQuery();
-	const selectedLicense = useSelector( getSelectedLicenseInfo );
-
-	const productSlug = selectedLicense ? getProductSlugFromProductType( selectedLicense ) : null;
-
-	return useMemo( () => {
-		return {
-			license:
-				productSlug && products
-					? products.find( ( product ) => product.slug === productSlug )
-					: null,
-			onActivate: () => {
-				if ( selectedLicense ) {
-					dispatch(
-						recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
-							site_id: null,
-							products: productSlug,
-						} )
-					);
-					dispatch( hideLicenseInfo() );
-					page.show(
-						addQueryArgs( `/partner-portal/issue-license/`, {
-							product_slug: productSlug,
-							source: 'dashboard',
-						} )
-					);
-				}
-			},
-			onClose: () => {
-				dispatch( hideLicenseInfo() );
-			},
-		};
-	}, [ dispatch, products, productSlug, selectedLicense ] );
 };

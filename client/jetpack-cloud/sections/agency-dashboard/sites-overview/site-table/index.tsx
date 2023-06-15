@@ -1,11 +1,8 @@
 import { Icon, starFilled, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useContext, useState, forwardRef, Ref } from 'react';
-import { useDispatch } from 'react-redux';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { showLicenseInfo } from 'calypso/state/jetpack-agency-dashboard/actions';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitesOverviewContext from '../context';
@@ -22,9 +19,7 @@ interface Props {
 }
 
 const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableElement > ) => {
-	const { isBulkManagementActive } = useContext( SitesOverviewContext );
-
-	const dispatch = useDispatch();
+	const { isBulkManagementActive, showLicenseInfo } = useContext( SitesOverviewContext );
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, true );
 
@@ -39,12 +34,10 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 	};
 
 	const onShowLicenseInfo = ( license: string ) => {
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_agency_dashboard_show_license_info', {
-				products: license,
-			} )
-		);
-		dispatch( showLicenseInfo( license ) );
+		recordEvent( 'calypso_jetpack_agency_dashboard_show_license_info', {
+			products: license,
+		} );
+		showLicenseInfo( license );
 	};
 
 	return (
