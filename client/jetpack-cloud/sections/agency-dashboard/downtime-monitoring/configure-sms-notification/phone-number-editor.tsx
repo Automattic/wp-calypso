@@ -11,6 +11,7 @@ import { useSelector } from 'calypso/state';
 import getCountries from 'calypso/state/selectors/get-countries';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import { useRequestVerificationCode } from '../hooks';
+import { getContactModalTitleAndSubTitle } from '../utils';
 import type {
 	StateMonitorSettingsSMS,
 	Site,
@@ -34,6 +35,7 @@ interface FormPhoneInputChangeResult {
 	phoneNumber: string;
 	phoneNumberFull: string;
 	verificationCode?: string;
+	id?: string;
 }
 
 export default function PhoneNumberEditor( {
@@ -66,6 +68,7 @@ export default function PhoneNumberEditor( {
 		countryNumericCode: selectedPhone?.countryNumericCode ?? '',
 		phoneNumber: selectedPhone?.phoneNumber ?? '',
 		phoneNumberFull: selectedPhone?.phoneNumberFull ?? '',
+		id: selectedPhone?.phoneNumberFull ?? '',
 	} );
 
 	const { verifiedContacts } = useContext( DashboardDataContext );
@@ -76,18 +79,22 @@ export default function PhoneNumberEditor( {
 
 	const handleSetPhoneItems = useCallback(
 		( isVerified = true ) => {
+			const phoneItemIndex = allPhoneItems.findIndex(
+				( item ) => item.phoneNumberFull === phoneItem.id
+			);
 			const updatedPhoneItem = {
 				...phoneItem,
 				verified: isVerified,
 			};
-			// Check if exists when editing
-			if ( ! isVerifyAction ) {
+			if ( phoneItemIndex > -1 ) {
+				allPhoneItems[ phoneItemIndex ] = updatedPhoneItem;
+			} else {
 				allPhoneItems.push( updatedPhoneItem );
 			}
 			setAllPhoneItems( allPhoneItems );
 			toggleModal();
 		},
-		[ allPhoneItems, isVerifyAction, phoneItem, setAllPhoneItems, toggleModal ]
+		[ allPhoneItems, phoneItem, setAllPhoneItems, toggleModal ]
 	);
 
 	// Function to handle request verification code
@@ -154,8 +161,10 @@ export default function PhoneNumberEditor( {
 		setValidationError( undefined );
 		if ( validationStatus.isValid ) {
 			if (
-				allPhoneItems.map( ( item ) => item.phoneNumberFull ).includes( phoneItem.phoneNumberFull )
-				// Handle case when editing
+				allPhoneItems
+					.map( ( item ) => item.phoneNumberFull )
+					.includes( phoneItem.phoneNumberFull ) &&
+				selectedPhone?.phoneNumberFull !== phoneItem.phoneNumberFull
 			) {
 				return setValidationError( {
 					phone: translate( 'This phone number is already in use.' ),
@@ -189,13 +198,7 @@ export default function PhoneNumberEditor( {
 		[]
 	);
 
-	let title = translate( 'Add your phone number' );
-	let subTitle = translate( 'Please use an accessible phone number. Only alerts sent.' );
-
-	if ( isVerifyAction ) {
-		title = translate( 'Verify your phone number' );
-		subTitle = translate( 'We’ll send a code to verify your phone number.' );
-	}
+	const { title, subTitle } = getContactModalTitleAndSubTitle.phone[ selectedAction ];
 
 	const onChangePhoneInput = ( {
 		phoneNumberFull,

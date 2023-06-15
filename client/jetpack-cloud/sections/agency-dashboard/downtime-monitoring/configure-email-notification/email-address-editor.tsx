@@ -13,6 +13,7 @@ import {
 	useValidateVerificationCode,
 	useResendVerificationCode,
 } from '../hooks';
+import { getContactModalTitleAndSubTitle } from '../utils';
 import EmailItemContent from './email-item-content';
 import type {
 	AllowedMonitorContactActions,
@@ -63,7 +64,6 @@ export default function EmailAddressEditor( {
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
 	const isVerifyAction = selectedAction === 'verify';
-	const isEditAction = selectedAction === 'edit';
 	const isRemoveAction = selectedAction === 'remove';
 
 	const requestVerificationCode = useRequestVerificationCode();
@@ -298,23 +298,7 @@ export default function EmailAddressEditor( {
 		handleSetEmailItems( false );
 	}
 
-	let title = translate( 'Add new email address' );
-	let subTitle = translate( 'Please use only your number or one you have access to.' );
-
-	if ( isVerifyAction ) {
-		title = translate( 'Verify your email address' );
-		subTitle = translate( 'We’ll send a code to verify your email address.' );
-	}
-
-	if ( isEditAction ) {
-		title = translate( 'Edit your email address' );
-		subTitle = translate( 'If you update your email address, you’ll need to verify it.' );
-	}
-
-	if ( isRemoveAction ) {
-		title = translate( 'Remove Email' );
-		subTitle = translate( 'Are you sure you want to remove this email address?' );
-	}
+	const { title, subTitle } = getContactModalTitleAndSubTitle.email[ selectedAction ];
 
 	const handleChange = useCallback(
 		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
