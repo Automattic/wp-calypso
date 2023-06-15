@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
@@ -5,7 +6,6 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
-import config from '@automattic/calypso-config';
 import BackupWarnings from 'calypso/components/jetpack/backup-warnings/backup-warnings';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
