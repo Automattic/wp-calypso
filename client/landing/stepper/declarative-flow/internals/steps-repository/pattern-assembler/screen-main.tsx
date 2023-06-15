@@ -108,7 +108,6 @@ const ScreenMain = ( {
 				<HStack direction="column" alignment="top" spacing="4">
 					<NavigatorItemGroup title={ translate( 'Layout' ) }>
 						<NavigationButtonAsItem
-							checklist
 							checked={ hasHeader }
 							path={ NAVIGATOR_PATHS.HEADER }
 							icon={ header }
@@ -118,7 +117,6 @@ const ScreenMain = ( {
 							{ translate( 'Header' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
-							checklist
 							checked={ hasSections }
 							path={ hasSections ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
@@ -128,7 +126,6 @@ const ScreenMain = ( {
 							{ translate( 'Homepage' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
-							checklist
 							checked={ hasFooter }
 							path={ NAVIGATOR_PATHS.FOOTER }
 							icon={ footer }
@@ -141,7 +138,6 @@ const ScreenMain = ( {
 					<NavigatorItemGroup title={ translate( 'Style' ) }>
 						<>
 							<NavigationButtonAsItem
-								checklist
 								checked={ hasColor }
 								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
 								icon={ color }
@@ -151,7 +147,6 @@ const ScreenMain = ( {
 								{ translate( 'Colors' ) }
 							</NavigationButtonAsItem>
 							<NavigationButtonAsItem
-								checklist
 								checked={ hasFont }
 								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
 								icon={ typography }
