@@ -28,8 +28,17 @@
 		font-family: $sans;
 	}
 
-	.plan-features-2023-grid__content .plan-features-2023-grid__table-item .plan-price {
+	.plan-features-2023-grid__content .plan-features-2023-grid__table-item .plan-price,
+	.plan-features-2023-grid__plan-comparison-grid-container .plan-comparison-grid .plan-price {
 		font-family: $sans;
+	}
+
+	.plan-price .plan-price__currency-symbol {
+		font-size: 1.5rem;
+	}
+
+	.plan-features-2023-grid__plan-comparison-grid-container .plan-comparison-grid .wp-brand-font {
+		display: none;
 	}
 
 	.plan-features-2023-grid__table.has-2-cols {
