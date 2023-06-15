@@ -3,6 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useEffect, useState, useMemo } from 'react';
+import { useLocation } from 'react-router';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
@@ -31,6 +32,7 @@ const SiteSubscriptionDetails = ( {
 	const translate = useTranslate();
 	const localeSlug = useLocale();
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
+	const location = useLocation();
 
 	const {
 		mutate: subscribe,
@@ -51,7 +53,9 @@ const SiteSubscriptionDetails = ( {
 				'You currently have paid subscriptions with this site. Paid subscriptions must be cancelled separately by clicking the Manage Subscriptions button or going to https://wordpress.com/me/purchases.\n\nPress OK to proceed with unsubscribing from the site.\nPress Cancel to go back.'
 			)
 		) {
-			unsubscribe( { blog_id: blogId, url } );
+			const query = new URLSearchParams( location.search );
+			const emailId = query.get( 'email_id' ) || undefined;
+			unsubscribe( { blog_id: blogId, url, emailId } );
 		}
 	};
 

@@ -83,31 +83,19 @@ const applyCallbackToPages = < K extends string, T >(
 	};
 };
 
-function getQueryParamFromUrl( param: string ): string | null {
-	let urlObj;
-	try {
-		urlObj = new URL( window.location.href );
-	} catch ( e ) {
-		return null;
-	}
-	return urlObj.searchParams.get( param );
-}
-
 // Subscriptions Management helper function to determine which API endpoint to call based on whether the user is logged in or not.
 const getSubscriptionMutationParams = (
 	action: 'new' | 'delete',
 	isLoggedIn: boolean,
 	blogId: number | string,
-	url?: string
+	url?: string,
+	emailId?: string
 ) => {
-	// if we have email_id in the url query params, we assign it
-	const emailIdParam = getQueryParamFromUrl( 'email_id' );
-
 	if ( isLoggedIn ) {
 		let path = `/read/following/mine/${ action }`;
 
-		if ( emailIdParam ) {
-			path += `?email_id=${ emailIdParam }`;
+		if ( emailId ) {
+			path += `?email_id=${ emailId }`;
 		}
 
 		return {
@@ -119,8 +107,8 @@ const getSubscriptionMutationParams = (
 
 	let path = `/read/site/${ blogId }/post_email_subscriptions/${ action }`;
 
-	if ( emailIdParam ) {
-		path += `?email_id=${ emailIdParam }`;
+	if ( emailId ) {
+		path += `?email_id=${ emailId }`;
 	}
 
 	return {
