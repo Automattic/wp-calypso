@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/variables";
 @import "./keyframes";
 
@@ -43,6 +45,10 @@ $font-family: "SF Pro Text", $sans;
 		position: relative;
 		z-index: 2;
 		overflow-x: visible;
+
+		@include break-wide {
+			width: 300px;
+		}
 	}
 
 	/**

@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/variables.scss";
 
 .pattern-list-panel__wrapper {
@@ -16,6 +18,12 @@
 	transform: translateX(0);
 	scrollbar-gutter: stable;
 	font-family: "SF Pro Text", $sans;
+
+	@include break-wide {
+		margin-inline-start: 300px;
+		width: 340px;
+		padding: 20px;
+	}
 }
 
 .pattern-list-panel__title {
