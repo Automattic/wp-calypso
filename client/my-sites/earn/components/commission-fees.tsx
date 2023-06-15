@@ -19,7 +19,7 @@ const CommissionFees = ( { className, commission, iconSize = 16 }: CommissionFee
 					'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
 					{
 						args: {
-							commission: '' + parseFloat( commission ) * 100 + '%',
+							commission: '' + parseFloat( String( commission ) ) * 100 + '%',
 							stripe: '2.9%+30c',
 						},
 						components: {

@@ -1,7 +1,6 @@
 import { CookieBanner } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import {
 	refreshCountryCodeCookieGdpr,
 	setTrackingPrefs,
@@ -9,7 +8,7 @@ import {
 	getTrackingPrefs,
 	useDoNotSell,
 } from 'calypso/lib/analytics/utils';
-import { useDispatch } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useCookieBannerContent } from './use-cookie-banner-content';

@@ -17,6 +17,7 @@ import { useSite } from '../../hooks/use-site';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
+import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';
@@ -47,6 +48,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
+	const design = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 		[]
 	);
 
@@ -130,7 +135,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		const isReEnteringStep =
 			signupCompleteFlowName === flow.name && signupCompleteStepName === currentStepRoute;
 		if ( ! isReEnteringStep ) {
-			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
+			recordStepStart( flow.name, kebabCase( currentStepRoute ), {
+				intent,
+				...( design && { assembler_source: getAssemblerSource( design ) } ),
+			} );
 		}
 
 		// Also record page view for data and analytics

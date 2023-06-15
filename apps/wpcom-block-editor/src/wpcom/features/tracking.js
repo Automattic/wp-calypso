@@ -887,6 +887,10 @@ const REDUX_TRACKING = {
  */
 const EVENT_TYPES = [ 'keyup', 'click' ];
 
+// Store original and rewritten redux actions locally so we can return the same references when
+// needed.
+const rewrittenActions = {};
+const originalActions = {};
 // Registering tracking handlers.
 if (
 	undefined === window ||
@@ -903,29 +907,48 @@ if (
 			const actions = { ...registry.dispatch( namespaceName ) };
 			const trackers = REDUX_TRACKING[ namespaceName ];
 
+			// Initialize namespace level objects if not yet done.
+			if ( ! rewrittenActions[ namespaceName ] ) {
+				rewrittenActions[ namespaceName ] = {};
+			}
+			if ( ! originalActions[ namespaceName ] ) {
+				originalActions[ namespaceName ] = {};
+			}
+
 			if ( trackers ) {
 				Object.keys( trackers ).forEach( ( actionName ) => {
 					const originalAction = actions[ actionName ];
 					const tracker = trackers[ actionName ];
-					actions[ actionName ] = ( ...args ) => {
-						debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
-						// We use a try-catch here to make sure the `originalAction`
-						// is always called. We don't want to break the original
-						// behaviour when our tracking throws an error.
-						try {
-							if ( typeof tracker === 'string' ) {
-								// Simple track - just based on the event name.
-								tracksRecordEvent( tracker );
-							} else if ( typeof tracker === 'function' ) {
-								// Advanced tracking - call function.
-								tracker( ...args );
+					// If we havent stored the originalAction, or it is no longer the same as the
+					// one we last wrote a corresponding rewrittenAction for, we need to update.
+					if (
+						! originalActions[ namespaceName ][ actionName ] ||
+						originalActions[ namespaceName ][ actionName ] !== originalAction
+					) {
+						// Save the originalAction and rewrittenAction for future reference.
+						originalActions[ namespaceName ][ actionName ] = originalAction;
+						rewrittenActions[ namespaceName ][ actionName ] = ( ...args ) => {
+							debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
+							// We use a try-catch here to make sure the `originalAction`
+							// is always called. We don't want to break the original
+							// behaviour when our tracking throws an error.
+							try {
+								if ( typeof tracker === 'string' ) {
+									// Simple track - just based on the event name.
+									tracksRecordEvent( tracker );
+								} else if ( typeof tracker === 'function' ) {
+									// Advanced tracking - call function.
+									tracker( ...args );
+								}
+							} catch ( err ) {
+								// eslint-disable-next-line no-console
+								console.error( err );
 							}
-						} catch ( err ) {
-							// eslint-disable-next-line no-console
-							console.error( err );
-						}
-						return originalAction( ...args );
-					};
+							return originalAction( ...args );
+						};
+					}
+					// Replace the action in the registry with the rewrittenAction.
+					actions[ actionName ] = rewrittenActions[ namespaceName ][ actionName ];
 				} );
 			}
 			return actions;

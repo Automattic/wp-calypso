@@ -13,7 +13,7 @@
 		padding-top: 20px;
 		padding-bottom: 20px;
 
-		* {
+		> * {
 			flex: 1;
 		}
 
@@ -138,4 +138,10 @@
 			display: none;
 		}
 	}
+}
+
+.subscriber-popover .hidden {
+	visibility: hidden;
+	height: 0;
+	padding: 0;
 }

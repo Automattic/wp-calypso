@@ -446,3 +446,25 @@ export const getPluginStatusesByType = createSelector(
 	},
 	( state: AppState ) => state.plugins.installed.status
 );
+
+/**
+ * Returns true if a particular plugin is installed and active for a specified site.
+ * This is useful for Jetpack connected sites.
+ *
+ * @param {Object} state - Global state tree
+ * @param {number} siteId - Site ID
+ * @param {string} pluginSlug - Plugin slug
+ * @returns {boolean} - True if that plugin is active for that site, false otherwise.
+ */
+export const isPluginActive = createSelector(
+	( state: AppState, siteId: number, pluginSlug: string ) => {
+		const sitePlugin = getAllPluginsIndexedBySiteId( state )[ siteId ]?.[ pluginSlug ];
+
+		if ( ! sitePlugin ) {
+			return false;
+		}
+
+		return sitePlugin.sites[ siteId ]?.active;
+	},
+	( state: AppState ) => [ getAllPluginsIndexedBySiteId( state ) ]
+) as ( state: AppState, siteId: number, pluginSlug: string ) => boolean;

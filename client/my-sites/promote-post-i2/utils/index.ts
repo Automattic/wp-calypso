@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign, CampaignStats } from 'calypso/data/promote-post/types';
 import {
 	PagedBlazeContentData,
 	PagedBlazeSearchResponse,
@@ -89,7 +89,7 @@ export const getCampaignStatus = ( status: string ) => {
 			return __( 'Canceled' );
 		}
 		case campaignStatus.FINISHED: {
-			return __( 'Finished' );
+			return __( 'Completed' );
 		}
 		case campaignStatus.PROCESSING: {
 			return __( 'Creating' );
@@ -213,3 +213,23 @@ export function getAdvertisingDashboardPath( path: string ) {
 	const pathPrefix = config( 'advertising_dashboard_path_prefix' ) || '/advertising';
 	return `${ pathPrefix }${ path }`;
 }
+
+/**
+ * Unifies the campaign list with the stats list
+ *
+ * @param {Campaign[]} campaigns List of campaigns
+ * @param {CampaignStats[]} campaignsStats List of campaign stats
+ * @returns A unified list of campaign with the stats
+ */
+export const unifyCampaigns = (
+	campaigns: Campaign[] = [],
+	campaignsStats: CampaignStats[] = []
+) => {
+	return campaigns.map( ( campaign ) => {
+		const stats = campaignsStats.find( ( cs ) => cs.campaign_id === campaign.campaign_id );
+		return {
+			...campaign,
+			...( stats ? stats : {} ),
+		};
+	} );
+};

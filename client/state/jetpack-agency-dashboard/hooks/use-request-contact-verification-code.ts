@@ -22,8 +22,8 @@ function mutationRequestVerificationCode(
 export default function useRequestContactVerificationCode< TContext = unknown >(
 	options?: UseMutationOptions< APIResponse, APIError, RequestVerificationCodeParams, TContext >
 ): UseMutationResult< APIResponse, APIError, RequestVerificationCodeParams, TContext > {
-	return useMutation< APIResponse, APIError, RequestVerificationCodeParams, TContext >(
-		mutationRequestVerificationCode,
-		options
-	);
+	return useMutation< APIResponse, APIError, RequestVerificationCodeParams, TContext >( {
+		...options,
+		mutationFn: mutationRequestVerificationCode,
+	} );
 }
