@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { Icon, file as fileIcon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import * as React from 'react';
@@ -8,7 +9,11 @@ import missingCredentialsIcon from 'calypso/components/jetpack/daily-backup-stat
 import PopoverMenu from 'calypso/components/popover-menu';
 import { getActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
-import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
+import {
+	backupContentsPath,
+	backupDownloadPath,
+	backupRestorePath,
+} from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
@@ -98,6 +103,16 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 						</div>
 					</div>
 				) }
+				<Button
+					borderless
+					compact
+					isPrimary={ false }
+					href={ backupContentsPath( siteSlug, rewindId ) }
+					className="toolbar__view-files-button"
+				>
+					<Icon icon={ fileIcon } className="toolbar__view-files-button-icon" size={ 18 } />
+					<span className="toolbar__view-files-button-text">{ translate( 'View files' ) }</span>
+				</Button>
 				<Button
 					borderless
 					compact
