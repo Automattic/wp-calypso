@@ -147,9 +147,9 @@ const SiteRow = ( {
 		// Record tracks event
 		const tracksProperties = { blog_id: blog_ID, portal };
 		if ( send_comments ) {
-			recordTracksEvent( 'calypso_reader_comment_emails_toggle_on', tracksProperties );
+			recordTracksEvent( 'calypso_subscriptions_comment_emails_toggle_on', tracksProperties );
 		} else {
-			recordTracksEvent( 'calypso_reader_comment_emails_toggle_off', tracksProperties );
+			recordTracksEvent( 'calypso_subscriptions_comment_emails_toggle_off', tracksProperties );
 		}
 	};
 
