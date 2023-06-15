@@ -9,6 +9,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
+import { receiveSites } from 'calypso/state/sites/actions';
 
 const noop = () => {};
 
@@ -259,9 +260,18 @@ export function handlePage( action, data ) {
 	}
 
 	// Need to extract the posts from the cards
-	let cardPosts = null;
+	let cardPosts = [];
+	let cardRecommendedSites = [];
+
 	if ( cards ) {
-		cardPosts = cards.filter( ( card ) => card.type === 'post' ).map( ( card ) => card.data );
+		cards.forEach( ( card ) => {
+			if ( card.type === 'post' ) {
+				cardPosts.push( card.data );
+			} else if ( card.type === 'recommended_blogs' ) {
+				cardRecommendedSites = card.data;
+			}
+		} );
+		console.log( 'cardPosts', cardPosts, 'cardRecommendedSites', cardRecommendedSites );
 	}
 
 	const actions = analyticsForStream( {
@@ -272,6 +282,7 @@ export function handlePage( action, data ) {
 
 	let streamItems = [];
 	let streamPosts = posts || cardPosts;
+	let streamSites = [];
 
 	if ( posts ) {
 		streamItems = posts.map( ( post ) => ( {
@@ -286,7 +297,7 @@ export function handlePage( action, data ) {
 			feed_ID: post.feed_ID,
 			xPostMetadata: XPostHelper.getXPostMetadata( post ),
 		} ) );
-	} else if ( cardPosts ) {
+	} else if ( cardPosts && cardRecommendedSites ) {
 		streamItems = cardPosts.map( ( post ) => ( {
 			...keyForPost( post ),
 			date: post[ dateProperty ],
@@ -299,6 +310,21 @@ export function handlePage( action, data ) {
 			feed_ID: post.feed_ID,
 			xPostMetadata: XPostHelper.getXPostMetadata( post ),
 		} ) );
+
+		streamSites = cardRecommendedSites.map( ( site ) => {
+			return {
+				url: site.URL,
+				site_icon: site.icon?.ico,
+				site_description: site.description,
+				site_name: site.name,
+				feed_URL: site.feed_URL,
+				feed_ID: site.feed_ID,
+			};
+		} );
+
+		// Filter out nulls
+		streamSites = streamSites.filter( ( item ) => item !== null );
+		console.log( 'streamSites', streamSites, 'streamPosts', streamPosts );
 	} else if ( sites ) {
 		streamItems = sites.map( ( site ) => {
 			const post = site.posts[ 0 ] ?? null;
@@ -333,7 +359,11 @@ export function handlePage( action, data ) {
 	} else {
 		actions.push( receivePosts( streamPosts ) );
 		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
+		if ( streamSites.length > 0 ) {
+			actions.push( receiveSites( streamSites ) );
+		}
 	}
+	console.log( 'actions', actions );
 
 	return actions;
 }
