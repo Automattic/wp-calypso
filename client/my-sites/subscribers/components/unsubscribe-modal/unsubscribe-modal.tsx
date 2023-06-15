@@ -25,12 +25,12 @@ const UnsubscribeModal = ( { subscriber, onClose }: UnsubscribeModalProps ) => {
 
 	const confirmButtonLabel = subscriberHasPlans
 		? translate( 'Manage paid subscribers', { context: 'Navigate to the Earns page button text.' } )
-		: translate( 'Unsubscribe', { context: 'Confirm Unsubscribe subscriber button text.' } );
+		: translate( 'Remove subscriber', { context: 'Confirm Unsubscribe subscriber button text.' } );
 
 	const confirmMessage = subscriberHasPlans
 		? translate( 'To remove this subscriber, you’ll need to cancel their paid subscription first.' )
 		: translate(
-				'Are you sure you want to remove %s from your subscribers? They will no longer receive any notifications from your site.',
+				'Are you sure you want to remove %s from your list? They will no longer receive new notifications from your site.',
 				{
 					args: [ subscriber?.display_name ],
 					comment: "%s is the subscriber's public display name",
