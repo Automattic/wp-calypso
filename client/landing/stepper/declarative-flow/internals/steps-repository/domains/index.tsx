@@ -7,7 +7,7 @@ import {
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
 	DOMAIN_UPSELL_FLOW,
-	ONBOARDING_PM_LOW,
+	ONBOARDING_PM_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -157,7 +157,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			case COPY_SITE_FLOW:
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
 			case DOMAIN_UPSELL_FLOW:
-			case ONBOARDING_PM_LOW:
+			case ONBOARDING_PM_FLOW:
 				return __( 'Enter some descriptive keywords to get started' );
 			default:
 				return createInterpolateElement(
@@ -256,7 +256,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	};
 
 	const shouldHideBackButton = () => {
-		if ( [ DOMAIN_UPSELL_FLOW, ONBOARDING_PM_LOW ].includes( flow ) ) {
+		if ( [ DOMAIN_UPSELL_FLOW, ONBOARDING_PM_FLOW ].includes( flow ) ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );

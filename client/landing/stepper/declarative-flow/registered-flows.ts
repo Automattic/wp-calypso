@@ -8,7 +8,7 @@ import {
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
 	BULK_DOMAIN_TRANSFER,
-	ONBOARDING_PM_LOW,
+	ONBOARDING_PM_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -103,7 +103,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 	[ IMPORT_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "import-hosted-site-flow" */ './import-hosted-site' ),
-	[ ONBOARDING_PM_LOW ]: () =>
+	[ ONBOARDING_PM_FLOW ]: () =>
 		import( /* webpackChunkName: "new-hosted-site-flow" */ './onboarding-pm' ),
 };
 

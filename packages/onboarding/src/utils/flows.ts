@@ -27,9 +27,9 @@ export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
-export const ONBOARDING_PM_LOW = 'onboarding-pm';
+export const ONBOARDING_PM_FLOW = 'onboarding-pm';
 export const isOnboardingPMFlow = ( flowName: string | null | undefined ) => {
-	return Boolean( flowName && [ ONBOARDING_PM_LOW ].includes( flowName ) );
+	return Boolean( flowName && [ ONBOARDING_PM_FLOW ].includes( flowName ) );
 };
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
