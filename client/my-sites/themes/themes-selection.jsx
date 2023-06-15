@@ -226,7 +226,8 @@ class ThemesSelection extends Component {
 			siteId,
 			tabFilter,
 			isLastPage,
-			includeWpOrgThemes,
+			isRequesting,
+			shouldFetchWpOrgThemes,
 			wpOrgQuery,
 			wpOrgThemes,
 		} = this.props;
@@ -236,7 +237,7 @@ class ThemesSelection extends Component {
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
-				{ includeWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
+				{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					upsellBanner={ upsellBanner }
@@ -253,7 +254,7 @@ class ThemesSelection extends Component {
 					isActive={ this.props.isThemeActive }
 					getPrice={ this.props.getPremiumThemePrice }
 					isInstalling={ this.props.isInstallingTheme }
-					loading={ this.props.isRequesting }
+					loading={ isRequesting }
 					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
@@ -261,7 +262,13 @@ class ThemesSelection extends Component {
 					searchTerm={ query.search }
 					tabFilter={ tabFilter }
 				/>
-				<SearchThemesTracks query={ query } themes={ interlacedThemes } />
+				<SearchThemesTracks
+					query={ query }
+					interlacedThemes={ interlacedThemes }
+					wpComThemes={ themes }
+					wpOrgThemes={ wpOrgThemes }
+					isRequesting={ isRequesting }
+				/>
 			</div>
 		);
 	}
@@ -335,9 +342,9 @@ export const ConnectedThemesSelection = connect(
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
 
-		const includeWpOrgThemes = forceWpOrgSearch && sourceSiteId !== 'wporg' && search; // Only request/include WP.org themes when searching a term.
+		const shouldFetchWpOrgThemes = forceWpOrgSearch && sourceSiteId !== 'wporg' && !! search; // Only fetch WP.org themes when searching a term.
 		const wpOrgQuery = { ...query, page: 1 }; // We limit the WP.org themes to one page only.
-		const wpOrgThemes = includeWpOrgThemes
+		const wpOrgThemes = shouldFetchWpOrgThemes
 			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []
 			: [];
 
@@ -350,7 +357,7 @@ export const ConnectedThemesSelection = connect(
 			isRequesting:
 				isCustomizedThemeListLoading ||
 				isRequestingThemesForQuery( state, sourceSiteId, query ) ||
-				( includeWpOrgThemes && isRequestingThemesForQuery( state, 'wporg', wpOrgQuery ) ),
+				( shouldFetchWpOrgThemes && isRequestingThemesForQuery( state, 'wporg', wpOrgQuery ) ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: isUserLoggedIn( state ),
 			isThemeActive: bindIsThemeActive( state, siteId ),
@@ -363,7 +370,7 @@ export const ConnectedThemesSelection = connect(
 			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
 			getThemeDetailsUrl: bindGetThemeDetailsUrl( state, siteId ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
-			includeWpOrgThemes,
+			shouldFetchWpOrgThemes,
 			wpOrgQuery,
 			wpOrgThemes,
 		};

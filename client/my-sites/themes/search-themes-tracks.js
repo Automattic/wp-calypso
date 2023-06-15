@@ -2,8 +2,7 @@ import { usePrevious } from '@wordpress/compose';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isRequestingThemesForQuery, prependThemeFilterKeys } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { prependThemeFilterKeys } from 'calypso/state/themes/selectors';
 
 function useThemeSearchDetails( query ) {
 	const search = query.search || '';
@@ -16,24 +15,16 @@ function useThemeSearchDetails( query ) {
 	return { search, searchTaxonomies, searchTerm, searchTermHasChanged };
 }
 
-function useIsRequestingThemes( query ) {
-	const isRequesting = useSelector(
-		( state ) =>
-			isRequestingThemesForQuery( state, 'wpcom', query ) ||
-			isRequestingThemesForQuery( state, 'wporg', query ) ||
-			isRequestingThemesForQuery( state, getSelectedSiteId( state ), query )
-	);
-	const prevIsRequesting = usePrevious( isRequesting );
-
-	return { isRequesting, prevIsRequesting };
-}
-
-export default function SearchThemesTracks( { query = {}, themes = [] } ) {
+export default function SearchThemesTracks( {
+	query = {},
+	interlacedThemes = [],
+	wpComThemes = [],
+	wpOrgThemes = [],
+	isRequesting = false,
+} ) {
 	const { search, searchTaxonomies, searchTerm, searchTermHasChanged } =
 		useThemeSearchDetails( query );
-	const themesCount = themes.length;
-
-	const { isRequesting, prevIsRequesting } = useIsRequestingThemes( query );
+	const prevIsRequesting = usePrevious( isRequesting );
 
 	const dispatch = useDispatch();
 
@@ -42,7 +33,10 @@ export default function SearchThemesTracks( { query = {}, themes = [] } ) {
 		search_term: searchTerm.trim(),
 		search_taxonomies: searchTaxonomies.trim(),
 		tier: query.tier,
-		result_count: themesCount,
+		result_count: wpComThemes.length + wpOrgThemes.length,
+		actual_count: interlacedThemes.length,
+		wpcom_result_count: wpComThemes.length,
+		wporg_result_count: wpOrgThemes.length,
 	} );
 
 	useEffect( () => {
@@ -54,7 +48,7 @@ export default function SearchThemesTracks( { query = {}, themes = [] } ) {
 		// If the count is immediately valued after a search, the query is retrieving
 		// results already available in the Redux store, skipping the remote fetches.
 		// We can just record the event straight away.
-		if ( searchTermHasChanged && ! isRequesting && themesCount > 0 ) {
+		if ( searchTermHasChanged && ! isRequesting && interlacedThemes.length > 0 ) {
 			dispatch( recordSearchEvent );
 			return;
 		}
@@ -64,7 +58,7 @@ export default function SearchThemesTracks( { query = {}, themes = [] } ) {
 			dispatch( recordSearchEvent );
 		}
 	}, [
-		themesCount,
+		interlacedThemes.length,
 		dispatch,
 		isRequesting,
 		prevIsRequesting,
