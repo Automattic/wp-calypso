@@ -7,14 +7,21 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { TabsSwitcher } from 'calypso/landing/subscriptions/components/tabs-switcher';
 import { useSubheaderText } from 'calypso/landing/subscriptions/hooks';
+import {
+	SubscriptionManagerContextProvider,
+	SubscriptionsPortal,
+} from '../subscription-manager-context';
+import type { SubscriptionManagerContext } from '../subscription-manager-context';
 import './styles.scss';
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
-
+	const context: SubscriptionManagerContext = {
+		portal: SubscriptionsPortal,
+	};
 	return (
-		<>
+		<SubscriptionManagerContextProvider { ...context }>
 			<UniversalNavbarHeader
 				className={ classNames( 'subscription-manager-header', {
 					'is-logged-in': isLoggedIn,
@@ -32,7 +39,7 @@ const SubscriptionManagementPage = () => {
 				/>
 				<TabsSwitcher />
 			</Main>
-		</>
+		</SubscriptionManagerContextProvider>
 	);
 };
 
