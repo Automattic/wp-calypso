@@ -71,9 +71,6 @@ export default function PageModuleToggler( {
 				position="bottom left"
 				context={ settingsActionRef.current }
 				focusOnShow={ false }
-				onClose={ () => {
-					setIsSettingsMenuVisible( false );
-				} }
 			>
 				<div>{ translate( 'Modules visibility' ) }</div>
 				<div className="page-modules-settings-toggle-wrapper">

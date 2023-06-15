@@ -147,6 +147,8 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
+		"stats/highlights-settings": false,
+		"stats/module-settings": false,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
 		"stepper-woocommerce-poc": true,

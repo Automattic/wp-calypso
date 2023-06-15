@@ -7,13 +7,12 @@ import { connect } from 'react-redux';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import version_compare from 'calypso/lib/version-compare';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
-import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	updateModuleToggles,
 	requestModuleToggles,
@@ -131,8 +130,7 @@ class StatsNavigation extends Component {
 	}
 
 	render() {
-		const { slug, selectedItem, interval, isLegacy, showSettingsTooltip, statsAdminVersion } =
-			this.props;
+		const { slug, selectedItem, interval, isLegacy, showSettingsTooltip } = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
@@ -142,10 +140,7 @@ class StatsNavigation extends Component {
 			'stats-navigation--modernized': ! isLegacy,
 		} );
 
-		// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
-		const isModuleSettingsSupported =
-			! config.isEnabled( 'is_running_in_jetpack_site' ) ||
-			!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
+		const isModuleSettingsEnabled = config.isEnabled( 'stats/module-settings' );
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
@@ -176,20 +171,20 @@ class StatsNavigation extends Component {
 					{ isLegacy && showIntervals && (
 						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
 					) }
+
+					{ isModuleSettingsEnabled && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
+						<PageModuleToggler
+							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
+							pageModules={ pageModules }
+							onToggleModule={ this.onToggleModule }
+							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+							onTooltipDismiss={ this.onTooltipDismiss }
+						/>
+					) }
 				</SectionNav>
 
 				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
-				) }
-
-				{ isModuleSettingsSupported && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
-					<PageModuleToggler
-						availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
-						pageModules={ pageModules }
-						onToggleModule={ this.onToggleModule }
-						isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-						onTooltipDismiss={ this.onTooltipDismiss }
-					/>
 				) }
 			</div>
 		);
@@ -209,7 +204,6 @@ export default connect(
 				canCurrentUser( state, siteId, 'manage_options' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
-			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
