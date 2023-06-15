@@ -24,7 +24,7 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
-				require="calypso/reader/site-stream"
+				require="calypso/reader/discover/discover-stream"
 				key={ 'site-' + blogId }
 				streamKey={ streamKey }
 				siteId={ +blogId }
@@ -41,7 +41,7 @@ const exported = {
 				showPrimaryFollowButtonOnCards={ false }
 				isDiscoverStream={ true }
 				showBack={ false }
-				className="is-discover-stream is-site-stream"
+				className="is-discover-stream"
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
