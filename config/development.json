@@ -183,8 +183,6 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
-		"stats/highlights-settings": true,
-		"stats/module-settings": true,
 		"stats/new-video-summary": true,
 		"stats/subscribers-chart-section": false,
 		"stepper-woocommerce-poc": true,
