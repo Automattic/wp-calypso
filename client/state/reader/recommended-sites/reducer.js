@@ -13,6 +13,10 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
 export const items = keyedReducer( 'seed', ( state = [], action ) => {
 	switch ( action.type ) {
 		case READER_RECOMMENDED_SITES_RECEIVE:
+			console.log( 'receiving', action.payload );
+			// This seems to be removing results we would want (in my end its reducing from 2 to 1
+			// and they dont have the same feedId)
+			console.log( uniqBy( state.concat( action.payload.sites ), 'feedId' ) );
 			return uniqBy( state.concat( action.payload.sites ), 'feedId' );
 	}
 

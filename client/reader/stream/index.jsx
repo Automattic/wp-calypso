@@ -52,6 +52,7 @@ import PostPlaceholder from './post-placeholder';
 import ReaderListFollowedSites from './reader-list-followed-sites';
 import './style.scss';
 import ReaderDiscoverSidebar from 'calypso/reader/stream/reader-discover-sidebar';
+import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 
 const WIDE_DISPLAY_CUTOFF = 900;
 const GUESSED_POST_HEIGHT = 600;
@@ -463,7 +464,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag, tags } =
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag, tags, sites } =
 			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
@@ -523,7 +524,7 @@ class ReaderStream extends Component {
 			} else if ( isSearchPage ) {
 				sidebarContent = <ReaderSearchSidebar items={ items } />;
 			} else if ( isDiscoverPage ) {
-				sidebarContent = <ReaderDiscoverSidebar items={ [] } />;
+				sidebarContent = <ReaderDiscoverSidebar items={ sites } />;
 			} else {
 				sidebarContent = <ReaderListFollowedSites path={ path } />;
 			}
@@ -600,6 +601,8 @@ export default connect(
 		const selectedPost = getPostByKey( state, stream.selected );
 		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
 
+		const recommendedSites = getReaderRecommendedSites( state, 'seed?' ) || [];
+
 		return {
 			blockedSites: getBlockedSites( state ),
 			items: getTransformedStreamItems( state, {
@@ -619,6 +622,7 @@ export default connect(
 			primarySiteId: getPrimarySiteId( state ),
 			tag: streamKeySuffix,
 			tags: getReaderTags( state ),
+			sites: recommendedSites,
 		};
 	},
 	{

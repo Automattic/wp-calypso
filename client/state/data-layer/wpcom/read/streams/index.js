@@ -9,7 +9,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
-import { receiveSites } from 'calypso/state/sites/actions';
+import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 
 const noop = () => {};
 
@@ -360,10 +360,9 @@ export function handlePage( action, data ) {
 		actions.push( receivePosts( streamPosts ) );
 		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
 		if ( streamSites.length > 0 ) {
-			actions.push( receiveSites( streamSites ) );
+			actions.push( receiveRecommendedSites( { seed: 'seed?', sites: streamSites } ) );
 		}
 	}
-	console.log( 'actions', actions );
 
 	return actions;
 }
