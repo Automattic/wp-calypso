@@ -291,6 +291,7 @@ export interface MonitorSettingsEmail {
 export interface StateMonitorSettingsSMS {
 	name: string;
 	countryCode: string;
+	countryNumericCode: string;
 	phoneNumber: string;
 	phoneNumberFull: string;
 	verified: boolean;
