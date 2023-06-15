@@ -43,7 +43,6 @@ const ScreenCategoryList = ( {
 	onTogglePatternPanelList,
 }: Props ) => {
 	const translate = useTranslate();
-	const firstCategory = categories[ 0 ];
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
@@ -55,11 +54,6 @@ const ScreenCategoryList = ( {
 	};
 
 	useEffect( () => {
-		// Open first category with a delay to avoid the top position flickering
-		setTimeout( () => setSelectedCategory( firstCategory?.name ?? null ), 200 );
-
-		// Notify the pattern panel list is open and closed
-		onTogglePatternPanelList?.( true );
 		return () => {
 			onTogglePatternPanelList?.( false );
 		};
