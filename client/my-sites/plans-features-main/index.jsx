@@ -51,7 +51,6 @@ import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import WpcomFAQ from 'calypso/my-sites/plans-features-main/components/wpcom-faq';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
@@ -421,8 +420,6 @@ export class PlansFeaturesMain extends Component {
 		if ( isInSignup ) {
 			return <PlanFAQ titanMonthlyRenewalCost={ titanMonthlyRenewalCost } />;
 		}
-
-		return <WpcomFAQ />;
 	}
 
 	render() {
