@@ -3,7 +3,9 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import TimeSince from 'calypso/components/time-since';
+import { successNotice } from 'calypso/state/notices/actions';
 import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
 
@@ -52,9 +54,10 @@ const SelectedNewPostDeliveryMethods = ( {
 
 type SiteRowProps = Reader.SiteSubscription & {
 	onSiteTitleClick: () => void;
+	successNotice: typeof successNotice;
 };
 
-export default function SiteRow( {
+const SiteRow = ( {
 	blog_ID,
 	name,
 	site_icon,
@@ -64,8 +67,12 @@ export default function SiteRow( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	onSiteTitleClick,
-}: SiteRowProps ) {
+	isDeleted,
+	successNotice,
+}: SiteRowProps ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const hostname = useMemo( () => {
 		try {
 			return new URL( url ).hostname;
@@ -87,8 +94,23 @@ export default function SiteRow( {
 		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
+	const { mutate: resubscribe } = SubscriptionManager.useSiteSubscribeMutation();
 
-	return (
+	const unsubscribeSuccessCallback = () => {
+		dispatch(
+			successNotice(
+				translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
+				{
+					duration: 5000,
+					button: translate( 'Resubscribe' ),
+					onClick: () =>
+						resubscribe( { blog_id: blog_ID, url, doNotInvalidateSiteSubscriptions: true } ),
+				}
+			)
+		);
+	};
+
+	return ! isDeleted ? (
 		<li className="row" role="row">
 			<div className="title-cell" role="cell">
 				<Button
@@ -171,10 +193,17 @@ export default function SiteRow( {
 						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
 					}
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID, url: url } ) }
+					onUnsubscribe={ () =>
+						unsubscribe(
+							{ blog_id: blog_ID, url, doNotInvalidateSiteSubscriptions: true },
+							{ onSuccess: unsubscribeSuccessCallback }
+						)
+					}
 					unsubscribing={ unsubscribing }
 				/>
 			</span>
 		</li>
-	);
-}
+	) : null;
+};
+
+export default connect( null, { successNotice } )( SiteRow );

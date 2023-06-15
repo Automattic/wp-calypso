@@ -32,6 +32,10 @@
 				}
 			}
 
+			&.deleted {
+				opacity: 0.5;
+			}
+
 			.title-cell {
 				display: flex;
 				align-items: center;

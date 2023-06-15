@@ -1,4 +1,4 @@
-import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingFlow } from '@automattic/onboarding';
+import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -611,7 +611,7 @@ class DomainsStep extends Component {
 		);
 	};
 
-	isHostingFlow = () => isHostingFlow( this.props.flowName );
+	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
 		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;

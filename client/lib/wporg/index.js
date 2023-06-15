@@ -130,6 +130,7 @@ export function fetchThemesList( options = {} ) {
 		'request[search]': search,
 		'request[page]': page,
 		'request[per_page]:': number,
+		'request[browse]': 'popular',
 	};
 
 	return getRequest( WPORG_THEMES_ENDPOINT, query );
