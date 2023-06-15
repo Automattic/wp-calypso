@@ -30,6 +30,7 @@ import {
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isThemePremium,
+	isThemeRetired,
 	doesThemeBundleSoftwareSet,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme,
@@ -67,7 +68,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
 			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased
 			isExternallyManagedTheme( state, themeId ) || // Third-party themes cannot be purchased
-			isThemeActive( state, themeId, siteId ), // Already active
+			isThemeActive( state, themeId, siteId ) || // Already active
+			isThemeRetired( state, themeId ), // Not a retired theme
 	};
 
 	const subscribe = {
@@ -89,7 +91,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! isExternallyManagedTheme( state, themeId ) || // We're currently only subscribing to third-party themes
 			( isExternallyManagedTheme( state, themeId ) &&
 				! isSiteEligibleForManagedExternalThemes( state, siteId ) ) || // User must have appropriate plan to subscribe
-			isThemeActive( state, themeId, siteId ), // Already active
+			isThemeActive( state, themeId, siteId ) || // Already active
+			isThemeRetired( state, themeId ), // Not a retired theme
 	};
 
 	// Jetpack-specific plan upgrade
@@ -116,7 +119,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! isThemePremium( state, themeId ) ||
 			isExternallyManagedTheme( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
-			isPremiumThemeAvailable( state, themeId, siteId ),
+			isPremiumThemeAvailable( state, themeId, siteId ) ||
+			isThemeRetired( state, themeId ),
 	};
 
 	// WPCOM-specific plan upgrade for premium themes with bundled software sets
@@ -154,7 +158,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! doesThemeBundleSoftwareSet( state, themeId ) ||
 			isExternallyManagedTheme( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
-			isPremiumThemeAvailable( state, themeId, siteId ),
+			isPremiumThemeAvailable( state, themeId, siteId ) ||
+			isThemeRetired( state, themeId ),
 	};
 
 	const upgradePlanForExternallyManagedThemes = {
@@ -177,7 +182,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			( isExternallyManagedTheme( state, themeId ) &&
 				isSiteEligibleForManagedExternalThemes( state, siteId ) ) ||
 			isThemeActive( state, themeId, siteId ) ||
-			isPremiumThemeAvailable( state, themeId, siteId ),
+			isPremiumThemeAvailable( state, themeId, siteId ) ||
+			isThemeRetired( state, themeId ),
 	};
 
 	const activate = {
@@ -194,7 +200,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				! isMarketplaceThemeSubscribed( state, themeId, siteId ) ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			( ! isWpcomTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ) ||
-			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ),
+			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
+			isThemeRetired( state, themeId ),
 	};
 
 	const deleteTheme = {
@@ -215,7 +222,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			} ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
-			! isThemeActive( state, themeId, siteId ),
+			! isThemeActive( state, themeId, siteId ) ||
+			isThemeRetired( state, themeId ),
 	};
 
 	if ( isFSEActive ) {
@@ -240,7 +248,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		} ),
 		action: tryAndCustomizeAction,
 		hideForTheme: ( state, themeId, siteId ) =>
-			! shouldShowTryAndCustomize( state, themeId, siteId ),
+			! shouldShowTryAndCustomize( state, themeId, siteId ) || isThemeRetired( state, themeId ),
 	};
 
 	const preview = {

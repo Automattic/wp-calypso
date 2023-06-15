@@ -1,5 +1,5 @@
 import { get, includes, map, mapKeys, omit, omitBy, some, startsWith } from 'lodash';
-import { DEFAULT_THEME_QUERY } from './constants';
+import { DEFAULT_THEME_QUERY, RETIRED_THEME_SLUGS_SET } from './constants';
 
 /**
  * Constants
@@ -30,6 +30,17 @@ const DELISTED_TAXONOMY_TERM_SLUGS = [ 'auto-loading-homepage' ];
 export function isPremium( theme ) {
 	const themeStylesheet = get( theme, 'stylesheet', false );
 	return themeStylesheet && startsWith( themeStylesheet, 'premium/' );
+}
+
+/**
+ * Whether a given theme object is retired.
+ *
+ * @param  {Object} theme Theme object
+ * @returns {boolean}      True if the theme is retired
+ */
+export function isRetired( theme ) {
+	const { retired = false, slug = '' } = theme || {};
+	return retired || RETIRED_THEME_SLUGS_SET.has( slug );
 }
 
 /**
