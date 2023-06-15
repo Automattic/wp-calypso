@@ -51,6 +51,7 @@ import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import ReaderListFollowedSites from './reader-list-followed-sites';
 import './style.scss';
+import ReaderDiscoverSidebar from 'calypso/reader/stream/reader-discover-sidebar';
 
 const WIDE_DISPLAY_CUTOFF = 900;
 const GUESSED_POST_HEIGHT = 600;
@@ -479,6 +480,7 @@ class ReaderStream extends Component {
 		const path = window.location.pathname;
 		const isTagPage = path.startsWith( '/tag/' );
 		const isSearchPage = path.startsWith( '/read/search' );
+		const isDiscoverPage = path.startsWith( '/discover' );
 		const streamType = getStreamType( streamKey );
 
 		let baseClassnames = classnames( 'following', this.props.className );
@@ -511,12 +513,17 @@ class ReaderStream extends Component {
 			let sidebarContent = null;
 			let tabTitle = translate( 'Sites' );
 
+			//TODO: figure out how to get list of recommended sites from the discover API request
+			// items is the list of posts, so we can't use that
+
 			if ( isTagPage ) {
 				sidebarContent = <ReaderTagSidebar tag={ tag } />;
 				tabTitle = translate( 'Related' );
 				baseClassnames = classnames( 'tag-stream__main', this.props.className );
 			} else if ( isSearchPage ) {
 				sidebarContent = <ReaderSearchSidebar items={ items } />;
+			} else if ( isDiscoverPage ) {
+				sidebarContent = <ReaderDiscoverSidebar items={ [] } />;
 			} else {
 				sidebarContent = <ReaderListFollowedSites path={ path } />;
 			}

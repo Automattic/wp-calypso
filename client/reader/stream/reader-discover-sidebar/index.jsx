@@ -25,7 +25,7 @@ const getSiteFromItem = ( item ) => {
 	};
 };
 
-const ReaderSearchSidebar = ( { items } ) => {
+const ReaderDiscoverSidebar = ( { items } ) => {
 	const translate = useTranslate();
 
 	const sites = items
@@ -58,4 +58,4 @@ const ReaderSearchSidebar = ( { items } ) => {
 	);
 };
 
-export default ReaderSearchSidebar;
+export default ReaderDiscoverSidebar;
