@@ -19,8 +19,8 @@ export const useCheckSiteTransferEligibility = (
 	siteId: number | null,
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
-	const mutation = useMutation(
-		async ( { newSiteOwner }: MutationVariables ) =>
+	const mutation = useMutation( {
+		mutationFn: async ( { newSiteOwner }: MutationVariables ) =>
 			wp.req.post(
 				{
 					path: `/sites/${ siteId }/site-owner-transfer/eligibility`,
@@ -28,10 +28,8 @@ export const useCheckSiteTransferEligibility = (
 				},
 				{ new_site_owner: newSiteOwner }
 			),
-		{
-			...options,
-		}
-	);
+		...options,
+	} );
 
 	const { mutate, isLoading } = mutation;
 
