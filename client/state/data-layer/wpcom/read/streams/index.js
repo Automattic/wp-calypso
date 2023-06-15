@@ -1,5 +1,4 @@
 import warn from '@wordpress/warning';
-import i18n from 'i18n-calypso';
 import { random, map, includes, get } from 'lodash';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
@@ -212,14 +211,13 @@ export function requestPage( action ) {
 	const fetchCount = pageHandle ? PER_FETCH : INITIAL_FETCH;
 	// eslint-disable-next-line no-extra-boolean-cast
 	const number = !! gap ? PER_GAP : fetchCount;
-	const lang = i18n.getLocaleVariant() || i18n.getLocaleSlug();
 	return http( {
 		method: 'GET',
 		path: path( { ...action.payload } ),
 		apiVersion,
 		query: isPoll
-			? pollQuery( [], { lang, ...algorithm } )
-			: query( { ...pageHandle, ...algorithm, number, lang }, action.payload ),
+			? pollQuery( [], { ...algorithm } )
+			: query( { ...pageHandle, ...algorithm, number }, action.payload ),
 		onSuccess: action,
 		onFailure: action,
 	} );
