@@ -15,7 +15,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
-import { useGetSiteSuggestionsQuery } from 'calypso/landing/stepper/hooks/use-get-site-suggestions-query';
 import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
@@ -48,18 +47,9 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		? isBusinessPlan( pickedPlanSlug ) || isEcommercePlan( pickedPlanSlug )
 		: hostingFlow;
 
-	useGetSiteSuggestionsQuery( {
-		enabled: ! currentSiteTitle,
-		onSuccess: ( response ) => {
-			if ( ! siteTitle && response.success === true ) {
-				setSiteTitle( response.suggestions[ 0 ].title );
-			}
-		},
-	} );
-
 	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
 	const isFormSubmitDisabled = isSiteTitleEmpty;
-	const hasChangedInput = useRef( { geoAffinity: false, title: false } );
+	const hasChangedInput = useRef( { geoAffinity: false } );
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -71,7 +61,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		}
 
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
-			has_site_title: hasChangedInput.current.title,
+			has_site_title: true,
 			has_geo_affinity: hasChangedInput.current.geoAffinity,
 		} );
 
@@ -82,7 +72,6 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		setFormTouched( true );
 
 		if ( event.currentTarget.name === 'siteTitle' ) {
-			hasChangedInput.current.title = true;
 			return setSiteTitle( event.currentTarget.value );
 		}
 	};
@@ -104,6 +93,8 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 					isError={ siteTitleError }
 					onChange={ onChange }
 					placeholder={ translate( 'My Hosted Site' ) }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus
 				/>
 				{ siteTitleError ? (
 					<FormInputValidation isError text={ translate( 'Please provide a site title' ) } />
