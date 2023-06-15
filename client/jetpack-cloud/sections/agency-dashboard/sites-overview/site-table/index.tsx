@@ -34,8 +34,8 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 	};
 
 	const onShowLicenseInfo = ( license: string ) => {
-		recordEvent( 'calypso_jetpack_agency_dashboard_show_license_info', {
-			products: license,
+		recordEvent( 'show_license_info', {
+			product: license,
 		} );
 		showLicenseInfo( license );
 	};
