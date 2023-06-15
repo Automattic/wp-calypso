@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
@@ -14,8 +13,6 @@ export const useSitesDashboardImportSiteUrl = (
 			source: TRACK_SOURCE_NAME,
 			...additionalParameters,
 		},
-		isDevAccount && isEnabled( 'hosting-onboarding-i2' )
-			? '/setup/import-hosted-site'
-			: '/start/import'
+		isDevAccount ? '/setup/import-hosted-site' : '/start/import'
 	);
 };

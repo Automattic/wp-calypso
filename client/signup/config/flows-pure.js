@@ -21,9 +21,7 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: isEnabled( 'hosting-onboarding-i2' )
-				? [ 'user-hosting' ]
-				: [ 'plans-hosting', 'user-hosting', 'domains' ],
+			steps: [ 'user-hosting' ],
 			destination: getHostingFlowDestination,
 			description:
 				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
