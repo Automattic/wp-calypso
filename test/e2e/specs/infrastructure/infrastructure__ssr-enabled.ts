@@ -1,5 +1,5 @@
 /**
- * @group calypso-loop
+ * @group calypso-pr
  */
 
 import { DataHelper } from '@automattic/calypso-e2e';
