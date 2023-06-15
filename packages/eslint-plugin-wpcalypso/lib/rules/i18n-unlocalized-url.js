@@ -10,7 +10,20 @@
 //------------------------------------------------------------------------------
 
 // @todo: should be replaced by url mapping from @automattic/i18n-calypso.
-const LOCALIZABLE_URLS = [ 'wordpress.com', 'apps.wordpress.com', 'jetpack.com', 'automattic.com' ];
+const LOCALIZABLE_URLS = [
+	'apps.wordpress.com',
+	'automattic.com/cookies(/|$)',
+	'automattic.com/privacy(/|$)',
+	'jetpack.com/?$',
+	'wordpress.com/?$',
+	'wordpress.com/blog(/|$)',
+	'wordpress.com/forums(/|$)',
+	'wordpress.com/go(/|$)',
+	'wordpress.com/support(/|$)',
+	'wordpress.com/theme(/|$)',
+	'wordpress.com/themes(/|$)',
+	'wordpress.com/tos(/|$)',
+];
 
 //------------------------------------------------------------------------------
 // Helper Functions
@@ -91,7 +104,7 @@ const rule = ( module.exports = function ( context ) {
 
 			if ( isLocalizableUrlString && ! isVariableDeclarationValue ) {
 				context.report( {
-					templateLiteralNode,
+					node: templateLiteralNode,
 					message: rule.ERROR_MESSAGE,
 				} );
 			}
@@ -99,6 +112,6 @@ const rule = ( module.exports = function ( context ) {
 	};
 } );
 
-rule.ERROR_MESSAGE = 'Url string should be wrapped in `localizeUrl` function call';
+rule.ERROR_MESSAGE = "Url string should be wrapped in 'localizeUrl' function call";
 
 rule.schema = [];
