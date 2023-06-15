@@ -28,7 +28,6 @@ import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
-import WebPreview from 'calypso/components/web-preview/content';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
@@ -54,7 +53,6 @@ import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
 import { RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
-import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
@@ -74,7 +72,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
 
-	const isMobile = ! useViewportMatch( 'small' );
 	const isDesktop = useViewportMatch( 'large' );
 
 	const intent = useSelect(
@@ -644,9 +641,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 		const actionButtons = (
 			<>
-				{ selectedDesignHasStyleVariations && (
-					<div className="action-buttons__title">{ headerDesignTitle }</div>
-				) }
+				<div className="action-buttons__title">{ headerDesignTitle }</div>
 				<div>{ getPrimaryActionButton() }</div>
 			</>
 		);
@@ -665,51 +660,29 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					isOpen={ showPremiumGlobalStylesModal }
 					tryStyle={ tryPremiumGlobalStyles }
 				/>
-				{ selectedDesignHasStyleVariations ? (
-					<AsyncLoad
-						require="@automattic/design-preview"
-						placeholder={ null }
-						previewUrl={ previewUrl }
-						splitPremiumVariations={
-							! selectedDesign.is_premium &&
-							! isBundledWithWooCommerce &&
-							! isPremiumThemeAvailable &&
-							! didPurchaseSelectedTheme &&
-							! isPluginBundleEligible
-						}
-						title={ headerDesignTitle }
-						description={ selectedDesign.description }
-						variations={ selectedDesignDetails?.style_variations }
-						selectedVariation={ selectedStyleVariation }
-						onSelectVariation={ previewDesignVariation }
-						actionButtons={ actionButtons }
-						recordDeviceClick={ recordDeviceClick }
-					/>
-				) : (
-					<WebPreview
-						showPreview
-						showClose={ false }
-						showEdit={ false }
-						externalUrl={ siteSlug }
-						showExternal={ true }
-						previewUrl={ previewUrl }
-						loadingMessage={ translate(
-							'{{strong}}One moment, please…{{/strong}} loading your site.',
-							{
-								components: { strong: <strong /> },
-							}
-						) }
-						toolbarComponent={ PreviewToolbar }
-						siteId={ site?.ID }
-						url={ site?.URL }
-						translate={ translate }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
+				<AsyncLoad
+					require="@automattic/design-preview"
+					placeholder={ null }
+					previewUrl={ previewUrl }
+					splitPremiumVariations={
+						! selectedDesign.is_premium &&
+						! isBundledWithWooCommerce &&
+						! isPremiumThemeAvailable &&
+						! didPurchaseSelectedTheme &&
+						! isPluginBundleEligible
+					}
+					title={ headerDesignTitle }
+					description={ selectedDesign.description }
+					variations={ selectedDesignDetails?.style_variations }
+					selectedVariation={ selectedStyleVariation }
+					onSelectVariation={ previewDesignVariation }
+					actionButtons={ actionButtons }
+					recordDeviceClick={ recordDeviceClick }
+				/>
 			</>
 		);
 
-		return selectedDesignHasStyleVariations ? (
+		return (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
@@ -717,25 +690,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				hideBack={ !! hideBackFromQueryString }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
-				customizedActionButtons={ actionButtons }
-				recordTracksEvent={ recordStepContainerTracksEvent }
-			/>
-		) : (
-			<StepContainer
-				stepName={ STEP_NAME }
-				stepContent={ stepContent }
-				hideSkip
-				hideBack={ !! hideBackFromQueryString }
-				className="design-setup__preview"
-				goBack={ handleBackClick }
-				goNext={ () => pickDesign() }
-				formattedHeader={
-					<FormattedHeader
-						id="design-setup-header"
-						headerText={ headerDesignTitle }
-						align={ isMobile ? 'left' : 'center' }
-					/>
-				}
 				customizedActionButtons={ actionButtons }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
