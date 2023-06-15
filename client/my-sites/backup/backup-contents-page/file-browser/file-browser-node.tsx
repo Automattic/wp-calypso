@@ -73,6 +73,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		return <Icon icon={ isOpen ? chevronDown : chevronRight } />;
 	};
 
+	const labelIsTruncated = item.name.length > 30;
+	const label = labelIsTruncated ? `${ item.name.slice( 0, 30 ) }…` : item.name;
+
 	return (
 		<div className="file-browser-node">
 			{ isRoot ? null : (
@@ -80,8 +83,10 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					icon={ renderExpandIcon }
 					className="file-browser-node__title has-icon"
 					onClick={ handleClick }
+					showTooltip={ labelIsTruncated }
+					label={ item.name }
 				>
-					<FileTypeIcon type={ item.type } /> { item.name }
+					<FileTypeIcon type={ item.type } /> { label }
 				</Button>
 			) }
 
