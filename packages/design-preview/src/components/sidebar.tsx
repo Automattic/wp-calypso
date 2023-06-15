@@ -132,7 +132,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 				) }
 				{ ! variations.length && isEnabled( 'signup/design-picker-preview-fonts' ) && (
 					<GlobalStylesProvider siteId={ siteId } stylesheet={ stylesheet } placeholder={ null }>
-						<>
+						<div className="design-preview__sidebar-variations">
 							<StyleHeading
 								title={ translate( 'Fonts' ) }
 								description={ translate(
@@ -146,7 +146,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 								selectedFontPairingVariation={ selectedFontVariation }
 								onSelect={ onSelectFontVariation }
 							/>
-						</>
+						</div>
 					</GlobalStylesProvider>
 				) }
 			</div>

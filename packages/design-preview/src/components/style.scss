@@ -217,6 +217,15 @@
 		}
 	}
 
+	.font-pairing-variations {
+		display: flex;
+		margin: 6px 6px 12px 12px;
+
+		.global-styles-variation__item {
+			width: 200px;
+		}
+	}
+
 	@include break-xlarge {
 		margin: 2rem 0 0;
 
@@ -233,6 +242,15 @@
 
 			.global-styles-variations__item {
 				box-sizing: border-box;
+				width: 100%;
+			}
+		}
+
+		.font-pairing-variations {
+			display: grid;
+			margin: 0;
+
+			.global-styles-variation__item {
 				width: 100%;
 			}
 		}
@@ -317,7 +335,7 @@
 }
 
 .design-preview__style-heading {
-	display: flex;
+	display: none;
 	flex-direction: column;
 	width: 100%;
 	margin-left: 3px;
@@ -334,20 +352,16 @@
 	}
 
 	p {
-		display: none;
 		color: var(--color-neutral-60);
 		font-size: 0.875rem;
 		letter-spacing: -0.15px;
 		padding: 6px 0 6px 0;
 		line-height: 20px;
 		margin: 0;
-
-		@include break-xlarge {
-			display: block;
-		}
 	}
 
 	@include break-xlarge {
+		display: flex;
 		margin: 32px 0 12px;
 	}
 }
