@@ -50,6 +50,11 @@ const Title = styled.h2( {
 	marginBottom: '1em',
 } );
 
+const ToggleContainer = styled.div( {
+	marginTop: '2em',
+	marginBottom: '2em',
+} );
+
 const Text = styled.p( {
 	marginBottom: '0.5em !important',
 } );
@@ -61,6 +66,43 @@ const List = styled.ul( {
 const ListItem = styled.li( {
 	marginBottom: '0.25em',
 } );
+
+const AdminCard = ( {
+	siteOwner,
+	onToggle,
+	checked,
+}: {
+	siteOwner?: string;
+	onToggle: ( checked: boolean ) => void;
+	checked: boolean;
+} ) => {
+	const translate = useTranslate();
+	return (
+		<>
+			<Title>{ translate( 'Admin access' ) }</Title>
+			<Text>
+				{ createInterpolateElement(
+					sprintf(
+						// translators: siteOwner is the user that the site is going to transfer to
+						translate(
+							'When you transfer a site you can keep or decline administrator rights. By declining, you’ll lose access to the site unless <strong>%(siteOwner)s</strong> gives you new permissions.'
+						),
+						{ siteOwner }
+					),
+					{ strong: <Strong /> }
+				) }
+			</Text>
+			<ToggleContainer>
+				<FormToggleControl
+					disabled={ false }
+					label={ translate( 'Keep me as an administrator on this site.' ) }
+					checked={ checked }
+					onChange={ () => onToggle( ! checked ) }
+				/>
+			</ToggleContainer>
+		</>
+	);
+};
 
 const DomainsCard = ( {
 	domains,
@@ -81,7 +123,7 @@ const DomainsCard = ( {
 						{ createInterpolateElement(
 							sprintf(
 								// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
-								// transer to
+								// transfer to
 								translate(
 									'The domain name <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site.'
 								),
@@ -137,7 +179,7 @@ const UpgradesCard = ( {
 					{ createInterpolateElement(
 						sprintf(
 							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
-							// transer to
+							// transfer to
 							translate(
 								'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain with the site.'
 							),
@@ -167,7 +209,7 @@ const ContentAndOwnershipCard = ( {
 					{ createInterpolateElement(
 						sprintf(
 							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
-							// transer to
+							// transfer to
 							translate(
 								'You’ll be removed as owner of <strong>%(siteSlug)s</strong> and <strong>%(siteOwner)s</strong> will be the new owner from now on.'
 							),
@@ -180,20 +222,7 @@ const ContentAndOwnershipCard = ( {
 					{ createInterpolateElement(
 						sprintf(
 							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
-							// transer to
-							translate(
-								'You will not be able to access <strong>%(siteSlug)s</strong> unless allowed by <strong>%(siteOwner)s</strong>.'
-							),
-							{ siteSlug, siteOwner }
-						),
-						{ strong: <Strong /> }
-					) }
-				</ListItem>
-				<ListItem>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
-							// transer to
+							// transfer to
 							translate(
 								'Your posts on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will no longer be authored by your account.'
 							),
@@ -216,6 +245,7 @@ const StartSiteOwnerTransfer = ( {
 	onSiteTransferError,
 	translate,
 }: Props ) => {
+	const [ confirmAdminToggle, setConfirmAdminToggle ] = useState( true );
 	const [ confirmFirstToggle, setConfirmFirstToggle ] = useState( false );
 	const [ confirmSecondToggle, setConfirmSecondToggle ] = useState( false );
 	const [ confirmThirdToggle, setConfirmThirdToggle ] = useState( false );
@@ -247,7 +277,7 @@ const StartSiteOwnerTransfer = ( {
 		if ( ! siteOwner ) {
 			return;
 		}
-		startSiteOwnerTransfer( { newSiteOwner: siteOwner } );
+		startSiteOwnerTransfer( { newSiteOwner: siteOwner, keepAdminAccess: confirmAdminToggle } );
 	};
 
 	const startSiteTransferForm = (
@@ -323,6 +353,11 @@ const StartSiteOwnerTransfer = ( {
 					domains={ customDomains }
 					siteOwner={ siteOwner }
 					siteSlug={ selectedSiteSlug }
+				/>
+				<AdminCard
+					siteOwner={ siteOwner }
+					onToggle={ setConfirmAdminToggle }
+					checked={ confirmAdminToggle }
 				/>
 				{ ! startSiteTransferSuccess && startSiteTransferForm }
 			</SiteOwnerTransferActionPanelBody>

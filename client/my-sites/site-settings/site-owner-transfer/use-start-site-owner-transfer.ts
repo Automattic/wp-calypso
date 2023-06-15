@@ -4,6 +4,7 @@ import wp from 'calypso/lib/wp';
 
 interface MutationVariables {
 	newSiteOwner: string;
+	keepAdminAccess: boolean;
 }
 
 interface MutationResponse {
@@ -19,20 +20,18 @@ export const useStartSiteOwnerTransfer = (
 	siteId: number | null,
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
-	const mutation = useMutation(
-		async ( { newSiteOwner }: MutationVariables ) => {
+	const mutation = useMutation( {
+		mutationFn: async ( { newSiteOwner, keepAdminAccess }: MutationVariables ) => {
 			return wp.req.post(
 				{
 					path: `/sites/${ siteId }/site-owner-transfer`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ new_site_owner: newSiteOwner }
+				{ new_site_owner: newSiteOwner, keep_admin_access: keepAdminAccess }
 			);
 		},
-		{
-			...options,
-		}
-	);
+		...options,
+	} );
 
 	const { mutate, isLoading } = mutation;
 
