@@ -1,0 +1,40 @@
+import { Button } from '@automattic/components';
+import { Modal } from '@wordpress/components';
+import './styles.scss';
+import { useTranslate } from 'i18n-calypso';
+
+type ConfirmModalProps = {
+	cancelButtonLabel?: string | React.ReactChild;
+	confirmButtonLabel?: string | React.ReactChild;
+	text?: string | React.ReactChild;
+	title: string;
+	onCancel: () => void;
+	onConfirm: () => void;
+};
+
+const ConfirmModal = ( {
+	cancelButtonLabel,
+	confirmButtonLabel,
+	text,
+	title,
+	onCancel,
+	onConfirm,
+}: ConfirmModalProps ) => {
+	const translate = useTranslate();
+
+	return (
+		<Modal overlayClassName="confirm-modal" title={ title } onRequestClose={ onCancel }>
+			{ text && <p>{ text }</p> }
+			<div className="confirm-modal__buttons">
+				<Button className="confirm-modal__cancel" onClick={ onCancel }>
+					{ cancelButtonLabel ?? translate( 'Cancel' ) }
+				</Button>
+				<Button onClick={ onConfirm } primary>
+					{ confirmButtonLabel ?? translate( 'Confirm' ) }
+				</Button>
+			</div>
+		</Modal>
+	);
+};
+
+export default ConfirmModal;

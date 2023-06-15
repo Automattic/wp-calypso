@@ -1,7 +1,7 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 
-.unsubscribe-modal {
+.confirm-modal {
 	.components-modal__frame {
 		max-width: 563px;
 	}
@@ -23,7 +23,7 @@
 		}
 	}
 
-	.unsubscribe-modal__buttons {
+	.confirm-modal__buttons {
 		display: flex;
 		justify-content: flex-end;
 		gap: 10px;

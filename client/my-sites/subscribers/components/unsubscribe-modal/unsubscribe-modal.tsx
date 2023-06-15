@@ -1,85 +1,64 @@
-import { Button } from '@automattic/components';
-import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import ConfirmModal from 'calypso/components/confirm-modal';
 import { Subscriber } from '../../types';
-import './styles.scss';
 
 export enum UnsubscribeActionType {
-	Cancel = 'cancel',
 	Manage = 'manage',
 	Unsubscribe = 'unsubscribe',
 }
 
 type UnsubscribeModalProps = {
 	subscriber?: Subscriber;
-	onClose: ( action: UnsubscribeActionType, subscriber?: Subscriber ) => void;
+	onCancel: () => void;
+	onConfirm: ( action: UnsubscribeActionType, subscriber?: Subscriber ) => void;
 };
 
-const UnsubscribeModal = ( { subscriber, onClose }: UnsubscribeModalProps ) => {
+const UnsubscribeModal = ( { subscriber, onCancel, onConfirm }: UnsubscribeModalProps ) => {
 	const translate = useTranslate();
 	const subscriberHasPlans = !! subscriber?.plans?.length;
 
-	const title = subscriberHasPlans
-		? translate( 'Remove paid subscriber' )
-		: translate( 'Remove free subscriber' );
-
-	const confirmButtonLabel = subscriberHasPlans
-		? translate( 'Manage paid subscribers', { context: 'Navigate to the Earns page button text.' } )
-		: translate( 'Remove subscriber', { context: 'Confirm Unsubscribe subscriber button text.' } );
-
-	const confirmMessage = subscriberHasPlans
-		? translate(
-				'To remove %s from your list, you’ll need to cancel their paid subscription first.',
-				{
-					args: [ subscriber?.display_name ],
-					comment: "%s is the subscriber's public display name",
-				}
-		  )
-		: translate(
-				'Are you sure you want to remove %s from your list? They will no longer receive new notifications from your site.',
-				{
-					args: [ subscriber?.display_name ],
-					comment: "%s is the subscriber's public display name",
-				}
-		  );
-
-	const confirmActionType = subscriberHasPlans
-		? UnsubscribeActionType.Manage
-		: UnsubscribeActionType.Unsubscribe;
-
-	const onCloseHandler = ( action?: string ) => {
-		if ( action === UnsubscribeActionType.Unsubscribe ) {
-			onClose( UnsubscribeActionType.Unsubscribe, subscriber );
-		} else if ( action === UnsubscribeActionType.Manage ) {
-			onClose( UnsubscribeActionType.Manage, subscriber );
-		} else {
-			onClose( UnsubscribeActionType.Cancel );
-		}
+	const freeSubscriberProps = {
+		action: UnsubscribeActionType.Unsubscribe,
+		confirmButtonLabel: translate( 'Remove subscriber' ),
+		text: translate(
+			'Are you sure you want to remove %s from your list? They will no longer receive new notifications from your site.',
+			{
+				args: [ subscriber?.display_name ],
+				comment: "%s is the subscriber's public display name",
+			}
+		),
+		title: translate( 'Remove free subscriber' ),
 	};
+
+	const paidSubscriberProps = {
+		action: UnsubscribeActionType.Manage,
+		confirmButtonLabel: translate( 'Manage paid subscribers' ),
+		text: translate(
+			'To remove %s from your list, you’ll need to cancel their paid subscription first.',
+			{
+				args: [ subscriber?.display_name ],
+				comment: "%s is the subscriber's public display name",
+			}
+		),
+		title: translate( 'Remove paid subscriber' ),
+	};
+
+	const { action, confirmButtonLabel, text, title } = subscriberHasPlans
+		? paidSubscriberProps
+		: freeSubscriberProps;
 
 	if ( ! subscriber ) {
 		return null;
 	}
 
 	return (
-		<Modal
-			overlayClassName="unsubscribe-modal"
+		<ConfirmModal
+			confirmButtonLabel={ confirmButtonLabel }
+			text={ text }
 			title={ title }
-			onRequestClose={ () => onCloseHandler( UnsubscribeActionType.Cancel ) }
-		>
-			<p>{ confirmMessage }</p>
-			<div className="unsubscribe-modal__buttons">
-				<Button
-					className="unsubscribe-modal__cancel"
-					onClick={ () => onCloseHandler( UnsubscribeActionType.Cancel ) }
-				>
-					{ translate( 'Cancel' ) }
-				</Button>
-				<Button onClick={ () => onCloseHandler( confirmActionType ) } primary>
-					{ confirmButtonLabel }
-				</Button>
-			</div>
-		</Modal>
+			onCancel={ onCancel }
+			onConfirm={ () => onConfirm( action, subscriber ) }
+		/>
 	);
 };
 
