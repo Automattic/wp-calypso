@@ -9,6 +9,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
+
 const noop = () => {};
 
 /**
@@ -211,6 +212,7 @@ export function requestPage( action ) {
 	const fetchCount = pageHandle ? PER_FETCH : INITIAL_FETCH;
 	// eslint-disable-next-line no-extra-boolean-cast
 	const number = !! gap ? PER_GAP : fetchCount;
+
 	return http( {
 		method: 'GET',
 		path: path( { ...action.payload } ),
