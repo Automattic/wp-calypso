@@ -24,7 +24,7 @@ import {
 	FormStatus,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { isNewsletterOrLinkInBioFlow, isAHostingFlow } from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
@@ -176,7 +176,7 @@ function CheckoutSummaryFeaturesWrapper( props: {
 	);
 	const shouldUseFlowFeatureList =
 		isNewsletterOrLinkInBioFlow( signupFlowName ) ||
-		( isAHostingFlow( signupFlowName ) && planHasHostingFeature );
+		( isAnyHostingFlow( signupFlowName ) && planHasHostingFeature );
 	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;
 
 	if ( responseCart.is_gift_purchase && giftSiteSlug ) {
@@ -405,7 +405,7 @@ function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
-			{ isAHostingFlow( flowName ) && (
+			{ isAnyHostingFlow( flowName ) && (
 				<CheckoutSummaryRefundWindows cart={ responseCart } highlight />
 			) }
 		</CheckoutSummaryFeaturesListWrapper>

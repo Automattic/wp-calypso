@@ -35,7 +35,7 @@ import {
 	WooLogo,
 } from '@automattic/components';
 import {
-	isAHostingFlow,
+	isAnyHostingFlow,
 	isLinkInBioFlow,
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
@@ -724,7 +724,7 @@ export class PlanFeatures2023Grid extends Component<
 	maybeRenderRefundNotice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { translate, flowName } = this.props;
 
-		if ( ! isAHostingFlow( flowName ) ) {
+		if ( ! isAnyHostingFlow( flowName ) ) {
 			return false;
 		}
 
