@@ -5,6 +5,7 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -46,6 +47,7 @@ const ScreenCategoryList = ( {
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
+	const isWideViewport = useViewportMatch( 'wide', '<' );
 
 	const trackEventCategoryClick = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CATEGORY_LIST_CATEGORY_CLICK, {
@@ -135,9 +137,13 @@ const ScreenCategoryList = ( {
 				</NavigatorBackButton>
 			</div>
 			<PatternListPanel
-				onSelect={ ( selectedPattern: Pattern | null ) =>
-					onSelect( 'section', selectedPattern, selectedCategory )
-				}
+				onSelect={ ( selectedPattern: Pattern | null ) => {
+					onSelect( 'section', selectedPattern, selectedCategory );
+					if ( isWideViewport ) {
+						onTogglePatternPanelList?.( false );
+						setSelectedCategory( null );
+					}
+				} }
 				selectedPattern={ selectedPattern }
 				selectedCategory={ selectedCategory }
 				categories={ categories }
