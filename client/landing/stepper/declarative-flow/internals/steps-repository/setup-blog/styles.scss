@@ -3,7 +3,7 @@
 $font-family: "SF Pro Text", $sans;
 
 .setup-blog {
-	.step-container__content {
+	.step-container .step-container__content {
 		display: flex;
 		justify-content: center;
 		margin-bottom: 30px;
@@ -14,7 +14,7 @@ $font-family: "SF Pro Text", $sans;
 		text-transform: none;
 	}
 
-	.step-container__header {
+	.step-container .step-container__header {
 		margin-bottom: 32px;
 	}
 
