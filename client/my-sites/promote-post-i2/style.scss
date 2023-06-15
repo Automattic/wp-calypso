@@ -311,18 +311,34 @@ body.is-section-promote-post-i2 {
 }
 
 .is-mobile-app-view {
-	.advertising__page-header,
-	.promote-post-i2 .posts-list-banner__container,
-	.promote-post-i2 .section-nav,
-	.promote-post-i2 .post-item__link {
-		display: none;
-	}
-	.layout.has-no-masterbar.is-group-sites.is-section-promote-post-i2 .layout__content {
-		padding-top: 0;
-	}
+	.layout {
+		&.has-no-masterbar.is-group-sites.is-section-promote-post-i2 .layout__content {
+			padding-top: 0;
+		}
 
-	.layout__primary .main {
-		padding-bottom: 0;
+		.layout__content .layout__primary {
+			.promote-post-i2__top-bar,
+			.promote-post-i2__header-subtitle,
+			.advertising__page-header,
+			.promote-post-i2 .posts-list-banner__container,
+			.promote-post-i2 .section-nav,
+			.promote-post-i2 .post-item__view-link,
+			.promote-post-i2 .campaign-item-details__support-buttons {
+				display: none;
+			}
+
+			.main {
+				padding-bottom: 0;
+
+				.promote-post-i2__search-bar-wrapper {
+					padding-top: 16px;
+
+					.promote-post-i2__search-bar-dropdown {
+						top: 4rem;
+					}
+				}
+			}
+		}
 	}
 }
 

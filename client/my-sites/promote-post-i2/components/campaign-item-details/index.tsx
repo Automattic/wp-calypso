@@ -121,7 +121,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( start_date ).format( 'MMMM DD, YYYY' );
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
-	const countriesListFormatted = countriesList ? `${ countriesList }` : __( 'All' );
+	const countriesListFormatted = countriesList ? `${ countriesList }` : __( 'Everywhere' );
 	const osListFormatted = OSsList ? `${ OSsList }` : translate( 'All' );
 	const topicsListFormatted = topicsList ? `${ topicsList }` : __( 'All' );
 	const impressionsTotal = formatNumber( impressions_total );

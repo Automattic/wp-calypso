@@ -392,10 +392,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					const searchParam = req.query.s || req.query.q;
 					if ( searchParam ) {
 						res.redirect(
-							'https://' +
-								req.context.lang +
-								'.search.wordpress.com/?q=' +
-								encodeURIComponent( searchParam )
+							'https://wordpress.com/read/search?q=' + encodeURIComponent( searchParam )
 						);
 						return;
 					}
@@ -695,10 +692,8 @@ function wpcomPages( app ) {
 			next();
 		}
 	} );
-
-	// redirect logged-out searches to en.search.wordpress.com
 	app.get( '/read/search', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn && calypsoEnv !== 'development' ) {
+		if ( ! req.context.isLoggedIn && calypsoEnv === 'production' ) {
 			res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
 		} else {
 			next();

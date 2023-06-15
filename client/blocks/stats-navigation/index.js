@@ -4,7 +4,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import SubscribersCount from 'calypso/blocks/subscribers-count';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -178,7 +177,15 @@ class StatsNavigation extends Component {
 						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
 					) }
 
-					{ ! config.isEnabled( 'stats/subscribers-section' ) && <SubscribersCount /> }
+					{ isModuleSettingsSupported && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
+						<PageModuleToggler
+							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
+							pageModules={ pageModules }
+							onToggleModule={ this.onToggleModule }
+							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+							onTooltipDismiss={ this.onTooltipDismiss }
+						/>
+					) }
 				</SectionNav>
 
 				{ isLegacy && showIntervals && (

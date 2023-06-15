@@ -148,7 +148,6 @@
 		"ssr/sample-log-cache-misses": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
-		"stats/subscribers-section": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": false,
 		"subscriber-csv-upload": true,

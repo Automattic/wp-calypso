@@ -276,6 +276,7 @@ class Login extends Component {
 			action,
 			currentQuery,
 			isGravatar,
+			isWooCoreProfilerFlow,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -421,6 +422,16 @@ class Login extends Component {
 					</p>
 				);
 			}
+		} else if ( isWooCoreProfilerFlow ) {
+			headerText = <h3>{ translate( 'One last step' ) }</h3>;
+			preHeader = null;
+			postHeader = (
+				<p className="login__header-subtitle">
+					{ translate(
+						'In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below.'
+					) }
+				</p>
+			);
 		} else if ( isJetpackWooCommerceFlow ) {
 			headerText = translate( 'Log in to your WordPress.com account' );
 			preHeader = (
@@ -711,6 +722,8 @@ export default connect(
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+		isWooCoreProfilerFlow:
+			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )

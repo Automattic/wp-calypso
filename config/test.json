@@ -100,7 +100,6 @@
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
-		"stats/subscribers-section": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": false,
 		"themes/premium": true,

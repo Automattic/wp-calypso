@@ -11,5 +11,42 @@
 
 	&__body {
 		border-top: 1px solid var(--studio-gray-5);
+		padding-top: 30px;
+	}
+
+	.file-browser-node {
+		&__loading {
+			&.placeholder {
+				height: 26px;
+				margin: 6px;
+				@include placeholder();
+			}
+		}
+
+		&__contents {
+			&:not(:first-child) {
+				padding-left: 26px;
+			}
+		}
+
+		.components-button.has-icon.has-text svg {
+			width: 22px;
+			height: 22px;
+			margin-right: 4px;
+		}
+
+		.components-button {
+			height: 32px;
+		}
+
+		&:not(:first-child) {
+			&:nth-child(even) {
+				background-color: var(--studio-gray-0);
+			}
+
+			&:nth-child(odd) {
+				background-color: #fff;
+			}
+		}
 	}
 }
