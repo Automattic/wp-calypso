@@ -5,6 +5,7 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -43,10 +44,10 @@ const ScreenCategoryList = ( {
 	onTogglePatternPanelList,
 }: Props ) => {
 	const translate = useTranslate();
-	const firstCategory = categories[ 0 ];
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
+	const isWideViewport = useViewportMatch( 'wide', '<' );
 
 	const trackEventCategoryClick = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CATEGORY_LIST_CATEGORY_CLICK, {
@@ -55,9 +56,6 @@ const ScreenCategoryList = ( {
 	};
 
 	useEffect( () => {
-		// Open first category with a delay to avoid the top position flickering
-		setTimeout( () => setSelectedCategory( firstCategory?.name ?? null ), 200 );
-
 		// Notify the pattern panel list is open and closed
 		onTogglePatternPanelList?.( true );
 		return () => {
@@ -141,9 +139,13 @@ const ScreenCategoryList = ( {
 				</NavigatorBackButton>
 			</div>
 			<PatternListPanel
-				onSelect={ ( selectedPattern: Pattern | null ) =>
-					onSelect( 'section', selectedPattern, selectedCategory )
-				}
+				onSelect={ ( selectedPattern: Pattern | null ) => {
+					onSelect( 'section', selectedPattern, selectedCategory );
+					if ( isWideViewport ) {
+						onTogglePatternPanelList?.( false );
+						setSelectedCategory( null );
+					}
+				} }
 				selectedPattern={ selectedPattern }
 				selectedCategory={ selectedCategory }
 				categories={ categories }
