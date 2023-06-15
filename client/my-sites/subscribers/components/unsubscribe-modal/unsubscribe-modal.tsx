@@ -28,7 +28,13 @@ const UnsubscribeModal = ( { subscriber, onClose }: UnsubscribeModalProps ) => {
 		: translate( 'Remove subscriber', { context: 'Confirm Unsubscribe subscriber button text.' } );
 
 	const confirmMessage = subscriberHasPlans
-		? translate( 'To remove this subscriber, you’ll need to cancel their paid subscription first.' )
+		? translate(
+				'To remove %s from your list, you’ll need to cancel their paid subscription first.',
+				{
+					args: [ subscriber?.display_name ],
+					comment: "%s is the subscriber's public display name",
+				}
+		  )
 		: translate(
 				'Are you sure you want to remove %s from your list? They will no longer receive new notifications from your site.',
 				{
