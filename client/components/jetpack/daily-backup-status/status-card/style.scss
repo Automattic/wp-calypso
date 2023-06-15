@@ -44,6 +44,17 @@
 		font-weight: 600;
 	}
 
+	.status-card__toolbar {
+		margin-left: auto;
+
+		.activity-card__toolbar--reverse {
+			margin-left: 0;
+			border-top: 0;
+			position: initial;
+			padding-top: 0;
+		}
+	}
+
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		font-weight: 600;
