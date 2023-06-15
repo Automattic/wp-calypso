@@ -81,6 +81,10 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 								...siteSubscription,
 								isDeleted:
 									siteSubscription.blog_ID === params.blog_id ? false : siteSubscription.isDeleted,
+								date_subscribed:
+									siteSubscription.blog_ID === params.blog_id
+										? new Date()
+										: siteSubscription.date_subscribed,
 							} ) ),
 						};
 					} ),
@@ -98,9 +102,13 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 				} );
 			}
 
-			return { previousSiteSubscriptionDetails };
+			return { previousSiteSubscriptions, previousSiteSubscriptionDetails };
 		},
 		onError: ( error, variables, context ) => {
+			if ( context?.previousSiteSubscriptions ) {
+				queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
+			}
+
 			if ( context?.previousSiteSubscriptionDetails ) {
 				queryClient.setQueryData(
 					siteSubscriptionDetailsCacheKey,
