@@ -1,8 +1,15 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { GlobalStylesVariations, GlobalStylesObject } from '@automattic/global-styles';
+import {
+	GlobalStylesVariations,
+	GlobalStylesProvider,
+	FontPairingVariations,
+} from '@automattic/global-styles';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import StyleHeading from './style-heading';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 
 interface CategoryBadgeProps {
 	category: Category;
@@ -37,6 +44,10 @@ interface SidebarProps {
 	splitPremiumVariations: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
+	siteId: number;
+	stylesheet: string;
+	selectedFontVariation: GlobalStylesObject | null;
+	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -52,6 +63,10 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	splitPremiumVariations,
 	onClickCategory,
 	actionButtons,
+	siteId,
+	stylesheet,
+	selectedFontVariation,
+	onSelectFontVariation,
 } ) => {
 	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
@@ -114,6 +129,25 @@ const Sidebar: React.FC< SidebarProps > = ( {
 							/>
 						</div>
 					</div>
+				) }
+				{ ! variations.length && isEnabled( 'signup/design-picker-preview-fonts' ) && (
+					<GlobalStylesProvider siteId={ siteId } stylesheet={ stylesheet } placeholder={ null }>
+						<>
+							<StyleHeading
+								title={ translate( 'Fonts' ) }
+								description={ translate(
+									'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
+								) }
+								isPremium
+							/>
+							<FontPairingVariations
+								siteId={ siteId }
+								stylesheet={ stylesheet }
+								selectedFontPairingVariation={ selectedFontVariation }
+								onSelect={ onSelectFontVariation }
+							/>
+						</>
+					</GlobalStylesProvider>
 				) }
 			</div>
 			{ actionButtons && (

@@ -2,6 +2,7 @@ import { useMemo } from '@wordpress/element';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
 
 interface PreviewProps {
@@ -19,6 +20,10 @@ interface PreviewProps {
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
+	siteId: number;
+	stylesheet: string;
+	selectedFontVariation: GlobalStylesObject | null;
+	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 }
 
 const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; };`;
@@ -41,6 +46,10 @@ const Preview: React.FC< PreviewProps > = ( {
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
+	siteId,
+	stylesheet,
+	selectedFontVariation,
+	onSelectFontVariation,
 } ) => {
 	const sitePreviewInlineCss = useMemo( () => {
 		if ( selectedVariation ) {
@@ -69,6 +78,10 @@ const Preview: React.FC< PreviewProps > = ( {
 				splitPremiumVariations={ splitPremiumVariations }
 				onClickCategory={ onClickCategory }
 				actionButtons={ actionButtons }
+				siteId={ siteId }
+				stylesheet={ stylesheet }
+				selectedFontVariation={ selectedFontVariation }
+				onSelectFontVariation={ onSelectFontVariation }
 			/>
 			<SitePreview
 				url={ previewUrl }

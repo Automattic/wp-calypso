@@ -59,6 +59,7 @@ import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { OnboardSelect, SiteSelect, StarterDesigns } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 
 const SiteIntent = Onboard.SiteIntent;
 const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
@@ -199,6 +200,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		[]
 	);
 	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
+
+	const [ selectedFontVariation, setSelectedFontVariation ] = useState< GlobalStylesObject | null >(
+		null
+	);
 
 	// Unset the selected design, thus restarting the design picking experience.
 	useEffect( () => {
@@ -678,6 +683,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					onSelectVariation={ previewDesignVariation }
 					actionButtons={ actionButtons }
 					recordDeviceClick={ recordDeviceClick }
+					siteId={ site.ID }
+					stylesheet={ selectedDesign.recipe?.stylesheet }
+					selectedFontVariation={ selectedFontVariation }
+					onSelectFontVariation={ setSelectedFontVariation }
 				/>
 			</>
 		);
