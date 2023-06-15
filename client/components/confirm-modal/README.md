@@ -20,7 +20,7 @@ The ConfirmModal component accepts the following props:
 - `onCancel`: Callback function to handle the cancel button click event.
 - `onConfirm`: Callback function to handle the confirm button click event.
 
-## Example usage:
+## Example usage
 
 ```jsx
 <ConfirmModal
