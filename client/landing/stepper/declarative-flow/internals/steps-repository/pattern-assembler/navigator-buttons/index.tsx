@@ -15,7 +15,6 @@ interface Props {
 	icon?: JSX.Element;
 	children: JSX.Element | string;
 	onClick?: () => void;
-	checklist?: boolean;
 	checked?: boolean;
 }
 
