@@ -36,15 +36,24 @@
 		}
 
 		&__checklist-item--checked {
-			color: var(--studio-gray-30);
-
-			&:hover,
-			&:focus-visible {
+			&:focus {
 				color: var(--studio-gray-100);
 			}
 
+			.navigator-button__text {
+				line-height: 24px;
+			}
+
 			.navigator-button__icon {
-				fill: var(--studio-gray-30);
+				fill: var(--studio-gray-100);
+			}
+
+			&:hover,
+			&:focus-visible {
+				color: var(--studio-blue-50);
+				.navigator-button__icon {
+					fill: var(--studio-blue-50);
+				}
 			}
 		}
 	}

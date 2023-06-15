@@ -13,22 +13,27 @@ interface Props {
 	path: string;
 	className?: string;
 	icon?: JSX.Element;
-	children: JSX.Element;
+	children: JSX.Element | string;
 	onClick?: () => void;
 	checklist?: boolean;
 	checked?: boolean;
 }
 
-const GenericButton = ( { icon, children, ...props }: Props ) => {
+const GenericButton = ( { icon, children, className, checked, ...props }: Props ) => {
 	const forwardIcon = isRTL() ? chevronLeft : chevronRight;
 
 	if ( icon ) {
 		return (
-			<Item { ...props }>
+			<Item
+				{ ...props }
+				className={ classnames( className, {
+					'navigator-button__checklist-item--checked': checked,
+				} ) }
+			>
 				<HStack justify="space-between">
 					<HStack justify="flex-start">
-						<Icon className="navigator-button__icon" icon={ icon } size={ 24 } />
-						<FlexItem>{ children }</FlexItem>
+						<Icon className="navigator-button__icon" icon={ checked ? check : icon } size={ 24 } />
+						<FlexItem className="navigator-button__text">{ children }</FlexItem>
 					</HStack>
 					<Icon icon={ forwardIcon } size={ 24 } />
 				</HStack>
@@ -46,24 +51,10 @@ const GenericButton = ( { icon, children, ...props }: Props ) => {
 	);
 };
 
-const ChecklistButton = ( { icon, children, className, checked, ...props }: Props ) => {
-	return (
-		<GenericButton
-			{ ...props }
-			icon={ checked ? check : icon }
-			className={ classnames( className, {
-				'navigator-button__checklist-item--checked': checked,
-			} ) }
-		>
-			{ children }
-		</GenericButton>
-	);
-};
-
-export const NavigationButtonAsItem = ( { className, checklist, ...props }: Props ) => {
+export const NavigationButtonAsItem = ( { className, ...props }: Props ) => {
 	return (
 		<NavigatorButton
-			as={ checklist ? ChecklistButton : GenericButton }
+			as={ GenericButton }
 			className={ classnames( 'navigator-button', className ) }
 			{ ...props }
 		/>

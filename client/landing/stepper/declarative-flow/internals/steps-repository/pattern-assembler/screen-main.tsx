@@ -115,7 +115,7 @@ const ScreenMain = ( {
 							aria-label={ translate( 'Header' ) }
 							onClick={ () => onSelect( 'header' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
+							{ translate( 'Header' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
 							checklist
@@ -125,7 +125,7 @@ const ScreenMain = ( {
 							aria-label={ translate( 'Homepage' ) }
 							onClick={ () => onSelect( 'section' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Homepage' ) }</span>
+							{ translate( 'Homepage' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
 							checklist
@@ -135,7 +135,7 @@ const ScreenMain = ( {
 							aria-label={ translate( 'Footer' ) }
 							onClick={ () => onSelect( 'footer' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
+							{ translate( 'Footer' ) }
 						</NavigationButtonAsItem>
 					</NavigatorItemGroup>
 					<NavigatorItemGroup title={ translate( 'Style' ) }>
@@ -148,10 +148,9 @@ const ScreenMain = ( {
 								aria-label={ translate( 'Colors' ) }
 								onClick={ () => onSelect( 'color-palettes' ) }
 							>
-								<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
+								{ translate( 'Colors' ) }
 							</NavigationButtonAsItem>
 							<NavigationButtonAsItem
-								key="font-pairings"
 								checklist
 								checked={ hasFont }
 								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
@@ -159,7 +158,7 @@ const ScreenMain = ( {
 								aria-label={ translate( 'Fonts' ) }
 								onClick={ () => onSelect( 'font-pairings' ) }
 							>
-								<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
+								{ translate( 'Fonts' ) }
 							</NavigationButtonAsItem>
 						</>
 					</NavigatorItemGroup>
