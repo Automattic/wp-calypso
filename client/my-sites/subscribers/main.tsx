@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
@@ -22,7 +21,6 @@ type SubscribersProps = {
 const DEFAULT_PER_PAGE = 10;
 
 export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
-	const isSubscribersPageEnabled = config.isEnabled( 'subscribers-page' );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const initialState = { data: { total: 0, subscribers: [], per_page: DEFAULT_PER_PAGE } };
 	const result = useSubscribersQuery( selectedSiteId, page, DEFAULT_PER_PAGE );
@@ -55,10 +53,6 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 			),
 		},
 	];
-
-	if ( ! isSubscribersPageEnabled ) {
-		return null;
-	}
 
 	return (
 		<Main wideLayout className="subscribers">
