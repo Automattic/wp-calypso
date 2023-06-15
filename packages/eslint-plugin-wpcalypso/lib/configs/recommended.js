@@ -162,4 +162,12 @@ module.exports = {
 		// Ensure our codebases use inclusive language
 		'inclusive-language/use-inclusive-words': 'error',
 	},
+	overrides: [
+		{
+			files: '**/test/*',
+			rules: {
+				'wpcalypso/i18n-unlocalized-url': 'off',
+			},
+		},
+	],
 };
