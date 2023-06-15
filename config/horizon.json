@@ -84,6 +84,7 @@
 		"network-connection": true,
 		"newsletter/stats": true,
 		"onboarding/import-light-url-screen": true,
+		"onboarding/import-redesign": true,
 		"p2/p2-plus": true,
 		"pattern-assembler/all-patterns-category": true,
 		"pattern-assembler/logged-in-showcase": true,
