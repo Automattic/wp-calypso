@@ -19,7 +19,7 @@ export const useAddNewSiteUrl = ( queryParameters: Record< string, Primitive > )
 		// eslint-disable-next-line no-nested-ternary
 		isJetpackCloud()
 			? config( 'jetpack_connect_url' )
-			: ( isDevAccount || isInHostingFlow ) && config.isEnabled( 'hosting-onboarding-i2' )
+			: isDevAccount || isInHostingFlow
 			? '/setup/new-hosted-site'
 			: config( 'signup_url' )
 	);
