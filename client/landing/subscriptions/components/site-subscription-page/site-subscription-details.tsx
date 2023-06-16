@@ -88,7 +88,7 @@ const SiteSubscriptionDetails = ( {
 		if ( paymentPlans && !! paymentPlans.length ) {
 			setShowUnsubscribeModal( true );
 		} else {
-			const emailId = getQueryArgs()?.email_id;
+			const emailId = getQueryArgs()?.email_id as string;
 			unsubscribe( { blog_id: blogId, url, emailId } );
 		}
 	};
