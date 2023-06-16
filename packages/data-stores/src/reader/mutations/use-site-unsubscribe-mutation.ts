@@ -11,6 +11,7 @@ type UnsubscribeParams = {
 	blog_id: number | string;
 	url?: string;
 	doNotInvalidateSiteSubscriptions?: boolean;
+	emailId?: string;
 };
 
 type UnsubscribeResponse = {
@@ -43,7 +44,8 @@ const useSiteUnsubscribeMutation = ( blog_id?: string ) => {
 				'delete',
 				isLoggedIn,
 				params.blog_id,
-				params.url
+				params.url,
+				params.emailId
 			);
 
 			const response = await callApi< UnsubscribeResponse >( {

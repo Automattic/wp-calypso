@@ -8,6 +8,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { CancelPaidSubscriptionModal } from '../cancel-paid-subscription-modal';
 import {
 	PaymentPlan,
@@ -87,7 +88,8 @@ const SiteSubscriptionDetails = ( {
 		if ( paymentPlans && !! paymentPlans.length ) {
 			setShowUnsubscribeModal( true );
 		} else {
-			unsubscribe( { blog_id: blogId, url } );
+			const emailId = getQueryArgs()?.email_id as string;
+			unsubscribe( { blog_id: blogId, url, emailId } );
 		}
 	};
 
