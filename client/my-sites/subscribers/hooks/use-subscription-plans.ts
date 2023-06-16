@@ -10,9 +10,9 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): string[] => {
 		if ( renew_interval === null ) {
 			return translate( 'one time' );
 		} else if ( renew_interval === '1 month' ) {
-			return translate( 'per month' );
+			return translate( 'Monthly' );
 		} else if ( renew_interval === '1 year' ) {
-			return translate( 'per year' );
+			return translate( 'Yearly' );
 		}
 	};
 
@@ -22,11 +22,11 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): string[] => {
 		}
 
 		const money = getCurrencyObject( renewalPrice, currency );
-		return money.integer !== '0' ? `${ money.symbol }${ money.integer } /` : '';
+		return money.integer !== '0' ? `${ money.symbol }${ money.integer }` : '';
 	}
 
 	const transformSubscriptionPlans = ( subscriptions?: SubscriptionPlan[] ) => {
-		const defaultSubscription = [ { renewalPrice: translate( 'Free tier' ), when: '' } ];
+		const defaultSubscription = [ { renewalPrice: translate( 'Free' ), when: '' } ];
 
 		if ( subscriptions ) {
 			const result = subscriptions.map( ( subscription: SubscriptionPlan ) => {
@@ -46,7 +46,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): string[] => {
 	const subscriptionPlans = useMemo( () => {
 		if ( subscriber ) {
 			const plans = transformSubscriptionPlans( subscriber.plans );
-			return plans.map( ( plan ) => `${ plan.renewalPrice } ${ plan.when }` );
+			return plans.map( ( plan ) => `${ plan.when } (${ plan.renewalPrice })` );
 		}
 		return [];
 	}, [ subscriber ] );
