@@ -18,18 +18,19 @@ interface UserResponse {
 
 interface UseAdministratorsParams {
 	siteId: number;
-	excludeUserIDs?: number[];
+	excludeUserEmails?: string[];
 }
 
-export function useAdministrators( { siteId, excludeUserIDs }: UseAdministratorsParams ) {
+export function useAdministrators( { siteId, excludeUserEmails }: UseAdministratorsParams ) {
 	const queryResult = useUsersQuery(
 		siteId,
 		{ role: 'administrator' },
 		{
 			select: ( data: UserResponse ) => {
 				const users = data?.pages?.[ 0 ]?.users || [];
-				if ( excludeUserIDs ) {
-					return users.filter( ( user ) => ! excludeUserIDs.includes( user.linked_user_ID ) );
+				// We filter by email instead of user.ID to support simple and atomic sites.
+				if ( excludeUserEmails ) {
+					return users.filter( ( user ) => ! excludeUserEmails.includes( user.email ) );
 				}
 				return users;
 			},

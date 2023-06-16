@@ -110,7 +110,7 @@ const SiteOwnerTransferEligibility = ( {
 	const currentUser = useSelector( getCurrentUser );
 	const { administrators, isLoading } = useAdministrators( {
 		siteId,
-		excludeUserIDs: [ currentUser?.ID as number ],
+		excludeUserEmails: [ currentUser?.email as string ],
 	} );
 
 	if ( isLoading ) {
