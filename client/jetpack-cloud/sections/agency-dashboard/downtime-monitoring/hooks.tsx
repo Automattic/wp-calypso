@@ -124,7 +124,9 @@ export function useContactModalTitleAndSubtitle(
 			email: {
 				add: {
 					title: translate( 'Add new email address' ),
-					subtitle: translate( 'Please use only your number or one you have access to.' ),
+					subtitle: translate(
+						'Please use an email address that is accessible. Only alerts will be sent.'
+					),
 				},
 				edit: {
 					title: translate( 'Edit your email address' ),
@@ -142,7 +144,9 @@ export function useContactModalTitleAndSubtitle(
 			phone: {
 				add: {
 					title: translate( 'Add your phone number' ),
-					subtitle: translate( 'Please use an accessible phone number. Only alerts sent.' ),
+					subtitle: translate(
+						'Please use phone number that is accessible. Only alerts will be sent.'
+					),
 				},
 				edit: {
 					title: translate( 'Edit your phone number' ),

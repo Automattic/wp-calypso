@@ -322,7 +322,11 @@ export default function EmailAddressEditor( {
 
 			<form className="configure-contact__form" onSubmit={ onSave }>
 				{ isRemoveAction ? (
-					selectedEmail && <EmailItemContent isRemoveAction item={ selectedEmail } />
+					selectedEmail && (
+						<div className="margin-top-16">
+							<EmailItemContent isRemoveAction item={ selectedEmail } />
+						</div>
+					)
 				) : (
 					<>
 						<FormFieldset>
