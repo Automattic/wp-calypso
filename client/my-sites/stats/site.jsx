@@ -487,7 +487,7 @@ export default connect(
 		//       If the user's role is missing from the site's stats dashboard access allowlist (fetched via getJetpackSettings.role),
 		//       then it should be reflected in the user's view_stats capability.
 		const canUserViewStats =
-			! isOdysseyStats && ( canUserManageOptions || canCurrentUser( state, siteId, 'view_stats' ) );
+			isOdysseyStats || ( canUserManageOptions || canCurrentUser( state, siteId, 'view_stats' ) );
 
 		return {
 			canUserViewStats,
