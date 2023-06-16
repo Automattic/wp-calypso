@@ -329,7 +329,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
 
 	const shouldUpgrade =
-		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
+		( ( selectedDesign?.is_premium || !! selectedFontVariation ) &&
+			! isPremiumThemeAvailable &&
+			! didPurchaseSelectedTheme ) ||
 		( ! isPluginBundleEligible && isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
@@ -613,7 +615,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		const selectStyle = () => {
 			if (
 				shouldLimitGlobalStyles &&
-				! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug )
+				! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) &&
+				!! selectedFontVariation
 			) {
 				unlockPremiumGlobalStyles();
 			} else {
