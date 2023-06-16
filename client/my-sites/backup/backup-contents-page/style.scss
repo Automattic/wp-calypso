@@ -11,10 +11,13 @@
 
 	&__body {
 		border-top: 1px solid var(--studio-gray-5);
+		overflow-x: scroll;
 		padding-top: 30px;
 	}
 
 	.file-browser-node {
+		min-width: max-content;
+
 		&__loading {
 			&.placeholder {
 				height: 26px;
@@ -24,9 +27,19 @@
 		}
 
 		&__contents {
+			display: flex;
+			flex-direction: column;
+			overflow-x: auto;
+			background-color: #fff;
+
 			&:not(:first-child) {
 				padding-left: 26px;
 			}
+		}
+
+		.file-browser-node__title {
+			white-space: nowrap;
+			overflow: hidden;
 		}
 
 		.components-button.has-icon.has-text svg {
