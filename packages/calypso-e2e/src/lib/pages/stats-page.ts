@@ -27,7 +27,7 @@ export class StatsPage {
 	 */
 	async clickTab( name: StatsTabs ): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			const dismissModalButton = await this.page.getByRole( 'button', { name: 'Got it' } );
+			const dismissModalButton = this.page.getByRole( 'button', { name: 'Got it' } );
 			await dismissModalButton.click();
 			await dismissModalButton.waitFor( { state: 'hidden' } );
 		}
