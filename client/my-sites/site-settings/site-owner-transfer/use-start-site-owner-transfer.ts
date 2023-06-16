@@ -20,6 +20,7 @@ export const useStartSiteOwnerTransfer = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const mutation = useMutation( {
+		...options,
 		mutationFn: async ( { newSiteOwner }: MutationVariables ) => {
 			return wp.req.post(
 				{
@@ -29,7 +30,6 @@ export const useStartSiteOwnerTransfer = (
 				{ new_site_owner: newSiteOwner }
 			);
 		},
-		...options,
 	} );
 
 	const { mutate, isLoading } = mutation;
