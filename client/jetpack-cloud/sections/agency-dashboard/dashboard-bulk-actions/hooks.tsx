@@ -50,7 +50,7 @@ export function useHandleToggleMonitor( selectedSites: Array< Site >, isLargeScr
 		( activate: boolean ) => {
 			const heading = activate ? translate( 'Resume Monitor' ) : translate( 'Pause Monitor' );
 			const monitorAction = activate ? translate( 'resume' ) : translate( 'pause' );
-			const siteCountText = getSiteCountText( selectedSites );
+			const siteCountText = getSiteCountText( selectedSites ) as string;
 			const content =
 				selectedSites.length > 1
 					? translate( 'You are about to %(monitorAction)s the monitor for %(siteCountText)s.', {
@@ -109,7 +109,7 @@ export function useHandleResetNotification(
 			strong: <strong />,
 		};
 
-		const siteCountText = getSiteCountText( selectedSites );
+		const siteCountText = getSiteCountText( selectedSites ) as string;
 
 		const content =
 			selectedSites.length > 1

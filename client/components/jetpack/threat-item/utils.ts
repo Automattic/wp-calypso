@@ -31,7 +31,7 @@ export const getThreatMessage = ( threat: Threat ): string | TranslateResult => 
 	switch ( getThreatType( threat ) ) {
 		case 'core':
 			return translate( 'The installed version of WordPress (%s) has a known vulnerability.', {
-				args: [ version ],
+				args: [ version ?? 'unknown' ],
 			} );
 
 		case 'core_file':
@@ -71,7 +71,7 @@ export const getThreatMessage = ( threat: Threat ): string | TranslateResult => 
 					count: Object.keys( threat.rows ).length,
 					args: {
 						threatCount: Object.keys( threat.rows ).length,
-						threatTable: threat.table,
+						threatTable: threat.table as string,
 					},
 				}
 			);

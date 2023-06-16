@@ -55,7 +55,7 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 
 	return translate( 'Start with %(plan)s', {
 		args: {
-			plan: planTitle,
+			plan: planTitle ?? '',
 		},
 	} );
 }

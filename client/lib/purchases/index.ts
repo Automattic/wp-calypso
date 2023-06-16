@@ -852,7 +852,7 @@ export function purchaseType( purchase: Purchase ) {
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return i18n.translate( 'Mailboxes and Productivity Tools at %(domain)s', {
 			args: {
-				domain: purchase.meta,
+				domain: purchase.meta as string,
 			},
 		} );
 	}
@@ -860,7 +860,7 @@ export function purchaseType( purchase: Purchase ) {
 	if ( isTitanMail( purchase ) ) {
 		return i18n.translate( 'Mailboxes at %(domain)s', {
 			args: {
-				domain: purchase.meta,
+				domain: purchase.meta as string,
 			},
 		} );
 	}

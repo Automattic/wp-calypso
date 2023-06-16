@@ -22,8 +22,8 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 } ) => {
 	const translate = useTranslate();
 	const sortingLabel = useMemo(
-		() => options.find( ( option ) => option.value === value )?.label,
-		[ options, value ]
+		() => options.find( ( option ) => option.value === value )?.label ?? translate( 'unknown' ),
+		[ options, value, translate ]
 	);
 
 	return (

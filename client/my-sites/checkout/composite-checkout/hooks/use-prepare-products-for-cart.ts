@@ -351,7 +351,7 @@ function useAddRenewalItems( {
 					translate(
 						"I tried and failed to create products matching the identifier '%(productAlias)s'",
 						{
-							args: { productAlias },
+							args: { productAlias: productAlias as string },
 						}
 					)
 				),
@@ -440,7 +440,7 @@ function useAddProductFromSlug( {
 					translate(
 						"I tried and failed to create products matching the identifier '%(productAlias)s'",
 						{
-							args: { productAlias: productAliasFromUrl },
+							args: { productAlias: productAliasFromUrl as string },
 						}
 					)
 				),

@@ -246,7 +246,7 @@ export const PreCancellationDialog = ( {
 						<FormattedHeader
 							brandFont
 							headerText={ translate( 'Are you sure you want to cancel your %(label)s plan?', {
-								args: { label: planLabel },
+								args: { label: planLabel ?? '' },
 							} ) }
 							align="left"
 						/>

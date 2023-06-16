@@ -24,6 +24,11 @@ export default function Prices() {
 		const userYearlyProduct = Object.values( userProducts ).find(
 			( p ) => p.product_id === product.product_id
 		);
+
+		if ( userYearlyProduct === undefined ) {
+			return null;
+		}
+
 		const userMonthlyProduct =
 			userYearlyProduct &&
 			Object.values( userProducts ).find(
@@ -57,9 +62,9 @@ export default function Prices() {
 					<div>
 						{ translate( '%(price)s/month', {
 							args: {
-								price:
-									userMonthlyProduct &&
-									formatCurrency( userMonthlyProduct.cost, 'USD', currencyFormatOptions ),
+								price: userMonthlyProduct
+									? formatCurrency( userMonthlyProduct.cost, 'USD', currencyFormatOptions )
+									: translate( 'unknown' ),
 							},
 						} ) }
 					</div>

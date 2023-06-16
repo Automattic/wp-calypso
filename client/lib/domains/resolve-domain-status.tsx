@@ -24,7 +24,7 @@ import type { I18N, TranslateResult } from 'i18n-calypso';
 
 type ResolveDomainStatusReturn =
 	| {
-			statusText: TranslateResult;
+			statusText: TranslateResult | TranslateResult[];
 			statusClass:
 				| 'status-error'
 				| 'status-warning'
@@ -346,7 +346,6 @@ export function resolveDomainStatus(
 						},
 						args: {
 							expiryDate: moment.utc( domain.expiry ).format( 'LL' ),
-							renewCta,
 						},
 					}
 				);

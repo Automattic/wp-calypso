@@ -148,7 +148,7 @@ export const EligibilityWarnings = ( {
 
 	const monthlyCost = useSelector( ( state ) =>
 		getProductDisplayCost( state, PLAN_BUSINESS_MONTHLY )
-	);
+	) as string;
 
 	return (
 		<div className={ classes }>

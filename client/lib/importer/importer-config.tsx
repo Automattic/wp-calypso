@@ -32,11 +32,7 @@ interface ImporterConfigArgs {
 	isJetpack?: boolean;
 }
 
-function getConfig(
-	args: ImporterConfigArgs = { siteTitle: '', isAtomic: false, isJetpack: false }
-): {
-	[ key: string ]: ImporterConfig;
-} {
+function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): ImporterConfigMap {
 	let importerConfig: ImporterConfigMap = {};
 
 	importerConfig.wordpress = {
@@ -48,7 +44,7 @@ function getConfig(
 		description: translate(
 			'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args,
+				args: { siteTitle },
 				components: {
 					b: <strong />,
 				},
@@ -84,7 +80,7 @@ function getConfig(
 			{
 				args: {
 					importerName: 'Blogger',
-					siteTitle: args.siteTitle,
+					siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -121,7 +117,7 @@ function getConfig(
 			'Import posts, tags, images, and videos ' +
 				'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args,
+				args: { siteTitle },
 				components: {
 					b: <strong />,
 				},
@@ -158,7 +154,7 @@ function getConfig(
 			{
 				args: {
 					importerName: 'Substack',
-					siteTitle: args.siteTitle,
+					siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -205,7 +201,7 @@ function getConfig(
 			{
 				args: {
 					importerName: 'Squarespace',
-					siteTitle: args.siteTitle,
+					siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -241,7 +237,7 @@ function getConfig(
 		description: translate(
 			'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args,
+				args: { siteTitle },
 				components: {
 					b: <strong />,
 				},
@@ -262,12 +258,12 @@ function getConfig(
 	const hasUnifiedImporter = config.isEnabled( 'importer/unified' );
 
 	// For Jetpack sites, we don't support migration as destination, so we remove the override here.
-	if ( hasUnifiedImporter && args.isJetpack && ! args.isAtomic ) {
+	if ( hasUnifiedImporter && isJetpack && ! isAtomic ) {
 		delete importerConfig.wordpress.overrideDestination;
 	}
 
 	// For atomic sites filter out all importers except the WordPress ones if the Unified Importer is disabled.
-	if ( ! hasUnifiedImporter && args.isAtomic ) {
+	if ( ! hasUnifiedImporter && isAtomic ) {
 		importerConfig = { wordpress: importerConfig.wordpress };
 	}
 
