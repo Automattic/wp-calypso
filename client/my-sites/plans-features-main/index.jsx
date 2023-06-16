@@ -501,7 +501,7 @@ PlansFeaturesMain.propTypes = {
 		'new-hosted-site-hosting-flow',
 		'plugins',
 		'jetpack-app',
-		'plans-import',
+		'import',
 		'plans-ecommerce',
 		'default',
 	] ),
