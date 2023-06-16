@@ -92,29 +92,17 @@ const getSubscriptionMutationParams = (
 	emailId?: string
 ) => {
 	if ( isLoggedIn ) {
-		let path = `/read/following/mine/${ action }`;
-
-		if ( emailId ) {
-			path += `?email_id=${ emailId }`;
-		}
-
 		return {
-			path,
+			path: `/read/following/mine/${ action }`,
 			apiVersion: '1.1',
-			body: { source: 'calypso', url: url },
+			body: { source: 'calypso', url: url, ...( emailId ? { email_id: emailId } : {} ) },
 		};
 	}
 
-	let path = `/read/site/${ blogId }/post_email_subscriptions/${ action }`;
-
-	if ( emailId ) {
-		path += `?email_id=${ emailId }`;
-	}
-
 	return {
-		path,
+		path: `/read/site/${ blogId }/post_email_subscriptions/${ action }`,
 		apiVersion: '1.2',
-		body: {},
+		body: { ...( emailId ? { email_id: emailId } : {} ) },
 	};
 };
 
