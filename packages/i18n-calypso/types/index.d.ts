@@ -29,7 +29,7 @@ export interface ComponentInterpolations {
 
 export interface TranslateOptions {
 	/**
-	 * Arguments you would pass into sprintf to be run against the text for string substitution. Each substitution must exist. Iff a substitution shouldn't exist in some cases, pass an empty string to make the substitution explicit.
+	 * Arguments you would pass into `sprintf` to be run against the text for string substitution. Each substitution must exist. If a substitution shouldn't exist in some cases, pass an empty string to make the substitution explicit.
 	 */
 	args?: Substitutions;
 

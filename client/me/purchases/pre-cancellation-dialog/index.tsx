@@ -139,8 +139,16 @@ export const PreCancellationDialog = ( {
 	 * Instantiate site's variables.
 	 */
 	const siteName = site.name ?? '';
-	const productSlug = site.plan?.product_slug;
-	const planLabel = site.plan?.product_name_short;
+
+	// This component doesn't make sense if a plan doesn't exist!
+	const plan = site.plan;
+	if ( ! plan ) {
+		return null;
+	}
+
+	const productSlug = plan.product_slug;
+	const planLabel = plan.product_name_short;
+
 	const isComingSoon = site.is_coming_soon;
 	const isPrivate = site.is_private;
 	const launchedStatus = site.launch_status === 'launched' ? true : false;
@@ -246,7 +254,7 @@ export const PreCancellationDialog = ( {
 						<FormattedHeader
 							brandFont
 							headerText={ translate( 'Are you sure you want to cancel your %(label)s plan?', {
-								args: { label: planLabel ?? '' },
+								args: { label: planLabel },
 							} ) }
 							align="left"
 						/>

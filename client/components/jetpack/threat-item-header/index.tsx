@@ -31,9 +31,11 @@ const getThreatMessage = ( threat: Threat ) => {
 
 	switch ( getThreatType( threat ) ) {
 		case 'core':
-			return translate( 'Vulnerable WordPress version: %s', {
-				args: [ version ?? 'unknown' ],
-			} );
+			return version
+				? translate( 'Vulnerable WordPress version: %s', {
+						args: [ version ],
+				  } )
+				: translate( 'Vulnerable WordPress version.' );
 
 		case 'core_file':
 			return translate( 'Infected core file: %s', {

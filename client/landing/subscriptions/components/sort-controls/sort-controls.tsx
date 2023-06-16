@@ -22,9 +22,13 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 } ) => {
 	const translate = useTranslate();
 	const sortingLabel = useMemo(
-		() => options.find( ( option ) => option.value === value )?.label ?? translate( 'unknown' ),
-		[ options, value, translate ]
+		() => options.find( ( option ) => option.value === value )?.label,
+		[ options, value ]
 	);
+
+	if ( ! sortingLabel ) {
+		throw new Error( 'In SortControl, props.value must exist in props.options.' );
+	}
 
 	return (
 		<Dropdown
