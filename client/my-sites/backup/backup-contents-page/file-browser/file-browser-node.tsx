@@ -1,5 +1,6 @@
 import { Button, Icon } from '@wordpress/components';
 import { chevronDown, chevronRight } from '@wordpress/icons';
+import classNames from 'classnames';
 import { FunctionComponent, useCallback, useState } from 'react';
 import FileTypeIcon from './file-type-icon';
 import { FileBrowserItem } from './types';
@@ -10,6 +11,7 @@ interface FileBrowserNodeProps {
 	path: string;
 	siteId: number;
 	rewindId: number;
+	isAlternate: boolean; // This decides if the node will have a background color or not
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -17,6 +19,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	path,
 	siteId,
 	rewindId,
+	isAlternate,
 } ) => {
 	const isRoot = path === '/';
 	const hasChildren = item.hasChildren;
@@ -49,7 +52,11 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 
 		// @TODO: Add a message when the API fails to fetch
 		if ( isSuccess ) {
+			let childIsAlternate = isAlternate;
+
 			return backupFiles.map( ( item ) => {
+				childIsAlternate = ! childIsAlternate;
+
 				return (
 					<FileBrowserNode
 						key={ item.name }
@@ -57,6 +64,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						path={ `${ path }${ item.name }/` }
 						siteId={ siteId }
 						rewindId={ rewindId }
+						isAlternate={ childIsAlternate }
 					/>
 				);
 			} );
@@ -73,8 +81,10 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		return <Icon icon={ isOpen ? chevronDown : chevronRight } />;
 	};
 
+	const nodeClassName = classNames( 'file-browser-node', { 'is-alternate': isAlternate } );
+
 	return (
-		<div className="file-browser-node">
+		<div className={ nodeClassName }>
 			{ isRoot ? null : (
 				<Button
 					icon={ renderExpandIcon }
