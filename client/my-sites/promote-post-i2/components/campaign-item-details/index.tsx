@@ -267,11 +267,11 @@ export default function CampaignItemDetails( props: Props ) {
 						{ ! isLoading ? (
 							<>
 								<span>&bull;</span>
-								<div className="campaign-item__header-status-date">
+								<div className="campaign-item__header-status-item">
 									{ translate( 'Created:' ) } { campaignCreatedFormatted }
 								</div>
 								<span>&bull;</span>
-								<div className="campaign-item__header-status-date">
+								<div className="campaign-item__header-status-item">
 									{ translate( 'Author:' ) } { display_name }
 								</div>
 							</>
@@ -472,7 +472,7 @@ export default function CampaignItemDetails( props: Props ) {
 											{ ! isLoading ? osListFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
-									<div>
+									<div className="campaign-item-details__interests">
 										<span className="campaign-item-details__label">
 											{ translate( 'Interests' ) }
 										</span>
