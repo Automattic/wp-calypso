@@ -47,6 +47,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 
 	const { refetch } = useGetSiteSuggestionsQuery( {
 		enabled: shouldOverrideSiteTitle,
+		refetchOnWindowFocus: false,
 		onSuccess: ( response ) => {
 			if ( response.success === true ) {
 				setSiteTitle( response.suggestions[ 0 ].title );
