@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
@@ -116,6 +117,9 @@ const DailyBackupStatus = ( {
 				deltas={ deltas }
 				selectedDate={ selectedDate }
 				lastBackupAttemptOnDate={ lastBackupAttemptOnDate }
+				{ ...( config.isEnabled( 'jetpack/backup-contents-page' )
+					? { availableActions: [ 'rewind' ] }
+					: {} ) }
 			/>
 		) : (
 			<BackupFailed backup={ backup } />

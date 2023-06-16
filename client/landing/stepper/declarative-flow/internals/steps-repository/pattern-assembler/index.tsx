@@ -573,7 +573,11 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
-						hasSections={ !! sections.length }
+						hasSections={ Boolean( sections.length ) }
+						hasHeader={ Boolean( header ) }
+						hasFooter={ Boolean( footer ) }
+						hasColor={ Boolean( colorVariation ) }
+						hasFont={ Boolean( fontVariation ) }
 					/>
 				</NavigatorScreen>
 
