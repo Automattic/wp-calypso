@@ -504,7 +504,7 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 							</div>
 						</div>
-						{ ( status === 'completed' || status === 'finished' ) && (
+						{ ( status === 'finished' || status === 'canceled' ) && (
 							<div className="campaign-item-details__payment-container">
 								<div className="campaign-item-details__payment">
 									<div className="campaign-item-details__payment-row">
