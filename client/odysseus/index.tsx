@@ -53,6 +53,13 @@ const OdysseusAssistant = () => {
 						sender: 'wapuu',
 					},
 				] );
+			} else if ( lastNudge.nudge === 'monthly-plan' ) {
+				setMessages( [
+					{
+						text: 'I see you are sitting on a monthly plan. I can recommend you to switch to an annual plan, so you can save some money.',
+						sender: 'wapuu',
+					},
+				] );
 			}
 
 			setIsNudging( true );
