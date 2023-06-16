@@ -18,8 +18,8 @@ export type Intent =
 	| 'new-hosted-site-hosting-flow'
 	| 'plugins'
 	| 'jetpack-app' // newly added
-	| 'plans-import'
-	| 'plans-ecommerce'
+	| 'import'
+	| 'plans-ecommerce' // rename -> commerce
 	| 'default';
 
 interface Props {
@@ -81,7 +81,7 @@ const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent | null => {
 				intent,
 				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
 			};
-		case 'plans-import':
+		case 'import':
 			return {
 				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],

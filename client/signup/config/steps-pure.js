@@ -269,7 +269,7 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
-				intent: 'plans-import',
+				intent: 'import',
 			},
 		},
 
