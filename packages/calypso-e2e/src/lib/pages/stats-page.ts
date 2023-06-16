@@ -26,11 +26,13 @@ export class StatsPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: StatsTabs ): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			const dismissModalButton = this.page.getByRole( 'button', { name: 'Got it' } );
-			await dismissModalButton.click();
-			await dismissModalButton.waitFor( { state: 'hidden' } );
-		}
+		try {
+			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+				const dismissModalButton = this.page.getByRole( 'button', { name: 'Got it' } );
+				await dismissModalButton.click( { timeout: 3000 } );
+				await dismissModalButton.waitFor( { state: 'hidden' } );
+			}
+		} catch ( e ) {}
 		await clickNavTab( this.page, name );
 	}
 }
