@@ -101,7 +101,9 @@ export function getMappedLanguageSlug( langSlug: string | undefined ) {
 	if ( langSlug === 'no' ) {
 		return 'nb';
 	}
-
+	if ( langSlug === 'zh' ) {
+		return 'zh-cn';
+	}
 	return langSlug;
 }
 
@@ -123,7 +125,7 @@ export function getLanguageRouteParam( name = 'lang', optional = true ) {
  * @returns {Object | undefined} An object containing the locale data or undefined.
  */
 export function getLanguage( langSlug: string | undefined ): Language | undefined {
-	langSlug = getMappedLanguageSlug( langSlug );
+	langSlug = getMappedLanguageSlug( langSlug?.toLowerCase() );
 	if ( langSlug && localeRegex.test( langSlug ) ) {
 		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
 		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.

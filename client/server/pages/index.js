@@ -8,6 +8,7 @@ import {
 	isTranslatedIncompletely,
 	isDefaultLocale,
 	getLanguageSlugs,
+	getLanguage,
 } from '@automattic/i18n-utils';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -297,7 +298,16 @@ function setUpLoggedOutRoute( req, res, next ) {
 		};
 	}
 	const acceptLang = req.get( 'Accept-Language' )?.split( ',' )[ 0 ];
-	req.context.lang = acceptLang || req.context.lang;
+
+	const language = getLanguage( acceptLang );
+
+	if ( language ) {
+		req.context.lang = language.langSlug;
+		req.context.store.dispatch( {
+			type: LOCALE_SET,
+			localeSlug: language.langSlug,
+		} );
+	}
 
 	Promise.all( setupRequests )
 		.then( () => {
