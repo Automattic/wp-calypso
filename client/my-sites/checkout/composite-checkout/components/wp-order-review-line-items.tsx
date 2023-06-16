@@ -63,7 +63,6 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
-	useVariantPickerRadioButtons,
 }: {
 	className?: string;
 	isSummary?: boolean;
@@ -76,8 +75,6 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
-	// This is just for unit tests.
-	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -94,7 +91,6 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
-					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					key={ product.product_slug }
 					product={ product }
 					isSummary={ isSummary }
@@ -156,7 +152,6 @@ function LineItemWrapper( {
 	hasPartnerCoupon,
 	isDisabled,
 	initialVariantTerm,
-	useVariantPickerRadioButtons,
 }: {
 	product: ResponseCartProduct;
 	isSummary?: boolean;
@@ -171,8 +166,6 @@ function LineItemWrapper( {
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
 	initialVariantTerm: number | null | undefined;
-	// This is just for unit tests.
-	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
@@ -206,7 +199,6 @@ function LineItemWrapper( {
 	} );
 
 	const areThereVariants = variants.length > 1;
-	const shouldUseRadioButtons = useVariantPickerRadioButtons;
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -228,7 +220,6 @@ function LineItemWrapper( {
 						onChangeItemVariant={ onChangePlanLength }
 						isDisabled={ isDisabled }
 						variants={ variants }
-						type={ shouldUseRadioButtons ? 'radio' : 'dropdown' }
 					/>
 				) }
 			</LineItem>
