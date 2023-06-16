@@ -177,32 +177,30 @@ const SiteRow = ( {
 
 	return ! isDeleted ? (
 		<li className="row" role="row">
-			<div className="title-cell" role="cell">
-				<Link className="name" href={ siteTitleUrl }>
+			<span className="title-cell" role="cell">
+				<Link className="title-icon" href={ siteTitleUrl }>
 					<SiteIcon iconUrl={ site_icon } size={ 40 } siteName={ name } />
 				</Link>
-				<div className="vertical-stack">
-					<div className="horizontal-stack">
-						<Link className="name" href={ siteTitleUrl }>
-							{ name }
-						</Link>
+				<span className="title-column">
+					<Link className="title-name" href={ siteTitleUrl }>
+						{ name }
 						{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
 						{ !! is_paid_subscription && (
 							<span className="paid-label">
 								{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
 							</span>
 						) }
-					</div>
+					</Link>
 					<a
-						className="url"
+						className="title-url"
 						{ ...( url && { href: url } ) }
 						rel="noreferrer noopener"
 						target="_blank"
 					>
 						{ hostname }
 					</a>
-				</div>
-			</div>
+				</span>
+			</span>
 			<span className="date-cell" role="cell">
 				<TimeSince
 					date={
