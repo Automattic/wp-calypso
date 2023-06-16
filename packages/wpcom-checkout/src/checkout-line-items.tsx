@@ -801,12 +801,12 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isMonthlyProduct( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(discount)s applied in first month only', {
+				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
 					comment:
 						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
 						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
 					args: {
-						discount: formatCurrency( upgradeCredit, product.currency, {
+						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ),
@@ -819,12 +819,12 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isYearly( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(discount)s applied in first year only', {
+				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
 					comment:
 						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
 						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
 					args: {
-						discount: formatCurrency( upgradeCredit, product.currency, {
+						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ),
