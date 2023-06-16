@@ -35,6 +35,16 @@ const ErrorText = styled.p( {
 	fontSize: '100%',
 } );
 
+const AdministratorsExplanation = styled( FormSettingExplanation )( {
+	a: {
+		color: 'var(--studio-gray-50)',
+		textDecoration: 'underline',
+		'&:hover': {
+			color: 'var(--studio-gray-80)',
+		},
+	},
+} );
+
 const SiteOwnerTransferEligibility = ( {
 	siteId,
 	siteSlug,
@@ -114,7 +124,7 @@ const SiteOwnerTransferEligibility = ( {
 						<ErrorText>{ siteTransferEligibilityError }</ErrorText>
 					</Error>
 				) }
-				<FormSettingExplanation>
+				<AdministratorsExplanation>
 					{ translate(
 						'If you don`t see the new owner in the list, {{linkToUsers}} add them as an administrator {{/linkToUsers}}',
 						{
@@ -123,7 +133,7 @@ const SiteOwnerTransferEligibility = ( {
 							},
 						}
 					) }
-				</FormSettingExplanation>
+				</AdministratorsExplanation>
 			</FormFieldset>
 
 			<ButtonStyled
