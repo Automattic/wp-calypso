@@ -16,6 +16,13 @@ export class StatsPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		// Surppress notices.
+		this.page.evaluate(
+			"window.localStorage.setItem('notices_dismissed__traffic_page_highlights_module_settings', '1')"
+		);
+		this.page.evaluate(
+			"window.localStorage.setItem('notices_dismissed__traffic_page_settings', '1')"
+		);
 	}
 
 	/**
@@ -25,13 +32,6 @@ export class StatsPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: StatsTabs ): Promise< void > {
-		// Surppress notices.
-		this.page.evaluate(
-			"window.localStorage.setItem('notices_dismissed__traffic_page_highlights_module_settings', '1')"
-		);
-		this.page.evaluate(
-			"window.localStorage.setItem('notices_dismissed__traffic_page_settings', '1')"
-		);
 		await clickNavTab( this.page, name );
 	}
 }
