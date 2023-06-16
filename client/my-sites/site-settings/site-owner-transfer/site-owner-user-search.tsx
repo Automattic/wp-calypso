@@ -45,6 +45,26 @@ const AdministratorsExplanation = styled( FormSettingExplanation )( {
 	},
 } );
 
+function NoAdministrators( { href, siteSlug }: { href: string; siteSlug: string } ) {
+	const translate = useTranslate();
+	return (
+		<>
+			<p>
+				{ translate(
+					'To transfer ownership of {{strong}}%(siteSlug)s{{/strong}} to another user, first add them as an administrator of the site.',
+					{
+						args: { siteSlug },
+						components: { strong: <Strong /> },
+					}
+				) }
+			</p>
+			<ButtonStyled primary type="submit" href={ href }>
+				{ translate( 'Manage team members' ) }
+			</ButtonStyled>
+		</>
+	);
+}
+
 const SiteOwnerTransferEligibility = ( {
 	siteId,
 	siteSlug,
@@ -85,11 +105,16 @@ const SiteOwnerTransferEligibility = ( {
 		checkSiteTransferEligibility( { newSiteOwner: tempSiteOwner } );
 	};
 
+	const addUsersHref = '/people/team/' + siteSlug;
 	const currentUser = useSelector( getCurrentUser );
 	const { administrators } = useAdministrators( {
 		siteId,
 		excludeUserIDs: [ currentUser?.ID as number ],
 	} );
+
+	if ( ! administrators || administrators.length === 0 ) {
+		return <NoAdministrators href={ addUsersHref } siteSlug={ siteSlug } />;
+	}
 
 	return (
 		<form onSubmit={ handleFormSubmit }>
@@ -112,7 +137,7 @@ const SiteOwnerTransferEligibility = ( {
 					value={ tempSiteOwner }
 				>
 					<option value="">{ translate( 'Select administrator' ) }</option>
-					{ administrators?.map( ( user ) => (
+					{ administrators.map( ( user ) => (
 						<option key={ user.ID } value={ user.email }>
 							{ `${ user.login } (${ user.email })` }
 						</option>
@@ -129,7 +154,7 @@ const SiteOwnerTransferEligibility = ( {
 						'If you don`t see the new owner in the list, {{linkToUsers}} add them as an administrator {{/linkToUsers}}',
 						{
 							components: {
-								linkToUsers: <a href={ '/people/team/' + siteSlug } />,
+								linkToUsers: <a href={ addUsersHref } />,
 							},
 						}
 					) }
