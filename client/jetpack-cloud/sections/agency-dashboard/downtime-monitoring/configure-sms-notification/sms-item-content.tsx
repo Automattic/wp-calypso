@@ -92,12 +92,7 @@ export default function SMSItemContent( { item, toggleModal, recordEvent }: Prop
 						{ translate( 'Verify' ) }
 					</PopoverMenuItem>
 
-					<PopoverMenuItem
-						onClick={ () => {
-							//TODO handle actions
-							return null;
-						} }
-					>
+					<PopoverMenuItem onClick={ () => handleToggleModal( 'edit' ) }>
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem
