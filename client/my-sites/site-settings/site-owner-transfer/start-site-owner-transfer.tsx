@@ -182,7 +182,7 @@ const ContentAndOwnershipCard = ( {
 							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
 							// transer to
 							translate(
-								'You will not be able to access <strong>%(siteSlug)s</strong> unless allowed by <strong>%(siteOwner)s</strong>.'
+								'You will remain as an administrator on <strong>%(siteSlug)s</strong>, unless removed by <strong>%(siteOwner)s</strong>.'
 							),
 							{ siteSlug, siteOwner }
 						),
@@ -195,7 +195,7 @@ const ContentAndOwnershipCard = ( {
 							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
 							// transer to
 							translate(
-								'Your posts on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will no longer be authored by your account.'
+								'Your posts on <strong>%(siteSlug)s</strong> will remain with your account, unless they are transferred to <strong>%(siteOwner)s</strong>.'
 							),
 							{ siteSlug, siteOwner }
 						),
