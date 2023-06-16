@@ -5,23 +5,26 @@ import { useState, useRef } from 'react';
 import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import type { StateMonitorSettingsSMS } from '../../sites-overview/types';
+import type {
+	AllowedMonitorContactActions,
+	StateMonitorSettingsSMS,
+} from '../../sites-overview/types';
 
 import '../style.scss';
 
 interface Props {
 	item: StateMonitorSettingsSMS;
+	toggleModal?: ( item?: StateMonitorSettingsSMS, action?: AllowedMonitorContactActions ) => void;
+	recordEvent?: ( action: string, params?: object ) => void;
 }
 
-// events actions have not yet been implemented, silencing this warning
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EVENT_NAMES = {
 	edit: 'downtime_monitoring_sms_number_edit_click',
 	remove: 'downtime_monitoring_sms_number_remove_click',
 	verify: 'downtime_monitoring_sms_number_verify_click',
 };
 
-export default function SMSItemContent( { item }: Props ) {
+export default function SMSItemContent( { item, toggleModal, recordEvent }: Props ) {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
@@ -34,11 +37,12 @@ export default function SMSItemContent( { item }: Props ) {
 		setIsOpen( false );
 	};
 
-	// silencing error until action handling is added
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleToggleModal = () => {
-		// Here you can handle actions
-		return null;
+	const handleToggleModal = ( action: AllowedMonitorContactActions ) => {
+		toggleModal?.( item, action );
+		if ( recordEvent ) {
+			const eventName = EVENT_NAMES?.[ action as keyof typeof EVENT_NAMES ];
+			recordEvent( eventName );
+		}
 	};
 
 	const isVerified = item.verified;
@@ -55,14 +59,8 @@ export default function SMSItemContent( { item }: Props ) {
 					<span
 						role="button"
 						tabIndex={ 0 }
-						onKeyPress={ () => {
-							//TODO add verification handling
-							return null;
-						} }
-						onClick={ () => {
-							//TODO add verification handling
-							return null;
-						} }
+						onKeyPress={ () => handleToggleModal( 'verify' ) }
+						onClick={ () => handleToggleModal( 'verify' ) }
 						className="configure-contact-info__verification-status cursor-pointer"
 					>
 						<Badge type="warning">{ translate( 'Pending' ) }</Badge>
@@ -90,21 +88,11 @@ export default function SMSItemContent( { item }: Props ) {
 					onClose={ closeDropdown }
 					position="bottom left"
 				>
-					<PopoverMenuItem
-						onClick={ () => {
-							//TODO handle actions
-							return null;
-						} }
-					>
+					<PopoverMenuItem onClick={ () => handleToggleModal( 'verify' ) }>
 						{ translate( 'Verify' ) }
 					</PopoverMenuItem>
 
-					<PopoverMenuItem
-						onClick={ () => {
-							//TODO handle actions
-							return null;
-						} }
-					>
+					<PopoverMenuItem onClick={ () => handleToggleModal( 'edit' ) }>
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem

@@ -197,7 +197,6 @@ PlansFeaturesMainPM.propTypes = {
 	redirectToAddDomainFlow: PropTypes.bool,
 	showBiannualToggle: PropTypes.bool,
 	shouldShowPlansFeatureComparison: PropTypes.bool,
-	showFAQ: PropTypes.bool,
 };
 
 PlansFeaturesMainPM.defaultProps = {
@@ -208,7 +207,6 @@ PlansFeaturesMainPM.defaultProps = {
 	isReskinned: true,
 	plansWithScroll: false,
 	planTypeSelector: 'interval',
-	showFAQ: true,
 	showBiannualToggle: true,
 	shouldShowPlansFeatureComparison: true,
 };

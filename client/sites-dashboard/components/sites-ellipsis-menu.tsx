@@ -436,7 +436,7 @@ export const SitesEllipsisMenu = ( {
 							{ __( 'Privacy settings' ) }
 						</MenuItemLink>
 					) }
-					{ hasCustomDomain && (
+					{ hasCustomDomain && ! isNotAtomicJetpack( site ) && (
 						<MenuItemLink
 							href={ `/domains/manage/${ site.slug }/dns/${ site.slug }` }
 							onClick={ () =>

@@ -1,6 +1,8 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import ActivityCard from 'calypso/components/activity-card';
+import { default as ActivityCard, useToggleContent } from 'calypso/components/activity-card';
+import { default as Toolbar } from 'calypso/components/activity-card/toolbar';
 import ExternalLink from 'calypso/components/external-link';
 import BackupWarningRetry from 'calypso/components/jetpack/backup-warnings/backup-warning-retry';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -59,6 +61,8 @@ const BackupSuccessful = ( {
 
 	const multiSiteInfoLink = `https://jetpack.com/redirect?source=jetpack-support-backup&anchor=does-jetpack-backup-support-multisite`;
 
+	const [ showContent, toggleShowContent ] = useToggleContent();
+
 	return (
 		<>
 			<div className="status-card__message-head">
@@ -66,6 +70,19 @@ const BackupSuccessful = ( {
 				<div className="status-card__hide-mobile">
 					{ isToday ? translate( 'Latest backup' ) : translate( 'Latest backup on this day' ) }
 				</div>
+
+				{ config.isEnabled( 'jetpack/backup-contents-page' ) && (
+					<div className="status-card__toolbar">
+						<Toolbar
+							siteId={ siteId }
+							activity={ backup }
+							isContentExpanded={ showContent }
+							onToggleContent={ toggleShowContent }
+							availableActions={ [ 'download', 'rewind', 'view' ] }
+							onClickClone={ onClickClone }
+						/>
+					</div>
+				) }
 			</div>
 			<div className="status-card__hide-desktop">
 				<div className="status-card__title">{ displayDate }</div>

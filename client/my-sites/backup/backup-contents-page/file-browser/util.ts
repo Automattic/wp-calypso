@@ -93,10 +93,10 @@ export const parseBackupContentsData = ( payload: BackupLsResponse ): FileBrowse
 		}
 
 		// If 'sort' field doesn't exist in either, then 'dir' types come first
-		if ( a.type === 'dir' && b.type !== 'dir' ) {
+		if ( a.hasChildren === true && b.hasChildren !== true ) {
 			return -1;
 		}
-		if ( b.type === 'dir' && a.type !== 'dir' ) {
+		if ( b.hasChildren === true && a.hasChildren !== true ) {
 			return 1;
 		}
 

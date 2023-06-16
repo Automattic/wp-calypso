@@ -1,39 +1,39 @@
 import { CountComparisonCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
-import './subscribers-highlight-section.scss';
+import './style.scss';
 
-interface SubscribersTotalsData {
-	total_email: number;
-	total_wpcom: number;
-	total_email_free: number;
-	total_email_paid: number;
-}
-
-function useSubscriberHighlights( subscribersTotals: SubscribersTotalsData ) {
+function useSubscriberHighlights( siteId: number | null ) {
 	const translate = useTranslate();
+
+	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
 	const highlights = [
 		{
 			heading: translate( 'Total email subscribers' ),
-			count: subscribersTotals?.total_email || 0,
-			// previousCount: 0, // TODO: get previous data
+			count: subscribersTotals?.total_email,
 		},
 		{
 			heading: translate( 'Free email subscribers' ),
-			count: subscribersTotals?.total_email_free || 0,
-			// previousCount: 0, // TODO: get previous data
+			count: subscribersTotals?.total_email_free,
 		},
 		{
 			heading: translate( 'Paid email subscribers' ),
-			count: subscribersTotals?.total_email_paid || 0,
-			// previousCount: 0, // TODO: get previous data
+			count: subscribersTotals?.total_email_paid,
 		},
 		{
 			heading: translate( 'WordPress.com subscribers' ),
-			count: subscribersTotals?.total_wpcom || 0,
-			// previousCount: 0, // TODO: get previous data
+			count: subscribersTotals?.total_wpcom,
 		},
-	];
+	] as { heading: string; count: number | null }[];
+
+	if ( isLoading || isError ) {
+		// Nulling the count values makes the count comparison card render a '-' instead of a '0'.
+		highlights.map( ( h ) => {
+			if ( ! h.count && h.count !== 0 ) {
+				h.count = null;
+			}
+		} );
+	}
 	return highlights;
 }
 
@@ -43,15 +43,14 @@ function SubscriberHighlightsHeader() {
 		comment: 'Heading for Subscribers page highlights section',
 	} );
 
+	// TODO: Add an explanation here if we're running an older version of Odyssey Stats
+	//       without support for subscriber highlights API endpoint support.
+
 	return <h1 className="highlight-cards-heading">{ localizedTitle }</h1>;
 }
 
-function SubscriberHighlightsListing( {
-	subscribersTotals,
-}: {
-	subscribersTotals: SubscribersTotalsData;
-} ) {
-	const highlights = useSubscriberHighlights( subscribersTotals );
+function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
+	const highlights = useSubscriberHighlights( siteId );
 
 	return (
 		<div className="highlight-cards-list">
@@ -68,12 +67,10 @@ function SubscriberHighlightsListing( {
 }
 
 export default function SubscribersHighlightSection( { siteId }: { siteId: number | null } ) {
-	const { data } = useSubscribersTotalsQueries( siteId ); // TODO: isLoading, isError can be used to handle loading and an error state
-
 	return (
 		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
 			<SubscriberHighlightsHeader />
-			<SubscriberHighlightsListing subscribersTotals={ data } />
+			<SubscriberHighlightsListing siteId={ siteId } />
 		</div>
 	);
 }
