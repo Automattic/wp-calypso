@@ -1,7 +1,8 @@
 import { TRANSFERRING_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { requestSiteChecklist } from 'calypso/state/checklist/actions';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { ONBOARD_STORE } from '../stores';
@@ -51,6 +52,8 @@ const transferringHostedSite: Flow = {
 					}
 
 					dispatch( requestAdminMenu( siteId ) );
+
+					dispatch( requestSiteChecklist( siteId ?? '' ) );
 
 					return exitFlow( '/home/' + siteId );
 				}
