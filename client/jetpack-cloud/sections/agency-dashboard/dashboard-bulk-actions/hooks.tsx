@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback, useEffect, useState, useContext, RefObject } from 'react';
+import { useCallback, useEffect, useState, useContext, RefObject } from 'react';
 import acceptDialog from 'calypso/lib/accept';
 import {
 	useJetpackAgencyDashboardRecordTrackEvent,
@@ -14,8 +14,8 @@ import {
 import type { Site } from '../sites-overview/types';
 
 const dialogContent = (
-	heading: ReactChild,
-	description: ReactChild,
+	heading: string,
+	description: string,
 	action: ( accepted: boolean ) => void
 ) => {
 	const content = (

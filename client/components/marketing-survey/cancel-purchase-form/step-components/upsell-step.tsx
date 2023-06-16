@@ -21,7 +21,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 type UpsellProps = {
-	children: React.ReactChild;
+	children?: React.ReactNode;
 	image: string;
 	title: TranslateResult;
 	acceptButtonText: TranslateResult;

@@ -1,7 +1,7 @@
 import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
-import { ReactChild, ReactElement } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
 import StepNavigationLink from '../step-navigation-link';
 import VideoPressLogo from '../videopress-logo';
@@ -19,9 +19,9 @@ interface Props {
 	hideNext?: boolean;
 	skipButtonAlign?: 'top' | 'bottom';
 	skipHeadingText?: string;
-	backLabelText?: string | ReactChild;
-	skipLabelText?: string | ReactChild;
-	nextLabelText?: string | ReactChild;
+	backLabelText?: TranslateResult;
+	skipLabelText?: TranslateResult;
+	nextLabelText?: TranslateResult;
 	formattedHeader?: ReactElement;
 	hideFormattedHeader?: boolean;
 	headerImageUrl?: string;

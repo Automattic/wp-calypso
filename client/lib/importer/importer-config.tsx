@@ -1,12 +1,12 @@
 import config from '@automattic/calypso-config';
-import { translate } from 'i18n-calypso';
+import { TranslateResult, translate } from 'i18n-calypso';
 import { filter, orderBy, values } from 'lodash';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
 export interface ImporterOptionalURL {
-	title: React.ReactChild;
-	description: React.ReactChild;
-	invalidDescription: React.ReactChild;
+	title: TranslateResult;
+	description: TranslateResult;
+	invalidDescription: TranslateResult;
 }
 
 export interface ImporterConfig {
@@ -15,8 +15,8 @@ export interface ImporterConfig {
 	type: 'file' | 'url';
 	title: string;
 	icon: string;
-	description: React.ReactChild;
-	uploadDescription: React.ReactChild;
+	description: TranslateResult;
+	uploadDescription: TranslateResult;
 	weight: number;
 	overrideDestination?: string;
 	optionalUrl?: ImporterOptionalURL;
