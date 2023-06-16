@@ -81,7 +81,7 @@ export async function clickNavTab(
 		await navTabsButtonLocator.click( { noWaitAfter: true } );
 
 		const navTabIsOpenLocator = page.locator( `${ navTabParent }.is-open` );
-		await navTabIsOpenLocator.waitFor();
+		await navTabIsOpenLocator.waitFor( { timeout: 20000 } );
 	}
 
 	// Click on the intended item and wait for navigation to finish.
