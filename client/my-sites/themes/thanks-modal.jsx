@@ -24,6 +24,7 @@ import {
 	isInstallingTheme,
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
+import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/should-redirect-to-thank-you-page';
 import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { trackClick } from './helpers';
@@ -64,6 +65,12 @@ class ThanksModal extends Component {
 	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.shouldRedirectToThankYouPage ) {
+			return {
+				isVisible: false,
+				wasInstalling: false,
+			};
+		}
 		if ( nextProps.isInstalling || nextProps.isActivating || nextProps.hasActivated ) {
 			return {
 				isVisible: true,
@@ -347,6 +354,8 @@ const ConnectedThanksModal = connect(
 				  )
 				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive );
 
+		const activatingThemeId = state.themes.activationRequests?.themeId;
+
 		return {
 			siteId,
 			siteUrl,
@@ -358,6 +367,7 @@ const ConnectedThanksModal = connect(
 				siteId
 			),
 			shouldEditHomepageWithGutenberg,
+			shouldRedirectToThankYouPage: shouldRedirectToThankYouPage( state, activatingThemeId ),
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
