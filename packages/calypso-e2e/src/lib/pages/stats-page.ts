@@ -1,6 +1,5 @@
 import { Page } from 'playwright';
 import { clickNavTab } from '../../element-helper';
-import envVariables from '../../env-variables';
 
 export type StatsTabs = 'Traffic' | 'Insights' | 'Store';
 
@@ -26,13 +25,12 @@ export class StatsPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: StatsTabs ): Promise< void > {
-		try {
-			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-				const dismissModalButton = this.page.getByRole( 'button', { name: 'Got it' } );
-				await dismissModalButton.click( { timeout: 3000 } );
-				await dismissModalButton.waitFor( { state: 'hidden' } );
-			}
-		} catch ( e ) {}
+		const dismissModalButton = this.page.getByRole( 'button', { name: 'Got it' } );
+
+		if ( ( await dismissModalButton.count() ) > 0 ) {
+			await dismissModalButton.click();
+			await dismissModalButton.waitFor( { state: 'hidden' } );
+		}
 		await clickNavTab( this.page, name );
 	}
 }
