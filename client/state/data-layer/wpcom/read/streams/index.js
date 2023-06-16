@@ -8,8 +8,8 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
+import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
-import { receiveSites } from 'calypso/state/sites/actions';
 
 const noop = () => {};
 
@@ -260,7 +260,7 @@ export function handlePage( action, data ) {
 	}
 
 	// Need to extract the posts from the cards
-	let cardPosts = [];
+	const cardPosts = [];
 	let cardRecommendedSites = [];
 
 	if ( cards ) {
@@ -271,7 +271,6 @@ export function handlePage( action, data ) {
 				cardRecommendedSites = card.data;
 			}
 		} );
-		console.log( 'cardPosts', cardPosts, 'cardRecommendedSites', cardRecommendedSites );
 	}
 
 	const actions = analyticsForStream( {
@@ -318,13 +317,13 @@ export function handlePage( action, data ) {
 				site_description: site.description,
 				site_name: site.name,
 				feed_URL: site.feed_URL,
-				feed_ID: site.feed_ID,
+				feed_ID: site.feed_ID, // Not sure if this is needed yet
+				feedId: site.feed_ID,
 			};
 		} );
 
 		// Filter out nulls
 		streamSites = streamSites.filter( ( item ) => item !== null );
-		console.log( 'streamSites', streamSites, 'streamPosts', streamPosts );
 	} else if ( sites ) {
 		streamItems = sites.map( ( site ) => {
 			const post = site.posts[ 0 ] ?? null;
@@ -360,10 +359,9 @@ export function handlePage( action, data ) {
 		actions.push( receivePosts( streamPosts ) );
 		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
 		if ( streamSites.length > 0 ) {
-			actions.push( receiveSites( streamSites ) );
+			actions.push( receiveRecommendedSites( { seed: 'seed?', sites: streamSites } ) );
 		}
 	}
-	console.log( 'actions', actions );
 
 	return actions;
 }
