@@ -1,9 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
-import {
-	BillingTransaction,
-	BillingTransactionsType,
-} from 'calypso/state/billing-transactions/types';
+import { BillingTransaction } from 'calypso/state/billing-transactions/types';
 
 export const billingTransactionsQueryKey = 'use-stored-payment-methods';
 
@@ -11,17 +8,17 @@ interface BillingHistory {
 	billing_history: BillingTransaction[];
 }
 
-const fetchBillingTransactions = ( transactionType?: BillingTransactionsType ) =>
-	wp.req.get( `/me/billing-history` + ( transactionType ? `/${ transactionType }` : '' ), {
+const fetchPastBillingTransactions = () =>
+	wp.req.get( '/me/billing-history/past', {
 		apiVersion: '1.3',
 	} );
 
-export const useBillingTransactions = ( transactionType?: BillingTransactionsType ) => {
-	const queryKey = [ billingTransactionsQueryKey, transactionType ];
+export const usePastBillingTransactions = () => {
+	const queryKey = [ billingTransactionsQueryKey ];
 
 	const { data, isLoading, error } = useQuery< BillingHistory, Error >( {
 		queryKey,
-		queryFn: () => fetchBillingTransactions( transactionType ),
+		queryFn: () => fetchPastBillingTransactions(),
 	} );
 
 	return {
