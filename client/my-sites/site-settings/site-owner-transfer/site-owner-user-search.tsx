@@ -8,6 +8,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { ChooseUserLoadingPlaceholder } from './choose-user-loading-placeholder';
 import { useAdministrators } from './use-administrators';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
 
@@ -107,10 +108,14 @@ const SiteOwnerTransferEligibility = ( {
 
 	const addUsersHref = '/people/team/' + siteSlug;
 	const currentUser = useSelector( getCurrentUser );
-	const { administrators } = useAdministrators( {
+	const { administrators, isLoading } = useAdministrators( {
 		siteId,
 		excludeUserIDs: [ currentUser?.ID as number ],
 	} );
+
+	if ( isLoading ) {
+		return <ChooseUserLoadingPlaceholder />;
+	}
 
 	if ( ! administrators || administrators.length === 0 ) {
 		return <NoAdministrators href={ addUsersHref } siteSlug={ siteSlug } />;
