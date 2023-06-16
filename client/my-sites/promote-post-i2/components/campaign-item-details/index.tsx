@@ -597,10 +597,12 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__support-heading">
 									{ translate( 'Support articles' ) }
 								</div>
+								{ /*
+								commented out until we get the link
 								<Button className="is-link campaign-item-details__support-effective-ad-doc">
 									{ translate( 'What makes an effective ad?' ) }
 									<Gridicon icon="external" size={ 16 } />
-								</Button>
+								</Button>*/ }
 
 								<InlineSupportLink
 									className="is-link components-button campaign-item-details__support-link"
