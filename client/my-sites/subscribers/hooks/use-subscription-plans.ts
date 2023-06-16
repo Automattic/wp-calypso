@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Subscriber, SubscriptionPlan } from '../types';
 
-const useAddSubscriptions = ( rawSubscribers: Subscriber[] ): Subscriber[] => {
+const useSubscriptionPlans = ( subscriber: Subscriber ): string[] => {
 	const translate = useTranslate();
 
 	const getPaymentInterval = ( renew_interval: string ) => {
@@ -25,7 +25,7 @@ const useAddSubscriptions = ( rawSubscribers: Subscriber[] ): Subscriber[] => {
 		return money.integer !== '0' ? `${ money.symbol }${ money.integer } /` : '';
 	}
 
-	const transformSubscriptions = ( subscriptions?: SubscriptionPlan[] ) => {
+	const transformSubscriptionPlans = ( subscriptions?: SubscriptionPlan[] ) => {
 		const defaultSubscription = [ { renewalPrice: translate( 'Free tier' ), when: '' } ];
 
 		if ( subscriptions ) {
@@ -43,23 +43,15 @@ const useAddSubscriptions = ( rawSubscribers: Subscriber[] ): Subscriber[] => {
 		return defaultSubscription;
 	};
 
-	const transformedSubscribers = useMemo(
-		() =>
-			rawSubscribers
-				? rawSubscribers.map( ( subscriber: Subscriber ) => {
-						const subscriptionObjects = transformSubscriptions( subscriber.plans );
-						return {
-							...subscriber,
-							subscriptions: subscriptionObjects.map(
-								( subscription ) => `${ subscription.renewalPrice } ${ subscription.when }`
-							),
-						};
-				  } )
-				: [],
-		[ rawSubscribers ]
-	);
+	const subscriptionPlans = useMemo( () => {
+		if ( subscriber ) {
+			const plans = transformSubscriptionPlans( subscriber.plans );
+			return plans.map( ( plan ) => `${ plan.renewalPrice } ${ plan.when }` );
+		}
+		return [];
+	}, [ subscriber ] );
 
-	return transformedSubscribers;
+	return subscriptionPlans;
 };
 
-export default useAddSubscriptions;
+export default useSubscriptionPlans;
