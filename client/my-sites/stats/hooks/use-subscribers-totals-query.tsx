@@ -2,29 +2,16 @@ import { useQueries } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 const querySubscribersTotals = ( siteId: number | null ): Promise< any > => {
-	return wpcom.req.get(
-		{
-			method: 'GET',
-			apiNamespace: 'rest/v1.1',
-			path: `/sites/${ siteId }/stats/followers`,
-		},
-		{
-			http_envelope: 1,
-		}
-	);
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/stats/followers`,
+	} );
 };
 
 const queryMore = ( siteId: number | null ): Promise< any > => {
-	return wpcom.req.get(
-		{
-			method: 'GET',
-			apiNamespace: 'wpcom/v2',
-			path: `/sites/${ siteId }/subscribers/counts`,
-		},
-		{
-			http_envelope: 1,
-		}
-	);
+	return wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: `/sites/${ siteId }/subscribers/counts`,
+	} );
 };
 
 const selectSubscribers = ( payload: {
@@ -69,14 +56,14 @@ export default function useSubscribersTotalsQueries( siteId: number | null ) {
 
 	return {
 		data: {
-			total_email: queries[ 0 ]?.data?.total_email || 0,
-			total_wpcom: queries[ 0 ]?.data?.total_wpcom || 0,
+			total_email: queries[ 0 ]?.data?.total_email,
+			total_wpcom: queries[ 0 ]?.data?.total_wpcom,
 			total_email_free:
 				queries[ 0 ]?.data?.total_email !== undefined &&
 				queries[ 1 ]?.data?.total_email_paid !== undefined
 					? queries[ 0 ]?.data?.total_email - queries[ 1 ]?.data?.total_email_paid
-					: 0,
-			total_email_paid: queries[ 1 ]?.data?.total_email_paid || 0,
+					: queries[ 0 ]?.data?.total_email,
+			total_email_paid: queries[ 1 ]?.data?.total_email_paid,
 		},
 		isLoading: queries.some( ( result ) => result.isLoading ),
 		isError: queries.some( ( result ) => result.isError ),
