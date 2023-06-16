@@ -3,7 +3,6 @@ import wpcom from 'calypso/lib/wp';
 
 const querySubscribersTotals = ( siteId: number | null ): Promise< any > => {
 	return wpcom.req.get( {
-		method: 'GET',
 		path: `/sites/${ siteId }/stats/followers`,
 	} );
 };
