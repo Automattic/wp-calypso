@@ -92,10 +92,7 @@ const sensei: Flow = {
 		if ( isPlanStep && ! isLoggedIn ) {
 			redirect( getStartUrl( 'senseiPlan', locale ) );
 
-			result = {
-				state: AssertConditionState.CHECKING,
-				message: `${ this.name } requires a logged in user`,
-			};
+			result = { state: AssertConditionState.FAILURE };
 		}
 
 		return result;
