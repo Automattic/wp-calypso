@@ -30,10 +30,8 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 	} = result && result.data ? result : initialState;
 	const { isFetching } = result;
 	const { pageClickCallback } = usePagination( page, pageChanged, isFetching );
-	const { currentSubscriber, onClickUnsubscribe, onCloseModal } = useUnsubscribeModal(
-		selectedSiteId,
-		page
-	);
+	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
+		useUnsubscribeModal( selectedSiteId, page );
 
 	const navigationItems: Item[] = [
 		{
@@ -88,7 +86,11 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 
 			{ !! total && <GrowYourAudience /> }
 
-			<UnsubscribeModal subscriber={ currentSubscriber } onClose={ onCloseModal } />
+			<UnsubscribeModal
+				subscriber={ currentSubscriber }
+				onCancel={ resetSubscriber }
+				onConfirm={ onConfirmModal }
+			/>
 		</Main>
 	);
 };
