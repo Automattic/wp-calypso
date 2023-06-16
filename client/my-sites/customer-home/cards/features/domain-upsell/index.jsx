@@ -188,7 +188,7 @@ export function RenderDomainUpsell( {
 			  );
 
 	const domainNameSVG = (
-		<svg viewBox="0 0 40 18" id="map">
+		<svg viewBox="0 0 40 18" id="map" direction="ltr">
 			<text x="-115" y="15">
 				{ domainSuggestionName.length > 34
 					? `${ domainSuggestionName.slice( 0, 32 ) }...`
