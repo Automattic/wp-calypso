@@ -319,8 +319,10 @@ export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
 
 export interface RequestVerificationCodeParams {
 	type: 'email' | 'sms';
-	value: string | number;
+	value: string;
 	site_ids: Array< number >;
+	// For SMS contacts
+	number?: string;
 	country_code?: string;
 	country_numeric_code?: string;
 }

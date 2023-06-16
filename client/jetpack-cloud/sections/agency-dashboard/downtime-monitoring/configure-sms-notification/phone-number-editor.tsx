@@ -130,7 +130,8 @@ export default function PhoneNumberEditor( {
 	const handleRequestVerificationCode = () => {
 		requestVerificationCode.mutate( {
 			type: 'sms',
-			value: Number( phoneItem.phoneNumber ),
+			value: `${ phoneItem.countryNumericCode }${ phoneItem.phoneNumber }`,
+			number: phoneItem.phoneNumber,
 			site_ids: sites?.map( ( site ) => site.blog_id ) ?? [],
 			country_code: phoneItem.countryCode,
 			country_numeric_code: phoneItem.countryNumericCode,
