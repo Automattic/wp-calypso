@@ -17,7 +17,7 @@
 	.pattern-assembler__pattern-panel-list--is-open & {
 		margin-inline-start: 365px;
 
-		@include break-wide {
+		@media ( max-width: $break-wide ) {
 			margin-inline-start: 360px;
 		}
 	}
