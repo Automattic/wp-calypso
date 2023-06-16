@@ -17,7 +17,7 @@ import SenseiSetup from './internals/steps-repository/sensei-setup';
 import { AssertConditionState, Flow } from './internals/types';
 import './internals/sensei.scss';
 
-function getStartUrl( step, locale ) {
+function getStartUrl( step: string, locale: string ) {
 	return locale && locale !== 'en'
 		? `/start/account/user/${ locale }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`
 		: `/start/account/user?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`;
@@ -81,7 +81,7 @@ const sensei: Flow = {
 		return { submit, goToStep };
 	},
 
-	useAssertConditions(): AssertConditionResult {
+	useAssertConditions() {
 		const currentPath = window.location.pathname;
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const isPlanStep = currentPath.endsWith( `setup/${ this.name }/senseiPlan` );
@@ -94,7 +94,7 @@ const sensei: Flow = {
 
 			result = {
 				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires a logged in user`,
+				message: `${ this.name } requires a logged in user`,
 			};
 		}
 
