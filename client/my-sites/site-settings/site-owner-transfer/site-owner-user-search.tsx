@@ -151,7 +151,7 @@ const SiteOwnerTransferEligibility = ( {
 				) }
 				<AdministratorsExplanation>
 					{ translate(
-						'If you don`t see the new owner in the list, {{linkToUsers}} add them as an administrator {{/linkToUsers}}',
+						'If you don’t see the new owner in the list, {{linkToUsers}} add them as an administrator.{{/linkToUsers}}',
 						{
 							components: {
 								linkToUsers: <a href={ addUsersHref } />,
