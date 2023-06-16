@@ -7,7 +7,6 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -41,7 +40,6 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		data: { launchpad_screen: launchpadScreenOption, checklist: launchpadChecklist } = {},
 	} = useLaunchpad( siteSlug, siteIntentOption );
 
-	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
 	const isLoggedIn = useSelector( isUserLoggedIn );
