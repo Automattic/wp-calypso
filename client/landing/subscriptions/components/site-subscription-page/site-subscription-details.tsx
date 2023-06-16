@@ -3,12 +3,12 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useEffect, useState, useMemo } from 'react';
-import { getQueryArgs } from 'calypso/lib/query-args';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { CancelPaidSubscriptionModal } from '../cancel-paid-subscription-modal';
 import {
 	PaymentPlan,
