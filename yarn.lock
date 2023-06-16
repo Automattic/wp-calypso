@@ -31726,11 +31726,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wpcom-proxy-request@workspace:packages/wpcom-proxy-request"
   dependencies:
+    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     debug: ^4.3.3
+    postcss: ^8.4.5
     progress-event: ^1.0.0
     uuid: ^8.3.2
+    webpack: ^5.68.0
     wp-error: ^1.3.0
   languageName: unknown
   linkType: soft

@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { SectionContainer } from 'calypso/components/section';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getEarnPageUrl } from '../../helpers';
 import './styles.scss';
 
 type GrowYourAudienceCardProps = {
@@ -65,7 +66,7 @@ const GrowYourAudience = () => {
 						'Allow your readers to support your work with paid subscriptions, gated content, or tips.'
 					) }
 					title={ translate( 'Start earning' ) }
-					url={ `https://wordpress.com/earn/${ selectedSiteSlug }` }
+					url={ getEarnPageUrl( selectedSiteSlug ) }
 				/>
 			</div>
 		</SectionContainer>

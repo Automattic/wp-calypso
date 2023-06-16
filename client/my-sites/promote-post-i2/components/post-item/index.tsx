@@ -133,9 +133,9 @@ export default function PostItem( { post }: Props ) {
 
 			<td className="post-item__post-type">{ getPostType( post.type ) }</td>
 			<td className="post-item__post-publish-date">{ postDate }</td>
-			<td className="post-item__post-views">{ formatNumber( viewCount ) }</td>
-			<td className="post-item__post-likes">{ formatNumber( likeCount ) }</td>
-			<td className="post-item__post-comments">{ formatNumber( commentCount ) }</td>
+			<td className="post-item__post-views">{ formatNumber( viewCount, true ) }</td>
+			<td className="post-item__post-likes">{ formatNumber( likeCount, true ) }</td>
+			<td className="post-item__post-comments">{ formatNumber( commentCount, true ) }</td>
 			<td className="post-item__post-view">
 				<a href={ post.post_url } className="post-item__view-link">
 					{ __( 'View' ) }
