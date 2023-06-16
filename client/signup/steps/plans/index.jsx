@@ -343,7 +343,6 @@ PlansStep.propTypes = {
 		'plugins',
 		'jetpack-app',
 		'import',
-		'plans-ecommerce',
 		'default',
 	] ),
 };
