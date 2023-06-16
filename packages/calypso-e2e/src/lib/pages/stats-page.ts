@@ -1,5 +1,6 @@
 import { Page } from 'playwright';
 import { clickNavTab } from '../../element-helper';
+import envVariables from '../../env-variables';
 
 export type StatsTabs = 'Traffic' | 'Insights' | 'Store';
 
@@ -19,25 +20,17 @@ export class StatsPage {
 	}
 
 	/**
-	 * Suppresses the tooltips that blocks the nav menu.
-	 */
-	async suppressTooltips() {
-		await this.page.evaluate(
-			"window.localStorage.setItem('notices_dismissed__traffic_page_highlights_module_settings', '1')"
-		);
-		await this.page.evaluate(
-			"window.localStorage.setItem('notices_dismissed__traffic_page_settings', '1')"
-		);
-	}
-
-	/**
 	 * Given a string, click on the tab name on the page.
 	 *
 	 * @param {StatsTabs} name Name of the tab to click.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: StatsTabs ): Promise< void > {
-		await this.suppressTooltips();
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			const dismissModalButton = this.page.getByRole( 'button', { name: 'Got it' } );
+			await dismissModalButton.click();
+			await dismissModalButton.waitFor( { state: 'hidden' } );
+		}
 		await clickNavTab( this.page, name );
 	}
 }
