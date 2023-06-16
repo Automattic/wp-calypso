@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext, RefObject } from 'react';
 import acceptDialog from 'calypso/lib/accept';
 import {
@@ -15,7 +15,7 @@ import type { Site } from '../sites-overview/types';
 
 const dialogContent = (
 	heading: string,
-	description: string,
+	description: TranslateResult,
 	action: ( accepted: boolean ) => void
 ) => {
 	const content = (
