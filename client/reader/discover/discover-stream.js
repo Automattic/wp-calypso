@@ -8,7 +8,7 @@ import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
-const DEFAULT_TAB = 'recommended-tab';
+const DEFAULT_TAB = 'recommended';
 
 const DiscoverStream = ( props ) => {
 	const locale = useLocale();
@@ -34,6 +34,13 @@ const DiscoverStream = ( props ) => {
 	// Filter followed tags out of interestTags to get recommendedTags.
 	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
 	const recommendedTags = interestTags.filter( ( tag ) => ! followedTagSlugs.includes( tag.slug ) );
+
+	const isDefaultTab = selectedTab === DEFAULT_TAB;
+	const streamProps = {
+		...props,
+		isDiscoverTags: ! isDefaultTab,
+		streamKey: `discover:${ selectedTab }`,
+	};
 
 	const DiscoverNavigation = () => (
 		<SegmentedControl
@@ -66,7 +73,7 @@ const DiscoverStream = ( props ) => {
 	return (
 		<>
 			<DiscoverNavigation />
-			<Stream { ...props } />;
+			<Stream { ...streamProps } />;
 		</>
 	);
 };

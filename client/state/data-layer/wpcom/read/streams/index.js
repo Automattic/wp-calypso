@@ -102,7 +102,12 @@ const streamApis = {
 		dateProperty: 'date',
 	},
 	discover: {
-		path: () => '/read/tags/cards',
+		path: ( { streamKey } ) => {
+			if ( streamKey === 'discover:recommended' ) {
+				return '/read/tags/cards';
+			}
+			return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
+		},
 		dateProperty: 'date',
 		query: ( extras, { tags } ) =>
 			getQueryString( {

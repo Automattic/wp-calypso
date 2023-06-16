@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import {
@@ -12,10 +11,9 @@ const ANALYTICS_PAGE_TITLE = 'Reader';
 
 const exported = {
 	discover( context, next ) {
-		const blogId = config( 'discover_blog_id' );
 		const basePath = sectionify( context.path );
-		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId;
-		const streamKey = `discover:${ blogId }`;
+		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Discover';
+		const streamKey = `discover:`;
 		const mcKey = 'discover';
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -25,9 +23,8 @@ const exported = {
 		context.primary = (
 			<AsyncLoad
 				require="calypso/reader/discover/discover-stream"
-				key={ 'site-' + blogId }
+				key="discover-page"
 				streamKey={ streamKey }
-				siteId={ +blogId }
 				title="Discover"
 				trackScrollPage={ trackScrollPage.bind(
 					null,
