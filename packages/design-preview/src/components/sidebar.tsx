@@ -1,10 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import {
-	GlobalStylesVariations,
-	GlobalStylesProvider,
-	FontPairingVariations,
-} from '@automattic/global-styles';
+import { GlobalStylesVariations, FontPairingVariations } from '@automattic/global-styles';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import StyleHeading from './style-heading';
@@ -131,23 +127,21 @@ const Sidebar: React.FC< SidebarProps > = ( {
 					</div>
 				) }
 				{ ! variations.length && isEnabled( 'signup/design-picker-preview-fonts' ) && (
-					<GlobalStylesProvider siteId={ siteId } stylesheet={ stylesheet } placeholder={ null }>
-						<div className="design-preview__sidebar-variations">
-							<StyleHeading
-								title={ translate( 'Fonts' ) }
-								description={ translate(
-									'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-								) }
-								isPremium
-							/>
-							<FontPairingVariations
-								siteId={ siteId }
-								stylesheet={ stylesheet }
-								selectedFontPairingVariation={ selectedFontVariation }
-								onSelect={ onSelectFontVariation }
-							/>
-						</div>
-					</GlobalStylesProvider>
+					<div className="design-preview__sidebar-variations">
+						<StyleHeading
+							title={ translate( 'Fonts' ) }
+							description={ translate(
+								'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
+							) }
+							isPremium
+						/>
+						<FontPairingVariations
+							siteId={ siteId }
+							stylesheet={ stylesheet }
+							selectedFontPairingVariation={ selectedFontVariation }
+							onSelect={ onSelectFontVariation }
+						/>
+					</div>
 				) }
 			</div>
 			{ actionButtons && (

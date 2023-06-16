@@ -205,6 +205,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		null
 	);
 
+	const [ globalStyles, setGlobalStyles ] = useState< GlobalStylesObject | null >( null );
+
 	// Unset the selected design, thus restarting the design picking experience.
 	useEffect( () => {
 		setSelectedDesign( undefined );
@@ -510,6 +512,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				}
 				return setDesignOnSite( siteSlugOrId, _selectedDesign, {
 					styleVariation: selectedStyleVariation,
+					globalStyles,
 				} ).then( ( theme: ActiveTheme ) => {
 					return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
 				} );
@@ -576,6 +579,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 			setSelectedDesign( undefined );
 			setSelectedStyleVariation( undefined );
+			setGlobalStyles( null );
+			setSelectedFontVariation( null );
 			setIsPreviewingDesign( false );
 			return;
 		}
@@ -687,6 +692,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					stylesheet={ selectedDesign.recipe?.stylesheet }
 					selectedFontVariation={ selectedFontVariation }
 					onSelectFontVariation={ setSelectedFontVariation }
+					onGlobalStylesChange={ setGlobalStyles }
 				/>
 			</>
 		);
