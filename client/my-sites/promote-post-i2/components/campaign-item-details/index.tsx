@@ -90,7 +90,7 @@ export default function CampaignItemDetails( props: Props ) {
 		clicks_total,
 		clickthrough_rate,
 		duration_days,
-		total_budget_left,
+		budget_left,
 		total_budget,
 		total_budget_used,
 		visits_total = 0,
@@ -115,7 +115,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
 	const durationFormatted = getCampaignDurationFormatted( start_date, end_date );
 	const totalBudgetFormatted = `$${ formatCents( total_budget || 0 ) }`;
-	const totalBudgetLeftFormatted = `$${ formatCents( total_budget_left || 0 ) } ${ __( 'left' ) }`;
+	const totalBudgetLeftFormatted = `$${ formatCents( budget_left || 0 ) } ${ __( 'left' ) }`;
 	const overallSpendingFormatted = `$${ formatCents( total_budget_used || 0 ) }`;
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
