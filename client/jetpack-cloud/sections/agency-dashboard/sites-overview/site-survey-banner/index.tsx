@@ -10,6 +10,8 @@ import {
 import { savePreference } from 'calypso/state/preferences/actions';
 import { PreferenceType } from '../types';
 
+import './style.scss';
+
 interface Props {
 	isDashboardView?: boolean;
 }
@@ -57,7 +59,7 @@ export default function SiteSurveyBanner( { isDashboardView }: Props ) {
 			jetpack
 			dismissWithoutSavingPreference
 			horizontal
-			onActivate={ () => dismissAndRecordEvent( 'survey_banner_accept' ) }
+			onClick={ () => dismissAndRecordEvent( 'survey_banner_accept' ) }
 			onDismiss={ () => dismissAndRecordEvent( 'survey_banner_dismiss' ) }
 		/>
 	);
