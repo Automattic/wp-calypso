@@ -18,6 +18,7 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import ReaderDiscoverSidebar from 'calypso/reader/stream/reader-discover-sidebar';
 import ReaderSearchSidebar from 'calypso/reader/stream/reader-search-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
@@ -28,6 +29,7 @@ import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/like
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
 	requestPage,
@@ -51,7 +53,6 @@ import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import ReaderListFollowedSites from './reader-list-followed-sites';
 import './style.scss';
-import ReaderDiscoverSidebar from 'calypso/reader/stream/reader-discover-sidebar';
 
 const WIDE_DISPLAY_CUTOFF = 900;
 const GUESSED_POST_HEIGHT = 600;
@@ -463,7 +464,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag, tags } =
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag, tags, sites } =
 			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
@@ -513,9 +514,6 @@ class ReaderStream extends Component {
 			let sidebarContent = null;
 			let tabTitle = translate( 'Sites' );
 
-			//TODO: figure out how to get list of recommended sites from the discover API request
-			// items is the list of posts, so we can't use that
-
 			if ( isTagPage ) {
 				sidebarContent = <ReaderTagSidebar tag={ tag } />;
 				tabTitle = translate( 'Related' );
@@ -523,7 +521,7 @@ class ReaderStream extends Component {
 			} else if ( isSearchPage ) {
 				sidebarContent = <ReaderSearchSidebar items={ items } />;
 			} else if ( isDiscoverPage ) {
-				sidebarContent = <ReaderDiscoverSidebar items={ [] } />;
+				sidebarContent = <ReaderDiscoverSidebar items={ sites } />;
 			} else {
 				sidebarContent = <ReaderListFollowedSites path={ path } />;
 			}
@@ -599,6 +597,7 @@ export default connect(
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
 		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
+		const recommendedSites = getReaderRecommendedSites( state, 'seed?' ) || [];
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -619,6 +618,7 @@ export default connect(
 			primarySiteId: getPrimarySiteId( state ),
 			tag: streamKeySuffix,
 			tags: getReaderTags( state ),
+			sites: recommendedSites,
 		};
 	},
 	{
