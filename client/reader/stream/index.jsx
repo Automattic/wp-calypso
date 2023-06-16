@@ -597,7 +597,7 @@ export default connect(
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
 		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
-		const recommendedSites = getReaderRecommendedSites( state, 'seed?' ) || [];
+		const recommendedSites = getReaderRecommendedSites( state, 'discover-recommendations' ) || [];
 
 		return {
 			blockedSites: getBlockedSites( state ),
