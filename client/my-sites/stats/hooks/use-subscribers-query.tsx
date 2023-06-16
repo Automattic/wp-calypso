@@ -13,7 +13,7 @@ export interface SubscribersData {
 	date?: string;
 	unit?: string;
 	data?: {
-		[ key: string ]: string | number;
+		[ key: string ]: number | null;
 	}[];
 }
 
