@@ -23,7 +23,7 @@ export const SubscriberList = ( { subscribers, onUnsubscribe }: SubscriberListPr
 				<span className="subscriber-list__profile-column" role="columnheader">
 					{ translate( 'Name' ) }
 				</span>
-				<span className="subscriber-list__subscription-type-column hidden" role="columnheader">
+				<span className="subscriber-list__subscription-type-column" role="columnheader">
 					{ translate( 'Subscription type' ) }
 				</span>
 				<span className="subscriber-list__rate-column hidden" role="columnheader">
