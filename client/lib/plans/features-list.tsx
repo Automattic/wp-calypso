@@ -294,7 +294,7 @@ import {
 	isFreePlan,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 } from '@automattic/calypso-products';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { englishLocales, localizeUrl, useLocale } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
 import { MemoExoticComponent } from 'react';
 import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
@@ -303,6 +303,8 @@ import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
+
+const locale = useLocale();
 
 export type FeatureObject = {
 	getSlug: () => string;
@@ -1709,7 +1711,14 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 		getTitle: () => i18n.translate( 'Transaction fees for payments' ),
 		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+			englishLocales.includes( locale ) ||
+			i18n.hasTranslation(
+				'Credit card fees are applied in addition to commission fees for payments.'
+			)
+				? i18n.translate(
+						'Credit card fees are applied in addition to commission fees for payments.'
+				  )
+				: '',
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
@@ -1718,7 +1727,14 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 10 },
 			} ),
 		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+			englishLocales.includes( locale ) ||
+			i18n.hasTranslation(
+				'Credit card fees are applied in addition to commission fees for payments.'
+			)
+				? i18n.translate(
+						'Credit card fees are applied in addition to commission fees for payments.'
+				  )
+				: '',
 		getAlternativeTitle: () => '10%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1729,7 +1745,14 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 8 },
 			} ),
 		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+			englishLocales.includes( locale ) ||
+			i18n.hasTranslation(
+				'Credit card fees are applied in addition to commission fees for payments.'
+			)
+				? i18n.translate(
+						'Credit card fees are applied in addition to commission fees for payments.'
+				  )
+				: '',
 		getAlternativeTitle: () => '8%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1740,7 +1763,14 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 4 },
 			} ),
 		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+			englishLocales.includes( locale ) ||
+			i18n.hasTranslation(
+				'Credit card fees are applied in addition to commission fees for payments.'
+			)
+				? i18n.translate(
+						'Credit card fees are applied in addition to commission fees for payments.'
+				  )
+				: '',
 		getAlternativeTitle: () => '4%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1751,7 +1781,14 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 2 },
 			} ),
 		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+			englishLocales.includes( locale ) ||
+			i18n.hasTranslation(
+				'Credit card fees are applied in addition to commission fees for payments.'
+			)
+				? i18n.translate(
+						'Credit card fees are applied in addition to commission fees for payments.'
+				  )
+				: '',
 		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1762,7 +1799,14 @@ export const FEATURES_LIST: FeatureList = {
 				args: { commission: 0 },
 			} ),
 		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+			englishLocales.includes( locale ) ||
+			i18n.hasTranslation(
+				'Credit card fees are applied in addition to commission fees for payments.'
+			)
+				? i18n.translate(
+						'Credit card fees are applied in addition to commission fees for payments.'
+				  )
+				: '',
 		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
