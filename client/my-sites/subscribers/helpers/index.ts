@@ -1,3 +1,10 @@
+const URL_PREFIX = 'https://wordpress.com';
+
+const getEarnPageUrl = ( siteSlug: string | null ) => `${ URL_PREFIX }/earn/${ siteSlug ?? '' }`;
+
+const getEarnPaymentsPageUrl = ( siteSlug: string | null ) =>
+	`${ URL_PREFIX }/earn/payments/${ siteSlug ?? '' }`;
+
 const getSubscribersCacheKey = (
 	siteId: number | null,
 	currentPage?: number,
@@ -18,4 +25,4 @@ const sanitizeInt = ( intString: string ) => {
 	return ! Number.isNaN( parsedInt ) && parsedInt > 0 ? parsedInt : undefined;
 };
 
-export { getSubscribersCacheKey, sanitizeInt };
+export { getEarnPageUrl, getEarnPaymentsPageUrl, getSubscribersCacheKey, sanitizeInt };

@@ -89,18 +89,25 @@ export const SiteSettingsPopover = ( {
 	const translate = useTranslate();
 	return (
 		<SettingsPopover className="site-settings-popover">
-			<SiteSettings { ...props } />
+			{ ( close: () => void ) => (
+				<>
+					<SiteSettings { ...props } />
 
-			<hr className="subscriptions__separator" />
+					<hr className="subscriptions__separator" />
 
-			<Button
-				className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
-				disabled={ unsubscribing }
-				icon={ <UnsubscribeIcon className="settings-popover__item-icon" /> }
-				onClick={ onUnsubscribe }
-			>
-				{ translate( 'Unsubscribe' ) }
-			</Button>
+					<Button
+						className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
+						disabled={ unsubscribing }
+						icon={ <UnsubscribeIcon className="settings-popover__item-icon" /> }
+						onClick={ () => {
+							onUnsubscribe();
+							close();
+						} }
+					>
+						{ translate( 'Unsubscribe' ) }
+					</Button>
+				</>
+			) }
 		</SettingsPopover>
 	);
 };

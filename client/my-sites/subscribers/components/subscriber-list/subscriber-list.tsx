@@ -7,13 +7,18 @@ import './styles.scss';
 
 type SubscriberListProps = {
 	subscribers: Subscriber[];
+	onUnsubscribe: ( subscriber: Subscriber ) => void;
 };
 
 const noop = () => undefined;
 
-export const SubscriberList = ( { subscribers: rawSubscribers }: SubscriberListProps ) => {
+export const SubscriberList = ( {
+	subscribers: rawSubscribers,
+	onUnsubscribe,
+}: SubscriberListProps ) => {
 	const translate = useTranslate();
 	const subscribers = useAddSubcriptions( rawSubscribers );
+
 	return (
 		<ul className="subscriber-list" role="table">
 			<li className="row header" role="row">
@@ -34,12 +39,12 @@ export const SubscriberList = ( { subscribers: rawSubscribers }: SubscriberListP
 				</span>
 				<span className="subscriber-list__menu-column" role="columnheader"></span>
 			</li>
-			{ subscribers.map( ( subscriber: Subscriber ) => (
+			{ subscribers.map( ( subscriber ) => (
 				<SubscriberRow
 					key={ subscriber.subscription_id }
 					subscriber={ subscriber }
 					onView={ noop }
-					onUnsubscribe={ noop }
+					onUnsubscribe={ onUnsubscribe }
 				/>
 			) ) }
 		</ul>

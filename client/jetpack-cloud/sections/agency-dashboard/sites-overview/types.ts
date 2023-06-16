@@ -194,6 +194,9 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	setIsBulkManagementActive: ( value: boolean ) => void;
 	selectedSites: Array< Site >;
 	setSelectedSites: ( value: Array< Site > ) => void;
+	currentLicenseInfo: string | null;
+	showLicenseInfo: ( license: string ) => void;
+	hideLicenseInfo: () => void;
 }
 
 export interface DashboardDataContextInterface {
@@ -291,6 +294,7 @@ export interface MonitorSettingsEmail {
 export interface StateMonitorSettingsSMS {
 	name: string;
 	countryCode: string;
+	countryNumericCode: string;
 	phoneNumber: string;
 	phoneNumberFull: string;
 	verified: boolean;

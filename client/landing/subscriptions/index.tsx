@@ -11,6 +11,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AnyAction } from 'redux';
 import { setupLocale } from 'calypso/boot/locale';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import GlobalNotices from 'calypso/components/global-notices';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { WindowLocaleEffectManager } from 'calypso/landing/stepper/utils/window-locale-effect-manager';
 import { SiteSubscriptionPage } from 'calypso/landing/subscriptions/components/site-subscription-page';
@@ -54,6 +55,7 @@ window.AppBoot = async () => {
 	ReactDom.render(
 		<CalypsoI18nProvider>
 			<Provider store={ reduxStore }>
+				<GlobalNotices />
 				<QueryClientProvider client={ queryClient }>
 					<MomentProvider>
 						<WindowLocaleEffectManager />

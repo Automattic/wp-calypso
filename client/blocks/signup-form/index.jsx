@@ -664,7 +664,7 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned || this.props.isWoo
+							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooCoreProfilerFlow )
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -1296,6 +1296,9 @@ function TrackRender( { children, eventName } ) {
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
+		const isWooCoreProfilerFlow =
+			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' );
+
 		return {
 			currentUser: getCurrentUser( state ),
 			oauth2Client,
@@ -1305,7 +1308,8 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-			isWoo: isWooOAuth2Client( oauth2Client ),
+			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
+			isWooCoreProfilerFlow,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 		};

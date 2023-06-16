@@ -39,7 +39,7 @@ const selectSubscribers = ( payload: {
 };
 
 // email_subscribers includes both email and wpcom subscribers so it can't be used for calculations
-const selecPaidSubscribers = ( payload: {
+const selectPaidSubscribers = ( payload: {
 	counts: { email_subscribers: number; paid_subscribers: number; social_followers: number };
 } ) => {
 	const paidSubscribers = payload?.counts?.paid_subscribers || 0;
@@ -61,7 +61,7 @@ export default function useSubscribersTotalsQueries( siteId: number | null ) {
 			{
 				queryKey: [ 'stats', 'totals', 'paid', 'subscribers', siteId ],
 				queryFn: () => queryMore( siteId ),
-				select: selecPaidSubscribers,
+				select: selectPaidSubscribers,
 				staleTime: 1000 * 60 * 5, // 5 minutes
 			},
 		],

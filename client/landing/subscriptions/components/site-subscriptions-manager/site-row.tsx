@@ -1,11 +1,15 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import TimeSince from 'calypso/components/time-since';
+import { successNotice } from 'calypso/state/notices/actions';
 import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
+import { useSubscriptionManagerContext } from '../subscription-manager-context';
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
@@ -52,9 +56,10 @@ const SelectedNewPostDeliveryMethods = ( {
 
 type SiteRowProps = Reader.SiteSubscription & {
 	onSiteTitleClick: () => void;
+	successNotice: typeof successNotice;
 };
 
-export default function SiteRow( {
+const SiteRow = ( {
 	blog_ID,
 	name,
 	site_icon,
@@ -64,8 +69,12 @@ export default function SiteRow( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	onSiteTitleClick,
-}: SiteRowProps ) {
+	isDeleted,
+	successNotice,
+}: SiteRowProps ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const hostname = useMemo( () => {
 		try {
 			return new URL( url ).hostname;
@@ -87,8 +96,73 @@ export default function SiteRow( {
 		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
+	const { mutate: resubscribe } = SubscriptionManager.useSiteSubscribeMutation();
 
-	return (
+	const unsubscribeSuccessCallback = () => {
+		dispatch(
+			successNotice(
+				translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
+				{
+					duration: 5000,
+					button: translate( 'Resubscribe' ),
+					onClick: () =>
+						resubscribe( { blog_id: blog_ID, url, doNotInvalidateSiteSubscriptions: true } ),
+				}
+			)
+		);
+	};
+
+	const { portal } = useSubscriptionManagerContext();
+
+	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
+		// Update post notification settings
+		updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } );
+
+		// Record tracks event
+		const tracksProperties = { blog_id: blog_ID, portal };
+		if ( send_posts ) {
+			recordTracksEvent( 'calypso_subscriptions_notifications_toggle_on', tracksProperties );
+		} else {
+			recordTracksEvent( 'calypso_subscriptions_notifications_toggle_off', tracksProperties );
+		}
+	};
+
+	const handleEmailMeNewPostsChange = ( send_posts: boolean ) => {
+		// Update post emails settings
+		updateEmailMeNewPosts( { blog_id: blog_ID, send_posts } );
+
+		// Record tracks event
+		const tracksProperties = { blog_id: blog_ID, portal };
+		if ( send_posts ) {
+			recordTracksEvent( 'calypso_subscriptions_post_emails_toggle_on', tracksProperties );
+		} else {
+			recordTracksEvent( 'calypso_subscriptions_post_emails_toggle_off', tracksProperties );
+		}
+	};
+
+	const handleEmailMeNewCommentsChange = ( send_comments: boolean ) => {
+		// Update comment emails settings
+		updateEmailMeNewComments( { blog_id: blog_ID, send_comments } );
+
+		// Record tracks event
+		const tracksProperties = { blog_id: blog_ID, portal };
+		if ( send_comments ) {
+			recordTracksEvent( 'calypso_subscriptions_comment_emails_toggle_on', tracksProperties );
+		} else {
+			recordTracksEvent( 'calypso_subscriptions_comment_emails_toggle_off', tracksProperties );
+		}
+	};
+
+	const handleDeliveryFrequencyChange = ( delivery_frequency: Reader.EmailDeliveryFrequency ) => {
+		// Update post emails delivery frequency
+		updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } );
+
+		// Record tracks event
+		const tracksProperties = { blog_id: blog_ID, delivery_frequency, portal };
+		recordTracksEvent( 'calypso_subscriptions_post_emails_set_frequency', tracksProperties );
+	};
+
+	return ! isDeleted ? (
 		<li className="row" role="row">
 			<div className="title-cell" role="cell">
 				<Button
@@ -146,35 +220,34 @@ export default function SiteRow( {
 				<SiteSettingsPopover
 					// NotifyMeOfNewPosts
 					notifyMeOfNewPosts={ !! delivery_methods.notification?.send_posts }
-					onNotifyMeOfNewPostsChange={ ( send_posts ) =>
-						updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } )
-					}
+					onNotifyMeOfNewPostsChange={ handleNotifyMeOfNewPostsChange }
 					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
 					// EmailMeNewPosts
 					emailMeNewPosts={ !! delivery_methods.email?.send_posts }
 					updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
-					onEmailMeNewPostsChange={ ( send_posts ) =>
-						updateEmailMeNewPosts( { blog_id: blog_ID, send_posts } )
-					}
+					onEmailMeNewPostsChange={ handleEmailMeNewPostsChange }
 					// DeliveryFrequency
 					deliveryFrequency={
 						delivery_methods.email?.post_delivery_frequency ??
 						Reader.EmailDeliveryFrequency.Instantly
 					}
-					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
-						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
-					}
+					onDeliveryFrequencyChange={ handleDeliveryFrequencyChange }
 					updatingFrequency={ updatingFrequency }
 					// EmailMeNewComments
 					emailMeNewComments={ !! delivery_methods.email?.send_comments }
-					onEmailMeNewCommentsChange={ ( send_comments ) =>
-						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
-					}
+					onEmailMeNewCommentsChange={ handleEmailMeNewCommentsChange }
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID, url: url } ) }
+					onUnsubscribe={ () =>
+						unsubscribe(
+							{ blog_id: blog_ID, url, doNotInvalidateSiteSubscriptions: true },
+							{ onSuccess: unsubscribeSuccessCallback }
+						)
+					}
 					unsubscribing={ unsubscribing }
 				/>
 			</span>
 		</li>
-	);
-}
+	) : null;
+};
+
+export default connect( null, { successNotice } )( SiteRow );
