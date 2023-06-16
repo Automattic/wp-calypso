@@ -207,8 +207,8 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 			vcs {
 				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM connection
 				triggerRules = """
-					+:root=${wpcom.id}:**/mu-plugins/jetpack*-plugin/moon/*
-					+:root=${wpcom.id}:**/mu-plugins/jetpack*-plugin/sun/*
+					+:root=wpcom:**/mu-plugins/jetpack*-plugin/moon/*
+					+:root=wpcom:**/mu-plugins/jetpack*-plugin/sun/*
 				""".trimIndent()
 			}
 		} else {
