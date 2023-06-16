@@ -321,20 +321,18 @@ describe( '<HappinessSupportCard isJetpackFreePlan', () => {
 } );
 
 describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
-	test.each( [
-		PLAN_BUSINESS,
-		PLAN_BUSINESS_2_YEARS,
-		PLAN_JETPACK_BUSINESS,
-		PLAN_JETPACK_BUSINESS_MONTHLY,
-	] )( `Should be eligible for live chat for %s`, ( plan ) => {
-		const props = {
-			plan: plan,
-			isPlaceholder: false,
-			selectedSite: {
-				plan: { product_slug: plan },
-			},
-		};
-		render( <ProductPurchaseFeaturesList { ...props } /> );
-		expect( screen.getByRole( 'link', { name: /ask a question/i } ) ).toBeVisible();
-	} );
+	test.each( [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS, PLAN_JETPACK_BUSINESS_MONTHLY ] )(
+		`Should be eligible for live chat for %s`,
+		( plan ) => {
+			const props = {
+				plan: plan,
+				isPlaceholder: false,
+				selectedSite: {
+					plan: { product_slug: plan },
+				},
+			};
+			render( <ProductPurchaseFeaturesList { ...props } /> );
+			expect( screen.getByRole( 'button', { name: /ask a question/i } ) ).toBeVisible();
+		}
+	);
 } );
