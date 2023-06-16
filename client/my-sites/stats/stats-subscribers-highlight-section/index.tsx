@@ -28,7 +28,11 @@ function useSubscriberHighlights( siteId: number | null ) {
 
 	if ( isLoading || isError ) {
 		// Nulling the count values makes the count comparison card render a '-' instead of a '0'.
-		highlights.map( ( h ) => ( h.count = null ) );
+		highlights.map( ( h ) => {
+			if ( ! h.count && h.count !== 0 ) {
+				h.count = null;
+			}
+		} );
 	}
 	return highlights;
 }

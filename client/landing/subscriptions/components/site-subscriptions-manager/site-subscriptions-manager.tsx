@@ -1,7 +1,6 @@
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import { useNavigate } from 'react-router';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import SiteSubscriptionsList from './site-subscriptions-list';
 import ListActionsBar from './site-subscriptions-list-actions-bar';
@@ -52,14 +51,11 @@ SiteSubscriptionsManager.ListActionsBar = ListActionsBar;
 SiteSubscriptionsManager.List = SiteSubscriptionsList;
 
 export default () => {
-	const navigate = useNavigate();
 	return (
 		<SiteSubscriptionsManagerProvider>
 			<SiteSubscriptionsManager>
 				<SiteSubscriptionsManager.ListActionsBar />
-				<SiteSubscriptionsManager.List
-					onSiteTitleClick={ ( blogId ) => navigate( `/subscriptions/site/${ blogId }` ) }
-				/>
+				<SiteSubscriptionsManager.List />
 			</SiteSubscriptionsManager>
 		</SiteSubscriptionsManagerProvider>
 	);

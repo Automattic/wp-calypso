@@ -194,6 +194,9 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	setIsBulkManagementActive: ( value: boolean ) => void;
 	selectedSites: Array< Site >;
 	setSelectedSites: ( value: Array< Site > ) => void;
+	currentLicenseInfo: string | null;
+	showLicenseInfo: ( license: string ) => void;
+	hideLicenseInfo: () => void;
 }
 
 export interface DashboardDataContextInterface {

@@ -25,6 +25,7 @@ import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { requestSites } from 'calypso/state/sites/actions';
+import { isAnchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
@@ -44,6 +45,10 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 }
 
 function determineFlow() {
+	if ( isAnchorFmFlow() ) {
+		return availableFlows[ 'anchor-fm-flow' ];
+	}
+
 	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
 
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];

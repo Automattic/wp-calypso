@@ -3,6 +3,7 @@ import { chevronDown, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { FunctionComponent, useCallback, useState } from 'react';
 import FileTypeIcon from './file-type-icon';
+import { useTruncatedFileName } from './hooks';
 import { FileBrowserItem } from './types';
 import { useBackupContentsQuery } from './use-backup-contents-query';
 
@@ -82,6 +83,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const nodeClassName = classNames( 'file-browser-node', { 'is-alternate': isAlternate } );
+	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30 );
 
 	return (
 		<div className={ nodeClassName }>
@@ -90,8 +92,10 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					icon={ renderExpandIcon }
 					className="file-browser-node__title has-icon"
 					onClick={ handleClick }
+					showTooltip={ isLabelTruncated }
+					label={ item.name }
 				>
-					<FileTypeIcon type={ item.type } /> { item.name }
+					<FileTypeIcon type={ item.type } /> { label }
 				</Button>
 			) }
 

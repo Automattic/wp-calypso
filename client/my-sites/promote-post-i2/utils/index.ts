@@ -62,10 +62,13 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 	}
 };
 
-export const isCampaignFinished = ( status: string ) => {
-	return [ campaignStatus.CANCELED, campaignStatus.ACTIVE, campaignStatus.FINISHED ].includes(
-		status
-	);
+export const showDetails = ( status: string ) => {
+	return [
+		campaignStatus.CANCELED,
+		campaignStatus.ACTIVE,
+		campaignStatus.FINISHED,
+		campaignStatus.REJECTED,
+	].includes( status );
 };
 
 export const getCampaignStatus = ( status: string ) => {

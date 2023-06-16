@@ -15,27 +15,30 @@ const useUnsubscribeModal = ( siteId: number | null, currentPage: number ) => {
 		setCurrentSubscriber( subscriber );
 	};
 
-	const onCloseModal = ( action: UnsubscribeActionType, subscriber?: Subscriber ) => {
+	const resetSubscriber = () => {
+		setCurrentSubscriber( undefined );
+	};
+
+	const onConfirmModal = ( action: UnsubscribeActionType, subscriber?: Subscriber ) => {
 		if ( action === UnsubscribeActionType.Manage ) {
 			window.open( getEarnPaymentsPageUrl( selectedSiteSlug ), '_blank' );
 		} else if ( action === UnsubscribeActionType.Unsubscribe && subscriber ) {
 			mutate( subscriber );
 		}
 
-		setCurrentSubscriber( undefined );
+		resetSubscriber();
 	};
 
 	// Reset current subscriber on unmount
 	useEffect( () => {
-		return () => {
-			setCurrentSubscriber( undefined );
-		};
+		return resetSubscriber;
 	}, [] );
 
 	return {
 		currentSubscriber,
 		onClickUnsubscribe,
-		onCloseModal,
+		onConfirmModal,
+		resetSubscriber,
 	};
 };
 

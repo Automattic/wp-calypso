@@ -127,6 +127,7 @@ export function fetchThemesList( options = {} ) {
 		// Return an `author` object containing `user_nicename` and `display_name` attrs.
 		// This is for consistency with WP.com, which always returns the display name as `author`.
 		'request[fields][extended_author]': true,
+		'request[fields][tags]': true,
 		'request[search]': search,
 		'request[page]': page,
 		'request[per_page]:': number,
