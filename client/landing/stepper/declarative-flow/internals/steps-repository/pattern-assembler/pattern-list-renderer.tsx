@@ -26,6 +26,7 @@ interface PatternListRendererProps {
 	emptyPatternText?: string;
 	composite?: Record< string, unknown >;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
+	sections?: Pattern[];
 }
 
 const PLACEHOLDER_HEIGHT = 100;
@@ -98,6 +99,7 @@ const PatternListRenderer = ( {
 	emptyPatternText,
 	composite,
 	onSelect,
+	sections,
 }: PatternListRendererProps ) => {
 	return (
 		<>
@@ -116,7 +118,9 @@ const PatternListRenderer = ( {
 					key={ `${ index }-${ pattern.ID }` }
 					pattern={ pattern }
 					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
-						[ activeClassName ]: pattern.ID === selectedPattern?.ID,
+						[ activeClassName ]:
+							pattern.ID === selectedPattern?.ID ||
+							sections?.find( ( { ID } ) => ID === pattern.ID ),
 					} ) }
 					isFirst={ index === 0 }
 					isShown={ shownPatterns.includes( pattern ) }

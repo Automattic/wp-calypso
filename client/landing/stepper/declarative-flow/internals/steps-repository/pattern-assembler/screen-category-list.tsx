@@ -30,6 +30,7 @@ interface Props {
 	selectedPattern: Pattern | null;
 	recordTracksEvent: ( name: string, eventProperties: any ) => void;
 	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
+	sections: Pattern[];
 }
 
 const ScreenCategoryList = ( {
@@ -41,6 +42,7 @@ const ScreenCategoryList = ( {
 	selectedPattern,
 	recordTracksEvent,
 	onTogglePatternPanelList,
+	sections,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
@@ -141,6 +143,7 @@ const ScreenCategoryList = ( {
 				selectedPattern={ selectedPattern }
 				selectedCategory={ selectedCategory }
 				categories={ categories }
+				sections={ sections }
 				patternsMapByCategory={ patternsMapByCategory }
 			/>
 		</div>
