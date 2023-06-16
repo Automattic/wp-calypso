@@ -33,7 +33,7 @@ import {
 	WOO_EXPRESS_PLANS,
 } from './constants';
 import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
-import { PLANS_LIST } from './plans-list';
+import { PLANS_LIST, PlanID } from './plans-list';
 import {
 	isJetpackBusiness,
 	isBusiness,
@@ -72,7 +72,7 @@ export function getPlansSlugs(): string[] {
 	return Object.keys( getPlans() );
 }
 
-export function getPlan( planKey: string | Plan ): Plan | JetpackPlan | WPComPlan | undefined {
+export function getPlan( planKey: PlanID | Plan ): Plan | JetpackPlan | WPComPlan | undefined {
 	if ( typeof planKey !== 'string' ) {
 		if ( Object.values( PLANS_LIST ).includes( planKey ) ) {
 			return planKey;

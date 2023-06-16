@@ -640,6 +640,11 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
+	term: TERM_ANNUALLY,
+	getBillingTimeFrame: () => i18n.translate( 'No expiration date' ),
+	getProductId: () => 1,
+	getStoreSlug: () => PLAN_FREE,
+	getPathSlug: () => 'beginner',
 } );
 
 const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
@@ -2293,14 +2298,9 @@ const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 } );
 
 // DO NOT import. Use `getPlan` instead.
-export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
+const PLANS_LIST_RAW = {
 	[ PLAN_FREE ]: {
 		...getPlanFreeDetails(),
-		term: TERM_ANNUALLY,
-		getBillingTimeFrame: () => i18n.translate( 'No expiration date' ),
-		getProductId: () => 1,
-		getStoreSlug: () => PLAN_FREE,
-		getPathSlug: () => 'beginner',
 	},
 
 	[ PLAN_BLOGGER ]: {
@@ -3180,139 +3180,147 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'p2-plus',
 		getBillingTimeFrame: () => translate( 'per user per month' ),
 	},
+
+	// Brand new WPCOM plans
+	[ PLAN_WPCOM_PRO ]: {
+		...getPlanProDetails(),
+		term: TERM_ANNUALLY,
+		getProductId: () => 1032,
+		getStoreSlug: () => PLAN_WPCOM_PRO,
+		getPathSlug: () => 'pro',
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	},
+
+	[ PLAN_WPCOM_PRO_MONTHLY ]: {
+		...getPlanProDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) => [ PLAN_FREE ].includes( plan ),
+		getProductId: () => 1034,
+		getStoreSlug: () => PLAN_WPCOM_PRO_MONTHLY,
+		getPathSlug: () => 'pro-monthly',
+	},
+
+	[ PLAN_WPCOM_PRO_2_YEARS ]: {
+		...getPlanProDetails(),
+		term: TERM_BIENNIALLY,
+		availableFor: ( plan ) =>
+			[ PLAN_FREE, PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ].includes( plan ),
+		getProductId: () => 1035,
+		getStoreSlug: () => PLAN_WPCOM_PRO_2_YEARS,
+		getPathSlug: () => 'pro-2-years',
+		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+	},
+
+	[ PLAN_ECOMMERCE_TRIAL_MONTHLY ]: {
+		...getDotcomPlanDetails(),
+		type: TYPE_ECOMMERCE,
+		group: GROUP_WPCOM,
+		getProductId: () => 1052,
+		getPathSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
+		term: TERM_MONTHLY,
+		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
+		getStoreSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
+		getTitle: () => i18n.translate( 'eCommerce free trial' ),
+		getDescription: () => i18n.translate( 'eCommerce free trial' ),
+		getTagline: () =>
+			i18n.translate( 'Get a taste of the world’s most popular eCommerce software.' ),
+	},
+
+	[ PLAN_WPCOM_STARTER ]: {
+		...getDotcomPlanDetails(),
+		group: GROUP_WPCOM,
+		type: TYPE_STARTER,
+		term: TERM_ANNUALLY,
+		getTitle: () => i18n.translate( 'WordPress Starter' ),
+		getProductId: () => 1033,
+		getStoreSlug: () => PLAN_WPCOM_STARTER,
+		getPathSlug: () => 'starter',
+		getDescription: () =>
+			i18n.hasTranslation(
+				'Start with a custom domain name, simple payments, and extra storage.'
+			) || [ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
+				? i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' )
+				: i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
+		getSubTitle: () => i18n.translate( 'Essential features. Freedom to grow.' ),
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		getPlanCompareFeatures: () => [
+			FEATURE_UNLIMITED_TRAFFIC,
+			FEATURE_MANAGED_HOSTING,
+			FEATURE_FREE_THEMES,
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_UNLIMITED_ADMINS,
+			FEATURE_6GB_STORAGE,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_PAYMENT_BLOCKS,
+			FEATURE_TITAN_EMAIL,
+		],
+		getIncludedFeatures: () => [ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ],
+		getCancellationFeatureList: (): CancellationFeatureLists => ( {
+			monthly: {
+				featureList: [
+					FEATURE_CANCELLATION_MANAGED_HOSTINGS,
+					FEATURE_CANCELLATION_SEO_AND_SOCIAL,
+					FEATURE_CANCELLATION_EARN_AD_REVENUE,
+					FEATURE_CANCELLATION_SECURITY_AND_SPAM,
+					FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
+				],
+				andMore: true,
+			},
+			yearly: {
+				featureList: [
+					FEATURE_CANCELLATION_MANAGED_HOSTINGS,
+					FEATURE_CANCELLATION_SEO_AND_SOCIAL,
+					FEATURE_CANCELLATION_EARN_AD_REVENUE,
+					FEATURE_CANCELLATION_SECURITY_AND_SPAM,
+					FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
+				],
+				andMore: true,
+			},
+			withDomain: {
+				featureList: [
+					FEATURE_CANCELLATION_MANAGED_HOSTINGS,
+					FEATURE_CANCELLATION_SEO_AND_SOCIAL,
+					FEATURE_CANCELLATION_EARN_AD_REVENUE,
+					FEATURE_CANCELLATION_SECURITY_AND_SPAM,
+				],
+				andMore: true,
+			},
+		} ),
+	},
+
+	[ PLAN_P2_FREE ]: {
+		// Inherits the free plan
+		...getPlanFreeDetails(),
+		getDescription: () =>
+			i18n.translate(
+				'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
+				plansDescriptionHeadingComponent
+			),
+		getTitle: () => i18n.translate( 'P2 Free' ),
+		getPlanCompareFeatures: () => [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_P2_3GB_STORAGE,
+			FEATURE_P2_UNLIMITED_USERS,
+			FEATURE_P2_UNLIMITED_POSTS_PAGES,
+			FEATURE_P2_SIMPLE_SEARCH,
+			FEATURE_P2_CUSTOMIZATION_OPTIONS,
+		],
+	},
+
+	[ PLAN_WPCOM_FLEXIBLE ]: {
+		// Inherits the free plan
+		...getPlanFreeDetails(),
+		group: GROUP_WPCOM,
+		type: TYPE_FLEXIBLE,
+		getTitle: () => i18n.translate( 'WordPress Free' ),
+		getBillingTimeFrame: () => i18n.translate( 'upgrade when you need' ),
+		getDescription: () =>
+			i18n.translate( 'Start your free WordPress.com website. Limited functionality and storage.' ),
+		getPlanCompareFeatures: () => [ FEATURE_1GB_STORAGE ],
+	},
 };
 
-PLANS_LIST[ PLAN_P2_FREE ] = {
-	...PLANS_LIST[ PLAN_FREE ],
-	getDescription: () =>
-		i18n.translate(
-			'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
-			plansDescriptionHeadingComponent
-		),
-	getTitle: () => i18n.translate( 'P2 Free' ),
-	getPlanCompareFeatures: () => [
-		// pay attention to ordering, shared features should align on /plan page
-		FEATURE_P2_3GB_STORAGE,
-		FEATURE_P2_UNLIMITED_USERS,
-		FEATURE_P2_UNLIMITED_POSTS_PAGES,
-		FEATURE_P2_SIMPLE_SEARCH,
-		FEATURE_P2_CUSTOMIZATION_OPTIONS,
-	],
-};
+export type PlanID = keyof typeof PLANS_LIST_RAW;
 
-// Brand new WPCOM plans
-PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
-	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_STARTER,
-	term: TERM_ANNUALLY,
-	getTitle: () => i18n.translate( 'WordPress Starter' ),
-	getProductId: () => 1033,
-	getStoreSlug: () => PLAN_WPCOM_STARTER,
-	getPathSlug: () => 'starter',
-	getDescription: () =>
-		i18n.hasTranslation( 'Start with a custom domain name, simple payments, and extra storage.' ) ||
-		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
-			? i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' )
-			: i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
-	getSubTitle: () => i18n.translate( 'Essential features. Freedom to grow.' ),
-	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
-	getPlanCompareFeatures: () => [
-		FEATURE_UNLIMITED_TRAFFIC,
-		FEATURE_MANAGED_HOSTING,
-		FEATURE_FREE_THEMES,
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UNLIMITED_ADMINS,
-		FEATURE_6GB_STORAGE,
-		FEATURE_GOOGLE_ANALYTICS,
-		FEATURE_PAYMENT_BLOCKS,
-		FEATURE_TITAN_EMAIL,
-	],
-	getIncludedFeatures: () => [ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ],
-	getCancellationFeatureList: (): CancellationFeatureLists => ( {
-		monthly: {
-			featureList: [
-				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-				FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
-			],
-			andMore: true,
-		},
-		yearly: {
-			featureList: [
-				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-				FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
-			],
-			andMore: true,
-		},
-		withDomain: {
-			featureList: [
-				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-			],
-			andMore: true,
-		},
-	} ),
-};
-
-PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
-	// Inherits the free plan
-	...PLANS_LIST[ PLAN_FREE ],
-	group: GROUP_WPCOM,
-	type: TYPE_FLEXIBLE,
-	getTitle: () => i18n.translate( 'WordPress Free' ),
-	getBillingTimeFrame: () => i18n.translate( 'upgrade when you need' ),
-	getDescription: () =>
-		i18n.translate( 'Start your free WordPress.com website. Limited functionality and storage.' ),
-	getPlanCompareFeatures: () => [ FEATURE_1GB_STORAGE ],
-};
-
-PLANS_LIST[ PLAN_WPCOM_PRO ] = {
-	...getPlanProDetails(),
-	term: TERM_ANNUALLY,
-	getProductId: () => 1032,
-	getStoreSlug: () => PLAN_WPCOM_PRO,
-	getPathSlug: () => 'pro',
-	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
-};
-
-PLANS_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {
-	...getPlanProDetails(),
-	...getMonthlyTimeframe(),
-	availableFor: ( plan ) => [ PLAN_FREE ].includes( plan ),
-	getProductId: () => 1034,
-	getStoreSlug: () => PLAN_WPCOM_PRO_MONTHLY,
-	getPathSlug: () => 'pro-monthly',
-};
-
-PLANS_LIST[ PLAN_WPCOM_PRO_2_YEARS ] = {
-	...getPlanProDetails(),
-	term: TERM_BIENNIALLY,
-	availableFor: ( plan ) =>
-		[ PLAN_FREE, PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ].includes( plan ),
-	getProductId: () => 1035,
-	getStoreSlug: () => PLAN_WPCOM_PRO_2_YEARS,
-	getPathSlug: () => 'pro-2-years',
-	getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-};
-
-PLANS_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
-	...getDotcomPlanDetails(),
-	type: TYPE_ECOMMERCE,
-	group: GROUP_WPCOM,
-	getProductId: () => 1052,
-	getPathSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	term: TERM_MONTHLY,
-	getBillingTimeFrame: () => i18n.translate( 'free trial' ),
-	getStoreSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	getTitle: () => i18n.translate( 'eCommerce free trial' ),
-	getDescription: () => i18n.translate( 'eCommerce free trial' ),
-	getTagline: () => i18n.translate( 'Get a taste of the world’s most popular eCommerce software.' ),
-};
+// Note: this does enough type checking that an invalid plan in the list above will cause an error when casting here.
+export const PLANS_LIST = PLANS_LIST_RAW as Record< PlanID, Plan | JetpackPlan | WPComPlan >;
