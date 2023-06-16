@@ -87,7 +87,7 @@ const sensei: Flow = {
 		const isPlanStep = currentPath.endsWith( `setup/${ this.name }/senseiPlan` );
 		const locale = useLocale();
 
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+		let result = { state: AssertConditionState.SUCCESS };
 
 		if ( isPlanStep && ! isLoggedIn ) {
 			redirect( getStartUrl( 'senseiPlan', locale ) );
