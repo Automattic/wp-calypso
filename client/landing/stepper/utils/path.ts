@@ -1,5 +1,6 @@
 import { Plans } from '@automattic/data-stores';
 import languages from '@automattic/languages';
+import { addQueryArgs } from '@wordpress/url';
 import { useMatch } from 'react-router-dom';
 
 const plansPaths = Plans.plansSlugs;
@@ -41,3 +42,16 @@ export function useLangRouteParam() {
 	const match = useMatch( path );
 	return match?.params.lang;
 }
+
+export const getLoginPath = (
+	redirectTo: string,
+	pageTitle = '',
+	variationName = '',
+	loginPath = '/start/account/user'
+): string => {
+	return addQueryArgs( loginPath, {
+		redirect_to: redirectTo,
+		variationName,
+		pageTitle,
+	} );
+};
