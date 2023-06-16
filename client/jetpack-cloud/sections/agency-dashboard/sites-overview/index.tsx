@@ -238,7 +238,7 @@ export default function SitesOverview() {
 			<div className="sites-overview__container">
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
-						<SiteSurveyBanner />
+						<SiteSurveyBanner isDashboardView />
 						<SiteWelcomeBanner isDashboardView />
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader

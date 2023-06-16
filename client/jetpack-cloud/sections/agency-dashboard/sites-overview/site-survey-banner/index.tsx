@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE,
@@ -10,7 +10,11 @@ import {
 import { savePreference } from 'calypso/state/preferences/actions';
 import { PreferenceType } from '../types';
 
-const SiteSurveyBanner = () => {
+interface Props {
+	isDashboardView?: boolean;
+}
+
+export default function SiteSurveyBanner( { isDashboardView }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -27,17 +31,15 @@ const SiteSurveyBanner = () => {
 		[ dispatch, preference, preferenceName ]
 	);
 
-	const handleTrackEvents = useCallback(
-		( eventName: string ) => {
-			dispatch( recordTracksEvent( eventName ) );
-		},
-		[ dispatch ]
-	);
-
-	const onDismiss = useCallback( () => {
+	const dismissAndRecordEvent = ( eventName: string ) => {
 		savePreferenceType( 'dismiss' );
-		handleTrackEvents( 'calypso_jetpack_agency_dashboard_survey_banner_dismiss_click' );
-	}, [ handleTrackEvents, savePreferenceType ] );
+
+		const eventNamePrefix = isDashboardView
+			? 'calypso_jetpack_agency_dashboard_'
+			: 'calypso_partner_portal_';
+
+		dispatch( recordTracksEvent( eventNamePrefix + eventName ) );
+	};
 
 	if ( isDismissed ) {
 		return null;
@@ -55,9 +57,8 @@ const SiteSurveyBanner = () => {
 			jetpack
 			dismissWithoutSavingPreference
 			horizontal
-			onDismiss={ onDismiss }
+			onActivate={ () => dismissAndRecordEvent( 'survey_banner_accept' ) }
+			onDismiss={ () => dismissAndRecordEvent( 'survey_banner_dismiss' ) }
 		/>
 	);
-};
-
-export default SiteSurveyBanner;
+}
