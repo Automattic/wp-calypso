@@ -36,7 +36,7 @@ class SiteStream extends Component {
 	};
 
 	render() {
-		const { site, feed, isBlocked, siteId, isDiscoverStream } = this.props;
+		const { site, feed, isBlocked, siteId } = this.props;
 		// check for redirect
 		if ( site && site.prefer_feed && site.feed_ID ) {
 			page.replace( '/read/feeds/' + site.feed_ID );
@@ -60,7 +60,7 @@ class SiteStream extends Component {
 				emptyContent={ emptyContent }
 				showPostHeader={ false }
 				showSiteNameOnCards={ false }
-				isDiscoverStream={ isDiscoverStream }
+				isDiscoverStream={ this.props.isDiscoverStream }
 			>
 				<DocumentHead
 					title={ this.props.translate( '%s ‹ Reader', {
@@ -68,15 +68,13 @@ class SiteStream extends Component {
 						comment: '%s is the section name. For example: "My Likes"',
 					} ) }
 				/>
-				{ ! isDiscoverStream && (
-					<ReaderFeedHeader
-						site={ site }
-						feed={ feed }
-						showBack={ this.props.showBack }
-						streamKey={ this.props.streamKey }
-					/>
-				) }
-				{ ! site && <QueryReaderSite siteId={ siteId } /> }
+				<ReaderFeedHeader
+					site={ site }
+					feed={ feed }
+					showBack={ this.props.showBack }
+					streamKey={ this.props.streamKey }
+				/>
+				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
 				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
 			</Stream>
 		);
