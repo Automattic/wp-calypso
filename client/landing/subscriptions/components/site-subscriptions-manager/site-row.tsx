@@ -1,15 +1,19 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import TimeSince from 'calypso/components/time-since';
 import { successNotice } from 'calypso/state/notices/actions';
+import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
-import { useSubscriptionManagerContext } from '../subscription-manager-context';
+import {
+	useSubscriptionManagerContext,
+	ReaderPortal,
+	SubscriptionsPortal,
+} from '../subscription-manager-context';
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
@@ -55,7 +59,6 @@ const SelectedNewPostDeliveryMethods = ( {
 };
 
 type SiteRowProps = Reader.SiteSubscription & {
-	onSiteTitleClick: () => void;
 	successNotice: typeof successNotice;
 };
 
@@ -68,7 +71,6 @@ const SiteRow = ( {
 	delivery_methods,
 	is_wpforteams_site,
 	is_paid_subscription,
-	onSiteTitleClick,
 	isDeleted,
 	successNotice,
 }: SiteRowProps ) => {
@@ -113,6 +115,17 @@ const SiteRow = ( {
 	};
 
 	const { portal } = useSubscriptionManagerContext();
+
+	const siteTitleUrl = useMemo( () => {
+		if ( portal === ReaderPortal ) {
+			// TODO: This should be feed_ID but we will address it separately
+			return `/read/feeds/${ blog_ID }`;
+		}
+
+		if ( portal === SubscriptionsPortal ) {
+			return `/subscriptions/site/${ blog_ID }`;
+		}
+	}, [ blog_ID, portal ] );
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings
@@ -164,34 +177,30 @@ const SiteRow = ( {
 
 	return ! isDeleted ? (
 		<li className="row" role="row">
-			<div className="title-cell" role="cell">
-				<Button
-					icon={ <SiteIcon iconUrl={ site_icon } siteName={ name } /> }
-					iconSize={ 40 }
-					onClick={ onSiteTitleClick }
-				/>
-				<div className="vertical-stack">
-					<div className="horizontal-stack">
-						<Button className="name" onClick={ onSiteTitleClick }>
-							{ name }
-						</Button>
+			<span className="title-cell" role="cell">
+				<Link className="title-icon" href={ siteTitleUrl }>
+					<SiteIcon iconUrl={ site_icon } size={ 40 } siteName={ name } />
+				</Link>
+				<span className="title-column">
+					<Link className="title-name" href={ siteTitleUrl }>
+						{ name }
 						{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
 						{ !! is_paid_subscription && (
 							<span className="paid-label">
 								{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
 							</span>
 						) }
-					</div>
+					</Link>
 					<a
-						className="url"
+						className="title-url"
 						{ ...( url && { href: url } ) }
 						rel="noreferrer noopener"
 						target="_blank"
 					>
 						{ hostname }
 					</a>
-				</div>
-			</div>
+				</span>
+			</span>
 			<span className="date-cell" role="cell">
 				<TimeSince
 					date={
