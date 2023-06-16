@@ -1,8 +1,9 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelect } from '@wordpress/data';
-import { Icon } from '@wordpress/icons';
+import { Icon, shuffle } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -62,6 +63,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
 	const isFormSubmitDisabled = isSiteTitleEmpty;
 	const hasChangedInput = useRef( { geoAffinity: false } );
+	const isSmallScreen = useMobileBreakpoint();
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -110,8 +112,16 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 						autoFocus
 					/>
 					<Button
-						tabIndex={ -1 }
-						css={ { position: 'absolute', top: 0, right: '1rem', height: '100%' } }
+						css={ {
+							position: 'absolute',
+							top: 0,
+							right: '1rem',
+							height: '100%',
+							display: 'flex',
+							alignItems: 'center',
+							gap: '4px',
+							color: 'var(--color-text) !important',
+						} }
 						borderless
 						onClick={ () => {
 							if ( shouldOverrideSiteTitle ) {
@@ -121,7 +131,8 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 							}
 						} }
 					>
-						{ translate( 'Generate random name' ) }
+						<Icon icon={ shuffle } fill="currentColor" />
+						{ ! isSmallScreen && translate( 'Generate' ) }
 					</Button>
 				</div>
 				{ siteTitleError ? (
