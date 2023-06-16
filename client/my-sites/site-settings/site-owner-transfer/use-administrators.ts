@@ -4,7 +4,7 @@ interface User {
 	ID: number;
 	login: string;
 	email: string;
-	linked_user_ID: number;
+	linked_user_ID?: number | false;
 }
 
 interface Page {
