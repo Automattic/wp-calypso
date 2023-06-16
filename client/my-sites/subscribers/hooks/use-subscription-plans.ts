@@ -3,6 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Subscriber, SubscriptionPlan } from '../types';
 
+const freePlan = 'Free';
+
 const useSubscriptionPlans = ( subscriber: Subscriber ): string[] => {
 	const translate = useTranslate();
 
@@ -46,7 +48,11 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): string[] => {
 	const subscriptionPlans = useMemo( () => {
 		if ( subscriber ) {
 			const plans = transformSubscriptionPlans( subscriber.plans );
-			return plans.map( ( plan ) => `${ plan.when } (${ plan.renewalPrice })` );
+			return plans.map( ( plan ) =>
+				plan.renewalPrice === freePlan
+					? plan.renewalPrice
+					: `${ plan.when } (${ plan.renewalPrice })`
+			);
 		}
 		return [];
 	}, [ subscriber ] );
