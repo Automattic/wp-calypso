@@ -130,7 +130,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 		if ( isDesignFirstFlow ) {
 			allDesigns.designs = allDesigns.designs.filter(
-				( design ) => design.is_bundled_with_woo_commerce === false
+				( design ) => design.is_premium === false && design.is_bundled_with_woo_commerce === false
 			);
 		}
 
