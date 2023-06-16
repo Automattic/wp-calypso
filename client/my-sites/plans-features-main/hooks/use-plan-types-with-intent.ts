@@ -19,7 +19,6 @@ export type Intent =
 	| 'plugins'
 	| 'jetpack-app' // newly added
 	| 'import'
-	| 'plans-ecommerce' // rename -> commerce
 	| 'default';
 
 interface Props {
@@ -85,11 +84,6 @@ const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent | null => {
 			return {
 				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
-			};
-		case 'plans-ecommerce':
-			return {
-				intent,
-				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
 			};
 		case 'plugins': // is this used?
 			return {

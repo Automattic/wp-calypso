@@ -244,22 +244,11 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
+
 		'plans-new': {
 			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
-		},
-
-		'plans-ecommerce': {
-			stepName: 'plans-ecommerce',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isPlanFulfilled,
-			props: {
-				hideFreePlan: true,
-				intent: 'plans-ecommerce',
-			},
 		},
 
 		'plans-import': {
