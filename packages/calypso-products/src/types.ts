@@ -130,6 +130,8 @@ export type JetpackProductCategory = ( typeof JETPACK_PRODUCT_CATEGORIES )[ numb
 
 // All
 export type ProductSlug = WPComProductSlug | JetpackProductSlug;
+
+// TODO: Remove this in favor of the auto-generated plan slugs in plans-list?
 export type PlanSlug = WPComPlanSlug | JetpackPlanSlug;
 export type PurchasableItemSlug = WPComPurchasableItemSlug | JetpackPurchasableItemSlug;
 

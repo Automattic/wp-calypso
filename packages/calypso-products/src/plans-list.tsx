@@ -3320,7 +3320,7 @@ const PLANS_LIST_RAW = {
 	},
 };
 
-export type PlanID = keyof typeof PLANS_LIST_RAW;
+export type PlanSlug = keyof typeof PLANS_LIST_RAW;
 
 // Note: this does enough type checking that an invalid plan in the list above will cause an error when casting here.
-export const PLANS_LIST = PLANS_LIST_RAW as Record< PlanID, Plan | JetpackPlan | WPComPlan >;
+export const PLANS_LIST = PLANS_LIST_RAW as Record< PlanSlug, Plan | JetpackPlan | WPComPlan >;
