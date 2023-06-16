@@ -19,7 +19,7 @@ export function isDiscoverFeed( feedId ) {
 }
 
 export function isDiscoverEnabled() {
-	return true;
+	return false;
 }
 
 export function isDiscoverPost( post ) {
