@@ -55,8 +55,6 @@ export function useValidateVerificationCode(): {
 			const newEmailItem = { email_address: params.value, verified: data.verified };
 			const newSMSItem = {
 				sms_number: params.value,
-				country_code: params.country_code,
-				country_numeric_code: params.country_numeric_code,
 				verified: data.verified,
 			};
 
@@ -83,8 +81,7 @@ export function useValidateVerificationCode(): {
 					sms_numbers: [
 						...oldContacts.sms_numbers.filter(
 							( sms: { sms_number: string; country_numeric_code: string } ) =>
-								`${ sms.country_numeric_code }${ sms.sms_number }` !==
-								`${ params.country_numeric_code }${ params.value }` // Add the country code to the number
+								sms.sms_number !== params.value
 						),
 						newSMSItem,
 					],

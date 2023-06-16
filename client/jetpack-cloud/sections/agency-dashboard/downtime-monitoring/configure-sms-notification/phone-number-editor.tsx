@@ -174,10 +174,8 @@ export default function PhoneNumberEditor( {
 		if ( phoneItem?.verificationCode ) {
 			verifyPhoneNumber.mutate( {
 				type: 'sms',
-				value: phoneItem.phoneNumber,
+				value: `${ phoneItem.countryNumericCode }${ phoneItem.phoneNumber }`,
 				verification_code: Number( phoneItem.verificationCode ),
-				country_code: phoneItem.countryCode,
-				country_numeric_code: phoneItem.countryNumericCode,
 			} );
 		}
 	};
