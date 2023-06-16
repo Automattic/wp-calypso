@@ -130,6 +130,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 								setShouldOverrideSiteTitle( true );
 							}
 						} }
+						aria-label={ translate( 'Generate a random site name' ) }
 					>
 						<Icon icon={ shuffle } fill="currentColor" />
 						{ ! isSmallScreen && translate( 'Generate' ) }
