@@ -52,14 +52,8 @@
 			height: 32px;
 		}
 
-		&:not(:first-child) {
-			&:nth-child(even) {
-				background-color: var(--studio-gray-0);
-			}
-
-			&:nth-child(odd) {
-				background-color: #fff;
-			}
+		.is-alternate {
+			background-color: var(--studio-gray-0);
 		}
 	}
 }
