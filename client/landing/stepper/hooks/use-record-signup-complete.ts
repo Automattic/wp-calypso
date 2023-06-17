@@ -39,7 +39,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 		const domainProductSlug =
 			domainCartItem &&
 			isDomainRegistration( domainCartItem ) &&
-			( domainCartItem.product_slug === '' ? undefined : domainCarItem.product_slug );
+			( domainCartItem.product_slug === '' ? undefined : domainCartItem.product_slug );
 		const hasCartItems = Boolean( domainProductSlug || planCartItem ); // see the function `dependenciesContainCartItem()
 
 		// TBD:
