@@ -18,7 +18,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 		return {
 			siteCount: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count,
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelct ).getPlanCartItem(),
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 		};
 	}, [] );
 
@@ -38,7 +38,9 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 		// This behavior worths a revisit. It's also why we can't check hasCartItems as simply as domainCartItem || planCartItem
 		const domainProductSlug =
 			domainCartItem &&
-			isDomainRegistration( domainCartItem ) &&
+			// FIXME:
+			// the current shopping cart types don't include one for a domain product. We should add one and remove the `any` here
+			isDomainRegistration( domainCartItem as any ) &&
 			( domainCartItem.product_slug === '' ? undefined : domainCartItem.product_slug );
 		const hasCartItems = Boolean( domainProductSlug || planCartItem ); // see the function `dependenciesContainCartItem()
 
