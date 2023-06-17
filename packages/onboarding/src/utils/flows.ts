@@ -27,7 +27,11 @@ export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
-export const ONBOARDING_PM_FLOW = 'onboarding-pm';
+export const BULK_DOMAIN_TRANSFER = 'bulk-domain-transfer';
+
+// TODO:
+// Once it is finalized, update it to just `onboarding-pm`
+export const ONBOARDING_PM_FLOW = 'onboarding-pm-dev';
 export const isOnboardingPMFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && [ ONBOARDING_PM_FLOW ].includes( flowName ) );
 };
