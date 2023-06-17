@@ -4,7 +4,7 @@ import { PropsWithChildren, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 
 const HoverAreaContainer = styled.span`
-	max-width: 240px;
+	max-width: 220px;
 `;
 
 const StyledTooltip = styled( Tooltip )`
