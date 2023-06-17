@@ -77,6 +77,7 @@ const translations = [
 		}
 	),
 	translate( 'Use the plugins' ),
+	translate( 'Plugin guide' ),
 
 	// Plan / Annual / Without custom domain selected or included in the cart
 	translate( 'Get the best out of your site' ),
@@ -162,6 +163,7 @@ const translations = [
 	translate( 'Say hello to your new email address' ),
 	translate( 'All set! Now it’s time to update your contact details.' ),
 	translate( 'Go to inbox' ),
+	translate( 'Manage email' ),
 	translate( 'Manage your email and site from anywhere' ),
 	translate(
 		'The Jetpack mobile app for iOS and Android makes managing your email, domain, and website even simpler.'
