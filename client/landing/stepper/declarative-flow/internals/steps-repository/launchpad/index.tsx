@@ -87,10 +87,9 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 
 	useEffect( () => {
 		if ( siteSlug && site && localStorage.getItem( 'launchpad_siteSlug' ) !== siteSlug ) {
-			recordSignupComplete();
 			localStorage.setItem( 'launchpad_siteSlug', siteSlug );
 		}
-	}, [ recordSignupComplete, siteSlug, site ] );
+	}, [ siteSlug, site ] );
 
 	return (
 		<>
