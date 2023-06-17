@@ -121,6 +121,12 @@ export function getItemIntroductoryOfferDisplay(
 		return null;
 	}
 
+	// This can happen for premium domains which registration price is haigher than the renewal price
+	// In these cases, we don't want to show a "Discount for first year" or related message
+	if ( product.item_subtotal_integer > product.item_original_subtotal_integer ) {
+		return null;
+	}
+
 	const isFreeTrial = product.item_subtotal_integer === 0;
 	const text = getIntroductoryOfferIntervalDisplay(
 		translate,
