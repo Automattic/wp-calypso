@@ -482,6 +482,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 export const getProductSlugFromProductType = ( type: string ): string | undefined => {
 	const slugs: Record< string, string > = {
 		backup: 'jetpack-backup-t1',
+		boost: 'jetpack-boost',
 		scan: 'jetpack-scan',
 	};
 

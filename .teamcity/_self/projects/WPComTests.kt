@@ -45,7 +45,9 @@ object WPComTests : Project({
 	// Gutenberg Atomic Edge
 	buildType(gutenbergPlaywrightBuildType("desktop", "4c66d90d-99c6-4ecb-9507-18bc2f44b551" , atomic=true, edge=true));
 	buildType(gutenbergPlaywrightBuildType("mobile", "ba0f925b-497b-4156-977e-5bfbe94f5744", atomic=true, edge=true));
-
+	// Gutenberg Atomic Nightly
+	buildType(gutenbergPlaywrightBuildType("desktop", "a3f58555-56bb-42c6-8543-ab27213d3085" , atomic=true, nightly=true));
+	buildType(gutenbergPlaywrightBuildType("mobile", "8191e677-0682-4709-9201-66a7788980f0", atomic=true, nightly=true));
 	// Editor Tracking
 	buildType(editorTrackingBuildType("desktop", "bd15ed14-e77d-11ec-8fea-0242ac120002", atomic=false, edge=false));
 	// Editor Tracking Edge
@@ -67,14 +69,18 @@ object WPComTests : Project({
 	buildType(P2E2ETests)
 })
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false ): E2EBuildType {
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): E2EBuildType {
 	var siteType = if (atomic) "atomic" else "simple";
-	var edgeType = if (edge) "edge" else "production";
+	var releaseType = when {
+		nightly -> "nightly"
+		edge -> "edge"
+		else -> "production"
+	}
 
-    return E2EBuildType (
-		buildId = "WPComTests_gutenberg_${siteType}_${edgeType}_$targetDevice",
+	return E2EBuildType (
+		buildId = "WPComTests_gutenberg_${siteType}_${releaseType}_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "Gutenberg $siteType E2E tests $edgeType ($targetDevice)",
+		buildName = "Gutenberg $siteType E2E tests $releaseType ($targetDevice)",
 		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
 		testGroup = "gutenberg",
 		buildParams = {
@@ -102,6 +108,15 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
 				param("JEST_E2E_WORKERS", "1")
 			}
+
+			// Nightlies only make sense in the AT context for now, but we leave it here to make it easier
+			// to setup a new nightly build for simple in the future. Nightly+edge doesn't make sense,
+			// but I don't think guarding against that here is worth the additional logic, as this is
+			// a factory function and a mistake like that should be clear by checking the arguments.
+			if (nightly) {
+				param("env.GUTENBERG_NIGHTLY", "true");
+			}
+
 			if (edge) {
 				param("env.GUTENBERG_EDGE", "true")
 			}
@@ -190,17 +205,10 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 	val triggers: Triggers.() -> Unit = {
 		if (jetpackTarget == "wpcom-staging") {
 			vcs {
-				// Trigger only when the "trunk" branch is modified, i.e. back-end merges
-				branchFilter = """
-					+:trunk
-				""".trimIndent()
-
 				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM connection
 				triggerRules = """
-					+:root=wpcom:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/sun/**
-					+:root=wpcom:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/moon/**
-					+:root=wpcom:%WPCOM_JETPACK_PLUGIN_PATH%/sun/**
-					+:root=wpcom:%WPCOM_JETPACK_PLUGIN_PATH%/moon/**
+					+:root=wpcom:**/mu-plugins/jetpack*-plugin/moon/*
+					+:root=wpcom:**/mu-plugins/jetpack*-plugin/sun/*
 				""".trimIndent()
 			}
 		} else {

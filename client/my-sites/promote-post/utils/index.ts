@@ -1,10 +1,7 @@
 import config from '@automattic/calypso-config';
 import { __, sprintf } from '@wordpress/i18n';
 import moment from 'moment';
-import {
-	Campaign,
-	CampaignStats,
-} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign, CampaignStats } from 'calypso/data/promote-post/types';
 
 export const campaignStatus = {
 	SCHEDULED: 'scheduled',

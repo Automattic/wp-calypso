@@ -254,6 +254,7 @@ class ReaderPostCard extends Component {
 					expandCard={ expandCard }
 					site={ site }
 					postKey={ postKey }
+					teams={ teams }
 				></TagPost>
 			);
 		} else if ( isPhotoPost ) {

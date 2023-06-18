@@ -28,9 +28,8 @@ interface Props {
 	) => void;
 	replacePatternMode: boolean;
 	selectedPattern: Pattern | null;
-	wrapperRef: React.RefObject< HTMLDivElement > | null;
-	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
 	recordTracksEvent: ( name: string, eventProperties: any ) => void;
+	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
 }
 
 const ScreenCategoryList = ( {
@@ -40,27 +39,13 @@ const ScreenCategoryList = ( {
 	replacePatternMode,
 	onSelect,
 	selectedPattern,
-	wrapperRef,
-	onTogglePatternPanelList,
 	recordTracksEvent,
+	onTogglePatternPanelList,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
-
-	const handleFocusOutside = ( event: Event ) => {
-		// Click outside the sidebar or action bar to close Pattern List
-		const target = event.target as HTMLElement;
-		if (
-			! (
-				target.closest( '.pattern-action-bar' ) || target.closest( '.pattern-assembler__sidebar' )
-			)
-		) {
-			setSelectedCategory( null );
-			onTogglePatternPanelList?.( false );
-		}
-	};
 
 	const trackEventCategoryClick = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CATEGORY_LIST_CATEGORY_CLICK, {
@@ -69,14 +54,6 @@ const ScreenCategoryList = ( {
 	};
 
 	useEffect( () => {
-		wrapperRef?.current?.addEventListener( 'click', handleFocusOutside );
-		return () => {
-			wrapperRef?.current?.removeEventListener( 'click', handleFocusOutside );
-		};
-	}, [] );
-
-	useEffect( () => {
-		// Notify the pattern panel list is going to close when umount
 		return () => {
 			onTogglePatternPanelList?.( false );
 		};
@@ -126,11 +103,11 @@ const ScreenCategoryList = ( {
 							aria-current={ isOpen }
 							onClick={ () => {
 								if ( isOpen ) {
-									setSelectedCategory( null );
 									onTogglePatternPanelList?.( false );
+									setSelectedCategory( null );
 								} else {
-									setSelectedCategory( name );
 									onTogglePatternPanelList?.( true );
+									setSelectedCategory( name );
 									trackEventCategoryClick( name );
 								}
 							} }

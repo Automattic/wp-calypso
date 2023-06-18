@@ -8,6 +8,7 @@ import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -30,7 +31,6 @@ import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import SiteContentHeader from './site-content-header';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
-import SiteSurveyBanner from './site-survey-banner';
 import SiteWelcomeBanner from './site-welcome-banner';
 import { getProductSlugFromProductType } from './utils';
 import type { Site } from '../sites-overview/types';
@@ -238,7 +238,6 @@ export default function SitesOverview() {
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
 						<SiteWelcomeBanner isDashboardView />
-						<SiteSurveyBanner />
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader
 							content={ renderIssueLicenseButton() }
@@ -284,6 +283,7 @@ export default function SitesOverview() {
 								value={ {
 									verifiedContacts: {
 										emails: verifiedContacts?.emails ?? [],
+										phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
 										refetchIfFailed: () => {
 											if ( fetchContactFailed ) {
 												refetchContacts();
@@ -293,13 +293,16 @@ export default function SitesOverview() {
 									},
 								} }
 							>
-								<SiteContent
-									data={ data }
-									isLoading={ isLoading }
-									currentPage={ currentPage }
-									isFavoritesTab={ isFavoritesTab }
-									ref={ containerRef }
-								/>
+								<>
+									<QueryProductsList type="jetpack" currency="USD" />
+									<SiteContent
+										data={ data }
+										isLoading={ isLoading }
+										currentPage={ currentPage }
+										isFavoritesTab={ isFavoritesTab }
+										ref={ containerRef }
+									/>
+								</>
 							</DashboardDataContext.Provider>
 						) }
 					</div>

@@ -17,6 +17,7 @@ import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
+import './style.scss';
 
 class StatModuleFollowers extends Component {
 	state = {
@@ -181,7 +182,7 @@ class StatModuleFollowers extends Component {
 							onSelect={ this.changeFilter }
 						/>
 					}
-					className="stats__modernised-comments"
+					className="stats__modernised-followers"
 					isLinkUnderlined={ activeFilter === 'wpcom-followers' }
 					showLeftIcon
 				/>

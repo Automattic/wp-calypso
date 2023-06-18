@@ -11,7 +11,7 @@ import {
 	isTitanMail,
 	isAkismetProduct,
 } from '@automattic/calypso-products';
-import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -233,14 +233,6 @@ class RemovePurchase extends Component {
 			className="remove-domain-dialog__chat-button"
 		/>
 	);
-
-	getContactUsButton = () => {
-		return (
-			<Button className="remove-purchase__support-link-button" href="/help/contact/">
-				{ this.props.translate( 'Contact Us' ) }
-			</Button>
-		);
-	};
 
 	shouldShowNonPrimaryDomainWarning() {
 		const { hasNonPrimaryDomainsFlag, isAtomicSite, hasCustomPrimaryDomain, purchase } = this.props;

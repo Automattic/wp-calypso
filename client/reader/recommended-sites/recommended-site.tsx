@@ -3,7 +3,6 @@ import {
 	Card,
 	Flex,
 	__experimentalHStack as HStack,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { close } from '@wordpress/icons';
@@ -43,19 +42,7 @@ const RecommendedSite = ( {
 				<Button className="recommended-site__close-button" icon={ close } iconSize={ 20 } />
 			</Flex>
 			<HStack justify="flex-start" spacing="4">
-				{
-					<ReaderAvatar
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
-						siteIcon={ siteIcon }
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
-						feedIcon={ feedIcon }
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
-						isCompact
-					/>
-				}
+				<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } isCompact />
 				<VStack spacing={ 0 }>
 					{ siteTitle && <h3 className="recommended-site__site-title">{ siteTitle }</h3> }
 					{ siteUrl && (

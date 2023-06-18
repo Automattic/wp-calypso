@@ -1,0 +1,5 @@
+@import "../modernized-mixins";
+
+.stats__modernised-followers {
+	@include segmented-controls;
+}

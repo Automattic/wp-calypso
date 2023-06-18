@@ -3,6 +3,7 @@ import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignBySlug, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
+	isDefaultGlobalStylesVariationSlug,
 	UnifiedDesignPicker,
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
@@ -16,9 +17,12 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import WebPreview from 'calypso/components/web-preview/content';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -26,7 +30,6 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { setActiveTheme } from 'calypso/state/themes/actions';
-import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
@@ -44,7 +47,7 @@ import {
 } from '../../analytics/record-design';
 import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
-import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
+import { RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
@@ -129,8 +132,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
 
 			allDesigns.designs = allDesigns.designs.map( ( design ) => {
-				design.style_variations = design.style_variations?.filter(
-					( variation ) => variation.slug === 'default'
+				design.style_variations = design.style_variations?.filter( ( variation ) =>
+					isDefaultGlobalStylesVariationSlug( variation.slug )
 				);
 				return design;
 			} );
@@ -252,9 +255,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
-		// Virtual designs don't need to be previewed and can go directly to the site assembler.
-		const shouldGoToAssembler =
-			design.is_virtual && design.slug === BLANK_CANVAS_DESIGN.slug && isDesktop;
+		// Redirect to Site Assembler if the design_type is set to "assembler".
+		const shouldGoToAssembler = isDesktop && design.design_type === 'assembler';
 
 		if ( shouldGoToAssembler ) {
 			design = {
@@ -303,11 +305,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for unlocking a selected premium design
 
+	useQueryThemes( 'wpcom', { tier: '-marketplace', number: 1000 } );
 	useQuerySitePurchases( site ? site.ID : -1 );
+	useQuerySiteFeatures( [ site?.ID ] );
 
-	const purchasedThemes = useSelector( ( state ) =>
-		site ? getPurchasedThemes( state, site.ID ) : []
-	);
 	const selectedDesignThemeId = selectedDesign ? getThemeIdFromDesign( selectedDesign ) : null;
 	const didPurchaseSelectedTheme = useSelector( ( state ) =>
 		site && selectedDesignThemeId
@@ -327,6 +328,23 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isEligibleForProPlan = useSelect(
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isEligibleForProPlan( site.ID ),
 		[ site ]
+	);
+
+	const getBadge = (
+		themeId: string,
+		forcePremium: boolean,
+		tooltipHeader: string,
+		tooltipMessage: string
+	) => (
+		<ThemeTypeBadge
+			canGoToCheckout={ false }
+			forcePremium={ forcePremium }
+			siteId={ site?.ID ?? null }
+			siteSlug={ siteSlug }
+			themeId={ themeId }
+			tooltipHeader={ tooltipHeader }
+			tooltipMessage={ tooltipMessage }
+		/>
 	);
 
 	function upgradePlan() {
@@ -578,8 +596,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		const selectStyle = () => {
 			if (
 				shouldLimitGlobalStyles &&
-				selectedStyleVariation &&
-				selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
+				! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug )
 			) {
 				unlockPremiumGlobalStyles();
 			} else {
@@ -725,8 +742,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		/>
 	);
 
-	const currentPlanFeatures = site?.plan?.features.active ?? [];
-
 	if ( isDesignFirstFlow ) {
 		categorization.categories = [];
 		categorization.selection = 'blog';
@@ -743,9 +758,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
-			purchasedThemes={ purchasedThemes }
-			currentPlanFeatures={ currentPlanFeatures }
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+			getBadge={ getBadge }
 		/>
 	);
 
