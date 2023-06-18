@@ -166,11 +166,9 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 
 	// The themes endpoint returns retired themes when search term exists.
 	// See: https://github.com/Automattic/wp-calypso/pull/78231
-	interlacedThemes.push( ...(
-		searchTerm
-			? restWpComThemes.filter( ( theme ) => ! theme.retired )
-			: restWpComThemes
-	) );
+	interlacedThemes.push(
+		...( searchTerm ? restWpComThemes.filter( ( theme ) => ! theme.retired ) : restWpComThemes )
+	);
 
 	// 3. WP.org themes (only if the list of WP.com themes has reached the last page).
 	if ( isEnabled( 'themes/interlaced-dotorg-themes' ) && isLastPage ) {
