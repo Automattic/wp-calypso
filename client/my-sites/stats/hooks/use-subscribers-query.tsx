@@ -29,14 +29,11 @@ function querySubscribers(
 	const query = {
 		unit: period,
 		quantity,
-		http_envelope: 1,
 		date: formattedDate,
 	};
 
 	return wpcom.req.get(
 		{
-			method: 'GET',
-			apiNamespace: 'rest/v1.1',
 			path: `/sites/${ siteId }/stats/subscribers`,
 		},
 		query
