@@ -46,7 +46,7 @@ const translations = [
 	translate( 'Your site looks stunning with its new theme. Take a look or start styling it up.' ),
 	translate( 'Customize the theme' ),
 	translate( 'Visit site' ),
-	translate( 'Solve anything with yout go-to theme resource' ),
+	translate( 'Solve anything with your go-to theme resource' ),
 	translate(
 		'Take a look at our comprehensive support documentation and learn more about themes.'
 	),
@@ -125,7 +125,7 @@ const translations = [
 	// Plan monthly or annual with custom domain for plans below Business
 	translate( 'A site refresh' ),
 	translate(
-		'A new look and feel can help you stand our from the crowd. Get a new theme and make an impression.'
+		'A new look and feel can help you stand out from the crowd. Get a new theme and make an impression.'
 	),
 	translate( '{{a}}Find your new theme{{/a}}', {
 		components: {
