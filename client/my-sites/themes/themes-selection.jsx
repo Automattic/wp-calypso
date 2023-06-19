@@ -343,7 +343,13 @@ export const ConnectedThemesSelection = connect(
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
 
 		const shouldFetchWpOrgThemes = forceWpOrgSearch && sourceSiteId !== 'wporg' && !! search; // Only fetch WP.org themes when searching a term.
-		const wpOrgQuery = { ...query, page: 1 }; // We limit the WP.org themes to one page only.
+		const wpOrgQuery = {
+			...query,
+			// We limit the WP.org themes to one page only.
+			page: 1,
+			// WP.com theme filters don't match WP.org ones, so we add them to the search term.
+			search: filter ? search + ' ' + filter.replaceAll( '+', ' ' ).replaceAll( '-', ' ' ) : search,
+		};
 		const wpOrgThemes = shouldFetchWpOrgThemes
 			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []
 			: [];
