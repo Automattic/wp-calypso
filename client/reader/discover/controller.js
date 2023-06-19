@@ -13,7 +13,7 @@ const exported = {
 	discover( context, next ) {
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Discover';
-		const streamKey = `discover:`;
+		const streamKey = 'discover:recommended';
 		const mcKey = 'discover';
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
