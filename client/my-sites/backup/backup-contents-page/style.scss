@@ -1,6 +1,15 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .backup-contents-page {
+	&__back-button.components-button.is-link {
+		color: #000;
+		text-decoration: none;
+
+		svg {
+			margin-right: 2px;
+		}
+	}
+
 	&__header {
 		padding-bottom: 30px;
 
