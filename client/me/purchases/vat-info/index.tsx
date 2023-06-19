@@ -7,6 +7,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
@@ -84,11 +85,19 @@ export default function VatInfoPage() {
 					</CardHeading>
 					<p className="vat-info__sidebar-paragraph">
 						{ translate(
-							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-							"%(taxName)s details saved on this page will be applied to all of your account's receipts. Only supported countries appear in the dropdown. For more information about taxes, {click here}.",
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
+							'The %(taxName)s details saved on this page will be applied to all receipts in your account. Only supported countries appear in the dropdown. For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.',
 							{
-								textOnly: true,
-								args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
+								args: { taxName: taxName ?? translate( 'Tax (VAT/GST/CT)', { textOnly: true } ) },
+								components: {
+									learnMoreLink: (
+										<InlineSupportLink
+											supportLink="https://wordpress.com/support/vat-gst-other-taxes/"
+											showText={ true }
+											showIcon={ false }
+										/>
+									),
+								},
 							}
 						) }
 					</p>
