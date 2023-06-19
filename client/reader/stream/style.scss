@@ -15,16 +15,18 @@
 			max-width: 600px;
 		}
 
-		.reader-tag-sidebar-recommended-sites {
-			max-width: 270px;
+		&.is-discover-stream {
+			.reader-tag-sidebar-recommended-sites {
+				max-width: 270px;
 
-			.reader-subscription-list-item .follow-button__label,
-			.reader-subscription-list-item__settings-label {
-				display: none;
-			}
+				.reader-subscription-list-item .follow-button__label,
+				.reader-subscription-list-item__settings-label {
+					display: none;
+				}
 
-			.reader-site-notification-settings__button-label {
-				display: none;
+				.reader-site-notification-settings__button-label {
+					display: none;
+				}
 			}
 		}
 	}
