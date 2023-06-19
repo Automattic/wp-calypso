@@ -342,7 +342,11 @@ export const ConnectedThemesSelection = connect(
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
 
-		const shouldFetchWpOrgThemes = forceWpOrgSearch && sourceSiteId !== 'wporg' && !! search; // Only fetch WP.org themes when searching a term.
+		const shouldFetchWpOrgThemes =
+			forceWpOrgSearch &&
+			sourceSiteId !== 'wporg' &&
+			!! search && // Only fetch WP.org themes when searching a term.
+			! tier; // WP.org themes are not a good fit for any of the tiers.
 		const wpOrgQuery = { ...query, page: 1 }; // We limit the WP.org themes to one page only.
 		const wpOrgThemes = shouldFetchWpOrgThemes
 			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []
