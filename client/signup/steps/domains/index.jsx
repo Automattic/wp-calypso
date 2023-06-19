@@ -656,7 +656,11 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
+			return (
+				! stepSectionName &&
+				'domain-transfer' !== this.props.flowName &&
+				translate( 'Enter some descriptive keywords to get started' )
+			);
 		}
 
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
@@ -667,7 +671,7 @@ class DomainsStep extends Component {
 	getHeaderText() {
 		const { headerText, isAllDomains, isReskinned, stepSectionName, translate } = this.props;
 
-		if ( stepSectionName === 'use-your-domain' ) {
+		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === this.props.flowName ) {
 			return '';
 		}
 
@@ -712,6 +716,11 @@ class DomainsStep extends Component {
 
 		if ( ! this.props.stepSectionName && this.props.isReskinned && ! this.isTailoredFlow() ) {
 			sideContent = this.getSideContent();
+		}
+
+		if ( 'domain-transfer' === this.props.flowName && ! this.props.stepSectionName ) {
+			content = this.useYourDomainForm();
+			sideContent = null;
 		}
 
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
