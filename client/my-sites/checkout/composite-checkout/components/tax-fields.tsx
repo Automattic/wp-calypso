@@ -71,6 +71,7 @@ export default function TaxFields( {
 
 	const fields: JSX.Element[] = [
 		<CountrySelectMenu
+			translate={ translate }
 			onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
 				onChange(
 					updateOnChangePayload(

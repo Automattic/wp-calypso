@@ -275,7 +275,7 @@ export function toE164( inputNumber: string, country: CountryData ) {
 	return '+' + country.dialCode + nationalNumber;
 }
 
-export function toIcannFormat( inputNumber: string, country: CountryData | undefined ) {
+export function toIcannFormat( inputNumber: string, country: CountryData ) {
 	if ( ! country ) {
 		return inputNumber;
 	}

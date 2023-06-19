@@ -5,6 +5,7 @@ import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { HTMLProps, ReactChild } from 'react';
 
 export default function CountrySelectMenu( {
+	translate,
 	onChange,
 	isDisabled,
 	isError,
@@ -12,6 +13,7 @@ export default function CountrySelectMenu( {
 	currentValue,
 	countriesList,
 }: {
+	translate: ReturnType< typeof useTranslate >;
 	onChange: HTMLProps< HTMLSelectElement >[ 'onChange' ];
 	isDisabled?: boolean;
 	isError?: boolean;
@@ -22,7 +24,6 @@ export default function CountrySelectMenu( {
 	const countrySelectorId = 'country-selector';
 	const countrySelectorLabelId = 'country-selector-label';
 	const countrySelectorDescriptionId = 'country-selector-description';
-	const translate = useTranslate();
 
 	return (
 		<FormFieldAnnotation
