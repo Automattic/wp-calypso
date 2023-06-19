@@ -85,7 +85,7 @@ export default function VatInfoPage() {
 					<p className="vat-info__sidebar-paragraph">
 						{ translate(
 							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-							"We currently only provide %(taxName)s invoices to users who are properly registered. %(taxName)s information saved on this page will be applied to all of your account's receipts.",
+							"%(taxName)s details saved on this page will be applied to all of your account's receipts. Only supported countries appear in the dropdown. For more information about taxes, {click here}.",
 							{
 								textOnly: true,
 								args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
