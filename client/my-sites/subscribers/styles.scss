@@ -10,7 +10,7 @@
 	}
 }
 
-.subscribers__header-count {
+.subscribers__header {
 	margin-top: 70px;
 	margin-bottom: 30px;
 	font-size: $font-title-small;
@@ -23,6 +23,16 @@
 
 	.subscribers__subscriber-count {
 		color: $studio-gray-40;
+	}
+
+	.add-subscribers-button {
+		float: right;
+
+		.gridicon {
+			height: 14px;
+			width: 14px;
+			top: 2px;
+		}
 	}
 }
 
