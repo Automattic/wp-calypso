@@ -167,7 +167,6 @@ export const SITE_LIMITER_FIELDS = [
 	'feed_item_ID',
 	'global_ID',
 	'metadata',
-	'tags',
 	'site_URL',
 	'URL',
 ];

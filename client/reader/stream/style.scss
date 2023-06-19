@@ -14,6 +14,21 @@
 		.tag-stream__header {
 			max-width: 600px;
 		}
+
+		&.is-discover-stream {
+			.reader-tag-sidebar-recommended-sites {
+				max-width: 270px;
+
+				.reader-subscription-list-item .follow-button__label,
+				.reader-subscription-list-item__settings-label {
+					display: none;
+				}
+
+				.reader-site-notification-settings__button-label {
+					display: none;
+				}
+			}
+		}
 	}
 }
 
@@ -874,3 +889,4 @@
 		border-radius: 6px; /* stylelint-disable-line scales/radii */
 	}
 }
+
