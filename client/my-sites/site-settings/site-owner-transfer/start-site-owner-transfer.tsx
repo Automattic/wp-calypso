@@ -13,6 +13,7 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
+import { Gridicon } from '@automattic/components';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 type Props = {
@@ -62,6 +63,23 @@ const ListItem = styled.li( {
 	marginBottom: '0.25em',
 } );
 
+const DomainsWrapper = styled.div( {
+	backgroundColor: '#F6F7F7',
+	marginTop: '2em',
+	marginBottom: '2em',
+	paddingTop: '1em',
+	paddingBottom: '1em',
+} );
+
+const DomainsWrapperItem = styled.div( {
+	paddingLeft: '1em',
+	fontWeight: 500,
+} );
+
+const GridiconStyled = styled( Gridicon )( {
+	paddingRight: '10px',
+} );
+
 const DomainsCard = ( {
 	domains,
 	siteSlug,
@@ -105,17 +123,19 @@ const DomainsCard = ( {
 							{ strong: <Strong /> }
 						) }
 					</Text>
-					<List>
+					<DomainsWrapper>
 						{ domains.map( ( domain ) => (
-							<ListItem key={ domain.name }>{ domain.name }</ListItem>
+							<DomainsWrapperItem key={ domain.name }>
+								<GridiconStyled icon="domains" size={ 16 } />
+								{ domain.name }
+							</DomainsWrapperItem>
 						) ) }
-					</List>
+					</DomainsWrapper>
 				</>
 			) }
 		</>
 	);
 };
-
 const UpgradesCard = ( {
 	purchases,
 	siteSlug,
