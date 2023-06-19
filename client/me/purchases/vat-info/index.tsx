@@ -88,7 +88,7 @@ export default function VatInfoPage() {
 							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
 							'The %(taxName)s details saved on this page will be applied to all receipts in your account. Only supported countries appear in the dropdown. For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.',
 							{
-								args: { taxName: taxName ?? translate( 'Tax (VAT/GST/CT)', { textOnly: true } ) },
+								args: { taxName: taxName ?? translate( 'tax (VAT/GST/CT)', { textOnly: true } ) },
 								components: {
 									learnMoreLink: (
 										<InlineSupportLink
