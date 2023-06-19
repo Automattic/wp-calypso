@@ -41,7 +41,6 @@ class ReaderPostCard extends Component {
 		discoverPost: PropTypes.object,
 		discoverSite: PropTypes.object,
 		showSiteName: PropTypes.bool,
-		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
@@ -123,7 +122,6 @@ class ReaderPostCard extends Component {
 			onCommentClick,
 			isSelected,
 			showSiteName,
-			followSource,
 			isDiscoverStream,
 			postKey,
 			isExpanded,
@@ -192,7 +190,6 @@ class ReaderPostCard extends Component {
 					showSiteName={ true }
 					teams={ teams }
 					showFollow={ ! isDiscover }
-					followSource={ followSource }
 				/>
 			);
 		} else {
@@ -205,7 +202,6 @@ class ReaderPostCard extends Component {
 					showAvatar={ ! compact }
 					teams={ teams }
 					showFollow={ ! isDiscover }
-					followSource={ followSource }
 				/>
 			);
 		}
