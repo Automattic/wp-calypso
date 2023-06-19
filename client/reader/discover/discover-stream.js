@@ -8,13 +8,15 @@ import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
+import './discover-stream.scss';
+
 const DEFAULT_TAB = 'recommended';
 
 const DiscoverStream = ( props ) => {
 	const locale = useLocale();
 	const followedTags = useSelector( getReaderFollowedTags ) || [];
 	const [ selectedTab, setSelectedTab ] = useState( DEFAULT_TAB );
-	const { data: interestTags } = useQuery( {
+	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
 			wpcom.req.get(
@@ -36,19 +38,9 @@ const DiscoverStream = ( props ) => {
 	const recommendedTags = interestTags.filter( ( tag ) => ! followedTagSlugs.includes( tag.slug ) );
 
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
-	const streamProps = {
-		...props,
-		isDiscoverTags: ! isDefaultTab,
-		streamKey: `discover:${ selectedTab }`,
-	};
 
 	const DiscoverNavigation = () => (
-		<SegmentedControl
-			primary
-			className="discover-stream__tab-control"
-			// TODO, move styles to a scss file and update further.
-			style={ { overflowX: 'scroll' } }
-		>
+		<SegmentedControl primary className="discover-stream__tab-control">
 			<SegmentedControl.Item
 				key={ DEFAULT_TAB }
 				selected={ DEFAULT_TAB === selectedTab }
@@ -70,11 +62,13 @@ const DiscoverStream = ( props ) => {
 		</SegmentedControl>
 	);
 
-	return (
-		<>
-			<DiscoverNavigation />
-			<Stream { ...streamProps } />;
-		</>
-	);
+	const streamProps = {
+		...props,
+		isDiscoverTags: ! isDefaultTab,
+		streamKey: `discover:${ selectedTab }`,
+		streamHeader: <DiscoverNavigation />,
+	};
+
+	return <Stream { ...streamProps } />;
 };
 export default DiscoverStream;
