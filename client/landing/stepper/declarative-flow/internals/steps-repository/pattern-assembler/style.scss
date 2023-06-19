@@ -37,7 +37,7 @@ $font-family: "SF Pro Text", $sans;
 	.pattern-assembler__sidebar {
 		display: flex;
 		flex-direction: column;
-		width: 348px;
+		width: 300px;
 		height: 100vh;
 		box-sizing: border-box;
 		padding: 110px 32px 32px;
@@ -46,8 +46,8 @@ $font-family: "SF Pro Text", $sans;
 		z-index: 2;
 		overflow-x: visible;
 
-		@media ( max-width: $break-wide ) {
-			width: 300px;
+		@include break-wide {
+			width: 348px;
 		}
 	}
 

@@ -6,11 +6,11 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	margin-inline-start: 348px;
-	width: 348px;
+	margin-inline-start: 300px;
+	width: 340px;
+	padding: 20px;
 	background: var(--studio-gray-0);
 	border-left: 1px solid rgba(0, 0, 0, 0.03);
-	padding: 24px;
 	max-height: 100vh;
 	min-height: 100vh;
 	overflow-y: auto;
@@ -19,10 +19,10 @@
 	scrollbar-gutter: stable;
 	font-family: "SF Pro Text", $sans;
 
-	@media ( max-width: $break-wide ) {
-		margin-inline-start: 300px;
-		width: 340px;
-		padding: 20px;
+	@include break-wide {
+		margin-inline-start: 348px;
+		width: 348px;
+		padding: 24px;
 	}
 }
 
