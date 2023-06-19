@@ -9,7 +9,7 @@ function unescape( str ) {
 
 // create function to transform item into a site object
 const getSiteFromItem = ( item ) => {
-	if ( item.site_name === undefined ) {
+	if ( item.site_name === undefined || item.site_description === undefined ) {
 		return null;
 	}
 	return {
