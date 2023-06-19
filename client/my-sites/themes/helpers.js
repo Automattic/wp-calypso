@@ -130,9 +130,10 @@ export function getSubjectsFromTermTable( filterToTermTable ) {
  */
 export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPage ) {
 	const isMatchingTheme = ( theme ) => {
-		if ( ! searchTerm ) {
+		if ( ! searchTerm || theme.retired ) {
 			return false;
 		}
+
 		return (
 			theme.name?.toLowerCase() === searchTerm?.toLowerCase() ||
 			theme.id?.toLowerCase() === searchTerm?.toLowerCase()
@@ -162,7 +163,12 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 	const restWpComThemes = matchingTheme
 		? wpComThemes.filter( ( theme ) => theme.id !== matchingTheme.id )
 		: wpComThemes;
-	interlacedThemes.push( ...restWpComThemes );
+
+	// The themes endpoint returns retired themes when search term exists.
+	// See: https://github.com/Automattic/wp-calypso/pull/78231
+	interlacedThemes.push(
+		...( searchTerm ? restWpComThemes.filter( ( theme ) => ! theme.retired ) : restWpComThemes )
+	);
 
 	// 3. WP.org themes (only if the list of WP.com themes has reached the last page).
 	if ( isEnabled( 'themes/interlaced-dotorg-themes' ) && isLastPage ) {
