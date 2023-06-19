@@ -46,7 +46,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details-header-line {
-		margin: 0 -64px 64px;
+		margin: 0 -64px 48px;
 		padding: 0;
 		@media (max-width: 660px) {
 			margin: 0;
@@ -71,9 +71,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item__header-status {
+		align-items: center;
+		color: $studio-gray-40;
 		display: flex;
 		flex: 1;
-		color: $studio-gray-40;
 
 		span {
 			margin: 0 11px;
@@ -82,11 +83,33 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		.badge {
 			border-radius: 4px;
 		}
+
+		.badge,
+		.campaign-item__header-status-item {
+			font-size: 0.75rem;
+			height: 20px;
+			line-height: 20px;
+		}
 	}
 
 	.campaign-item-details {
 		display: flex;
 		flex-direction: column;
+
+		.campaign-item-details__notice {
+			margin-bottom: 24px;
+		}
+
+		.campaign-item-details__wrapper {
+			.campaign-item-details__label,
+			.campaign-item-details__text {
+				color: var(--studio-gray-100);
+			}
+			.campaign-item-details__text
+			.campaign-item-details__text {
+				line-height: 1.25;
+			}
+		}
 	}
 
 	.campaign-item-details__notice {
@@ -227,6 +250,14 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				display: flex;
 				flex-direction: column;
 				padding: 16px 16px 0;
+
+				&.campaign-item-details__interests {
+					padding-top: 0;
+
+					@media (min-width: calc($break-medium + 1px)) {
+						padding-top: 24px;
+					}
+				}
 
 				@media (min-width: $break-medium) {
 					padding: 24px 24px 0;
@@ -474,6 +505,39 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				background-color: hsl(200, 20%, 95%);
 			}
 		}
+	}
+}
+
+@mixin blazepress-campaign-details-mobile {
+	.campaign-item__container {
+		.campaign-item-details-header-line {
+			margin-bottom: 32px;
+		}
+
+		.campaign-item-details .campaign-item-details__notice {
+			margin-bottom: 32px;
+		}
+	}
+}
+
+// Show Mobile view for screens if window width <= 782px
+@media screen and (max-width: $break-medium) {
+	@include blazepress-campaign-details-mobile;
+}
+
+// Show Mobile view if sidebar is collapsed and main content width <= 782px
+$break-medium-collapsed-menu: $break-medium + 36px;
+@media screen and (max-width: $break-medium-collapsed-menu) {
+	body.is-section-promote-post-i2.is-sidebar-collapsed {
+		@include blazepress-campaign-details-mobile;
+	}
+}
+
+// Show Mobile view if sidebar is expanded and main content width <= 782px
+$break-medium-expanded-menu: $break-medium + 272px;
+@media screen and (max-width: $break-medium-expanded-menu) {
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
+		@include blazepress-campaign-details-mobile;
 	}
 }
 
