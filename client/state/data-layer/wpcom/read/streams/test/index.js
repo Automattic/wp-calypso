@@ -85,7 +85,7 @@ describe( 'streams', () => {
 					},
 				},
 				{
-					stream: 'discover:dailypromt',
+					stream: 'discover:dailyprompt',
 					expected: {
 						method: 'GET',
 						path: `/read/tags/dialyprompt/posts`,
