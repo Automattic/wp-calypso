@@ -1,7 +1,7 @@
 import page from 'page';
 import { addQueryArgs } from 'calypso/lib/route';
 import { sanitizeInt } from './helpers';
-import { Subscribers } from './main';
+import SubscriberDetailsPage from './subscriber-details-page';
 
 const pageChanged = ( path ) => ( pageNumber ) => {
 	if ( window ) {
@@ -14,7 +14,12 @@ export function subscribers( context, next ) {
 	const { path, query } = context;
 	const pageNumber = sanitizeInt( query.page ) ?? 1;
 
-	context.primary = <Subscribers page={ pageNumber } pageChanged={ pageChanged( path ) } />;
+
+export function subscriberDetails( context, next ) {
+	const { path } = context;
+	const subscriberId = path.split( '/' ).pop();
+
+	context.primary = <SubscriberDetailsPage subscriberId={ subscriberId } />;
 
 	next();
 }
