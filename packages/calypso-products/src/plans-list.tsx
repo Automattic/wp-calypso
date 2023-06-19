@@ -3181,49 +3181,23 @@ const PLANS_LIST_RAW = {
 		getBillingTimeFrame: () => translate( 'per user per month' ),
 	},
 
-	// Brand new WPCOM plans
-	[ PLAN_WPCOM_PRO ]: {
-		...getPlanProDetails(),
-		term: TERM_ANNUALLY,
-		getProductId: () => 1032,
-		getStoreSlug: () => PLAN_WPCOM_PRO,
-		getPathSlug: () => 'pro',
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
-	},
-
-	[ PLAN_WPCOM_PRO_MONTHLY ]: {
-		...getPlanProDetails(),
-		...getMonthlyTimeframe(),
-		availableFor: ( plan ) => [ PLAN_FREE ].includes( plan ),
-		getProductId: () => 1034,
-		getStoreSlug: () => PLAN_WPCOM_PRO_MONTHLY,
-		getPathSlug: () => 'pro-monthly',
-	},
-
-	[ PLAN_WPCOM_PRO_2_YEARS ]: {
-		...getPlanProDetails(),
-		term: TERM_BIENNIALLY,
-		availableFor: ( plan ) =>
-			[ PLAN_FREE, PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ].includes( plan ),
-		getProductId: () => 1035,
-		getStoreSlug: () => PLAN_WPCOM_PRO_2_YEARS,
-		getPathSlug: () => 'pro-2-years',
-		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-	},
-
-	[ PLAN_ECOMMERCE_TRIAL_MONTHLY ]: {
-		...getDotcomPlanDetails(),
-		type: TYPE_ECOMMERCE,
-		group: GROUP_WPCOM,
-		getProductId: () => 1052,
-		getPathSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
-		term: TERM_MONTHLY,
-		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
-		getStoreSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
-		getTitle: () => i18n.translate( 'eCommerce free trial' ),
-		getDescription: () => i18n.translate( 'eCommerce free trial' ),
-		getTagline: () =>
-			i18n.translate( 'Get a taste of the world’s most popular eCommerce software.' ),
+	[ PLAN_P2_FREE ]: {
+		// Inherits the free plan
+		...getPlanFreeDetails(),
+		getDescription: () =>
+			i18n.translate(
+				'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
+				plansDescriptionHeadingComponent
+			),
+		getTitle: () => i18n.translate( 'P2 Free' ),
+		getPlanCompareFeatures: () => [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_P2_3GB_STORAGE,
+			FEATURE_P2_UNLIMITED_USERS,
+			FEATURE_P2_UNLIMITED_POSTS_PAGES,
+			FEATURE_P2_SIMPLE_SEARCH,
+			FEATURE_P2_CUSTOMIZATION_OPTIONS,
+		],
 	},
 
 	[ PLAN_WPCOM_STARTER ]: {
@@ -3288,25 +3262,6 @@ const PLANS_LIST_RAW = {
 		} ),
 	},
 
-	[ PLAN_P2_FREE ]: {
-		// Inherits the free plan
-		...getPlanFreeDetails(),
-		getDescription: () =>
-			i18n.translate(
-				'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
-				plansDescriptionHeadingComponent
-			),
-		getTitle: () => i18n.translate( 'P2 Free' ),
-		getPlanCompareFeatures: () => [
-			// pay attention to ordering, shared features should align on /plan page
-			FEATURE_P2_3GB_STORAGE,
-			FEATURE_P2_UNLIMITED_USERS,
-			FEATURE_P2_UNLIMITED_POSTS_PAGES,
-			FEATURE_P2_SIMPLE_SEARCH,
-			FEATURE_P2_CUSTOMIZATION_OPTIONS,
-		],
-	},
-
 	[ PLAN_WPCOM_FLEXIBLE ]: {
 		// Inherits the free plan
 		...getPlanFreeDetails(),
@@ -3317,6 +3272,51 @@ const PLANS_LIST_RAW = {
 		getDescription: () =>
 			i18n.translate( 'Start your free WordPress.com website. Limited functionality and storage.' ),
 		getPlanCompareFeatures: () => [ FEATURE_1GB_STORAGE ],
+	},
+
+	// Brand new WPCOM plans
+	[ PLAN_WPCOM_PRO ]: {
+		...getPlanProDetails(),
+		term: TERM_ANNUALLY,
+		getProductId: () => 1032,
+		getStoreSlug: () => PLAN_WPCOM_PRO,
+		getPathSlug: () => 'pro',
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	},
+
+	[ PLAN_WPCOM_PRO_MONTHLY ]: {
+		...getPlanProDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) => [ PLAN_FREE ].includes( plan ),
+		getProductId: () => 1034,
+		getStoreSlug: () => PLAN_WPCOM_PRO_MONTHLY,
+		getPathSlug: () => 'pro-monthly',
+	},
+
+	[ PLAN_WPCOM_PRO_2_YEARS ]: {
+		...getPlanProDetails(),
+		term: TERM_BIENNIALLY,
+		availableFor: ( plan ) =>
+			[ PLAN_FREE, PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ].includes( plan ),
+		getProductId: () => 1035,
+		getStoreSlug: () => PLAN_WPCOM_PRO_2_YEARS,
+		getPathSlug: () => 'pro-2-years',
+		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+	},
+
+	[ PLAN_ECOMMERCE_TRIAL_MONTHLY ]: {
+		...getDotcomPlanDetails(),
+		type: TYPE_ECOMMERCE,
+		group: GROUP_WPCOM,
+		getProductId: () => 1052,
+		getPathSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
+		term: TERM_MONTHLY,
+		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
+		getStoreSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
+		getTitle: () => i18n.translate( 'eCommerce free trial' ),
+		getDescription: () => i18n.translate( 'eCommerce free trial' ),
+		getTagline: () =>
+			i18n.translate( 'Get a taste of the world’s most popular eCommerce software.' ),
 	},
 };
 
