@@ -28,6 +28,7 @@ interface Props {
 	) => void;
 	replacePatternMode: boolean;
 	selectedPattern: Pattern | null;
+	selectedPatterns: Pattern[];
 	recordTracksEvent: ( name: string, eventProperties: any ) => void;
 	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
 }
@@ -39,6 +40,7 @@ const ScreenCategoryList = ( {
 	replacePatternMode,
 	onSelect,
 	selectedPattern,
+	selectedPatterns,
 	recordTracksEvent,
 	onTogglePatternPanelList,
 }: Props ) => {
@@ -139,6 +141,7 @@ const ScreenCategoryList = ( {
 					onSelect( 'section', selectedPattern, selectedCategory )
 				}
 				selectedPattern={ selectedPattern }
+				selectedPatterns={ selectedPatterns }
 				selectedCategory={ selectedCategory }
 				categories={ categories }
 				patternsMapByCategory={ patternsMapByCategory }
