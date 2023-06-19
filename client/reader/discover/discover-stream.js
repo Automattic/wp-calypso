@@ -62,10 +62,22 @@ const DiscoverStream = ( props ) => {
 		</SegmentedControl>
 	);
 
+	let streamKey = `discover:${ selectedTab }`;
+	// We want a different stream key for recommended depending on the followed tags that are available.
+	if ( isDefaultTab ) {
+		if ( ! followedTags.length ) {
+			streamKey += '-no-tags';
+		} else {
+			// Ensures a different key depending on the users followed tags list. So the stream can
+			// update when the user follows/unfollows other tags.
+			streamKey += followedTagSlugs.reduce( ( acc, val ) => acc + `-${ val }`, '' );
+		}
+	}
+
 	const streamProps = {
 		...props,
 		isDiscoverTags: ! isDefaultTab,
-		streamKey: `discover:${ selectedTab }`,
+		streamKey,
 		streamHeader: <DiscoverNavigation />,
 	};
 
