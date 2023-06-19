@@ -38,7 +38,6 @@ class ReaderPostCard extends Component {
 		isSelected: PropTypes.bool,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
-		showPrimaryFollowButton: PropTypes.bool,
 		discoverPost: PropTypes.object,
 		discoverSite: PropTypes.object,
 		showSiteName: PropTypes.bool,
@@ -122,7 +121,6 @@ class ReaderPostCard extends Component {
 			site,
 			feed,
 			onCommentClick,
-			showPrimaryFollowButton,
 			isSelected,
 			showSiteName,
 			followSource,
@@ -194,7 +192,6 @@ class ReaderPostCard extends Component {
 					showSiteName={ true }
 					teams={ teams }
 					showFollow={ ! isDiscover }
-					showPrimaryFollowButton={ showPrimaryFollowButton }
 					followSource={ followSource }
 				/>
 			);
@@ -208,7 +205,6 @@ class ReaderPostCard extends Component {
 					showAvatar={ ! compact }
 					teams={ teams }
 					showFollow={ ! isDiscover }
-					showPrimaryFollowButton={ showPrimaryFollowButton }
 					followSource={ followSource }
 				/>
 			);
