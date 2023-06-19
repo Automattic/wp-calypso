@@ -36,6 +36,12 @@ body.is-section-promote-post-i2 {
 					max-width: 1040px;
 					width: calc(100% - 128px);
 				}
+
+				// Align vertical align of a campaign status badge.
+				.campaigns-list__table .campaign-item__status .badge {
+					height: 20px;
+					padding: 0 10px;
+				}
 			}
 
 			.advertising__page-header {

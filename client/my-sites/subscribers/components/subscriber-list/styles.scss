@@ -13,7 +13,7 @@
 		padding-top: 20px;
 		padding-bottom: 20px;
 
-		* {
+		> * {
 			flex: 1;
 		}
 
@@ -129,12 +129,23 @@
 	}
 }
 
-@media ( max-width: $break-medium ) {
+@media ( max-width: $break-large ) {
 	.subscriber-list {
 		padding-left: 16px;
 		padding-right: 16px;
 
 		.subscriber-list__since-column {
+			display: none;
+		}
+	}
+}
+
+@media ( max-width: $break-medium ) {
+	.subscriber-list {
+		padding-left: 16px;
+		padding-right: 16px;
+
+		.subscriber-list__subscription-type-column {
 			display: none;
 		}
 	}

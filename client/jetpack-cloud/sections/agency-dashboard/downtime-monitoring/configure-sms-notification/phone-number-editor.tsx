@@ -10,11 +10,17 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useSelector } from 'calypso/state';
 import getCountries from 'calypso/state/selectors/get-countries';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
-import { useRequestVerificationCode } from '../hooks';
-import type { StateMonitorSettingsSMS, Site } from '../../sites-overview/types';
+import { useContactModalTitleAndSubtitle, useRequestVerificationCode } from '../hooks';
+import type {
+	StateMonitorSettingsSMS,
+	Site,
+	AllowedMonitorContactActions,
+} from '../../sites-overview/types';
 
 interface Props {
 	toggleModal: () => void;
+	selectedPhone?: StateMonitorSettingsSMS;
+	selectedAction?: AllowedMonitorContactActions;
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
 	setAllPhoneItems: ( phoneNumbers: Array< StateMonitorSettingsSMS > ) => void;
 	setVerifiedPhoneNumber: ( item: string ) => void;
@@ -28,10 +34,13 @@ interface FormPhoneInputChangeResult {
 	phoneNumber: string;
 	phoneNumberFull: string;
 	verificationCode?: string;
+	id?: string;
 }
 
 export default function PhoneNumberEditor( {
 	toggleModal,
+	selectedPhone,
+	selectedAction = 'add',
 	allPhoneItems,
 	setAllPhoneItems,
 	setVerifiedPhoneNumber,
@@ -53,25 +62,36 @@ export default function PhoneNumberEditor( {
 		{ phone?: string; verificationCode?: string } | undefined
 	>();
 	const [ phoneItem, setPhoneItem ] = useState< FormPhoneInputChangeResult >( {
-		name: '',
-		countryCode: '',
-		countryNumericCode: '',
-		phoneNumber: '',
-		phoneNumberFull: '',
+		name: selectedPhone?.name ?? '',
+		countryCode: selectedPhone?.countryCode ?? '',
+		countryNumericCode: selectedPhone?.countryNumericCode ?? '',
+		phoneNumber: selectedPhone?.phoneNumber ?? '',
+		phoneNumberFull: selectedPhone?.phoneNumberFull ?? '',
+		id: selectedPhone?.phoneNumberFull ?? '',
 	} );
 
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
+	const isVerifyAction = selectedAction === 'verify';
+
 	const requestVerificationCode = useRequestVerificationCode();
+
+	const { title, subtitle } = useContactModalTitleAndSubtitle( 'phone', selectedAction );
 
 	const handleSetPhoneItems = useCallback(
 		( isVerified = true ) => {
+			const phoneItemIndex = allPhoneItems.findIndex(
+				( item ) => item.phoneNumberFull === phoneItem.id
+			);
 			const updatedPhoneItem = {
 				...phoneItem,
 				verified: isVerified,
 			};
-			// Check if exists when editing
-			allPhoneItems.push( updatedPhoneItem );
+			if ( phoneItemIndex > -1 ) {
+				allPhoneItems[ phoneItemIndex ] = updatedPhoneItem;
+			} else {
+				allPhoneItems.push( updatedPhoneItem );
+			}
 			setAllPhoneItems( allPhoneItems );
 			toggleModal();
 		},
@@ -88,6 +108,14 @@ export default function PhoneNumberEditor( {
 			country_numeric_code: phoneItem.countryNumericCode,
 		} );
 	};
+
+	// Trigger resend code when user chooses to verify email action
+	useEffect( () => {
+		if ( isVerifyAction ) {
+			setShowCodeVerification( true );
+			// TODO: call resend verification code API
+		}
+	}, [ isVerifyAction ] );
 
 	// Show code input when verification code request is successful
 	useEffect( () => {
@@ -134,8 +162,10 @@ export default function PhoneNumberEditor( {
 		setValidationError( undefined );
 		if ( validationStatus.isValid ) {
 			if (
-				allPhoneItems.map( ( item ) => item.phoneNumberFull ).includes( phoneItem.phoneNumberFull )
-				// Handle case when editing
+				allPhoneItems
+					.map( ( item ) => item.phoneNumberFull )
+					.includes( phoneItem.phoneNumberFull ) &&
+				selectedPhone?.phoneNumberFull !== phoneItem.phoneNumberFull
 			) {
 				return setValidationError( {
 					phone: translate( 'This phone number is already in use.' ),
@@ -168,9 +198,6 @@ export default function PhoneNumberEditor( {
 		},
 		[]
 	);
-
-	const title = translate( 'Add your phone number' );
-	const subTitle = translate( 'Please use an accessible phone number. Only alerts sent.' );
 
 	const onChangePhoneInput = ( {
 		phoneNumberFull,
@@ -224,7 +251,7 @@ export default function PhoneNumberEditor( {
 			title={ title }
 			className="notification-settings__modal"
 		>
-			<div className="notification-settings__sub-title">{ subTitle }</div>
+			<div className="notification-settings__sub-title">{ subtitle }</div>
 
 			<form className="configure-contact__form" onSubmit={ onSave }>
 				<>
@@ -235,12 +262,14 @@ export default function PhoneNumberEditor( {
 							name="name"
 							value={ phoneItem.name }
 							onChange={ handleChange( 'name' ) }
-							aria-describedby="name-help-text"
+							aria-describedby={ ! isVerifyAction ? 'name-help-text' : undefined }
 							disabled={ showCodeVerification }
 						/>
-						<div className="configure-contact__help-text" id="name-help-text">
-							{ translate( 'Give this number a name for your personal reference.' ) }
-						</div>
+						{ ! isVerifyAction && (
+							<div className="configure-contact__help-text" id="name-help-text">
+								{ translate( 'Give this number a name for your personal reference.' ) }
+							</div>
+						) }
 					</FormFieldset>
 					<div className="configure-contact__phone-input-container">
 						{
@@ -260,9 +289,11 @@ export default function PhoneNumberEditor( {
 								{ validationError?.phone }
 							</div>
 						) }
-						<div className="configure-contact__help-text" id="phone-help-text">
-							{ translate( 'We’ll send a code to verify your phone number.' ) }
-						</div>
+						{ ! isVerifyAction && (
+							<div className="configure-contact__help-text" id="phone-help-text">
+								{ translate( 'We’ll send a code to verify your phone number.' ) }
+							</div>
+						) }
 					</div>
 					{ showCodeVerification && (
 						<FormFieldset>

@@ -12,6 +12,7 @@ import {
 	useRequestVerificationCode,
 	useValidateVerificationCode,
 	useResendVerificationCode,
+	useContactModalTitleAndSubtitle,
 } from '../hooks';
 import EmailItemContent from './email-item-content';
 import type {
@@ -63,12 +64,13 @@ export default function EmailAddressEditor( {
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
 	const isVerifyAction = selectedAction === 'verify';
-	const isEditAction = selectedAction === 'edit';
 	const isRemoveAction = selectedAction === 'remove';
 
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyEmail = useValidateVerificationCode();
 	const resendCode = useResendVerificationCode();
+
+	const { title, subtitle } = useContactModalTitleAndSubtitle( 'email', selectedAction );
 
 	// Function to handle resending verification code
 	const handleResendCode = useCallback( () => {
@@ -298,24 +300,6 @@ export default function EmailAddressEditor( {
 		handleSetEmailItems( false );
 	}
 
-	let title = translate( 'Add new email address' );
-	let subTitle = translate( 'Please use only your number or one you have access to.' );
-
-	if ( isVerifyAction ) {
-		title = translate( 'Verify your email address' );
-		subTitle = translate( 'We’ll send a code to verify your email address.' );
-	}
-
-	if ( isEditAction ) {
-		title = translate( 'Edit your email address' );
-		subTitle = translate( 'If you update your email address, you’ll need to verify it.' );
-	}
-
-	if ( isRemoveAction ) {
-		title = translate( 'Remove Email' );
-		subTitle = translate( 'Are you sure you want to remove this email address?' );
-	}
-
 	const handleChange = useCallback(
 		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setEmailItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
@@ -334,11 +318,15 @@ export default function EmailAddressEditor( {
 			title={ title }
 			className="notification-settings__modal"
 		>
-			<div className="notification-settings__sub-title">{ subTitle }</div>
+			<div className="notification-settings__sub-title">{ subtitle }</div>
 
 			<form className="configure-contact__form" onSubmit={ onSave }>
 				{ isRemoveAction ? (
-					selectedEmail && <EmailItemContent isRemoveAction item={ selectedEmail } />
+					selectedEmail && (
+						<div className="margin-top-16">
+							<EmailItemContent isRemoveAction item={ selectedEmail } />
+						</div>
+					)
 				) : (
 					<>
 						<FormFieldset>

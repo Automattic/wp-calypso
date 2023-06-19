@@ -77,23 +77,6 @@
 	}
 }
 
-.license-bundle-card__price {
-	margin-bottom: 0.25rem;
-	font-size: 1.25rem;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.5rem;
-	font-weight: 600;
-	color: var(--studio-gray-80);
-
-	@include break-xlarge {
-		font-size: 1.5rem;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.75rem;
-		font-weight: 700;
-		color: var(--studio-black);
-	}
-}
-
 .license-bundle-card__footer {
 	display: flex;
 	justify-content: space-between;
@@ -104,14 +87,6 @@
 		flex-direction: column;
 		align-items: flex-start;
 	}
-}
-
-.license-bundle-card__price-interval {
-	font-size: 0.75rem;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 0.875rem;
-	font-weight: 400;
-	color: var(--studio-gray-60);
 }
 
 .license-bundle-card__select-license {

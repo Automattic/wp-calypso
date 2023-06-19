@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign, CampaignStats } from 'calypso/data/promote-post/types';
 import {
 	PagedBlazeContentData,
 	PagedBlazeSearchResponse,
@@ -62,10 +62,13 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 	}
 };
 
-export const isCampaignFinished = ( status: string ) => {
-	return [ campaignStatus.CANCELED, campaignStatus.ACTIVE, campaignStatus.FINISHED ].includes(
-		status
-	);
+export const showDetails = ( status: string ) => {
+	return [
+		campaignStatus.CANCELED,
+		campaignStatus.ACTIVE,
+		campaignStatus.FINISHED,
+		campaignStatus.REJECTED,
+	].includes( status );
 };
 
 export const getCampaignStatus = ( status: string ) => {
@@ -165,8 +168,8 @@ export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string
 	return `${ ( +minEstimate ).toLocaleString() } - ${ ( +maxEstimate ).toLocaleString() }`;
 };
 
-export const formatNumber = ( number: number ) => {
-	if ( ! number ) {
+export const formatNumber = ( number: number, onlyPositives = false ): string => {
+	if ( ! number || ( onlyPositives && number < 0 ) ) {
 		return '-';
 	}
 	return number.toLocaleString();
@@ -213,3 +216,23 @@ export function getAdvertisingDashboardPath( path: string ) {
 	const pathPrefix = config( 'advertising_dashboard_path_prefix' ) || '/advertising';
 	return `${ pathPrefix }${ path }`;
 }
+
+/**
+ * Unifies the campaign list with the stats list
+ *
+ * @param {Campaign[]} campaigns List of campaigns
+ * @param {CampaignStats[]} campaignsStats List of campaign stats
+ * @returns A unified list of campaign with the stats
+ */
+export const unifyCampaigns = (
+	campaigns: Campaign[] = [],
+	campaignsStats: CampaignStats[] = []
+) => {
+	return campaigns.map( ( campaign ) => {
+		const stats = campaignsStats.find( ( cs ) => cs.campaign_id === campaign.campaign_id );
+		return {
+			...campaign,
+			...( stats ? stats : {} ),
+		};
+	} );
+};

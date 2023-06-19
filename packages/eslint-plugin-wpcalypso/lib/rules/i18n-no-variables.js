@@ -42,6 +42,10 @@ const rule = ( module.exports = function ( context ) {
 
 	function validateOptions( options ) {
 		return options.properties.every( function ( property ) {
+			if ( property.type === 'SpreadElement' ) {
+				return;
+			}
+
 			const key = property.key.name;
 
 			// `options.original` can be a string value to be validated in this

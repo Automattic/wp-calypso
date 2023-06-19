@@ -5,9 +5,6 @@ export function useShouldRenderEmailOption() {
 
 	return {
 		isLoading: isFetching,
-		render:
-			( supportAvailability?.is_user_eligible_for_tickets ||
-				supportAvailability?.is_user_eligible_for_upwork ) ??
-			false,
+		render: supportAvailability?.is_user_eligible_for_tickets ?? false,
 	};
 }

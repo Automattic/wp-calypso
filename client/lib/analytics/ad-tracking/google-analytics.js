@@ -1,5 +1,4 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getGaGtag } from '../utils/get-ga-gtag';
 import * as GA4 from './google-analytics-4';
@@ -29,10 +28,7 @@ export function getGoogleAnalyticsDefaultConfig() {
 		custom_map: {
 			dimension3: 'client_id',
 		},
-		linker:
-			isJetpackCloud() || isAkismetCheckout()
-				? { domains: [ 'wordpress.com' ] }
-				: { accept_incoming: true },
+		linker: isJetpackCloud() ? { domains: [ 'wordpress.com' ] } : { accept_incoming: true },
 	};
 }
 

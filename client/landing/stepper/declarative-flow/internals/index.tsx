@@ -1,6 +1,6 @@
 import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
+import { useEffect, useState, useCallback, Suspense, lazy, useRef } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -17,6 +17,7 @@ import { useSite } from '../../hooks/use-site';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
+import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';
@@ -49,9 +50,16 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
+	const design = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
+
+	const urlQueryParams = useQuery();
+	const isInHostingFlow = useRef( urlQueryParams.get( 'hosting-flow' ) === 'true' ).current;
 
 	const site = useSite();
-	const ref = useQuery().get( 'ref' ) || '';
+	const ref = urlQueryParams.get( 'ref' ) || '';
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
@@ -130,7 +138,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		const isReEnteringStep =
 			signupCompleteFlowName === flow.name && signupCompleteStepName === currentStepRoute;
 		if ( ! isReEnteringStep ) {
-			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
+			recordStepStart( flow.name, kebabCase( currentStepRoute ), {
+				intent,
+				is_in_hosting_flow: isInHostingFlow,
+				...( design && { assembler_source: getAssemblerSource( design ) } ),
+			} );
 		}
 
 		// Also record page view for data and analytics

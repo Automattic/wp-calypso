@@ -5,7 +5,7 @@ import { chevronRight } from '@wordpress/icons';
 import { useMemo } from 'react';
 import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -17,7 +17,7 @@ import {
 	getCampaignBudgetData,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
-	isCampaignFinished,
+	showDetails,
 } from '../../utils';
 import './style.scss';
 
@@ -71,7 +71,7 @@ export default function CampaignItem( props: Props ) {
 	const budgetString = campaignDays ? `$${ totalBudget } ${ totalBudgetLeftString }` : '-';
 	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
 
-	const campaignContainsData = isCampaignFinished( status );
+	const shouldShowDetailsButton = showDetails( status );
 	const statusBadge = (
 		<Badge type={ getCampaignStatusBadgeColor( status ) }>{ getCampaignStatus( status ) }</Badge>
 	);
@@ -84,7 +84,7 @@ export default function CampaignItem( props: Props ) {
 		if ( impressions_total > 0 ) {
 			statElements[ statElements.length ] = sprintf(
 				// translators: %s is formatted number of views
-				_n( '%s impressions', '%s impression', impressions_total ),
+				_n( '%s impression', '%s impressions', impressions_total ),
 				formatNumber( impressions_total )
 			);
 		}
@@ -92,7 +92,7 @@ export default function CampaignItem( props: Props ) {
 		if ( clicks_total > 0 ) {
 			statElements[ statElements.length ] = sprintf(
 				// translators: %s is formatted number of clicks
-				_n( '%s clicks', '%s click', clicks_total ),
+				_n( '%s click', '%s clicks', clicks_total ),
 				formatNumber( clicks_total )
 			);
 		}
@@ -148,11 +148,12 @@ export default function CampaignItem( props: Props ) {
 				{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }
 			</td>
 			<td className="campaign-item__budget">{ budgetString }</td>
-			{ /* TODO: Return these columns back when backend is ready to provide the data */ }
-			{ /* <td className="campaign-item__impressions">{ formatNumber( impressions_total ) }</td> */ }
-			{ /* <td className="campaign-item__clicks">{ formatNumber( clicks_total ) }</td> */ }
+			<td className="campaign-item__impressions">{ formatNumber( impressions_total ) }</td>
+			<td className="campaign-item__clicks">{ formatNumber( clicks_total ) }</td>
 			<td className="campaign-item__action">
-				{ campaignContainsData && <Button href={ openCampaignURL } isLink icon={ chevronRight } /> }
+				{ shouldShowDetailsButton && (
+					<Button href={ openCampaignURL } isLink icon={ chevronRight } />
+				) }
 			</td>
 		</tr>
 	);

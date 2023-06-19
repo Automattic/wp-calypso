@@ -194,6 +194,9 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	setIsBulkManagementActive: ( value: boolean ) => void;
 	selectedSites: Array< Site >;
 	setSelectedSites: ( value: Array< Site > ) => void;
+	currentLicenseInfo: string | null;
+	showLicenseInfo: ( license: string ) => void;
+	hideLicenseInfo: () => void;
 }
 
 export interface DashboardDataContextInterface {
@@ -288,9 +291,29 @@ export interface MonitorSettingsEmail {
 	verified: boolean;
 }
 
+export interface StateMonitorSettingsSMS {
+	name: string;
+	countryCode: string;
+	countryNumericCode: string;
+	phoneNumber: string;
+	phoneNumberFull: string;
+	verified: boolean;
+}
+
 export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
 	isDefault?: boolean;
 }
+
+export interface StateMonitorSettingsSMS {
+	name: string;
+	countryCode: string;
+	phoneNumber: string;
+	phoneNumberFull: string;
+	verified: boolean;
+}
+
+export type MonitorSettingsContact = Partial< MonitorSettingsEmail > &
+	Partial< StateMonitorSettingsSMS >;
 
 export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
 
@@ -316,20 +339,14 @@ export interface MonitorContactsResponse {
 export type MonitorDuration = { label: string; time: number };
 
 export interface InitialMonitorSettings {
+	enableSMSNotification: boolean;
 	enableEmailNotification: boolean;
 	enableMobileNotification: boolean;
 	selectedDuration: MonitorDuration | undefined;
 	emailContacts?: MonitorSettingsEmail[] | [];
+	phoneContacts?: StateMonitorSettingsSMS[] | [];
 }
 export interface ResendVerificationCodeParams {
 	type: 'email';
 	value: string;
-}
-
-export interface StateMonitorSettingsSMS {
-	name: string;
-	countryCode: string;
-	phoneNumber: string;
-	phoneNumberFull: string;
-	verified: boolean;
 }

@@ -1,18 +1,19 @@
 import { Button } from '@automattic/components';
 import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import SMSItemContent from './sms-item-content';
 import type { StateMonitorSettingsSMS } from '../../sites-overview/types';
-
 interface Props {
 	toggleModal: () => void;
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
+	recordEvent: ( action: string, params?: object ) => void;
 	verifiedPhoneNumber?: string;
 }
 
 export default function ConfigureSMSNotification( {
 	toggleModal,
+	recordEvent,
 	allPhoneItems,
-	verifiedPhoneNumber,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -24,13 +25,14 @@ export default function ConfigureSMSNotification( {
 	return (
 		<div className="configure-contact__card-container">
 			{ allPhoneItems.map( ( item ) => (
-				// TODO: Replace with the correct component
-				<li key={ item.phoneNumberFull }>
-					{ item.phoneNumberFull }
-					{ item.phoneNumberFull === verifiedPhoneNumber && item.verified && ': Verified' }
-					{ ! item.verified && ': Pending' }
-				</li>
+				<SMSItemContent
+					toggleModal={ toggleModal }
+					recordEvent={ recordEvent }
+					key={ item.phoneNumberFull }
+					item={ item }
+				/>
 			) ) }
+
 			<Button
 				compact
 				className="configure-contact__button"
