@@ -80,8 +80,7 @@ export function useValidateVerificationCode(): {
 					// Replace if it exists, otherwise add it
 					sms_numbers: [
 						...oldContacts.sms_numbers.filter(
-							( sms: { sms_number: string; country_numeric_code: string } ) =>
-								sms.sms_number !== params.value
+							( sms: { sms_number: string } ) => sms.sms_number !== params.value
 						),
 						newSMSItem,
 					],
