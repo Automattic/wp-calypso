@@ -32,7 +32,7 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 		alsoIncluded,
 		benefits,
 		benefitsComingSoon,
-		description,
+		lightboxDescription,
 		faqs,
 		productSlug,
 		recommendedFor,
@@ -53,7 +53,7 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 				</div>
 				<h2>{ title }</h2>
 			</div>
-			<div className="jetpack-product-info__description">{ description }</div>
+			<div className="jetpack-product-info__description">{ lightboxDescription }</div>
 
 			{ showPricingBreakdown && product.productsIncluded && (
 				<PricingBreakdown
