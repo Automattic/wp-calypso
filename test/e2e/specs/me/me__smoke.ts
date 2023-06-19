@@ -42,8 +42,14 @@ describe( 'Me: Smoke Test', function () {
 		{ target: 'Notification Settings', endpoint: 'notifications' },
 		{ target: 'Blocked Sites', endpoint: 'site-blocks' },
 		{ target: 'Apps', endpoint: 'get-apps' },
-	] )( 'Navigate to Me > %s', async function ( { target, endpoint } ) {
-		await page.getByRole( 'link', { name: target } ).click();
+	] )( 'Navigate to Me > $target', async function ( { target, endpoint } ) {
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+			await page.getByRole( 'link', { name: target } ).click();
+		} else {
+			// See: https://github.com/Automattic/wp-calypso/issues/78356
+			await page.goto( DataHelper.getCalypsoURL( `me/${ endpoint }` ) );
+		}
 		await page.waitForURL( new RegExp( endpoint ) );
+		await page.getByRole( 'heading', { name: target } );
 	} );
 } );
