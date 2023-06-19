@@ -2,8 +2,8 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import TimeSince from 'calypso/components/time-since';
 import useSubscriptionPlans from '../../hooks/use-subscription-plans';
 import { Subscriber } from '../../types';
-import { SubscriberPopover } from './subscriber-popover';
-import { SubscriberProfile } from './subscriber-profile';
+import { SubscriberPopover } from '../subscriber-popover';
+import { SubscriberProfile } from '../subscriber-profile';
 
 type SubscriberRowProps = {
 	onUnsubscribe: ( subscriber: Subscriber ) => void;
