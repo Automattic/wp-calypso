@@ -18,6 +18,7 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import ReaderDiscoverSidebar from 'calypso/reader/stream/reader-discover-sidebar';
 import ReaderSearchSidebar from 'calypso/reader/stream/reader-search-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
@@ -28,6 +29,7 @@ import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/like
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
 	requestPage,
@@ -41,6 +43,7 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
+import { getReaderTags } from 'calypso/state/reader/tags/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -134,6 +137,7 @@ class ReaderStream extends Component {
 			this.props.requestPage( {
 				streamKey: this.props.recsStreamKey,
 				pageHandle: this.props.recsStream.pageHandle,
+				tags: this.props.recsStream.tags,
 			} );
 		}
 	}
@@ -375,12 +379,12 @@ class ReaderStream extends Component {
 	};
 
 	poll = () => {
-		const { streamKey } = this.props;
-		this.props.requestPage( { streamKey, isPoll: true } );
+		const { streamKey, tags } = this.props;
+		this.props.requestPage( { streamKey, isPoll: true, tags } );
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		const { streamKey, stream, startDate } = props;
+		const { streamKey, stream, startDate, tags } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
@@ -388,7 +392,7 @@ class ReaderStream extends Component {
 			props.trackScrollPage( pageId );
 		}
 		const pageHandle = stream.pageHandle || { before: startDate };
-		props.requestPage( { streamKey, pageHandle } );
+		props.requestPage( { streamKey, pageHandle, tags } );
 	};
 
 	showUpdates = () => {
@@ -460,7 +464,17 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag } = this.props;
+		const {
+			translate,
+			forcePlaceholders,
+			lastPage,
+			streamHeader,
+			streamKey,
+			tag,
+			tags,
+			sites,
+			isDiscoverTags,
+		} = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -476,6 +490,7 @@ class ReaderStream extends Component {
 		const path = window.location.pathname;
 		const isTagPage = path.startsWith( '/tag/' );
 		const isSearchPage = path.startsWith( '/read/search' );
+		const isDiscoverPage = path.startsWith( '/discover' );
 		const streamType = getStreamType( streamKey );
 
 		let baseClassnames = classnames( 'following', this.props.className );
@@ -501,18 +516,21 @@ class ReaderStream extends Component {
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 					className="stream__list"
+					tags={ tags }
 				/>
 			);
 
 			let sidebarContent = null;
 			let tabTitle = translate( 'Sites' );
 
-			if ( isTagPage ) {
+			if ( isTagPage || isDiscoverTags ) {
 				sidebarContent = <ReaderTagSidebar tag={ tag } />;
 				tabTitle = translate( 'Related' );
 				baseClassnames = classnames( 'tag-stream__main', this.props.className );
 			} else if ( isSearchPage ) {
 				sidebarContent = <ReaderSearchSidebar items={ items } />;
+			} else if ( isDiscoverPage ) {
+				sidebarContent = <ReaderDiscoverSidebar items={ sites } />;
 			} else {
 				sidebarContent = <ReaderListFollowedSites path={ path } />;
 			}
@@ -566,7 +584,10 @@ class ReaderStream extends Component {
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
-		const shouldPoll = streamType !== 'search' && streamType !== 'custom_recs_posts_with_images';
+		// Check array of streamTypes to see if we should poll for updates;
+		const shouldPoll = ! [ 'search', 'custom_recs_posts_with_images', 'discover' ].includes(
+			streamType
+		);
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
@@ -588,6 +609,7 @@ export default connect(
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
 		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
+		const recommendedSites = getReaderRecommendedSites( state, 'discover-recommendations' ) || [];
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -607,6 +629,8 @@ export default connect(
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			tag: streamKeySuffix,
+			tags: getReaderTags( state ),
+			sites: recommendedSites,
 		};
 	},
 	{

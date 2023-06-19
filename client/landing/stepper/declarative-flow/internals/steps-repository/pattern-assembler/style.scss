@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/variables";
 @import "./keyframes";
 
@@ -35,7 +37,7 @@ $font-family: "SF Pro Text", $sans;
 	.pattern-assembler__sidebar {
 		display: flex;
 		flex-direction: column;
-		width: 348px;
+		width: 300px;
 		height: 100vh;
 		box-sizing: border-box;
 		padding: 110px 32px 32px;
@@ -43,6 +45,10 @@ $font-family: "SF Pro Text", $sans;
 		position: relative;
 		z-index: 2;
 		overflow-x: visible;
+
+		@include break-wide {
+			width: 348px;
+		}
 	}
 
 	/**

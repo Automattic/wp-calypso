@@ -23,7 +23,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
-import { recordSelectedDesign } from '../../analytics/record-design';
+import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
 import { SITE_TAGLINE, PATTERN_TYPES, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoryAll from './hooks/use-category-all';
@@ -129,6 +129,7 @@ const PatternAssembler = ( {
 				color_variation_type: getVariationType( colorVariation ),
 				font_variation_title: getVariationTitle( fontVariation ),
 				font_variation_type: getVariationType( fontVariation ),
+				assembler_source: getAssemblerSource( selectedDesign ),
 			} ),
 		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
 	);
@@ -572,7 +573,11 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
-						hasSections={ !! sections.length }
+						hasSections={ Boolean( sections.length ) }
+						hasHeader={ Boolean( header ) }
+						hasFooter={ Boolean( footer ) }
+						hasColor={ Boolean( colorVariation ) }
+						hasFont={ Boolean( fontVariation ) }
 					/>
 				</NavigatorScreen>
 
@@ -618,6 +623,7 @@ const PatternAssembler = ( {
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
 						onTogglePatternPanelList={ setIsPatternPanelListOpen }
+						selectedPatterns={ sections }
 					/>
 				</NavigatorScreen>
 

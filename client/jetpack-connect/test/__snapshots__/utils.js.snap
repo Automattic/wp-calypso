@@ -11,6 +11,7 @@ Object {
   "closeWindowAfterLogin": false,
   "from": "[unknown]",
   "homeUrl": "https://yourjetpack.blog",
+  "installedExtSuccess": "1",
   "isPopup": false,
   "jpVersion": null,
   "nonce": "foobar",

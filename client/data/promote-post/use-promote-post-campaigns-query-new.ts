@@ -29,7 +29,7 @@ export type CampaignResponse = {
 		clickthrough_rate: number;
 		duration_days: number;
 		total_budget: number;
-		total_budget_left: number;
+		budget_left: number;
 		total_budget_used: number;
 		display_delivery_estimate: string;
 		visits_total: number;

@@ -19,7 +19,7 @@ import type { Activity } from './types';
 
 import './style.scss';
 
-const useToggleContent = (): [ boolean, () => void ] => {
+export const useToggleContent = (): [ boolean, () => void ] => {
 	const [ isVisible, setVisible ] = useState( false );
 
 	const toggle = () => {

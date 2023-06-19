@@ -22,8 +22,8 @@ function mutationResendVerificationCode(
 export default function useResendVerificationCodeMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIResponse, APIError, ResendVerificationCodeParams, TContext >
 ): UseMutationResult< APIResponse, APIError, ResendVerificationCodeParams, TContext > {
-	return useMutation< APIResponse, APIError, ResendVerificationCodeParams, TContext >(
-		mutationResendVerificationCode,
-		options
-	);
+	return useMutation< APIResponse, APIError, ResendVerificationCodeParams, TContext >( {
+		...options,
+		mutationFn: mutationResendVerificationCode,
+	} );
 }

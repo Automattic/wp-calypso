@@ -96,6 +96,10 @@ export function useStepNavigator(
 		} );
 	}
 
+	function goToSitePickerPage() {
+		navigation.goToStep?.( `sitePicker?from=${ fromSite }` );
+	}
+
 	return {
 		supportLinkModal: false,
 		goToIntentPage,
@@ -106,6 +110,7 @@ export function useStepNavigator(
 		goToWpAdminImportPage,
 		goToWpAdminWordPressPluginPage,
 		goToAddDomainPage,
+		goToSitePickerPage,
 		navigate: ( path ) => navigator( path ),
 	};
 }

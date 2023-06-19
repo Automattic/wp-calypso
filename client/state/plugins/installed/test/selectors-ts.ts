@@ -24,6 +24,7 @@ import {
 	isPluginActionStatus,
 	isPluginActionInProgress,
 	getPluginStatusesByType,
+	isPluginActive,
 } from '../selectors-ts';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
@@ -595,5 +596,27 @@ describe( 'getPluginStatusesByType', () => {
 
 	test( 'Should return an empty array if there are no matching statuses of that type.', () => {
 		expect( getPluginStatusesByType( state, 'someOtherType' ) ).toEqual( [] );
+	} );
+} );
+
+describe( 'isPluginActive', () => {
+	test( 'Should return false if the plugin is not found', () => {
+		expect( isPluginActive( state, siteOneId, 'not' ) ).toEqual( false );
+	} );
+
+	test( 'Should return false if the site is not found', () => {
+		expect( isPluginActive( state, nonExistingSiteId1, 'akismet' ) ).toEqual( false );
+	} );
+
+	test( 'Should return false if the plugin is not found on the site', () => {
+		expect( isPluginActive( state, siteTwoId, 'akismet' ) ).toEqual( false );
+	} );
+
+	test( 'Should return true if the plugin is active', () => {
+		expect( isPluginActive( state, siteOneId, 'akismet' ) ).toEqual( true );
+	} );
+
+	test( 'Should return false if the plugin is not active', () => {
+		expect( isPluginActive( state, siteOneId, 'hello-dolly' ) ).toEqual( false );
 	} );
 } );

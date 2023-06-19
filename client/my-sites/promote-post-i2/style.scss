@@ -41,6 +41,26 @@
 	background-color: transparent;
 }
 
+// Grabbed from wp-calypso/client/my-sites/sidebar/style.scss
+@media screen and ( max-width: 660px ) {
+	.theme-default {
+		// client/layout/style.scss
+		.layout__content {
+			min-height: initial;
+		}
+
+		.focus-content:not(.has-no-sidebar) .layout__content {
+			padding: 47px 0 0;
+		}
+
+		// client/layout/sidebar/style.scss
+		.sidebar {
+			position: absolute;
+			padding-bottom: 120px;
+		}
+	}
+}
+
 body.is-section-promote-post-i2 {
 	.layout__content {
 		position: relative;
@@ -419,6 +439,13 @@ body.is-section-promote-post-i2 {
 
 		.select-dropdown__header {
 			border: none;
+		}
+
+		.segmented-control.is-compact {
+			overflow-x: auto;
+			&::-webkit-scrollbar {
+				display: none;
+			}
 		}
 	}
 }

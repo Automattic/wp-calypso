@@ -194,6 +194,9 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	setIsBulkManagementActive: ( value: boolean ) => void;
 	selectedSites: Array< Site >;
 	setSelectedSites: ( value: Array< Site > ) => void;
+	currentLicenseInfo: string | null;
+	showLicenseInfo: ( license: string ) => void;
+	hideLicenseInfo: () => void;
 }
 
 export interface DashboardDataContextInterface {
@@ -291,6 +294,7 @@ export interface MonitorSettingsEmail {
 export interface StateMonitorSettingsSMS {
 	name: string;
 	countryCode: string;
+	countryNumericCode: string;
 	phoneNumber: string;
 	phoneNumberFull: string;
 	verified: boolean;
@@ -315,14 +319,16 @@ export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
 
 export interface RequestVerificationCodeParams {
 	type: 'email' | 'sms';
-	value: string | number;
+	value: string;
 	site_ids: Array< number >;
+	// For SMS contacts
+	number?: string;
 	country_code?: string;
 	country_numeric_code?: string;
 }
 
 export interface ValidateVerificationCodeParams {
-	type: 'email';
+	type: 'email' | 'sms';
 	value: string;
 	verification_code: number;
 }
