@@ -440,6 +440,13 @@ body.is-section-promote-post-i2 {
 		.select-dropdown__header {
 			border: none;
 		}
+
+		.segmented-control.is-compact {
+			overflow-x: auto;
+			&::-webkit-scrollbar {
+				display: none;
+			}
+		}
 	}
 }
 
