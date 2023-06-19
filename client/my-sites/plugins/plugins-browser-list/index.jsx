@@ -3,7 +3,6 @@ import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import Spotlight from 'calypso/components/spotlight';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
@@ -99,16 +98,6 @@ const PluginsBrowserList = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const sectionJitmPath = getMessagePathForJITM( currentRoute );
 
-	const SpotlightPlaceholder = (
-		<Spotlight
-			taglineText="Calypso placeholder"
-			illustrationSrc="https://wordpress.com/wp-content/lib/marketplace-images/sensei-pro.svg"
-			onClick={ () => {} }
-			titleText="This is the default placeholder rendered in Calypso"
-			ctaText="Click me"
-		/>
-	);
-
 	return (
 		<div className="plugins-browser-list">
 			{ ! noHeader && ( title || subtitle || resultCount || browseAllLink ) && (
@@ -132,7 +121,7 @@ const PluginsBrowserList = ( {
 				<AsyncLoad
 					require="calypso/blocks/jitm"
 					template="spotlight"
-					jitmPlaceholder={ SpotlightPlaceholder }
+					placeholder={ null }
 					messagePath="calypso:plugins:search"
 					searchQuery={ search }
 				/>
