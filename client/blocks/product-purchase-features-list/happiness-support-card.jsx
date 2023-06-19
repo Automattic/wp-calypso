@@ -5,8 +5,7 @@ export const HappinessSupportCard = ( {
 	isJetpack,
 	isJetpackFreePlan,
 	isPlaceholder,
-	liveChatButtonEventName,
-	showLiveChatButton,
+	contactButtonEventName,
 } ) => (
 	<div className="product-purchase-features-list__item">
 		<HappinessSupport
@@ -14,8 +13,7 @@ export const HappinessSupportCard = ( {
 			isJetpack={ isJetpack }
 			isJetpackFreePlan={ isJetpackFreePlan }
 			isPlaceholder={ isPlaceholder }
-			showLiveChatButton={ showLiveChatButton }
-			liveChatButtonEventName={ liveChatButtonEventName }
+			contactButtonEventName={ contactButtonEventName }
 		/>
 	</div>
 );
