@@ -575,7 +575,10 @@ class ReaderStream extends Component {
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
-		const shouldPoll = streamType !== 'search' && streamType !== 'custom_recs_posts_with_images';
+		// Check array of streamTypes to see if we should poll for updates;
+		const shouldPoll = ! [ 'search', 'custom_recs_posts_with_images', 'discover' ].includes(
+			streamType
+		);
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
