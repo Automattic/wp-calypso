@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -13,7 +13,6 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
-import { Gridicon } from '@automattic/components';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 type Props = {
