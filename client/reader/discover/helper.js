@@ -19,7 +19,7 @@ export function isDiscoverFeed( feedId ) {
 }
 
 export function isDiscoverEnabled() {
-	return false;
+	return config.isEnabled( 'reader/discover' );
 }
 
 export function isDiscoverPost( post ) {
