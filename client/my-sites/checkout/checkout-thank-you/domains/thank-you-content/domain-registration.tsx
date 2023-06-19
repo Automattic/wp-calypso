@@ -7,18 +7,19 @@ import {
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
 import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
-import { useSiteOption } from 'calypso/state/sites/hooks';
 import type {
 	DomainThankYouParams,
 	DomainThankYouProps,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 
-const DomainRegistrationThankYouProps = ( {
+const domainRegistrationThankYouProps = ( {
 	domain,
 	email,
 	hasProfessionalEmail,
 	hideProfessionalEmailStep,
 	selectedSiteSlug,
+	siteIntent,
+	launchpadScreen,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildDomainStepForProfessionalEmail(
 		{
@@ -31,9 +32,6 @@ const DomainRegistrationThankYouProps = ( {
 		'REGISTRATION',
 		true
 	);
-
-	const siteIntent = useSiteOption( 'site_intent' );
-	const launchpadScreen = useSiteOption( 'launchpad_screen' );
 
 	const launchpadNextSteps = buildDomainStepForLaunchpadNextSteps(
 		siteIntent as string,
@@ -117,4 +115,4 @@ const DomainRegistrationThankYouProps = ( {
 	return returnProps;
 };
 
-export default DomainRegistrationThankYouProps;
+export default domainRegistrationThankYouProps;
