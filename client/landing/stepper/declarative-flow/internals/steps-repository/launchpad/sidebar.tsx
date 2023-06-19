@@ -212,7 +212,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				) }
 				<Launchpad
 					siteSlug={ siteSlug }
-					taskFilter={ () => enhancedTasks }
+					taskFilter={ () => enhancedTasks || [] }
 					makeLastTaskPrimaryAction={ true }
 				/>
 			</div>
