@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
+import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import type { FC } from 'react';
@@ -18,11 +19,12 @@ const SupportButton: FC< Props > = ( {
 	skipToContactOptions = false,
 } ) => {
 	const { __ } = useI18n();
+	const { url } = useStillNeedHelpURL();
 	const { setInitialRoute, setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	function handleClick() {
 		if ( skipToContactOptions ) {
-			setInitialRoute( '/contact-options' );
+			setInitialRoute( url );
 		}
 		setShowHelpCenter( true );
 		recordTracksEvent( 'calypso_support_button_click', {
