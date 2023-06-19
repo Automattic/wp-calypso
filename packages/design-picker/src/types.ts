@@ -1,5 +1,5 @@
 import type { FONT_PAIRINGS } from './constants';
-import type { GlobalStyles } from '@automattic/data-stores';
+import type { GlobalStyles } from '@automattic/data-stores/src/site/types'; // Import from a specific file to avoid the circular dependencies
 import type { ValuesType } from 'utility-types';
 
 export type Font = ValuesType< ValuesType< typeof FONT_PAIRINGS > >;
