@@ -623,7 +623,7 @@ const PatternAssembler = ( {
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
 						onTogglePatternPanelList={ setIsPatternPanelListOpen }
-						sections={ sections }
+						selectedPatterns={ sections }
 					/>
 				</NavigatorScreen>
 
