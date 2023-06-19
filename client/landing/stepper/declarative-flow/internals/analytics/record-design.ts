@@ -64,12 +64,14 @@ export function getDesignEventProps( {
 	intent,
 	design,
 	styleVariation,
+	colorVariation,
 	fontVariation,
 }: {
 	flow: string | null;
 	intent: string;
 	design: Design;
 	styleVariation?: StyleVariation;
+	colorVariation?: GlobalStylesObject | null;
 	fontVariation?: GlobalStylesObject | null;
 } ) {
 	const is_style_variation = styleVariation && styleVariation.slug !== 'default';
@@ -86,6 +88,10 @@ export function getDesignEventProps( {
 		is_premium: design.is_premium,
 		has_style_variations: ( design.style_variations || [] ).length > 0,
 		is_style_variation: is_style_variation,
+		...( colorVariation && {
+			font_variation_title: getVariationTitle( colorVariation ),
+			font_variation_type: getVariationType( colorVariation ),
+		} ),
 		...( fontVariation && {
 			font_variation_title: getVariationTitle( fontVariation ),
 			font_variation_type: getVariationType( fontVariation ),

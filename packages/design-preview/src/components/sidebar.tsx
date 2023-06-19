@@ -1,6 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { GlobalStylesVariations, FontPairingVariations } from '@automattic/global-styles';
+import {
+	GlobalStylesVariations,
+	ColorPaletteVariations,
+	FontPairingVariations,
+} from '@automattic/global-styles';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
@@ -41,6 +45,8 @@ interface SidebarProps {
 	actionButtons: React.ReactNode;
 	siteId: number;
 	stylesheet: string;
+	selectedColorVariation: GlobalStylesObject | null;
+	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 }
@@ -60,12 +66,17 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	actionButtons,
 	siteId,
 	stylesheet,
+	selectedColorVariation,
+	onSelectColorVariation,
 	selectedFontVariation,
 	onSelectFontVariation,
 } ) => {
 	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
 	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
+
+	// The variations is undefined when we're still loading the design details
+	const hasStyleVariations = ! variations || variations.length > 0;
 
 	return (
 		<div className="design-preview__sidebar">
@@ -109,7 +120,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 						</p>
 					</div>
 				) }
-				{ variations && variations.length > 0 && (
+				{ hasStyleVariations && (
 					<div className="design-preview__sidebar-variations">
 						<div className="design-preview__sidebar-variations-grid">
 							<GlobalStylesVariations
@@ -125,18 +136,26 @@ const Sidebar: React.FC< SidebarProps > = ( {
 						</div>
 					</div>
 				) }
-				{ variations &&
-					variations.length === 0 &&
-					isEnabled( 'signup/design-picker-preview-fonts' ) && (
-						<div className="design-preview__sidebar-variations">
-							<FontPairingVariations
-								siteId={ siteId }
-								stylesheet={ stylesheet }
-								selectedFontPairingVariation={ selectedFontVariation }
-								onSelect={ onSelectFontVariation }
-							/>
-						</div>
-					) }
+				{ ! hasStyleVariations && isEnabled( 'signup/design-picker-preview-colors' ) && (
+					<div className="design-preview__sidebar-variations">
+						<ColorPaletteVariations
+							siteId={ siteId }
+							stylesheet={ stylesheet }
+							selectedColorPaletteVariation={ selectedColorVariation }
+							onSelect={ onSelectColorVariation }
+						/>
+					</div>
+				) }
+				{ ! hasStyleVariations && isEnabled( 'signup/design-picker-preview-fonts' ) && (
+					<div className="design-preview__sidebar-variations">
+						<FontPairingVariations
+							siteId={ siteId }
+							stylesheet={ stylesheet }
+							selectedFontPairingVariation={ selectedFontVariation }
+							onSelect={ onSelectFontVariation }
+						/>
+					</div>
+				) }
 			</div>
 			{ actionButtons && (
 				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
