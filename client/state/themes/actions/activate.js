@@ -14,10 +14,9 @@ import {
 	themeHasAutoLoadingHomepage,
 	wasAtomicTransferDialogAccepted,
 	isExternallyManagedTheme,
-	doesThemeBundleSoftwareSet,
 } from 'calypso/state/themes/selectors';
-
 import 'calypso/state/themes/init';
+import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/should-redirect-to-thank-you-page';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -85,8 +84,6 @@ export function activate(
 		 *
 		 * Currently a feature flag check is also being applied.
 		 */
-		const isExternallyManaged = isExternallyManagedTheme( getState(), themeId );
-		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const siteSlug = getSiteSlug( getState(), siteId );
 		const dispatchActivateAction = activateOrInstallThenActivate(
@@ -97,12 +94,7 @@ export function activate(
 			keepCurrentHomepage
 		);
 
-		if (
-			isEnabled( 'themes/display-thank-you-page' ) &&
-			isDotComTheme &&
-			! isWooTheme &&
-			! isExternallyManaged
-		) {
+		if ( shouldRedirectToThankYouPage( getState(), themeId ) ) {
 			dispatchActivateAction( dispatch, getState );
 
 			return page( `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }` );

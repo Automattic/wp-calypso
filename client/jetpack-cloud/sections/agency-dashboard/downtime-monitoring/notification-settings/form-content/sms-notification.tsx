@@ -5,6 +5,7 @@ import ConfigureSMSNotification from '../../configure-sms-notification';
 import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
 interface Props {
+	recordEvent: ( action: string, params?: object ) => void;
 	enableSMSNotification: boolean;
 	setEnableSMSNotification: ( isEnabled: boolean ) => void;
 	toggleModal: () => void;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function SMSNotification( {
+	recordEvent,
 	enableSMSNotification,
 	setEnableSMSNotification,
 	toggleModal,
@@ -54,6 +56,7 @@ export default function SMSNotification( {
 					<ConfigureSMSNotification
 						toggleModal={ toggleModal }
 						allPhoneItems={ allPhoneItems }
+						recordEvent={ recordEvent }
 						verifiedPhoneNumber={ verifiedItem?.phone }
 					/>
 				</>

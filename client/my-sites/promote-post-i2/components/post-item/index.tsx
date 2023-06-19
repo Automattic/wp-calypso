@@ -7,6 +7,7 @@ import resizeImageUrl from 'calypso/lib/resize-image-url';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
 import useOpenPromoteWidget from '../../hooks/use-open-promote-widget';
+import { formatNumber } from '../../utils';
 
 export type BlazablePost = {
 	ID: number;
@@ -97,20 +98,22 @@ export default function PostItem( { post }: Props ) {
 				</div>
 				<div className="post-item__post-data-row post-item__post-data-row-mobile">
 					<div className="post-item__stats-mobile">
-						{
-							// translators: %d is number of post's views
-							sprintf( _n( '%d view', '%d views', viewCount ), viewCount )
-						}
+						{ sprintf(
+							// translators: %s is number of post's views
+							_n( '%s view', '%s views', viewCount ),
+							formatNumber( viewCount )
+						) }
 						{ mobileStatsSeparator }
 						{
-							// translators: %d is number of post's likes
-							sprintf( _n( '%d like', '%d likes', likeCount ), likeCount )
+							// translators: %s is number of post's likes
+							sprintf( _n( '%s like', '%s likes', likeCount ), formatNumber( likeCount ) )
 						}
 						{ mobileStatsSeparator }
-						{
-							// translators: %d is number of post's comments
-							sprintf( _n( '%d comment', '%d comments', commentCount ), commentCount )
-						}
+						{ sprintf(
+							// translators: %s is number of post's comments
+							_n( '%s comment', '%s comments', commentCount ),
+							formatNumber( commentCount )
+						) }
 					</div>
 					<div className="post-item__actions-mobile">
 						<a href={ post.post_url } className="post-item__view-link">
@@ -130,9 +133,9 @@ export default function PostItem( { post }: Props ) {
 
 			<td className="post-item__post-type">{ getPostType( post.type ) }</td>
 			<td className="post-item__post-publish-date">{ postDate }</td>
-			<td className="post-item__post-views">{ viewCount }</td>
-			<td className="post-item__post-likes">{ likeCount }</td>
-			<td className="post-item__post-comments">{ commentCount }</td>
+			<td className="post-item__post-views">{ formatNumber( viewCount, true ) }</td>
+			<td className="post-item__post-likes">{ formatNumber( likeCount, true ) }</td>
+			<td className="post-item__post-comments">{ formatNumber( commentCount, true ) }</td>
 			<td className="post-item__post-view">
 				<a href={ post.post_url } className="post-item__view-link">
 					{ __( 'View' ) }

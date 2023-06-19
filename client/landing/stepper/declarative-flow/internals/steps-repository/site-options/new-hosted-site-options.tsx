@@ -1,14 +1,14 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelect } from '@wordpress/data';
-import { Icon } from '@wordpress/icons';
+import { Icon, shuffle } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import siteOptionsUrl from 'calypso/assets/images/onboarding/site-options.svg';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -43,24 +43,28 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const translate = useTranslate();
 
+	const [ shouldOverrideSiteTitle, setShouldOverrideSiteTitle ] = useState( false );
+
+	const { refetch } = useGetSiteSuggestionsQuery( {
+		enabled: shouldOverrideSiteTitle,
+		refetchOnWindowFocus: false,
+		onSuccess: ( response ) => {
+			if ( response.success === true ) {
+				setSiteTitle( response.suggestions[ 0 ].title );
+			}
+		},
+	} );
+
 	const pickedPlanSlug = planCartItem?.product_slug;
 
 	const shouldShowGeoAffinityPicker = pickedPlanSlug
 		? isBusinessPlan( pickedPlanSlug ) || isEcommercePlan( pickedPlanSlug )
 		: hostingFlow;
 
-	useGetSiteSuggestionsQuery( {
-		enabled: ! currentSiteTitle,
-		onSuccess: ( response ) => {
-			if ( ! siteTitle && response.success === true ) {
-				setSiteTitle( response.suggestions[ 0 ].title );
-			}
-		},
-	} );
-
 	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
 	const isFormSubmitDisabled = isSiteTitleEmpty;
-	const hasChangedInput = useRef( { geoAffinity: false, title: false } );
+	const hasChangedInput = useRef( { geoAffinity: false } );
+	const isSmallScreen = useMobileBreakpoint();
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -72,7 +76,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		}
 
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
-			has_site_title: hasChangedInput.current.title,
+			has_site_title: true,
 			has_geo_affinity: hasChangedInput.current.geoAffinity,
 		} );
 
@@ -83,7 +87,6 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		setFormTouched( true );
 
 		if ( event.currentTarget.name === 'siteTitle' ) {
-			hasChangedInput.current.title = true;
 			return setSiteTitle( event.currentTarget.value );
 		}
 	};
@@ -97,15 +100,43 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 					'no-site-picker': ! shouldShowGeoAffinityPicker,
 				} ) }
 			>
-				<FormLabel htmlFor="siteTitle">{ translate( 'Site title' ) }</FormLabel>
-				<FormInput
-					name="siteTitle"
-					id="siteTitle"
-					value={ siteTitle }
-					isError={ siteTitleError }
-					onChange={ onChange }
-					placeholder={ translate( 'My Hosted Site' ) }
-				/>
+				<FormLabel htmlFor="siteTitle">{ translate( 'Give your site a name' ) }</FormLabel>
+				<div css={ { position: 'relative' } }>
+					<FormInput
+						name="siteTitle"
+						id="siteTitle"
+						value={ siteTitle }
+						isError={ siteTitleError }
+						onChange={ onChange }
+						placeholder={ translate( 'My Hosted Site' ) }
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus
+					/>
+					<Button
+						css={ {
+							position: 'absolute',
+							top: 0,
+							right: '1rem',
+							height: '100%',
+							display: 'flex',
+							alignItems: 'center',
+							gap: '4px',
+							color: 'var(--color-text) !important',
+						} }
+						borderless
+						onClick={ () => {
+							if ( shouldOverrideSiteTitle ) {
+								refetch();
+							} else {
+								setShouldOverrideSiteTitle( true );
+							}
+						} }
+						aria-label={ translate( 'Generate a random site name' ) }
+					>
+						<Icon icon={ shuffle } fill="currentColor" />
+						{ ! isSmallScreen && translate( 'Generate' ) }
+					</Button>
+				</div>
 				{ siteTitleError ? (
 					<FormInputValidation isError text={ translate( 'Please provide a site title' ) } />
 				) : (
@@ -142,7 +173,6 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 				backLabelText={ __( 'Back' ) }
 				hideBack={ hostingFlow }
 				goBack={ goBack }
-				headerImageUrl={ siteOptionsUrl }
 				hideSkip={ true }
 				isHorizontalLayout
 				formattedHeader={

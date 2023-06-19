@@ -17,6 +17,7 @@ import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-pr
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { Activity } from '../types';
+import ViewFilesButton from './buttons/view-files-button';
 import downloadIcon from './download-icon.svg';
 
 type SingleSiteOwnProps = {
@@ -98,6 +99,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 						</div>
 					</div>
 				) }
+				<ViewFilesButton siteSlug={ siteSlug } rewindId={ rewindId } />
 				<Button
 					borderless
 					compact

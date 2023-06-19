@@ -14,6 +14,19 @@
 	}
 }
 
+.device-switcher__container--frame-fixed-viewport {
+	.device-switcher__viewport {
+		position: relative;
+		display: flex;
+		flex: 1;
+		width: 100%;
+		max-width: 100%;
+		max-height: 100%;
+		justify-content: center;
+		justify-items: center;
+	}
+}
+
 .device-switcher__frame {
 	display: flex;
 	flex: 1;
@@ -34,36 +47,59 @@
 			--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
 			border: var(--device-switcher-border-width) solid var(--color-print);
 			box-sizing: border-box;
-			box-shadow:
-				0 5px 15px rgb(0 0 0 / 7%),
-				0 3px 10px rgb(0 0 0 / 4%);
+
+			.device-switcher__container--frame-shadow & {
+				box-shadow:
+					0 5px 15px rgb(0 0 0 / 7%),
+					0 3px 10px rgb(0 0 0 / 4%);
+			}
 		}
 
 		@include break-large {
 			--device-switcher-border-radius: 20px; /* stylelint-disable-line scales/radii */
 			border: var(--device-switcher-border-width) solid var(--color-print);
-			box-shadow:
-				0 15px 20px rgb(0 0 0 / 4%),
-				0 13px 10px rgb(0 0 0 / 3%),
-				0 6px 6px rgb(0 0 0 / 2%);
 			margin-top: 0;
+
+			.device-switcher__container--frame-shadow & {
+				box-shadow:
+					0 15px 20px rgb(0 0 0 / 4%),
+					0 13px 10px rgb(0 0 0 / 3%),
+					0 6px 6px rgb(0 0 0 / 2%);
+			}
 		}
 	}
 
 	.device-switcher__container--is-tablet & {
-		max-width: 783px;
+		max-width: 782px;
 	}
 
 	.device-switcher__container--is-phone & {
 		--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
-		max-width: 340px;
+		max-width: 480px;
 		max-height: 680px;
-		box-shadow:
-			0 76px 65px rgb(0 0 0 / 4%),
-			0 50px 40px rgb(0 0 0 / 3%),
-			0 30px 20px rgb(0 0 0 / 3%),
-			0 15px 13px rgb(0 0 0 / 2%),
-			0 6px 5px rgb(0 0 0 / 2%),
-			0 2px 3px rgb(0 0 0 / 1%);
+
+		.device-switcher__container--frame-shadow & {
+			box-shadow:
+				0 76px 65px rgb(0 0 0 / 4%),
+				0 50px 40px rgb(0 0 0 / 3%),
+				0 30px 20px rgb(0 0 0 / 3%),
+				0 15px 13px rgb(0 0 0 / 2%),
+				0 6px 5px rgb(0 0 0 / 2%),
+				0 2px 3px rgb(0 0 0 / 1%);
+		}
+	}
+
+	.device-switcher__container--frame-fixed-viewport & {
+		--viewport-width-px: calc(var(--viewport-width) * 1px);
+		--viewport-height: calc(100% / var(--viewport-scale));
+		position: absolute;
+		box-sizing: border-box;
+		transform-origin: top center;
+		transform: scale(var(--viewport-scale));
+		width: var(--viewport-width-px);
+		max-width: var(--viewport-width-px);
+		min-height: var(--viewport-height);
+		max-height: var(--viewport-height);
+		transition: width 0.2s ease-out, max-width 0.2s ease-out;
 	}
 }

@@ -44,6 +44,7 @@
 		"@automattic/language-picker": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/lasagna": "^0.6.1",
+		"@automattic/launchpad": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
 		"@automattic/mini-cart": "workspace:^",
@@ -214,6 +215,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@sentry/webpack-plugin": "^1.18.8",
+		"@storybook/addon-actions": "^7.0.18",
 		"@tanstack/query-sync-storage-persister": "^4.29.1",
 		"@testing-library/dom": "^8.13.0",
 		"@testing-library/jest-dom": "^5.16.2",

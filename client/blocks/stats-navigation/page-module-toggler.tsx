@@ -71,6 +71,9 @@ export default function PageModuleToggler( {
 				position="bottom left"
 				context={ settingsActionRef.current }
 				focusOnShow={ false }
+				onClose={ () => {
+					setIsSettingsMenuVisible( false );
+				} }
 			>
 				<div>{ translate( 'Modules visibility' ) }</div>
 				<div className="page-modules-settings-toggle-wrapper">
@@ -82,7 +85,7 @@ export default function PageModuleToggler( {
 								<FormToggle
 									className="page-modules-settings-toggle-control"
 									checked={ pageModules[ toggleItem.key ] !== false }
-									onChange={ ( event: React.FormEvent< HTMLInputElement > ) => {
+									onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) => {
 										onToggleModule( toggleItem.key, event.target.checked );
 									} }
 								/>

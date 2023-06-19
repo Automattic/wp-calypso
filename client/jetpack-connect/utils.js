@@ -43,6 +43,8 @@ export function authQueryTransformer( queryObject ) {
 		woodna_service_name: queryObject.woodna_service_name || null,
 		woodna_help_url: queryObject.woodna_help_url || null,
 		allowSiteConnection: queryObject.skip_user || queryObject.allow_site_connection || null,
+		// Used by woo core profiler flow to determine if we need to show a success notice after installing extensions or not.
+		installedExtSuccess: queryObject.installed_ext_success || null,
 	};
 }
 
@@ -64,6 +66,7 @@ export const authQueryPropTypes = PropTypes.shape( {
 	siteUrl: PropTypes.string,
 	state: PropTypes.string.isRequired,
 	userEmail: PropTypes.string,
+	installedExtSuccess: PropTypes.string,
 } );
 
 export function addCalypsoEnvQueryArg( url ) {
