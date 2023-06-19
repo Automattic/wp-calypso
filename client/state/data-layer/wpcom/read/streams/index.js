@@ -200,20 +200,19 @@ const streamApis = {
 	},
 	discover: {
 		path: ( { streamKey } ) => {
-			if ( streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
-				return '/read/tags/cards';
+			if ( ! streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
+				return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
 			}
-			return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
+			return '/read/tags/cards';
 		},
 		dateProperty: 'date',
-		query: ( extras, { tags } ) => {
-			return getQueryString( {
+		query: ( extras, { tags } ) =>
+			getQueryString( {
 				...extras,
 				tags: tags ? Object.values( tags )?.map( ( tag ) => tag.slug ) : [],
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
-			} );
-		},
+			} ),
 		apiNamespace: 'wpcom/v2',
 	},
 	site: {
