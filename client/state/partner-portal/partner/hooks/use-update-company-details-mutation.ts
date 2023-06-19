@@ -24,8 +24,8 @@ function updateCompanyDetails( details: CompanyDetailsPayload ): Promise< APIPar
 export default function useUpdateCompanyDetailsMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIPartner, APIError, CompanyDetailsPayload, TContext >
 ): UseMutationResult< APIPartner, APIError, CompanyDetailsPayload, TContext > {
-	return useMutation< APIPartner, APIError, CompanyDetailsPayload, TContext >(
-		updateCompanyDetails,
-		options
-	);
+	return useMutation< APIPartner, APIError, CompanyDetailsPayload, TContext >( {
+		...options,
+		mutationFn: updateCompanyDetails,
+	} );
 }

@@ -24,7 +24,7 @@ export default function useChatStatus(
 	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
 		useMessagingAvailability( group, checkAgentAvailability && isEligibleForChat );
 
-	const { status: zendeskStatus } = useZendeskConfig( isEligibleForChat && hasActiveChats );
+	const { status: zendeskStatus } = useZendeskConfig( isEligibleForChat );
 
 	return {
 		canConnectToZendesk: zendeskStatus !== 'error',
@@ -32,6 +32,8 @@ export default function useChatStatus(
 		isChatAvailable: Boolean( chatAvailability?.is_available ),
 		isEligibleForChat,
 		isLoading: isLoadingAvailability || isLoadingSupportActivity,
+		isPresalesChatOpen: Boolean( chatStatus?.is_presales_chat_open ),
+		isPrecancellationChatOpen: Boolean( chatStatus?.is_precancellation_chat_open ),
 		supportActivity,
 		supportLevel: chatStatus?.supportLevel,
 	};

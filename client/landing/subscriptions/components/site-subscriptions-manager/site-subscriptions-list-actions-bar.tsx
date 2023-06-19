@@ -34,7 +34,7 @@ const ListActionsBar = () => {
 			/>
 
 			<SelectDropdown
-				className="subscriptions-manager__filter-control subscriptions-manager__list-actions-bar-spacer"
+				className="subscriptions-manager__filter-control list-actions-bar-spacer"
 				options={ filterOptions }
 				onSelect={ ( selectedOption: Option< Reader.SiteSubscriptionsFilterBy > ) =>
 					setFilterOption( selectedOption.value )

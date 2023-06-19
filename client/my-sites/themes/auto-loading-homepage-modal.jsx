@@ -1,16 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog, Gridicon, Spinner } from '@automattic/components';
+import { Dialog, Gridicon, Button, ScreenReaderText } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { CheckboxControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormRadio from 'calypso/components/forms/form-radio';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { preventWidows } from 'calypso/lib/formatting';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
 	acceptAutoLoadingHomepageWarning,
@@ -30,7 +26,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './auto-loading-homepage-modal.scss';
 
-class AutoLoadingHomepageModal extends Component {
+export class AutoLoadingHomepageModal extends Component {
 	static propTypes = {
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		theme: PropTypes.shape( {
@@ -51,43 +47,22 @@ class AutoLoadingHomepageModal extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			homepageAction: 'keep_current_homepage',
 			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
 			wasVisible: props.isVisible,
-			// Don't render the iframe on mobile; Doing it here prevents unnecessary data fetching vs. CSS.
-			isNarrow: isWithinBreakpoint( '<782px' ),
+			hasConfirmed: false,
 		};
-	}
-
-	componentDidMount() {
-		// Change the isNarrow state when the size of the browser changes.
-		// (Putting this on an attribute instead of state because of react/no-did-mount-set-state)
-		this.unsubscribe = subscribeIsWithinBreakpoint( '<782px', ( isNarrow ) =>
-			this.setState( { isNarrow } )
-		);
-	}
-
-	componentWillUnmount() {
-		if ( typeof this.unsubscribe === 'function' ) {
-			this.unsubscribe();
-		}
 	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		// This component doesn't unmount when the dialog closes, so the state
 		// needs to be reset back to defaults each time it opens.
-		// Reseting `homepageAction` ensures the default option will be selected.
 		if ( nextProps.isVisible && ! prevState.wasVisible ) {
-			return { homepageAction: 'keep_current_homepage', wasVisible: true };
+			return { wasVisible: true };
 		} else if ( ! nextProps.isVisible && prevState.wasVisible ) {
 			return { wasVisible: false };
 		}
 		return null;
 	}
-
-	handleHomepageAction = ( event ) => {
-		this.setState( { homepageAction: event.currentTarget.value } );
-	};
 
 	closeModalHandler =
 		( action = 'dismiss' ) =>
@@ -95,7 +70,15 @@ class AutoLoadingHomepageModal extends Component {
 			const { installingThemeId, siteId, source } = this.props;
 			if ( 'activeTheme' === action ) {
 				this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
-				const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
+
+				/**
+				 * We don't want to keep the current homepage since it's "broken" for now.
+				 * Update this when we find a way to improve the theme switch experience as a whole.
+				 *
+				 * @see pbxlJb-3Uv-p2
+				 */
+				const keepCurrentHomepage = false;
+
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
 					theme: installingThemeId,
 					keep_current_homepage: keepCurrentHomepage,
@@ -107,12 +90,6 @@ class AutoLoadingHomepageModal extends Component {
 					false,
 					keepCurrentHomepage
 				);
-			} else if ( 'keepCurrentTheme' === action ) {
-				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
-					action: 'button',
-					theme: installingThemeId,
-				} );
-				return this.props.hideAutoLoadingHomepageWarning();
 			} else if ( 'dismiss' === action ) {
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
 					action: 'escape',
@@ -131,7 +108,8 @@ class AutoLoadingHomepageModal extends Component {
 			isCurrentTheme,
 			isVisible = false,
 		} = this.props;
-		const { isNarrow } = this.state;
+
+		const { hasConfirmed } = this.state;
 
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
@@ -152,135 +130,66 @@ class AutoLoadingHomepageModal extends Component {
 			return null;
 		}
 
-		const {
-			name: themeName,
-			id: themeId,
-			stylesheet,
-			screenshot: themeScreenshot,
-		} = this.props.theme;
-
-		const iframeSrcKeepHomepage = `//${ this.props.siteDomain }?theme=${ encodeURIComponent(
-			stylesheet
-		) }&hide_banners=true&preview_overlay=true`;
+		const { name: themeName, id: themeId } = this.props.theme;
 
 		return (
 			<Dialog
 				className="themes__auto-loading-homepage-modal"
 				isVisible={ isVisible }
-				buttons={ [
-					{
-						action: 'keepCurrentTheme',
-						label: translate( 'Keep my current theme' ),
-						isPrimary: false,
-						onClick: this.closeModalHandler( 'keepCurrentTheme' ),
-					},
-					{
-						action: 'activeTheme',
-						label: translate( 'Activate %(themeName)s', { args: { themeName } } ),
-						isPrimary: true,
-						onClick: this.closeModalHandler( 'activeTheme' ),
-					},
-				] }
 				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
-				<Gridicon
-					icon="cross"
-					className="themes__auto-loading-homepage-modal-close-icon"
-					onClick={ this.closeModalHandler( 'dismiss' ) }
-				/>
 				<TrackComponentView
 					eventName="calypso_theme_autoloading_homepage_modal_view"
 					eventProperties={ { theme: themeId } }
 				/>
+				<Button
+					className="themes__auto-loading-homepage-modal-close-icon"
+					borderless
+					onClick={ this.closeModalHandler( 'dismiss' ) }
+				>
+					<Gridicon icon="cross" size={ 12 } />
+					<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
+				</Button>
 				<div className="themes__theme-preview-wrapper">
-					<h1>
-						{ translate( 'How would you like to use %(themeName)s?', {
+					<h1 className="auto-loading-homepage-modal__heading">
+						{ translate( 'Activate %(themeName)s', {
 							args: { themeName },
 						} ) }
 					</h1>
-					<div className="themes__theme-preview-items">
-						<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
-							<FormLabel>
-								<div className="themes__iframe-wrapper">
-									<Spinner />
-									{ ! isNarrow && (
-										<iframe
-											scrolling="no"
-											loading="lazy"
-											title={ translate( 'Preview of current homepage with new theme applied' ) }
-											src={ iframeSrcKeepHomepage }
+					<p className="auto-loading-homepage-modal__description">
+						{ translate(
+							'After activation, this layout will replace your existing homepage. But you can still access your old content. {{a}}Learn more{{/a}}.',
+							{
+								components: {
+									a: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/support/themes/changing-themes' ) }
+											target="_blank"
+											rel="noopener noreferrer"
 										/>
-									) }
-								</div>
-								<FormRadio
-									value="keep_current_homepage"
-									checked={ 'keep_current_homepage' === this.state.homepageAction }
-									onChange={ this.handleHomepageAction }
-									label={ preventWidows(
-										translate( 'Switch theme, preserving my homepage content.' )
-									) }
-								/>
-							</FormLabel>
-						</div>
-						<div className="themes__theme-preview-item">
-							<FormLabel>
-								<div className="themes__theme-preview-image-wrapper">
-									<img
-										src={ themeScreenshot }
-										alt={ translate( "Preview of new theme's default homepage" ) }
-									/>
-								</div>
-								<FormRadio
-									value="use_new_homepage"
-									checked={ 'use_new_homepage' === this.state.homepageAction }
-									onChange={ this.handleHomepageAction }
-									label={ preventWidows(
-										translate( 'Replace my homepage content with the %(themeName)s homepage.', {
-											args: { themeName },
-										} )
-									) }
-								/>
-							</FormLabel>
-						</div>
-					</div>
-					<div className="themes__autoloading-homepage-option-description">
-						{ this.state.homepageAction === 'keep_current_homepage' && (
-							<p>
-								{ preventWidows(
-									translate(
-										'Your new theme design will be applied without changing your homepage content.'
-									)
-								) }{ ' ' }
-								<ExternalLink
-									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
-									icon
-									target="_blank"
-								>
-									{ translate( 'Learn more.' ) }
-								</ExternalLink>
-							</p>
+									),
+								},
+							}
 						) }
-						{ this.state.homepageAction === 'use_new_homepage' && (
-							<p>
-								<span
-									// eslint-disable-next-line react/no-danger
-									dangerouslySetInnerHTML={ {
-										__html: preventWidows(
-											translate(
-												'After activation, you can still access your old homepage content under Pages &rarr; Drafts.'
-											)
-										),
-									} }
-								/>{ ' ' }
-								<ExternalLink
-									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
-									icon
-									target="_blank"
-								>
-									{ translate( 'Learn more.' ) }
-								</ExternalLink>
-							</p>
+					</p>
+					<CheckboxControl
+						className="auto-loading-homepage-modal__checkbox"
+						label={ translate(
+							'I understand that this layout will replace my existing homepage.'
 						) }
+						checked={ hasConfirmed }
+						onChange={ () => this.setState( { hasConfirmed: ! hasConfirmed } ) }
+					/>
+					<div className="auto-loading-homepage-modal__actions">
+						<Button
+							primary
+							onClick={ this.closeModalHandler( 'activeTheme' ) }
+							disabled={ ! hasConfirmed }
+						>
+							{ translate( 'Activate %(themeName)s', {
+								args: { themeName },
+							} ) }
+						</Button>
 					</div>
 				</div>
 			</Dialog>

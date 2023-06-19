@@ -11,6 +11,8 @@ import type {
 	AllowedMonitorContactActions,
 } from '../../sites-overview/types';
 
+import '../style.scss';
+
 interface Props {
 	item: StateMonitorSettingsEmail;
 	toggleModal?: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
@@ -59,11 +61,11 @@ export default function EmailItemContent( {
 	const isVerified = item.verified || verifiedContacts.emails.includes( item.email );
 
 	return (
-		<Card className="configure-email-address__card" key={ item.email } compact>
-			<div className="configure-email-address__card-content-container">
-				<span className="configure-email-address__card-content">
-					<div className="configure-email-address__card-heading">{ item.email }</div>
-					<div className="configure-email-address__card-sub-heading">{ item.name }</div>
+		<Card className="configure-contact-info__card" key={ item.email } compact>
+			<div className="configure-contact-info__card-content-container">
+				<span className="configure-contact-info__card-content">
+					<div className="configure-contact-info__card-heading">{ item.email }</div>
+					<div className="configure-contact-info__card-sub-heading">{ item.name }</div>
 				</span>
 				{
 					// Show the status and actions only if the action is not remove.
@@ -76,13 +78,13 @@ export default function EmailItemContent( {
 								tabIndex={ 0 }
 								onKeyPress={ () => handleToggleModal( 'verify' ) }
 								onClick={ () => handleToggleModal( 'verify' ) }
-								className="configure-email-address__verification-status cursor-pointer"
+								className="configure-contact-info__verification-status cursor-pointer"
 							>
 								<Badge type="warning">{ translate( 'Pending' ) }</Badge>
 							</span>
 						) }
 						{ showVerifiedBadge && isVerified && (
-							<span className="configure-email-address__verification-status">
+							<span className="configure-contact-info__verification-status">
 								<Badge type="success">{ translate( 'Verified' ) }</Badge>
 							</span>
 						) }
@@ -90,7 +92,7 @@ export default function EmailItemContent( {
 							<Button
 								compact
 								borderless
-								className="configure-email-address__action-icon"
+								className="configure-contact-info__action-icon"
 								onClick={ showActions }
 								aria-label={ translate( 'More actions' ) }
 								ref={ buttonActionRef }
@@ -98,7 +100,7 @@ export default function EmailItemContent( {
 								<Icon size={ 18 } icon={ moreHorizontal } />
 							</Button>
 							<PopoverMenu
-								className="configure-email-address__popover-menu"
+								className="configure-contact-info__popover-menu"
 								context={ buttonActionRef.current }
 								isVisible={ isOpen }
 								onClose={ closeDropdown }

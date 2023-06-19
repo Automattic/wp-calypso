@@ -18,7 +18,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"build": "NODE_ENV=production yarn dev",
+		"build": "NODE_ENV=production yarn dev && yarn translate",
 		"build:stats": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/calypso-stats",
 		"show-stats": "NODE_ENV=production EMIT_STATS=true yarn build",

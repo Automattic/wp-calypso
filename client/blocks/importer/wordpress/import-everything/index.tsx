@@ -27,6 +27,7 @@ import { MigrationStatus } from '../types';
 import { retrieveMigrateSource, clearMigrateSource } from '../utils';
 import { Confirm } from './confirm';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 interface Props {
@@ -37,6 +38,7 @@ interface Props {
 	targetSiteEligibleForProPlan: boolean;
 	stepNavigator?: StepNavigator;
 	showConfirmDialog: boolean;
+	sourceUrlAnalyzedData?: UrlData | null;
 }
 
 interface State {
@@ -64,10 +66,15 @@ export class ImportEverything extends SectionMigrate {
 	};
 
 	resetMigration = () => {
-		const { stepNavigator } = this.props;
+		const { stepNavigator, isMigrateFromWp } = this.props;
 
 		this.requestMigrationReset( this.props.targetSiteId ).finally( () => {
-			stepNavigator?.goToImportCapturePage?.();
+			if ( isMigrateFromWp ) {
+				stepNavigator?.goToSitePickerPage?.();
+			} else {
+				stepNavigator?.goToImportCapturePage?.();
+			}
+
 			/**
 			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
 			 * Call to updateFromAPI will update both local and non-local state.
@@ -143,7 +150,21 @@ export class ImportEverything extends SectionMigrate {
 			showConfirmDialog = true,
 			isMigrateFromWp,
 			onContentOnlySelection,
+			translate,
+			recordTracksEvent,
 		} = this.props;
+
+		if ( targetSite && targetSite.is_wpcom_staging_site ) {
+			return (
+				<NotAuthorized
+					onStartBuilding={ () => {
+						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard' );
+						stepNavigator.goToDashboardPage();
+					} }
+					onStartBuildingText={ translate( 'Skip to dashboard' ) }
+				/>
+			);
+		}
 
 		if ( isEnabled( 'onboarding/import-redesign' ) ) {
 			return (
@@ -235,7 +256,7 @@ export class ImportEverything extends SectionMigrate {
 						? this.renderDefaultHoorayScreen()
 						: this.renderHoorayScreenWithDomainInfo() }
 				</Hooray>
-				<GettingStartedVideo />
+				{ ! isEnabled( 'onboarding/import-redesign' ) && <GettingStartedVideo /> }
 			</>
 		);
 	}

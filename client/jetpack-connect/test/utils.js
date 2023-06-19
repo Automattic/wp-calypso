@@ -85,6 +85,7 @@ describe( 'parseAuthorizationQuery', () => {
 			site_url: 'https://yourjetpack.blog',
 			state: '1',
 			allow_site_connection: '1',
+			installed_ext_success: '1',
 		};
 		const result = parseAuthorizationQuery( data );
 		expect( result ).not.toBeNull();

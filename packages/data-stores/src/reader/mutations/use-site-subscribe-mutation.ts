@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { callApi, getSubscriptionMutationParams } from '../helpers';
 import { useIsLoggedIn, useCacheKey } from '../hooks';
+import { SiteSubscriptionsPages } from '../types';
 import type { SiteSubscriptionDetails } from '../types';
 
 type SubscribeParams = {
 	blog_id?: number | string;
 	url?: string;
+	doNotInvalidateSiteSubscriptions?: boolean;
 };
 
 type SubscribeResponse = {
@@ -62,8 +64,32 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 
 			return response;
 		},
-		onMutate: async () => {
+		onMutate: async ( params ) => {
 			await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
+
+			const previousSiteSubscriptions =
+				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
+
+			if ( previousSiteSubscriptions ) {
+				queryClient.setQueryData( siteSubscriptionsCacheKey, {
+					...previousSiteSubscriptions,
+					pages: previousSiteSubscriptions.pages.map( ( page ) => {
+						return {
+							...page,
+							total_subscriptions: page.total_subscriptions - 1,
+							subscriptions: page.subscriptions.map( ( siteSubscription ) => ( {
+								...siteSubscription,
+								isDeleted:
+									siteSubscription.blog_ID === params.blog_id ? false : siteSubscription.isDeleted,
+								date_subscribed:
+									siteSubscription.blog_ID === params.blog_id
+										? new Date()
+										: siteSubscription.date_subscribed,
+							} ) ),
+						};
+					} ),
+				} );
+			}
 
 			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
 				siteSubscriptionDetailsCacheKey
@@ -76,9 +102,13 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 				} );
 			}
 
-			return { previousSiteSubscriptionDetails };
+			return { previousSiteSubscriptions, previousSiteSubscriptionDetails };
 		},
 		onError: ( error, variables, context ) => {
+			if ( context?.previousSiteSubscriptions ) {
+				queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
+			}
+
 			if ( context?.previousSiteSubscriptionDetails ) {
 				queryClient.setQueryData(
 					siteSubscriptionDetailsCacheKey,
@@ -86,8 +116,10 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 				);
 			}
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+		onSettled: ( _data, _error, params: SubscribeParams ) => {
+			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
+				queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+			}
 			queryClient.invalidateQueries( subscriptionsCountCacheKey );
 			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
 		},

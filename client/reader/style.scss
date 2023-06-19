@@ -374,7 +374,7 @@
 	}
 
 	.layout__header-section-content {
-		padding: 24px 24px 36px;
+		padding: 0 24px 36px;
 		@include break-medium {
 			padding: 24px 108px 36px;
 		}
@@ -384,6 +384,16 @@
 		border-bottom: none;
 		background: transparent;
 		color: var(--studio-white);
+		position: static;
+
+		@include breakpoint-deprecated( "<480px" ) {
+			.masterbar__item {
+				padding: 0 4px;
+				&:last-child {
+					padding-right: 20px;
+				}
+			}
+		}
 	}
 
 	// logged out master bar

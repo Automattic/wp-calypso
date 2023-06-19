@@ -8,6 +8,7 @@ import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -282,6 +283,7 @@ export default function SitesOverview() {
 								value={ {
 									verifiedContacts: {
 										emails: verifiedContacts?.emails ?? [],
+										phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
 										refetchIfFailed: () => {
 											if ( fetchContactFailed ) {
 												refetchContacts();
@@ -291,13 +293,16 @@ export default function SitesOverview() {
 									},
 								} }
 							>
-								<SiteContent
-									data={ data }
-									isLoading={ isLoading }
-									currentPage={ currentPage }
-									isFavoritesTab={ isFavoritesTab }
-									ref={ containerRef }
-								/>
+								<>
+									<QueryProductsList type="jetpack" currency="USD" />
+									<SiteContent
+										data={ data }
+										isLoading={ isLoading }
+										currentPage={ currentPage }
+										isFavoritesTab={ isFavoritesTab }
+										ref={ containerRef }
+									/>
+								</>
 							</DashboardDataContext.Provider>
 						) }
 					</div>

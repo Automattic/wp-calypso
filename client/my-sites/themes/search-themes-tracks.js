@@ -1,9 +1,8 @@
 import { usePrevious } from '@wordpress/compose';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isRequestingThemesForQuery, prependThemeFilterKeys } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { prependThemeFilterKeys } from 'calypso/state/themes/selectors';
 
 function useThemeSearchDetails( query ) {
 	const search = query.search || '';
@@ -16,52 +15,16 @@ function useThemeSearchDetails( query ) {
 	return { search, searchTaxonomies, searchTerm, searchTermHasChanged };
 }
 
-function useThemeSearchResults( search, themes, wporgThemes ) {
-	const themesCount = themes.length;
-	const wporgThemesCount = wporgThemes.length;
-	const totalCount = themesCount + wporgThemesCount;
-
-	// In some cases, we don't show all themes that match a search.
-	// For example, when there are no WPCOM results, we only show WPORG themes
-	// whose names are an exact match for the search.
-	// @see https://github.com/Automattic/wp-calypso/pull/69461
-	const actualCount = useMemo( () => {
-		if ( themesCount > 0 || ! search ) {
-			return themesCount;
-		}
-
-		const matchingWporgThemes = wporgThemes.filter(
-			( theme ) =>
-				theme?.name?.toLowerCase() === search.toLowerCase() ||
-				theme?.id?.toLowerCase() === search.toLowerCase()
-		);
-		return matchingWporgThemes.length;
-	}, [ search, themesCount, wporgThemes ] );
-
-	return { actualCount, themesCount, totalCount, wporgThemesCount };
-}
-
-function useIsRequestingThemes( query ) {
-	const isRequesting = useSelector(
-		( state ) =>
-			isRequestingThemesForQuery( state, 'wpcom', query ) ||
-			isRequestingThemesForQuery( state, 'wporg', query ) ||
-			isRequestingThemesForQuery( state, getSelectedSiteId( state ), query )
-	);
-	const prevIsRequesting = usePrevious( isRequesting );
-
-	return { isRequesting, prevIsRequesting };
-}
-
-export default function SearchThemesTracks( { query = {}, themes = [], wporgThemes = [] } ) {
+export default function SearchThemesTracks( {
+	query = {},
+	interlacedThemes = [],
+	wpComThemes = [],
+	wpOrgThemes = [],
+	isRequesting = false,
+} ) {
 	const { search, searchTaxonomies, searchTerm, searchTermHasChanged } =
 		useThemeSearchDetails( query );
-	const { actualCount, themesCount, totalCount, wporgThemesCount } = useThemeSearchResults(
-		search,
-		themes,
-		wporgThemes
-	);
-	const { isRequesting, prevIsRequesting } = useIsRequestingThemes( query );
+	const prevIsRequesting = usePrevious( isRequesting );
 
 	const dispatch = useDispatch();
 
@@ -70,10 +33,10 @@ export default function SearchThemesTracks( { query = {}, themes = [], wporgThem
 		search_term: searchTerm.trim(),
 		search_taxonomies: searchTaxonomies.trim(),
 		tier: query.tier,
-		result_count: totalCount,
-		actual_count: actualCount,
-		wpcom_result_count: themesCount,
-		wporg_result_count: wporgThemesCount,
+		result_count: wpComThemes.length + wpOrgThemes.length,
+		actual_count: interlacedThemes.length,
+		wpcom_result_count: wpComThemes.length,
+		wporg_result_count: wpOrgThemes.length,
 	} );
 
 	useEffect( () => {
@@ -85,7 +48,7 @@ export default function SearchThemesTracks( { query = {}, themes = [], wporgThem
 		// If the count is immediately valued after a search, the query is retrieving
 		// results already available in the Redux store, skipping the remote fetches.
 		// We can just record the event straight away.
-		if ( searchTermHasChanged && ! isRequesting && actualCount > 0 ) {
+		if ( searchTermHasChanged && ! isRequesting && interlacedThemes.length > 0 ) {
 			dispatch( recordSearchEvent );
 			return;
 		}
@@ -95,7 +58,7 @@ export default function SearchThemesTracks( { query = {}, themes = [], wporgThem
 			dispatch( recordSearchEvent );
 		}
 	}, [
-		actualCount,
+		interlacedThemes.length,
 		dispatch,
 		isRequesting,
 		prevIsRequesting,

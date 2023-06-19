@@ -7,7 +7,7 @@ WordPress.com for Desktop is an [Electron](https://github.com/atom/electron) wra
 The steps marked _Production\*_ can be omitted but should be taken when building the production version of the app.
 
 1. Clone the Calypso repository locally
-1. Install all root level dependencies with `yarn` or `yarn install --frozen-lockfile`
+1. Install all root level dependencies with `yarn`
 1. Export the environment variables:
    - _Production\*_: `CONFIG_ENV` (set to `release`)
    - _Production\*_: `CALYPSO_SECRETS_ENCRYPTION_KEY` (it's a secret!)
