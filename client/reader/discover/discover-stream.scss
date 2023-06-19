@@ -1,12 +1,14 @@
-.segmented-control.discover-stream__tab-control {
-	overflow-x: scroll;
-	margin-bottom: 20px;
-	padding-bottom: 15px;
-	border-bottom: 1px solid var(--color-neutral-5);
+.is-discover-stream {
+	.segmented-control.is-primary.discover-stream__tab-control {
+		overflow-x: scroll;
+		margin-bottom: 20px;
+		padding-bottom: 15px;
+		border-bottom: 1px solid var(--color-neutral-5);
 
-	.segmented-control__item .segmented-control__link {
-		border: 1px solid var(--color-neutral-10);
-		border-radius: 4px;
-		margin: 0 5px;
+		.segmented-control__item .segmented-control__link {
+			border: 1px solid var(--color-neutral-10);
+			border-radius: 4px;
+			margin: 0 5px;
+		}
 	}
 }
