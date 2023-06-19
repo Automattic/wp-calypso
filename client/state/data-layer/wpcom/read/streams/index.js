@@ -409,9 +409,6 @@ export function handlePage( action, data ) {
 			);
 		}
 		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
-		if ( streamSites.length > 0 ) {
-			actions.push( receiveRecommendedSites( { seed: 'seed?', sites: streamSites } ) );
-		}
 	}
 
 	return actions;
