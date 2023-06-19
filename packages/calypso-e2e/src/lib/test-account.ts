@@ -47,13 +47,6 @@ export class TestAccount {
 			await this.logInViaLoginPage( page );
 		}
 
-		// This element has no accessible name, hence the raw selector. It is only used once,
-		// so it is kept in the POM definition for readability.
-		// Waiting for this element adds much-needed wait when Playwright executes interactions
-		// with the NavbarComponent. This is because Calypso often swallows interactions
-		// during load; the loading process post-login is one of the longest anywhere in the project.
-		await page.locator( '.pulsing-dot' ).waitFor( { state: 'hidden' } );
-
 		if ( url ) {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
 		}
