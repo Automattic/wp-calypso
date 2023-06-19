@@ -51,10 +51,18 @@ export function useValidateVerificationCode(): {
 		// Optimistically update the contacts
 		queryClient.setQueryData( queryKey, ( oldContacts: any ) => {
 			const type = params.type;
+
+			const newEmailItem = { email_address: params.value, verified: data.verified };
+			const newSMSItem = {
+				sms_number: params.value,
+				verified: data.verified,
+			};
+
 			if ( ! oldContacts ) {
 				// If there are no contacts, create a new object
 				return {
-					emails: [ { email_address: params.value, verified: data.verified } ],
+					...( type === 'email' && { emails: [ newEmailItem ] } ),
+					...( type === 'sms' && { sms_numbers: [ newSMSItem ] } ),
 				};
 			}
 			return {
@@ -65,7 +73,16 @@ export function useValidateVerificationCode(): {
 						...oldContacts.emails.filter(
 							( email: { email_address: string } ) => email.email_address !== params.value
 						),
-						{ email_address: params.value, verified: data.verified },
+						newEmailItem,
+					],
+				} ),
+				...( type === 'sms' && {
+					// Replace if it exists, otherwise add it
+					sms_numbers: [
+						...oldContacts.sms_numbers.filter(
+							( sms: { sms_number: string } ) => sms.sms_number !== params.value
+						),
+						newSMSItem,
 					],
 				} ),
 			};

@@ -78,6 +78,12 @@ const getAutoplayIframe = ( iframe ) => {
 		} else {
 			autoplayIframe.src += '&autoplay=1';
 		}
+
+		// ?autoplay=1 is no longer sufficient for YouTube - we also need to add autoplay to the allow attribute.
+		const allow = ( autoplayIframe.allow || '' ).split( /\s*;\s*/g );
+		allow.push( 'autoplay' );
+		autoplayIframe.setAttribute( 'allow', allow.filter( ( s ) => s.length > 0 ).join( '; ' ) );
+
 		return autoplayIframe.outerHTML;
 	}
 	return null;

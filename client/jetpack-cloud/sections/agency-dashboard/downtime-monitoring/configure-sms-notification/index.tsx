@@ -14,6 +14,7 @@ export default function ConfigureSMSNotification( {
 	toggleModal,
 	recordEvent,
 	allPhoneItems,
+	verifiedPhoneNumber,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -30,6 +31,7 @@ export default function ConfigureSMSNotification( {
 					recordEvent={ recordEvent }
 					key={ item.phoneNumberFull }
 					item={ item }
+					showVerifiedBadge={ item.phoneNumberFull === verifiedPhoneNumber }
 				/>
 			) ) }
 
