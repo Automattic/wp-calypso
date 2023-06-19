@@ -149,7 +149,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<div>
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
-					site={ site || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					site={ site }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }

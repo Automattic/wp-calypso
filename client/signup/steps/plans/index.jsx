@@ -151,7 +151,7 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					site={ selectedSite }
 					hideFreePlan={ hideFreePlan }
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					isInSignup={ true }

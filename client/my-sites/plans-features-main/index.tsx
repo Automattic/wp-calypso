@@ -32,9 +32,7 @@ import { useCallback } from '@wordpress/element';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 import page from 'page';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -64,6 +62,10 @@ import './style.scss';
 import useIntentFromSiteMeta from './hooks/use-intent-from-site-meta';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanTypesWithIntent from './hooks/use-plan-types-with-intent';
+import type { Intent } from './hooks/use-plan-types-with-intent';
+import type { CartItem } from 'calypso/signup/steps/page-picker/use-cart-for-difm';
+import type { IAppState } from 'calypso/state/types';
+import type { Site } from 'calypso/my-sites/scan/types';
 
 const OnboardingPricingGrid2023 = ( props ) => {
 	const {
@@ -361,7 +363,105 @@ const PricingView = ( props ) => {
 	);
 };
 
-export class PlansFeaturesMain extends Component {
+const PlansFeaturesMain = ( props ) => {
+	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
+
+	const isDisplayingPlansNeededForFeature = () => {
+		const { selectedFeature, selectedPlan, previousRoute, planTypeSelector } = props;
+
+		if (
+			isValidFeatureKey( selectedFeature ) &&
+			getPlan( selectedPlan ) &&
+			! isPersonalPlan( selectedPlan ) &&
+			( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) )
+		) {
+			return true;
+		}
+	};
+
+	const toggleIsFreePlanPaidDomainDialogOpen = () => {
+		setIsFreePlanPaidDomainDialogOpen( ! isFreePlanPaidDomainDialogOpen );
+	};
+
+	const onUpgradeClick = ( cartItemForPlan ) => {
+		const { domainName, onUpgradeClick, siteSlug, flowName } = props;
+
+		// The `cartItemForPlan` var is null if the free plan is selected
+		if ( cartItemForPlan == null && 'onboarding' === flowName && domainName ) {
+			toggleIsFreePlanPaidDomainDialogOpen();
+			return;
+		}
+
+		if ( onUpgradeClick ) {
+			onUpgradeClick( cartItemForPlan );
+			return;
+		}
+
+		const planPath = getPlanPath( cartItemForPlan?.product_slug ) || '';
+		const checkoutUrlWithArgs = `/checkout/${ siteSlug }/${ planPath }`;
+
+		page( checkoutUrlWithArgs );
+	}
+
+	const FreePlanPaidDomainModal = ( props ) => {
+		const { domainName, replacePaidDomainWithFreeDomain, onUpgradeClick } = props;
+
+		return (
+			<FreePlanPaidDomainDialog
+				domainName={ domainName }
+				suggestedPlanSlug={ PLAN_PERSONAL }
+				onClose={ toggleIsFreePlanPaidDomainDialogOpen }
+				onFreePlanSelected={ ( freeDomainSuggestion ) => {
+					replacePaidDomainWithFreeDomain( freeDomainSuggestion );
+					onUpgradeClick( null );
+				} }
+				onPlanSelected={ () => {
+					const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
+					onUpgradeClick( cartItemForPlan );
+				} }
+			/>
+		);
+	};
+
+	const isPersonalCustomerTypePlanVisible = ( props ) => {
+		const { hidePersonalPlan } = props;
+		return ! hidePersonalPlan;
+	};
+
+	const { siteId, redirectToAddDomainFlow, hidePlanTypeSelector, planTypeSelector } = props;
+
+	// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
+	let hidePlanSelector =
+		'customer' === planTypeSelector && isDisplayingPlansNeededForFeature();
+
+	// In the "purchase a plan and free domain" flow we do not want to show
+	// monthly plans because monthly plans do not come with a free domain.
+	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
+		hidePlanSelector = true;
+	}
+
+	return (
+		<div
+			className={ classNames(
+				'plans-features-main',
+				'is-pricing-grid-2023-plans-features-main'
+			) }
+		>
+			<QueryPlans />
+			<QuerySites siteId={ siteId } />
+			<QuerySitePlans siteId={ siteId } />
+			<PricingView
+				{ ...props }
+				isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature() }
+				onUpgradeClick={ onUpgradeClick }
+				hidePlanSelector={ hidePlanSelector }
+			/>
+			{ isFreePlanPaidDomainDialogOpen && <FreePlanPaidDomainModal { ...props } /> }
+		</div>
+	);
+};
+
+export class PlansFeaturesMainX extends Component {
 	state = {
 		isFreePlanPaidDomainDialogOpen: false,
 	};
@@ -465,46 +565,35 @@ export class PlansFeaturesMain extends Component {
 	}
 }
 
-PlansFeaturesMain.propTypes = {
-	redirectToAddDomainFlow: PropTypes.bool,
-	hidePlanTypeSelector: PropTypes.bool,
-	basePlansPath: PropTypes.string,
-	hideFreePlan: PropTypes.bool,
-	hidePersonalPlan: PropTypes.bool,
-	hidePremiumPlan: PropTypes.bool,
-	hideEcommercePlan: PropTypes.bool,
-	hideEnterprisePlan: PropTypes.bool,
-	customerType: PropTypes.string,
-	flowName: PropTypes.string,
-	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly', '3yearly' ] ),
-	isInSignup: PropTypes.bool,
-	isLandingPage: PropTypes.bool,
-	isStepperUpgradeFlow: PropTypes.bool,
-	onUpgradeClick: PropTypes.func,
-	redirectTo: PropTypes.string,
-	selectedFeature: PropTypes.string,
-	selectedPlan: PropTypes.string,
-	siteId: PropTypes.number,
-	siteSlug: PropTypes.string,
-	isAllPaidPlansShown: PropTypes.bool,
-	plansWithScroll: PropTypes.bool,
-	planTypes: PropTypes.array,
-	isReskinned: PropTypes.bool,
-	isPlansInsideStepper: PropTypes.bool,
-	planTypeSelector: PropTypes.string,
-	busyOnUpgradeClick: PropTypes.bool,
-	intent: PropTypes.oneOf( [
-		'blog-onboarding',
-		'newsletter',
-		'link-in-bio',
-		'new-hosted-site',
-		'new-hosted-site-hosting-flow',
-		'plugins',
-		'jetpack-app',
-		'import',
-		'default',
-	] ),
-};
+interface PlansFeaturesMainConnectedProps {
+	redirectToAddDomainFlow?: boolean;
+	hidePlanTypeSelector?: boolean;
+	basePlansPath: string;
+	hideFreePlan?: boolean;
+	hidePersonalPlan?: boolean;
+	hidePremiumPlan?: boolean;
+	hideEcommercePlan?: boolean;
+	hideEnterprisePlan?: boolean;
+	customerType: string;
+	flowName: string;
+	intervalType: 'monthly' | 'yearly' | '2yearly' | '3yearly';
+	isInSignup?: boolean;
+	isLandingPage?: boolean;
+	isStepperUpgradeFlow?: boolean;
+	onUpgradeClick?: ( cartItemForPlan: CartItem ) => void;
+	redirectTo?: string;
+	selectedFeature?: string;
+	selectedPlan?: string;
+	siteId: number;
+	siteSlug: string;
+	isAllPaidPlansShown?: boolean;
+	plansWithScroll: boolean;
+	isReskinned: boolean;
+	isPlansInsideStepper: boolean;
+	planTypeSelector: 'customer' | 'interval';
+	busyOnUpgradeClick: boolean;
+	intent: Intent;
+}
 
 PlansFeaturesMain.defaultProps = {
 	basePlansPath: null,
@@ -523,26 +612,41 @@ PlansFeaturesMain.defaultProps = {
 	isStepperUpgradeFlow: false,
 };
 
-export default connect( ( state, props ) => {
-	const siteId = get( props.site, [ 'ID' ] );
-	const sitePlan = getSitePlan( state, siteId );
+interface PlansFeaturesMainProps {
+	site?: Site;
+	intent?: Intent;
+	customerType: string;
+	basePlansPath: string;
+	isStepperUpgradeFlow: boolean;
+	isInSignup: boolean;
+	isPlansInsideStepper: boolean;
+	intervalType: 'monthly' | 'yearly' | '2yearly' | '3yearly';
+	hidePersonalPlan: boolean;
+	selectedPlan: string;
+	selectedFeature: string;
+}
+
+export default connect( ( state: IAppState, props: PlansFeaturesMainProps ) => {
+	const siteId = props.site?.ID;
+	const sitePlan = siteId ? getSitePlan( state, siteId ) : null;
 	const currentPlan = getCurrentPlan( state, siteId );
-	const currentPurchase = getByPurchaseId( state, currentPlan?.id );
+	const currentPurchase = currentPlan?.id ? getByPurchaseId( state, currentPlan?.id ) : null;
 	const sitePlanSlug = sitePlan?.product_slug;
 	const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
-	const siteSlug = getSiteSlug( state, get( props.site, [ 'ID' ] ) );
+	const siteSlug = getSiteSlug( state, props.site?.ID );
 	const intent = props.intent || 'default';
 
-	let customerType = chooseDefaultCustomerType( {
+	let customerType =  sitePlan && chooseDefaultCustomerType( {
 		currentCustomerType: props.customerType,
 		selectedPlan: props.selectedPlan,
-		sitePlan,
+		currentPlan: sitePlan,
 	} );
 
 	// Make sure the plans for the default customer type can be purchased.
 	if (
 		! props.customerType &&
 		customerType === 'personal' &&
+		siteId &&
 		! canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	) {
 		customerType = 'business';
@@ -562,12 +666,12 @@ export default connect( ( state, props ) => {
 	};
 
 	return {
-		isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
+		isCurrentPlanRetired: sitePlanSlug && ( isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ) ),
 		currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
 		customerType,
 		domains: getDomainsBySiteId( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
-		isMultisite: isJetpackSiteMultiSite( state, siteId ),
+		isMultisite: siteId ? isJetpackSiteMultiSite( state, siteId ) : null,
 		previousRoute: getPreviousRoute( state ),
 		siteId,
 		siteSlug,
