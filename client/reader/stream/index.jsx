@@ -464,8 +464,17 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag, tags, sites } =
-			this.props;
+		const {
+			translate,
+			forcePlaceholders,
+			lastPage,
+			streamHeader,
+			streamKey,
+			tag,
+			tags,
+			sites,
+			isDiscoverTags,
+		} = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -514,7 +523,7 @@ class ReaderStream extends Component {
 			let sidebarContent = null;
 			let tabTitle = translate( 'Sites' );
 
-			if ( isTagPage ) {
+			if ( isTagPage || isDiscoverTags ) {
 				sidebarContent = <ReaderTagSidebar tag={ tag } />;
 				tabTitle = translate( 'Related' );
 				baseClassnames = classnames( 'tag-stream__main', this.props.className );
