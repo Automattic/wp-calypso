@@ -31,7 +31,6 @@ const ScreenFontPairings = ( {
 				description={ translate(
 					'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
 				) }
-				isPremium
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">

@@ -100,7 +100,6 @@ export const openHelpCenterFromJITM =
 		const HELP_CENTER_STORE = HelpCenter.register();
 		dataStoreDispatch( HELP_CENTER_STORE ).setInitialRoute( route );
 		dataStoreDispatch( HELP_CENTER_STORE ).setShowHelpCenter( true );
-		dataStoreDispatch( HELP_CENTER_STORE ).setChatTag( 'churn_chat_prompt' );
 		dispatch( {
 			type: JITM_OPEN_HELP_CENTER,
 		} );

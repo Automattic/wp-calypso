@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { Icon, seen, trash } from '@wordpress/icons';
+import { close, Icon, seen, trash } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -9,11 +9,20 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import './styles.scss';
 
 type SubscriberPopoverProps = {
+	isCancelPaidSubscriptionButtonVisible?: boolean;
+	isViewButtonVisible?: boolean;
+	onCancelPaidSubscription?: () => void;
 	onUnsubscribe: () => void;
-	onView: () => void;
+	onView?: () => void;
 };
 
-const SubscriberPopover = ( { onUnsubscribe, onView }: SubscriberPopoverProps ) => {
+const SubscriberPopover = ( {
+	isCancelPaidSubscriptionButtonVisible = false,
+	isViewButtonVisible = false,
+	onCancelPaidSubscription,
+	onUnsubscribe,
+	onView,
+}: SubscriberPopoverProps ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
 	const buttonRef = useRef< HTMLButtonElement >( null );
@@ -38,10 +47,18 @@ const SubscriberPopover = ( { onUnsubscribe, onView }: SubscriberPopoverProps ) 
 				className="subscriber-popover"
 				focusOnShow={ false }
 			>
-				<PopoverMenuItem onClick={ onView } className="hidden">
-					<Icon icon={ seen } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-					{ translate( 'View' ) }
-				</PopoverMenuItem>
+				{ isViewButtonVisible && (
+					<PopoverMenuItem onClick={ onView }>
+						<Icon icon={ seen } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+						{ translate( 'View' ) }
+					</PopoverMenuItem>
+				) }
+				{ isCancelPaidSubscriptionButtonVisible && (
+					<PopoverMenuItem onClick={ onCancelPaidSubscription }>
+						<Icon icon={ close } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+						{ translate( 'Cancel paid subscription' ) }
+					</PopoverMenuItem>
+				) }
 				<PopoverMenuItem onClick={ onUnsubscribe }>
 					<Icon icon={ trash } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 					{ translate( 'Unsubscribe' ) }
@@ -51,4 +68,4 @@ const SubscriberPopover = ( { onUnsubscribe, onView }: SubscriberPopoverProps ) 
 	);
 };
 
-export { SubscriberPopover };
+export default SubscriberPopover;
