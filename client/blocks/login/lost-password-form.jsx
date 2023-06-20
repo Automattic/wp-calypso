@@ -1,4 +1,5 @@
-import { FormInputValidation, Spinner } from '@automattic/components';
+import { FormInputValidation } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';

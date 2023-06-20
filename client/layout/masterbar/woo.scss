@@ -874,19 +874,11 @@
 			}
 		}
 
-		.spinner__outer,
-		.spinner__inner {
-			border-top-color: var(--wp-admin-theme-color);
-		}
-		.spinner__inner {
-			border-right-color: var(--wp-admin-theme-color);
-		}
-
 		// Lost password
 		.login__lostpassword-form {
 			display: flex;
 			flex-direction: column;
-			padding: 54px 24px 32px;
+			padding: 48px 24px 32px;
 
 			@media screen and ( max-width: 660px ) {
 				padding: 32px 16px 28px;
