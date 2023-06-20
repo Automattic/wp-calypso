@@ -77,6 +77,7 @@ const DomainsWrapperItem = styled.div( {
 
 const GridiconStyled = styled( Gridicon )( {
 	paddingRight: '10px',
+	verticalAlign: 'middle',
 } );
 
 const DomainsCard = ( {
