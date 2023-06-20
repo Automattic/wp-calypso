@@ -93,7 +93,6 @@ export default function CampaignItemDetails( props: Props ) {
 		budget_left,
 		total_budget,
 		total_budget_used,
-		views_total = 0,
 		views_organic,
 	} = campaign_stats || {};
 
@@ -169,6 +168,7 @@ export default function CampaignItemDetails( props: Props ) {
 			value: views_organic || 0,
 		},
 	];
+	const databarTotal = databars.reduce( ( total, item ) => total + item.value, 0 );
 
 	const cancelCampaignButtonText =
 		status === 'active' ? __( 'Stop campaign' ) : __( 'Cancel campaign' );
@@ -428,7 +428,7 @@ export default function CampaignItemDetails( props: Props ) {
 															<HorizontalBarListItem
 																key={ `bar_${ index }` }
 																data={ item }
-																maxValue={ views_total }
+																maxValue={ databarTotal }
 																hasIndicator={ false }
 																leftSideItem={ null }
 																useShortLabel={ false }
