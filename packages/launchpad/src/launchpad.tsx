@@ -1,5 +1,5 @@
 import { useLaunchpad } from '@automattic/data-stores';
-import { useEffect, useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import Checklist from './checklist';
 import type { Task } from './types';
 
@@ -20,7 +20,7 @@ const Launchpad = ( {
 	const { isFetchedAfterMount, data } = launchpadData;
 	const tasks = useRef< Task[] >( [] );
 
-	useEffect( () => {
+	useMemo( () => {
 		const originalTasks = data.checklist || [];
 		tasks.current = taskFilter ? taskFilter( originalTasks ) : originalTasks;
 	}, [ data, taskFilter ] );
