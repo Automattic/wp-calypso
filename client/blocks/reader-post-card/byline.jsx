@@ -23,6 +23,7 @@ class PostByline extends Component {
 		showAvatar: PropTypes.bool,
 		teams: PropTypes.array,
 		showFollow: PropTypes.bool,
+		compact: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -39,7 +40,8 @@ class PostByline extends Component {
 	};
 
 	render() {
-		const { post, site, feed, isDiscoverPost, showSiteName, showAvatar, teams } = this.props;
+		const { post, site, feed, isDiscoverPost, showSiteName, showAvatar, teams, compact } =
+			this.props;
 		const feedId = feed ? feed.feed_ID : get( post, 'feed_ID' );
 		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 		const siteId = get( site, 'ID' );
@@ -71,7 +73,7 @@ class PostByline extends Component {
 					/>
 				) }
 				<div className="reader-post-card__byline-details">
-					{ ( shouldDisplayAuthor || showSiteName ) && (
+					{ ( shouldDisplayAuthor || showSiteName ) && ! compact && (
 						<div className="reader-post-card__byline-author-site">
 							{ shouldDisplayAuthor && (
 								<ReaderAuthorLink
@@ -106,7 +108,7 @@ class PostByline extends Component {
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									{ siteSlug }
+									{ siteName && ( compact || ! showSiteName ) ? siteName : siteSlug }
 								</a>
 								<span className="reader-post-card__timestamp-bullet">·</span>
 								<a
@@ -121,7 +123,7 @@ class PostByline extends Component {
 							</span>
 						) }
 					</div>
-					<TagsList post={ post } />
+					{ ! compact && <TagsList post={ post } /> }
 				</div>
 				<ReaderPostEllipsisMenu site={ site } teams={ teams } post={ post } showFollow={ false } />
 			</div>

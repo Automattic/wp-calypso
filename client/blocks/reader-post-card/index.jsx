@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
-import TagPost from 'calypso/blocks/reader-post-card/tag-post';
+import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -142,7 +142,7 @@ class ReaderPostCard extends Component {
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
-		const isReaderTagPage = currentRoute.startsWith( '/tag/' );
+		const isConversations = currentRoute.startsWith( '/read/conversations' );
 		const isReaderSearchPage = currentRoute.startsWith( '/read/search' );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
@@ -153,7 +153,6 @@ class ReaderPostCard extends Component {
 			'is-seen': isSeen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
-			'is-tag-post': isReaderTagPage || isDiscoverStream,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -184,14 +183,12 @@ class ReaderPostCard extends Component {
 				showAvatar={ ! compact }
 				teams={ teams }
 				showFollow={ ! isDiscover }
-				showPrimaryFollowButton={ showPrimaryFollowButton }
-				followSource={ followSource }
 			/>
 		);
 
 		// Set up post card
 		let readerPostCard;
-		if ( compact ) {
+		if ( isConversations ) {
 			readerPostCard = (
 				<ConversationPost
 					post={ post }
@@ -202,9 +199,9 @@ class ReaderPostCard extends Component {
 					onClick={ this.handleCardClick }
 				/>
 			);
-		} else if ( isReaderTagPage || isDiscoverStream ) {
+		} else if ( compact ) {
 			readerPostCard = (
-				<TagPost
+				<CompactPostCard
 					post={ post }
 					title={ title }
 					isDiscover={ isDiscover }
@@ -212,8 +209,9 @@ class ReaderPostCard extends Component {
 					expandCard={ expandCard }
 					site={ site }
 					postKey={ postKey }
-					teams={ teams }
-				></TagPost>
+					postByline={ postByline }
+					onClick={ this.handleCardClick }
+				/>
 			);
 		} else if ( isPhotoPost ) {
 			readerPostCard = (
@@ -259,10 +257,10 @@ class ReaderPostCard extends Component {
 			);
 		}
 
-		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
+		const onClick = ! isPhotoPost ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
-				{ ! compact && ! isReaderTagPage && ! isDiscoverStream && postByline }
+				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>

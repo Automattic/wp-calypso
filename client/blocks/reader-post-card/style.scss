@@ -143,76 +143,6 @@
 	}
 
 	&.is-compact {
-		.reader-post-card__byline-details {
-			display: flex;
-			flex-direction: row;
-			max-height: 16px * 1.4;
-			max-width: calc(100% - 75px);
-			position: relative;
-
-			&::after {
-				@include long-content-fade( $size: 10% );
-			}
-		}
-
-		.reader-post-card__byline-author-site {
-			flex: 0 0 auto;
-			width: auto;
-		}
-
-		.reader-post-card__timestamp-and-tag {
-			margin-top: 0;
-			margin-left: 0;
-
-			@include breakpoint-deprecated( ">480px" ) {
-				margin-left: 5px;
-			}
-		}
-
-		.reader-post-card__byline-author-site,
-		.reader-post-card__timestamp-and-tag {
-			&::after {
-				display: none;
-			}
-		}
-
-		.reader-post-card__timestamp-link {
-			color: var(--color-text-subtle);
-		}
-
-		.reader-post-options-menu {
-			position: absolute;
-			right: 14px;
-			top: 0;
-		}
-
-		.reader-featured-image {
-			height: auto;
-			margin-bottom: 0;
-			min-width: 100px;
-		}
-
-		.reader-post-card__post {
-			margin-top: 0;
-		}
-
-		.reader-post-card__post-details {
-			margin-top: 0;
-		}
-
-		.reader-post-card__post-details .reader-excerpt {
-			font-size: $font-body;
-			font-weight: 400;
-			margin-top: 4px;
-			max-height: 16px * 1.4;
-			overflow: hidden;
-			position: relative;
-			word-wrap: break-word;
-		}
-	}
-
-	&.is-tag-post {
-
 		.reader-featured-image {
 			width: 200px !important;
 			min-height: 140px;
@@ -220,9 +150,14 @@
 		}
 
 		.reader-post-card__post {
+			display: inherit;
+			margin: 0;
+		}
+
+		.reader-post-card__post-content {
 			flex-direction: row;
 			gap: 24px;
-			margin: 0;
+			margin-bottom: 8px;
 		}
 
 		.reader-post-card__post-details {
@@ -239,6 +174,11 @@
 
 		.reader-post-card__featured-images {
 			flex-direction: row;
+		}
+
+		.reader-excerpt {
+			max-height: none;
+			-webkit-line-clamp: 3;
 		}
 	}
 
@@ -268,13 +208,6 @@
 	.comments__comment-actions {
 		display: flex;
 		justify-content: flex-start;
-	}
-	.reader-post-card__byline {
-		margin-top: 16px;
-	}
-	.reader-post-options-menu__ellipsis-menu {
-		flex: 1;
-		text-align: right;
 	}
 }
 
@@ -904,4 +837,8 @@
 		margin-top: -2px;
 		margin-left: 5px;
 	}
+}
+
+.reader-post-card__post-content {
+	display: flex;
 }
