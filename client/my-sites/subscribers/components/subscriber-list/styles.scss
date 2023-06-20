@@ -48,47 +48,6 @@
 			align-items: center;
 			flex: 3;
 			min-width: 0;
-
-			.subscriber-profile {
-				display: flex;
-				min-width: 0;
-
-				.subscriber-profile__user-image {
-					height: 40px;
-					width: 40px;
-					border-radius: 50%;
-					margin-right: 12px;
-					flex: 0;
-				}
-
-				.subscriber-profile__user-details {
-					display: flex;
-					flex-direction: column;
-					justify-content: center;
-					max-width: 100%;
-					overflow: hidden;
-					min-width: 0;
-
-					.subscriber-profile__name {
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						font-weight: bold;
-						line-height: 17px;
-						min-width: 0;
-						font-size: $font-code;
-					}
-
-					.subscriber-profile__email {
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						font-size: $font-body-extra-small;
-						color: $studio-gray-60;
-						min-width: 0;
-					}
-				}
-			}
 		}
 
 		.subscriber-list__checkbox-column {
@@ -107,24 +66,19 @@
 			}
 		}
 
-		.subscriber-popover__container {
-			height: 24px;
-		}
-
-		.subscriber-popover__toggle {
-			cursor: pointer;
-
-			.gridicons-ellipsis {
-				transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-			}
-
-			&.is-popover-visible .gridicons-ellipsis {
-				transform: rotate(90deg);
-			}
-		}
-
 		&:last-child {
 			border-bottom: none;
+		}
+	}
+}
+
+@media ( max-width: $break-large ) {
+	.subscriber-list {
+		padding-left: 16px;
+		padding-right: 16px;
+
+		.subscriber-list__since-column {
+			display: none;
 		}
 	}
 }
@@ -134,7 +88,7 @@
 		padding-left: 16px;
 		padding-right: 16px;
 
-		.subscriber-list__since-column {
+		.subscriber-list__subscription-type-column {
 			display: none;
 		}
 	}

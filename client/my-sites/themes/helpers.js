@@ -121,6 +121,7 @@ export function getSubjectsFromTermTable( filterToTermTable ) {
  * - If the search term has an exact match (either a WP.com or a WP.org theme), that theme is the first result.
  * - WP.com themes are prioritized over WP.org themes.
  * - Retired WP.org themes or duplicate WP.org themes (those that are also WP.com themes) are excluded.
+ * - WP.org block themes are prioritized over WP.org classic themes.
  *
  * @param wpComThemes List of WP.com themes.
  * @param wpOrgThemes List of WP.org themes.
@@ -129,9 +130,10 @@ export function getSubjectsFromTermTable( filterToTermTable ) {
  */
 export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPage ) {
 	const isMatchingTheme = ( theme ) => {
-		if ( ! searchTerm ) {
+		if ( ! searchTerm || theme.retired ) {
 			return false;
 		}
+
 		return (
 			theme.name?.toLowerCase() === searchTerm?.toLowerCase() ||
 			theme.id?.toLowerCase() === searchTerm?.toLowerCase()
@@ -148,20 +150,49 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 		  )
 		: [];
 
-	const matchingTheme = wpComThemes.find( isMatchingTheme );
+	const interlacedThemes = [];
+
+	// 1. Exact match.
+	const matchingTheme =
+		wpComThemes.find( isMatchingTheme ) || validWpOrgThemes.find( isMatchingTheme );
+	if ( matchingTheme ) {
+		interlacedThemes.push( matchingTheme );
+	}
+
+	// 2. WP.com themes.
 	const restWpComThemes = matchingTheme
 		? wpComThemes.filter( ( theme ) => theme.id !== matchingTheme.id )
 		: wpComThemes;
-	const matchingWpOrgTheme = validWpOrgThemes.find( isMatchingTheme );
-	const restWpOrgThemes = matchingWpOrgTheme
-		? validWpOrgThemes.filter( ( theme ) => theme.id !== matchingWpOrgTheme.id )
-		: validWpOrgThemes;
 
-	return [
-		...( matchingTheme ? [ matchingTheme ] : [] ),
-		...( matchingWpOrgTheme ? [ matchingWpOrgTheme ] : [] ),
-		...restWpComThemes,
-		// Include WP.org themes after the last page of WP.com themes.
-		...( isEnabled( 'themes/interlaced-dotorg-themes' ) && isLastPage ? restWpOrgThemes : [] ),
-	];
+	// The themes endpoint returns retired themes when search term exists.
+	// See: https://github.com/Automattic/wp-calypso/pull/78231
+	interlacedThemes.push(
+		...( searchTerm ? restWpComThemes.filter( ( theme ) => ! theme.retired ) : restWpComThemes )
+	);
+
+	// 3. WP.org themes (only if the list of WP.com themes has reached the last page).
+	if ( isEnabled( 'themes/interlaced-dotorg-themes' ) && isLastPage ) {
+		const restWpOrgBlockThemes = [];
+		const restWpOrgClassicThemes = [];
+
+		validWpOrgThemes.forEach( ( theme ) => {
+			if ( theme.id === matchingTheme?.id ) {
+				return;
+			}
+			if (
+				theme.taxonomies?.theme_feature?.some(
+					( feature ) => feature?.slug === 'full-site-editing'
+				)
+			) {
+				restWpOrgBlockThemes.push( theme );
+			} else {
+				restWpOrgClassicThemes.push( theme );
+			}
+		} );
+
+		interlacedThemes.push( ...restWpOrgBlockThemes );
+		interlacedThemes.push( ...restWpOrgClassicThemes );
+	}
+
+	return interlacedThemes;
 }

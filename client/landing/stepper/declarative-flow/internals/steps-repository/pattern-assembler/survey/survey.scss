@@ -4,11 +4,15 @@
 	background: #f0f7fc;
 	margin: 16px 0;
 
-	&.banner.card {
+	&.banner.card.is-dismissible {
 		cursor: default;
 		border: 0;
 		box-shadow: none;
-		padding-right: 52px;
+
+		// Overwrite .banner.card padding without !important
+		@media (min-width: 481px) {
+			padding-right: 52px;
+		}
 	}
 
 	.banner__info .banner__title {

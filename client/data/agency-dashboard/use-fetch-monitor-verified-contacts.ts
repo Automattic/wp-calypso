@@ -18,11 +18,11 @@ const useFetchMonitorVerfiedContacts = ( isPartnerOAuthTokenLoaded: boolean ) =>
 		select: ( contacts: MonitorContactsResponse ) => {
 			return {
 				emails: contacts?.emails
-					.filter( ( email ) => email.verified )
+					?.filter( ( email ) => email.verified )
 					.map( ( email ) => email.email_address ),
-				phoneNumbers: contacts.sms_numbers
-					.filter( ( sms ) => sms.verified )
-					.map( ( sms ) => `${ sms.country_numeric_code }${ sms.sms_number }` ), // Add country code to phone number
+				phoneNumbers: contacts?.sms_numbers
+					?.filter( ( sms ) => sms.verified )
+					.map( ( sms ) => sms.sms_number ),
 			};
 		},
 		enabled: isPartnerOAuthTokenLoaded && isMultipleEmailEnabled,

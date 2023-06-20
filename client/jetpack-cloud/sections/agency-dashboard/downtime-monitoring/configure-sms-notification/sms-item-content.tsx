@@ -16,6 +16,7 @@ interface Props {
 	item: StateMonitorSettingsSMS;
 	toggleModal?: ( item?: StateMonitorSettingsSMS, action?: AllowedMonitorContactActions ) => void;
 	recordEvent?: ( action: string, params?: object ) => void;
+	showVerifiedBadge?: boolean;
 }
 
 const EVENT_NAMES = {
@@ -24,7 +25,12 @@ const EVENT_NAMES = {
 	verify: 'downtime_monitoring_sms_number_verify_click',
 };
 
-export default function SMSItemContent( { item, toggleModal, recordEvent }: Props ) {
+export default function SMSItemContent( {
+	item,
+	toggleModal,
+	recordEvent,
+	showVerifiedBadge,
+}: Props ) {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
@@ -66,7 +72,7 @@ export default function SMSItemContent( { item, toggleModal, recordEvent }: Prop
 						<Badge type="warning">{ translate( 'Pending' ) }</Badge>
 					</span>
 				) }
-				{ isVerified && (
+				{ showVerifiedBadge && isVerified && (
 					<span className="configure-contact-info__verification-status">
 						<Badge type="success">{ translate( 'Verified' ) }</Badge>
 					</span>
@@ -92,12 +98,7 @@ export default function SMSItemContent( { item, toggleModal, recordEvent }: Prop
 						{ translate( 'Verify' ) }
 					</PopoverMenuItem>
 
-					<PopoverMenuItem
-						onClick={ () => {
-							//TODO handle actions
-							return null;
-						} }
-					>
+					<PopoverMenuItem onClick={ () => handleToggleModal( 'edit' ) }>
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem

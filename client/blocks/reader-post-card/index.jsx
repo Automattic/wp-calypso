@@ -10,11 +10,6 @@ import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import TagPost from 'calypso/blocks/reader-post-card/tag-post';
-import DiscoverFollowButton from 'calypso/reader/discover/follow-button';
-import {
-	getDiscoverBlogName,
-	getSourceFollowUrl as getDiscoverFollowUrl,
-} from 'calypso/reader/discover/helper';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -164,18 +159,6 @@ class ReaderPostCard extends Component {
 			'is-tag-post': isReaderTagPage,
 		} );
 
-		let discoverFollowButton;
-
-		if ( isDiscover && ! compact ) {
-			const discoverBlogName = getDiscoverBlogName( post ) || null;
-			discoverFollowButton = discoverBlogName && (
-				<DiscoverFollowButton
-					siteName={ discoverBlogName }
-					followUrl={ getDiscoverFollowUrl( post ) }
-				/>
-			);
-		}
-
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const readerPostActions = (
 			<ReaderPostActions
@@ -268,7 +251,6 @@ class ReaderPostCard extends Component {
 					expandCard={ expandCard }
 					postKey={ postKey }
 				>
-					{ discoverFollowButton }
 					{ readerPostActions }
 				</PhotoPost>
 			);
@@ -297,7 +279,6 @@ class ReaderPostCard extends Component {
 					{ isDailyPostChallengeOrPrompt( post ) && site && (
 						<DailyPostButton post={ post } site={ site } />
 					) }
-					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
 			);

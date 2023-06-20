@@ -14,7 +14,15 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { siteId, rewindId 
 		hasChildren: true,
 	};
 
-	return <FileBrowserNode siteId={ siteId } rewindId={ rewindId } item={ rootItem } path="/" />;
+	return (
+		<FileBrowserNode
+			siteId={ siteId }
+			rewindId={ rewindId }
+			item={ rootItem }
+			path="/"
+			isAlternate={ true }
+		/>
+	);
 };
 
 export default FileBrowser;

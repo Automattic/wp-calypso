@@ -481,7 +481,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				) }
 				<br />
 				<br />
-				<CommissionFees commission={ commission } iconSize={ 14 } className="earn__notes" />
+				<CommissionFees
+					className="earn__notes"
+					commission={ commission }
+					iconSize={ 14 }
+					siteSlug={ selectedSiteSlug }
+				/>
 			</>
 		),
 	} );

@@ -824,7 +824,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
 						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
 					args: {
-						discount: formatCurrency( upgradeCredit, product.currency, {
+						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ),

@@ -156,7 +156,6 @@ export default function WPCheckout( {
 	areThereErrors,
 	isInitialCartLoading,
 	customizedPreviousPath,
-	useVariantPickerRadioButtons,
 	loadingContent,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
@@ -174,8 +173,6 @@ export default function WPCheckout( {
 	areThereErrors: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
-	// This is just for unit tests.
-	useVariantPickerRadioButtons?: boolean;
 	loadingContent: ReactNode;
 } ) {
 	const cartKey = useCartKey();
@@ -372,7 +369,6 @@ export default function WPCheckout( {
 				titleContent={ <OrderReviewTitle /> }
 				completeStepContent={
 					<WPCheckoutOrderReview
-						useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 						removeProductFromCart={ removeProductFromCart }
 						couponFieldStateProps={ couponFieldStateProps }
 						onChangePlanLength={ changePlanLength }

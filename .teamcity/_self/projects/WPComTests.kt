@@ -205,15 +205,10 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 	val triggers: Triggers.() -> Unit = {
 		if (jetpackTarget == "wpcom-staging") {
 			vcs {
-				// Trigger only when the "trunk" branch is modified, i.e. back-end merges
-				branchFilter = """
-					+:trunk
-				""".trimIndent()
-
 				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM connection
 				triggerRules = """
-					+:root=wpcom:**/sun/**
-					+:root=wpcom:**/moon/**
+					+:root=wpcom:**/mu-plugins/jetpack*-plugin/moon/*
+					+:root=wpcom:**/mu-plugins/jetpack*-plugin/sun/*
 				""".trimIndent()
 			}
 		} else {

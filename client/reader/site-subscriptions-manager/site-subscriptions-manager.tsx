@@ -34,7 +34,7 @@ const SiteSubscriptionsManager = () => {
 					<ExternalSiteSubscriptionsManager>
 						<ExternalSiteSubscriptionsManager.ListActionsBar />
 						<RecommendedSites />
-						<ExternalSiteSubscriptionsManager.List onSiteTitleClick={ () => undefined } />
+						<ExternalSiteSubscriptionsManager.List />
 					</ExternalSiteSubscriptionsManager>
 				</SiteSubscriptionsManagerProvider>
 			</Main>
