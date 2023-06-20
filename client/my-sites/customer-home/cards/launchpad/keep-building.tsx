@@ -34,8 +34,13 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 
-	const tasksWithActions = ( tasks: Task[] ) => {
-		return tasks.map( ( task: Task ) => {
+	const sortedTasksWithActions = ( tasks: Task[] ) => {
+		const completedTasks = tasks.filter( ( task: Task ) => task.completed );
+		const incompleteTasks = tasks.filter( ( task: Task ) => ! task.completed );
+
+		const sortedTasks = [ ...completedTasks, ...incompleteTasks ];
+
+		return sortedTasks.map( ( task: Task ) => {
 			let actionDispatch;
 
 			switch ( task.id ) {
@@ -93,7 +98,7 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 			<Launchpad
 				siteSlug={ siteSlug }
 				checklistSlug={ checklistSlug }
-				taskFilter={ tasksWithActions }
+				taskFilter={ sortedTasksWithActions }
 			/>
 		</div>
 	);
