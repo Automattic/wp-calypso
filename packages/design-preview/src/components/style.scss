@@ -34,6 +34,7 @@
 		position: sticky;
 		bottom: 0;
 		width: 100%;
+		background-color: var(--studio-white);
 		z-index: z-index("root", ".design-preview__sidebar-action-buttons");
 
 		a,
@@ -44,11 +45,10 @@
 		}
 
 		@include break-xlarge {
-			bottom: 8px;
 			display: flex;
 			flex-direction: column;
 			gap: 8px;
-			margin: 2rem 0 0;
+			padding: 32px 0;
 		}
 	}
 
@@ -69,7 +69,6 @@
 }
 
 .design-preview__sidebar-content {
-
 	.global-styles-variations__type.combined-variations {
 		.global-styles-variations__header {
 			display: none;
@@ -185,6 +184,12 @@
 			margin-top: 2rem;
 		}
 	}
+
+	@include break-xlarge {
+		padding: 0 16px 4px;
+		margin: 0 -16px;
+		overflow: auto;
+	}
 }
 
 .design-preview__sidebar-variations {
@@ -249,6 +254,7 @@
 		.font-pairing-variations {
 			display: grid;
 			margin: 0;
+			padding-inline-end: 6px;
 
 			.global-styles-variation__item {
 				width: 100%;
