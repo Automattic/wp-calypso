@@ -51,6 +51,10 @@ const designFirst: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
 			{
+				slug: 'site-launch',
+				asyncComponent: () => import( './internals/steps-repository/site-launch' ),
+			},
+			{
 				slug: 'celebration-step',
 				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
 			},
@@ -77,7 +81,6 @@ const designFirst: Flow = {
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-			const returnUrl = `/setup/design-first/celebration-step?siteSlug=${ siteSlug }`;
 
 			switch ( currentStep ) {
 				case 'site-creation-step':
@@ -112,19 +115,11 @@ const designFirst: Flow = {
 							// Remove the site_intent.
 							setIntentOnSite( providedDependencies?.siteSlug, '' ),
 						] );
-
-						// If the user launched their site with a plan or domain in their cart, redirect them to
-						// checkout before sending them home.
-						if ( getPlanCartItem() || getDomainCartItem() ) {
-							const encodedReturnUrl = encodeURIComponent( returnUrl );
-
-							return window.location.assign(
-								`/checkout/${ encodeURIComponent(
-									( siteSlug as string ) ?? ''
-								) }?redirect_to=${ encodedReturnUrl }`
-							);
-						}
-						return window.location.replace( returnUrl );
+						return navigate( 'celebration-step' );
+					}
+					if ( providedDependencies?.goToCheckout ) {
+						// Do nothing and wait for checkout redirect
+						return;
 					}
 					return navigate( 'launchpad' );
 				}
@@ -197,6 +192,8 @@ const designFirst: Flow = {
 					}
 					return navigate( 'launchpad' );
 				case 'launchpad':
+					return navigate( 'processing' );
+				case 'site-launch':
 					return navigate( 'processing' );
 			}
 		}
