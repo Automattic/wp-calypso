@@ -102,7 +102,7 @@ export default function VatInfoPage() {
 						<br />
 						<br />
 						{ translate(
-							'Only certain countries are supported. If your country is not listed, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+							'Currently, only certain countries are supported. If your country is not listed, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
 							{
 								components: {
 									contactSupportLink: (
