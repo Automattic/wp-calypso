@@ -131,8 +131,9 @@ export function generateFlows( {
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans' ]
 				: [ 'user', 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pdhack-Hk.',
+			destination: ( dependencies ) => `/domains/manage/${ dependencies.siteSlug }`,
+			description:
+				'Onboarding flow specifically for domain transfers. Read more in https://wp.me/pdhack-Hk.',
 			lastModified: '2023-06-19',
 			showRecaptcha: true,
 		},
