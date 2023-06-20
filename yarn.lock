@@ -542,7 +542,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/format-currency": "workspace:^"
-    "@automattic/happychat-connection": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@remix-run/router": ^1.5.0
     "@tanstack/react-query": ^4.29.1
@@ -804,60 +803,6 @@ __metadata:
     tslib: ^2.3.0
     typescript: ^4.7.4
     wpcom-proxy-request: "workspace:^"
-  languageName: unknown
-  linkType: soft
-
-"@automattic/happychat-app@workspace:apps/happychat":
-  version: 0.0.0-use.local
-  resolution: "@automattic/happychat-app@workspace:apps/happychat"
-  dependencies:
-    "@automattic/calypso-apps-builder": "workspace:^"
-    "@automattic/calypso-babel-config": "workspace:^"
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-polyfills": "workspace:^"
-    "@automattic/components": "workspace:^"
-    "@automattic/happychat-connection": "workspace:^"
-    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
-    "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
-    "@wordpress/data": ^7.6.0
-    "@wordpress/icons": ^9.13.0
-    autoprefixer: ^10.2.5
-    calypso: "workspace:^"
-    copy-webpack-plugin: ^10.1.0
-    html-webpack-plugin: ^5.0.0-beta.4
-    jest: ^27.2.4
-    postcss: ^8.3.11
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    react-query: ^3.32.1
-    react-redux: ^8.0.5
-    redux: ^4.2.1
-    redux-thunk: ^2.4.2
-    webpack: ^5.68.0
-    webpack-bundle-analyzer: ^4.5.0
-    webpack-dev-server: ^4.7.3
-    wpcom: "workspace:^"
-    wpcom-proxy-request: "workspace:^"
-  languageName: unknown
-  linkType: soft
-
-"@automattic/happychat-connection@workspace:^, @automattic/happychat-connection@workspace:packages/happychat-connection":
-  version: 0.0.0-use.local
-  resolution: "@automattic/happychat-connection@workspace:packages/happychat-connection"
-  dependencies:
-    "@automattic/calypso-config": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
-    debug: 4.3.3
-    i18n-calypso: "workspace:^"
-    react: ^17.0.2
-    socket.io-client: 2.3.0
-    typescript: ^4.7.4
-    wpcom-proxy-request: "workspace:^"
-  peerDependencies:
-    react: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -11110,7 +11055,6 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/generate-password": "workspace:^"
     "@automattic/global-styles": "workspace:^"
-    "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
@@ -13318,18 +13262,6 @@ __metadata:
     supports-color:
       optional: true
   checksum: cedbec45298dd5c501d01b92b119cd3faebe5438c3917ff11ae1bff86a6c722930ac9c8659792824013168ba6db7c4668225d845c633fbdafbbf902a6389f736
-  languageName: node
-  linkType: hard
-
-"debug@npm:4.3.3":
-  version: 4.3.3
-  resolution: "debug@npm:4.3.3"
-  dependencies:
-    ms: 2.1.2
-  peerDependenciesMeta:
-    supports-color:
-      optional: true
-  checksum: 31873df69ff7036ce4f4158dcd6f71cd399b834ab1efbf23383f660822d28c7e29442fa83d34ccdd2f5201ff69eb494f0c7e8c01ecd314f0207bb631bb048ac0
   languageName: node
   linkType: hard
 
@@ -28108,7 +28040,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket.io-client@npm:2.3.0, socket.io-client@npm:^2.3.0":
+"socket.io-client@npm:^2.3.0":
   version: 2.3.0
   resolution: "socket.io-client@npm:2.3.0"
   dependencies:
@@ -31517,7 +31449,6 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-carousel": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
-    "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"

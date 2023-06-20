@@ -43,7 +43,6 @@
 		"external-media/openverse": true,
 		"cookie-banner": false,
 		"google-my-business": true,
-		"happychat": false,
 		"help": true,
 		"help/gpt-response": true,
 		"i18n/empathy-mode": true,

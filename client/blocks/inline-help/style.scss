@@ -158,47 +158,6 @@
 	}
 }
 
-.inline-help__contact {
-	.inline-help__title {
-		@include hide-content-accessibly;
-	}
-
-	.help-contact__form {
-		margin: 0;
-		padding: 0;
-		box-shadow: none;
-		text-align: left;
-		border-radius: 2px 2px 0 0;
-
-		.sites-dropdown__wrapper {
-			max-width: 100%;
-
-			.site__content {
-				padding: 8px;
-			}
-		}
-
-		.help-contact-confirmation {
-			min-height: auto;
-			height: auto;
-
-			.help-contact-confirmation__contents {
-				margin: 20px 0;
-			}
-		}
-	}
-
-	.help-contact-form__site-selection {
-		margin-bottom: 8px;
-	}
-
-	.sites-dropdown {
-		.site-selector__sites {
-			max-height: 20vh;
-		}
-	}
-}
-
 .inline-help__section-title {
 	font-weight: bold;
 	line-height: 1.4;
@@ -278,7 +237,8 @@
 			flex-grow: 2;
 		}
 
-		.gridicon, svg {
+		.gridicon,
+		svg {
 			align-self: baseline;
 			color: var( --color-neutral-light );
 			flex-shrink: 0;
@@ -351,79 +311,6 @@
 	}
 }
 
-// CONTACT FORM
-.inline-help__contact-page {
-	.button {
-		text-align: left;
-	}
-
-	.inline-help__contact-boxes {
-		display: flex;
-		justify-content: space-between;
-
-		.inline-help__contact-box {
-			border: 1px solid var( --color-neutral-0 );
-			border-radius: 2px;
-			box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
-				0 1px 1px rgba( 0, 0, 0, 0.08 );
-			cursor: pointer;
-			width: 45%;
-
-			> div {
-				padding: 28px;
-
-				svg {
-					display: block;
-					margin: 0 auto;
-				}
-			}
-		}
-	}
-}
-
-// POPOVER
-.inline-help__popover-content {
-	background-color: var( --color-surface );
-
-	p {
-		font-size: $font-body-extra-small;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			font-size: $font-body-small;
-		}
-	}
-
-	a,
-	button {
-		font-size: $font-body-extra-small;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			font-size: $font-body-small;
-		}
-	}
-
-	&.is-secondary-view-active {
-		.inline-help__search {
-			display: none;
-		}
-
-		.inline-help__secondary-view {
-			display: block;
-		}
-
-		.inline-help__footer {
-			.inline-help__more-button,
-			.inline-help__contact-button {
-				display: none;
-			}
-
-			.inline-help__cancel-button {
-				display: block;
-			}
-		}
-	}
-}
-
 .inline-help__secondary-view {
 	display: none;
 	box-sizing: border-box;
@@ -446,47 +333,6 @@
 		font-size: $font-body-small;
 		font-weight: 600;
 		margin-bottom: 5px;
-	}
-}
-
-.inline-help__contact {
-	.inline-help__title {
-		@include hide-content-accessibly;
-	}
-
-	.help-contact__form {
-		margin: 0;
-		padding: 0;
-		box-shadow: none;
-		text-align: left;
-		border-radius: 2px 2px 0 0;
-
-		.sites-dropdown__wrapper {
-			max-width: 100%;
-
-			.site__content {
-				padding: 8px;
-			}
-		}
-
-		.help-contact-confirmation {
-			min-height: auto;
-			height: auto;
-
-			.help-contact-confirmation__contents {
-				margin: 20px 0;
-			}
-		}
-	}
-
-	.help-contact-form__site-selection {
-		margin-bottom: 8px;
-	}
-
-	.sites-dropdown {
-		.site-selector__sites {
-			max-height: 20vh;
-		}
 	}
 }
 
