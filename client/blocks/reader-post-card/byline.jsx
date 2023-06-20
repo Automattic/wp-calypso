@@ -108,6 +108,7 @@ class PostByline extends Component {
 									target="_blank"
 									rel="noopener noreferrer"
 								>
+									{ /* Use the siteName if not showing it above, otherwise use the slug */ }
 									{ siteName && ( compact || ! showSiteName ) ? siteName : siteSlug }
 								</a>
 								<span className="reader-post-card__timestamp-bullet">·</span>
