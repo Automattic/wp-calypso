@@ -1,7 +1,6 @@
 import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { DESIGN_FIRST_FLOW, replaceProductsInCart } from '@automattic/onboarding';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
@@ -64,13 +63,7 @@ const designFirst: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
-		const { getDomainCartItem, getPlanCartItem } = useSelect(
-			( select ) => ( {
-				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
-				getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
-			} ),
-			[]
-		);
+
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const state = useSelect(
@@ -151,11 +144,6 @@ const designFirst: Flow = {
 
 						const currentSiteSlug = String( providedDependencies?.domainName ?? siteSlug );
 
-						await replaceProductsInCart(
-							currentSiteSlug as string,
-							[ getPlanCartItem() ].filter( Boolean ) as MinimalRequestCartProduct[]
-						);
-
 						return window.location.assign(
 							`/setup/design-first/launchpad?siteSlug=${ currentSiteSlug }`
 						);
@@ -174,14 +162,6 @@ const designFirst: Flow = {
 						await updateLaunchpadSettings( siteSlug, {
 							checklist_statuses: { plan_completed: true },
 						} );
-					}
-					if ( providedDependencies?.goToCheckout ) {
-						const items = [ getPlanCartItem(), getDomainCartItem() ].filter(
-							Boolean
-						) as MinimalRequestCartProduct[];
-
-						// Always replace items in the cart so we can remove old plan/domain items.
-						await replaceProductsInCart( siteSlug as string, items );
 					}
 					return navigate( 'launchpad' );
 				case 'setup-blog':
