@@ -129,14 +129,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 
 		if ( isDesignFirstFlow ) {
-			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
-
-			allDesigns.designs = allDesigns.designs.map( ( design ) => {
-				design.style_variations = design.style_variations?.filter( ( variation ) =>
-					isDefaultGlobalStylesVariationSlug( variation.slug )
-				);
-				return design;
-			} );
+			allDesigns.designs = allDesigns.designs.filter(
+				( design ) => design.is_premium === false && design.is_bundled_with_woo_commerce === false
+			);
 		}
 
 		return allDesigns;
@@ -187,10 +182,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 	} );
-
-	if ( isDesignFirstFlow && selectedDesignDetails?.style_variations ) {
-		selectedDesignDetails.style_variations = [];
-	}
 
 	const selectedStyleVariation = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedStyleVariation(),
@@ -355,10 +346,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			);
 		}
 
-		recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
-			theme: selectedDesign?.slug,
-		} );
-		setShowUpgradeModal( true );
+		if ( isDesignFirstFlow ) {
+			// tofix
+		} else {
+			recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
+				theme: selectedDesign?.slug,
+			} );
+			setShowUpgradeModal( true );
+		}
 	}
 
 	function closeUpgradeModal() {
@@ -596,7 +591,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		const selectStyle = () => {
 			if (
 				shouldLimitGlobalStyles &&
-				! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug )
+				! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) &&
+				! isDesignFirstFlow
 			) {
 				unlockPremiumGlobalStyles();
 			} else {
