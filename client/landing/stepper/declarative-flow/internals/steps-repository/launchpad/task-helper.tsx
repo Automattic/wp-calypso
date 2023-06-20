@@ -57,9 +57,9 @@ export function getEnhancedTasks(
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const firstPostPublished =
-		Boolean( tasks?.find( ( task ) => task.id === 'first_post_published' )?.completed ) ||
-		! isStartWritingFlow( flow );
+	const firstPostPublished = Boolean(
+		tasks?.find( ( task ) => task.id === 'first_post_published' )?.completed
+	);
 
 	const setupBlogCompleted =
 		Boolean( tasks?.find( ( task ) => task.id === 'setup_blog' )?.completed ) ||
