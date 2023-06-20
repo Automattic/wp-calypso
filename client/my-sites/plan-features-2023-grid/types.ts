@@ -15,7 +15,6 @@ export type PlanProperties = {
 	currencyCode: string | null;
 	features: TransformedFeatureObject[];
 	jpFeatures: TransformedFeatureObject[];
-	isLandingPage?: boolean;
 	isPlaceholder?: boolean;
 	isVisible: boolean;
 	planConstantObj: ReturnType< typeof applyTestFiltersToPlansList >;

@@ -114,7 +114,6 @@ type PlanFeatures2023GridProps = {
 	flowName: string;
 	domainName: string;
 	placeholder?: string;
-	isLandingPage?: boolean;
 	intervalType: string;
 	currentSitePlanSlug?: string;
 	hidePlansFeatureComparison: boolean;
@@ -908,7 +907,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const {
 			placeholder,
 			plans,
-			isLandingPage,
 			visiblePlans,
 			isInSignup,
 			siteId,
@@ -1053,7 +1051,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				current: isCurrentPlan,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
-				isLandingPage,
 				isPlaceholder,
 				isVisible,
 				planConstantObj,

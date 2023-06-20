@@ -23,9 +23,9 @@ export type Intent =
 
 interface Props {
 	intent: Intent;
-	selectedPlan: string;
-	sitePlanSlug: string;
-	hideEnterprisePlan: boolean;
+	selectedPlan?: string;
+	sitePlanSlug?: string | null;
+	hideEnterprisePlan?: boolean;
 }
 
 interface PlanTypesWithIntent {
@@ -33,9 +33,11 @@ interface PlanTypesWithIntent {
 	planTypes: string[];
 }
 
-const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent | null => {
+const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent => {
 	const { selectedPlan, sitePlanSlug, hideEnterprisePlan, intent } = props;
-	const isBloggerAvailable = isBloggerPlan( selectedPlan ) || isBloggerPlan( sitePlanSlug );
+	const isBloggerAvailable =
+		( selectedPlan && isBloggerPlan( selectedPlan ) ) ||
+		( sitePlanSlug && isBloggerPlan( sitePlanSlug ) );
 
 	// TODO:
 	// this should fall into the processing function for the visible plans
