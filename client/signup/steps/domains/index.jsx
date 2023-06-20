@@ -746,7 +746,10 @@ class DomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
-		if ( 'use-your-domain' !== this.props.stepSectionName ) {
+		if (
+			'use-your-domain' !== this.props.stepSectionName &&
+			'domain-transfer' !== this.props.flowName
+		) {
 			return null;
 		}
 
@@ -808,6 +811,9 @@ class DomainsStep extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
+		} else if ( ! previousStepBackUrl && 'domain-transfer' === this.props.flowName ) {
+			backUrl = null;
+			backLabelText = null;
 		} else {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
 
