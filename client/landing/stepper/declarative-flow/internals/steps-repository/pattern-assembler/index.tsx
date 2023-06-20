@@ -213,7 +213,8 @@ const PatternAssembler = ( {
 	};
 
 	const showNotice = ( action: string, pattern: Pattern ) => {
-		noticeOperations.createNotice( { content: getNoticeContent( action, pattern ) } );
+		noticeOperations.removeNotice( action );
+		noticeOperations.createNotice( { id: action, content: getNoticeContent( action, pattern ) } );
 	};
 
 	const getDesign = () =>
