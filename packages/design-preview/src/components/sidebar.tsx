@@ -34,7 +34,7 @@ interface SidebarProps {
 	description?: string;
 	shortDescription?: string;
 	pricingBadge?: React.ReactNode;
-	variations: StyleVariation[];
+	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	splitPremiumVariations: boolean;
@@ -53,7 +53,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	pricingBadge,
 	description,
 	shortDescription,
-	variations = [],
+	variations,
 	selectedVariation,
 	onSelectVariation,
 	splitPremiumVariations,
@@ -110,7 +110,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 						</p>
 					</div>
 				) }
-				{ variations.length > 0 && (
+				{ variations && variations.length > 0 && (
 					<div className="design-preview__sidebar-variations">
 						<div className="design-preview__sidebar-variations-grid">
 							<GlobalStylesVariations
@@ -126,23 +126,25 @@ const Sidebar: React.FC< SidebarProps > = ( {
 						</div>
 					</div>
 				) }
-				{ ! variations.length && isEnabled( 'signup/design-picker-preview-fonts' ) && (
-					<div className="design-preview__sidebar-variations">
-						<StyleHeading
-							title={ translate( 'Fonts' ) }
-							description={ translate(
-								'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-							) }
-							isPremium
-						/>
-						<FontPairingVariations
-							siteId={ siteId }
-							stylesheet={ stylesheet }
-							selectedFontPairingVariation={ selectedFontVariation }
-							onSelect={ onSelectFontVariation }
-						/>
-					</div>
-				) }
+				{ variations &&
+					variations.length === 0 &&
+					isEnabled( 'signup/design-picker-preview-fonts' ) && (
+						<div className="design-preview__sidebar-variations">
+							<StyleHeading
+								title={ translate( 'Fonts' ) }
+								description={ translate(
+									'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
+								) }
+								isPremium
+							/>
+							<FontPairingVariations
+								siteId={ siteId }
+								stylesheet={ stylesheet }
+								selectedFontPairingVariation={ selectedFontVariation }
+								onSelect={ onSelectFontVariation }
+							/>
+						</div>
+					) }
 			</div>
 			{ actionButtons && (
 				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>

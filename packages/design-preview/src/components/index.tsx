@@ -47,7 +47,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	description,
 	shortDescription,
 	pricingBadge,
-	variations = [],
+	variations,
 	selectedVariation,
 	onSelectVariation,
 	splitPremiumVariations,
@@ -76,7 +76,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 			inlineCss += transformStyles( globalStyles );
 		}
 
-		if ( selectedVariation ) {
+		if ( variations && selectedVariation ) {
 			inlineCss +=
 				selectedVariation.inline_css ??
 				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' );

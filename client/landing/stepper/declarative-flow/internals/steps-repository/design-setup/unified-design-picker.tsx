@@ -686,7 +686,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					}
 					title={ headerDesignTitle }
 					description={ selectedDesign.description }
-					variations={ selectedDesignDetails?.style_variations }
+					variations={
+						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
+					}
 					selectedVariation={ selectedStyleVariation }
 					onSelectVariation={ previewDesignVariation }
 					actionButtons={ actionButtons }
