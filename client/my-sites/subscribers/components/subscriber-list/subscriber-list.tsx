@@ -6,12 +6,11 @@ import './styles.scss';
 
 type SubscriberListProps = {
 	subscribers: Subscriber[];
+	onView: ( subscriber: Subscriber ) => void;
 	onUnsubscribe: ( subscriber: Subscriber ) => void;
 };
 
-const noop = () => undefined;
-
-export const SubscriberList = ( { subscribers, onUnsubscribe }: SubscriberListProps ) => {
+const SubscriberList = ( { subscribers, onView, onUnsubscribe }: SubscriberListProps ) => {
 	const translate = useTranslate();
 
 	return (
@@ -38,10 +37,12 @@ export const SubscriberList = ( { subscribers, onUnsubscribe }: SubscriberListPr
 				<SubscriberRow
 					key={ subscriber.subscription_id }
 					subscriber={ subscriber }
-					onView={ noop }
+					onView={ onView }
 					onUnsubscribe={ onUnsubscribe }
 				/>
 			) ) }
 		</ul>
 	);
 };
+
+export default SubscriberList;
