@@ -780,11 +780,20 @@
 				}
 			}
 		}
+		.login__form-userdata label.form-label {
+			line-height: 16px;
+		}
+
+		.login__form .login__form-userdata input.form-text-input,
+		.login__form .login__form-userdata input {
+			margin-bottom: 16px;
+		}
 
 		.login__form-header h3,
 		.formatted-header .formatted-header__title {
 			margin-bottom: 12px;
 			font-size: $woo-font-title-large;
+			line-height: 32px;
 
 			@media screen and ( max-width: 660px ) {
 				font-size: rem(28px);
@@ -856,6 +865,7 @@
 		}
 
 		// Log in link on signup page
+		.login__header-subtitle a,
 		.formatted-header__subtitle a {
 			color: var(--wp-admin-theme-color);
 		}
