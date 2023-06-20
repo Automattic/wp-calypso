@@ -205,6 +205,13 @@ export default function PhoneNumberEditor( {
 		}
 	}, [ translate, verifyPhoneNumber.errorMessage ] );
 
+	// Refetch verified contacts if failed
+	useEffect( () => {
+		verifiedContacts.refetchIfFailed();
+		// Disable linting because we only want to refetch once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
 	// Set help text when phone number verification fails
 	useEffect( () => {
 		if ( verifyPhoneNumber.isError ) {
