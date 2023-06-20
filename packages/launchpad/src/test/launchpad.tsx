@@ -26,7 +26,6 @@ describe( 'Launchpad', () => {
 	describe( 'when no taskFilter is provided', () => {
 		it( 'then all tasks from useLaunchpad are rendered', () => {
 			render( <Launchpad siteSlug="any site" /> );
-
 			const checklistItems = screen.queryAllByRole( 'listitem' );
 			expect( checklistItems.length ).toBe( 3 );
 		} );
@@ -43,7 +42,6 @@ describe( 'Launchpad', () => {
 
 			const checklistItems = screen.queryAllByRole( 'listitem' );
 			expect( checklistItems.length ).toBe( 1 );
-
 			const taskId = checklistItems[ 0 ].querySelector( 'button' )?.getAttribute( 'data-task' );
 			expect( taskId ).toBe( 'task1' );
 		} );
