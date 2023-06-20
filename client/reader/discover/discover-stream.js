@@ -1,7 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import wpcom from 'calypso/lib/wp';
 import Stream from 'calypso/reader/stream';
@@ -16,6 +16,8 @@ const DiscoverStream = ( props ) => {
 	const locale = useLocale();
 	const followedTags = useSelector( getReaderFollowedTags ) || [];
 	const [ selectedTab, setSelectedTab ] = useState( DEFAULT_TAB );
+	const scrollRef = useRef();
+	const scrollPosition = useRef( 0 );
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
@@ -39,27 +41,44 @@ const DiscoverStream = ( props ) => {
 
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
+	// To keep track of the navigation tabs scroll position and keep it from appearing to reset
+	// after child render.
+	const trackScrollPosition = () => {
+		scrollPosition.current = scrollRef.current?.scrollLeft;
+	};
+
+	// Set the scroll position of the navigation tabs to what we last tracked.
+	if ( scrollRef.current ) {
+		// Set 0 timeout to put this at the end of the callstack so it happens after the children
+		// rerender.
+		setTimeout( () => {
+			scrollRef.current.scrollLeft = scrollPosition.current;
+		}, 0 );
+	}
+
 	const DiscoverNavigation = () => (
-		<SegmentedControl primary className="discover-stream__tab-control">
-			<SegmentedControl.Item
-				key={ DEFAULT_TAB }
-				selected={ DEFAULT_TAB === selectedTab }
-				onClick={ () => setSelectedTab( DEFAULT_TAB ) }
-			>
-				{ translate( 'Recommended' ) }
-			</SegmentedControl.Item>
-			{ recommendedTags.map( ( tag ) => {
-				return (
-					<SegmentedControl.Item
-						key={ tag.slug }
-						selected={ tag.slug === selectedTab }
-						onClick={ () => setSelectedTab( tag.slug ) }
-					>
-						{ tag.title }
-					</SegmentedControl.Item>
-				);
-			} ) }
-		</SegmentedControl>
+		<div className="discover-stream__tabs" ref={ scrollRef } onScroll={ trackScrollPosition }>
+			<SegmentedControl primary className="discover-stream__tab-control">
+				<SegmentedControl.Item
+					key={ DEFAULT_TAB }
+					selected={ DEFAULT_TAB === selectedTab }
+					onClick={ () => setSelectedTab( DEFAULT_TAB ) }
+				>
+					{ translate( 'Recommended' ) }
+				</SegmentedControl.Item>
+				{ recommendedTags.map( ( tag ) => {
+					return (
+						<SegmentedControl.Item
+							key={ tag.slug }
+							selected={ tag.slug === selectedTab }
+							onClick={ () => setSelectedTab( tag.slug ) }
+						>
+							{ tag.title }
+						</SegmentedControl.Item>
+					);
+				} ) }
+			</SegmentedControl>
+		</div>
 	);
 
 	let streamKey = `discover:${ selectedTab }`;
