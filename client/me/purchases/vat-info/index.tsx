@@ -36,6 +36,12 @@ export default function VatInfoPage() {
 	);
 	const taxSupportPageURL = localizeUrl( 'https://wordpress.com/support/vat-gst-other-taxes/' );
 
+	const reduxDispatch = useDispatch();
+
+	const clickSupport = () => {
+		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
+	};
+
 	useRecordVatEvents( { fetchError } );
 
 	if ( fetchError ) {
@@ -88,7 +94,33 @@ export default function VatInfoPage() {
 					<p className="vat-info__sidebar-paragraph">
 						{ translate(
 							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
-							'The %(taxName)s details saved on this page will be applied to all receipts in your account. Only supported countries appear in the dropdown. For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.',
+							'The %(taxName)s details saved on this page will be applied to all receipts in your account.',
+							{
+								args: { taxName: taxName ?? translate( 'tax (VAT/GST/CT)', { textOnly: true } ) },
+							}
+						) }
+						<br />
+						<br />
+						{ translate(
+							'Only certain countries are supported. If your country is not listed, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+							{
+								components: {
+									contactSupportLink: (
+										<a
+											target="_blank"
+											href={ CALYPSO_CONTACT }
+											rel="noreferrer"
+											onClick={ clickSupport }
+											title="Contact support for assistance"
+										/>
+									),
+								},
+							}
+						) }
+						<br />
+						<br />
+						{ translate(
+							'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.',
 							{
 								args: { taxName: taxName ?? translate( 'tax (VAT/GST/CT)', { textOnly: true } ) },
 								components: {
@@ -97,7 +129,7 @@ export default function VatInfoPage() {
 											supportLink={ taxSupportPageURL }
 											showText={ true }
 											showIcon={ false }
-											supportPostId={ 234670 } //This is what makes it a modal dialogue
+											supportPostId={ 234670 } //This is what makes the document appear in a dialogue
 											linkTitle="VAT, GST, and other taxes"
 										/>
 									),
