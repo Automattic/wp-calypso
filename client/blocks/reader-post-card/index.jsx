@@ -20,7 +20,6 @@ import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import PostByline from './byline';
 import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
@@ -142,6 +141,7 @@ class ReaderPostCard extends Component {
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const isReaderTagPage = currentRoute.startsWith( '/tag/' );
+		const isReaderDiscoverPage = currentRoute.startsWith( '/discover' );
 		const isReaderSearchPage = currentRoute.startsWith( '/read/search' );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
@@ -152,7 +152,7 @@ class ReaderPostCard extends Component {
 			'is-seen': isSeen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
-			'is-tag-post': isReaderTagPage,
+			'is-tag-post': isReaderTagPage || isReaderDiscoverPage,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -214,12 +214,11 @@ class ReaderPostCard extends Component {
 					post={ post }
 					title={ title }
 					isDiscover={ isDiscover }
-					postByline={ postByline }
 					commentIds={ postKey.comments }
 					onClick={ this.handleCardClick }
 				/>
 			);
-		} else if ( isReaderTagPage ) {
+		} else if ( isReaderTagPage || isReaderDiscoverPage ) {
 			readerPostCard = (
 				<TagPost
 					post={ post }
