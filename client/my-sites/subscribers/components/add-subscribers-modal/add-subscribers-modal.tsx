@@ -26,6 +26,8 @@ const AddSubscribersModal = ( {
 						siteId={ siteId }
 						submitBtnAlwaysEnable={ true }
 						onImportFinished={ onAddFinished }
+						showTitle={ false }
+						showSubtitle={ false }
 					/>
 				</Modal>
 			) }
