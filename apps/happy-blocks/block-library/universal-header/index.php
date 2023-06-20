@@ -11,7 +11,6 @@
  * Load functions from the h4 theme, we're using localized_tailored_flow_url here.
  */
 require_once WP_CONTENT_DIR . '/themes/h4/landing/marketing/pages/_common/lib/functions.php';
-use function \WPCOM\Themes\H4\Landing\Marketing\localized_tailored_flow_url;
 
 if ( ! isset( $args ) ) {
 	$args = array();
@@ -136,7 +135,7 @@ $happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 								</a>
 							</li>
 							<li>
-								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/newsletter' ) ); ?>" tabindex="-1">
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/newsletter' ) ); ?>" tabindex="-1">
 									<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
 								</a>
 							</li>
@@ -316,7 +315,7 @@ $happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 									</a>
 								</li>
 								<li class="x-menu-grid-item">
-									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/newsletter' ) ); ?>" tabindex="-1">
+									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/newsletter' ) ); ?>" tabindex="-1">
 										<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
 									</a>
 								</li>
