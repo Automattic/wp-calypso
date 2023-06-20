@@ -13,13 +13,13 @@ import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div`
 	& > * {
-		margin: 16px 0 16px -24px;
+		margin: 16px 0;
 		padding-left: 24px;
 		position: relative;
 	}
 
 	.rtl & > * {
-		margin: 16px -24px 16px 0;
+		margin: 16px 0;
 		padding-right: 24px;
 		padding-left: 0;
 	}
@@ -41,6 +41,17 @@ const CheckoutTermsWrapper = styled.div`
 	}
 `;
 
+const NonTotalPrices = styled.div`
+	font-size: 12px;
+	border-top: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
+	border-bottom: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
+	padding: 16px 0;
+`;
+const TotalPrice = styled.div`
+	font-size: 14px;
+	padding: 16px 0;
+`;
+
 export default function PaymentMethodStep() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -53,14 +64,18 @@ export default function PaymentMethodStep() {
 			</CheckoutTermsWrapper>
 
 			<WPOrderReviewSection>
-				<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
-				{ taxLineItems.map( ( taxLineItem ) => (
-					<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-				) ) }
-				{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-					<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-				) }
-				<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+				<NonTotalPrices>
+					<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
+					{ taxLineItems.map( ( taxLineItem ) => (
+						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+					) ) }
+					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+						<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+					) }
+				</NonTotalPrices>
+				<TotalPrice>
+					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+				</TotalPrice>
 			</WPOrderReviewSection>
 		</>
 	);

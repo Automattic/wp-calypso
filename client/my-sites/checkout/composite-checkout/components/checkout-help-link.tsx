@@ -23,10 +23,13 @@ type StyledProps = {
 };
 
 const CheckoutHelpLinkWrapper = styled.div< StyledProps >`
-	background: ${ ( props ) => props.theme.colors.surface };
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	margin: 0;
 	padding: 20px;
+
+	&:empty {
+		display: none;
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		background: transparent;
