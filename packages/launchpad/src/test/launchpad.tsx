@@ -39,9 +39,9 @@ describe( 'Launchpad', () => {
 			};
 
 			render( <Launchpad siteSlug="any site" taskFilter={ filter } /> );
-
 			const checklistItems = screen.queryAllByRole( 'listitem' );
 			expect( checklistItems.length ).toBe( 1 );
+
 			const taskId = checklistItems[ 0 ].querySelector( 'button' )?.getAttribute( 'data-task' );
 			expect( taskId ).toBe( 'task1' );
 		} );
