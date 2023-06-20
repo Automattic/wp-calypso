@@ -1,7 +1,5 @@
-import config from '@automattic/calypso-config';
 import { isJetpackBackupSlug } from '@automattic/calypso-products';
 import Debug from 'debug';
-import page from 'page';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
@@ -13,14 +11,12 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setFilter } from 'calypso/state/activity-log/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupContentsPage from './backup-contents-page';
 import BackupUpsell from './backup-upsell';
 import BackupCloneFlow from './clone-flow';
 import BackupsPage from './main';
 import MultisiteNoBackupPlanSwitch from './multisite-no-backup-plan-switch';
-import { backupMainPath } from './paths';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import WPCOMBackupUpsell from './wpcom-backup-upsell';
 import WpcomBackupUpsellPlaceholder from './wpcom-backup-upsell-placeholder';
@@ -169,12 +165,6 @@ export function backupContents( context, next ) {
 	debug( 'controller: backupContents', context.params );
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-
-	if ( ! config.isEnabled( 'jetpack/backup-contents-page' ) ) {
-		debug( 'controller: backup contents page feature not available', context.params );
-		const siteSlug = getSiteSlug( state, siteId );
-		return page.redirect( backupMainPath( siteSlug ) );
-	}
 
 	context.primary = <BackupContentsPage siteId={ siteId } rewindId={ context.params.rewindId } />;
 	next();

@@ -1,14 +1,20 @@
-export const SubscriberProfile = ( {
-	avatar,
-	displayName,
-	email,
-}: {
+import './styles.scss';
+
+type SubscriberProfileProps = {
 	avatar: string;
 	displayName: string;
 	email: string;
-} ) => {
+	compact?: boolean;
+};
+
+const SubscriberProfile = ( {
+	avatar,
+	displayName,
+	email,
+	compact = true,
+}: SubscriberProfileProps ) => {
 	return (
-		<div className="subscriber-profile">
+		<div className={ `subscriber-profile ${ compact ? 'subscriber-profile--compact' : '' }` }>
 			<img src={ avatar } className="subscriber-profile__user-image" alt="Profile pic" />
 			<div className="subscriber-profile__user-details">
 				<span className="subscriber-profile__name">{ displayName }</span>
@@ -19,3 +25,5 @@ export const SubscriberProfile = ( {
 		</div>
 	);
 };
+
+export default SubscriberProfile;

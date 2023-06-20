@@ -1,3 +1,4 @@
+import { PremiumBadge } from '@automattic/design-picker';
 import {
 	__unstableComposite as Composite,
 	__unstableUseCompositeState as useCompositeState,
@@ -55,7 +56,7 @@ const ColorPaletteVariation = ( {
 			aria-label={
 				translate( 'Color: %s', {
 					comment: 'Aria label for color preview buttons',
-					args: colorPaletteVariation.title ?? translate( 'Default' ),
+					args: colorPaletteVariation.title ?? translate( 'Free style' ),
 				} ) as string
 			}
 		>
@@ -82,25 +83,33 @@ const ColorPaletteVariations = ( {
 		<Composite
 			{ ...composite }
 			role="listbox"
-			className="color-palette-variations"
 			aria-label={ translate( 'Color palette variations' ) }
 		>
-			<ColorPaletteVariation
-				key="base"
-				colorPaletteVariation={ base }
-				isActive={ ! selectedColorPaletteVariation }
-				composite={ composite }
-				onSelect={ () => onSelect( null ) }
-			/>
-			{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
+			<h3 className="global-styles-variation__title">{ translate( 'Free style' ) }</h3>
+			<div className="color-palette-variations">
 				<ColorPaletteVariation
-					key={ index }
-					colorPaletteVariation={ colorPaletteVariation }
-					isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
+					key="base"
+					colorPaletteVariation={ { ...base, title: translate( 'Free style' ) } }
+					isActive={ ! selectedColorPaletteVariation }
 					composite={ composite }
-					onSelect={ () => onSelect( colorPaletteVariation ) }
+					onSelect={ () => onSelect( null ) }
 				/>
-			) ) }
+			</div>
+			<h3 className="global-styles-variation__title">
+				{ translate( 'Premium styles' ) }
+				<PremiumBadge shouldHideTooltip shouldCompactWithAnimation />
+			</h3>
+			<div className="color-palette-variations">
+				{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
+					<ColorPaletteVariation
+						key={ index }
+						colorPaletteVariation={ colorPaletteVariation }
+						isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
+						composite={ composite }
+						onSelect={ () => onSelect( colorPaletteVariation ) }
+					/>
+				) ) }
+			</div>
 		</Composite>
 	);
 };
