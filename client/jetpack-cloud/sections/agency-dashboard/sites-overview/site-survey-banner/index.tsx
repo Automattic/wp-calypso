@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Banner from 'calypso/components/banner';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -43,7 +43,10 @@ export default function SiteSurveyBanner( { isDashboardView }: Props ) {
 		dispatch( recordTracksEvent( eventNamePrefix + eventName ) );
 	};
 
-	if ( isDismissed ) {
+	// This survey is only available in English only.
+	const isEnglishLocale = getLocaleSlug() === 'en' || getLocaleSlug() === 'en-gb';
+
+	if ( isDismissed || ! isEnglishLocale ) {
 		return null;
 	}
 
