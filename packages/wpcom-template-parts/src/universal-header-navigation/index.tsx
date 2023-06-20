@@ -108,7 +108,7 @@ const UniversalNavbarHeader = ( {
 															titleValue=""
 															content={ __( 'Newsletter', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl(
-																'//wordpress.com/setup/newsletter',
+																'//wordpress.com/newsletter',
 																locale,
 																isLoggedIn,
 																true
@@ -443,7 +443,7 @@ const UniversalNavbarHeader = ( {
 												titleValue=""
 												content={ __( 'Newsletter', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl(
-													'//wordpress.com/setup/newsletter',
+													'//wordpress.com/newsletter',
 													locale,
 													isLoggedIn,
 													true
