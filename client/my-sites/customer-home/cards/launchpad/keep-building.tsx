@@ -75,7 +75,7 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 					break;
 
 				case 'domain_claim':
-				case 'domain_upsell':
+				case 'domain_customize':
 					actionDispatch = () => {
 						recordTaskClickTracksEvent( task );
 						window.location.assign( `/domains/add/${ siteSlug }` );
