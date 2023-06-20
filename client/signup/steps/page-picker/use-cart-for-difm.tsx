@@ -69,7 +69,7 @@ function getDIFMPriceBreakdownSubLabel( {
 				<>
 					{ translate( 'Service: %(productCost)s one-time fee', {
 						args: {
-							productCost: formattedOneTimeFee,
+							productCost: formattedOneTimeFee as string,
 						},
 					} ) }
 					<br></br>

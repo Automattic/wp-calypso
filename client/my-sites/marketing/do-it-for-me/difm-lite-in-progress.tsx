@@ -63,18 +63,18 @@ function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: P
 				/>
 			),
 		},
-		args: {
-			contentSubmissionDueDate: contentSubmissionDueDate
-				? moment( contentSubmissionDueDate ).format( 'MMMM Do, YYYY' )
-				: null,
-		},
 	};
 
 	const lineText = contentSubmissionDueDate
 		? translate(
 				'Click the button below to provide the content we need to build your site by %(contentSubmissionDueDate)s.{{br}}{{/br}}' +
 					'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
-				lineTextTranslateOptions
+				{
+					...lineTextTranslateOptions,
+					args: {
+						contentSubmissionDueDate: moment( contentSubmissionDueDate ).format( 'MMMM Do, YYYY' ),
+					},
+				}
 		  )
 		: translate(
 				'Click the button below to provide the content we need to build your site.{{br}}{{/br}}' +
