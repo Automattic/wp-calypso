@@ -50,14 +50,6 @@ declare module 'calypso/data/support-article-alternates/use-support-article-alte
 	export default useSupportArticleAlternatesQuery;
 }
 
-declare module 'calypso/data/help/use-active-support-tickets-query' {
-	import { SupportTicket } from '../types';
-	export const useActiveSupportTicketsQuery: (
-		email: string,
-		queryOptions?: unknown
-	) => { isLoading: boolean; data?: SupportTicket[] };
-}
-
 declare module 'calypso/state/data-layer/wpcom-api-middleware' {
 	const WpcomApiMiddleware = ( Function ) => Function;
 	export const WpcomApiMiddleware;
