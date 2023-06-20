@@ -1,4 +1,4 @@
-import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
@@ -58,13 +58,11 @@ export const useHelpSearchQuery = (
 	queryOptions: Record< string, unknown > = {},
 	sectionName = ''
 ) => {
-	const queryClient = useQueryClient();
-
 	return useQuery< any >( {
 		queryKey: [ 'help-center-search', search, sectionName ],
 		queryFn: () => fetchArticlesAPI( search, locale, sectionName ),
 		onSuccess: async ( data ) => {
-			const newData = await Promise.all(
+			await Promise.all(
 				data.map( async ( result: SearchResult ) => {
 					if ( ! result.content && result.blog_id && result.post_id ) {
 						const article: Article = await fetchArticleAPI( result.blog_id, result.post_id );
@@ -73,8 +71,6 @@ export const useHelpSearchQuery = (
 					return result;
 				} )
 			);
-
-			queryClient.setQueryData( [ 'help', search ], newData );
 		},
 		refetchOnWindowFocus: false,
 		refetchOnMount: true,
