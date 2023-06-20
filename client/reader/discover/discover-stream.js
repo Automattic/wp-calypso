@@ -1,7 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import wpcom from 'calypso/lib/wp';
 import Stream from 'calypso/reader/stream';
@@ -47,14 +47,25 @@ const DiscoverStream = ( props ) => {
 		scrollPosition.current = scrollRef.current?.scrollLeft;
 	};
 
-	// Set the scroll position of the navigation tabs to what we last tracked.
-	if ( scrollRef.current ) {
+	// Set the scroll position and focus of navigation tabs when selected tab changes and this
+	// component is forced to rerender.
+	useEffect( () => {
 		// Set 0 timeout to put this at the end of the callstack so it happens after the children
 		// rerender.
 		setTimeout( () => {
-			scrollRef.current.scrollLeft = scrollPosition.current;
+			// Ignore the recommended tab since this is set on load and is next to the reset point.
+			if ( selectedTab !== 'recommended' ) {
+				const selectedElement = document.querySelector(
+					'.discover-stream__tabs .segmented-control__item.is-selected .segmented-control__link'
+				);
+				selectedElement && selectedElement.focus();
+
+				if ( scrollRef.current ) {
+					scrollRef.current.scrollLeft = scrollPosition.current;
+				}
+			}
 		}, 0 );
-	}
+	}, [ selectedTab ] );
 
 	const DiscoverNavigation = () => (
 		<div className="discover-stream__tabs" ref={ scrollRef } onScroll={ trackScrollPosition }>
