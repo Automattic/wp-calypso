@@ -495,6 +495,9 @@ export class LoginForm extends Component {
 
 	renderUsernameorEmailLabel() {
 		if ( this.props.isP2Login || ( this.props.isWoo && ! this.props.isPartnerSignup ) ) {
+			if ( this.props.isWooCoreProfilerFlow ) {
+				return this.props.translate( 'Your email address' );
+			}
 			return this.props.translate( 'Your email address or username' );
 		}
 
