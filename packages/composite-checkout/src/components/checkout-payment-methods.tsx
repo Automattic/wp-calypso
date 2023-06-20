@@ -21,6 +21,10 @@ import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
+const CheckoutPaymentMethodsWrapper = styled.div`
+	padding-top: 4px;
+`;
+
 export const RadioButtons = styled.div`
 	margin-bottom: 16px;
 `;
@@ -53,7 +57,9 @@ export default function CheckoutPaymentMethods( {
 	if ( summary && isComplete && paymentMethod ) {
 		debug( 'rendering selected paymentMethod', paymentMethod );
 		return (
-			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
+			<CheckoutPaymentMethodsWrapper
+				className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }
+			>
 				<CheckoutErrorBoundary
 					errorMessage={ __( 'There was a problem with this payment method.' ) }
 					onError={ onError }
@@ -68,7 +74,7 @@ export default function CheckoutPaymentMethods( {
 						ariaLabel={ paymentMethod.getAriaLabel( __ as ( text: string ) => string ) }
 					/>
 				</CheckoutErrorBoundary>
-			</div>
+			</CheckoutPaymentMethodsWrapper>
 		);
 	}
 
@@ -84,7 +90,9 @@ export default function CheckoutPaymentMethods( {
 	debug( 'rendering paymentMethods', paymentMethods );
 
 	return (
-		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
+		<CheckoutPaymentMethodsWrapper
+			className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }
+		>
 			<RadioButtons>
 				{ paymentMethods.map( ( method ) => (
 					<CheckoutErrorBoundary
@@ -108,7 +116,7 @@ export default function CheckoutPaymentMethods( {
 					</CheckoutErrorBoundary>
 				) ) }
 			</RadioButtons>
-		</div>
+		</CheckoutPaymentMethodsWrapper>
 	);
 }
 
