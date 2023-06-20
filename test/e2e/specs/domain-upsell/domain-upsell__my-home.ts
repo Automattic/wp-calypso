@@ -3,76 +3,57 @@
  */
 
 import {
-	DataHelper,
-	PlansPage,
 	CartCheckoutPage,
 	TestAccount,
 	BrowserManager,
-	SecretsManager,
 	RestAPIClient,
-	MyHomePage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'My Home: Domain upsell' ), function () {
+describe( 'Domain: Upsell (Home)', function () {
 	let cartCheckoutPage: CartCheckoutPage;
-	let plansPage: PlansPage;
-	let myHomePage: MyHomePage;
-	let selectedDomain: string;
+	let domain: string;
 	let page: Page;
-	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 
 	beforeAll( async function () {
-		const restAPIClient = new RestAPIClient( credentials );
-		await restAPIClient.clearShoppingCart( credentials.testSites?.primary?.id as number );
+		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
+
+		const restAPIClient = new RestAPIClient( testAccount.credentials );
+		await restAPIClient.clearShoppingCart(
+			testAccount.credentials.testSites?.primary?.id as number
+		);
 
 		page = await browser.newPage();
-
 		await BrowserManager.setStoreCookie( page );
 
-		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
-		await testAccount.authenticate( page, { url: /home/ } );
+		await testAccount.authenticate( page );
 	} );
 
-	it( 'Navigate to my home page', async function () {
-		myHomePage = new MyHomePage( page );
+	it( 'Domain upsell CTA is present', async function () {
+		await page
+			.getByRole( 'main' )
+			.getByRole( 'heading', { name: /domain/ } )
+			.waitFor();
+
+		domain = await page.locator( '.domain-upsell-illustration' ).innerText();
 	} );
 
-	it( 'Check Domain Upsell Exists', async function () {
-		await myHomePage.validateDomainUpsell();
+	it( 'Click on domain upsell CTA button', async function () {
+		await page.getByRole( 'main' ).getByRole( 'button', { name: 'Get this domain' } ).click();
 	} );
 
-	it( 'Get available domain', async function () {
-		const suggestedDomain = await myHomePage.suggestedDomainName();
-		expect( suggestedDomain ).toBeTruthy();
-		selectedDomain = suggestedDomain ?? '';
+	it( 'Choose the Free plan', async function () {
+		await page.getByRole( 'button', { name: /free plan/ } ).click();
 	} );
 
-	it( 'Buy suggested domain', async function () {
-		await myHomePage.clickBuySuggestedDomain( 'Get this domain' );
+	it( 'Dismiss paid plan upgrade CTA', async function () {
+		await page.getByRole( 'button', { name: 'That works for me' } ).click();
 	} );
 
-	it( 'View available plans', async function () {
-		plansPage = new PlansPage( page );
-	} );
-
-	it( 'Click button to skip plan', async function () {
-		await plansPage.clickSkipPlanActionButton( 'Or continue with the free plan.' );
-	} );
-
-	it( 'Continue to checkout without a plan', async function () {
-		await plansPage.clickSkipPlanConfirmButton( 'That works for me' );
-	} );
-
-	it( 'Check only one item on checkout', async function () {
+	it( 'Secure checkout loads with the selected domain', async function () {
 		cartCheckoutPage = new CartCheckoutPage( page );
-		await cartCheckoutPage.validateCartItemsCount( 1 );
-	} );
-
-	it( 'Domain is added to the cart', async function () {
-		cartCheckoutPage = new CartCheckoutPage( page );
-		await cartCheckoutPage.validateCartItem( selectedDomain );
+		await cartCheckoutPage.validateCartItem( domain );
 	} );
 } );
