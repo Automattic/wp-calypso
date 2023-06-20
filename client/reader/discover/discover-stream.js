@@ -72,7 +72,7 @@ const DiscoverStream = ( props ) => {
 			<SegmentedControl primary className="discover-stream__tab-control">
 				<SegmentedControl.Item
 					key={ DEFAULT_TAB }
-					selected={ DEFAULT_TAB === selectedTab }
+					selected={ isDefaultTab }
 					onClick={ () => setSelectedTab( DEFAULT_TAB ) }
 				>
 					{ translate( 'Recommended' ) }
