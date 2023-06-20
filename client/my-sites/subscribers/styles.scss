@@ -10,16 +10,8 @@
 	}
 
 	.add-subscribers-button {
-		float: right;
-		padding: 13px 14px 13px 20px;
-		letter-spacing: 1px;
-
-		.gridicon {
-			height: 14px;
-			width: 14px;
-			top: 2px;
-			padding-right: 10px;
-		}
+		display: flex;
+		gap: 10px;
 	}
 }
 

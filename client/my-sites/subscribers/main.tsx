@@ -90,11 +90,10 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 			<FixedNavigationHeader navigationItems={ navigationItems }>
 				<Button
 					className="add-subscribers-button"
-					compact
 					primary
 					onClick={ () => setShowAddSubscribersModal( true ) }
 				>
-					<Gridicon icon="plus" size={ 16 } />
+					<Gridicon icon="plus" size={ 24 } />
 					{ translate( 'Add subscribers' ) }
 				</Button>
 				<SubscribersHeaderPopover siteId={ selectedSiteId } />
