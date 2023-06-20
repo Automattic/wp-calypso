@@ -1,4 +1,5 @@
 import { CompactCard, Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -33,6 +34,7 @@ export default function VatInfoPage() {
 	const taxName = useTaxName(
 		currentVatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB'
 	);
+	const taxSupportPageURL = localizeUrl( 'https://wordpress.com/support/vat-gst-other-taxes/' );
 
 	useRecordVatEvents( { fetchError } );
 
@@ -92,9 +94,11 @@ export default function VatInfoPage() {
 								components: {
 									learnMoreLink: (
 										<InlineSupportLink
-											supportLink="https://wordpress.com/support/vat-gst-other-taxes/"
+											supportLink={ taxSupportPageURL }
 											showText={ true }
 											showIcon={ false }
+											supportPostId={ 234670 } //This is what makes it a modal dialogue
+											linkTitle="VAT, GST, and other taxes"
 										/>
 									),
 								},
