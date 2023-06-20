@@ -17,6 +17,7 @@ interface Props {
 	toggleModal?: ( item?: StateMonitorSettingsSMS, action?: AllowedMonitorContactActions ) => void;
 	recordEvent?: ( action: string, params?: object ) => void;
 	showVerifiedBadge?: boolean;
+	isRemoveAction?: boolean;
 }
 
 const EVENT_NAMES = {
@@ -101,12 +102,7 @@ export default function SMSItemContent( {
 					<PopoverMenuItem onClick={ () => handleToggleModal( 'edit' ) }>
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem
-						onClick={ () => {
-							//TODO handle actions
-							return null;
-						} }
-					>
+					<PopoverMenuItem onClick={ () => handleToggleModal( 'remove' ) }>
 						{ translate( 'Remove' ) }
 					</PopoverMenuItem>
 				</PopoverMenu>
