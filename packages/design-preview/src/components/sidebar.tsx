@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import { GlobalStylesVariations, FontPairingVariations } from '@automattic/global-styles';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import StyleHeading from './style-heading';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
@@ -130,13 +129,6 @@ const Sidebar: React.FC< SidebarProps > = ( {
 					variations.length === 0 &&
 					isEnabled( 'signup/design-picker-preview-fonts' ) && (
 						<div className="design-preview__sidebar-variations">
-							<StyleHeading
-								title={ translate( 'Fonts' ) }
-								description={ translate(
-									'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-								) }
-								isPremium
-							/>
 							<FontPairingVariations
 								siteId={ siteId }
 								stylesheet={ stylesheet }

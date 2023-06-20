@@ -253,7 +253,7 @@
 
 		.font-pairing-variations {
 			display: grid;
-			margin: 0;
+			margin: 14px -2px 26px;
 			padding-inline-end: 6px;
 
 			.global-styles-variation__item {
@@ -337,37 +337,5 @@
 		color: var(--color-neutral-0);
 		padding: 8px;
 		-webkit-font-smoothing: antialiased;
-	}
-}
-
-.design-preview__style-heading {
-	display: none;
-	flex-direction: column;
-	width: 100%;
-	margin-left: 3px;
-	color: var(--studio-gray-50);
-
-	h2 {
-		display: inline-block;
-		font-size: 1rem;
-		white-space: nowrap;
-		font-weight: 500;
-		line-height: 24px;
-		color: var(--studio-gray-100);
-		margin: 0;
-	}
-
-	p {
-		color: var(--color-neutral-60);
-		font-size: 0.875rem;
-		letter-spacing: -0.15px;
-		padding: 6px 0 6px 0;
-		line-height: 20px;
-		margin: 0;
-	}
-
-	@include break-xlarge {
-		display: flex;
-		margin: 32px 0 12px;
 	}
 }
