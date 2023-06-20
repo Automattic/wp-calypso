@@ -12,3 +12,12 @@
 		}
 	}
 }
+
+.discover-stream__navigation {
+	display: flex;
+	overflow-x: scroll;
+
+	.discover-stream__navigation-item {
+		overflow: visible;
+	}
+}

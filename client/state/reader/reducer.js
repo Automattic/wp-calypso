@@ -1,6 +1,7 @@
 import { withStorageKey } from '@automattic/state-utils';
 import { combineReducers } from 'calypso/state/utils';
 import conversations from './conversations/reducer';
+import { discover } from './discover/reducer';
 import feedSearches from './feed-searches/reducer';
 import feeds from './feeds/reducer';
 import follows from './follows/reducer';
@@ -18,6 +19,7 @@ import thumbnails from './thumbnails/reducer';
 
 const combinedReducer = combineReducers( {
 	conversations,
+	discover,
 	feeds,
 	feedSearches,
 	follows,

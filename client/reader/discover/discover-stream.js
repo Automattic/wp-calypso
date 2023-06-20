@@ -7,6 +7,7 @@ import wpcom from 'calypso/lib/wp';
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import DiscoverNav2 from './discover-navigation';
 
 import './discover-stream.scss';
 
@@ -81,6 +82,11 @@ const DiscoverStream = ( props ) => {
 		streamHeader: <DiscoverNavigation />,
 	};
 
-	return <Stream { ...streamProps } />;
+	return (
+		<>
+			<DiscoverNav2 recommendedTags={ recommendedTags } />
+			<Stream { ...streamProps } />
+		</>
+	);
 };
 export default DiscoverStream;
