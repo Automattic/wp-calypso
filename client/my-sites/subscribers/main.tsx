@@ -50,7 +50,9 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 		setShowAddSubscribersModal( false );
 		dispatch(
 			successNotice(
-				translate( 'Your subscriber list is being processed. Please check your email for status.' ),
+				translate(
+					"Your subscriber list is being processed. We'll send you an email when it's finished importing."
+				),
 				{
 					duration: 5000,
 				}
