@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 @import "./styles/theme.scss";
 @import "./styles/layout.scss";
 @import "./styles/wp-admin.scss";
@@ -107,6 +109,57 @@
 			.post-item__view-link {
 				margin-right: 10px !important;
 			}
+		}
+
+		// Campaigns details
+		.campaign-item__container {
+			.campaign-item-header {
+				button.campaign-item-promote-again-button {
+					font-weight: 600;
+					font-size: 1rem;
+					padding: 8px 24px;
+					min-width: 110px;
+					line-height: 24px;
+					margin-top: 15px;
+					border-radius: 4px;
+				}
+			}
+
+			.campaign-item-details__support-buttons-container {
+				.campaign-item-details__support-buttons a {
+					padding: 4px 8px;
+					background: none;
+					color: var(--color-accent);
+					border: 1.5px solid var(--color-accent);
+					font-weight: 600;
+					font-size: 0.75rem;
+					line-height: 20px;
+				}
+
+				.campaign-item-details__support-articles-wrapper {
+					margin: 24px 0;
+
+					.campaign-item-details__support-link {
+						color: var(--color-primary);
+					}
+					.campaign-item-details__powered-by {
+						display: none;
+					}
+				}
+			}
+		}
+	}
+}
+
+// only screen and (max-width: 960px)
+$break-medium-expanded-menu: $break-medium + 272px;
+@media screen and (max-width: $break-medium-expanded-menu) {
+	body #wpcontent .jp-blaze-dashboard .promote-post-i2 {
+		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
+			padding: 12px;
+			line-height: 16px;
+			font-weight: 600;
+			font-size: 0.75rem;
 		}
 	}
 }
