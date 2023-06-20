@@ -56,6 +56,7 @@ export default function SiteSurveyBanner( { isDashboardView }: Props ) {
 			) }
 			callToAction={ translate( 'Take survey' ) }
 			href="https://automattic.survey.fm/agency-partnership-usage-survey"
+			target="_blank"
 			jetpack
 			dismissWithoutSavingPreference
 			horizontal
