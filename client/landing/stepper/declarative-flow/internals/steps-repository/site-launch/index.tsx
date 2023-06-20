@@ -7,6 +7,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToSlug } from 'calypso/lib/url';
 import type { StepProps } from '../../types';
 // import './style.scss';
 interface SiteLaunchStepProps extends StepProps {
@@ -27,8 +28,8 @@ const SiteLaunchStep: React.FC< SiteLaunchStepProps > = function ( props ) {
 		if ( site?.ID ) {
 			setPendingAction( async () => {
 				await launchSite( site.ID );
-				await new Promise( ( res ) => setTimeout( res, 2000 ) );
-				return { blogLaunched: true };
+				await new Promise( ( res ) => setTimeout( res, 1000 ) );
+				return { blogLaunched: true, siteSlug: urlToSlug( site.URL ) };
 			} );
 			submit?.();
 		}
