@@ -85,7 +85,7 @@ const ColorPaletteVariations = ( {
 			role="listbox"
 			aria-label={ translate( 'Color palette variations' ) }
 		>
-			<h3 className="global-styles-variation__title">{ translate( 'Free styles' ) }</h3>
+			<h3 className="global-styles-variation__title">{ translate( 'Free style' ) }</h3>
 			<div className="color-palette-variations">
 				<ColorPaletteVariation
 					key="base"

@@ -85,7 +85,7 @@ const FontPairingVariations = ( {
 			role="listbox"
 			aria-label={ translate( 'Font pairing variations' ) }
 		>
-			<h3 className="global-styles-variation__title">{ translate( 'Free fonts' ) }</h3>
+			<h3 className="global-styles-variation__title">{ translate( 'Free font' ) }</h3>
 			<div className="font-pairing-variations">
 				<FontPairingVariation
 					key="base"
