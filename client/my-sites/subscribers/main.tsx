@@ -87,7 +87,7 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 
 				<Pagination
 					className="subscribers__pagination"
-					page={ page }
+					page={ pageNumber }
 					perPage={ per_page }
 					total={ total }
 					pageClick={ pageClickCallback }
