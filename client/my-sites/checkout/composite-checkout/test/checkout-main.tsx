@@ -147,7 +147,7 @@ describe( 'CheckoutMain', () => {
 		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
 		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
-		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue to payment' );
 		await user.click( confirmButton );
 		await waitFor( async () => {
 			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
@@ -170,7 +170,7 @@ describe( 'CheckoutMain', () => {
 		const user = userEvent.setup();
 		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
-		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue to payment' );
 		await user.click( confirmButton );
 		await waitFor( () => {
 			expect( navigate ).toHaveBeenCalledWith( '/plans/foo.com' );
@@ -193,7 +193,7 @@ describe( 'CheckoutMain', () => {
 		const user = userEvent.setup();
 		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
-		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue to payment' );
 		await user.click( confirmButton );
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
