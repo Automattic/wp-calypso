@@ -18,12 +18,6 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	// texts
-	const title = translate( 'Congrats on your new theme!' );
-	const subtitle = translate(
-		"Your new theme is a reflection of your unique style and personality, and we're thrilled to see it come to life."
-	);
-
 	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themeSlugs ) );
 	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', themeSlugs ) );
 	const themesList = useMemo(
@@ -90,12 +84,29 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 	);
 	const isAtomicNeeded = hasDotOrgThemes || hasExternallyManagedThemes;
 
+	const hasFreeThemes = themesList.some( ( theme ) => theme?.cost?.number === 0 );
+
+	// texts
+	const paidTitle = translate( 'Unveil the wow factor' );
+	const paidSubtitle = translate(
+		`All set! Activate the %(themeName)s theme and take your site's style to the next level.`,
+		{
+			args: {
+				themeName: themesList[ 0 ]?.name || '',
+			},
+		}
+	);
+	const freeTitle = translate( 'Way to make an impression' );
+	const freeSubtitle = translate(
+		'Your site looks stunning with its new theme. Take a look or start styling it up. '
+	);
+
 	return [
 		themesSection,
 		allThemesFetched,
 		goBackSection,
-		title,
-		subtitle,
+		hasFreeThemes ? freeTitle : paidTitle,
+		hasFreeThemes ? freeSubtitle : paidSubtitle,
 		thankyouSteps,
 		isAtomicNeeded,
 	];

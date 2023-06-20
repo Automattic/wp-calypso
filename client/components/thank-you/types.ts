@@ -59,7 +59,7 @@ export type ThankYouData = [
 	boolean,
 	JSX.Element,
 	string,
-	string,
+	string | React.ReactChild,
 	string[],
 	boolean
 ];
