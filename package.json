@@ -223,6 +223,7 @@
 		"@types/gtag.js": "^0.0.10",
 		"@types/highlight-words-core": "^1.2.1",
 		"@types/superagent": "^4.1.15",
+		"@types/wordpress__components": "^23.0.1",
 		"@typescript-eslint/eslint-plugin": "^5.53.0",
 		"@typescript-eslint/parser": "^5.53.0",
 		"@wordpress/eslint-plugin": "^13.7.0",
@@ -291,8 +292,9 @@
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
-		"react-dates": "17.1.1",
+		"@types/react": "^18.2",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",
+		"@types/wordpress__components": "23.0.1",
 		"@types/wordpress__editor": "npm:noop-package@1.0.0",
 		"@types/wordpress__notices": "npm:noop-package@1.0.0",
 		"@types/wordpress__rich-text": "npm:noop-package@1.0.0",
