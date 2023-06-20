@@ -20,7 +20,6 @@ import { useToggleEdgeCacheMutation } from './use-toggle-edge-cache';
 
 const CardBody = styled.div( {
 	display: 'flex',
-	marginLeft: '3em',
 	flexDirection: 'column',
 } );
 
