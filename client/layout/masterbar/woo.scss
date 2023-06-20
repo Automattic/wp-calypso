@@ -868,6 +868,7 @@
 		.login__header-subtitle a,
 		.formatted-header__subtitle a {
 			color: var(--wp-admin-theme-color);
+			line-height: inherit;
 		}
 
 		.form-input-validation {
