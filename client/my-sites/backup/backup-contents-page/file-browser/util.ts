@@ -50,6 +50,7 @@ export const transformFileType = (
 		case 'theme':
 		case 'plugin':
 		case 'table':
+		case 'archive':
 			return item.type;
 		case 'file':
 			if ( item.has_children ) {
@@ -69,13 +70,15 @@ export const parseBackupContentsData = ( payload: BackupLsResponse ): FileBrowse
 
 	const transformedData = Object.entries( payload.contents ).map( ( [ name, item ] ) => {
 		const type = transformFileType( name, item );
+		const label = item.label ?? name;
 
 		return {
-			name,
+			name: label,
 			type,
 			hasChildren: item.has_children ?? false,
 			...( item.period && { period: item.period } ),
 			...( item.sort && { sort: item.sort } ),
+			...( item.type === 'archive' && { extension_type: name.replace( '*', '' ) } ),
 		};
 	} );
 
@@ -93,10 +96,10 @@ export const parseBackupContentsData = ( payload: BackupLsResponse ): FileBrowse
 		}
 
 		// If 'sort' field doesn't exist in either, then 'dir' types come first
-		if ( a.type === 'dir' && b.type !== 'dir' ) {
+		if ( a.hasChildren === true && b.hasChildren !== true ) {
 			return -1;
 		}
-		if ( b.type === 'dir' && a.type !== 'dir' ) {
+		if ( b.hasChildren === true && a.hasChildren !== true ) {
 			return 1;
 		}
 

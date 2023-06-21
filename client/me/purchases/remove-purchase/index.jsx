@@ -29,7 +29,6 @@ import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dial
 import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
@@ -483,7 +482,6 @@ export default connect(
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
-			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
 			isAkismet,
 			purchasesError: getPurchasesError( state ),

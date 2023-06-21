@@ -62,12 +62,6 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 	}
 };
 
-export const isCampaignFinished = ( status: string ) => {
-	return [ campaignStatus.CANCELED, campaignStatus.ACTIVE, campaignStatus.FINISHED ].includes(
-		status
-	);
-};
-
 export const getCampaignStatus = ( status: string ) => {
 	switch ( status ) {
 		case campaignStatus.SCHEDULED: {
@@ -165,8 +159,8 @@ export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string
 	return `${ ( +minEstimate ).toLocaleString() } - ${ ( +maxEstimate ).toLocaleString() }`;
 };
 
-export const formatNumber = ( number: number ) => {
-	if ( ! number ) {
+export const formatNumber = ( number: number, onlyPositives = false ): string => {
+	if ( ! number || ( onlyPositives && number < 0 ) ) {
 		return '-';
 	}
 	return number.toLocaleString();

@@ -34,7 +34,7 @@ This is the base component and acts as a wrapper for a section's (a list of card
 ### Props
 
 - `className` - _optional_ (string|object) Classes to be added to the rendered component.
-- `label` - _optional_ (string|ReactChild) The text to be displayed in the header.
+- `label` - _optional_ (string|ReactElement) The text to be displayed in the header.
 
 ## General guidelines
 

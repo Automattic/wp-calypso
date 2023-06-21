@@ -90,11 +90,10 @@ export default function CampaignItemDetails( props: Props ) {
 		clicks_total,
 		clickthrough_rate,
 		duration_days,
-		total_budget_left,
+		budget_left,
 		total_budget,
 		total_budget_used,
-		visits_total = 0,
-		visits_organic,
+		views_organic,
 	} = campaign_stats || {};
 
 	const { card_name, payment_method, subtotal, credits, total } = billing_data || {};
@@ -115,7 +114,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
 	const durationFormatted = getCampaignDurationFormatted( start_date, end_date );
 	const totalBudgetFormatted = `$${ formatCents( total_budget || 0 ) }`;
-	const totalBudgetLeftFormatted = `$${ formatCents( total_budget_left || 0 ) } ${ __( 'left' ) }`;
+	const totalBudgetLeftFormatted = `$${ formatCents( budget_left || 0 ) } ${ __( 'left' ) }`;
 	const overallSpendingFormatted = `$${ formatCents( total_budget_used || 0 ) }`;
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
@@ -166,9 +165,14 @@ export default function CampaignItemDetails( props: Props ) {
 		},
 		{
 			label: translate( 'Organic' ),
-			value: visits_organic || 0,
+			value: views_organic || 0,
 		},
 	];
+
+	const databarTotal = databars.reduce(
+		( total, { value } ) => ( value > 0 ? total + value : total ), // Sum only positive values.
+		0
+	);
 
 	const cancelCampaignButtonText =
 		status === 'active' ? __( 'Stop campaign' ) : __( 'Cancel campaign' );
@@ -267,11 +271,11 @@ export default function CampaignItemDetails( props: Props ) {
 						{ ! isLoading ? (
 							<>
 								<span>&bull;</span>
-								<div className="campaign-item__header-status-date">
+								<div className="campaign-item__header-status-item">
 									{ translate( 'Created:' ) } { campaignCreatedFormatted }
 								</div>
 								<span>&bull;</span>
-								<div className="campaign-item__header-status-date">
+								<div className="campaign-item__header-status-item">
 									{ translate( 'Author:' ) } { display_name }
 								</div>
 							</>
@@ -428,7 +432,7 @@ export default function CampaignItemDetails( props: Props ) {
 															<HorizontalBarListItem
 																key={ `bar_${ index }` }
 																data={ item }
-																maxValue={ visits_total }
+																maxValue={ databarTotal }
 																hasIndicator={ false }
 																leftSideItem={ null }
 																useShortLabel={ false }
@@ -472,7 +476,7 @@ export default function CampaignItemDetails( props: Props ) {
 											{ ! isLoading ? osListFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
-									<div>
+									<div className="campaign-item-details__interests">
 										<span className="campaign-item-details__label">
 											{ translate( 'Interests' ) }
 										</span>
@@ -504,8 +508,7 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 							</div>
 						</div>
-
-						{ status === 'completed' && (
+						{ ( status === 'finished' || status === 'canceled' ) && (
 							<div className="campaign-item-details__payment-container">
 								<div className="campaign-item-details__payment">
 									<div className="campaign-item-details__payment-row">
@@ -540,7 +543,7 @@ export default function CampaignItemDetails( props: Props ) {
 												) }
 												{ total ? (
 													<span className="campaign-item-details__label">
-														<div>{ translate( 'Paid' ) }</div>
+														<div>{ translate( 'Total paid' ) }</div>
 														<div>{ totalFormatted }</div>
 													</span>
 												) : (
@@ -597,10 +600,12 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__support-heading">
 									{ translate( 'Support articles' ) }
 								</div>
+								{ /*
+								commented out until we get the link
 								<Button className="is-link campaign-item-details__support-effective-ad-doc">
 									{ translate( 'What makes an effective ad?' ) }
 									<Gridicon icon="external" size={ 16 } />
-								</Button>
+								</Button>*/ }
 
 								<InlineSupportLink
 									className="is-link components-button campaign-item-details__support-link"

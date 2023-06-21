@@ -1,8 +1,9 @@
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import TimeSince from 'calypso/components/time-since';
+import useSubscriptionPlans from '../../hooks/use-subscription-plans';
 import { Subscriber } from '../../types';
-import { SubscriberPopover } from './subscriber-popover';
-import { SubscriberProfile } from './subscriber-profile';
+import { SubscriberPopover } from '../subscriber-popover';
+import { SubscriberProfile } from '../subscriber-profile';
 
 type SubscriberRowProps = {
 	onUnsubscribe: ( subscriber: Subscriber ) => void;
@@ -12,6 +13,7 @@ type SubscriberRowProps = {
 
 export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: SubscriberRowProps ) => {
 	const { avatar, display_name, email_address, date_subscribed, open_rate } = subscriber;
+	const subscriptionPlans = useSubscriptionPlans( subscriber );
 
 	return (
 		<li className="subscriber-row row" role="row">
@@ -21,7 +23,12 @@ export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: Subscriber
 			<span className="subscriber-list__profile-column" role="cell">
 				<SubscriberProfile avatar={ avatar } displayName={ display_name } email={ email_address } />
 			</span>
-			<span className="subscriber-list__subscription-type-column hidden" role="cell"></span>
+			<span className="subscriber-list__subscription-type-column" role="cell">
+				{ subscriptionPlans &&
+					subscriptionPlans.map( ( subscriptionPlan, index ) => (
+						<div key={ index }>{ subscriptionPlan }</div>
+					) ) }
+			</span>
 			<span className="subscriber-list__rate-column hidden" role="cell">
 				{ open_rate }
 			</span>

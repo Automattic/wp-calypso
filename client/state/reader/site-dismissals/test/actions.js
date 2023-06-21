@@ -16,10 +16,11 @@ describe( 'actions', () => {
 
 	describe( '#dismissSite', () => {
 		test( 'should return an action when a site is dismissed', () => {
-			const action = dismissSite( 123 );
+			const action = dismissSite( { siteId: 123, seed: 456 } );
 			expect( action ).toEqual( {
 				type: READER_DISMISS_SITE,
 				payload: { siteId: 123 },
+				seed: 456,
 			} );
 		} );
 	} );

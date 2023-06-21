@@ -5,14 +5,13 @@ import { useMemo } from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactChild } from 'react';
 interface Props {
 	responseCart: ResponseCart;
 	headerText?: TranslateResult;
 }
 
 interface NextStepsStep {
-	text: ReactChild;
+	text: TranslateResult;
 	icon: JSX.Element;
 }
 

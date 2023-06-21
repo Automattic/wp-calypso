@@ -7,6 +7,7 @@ import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
 import './woo.scss';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -14,20 +15,37 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 // Masterbar for WooCommerce Core Profiler Jetpack step
 const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) => string } ) => {
-	const redirectTo = useSelector( ( state ) => {
-		switch ( getCurrentRoute( state ) ) {
+	const { redirectTo, shouldShowProgressBar, shouldShowNoThanks } = useSelector( ( state ) => {
+		const currentRoute = getCurrentRoute( state );
+		let redirectTo = null;
+		let shouldShowProgressBar = true;
+		let shouldShowNoThanks = true;
+		switch ( currentRoute ) {
 			case '/jetpack/connect/authorize':
-				return getCurrentQueryArguments( state )?.redirect_after_auth;
+				redirectTo = getCurrentQueryArguments( state )?.redirect_after_auth;
 			case '/log-in/jetpack':
-				return getQueryArg( getRedirectToOriginal( state ) || '', 'redirect_after_auth' );
+				redirectTo = getQueryArg( getRedirectToOriginal( state ) || '', 'redirect_after_auth' );
 			default:
-				return null;
 		}
+
+		if (
+			currentRoute === '/log-in/jetpack/lostpassword' ||
+			getCurrentQueryArguments( state )?.lostpassword_flow
+		) {
+			shouldShowProgressBar = false;
+			shouldShowNoThanks = false;
+		}
+
+		return {
+			redirectTo,
+			shouldShowProgressBar,
+			shouldShowNoThanks,
+		};
 	} );
 
 	return (
 		<Fragment>
-			<ProgressBar className="masterbar__progress-bar" value={ 95 } />
+			{ shouldShowProgressBar && <ProgressBar className="masterbar__progress-bar" value={ 95 } /> }
 			<header className="masterbar masterbar__woo">
 				<nav className="masterbar__woo-nav-wrapper">
 					<ul className="masterbar__woo-nav">
@@ -44,8 +62,14 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 							</a>
 						</li>
 						<li className="masterbar__woo-nav-item">
-							{ typeof redirectTo === 'string' && redirectTo.length && (
-								<Button href={ redirectTo } className="masterbar__no-thanks-button">
+							{ shouldShowNoThanks && typeof redirectTo === 'string' && redirectTo.length && (
+								<Button
+									onClick={ () => {
+										recordTracksEvent( 'calypso_jpc_wc_coreprofiler_skip' );
+										window.location.href = redirectTo;
+									} }
+									className="masterbar__no-thanks-button"
+								>
 									{ translate( 'No, Thanks' ) }
 								</Button>
 							) }

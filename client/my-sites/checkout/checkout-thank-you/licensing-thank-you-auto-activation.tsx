@@ -152,7 +152,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								strong: <strong />,
 							},
 							args: {
-								productName,
+								productName: productName as string,
 								selectedSite: urlToSlug( selectedSite ),
 								incompatibleProductName,
 							},
@@ -171,7 +171,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								a: <a href={ manualActivationUrl } />,
 							},
 							args: {
-								productName,
+								productName: productName as string,
 								selectedSite: urlToSlug( selectedSite ),
 							},
 						}
@@ -281,7 +281,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 						<br />
 						{ translate( 'Select the site you want %(productName)s on:', {
 							args: {
-								productName,
+								productName: productName as string,
 							},
 						} ) }
 					</p>

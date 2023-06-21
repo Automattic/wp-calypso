@@ -31,7 +31,6 @@ const ScreenColorPalettes = ( {
 				description={ translate(
 					'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
 				) }
-				isPremium
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">

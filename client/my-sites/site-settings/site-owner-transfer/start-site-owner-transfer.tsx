@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -62,6 +62,24 @@ const ListItem = styled.li( {
 	marginBottom: '0.25em',
 } );
 
+const DomainsWrapper = styled.div( {
+	backgroundColor: '#F6F7F7',
+	marginTop: '2em',
+	marginBottom: '2em',
+	paddingTop: '1em',
+	paddingBottom: '1em',
+} );
+
+const DomainsWrapperItem = styled.div( {
+	paddingLeft: '1em',
+	fontWeight: 500,
+} );
+
+const GridiconStyled = styled( Gridicon )( {
+	paddingRight: '10px',
+	verticalAlign: 'middle',
+} );
+
 const DomainsCard = ( {
 	domains,
 	siteSlug,
@@ -105,17 +123,19 @@ const DomainsCard = ( {
 							{ strong: <Strong /> }
 						) }
 					</Text>
-					<List>
+					<DomainsWrapper>
 						{ domains.map( ( domain ) => (
-							<ListItem key={ domain.name }>{ domain.name }</ListItem>
+							<DomainsWrapperItem key={ domain.name }>
+								<GridiconStyled icon="domains" size={ 16 } />
+								{ domain.name }
+							</DomainsWrapperItem>
 						) ) }
-					</List>
+					</DomainsWrapper>
 				</>
 			) }
 		</>
 	);
 };
-
 const UpgradesCard = ( {
 	purchases,
 	siteSlug,
@@ -182,7 +202,7 @@ const ContentAndOwnershipCard = ( {
 							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
 							// transer to
 							translate(
-								'You will not be able to access <strong>%(siteSlug)s</strong> unless allowed by <strong>%(siteOwner)s</strong>.'
+								'You will remain as an administrator on <strong>%(siteSlug)s</strong>, unless removed by <strong>%(siteOwner)s</strong>.'
 							),
 							{ siteSlug, siteOwner }
 						),
@@ -195,7 +215,7 @@ const ContentAndOwnershipCard = ( {
 							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
 							// transer to
 							translate(
-								'Your posts on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will no longer be authored by your account.'
+								'Your posts on <strong>%(siteSlug)s</strong> will remain with your account, unless they are transferred to <strong>%(siteOwner)s</strong>.'
 							),
 							{ siteSlug, siteOwner }
 						),

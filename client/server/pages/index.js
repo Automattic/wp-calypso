@@ -686,7 +686,7 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( '/discover', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn ) {
+		if ( ! req.context.isLoggedIn && calypsoEnv !== 'development' ) {
 			res.redirect( config( 'discover_logged_out_redirect_url' ) );
 		} else {
 			next();

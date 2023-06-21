@@ -34,7 +34,7 @@ function useHostingProviderGuessQuery( siteId: SiteId ) {
 const HostSelection: FunctionComponent = () => {
 	const isMobile = useMobileBreakpoint();
 	const siteId = useSelector( getSelectedSiteId ) as SiteId;
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

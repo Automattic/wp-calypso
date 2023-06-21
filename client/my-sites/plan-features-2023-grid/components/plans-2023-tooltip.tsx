@@ -3,7 +3,9 @@ import { TranslateResult } from 'i18n-calypso';
 import { PropsWithChildren, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 
-const HoverAreaContainer = styled.span``;
+const HoverAreaContainer = styled.span`
+	max-width: 220px;
+`;
 
 const StyledTooltip = styled( Tooltip )`
 	&.tooltip.popover .popover__inner {

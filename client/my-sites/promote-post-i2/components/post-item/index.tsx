@@ -3,6 +3,7 @@ import './style.scss';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import InfoPopover from 'calypso/components/info-popover';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
@@ -53,6 +54,9 @@ export default function PostItem( { post }: Props ) {
 
 	const mobileStatsSeparator = <span className="blazepress-mobile-stats-mid-dot">&#183;</span>;
 
+	const titleIsLong = post?.title.length > 55;
+	const titleShortened = titleIsLong ? post?.title.slice( 0, 55 ) + '...' : post?.title;
+
 	return (
 		<tr className="post-item__row">
 			<td className="post-item__post-data">
@@ -93,7 +97,16 @@ export default function PostItem( { post }: Props ) {
 							{ mobileStatsSeparator }
 							{ postDate }
 						</div>
-						<div className="post-item__post-title-content">{ post?.title || __( 'Untitled' ) }</div>
+						<div className="post-item__post-title-content">
+							<span>{ titleShortened || __( 'Untitled' ) }</span>
+							{ titleIsLong && (
+								<InfoPopover position="bottom right">
+									{ __( 'Title: ' ) }
+									<br />
+									<span className="popover-title">{ post?.title }</span>
+								</InfoPopover>
+							) }
+						</div>
 					</div>
 				</div>
 				<div className="post-item__post-data-row post-item__post-data-row-mobile">
@@ -116,7 +129,12 @@ export default function PostItem( { post }: Props ) {
 						) }
 					</div>
 					<div className="post-item__actions-mobile">
-						<a href={ post.post_url } className="post-item__view-link">
+						<a
+							href={ post.post_url }
+							className="post-item__view-link"
+							target="_blank"
+							rel="noreferrer"
+						>
 							{ __( 'View' ) }
 						</a>
 						<Button
@@ -133,11 +151,11 @@ export default function PostItem( { post }: Props ) {
 
 			<td className="post-item__post-type">{ getPostType( post.type ) }</td>
 			<td className="post-item__post-publish-date">{ postDate }</td>
-			<td className="post-item__post-views">{ formatNumber( viewCount ) }</td>
-			<td className="post-item__post-likes">{ formatNumber( likeCount ) }</td>
-			<td className="post-item__post-comments">{ formatNumber( commentCount ) }</td>
+			<td className="post-item__post-views">{ formatNumber( viewCount, true ) }</td>
+			<td className="post-item__post-likes">{ formatNumber( likeCount, true ) }</td>
+			<td className="post-item__post-comments">{ formatNumber( commentCount, true ) }</td>
 			<td className="post-item__post-view">
-				<a href={ post.post_url } className="post-item__view-link">
+				<a href={ post.post_url } className="post-item__view-link" target="_blank" rel="noreferrer">
 					{ __( 'View' ) }
 				</a>
 			</td>
