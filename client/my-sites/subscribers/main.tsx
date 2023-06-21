@@ -1,3 +1,4 @@
+import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
@@ -7,7 +8,9 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import { SubscribersListManagerProvider } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { SubscribersHeaderPopover } from './components/subscribers-header-popover';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
 import { useUnsubscribeModal } from './hooks';
@@ -27,6 +30,22 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 		useUnsubscribeModal( selectedSiteId, pageNumber );
 	const onClickView = ( subscriber: Subscriber ) => {
 		page.show( `/subscribers/${ selectedSiteSlug }/${ subscriber.subscription_id }` );
+	};
+	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
+	const dispatch = useDispatch();
+
+	const addSubscribersCallback = () => {
+		setShowAddSubscribersModal( false );
+		dispatch(
+			successNotice(
+				translate(
+					"Your subscriber list is being processed. We'll send you an email when it's finished importing."
+				),
+				{
+					duration: 5000,
+				}
+			)
+		);
 	};
 
 	const navigationItems: Item[] = [
@@ -57,6 +76,14 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 		<Main wideLayout className="subscribers">
 			<DocumentHead title={ translate( 'Subscribers' ) } />
 			<FixedNavigationHeader navigationItems={ navigationItems }>
+				<Button
+					className="add-subscribers-button"
+					primary
+					onClick={ () => setShowAddSubscribersModal( true ) }
+				>
+					<Gridicon icon="plus" size={ 24 } />
+					{ translate( 'Add subscribers' ) }
+				</Button>
 				<SubscribersHeaderPopover siteId={ selectedSiteId } />
 			</FixedNavigationHeader>
 
@@ -76,6 +103,14 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 				onCancel={ resetSubscriber }
 				onConfirm={ onConfirmModal }
 			/>
+			{ selectedSiteId && (
+				<AddSubscribersModal
+					siteId={ selectedSiteId }
+					showModal={ showAddSubscribersModal }
+					onClose={ () => setShowAddSubscribersModal( false ) }
+					onAddFinished={ () => addSubscribersCallback() }
+				/>
+			) }
 		</Main>
 	);
 };
