@@ -15,7 +15,11 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	margin-bottom: 20px;
 	flex-wrap: wrap;
 	display: grid;
-	grid-template-columns: 1fr 220px;
+	grid-template-columns: 1fr 480px;
+
+	&.wide {
+		grid-template-columns: 1fr 220px;
+	}
 
 	.promote-post-i2__search-bar-dropdown {
 		&.select-dropdown {
