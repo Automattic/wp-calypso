@@ -8,10 +8,11 @@ import { SubscriberDetails } from './components/subscriber-details';
 import { SubscriberPopover } from './components/subscriber-popover';
 
 type SubscriberDetailsPageProps = {
-	subscriberId: number;
+	subscriberId?: number;
+	userId?: number;
 };
 
-const SubscriberDetailsPage = ( { subscriberId }: SubscriberDetailsPageProps ) => {
+const SubscriberDetailsPage = ( { subscriberId, userId }: SubscriberDetailsPageProps ) => {
 	const translate = useTranslate();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
@@ -25,16 +26,6 @@ const SubscriberDetailsPage = ( { subscriberId }: SubscriberDetailsPageProps ) =
 			href: `/subscribers/${ selectedSiteSlug }/${ subscriberId }`,
 		},
 	];
-
-	const mockSubscriber = {
-		avatar: `https://secure.gravatar.com/avatar/${ subscriberId }`,
-		subscription_id: subscriberId,
-		email_address: 'mock.subscriber@email.com',
-		display_name: 'Mock Subscriber',
-		date_subscribed: '2021-01-01T00:00:00.000Z',
-		open_rate: 0,
-		user_id: 0,
-	};
 
 	return (
 		<Main wideLayout>
