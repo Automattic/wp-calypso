@@ -1,4 +1,3 @@
-import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -14,7 +13,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { getLoginPath } from '../utils/path';
+import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
@@ -85,14 +84,11 @@ const newsletter: Flow = {
 			flowName,
 		} );
 		setStepProgress( flowProgress );
-		const locale = useLocale();
-		const localizeUrl = useLocalizeUrl();
-
-		const logInUrl = localizeUrl(
-			getLoginPath( `/setup/${ flowName }/newsletterSetup`, 'Newsletter', flowName ),
-			locale,
-			userIsLoggedIn
-		);
+		const logInUrl = useLoginUrl( {
+			flowName,
+			redirectTo: `/setup/${ flowName }/newsletterSetup`,
+			pageTitle: 'Newsletter',
+		} );
 
 		// Unless showing intro step, send non-logged-in users to account screen.
 		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
