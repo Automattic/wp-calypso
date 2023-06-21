@@ -85,8 +85,8 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 								element={ __( 'Contact Options', __i18n_text_domain__ ) }
 							/>
 							<Route path="/inline-chat" element={ __( 'Live Chat', __i18n_text_domain__ ) } />
-							<Route path="/contact-form" element={ SupportModeTitle } />
-							<Route path="/post" element={ ArticleTitle } />
+							<Route path="/contact-form" element={ <SupportModeTitle /> } />
+							<Route path="/post" element={ <ArticleTitle /> } />
 							<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
 						</Routes>
 					) : (
