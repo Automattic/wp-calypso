@@ -1,5 +1,6 @@
 import React, { createContext, useState, useCallback, useContext, useEffect } from 'react';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
+import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSubscribersQuery } from '../../queries';
 
 type SubscriberListManagerProviderProps = {
@@ -12,10 +13,10 @@ type SubscriberListManagerProviderProps = {
 type SubscriberListManagerContextProps = {
 	searchTerm: string;
 	handleSearch: ( term: string ) => void;
-	subscribersQueryResult: ReturnType< typeof useSubscribersQuery >; // Replace QueryResult with the actual type of the result
 	page: number;
 	perPage: number;
 	setPerPage: ( perPage: number ) => void;
+	subscribers: Subscriber[];
 	total: number;
 	grandTotal: number;
 	pageClickCallback: ( page: number ) => void;
@@ -50,9 +51,10 @@ export const SubscribersListManagerProvider = ( {
 		siteId,
 	} );
 
-	const { total, per_page } = subscribersQueryResult.data || {
+	const { total, per_page, subscribers } = subscribersQueryResult.data || {
 		total: 0,
 		per_page: DEFAULT_PER_PAGE,
+		subscribers: [],
 	};
 
 	// If we receive a different perPage value from the query, update the state
@@ -77,7 +79,7 @@ export const SubscribersListManagerProvider = ( {
 				total,
 				perPage,
 				setPerPage,
-				subscribersQueryResult,
+				subscribers,
 				pageClickCallback,
 			} }
 		>

@@ -12,9 +12,7 @@ type SubscriberListProps = {
 
 const SubscriberList = ( { onView, onUnsubscribe }: SubscriberListProps ) => {
 	const translate = useTranslate();
-	const { subscribersQueryResult } = useSubscriberListManager();
-	const { data } = subscribersQueryResult;
-	const { subscribers } = data || { subscribers: [] };
+	const { subscribers } = useSubscriberListManager();
 
 	return (
 		<ul className="subscriber-list" role="table">
