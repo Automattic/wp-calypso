@@ -4,8 +4,7 @@ import { Button, Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { localize, useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -57,21 +56,6 @@ const ToggleLabel = styled.p( {
 	fontSize: '14px',
 } );
 
-const EdgeCacheToggle = ( { onEdgeCacheToggle, checked, disabled } ) => {
-	const translate = useTranslate();
-	return (
-		<ToggleContainer>
-			<ToggleLabel>{ translate( 'Edge cache' ) }</ToggleLabel>
-			<CacheToggle
-				disabled={ disabled }
-				checked={ checked }
-				onChange={ onEdgeCacheToggle }
-				label={ translate( 'Enable edge caching for faster content delivery' ) }
-			/>
-		</ToggleContainer>
-	);
-};
-
 export const CacheCard = ( {
 	disabled,
 	shouldRateLimitCacheClear,
@@ -82,15 +66,16 @@ export const CacheCard = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const showEdgeCache = config.isEnabled( 'yolo/edge-cache-i1' );
-	const [ isEdgeCacheActive, setIsEdgeCacheActive ] = useState( false );
-	const { loading: getEdgeCacheLoading, data: edgeCacheActive } = useEdgeCacheQuery( siteId, {
+	const { loading: getEdgeCacheLoading, data: isEdgeCacheActive } = useEdgeCacheQuery( siteId, {
 		enabled: showEdgeCache,
+		initialData: false,
 	} );
+
 	const { toggleEdgeCache, isLoading: toggleEdgeCacheLoading } = useToggleEdgeCacheMutation(
 		siteId,
 		{
-			onSuccess: ( args ) => {
-				const active = args[ 1 ];
+			onSettled: ( ...args ) => {
+				const active = args[ 2 ];
 				dispatch(
 					recordTracksEvent(
 						active
@@ -122,10 +107,6 @@ export const CacheCard = ( {
 		}
 		clearAtomicWordPressCache( siteId, 'Manually clearing again.' );
 	};
-
-	useEffect( () => {
-		setIsEdgeCacheActive( edgeCacheActive );
-	}, [ edgeCacheActive ] );
 
 	const getClearCacheContent = () => {
 		return (
@@ -164,29 +145,30 @@ export const CacheCard = ( {
 			<CardHeading id="cache" size={ 20 }>
 				{ translate( 'Cache' ) }
 			</CardHeading>
-			{ showEdgeCache ? (
-				<CardBody>
-					<EdgeCacheDescription>
-						{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
-							components: {
-								a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
-							},
-						} ) }
-					</EdgeCacheDescription>
-					<EdgeCacheToggle
-						onEdgeCacheToggle={ ( active ) => {
-							toggleEdgeCache( active );
-							setIsEdgeCacheActive( active );
-						} }
-						checked={ isEdgeCacheActive }
-						disabled={ clearEdgeCacheLoading }
-					/>
-					<Hr />
-					{ getClearCacheContent() }
-				</CardBody>
-			) : (
-				getClearCacheContent()
-			) }
+			<CardBody>
+				<EdgeCacheDescription>
+					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
+						components: {
+							a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
+						},
+					} ) }
+				</EdgeCacheDescription>
+				{ showEdgeCache && (
+					<>
+						<ToggleContainer>
+							<ToggleLabel>{ translate( 'Edge cache' ) }</ToggleLabel>
+							<CacheToggle
+								disabled={ clearEdgeCacheLoading || getEdgeCacheLoading }
+								checked={ isEdgeCacheActive }
+								onChange={ toggleEdgeCache }
+								label={ translate( 'Enable edge caching for faster content delivery' ) }
+							/>
+						</ToggleContainer>
+						<Hr />
+					</>
+				) }
+				{ getClearCacheContent() }
+			</CardBody>
 		</Card>
 	);
 };

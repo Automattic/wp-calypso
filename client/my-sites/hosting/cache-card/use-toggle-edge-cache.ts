@@ -8,10 +8,6 @@ import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { USE_EDGE_CACHE_QUERY_KEY } from './use-edge-cache';
 
-interface MutationVariables {
-	active: boolean;
-}
-
 interface MutationError {
 	code: string;
 	message: string;
@@ -21,25 +17,34 @@ export const TOGGLE_EDGE_CACHE_MUTATION_KEY = 'set-edge-site-mutation-key';
 
 export const useToggleEdgeCacheMutation = (
 	siteId: number,
-	options: UseMutationOptions< boolean, MutationError, MutationVariables > = {}
+	options: UseMutationOptions< boolean, MutationError, boolean > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation( {
-		mutationFn: async ( active ) =>
-			wp.req.post( {
+	const mutation = useMutation< boolean, MutationError, boolean >( {
+		mutationFn: async ( active ) => {
+			return wp.req.post( {
 				path: `/sites/${ siteId }/hosting/edge-cache/active`,
 				apiNamespace: 'wpcom/v2',
 				body: {
 					active: active ? 1 : 0,
 				},
-			} ),
-		...options,
-		mutationKey: [ TOGGLE_EDGE_CACHE_MUTATION_KEY, siteId ],
-		onSuccess: async ( ...args ) => {
-			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], () => {
-				return args[ 1 ];
 			} );
-			options?.onSuccess?.( ...args );
+		},
+		mutationKey: [ TOGGLE_EDGE_CACHE_MUTATION_KEY, siteId ],
+		onMutate: async ( active ) => {
+			await queryClient.cancelQueries( [ USE_EDGE_CACHE_QUERY_KEY, siteId ] );
+			const previousData = queryClient.getQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ] );
+			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], active );
+			return { previousActive: previousData };
+		},
+		onError( _err, _newActive, context ) {
+			// Revert to previous settings on failure
+			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], context?.previousActive );
+		},
+		onSettled: ( ...args ) => {
+			// Refetch settings regardless
+			queryClient.invalidateQueries( [ USE_EDGE_CACHE_QUERY_KEY, siteId ] );
+			options?.onSettled?.( ...args );
 		},
 	} );
 
