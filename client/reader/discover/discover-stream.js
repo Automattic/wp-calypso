@@ -1,3 +1,4 @@
+import { Button, Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
@@ -9,7 +10,6 @@ import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './discover-stream.scss';
-import { Button, Gridicon } from '@automattic/components';
 
 const DEFAULT_TAB = 'recommended';
 
@@ -44,8 +44,43 @@ const DiscoverStream = ( props ) => {
 
 	// To keep track of the navigation tabs scroll position and keep it from appearing to reset
 	// after child render.
-	const trackScrollPosition = () => {
+	const handleScroll = () => {
+		// Save scroll position for later reference.
 		scrollPosition.current = scrollRef.current?.scrollLeft;
+		// Determine and set visibility on scroll buttons.
+		const leftScrollButton = document.querySelector( '.discover-stream__tabs-scroll-left-button' );
+		const rightScrollButton = document.querySelector(
+			'.discover-stream__tabs-scroll-right-button'
+		);
+		if ( scrollPosition.current < 10 ) {
+			// dont show left button, show right
+
+			if ( leftScrollButton ) {
+				leftScrollButton.style.display = 'none';
+			}
+			if ( rightScrollButton ) {
+				rightScrollButton.style.display = 'block';
+			}
+		} else if (
+			scrollPosition.current >
+			scrollRef.current?.scrollWidth - scrollRef.current?.clientWidth - 10
+		) {
+			// show left, not right
+			if ( leftScrollButton ) {
+				leftScrollButton.style.display = 'block';
+			}
+			if ( rightScrollButton ) {
+				rightScrollButton.style.display = 'none';
+			}
+		} else {
+			// show both.
+			if ( leftScrollButton ) {
+				leftScrollButton.style.display = 'block';
+			}
+			if ( rightScrollButton ) {
+				rightScrollButton.style.display = 'block';
+			}
+		}
 	};
 
 	const scrollLeft = () => {
@@ -86,9 +121,11 @@ const DiscoverStream = ( props ) => {
 				onClick={ scrollLeft }
 				tabIndex={ -1 }
 				aria-hidden={ true }
+				style={ scrollPosition.current === 0 && { display: 'none' } }
 			>
 				<Gridicon icon="chevron-left" />
 			</Button>
+
 			<Button
 				className="discover-stream__tabs-scroll-right-button"
 				onClick={ scrollRight }
@@ -97,7 +134,8 @@ const DiscoverStream = ( props ) => {
 			>
 				<Gridicon icon="chevron-right" />
 			</Button>
-			<div className="discover-stream__tabs" ref={ scrollRef } onScroll={ trackScrollPosition }>
+
+			<div className="discover-stream__tabs" ref={ scrollRef } onScroll={ handleScroll }>
 				<SegmentedControl primary className="discover-stream__tab-control">
 					<SegmentedControl.Item
 						key={ DEFAULT_TAB }
