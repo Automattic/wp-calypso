@@ -104,12 +104,16 @@ import ThemeStyleVariations from './theme-style-variations';
 import './style.scss';
 
 const LivePreviewButton = ( {
-	siteSlug,
-	themeType,
-	isFullSiteEditingTheme,
-	stylesheet,
+	isActive,
 	isAtomic,
+	isFullSiteEditingTheme,
+	siteSlug,
+	stylesheet,
+	themeType,
 } ) => {
+	if ( isActive ) {
+		return null;
+	}
 	if ( ! isFullSiteEditingTheme ) {
 		return null;
 	}
@@ -630,6 +634,7 @@ class ThemeSheet extends Component {
 			isFullSiteEditingTheme,
 			stylesheet,
 			isAtomic,
+			isActive,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -651,11 +656,12 @@ class ThemeSheet extends Component {
 					<div className="theme__sheet-main-actions">
 						{ config.isEnabled( 'themes/block-theme-previews-poc' ) && (
 							<LivePreviewButton
-								siteSlug={ siteSlug }
-								themeType={ themeType }
-								isFullSiteEditingTheme={ isFullSiteEditingTheme }
-								stylesheet={ stylesheet }
+								isActive={ isActive }
 								isAtomic={ isAtomic }
+								isFullSiteEditingTheme={ isFullSiteEditingTheme }
+								siteSlug={ siteSlug }
+								stylesheet={ stylesheet }
+								themeType={ themeType }
 							></LivePreviewButton>
 						) }
 						{ shouldRenderButton &&
