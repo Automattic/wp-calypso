@@ -71,7 +71,6 @@ import {
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
 import {
-	getThemeType,
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
 	isThemePremium,
@@ -631,7 +630,6 @@ class ThemeSheet extends Component {
 			softLaunched,
 			translate,
 			siteSlug,
-			themeType,
 			stylesheet,
 			isAtomic,
 			isActive,
@@ -666,7 +664,6 @@ class ThemeSheet extends Component {
 								showTryAndCustomize={ showTryAndCustomize }
 								siteSlug={ siteSlug }
 								stylesheet={ stylesheet }
-								themeType={ themeType }
 							></LivePreviewButton>
 						) }
 						{ shouldRenderButton &&
@@ -1548,16 +1545,12 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
-		const themeType = config.isEnabled( 'themes/block-theme-previews-poc' )
-			? getThemeType( state, themeId )
-			: undefined;
 		const isFullSiteEditingTheme = config.isEnabled( 'themes/block-theme-previews-poc' )
 			? getIsFullSiteEditingTheme( state, themeId )
 			: undefined;
 
 		return {
 			...theme,
-			themeType,
 			themeId,
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
