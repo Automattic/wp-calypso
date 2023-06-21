@@ -34,13 +34,20 @@ export default function VatInfoPage() {
 	const taxName = useTaxName(
 		currentVatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB'
 	);
-	const taxSupportPageURL = localizeUrl( 'https://wordpress.com/support/vat-gst-other-taxes/' );
 
 	const reduxDispatch = useDispatch();
 
 	const clickSupport = () => {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
 	};
+
+	/* This is a call to action for contacting support */
+	const contactSupportLinkTitle = translate( 'Contact Happiness Engineers' );
+
+	const taxSupportPageURL = localizeUrl( 'https://wordpress.com/support/vat-gst-other-taxes/' );
+
+	/* This is the title of the support page from https://wordpress.com/support/vat-gst-other-taxes/ */
+	const taxSupportPageLinkTitle = translate( 'VAT, GST, and other taxes' );
 
 	useRecordVatEvents( { fetchError } );
 
@@ -102,16 +109,27 @@ export default function VatInfoPage() {
 						<br />
 						<br />
 						{ translate(
-							'Currently, only certain countries are supported. If your country is not listed, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
+							/* translators: This is a list of tax-related reasons a customer might need to contact support */
+							'If you:' +
+								'{{ul}}' +
+								'{{li}}Need to update existing Tax ID details{{/li}}' +
+								'{{li}}Have been charged VAT as a VAT-Registered Business subject to reverse charges{{/li}}' +
+								'{{li}}Do not see your country listed in this form{{/li}}' +
+								'{{/ul}}' +
+								'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.',
 							{
+								args: { taxName: taxName ?? translate( 'tax', { textOnly: true } ) },
 								components: {
+									ul: <ul />,
+									li: <li />,
 									contactSupportLink: (
 										<a
 											target="_blank"
 											href={ CALYPSO_CONTACT }
 											rel="noreferrer"
 											onClick={ clickSupport }
-											title="Contact support for assistance"
+											title={ contactSupportLinkTitle }
 										/>
 									),
 								},
@@ -130,7 +148,7 @@ export default function VatInfoPage() {
 											showText={ true }
 											showIcon={ false }
 											supportPostId={ 234670 } //This is what makes the document appear in a dialogue
-											linkTitle="VAT, GST, and other taxes"
+											linkTitle={ taxSupportPageLinkTitle }
 										/>
 									),
 								},
