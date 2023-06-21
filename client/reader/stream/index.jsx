@@ -472,6 +472,7 @@ class ReaderStream extends Component {
 			streamKey,
 			tag,
 			tags,
+			sites,
 			isDiscoverTags,
 			isDiscoverStream,
 		} = this.props;
@@ -533,7 +534,7 @@ class ReaderStream extends Component {
 			} else if ( isDiscoverStream ) {
 				sidebarContent = (
 					<ReaderPopularSitesSidebar
-						items={ items }
+						items={ sites }
 						followSource={ READER_DISCOVER_POPULAR_SITES }
 					/>
 				);
