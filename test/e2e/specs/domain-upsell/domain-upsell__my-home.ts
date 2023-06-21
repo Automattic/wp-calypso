@@ -1,13 +1,21 @@
 /**
- * @group calypso-pr
+ * @group calypso-loop
  */
 
-import { TestAccount, BrowserManager, RestAPIClient } from '@automattic/calypso-e2e';
+import {
+	TestAccount,
+	BrowserManager,
+	RestAPIClient,
+	MyHomePage,
+	PlansPage,
+} from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( 'Domain: Upsell (Home)', function () {
+	let myHomePage: MyHomePage;
+	let plansPage: PlansPage;
 	let suggestedDomain: string;
 	let page: Page;
 
@@ -40,29 +48,28 @@ describe( 'Domain: Upsell (Home)', function () {
 	} );
 
 	it( 'Domain upsell card is present', async function () {
-		await page
-			.getByRole( 'main' )
-			.getByRole( 'heading', { name: /domain/ } )
-			.waitFor();
+		myHomePage = new MyHomePage( page );
+
+		expect( await myHomePage.isHeadingPresent( /domain/ ) ).toBe( true );
 	} );
 
 	it( 'Domain upsell card has suggested domain', async function () {
-		const locator = page.locator( '.domain-upsell-illustration' );
-		await locator.waitFor();
-		suggestedDomain = await locator.innerText();
+		suggestedDomain = await myHomePage.getSuggestedUpsellDomain();
 
 		expect( suggestedDomain ).not.toBe( '' );
 	} );
 
 	it( 'Click to begin searching for a domain', async function () {
-		await page.getByRole( 'main' ).getByRole( 'button', { name: 'Get this domain' } ).click();
+		await myHomePage.clickButton( 'Get this domain' );
 
 		// The test user does not have a plan so the Plans upsell page will load.
 		await page.waitForURL( /plans\/yearly/ );
 	} );
 
 	it( 'Choose the Free plan', async function () {
-		await page.getByRole( 'button', { name: /free plan/ } ).click();
+		plansPage = new PlansPage( page );
+
+		await plansPage.selectPlan( 'Free' );
 	} );
 
 	it( 'Dismiss paid plan upgrade CTA', async function () {
