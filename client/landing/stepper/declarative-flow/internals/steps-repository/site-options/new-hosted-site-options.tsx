@@ -1,5 +1,5 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, Spinner } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelect } from '@wordpress/data';
@@ -45,7 +45,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 
 	const [ shouldOverrideSiteTitle, setShouldOverrideSiteTitle ] = useState( false );
 
-	const { refetch } = useGetSiteSuggestionsQuery( {
+	const { refetch, isFetching } = useGetSiteSuggestionsQuery( {
 		enabled: shouldOverrideSiteTitle,
 		refetchOnWindowFocus: false,
 		onSuccess: ( response ) => {
@@ -133,8 +133,13 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 						} }
 						aria-label={ translate( 'Generate a random site name' ) }
 					>
-						<Icon icon={ shuffle } fill="currentColor" />
-						{ ! isSmallScreen && translate( 'Generate' ) }
+						{ ! isFetching && (
+							<>
+								<Icon icon={ shuffle } fill="currentColor" />
+								{ ! isSmallScreen && translate( 'Generate' ) }
+							</>
+						) }
+						{ isFetching && <Spinner size={ 16 } /> }
 					</Button>
 				</div>
 				{ siteTitleError ? (
