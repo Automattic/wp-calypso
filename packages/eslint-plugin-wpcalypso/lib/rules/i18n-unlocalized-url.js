@@ -31,6 +31,28 @@ const LOCALIZABLE_URLS = [
 
 const getCallee = require( '../util/get-callee' );
 
+/**
+ * Check whether the provided string is localizable string.
+ *
+ * @param   {string}  string String to be tested
+ * @returns {boolean}
+ */
+function isLocalizableUrlString( string ) {
+	return LOCALIZABLE_URLS.some( ( url ) =>
+		new RegExp( `^(https?:)?//${ url.replace( '.', '\\.' ) }`, 'i' ).test( string )
+	);
+}
+
+/**
+ * Check whether the provided node type is variable declarator.
+ *
+ * @param   {string}  type Node type
+ * @returns {boolean}
+ */
+function isVariableDeclarationValue( type ) {
+	return type === 'VariableDeclarator';
+}
+
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
@@ -43,6 +65,7 @@ const rule = ( module.exports = function ( context ) {
 		'Program:exit': function () {
 			for ( const node of variableDeclarationValues ) {
 				if ( ! urlVariables.has( node.parent?.id?.name ) ) {
+					// Report unlocalized url.
 					context.report( {
 						node,
 						message: rule.ERROR_MESSAGE,
@@ -66,18 +89,15 @@ const rule = ( module.exports = function ( context ) {
 				return;
 			}
 
-			const isLocalizableUrlString = LOCALIZABLE_URLS.some( ( url ) =>
-				new RegExp( `^(https?:)?//${ url.replace( '.', '\\.' ) }`, 'i' ).test( node.value )
-			);
-
-			// Url string is assigned to a variable and variable is later used in a localizeUrl call;
-			const isVariableDeclarationValue = node.parent.type === 'VariableDeclarator';
-
-			if ( isLocalizableUrlString && isVariableDeclarationValue ) {
-				variableDeclarationValues.push( node );
+			if ( ! isLocalizableUrlString( node.value ) ) {
+				return;
 			}
 
-			if ( isLocalizableUrlString && ! isVariableDeclarationValue ) {
+			// Url string is assigned to a variable and variable is possibly later used in a localizeUrl call;
+			if ( isVariableDeclarationValue( node.parent.type ) ) {
+				variableDeclarationValues.push( node );
+			} else {
+				// Report unlocalized url.
 				context.report( {
 					node,
 					message: rule.ERROR_MESSAGE,
@@ -91,18 +111,15 @@ const rule = ( module.exports = function ( context ) {
 				return;
 			}
 
-			const isLocalizableUrlString = LOCALIZABLE_URLS.some( ( url ) =>
-				new RegExp( `^(https?:)?//${ url.replace( '.', '\\.' ) }`, 'i' ).test( node.value.raw )
-			);
-
-			// Url template string is assigned to a variable and variable is later used in a localizeUrl call;
-			const isVariableDeclarationValue = templateLiteralNode.parent.type === 'VariableDeclarator';
-
-			if ( isLocalizableUrlString && isVariableDeclarationValue ) {
-				variableDeclarationValues.push( templateLiteralNode );
+			if ( ! isLocalizableUrlString( node.value.raw ) ) {
+				return;
 			}
 
-			if ( isLocalizableUrlString && ! isVariableDeclarationValue ) {
+			// Url template string is assigned to a variable and variable is later used in a localizeUrl call;
+			if ( isVariableDeclarationValue( templateLiteralNode.parent.type ) ) {
+				variableDeclarationValues.push( templateLiteralNode );
+			} else {
+				// Report unlocalized url.
 				context.report( {
 					node: templateLiteralNode,
 					message: rule.ERROR_MESSAGE,
