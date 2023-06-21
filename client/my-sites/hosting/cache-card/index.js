@@ -18,26 +18,55 @@ import { useClearEdgeCacheMutation } from './use-clear-edge-cache';
 import { useEdgeCacheQuery } from './use-edge-cache';
 import { useToggleEdgeCacheMutation } from './use-toggle-edge-cache';
 
+const Hr = styled.hr( {
+	marginBottom: '16px',
+	marginTop: '16px',
+	width: '100%',
+	color: '#e0e0e0',
+} );
+
+const EdgeCacheDescription = styled.p( {
+	fontSize: '16px',
+	marginBottom: '16px',
+} );
+
+const EdgeCacheNotice = styled.p( {
+	color: '#646970',
+	marginTop: '18px',
+} );
+
 const CardBody = styled.div( {
 	display: 'flex',
 	flexDirection: 'column',
 } );
 
 const ToggleContainer = styled.div( {
+	fontSize: '14px',
 	label: {
-		fontSize: '16px',
+		fontSize: '14px',
 	},
+} );
+
+const CacheToggle = styled( ToggleControl )( {
+	marginBottom: '0px !important',
+} );
+
+const ToggleLabel = styled.p( {
+	marginBottom: '9px',
+	fontWeight: 600,
+	fontSize: '14px',
 } );
 
 const EdgeCacheToggle = ( { onEdgeCacheToggle, checked, disabled } ) => {
 	const translate = useTranslate();
 	return (
 		<ToggleContainer>
-			<ToggleControl
+			<ToggleLabel>{ translate( 'Edge cache' ) }</ToggleLabel>
+			<CacheToggle
 				disabled={ disabled }
 				checked={ checked }
 				onChange={ onEdgeCacheToggle }
-				label={ translate( 'Edge Cache' ) }
+				label={ translate( 'Enable edge caching for faster content delivery' ) }
 			/>
 		</ToggleContainer>
 	);
@@ -101,16 +130,6 @@ export const CacheCard = ( {
 	const getClearCacheContent = () => {
 		return (
 			<div>
-				<p>
-					{ translate(
-						'Be careful, clearing the cache may make your site unresponsive while it is being rebuilt. {{a}}Learn more{{/a}}.',
-						{
-							components: {
-								a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
-							},
-						}
-					) }
-				</p>
 				<Button
 					primary
 					onClick={ clearCache }
@@ -125,6 +144,11 @@ export const CacheCard = ( {
 				>
 					<span>{ translate( 'Clear cache' ) }</span>
 				</Button>
+				<EdgeCacheNotice>
+					{ translate(
+						'Be careful, clearing the cache may make your site less responsive while it is being rebuilt.'
+					) }
+				</EdgeCacheNotice>
 				{ shouldRateLimitCacheClear && (
 					<p className="form-setting-explanation">
 						{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
@@ -137,9 +161,18 @@ export const CacheCard = ( {
 	return (
 		<Card className="cache-card">
 			<MaterialIcon icon="autorenew" size={ 32 } />
-			<CardHeading id="cache">{ translate( 'Cache' ) }</CardHeading>
+			<CardHeading id="cache" size={ 20 }>
+				{ translate( 'Cache' ) }
+			</CardHeading>
 			{ showEdgeCache ? (
 				<CardBody>
+					<EdgeCacheDescription>
+						{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
+							components: {
+								a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
+							},
+						} ) }
+					</EdgeCacheDescription>
 					<EdgeCacheToggle
 						onEdgeCacheToggle={ ( active ) => {
 							toggleEdgeCache( active );
@@ -148,6 +181,7 @@ export const CacheCard = ( {
 						checked={ isEdgeCacheActive }
 						disabled={ clearEdgeCacheLoading }
 					/>
+					<Hr />
 					{ getClearCacheContent() }
 				</CardBody>
 			) : (
