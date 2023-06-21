@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
-import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import '../style.scss';
 
 function unescape( str ) {
@@ -24,7 +23,7 @@ const getSiteFromItem = ( item ) => {
 	};
 };
 
-const ReaderDiscoverSidebar = ( { items } ) => {
+const ReaderPopularSitesSidebar = ( { items, followSource } ) => {
 	const translate = useTranslate();
 
 	const sites = items
@@ -41,7 +40,7 @@ const ReaderDiscoverSidebar = ( { items } ) => {
 			showLastUpdatedDate={ false }
 			showNotificationSettings={ false }
 			showFollowedOnDate={ false }
-			followSource={ READER_SEARCH_POPULAR_SITES }
+			followSource={ followSource }
 		/>
 	) );
 
@@ -57,4 +56,4 @@ const ReaderDiscoverSidebar = ( { items } ) => {
 	);
 };
 
-export default ReaderDiscoverSidebar;
+export default ReaderPopularSitesSidebar;
