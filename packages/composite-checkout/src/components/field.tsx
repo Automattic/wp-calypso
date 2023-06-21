@@ -151,6 +151,7 @@ interface FieldProps {
 	errorMessage?: string;
 	autoComplete?: string;
 	disabled?: boolean;
+	children?: React.ReactNode;
 }
 
 const FieldIcon = styled.div`
@@ -214,7 +215,7 @@ function RenderedIcon( {
 	if ( iconAction ) {
 		return (
 			<ButtonIcon>
-				<Button onClick={ iconAction }>{ icon as React.ReactChildren }</Button>
+				<Button onClick={ iconAction }>{ icon }</Button>
 			</ButtonIcon>
 		);
 	}

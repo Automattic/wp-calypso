@@ -14,6 +14,7 @@ const SiteOffsetContext = createContext< contextType >( null );
 
 interface Props {
 	site: string;
+	children?: React.ReactNode;
 }
 
 const SiteOffsetProvider: FunctionComponent< Props > = ( { children, site } ) => {

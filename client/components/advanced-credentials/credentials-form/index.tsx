@@ -27,6 +27,7 @@ interface Props {
 	host: string;
 	role: string;
 	withHeader?: boolean;
+	children?: React.ReactNode;
 }
 
 const ServerCredentialsForm: FunctionComponent< Props > = ( {

@@ -13,6 +13,7 @@ export interface BadgeProps {
 		| 'info-purple'
 		| 'error';
 	className?: string;
+	children?: React.ReactNode;
 }
 
 const Badge: React.FunctionComponent< BadgeProps > = ( props ) => {

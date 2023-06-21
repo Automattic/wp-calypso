@@ -19,6 +19,7 @@ export type FormPhoneMediaInputProps = {
 	countriesList: CountryListItem[];
 	enableStickyCountry?: boolean;
 	inputRef?: MutableRefObject< HTMLInputElement | undefined >;
+	children?: React.ReactNode;
 };
 
 const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {

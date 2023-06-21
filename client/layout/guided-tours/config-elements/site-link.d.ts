@@ -5,6 +5,7 @@ interface SiteLinkProps {
 	isButton?: boolean;
 	isPrimaryButton?: boolean;
 	newWindow?: boolean;
+	children?: React.ReactNode;
 }
 
 declare class SiteLink extends Component< SiteLinkProps, any > {}

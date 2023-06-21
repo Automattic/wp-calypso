@@ -32,6 +32,7 @@ export default class InfoPopover extends Component {
 			'top left',
 		] ),
 		showOnHover: PropTypes.bool,
+		children: PropTypes.node,
 	};
 
 	static defaultProps = {

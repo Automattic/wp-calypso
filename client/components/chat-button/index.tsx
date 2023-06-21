@@ -18,6 +18,7 @@ type Props = {
 	onError?: () => void;
 	primary?: boolean;
 	siteUrl?: string;
+	children?: React.ReactNode;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();

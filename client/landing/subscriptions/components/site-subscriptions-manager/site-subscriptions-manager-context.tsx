@@ -15,7 +15,9 @@ const SiteSubscriptionsManagerContext = createContext<
 	SiteSubscriptionsManagerContextProps | undefined
 >( undefined );
 
-export const SiteSubscriptionsManagerProvider: React.FC = ( { children } ) => {
+export const SiteSubscriptionsManagerProvider: React.FC< { children: React.ReactNode } > = ( {
+	children,
+} ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const handleSearch = useCallback( ( term: string ) => {
 		setSearchTerm( term );

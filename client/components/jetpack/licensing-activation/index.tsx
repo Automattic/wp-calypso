@@ -21,6 +21,7 @@ interface Props {
 	showProgressIndicator?: boolean;
 	progressIndicatorValue?: number;
 	progressIndicatorTotal?: number;
+	children?: React.ReactNode;
 }
 
 const LicensingActivation: FC< Props > = ( {

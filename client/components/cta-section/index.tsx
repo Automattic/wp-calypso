@@ -50,6 +50,7 @@ interface Props {
 	buttonAction: () => void;
 	notice: ReactElement | null;
 	ctaRef?: React.RefObject< HTMLButtonElement >;
+	children?: React.ReactNode;
 }
 
 const CtaSection: React.FunctionComponent< Props > = ( props ) => {

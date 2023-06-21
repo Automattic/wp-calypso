@@ -6,14 +6,10 @@ import './style.scss';
 interface Props {
 	align?: 'center' | 'left' | 'right';
 	className?: string;
+	children: React.ReactNode;
 }
 
-const Progress: React.FunctionComponent< Props > = ( {
-	className,
-	align = 'center',
-	children,
-	...additionalProps
-} ) => {
+const Progress = ( { className, align = 'center', children, ...additionalProps }: Props ) => {
 	return (
 		<div
 			className={ classnames(

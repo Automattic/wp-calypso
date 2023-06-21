@@ -52,7 +52,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	);
 
 	const startImportCallback = useCallback(
-		( args ) => {
+		( args: StartImportTrackingProps ) => {
 			// reset migration confirmation to initial state
 			setMigrationConfirmed( false );
 			setShowConfirmModal( false );

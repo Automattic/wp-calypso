@@ -8,6 +8,7 @@ interface Props {
 	rewindId: string;
 	showActions: boolean;
 	siteSlug: string;
+	children?: React.ReactNode;
 }
 
 const ActivityCardActionBar: FunctionComponent< Props > = ( {

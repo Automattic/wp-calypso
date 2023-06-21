@@ -7,6 +7,7 @@ import './style.scss';
 interface Props {
 	animate?: boolean;
 	className?: string;
+	children: React.ReactNode;
 }
 
 const Hooray: React.FunctionComponent< Props > = ( {

@@ -7,10 +7,9 @@ interface TourKitContext {
 
 const TourKitContext = createContext< TourKitContext >( {} as TourKitContext );
 
-const TourKitContextProvider: React.FunctionComponent< TourKitContext > = ( {
-	config,
-	children,
-} ) => {
+const TourKitContextProvider: React.FunctionComponent<
+	TourKitContext & { children?: React.ReactNode }
+> = ( { config, children } ) => {
 	return <TourKitContext.Provider value={ { config } }>{ children }</TourKitContext.Provider>;
 };
 
