@@ -57,6 +57,10 @@ export function getEnhancedTasks(
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
+	const firstPostPublished = Boolean(
+		tasks?.find( ( task ) => task.id === 'first_post_published' )?.completed
+	);
+
 	const setupBlogCompleted =
 		Boolean( tasks?.find( ( task ) => task.id === 'setup_blog' )?.completed ) ||
 		! isStartWritingFlow( flow );
@@ -225,12 +229,11 @@ export function getEnhancedTasks(
 					taskData = {
 						disabled:
 							mustVerifyEmailBeforePosting ||
-							isStartWritingFlow( flow || null ) ||
-							( task.completed && isDesignFirstFlow( flow || null ) ) ||
+							( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
 							false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							const newPostUrl = ! isDesignFirstFlow( flow || null )
+							const newPostUrl = ! isBlogOnboardingFlow( flow || null )
 								? `/post/${ siteSlug }`
 								: addQueryArgs( `https://${ siteSlug }/wp-admin/post-new.php`, {
 										origin: window.location.origin,
@@ -332,8 +335,13 @@ export function getEnhancedTasks(
 				case 'blog_launched':
 					taskData = {
 						disabled:
-							isBlogOnboardingFlow( flow ) &&
-							( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ),
+							( isStartWritingFlow( flow ) &&
+								( ! firstPostPublished ||
+									! planCompleted ||
+									! domainUpsellCompleted ||
+									! setupBlogCompleted ) ) ||
+							( isDesignFirstFlow( flow ) &&
+								( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ) ),
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );

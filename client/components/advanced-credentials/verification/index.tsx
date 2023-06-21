@@ -76,7 +76,7 @@ const Verification: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 	const siteId = useSelector( getSelectedSiteId );
 	const updateError = useSelector( ( state ) => getJetpackCredentialsUpdateError( state, siteId ) );
 	const updateProgress = useSelector( ( state ) =>

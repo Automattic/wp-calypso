@@ -19,9 +19,9 @@ export default function PoweredByWPFooter( { clientTitle }: Props ) {
 		);
 	}
 
-	function renderPoweredByWPWithClientTitle() {
-		const wording = translate( '%(clientTitle)s is powered by <logo/> WordPress.com', {
-			args: { clientTitle },
+	function renderPoweredByWPWithClientTitle( title: string ) {
+		const wording = translate( '%(title)s is powered by <logo/> WordPress.com', {
+			args: { title },
 			comment:
 				"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Crowdsignal' or 'Gravatar')",
 		} ) as string;
@@ -34,7 +34,7 @@ export default function PoweredByWPFooter( { clientTitle }: Props ) {
 	return (
 		<footer className="powered-by-wp-footer">
 			<div className="powered-by-wp-footer__info">
-				{ clientTitle ? renderPoweredByWPWithClientTitle() : renderPoweredByWP() }
+				{ clientTitle ? renderPoweredByWPWithClientTitle( clientTitle ) : renderPoweredByWP() }
 			</div>
 		</footer>
 	);

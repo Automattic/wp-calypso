@@ -1,8 +1,8 @@
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormFieldAnnotation from 'calypso/my-sites/checkout/composite-checkout/components/form-field-annotation';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-import type { HTMLProps, ReactChild } from 'react';
+import type { HTMLProps } from 'react';
 
 export default function CountrySelectMenu( {
 	onChange,
@@ -15,7 +15,7 @@ export default function CountrySelectMenu( {
 	onChange: HTMLProps< HTMLSelectElement >[ 'onChange' ];
 	isDisabled?: boolean;
 	isError?: boolean;
-	errorMessage?: ReactChild;
+	errorMessage?: TranslateResult;
 	currentValue: HTMLProps< HTMLSelectElement >[ 'value' ];
 	countriesList: CountryListItem[];
 } ) {

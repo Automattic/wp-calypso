@@ -2,8 +2,8 @@ import { Button } from '@automattic/components';
 import { Modal } from '@wordpress/components';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
-import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback, useContext, useEffect, useState, useMemo } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useCallback, useContext, useEffect, useState, useMemo } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -59,7 +59,7 @@ export default function EmailAddressEditor( {
 		id: '',
 	} );
 	const [ resendCodeClicked, setResendCodeClicked ] = useState< boolean >( false );
-	const [ helpText, setHelpText ] = useState< ReactChild | undefined >( undefined );
+	const [ helpText, setHelpText ] = useState< TranslateResult | undefined >( undefined );
 
 	const { verifiedContacts } = useContext( DashboardDataContext );
 

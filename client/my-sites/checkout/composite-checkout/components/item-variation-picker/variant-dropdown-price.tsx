@@ -135,20 +135,19 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const productBillingTermInMonths = variant.productBillingTermInMonths;
 	const isIntroductoryOffer = introCount > 0;
 	const translate = useTranslate();
-	const billingTermInYears = () => {
-		if ( productBillingTermInMonths > 12 ) {
-			return productBillingTermInMonths / 12;
-		}
-		return null;
-	};
 
 	const translatedIntroOfferDetails = () => {
 		const args = {
 			formattedCurrentPrice,
 			formattedPriceBeforeDiscounts,
-			billingTermInYears: billingTermInYears(),
 			introCount,
 		};
+		// Add billing term in years for multi-year plans. (Only to be used when productBillingTermInMonths > 12)
+		const multiYearArgs = {
+			...args,
+			billingTermInYears: productBillingTermInMonths / 12,
+		};
+
 		//generic introductory offer to catch unexpected offer terms
 		if (
 			( introTerm !== 'month' && introTerm !== 'year' ) ||
@@ -178,11 +177,11 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				return introTerm === 'month'
 					? translate(
 							'%(formattedCurrentPrice)s first month then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
-							{ args }
+							{ args: multiYearArgs }
 					  )
 					: translate(
 							'%(formattedCurrentPrice)s first year then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
-							{ args }
+							{ args: multiYearArgs }
 					  );
 				// translation example: $1 first month then $2 per 2 years
 			} else if ( productBillingTermInMonths === 12 ) {
@@ -210,13 +209,13 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 					? preventWidows(
 							translate(
 								'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
-								{ args }
+								{ args: multiYearArgs }
 							)
 					  )
 					: preventWidows(
 							translate(
 								'%(formattedCurrentPrice)s for first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
-								{ args }
+								{ args: multiYearArgs }
 							)
 					  );
 				// translation example: $1 first 3 months then $2 per 2 years

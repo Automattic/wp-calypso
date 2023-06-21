@@ -82,7 +82,6 @@ class ReaderStream extends Component {
 		emptyContent: PropTypes.object,
 		className: PropTypes.string,
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
-		showPrimaryFollowButtonOnCards: PropTypes.bool,
 		placeholderFactory: PropTypes.func,
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
@@ -100,7 +99,6 @@ class ReaderStream extends Component {
 		onUpdatesShown: noop,
 		className: '',
 		showDefaultEmptyContentIfMissing: true,
-		showPrimaryFollowButtonOnCards: false,
 		isDiscoverStream: false,
 		isMain: true,
 		useCompactCards: false,
@@ -446,7 +444,6 @@ class ReaderStream extends Component {
 					suppressSiteNameLink={ this.props.suppressSiteNameLink }
 					showPostHeader={ this.props.showPostHeader }
 					showFollowInHeader={ this.props.showFollowInHeader }
-					showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
 					isDiscoverStream={ this.props.isDiscoverStream }
 					showSiteName={ this.props.showSiteNameOnCards }
 					selectedPostKey={ undefined }

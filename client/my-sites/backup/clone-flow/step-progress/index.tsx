@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactChild } from 'react';
 
 import './style.scss';
 
@@ -35,7 +34,7 @@ type StepKey = 'destination' | 'clonePoint' | 'configure';
 
 interface Step {
 	key: StepKey;
-	label: ReactChild | null;
+	label: string;
 }
 
 interface Props {

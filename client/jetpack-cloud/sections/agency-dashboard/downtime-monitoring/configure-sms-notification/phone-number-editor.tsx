@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { Modal } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState, useContext, useEffect, ReactChild, useMemo } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useCallback, useState, useContext, useEffect, useMemo } from 'react';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -54,7 +54,7 @@ export default function PhoneNumberEditor( {
 
 	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ?? [] );
 
-	const [ helpText, setHelpText ] = useState< ReactChild | undefined >( undefined );
+	const [ helpText, setHelpText ] = useState< TranslateResult | undefined >( undefined );
 	const [ showCodeVerification, setShowCodeVerification ] = useState< boolean >( false );
 	const [ validationStatus, setValidationStatus ] = useState< {
 		isValid: boolean;

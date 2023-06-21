@@ -93,8 +93,7 @@ export default function CampaignItemDetails( props: Props ) {
 		budget_left,
 		total_budget,
 		total_budget_used,
-		visits_total = 0,
-		visits_organic,
+		views_organic,
 	} = campaign_stats || {};
 
 	const { card_name, payment_method, subtotal, credits, total } = billing_data || {};
@@ -166,9 +165,10 @@ export default function CampaignItemDetails( props: Props ) {
 		},
 		{
 			label: translate( 'Organic' ),
-			value: visits_organic || 0,
+			value: views_organic || 0,
 		},
 	];
+	const databarTotal = databars.reduce( ( total, item ) => total + item.value, 0 );
 
 	const cancelCampaignButtonText =
 		status === 'active' ? __( 'Stop campaign' ) : __( 'Cancel campaign' );
@@ -428,7 +428,7 @@ export default function CampaignItemDetails( props: Props ) {
 															<HorizontalBarListItem
 																key={ `bar_${ index }` }
 																data={ item }
-																maxValue={ visits_total }
+																maxValue={ databarTotal }
 																hasIndicator={ false }
 																leftSideItem={ null }
 																useShortLabel={ false }

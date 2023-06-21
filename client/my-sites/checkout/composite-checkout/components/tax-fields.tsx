@@ -22,7 +22,7 @@ import type {
 	ManagedContactDetails,
 	ManagedValue,
 } from '@automattic/wpcom-checkout';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, ReactElement } from 'react';
 
 const GridRow = styled.div`
 	display: -ms-grid;
@@ -69,7 +69,7 @@ export default function TaxFields( {
 			: {};
 	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
 
-	const fields: JSX.Element[] = [
+	const fields: ReactElement[] = [
 		<CountrySelectMenu
 			onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
 				onChange(
