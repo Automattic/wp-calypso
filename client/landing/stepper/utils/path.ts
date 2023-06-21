@@ -44,23 +44,28 @@ export function useLangRouteParam() {
 	return match?.params.lang;
 }
 
-export const useLoginUrl = ( {
-	flowName,
-	redirectTo,
-	pageTitle,
-}: {
-	flowName: string;
-	redirectTo: string;
-	pageTitle: string;
+export const useLoginUrl = ( params: {
+	flowName?: string;
+	redirectTo?: string;
+	pageTitle?: string;
 } ): string => {
 	const locale = useLocale();
 
 	const loginPath =
 		locale && locale !== 'en' ? `/start/account/user/${ locale }` : `/start/account/user`;
 
-	return addQueryArgs( loginPath, {
-		redirect_to: redirectTo,
-		variationName: flowName,
-		pageTitle: pageTitle,
-	} );
+	const nonEmptyQueryParameters = Object.entries( params )
+		.filter( ( [ , value ] ) => value )
+		.map( ( [ key, value ] ) => {
+			switch ( key ) {
+				case 'redirectTo':
+					return [ 'redirect_to', value ];
+				case 'flowName':
+					return [ 'variationName', value ];
+				default:
+					return [ key, value ];
+			}
+		} );
+
+	return addQueryArgs( loginPath, Object.fromEntries( nonEmptyQueryParameters ) );
 };
