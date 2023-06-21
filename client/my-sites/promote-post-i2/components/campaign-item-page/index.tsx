@@ -33,20 +33,20 @@ export default function CampaignItemPage( props: Props ) {
 
 	if ( isError ) {
 		return (
-			<Notice status="is-error" icon="mention" showDismiss={ false }>
-				{ noCampaignListMessage }
-			</Notice>
+			<MainWrapper>
+				<Notice status="is-error" icon="mention" showDismiss={ false }>
+					{ noCampaignListMessage }
+				</Notice>
+			</MainWrapper>
 		);
 	}
 
-	if ( ! campaign || campaignsIsLoading ) {
-		return <CampaignItemDetails isLoading={ true } />;
-	}
+	const isLoading = ! campaign || campaignsIsLoading;
 
 	return (
 		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising - Campaign details' ) } />
-			<CampaignItemDetails siteId={ +siteId } campaign={ campaign } />
+			<CampaignItemDetails isLoading={ isLoading } siteId={ +siteId } campaign={ campaign } />
 		</MainWrapper>
 	);
 }
