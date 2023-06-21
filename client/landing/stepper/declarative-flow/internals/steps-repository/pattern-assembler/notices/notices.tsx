@@ -1,7 +1,7 @@
 import { NoticeList, SnackbarList } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import i18n from 'i18n-calypso';
-import { ComponentType, ReactNode, ReactChild, useMemo, useState, useCallback } from 'react';
+import { ComponentType, ReactNode, ReactChild, useState } from 'react';
 import type { Pattern } from '../types';
 import './notices.scss';
 
@@ -27,62 +27,57 @@ const withNotices = createHigherOrderComponent(
 		return ( props: OuterProps & NoticesProps ) => {
 			const [ noticeList, setNoticeList ] = useState< Notice[] >( [] );
 
-			const removeNotice = useCallback(
-				( id: string ) => {
-					setNoticeList( ( current ) => current.filter( ( notice ) => notice.id !== id ) );
+			const removeNotice = ( id: string ) => {
+				setNoticeList( ( current ) => current.filter( ( notice ) => notice.id !== id ) );
+			};
+
+			const createNotice = ( id: string, content: ReactChild ) => {
+				const existingNoticeWithSameId = noticeList.find( ( notice ) => notice.id === id );
+				if ( existingNoticeWithSameId?.timer ) {
+					clearTimeout( existingNoticeWithSameId.timer );
+					delete existingNoticeWithSameId.timer;
+				}
+
+				const newNotice = {
+					id,
+					content,
+					timer: setTimeout( () => {
+						removeNotice( id );
+					}, NOTICE_TIMEOUT ),
+				};
+
+				setNoticeList( ( current ) => [
+					...current.filter( ( notice ) => notice.id !== id ),
+					newNotice,
+				] );
+			};
+
+			const noticeOperations: NoticeOperationsProps = {
+				showPatternInsertedNotice: ( pattern: Pattern ) => {
+					createNotice(
+						'pattern-inserted',
+						i18n.translate( 'Block pattern "%(patternName)s" inserted.', {
+							args: { patternName: pattern.title },
+						} )
+					);
 				},
-				[ setNoticeList ]
-			);
-
-			const noticeOperations: NoticeOperationsProps = useMemo( () => {
-				const createNotice = ( id: string, content: ReactChild ) => {
-					const existingNoticeWithSameId = noticeList.find( ( notice ) => notice.id === id );
-					if ( existingNoticeWithSameId?.timer ) {
-						clearTimeout( existingNoticeWithSameId.timer );
-						delete existingNoticeWithSameId.timer;
-					}
-
-					const newNotice = {
-						id,
-						content,
-						timer: setTimeout( () => {
-							removeNotice( id );
-						}, NOTICE_TIMEOUT ),
-					};
-
-					setNoticeList( ( current ) => [
-						...current.filter( ( notice ) => notice.id !== id ),
-						newNotice,
-					] );
-				};
-
-				return {
-					showPatternInsertedNotice: ( pattern: Pattern ) => {
-						createNotice(
-							'pattern-inserted',
-							i18n.translate( 'Block pattern "%(patternName)s" inserted.', {
-								args: { patternName: pattern.title },
-							} )
-						);
-					},
-					showPatternReplacedNotice: ( pattern: Pattern ) => {
-						createNotice(
-							'pattern-replaced',
-							i18n.translate( 'Block pattern "%(patternName)s" replaced.', {
-								args: { patternName: pattern.title },
-							} )
-						);
-					},
-					showPatternRemovedNotice: ( pattern: Pattern ) => {
-						createNotice(
-							'pattern-removed',
-							i18n.translate( 'Block pattern "%(patternName)s" removed.', {
-								args: { patternName: pattern.title },
-							} )
-						);
-					},
-				};
-			}, [ noticeList, removeNotice ] );
+				showPatternReplacedNotice: ( pattern: Pattern ) => {
+					createNotice(
+						'pattern-replaced',
+						i18n.translate( 'Block pattern "%(patternName)s" replaced.', {
+							args: { patternName: pattern.title },
+						} )
+					);
+				},
+				showPatternRemovedNotice: ( pattern: Pattern ) => {
+					createNotice(
+						'pattern-removed',
+						i18n.translate( 'Block pattern "%(patternName)s" removed.', {
+							args: { patternName: pattern.title },
+						} )
+					);
+				},
+			};
 
 			const noticeUI = <SnackbarList notices={ noticeList } onRemove={ removeNotice } />;
 
