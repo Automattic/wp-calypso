@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
@@ -14,6 +15,8 @@ import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import ReaderListFollowingItem from './item';
 import '../style.scss';
+
+const isSubscriptionManagerEnabled = config.isEnabled( 'reader/subscription-management' );
 
 export class ReaderListFollowedSites extends Component {
 	constructor( props ) {
@@ -95,7 +98,10 @@ export class ReaderListFollowedSites extends Component {
 		return (
 			<>
 				<h2>
-					{ translate( 'Following' ) } <a href="/following/manage">{ translate( 'Manage' ) }</a>
+					{ isSubscriptionManagerEnabled ? translate( 'Subscriptions' ) : translate( 'Following' ) }{ ' ' }
+					<a href={ isSubscriptionManagerEnabled ? '/read/subscriptions' : '/following/manage' }>
+						{ translate( 'Manage' ) }
+					</a>
 				</h2>
 				{ sites.length >= searchThreshold && (
 					<FollowingManageSearchFollowed onSearch={ this.searchEvent } initialValue={ query } />
@@ -106,7 +112,6 @@ export class ReaderListFollowedSites extends Component {
 						<li className="reader-sidebar-more">
 							<Button
 								plain
-								// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 								className="sidebar-streams__following-load-more"
 								onClick={ this.loadMoreSites }
 							>
