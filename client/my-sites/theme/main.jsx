@@ -90,6 +90,7 @@ import {
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
+	isFullSiteEditingTheme as getIsFullSiteEditingTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -102,7 +103,11 @@ import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
 
-const LivePreviewButton = ( { siteSlug, themeId, themeType } ) => {
+const LivePreviewButton = ( { siteSlug, themeId, themeType, isFullSiteEditingTheme } ) => {
+	if ( ! isFullSiteEditingTheme ) {
+		return null;
+	}
+
 	let themePath = '';
 	switch ( themeType ) {
 		case 'free':
@@ -628,6 +633,7 @@ class ThemeSheet extends Component {
 			themeId,
 			siteSlug,
 			themeType,
+			isFullSiteEditingTheme,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -652,6 +658,7 @@ class ThemeSheet extends Component {
 								siteSlug={ siteSlug }
 								themeId={ themeId }
 								themeType={ themeType }
+								isFullSiteEditingTheme={ isFullSiteEditingTheme }
 							></LivePreviewButton>
 						) }
 						{ shouldRenderButton &&
@@ -1536,6 +1543,9 @@ export default connect(
 		const themeType = config.isEnabled( 'themes/block-theme-previews-poc' )
 			? getThemeType( state, themeId )
 			: undefined;
+		const isFullSiteEditingTheme = config.isEnabled( 'themes/block-theme-previews-poc' )
+			? getIsFullSiteEditingTheme( state, themeId )
+			: undefined;
 
 		return {
 			...theme,
@@ -1553,6 +1563,7 @@ export default connect(
 			productionSiteSlug,
 			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, themeId, siteId ),
+			isFullSiteEditingTheme,
 			isJetpack,
 			isAtomic,
 			isStandaloneJetpack,
