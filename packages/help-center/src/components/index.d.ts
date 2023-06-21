@@ -104,7 +104,7 @@ declare module 'calypso/state/current-user/selectors' {
 	export const getCurrentUserId: ( state: unknown ) => string;
 }
 
-declare module 'calypso/state/inline-help/selectors/get-admin-help-results' {
+declare module 'calypso/state/selectors/get-admin-help-results' {
 	const getAdminHelpResults: (
 		state: unknown,
 		searchQuery: string,
