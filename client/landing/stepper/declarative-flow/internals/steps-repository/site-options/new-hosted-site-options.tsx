@@ -63,7 +63,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 
 	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
 	const isFormSubmitDisabled = isSiteTitleEmpty;
-	const hasChangedInput = useRef( { geoAffinity: false } );
+	const hasChangedInput = useRef( { title: false, geoAffinity: false } );
 	const isSmallScreen = useMobileBreakpoint();
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
@@ -87,6 +87,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		setFormTouched( true );
 
 		if ( event.currentTarget.name === 'siteTitle' ) {
+			hasChangedInput.current.title = true;
 			return setSiteTitle( event.currentTarget.value );
 		}
 	};
@@ -130,6 +131,11 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 							} else {
 								setShouldOverrideSiteTitle( true );
 							}
+
+							recordTracksEvent( 'calypso_signup_site_options_fetch_suggestion_click', {
+								source: 'site_title',
+								has_changed_title: hasChangedInput.current.title,
+							} );
 						} }
 						aria-label={ translate( 'Generate a random site name' ) }
 					>
