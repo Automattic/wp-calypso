@@ -7,7 +7,7 @@ import {
 	Flow,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const Blog: Flow = {
 	name: 'blog',
@@ -23,28 +23,14 @@ const Blog: Flow = {
 		];
 	},
 
-	useStepNavigation( navigate ) {
-		const goBack = () => {
-			return;
-		};
-
-		const goNext = () => {
-			return;
-		};
-
-		const goToStep = ( step: string ) => {
-			navigate( step );
-		};
-
-		return { goNext, goBack, goToStep };
+	useStepNavigation() {
+		return {};
 	},
 
 	useAssertConditions(): AssertConditionResult {
 		const flowName = this.name;
 		const isLoggedIn = useSelector( isUserLoggedIn );
-		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const locale = useLocale();
-		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
 		const logInUrl =
 			locale && locale !== 'en'
@@ -58,13 +44,6 @@ const Blog: Flow = {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
-			};
-		} else if ( userAlreadyHasSites ) {
-			// This prevents a bunch of sites being created accidentally.
-			redirect( `/` );
-			result = {
-				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires no preexisting sites`,
 			};
 		}
 

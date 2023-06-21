@@ -23,8 +23,8 @@ function mutationValidateVerificationCode(
 export default function useValidateVerificationCodeMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIResponse, APIError, ValidateVerificationCodeParams, TContext >
 ): UseMutationResult< APIResponse, APIError, ValidateVerificationCodeParams, TContext > {
-	return useMutation< APIResponse, APIError, ValidateVerificationCodeParams, TContext >(
-		mutationValidateVerificationCode,
-		options
-	);
+	return useMutation< APIResponse, APIError, ValidateVerificationCodeParams, TContext >( {
+		...options,
+		mutationFn: mutationValidateVerificationCode,
+	} );
 }

@@ -7,6 +7,11 @@
 		display: flex;
 		align-items: center;
 
+		// Add gap for not open .section-nav on tablet and mobile.
+		@media ( max-width: $break-medium ) {
+			padding-right: 16px;
+		}
+
 		button {
 			height: 24px;
 			cursor: pointer;
@@ -52,6 +57,7 @@
 	// Modernize styles except for GoogleMyBusinessStats and StatsOverview pages
 	&.stats-navigation--modernized {
 		// For aligning the `.page-modules-settings` action button.
+		position: relative;
 		display: flex;
 		align-items: center;
 
@@ -78,6 +84,12 @@
 							line-height: 24px;
 
 						}
+					}
+
+					& ~ .page-modules-settings {
+						position: absolute;
+						top: 11px;
+						right: 0;
 					}
 				}
 			}

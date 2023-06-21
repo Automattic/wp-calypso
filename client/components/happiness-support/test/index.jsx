@@ -1,19 +1,11 @@
 /** @jest-environment jsdom */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-	CALYPSO_CONTACT,
-	JETPACK_CONTACT_SUPPORT,
-	JETPACK_SUPPORT,
-	SUPPORT_ROOT,
-} from 'calypso/lib/url/support';
+import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { HappinessSupport } from '..';
 
-jest.mock( 'calypso/components/happychat/connection-connected', () => () => (
-	<div data-testid="happychat-connection" />
-) );
-jest.mock( 'calypso/components/happychat/button', () => ( { onClick, children } ) => (
-	<button data-testid="happychat-button" onClick={ onClick }>
+jest.mock( 'calypso/components/support-button', () => ( { onClick, children } ) => (
+	<button data-testid="support-button" onClick={ onClick }>
 		{ children }
 	</button>
 ) );
@@ -77,52 +69,24 @@ describe( 'HappinessSupport', () => {
 		expect( container.firstChild ).toHaveClass( 'is-placeholder' );
 	} );
 
-	test( 'should render a <HappychatConnection /> when showLiveChat prop is true', () => {
-		render(
-			<HappinessSupport translate={ translate } recordTracksEvent={ noop } showLiveChatButton />
-		);
-		expect( screen.getByTestId( 'happychat-connection' ) ).toBeVisible();
-	} );
-
 	describe( 'LiveChat button', () => {
 		const props = {
 			translate,
 			recordTracksEvent: noop,
 		};
 
-		test( 'should be rendered only when showLiveChatButton prop is true and LiveChat is available', () => {
-			const { rerender } = render(
-				<HappinessSupport { ...props } showLiveChatButton liveChatAvailable />
-			);
+		test( 'should be rendered only when not dealing with Jetpack site', () => {
+			const { rerender } = render( <HappinessSupport { ...props } /> );
 			// should be rendered here
-			expect( screen.getByTestId( 'happychat-button' ) ).toBeVisible();
+			expect( screen.getByTestId( 'support-button' ) ).toBeVisible();
 
-			// false cases
-			const queryHappychatButton = () => screen.queryByTestId( 'happychat-button' );
-			rerender( <HappinessSupport { ...props } /> );
-			expect( queryHappychatButton() ).not.toBeInTheDocument();
-
-			rerender( <HappinessSupport { ...props } showLiveChatButton /> );
-			expect( queryHappychatButton() ).not.toBeInTheDocument();
-
-			rerender( <HappinessSupport { ...props } showLiveChatButton={ false } /> );
-			expect( queryHappychatButton() ).not.toBeInTheDocument();
-
-			rerender( <HappinessSupport { ...props } showLiveChatButton liveChatAvailable={ false } /> );
-			expect( queryHappychatButton() ).not.toBeInTheDocument();
-
-			rerender( <HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable /> );
-			expect( queryHappychatButton() ).not.toBeInTheDocument();
-
-			rerender(
-				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ false } />
-			);
-			expect( queryHappychatButton() ).not.toBeInTheDocument();
+			rerender( <HappinessSupport { ...props } isJetpack={ false } /> );
+			expect( screen.getByTestId( 'support-button' ) ).toBeVisible();
 		} );
 
 		test( 'should render translated content', () => {
-			render( <HappinessSupport { ...props } showLiveChatButton liveChatAvailable /> );
-			expect( screen.getByTestId( 'happychat-button' ) ).toHaveTextContent(
+			render( <HappinessSupport { ...props } /> );
+			expect( screen.getByTestId( 'support-button' ) ).toHaveTextContent(
 				'Translated: Ask a question'
 			);
 		} );
@@ -135,14 +99,12 @@ describe( 'HappinessSupport', () => {
 				<HappinessSupport
 					translate={ translate }
 					recordTracksEvent={ recordTracksEvent }
-					showLiveChatButton
-					liveChatAvailable
-					liveChatButtonEventName="test:eventName"
+					contactButtonEventName="test:eventName"
 				/>
 			);
 
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
-			await user.click( screen.getByTestId( 'happychat-button' ) );
+			await user.click( screen.getByTestId( 'support-button' ) );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'test:eventName' );
 		} );
 
@@ -151,16 +113,11 @@ describe( 'HappinessSupport', () => {
 			const recordTracksEvent = jest.fn();
 
 			render(
-				<HappinessSupport
-					translate={ translate }
-					recordTracksEvent={ recordTracksEvent }
-					showLiveChatButton
-					liveChatAvailable
-				/>
+				<HappinessSupport translate={ translate } recordTracksEvent={ recordTracksEvent } />
 			);
 
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
-			await user.click( screen.getByTestId( 'happychat-button' ) );
+			await user.click( screen.getByTestId( 'support-button' ) );
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
 		} );
 	} );
@@ -172,41 +129,6 @@ describe( 'HappinessSupport', () => {
 		};
 		const linkName = 'Translated: Ask a question';
 		const getContactLink = () => screen.getByRole( 'link', { name: linkName } );
-
-		test( 'should be rendered unless LiveChat button shows up', () => {
-			// should not be displayed here
-			const { rerender } = render(
-				<HappinessSupport { ...props } showLiveChatButton liveChatAvailable />
-			);
-			expect( screen.queryByRole( 'link', { name: linkName } ) ).not.toBeInTheDocument();
-
-			// should be rendered in the following cases
-
-			rerender( <HappinessSupport { ...props } /> );
-			expect( getContactLink() ).toBeVisible();
-
-			rerender( <HappinessSupport { ...props } showLiveChatButton /> );
-			expect( getContactLink() ).toBeVisible();
-
-			rerender( <HappinessSupport { ...props } showLiveChatButton={ false } /> );
-			expect( getContactLink() ).toBeVisible();
-
-			rerender( <HappinessSupport { ...props } showLiveChatButton liveChatAvailable={ false } /> );
-			expect( getContactLink() ).toBeVisible();
-
-			rerender( <HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable /> );
-			expect( getContactLink() ).toBeVisible();
-
-			rerender(
-				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ false } />
-			);
-			expect( getContactLink() ).toBeVisible();
-		} );
-
-		test( 'should be rendered with link to CALYPSO_CONTACT if it is not for Jetpack', () => {
-			render( <HappinessSupport { ...props } /> );
-			expect( getContactLink() ).toHaveAttribute( 'href', CALYPSO_CONTACT );
-		} );
 
 		test( 'should be rendered with link to JETPACK_CONTACT_SUPPORT if it is for Jetpack', () => {
 			render( <HappinessSupport { ...props } isJetpack /> );

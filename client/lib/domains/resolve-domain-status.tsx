@@ -20,12 +20,11 @@ import { transferStatus, type as domainTypes, gdprConsentStatus } from './consta
 import type { ResponseDomain } from './types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
-import type { I18N } from 'i18n-calypso';
-import type { ReactChild } from 'react';
+import type { I18N, TranslateResult } from 'i18n-calypso';
 
-export type ResolveDomainStatusReturn =
+type ResolveDomainStatusReturn =
 	| {
-			statusText: ReactChild | Array< ReactChild >;
+			statusText: TranslateResult | TranslateResult[];
 			statusClass:
 				| 'status-error'
 				| 'status-warning'
@@ -33,10 +32,10 @@ export type ResolveDomainStatusReturn =
 				| 'status-success'
 				| 'status-neutral'
 				| 'status-premium';
-			status: ReactChild;
+			status: TranslateResult;
 			icon: 'info' | 'verifying' | 'check_circle' | 'cached' | 'cloud_upload' | 'download_done';
 			listStatusWeight?: number;
-			noticeText?: ReactChild | Array< ReactChild > | null;
+			noticeText?: TranslateResult | Array< TranslateResult > | null;
 	  }
 	| Record< string, never >;
 
@@ -347,7 +346,6 @@ export function resolveDomainStatus(
 						},
 						args: {
 							expiryDate: moment.utc( domain.expiry ).format( 'LL' ),
-							renewCta,
 						},
 					}
 				);

@@ -20,8 +20,8 @@ function mutationUpdateMonitorSettings( {
 export default function useUpdateMonitorSettingsMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIResponse, APIError, UpdateMonitorSettingsArgs, TContext >
 ): UseMutationResult< APIResponse, APIError, UpdateMonitorSettingsArgs, TContext > {
-	return useMutation< APIResponse, APIError, UpdateMonitorSettingsArgs, TContext >(
-		mutationUpdateMonitorSettings,
-		options
-	);
+	return useMutation< APIResponse, APIError, UpdateMonitorSettingsArgs, TContext >( {
+		...options,
+		mutationFn: mutationUpdateMonitorSettings,
+	} );
 }

@@ -1,14 +1,12 @@
 import { FunctionComponent } from 'react';
 import { ItemVariationDropDown } from './item-variation-dropdown';
-import { ItemVariationRadioButtons } from './item-variation-radio-buttons';
 import type { ItemVariationPickerProps } from './types';
 
-export const ItemVariationPicker: FunctionComponent<
-	ItemVariationPickerProps & { type: 'dropdown' | 'radio' }
-> = ( props ) => {
-	if ( props.type === 'radio' ) {
-		return <ItemVariationRadioButtons { ...props } />;
-	}
+/**
+ * A fascade component to allow using different types of variant pickers (eg:
+ * radio buttons vs. dropdown).
+ */
+export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > = ( props ) => {
 	return <ItemVariationDropDown { ...props } />;
 };
 

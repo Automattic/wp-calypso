@@ -20,8 +20,8 @@ function mutationUnassignLicense( {
 export default function useUnassignLicenseMutation< TContext = unknown >(
 	options?: UseMutationOptions< APILicense, Error, MutationUnassignLicenseVariables, TContext >
 ): UseMutationResult< APILicense, Error, MutationUnassignLicenseVariables, TContext > {
-	return useMutation< APILicense, Error, MutationUnassignLicenseVariables, TContext >(
-		mutationUnassignLicense,
-		options
-	);
+	return useMutation< APILicense, Error, MutationUnassignLicenseVariables, TContext >( {
+		...options,
+		mutationFn: mutationUnassignLicense,
+	} );
 }

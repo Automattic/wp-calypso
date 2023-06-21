@@ -5,6 +5,17 @@ import runTask from './teamcity-task-runner.mjs';
 
 const globPromise = util.promisify( glob );
 
+// Promise.allSettled with some extra code to throw an error.
+async function completeTasks( promises ) {
+	const results = await Promise.allSettled( promises );
+	const exitCodes = results
+		.filter( ( { status } ) => status === 'rejected' )
+		.map( ( { reason } ) => reason );
+	if ( exitCodes.length ) {
+		throw exitCodes[ 0 ];
+	}
+}
+
 function withTscInfo( { cmd, id } ) {
 	return {
 		testId: id,
@@ -75,7 +86,7 @@ try {
 	const tscTasks = ( async () => {
 		// This task is a prerequisite for the other tsc tasks, so it must run separately.
 		await runTask( tscPackages );
-		await Promise.allSettled( tscCommands.map( runTask ) );
+		await completeTasks( tscCommands.map( runTask ) );
 	} )();
 
 	// Run these smaller tasks in serial to keep a healthy amount of CPU available for the other tasks.
@@ -86,8 +97,8 @@ try {
 		await runTask( testWorkspaces );
 	} )();
 
-	await Promise.allSettled( [ testClientTask, tscTasks, otherTestTasks ] );
+	await completeTasks( [ testClientTask, tscTasks, otherTestTasks ] );
 } catch ( exitCode ) {
-	console.log( `A task failed with exit code ${ exitCode }` );
+	console.error( 'One or more tasks failed.' );
 	process.exit( exitCode );
 }

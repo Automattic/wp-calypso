@@ -35,7 +35,6 @@ object WPComPlugins : Project({
 	buildType(BlazeDashboard)
 	buildType(O2Blocks)
 	buildType(HappyBlocks)
-	buildType(Happychat)
 	buildType(GutenbergUploadSourceMapsToSentry);
 
 	cleanup {
@@ -180,15 +179,6 @@ private object WpcomBlockEditor : WPComPluginBuild(
 	docsLink = "PCYsg-l4k-p2",
 )
 
-private object Happychat : WPComPluginBuild(
-	buildId = "WPComPlugins_Happychat",
-	buildName = "Happychat",
-	pluginSlug = "happychat",
-	archiveDir = "./dist/",
-	docsLink = "TODO",
-	withPRNotify = "false",
-)
-
 private object Notifications : WPComPluginBuild(
 	buildId = "WPComPlugins_Notifications",
 	buildName = "Notifications",
@@ -233,15 +223,6 @@ private object OdysseyStats : WPComPluginBuild(
 	withPRNotify = "false",
 	docsLink = "PejTkB-3N-p2",
 	buildSteps = {
-		bashNodeScript {
-			name = "Translate Odyssey Stats"
-			scriptContent = """
-				cd apps/odyssey-stats
-
-				# generate language files
-				yarn translate
-			"""
-		}
 		bashNodeScript {
 			name = "Run Unit Tests"
 			scriptContent = """
@@ -330,7 +311,7 @@ private object HappyBlocks : WPComPluginBuild(
 private object GutenbergUploadSourceMapsToSentry: BuildType() {
 	init {
 		name = "Upload Source Maps";
-		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-comment by a WPCOM post-deploy job.";
+		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-commit by a WPCOM post-deploy job.";
 
 		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
 

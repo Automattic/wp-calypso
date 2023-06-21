@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
@@ -9,6 +8,7 @@ import { APIProductFamilyProduct } from '../../../../state/partner-portal/types'
 import { useProductDescription } from '../hooks';
 import LicenseLightbox from '../license-lightbox';
 import LicenseLightboxLink from '../license-lightbox-link';
+import ProductPriceWithDiscount from '../primary/product-price-with-discount-info';
 import { getProductTitle } from '../utils';
 
 import './style.scss';
@@ -124,13 +124,7 @@ export default function LicenseProductCard( props: Props ) {
 						</div>
 
 						<div className="license-product-card__pricing">
-							<div className="license-product-card__price">
-								{ formatCurrency( product.amount, product.currency ) }
-							</div>
-							<div className="license-product-card__price-interval">
-								{ product.price_interval === 'day' && translate( '/USD per license per day' ) }
-								{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
-							</div>
+							<ProductPriceWithDiscount product={ product } />
 						</div>
 					</div>
 				</div>

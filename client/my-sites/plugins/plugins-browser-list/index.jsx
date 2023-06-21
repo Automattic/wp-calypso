@@ -110,6 +110,15 @@ const PluginsBrowserList = ( {
 					messagePath="calypso:plugins:spotlight"
 				/>
 			) }
+			{ listType === 'search' && (
+				<AsyncLoad
+					require="calypso/blocks/jitm"
+					template="spotlight"
+					placeholder={ null }
+					messagePath="calypso:plugins:search"
+					searchQuery={ search }
+				/>
+			) }
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
 		</div>
 	);

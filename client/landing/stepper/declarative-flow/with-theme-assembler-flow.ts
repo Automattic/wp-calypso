@@ -3,6 +3,7 @@ import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
 import { useFlowProgress, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
@@ -22,6 +23,9 @@ const withThemeAssemblerFlow: Flow = {
 	useSideEffect() {
 		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = useQuery().get( 'theme' );
+
+		// We have to query theme for the Jetpack site.
+		useQueryTheme( 'wpcom', selectedTheme );
 
 		useEffect( () => {
 			if ( selectedTheme === BLANK_CANVAS_DESIGN.slug ) {
@@ -85,7 +89,15 @@ const withThemeAssemblerFlow: Flow = {
 			}
 		};
 
-		return { submit };
+		const goBack = () => {
+			switch ( _currentStep ) {
+				case 'patternAssembler': {
+					return window.location.assign( `/themes/${ siteSlug }` );
+				}
+			}
+		};
+
+		return { submit, goBack };
 	},
 };
 

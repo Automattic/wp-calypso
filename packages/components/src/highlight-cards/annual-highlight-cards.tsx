@@ -29,7 +29,7 @@ export default function AnnualHighlightCards( {
 
 	const header = (
 		<h3 className="highlight-cards-heading">
-			{ Number.isFinite( year )
+			{ year != null && Number.isFinite( year )
 				? translate( '%(year)s in review', { args: { year } } )
 				: translate( 'Year in review' ) }{ ' ' }
 			{ titleHref ? (

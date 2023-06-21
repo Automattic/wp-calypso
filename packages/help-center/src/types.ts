@@ -41,7 +41,7 @@ export interface FeatureFlags {
 
 export interface SearchResult {
 	link: string;
-	title: string | React.ReactChild;
+	title: string;
 	content?: string;
 	icon?: string;
 	post_id?: number;

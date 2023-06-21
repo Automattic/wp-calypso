@@ -1,5 +1,6 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 %ellipsis {
 	overflow: hidden;
@@ -21,7 +22,7 @@
 		margin: 0 0 16px 0;
 	}
 
-	&__list {
+	&__horizontal-list {
 		margin: 0;
 	}
 
@@ -41,7 +42,7 @@
 			}
 		}
 
-		&__close-button {
+		&__dismiss-button {
 			color: $studio-gray-60;
 			padding: 0;
 			min-height: unset;
@@ -87,6 +88,25 @@
 			border-radius: 4px;
 			padding-left: 24px;
 			padding-right: 24px;
+		}
+
+		&__dismiss-button.is-placeholder,
+		&__site-title.is-placeholder,
+		&__site-url.is-placeholder,
+		&__site-description.is-placeholder,
+		&__subscribe-button.is-placeholder {
+			@include placeholder();
+		}
+	}
+
+	.dot-pager {
+		&__controls {
+			padding: 0 4px;
+		}
+
+		.recommended-site {
+			width: auto;
+			margin: 1px 1px 32px 1px;
 		}
 	}
 }

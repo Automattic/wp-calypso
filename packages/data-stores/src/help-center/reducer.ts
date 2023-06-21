@@ -87,15 +87,6 @@ const message: Reducer< string | undefined, HelpCenterAction > = ( state, action
 	return state;
 };
 
-const chatTag: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
-	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
-		return undefined;
-	} else if ( action.type === 'HELP_CENTER_SET_CHAT_TAG' ) {
-		return action.chatTag;
-	}
-	return state;
-};
-
 const userDeclaredSiteUrl: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
 		return undefined;
@@ -117,18 +108,6 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
-const iframe: Reducer< HTMLIFrameElement | undefined | null, HelpCenterAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'HELP_CENTER_SET_IFRAME' ) {
-		return action.iframe;
-	} else if ( action.type === 'HELP_CENTER_RESET_IFRAME' ) {
-		return undefined;
-	}
-	return state;
-};
-
 const initialRoute: Reducer< InitialEntry | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_INITIAL_ROUTE' ) {
 		return action.route;
@@ -143,13 +122,11 @@ const reducer = combineReducers( {
 	site,
 	subject,
 	message,
-	chatTag,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
 	hasSeenWhatsNewModal,
 	isMinimized,
 	unreadCount,
-	iframe,
 	initialRoute,
 } );
 

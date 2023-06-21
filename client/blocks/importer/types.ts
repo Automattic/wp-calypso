@@ -12,11 +12,13 @@ export type StepNavigator = {
 	goToIntentPage?: () => void;
 	goToImportCapturePage?: () => void;
 	goToSiteViewPage?: () => void;
+	goToDashboardPage?: () => void;
 	goToCheckoutPage?: () => void;
 	goToWpAdminImportPage?: () => void;
 	goToWpAdminWordPressPluginPage?: () => void;
 	navigate?: ( path: string ) => void;
 	goToAddDomainPage?: () => void;
+	goToSitePickerPage?: () => void;
 };
 
 export interface ImportError {

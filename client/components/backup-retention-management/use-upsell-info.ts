@@ -17,7 +17,7 @@ import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { SelectorProductWithStorage } from 'calypso/components/backup-storage-space/usage-warning/use-upsell-slug';
-
+import type { TranslateResult } from 'i18n-calypso';
 /**
  * This hook is inspired in `calypso/components/backup-storage-space/usage-warning/use-upsell-slug`.
  * The main difference is that this hook returns the best storage addon according to the space needed
@@ -36,7 +36,7 @@ export default (
 	const additionalBytesNeeded = currentSize * retentionDays - storageLimitBytes;
 
 	const upsellSlug = useMemo( () => {
-		const ADD_ON_STORAGE_MAP: Record< string, React.ReactChild > = {
+		const ADD_ON_STORAGE_MAP: Record< string, TranslateResult > = {
 			[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: TEN_GIGABYTES,
 			[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: HUNDRED_GIGABYTES,
 			[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: ONE_TERABYTES,

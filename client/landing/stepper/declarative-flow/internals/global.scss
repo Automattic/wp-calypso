@@ -64,6 +64,7 @@ button {
 /**
  * Site Setup
  */
+.import-hosted-site,
 .site-setup,
 .import-focused,
 .plugin-bundle,
@@ -331,15 +332,6 @@ button {
 
 	.gridicon {
 		fill: currentColor;
-	}
-}
-
-
-@media ( max-width: 660px ) {
-	body.is-section-stepper .wpcom-site {
-		.inline-help {
-			bottom: 74px;
-		}
 	}
 }
 

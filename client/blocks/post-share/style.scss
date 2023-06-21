@@ -177,6 +177,10 @@ $section-border: solid 1px var(--color-neutral-5);
 		width: 22px;
 	}
 
+	&.is-round::before {
+		border-radius: 50%;
+	}
+
 	.google_plus & {
 		top: 11px;
 
@@ -184,6 +188,12 @@ $section-border: solid 1px var(--color-neutral-5);
 			border-radius: 50%;
 			height: 24px;
 			width: 24px;
+		}
+	}
+
+	.instagram-business & {
+		&::before {
+			border-radius: 30%;
 		}
 	}
 }
@@ -242,6 +252,10 @@ $section-border: solid 1px var(--color-neutral-5);
 
 	.social-logo.tumblr {
 		color: var(--color-tumblr);
+	}
+
+	.social-logo.instagram {
+		color: var(--color-instagram);
 	}
 
 	.social-logo.eventbrite {

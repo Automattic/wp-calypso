@@ -25,6 +25,7 @@ const incompatiblePlugins = new Set( [
 	'post-type-switcher',
 	'reset-wp',
 	'secure-file-manager',
+	'ultimate-reset',
 	'ultimate-wp-reset',
 	'username-changer',
 	'username-updater',
@@ -49,20 +50,23 @@ const incompatiblePlugins = new Set( [
 	'backup-wd',
 	'backupwordpress',
 	'backwpup',
+	'jetpack-backup',
 	'wp-db-backup',
 
 	// caching
 	'cache-enabler',
 	'comet-cache',
 	'hyper-cache',
-	'powered-cache',
 	'jch-optimize',
+	'performance-lab',
+	'powered-cache',
 	'quick-cache',
 	'redis-cache',
 	'sg-cachepress',
 	'w3-total-cache',
 	'wp-cache',
 	'wp-fastest-cache',
+	'wp-optimizer',
 	'wp-speed-of-light',
 	'wp-super-cache',
 
@@ -93,10 +97,10 @@ const incompatiblePlugins = new Set( [
 	// security
 	'antihacker',
 	'deactivate-xml-rpc-service',
-	'disable-xml-rpc',
 	'disable-xml-rpc-api',
 	'disable-xml-rpc-fully',
 	'disable-xml-rpc-unset-x-pingback',
+	'disable-xml-rpc',
 	'manage-xml-rpc',
 	'sg-security',
 	'simple-xml-rpc-disabler',
@@ -104,6 +108,7 @@ const incompatiblePlugins = new Set( [
 	'wee-remove-xmlrpc-methods',
 	'wordfence',
 	'wp-hide-security-enhancer',
+	'wp-security-hardening',
 	'wp-simple-firewall',
 
 	// spam
@@ -112,6 +117,7 @@ const incompatiblePlugins = new Set( [
 	'send-email-from-admin',
 
 	// cloning/staging
+	'flo-launch',
 	'wp-staging',
 
 	// misc
@@ -119,21 +125,25 @@ const incompatiblePlugins = new Set( [
 	'adult-mass-videos-embedder',
 	'ari-adminer',
 	'automatic-video-posts',
+	'blogmatic-poster',
+	'blogmatic',
 	'bwp-minify',
 	'clearfy',
 	'cornerstone',
 	'cryptocurrency-pricing-list',
+	'db-access-adminer',
 	'event-espresso-decaf',
 	'facetwp-manipulator',
 	'fast-velocity-minify',
 	'nginx-helper',
 	'p3',
+	'pexlechris-adminer',
 	'plugin-detective',
 	'porn-embed',
 	'propellerads-official',
 	'really-simple-ssl',
-	'robo-gallery',
 	'speed-contact-bar',
+	'trafficzion',
 	'tubeace',
 	'unplug-jetpack',
 	'video-importer',
@@ -143,9 +153,14 @@ const incompatiblePlugins = new Set( [
 	'wp-monero-miner-pro',
 	'wp-monero-miner-using-coin-hive',
 	'wp-optimize-by-xtraffic',
+	'wpcom-migration',
 	'wpematico',
+	'wpstagecoach',
 	'yuzo-related-post',
 	'zapp-proxy-server',
+
+	// crm
+	'civicrm',
 ] );
 
 export function isCompatiblePlugin( pluginSlug ) {

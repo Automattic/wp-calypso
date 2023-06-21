@@ -1,3 +1,4 @@
+import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
@@ -8,16 +9,16 @@ import type { AddOnMeta } from '../hooks/use-add-ons';
 
 export interface Props {
 	actionPrimary?: {
-		text: string | React.ReactChild;
+		text: string;
 		handler: ( productSlug: string, quantity?: number ) => void;
 	};
 	actionSecondary?: {
-		text: string | React.ReactChild;
+		text: string;
 		handler: ( productSlug: string ) => void;
 	};
 	useAddOnAvailabilityStatus?: ( addOnMeta: AddOnMeta ) => {
 		available: boolean;
-		text?: string | React.ReactChild;
+		text?: string;
 	};
 	highlightFeatured: boolean;
 	addOnMeta: AddOnMeta;
@@ -104,6 +105,17 @@ const AddOnCard = ( {
 		actionSecondary?.handler( addOnMeta.productSlug );
 	};
 
+	// if product is space upgrade choose the action based on the purchased status
+	const shouldRenderPrimaryAction =
+		addOnMeta.productSlug === PRODUCT_1GB_SPACE
+			? ! addOnMeta.purchased
+			: availabilityStatus?.available;
+
+	const shouldRenderSecondaryAction =
+		addOnMeta.productSlug === PRODUCT_1GB_SPACE
+			? addOnMeta.purchased
+			: ! availabilityStatus?.available;
+
 	return (
 		<Container>
 			<Card className="add-ons-card">
@@ -125,7 +137,7 @@ const AddOnCard = ( {
 				</CardHeader>
 				<CardBody className="add-ons-card__body">{ addOnMeta.description }</CardBody>
 				<CardFooter isBorderless={ true } className="add-ons-card__footer">
-					{ ! availabilityStatus?.available && (
+					{ shouldRenderSecondaryAction && (
 						<>
 							{ actionSecondary && (
 								<Button onClick={ onActionSecondary }>{ actionSecondary.text }</Button>
@@ -138,7 +150,7 @@ const AddOnCard = ( {
 							) }
 						</>
 					) }
-					{ availabilityStatus?.available && actionPrimary && (
+					{ shouldRenderPrimaryAction && actionPrimary && (
 						<Button onClick={ onActionPrimary } primary>
 							{ actionPrimary.text }
 						</Button>

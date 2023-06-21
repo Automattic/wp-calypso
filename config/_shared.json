@@ -10,7 +10,6 @@
 	"discover_feed_id": 41325786,
 	"daily_post_blog_id": 489937,
 	"discover_logged_out_redirect_url": false,
-	"happychat_pling_noise_path": "/calypso/audio/chat-pling.wav",
 	"facebook_api_key": false,
 	"features": {},
 	"google_analytics_key": false,
@@ -223,7 +222,8 @@
 		"pro",
 		"starter",
 		"domain",
-		"onboarding-2023-pricing-grid"
+		"onboarding-2023-pricing-grid",
+		"domain-transfer"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

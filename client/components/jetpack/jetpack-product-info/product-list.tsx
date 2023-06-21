@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
-import { ProductDescription } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { ProductDescription } from './types';
 
 type JetpackProductInfoProductListProps = {
 	products: ReadonlyArray< string >;

@@ -48,7 +48,7 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 									count: extraPageCount,
 									args: {
 										extraPageCount,
-										costOfExtraPages,
+										costOfExtraPages: costOfExtraPages as string,
 									},
 								}
 							) }

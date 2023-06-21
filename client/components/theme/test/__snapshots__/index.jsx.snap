@@ -38,13 +38,9 @@ exports[`Theme rendering with default display buttonContents should match snapsh
           Twenty Seventeen
         </span>
       </h2>
-      <div
-        class="theme-card__info-pricing"
-      >
-        <span>
-          Free
-        </span>
-      </div>
+      <components--theme-type-badge
+        themeid="twentyseventeen"
+      />
       <div
         class="theme-card__info-options"
       >

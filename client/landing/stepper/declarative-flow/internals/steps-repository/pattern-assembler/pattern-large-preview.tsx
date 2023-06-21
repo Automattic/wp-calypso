@@ -50,7 +50,7 @@ const PatternLargePreview = ( {
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
-	const [ device, setDevice ] = useState< string >( 'desktop' );
+	const [ device, setDevice ] = useState< string >( 'computer' );
 	const [ blockGap ] = useStyle( 'spacing.blockGap' );
 	const [ backgroundColor ] = useStyle( 'color.background' );
 	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
@@ -135,10 +135,12 @@ const PatternLargePreview = ( {
 		);
 	};
 
-	const updateViewportHeight = () => {
-		setViewportHeight( frameRef.current?.clientHeight );
+	const updateViewportHeight = ( height?: number ) => {
+		// Required for 100vh patterns
+		setViewportHeight( height );
 	};
 
+	// Scroll to newly added patterns
 	useEffect( () => {
 		let timerId: number;
 		const scrollIntoView = () => {
@@ -169,13 +171,6 @@ const PatternLargePreview = ( {
 		};
 	}, [ activePosition, header, sections, footer ] );
 
-	useEffect( () => {
-		const handleResize = () => updateViewportHeight();
-		window.addEventListener( 'resize', handleResize );
-
-		return () => window.removeEventListener( 'resize', handleResize );
-	} );
-
 	// Delay updating the styles to make the transition smooth
 	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
 	useEffect( () => {
@@ -190,15 +185,14 @@ const PatternLargePreview = ( {
 			className="pattern-large-preview"
 			isShowDeviceSwitcherToolbar
 			isShowFrameBorder
+			isShowFrameShadow={ false }
+			isFixedViewport={ !! hasSelectedPattern }
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
-				// Wait for the animation to end in 200ms
-				window.setTimeout( () => {
-					setDevice( device );
-					updateViewportHeight();
-				}, 205 );
+				setDevice( device );
 			} }
+			onViewportChange={ updateViewportHeight }
 		>
 			{ hasSelectedPattern ? (
 				<ul

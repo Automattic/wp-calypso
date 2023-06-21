@@ -22,6 +22,7 @@ import PlansComparison, {
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
@@ -151,7 +152,6 @@ export class PlansStep extends Component {
 				{ errorDisplay }
 				<PlansFeaturesMain
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					showFAQ={ this.state.isDesktop }
 					hideFreePlan={ hideFreePlan }
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					isInSignup={ true }
@@ -268,6 +268,17 @@ export class PlansStep extends Component {
 					step: 'transfer-or-connect',
 					initialQuery: previousStep?.siteUrl,
 				};
+
+				// During onboarding, if the user chooses to use their own domain, but that domain needs to have
+				// its ownership verified, they can skip the domain selection step and the `domainItem` dependency
+				// is not provided. In that case, the "Back" button in the plan selection step needs to go back to
+				// the initial domain seleciton step and no to the "transfer or connect" step.
+				if (
+					'onboarding' === flowName &&
+					undefined === previousStep?.providedDependencies?.domainItem
+				) {
+					backUrl = getStepUrl( 'onboarding', 'domains' );
+				}
 			}
 		}
 
