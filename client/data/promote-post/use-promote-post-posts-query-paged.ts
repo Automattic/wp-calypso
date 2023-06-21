@@ -7,7 +7,7 @@ type BlazablePostsQueryOptions = {
 	page?: number;
 };
 
-const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
+export const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 	let searchQueryParams = '';
 
 	if ( searchOptions.search ) {
