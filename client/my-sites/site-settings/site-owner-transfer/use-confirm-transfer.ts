@@ -8,7 +8,7 @@ import wpcom from 'calypso/lib/wp';
  */
 export function useConfirmTransfer(
 	{ siteId }: { siteId: number },
-	queryOptions: UseMutationOptions = {}
+	queryOptions: UseMutationOptions< unknown, unknown, string > = {}
 ) {
 	const mutation = useMutation( {
 		mutationFn: ( confirmationHash ) =>
@@ -26,7 +26,7 @@ export function useConfirmTransfer(
 	 * Mutation to confirm the transfer of a site to another user given a confirmation hash.
 	 */
 	const confirmTransfer = useCallback(
-		( confirmationHash ) => {
+		( confirmationHash: string ) => {
 			mutate( confirmationHash );
 		},
 		[ mutate ]

@@ -59,7 +59,7 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
 	const handleClick = useCallback(
-		( event ) => {
+		( event: React.SyntheticEvent ) => {
 			if ( isMinimized && event.target === event.currentTarget ) {
 				onMaximize?.();
 			}

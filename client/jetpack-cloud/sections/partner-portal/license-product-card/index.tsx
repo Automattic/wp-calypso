@@ -18,7 +18,7 @@ interface Props {
 	product: APIProductFamilyProduct;
 	isSelected: boolean;
 	isDisabled?: boolean;
-	onSelectProduct: ( value: APIProductFamilyProduct | string ) => void | null;
+	onSelectProduct: ( value: APIProductFamilyProduct ) => void | null;
 	suggestedProduct?: string | null;
 	isMultiSelect?: boolean;
 }

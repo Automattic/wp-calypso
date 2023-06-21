@@ -33,7 +33,7 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 	const [ showThreatDialog, setShowThreatDialog ] = useState( false );
 
 	const openDialog = useCallback(
-		( threat ) => {
+		( threat: Threat ) => {
 			dispatch( trackOpenThreatDialog( siteId ?? 0, threat.signature ) );
 			setSelectedThreat( threat );
 			setShowThreatDialog( true );
