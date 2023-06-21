@@ -32,7 +32,7 @@ export const useGetSiteSuggestionsQuery = ( {
 		refetchOnWindowFocus,
 		enabled,
 		onSuccess,
-		queryKey: [],
+		queryKey: [ 'site-suggestions' ],
 		meta: {
 			persist: false,
 		},
