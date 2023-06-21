@@ -1,4 +1,7 @@
-import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import {
+	FEATURE_INSTALL_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES,
+} from '@automattic/calypso-products';
 import { compact, property, snakeCase } from 'lodash';
 import { default as pageRouter } from 'page';
 import PropTypes from 'prop-types';
@@ -315,6 +318,7 @@ export const ConnectedThemesSelection = connect(
 			siteId,
 			WPCOM_FEATURES_PREMIUM_THEMES
 		);
+		const canInstallThemes = siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
@@ -345,8 +349,11 @@ export const ConnectedThemesSelection = connect(
 		const shouldFetchWpOrgThemes =
 			forceWpOrgSearch &&
 			sourceSiteId !== 'wporg' &&
-			!! search && // Only fetch WP.org themes when searching a term.
-			! tier; // WP.org themes are not a good fit for any of the tiers.
+			// Only fetch WP.org themes when searching a term.
+			!! search &&
+			// WP.org themes are not a good fit for any of the tiers,
+			// unless the site can install themes, then they can be searched in the 'free' tier.
+			( ! tier || ( tier === 'free' && canInstallThemes ) );
 		const wpOrgQuery = {
 			...query,
 			// We limit the WP.org themes to one page only.
