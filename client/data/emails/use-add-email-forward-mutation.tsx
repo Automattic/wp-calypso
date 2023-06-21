@@ -167,7 +167,7 @@ export default function useAddEmailForwardMutation(
 				{
 					args: {
 						emailAddress: variables.mailbox,
-						message: error,
+						message: error as string,
 					},
 					components: noticeComponents,
 				}

@@ -10,6 +10,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { EmptyListView } from './components/empty-list-view';
 import { GrowYourAudience } from './components/grow-your-audience';
 import { SubscriberList } from './components/subscriber-list';
+import { SubscribersHeaderPopover } from './components/subscribers-header-popover';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
 import { usePagination, useUnsubscribeModal } from './hooks';
 import { useSubscribersQuery } from './queries';
@@ -66,7 +67,9 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	return (
 		<Main wideLayout className="subscribers">
 			<DocumentHead title={ translate( 'Subscribers' ) } />
-			<FixedNavigationHeader navigationItems={ navigationItems }></FixedNavigationHeader>
+			<FixedNavigationHeader navigationItems={ navigationItems }>
+				<SubscribersHeaderPopover siteId={ selectedSiteId } />
+			</FixedNavigationHeader>
 
 			<section className="subscribers__section">
 				{ total ? (
@@ -87,7 +90,7 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 
 				<Pagination
 					className="subscribers__pagination"
-					page={ page }
+					page={ pageNumber }
 					perPage={ per_page }
 					total={ total }
 					pageClick={ pageClickCallback }

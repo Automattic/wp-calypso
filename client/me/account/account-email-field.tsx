@@ -88,7 +88,7 @@ const AccountEmailValidationNotice = ( {
 					settingName: 'user_email',
 					unsavedUserSettings,
 					userSettings,
-				} ),
+				} ) as string,
 			},
 		} );
 	}
@@ -119,7 +119,7 @@ const AccountEmailPendingEmailChangeNotice = ( {
 		settingName: 'new_user_email',
 		unsavedUserSettings,
 		userSettings,
-	} );
+	} ) as string;
 
 	const hasCustomDomainRegistration = domainsList.some( ( domain ) => {
 		return domainTypes.REGISTERED === domain.type;

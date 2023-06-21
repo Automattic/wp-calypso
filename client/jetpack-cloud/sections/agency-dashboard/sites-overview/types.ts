@@ -1,12 +1,10 @@
-import type { ReactChild } from 'react';
-
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
 	key: AllowedTypes;
-	title: ReactChild;
+	title: string;
 	className?: string;
 	isExpandable?: boolean;
 	isSortable?: boolean;
@@ -102,26 +100,26 @@ export interface BoostNode {
 export interface BackupNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 }
 
 export interface ScanNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 	threats: number;
 }
 
 interface PluginNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 	updates: number;
 }
 export interface MonitorNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 	error?: boolean;
 	settings?: MonitorSettings;
 }
@@ -140,12 +138,12 @@ export interface SiteData {
 
 export interface RowMetaData {
 	row: {
-		value: Site | SiteStats | BoostData | ReactChild;
+		value: Site | SiteStats | BoostData | string;
 		status: AllowedStatusTypes;
 	};
 	link: string;
 	isExternalLink: boolean;
-	tooltip: ReactChild | undefined;
+	tooltip?: string;
 	tooltipId: string;
 	siteDown?: boolean;
 	eventName: string | undefined;
@@ -163,7 +161,7 @@ export type StatusEventNames = {
 };
 
 export type StatusTooltip = {
-	[ key in AllowedStatusTypes ]?: ReactChild;
+	[ key in AllowedStatusTypes ]?: string;
 };
 
 export type AllowedActionTypes =
