@@ -99,7 +99,6 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
 					intent="plugins"
-					isInMarketplace
 					isReskinned
 				/>
 			</div>

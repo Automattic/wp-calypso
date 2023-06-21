@@ -101,7 +101,6 @@ export class PlansStep extends Component {
 			selectedSite,
 			intent,
 			flowName,
-			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 			eligibleForProPlan,
 		} = this.props;
@@ -164,8 +163,6 @@ export class PlansStep extends Component {
 					plansWithScroll={ this.state.isDesktop }
 					intent={ intent }
 					flowName={ flowName }
-					isAllPaidPlansShown={ true }
-					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					isReskinned={ isReskinned }
 					hidePremiumPlan={ this.props.hidePremiumPlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }

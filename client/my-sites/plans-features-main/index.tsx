@@ -43,14 +43,13 @@ import type { Intent } from './hooks/use-plan-types-with-intent';
 import type { IntervalType } from './types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import type { Site } from 'calypso/my-sites/scan/types';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
 
 interface PlansFeaturesMainProps {
 	plansWithScroll?: boolean;
-	site?: Site;
+	site?: { ID: number } | null; // Only need ID. There are different "site" types in the codebase
 	intent?: Intent | null;
 	customerType?: string;
 	basePlansPath?: string;
@@ -76,18 +75,18 @@ interface PlansFeaturesMainProps {
 	isStepperUpgradeFlow?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
-	isReskinned: boolean;
+	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	visiblePlans: string[];
 	plans: string[];
+	customerType: string;
 	siteId?: number;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	sitePlanSlug?: string | null;
 	siteSlug?: string | null;
-	customerType: string;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -129,7 +128,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		intervalType,
 		planTypeSelectorProps,
 		hidePlansFeatureComparison,
-		replacePaidDomainWithFreeDomain,
 		sitePlanSlug,
 		siteSlug,
 		intent,
@@ -182,7 +180,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isReskinned,
 		intervalType,
 		hidePlansFeatureComparison,
-		replacePaidDomainWithFreeDomain,
 		currentSitePlanSlug: sitePlanSlug,
 		planActionOverrides,
 		intent,
@@ -432,7 +429,6 @@ const PlansFeaturesMain = ( {
 						intervalType={ intervalType }
 						planTypeSelectorProps={ planTypeSelectorProps }
 						hidePlansFeatureComparison={ hidePlansFeatureComparison }
-						replacePaidDomainWithFreeDomain={ replacePaidDomainWithFreeDomain }
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
 						intent={ visiblePlanTypes.intent }
