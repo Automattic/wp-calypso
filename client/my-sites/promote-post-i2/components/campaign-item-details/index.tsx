@@ -452,7 +452,7 @@ export default function CampaignItemDetails( props: Props ) {
 															</div>
 														</ul>
 													) : (
-														<div>{ __( `Stats are disabled for this site` ) }</div>
+														<div>{ translate( 'Stats are disabled for this site' ) }</div>
 													) }
 												</>
 											) : (
