@@ -10,7 +10,7 @@ import { sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import { BEFORE_SUBMIT } from './constants';
 import { formatDate } from './util';
@@ -102,9 +102,9 @@ function PaymentMethodStep( {
 	siteSlug: string;
 } ) {
 	const translate = useTranslate();
-	const clickHandler = useCallback( ( event ) => {
+	const clickHandler = useCallback( ( event: React.MouseEvent ) => {
 		event.preventDefault();
-		page( event.target.href );
+		page( ( event.target as HTMLAnchorElement ).href );
 	}, [] );
 	// translators: %s will be replaced with the last 4 digits of a credit card.
 	const maskedCard = sprintf( translate( '**** %s' ), card?.card_last_4 || '' );

@@ -208,7 +208,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	);
 
 	const onSetBackupPeriod = useCallback(
-		( period ) => {
+		( period: string ) => {
 			// Grab the selected backup period / rewindId and set it
 			setBackupPeriod( period );
 			setUserHasSetBackupPeriod( true );

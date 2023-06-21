@@ -23,7 +23,7 @@ const JetpackCloudMasterBar: React.FC = () => {
 	const isExteriorPage = /^\/(?:backup|scan)\/[^/]*$/.test( currentRoute );
 
 	const handleLogoClick = React.useCallback(
-		( e ) => {
+		( e: React.MouseEvent< HTMLAnchorElement > ) => {
 			if ( isNarrow && 'sidebar' === currentLayoutFocus ) {
 				e.preventDefault();
 				dispatch( setLayoutFocus( 'content' ) );

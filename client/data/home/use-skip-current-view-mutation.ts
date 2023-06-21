@@ -55,7 +55,7 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 	);
 
 	const skipCard = useCallback(
-		( card, reminder?: ReminderDuration ) => mutate( { reminder: reminder ?? null, card } ),
+		( card: string, reminder?: ReminderDuration ) => mutate( { reminder: reminder ?? null, card } ),
 		[ mutate ]
 	);
 

@@ -82,7 +82,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 		useMigrateProvisionMutation( handleUpdateCredentials );
 
 	const submitCredentials = useCallback(
-		( e ) => {
+		( e: React.SyntheticEvent ) => {
 			const _confirmCallback = () => {
 				setShowConfirmModal( false );
 				setMigrationConfirmed( true );

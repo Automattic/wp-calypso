@@ -14,7 +14,7 @@ const useTrackCallback = (
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 	const trackedCallback = useCallback(
-		( ...rest ) => {
+		( ...rest: unknown[] ) => {
 			dispatch(
 				recordTracksEvent( eventName, {
 					site_id: siteId,

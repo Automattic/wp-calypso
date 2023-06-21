@@ -12,7 +12,8 @@ export default function TransactionStatusHandler( {
 }: {
 	redirectToUrl?: ( url: string ) => void;
 } ): null {
-	const defaultRedirect = useCallback( ( url ) => ( window.location = url ), [] );
+	// @ts-expect-error window.location can accept a string, but the types don't like it.
+	const defaultRedirect = useCallback( ( url: string ) => ( window.location = url ), [] );
 	useTransactionStatusHandler( redirectToUrl || defaultRedirect );
 	return null;
 }

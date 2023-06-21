@@ -325,7 +325,7 @@ type PlanComparisonGridHeaderProps = {
 	isLaunchPage?: boolean;
 	isFooter?: boolean;
 	flowName: string;
-	onPlanChange: ( currentPlan: string, event: ChangeEvent ) => void;
+	onPlanChange: ( currentPlan: string, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
@@ -418,7 +418,9 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 			<PlanSelector>
 				{ showPlanSelect && (
 					<select
-						onChange={ ( event: ChangeEvent ) => onPlanChange( planName, event ) }
+						onChange={ ( event: ChangeEvent< HTMLSelectElement > ) =>
+							onPlanChange( planName, event )
+						}
 						className="plan-comparison-grid__title-select"
 						value={ planName }
 					>
@@ -923,7 +925,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	}, [ planProperties ] );
 
 	const onPlanChange = useCallback(
-		( currentPlan, event ) => {
+		( currentPlan: string, event: ChangeEvent< HTMLSelectElement > ) => {
 			const newPlan = event.currentTarget.value;
 
 			const newVisiblePlans = visiblePlans.map( ( plan ) =>

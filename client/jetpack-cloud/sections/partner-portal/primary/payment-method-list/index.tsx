@@ -48,7 +48,7 @@ export default function PaymentMethodList() {
 	const hasMore = useSelector( hasMoreStoredCards );
 	const [ paging, setPaging ] = useState( { startingAfter: '', endingBefore: '' } );
 	const onPageClickCallback = useCallback(
-		( page, direction ) => {
+		( page: number, direction: 'next' | 'prev' ) => {
 			// Set a cursor for use in pagination.
 			setPaging( preparePagingCursor( direction, storedCards, page === 1 ) );
 		},

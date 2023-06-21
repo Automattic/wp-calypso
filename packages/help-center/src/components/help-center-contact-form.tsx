@@ -37,6 +37,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import { useChatStatus, useContactFormTitle, useChatWidget, useZendeskMessaging } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
+import { SearchResult } from '../types';
 import { BackButton } from './back-button';
 import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
@@ -194,7 +195,7 @@ export const HelpCenterContactForm = () => {
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
 
 	const redirectToArticle = useCallback(
-		( event, result ) => {
+		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
 			event.preventDefault();
 
 			// if result.post_id isn't set then open in a new window
@@ -204,31 +205,26 @@ export const HelpCenterContactForm = () => {
 					force_site_id: true,
 					location: 'help-center',
 					result_url: result.link,
-					post_id: result.postId,
-					blog_id: result.blogId,
+					post_id: result.post_id,
+					blog_id: result.blog_id,
 				};
 				recordTracksEvent( `calypso_inlinehelp_article_no_postid_redirect`, tracksData );
 				window.open( result.link, '_blank' );
 				return;
 			}
 
-			const searchResult = {
-				...result,
-				title: preventWidows( decodeEntities( result.title ) ),
-				query: debouncedMessage,
-			};
 			const params = new URLSearchParams( {
 				link: result.link,
-				postId: result.post_id,
+				postId: String( result.post_id ),
 				query: debouncedMessage || '',
 				title: preventWidows( decodeEntities( result.title ) ),
 			} );
 
 			if ( result.blog_id ) {
-				params.set( 'blogId', result.blog_id );
+				params.set( 'blogId', String( result.blog_id ) );
 			}
 
-			navigate( `/post/?${ params }`, searchResult );
+			navigate( `/post/?${ params }` );
 		},
 		[ navigate, debouncedMessage ]
 	);

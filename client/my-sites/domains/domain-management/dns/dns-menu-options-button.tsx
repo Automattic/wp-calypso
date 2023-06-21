@@ -161,7 +161,7 @@ function DnsMenuOptionsButton( {
 	};
 
 	const showEmailRestoreDialog = useCallback(
-		( providerKey ) => setEmailRestoreDialogVisibility( { [ providerKey ]: true } ),
+		( providerKey: string ) => setEmailRestoreDialogVisibility( { [ providerKey ]: true } ),
 		[]
 	);
 

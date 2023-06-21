@@ -48,7 +48,7 @@ export const useAddStagingSiteMutation = (
 	// TODO: Remove that when react-query v5 is out. They seem to have added isPending variable for this.
 	const isLoading = useIsMutating( { mutationKey: [ ADD_STAGING_SITE_MUTATION_KEY, siteId ] } ) > 0;
 
-	const addStagingSite = useCallback( ( args ) => mutate( args ), [ mutate ] );
+	const addStagingSite = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
 	return { addStagingSite, isLoading };
 };

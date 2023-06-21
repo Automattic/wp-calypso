@@ -8,7 +8,7 @@ export const useArrowNavigation = (
 	onOpen: () => void
 ) => {
 	const handleTrapFocus = useCallback(
-		( event ) => {
+		( event: KeyboardEvent ) => {
 			const focusableElements = (
 				element ? focus.focusable.find( element ) : []
 			) as HTMLButtonElement[];

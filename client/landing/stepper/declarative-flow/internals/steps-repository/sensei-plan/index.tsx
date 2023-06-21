@@ -22,7 +22,7 @@ import { useFeatures, Status } from './constants';
 import { useCreateSenseiSite } from './create-sensei-site';
 import { useBusinessPlanPricing, useSenseiProPricing } from './sensei-plan-products';
 import type { Step } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
+import type { NewSiteBlogDetails, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
 
@@ -52,8 +52,8 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const { createAndConfigureSite, progress } = useCreateSenseiSite();
 
 	const createCheckoutCart = useCallback(
-		async ( site ) => {
-			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( site?.site_slug );
+		async ( site?: NewSiteBlogDetails ) => {
+			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( site?.site_slug ?? '' );
 
 			const productsToAdd: MinimalRequestCartProduct[] = [
 				{

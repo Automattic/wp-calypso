@@ -56,9 +56,13 @@ import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
+import { OnChangeItemVariant } from './item-variation-picker';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type {
+	CheckoutPageErrorCallback,
+	PaymentEventCallbackArguments,
+} from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	CountryListItem,
@@ -151,7 +155,7 @@ export default function CheckoutMain( {
 	}, [ akismetSiteSlug, jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
-		( error ) => {
+		( error: string ) => {
 			debug( 'error', error );
 			const message = error && error.toString ? error.toString() : error;
 			reduxDispatch(
@@ -375,7 +379,7 @@ export default function CheckoutMain( {
 		checkoutFlow
 	);
 
-	const changePlanLength = useCallback(
+	const changePlanLength = useCallback< OnChangeItemVariant >(
 		( uuidToReplace, newProductSlug, newProductId ) => {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
@@ -622,7 +626,7 @@ export default function CheckoutMain( {
 	// PayPal. They will redirect directly to the post-checkout page decided by
 	// `getThankYouUrl`.
 	const handlePaymentComplete = useCallback(
-		( args ) => {
+		( args: PaymentEventCallbackArguments ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
 			reduxDispatch(

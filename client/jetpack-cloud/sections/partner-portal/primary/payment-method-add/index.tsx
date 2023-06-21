@@ -118,7 +118,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	);
 
 	const showSuccessMessage = useCallback(
-		( message ) => {
+		( message: TranslateResult ) => {
 			reduxDispatch(
 				successNotice( message, { isPersistent: true, displayOnNextPage: true, duration: 5000 } )
 			);

@@ -16,7 +16,7 @@ export const useCancelCampaignMutation = ( onError: () => void ) => {
 
 	const { mutate } = mutation;
 	const cancelCampaign = useCallback(
-		( siteId, campaignId ) => mutate( { siteId, campaignId } ),
+		( siteId: number, campaignId: number ) => mutate( { siteId, campaignId } ),
 		[ mutate ]
 	);
 

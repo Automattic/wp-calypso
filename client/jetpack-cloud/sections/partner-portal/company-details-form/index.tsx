@@ -100,7 +100,7 @@ export default function CompanyDetailsForm( {
 	);
 
 	const handleSubmit = useCallback(
-		( e ) => {
+		( e: React.SyntheticEvent ) => {
 			e.preventDefault();
 
 			if ( ! showCountryFields || isLoading ) {

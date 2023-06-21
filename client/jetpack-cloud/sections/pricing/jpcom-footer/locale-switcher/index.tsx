@@ -45,7 +45,10 @@ const LocaleSwitcher: React.FC< Props > = ( { isVisible, onClose } ) => {
 					.replace( new RegExp( `^(/${ defaultLocale }/)` ), '/' )
 			: '/pricing';
 
-	const onMouseOver = useCallback( ( code ) => setSelectedLocale( code ), [ setSelectedLocale ] );
+	const onMouseOver = useCallback(
+		( code: string ) => setSelectedLocale( code ),
+		[ setSelectedLocale ]
+	);
 	const onMouseLeave = useCallback(
 		() => setSelectedLocale( defaultLocale ),
 		[ defaultLocale, setSelectedLocale ]

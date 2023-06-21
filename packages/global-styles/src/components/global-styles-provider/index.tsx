@@ -24,7 +24,7 @@ const useGlobalStylesUserConfig = () => {
 	} );
 
 	const setConfig = useCallback(
-		( callback ) => {
+		( callback: ( config: GlobalStylesObject ) => GlobalStylesObject ) => {
 			setUserConfig( ( currentConfig ) => {
 				const updatedConfig = callback( currentConfig );
 				return {
