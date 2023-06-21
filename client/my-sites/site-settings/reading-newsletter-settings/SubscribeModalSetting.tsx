@@ -8,7 +8,7 @@ import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-export const SUBSCRIBE_MODAL_OPTION = 'wpcom_subscribe_modal';
+export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
 const ToggleControl = OriginalToggleControl as React.ComponentType<
 	OriginalToggleControl.Props & {
@@ -29,7 +29,7 @@ export const SubscribeModalSetting = ( {
 }: SubscribeModalSettingProps ) => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
-	const siteEditorUrl = useSelector( ( state ) =>
+	const siteEditorUrl = useSelector( ( state: object ) =>
 		getSiteEditorUrl( state, selectedSite?.ID || null )
 	);
 	const themeSlug = useSelector( ( state ) =>
