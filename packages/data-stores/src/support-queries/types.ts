@@ -3,7 +3,7 @@ interface Availability {
 	precancellation: boolean;
 }
 
-export interface ChatAvailability {
+export interface HappyChatAvailability {
 	locale: string;
 	is_user_eligible: boolean;
 	supportLevel:

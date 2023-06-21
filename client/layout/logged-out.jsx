@@ -168,6 +168,7 @@ const LayoutLoggedOut = ( {
 			) }
 			<div id="content" className="layout__content">
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
+				{ isCheckout && <AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } /> }
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>

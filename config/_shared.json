@@ -10,6 +10,7 @@
 	"discover_feed_id": 41325786,
 	"daily_post_blog_id": 489937,
 	"discover_logged_out_redirect_url": false,
+	"happychat_pling_noise_path": "/calypso/audio/chat-pling.wav",
 	"facebook_api_key": false,
 	"features": {},
 	"google_analytics_key": false,

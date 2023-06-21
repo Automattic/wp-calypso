@@ -31,6 +31,4 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	page( '/me/chat', sidebar, helpController.contactRedirect, makeLayout, clientRender );
 }

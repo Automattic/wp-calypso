@@ -1002,6 +1002,20 @@ function handleCheckoutModal( calypsoPort ) {
 	};
 }
 
+function handleInlineHelpButton( calypsoPort ) {
+	addAction(
+		'a8c.wpcom-block-editor.toggleInlineHelpButton',
+		'a8c/wpcom-block-editor/toggleInlineHelpButton',
+		/** @type {({ hidden: boolean }) => void} */
+		( data ) => {
+			calypsoPort.postMessage( {
+				action: 'toggleInlineHelpButton',
+				payload: data,
+			} );
+		}
+	);
+}
+
 /**
  * Handles the back to Dashboard link after the removal of the previously-used Portal in Gutenberg 14.5
  *
@@ -1167,6 +1181,8 @@ function initPort( message ) {
 		handleEditorLoaded( calypsoPort );
 
 		handleCheckoutModal( calypsoPort );
+
+		handleInlineHelpButton( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
 

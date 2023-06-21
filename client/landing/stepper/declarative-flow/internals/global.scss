@@ -335,6 +335,15 @@ button {
 	}
 }
 
+
+@media ( max-width: 660px ) {
+	body.is-section-stepper .wpcom-site {
+		.inline-help {
+			bottom: 74px;
+		}
+	}
+}
+
 .wooexpress,
 .copy-site,
 .ecommerce {

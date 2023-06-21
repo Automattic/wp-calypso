@@ -37,6 +37,12 @@ const sections = [
 		group: 'me',
 	},
 	{
+		name: 'happychat',
+		paths: [ '/me/chat' ],
+		module: 'calypso/me/happychat',
+		group: 'me',
+	},
+	{
 		name: 'notification-settings',
 		paths: [ '/me/notifications' ],
 		module: 'calypso/me/notification-settings',
@@ -397,12 +403,6 @@ const sections = [
 		paths: [ '/help' ],
 		module: 'calypso/me/help',
 		enableLoggedOut: true,
-		group: 'me',
-	},
-	{
-		name: 'help',
-		paths: [ '/me/chat' ],
-		module: 'calypso/me/help',
 		group: 'me',
 	},
 	{

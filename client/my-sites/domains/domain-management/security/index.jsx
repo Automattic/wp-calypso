@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
 import MaterialIcon from 'calypso/components/material-icon';
-import SupportButton from 'calypso/components/support-button';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -19,6 +18,7 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import {
 	getByPurchaseId,
@@ -91,7 +91,9 @@ class Security extends Component {
 							'Due to some changes to your domain, we need to generate a new SSL certificate to activate your HTTPS encryption. This process should only take a couple hours at most. If you’re running into delays please let us know so we can help you out.'
 						) }
 					</p>
-					<SupportButton skipToContactOptions>{ translate( 'Contact support' ) }</SupportButton>
+					<Button onClick={ this.props.showInlineHelpPopover }>
+						{ translate( 'Contact support' ) }
+					</Button>
 				</Fragment>
 			);
 		}
@@ -212,6 +214,7 @@ export default connect(
 		};
 	},
 	{
+		showInlineHelpPopover,
 		recordTracksEvent,
 	}
 )( localize( Security ) );

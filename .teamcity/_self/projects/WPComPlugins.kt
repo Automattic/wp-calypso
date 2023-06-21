@@ -35,6 +35,7 @@ object WPComPlugins : Project({
 	buildType(BlazeDashboard)
 	buildType(O2Blocks)
 	buildType(HappyBlocks)
+	buildType(Happychat)
 	buildType(GutenbergUploadSourceMapsToSentry);
 
 	cleanup {
@@ -177,6 +178,15 @@ private object WpcomBlockEditor : WPComPluginBuild(
 	archiveDir = "./dist/",
 	buildEnv = "development",
 	docsLink = "PCYsg-l4k-p2",
+)
+
+private object Happychat : WPComPluginBuild(
+	buildId = "WPComPlugins_Happychat",
+	buildName = "Happychat",
+	pluginSlug = "happychat",
+	archiveDir = "./dist/",
+	docsLink = "TODO",
+	withPRNotify = "false",
 )
 
 private object Notifications : WPComPluginBuild(

@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { OtherSupportAvailability, ChatAvailability } from './types';
+import { OtherSupportAvailability, HappyChatAvailability } from './types';
 
 type ResponseType< T extends 'CHAT' | 'OTHER' > = T extends 'CHAT'
-	? ChatAvailability
+	? HappyChatAvailability
 	: OtherSupportAvailability;
 
 interface APIFetchOptions {

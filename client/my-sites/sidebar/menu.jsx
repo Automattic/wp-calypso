@@ -31,6 +31,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	selected,
 	sidebarCollapsed,
 	shouldOpenExternalLinksInCurrentTab,
+	canNavigate,
 	...props
 } ) => {
 	const reduxDispatch = useDispatch();
@@ -86,6 +87,11 @@ export const MySitesSidebarUnifiedMenu = ( {
 			return;
 		}
 
+		if ( ! canNavigate( link ) ) {
+			event?.preventDefault();
+			return;
+		}
+
 		trackClickEvent( link );
 		window.scrollTo( 0, 0 );
 		reduxDispatch( toggleSection( sectionId ) );
@@ -118,6 +124,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 							trackClickEvent={ trackClickEvent }
 							isSubItem={ true }
 							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+							canNavigate={ canNavigate }
 						/>
 					);
 				} ) }
@@ -136,6 +143,7 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	link: PropTypes.string,
 	sidebarCollapsed: PropTypes.bool,
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
+	canNavigate: PropTypes.func.isRequired,
 	/*
 	Example of children shape:
 	[

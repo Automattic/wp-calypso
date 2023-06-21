@@ -13,6 +13,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import 'calypso/state/purchases/init';
 
@@ -23,6 +24,7 @@ export const clearPurchases = () => ( dispatch, getState ) => {
 	const siteId = getSelectedSiteId( getState() );
 
 	dispatch( { type: PURCHASES_REMOVE } );
+	dispatch( requestHappychatEligibility() );
 	if ( siteId ) {
 		dispatch( requestAdminMenu( siteId ) );
 	}
@@ -89,6 +91,7 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch, getState ) =
 					userId,
 				} );
 
+				dispatch( requestHappychatEligibility() );
 				if ( siteId ) {
 					dispatch( requestAdminMenu( siteId ) );
 				}
