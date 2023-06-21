@@ -53,6 +53,7 @@ export {
 	PostSubscriptionsSortBy,
 	SiteSubscriptionsFilterBy,
 	SiteSubscriptionsSortBy,
+	SubscribersFilterBy,
 } from './constants';
 
 export { isErrorResponse } from './helpers';

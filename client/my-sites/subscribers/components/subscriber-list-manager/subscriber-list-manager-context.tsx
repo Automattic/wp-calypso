@@ -1,3 +1,4 @@
+import { Reader } from '@automattic/data-stores';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useDebounce } from 'use-debounce';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
@@ -21,6 +22,8 @@ type SubscriberListManagerContextProps = {
 	total: number;
 	grandTotal: number;
 	pageClickCallback: ( page: number ) => void;
+	filterOption: Reader.SubscribersFilterBy;
+	setFilterOption: ( option: Reader.SubscribersFilterBy ) => void;
 };
 
 const SubscriberListManagerContext = createContext< SubscriberListManagerContextProps | undefined >(
@@ -37,6 +40,7 @@ export const SubscribersListManagerProvider = ( {
 }: SubscriberListManagerProviderProps ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
+	const [ filterOption, setFilterOption ] = useState( Reader.SubscribersFilterBy.All );
 
 	const handleSearch = useCallback( ( term: string ) => {
 		setSearchTerm( term );
@@ -52,6 +56,7 @@ export const SubscribersListManagerProvider = ( {
 		perPage,
 		search: debouncedSearchTerm,
 		siteId,
+		filterOption,
 	} );
 
 	const { total, per_page, subscribers } = subscribersQueryResult.data || {
@@ -84,6 +89,8 @@ export const SubscribersListManagerProvider = ( {
 				setPerPage,
 				subscribers,
 				pageClickCallback,
+				filterOption,
+				setFilterOption,
 			} }
 		>
 			{ children }
