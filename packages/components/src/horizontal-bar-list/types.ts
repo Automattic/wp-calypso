@@ -12,7 +12,7 @@ export type HorizontalBarListItemProps = {
 	url?: string;
 	onClick?: ( e: React.MouseEvent | React.KeyboardEvent, data: StatDataObject ) => void;
 	hasIndicator?: boolean;
-	leftSideItem?: React.ReactNode | HTMLElement | undefined;
+	leftSideItem?: React.ReactNode | undefined;
 	renderLeftSideItem?: ( data: StatDataObject ) => React.ReactNode | undefined;
 	renderRightSideItem?: ( data: StatDataObject ) => React.ReactNode;
 	useShortLabel?: boolean;
