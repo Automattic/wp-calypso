@@ -122,7 +122,7 @@ const DiscoverStream = ( props ) => {
 				onClick={ scrollLeft }
 				tabIndex={ -1 }
 				aria-hidden={ true }
-				style={ scrollPosition.current === 0 && { display: 'none' } }
+				style={ scrollPosition.current === 0 ? { display: 'none' } : { display: 'block' } }
 			>
 				<Gridicon icon="chevron-left" />
 			</Button>
