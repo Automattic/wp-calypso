@@ -17,7 +17,7 @@ export type Intent =
 	| 'new-hosted-site'
 	| 'new-hosted-site-hosting-flow'
 	| 'plugins'
-	| 'jetpack-app' // newly added
+	| 'jetpack-app'
 	| 'import'
 	| 'default';
 
@@ -95,6 +95,12 @@ const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent => {
 					TYPE_BUSINESS, // this can match the currentSitePlanType. needs investigation.
 					TYPE_ECOMMERCE, // this can match the currentSitePlanType. needs investigation.
 				],
+			};
+		// The Jetpack mobile app only wants to display two plans -- personal and premium
+		case 'jetpack-app':
+			return {
+				intent,
+				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
 			};
 		default:
 			return {

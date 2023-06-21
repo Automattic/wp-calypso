@@ -230,7 +230,7 @@ const PlansFeaturesMain = ( {
 	hideBusinessPlan,
 	hideEcommercePlan,
 	hideEnterprisePlan,
-	intent: intentFromProps,
+	intent: intentFromProps, // do not set a default value for this prop here
 	isReskinned,
 	customerType = 'personal',
 	planTypeSelector = 'interval',
@@ -307,11 +307,14 @@ const PlansFeaturesMain = ( {
 		intervalType,
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
+
 	const intentFromSiteMeta = useIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
+	// plans from upsells takes precedence for setting intent, globally
 	const intent = planFromUpsells
 		? 'default'
 		: intentFromProps || intentFromSiteMeta.intent || 'default';
+
 	const defaultPlanTypes = usePlanTypesWithIntent( {
 		intent: 'default',
 		selectedPlan,
