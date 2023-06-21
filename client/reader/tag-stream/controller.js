@@ -40,7 +40,7 @@ export const tagListing = ( context, next ) => {
 	context.primary = (
 		<>
 			<DocumentHead
-				title={ translate( 'Articles About %s – Reader – WordPress.com', {
+				title={ translate( 'Articles About %s ‹ Reader', {
 					args: [ tagTitle ],
 					comment: 'page title for reader tag pages. %s is the name of the tag e.g. "art"',
 				} ) }

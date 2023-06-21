@@ -33,7 +33,7 @@ export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 	}
 	context.primary = (
 		<>
-			<DocumentHead title={ translate( 'Popular Tags and Posts on WordPress.com' ) } />
+			<DocumentHead title={ translate( 'Popular Tags and Posts ‹ Reader' ) } />
 			<TagsPage
 				trendingTags={ context.params.trendingTags }
 				alphabeticTags={ context.params.alphabeticTags }
