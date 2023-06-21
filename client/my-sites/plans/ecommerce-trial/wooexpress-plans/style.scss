@@ -1,3 +1,4 @@
+@import "@automattic/typography/styles/woo-commerce";
 @import "@wordpress/base-styles/breakpoints";
 
 .wooexpress-plans__interval-toggle-wrapper {
@@ -23,6 +24,12 @@
 	}
 }
 
+.is-section-plans:not(.is-sidebar-collapsed) body.is-section-stepper .plan-features-2023-grid__table-item.plan-features-2023-grid__table-item.popular-plan-parent-class .plan-features-2023-grid__popular-badge,
+.is-section-plans:not(.is-sidebar-collapsed) body.is-section-signup.is-white-signup .plan-features-2023-grid__table-item.plan-features-2023-grid__table-item.popular-plan-parent-class .plan-features-2023-grid__popular-badge,
+.is-section-plans:not(.is-sidebar-collapsed) .is-2023-pricing-grid .plan-features-2023-grid__table-item.plan-features-2023-grid__table-item.popular-plan-parent-class .plan-features-2023-grid__popular-badge {
+	border-radius: 0 !important;
+}
+
 .wooexpress-plans__grid.is-2023-pricing-grid {
 	.plan-features-2023-grid__header-title {
 		font-family: $sans;
@@ -41,6 +48,10 @@
 		display: none;
 	}
 
+	.plan-features-2023-grid__table {
+		border-radius: 0;
+	}
+
 	.plan-features-2023-grid__table.has-2-cols {
 		margin-left: auto;
 		margin-right: auto;
@@ -51,30 +62,48 @@
 .enterprise-ecommerce__banner {
 	align-items: center;
 	border: 1px solid var(--color-border-subtle);
-	border-radius: 4px;
-	display: flex;
-	gap: 1em;
-	justify-content: space-between;
 	margin: 0.5em auto 2em;
 	max-width: calc(800px - 3em);
-	padding: 1em 1.5em 1.5em;
+	padding: 2em 1.25em;
 
-	.enterprise-ecommerce__title {
-		font-size: 1.5rem;
-		margin-bottom: 0.5em;
-		margin-top: 0;
-	}
+	.enterprise-ecommerce__content {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-between;
 
-	.enterprise-ecommerce__subtitle {
-		margin: 1em 0;
-	}
+		.enterprise-ecommerce__title {
+			flex: 3 100%;
+			font-size: $woo-font-title-medium;
+			margin-bottom: 0.5em;
+			margin-top: 0;
+		}
 
-	.enterprise-ecommerce__cta {
-		margin-top: 2em;
-		text-align: right;
+		.enterprise-ecommerce__subtitle {
+			flex: 2 0 0;
+			font-size: $woo-font-body-extra-small;
+		}
 
-		.button {
-			width: 240px;
+		.enterprise-ecommerce__cta {
+			flex: 1 0 0;
+			margin-left: 2em;
+			text-align: right;
+
+			@media ( max-width: $break-small ) {
+				flex: 1 100%;
+				margin-top: 2em;
+				margin-left: 0;
+				text-align: center;
+			}
+
+			.button {
+				border-color: #0675c4;
+				color: #0675c4;
+				width: 240px;
+
+				@media ( max-width: $break-small ) {
+					width: 100%;
+				}
+			}
 		}
 	}
 }

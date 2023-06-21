@@ -104,11 +104,11 @@ const ECommerceTrialExpired = (): JSX.Element => {
 								'Learn how Woo can support the unique needs of high-volume stores throught dedicated support, discounts, and more.'
 							) }
 						</div>
-					</div>
-					<div className="enterprise-ecommerce__cta">
-						<Button href="https://woocommerce.com/enterprise-ecommerce/?utm_source=wooexpress&utm_campaign=plans_grid">
-							{ translate( 'Learn more' ) }
-						</Button>
+						<div className="enterprise-ecommerce__cta">
+							<Button href="https://woocommerce.com/enterprise-ecommerce/?utm_source=wooexpress&utm_campaign=plans_grid">
+								{ translate( 'Learn more' ) }
+							</Button>
+						</div>
 					</div>
 				</div>
 
