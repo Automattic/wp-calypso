@@ -151,6 +151,7 @@
 		"subscription-management-pending-view": true,
 		"subscription-management/comments-list-controls": true,
 		"themes/atomic-homepage-replace": true,
+		"themes/block-theme-previews-poc": false,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
