@@ -106,15 +106,15 @@ import './style.scss';
 const LivePreviewButton = ( {
 	isActive,
 	isAtomic,
-	isFullSiteEditingTheme,
 	siteSlug,
 	stylesheet,
+	showTryAndCustomize,
 	themeType,
 } ) => {
 	if ( isActive ) {
 		return null;
 	}
-	if ( ! isFullSiteEditingTheme ) {
+	if ( showTryAndCustomize ) {
 		return null;
 	}
 	if ( isAtomic ) {
@@ -631,10 +631,10 @@ class ThemeSheet extends Component {
 			translate,
 			siteSlug,
 			themeType,
-			isFullSiteEditingTheme,
 			stylesheet,
 			isAtomic,
 			isActive,
+			showTryAndCustomize,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -658,9 +658,9 @@ class ThemeSheet extends Component {
 							<LivePreviewButton
 								isActive={ isActive }
 								isAtomic={ isAtomic }
-								isFullSiteEditingTheme={ isFullSiteEditingTheme }
 								siteSlug={ siteSlug }
 								stylesheet={ stylesheet }
+								showTryAndCustomize={ showTryAndCustomize }
 								themeType={ themeType }
 							></LivePreviewButton>
 						) }
