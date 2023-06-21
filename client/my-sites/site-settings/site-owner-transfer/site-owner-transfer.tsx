@@ -63,10 +63,10 @@ const SiteOwnerTransfer = () => {
 	}
 
 	const onBackClick = () => {
-		if ( ! pendingDomain && ! newSiteOwner ) {
-			page( '/settings/general/' + selectedSite.slug );
-		} else {
+		if ( ! pendingDomain && newSiteOwner && ! transferSiteSuccess ) {
 			setNewSiteOwner( '' );
+		} else {
+			page( '/settings/general/' + selectedSite.slug );
 		}
 	};
 
