@@ -103,15 +103,22 @@ import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
 
-const LivePreviewButton = ( { siteSlug, themeType, isFullSiteEditingTheme, stylesheet } ) => {
+const LivePreviewButton = ( {
+	siteSlug,
+	themeType,
+	isFullSiteEditingTheme,
+	stylesheet,
+	isAtomic,
+} ) => {
 	if ( ! isFullSiteEditingTheme ) {
 		return null;
 	}
-
+	if ( isAtomic ) {
+		return null;
+	}
 	if ( themeType !== 'free' && themeType !== 'premium' ) {
 		return null;
 	}
-
 	return (
 		<Button href={ `https://${ siteSlug }/wp-admin/site-editor.php?theme_preview=${ stylesheet }` }>
 			Live Preview (PoC)
@@ -622,11 +629,14 @@ class ThemeSheet extends Component {
 			themeType,
 			isFullSiteEditingTheme,
 			stylesheet,
+			isAtomic,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
 		const shouldRenderButton = ! retired && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
+
+		// console.log( { themeType, 'this.props': this.props } );
 
 		return (
 			<div className="theme__sheet-header">
@@ -647,6 +657,7 @@ class ThemeSheet extends Component {
 								themeType={ themeType }
 								isFullSiteEditingTheme={ isFullSiteEditingTheme }
 								stylesheet={ stylesheet }
+								isAtomic={ isAtomic }
 							></LivePreviewButton>
 						) }
 						{ shouldRenderButton &&
