@@ -142,11 +142,7 @@ const UniversalNavbarHeader = ( {
 															target="_self"
 														/>
 														<ClickableItem
-															titleValue={
-																locale === 'en' || hasTranslation?.( 'Course Maker' )
-																	? __( 'Course Maker', __i18n_text_domain__ )
-																	: __( 'Course', __i18n_text_domain__ )
-															}
+															titleValue=""
 															content={
 																locale === 'en' || hasTranslation?.( 'Course Maker' )
 																	? __( 'Course Maker', __i18n_text_domain__ )
@@ -472,11 +468,7 @@ const UniversalNavbarHeader = ( {
 												type="menu"
 											/>
 											<ClickableItem
-												titleValue={
-													locale === 'en' || hasTranslation?.( 'Course Maker' )
-														? __( 'Course Maker', __i18n_text_domain__ )
-														: __( 'Course', __i18n_text_domain__ )
-												}
+												titleValue=""
 												content={
 													locale === 'en' || hasTranslation?.( 'Course Maker' )
 														? __( 'Course Maker', __i18n_text_domain__ )
