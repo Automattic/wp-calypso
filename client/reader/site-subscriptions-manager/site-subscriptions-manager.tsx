@@ -32,6 +32,10 @@ const SiteSubscriptionsManager = () => {
 		portal: ReaderPortal,
 	};
 
+	// Mark follows as stale on unmount to ensure that the reader
+	// redux store is in a consistent state when the user navigates.
+	// This is necessary because the subscription manager does not
+	// sync its subscriptions state with the reader redux store.
 	useMarkFollowsAsStaleOnUnmount();
 
 	return (
