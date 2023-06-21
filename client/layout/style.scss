@@ -53,6 +53,7 @@ body.is-focus-sites {
 
 	// Checkout sets it own padding/margin
 	.is-section-checkout &,
+	.theme-default .focus-content &,
 	.is-section-checkout.has-no-sidebar & {
 		padding: 0;
 		margin: 0;
