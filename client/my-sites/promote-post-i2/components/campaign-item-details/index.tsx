@@ -416,41 +416,55 @@ export default function CampaignItemDetails( props: Props ) {
 										) : null }
 									</div>
 									<div>
-										<div className="campaign-item-details__trafic-container-header">
+										<div className="campaign-item-details__traffic-container-header">
 											<span className="campaign-item-details__label">
 												{ translate( 'Traffic breakdown' ) }
 											</span>
-											<span className="campaign-item-details__label">
-												{ translate( 'Visits' ) }
-											</span>
+											{ databarTotal > 0 && (
+												<span className="campaign-item-details__label">
+													{ translate( 'Visits' ) }
+												</span>
+											) }
 										</div>
 										<div className="campaign-item-details__traffic-container-body">
-											<ul className="horizontal-bar-list">
-												{ ! isLoading ? (
-													<HorizontalBarList>
-														{ databars?.map( ( item, index ) => (
-															<HorizontalBarListItem
-																key={ `bar_${ index }` }
-																data={ item }
-																maxValue={ databarTotal }
-																hasIndicator={ false }
-																leftSideItem={ null }
-																useShortLabel={ false }
-																useShortNumber={ true }
-																isStatic={ true }
-																usePlainCard={ false }
-																isLinkUnderlined={ false }
-																leftGroupToggle={ true }
-															/>
-														) ) }
-													</HorizontalBarList>
-												) : (
-													<FlexibleSkeleton />
-												) }
-											</ul>
-											<div className="campaign-item-details__details no-bottom-margin">
-												{ translate( 'Compares traffic when campaign was active' ) }
-											</div>
+											{ isLoading && <FlexibleSkeleton /> }
+
+											{ ! isLoading && databarTotal === 0 && (
+												<div className="campaign-item-details__traffic-no-data">
+													{ translate( 'No data' ) }
+												</div>
+											) }
+
+											{ ! isLoading && databarTotal > 0 && (
+												<>
+													<ul className="horizontal-bar-list">
+														{ ! isLoading ? (
+															<HorizontalBarList>
+																{ databars?.map( ( item, index ) => (
+																	<HorizontalBarListItem
+																		key={ `bar_${ index }` }
+																		data={ item }
+																		maxValue={ databarTotal }
+																		hasIndicator={ false }
+																		leftSideItem={ null }
+																		useShortLabel={ false }
+																		useShortNumber={ true }
+																		isStatic={ true }
+																		usePlainCard={ false }
+																		isLinkUnderlined={ false }
+																		leftGroupToggle={ true }
+																	/>
+																) ) }
+															</HorizontalBarList>
+														) : (
+															<FlexibleSkeleton />
+														) }
+													</ul>
+													<div className="campaign-item-details__details no-bottom-margin">
+														{ translate( 'Compares traffic when campaign was active' ) }
+													</div>
+												</>
+											) }
 										</div>
 									</div>
 								</div>
@@ -528,7 +542,7 @@ export default function CampaignItemDetails( props: Props ) {
 												{ subtotal ? (
 													<span className="campaign-item-details__label">
 														<div>{ translate( 'Subtotal' ) }</div>
-														<div>{ subtotalFormatted }</div>
+														<div className="amount">{ subtotalFormatted }</div>
 													</span>
 												) : (
 													[]
@@ -536,16 +550,21 @@ export default function CampaignItemDetails( props: Props ) {
 												{ credits ? (
 													<span className="campaign-item-details__label">
 														<div>{ translate( 'Credits' ) }</div>
-														<div>{ creditsFormatted }</div>
+														<div className="amount">{ creditsFormatted }</div>
 													</span>
 												) : (
 													[]
 												) }
 												{ total ? (
-													<span className="campaign-item-details__label">
-														<div>{ translate( 'Total paid' ) }</div>
-														<div>{ totalFormatted }</div>
-													</span>
+													<>
+														<span className="campaign-item-details__label">
+															<div>{ translate( 'Total paid' ) }</div>
+															<div className="amount">{ totalFormatted }</div>
+														</span>
+														<p className="campaign-item-details__payment-charges-disclosure">
+															{ translate( 'All charges inclusive of VAT, if any.' ) }
+														</p>
+													</>
 												) : (
 													[]
 												) }
@@ -576,6 +595,11 @@ export default function CampaignItemDetails( props: Props ) {
 							<div className="campaign-item-details__preview-content">
 								<AdPreview isLoading={ isLoading } htmlCode={ creative_html || '' } />
 							</div>
+							<p className="campaign-item-details__preview-disclosure">
+								{ translate(
+									'Depending on the platform, the ad may seem differently from the preview.'
+								) }
+							</p>
 						</div>
 
 						<div className="campaign-item-details__support-buttons-container">
@@ -616,8 +640,7 @@ export default function CampaignItemDetails( props: Props ) {
 									<Gridicon icon="external" size={ 16 } />
 								</InlineSupportLink>
 								<div className="campaign-item-details__powered-by">
-									<Gridicon icon="fire" size={ 16 } />
-									<span>{ translate( 'Powered by Blaze' ) }</span>
+									<span>{ translate( 'Blaze - Powered by Jetpack' ) }</span>
 								</div>
 							</div>
 						</div>
