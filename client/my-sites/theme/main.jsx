@@ -89,7 +89,6 @@ import {
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
-	isFullSiteEditingTheme as getIsFullSiteEditingTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -1545,10 +1544,6 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
-		const isFullSiteEditingTheme = config.isEnabled( 'themes/block-theme-previews-poc' )
-			? getIsFullSiteEditingTheme( state, themeId )
-			: undefined;
-
 		return {
 			...theme,
 			themeId,
@@ -1564,7 +1559,6 @@ export default connect(
 			productionSiteSlug,
 			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, themeId, siteId ),
-			isFullSiteEditingTheme,
 			isJetpack,
 			isAtomic,
 			isStandaloneJetpack,
