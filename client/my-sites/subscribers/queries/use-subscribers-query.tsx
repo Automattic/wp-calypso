@@ -21,7 +21,7 @@ const useSubscribersQuery = ( {
 		queryFn: () =>
 			wpcom.req.get( {
 				path: `/sites/${ siteId }/subscribers?per_page=${ perPage }&page=${ page }${
-					search ? `&search=${ search }` : ''
+					search ? `&search=${ encodeURIComponent( search ) }` : ''
 				}`,
 				apiNamespace: 'wpcom/v2',
 			} ),
