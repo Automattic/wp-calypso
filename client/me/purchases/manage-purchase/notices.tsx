@@ -445,7 +445,7 @@ class PurchaseNotice extends Component<
 				expiry: expiry.fromNow(),
 				earliestOtherExpiry: earliestOtherExpiringPurchase
 					? moment( earliestOtherExpiringPurchase.expiryDate ).fromNow()
-					: null,
+					: '',
 			},
 			components: {
 				link: (

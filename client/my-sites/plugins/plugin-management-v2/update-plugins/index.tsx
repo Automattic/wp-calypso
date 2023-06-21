@@ -68,23 +68,18 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 	}
 
 	function updateAllPluginsNotice() {
-		let pluginName;
-		const hasOnePlugin = pluginUpdateCount === 1;
+		let heading = translate( 'Update %(pluginUpdateCount)d plugins', {
+			args: { pluginUpdateCount },
+		} );
 
-		if ( hasOnePlugin ) {
+		if ( pluginUpdateCount === 1 ) {
 			const [ { name, slug } ] = pluginsWithUpdates;
-			pluginName = name || slug;
+			heading = translate( 'Update %(pluginName)s', { args: { pluginName: name || slug } } );
 		}
 
 		const dialogOptions = {
 			additionalClassNames: 'plugins__confirmation-modal',
 		};
-
-		const heading = hasOnePlugin
-			? translate( 'Update %(pluginName)s', { args: { pluginName } } )
-			: translate( 'Update %(pluginUpdateCount)d plugins', {
-					args: { pluginUpdateCount },
-			  } );
 
 		acceptDialog(
 			getPluginActionDailogMessage( allSites, pluginsWithUpdates, heading, 'update' ),

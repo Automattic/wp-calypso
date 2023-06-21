@@ -6,7 +6,7 @@ import './style.scss';
  *
  * @param {Object} props Component props
  * @param {string=} props.className optional extra CSS class(es) to be added to the component
- * @param {import('react').ReactChild=} props.children react element props that must contain some children
+ * @param {import('react').ReactNode=} props.children react element props that must contain some children
  * @param {Object=} props.otherProps react element props that must contain some children
  * @returns {import('react').ReactElement} React component
  */

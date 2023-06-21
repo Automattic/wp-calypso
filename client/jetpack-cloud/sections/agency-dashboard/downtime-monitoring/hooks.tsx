@@ -170,8 +170,8 @@ export function useContactModalTitleAndSubtitle(
 					subtitle: translate( 'If you update your number, you’ll need to verify it.' ),
 				},
 				remove: {
-					title: '',
-					subtitle: '',
+					title: translate( 'Remove Phone Number' ),
+					subtitle: translate( 'Are you sure you want to remove this phone number?' ),
 				},
 				verify: {
 					title: translate( 'Verify your phone number' ),

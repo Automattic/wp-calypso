@@ -14,5 +14,5 @@ function render() {
 
 ## Props
 
-- `header` (`ReactChild`) - The string rendered in the title of the component.
-- `children` (`ReactChild`) - The content to be rendered inside the item.
+- `header` (`ReactNode`) - The content rendered in the title of the component.
+- `children` (`ReactNode`) - The content to be rendered inside the item.

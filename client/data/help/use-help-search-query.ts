@@ -1,26 +1,80 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
-import type { LinksForSection } from '@automattic/data-stores';
+import apiFetch from '@wordpress/api-fetch';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+
+export interface SearchResult {
+	link: string;
+	title: string | React.ReactChild;
+	content?: string;
+	icon?: string;
+	post_id?: number;
+	blog_id?: number;
+	source?: string;
+}
+
+interface APIFetchOptions {
+	global: boolean;
+	path: string;
+}
+
+interface Article {
+	content: string;
+}
+
+const fetchArticlesAPI = ( search: string, locale: string, sectionName: string ) => {
+	const params = `?query=${ encodeURIComponent( search ) }&locale=${ encodeURIComponent(
+		locale
+	) }&section=${ encodeURIComponent( sectionName ) }`;
+	if ( canAccessWpcomApis() ) {
+		return wpcomRequest( {
+			path: `help/search/wpcom${ params }`,
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+		} );
+	}
+	return apiFetch( {
+		global: true,
+		path: `/help-center/search${ params }`,
+	} as APIFetchOptions );
+};
+
+const fetchArticleAPI = ( blogId: number, postId: number ): Promise< Article > => {
+	if ( canAccessWpcomApis() ) {
+		return wpcomRequest( {
+			path: `help/article/${ blogId }/${ postId }`,
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+		} );
+	}
+	return apiFetch( {
+		global: true,
+		path: `/help-center/fetch-post?blog_id=${ blogId }&post_id=${ postId }`,
+	} as APIFetchOptions );
+};
+
 export const useHelpSearchQuery = (
 	search: string,
-	queryOptions: Record< string, unknown > = {}
+	locale = 'en',
+	queryOptions: Record< string, unknown > = {},
+	sectionName = ''
 ) => {
-	const locale = useLocale();
-	const params = new URLSearchParams( {
-		include_post_id: '1',
-		locale,
-	} );
-
-	if ( search ) {
-		params.append( 'query', search );
-	}
-
-	return useQuery< { wordpress_support_links: LinksForSection[] } >( {
-		queryKey: [ 'help', search ],
-		queryFn: () =>
-			wpcomRequest( { path: '/help/search', query: params.toString(), apiVersion: '1.1' } ),
-		enabled: !! search,
+	return useQuery< any >( {
+		queryKey: [ 'help-center-search', search, sectionName ],
+		queryFn: () => fetchArticlesAPI( search, locale, sectionName ),
+		onSuccess: async ( data ) => {
+			await Promise.all(
+				data.map( async ( result: SearchResult ) => {
+					if ( ! result.content && result.blog_id && result.post_id ) {
+						const article: Article = await fetchArticleAPI( result.blog_id, result.post_id );
+						return { ...result, content: article.content };
+					}
+					return result;
+				} )
+			);
+		},
+		refetchOnWindowFocus: false,
+		refetchOnMount: true,
+		enabled: true,
 		...queryOptions,
 	} );
 };

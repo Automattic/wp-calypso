@@ -7,7 +7,6 @@ import { useDispatch } from 'calypso/state';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import type { ReactChild } from 'react';
 
 import './style.scss';
 
@@ -16,7 +15,7 @@ type RenewButtonProps = {
 	selectedSite: SiteDetails;
 	subscriptionId: number;
 	compact?: boolean;
-	customLabel?: ReactChild;
+	customLabel?: string;
 	disabled?: boolean;
 	primary?: boolean;
 	redemptionProduct?: ProductListItem;
@@ -54,7 +53,7 @@ function RenewButton( {
 	}
 
 	const buttonClasses = classNames( 'renew-button', { 'is-loading': loading } );
-	let buttonLabel: ReactChild;
+	let buttonLabel;
 	if ( reactivate ) {
 		buttonLabel = translate( 'Reactivate for {{strong}}%(price)s{{/strong}}', {
 			components: { strong: <strong /> },

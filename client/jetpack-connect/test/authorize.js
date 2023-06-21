@@ -7,7 +7,6 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import deepFreeze from 'deep-freeze';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
-import happychatReducer from 'calypso/state/happychat/reducer';
 import purchasesReducer from 'calypso/state/purchases/reducer';
 import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -90,7 +89,6 @@ function renderWithRedux( ui ) {
 			ui: uiReducer,
 			documentHead: documentHeadReducer,
 			purchases: purchasesReducer,
-			happychat: happychatReducer,
 			siteConnection: siteConnectionReducer,
 		},
 	} );

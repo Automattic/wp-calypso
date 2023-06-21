@@ -13,7 +13,7 @@ export interface FooterProps {
 	onLanguageChange?: React.ChangeEventHandler< HTMLSelectElement >;
 	isLoggedIn?: boolean;
 	currentRoute?: string;
-	additionalCompanyLinks?: React.ReactChild | null;
+	additionalCompanyLinks?: React.ReactNode;
 }
 export interface PureFooterProps extends FooterProps {
 	localizeUrl?: ReturnType< typeof useLocalizeUrl >;

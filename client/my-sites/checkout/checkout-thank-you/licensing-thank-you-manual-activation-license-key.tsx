@@ -38,7 +38,7 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 			/>
 			<LicensingActivation
 				title={ translate( 'Activate your %(productName)s plan', {
-					args: { productName },
+					args: { productName: productName ?? '' },
 				} ) }
 				footerImage={ licensingActivationPluginBanner }
 				isLoading={ isProductListFetching }
