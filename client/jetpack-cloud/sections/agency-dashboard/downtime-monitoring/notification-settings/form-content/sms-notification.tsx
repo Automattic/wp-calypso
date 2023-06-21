@@ -23,7 +23,7 @@ export default function SMSNotification( {
 	const translate = useTranslate();
 
 	const handleToggleClick = ( isEnabled: boolean ) => {
-		// Record event here
+		recordEvent( isEnabled ? 'sms_notification_enable' : 'sms_notification_disable' );
 		setEnableSMSNotification( isEnabled );
 	};
 
