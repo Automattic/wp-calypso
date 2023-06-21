@@ -4,8 +4,10 @@
 }
 
 .reader-post-options-menu__ellipsis-menu {
+	margin-left: 16px;
+
 	.ellipsis-menu__toggle {
-		padding: 0 0 34px;
+		padding: 0 0 36px;
 		height: 24px;
 	}
 }
@@ -171,6 +173,13 @@
 		.reader-excerpt {
 			max-height: none;
 			-webkit-line-clamp: 3;
+		}
+
+		&:not(.has-thumbnail) {
+			.reader-post-card__title {
+				display: flex;
+				justify-content: space-between;
+			}
 		}
 	}
 

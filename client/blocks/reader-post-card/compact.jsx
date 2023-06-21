@@ -29,27 +29,37 @@ const CompactPost = ( {
 							<a className="reader-post-card__title-link" href={ post.URL }>
 								{ post.title }
 							</a>
+							{ ! post.canonical_media && (
+								<ReaderPostEllipsisMenu
+									site={ site }
+									teams={ teams }
+									post={ post }
+									showFollow={ false }
+								/>
+							) }
 						</h2>
 					</AutoDirection>
 					{ postByline }
 					<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
 				</div>
-				<div className="reader-post-card__post-media">
-					<ReaderPostEllipsisMenu
-						site={ site }
-						teams={ teams }
-						post={ post }
-						showFollow={ false }
-					/>
-					<FeaturedAsset
-						post={ post }
-						canonicalMedia={ post.canonical_media }
-						postUrl={ post.URL }
-						onVideoThumbnailClick={ onVideoThumbnailClick }
-						isVideoExpanded={ isExpanded }
-						isCompactPost={ true }
-					/>
-				</div>
+				{ post.canonical_media && (
+					<div className="reader-post-card__post-media">
+						<ReaderPostEllipsisMenu
+							site={ site }
+							teams={ teams }
+							post={ post }
+							showFollow={ false }
+						/>
+						<FeaturedAsset
+							post={ post }
+							canonicalMedia={ post.canonical_media }
+							postUrl={ post.URL }
+							onVideoThumbnailClick={ onVideoThumbnailClick }
+							isVideoExpanded={ isExpanded }
+							isCompactPost={ true }
+						/>
+					</div>
+				) }
 			</div>
 			{ children }
 		</div>
