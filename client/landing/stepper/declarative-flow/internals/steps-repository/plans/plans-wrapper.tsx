@@ -161,7 +161,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					flowName={ flowName }
 					isAllPaidPlansShown={ true }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ intent }

@@ -100,7 +100,6 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					selectedPlan={ PLAN_BUSINESS }
 					intent="plugins"
 					isInMarketplace
-					shouldShowPlansFeatureComparison
 					isReskinned
 				/>
 			</div>

@@ -51,7 +51,7 @@ import './style.scss';
 interface PlansFeaturesMainProps {
 	plansWithScroll?: boolean;
 	site?: Site;
-	intent?: Intent;
+	intent?: Intent | null;
 	customerType?: string;
 	basePlansPath?: string;
 	selectedPlan?: string;
@@ -60,7 +60,7 @@ interface PlansFeaturesMainProps {
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	domainName?: string;
-	flowName?: string;
+	flowName?: string | null;
 	replacePaidDomainWithFreeDomain?: ( freeDomainSuggestion: DomainSuggestion ) => void;
 	intervalType?: IntervalType;
 	planTypeSelector?: 'customer' | 'interval';
@@ -75,7 +75,7 @@ interface PlansFeaturesMainProps {
 	hideEnterprisePlan?: boolean; // to be deprecated
 	isStepperUpgradeFlow?: boolean;
 	isInSignup?: boolean;
-	isLaunchPage?: boolean;
+	isLaunchPage?: boolean | null;
 	isReskinned: boolean;
 	isPlansInsideStepper?: boolean;
 }
@@ -83,10 +83,8 @@ interface PlansFeaturesMainProps {
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	visiblePlans: string[];
 	plans: string[];
-	isLaunchPage?: boolean | null;
 	siteId?: number;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	hidePlansFeatureComparison?: boolean;
 	sitePlanSlug?: string | null;
 	siteSlug?: string | null;
 	customerType: string;
@@ -130,7 +128,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isReskinned,
 		intervalType,
 		planTypeSelectorProps,
-		hidePlansFeatureComparison, // TODO clk
+		hidePlansFeatureComparison,
 		replacePaidDomainWithFreeDomain,
 		sitePlanSlug,
 		siteSlug,

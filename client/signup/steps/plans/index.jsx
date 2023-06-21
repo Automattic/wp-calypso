@@ -166,7 +166,6 @@ export class PlansStep extends Component {
 					flowName={ flowName }
 					isAllPaidPlansShown={ true }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
 					hidePremiumPlan={ this.props.hidePremiumPlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
