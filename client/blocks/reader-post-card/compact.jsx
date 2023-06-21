@@ -1,9 +1,20 @@
 import PropTypes from 'prop-types';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
+import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import AutoDirection from 'calypso/components/auto-direction';
 import FeaturedAsset from './featured-asset';
 
-const CompactPost = ( { post, isDiscover, expandCard, postKey, isExpanded, site, postByline } ) => {
+const CompactPost = ( {
+	children,
+	post,
+	isDiscover,
+	expandCard,
+	postKey,
+	isExpanded,
+	site,
+	postByline,
+	teams,
+} ) => {
 	const onVideoThumbnailClick =
 		post.canonical_media?.mediaType === 'video'
 			? () => expandCard( { postKey, post, site } )
@@ -20,18 +31,27 @@ const CompactPost = ( { post, isDiscover, expandCard, postKey, isExpanded, site,
 							</a>
 						</h2>
 					</AutoDirection>
+					{ postByline }
 					<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
 				</div>
-				<FeaturedAsset
-					post={ post }
-					canonicalMedia={ post.canonical_media }
-					postUrl={ post.URL }
-					onVideoThumbnailClick={ onVideoThumbnailClick }
-					isVideoExpanded={ isExpanded }
-					isCompactPost={ true }
-				/>
+				<div className="reader-post-card__post-media">
+					<ReaderPostEllipsisMenu
+						site={ site }
+						teams={ teams }
+						post={ post }
+						showFollow={ false }
+					/>
+					<FeaturedAsset
+						post={ post }
+						canonicalMedia={ post.canonical_media }
+						postUrl={ post.URL }
+						onVideoThumbnailClick={ onVideoThumbnailClick }
+						isVideoExpanded={ isExpanded }
+						isCompactPost={ true }
+					/>
+				</div>
 			</div>
-			{ postByline }
+			{ children }
 		</div>
 	);
 };

@@ -149,6 +149,7 @@ class TagStream extends Component {
 				showFollowInHeader={ true }
 				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder
 				streamHeader={ tagHeader }
+				showSiteNameOnCards={ false }
 				useCompactCards={ true }
 			>
 				<QueryReaderFollowedTags />

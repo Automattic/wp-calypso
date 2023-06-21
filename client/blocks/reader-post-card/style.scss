@@ -4,18 +4,9 @@
 }
 
 .reader-post-options-menu__ellipsis-menu {
-	position: relative;
-
 	.ellipsis-menu__toggle {
-		padding: 0;
+		padding: 0 0 34px;
 		height: 24px;
-		position: relative;
-		right: -1px;
-		top: 6px;
-
-		.ellipsis-menu__toggle-icon {
-			top: -1px;
-		}
 	}
 }
 
@@ -172,8 +163,9 @@
 			overflow: hidden;
 		}
 
-		.reader-post-card__featured-images {
+		.reader-post-card__post-media {
 			flex-direction: row;
+			text-align: right;
 		}
 
 		.reader-excerpt {

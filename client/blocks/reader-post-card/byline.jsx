@@ -53,6 +53,7 @@ class PostByline extends Component {
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 		const shouldDisplayAuthor =
 			! isDiscoverPost &&
+			! compact &&
 			hasAuthorName &&
 			! isAuthorNameBlocked( post.author.name ) &&
 			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
@@ -109,7 +110,7 @@ class PostByline extends Component {
 									rel="noopener noreferrer"
 								>
 									{ /* Use the siteName if not showing it above, otherwise use the slug */ }
-									{ siteName && ( compact || ! showSiteName ) ? siteName : siteSlug }
+									{ ! showSiteName ? siteName : siteSlug }
 								</a>
 								<span className="reader-post-card__timestamp-bullet">·</span>
 								<a
@@ -126,7 +127,14 @@ class PostByline extends Component {
 					</div>
 					{ ! compact && <TagsList post={ post } /> }
 				</div>
-				<ReaderPostEllipsisMenu site={ site } teams={ teams } post={ post } showFollow={ false } />
+				{ ! compact && (
+					<ReaderPostEllipsisMenu
+						site={ site }
+						teams={ teams }
+						post={ post }
+						showFollow={ false }
+					/>
+				) }
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */

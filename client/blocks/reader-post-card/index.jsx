@@ -211,7 +211,9 @@ class ReaderPostCard extends Component {
 					postKey={ postKey }
 					postByline={ postByline }
 					onClick={ this.handleCardClick }
-				/>
+				>
+					{ readerPostActions }
+				</CompactPostCard>
 			);
 		} else if ( isPhotoPost ) {
 			readerPostCard = (
