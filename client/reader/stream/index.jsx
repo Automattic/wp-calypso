@@ -16,10 +16,12 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import {
+	READER_SEARCH_POPULAR_SITES,
+	READER_DISCOVER_POPULAR_SITES,
+} from 'calypso/reader/follow-sources';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
-import ReaderDiscoverSidebar from 'calypso/reader/stream/reader-discover-sidebar';
-import ReaderSearchSidebar from 'calypso/reader/stream/reader-search-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
@@ -52,6 +54,7 @@ import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import ReaderListFollowedSites from './reader-list-followed-sites';
+import ReaderPopularSitesSidebar from './reader-popular-sites-sidebar';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 900;
@@ -469,8 +472,8 @@ class ReaderStream extends Component {
 			streamKey,
 			tag,
 			tags,
-			sites,
 			isDiscoverTags,
+			isDiscoverStream,
 		} = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
@@ -487,7 +490,6 @@ class ReaderStream extends Component {
 		const path = window.location.pathname;
 		const isTagPage = path.startsWith( '/tag/' );
 		const isSearchPage = path.startsWith( '/read/search' );
-		const isDiscoverPage = path.startsWith( '/discover' );
 		const streamType = getStreamType( streamKey );
 
 		let baseClassnames = classnames( 'following', this.props.className );
@@ -525,9 +527,16 @@ class ReaderStream extends Component {
 				tabTitle = translate( 'Related' );
 				baseClassnames = classnames( 'tag-stream__main', this.props.className );
 			} else if ( isSearchPage ) {
-				sidebarContent = <ReaderSearchSidebar items={ items } />;
-			} else if ( isDiscoverPage ) {
-				sidebarContent = <ReaderDiscoverSidebar items={ sites } />;
+				sidebarContent = (
+					<ReaderPopularSitesSidebar items={ items } followSource={ READER_SEARCH_POPULAR_SITES } />
+				);
+			} else if ( isDiscoverStream ) {
+				sidebarContent = (
+					<ReaderPopularSitesSidebar
+						items={ items }
+						followSource={ READER_DISCOVER_POPULAR_SITES }
+					/>
+				);
 			} else {
 				sidebarContent = <ReaderListFollowedSites path={ path } />;
 			}
