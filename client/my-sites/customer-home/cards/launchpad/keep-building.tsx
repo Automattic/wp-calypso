@@ -34,6 +34,15 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 
+	recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
+		checklist_slug: checklistSlug,
+		tasks: `,${ checklist?.map( ( task: Task ) => task.id ).join( ',' ) },`,
+		is_completed: completedSteps === numberOfSteps,
+		number_of_steps: numberOfSteps,
+		number_of_completed_steps: completedSteps,
+		context: 'customer-home',
+	} );
+
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
 		const completedTasks = tasks.filter( ( task: Task ) => task.completed );
 		const incompleteTasks = tasks.filter( ( task: Task ) => ! task.completed );
