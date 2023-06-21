@@ -33,12 +33,13 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 	const plan = getPlan( planType );
 	const planId = plan?.getProductId();
 	const [ visibleFeaturesNum, setVisibleFeatureNum ] = useState( initialFeaturesNumber );
-	let features: React.ReactChild[] = [];
-	if ( plan && 'getPlanCompareFeatures' in plan ) {
-		features = ( plan?.getPlanCompareFeatures?.() || [] )
-			.map( ( feature: string ) => getFeatureByKey( feature )?.getTitle() || '' )
-			.filter( ( x: string | React.ReactChild ) => x );
-	}
+
+	const features =
+		plan && 'getPlanCompareFeatures' in plan
+			? ( plan?.getPlanCompareFeatures?.() || [] )
+					.map( ( feature: string ) => getFeatureByKey( feature )?.getTitle() )
+					.filter( ( x ) => x )
+			: [];
 
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planId as number, true ) );

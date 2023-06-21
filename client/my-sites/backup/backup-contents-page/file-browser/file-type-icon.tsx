@@ -32,6 +32,7 @@ const fileTypeToIcon: Record< FileType, JSX.Element > = {
 	code: pages,
 	wordpress: wordpress,
 	other: pages,
+	archive: file,
 };
 
 const FileTypeIcon: FunctionComponent< FileTypeIconProps > = ( { type } ) => {

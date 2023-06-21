@@ -78,7 +78,7 @@ export default function UnassignLicenseDialog( {
 					'Unassigning this license means that the site {{bold}}%(siteUrl)s{{/bold}} will no longer have access to {{bold}}%(product)s{{/bold}}. Once this action is completed, you will be able to assign the license to another site. You will continue to be billed.',
 					{
 						components: { bold: <strong /> },
-						args: { siteUrl, product },
+						args: { siteUrl: siteUrl ?? '', product },
 					}
 				) }
 				&nbsp;

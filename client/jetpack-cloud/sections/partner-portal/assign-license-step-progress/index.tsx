@@ -6,11 +6,10 @@ import { useSelector } from 'calypso/state';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactChild } from 'react';
 
 import './style.scss';
 
-function getStepClassName( currentStep: number, step: number ): any {
+function getStepClassName( currentStep: number, step: number ): string {
 	return classnames( {
 		'step-current': currentStep === step,
 		'step-next': currentStep < step,
@@ -38,7 +37,7 @@ type StepKey = 'issueLicense' | 'addPaymentMethod' | 'assignLicense';
 
 interface Step {
 	key: StepKey;
-	label: ReactChild | null;
+	label: string;
 }
 
 interface Props {

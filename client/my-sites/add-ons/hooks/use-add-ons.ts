@@ -3,7 +3,7 @@ import {
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
 import { useSelector } from 'calypso/state';
@@ -27,10 +27,10 @@ export interface AddOnMeta {
 	featureSlugs?: string[] | null;
 	icon: JSX.Element;
 	featured?: boolean; // irrelevant to "featureSlugs"
-	name: string | React.ReactChild | null;
+	name: string | null;
 	quantity?: number;
-	description: string | React.ReactChild | null;
-	displayCost: string | React.ReactChild | null;
+	description: string | null;
+	displayCost: TranslateResult | null;
 	purchased?: boolean;
 }
 

@@ -67,7 +67,7 @@ const ECommerceTrialBanner = ( props: ECommerceTrialBannerProps ) => {
 									count: eCommerceTrialDaysLeftToDisplay,
 									args: {
 										daysLeft: eCommerceTrialDaysLeftToDisplay,
-										expirationdate: readableExpirationDate,
+										expirationdate: readableExpirationDate as string,
 									},
 								}
 						  ) }

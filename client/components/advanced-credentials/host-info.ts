@@ -1,10 +1,4 @@
-import { translate, TranslateResult } from 'i18n-calypso';
-import { ReactChild } from 'react';
-
-export interface LinkAndInfo {
-	info?: TranslateResult;
-	link?: string | TranslateResult;
-}
+import { translate } from 'i18n-calypso';
 
 enum InfoTypes {
 	Text = 'Text',
@@ -16,23 +10,23 @@ enum InfoTypes {
 
 export interface Text {
 	type: InfoTypes.Text;
-	text: ReactChild;
+	text: string;
 }
 
 export interface Link {
 	type: InfoTypes.Link;
-	text: ReactChild;
+	text: string;
 	link: string;
 }
 
 export interface UnorderedList {
 	type: InfoTypes.UnorderedList;
-	items: ReactChild[];
+	items: string[];
 }
 
 export interface OrderedList {
 	type: InfoTypes.OrderedList;
-	items: ReactChild[];
+	items: string[];
 }
 
 export interface Line {

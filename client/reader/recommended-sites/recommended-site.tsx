@@ -1,3 +1,5 @@
+import { SubscriptionManager } from '@automattic/data-stores';
+import { useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Card,
@@ -6,6 +8,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { usePrevious } from '@wordpress/compose';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -37,6 +40,25 @@ import {
 } from '../stats';
 import { RecommendedSitePlaceholder } from './placeholder';
 import { seed as recommendedSitesSeed } from './recommended-sites';
+
+/**
+ * This hook invalidates the cache for site subscriptions when the "subscribe" mutation is completed.
+ * This is necessary because the site subscriptions list uses react-query for state management, while the reader uses redux with data-layer middleware for its state management.
+ * Since these two state management systems are not aware of each other, we need to manually invalidate the cache when the "subscribe" mutation is completed.
+ */
+const useInvalidateSiteSubscriptionsCache = ( isSubscribeLoading: boolean ) => {
+	const wasSubscribeLoading = usePrevious( isSubscribeLoading );
+	const siteSubscriptionsCacheKey = SubscriptionManager.useCacheKey( [
+		'read',
+		'site-subscriptions',
+	] );
+	const queryClient = useQueryClient();
+	useEffect( () => {
+		if ( wasSubscribeLoading && ! isSubscribeLoading ) {
+			queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+		}
+	}, [ isSubscribeLoading, wasSubscribeLoading, queryClient ] );
+};
 
 const enum RecommendedSiteEvent {
 	Dismissed = 'calypso_reader_recommended_site_dismissed',
@@ -81,6 +103,8 @@ const RecommendedSite = ( {
 	const isSubscribeLoading: boolean = useSelector( ( state ) =>
 		isReaderFollowFeedLoading( state, siteUrl )
 	);
+
+	useInvalidateSiteSubscriptionsCache( isSubscribeLoading );
 
 	useEffect( () => {
 		if ( railcar ) {
@@ -160,6 +184,7 @@ const RecommendedSite = ( {
 						follow( siteUrl, null, {
 							siteId,
 							seed: recommendedSitesSeed,
+							siteTitle,
 						} ) as AnyAction
 					);
 				} }

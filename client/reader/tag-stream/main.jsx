@@ -26,7 +26,6 @@ class TagStream extends Component {
 	static propTypes = {
 		encodedTagSlug: PropTypes.string,
 		decodedTagSlug: PropTypes.string,
-		followSource: PropTypes.string.isRequired,
 	};
 
 	state = {

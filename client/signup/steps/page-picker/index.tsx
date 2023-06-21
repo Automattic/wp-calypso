@@ -388,7 +388,7 @@ function DIFMPagePicker( props: StepProps ) {
 							),
 					},
 					args: {
-						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages as number,
 						extraPagePrice: formatCurrency(
 							difmTieredPriceDetails?.perExtraPagePrice ?? 0,
 							effectiveCurrencyCode ?? '',
@@ -413,7 +413,7 @@ function DIFMPagePicker( props: StepProps ) {
 							),
 					},
 					args: {
-						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages as number,
 						extraPagePrice: formatCurrency(
 							difmTieredPriceDetails?.perExtraPagePrice ?? 0,
 							effectiveCurrencyCode ?? '',

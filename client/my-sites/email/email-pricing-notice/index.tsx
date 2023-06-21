@@ -24,7 +24,7 @@ function getNoticeMessage(
 ): TranslateResult {
 	const translateArgs = {
 		args: {
-			price: mailboxPurchaseCost?.text,
+			price: mailboxPurchaseCost?.text as string,
 		},
 		components: {
 			strong: <strong />,
