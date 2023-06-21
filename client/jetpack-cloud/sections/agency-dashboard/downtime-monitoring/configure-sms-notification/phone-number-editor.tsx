@@ -222,7 +222,7 @@ export default function PhoneNumberEditor( {
 		handleSetPhoneItems( false );
 	}
 
-	// Remove email item when user confirms to remove the email address
+	// Remove phone item when user confirms to remove the phone number
 	const handleRemove = () => {
 		//TODO: add tracks event
 		const phoneItems = [ ...allPhoneItems ];
