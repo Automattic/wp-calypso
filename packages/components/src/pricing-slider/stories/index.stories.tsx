@@ -4,12 +4,20 @@ import type { RenderThumbFunction } from '../types';
 import type { StoryFn, Meta } from '@storybook/react';
 
 export default {
-	title: 'JS Packages/Components/Pricing Slider',
+	title: 'packages/components/Pricing Slider',
 	component: PricingSlider,
 } as Meta< typeof PricingSlider >;
 
+const StoryContainer = ( { children }: { children: React.ReactNode } ) => (
+	<div style={ { padding: '10vh 20vw' } }>{ children }</div>
+);
+
 // Export additional stories using pre-defined values
-const Template: StoryFn< typeof PricingSlider > = ( args ) => <PricingSlider { ...args } />;
+const Template: StoryFn< typeof PricingSlider > = ( args ) => (
+	<StoryContainer>
+		<PricingSlider { ...args } />
+	</StoryContainer>
+);
 
 // Export Default story
 export const _default = Template.bind( {} );
@@ -27,7 +35,7 @@ const TemplateWithChangingValue: StoryFn< typeof PricingSlider > = ( args ) => {
 	} ) as RenderThumbFunction;
 
 	return (
-		<div>
+		<StoryContainer>
 			<PricingSlider
 				{ ...args }
 				value={ value }
@@ -37,7 +45,7 @@ const TemplateWithChangingValue: StoryFn< typeof PricingSlider > = ( args ) => {
 			/>
 			<div>{ `Value on changing: ${ value }` }</div>
 			<div>{ `Value on change ends: ${ endValue }` }</div>
-		</div>
+		</StoryContainer>
 	);
 };
 
