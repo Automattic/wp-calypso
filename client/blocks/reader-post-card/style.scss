@@ -7,7 +7,7 @@
 	margin-left: 16px;
 
 	.ellipsis-menu__toggle {
-		padding: 0 0 36px;
+		padding: 0;
 		height: 24px;
 	}
 }
@@ -180,6 +180,12 @@
 				display: flex;
 				justify-content: space-between;
 			}
+		}
+	}
+
+	&.is-compact.has-thumbnail {
+		.ellipsis-menu__toggle {
+			padding-bottom: 36px;
 		}
 	}
 
