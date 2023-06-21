@@ -75,8 +75,8 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 					>
 						{ translate( '%(productName)s was added to your site %(siteName)s.', {
 							args: {
-								productName,
-								siteName,
+								productName: productName as string, // We know this exists via hasProductInfo
+								siteName: siteName ?? '',
 							},
 						} ) }
 					</p>

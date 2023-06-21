@@ -161,12 +161,16 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 			.horizontal-bar-list {
 				margin-bottom: 10px;
+
+				.horizontal-bar-list-item-bar {
+					padding-left: 8px;
+				}
 			}
 
 			.horizontal-bar-list-item {
 				padding: 0;
 				margin-bottom: 8px;
-				padding-right: 4px;
+				padding-right: 8px;
 
 				&:last-child {
 					.horizontal-bar-list-item-bar {

@@ -101,6 +101,34 @@ import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
 
+const LivePreviewButton = ( {
+	isActive,
+	isAtomic,
+	isExternallyManagedTheme,
+	isWporg,
+	showTryAndCustomize,
+	siteSlug,
+	stylesheet,
+} ) => {
+	if ( isActive ) {
+		return null;
+	}
+	if ( showTryAndCustomize ) {
+		return null;
+	}
+	if ( isAtomic ) {
+		return null;
+	}
+	if ( isExternallyManagedTheme || isWporg ) {
+		return null;
+	}
+	return (
+		<Button href={ `https://${ siteSlug }/wp-admin/site-editor.php?theme_preview=${ stylesheet }` }>
+			Live Preview (PoC)
+		</Button>
+	);
+};
+
 const noop = () => {};
 
 class ThemeSheet extends Component {
@@ -593,7 +621,21 @@ class ThemeSheet extends Component {
 	};
 
 	renderHeader = () => {
-		const { author, isWPForTeamsSite, name, retired, softLaunched, translate } = this.props;
+		const {
+			author,
+			isWPForTeamsSite,
+			name,
+			retired,
+			softLaunched,
+			translate,
+			siteSlug,
+			stylesheet,
+			isAtomic,
+			isActive,
+			showTryAndCustomize,
+			isExternallyManagedTheme,
+			isWporg,
+		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
@@ -612,6 +654,17 @@ class ThemeSheet extends Component {
 						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
 					<div className="theme__sheet-main-actions">
+						{ config.isEnabled( 'themes/block-theme-previews-poc' ) && (
+							<LivePreviewButton
+								isActive={ isActive }
+								isAtomic={ isAtomic }
+								isExternallyManagedTheme={ isExternallyManagedTheme }
+								isWporg={ isWporg }
+								showTryAndCustomize={ showTryAndCustomize }
+								siteSlug={ siteSlug }
+								stylesheet={ stylesheet }
+							></LivePreviewButton>
+						) }
 						{ shouldRenderButton &&
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()

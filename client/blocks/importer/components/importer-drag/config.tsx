@@ -66,7 +66,7 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 			),
 		},
 	};
-	const importerData = importerConfig()[ importer ];
+	const importerData = importerConfig( {} )[ importer ];
 
 	importerData.title = translate( 'Import content from %(importerName)s', {
 		...options,

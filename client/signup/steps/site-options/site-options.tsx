@@ -1,7 +1,7 @@
 import { Button, FormInputValidation } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import React, { ReactChild, useState } from 'react';
+import React, { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -15,10 +15,10 @@ interface Props {
 	defaultSiteTitle: string;
 	defaultTagline: string;
 	defaultSearchTerms?: string;
-	siteTitleLabel: ReactChild;
-	siteTitleExplanation?: ReactChild;
-	taglineExplanation?: ReactChild;
-	searchTermsExplanation?: ReactChild;
+	siteTitleLabel: TranslateResult;
+	siteTitleExplanation?: TranslateResult;
+	taglineExplanation?: TranslateResult;
+	searchTermsExplanation?: TranslateResult;
 	isSiteTitleRequired?: boolean;
 	isTaglineRequired?: boolean;
 	acceptSearchTerms?: boolean;

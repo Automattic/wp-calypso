@@ -17,6 +17,7 @@ interface Props {
 	toggleModal?: ( item?: StateMonitorSettingsSMS, action?: AllowedMonitorContactActions ) => void;
 	recordEvent?: ( action: string, params?: object ) => void;
 	showVerifiedBadge?: boolean;
+	isRemoveAction?: boolean;
 }
 
 const EVENT_NAMES = {
@@ -30,6 +31,7 @@ export default function SMSItemContent( {
 	toggleModal,
 	recordEvent,
 	showVerifiedBadge,
+	isRemoveAction = false,
 }: Props ) {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -60,56 +62,59 @@ export default function SMSItemContent( {
 					<div className="configure-contact-info__card-heading">{ item.phoneNumberFull }</div>
 					<div className="configure-contact-info__card-sub-heading">{ item.name }</div>
 				</span>
+				{
+					// Show the status and actions only if the action is not remove.
+				 }
+				{ ! isRemoveAction && (
+					<>
+						{ ! isVerified && (
+							<span
+								role="button"
+								tabIndex={ 0 }
+								onKeyPress={ () => handleToggleModal( 'verify' ) }
+								onClick={ () => handleToggleModal( 'verify' ) }
+								className="configure-contact-info__verification-status cursor-pointer"
+							>
+								<Badge type="warning">{ translate( 'Pending' ) }</Badge>
+							</span>
+						) }
+						{ showVerifiedBadge && isVerified && (
+							<span className="configure-contact-info__verification-status">
+								<Badge type="success">{ translate( 'Verified' ) }</Badge>
+							</span>
+						) }
+						<>
+							<Button
+								compact
+								borderless
+								className="configure-contact-info__action-icon"
+								onClick={ showActions }
+								aria-label={ translate( 'More actions' ) }
+								ref={ buttonActionRef }
+							>
+								<Icon size={ 18 } icon={ moreHorizontal } />
+							</Button>
+							<PopoverMenu
+								className="configure-contact-info__popover-menu"
+								context={ buttonActionRef.current }
+								isVisible={ isOpen }
+								onClose={ closeDropdown }
+								position="bottom left"
+							>
+								<PopoverMenuItem onClick={ () => handleToggleModal( 'verify' ) }>
+									{ translate( 'Verify' ) }
+								</PopoverMenuItem>
 
-				{ ! isVerified && (
-					<span
-						role="button"
-						tabIndex={ 0 }
-						onKeyPress={ () => handleToggleModal( 'verify' ) }
-						onClick={ () => handleToggleModal( 'verify' ) }
-						className="configure-contact-info__verification-status cursor-pointer"
-					>
-						<Badge type="warning">{ translate( 'Pending' ) }</Badge>
-					</span>
+								<PopoverMenuItem onClick={ () => handleToggleModal( 'edit' ) }>
+									{ translate( 'Edit' ) }
+								</PopoverMenuItem>
+								<PopoverMenuItem onClick={ () => handleToggleModal( 'remove' ) }>
+									{ translate( 'Remove' ) }
+								</PopoverMenuItem>
+							</PopoverMenu>
+						</>
+					</>
 				) }
-				{ showVerifiedBadge && isVerified && (
-					<span className="configure-contact-info__verification-status">
-						<Badge type="success">{ translate( 'Verified' ) }</Badge>
-					</span>
-				) }
-				<Button
-					compact
-					borderless
-					className="configure-contact-info__action-icon"
-					onClick={ showActions }
-					aria-label={ translate( 'More actions' ) }
-					ref={ buttonActionRef }
-				>
-					<Icon size={ 18 } icon={ moreHorizontal } />
-				</Button>
-				<PopoverMenu
-					className="configure-contact-info__popover-menu"
-					context={ buttonActionRef.current }
-					isVisible={ isOpen }
-					onClose={ closeDropdown }
-					position="bottom left"
-				>
-					<PopoverMenuItem onClick={ () => handleToggleModal( 'verify' ) }>
-						{ translate( 'Verify' ) }
-					</PopoverMenuItem>
-
-					<PopoverMenuItem onClick={ () => handleToggleModal( 'edit' ) }>
-						{ translate( 'Edit' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem
-						onClick={ () => {
-							//TODO handle actions
-							return null;
-						} }
-					>
-						{ translate( 'Remove' ) }
-					</PopoverMenuItem>
-				</PopoverMenu>
 			</div>
 		</Card>
 	);
