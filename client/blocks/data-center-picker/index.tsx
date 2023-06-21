@@ -114,7 +114,7 @@ const PickerOption = styled.div( {
 const PickerOptionLabel = styled.span( { lineHeight: '20px', fontWeight: 600, color: '#101517' } );
 
 const PickerRadio = styled.input( {
-	margin: '2px 16px 0 0',
+	margin: '2px 16px 8px 0',
 } );
 
 const CompactPickerSelect = styled( FormSelect )( {
