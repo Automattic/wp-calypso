@@ -211,6 +211,7 @@ export interface License {
 	username: string | null;
 	blogId: number | null;
 	siteUrl: string | null;
+	hasDownloads: boolean;
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
