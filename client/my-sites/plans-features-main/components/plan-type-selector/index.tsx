@@ -93,6 +93,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 type PopupMessageProps = {
 	context?: HTMLElement;
 	isVisible: boolean;
+	children?: React.ReactNode;
 };
 
 // eslint-disable @typescript-eslint/no-use-before-define
