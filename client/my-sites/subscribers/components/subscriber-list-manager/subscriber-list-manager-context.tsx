@@ -1,4 +1,5 @@
-import React, { createContext, useState, useCallback, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import { useDebounce } from 'use-debounce';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSubscribersQuery } from '../../queries';
@@ -41,13 +42,15 @@ export const SubscribersListManagerProvider = ( {
 		setSearchTerm( term );
 	}, [] );
 
+	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
+
 	const grandTotalQueryResult = useSubscribersQuery( { siteId } );
 	const grandTotal = grandTotalQueryResult.data?.total || 0;
 
 	const subscribersQueryResult = useSubscribersQuery( {
 		page,
 		perPage,
-		search: searchTerm,
+		search: debouncedSearchTerm,
 		siteId,
 	} );
 
