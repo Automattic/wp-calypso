@@ -90,7 +90,7 @@ export const useSubscriberListManager = () => {
 	const context = useContext( SubscriberListManagerContext );
 	if ( ! context ) {
 		throw new Error(
-			'useSubscriberListManager must be used within a SiteSubscriptionsManagerProvider'
+			'useSubscriberListManager must be used within a SubscribersListManagerProvider'
 		);
 	}
 	return context;
