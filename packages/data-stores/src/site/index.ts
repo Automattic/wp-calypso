@@ -1,7 +1,7 @@
 import { registerStore } from '@wordpress/data';
 import { registerPlugins } from '../plugins';
 import { controls } from '../wpcom-request-controls';
-import { createActions } from './actions';
+import { createActions, ActionCreators } from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
@@ -9,7 +9,7 @@ import * as selectors from './selectors';
 import type { WpcomClientCredentials } from '../shared-types';
 
 export * from './types';
-export type { State };
+export type { State, ActionCreators as SiteActions };
 export { STORE_KEY };
 
 let isRegistered = false;
