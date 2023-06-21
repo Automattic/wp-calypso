@@ -44,6 +44,7 @@ import 'calypso/state/reader/init';
  * @typedef {Object} RecommendedSiteInfo
  * @property {number} seed - Random number for the recommendation logic
  * @property {number} siteId - Identifier of the recommended site
+ * @property {string} siteTitle - Title of the recommended site
  */
 
 /**
