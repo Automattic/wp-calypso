@@ -8,7 +8,7 @@ export const useEdgeCacheQuery = ( siteId: number, options: UseQueryOptions ) =>
 		queryKey: [ USE_EDGE_CACHE_QUERY_KEY, siteId ],
 		queryFn: () =>
 			wp.req.get( {
-				path: `/sites/${ siteId }/edge-cache/active`,
+				path: `/sites/${ siteId }/hosting/edge-cache/active`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: !! siteId && ( options?.enabled ?? true ),

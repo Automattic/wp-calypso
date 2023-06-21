@@ -27,7 +27,7 @@ export const useToggleEdgeCacheMutation = (
 	const mutation = useMutation( {
 		mutationFn: async ( active ) =>
 			wp.req.post( {
-				path: `/sites/${ siteId }/edge-cache/active`,
+				path: `/sites/${ siteId }/hosting/edge-cache/active`,
 				apiNamespace: 'wpcom/v2',
 				body: {
 					active: active ? 1 : 0,

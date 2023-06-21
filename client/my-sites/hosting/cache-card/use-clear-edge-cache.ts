@@ -24,7 +24,7 @@ export const useClearEdgeCacheMutation = (
 	const mutation = useMutation( {
 		mutationFn: async () =>
 			wp.req.post( {
-				path: `/sites/${ siteId }/edge-cache/purge`,
+				path: `/sites/${ siteId }/hosting/edge-cache/purge`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		...options,
