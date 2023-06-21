@@ -61,6 +61,36 @@ const rule = ( module.exports = function ( context ) {
 	const variableDeclarationValues = [];
 	const urlVariables = new Set();
 
+	/**
+	 * Check whether the node is unlocalized url.
+	 *
+	 * @param   {Object} node
+	 * @param   {string} nodeValueString
+	 * @returns {void}
+	 */
+	function handleUnlocalizedUrls( node, nodeValueString ) {
+		// Node is wrapped in localizeUrl, therefore we can assume it's localized and we don't need to do any further checks.
+		if ( getCallee( node.parent ).name === 'localizeUrl' ) {
+			return;
+		}
+
+		// Check whether the string value of the node is localizable string.
+		if ( ! isLocalizableUrlString( nodeValueString ) ) {
+			return;
+		}
+
+		// Url string is assigned to a variable and variable is possibly later used in a localizeUrl call;
+		if ( isVariableDeclarationValue( node.parent.type ) ) {
+			variableDeclarationValues.push( node );
+		} else {
+			// Report unlocalized url.
+			context.report( {
+				node,
+				message: rule.ERROR_MESSAGE,
+			} );
+		}
+	}
+
 	return {
 		'Program:exit': function () {
 			for ( const node of variableDeclarationValues ) {
@@ -84,47 +114,11 @@ const rule = ( module.exports = function ( context ) {
 			}
 		},
 		Literal: function ( node ) {
-			// String is wrapped in localizeUrl, therefore we can assume it's localized and we don't need to do any further checks.
-			if ( getCallee( node.parent ).name === 'localizeUrl' ) {
-				return;
-			}
-
-			if ( ! isLocalizableUrlString( node.value ) ) {
-				return;
-			}
-
-			// Url string is assigned to a variable and variable is possibly later used in a localizeUrl call;
-			if ( isVariableDeclarationValue( node.parent.type ) ) {
-				variableDeclarationValues.push( node );
-			} else {
-				// Report unlocalized url.
-				context.report( {
-					node,
-					message: rule.ERROR_MESSAGE,
-				} );
-			}
+			handleUnlocalizedUrls( node, node.value );
 		},
 		TemplateElement: function ( node ) {
-			// Template literal is wrapped in localizeUrl, therefore we can assume it's localized and we don't need to do any further checks.
 			const templateLiteralNode = node.parent;
-			if ( getCallee( templateLiteralNode.parent ).name === 'localizeUrl' ) {
-				return;
-			}
-
-			if ( ! isLocalizableUrlString( node.value.raw ) ) {
-				return;
-			}
-
-			// Url template string is assigned to a variable and variable is later used in a localizeUrl call;
-			if ( isVariableDeclarationValue( templateLiteralNode.parent.type ) ) {
-				variableDeclarationValues.push( templateLiteralNode );
-			} else {
-				// Report unlocalized url.
-				context.report( {
-					node: templateLiteralNode,
-					message: rule.ERROR_MESSAGE,
-				} );
-			}
+			handleUnlocalizedUrls( templateLiteralNode, node.value.raw );
 		},
 	};
 } );
