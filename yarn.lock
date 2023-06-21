@@ -490,6 +490,7 @@ __metadata:
     qrcode.react: ^3.1.0
     react-modal: ^3.16.1
     react-slider: ^2.0.5
+    resize-observer-polyfill: ^1.5.1
     typescript: ^4.7.4
     utility-types: ^3.10.0
     wpcom-proxy-request: "workspace:^"
@@ -26803,7 +26804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resize-observer-polyfill@npm:1.5.1":
+"resize-observer-polyfill@npm:1.5.1, resize-observer-polyfill@npm:^1.5.1":
   version: 1.5.1
   resolution: "resize-observer-polyfill@npm:1.5.1"
   checksum: 5e882475067f0b97dc07e0f37c3e335ac5bc3520d463f777cec7e894bb273eddbfecb857ae668e6fb6881fd6f6bb7148246967172139302da50fa12ea3a15d95
