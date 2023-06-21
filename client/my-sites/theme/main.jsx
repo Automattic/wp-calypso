@@ -103,29 +103,17 @@ import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
 
-const LivePreviewButton = ( { siteSlug, themeId, themeType, isFullSiteEditingTheme } ) => {
+const LivePreviewButton = ( { siteSlug, themeType, isFullSiteEditingTheme, stylesheet } ) => {
 	if ( ! isFullSiteEditingTheme ) {
 		return null;
 	}
 
-	let themePath = '';
-	switch ( themeType ) {
-		case 'free':
-			themePath = 'pub/';
-			break;
-		case 'premium':
-			themePath = 'premium/';
-			break;
-	}
-
-	if ( themePath === '' ) {
+	if ( themeType !== 'free' && themeType !== 'premium' ) {
 		return null;
 	}
 
 	return (
-		<Button
-			href={ `https://${ siteSlug }/wp-admin/site-editor.php?theme_preview=${ themePath }${ themeId }` }
-		>
+		<Button href={ `https://${ siteSlug }/wp-admin/site-editor.php?theme_preview=${ stylesheet }` }>
 			Live Preview (PoC)
 		</Button>
 	);
@@ -630,10 +618,10 @@ class ThemeSheet extends Component {
 			retired,
 			softLaunched,
 			translate,
-			themeId,
 			siteSlug,
 			themeType,
 			isFullSiteEditingTheme,
+			stylesheet,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -656,9 +644,9 @@ class ThemeSheet extends Component {
 						{ config.isEnabled( 'themes/block-theme-previews-poc' ) && (
 							<LivePreviewButton
 								siteSlug={ siteSlug }
-								themeId={ themeId }
 								themeType={ themeType }
 								isFullSiteEditingTheme={ isFullSiteEditingTheme }
+								stylesheet={ stylesheet }
 							></LivePreviewButton>
 						) }
 						{ shouldRenderButton &&
