@@ -79,6 +79,7 @@ export const parseBackupContentsData = ( payload: BackupLsResponse ): FileBrowse
 			...( item.period && { period: item.period } ),
 			...( item.sort && { sort: item.sort } ),
 			...( item.type === 'archive' && { extension_type: name.replace( '*', '' ) } ),
+			...( item.extension_version && { extensionVersion: item.extension_version } ),
 		};
 	} );
 
