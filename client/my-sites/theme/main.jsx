@@ -102,7 +102,6 @@ import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
 
-// WIP
 const LivePreviewButton = ( { siteSlug, themeId, themeType } ) => {
 	let themePath = '';
 	switch ( themeType ) {
@@ -648,13 +647,13 @@ class ThemeSheet extends Component {
 						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
 					<div className="theme__sheet-main-actions">
-						{ /* TODO: feature flag */ }
-						{ /* WIP */ }
-						<LivePreviewButton
-							siteSlug={ siteSlug }
-							themeId={ themeId }
-							themeType={ themeType }
-						></LivePreviewButton>
+						{ config.isEnabled( 'themes/block-theme-previews-poc' ) && (
+							<LivePreviewButton
+								siteSlug={ siteSlug }
+								themeId={ themeId }
+								themeType={ themeType }
+							></LivePreviewButton>
+						) }
 						{ shouldRenderButton &&
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
@@ -1534,9 +1533,9 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
-		// TODO: feature flag
-		// WIP
-		const themeType = getThemeType( state, themeId );
+		const themeType = config.isEnabled( 'themes/block-theme-previews-poc' )
+			? getThemeType( state, themeId )
+			: undefined;
 
 		return {
 			...theme,
