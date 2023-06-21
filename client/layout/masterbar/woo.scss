@@ -780,11 +780,20 @@
 				}
 			}
 		}
+		.login__form-userdata label.form-label {
+			line-height: 16px;
+		}
+
+		.login__form .login__form-userdata input.form-text-input,
+		.login__form .login__form-userdata input {
+			margin-bottom: 16px;
+		}
 
 		.login__form-header h3,
 		.formatted-header .formatted-header__title {
 			margin-bottom: 12px;
 			font-size: $woo-font-title-large;
+			line-height: 32px;
 
 			@media screen and ( max-width: 660px ) {
 				font-size: rem(28px);
@@ -856,8 +865,10 @@
 		}
 
 		// Log in link on signup page
+		.login__header-subtitle a,
 		.formatted-header__subtitle a {
 			color: var(--wp-admin-theme-color);
+			line-height: inherit;
 		}
 
 		.form-input-validation {
@@ -872,6 +883,32 @@
 			svg {
 				display: none;
 			}
+		}
+
+		// Lost password
+		.login__lostpassword-form {
+			display: flex;
+			flex-direction: column;
+			padding: 48px 24px 32px;
+
+			@media screen and ( max-width: 660px ) {
+				padding: 32px 16px 28px;
+			}
+
+			.login__form-action {
+				margin-top: 24px;
+			}
+
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
+			}
+			.form-input-validation {
+				padding-bottom: 0;
+			}
+		}
+
+		.login__lostpassword-subtitle a {
+			line-height: inherit;
 		}
 	}
 }
