@@ -1,0 +1,55 @@
+@import "@automattic/jetpack-base-styles/style";
+
+$thumb-height: 40px;
+$track-height: 8px;
+
+@mixin adjust-track-rail-styles {
+	height: $track-height;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+}
+
+// Base styles
+.jp-components-pricing-slider__control {
+	width: 100%;
+	height: $thumb-height;
+}
+
+.jp-components-pricing-slider__track {
+	@include adjust-track-rail-styles;
+	top: calc(($thumb-height / 2) - ($track-height / 2));
+	background: var(--jp-gray);
+
+	&.jp-components-pricing-slider__track-0 {
+		background: var(--jp-green-40);
+	}
+
+	&.jp-components-pricing-slider__track-1 {
+		background: var(--jp-gray);
+	}
+}
+
+.jp-components-pricing-slider__thumb {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 16px;
+	height: $thumb-height;
+	background-color: var(--jp-white);
+	border: 1px solid var(--jp-gray);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 8px rgba(0, 0, 0, 0.08);
+	border-radius: 4px;
+	color: var(--jp-black);
+	font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-style: normal;
+	font-weight: 600;
+	font-size: var(--font-body);
+	line-height: 24px;
+	letter-spacing: -0.02em;
+	white-space: nowrap;
+	cursor: pointer;
+
+	&.jp-components-pricing-slider__thumb--is-active {
+		// On focus styling
+		outline: none;
+	}
+}
