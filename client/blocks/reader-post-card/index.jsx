@@ -119,11 +119,8 @@ class ReaderPostCard extends Component {
 			site,
 			feed,
 			onCommentClick,
-			showPrimaryFollowButton,
 			isSelected,
 			showSiteName,
-			followSource,
-			isDiscoverStream,
 			postKey,
 			isExpanded,
 			expandCard,
@@ -183,6 +180,7 @@ class ReaderPostCard extends Component {
 				showAvatar={ ! compact }
 				teams={ teams }
 				showFollow={ ! isDiscover }
+				compact={ compact }
 			/>
 		);
 

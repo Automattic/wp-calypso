@@ -147,6 +147,11 @@
 			margin: 0;
 		}
 
+		.reader-post-card__post-heading {
+			display: flex;
+			justify-content: space-between;
+		}
+
 		.reader-post-card__post-content {
 			flex-direction: row;
 			gap: 24px;
@@ -173,13 +178,6 @@
 		.reader-excerpt {
 			max-height: none;
 			-webkit-line-clamp: 3;
-		}
-
-		&:not(.has-thumbnail) {
-			.reader-post-card__title {
-				display: flex;
-				justify-content: space-between;
-			}
 		}
 	}
 

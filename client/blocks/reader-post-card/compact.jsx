@@ -24,22 +24,26 @@ const CompactPost = ( {
 		<div className="reader-post-card__post">
 			<div className="reader-post-card__post-content">
 				<div className="reader-post-card__post-details">
-					<AutoDirection>
-						<h2 className="reader-post-card__title">
-							<a className="reader-post-card__title-link" href={ post.URL }>
-								{ post.title }
-							</a>
-							{ ! post.canonical_media && (
-								<ReaderPostEllipsisMenu
-									site={ site }
-									teams={ teams }
-									post={ post }
-									showFollow={ false }
-								/>
-							) }
-						</h2>
-					</AutoDirection>
-					{ postByline }
+					<div className="reader-post-card__post-heading">
+						<div className="reader-post-card__post-title-meta">
+							<AutoDirection>
+								<h2 className="reader-post-card__title">
+									<a className="reader-post-card__title-link" href={ post.URL }>
+										{ post.title }
+									</a>
+								</h2>
+							</AutoDirection>
+							{ postByline }
+						</div>
+						{ ! post.canonical_media && (
+							<ReaderPostEllipsisMenu
+								site={ site }
+								teams={ teams }
+								post={ post }
+								showFollow={ false }
+							/>
+						) }
+					</div>
 					<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
 				</div>
 				{ post.canonical_media && (
