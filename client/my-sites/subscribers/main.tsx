@@ -12,7 +12,7 @@ import { SubscribersHeaderPopover } from './components/subscribers-header-popove
 import { UnsubscribeModal } from './components/unsubscribe-modal';
 import { useUnsubscribeModal } from './hooks';
 import { Subscriber } from './types';
-import './styles.scss';
+import './style.scss';
 
 type SubscribersProps = {
 	pageNumber: number;

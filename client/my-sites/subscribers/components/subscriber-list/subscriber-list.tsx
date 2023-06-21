@@ -3,7 +3,7 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
 import { Subscriber } from '../../types';
 import { SubscriberRow } from './subscriber-row';
-import './styles.scss';
+import './style.scss';
 
 type SubscriberListProps = {
 	onView: ( subscriber: Subscriber ) => void;

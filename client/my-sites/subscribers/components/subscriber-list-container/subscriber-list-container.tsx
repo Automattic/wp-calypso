@@ -5,7 +5,7 @@ import { SubscriberList } from 'calypso/my-sites/subscribers/components/subscrib
 import { SubscriberListActionsBar } from 'calypso/my-sites/subscribers/components/subscriber-list-actions-bar';
 import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
-import './styles.scss';
+import './style.scss';
 
 type SubscriberListContainerProps = {
 	onClickView: ( subscriber: Subscriber ) => void;

@@ -8,7 +8,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-import '../shared/popover-styles.scss';
+import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
 	siteId: number | null;
