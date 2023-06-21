@@ -74,7 +74,7 @@ class PostByline extends Component {
 					/>
 				) }
 				<div className="reader-post-card__byline-details">
-					{ ( shouldDisplayAuthor || showSiteName ) && ! compact && (
+					{ ( shouldDisplayAuthor || showSiteName ) && (
 						<div className="reader-post-card__byline-author-site">
 							{ shouldDisplayAuthor && (
 								<ReaderAuthorLink

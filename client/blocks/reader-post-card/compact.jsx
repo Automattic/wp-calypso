@@ -72,6 +72,7 @@ const CompactPost = ( {
 
 CompactPost.propTypes = {
 	post: PropTypes.object.isRequired,
+	postByline: PropTypes.object,
 	isDiscover: PropTypes.bool,
 };
 
