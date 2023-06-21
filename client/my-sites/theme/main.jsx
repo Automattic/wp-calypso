@@ -106,10 +106,11 @@ import './style.scss';
 const LivePreviewButton = ( {
 	isActive,
 	isAtomic,
+	isExternallyManagedTheme,
+	isWporg,
+	showTryAndCustomize,
 	siteSlug,
 	stylesheet,
-	showTryAndCustomize,
-	themeType,
 } ) => {
 	if ( isActive ) {
 		return null;
@@ -120,7 +121,7 @@ const LivePreviewButton = ( {
 	if ( isAtomic ) {
 		return null;
 	}
-	if ( themeType !== 'free' && themeType !== 'premium' ) {
+	if ( isExternallyManagedTheme || isWporg ) {
 		return null;
 	}
 	return (
@@ -635,6 +636,8 @@ class ThemeSheet extends Component {
 			isAtomic,
 			isActive,
 			showTryAndCustomize,
+			isExternallyManagedTheme,
+			isWporg,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -658,9 +661,11 @@ class ThemeSheet extends Component {
 							<LivePreviewButton
 								isActive={ isActive }
 								isAtomic={ isAtomic }
+								isExternallyManagedTheme={ isExternallyManagedTheme }
+								isWporg={ isWporg }
+								showTryAndCustomize={ showTryAndCustomize }
 								siteSlug={ siteSlug }
 								stylesheet={ stylesheet }
-								showTryAndCustomize={ showTryAndCustomize }
 								themeType={ themeType }
 							></LivePreviewButton>
 						) }
