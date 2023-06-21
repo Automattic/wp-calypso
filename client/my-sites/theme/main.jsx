@@ -636,8 +636,6 @@ class ThemeSheet extends Component {
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
 		const shouldRenderButton = ! retired && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 
-		// console.log( { themeType, 'this.props': this.props } );
-
 		return (
 			<div className="theme__sheet-header">
 				<div className="theme__sheet-main">
