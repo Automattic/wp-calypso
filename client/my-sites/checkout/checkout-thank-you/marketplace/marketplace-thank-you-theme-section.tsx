@@ -51,7 +51,8 @@ const ThemeSectionContent = styled.div`
 	align-items: center;
 	flex-wrap: wrap;
 	gap: 16px;
-	padding-top: 26px;
+	padding: 20px 25px;
+	border: 1px solid var( --color-border-subtle );
 `;
 
 const ThemeSectionName = styled.div`
@@ -124,18 +125,6 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 		<ThemeSectionContainer>
 			<QueryActiveTheme siteId={ siteId } />
 			<AutoLoadingHomepageModal source="details" />
-			<ThemeSectionImageContainer>
-				<ThemeSectionImage
-					src={ theme.screenshot }
-					alt={
-						translate( "%(theme)s's icon", {
-							args: {
-								theme: theme.name,
-							},
-						} ) as string
-					}
-				/>
-			</ThemeSectionImageContainer>
 			<ThemeSectionContent>
 				<ThemeSectionName>
 					<h5>{ theme.name }</h5>
@@ -165,6 +154,18 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 						</ThemeButton>
 					) : null }
 				</ThemeSectionButtons>
+				<ThemeSectionImageContainer>
+					<ThemeSectionImage
+						src={ theme.screenshot }
+						alt={
+							translate( "%(theme)s's icon", {
+								args: {
+									theme: theme.name,
+								},
+							} ) as string
+						}
+					/>
+				</ThemeSectionImageContainer>
 			</ThemeSectionContent>
 		</ThemeSectionContainer>
 	);
