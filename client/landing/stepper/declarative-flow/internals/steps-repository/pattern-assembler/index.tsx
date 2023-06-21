@@ -6,7 +6,6 @@ import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
 	__experimentalUseNavigator as useNavigator,
-	withNotices,
 } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -33,7 +32,7 @@ import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import { usePrefetchImages } from './hooks/use-prefetch-images';
 import useRecipe from './hooks/use-recipe';
-import Notices, { getNoticeContent } from './notices/notices';
+import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
 import ScreenActivation from './screen-activation';
@@ -61,9 +60,9 @@ const PatternAssembler = ( {
 	navigation,
 	flow,
 	stepName,
-	noticeList,
 	noticeOperations,
-}: StepProps & withNotices.Props ) => {
+	noticeUI,
+}: StepProps & NoticesProps ) => {
 	const translate = useTranslate();
 	const navigator = useNavigator();
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
@@ -212,11 +211,6 @@ const PatternAssembler = ( {
 		} );
 	};
 
-	const showNotice = ( action: string, pattern: Pattern ) => {
-		noticeOperations.removeNotice( action );
-		noticeOperations.createNotice( { id: action, content: getNoticeContent( action, pattern ) } );
-	};
-
 	const getDesign = () =>
 		( {
 			...selectedDesign,
@@ -238,12 +232,12 @@ const PatternAssembler = ( {
 		updateActivePatternPosition( -1 );
 		if ( pattern ) {
 			if ( header ) {
-				showNotice( 'replace', pattern );
+				noticeOperations.showPatternReplacedNotice( pattern );
 			} else {
-				showNotice( 'add', pattern );
+				noticeOperations.showPatternInsertedNotice( pattern );
 			}
 		} else if ( header ) {
-			showNotice( 'remove', header );
+			noticeOperations.showPatternRemovedNotice( header );
 		}
 	};
 
@@ -257,12 +251,12 @@ const PatternAssembler = ( {
 		activateFooterPosition( !! pattern );
 		if ( pattern ) {
 			if ( footer ) {
-				showNotice( 'replace', pattern );
+				noticeOperations.showPatternReplacedNotice( pattern );
 			} else {
-				showNotice( 'add', pattern );
+				noticeOperations.showPatternInsertedNotice( pattern );
 			}
 		} else if ( footer ) {
-			showNotice( 'remove', footer );
+			noticeOperations.showPatternRemovedNotice( footer );
 		}
 	};
 
@@ -277,7 +271,7 @@ const PatternAssembler = ( {
 				...sections.slice( sectionPosition + 1 ),
 			] );
 			updateActivePatternPosition( sectionPosition );
-			showNotice( 'replace', pattern );
+			noticeOperations.showPatternReplacedNotice( pattern );
 		}
 	};
 
@@ -290,11 +284,11 @@ const PatternAssembler = ( {
 			},
 		] );
 		updateActivePatternPosition( sections.length );
-		showNotice( 'add', pattern );
+		noticeOperations.showPatternInsertedNotice( pattern );
 	};
 
 	const deleteSection = ( position: number ) => {
-		showNotice( 'remove', sections[ position ] );
+		noticeOperations.showPatternRemovedNotice( sections[ position ] );
 		setSections( [ ...sections.slice( 0, position ), ...sections.slice( position + 1 ) ] );
 		updateActivePatternPosition( position );
 	};
@@ -565,7 +559,7 @@ const PatternAssembler = ( {
 			ref={ wrapperRef }
 			tabIndex={ -1 }
 		>
-			<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
+			{ noticeUI }
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
@@ -704,7 +698,7 @@ const PatternAssembler = ( {
 	);
 };
 
-const PatternAssemblerStep = ( props: StepProps & withNotices.Props ) => (
+const PatternAssemblerStep = ( props: StepProps & NoticesProps ) => (
 	<NavigatorProvider initialPath={ NAVIGATOR_PATHS.MAIN } tabIndex={ -1 }>
 		<PatternAssembler { ...props } />
 	</NavigatorProvider>
