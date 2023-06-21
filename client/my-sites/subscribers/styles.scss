@@ -8,9 +8,15 @@
 	.subscribers__section {
 		margin-bottom: 64px;
 	}
+
+	.add-subscribers-button {
+		display: flex;
+		gap: 10px;
+		margin-right: 24px;
+	}
 }
 
-.subscribers__header-count {
+.subscribers__header {
 	margin-top: 70px;
 	margin-bottom: 30px;
 	font-size: $font-title-small;
