@@ -146,10 +146,14 @@ export default function CheckoutHelpLink() {
 	}, [ isChatActive, setShowMessagingLauncher, isMessagingWidgetShown ] );
 
 	const shouldShowHelpLink = ! isChatActive && ! isPresalesChatAvailable;
+	if ( ! shouldShowHelpLink ) {
+		return null;
+	}
+
 	return (
 		<CheckoutHelpLinkWrapper>
 			{ isLoadingChat && <LoadingButton /> }
-			{ ! isLoadingChat && shouldShowHelpLink && (
+			{ ! isLoadingChat && (
 				<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
 					{ translate(
 						'Questions? {{underline}}Read more about plans and purchases{{/underline}}',
