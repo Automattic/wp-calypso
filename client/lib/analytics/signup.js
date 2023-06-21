@@ -9,6 +9,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { identifyUser } from 'calypso/lib/analytics/identify-user';
 import { addToQueue } from 'calypso/lib/analytics/queue';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { SIGNUP_DOMAIN_ORIGIN_KEY } from './utils/signup_domain_origin';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 
@@ -65,7 +66,7 @@ export function recordSignupComplete(
 		);
 	}
 
-	const signUpDomainOrigin = window.localStorage.getItem( 'SIGNUP_DOMAIN_ORIGIN' );
+	const signUpDomainOrigin = window.localStorage.getItem( SIGNUP_DOMAIN_ORIGIN_KEY );
 
 	// Tracks
 	// Note that Tracks expects blog_id to differntiate sites, hence using
@@ -88,7 +89,7 @@ export function recordSignupComplete(
 		signup_domain_origin: signUpDomainOrigin,
 	} );
 
-	window.localStorage.removeItem( 'SIGNUP_DOMAIN_ORIGIN' );
+	window.localStorage.removeItem( SIGNUP_DOMAIN_ORIGIN_KEY );
 
 	// Google Analytics
 	const flags = [
