@@ -1,5 +1,24 @@
-.is-discover-stream {
+.discover-stream-navigation {
+	position: relative;
+
+	.discover-stream__tabs-scroll-left-button,
+	.discover-stream__tabs-scroll-right-button {
+		border-radius: 50%;
+		padding: 6px 10px;
+		position: absolute;
+		top: 0;
+		z-index: 1;
+	}
+
+	.discover-stream__tabs-scroll-right-button {
+		right: 0;
+	}
+	.discover-stream__tabs-scroll-left-button {
+		left: 0;
+	}
+
 	.discover-stream__tabs {
+		position: relative;
 		overflow-x: scroll;
 		margin-bottom: 20px;
 		padding-bottom: 15px;
@@ -10,5 +29,12 @@
 			border-radius: 4px;
 			margin: 0 5px;
 		}
+
 	}
+}
+
+
+.accessible-focus .discover-stream-navigation .discover-stream__tabs-scroll-left-button,
+.accessible-focus .discover-stream-navigation .discover-stream__tabs-scroll-right-button {
+	display: none;
 }

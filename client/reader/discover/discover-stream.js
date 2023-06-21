@@ -9,6 +9,7 @@ import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './discover-stream.scss';
+import { Button, Gridicon } from '@automattic/components';
 
 const DEFAULT_TAB = 'recommended';
 
@@ -47,6 +48,17 @@ const DiscoverStream = ( props ) => {
 		scrollPosition.current = scrollRef.current?.scrollLeft;
 	};
 
+	const scrollLeft = () => {
+		if ( scrollRef.current ) {
+			scrollRef.current.scrollLeft -= scrollRef.current.clientWidth * ( 2 / 3 );
+		}
+	};
+	const scrollRight = () => {
+		if ( scrollRef.current ) {
+			scrollRef.current.scrollLeft += scrollRef.current.clientWidth * ( 2 / 3 );
+		}
+	};
+
 	// Set the scroll position and focus of navigation tabs when selected tab changes and this
 	// component is forced to rerender.
 	useEffect( () => {
@@ -68,27 +80,45 @@ const DiscoverStream = ( props ) => {
 	}, [ selectedTab ] );
 
 	const DiscoverNavigation = () => (
-		<div className="discover-stream__tabs" ref={ scrollRef } onScroll={ trackScrollPosition }>
-			<SegmentedControl primary className="discover-stream__tab-control">
-				<SegmentedControl.Item
-					key={ DEFAULT_TAB }
-					selected={ isDefaultTab }
-					onClick={ () => setSelectedTab( DEFAULT_TAB ) }
-				>
-					{ translate( 'Recommended' ) }
-				</SegmentedControl.Item>
-				{ recommendedTags.map( ( tag ) => {
-					return (
-						<SegmentedControl.Item
-							key={ tag.slug }
-							selected={ tag.slug === selectedTab }
-							onClick={ () => setSelectedTab( tag.slug ) }
-						>
-							{ tag.title }
-						</SegmentedControl.Item>
-					);
-				} ) }
-			</SegmentedControl>
+		<div className="discover-stream-navigation">
+			<Button
+				className="discover-stream__tabs-scroll-left-button"
+				onClick={ scrollLeft }
+				tabIndex={ -1 }
+				aria-hidden={ true }
+			>
+				<Gridicon icon="chevron-left" />
+			</Button>
+			<Button
+				className="discover-stream__tabs-scroll-right-button"
+				onClick={ scrollRight }
+				tabIndex={ -1 }
+				aria-hidden={ true }
+			>
+				<Gridicon icon="chevron-right" />
+			</Button>
+			<div className="discover-stream__tabs" ref={ scrollRef } onScroll={ trackScrollPosition }>
+				<SegmentedControl primary className="discover-stream__tab-control">
+					<SegmentedControl.Item
+						key={ DEFAULT_TAB }
+						selected={ isDefaultTab }
+						onClick={ () => setSelectedTab( DEFAULT_TAB ) }
+					>
+						{ translate( 'Recommended' ) }
+					</SegmentedControl.Item>
+					{ recommendedTags.map( ( tag ) => {
+						return (
+							<SegmentedControl.Item
+								key={ tag.slug }
+								selected={ tag.slug === selectedTab }
+								onClick={ () => setSelectedTab( tag.slug ) }
+							>
+								{ tag.title }
+							</SegmentedControl.Item>
+						);
+					} ) }
+				</SegmentedControl>
+			</div>
 		</div>
 	);
 
