@@ -71,6 +71,7 @@ import {
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
 import {
+	getThemeType,
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
 	isThemePremium,
@@ -100,6 +101,31 @@ import ThemeNotFoundError from './theme-not-found-error';
 import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
+
+// WIP
+const LivePreviewButton = ( { siteSlug, themeId, themeType } ) => {
+	let themePath = '';
+	switch ( themeType ) {
+		case 'free':
+			themePath = 'pub/';
+			break;
+		case 'premium':
+			themePath = 'premium/';
+			break;
+	}
+
+	if ( themePath === '' ) {
+		return null;
+	}
+
+	return (
+		<Button
+			href={ `https://${ siteSlug }/wp-admin/site-editor.php?theme_preview=${ themePath }${ themeId }` }
+		>
+			Live Preview (PoC)
+		</Button>
+	);
+};
 
 const noop = () => {};
 
@@ -593,7 +619,17 @@ class ThemeSheet extends Component {
 	};
 
 	renderHeader = () => {
-		const { author, isWPForTeamsSite, name, retired, softLaunched, translate } = this.props;
+		const {
+			author,
+			isWPForTeamsSite,
+			name,
+			retired,
+			softLaunched,
+			translate,
+			themeId,
+			siteSlug,
+			themeType,
+		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
@@ -612,6 +648,13 @@ class ThemeSheet extends Component {
 						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
 					<div className="theme__sheet-main-actions">
+						{ /* TODO: feature flag */ }
+						{ /* WIP */ }
+						<LivePreviewButton
+							siteSlug={ siteSlug }
+							themeId={ themeId }
+							themeType={ themeType }
+						></LivePreviewButton>
 						{ shouldRenderButton &&
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
@@ -1491,8 +1534,13 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
+		// TODO: feature flag
+		// WIP
+		const themeType = getThemeType( state, themeId );
+
 		return {
 			...theme,
+			themeType,
 			themeId,
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
