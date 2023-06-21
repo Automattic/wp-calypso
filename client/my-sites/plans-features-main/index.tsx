@@ -48,9 +48,9 @@ import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 interface PlansFeaturesMainProps {
-	plansWithScroll?: boolean;
-	site?: { ID: number } | null; // Only need ID. There are different "site" types in the codebase
+	siteId?: number | null;
 	intent?: Intent | null;
+	plansWithScroll?: boolean;
 	customerType?: string;
 	basePlansPath?: string;
 	selectedPlan?: string;
@@ -83,7 +83,6 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	visiblePlans: string[];
 	plans: string[];
 	customerType: string;
-	siteId?: number;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	sitePlanSlug?: string | null;
 	siteSlug?: string | null;
@@ -218,7 +217,7 @@ const PlansFeaturesMain = ( {
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectToAddDomainFlow,
-	site,
+	siteId,
 	selectedPlan,
 	basePlansPath,
 	selectedFeature,
@@ -243,7 +242,6 @@ const PlansFeaturesMain = ( {
 	isLaunchPage = false,
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
-	const siteId = site?.ID;
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )

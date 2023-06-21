@@ -150,22 +150,22 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<PlansFeaturesMain
-					site={ selectedSite }
-					hideFreePlan={ hideFreePlan }
-					hideEcommercePlan={ this.shouldHideEcommercePlan() }
+					siteId={ selectedSite?.ID }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
 					domainName={ domainName }
 					customerType={ this.getCustomerType() }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					plansWithScroll={ this.state.isDesktop }
 					intent={ intent }
 					flowName={ flowName }
 					isReskinned={ isReskinned }
-					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hideFreePlan={ hideFreePlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
+					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
 					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
 				/>
