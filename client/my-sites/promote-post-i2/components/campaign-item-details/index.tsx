@@ -94,10 +94,12 @@ export default function CampaignItemDetails( props: Props ) {
 		total_budget,
 		total_budget_used,
 		views_organic,
+		views_total,
 	} = campaign_stats || {};
 
 	const { card_name, payment_method, subtotal, credits, total } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
+	const statsEnabled = views_total !== -1;
 
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }`, // + campaignId,
@@ -416,37 +418,46 @@ export default function CampaignItemDetails( props: Props ) {
 											<span className="campaign-item-details__label">
 												{ translate( 'Traffic breakdown' ) }
 											</span>
-											<span className="campaign-item-details__label">
-												{ translate( 'Visits' ) }
-											</span>
+											{ statsEnabled && (
+												<span className="campaign-item-details__label">
+													{ translate( 'Views' ) }
+												</span>
+											) }
 										</div>
 										<div className="campaign-item-details__traffic-container-body">
-											<ul className="horizontal-bar-list">
-												{ ! isLoading ? (
-													<HorizontalBarList>
-														{ databars?.map( ( item, index ) => (
-															<HorizontalBarListItem
-																key={ `bar_${ index }` }
-																data={ item }
-																maxValue={ databarTotal }
-																hasIndicator={ false }
-																leftSideItem={ null }
-																useShortLabel={ false }
-																useShortNumber={ true }
-																isStatic={ true }
-																usePlainCard={ false }
-																isLinkUnderlined={ false }
-																leftGroupToggle={ true }
-															/>
-														) ) }
-													</HorizontalBarList>
-												) : (
-													<FlexibleSkeleton />
-												) }
-											</ul>
-											<div className="campaign-item-details__details no-bottom-margin">
-												{ translate( 'Compares traffic when campaign was active' ) }
-											</div>
+											{ ! isLoading ? (
+												<>
+													{ statsEnabled ? (
+														<ul className="horizontal-bar-list">
+															<HorizontalBarList>
+																{ databars?.map( ( item, index ) => (
+																	<HorizontalBarListItem
+																		key={ `bar_${ index }` }
+																		data={ item }
+																		maxValue={ databarTotal }
+																		hasIndicator={ false }
+																		leftSideItem={ null }
+																		useShortLabel={ false }
+																		useShortNumber={ true }
+																		isStatic={ true }
+																		usePlainCard={ false }
+																		isLinkUnderlined={ false }
+																		leftGroupToggle={ true }
+																	/>
+																) ) }
+															</HorizontalBarList>
+
+															<div className="campaign-item-details__details no-bottom-margin">
+																{ translate( 'Compares traffic when campaign was active' ) }
+															</div>
+														</ul>
+													) : (
+														<div>{ __( `Stats are disabled for this site` ) }</div>
+													) }
+												</>
+											) : (
+												<FlexibleSkeleton />
+											) }
 										</div>
 									</div>
 								</div>
