@@ -116,7 +116,12 @@ export default function PostItem( { post }: Props ) {
 						) }
 					</div>
 					<div className="post-item__actions-mobile">
-						<a href={ post.post_url } className="post-item__view-link">
+						<a
+							href={ post.post_url }
+							className="post-item__view-link"
+							target="_blank"
+							rel="noreferrer"
+						>
 							{ __( 'View' ) }
 						</a>
 						<Button
@@ -137,7 +142,7 @@ export default function PostItem( { post }: Props ) {
 			<td className="post-item__post-likes">{ formatNumber( likeCount, true ) }</td>
 			<td className="post-item__post-comments">{ formatNumber( commentCount, true ) }</td>
 			<td className="post-item__post-view">
-				<a href={ post.post_url } className="post-item__view-link">
+				<a href={ post.post_url } className="post-item__view-link" target="_blank" rel="noreferrer">
 					{ __( 'View' ) }
 				</a>
 			</td>
