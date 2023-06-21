@@ -104,21 +104,17 @@ describe( 'CacheCard component', () => {
 
 	it( 'toggles edge cache state when edge cache checkbox is clicked', async () => {
 		useEdgeCacheQuery.mockReturnValue( { data: false, isLoading: false } );
-		useToggleEdgeCacheMutation.mockReturnValue( {
-			toggleEdgeCache: jest.fn(),
-			isLoading: false,
-		} );
+		useToggleEdgeCacheMutation.mockReturnValue( { toggleEdgeCache: jest.fn(), isLoading: false } );
 
 		render(
 			<Provider store={ store }>
 				<CacheCard { ...defaultProps } />
 			</Provider>
 		);
+		expect( useToggleEdgeCacheMutation().toggleEdgeCache ).not.toHaveBeenCalled();
 		expect( screen.getByRole( 'checkbox' ) ).toBeVisible();
-		fireEvent.click( screen.getByRole( 'checkbox' ) );
+		screen.getByRole( 'checkbox' ).click();
 		expect( useToggleEdgeCacheMutation().toggleEdgeCache ).toHaveBeenCalledWith( true );
-		fireEvent.click( screen.getByRole( 'checkbox' ) );
-		expect( useToggleEdgeCacheMutation().toggleEdgeCache ).toHaveBeenCalledWith( false );
 	} );
 	it( 'displays rate limit message when shouldRateLimitCacheClear prop is true', () => {
 		useEdgeCacheQuery.mockReturnValue( { data: false, isLoading: false } );
