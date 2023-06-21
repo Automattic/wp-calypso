@@ -8,6 +8,10 @@
 		position: absolute;
 		top: 0;
 		z-index: 1;
+
+		&.display-none {
+			display: none;
+		}
 	}
 
 	.discover-stream__tabs-scroll-right-button {

@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import { useState, useRef, useEffect } from 'react';
@@ -57,10 +58,10 @@ const DiscoverStream = ( props ) => {
 			// dont show left button, show right
 
 			if ( leftScrollButton ) {
-				leftScrollButton.style.display = 'none';
+				leftScrollButton.classList.add( 'display-none' );
 			}
 			if ( rightScrollButton ) {
-				rightScrollButton.style.display = 'block';
+				rightScrollButton.classList.remove( 'display-none' );
 			}
 		} else if (
 			scrollPosition.current >
@@ -68,18 +69,18 @@ const DiscoverStream = ( props ) => {
 		) {
 			// show left, not right
 			if ( leftScrollButton ) {
-				leftScrollButton.style.display = 'block';
+				leftScrollButton.classList.remove( 'display-none' );
 			}
 			if ( rightScrollButton ) {
-				rightScrollButton.style.display = 'none';
+				rightScrollButton.classList.add( 'display-none' );
 			}
 		} else {
 			// show both.
 			if ( leftScrollButton ) {
-				leftScrollButton.style.display = 'block';
+				leftScrollButton.classList.remove( 'display-none' );
 			}
 			if ( rightScrollButton ) {
-				rightScrollButton.style.display = 'block';
+				rightScrollButton.classList.remove( 'display-none' );
 			}
 		}
 	}, 50 );
@@ -118,17 +119,22 @@ const DiscoverStream = ( props ) => {
 	const DiscoverNavigation = () => (
 		<div className="discover-stream-navigation">
 			<Button
-				className="discover-stream__tabs-scroll-left-button"
+				className={ classNames( 'discover-stream__tabs-scroll-left-button', {
+					'display-none': scrollPosition.current < 10,
+				} ) }
 				onClick={ scrollLeft }
 				tabIndex={ -1 }
 				aria-hidden={ true }
-				style={ scrollPosition.current === 0 ? { display: 'none' } : { display: 'block' } }
 			>
 				<Gridicon icon="chevron-left" />
 			</Button>
 
 			<Button
-				className="discover-stream__tabs-scroll-right-button"
+				className={ classNames( 'discover-stream__tabs-scroll-right-button', {
+					'display-none':
+						scrollPosition.current >
+						scrollRef.current?.scrollWidth - scrollRef.current?.clientWidth - 10,
+				} ) }
 				onClick={ scrollRight }
 				tabIndex={ -1 }
 				aria-hidden={ true }
