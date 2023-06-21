@@ -78,18 +78,3 @@
 	margin-top: -8px;
 	margin-right: -8px;
 }
-
-// HappyChat button in success/error banner
-.activity-log-banner__happychat-button {
-	color: var(--color-neutral-30);
-	padding: 8px 8px 0 0;
-	margin-left: 16px;
-	display: inline-block;
-	vertical-align: text-top;
-
-	.gridicon {
-		float: left;
-		top: 0;
-		margin-right: 8px;
-	}
-}
