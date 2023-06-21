@@ -3,9 +3,10 @@ import { Item } from 'calypso/components/breadcrumb';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscriberDetails } from './components/subscriber-details';
 import { SubscriberPopover } from './components/subscriber-popover';
+import useSubscriberDetailsQuery from './queries/use-subscriber-details-query';
 
 type SubscriberDetailsPageProps = {
 	subscriberId?: number;
@@ -14,7 +15,9 @@ type SubscriberDetailsPageProps = {
 
 const SubscriberDetailsPage = ( { subscriberId, userId }: SubscriberDetailsPageProps ) => {
 	const translate = useTranslate();
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const { data: subscriber } = useSubscriberDetailsQuery( selectedSiteId, subscriberId, userId );
 
 	const navigationItems: Item[] = [
 		{
@@ -32,7 +35,7 @@ const SubscriberDetailsPage = ( { subscriberId, userId }: SubscriberDetailsPageP
 			<FixedNavigationHeader navigationItems={ navigationItems }>
 				<SubscriberPopover onUnsubscribe={ () => undefined } />
 			</FixedNavigationHeader>
-			<SubscriberDetails subscriber={ mockSubscriber } />
+			{ subscriber && <SubscriberDetails subscriber={ subscriber } /> }
 		</Main>
 	);
 };
