@@ -168,9 +168,11 @@ export default function CampaignItemDetails( props: Props ) {
 			value: views_organic || 0,
 		},
 	];
-	const databarTotal = databars
-		.map( ( item ) => ( item.value > 0 ? item.value : 0 ) ) // Get only positive values.
-		.reduce( ( total, value ) => total + value, 0 );
+
+	const databarTotal = databars.reduce(
+		( total, { value } ) => ( value > 0 ? total + value : total ), // Sum only positive values.
+		0
+	);
 
 	const cancelCampaignButtonText =
 		status === 'active' ? __( 'Stop campaign' ) : __( 'Cancel campaign' );
