@@ -19,12 +19,12 @@ const SubscriberListContainer = ( {
 	const { grandTotal, total, perPage, page, pageClickCallback } = useSubscriberListManager();
 
 	return (
-		<section className="subscribers__section">
+		<section className="subscriber-list-container">
 			{ grandTotal ? (
 				<>
-					<div className="subscribers__header">
-						<span className="subscribers__title">{ translate( 'Total' ) }</span>{ ' ' }
-						<span className="subscribers__subscriber-count">{ total }</span>
+					<div className="subscriber-list-container__header">
+						<span className="subscriber-list-container__title">{ translate( 'Total' ) }</span>{ ' ' }
+						<span className="subscriber-list-container__subscriber-count">{ total }</span>
 					</div>
 					<SubscriberListActionsBar />
 
@@ -37,7 +37,7 @@ const SubscriberListContainer = ( {
 			) }
 
 			<Pagination
-				className="subscribers__pagination"
+				className="subscriber-list-container__pagination"
 				page={ page }
 				perPage={ perPage }
 				total={ total }
