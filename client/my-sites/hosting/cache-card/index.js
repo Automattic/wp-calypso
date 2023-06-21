@@ -52,7 +52,7 @@ export const CacheCard = ( {
 	translate,
 } ) => {
 	const dispatch = useDispatch();
-	const showEdgeCache = config.isEnabled( 'edge-cache' );
+	const showEdgeCache = config.isEnabled( 'yolo/edge-cache-i1' );
 	const [ isEdgeCacheActive, setIsEdgeCacheActive ] = useState( false );
 	const { loading: getEdgeCacheLoading, data: edgeCacheActive } = useEdgeCacheQuery( siteId, {
 		enabled: showEdgeCache,
