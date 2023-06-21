@@ -2,7 +2,7 @@ import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
-import './styles.scss';
+import './style.scss';
 
 const ListActionsBar = () => {
 	const translate = useTranslate();
