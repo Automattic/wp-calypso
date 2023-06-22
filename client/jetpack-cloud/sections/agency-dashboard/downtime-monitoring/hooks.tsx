@@ -16,10 +16,25 @@ export function useRequestVerificationCode(): {
 	isError: boolean;
 	isLoading: boolean;
 	isSuccess: boolean;
+	isVerified: boolean;
 } {
-	return useRequestContactVerificationCode( {
+	const [ isAlreadyVerifed, setIsAlreadyVerifed ] = useState( false );
+
+	const data = useRequestContactVerificationCode( {
 		retry: false,
+		onError: async ( error ) => {
+			// Add the contact to the list of contacts if already verified
+			if (
+				error?.code &&
+				[ 'existing_verified_email_contact', 'existing_verified_sms_contact' ].includes(
+					error.code
+				)
+			) {
+				setIsAlreadyVerifed( true );
+			}
+		},
 	} );
+	return { ...data, isVerified: isAlreadyVerifed };
 }
 
 const verificationErrorMessages: { [ key: string ]: string } = {
@@ -95,8 +110,8 @@ export function useValidateVerificationCode(): {
 			await handleSetMonitoringContacts( data, params );
 		},
 		onError: async ( error, params ) => {
+			// Add the contact to the list of contacts if already verified
 			if ( error?.code === 'jetpack_agency_contact_is_verified' ) {
-				// Add the contact to the list of contacts if already verified
 				setIsAlreadyVerifed( true );
 				await handleSetMonitoringContacts( { verified: true }, params );
 			}
