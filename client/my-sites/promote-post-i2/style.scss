@@ -285,6 +285,7 @@ body.is-section-promote-post-i2 {
 		.form-text-input.search__input {
 			@include promote-post-i2-font;
 
+			color: $studio-gray-100;
 			height: calc(100% - 4px) !important;
 			margin: 2px 2px 2px 0;
 		}
