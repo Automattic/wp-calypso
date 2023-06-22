@@ -59,18 +59,3 @@ export const requestDisconnectSiteStripeAccount = (
 		noticeTextOnSuccess
 	);
 };
-
-export const requestDisconnectStripeAccount = (
-	siteId,
-	connectedAccountId,
-	noticeTextOnProcessing,
-	noticeTextOnSuccess
-) => {
-	return requestDisconnectStripeAccountByUrl(
-		`/me/connected_account/stripe/${ connectedAccountId }/disconnect`,
-		siteId,
-		connectedAccountId,
-		noticeTextOnProcessing,
-		noticeTextOnSuccess
-	);
-};
