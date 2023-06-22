@@ -12,7 +12,6 @@
 	.reader-post-card__post-details {
 		margin-top: -2px;
 		min-width: 0;
-		white-space: nowrap;
 	}
 
 	.reader-post-card__byline-details {
@@ -30,12 +29,8 @@
 	}
 
 	.reader-post-card__title {
-		line-height: 1.25;
-		max-height: 16px * 1.6;
 		margin-top: 2px;
-		overflow: hidden;
 		position: relative;
-		white-space: nowrap;
 
 		&::after {
 			@include long-content-fade( $size: 35px );
@@ -45,11 +40,7 @@
 	.reader-post-card__title-link {
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 17px;
-	}
-
-	.reader-excerpt__content {
-		margin-top: 2px;
-		width: 100%;
+		line-height: 1.5;
 	}
 
 	.comments__comment-author .gravatar {

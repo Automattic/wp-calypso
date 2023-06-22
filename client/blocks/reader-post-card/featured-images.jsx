@@ -4,11 +4,11 @@ import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
 import {
 	READER_FEATURED_MAX_IMAGE_HEIGHT,
-	READER_TAG_POST_FEATURED_MAX_IMAGE_HEIGHT,
+	READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
 } from 'calypso/state/reader/posts/sizes';
 
-const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isTagPost } ) => {
-	const numImages = isTagPost ? 1 : 4;
+const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost } ) => {
+	const numImages = isCompactPost ? 1 : 4;
 	const imagesToDisplay = getImagesFromPostToDisplay( post, numImages );
 	if ( imagesToDisplay.length === 0 ) {
 		return (
@@ -16,7 +16,7 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isTagPost } ) =>
 				canonicalMedia={ canonicalMedia }
 				href={ postUrl }
 				fetched={ canonicalMedia.fetched }
-				isTagPost={ isTagPost }
+				isCompactPost={ isCompactPost }
 			/>
 		);
 	}
@@ -24,8 +24,8 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isTagPost } ) =>
 	let classNames = 'reader-post-card__featured-images';
 	const listItems = imagesToDisplay.map( ( image, index, [ imageWidth, imageHeight ] ) => {
 		imageWidth = null;
-		imageHeight = isTagPost
-			? READER_TAG_POST_FEATURED_MAX_IMAGE_HEIGHT
+		imageHeight = isCompactPost
+			? READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT
 			: READER_FEATURED_MAX_IMAGE_HEIGHT;
 
 		let width = '50%';
