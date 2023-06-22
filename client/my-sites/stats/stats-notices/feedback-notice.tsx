@@ -3,13 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
-import { StatsNoticeProps } from './types';
-
-interface FeedbackNoticeProps {
-	onTakeSurveyClick: () => void;
-	onRemindMeLaterClick: () => void;
-	onNoticeDismiss: () => void;
-}
+import { StatsNoticeProps, FeedbackNoticeProps } from './types';
 
 export const FeedbackNoticeBody = ( {
 	onTakeSurveyClick,

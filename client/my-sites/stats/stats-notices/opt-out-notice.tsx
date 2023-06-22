@@ -3,13 +3,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
-import { StatsNoticeProps } from './types';
+import { StatsNoticeProps, NoticeProps } from './types';
 
-interface OptOutNoticeProps {
-	onNoticeDismiss: () => void;
-}
-
-export const OptOutNoticeBody = ( { onNoticeDismiss }: OptOutNoticeProps ) => {
+export const OptOutNoticeBody = ( { onNoticeDismiss }: NoticeProps ) => {
 	const translate = useTranslate();
 
 	return (
