@@ -11,7 +11,7 @@ const ListActionsBar = () => {
 	return (
 		<div className="list-actions-bar">
 			<SearchInput
-				placeholder={ translate( 'Search by site name or address…' ) }
+				placeholder={ translate( 'Search by name, username or email…' ) }
 				searchIcon={ <SearchIcon size={ 18 } /> }
 				onSearch={ handleSearch }
 			/>
