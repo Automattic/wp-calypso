@@ -18,7 +18,6 @@ export const useEdgeCacheQuery = (
 		select: ( data ) => {
 			return !! data;
 		},
-		initialData: options?.initialData || false,
 		meta: {
 			persist: false,
 		},

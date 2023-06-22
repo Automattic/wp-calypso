@@ -13,6 +13,7 @@ import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
 import { useClearEdgeCacheMutation } from './use-clear-edge-cache';
 import { useEdgeCacheQuery } from './use-edge-cache';
 import { useToggleEdgeCacheMutation } from './use-toggle-edge-cache';
@@ -66,9 +67,12 @@ export const CacheCard = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const showEdgeCache = config.isEnabled( 'yolo/edge-cache-i1' );
-	const { loading: getEdgeCacheLoading, data: isEdgeCacheActive } = useEdgeCacheQuery( siteId, {
+	const {
+		isLoading: getEdgeCacheLoading,
+		data: isEdgeCacheActive,
+		isInitialLoading: getEdgeCacheInitialLoading,
+	} = useEdgeCacheQuery( siteId, {
 		enabled: showEdgeCache,
-		initialData: false,
 	} );
 
 	const { toggleEdgeCache, isLoading: toggleEdgeCacheLoading } = useToggleEdgeCacheMutation(
@@ -156,15 +160,21 @@ export const CacheCard = ( {
 				{ showEdgeCache && (
 					<>
 						<ToggleContainer>
-							<ToggleLabel>{ translate( 'Edge cache' ) }</ToggleLabel>
-							<CacheToggle
-								disabled={ clearEdgeCacheLoading || getEdgeCacheLoading }
-								checked={ isEdgeCacheActive }
-								onChange={ toggleEdgeCache }
-								label={ translate( 'Enable edge caching for faster content delivery' ) }
-							/>
+							{ getEdgeCacheInitialLoading ? (
+								<EdgeCacheLoadingPlaceholder />
+							) : (
+								<>
+									<ToggleLabel>{ translate( 'Edge cache' ) }</ToggleLabel>
+									<CacheToggle
+										disabled={ clearEdgeCacheLoading || getEdgeCacheLoading }
+										checked={ isEdgeCacheActive }
+										onChange={ toggleEdgeCache }
+										label={ translate( 'Enable edge caching for faster content delivery' ) }
+									/>
+									<Hr />
+								</>
+							) }
 						</ToggleContainer>
-						<Hr />
 					</>
 				) }
 				{ getClearCacheContent() }
