@@ -22,7 +22,6 @@ export const useEdgeCacheQuery = (
 		meta: {
 			persist: false,
 		},
-		staleTime: 10 * 1000,
 		onSuccess: options?.onSuccess,
 		onError: options?.onError,
 	} );
