@@ -1,8 +1,8 @@
 .discover-stream-navigation {
 	position: relative;
 
-	.discover-stream__tabs-scroll-left-button,
-	.discover-stream__tabs-scroll-right-button {
+	.discover-stream-navigation__tabs-scroll-left-button,
+	.discover-stream-navigation__tabs-scroll-right-button {
 		border-radius: 50%;
 		padding: 6px 10px;
 		position: absolute;
@@ -14,21 +14,21 @@
 		}
 	}
 
-	.discover-stream__tabs-scroll-right-button {
+	.discover-stream-navigation__tabs-scroll-right-button {
 		right: 0;
 	}
-	.discover-stream__tabs-scroll-left-button {
+	.discover-stream-navigation__tabs-scroll-left-button {
 		left: 0;
 	}
 
-	.discover-stream__tabs {
+	.discover-stream-navigation__tabs {
 		position: relative;
 		overflow-x: scroll;
 		margin-bottom: 20px;
 		padding-bottom: 15px;
 		border-bottom: 1px solid var(--color-neutral-5);
 
-		.segmented-control.is-primary.discover-stream__tab-control .segmented-control__item .segmented-control__link {
+		.segmented-control.is-primary.discover-stream-navigation__tab-control .segmented-control__item .segmented-control__link {
 			border: 1px solid var(--color-neutral-10);
 			border-radius: 4px;
 			margin: 0 5px;
@@ -37,7 +37,7 @@
 	}
 }
 
-.accessible-focus .discover-stream-navigation .discover-stream__tabs-scroll-left-button,
-.accessible-focus .discover-stream-navigation .discover-stream__tabs-scroll-right-button {
+.accessible-focus .discover-stream-navigation .discover-stream-navigation__tabs-scroll-left-button,
+.accessible-focus .discover-stream-navigation .discover-stream-navigation__tabs-scroll-right-button {
 	display: none;
 }

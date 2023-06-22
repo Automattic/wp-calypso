@@ -15,15 +15,16 @@ import './discover-stream.scss';
 
 const DEFAULT_TAB = 'recommended';
 const SHOW_SCROLL_THRESHOLD = 10;
+const DEFAULT_CLASS = 'discover-stream-navigation';
 const showElement = ( element ) => element && element.classList.remove( 'display-none' );
 const hideElement = ( element ) => element && element.classList.add( 'display-none' );
 
 const DiscoverStream = ( props ) => {
+	const scrollRef = useRef();
+	const scrollPosition = useRef( 0 );
 	const locale = useLocale();
 	const followedTags = useSelector( getReaderFollowedTags ) || [];
 	const [ selectedTab, setSelectedTab ] = useState( DEFAULT_TAB );
-	const scrollRef = useRef();
-	const scrollPosition = useRef( 0 );
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
@@ -47,6 +48,11 @@ const DiscoverStream = ( props ) => {
 
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
+	const shouldHideLeftScrollButton = () => scrollPosition.current < SHOW_SCROLL_THRESHOLD;
+	const shouldHideRightScrollButton = () =>
+		scrollPosition.current >
+		scrollRef.current?.scrollWidth - scrollRef.current?.clientWidth - SHOW_SCROLL_THRESHOLD;
+
 	// To keep track of the navigation tabs scroll position and keep it from appearing to reset
 	// after child render.
 	const handleScroll = debounce( () => {
@@ -54,40 +60,26 @@ const DiscoverStream = ( props ) => {
 		scrollPosition.current = scrollRef.current?.scrollLeft;
 
 		// Determine and set visibility classes on scroll buttons.
-		const leftScrollButton = document.querySelector( '.discover-stream__tabs-scroll-left-button' );
-		const rightScrollButton = document.querySelector(
-			'.discover-stream__tabs-scroll-right-button'
+		const leftScrollButton = document.querySelector(
+			`.${ DEFAULT_CLASS }__tabs-scroll-left-button`
 		);
-		if ( scrollPosition.current < SHOW_SCROLL_THRESHOLD ) {
-			// Within threshold of left edge, only show right button.
-			showElement( rightScrollButton );
-			hideElement( leftScrollButton );
-		} else if (
-			scrollPosition.current >
-			scrollRef.current?.scrollWidth - scrollRef.current?.clientWidth - SHOW_SCROLL_THRESHOLD
-		) {
-			// Within threshold of right edge, only show left button.
-			showElement( leftScrollButton );
-			hideElement( rightScrollButton );
-		} else {
-			// Otherwise show both.
-			showElement( leftScrollButton );
-			showElement( rightScrollButton );
-		}
+		const rightScrollButton = document.querySelector(
+			`.${ DEFAULT_CLASS }__tabs-scroll-right-button`
+		);
+		shouldHideLeftScrollButton()
+			? hideElement( leftScrollButton )
+			: showElement( leftScrollButton );
+		shouldHideRightScrollButton()
+			? hideElement( rightScrollButton )
+			: showElement( rightScrollButton );
 	}, 50 );
 
-	const scrollLeft = () => {
+	const bumpScrollX = ( shouldScrollLeft ) => {
 		if ( scrollRef.current ) {
+			const directionMultiplier = shouldScrollLeft ? -1 : 1;
 			const finalPositionX =
-				scrollRef.current.scrollLeft - scrollRef.current.clientWidth * ( 2 / 3 );
-			scrollRef.current.scrollTo( { top: 0, left: finalPositionX, behavior: 'smooth' } );
-		}
-	};
-
-	const scrollRight = () => {
-		if ( scrollRef.current ) {
-			const finalPositionX =
-				scrollRef.current.scrollLeft + scrollRef.current.clientWidth * ( 2 / 3 );
+				scrollRef.current.scrollLeft +
+				directionMultiplier * scrollRef.current.clientWidth * ( 2 / 3 );
 			scrollRef.current.scrollTo( { top: 0, left: finalPositionX, behavior: 'smooth' } );
 		}
 	};
@@ -101,7 +93,7 @@ const DiscoverStream = ( props ) => {
 			// Ignore the recommended tab since this is set on load and is next to the reset point.
 			if ( selectedTab !== 'recommended' ) {
 				const selectedElement = document.querySelector(
-					'.discover-stream__tabs .segmented-control__item.is-selected .segmented-control__link'
+					`.${ DEFAULT_CLASS }__tabs .segmented-control__item.is-selected .segmented-control__link`
 				);
 				selectedElement && selectedElement.focus();
 
@@ -113,12 +105,12 @@ const DiscoverStream = ( props ) => {
 	}, [ selectedTab ] );
 
 	const DiscoverNavigation = () => (
-		<div className="discover-stream-navigation">
+		<div className={ DEFAULT_CLASS }>
 			<Button
-				className={ classNames( 'discover-stream__tabs-scroll-left-button', {
-					'display-none': scrollPosition.current < 10,
+				className={ classNames( `${ DEFAULT_CLASS }__tabs-scroll-left-button`, {
+					'display-none': shouldHideLeftScrollButton(),
 				} ) }
-				onClick={ scrollLeft }
+				onClick={ () => bumpScrollX( true ) }
 				tabIndex={ -1 }
 				aria-hidden={ true }
 			>
@@ -126,20 +118,18 @@ const DiscoverStream = ( props ) => {
 			</Button>
 
 			<Button
-				className={ classNames( 'discover-stream__tabs-scroll-right-button', {
-					'display-none':
-						scrollPosition.current >
-						scrollRef.current?.scrollWidth - scrollRef.current?.clientWidth - 10,
+				className={ classNames( `${ DEFAULT_CLASS }__tabs-scroll-right-button`, {
+					'display-none': shouldHideRightScrollButton(),
 				} ) }
-				onClick={ scrollRight }
+				onClick={ () => bumpScrollX() }
 				tabIndex={ -1 }
 				aria-hidden={ true }
 			>
 				<Gridicon icon="chevron-right" />
 			</Button>
 
-			<div className="discover-stream__tabs" ref={ scrollRef } onScroll={ handleScroll }>
-				<SegmentedControl primary className="discover-stream__tab-control">
+			<div className={ `${ DEFAULT_CLASS }__tabs` } ref={ scrollRef } onScroll={ handleScroll }>
+				<SegmentedControl primary className={ `${ DEFAULT_CLASS }__tab-control` }>
 					<SegmentedControl.Item
 						key={ DEFAULT_TAB }
 						selected={ isDefaultTab }
