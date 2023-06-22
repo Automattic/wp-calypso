@@ -34,8 +34,8 @@ const Blog: Flow = {
 
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?redirect_to=/setup/blog`
-				: `/start/account/user?redirect_to=/setup/blog`;
+				? `/start/account/user/${ locale }?redirect_to=/setup/blog&variationName=blogger-intent`
+				: `/start/account/user?redirect_to=/setup/blog&variationName=blogger-intent`;
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
