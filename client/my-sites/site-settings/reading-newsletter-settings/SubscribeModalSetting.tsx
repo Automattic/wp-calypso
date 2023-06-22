@@ -53,7 +53,7 @@ export const SubscribeModalSetting = ( {
 			/>
 			<FormSettingExplanation>
 				{ translate(
-					'Grow your subscriber list by enabling a popup modal with a subscribe form. This will show as readers scroll. {{link}}Edit the modal here.{{/link}}.',
+					'Grow your subscriber list by enabling a popup modal with a subscribe form. This will show as readers scroll. {{link}}Edit the modal{{/link}}.',
 					{
 						components: {
 							link: (
