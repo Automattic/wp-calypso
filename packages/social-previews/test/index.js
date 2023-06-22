@@ -129,9 +129,19 @@ describe( 'Twitter previews', () => {
 		urls: [],
 	};
 
+	const dummyProps = {
+		title: 'test',
+		description: 'test',
+		image: 'https://s1.wp.com/wp-content/themes/h4/i/automattic-2x.png',
+		url: 'https://wordpress.com/',
+	};
+
 	it( 'should display an untruncated title', () => {
 		const { container } = render(
-			<Twitter title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral." />
+			<Twitter
+				{ ...dummyProps }
+				title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral."
+			/>
 		);
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
@@ -145,7 +155,10 @@ describe( 'Twitter previews', () => {
 
 	it( 'should display a truncated description', () => {
 		const { container } = render(
-			<Twitter description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+			<Twitter
+				{ ...dummyProps }
+				description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse."
+			/>
 		);
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
@@ -160,7 +173,10 @@ describe( 'Twitter previews', () => {
 
 	it( 'should strip html tags from the description', () => {
 		const { container } = render(
-			<Twitter description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+			<Twitter
+				{ ...dummyProps }
+				description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse."
+			/>
 		);
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
@@ -175,8 +191,8 @@ describe( 'Twitter previews', () => {
 	it( 'should display image only when provided', () => {
 		const { container } = render(
 			<>
-				<Twitter />
-				<Twitter image={ IMAGE_SRC_FIXTURE } />
+				<Twitter { ...dummyProps } image="" />
+				<Twitter { ...dummyProps } image={ IMAGE_SRC_FIXTURE } />
 			</>
 		);
 
@@ -197,7 +213,7 @@ describe( 'Twitter previews', () => {
 	} );
 
 	it( 'should display a protocol-less url only (with no separator) when author is not provided', () => {
-		const { container } = render( <Twitter url="https://wordpress.com" /> );
+		const { container } = render( <Twitter { ...dummyProps } url="https://wordpress.com" /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
@@ -209,7 +225,7 @@ describe( 'Twitter previews', () => {
 
 	describe( 'Styling hooks', () => {
 		it( 'should append a classname with the correct "type" to the root element when provided', () => {
-			const { container } = render( <Twitter cardType="article" title="test" /> );
+			const { container } = render( <Twitter { ...dummyProps } cardType="article" title="test" /> );
 
 			const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 			const innerEl = tweetWrapper.querySelector( '.twitter-preview__card > div' );

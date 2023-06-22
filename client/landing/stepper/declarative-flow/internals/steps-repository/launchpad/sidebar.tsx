@@ -1,11 +1,11 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
-import { isStartWritingFlow } from '@automattic/onboarding';
+import { Launchpad } from '@automattic/launchpad';
+import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -15,9 +15,9 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
-import Checklist from './checklist';
 import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
@@ -49,7 +49,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	let isDomainSSLProcessing: boolean | null = false;
 	const translate = useTranslate();
 	const site = useSite();
-	const siteIntentOption = site?.options?.site_intent;
+	const siteIntentOption = site?.options?.site_intent ?? null;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
@@ -57,7 +57,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const {
 		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
-		isFetchedAfterMount,
 	} = useLaunchpad( siteSlug, siteIntentOption );
 
 	const selectedDomain = useSelect(
@@ -66,7 +65,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	);
 
 	const showDomain =
-		! isStartWritingFlow( flow ) ||
+		! isBlogOnboardingFlow( flow ) ||
 		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
@@ -99,12 +98,26 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
-	const domainUpgradeBadgeUrl = ! site?.plan?.is_free
-		? `/domains/manage/${ siteSlug }`
-		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
-	const showDomainUpgradeBadge =
-		sidebarDomain?.isWPCOMDomain &&
-		! enhancedTasks?.find( ( task ) => task.id === 'domain_upsell' );
+
+	function getDomainUpgradeBadgeUrl() {
+		if ( isBlogOnboardingFlow( siteIntentOption ) ) {
+			return `/setup/${ siteIntentOption }/domains?siteSlug=${ selectedDomain?.domain_name }&domainAndPlanPackage=true`;
+		}
+		return ! site?.plan?.is_free
+			? `/domains/manage/${ siteSlug }`
+			: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+	}
+
+	function showDomainUpgradeBadge() {
+		if ( isBlogOnboardingFlow( siteIntentOption ) ) {
+			return selectedDomain?.is_free;
+		}
+
+		return (
+			sidebarDomain?.isWPCOMDomain &&
+			! enhancedTasks?.find( ( task ) => task.id === 'domain_upsell' )
+		);
+	}
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
@@ -175,8 +188,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 								</>
 							) }
 						</div>
-						{ showDomainUpgradeBadge && (
-							<a href={ domainUpgradeBadgeUrl }>
+						{ showDomainUpgradeBadge() && (
+							<a href={ getDomainUpgradeBadgeUrl() }>
 								<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
 									{ translate( 'Customize' ) }
 								</Badge>
@@ -197,7 +210,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						</p>
 					</div>
 				) }
-				{ isFetchedAfterMount ? <Checklist tasks={ enhancedTasks } /> : <Checklist.Placeholder /> }
+				<Launchpad
+					siteSlug={ siteSlug }
+					taskFilter={ () => enhancedTasks || [] }
+					makeLastTaskPrimaryAction={ true }
+				/>
 			</div>
 			<div className="launchpad__sidebar-admin-link">
 				<StepNavigationLink

@@ -3,7 +3,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
 } from '@automattic/calypso-products';
-import { Button, Card, Gridicon, Spinner } from '@automattic/components';
+import { Button, Card, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
+import { Spinner as WPSpinner } from '@wordpress/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes, startsWith } from 'lodash';
@@ -64,8 +65,8 @@ import {
 } from './connection-notice-types';
 import { JPC_PATH_PLANS, JPC_PATH_PLANS_COMPLETE, REMOTE_PATH_AUTH } from './constants';
 import Disclaimer from './disclaimer';
+import { JetpackFeatures } from './features';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
-import JetpackConnectHappychatButton from './happychat-button';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import MainWrapper from './main-wrapper';
@@ -80,6 +81,7 @@ import {
 } from './persistence-utils';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
+import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
 
 /**
  * Constants
@@ -278,7 +280,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackSocialPlugin() ||
 			this.isFromMyJetpack() ||
 			this.isFromJetpackSearchPlugin() ||
-			this.isFromJetpackVideoPressPlugin()
+			this.isFromJetpackVideoPressPlugin() ||
+			( this.isFromJetpackBackupPlugin() && siteHasBackups )
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -400,6 +403,7 @@ export class JetpackAuthorize extends Component {
 				'woocommerce-services-auto-authorize',
 				'woocommerce-setup-wizard',
 				'woocommerce-onboarding',
+				'woocommerce-core-profiler',
 			].includes( from ) || this.getWooDnaConfig( props ).isWooDnaFlow()
 		);
 	};
@@ -407,6 +411,11 @@ export class JetpackAuthorize extends Component {
 	isWooOnboarding( props = this.props ) {
 		const { from } = props.authQuery;
 		return 'woocommerce-onboarding' === from;
+	}
+
+	isWooCoreProfiler( props = this.props ) {
+		const { from } = props.authQuery;
+		return 'woocommerce-core-profiler' === from;
 	}
 
 	getWooDnaConfig( props = this.props ) {
@@ -434,6 +443,8 @@ export class JetpackAuthorize extends Component {
 		const { from } = this.props.authQuery;
 		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
+		} else if ( from === 'woocommerce-core-profiler' ) {
+			recordTracksEvent( 'calypso_jpc_different_user_click' );
 		}
 	};
 
@@ -658,6 +669,14 @@ export class JetpackAuthorize extends Component {
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
 
+		if ( this.isFromMigrationPlugin() ) {
+			if ( this.props.isFetchingAuthorizationSite ) {
+				return translate( 'Preparing authorization' );
+			}
+
+			return translate( 'Continue' );
+		}
+
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			return translate( 'Go back to your site' );
 		}
@@ -689,6 +708,10 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Return to your site' );
 		}
 
+		if ( this.isWooCoreProfiler() ) {
+			return translate( 'Connect your account' );
+		}
+
 		if ( ! this.retryingAuth ) {
 			return translate( 'Approve' );
 		}
@@ -697,6 +720,30 @@ export class JetpackAuthorize extends Component {
 	getUserText() {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
+		const isWpcomMigration = this.isFromMigrationPlugin();
+
+		if ( isWpcomMigration ) {
+			const { display_name, email } = this.props.user;
+			return (
+				<>
+					<strong>{ display_name }</strong>
+					<br />
+					<small>{ email }</small>
+				</>
+			);
+		}
+
+		if ( this.isWooCoreProfiler() ) {
+			return (
+				<>
+					{ translate( 'Connecting as %(user)s', {
+						args: { user: this.props.user.display_name },
+					} ) }
+					<br />
+					<small>{ this.props.user.email }</small>
+				</>
+			);
+		}
 
 		// Accounts created through the new Magic Link-based signup flow (enabled with the
 		// 'jetpack/magic-link-signup' feature flag) are created with a username based on the user's
@@ -792,13 +839,68 @@ export class JetpackAuthorize extends Component {
 		return jpcTarget;
 	}
 
+	renderContent() {
+		const { translate, user, authQuery } = this.props;
+		if ( this.isWooCoreProfiler() ) {
+			return (
+				<Fragment>
+					<div className="jetpack-connect__logged-in-content">
+						<Card className="jetpack-connect__logged-in-card">
+							<Gravatar user={ user } size={ 40 } />
+							<div>
+								<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
+								<LoggedOutFormLinkItem
+									href={ login( {
+										isJetpack: true,
+										redirectTo: window.location.href,
+										from: authQuery.from,
+									} ) }
+									onClick={ this.handleSignIn }
+								>
+									{ translate( 'Sign in as a different user' ) }
+								</LoggedOutFormLinkItem>
+							</div>
+						</Card>
+						<div className="jetpack-connect__logged-in-bottom">
+							{ this.renderStateAction() }
+							<JetpackFeatures />
+							<Disclaimer siteName={ decodeEntities( authQuery.blogname ) } />
+							<div className="jetpack-connect__jetpack-logo-wrapper">
+								<JetpackLogo monochrome size={ 18 } />{ ' ' }
+								<span>{ translate( 'Jetpack powered' ) }</span>
+							</div>
+						</div>
+					</div>
+					{ authQuery.installedExtSuccess && <WooInstallExtSuccessNotice /> }
+				</Fragment>
+			);
+		}
+
+		const gravatarSize = this.isFromMigrationPlugin() ? 94 : 64;
+
+		return (
+			<Card className="jetpack-connect__logged-in-card">
+				<Gravatar user={ user } size={ gravatarSize } />
+				<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
+				{ this.renderNotices() }
+				{ this.renderStateAction() }
+			</Card>
+		);
+	}
+
 	renderFooterLinks() {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { from } = this.props.authQuery;
 		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
-		if ( this.retryingAuth || isAuthorizing || authorizeSuccess || this.redirecting ) {
+		if (
+			this.retryingAuth ||
+			isAuthorizing ||
+			authorizeSuccess ||
+			this.redirecting ||
+			this.isWooCoreProfiler()
+		) {
 			return null;
 		}
 
@@ -821,11 +923,7 @@ export class JetpackAuthorize extends Component {
 						{ translate( 'Create a new account' ) }
 					</LoggedOutFormLinkItem>
 				) }
-				{ ! isJetpackMagicLinkSignUpFlow && (
-					<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
-						<HelpButton />
-					</JetpackConnectHappychatButton>
-				) }
+				{ ! isJetpackMagicLinkSignUpFlow && <HelpButton /> }
 			</LoggedOutFormLinks>
 		);
 	}
@@ -848,12 +946,7 @@ export class JetpackAuthorize extends Component {
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 					{ translate( 'Create a new account or connect as a different user' ) }
 				</LoggedOutFormLinkItem>
-				<JetpackConnectHappychatButton
-					eventName="calypso_jpc_authorize_chat_initiated"
-					label={ helpButtonLabel }
-				>
-					<HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } />
-				</JetpackConnectHappychatButton>
+				<HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } />
 				{ this.renderBackToWpAdminLink() }
 			</LoggedOutFormLinks>
 		);
@@ -886,13 +979,28 @@ export class JetpackAuthorize extends Component {
 			return null;
 		}
 
-		if (
+		const isLoading =
 			this.props.isFetchingAuthorizationSite ||
 			this.props.isRequestingSitePurchases ||
 			this.isAuthorizing() ||
 			this.retryingAuth ||
-			authorizeSuccess
-		) {
+			authorizeSuccess;
+
+		if ( this.isWooCoreProfiler() ) {
+			return (
+				<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
+					<Button
+						primary
+						disabled={ isLoading || this.isAuthorizing() || this.props.hasXmlrpcError }
+						onClick={ this.handleSubmit }
+					>
+						{ isLoading ? <WPSpinner /> : this.getButtonText() }
+					</Button>
+				</LoggedOutFormFooter>
+			);
+		}
+
+		if ( isLoading ) {
 			return (
 				<div className="jetpack-connect__logged-in-form-loading">
 					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
@@ -901,7 +1009,6 @@ export class JetpackAuthorize extends Component {
 		}
 
 		const { blogname } = this.props.authQuery;
-
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
 				<Disclaimer siteName={ decodeEntities( blogname ) } />
@@ -923,7 +1030,9 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<MainWrapper
-				isWoo={ this.isWooOnboarding() }
+				isWooOnboarding={ this.isWooOnboarding() }
+				isWooCoreProfiler={ this.isWooCoreProfiler() }
+				isWpcomMigration={ this.isFromMigrationPlugin() }
 				wooDnaConfig={ wooDna }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
@@ -939,15 +1048,12 @@ export class JetpackAuthorize extends Component {
 						/>
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
-							isWoo={ this.isWooOnboarding() }
+							isWooOnboarding={ this.isWooOnboarding() }
+							isWooCoreProfiler={ this.isWooCoreProfiler() }
+							isWpcomMigration={ this.isFromMigrationPlugin() }
 							wooDnaConfig={ wooDna }
 						/>
-						<Card className="jetpack-connect__logged-in-card">
-							<Gravatar user={ this.props.user } size={ 64 } />
-							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
-							{ this.renderNotices() }
-							{ this.renderStateAction() }
-						</Card>
+						{ this.renderContent() }
 						{ this.renderFooterLinks() }
 					</div>
 				</div>

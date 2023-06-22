@@ -29,8 +29,8 @@
 	padding: 1.5rem;
 	border: 1px solid var(--studio-gray-10);
 	border-radius: 4px;
-	cursor: pointer;
 	user-select: none;
+	cursor: pointer;
 
 	@include break-xlarge {
 		margin: 0.5rem;
@@ -77,6 +77,44 @@
 	}
 }
 
+@mixin license-product-card-block__main {
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+
+@mixin license-product-card-line__main {
+	justify-content: flex-start;
+}
+
+.license-product-card__main {
+	display: flex;
+	width: 100%;
+
+	@include license-product-card-block__main;
+
+	@include break-mobile {
+		@include license-product-card-line__main;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		@include license-product-card-block__main;
+	}
+
+	@include break-medium {
+		@include license-product-card-line__main;
+	}
+
+	@include break-xlarge {
+		@include license-product-card-block__main;
+	}
+}
+
+.license-product-card__heading {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
 @mixin license-product-card-block__title {
 	flex: 0 1  calc(100% - 34px);
 }
@@ -110,6 +148,14 @@
 	}
 }
 
+.license-product-card__description {
+	font-size: 1rem;
+	color: var(--studio-gray-60);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1.5rem;
+	margin: 8px 0;
+}
+
 @mixin license-product-card-block__select-button {
 	order: initial;
 	margin-right: 0;
@@ -121,8 +167,8 @@
 }
 
 .license-product-card__select-button {
-	width: 20px;
-	height: 20px;
+	min-width: 20px;
+	max-height: 20px;
 	border: 2px solid var(--studio-black);
 	border-radius: 12px; /* stylelint-disable-line scales/radii */
 	text-align: center;
@@ -194,30 +240,4 @@
 	@include break-xlarge {
 		@include license-product-card-block__pricing;
 	}
-}
-
-.license-product-card__price {
-	margin-bottom: 0.25rem;
-	font-size: 1.25rem;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.5rem;
-	font-weight: 600;
-	color: var(--studio-gray-80);
-
-	@include break-xlarge {
-		margin-bottom: 0.5rem;
-		font-size: 1.5rem;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.75rem;
-		font-weight: 700;
-		color: var(--studio-black);
-	}
-}
-
-.license-product-card__price-interval {
-	font-size: 0.75rem;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 0.875rem;
-	font-weight: 400;
-	color: var(--studio-gray-60);
 }

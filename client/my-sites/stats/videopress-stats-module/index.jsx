@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	isRequestingSiteStatsForQuery,
 	getVideoPressPlaysComplete,
@@ -109,6 +110,7 @@ class VideoPressStatsModule extends Component {
 			period,
 			siteSlug,
 			translate,
+			siteAdminUrl,
 		} = this.props;
 
 		let completeVideoStats = [];
@@ -139,7 +141,13 @@ class VideoPressStatsModule extends Component {
 		} );
 
 		const editVideo = ( postId ) => {
-			page( `/media/${ siteSlug }/${ postId }` );
+			const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+			if ( ! isOdysseyStats ) {
+				page( `/media/${ siteSlug }/${ postId }` );
+				return;
+			}
+			// If it's Odyssey, redirect user to media lib page.
+			location.href = `${ siteAdminUrl }upload.php?item=${ postId }`;
 		};
 
 		const showStat = ( queryStatType, row ) => {
@@ -249,9 +257,6 @@ class VideoPressStatsModule extends Component {
 							) }
 						</SectionHeader>
 						<Card compact className={ cardClasses }>
-							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
-							{ hasError && <ErrorPanel /> }
-
 							<div className="videopress-stats-module__grid">
 								<div className="videopress-stats-module__header-row-wrapper">
 									<div className="videopress-stats-module__grid-header">Title</div>
@@ -315,6 +320,8 @@ class VideoPressStatsModule extends Component {
 									</div>
 								) ) }
 							</div>
+							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+							{ hasError && <ErrorPanel /> }
 							<StatsModulePlaceholder isLoading={ isLoading } />
 						</Card>
 					</div>
@@ -334,6 +341,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		data: getVideoPressPlaysComplete( state, siteId, statType, query ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteId,
 		siteSlug,
 	};

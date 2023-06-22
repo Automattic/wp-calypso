@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { isRequestingActiveTheme, getActiveTheme } from 'calypso/state/themes/selectors';

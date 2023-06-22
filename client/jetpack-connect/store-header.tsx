@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackHeader from 'calypso/components/jetpack-header';
+import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 
@@ -28,8 +28,9 @@ export default function StoreHeader() {
 			<div className={ headerClass }>
 				<JetpackHeader
 					partnerSlug={ partnerSlug }
-					isWoo={ false }
+					isWooOnboarding={ false }
 					isWooDna={ false }
+					isWooCoreProfiler={ false }
 					darkColorScheme
 				/>
 			</div>

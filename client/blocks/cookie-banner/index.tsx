@@ -1,14 +1,16 @@
 import { CookieBanner } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import {
 	refreshCountryCodeCookieGdpr,
 	setTrackingPrefs,
 	shouldSeeCookieBanner,
 	getTrackingPrefs,
+	useDoNotSell,
 } from 'calypso/lib/analytics/utils';
+import { useSelector, useDispatch } from 'calypso/state';
 import { bumpStat } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useCookieBannerContent } from './use-cookie-banner-content';
 import type { CookieBannerProps } from '@automattic/privacy-toolset';
 
@@ -18,10 +20,16 @@ const noop = () => undefined;
 const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 	const content = useCookieBannerContent();
 	const dispatch = useDispatch();
+	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
+	const { setUserAdvertisingOptOut } = useDoNotSell();
 
 	const handleAccept = useCallback< CookieBannerProps[ 'onAccept' ] >(
 		( buckets ) => {
 			setTrackingPrefs( { ok: true, buckets } );
+			// If the user is logged in, update their advertising opt-out setting
+			if ( isLoggedIn ) {
+				setUserAdvertisingOptOut( ! buckets.advertising );
+			}
 			onClose();
 		},
 		[ onClose ]

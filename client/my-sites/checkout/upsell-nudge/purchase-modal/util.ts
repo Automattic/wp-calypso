@@ -1,7 +1,7 @@
 import { useProcessPayment, PaymentProcessorResponseType } from '@automattic/composite-checkout';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';

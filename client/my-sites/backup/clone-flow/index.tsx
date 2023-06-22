@@ -1,7 +1,6 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -19,6 +18,7 @@ import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useDispatch, useSelector } from 'calypso/state';
 import { rewindClone, rewindStagingClone } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
@@ -44,6 +44,7 @@ import RewindFlowNotice, { RewindFlowNoticeLevel } from '../rewind-flow/rewind-f
 import { defaultRewindConfig, RewindConfig } from '../rewind-flow/types';
 import CloneFlowStepProgress from './step-progress';
 import CloneFlowSuggestionSearch from './suggestion-search';
+import type { UseQueryResult } from '@tanstack/react-query';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
 import './style.scss';
@@ -51,6 +52,10 @@ import './style.scss';
 interface Props {
 	siteId: number;
 }
+
+type ActivityLogEntry = {
+	activityDate: string;
+};
 
 const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const dispatch = useDispatch();
@@ -233,7 +238,11 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	const disableClone = false;
 
-	const { data: logs } = useRewindableActivityLogQuery( siteId, {}, { enabled: !! siteId } );
+	const { data: logs } = useRewindableActivityLogQuery(
+		siteId,
+		{},
+		{ enabled: !! siteId }
+	) as UseQueryResult< ActivityLogEntry[] >;
 	const lastBackup = logs && logs.length > 0 ? logs[ 0 ] : undefined;
 
 	// Screen that allows user to add credentials for an alternate restore / clone
@@ -291,7 +300,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					</Card>
 				) }
 				<ActivityCardList
-					logs={ logs.slice( 1 ) }
+					logs={ logs?.slice( 1 ) ?? [] }
 					pageSize={ 10 }
 					showFilter={ false }
 					availableActions={ [ 'clone' ] }
@@ -306,7 +315,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			<div className="clone-flow__confirmation-popover-heading">{ translate( 'Important!' ) }</div>
 			<div className="clone-flow__confirmation-popover-info">
 				{ translate(
-					'Before continue, be aware that any current content on {{strong}}%(destinationUrl)s{{/strong}} will be overriden based on what you configured to copy.',
+					'Before continuing, be aware that any current content on {{strong}}%(destinationUrl)s{{/strong}} will be overriden based on what you configured to copy.',
 					{
 						args: {
 							destinationUrl: getDestinationUrl(),

@@ -17,18 +17,23 @@ const BlazePressStrings = () => {
 	translate( 'Estimated impressions' );
 	translate( 'Max budget' );
 	translate( 'Duration' );
+	translate( 'Total' );
+	translate( 'Credits will automatically be applied to your order if available.' );
 	translate( 'Ad Preview' );
 	translate( 'Ad destination' );
 	translate( 'Audience' );
 	translate( 'Budget & Duration' );
+	translate( 'Payment' );
 	translate( 'Save' );
 	translate( 'Save selection' );
 	translate( 'Use post image' );
 	translate( 'Upload' );
 	translate( 'Use + / - or simply drag the image to adjust it' );
-	translate( 'Payment' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
+	translate(
+		'You will not be charged and any available credits (if applicable) will not be spent until the ad is approved and starts running. You can pause spending at any time.'
+	);
 	translate( 'Saved cards' );
 	translate( 'Add new card' );
 	translate( '(ending %(lastFour)s)' );
@@ -92,10 +97,9 @@ const BlazePressStrings = () => {
 	translate( 'Pick a few categories, like food or movies, to narrow your audience.' );
 	translate( 'Previous' );
 	translate( 'Continue' );
-	translate( 'Audience & Budget' );
-	translate( 'Save and Submit' );
-	translate( 'Next' );
-	translate( 'Close' );
+	translate( 'Go to my campaigns' );
+	translate( 'Skip and go to my campaigns next time.' );
+	translate( 'Creating Campaign' );
 	translate( 'Make the most of your Blaze campaign' );
 	translate( 'Choose an eye-catching image for your ad' );
 	translate( 'Adjust your title to make it more engaging' );
@@ -103,13 +107,52 @@ const BlazePressStrings = () => {
 	translate( 'Get started' );
 	translate( 'Learn more' );
 	translate( "Don't show me this step again." );
+	translate( 'Select post to promote' );
+	translate( 'Advanced Settings' );
+	translate( 'Targeted Devices' );
+	translate( 'Ad creative' );
+	translate( "Use post's media" );
+	translate( 'Apply' );
+	translate( 'Reset' );
+	translate( 'Crop' );
 	translate( 'Drop image here' );
 	translate( 'Click or Drag an image here' );
-	translate( 'All fields marked as required' );
-	translate( 'must be completed to continue' );
+	translate( 'All Locations' );
+	translate( 'Budget and duration' );
+	translate( 'Daily spend for %(durationDays)s-day duration' );
+	translate( 'Estimated people reached per day' );
+	translate( 'Duration (days)' );
+	translate( 'Review your campaign' );
+	translate(
+		'We created this campaign to deliver the most valuable traffic, yet you can still make changes before submitting it.'
+	);
+	translate( 'day' );
+	translate( 'total' );
+	translate( 'Search…' );
+	translate( 'Post' );
+	translate( 'Page' );
+	translate( 'Product' );
+	translate( 'Promote' );
+	translate( 'Untitled' );
+	translate( 'View' );
+	translate( 'Create campaign' );
+	translate( 'Make changes' );
+	translate( 'Summary' );
+	translate( 'Max Budget' );
+	translate( 'Estimated Impressions' );
+	translate( 'Credits' );
+	translate( 'Destination' );
+	translate( 'Audience & Budget' );
+	translate( 'Save and Submit' );
+	translate( 'Next' );
+	translate( 'Close' );
+	translate( '%(field)s is required.' );
+	translate( 'This field is required.' );
+	translate( 'All fields marked as required ({{span}}*{{/span}}) must be completed to continue' );
 	translate( 'All' );
 	translate( 'Mobile devices' );
 	translate( 'Desktop devices' );
+	translate( 'Credits' );
 };
 
 if ( window.BlazePress ) {

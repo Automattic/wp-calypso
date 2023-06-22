@@ -1,10 +1,9 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { getQueryArg } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 import page from 'page';
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	ensurePartnerPortalReturnUrl,
 	getProductTitle,
@@ -12,6 +11,7 @@ import {
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -49,17 +49,15 @@ export function useReturnUrl( redirect: boolean ): void {
  *
  */
 export function useRecentPaymentMethodsQuery( { enabled = true }: UseQueryOptions = {} ) {
-	return useQuery(
-		[ 'jetpack-cloud', 'partner-portal', 'recent-cards' ],
-		() =>
+	return useQuery( {
+		queryKey: [ 'jetpack-cloud', 'partner-portal', 'recent-cards' ],
+		queryFn: () =>
 			wpcomJpl.req.get( {
 				apiNamespace: 'wpcom/v2',
 				path: '/jetpack-licensing/stripe/payment-methods',
 			} ),
-		{
-			enabled: enabled,
-		}
-	);
+		enabled: enabled,
+	} );
 }
 
 /**
@@ -328,8 +326,8 @@ export function useIssueMultipleLicenses(
 				.filter( ( license ) => license );
 
 			if ( assignedLicenses.length > 0 ) {
-				const initialLicenseList = assignedLicenses.slice( 0, -1 );
-				const lastLicenseItem = assignedLicenses.slice( -1 )[ 0 ];
+				const initialLicenseList = assignedLicenses.slice( 0, -1 ) as string[];
+				const lastLicenseItem = assignedLicenses.slice( -1 )[ 0 ] as string;
 
 				const commaCharacter = translate( ',', {
 					comment:
@@ -476,4 +474,90 @@ export function useAssignMultipleLicenses(
 ): [ () => void, boolean ] {
 	const [ assign, isLoading ] = useAssignLicenses( selectedLicenseKeys, selectedSite );
 	return [ assign, isLoading ];
+}
+
+/**
+ * Returns product description and features with given product slug.
+ *
+ * @param productSlug
+ * @returns
+ */
+export function useProductDescription( productSlug: string ): {
+	description: TranslateResult | null;
+	features: ReadonlyArray< TranslateResult >;
+} {
+	const translate = useTranslate();
+
+	return useMemo( () => {
+		let description = '';
+		const features = [];
+
+		switch ( productSlug ) {
+			case 'jetpack-complete':
+				description = translate( 'Includes all Security 1TB and full Jetpack package.' );
+				features.push(
+					translate( 'All Security products' ),
+					translate( '1TB cloud storage' ),
+					translate( 'Full Jetpack package' )
+				);
+				break;
+			case 'jetpack-security-t1':
+				description = translate(
+					'Includes VaultPress Backup 10GB, Scan Daily and Akismet Anti-spam.'
+				);
+				features.push(
+					translate( 'VaultPress Backup 10GB' ),
+					translate( 'Scan Daily' ),
+					translate( 'Akismet Anti-spam*' )
+				);
+				break;
+			case 'jetpack-security-t2':
+				description = translate(
+					'Includes VaultPress Backup 1TB, Scan Daily and Akismet Anti-spam.'
+				);
+				features.push(
+					translate( 'VaultPress Backup 1TB' ),
+					translate( 'Scan Daily' ),
+					translate( 'Akismet Anti-spam*' )
+				);
+				break;
+			case 'jetpack-starter':
+				description = translate( 'Includes VaultPress Backup 1GB and Akismet Anti-spam.' );
+				features.push( translate( 'VaultPress Backup 1GB' ), translate( 'Akismet Anti-spam*' ) );
+				break;
+			case 'jetpack-anti-spam':
+				description = translate( 'Automatically clear spam from your comments and forms.' );
+				break;
+			case 'jetpack-backup-t1':
+			case 'jetpack-backup-t2':
+				description = translate( 'Real-time cloud backups with one-click restores.' );
+				break;
+			case 'jetpack-boost':
+				description = translate( 'Essential tools to speed up your site - no developer required.' );
+				break;
+			case 'jetpack-scan':
+				description = translate( 'Automatic malware scanning with one-click fixes.' );
+				break;
+			case 'jetpack-videopress':
+				description = translate( 'High-quality, ad-free video built specifically for WordPress.' );
+				break;
+			case 'jetpack-social-basic':
+				description = translate( 'Write once, post everywhere.' );
+				break;
+			case 'jetpack-social-advanced':
+				description = translate( 'Write once, post everywhere.' );
+				break;
+			case 'jetpack-search':
+				description = translate( 'Help your site visitors find answers instantly.' );
+				break;
+			case 'jetpack-ai':
+				description = translate( 'Unleash the power of AI to boost your content creation.' );
+				break;
+		}
+
+		return {
+			description,
+			features,
+		};
+	}, [ productSlug, translate ] );
 }

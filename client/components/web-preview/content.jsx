@@ -429,6 +429,8 @@ export default class WebPreviewContent extends Component {
 								fetchpriority={ fetchpriority ? fetchpriority : undefined }
 								scrolling={ autoHeight ? 'no' : undefined }
 								tabIndex={ disableTabbing ? -1 : 0 }
+								/* See https://help.hotjar.com/hc/en-us/articles/115011624347-Can-I-Track-iframes-Inside-Heatmaps-and-Recordings- */
+								data-hj-allow-iframe
 							/>
 						</div>
 					) }
@@ -498,8 +500,6 @@ WebPreviewContent.propTypes = {
 	isModalWindow: PropTypes.bool,
 	// The site/post description passed to the SeoPreviewPane
 	frontPageMetaDescription: PropTypes.string,
-	// Whether the inline help popup is open
-	isInlineHelpPopoverVisible: PropTypes.bool,
 	// A post object used to override the selected post in the SEO preview
 	overridePost: PropTypes.object,
 	// A customized Toolbar element

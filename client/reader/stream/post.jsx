@@ -73,7 +73,6 @@ class ReaderPostCardAdapter extends Component {
 				onClick={ this.onClick }
 				onCommentClick={ this.onCommentClick }
 				isSelected={ this.props.isSelected }
-				showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 				followSource={ this.props.followSource }
 				showSiteName={ this.props.showSiteName }
 				isDiscoverStream={ this.props.isDiscoverStream }

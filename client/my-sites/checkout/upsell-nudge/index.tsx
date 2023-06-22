@@ -53,7 +53,6 @@ import {
 import { getSitePlan, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { updateCartContactDetailsForCheckout } from '../composite-checkout/lib/update-cart-contact-details-for-checkout';
-import AnnualUpsell from './annual-upsell';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import PurchaseModal, { wrapValueInManagedValue } from './purchase-modal';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
@@ -78,7 +77,6 @@ const noop = () => {};
 export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
-export const ANNUAL_PLAN_UPGRADE_UPSELL = 'annual-plan-upgrade-upsell';
 export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
 
 export interface UpsellNudgeManualProps {
@@ -226,9 +224,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		return (
 			<Main
 				className={ classnames( styleClass, {
-					'is-wide-layout':
-						BUSINESS_PLAN_UPGRADE_UPSELL === upsellType ||
-						ANNUAL_PLAN_UPGRADE_UPSELL === upsellType,
+					'is-wide-layout': BUSINESS_PLAN_UPGRADE_UPSELL === upsellType,
 				} ) }
 			>
 				<QueryPaymentCountries />
@@ -302,7 +298,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			siteSlug,
 			hasSevenDayRefundPeriod,
 			isLoading: isFetchingData,
-			currentProduct,
 		} = this.props;
 
 		const isLoading =
@@ -336,20 +331,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
-					/>
-				);
-			case ANNUAL_PLAN_UPGRADE_UPSELL:
-				return isLoading ? (
-					this.renderGenericPlaceholder()
-				) : (
-					<AnnualUpsell
-						currencyCode={ currencyCode }
-						planDiscountedRawPrice={ planDiscountedRawPrice }
-						translate={ translate }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-						upgradeItem={ upgradeItem }
-						currentProduct={ currentProduct }
 					/>
 				);
 			case PROFESSIONAL_EMAIL_UPSELL:

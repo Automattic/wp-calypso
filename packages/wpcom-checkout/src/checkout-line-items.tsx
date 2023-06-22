@@ -15,6 +15,7 @@ import {
 	isJetpackProductSlug,
 	isTitanMail,
 	isDIFMProduct,
+	isTieredVolumeSpaceAddon,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -642,6 +643,17 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			},
 		};
 
+		if ( isTieredVolumeSpaceAddon( product ) ) {
+			const spaceQuantity = product?.quantity ?? 1;
+			return (
+				<>
+					{ translate( '%(quantity)s GB extra space, %(price)s per year', {
+						args: { quantity: spaceQuantity, price: options.args.price },
+					} ) }
+				</>
+			);
+		}
+
 		if ( isMonthlyProduct( product ) ) {
 			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
 		}
@@ -740,7 +752,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	const isDomainMapping = productSlug === 'domain_map';
 
 	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
-		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : null;
+		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
 
 		return (
 			<>
@@ -764,19 +776,17 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
-function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct } ) {
+function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const planSlug = product.product_slug;
 	const origCost = product.item_original_subtotal_integer;
 	const finalCost = product.item_subtotal_integer;
+	const upgradeCredit = origCost - finalCost;
+	const planSlug = product.product_slug;
 	const isRenewal = product.is_renewal;
 
-	// Do not display discount reason if there is an introductory offer.
-	if ( product.introductory_offer_terms?.enabled ) {
-		return null;
-	}
-
 	if (
+		// Do not display discount reason if there is an introductory offer.
+		product.introductory_offer_terms?.enabled ||
 		// Do not display discount reason for non-wpcom, non-jetpack products.
 		( ! isWpComPlan( planSlug ) && ! isJetpackProductSlug( planSlug ) ) ||
 		// Do not display discount reason if there is no discount.
@@ -788,19 +798,59 @@ function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct }
 	) {
 		return null;
 	}
-
 	if ( isMonthlyProduct( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first month' ) }</DiscountCallout>;
+		return (
+			<>
+				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
+					comment:
+						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+					args: {
+						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</>
+		);
 	}
 
 	if ( isYearly( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+		return (
+			<>
+				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
+					comment:
+						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+					args: {
+						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</>
+		);
 	}
 
 	if ( isBiennially( product ) || isTriennially( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
+		return (
+			<>
+				{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
+					comment:
+						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+					args: {
+						discount: formatCurrency( upgradeCredit, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</>
+		);
 	}
-
 	return null;
 }
 
@@ -985,13 +1035,17 @@ function WPLineItem( {
 			</span>
 
 			{ product && ! containsPartnerCoupon && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice product={ product } />
-					<DomainDiscountCallout product={ product } />
-					<FirstTermDiscountCallout product={ product } />
-					<CouponDiscountCallout product={ product } />
-					<IntroductoryOfferCallout product={ product } />
-				</LineItemMeta>
+				<>
+					<LineItemMeta>
+						<UpgradeCreditInformation product={ product } />
+					</LineItemMeta>
+					<LineItemMeta>
+						<LineItemSublabelAndPrice product={ product } />
+						<DomainDiscountCallout product={ product } />
+						<CouponDiscountCallout product={ product } />
+						<IntroductoryOfferCallout product={ product } />
+					</LineItemMeta>
+				</>
 			) }
 
 			{ product && containsPartnerCoupon && (

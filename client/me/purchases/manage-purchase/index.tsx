@@ -118,6 +118,7 @@ import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
@@ -942,7 +943,7 @@ class ManagePurchase extends Component<
 					'with {{strong}}%(domain)s{{/strong}}, making it easier to remember and easier to share.',
 				{
 					args: {
-						domain: purchase.meta,
+						domain: purchase.meta as string,
 						wpcom_url: purchase.domain,
 					},
 					components: {
@@ -979,7 +980,7 @@ class ManagePurchase extends Component<
 								count: purchase.purchaseRenewalQuantity,
 								args: {
 									numberOfMailboxes: purchase.purchaseRenewalQuantity,
-									domain: purchase.meta,
+									domain: purchase.meta as string,
 								},
 							}
 						) }
@@ -992,7 +993,10 @@ class ManagePurchase extends Component<
 		if ( isDIFMProduct( purchase ) ) {
 			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
 			if ( difmTieredPurchaseDetails && ( difmTieredPurchaseDetails.extraPageCount ?? 0 ) > 0 ) {
-				const { extraPageCount, numberOfIncludedPages } = difmTieredPurchaseDetails;
+				// We know there are some pages due to the above check.
+				const extraPageCount = difmTieredPurchaseDetails.extraPageCount as number;
+				const numberOfIncludedPages = difmTieredPurchaseDetails.numberOfIncludedPages as number;
+
 				return (
 					<>
 						{ numberOfIncludedPages === 1
@@ -1180,7 +1184,7 @@ class ManagePurchase extends Component<
 								<div className="manage-purchase__contact-partner">
 									{ translate( 'Please contact your site host %(partnerName)s for details', {
 										args: {
-											partnerName: getPartnerName( purchase ),
+											partnerName: getPartnerName( purchase ) ?? '',
 										},
 									} ) }
 								</div>
@@ -1427,7 +1431,7 @@ function PurchasesQueryComponent( {
 }
 
 export default connect(
-	( state, props: ManagePurchaseProps ) => {
+	( state: IAppState, props: ManagePurchaseProps ) => {
 		const purchase = getByPurchaseId( state, props.purchaseId );
 
 		const purchaseAttachedTo =

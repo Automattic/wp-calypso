@@ -5,11 +5,14 @@ import {
 	adTrackSignupComplete,
 	adTrackRegistration,
 } from 'calypso/lib/analytics/ad-tracking';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { identifyUser } from 'calypso/lib/analytics/identify-user';
 import { addToQueue } from 'calypso/lib/analytics/queue';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	getDomainOrigin,
+	removeDomainOrigin,
+} from 'calypso/lib/analytics/utils/signup_domain_origin';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 
@@ -20,8 +23,6 @@ export function recordSignupStart( flow, ref, optionalProps ) {
 	gaRecordEvent( 'Signup', 'calypso_signup_start' );
 	// Marketing
 	adTrackSignupStart( flow );
-	// FullStory
-	recordFullStoryEvent( 'calypso_signup_start', { flow, ref, ...optionalProps } );
 }
 
 export function recordSignupComplete(
@@ -37,6 +38,8 @@ export function recordSignupComplete(
 		theme,
 		intent,
 		startingPoint,
+		isTransfer,
+		isMapping,
 	},
 	now
 ) {
@@ -59,10 +62,14 @@ export function recordSignupComplete(
 				theme,
 				intent,
 				startingPoint,
+				isTransfer,
+				isMapping,
 			},
 			true
 		);
 	}
+
+	const signUpDomainOrigin = getDomainOrigin();
 
 	// Tracks
 	// Note that Tracks expects blog_id to differntiate sites, hence using
@@ -80,7 +87,12 @@ export function recordSignupComplete(
 		theme,
 		intent,
 		starting_point: startingPoint,
+		is_transfer: isTransfer,
+		is_mapping: isMapping,
+		signup_domain_origin: signUpDomainOrigin,
 	} );
+
+	removeDomainOrigin();
 
 	// Google Analytics
 	const flags = [
@@ -92,7 +104,7 @@ export function recordSignupComplete(
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
 
-	// Tracks, Google Analytics, FullStory
+	// Tracks, Google Analytics
 	if ( isNew7DUserSite ) {
 		const device = resolveDeviceTypeByViewPort();
 
@@ -100,27 +112,10 @@ export function recordSignupComplete(
 		recordTracksEvent( 'calypso_new_user_site_creation', { flow, device } );
 		// Google Analytics
 		gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
-		// FullStory
-		recordFullStoryEvent( 'calypso_new_user_site_creation', { flow, device } );
 	}
 
 	// Marketing
 	adTrackSignupComplete( { isNewUserSite: isNewUser && isNewSite } );
-
-	// FullStory
-	recordFullStoryEvent( 'calypso_signup_complete', {
-		flow,
-		blog_id: siteId,
-		is_new_user: isNewUser,
-		is_new_site: isNewSite,
-		is_blank_canvas: isBlankCanvas,
-		has_cart_items: hasCartItems,
-		plan_product_slug: planProductSlug,
-		domain_product_slug: domainProductSlug,
-		theme,
-		intent,
-		starting_point: startingPoint,
-	} );
 }
 
 export function recordSignupStep( flow, step, optionalProps ) {
@@ -136,8 +131,6 @@ export function recordSignupStep( flow, step, optionalProps ) {
 
 	// Tracks
 	recordTracksEvent( 'calypso_signup_step_start', props );
-	// FullStory
-	recordFullStoryEvent( 'calypso_signup_step_start', props );
 }
 
 export function recordSignupInvalidStep( flow, step ) {
@@ -165,8 +158,6 @@ export function recordRegistration( { userData, flow, type } ) {
 	gaRecordEvent( 'Signup', 'calypso_user_registration_complete' );
 	// Marketing
 	adTrackRegistration();
-	// FullStory
-	recordFullStoryEvent( 'calypso_user_registration_complete', { flow, type, device } );
 }
 
 /**

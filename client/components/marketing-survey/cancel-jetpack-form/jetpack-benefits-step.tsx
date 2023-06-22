@@ -6,12 +6,12 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import JetpackBenefits from 'calypso/blocks/jetpack-benefits';
 import JetpackGeneralBenefits from 'calypso/blocks/jetpack-benefits/general-benefits';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isPartnerPurchase } from 'calypso/lib/purchases';
+import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import type { Purchase } from 'calypso/lib/purchases/types';

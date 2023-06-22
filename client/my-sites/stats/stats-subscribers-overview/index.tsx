@@ -1,57 +1,32 @@
 import { CountComparisonCard } from '@automattic/components';
-import { translate } from 'i18n-calypso';
 import React from 'react';
+import useSubscribersOverview from 'calypso/my-sites/stats/hooks/use-subscribers-overview';
 
-function SubscribersOverviewCardStats() {
-	const overviewCardStats = [
-		{
-			heading: translate( 'Today' ),
-			count: 1410,
-		},
-		{
-			heading: translate( '30 days ago' ),
-			count: 1080,
-			previousCount: 1080,
-		},
-		{
-			heading: translate( '60 days ago' ),
-			count: 1000,
-			previousCount: 1080,
-		},
-		{
-			heading: translate( '90 days ago' ),
-			count: 970,
-			previousCount: 1080,
-		},
-	];
-	return overviewCardStats;
+interface SubscribersOverviewProps {
+	siteId: number | null;
 }
 
-function SubscribersOverviewCards() {
-	const overviewCardStats = SubscribersOverviewCardStats();
+const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } ) => {
+	const { isLoading, isError, overviewData } = useSubscribersOverview( siteId );
 
 	return (
-		<div className="overview-cards-list">
-			{ overviewCardStats.map( ( overviewCardStat ) => (
-				<CountComparisonCard
-					key={ overviewCardStat.heading }
-					heading={ overviewCardStat.heading }
-					count={ overviewCardStat.count }
-					previousCount={ overviewCardStat.previousCount }
-					showValueTooltip
-					icon={ false }
-				/>
-			) ) }
+		<div className="subscribers-overview highlight-cards">
+			<div className="highlight-cards-list">
+				{ overviewData.map( ( { count, label }, index ) => {
+					return (
+						// TODO: Communicate loading vs error state to the user.
+						<CountComparisonCard
+							key={ index }
+							heading={ label }
+							count={ isLoading || isError ? null : count }
+							showValueTooltip
+							icon={ false }
+						/>
+					);
+				} ) }
+			</div>
 		</div>
 	);
-}
-
-function SubscribersOverview() {
-	return (
-		<div className="subscribers-overview">
-			<SubscribersOverviewCards />
-		</div>
-	);
-}
+};
 
 export default SubscribersOverview;

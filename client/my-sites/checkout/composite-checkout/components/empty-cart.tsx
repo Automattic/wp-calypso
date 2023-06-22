@@ -1,7 +1,7 @@
 import { CheckoutStepBody } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import type { ResponseCart } from '@automattic/shopping-cart';

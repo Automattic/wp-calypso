@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ReactChild } from 'react';
+import { ReactNode } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 
 import './style.scss';
@@ -9,10 +9,10 @@ interface LinkCardContainerProps {
 	border?: string;
 }
 interface LinkCardProps {
-	label?: ReactChild;
-	title: ReactChild;
+	label?: ReactNode;
+	title: ReactNode;
 	titleMarginBottom?: string;
-	cta?: ReactChild;
+	cta?: ReactNode;
 	background?: string;
 	border?: string;
 	url: string;

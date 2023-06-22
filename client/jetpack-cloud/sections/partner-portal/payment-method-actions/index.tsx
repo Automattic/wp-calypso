@@ -1,15 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import PaymentMethodDeleteDialog from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-dialog';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { deleteStoredCard } from 'calypso/state/partner-portal/stored-cards/actions';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import type { CalypsoDispatch } from 'calypso/state/types';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
@@ -20,7 +19,7 @@ interface Props {
 
 const PaymentMethodActions: FunctionComponent< Props > = ( { card } ) => {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch< CalypsoDispatch >();
+	const reduxDispatch = useDispatch();
 
 	const [ isDeleteDialogVisible, setIsDeleteDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDeleteDialogVisible( false ), [] );

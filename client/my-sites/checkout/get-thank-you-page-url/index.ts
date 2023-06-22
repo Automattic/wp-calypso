@@ -18,10 +18,6 @@ import {
 	isWpComPremiumPlan,
 	isTitanMail,
 	isDomainRegistration,
-	TERM_MONTHLY,
-	TERM_ANNUALLY,
-	PLAN_PREMIUM,
-	PLAN_PREMIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -64,7 +60,6 @@ import {
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { Purchase } from 'calypso/lib/purchases/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
@@ -102,8 +97,6 @@ export interface PostCheckoutUrlArguments {
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains?: ResponseDomain[];
-	monthlyToAnnualPostPurchaseExperimentUser?: boolean;
-	purchases?: Purchase[];
 }
 
 /**
@@ -140,8 +133,6 @@ export default function getThankYouPageUrl( {
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
-	monthlyToAnnualPostPurchaseExperimentUser,
-	purchases,
 }: PostCheckoutUrlArguments ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -344,8 +335,6 @@ export default function getThankYouPageUrl( {
 					hideUpsell: Boolean( hideNudge ),
 					domains,
 					isDomainOnly,
-					monthlyToAnnualPostPurchaseExperimentUser,
-					purchases,
 			  } )
 			: undefined;
 
@@ -555,7 +544,10 @@ function getFallbackDestination( {
 		cart?.products?.filter( ( product ) => product?.extra?.is_marketplace_product ) || [];
 
 	const marketplacePluginSlugs = marketplaceProducts
-		.filter( ( { extra } ) => extra.product_type === 'marketplace_plugin' )
+		.filter(
+			( { extra } ) =>
+				extra.product_type === 'marketplace_plugin' || extra.product_type === 'saas_plugin'
+		)
 		.map( ( { extra } ) => extra.product_slug );
 
 	const marketplaceThemeSlugs = marketplaceProducts
@@ -565,7 +557,10 @@ function getFallbackDestination( {
 	if ( marketplaceProducts.length > 0 ) {
 		debug( 'site with marketplace products' );
 		return addQueryArgs(
-			{ plugins: marketplacePluginSlugs.join( ',' ), themes: marketplaceThemeSlugs.join( ',' ) },
+			{
+				...( marketplacePluginSlugs.length ? { plugins: marketplacePluginSlugs.join( ',' ) } : {} ),
+				...( marketplaceThemeSlugs.length ? { themes: marketplaceThemeSlugs.join( ',' ) } : {} ),
+			},
 			`/marketplace/thank-you/${ siteSlug }`
 		);
 	}
@@ -581,11 +576,7 @@ function getFallbackDestination( {
  * @param {ResponseCart} cart the cart object
  * @returns {string|undefined} the product slug of the next higher plan if it exists, undefined otherwise.
  */
-function getNextHigherPlanSlug(
-	cart: ResponseCart,
-	monthlyToAnnualPostPurchaseExperimentUser?: boolean,
-	purchases?: Purchase[]
-): string | undefined {
+function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	const currentPlanSlug = cart && getAllCartItems( cart ).filter( isPlan )[ 0 ]?.product_slug;
 	if ( ! currentPlanSlug ) {
 		return;
@@ -593,26 +584,7 @@ function getNextHigherPlanSlug(
 
 	const currentPlan = getPlan( currentPlanSlug );
 
-	// Upsell an annual plan when on a monthly plan.
-	if ( monthlyToAnnualPostPurchaseExperimentUser ) {
-		if ( currentPlan?.term === TERM_MONTHLY ) {
-			return findFirstSimilarPlanKey( currentPlanSlug, { term: TERM_ANNUALLY } );
-		}
-	}
-
-	// Check if it came from the Annual Upsell on premium plans (premium monthly -> premium yearly)
-	const postAnnualUpsell =
-		purchases?.length &&
-		purchases[ 0 ].productSlug === PLAN_PREMIUM_MONTHLY &&
-		currentPlanSlug === PLAN_PREMIUM;
-
-	// Don't show the business plan upsell if the current plan is a premium monthly plan or coming from the annual upsell
-	// For the experiment: calypso_postpurchase_upsell_monthly_to_annual_plan
-	if (
-		isWpComPremiumPlan( currentPlanSlug ) &&
-		currentPlan?.term !== TERM_MONTHLY &&
-		! postAnnualUpsell
-	) {
+	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
 		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
 		return planKey ? getPlan( planKey )?.getPathSlug?.() : undefined;
 	}
@@ -624,39 +596,13 @@ function getPlanUpgradeUpsellUrl( {
 	receiptId,
 	cart,
 	siteSlug,
-	monthlyToAnnualPostPurchaseExperimentUser,
-	purchases,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	monthlyToAnnualPostPurchaseExperimentUser?: boolean;
-	purchases?: Purchase[];
 } ): string | undefined {
-	if ( ! siteSlug ) {
-		return;
-	}
-
-	if ( monthlyToAnnualPostPurchaseExperimentUser ) {
-		if ( cart ) {
-			const upgradeItem = getNextHigherPlanSlug(
-				cart,
-				monthlyToAnnualPostPurchaseExperimentUser,
-				purchases
-			);
-
-			if ( upgradeItem ) {
-				return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ receiptId }`;
-			}
-		}
-	}
-
 	if ( cart && hasPremiumPlan( cart ) ) {
-		const upgradeItem = getNextHigherPlanSlug(
-			cart,
-			monthlyToAnnualPostPurchaseExperimentUser,
-			purchases
-		);
+		const upgradeItem = getNextHigherPlanSlug( cart );
 
 		if ( upgradeItem ) {
 			return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ receiptId }`;
@@ -673,8 +619,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	hideUpsell,
 	domains,
 	isDomainOnly,
-	monthlyToAnnualPostPurchaseExperimentUser,
-	purchases,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
@@ -682,8 +626,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	hideUpsell: boolean;
 	domains: ResponseDomain[] | undefined;
 	isDomainOnly?: boolean;
-	monthlyToAnnualPostPurchaseExperimentUser?: boolean;
-	purchases?: Purchase[];
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -715,8 +657,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 			receiptId,
 			cart,
 			siteSlug,
-			monthlyToAnnualPostPurchaseExperimentUser,
-			purchases,
 		} );
 
 		if ( planUpgradeUpsellUrl ) {

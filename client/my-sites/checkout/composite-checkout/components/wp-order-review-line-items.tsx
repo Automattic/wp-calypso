@@ -14,7 +14,6 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -64,7 +63,6 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
-	useVariantPickerRadioButtons,
 }: {
 	className?: string;
 	isSummary?: boolean;
@@ -77,8 +75,6 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
-	// This is just for unit tests.
-	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -95,7 +91,6 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
-					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					key={ product.product_slug }
 					product={ product }
 					isSummary={ isSummary }
@@ -157,7 +152,6 @@ function LineItemWrapper( {
 	hasPartnerCoupon,
 	isDisabled,
 	initialVariantTerm,
-	useVariantPickerRadioButtons,
 }: {
 	product: ResponseCartProduct;
 	isSummary?: boolean;
@@ -172,8 +166,6 @@ function LineItemWrapper( {
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
 	initialVariantTerm: number | null | undefined;
-	// This is just for unit tests.
-	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
@@ -203,25 +195,10 @@ function LineItemWrapper( {
 			return true;
 		}
 
-		try {
-			const { variationName } = dangerouslyGetExperimentAssignment( 'calypso_plans_2yr_toggle' );
-
-			if ( variationName === 'toggle_and_checkout' ) {
-				return true;
-			}
-		} catch {
-			// The error is intentionally ignore here. For this particular experiment,
-			// the experience should start from the 2023 version of plans page to the checkout.
-			// Thus, for any other flow that leads to the checkout, they shouldn't be affected.
-			// That also means chances are that we can't load or preload the experiment earlier
-			// so that `dangerouslyGetExperimentAssignment` doesn't throw.
-		}
-
 		return variant.termIntervalInMonths >= initialVariantTerm;
 	} );
 
 	const areThereVariants = variants.length > 1;
-	const shouldUseRadioButtons = useVariantPickerRadioButtons;
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -243,7 +220,6 @@ function LineItemWrapper( {
 						onChangeItemVariant={ onChangePlanLength }
 						isDisabled={ isDisabled }
 						variants={ variants }
-						type={ shouldUseRadioButtons ? 'radio' : 'dropdown' }
 					/>
 				) }
 			</LineItem>

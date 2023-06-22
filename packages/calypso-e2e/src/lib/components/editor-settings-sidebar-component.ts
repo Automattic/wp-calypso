@@ -11,9 +11,6 @@ import type {
 const panel = '[aria-label="Editor settings"]';
 
 const selectors = {
-	// Close button for mobile
-	mobileCloseSidebarButton: `${ panel } [aria-label="Close settings"]:visible`,
-
 	// Tab
 	tabButton: ( tabName: EditorSidebarTab ) => `${ panel } button[data-label="${ tabName }"]`,
 	activeTabButton: ( tabName: EditorSidebarTab ) =>
@@ -71,8 +68,8 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.mobileCloseSidebarButton );
-		await locator.click();
+		const closeButton = editorParent.getByRole( 'button', { name: 'Close Settings' } );
+		await closeButton.click();
 	}
 
 	/**

@@ -3,7 +3,6 @@ import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import domainThankYouContent from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content';
@@ -12,6 +11,7 @@ import {
 	DomainThankYouType,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { useDispatch } from 'calypso/state';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
@@ -34,6 +34,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	hideProfessionalEmailStep,
 	type,
 } ) => {
+	const launchpadScreen = useSiteOption( 'launchpad_screen' );
+	const siteIntent = useSiteOption( 'site_intent' );
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];
 		return propsGetter( {
@@ -42,12 +44,21 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			email,
 			hasProfessionalEmail,
 			hideProfessionalEmailStep,
+			siteIntent,
+			launchpadScreen,
 		} );
-	}, [ type, domain, selectedSiteSlug, email, hasProfessionalEmail, hideProfessionalEmailStep ] );
+	}, [
+		type,
+		domain,
+		selectedSiteSlug,
+		email,
+		hasProfessionalEmail,
+		hideProfessionalEmailStep,
+		siteIntent,
+		launchpadScreen,
+	] );
 	const dispatch = useDispatch();
-	const launchpadScreen = useSiteOption( 'launchpad_screen' );
 	const isLaunchpadEnabled = launchpadScreen === 'full';
-	const siteIntent = useSiteOption( 'site_intent' );
 
 	useEffect( () => {
 		dispatch( hideMasterbar() );

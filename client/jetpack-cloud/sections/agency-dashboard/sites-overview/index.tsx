@@ -6,14 +6,16 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
@@ -24,6 +26,7 @@ import {
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
+import DashboardDataContext from './dashboard-data-context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import SiteContentHeader from './site-content-header';
@@ -70,6 +73,12 @@ export default function SitesOverview() {
 		filter,
 		sort
 	);
+
+	const {
+		data: verifiedContacts,
+		refetch: refetchContacts,
+		isError: fetchContactFailed,
+	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
 
 	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
 
@@ -229,8 +238,8 @@ export default function SitesOverview() {
 			<div className="sites-overview__container">
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
+						<SiteSurveyBanner isDashboardView />
 						<SiteWelcomeBanner isDashboardView />
-						<SiteSurveyBanner />
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader
 							content={ renderIssueLicenseButton() }
@@ -272,13 +281,31 @@ export default function SitesOverview() {
 						{ showEmptyState ? (
 							<div className="sites-overview__no-sites">{ emptyState }</div>
 						) : (
-							<SiteContent
-								data={ data }
-								isLoading={ isLoading }
-								currentPage={ currentPage }
-								isFavoritesTab={ isFavoritesTab }
-								ref={ containerRef }
-							/>
+							<DashboardDataContext.Provider
+								value={ {
+									verifiedContacts: {
+										emails: verifiedContacts?.emails ?? [],
+										phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+										refetchIfFailed: () => {
+											if ( fetchContactFailed ) {
+												refetchContacts();
+											}
+											return;
+										},
+									},
+								} }
+							>
+								<>
+									<QueryProductsList type="jetpack" currency="USD" />
+									<SiteContent
+										data={ data }
+										isLoading={ isLoading }
+										currentPage={ currentPage }
+										isFavoritesTab={ isFavoritesTab }
+										ref={ containerRef }
+									/>
+								</>
+							</DashboardDataContext.Provider>
 						) }
 					</div>
 				</div>

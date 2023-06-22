@@ -10,11 +10,12 @@ import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import SocialLogo from 'calypso/components/social-logo';
 import { useShouldShowFirstPostPublishedModal } from '../../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
 import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
 import useShouldShowVideoCelebrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-should-show-video-celebration-modal';
 import postPublishedImage from './images/illo-share.svg';
+import InlineSocialLogo from './inline-social-logo';
+import InlineSocialLogosSprite from './inline-social-logos-sprite';
 import useSharingModalDismissed from './use-sharing-modal-dismissed';
 import './style.scss';
 
@@ -30,6 +31,7 @@ const SharingModal: React.FC = () => {
 	const { launchpadScreenOption } = window?.launchpadOptions || {};
 	const { isDismissed, updateIsDismissed } = useSharingModalDismissed( isDismissedDefault );
 	const { __ } = useI18n();
+	const isPrivateBlog = window?.wpcomGutenberg?.blogPublic === '-1';
 
 	const { link, title } = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
@@ -53,9 +55,6 @@ const SharingModal: React.FC = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
 	const { createNotice } = useDispatch( noticesStore );
-
-	const siteSlug = window.location.hostname;
-	const subscribersUrl = `https://wordpress.com/people/subscribers/${ siteSlug }`;
 
 	useEffect( () => {
 		// The first post will show a different modal.
@@ -86,6 +85,10 @@ const SharingModal: React.FC = () => {
 		isCurrentPostPublished,
 		launchpadScreenOption,
 	] );
+
+	if ( ! isOpen || isDismissedDefault || isPrivateBlog ) {
+		return null;
+	}
 
 	const shareTwitter = () => {
 		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
@@ -157,9 +160,7 @@ const SharingModal: React.FC = () => {
 		recordTracksEvent( 'calypso_editor_sharing_view_subscribers' );
 	};
 
-	if ( ! isOpen || isDismissedDefault ) {
-		return null;
-	}
+	const subscribersUrl = `https://wordpress.com/people/subscribers/${ window.location.hostname }`;
 
 	return (
 		<Modal
@@ -168,6 +169,7 @@ const SharingModal: React.FC = () => {
 			title=""
 			onRequestClose={ closeModal }
 		>
+			<InlineSocialLogosSprite />
 			<div className="wpcom-block-editor-post-published-sharing-modal__inner">
 				<div className="wpcom-block-editor-post-published-sharing-modal__left">
 					<h1> { __( 'Post published!', 'full-site-editing' ) } </h1>
@@ -189,7 +191,11 @@ const SharingModal: React.FC = () => {
 						) }
 					</p>
 					<div className="wpcom-block-editor-post-published-buttons">
-						<a href={ link } className="link-button" rel="external">
+						<a
+							href={ link }
+							className="link-button wpcom-block-editor-post-published-sharing-modal__view-post-link"
+							rel="external"
+						>
 							{ ' ' }
 							<Icon icon={ globe } /> { __( 'View Post', 'full-site-editing' ) }
 						</a>
@@ -210,7 +216,7 @@ const SharingModal: React.FC = () => {
 						) }
 						onClick={ shareFb }
 					>
-						<SocialLogo icon="facebook" size={ 18 } />
+						<InlineSocialLogo icon="facebook" size={ 18 } />
 					</Button>
 					<Button
 						className={ classnames(
@@ -219,7 +225,7 @@ const SharingModal: React.FC = () => {
 						) }
 						onClick={ shareTwitter }
 					>
-						<SocialLogo icon="twitter-alt" size={ 18 } />
+						<InlineSocialLogo icon="twitter-alt" size={ 18 } />
 					</Button>
 					<Button
 						className={ classnames(
@@ -228,7 +234,7 @@ const SharingModal: React.FC = () => {
 						) }
 						onClick={ shareLinkedin }
 					>
-						<SocialLogo icon="linkedin" size={ 18 } />
+						<InlineSocialLogo icon="linkedin" size={ 18 } />
 					</Button>
 					<Button
 						className={ classnames(
@@ -237,7 +243,7 @@ const SharingModal: React.FC = () => {
 						) }
 						onClick={ shareTumblr }
 					>
-						<SocialLogo icon="tumblr-alt" size={ 18 } />
+						<InlineSocialLogo icon="tumblr-alt" size={ 18 } />
 					</Button>
 					<Button
 						className={ classnames(
@@ -246,7 +252,7 @@ const SharingModal: React.FC = () => {
 						) }
 						onClick={ sharePinterest }
 					>
-						<SocialLogo icon="pinterest-alt" size={ 18 } />
+						<InlineSocialLogo icon="pinterest-alt" size={ 18 } />
 					</Button>
 					<div className="wpcom-block-editor-post-published-sharing-modal__checkbox-section">
 						<FormLabel htmlFor="toggle" className="is-checkbox">

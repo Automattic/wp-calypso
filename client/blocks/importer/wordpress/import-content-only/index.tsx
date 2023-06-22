@@ -1,10 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
 import { Importer, ImportJob, ImportJobParams, StepNavigator } from 'calypso/blocks/importer/types';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
+import { useDispatch } from 'calypso/state';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
@@ -23,7 +23,7 @@ interface Props {
 	importer: Importer;
 	siteItem: SiteDetails | null | undefined;
 	siteSlug: string;
-	siteAnalyzedData: UrlData;
+	siteAnalyzedData: UrlData | null;
 	stepNavigator?: StepNavigator;
 }
 

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import {
 	__experimentalHStack as HStack,
@@ -10,31 +9,39 @@ import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
 import { NavigatorItemGroup } from './navigator-item-group';
+import Survey from './survey';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
 interface Props {
-	shouldUnlockGlobalStyles: boolean;
-	isDismissedGlobalStylesUpgradeModal?: boolean;
-	hasSelectedColorVariation?: boolean;
-	hasSelectedFontVariation?: boolean;
 	onSelect: ( name: string ) => void;
-	onContinueClick: () => void;
+	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
+	surveyDismissed: boolean;
+	setSurveyDismissed: ( dismissed: boolean ) => void;
+	hasSections: boolean;
+	hasHeader: boolean;
+	hasFooter: boolean;
+	hasColor: boolean;
+	hasFont: boolean;
 }
 
 const ScreenMain = ( {
-	shouldUnlockGlobalStyles,
-	isDismissedGlobalStylesUpgradeModal,
-	hasSelectedColorVariation,
-	hasSelectedFontVariation,
 	onSelect,
 	onContinueClick,
 	recordTracksEvent,
+	surveyDismissed,
+	setSurveyDismissed,
+	hasSections,
+	hasHeader,
+	hasFooter,
+	hasColor,
+	hasFont,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
@@ -49,38 +56,6 @@ const ScreenMain = ( {
 	const headerDescription = selectedDesign?.is_virtual
 		? translate( 'Customize your homepage with our library of styles and patterns.' )
 		: translate( 'Use our library of styles and patterns to build a homepage.' );
-
-	const getDescription = () => {
-		if ( ! shouldUnlockGlobalStyles ) {
-			return translate( 'Ready? Go to the Site Editor to continue editing.' );
-		}
-
-		if ( isDismissedGlobalStylesUpgradeModal ) {
-			return translate(
-				'Ready to continue? Keep your selected styles and upgrade to the Premium plan later.'
-			);
-		}
-
-		if ( hasSelectedColorVariation && hasSelectedFontVariation ) {
-			return translate(
-				'Your font and color choices are exclusive to the Premium plan and above.'
-			);
-		} else if ( hasSelectedColorVariation ) {
-			return translate( 'Your color choices are exclusive to the Premium plan and above.' );
-		} else if ( hasSelectedFontVariation ) {
-			return translate( 'Your font choices are exclusive to the Premium plan and above.' );
-		}
-	};
-
-	const getContinueText = () => {
-		if ( isDismissedGlobalStylesUpgradeModal ) {
-			return translate( 'Continue to the editor' );
-		}
-
-		return shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal
-			? translate( 'Unlock this style' )
-			: translate( 'Continue' );
-	};
 
 	// Use the mousedown event to prevent either the button focusing or text selection
 	const handleMouseDown = ( event: MouseEvent< HTMLButtonElement > ) => {
@@ -133,56 +108,62 @@ const ScreenMain = ( {
 				<HStack direction="column" alignment="top" spacing="4">
 					<NavigatorItemGroup title={ translate( 'Layout' ) }>
 						<NavigationButtonAsItem
-							path="/header"
+							checked={ hasHeader }
+							path={ NAVIGATOR_PATHS.HEADER }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
 							onClick={ () => onSelect( 'header' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
+							{ translate( 'Header' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
-							path="/section"
+							checked={ hasSections }
+							path={ hasSections ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
 							aria-label={ translate( 'Homepage' ) }
 							onClick={ () => onSelect( 'section' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Homepage' ) }</span>
+							{ translate( 'Homepage' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
-							path="/footer"
+							checked={ hasFooter }
+							path={ NAVIGATOR_PATHS.FOOTER }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
 							onClick={ () => onSelect( 'footer' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
+							{ translate( 'Footer' ) }
 						</NavigationButtonAsItem>
 					</NavigatorItemGroup>
-					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
-						<NavigatorItemGroup title={ translate( 'Style' ) }>
-							<>
-								<NavigationButtonAsItem
-									path="/color-palettes"
-									icon={ color }
-									aria-label={ translate( 'Colors' ) }
-									onClick={ () => onSelect( 'color-palettes' ) }
-								>
-									<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
-								</NavigationButtonAsItem>
-								<NavigationButtonAsItem
-									path="/font-pairings"
-									icon={ typography }
-									aria-label={ translate( 'Fonts' ) }
-									onClick={ () => onSelect( 'font-pairings' ) }
-								>
-									<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
-								</NavigationButtonAsItem>
-							</>
-						</NavigatorItemGroup>
-					) }
+					<NavigatorItemGroup title={ translate( 'Style' ) }>
+						<>
+							<NavigationButtonAsItem
+								checked={ hasColor }
+								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
+								icon={ color }
+								aria-label={ translate( 'Colors' ) }
+								onClick={ () => onSelect( 'color-palettes' ) }
+							>
+								{ translate( 'Colors' ) }
+							</NavigationButtonAsItem>
+							<NavigationButtonAsItem
+								checked={ hasFont }
+								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
+								icon={ typography }
+								aria-label={ translate( 'Fonts' ) }
+								onClick={ () => onSelect( 'font-pairings' ) }
+							>
+								{ translate( 'Fonts' ) }
+							</NavigationButtonAsItem>
+						</>
+					</NavigatorItemGroup>
 				</HStack>
+				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
 			</div>
 			<div className="screen-container__footer">
-				<span className="screen-container__description">{ getDescription() }</span>
+				<span className="screen-container__description">
+					{ translate( 'Ready? Go to the Site Editor to continue editing.' ) }
+				</span>
 				<Button
 					className="pattern-assembler__button"
 					primary
@@ -190,7 +171,7 @@ const ScreenMain = ( {
 					onMouseDown={ handleMouseDown }
 					onClick={ handleClick }
 				>
-					{ getContinueText() }
+					{ translate( 'Continue' ) }
 				</Button>
 			</div>
 		</>

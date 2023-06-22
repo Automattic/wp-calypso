@@ -15,6 +15,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportT
 import jetbrains.buildServer.configs.kotlin.v2019_2.Triggers
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -45,7 +47,9 @@ object WPComTests : Project({
 	// Gutenberg Atomic Edge
 	buildType(gutenbergPlaywrightBuildType("desktop", "4c66d90d-99c6-4ecb-9507-18bc2f44b551" , atomic=true, edge=true));
 	buildType(gutenbergPlaywrightBuildType("mobile", "ba0f925b-497b-4156-977e-5bfbe94f5744", atomic=true, edge=true));
-
+	// Gutenberg Atomic Nightly
+	buildType(gutenbergPlaywrightBuildType("desktop", "a3f58555-56bb-42c6-8543-ab27213d3085" , atomic=true, nightly=true));
+	buildType(gutenbergPlaywrightBuildType("mobile", "8191e677-0682-4709-9201-66a7788980f0", atomic=true, nightly=true));
 	// Editor Tracking
 	buildType(editorTrackingBuildType("desktop", "bd15ed14-e77d-11ec-8fea-0242ac120002", atomic=false, edge=false));
 	// Editor Tracking Edge
@@ -67,14 +71,20 @@ object WPComTests : Project({
 	buildType(P2E2ETests)
 })
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false ): E2EBuildType {
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): E2EBuildType {
 	var siteType = if (atomic) "atomic" else "simple";
-	var edgeType = if (edge) "edge" else "production";
+	var releaseType = when {
+		nightly -> "nightly"
+		edge -> "edge"
+		else -> "production"
+	}
 
-    return E2EBuildType (
-		buildId = "WPComTests_gutenberg_${siteType}_${edgeType}_$targetDevice",
+	val buildName = "Gutenberg $siteType E2E tests $releaseType ($targetDevice)"
+
+	return E2EBuildType (
+		buildId = "WPComTests_gutenberg_${siteType}_${releaseType}_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "Gutenberg $siteType E2E tests $edgeType ($targetDevice)",
+		buildName = buildName,
 		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
 		testGroup = "gutenberg",
 		buildParams = {
@@ -101,9 +111,35 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				// The reason for this is an inconsistent issue breaking the login in AT test sites when
 				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
 				param("JEST_E2E_WORKERS", "1")
+
 			}
+
+			if (nightly) {
+				param("env.GUTENBERG_NIGHTLY", "true");
+				password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
+				// Once we move back to #gutenberg-on-dotcom in Gutenbot, change this to `GB_ANNOUNCEMENT_SLACK_CHANNEL_ID` that points
+				// to a token that has the corresponding channel id.
+				password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
+				text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
+			}
+
 			if (edge) {
 				param("env.GUTENBERG_EDGE", "true")
+			}
+		},
+		buildSteps = {
+			exec {
+				name = "Post Successful Message to Slack"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+				path = "./bin/post-threaded-slack-message.sh"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The \$buildName passed successfully!\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+			}
+
+			exec {
+				name = "Post Failure Message to Slack"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				path = "./bin/post-threaded-slack-message.sh"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The \$buildName failed! Could you have a look? @kitkat-team @calypso-platform-team!\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 		},
 		buildFeatures = {
@@ -190,32 +226,14 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 	val triggers: Triggers.() -> Unit = {
 		if (jetpackTarget == "wpcom-staging") {
 			vcs {
-				// Trigger only when the "trunk" branch is modified, i.e. back-end merges
-				branchFilter = """
-					+:trunk
-				""".trimIndent()
-
 				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM connection
 				triggerRules = """
-					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/staging/**
-					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_PLUGIN_PATH%/staging/**
-				""".trimIndent()
-			}
-		} else if (jetpackTarget == "wpcom-production") {
-			vcs {
-				// Trigger only when the "trunk" branch is modified, i.e. back-end merges
-				branchFilter = """
-					+:trunk
-				""".trimIndent()
-
-				// Trigger only when changes are made to the Jetpack prod directories in our WPCOM connection
-				triggerRules = """
-					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/production/**
-					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_PLUGIN_PATH%/production/**
+					+:root=wpcom:**/mu-plugins/jetpack*-plugin/moon/*
+					+:root=wpcom:**/mu-plugins/jetpack*-plugin/sun/*
 				""".trimIndent()
 			}
 		} else {
-			// For remote-site tests, we are just running daily for now. They aren't related to Jetpack releases on DotCom.
+			// For remote-site tests and production, we are just running daily for now.
 			schedule {
 				schedulingPolicy = daily {
 					hour = 5
@@ -247,7 +265,8 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 			param("env.JETPACK_TARGET", jetpackTarget)
 		},
 		buildFeatures = {},
-		buildTriggers = triggers
+		buildTriggers = triggers,
+		addWpcomVcsRoot = true
 	)
 }
 

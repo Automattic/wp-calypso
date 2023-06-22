@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isAkismetProduct } from '@automattic/calypso-products';
 import { useStripe, useStripeSetupIntentId } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { Card, Gridicon } from '@automattic/components';
@@ -12,7 +13,6 @@ import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
@@ -20,6 +20,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { useDispatch } from 'calypso/state';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	assignPayPalProcessor,
@@ -89,6 +90,8 @@ export default function PaymentMethodSelector( {
 		error: setupIntentError,
 	} = useStripeSetupIntentId();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
+
+	const isAkismetPurchase = purchase ? isAkismetProduct( purchase ) : false;
 
 	const showRedirectMessage = useCallback( () => {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
@@ -209,7 +212,7 @@ export default function PaymentMethodSelector( {
 				<div className="payment-method-selector__terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
-						<TosText />
+						<TosText isAkismetPurchase={ isAkismetPurchase } />
 					</p>
 				</div>
 

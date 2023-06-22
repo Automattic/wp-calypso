@@ -1,8 +1,8 @@
 import { PaymentLogo } from '@automattic/composite-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import PaymentMethodActions from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-actions';
+import { useSelector } from 'calypso/state';
 import { isDeletingStoredCard } from 'calypso/state/partner-portal/stored-cards/selectors';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 

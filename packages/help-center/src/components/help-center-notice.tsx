@@ -1,4 +1,4 @@
-import { SupportSession } from '@automattic/data-stores';
+import { SupportActivity } from '@automattic/data-stores';
 import { localizeUrl, useLocale, getRelativeTimeString } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,7 +12,7 @@ type Props = {
 };
 
 function getResponses( siteName?: string ) {
-	const responses: Record< AnalysisReport[ 'result' ], React.ReactChild > = {
+	const responses: Record< AnalysisReport[ 'result' ], React.ReactElement | string > = {
 		NOT_OWNED_BY_USER: (
 			<p>
 				{ sprintf(
@@ -97,7 +97,7 @@ export function HelpCenterOwnershipNotice( { ownershipResult }: Props ) {
 export function HelpCenterActiveTicketNotice( {
 	tickets,
 }: {
-	tickets: SupportSession[] | undefined;
+	tickets: SupportActivity[] | undefined;
 } ) {
 	const locale = useLocale();
 

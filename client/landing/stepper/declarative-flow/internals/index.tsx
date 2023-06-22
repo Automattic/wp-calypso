@@ -1,12 +1,11 @@
 import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
+import { useEffect, useState, useCallback, Suspense, lazy, useRef } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
@@ -18,6 +17,7 @@ import { useSite } from '../../hooks/use-site';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
+import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';
@@ -50,9 +50,16 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
+	const design = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
+
+	const urlQueryParams = useQuery();
+	const isInHostingFlow = useRef( urlQueryParams.get( 'hosting-flow' ) === 'true' ).current;
 
 	const site = useSite();
-	const ref = useQuery().get( 'ref' ) || '';
+	const ref = urlQueryParams.get( 'ref' ) || '';
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
@@ -117,7 +124,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	useEffect( () => {
 		if ( isFlowStart() ) {
 			recordSignupStart( flow.name, ref );
-			recordFullStoryEvent( `calypso_signup_start_${ flow.name }`, { flow: flow.name } );
 		}
 	}, [ flow, ref, isFlowStart ] );
 
@@ -132,7 +138,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		const isReEnteringStep =
 			signupCompleteFlowName === flow.name && signupCompleteStepName === currentStepRoute;
 		if ( ! isReEnteringStep ) {
-			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
+			recordStepStart( flow.name, kebabCase( currentStepRoute ), {
+				intent,
+				is_in_hosting_flow: isInHostingFlow,
+				...( design && { assembler_source: getAssemblerSource( design ) } ),
+			} );
 		}
 
 		// Also record page view for data and analytics
@@ -154,7 +164,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return <StepperLoader />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
-				throw new Error( assertCondition.message ?? 'An error has occurred.' );
+				return <></>;
 		}
 
 		const StepComponent = 'asyncComponent' in step ? lazy( step.asyncComponent ) : step.component;

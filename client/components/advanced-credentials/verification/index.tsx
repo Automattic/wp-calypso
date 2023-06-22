@@ -2,8 +2,8 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { useSelector } from 'calypso/state';
 import { CredentialsTestProgress as Progress } from 'calypso/state/data-layer/wpcom/activity-log/update-credentials/vendor';
 import getJetpackCredentialsUpdateError, {
 	UpdateError,
@@ -76,7 +76,7 @@ const Verification: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 	const siteId = useSelector( getSelectedSiteId );
 	const updateError = useSelector( ( state ) => getJetpackCredentialsUpdateError( state, siteId ) );
 	const updateProgress = useSelector( ( state ) =>

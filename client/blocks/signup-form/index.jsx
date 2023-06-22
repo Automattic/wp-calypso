@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { SelectCardCheckbox } from '@automattic/onboarding';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -40,6 +41,7 @@ import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
+import { preventWidows } from 'calypso/lib/formatting';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import {
 	isCrowdsignalOAuth2Client,
@@ -49,6 +51,7 @@ import {
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
+import { getIAmDeveloperCopy } from 'calypso/me/profile/get-i-am-a-developer-copy';
 import { isP2Flow } from 'calypso/signup/utils';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
@@ -95,6 +98,7 @@ class SignupForm extends Component {
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
 		isPasswordless: PropTypes.bool,
+		showIsDevAccountCheckbox: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
@@ -119,6 +123,7 @@ class SignupForm extends Component {
 		displayUsernameInput: true,
 		flowName: '',
 		isPasswordless: false,
+		showIsDevAccountCheckbox: false,
 		isSocialSignupEnabled: false,
 		horizontal: false,
 		shouldDisplayUserExistsError: false,
@@ -150,6 +155,7 @@ class SignupForm extends Component {
 
 		this.state = {
 			submitting: false,
+			isDevAccount: false,
 			isFieldDirty: {
 				email: false,
 				username: false,
@@ -508,7 +514,9 @@ class SignupForm extends Component {
 	globalNotice( notice, status ) {
 		return (
 			<Notice
-				className="signup-form__notice"
+				className={ classNames( 'signup-form__notice', {
+					'signup-form__span-columns': this.isHorizontal(),
+				} ) }
 				showDismiss={ false }
 				status={ status }
 				text={ this.getNoticeMessageWithLogin( notice ) }
@@ -526,6 +534,7 @@ class SignupForm extends Component {
 		const userData = {
 			password: formState.getFieldValue( this.state.form, 'password' ),
 			email: formState.getFieldValue( this.state.form, 'email' ),
+			is_dev_account: this.state.isDevAccount,
 		};
 
 		if ( this.props.displayNameInput ) {
@@ -656,7 +665,7 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned || this.props.isWoo
+							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooCoreProfilerFlow )
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -924,6 +933,28 @@ class SignupForm extends Component {
 		return false;
 	}
 
+	isDevAccountCheckbox() {
+		if ( ! this.props.showIsDevAccountCheckbox ) {
+			return null;
+		}
+
+		const { translate } = this.props;
+		return (
+			<SelectCardCheckbox
+				className="signup-form__is-dev-account-checkbox signup-form__span-columns"
+				checked={ this.state.isDevAccount }
+				onChange={ ( isDevAccount ) => {
+					recordTracksEvent( 'calypso_signup_dev_account_toggle', {
+						is_dev_account: isDevAccount,
+					} );
+					this.setState( { isDevAccount } );
+				} }
+			>
+				{ preventWidows( getIAmDeveloperCopy( translate ) ) }
+			</SelectCardCheckbox>
+		);
+	}
+
 	emailDisableExplanation() {
 		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
 			return (
@@ -953,7 +984,19 @@ class SignupForm extends Component {
 	}
 
 	hasFilledInputValues = () => {
-		return Object.values( this.getUserData() ).every( ( value ) => value.trim().length > 0 );
+		const userInputFields = [ 'email', 'username', 'password' ];
+		return userInputFields.every( ( field ) => {
+			const value = formState.getFieldValue( this.state.form, field );
+			if ( typeof value === 'string' ) {
+				return value.trim().length > 0;
+			}
+			// eslint-disable-next-line no-console
+			console.warn(
+				`hasFilledInputValues: field ${ field } has a value of type ${ typeof value }. Expected string.`
+			);
+			// If we can't determine if the field is filled, we assume it is so that the user can submit the form.
+			return true;
+		} );
 	};
 
 	formFooter() {
@@ -1152,6 +1195,7 @@ class SignupForm extends Component {
 					} ) }
 				>
 					{ this.getNotice() }
+					{ this.isDevAccountCheckbox() }
 					<PasswordlessSignupForm
 						step={ this.props.step }
 						stepName={ this.props.stepName }
@@ -1162,6 +1206,7 @@ class SignupForm extends Component {
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
 						queryArgs={ this.props.queryArgs }
+						isDevAccount={ this.state.isDevAccount }
 					/>
 
 					{ showSeparator && (
@@ -1177,6 +1222,7 @@ class SignupForm extends Component {
 							socialServiceResponse={ this.props.socialServiceResponse }
 							isReskinned={ this.props.isReskinned }
 							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+							isDevAccount={ this.state.isDevAccount }
 						/>
 					) }
 					{ this.props.footerLink || this.footerLink() }
@@ -1220,6 +1266,7 @@ class SignupForm extends Component {
 							compact={ this.props.isWoo || isGravatarOAuth2Client( this.props.oauth2Client ) }
 							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 							loginUrl={ this.props.loginUrl }
+							isDevAccount={ this.state.isDevAccount }
 						/>
 					</Fragment>
 				) }
@@ -1241,6 +1288,9 @@ function TrackRender( { children, eventName } ) {
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
+		const isWooCoreProfilerFlow =
+			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' );
+
 		return {
 			currentUser: getCurrentUser( state ),
 			oauth2Client,
@@ -1250,7 +1300,8 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-			isWoo: isWooOAuth2Client( oauth2Client ),
+			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
+			isWooCoreProfilerFlow,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 		};

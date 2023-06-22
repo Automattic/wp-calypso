@@ -2,8 +2,9 @@ import { IncompleteWPcomPlan } from '@automattic/calypso-products';
 import {
 	NEWSLETTER_FLOW,
 	isLinkInBioFlow,
-	isHostingFlow,
+	isAnyHostingFlow,
 	isNewsletterOrLinkInBioFlow,
+	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 
 const newsletterFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
@@ -15,7 +16,11 @@ const linkInBioFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 };
 
 const hostingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isHostingFlow( flowName ) && plan.getHostingSignupFeatures?.( plan.term );
+	return isAnyHostingFlow( flowName ) && plan.getHostingSignupFeatures?.( plan.term );
+};
+
+const blogOnboardingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
+	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingSignupFeatures;
 };
 
 const signupFlowDefaultFeatures = (
@@ -45,6 +50,7 @@ export const getPlanFeatureAccessor = ( {
 		newsletterFeatures( flowName, plan ),
 		linkInBioFeatures( flowName, plan ),
 		hostingFeatures( flowName, plan ),
+		blogOnboardingFeatures( flowName, plan ),
 		signupFlowDefaultFeatures( flowName, plan, isInVerticalScrollingPlansExperiment ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
@@ -63,11 +69,16 @@ const hostingHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan
 	return isLinkInBioFlow( flowName ) && plan.getHostingHighlightedFeatures;
 };
 
+const blogOnboardingHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
+	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingHighlightedFeatures;
+};
+
 export const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	const accessor = [
 		newsletterHighlightedFeatures( flowName, plan ),
 		linkInBioHighlightedFeatures( flowName, plan ),
 		hostingHighlightedFeatures( flowName, plan ),
+		blogOnboardingHighlightedFeatures( flowName, plan ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
 	} );

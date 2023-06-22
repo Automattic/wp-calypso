@@ -38,7 +38,13 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
-import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
+import {
+	addTracking,
+	appendStyleVariationToThemesPath,
+	getSubjectsFromTermTable,
+	trackClick,
+	localizeThemesPath,
+} from './helpers';
 import InstallThemeButton from './install-theme-button';
 import ThemePreview from './theme-preview';
 import ThemesHeader from './themes-header';
@@ -449,17 +455,21 @@ class ThemeShowcase extends Component {
 			upsellBanner: this.props.upsellBanner,
 			search: search,
 			tier: this.props.tier,
+			tabFilter: this.state.tabFilter.key,
 			defaultOption: this.props.defaultOption,
 			secondaryOption: this.props.secondaryOption,
 			placeholderCount: this.props.placeholderCount,
 			bookmarkRef: this.bookmarkRef,
-			getScreenshotUrl: ( theme ) => {
+			getScreenshotUrl: ( theme, styleVariation ) => {
 				if ( ! getScreenshotOption( theme ).getUrl ) {
 					return null;
 				}
 
 				return localizeThemesPath(
-					getScreenshotOption( theme ).getUrl( theme ),
+					appendStyleVariationToThemesPath(
+						getScreenshotOption( theme ).getUrl( theme ),
+						styleVariation
+					),
 					locale,
 					! isLoggedIn
 				);

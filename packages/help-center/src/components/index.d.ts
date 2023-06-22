@@ -50,12 +50,9 @@ declare module 'calypso/data/support-article-alternates/use-support-article-alte
 	export default useSupportArticleAlternatesQuery;
 }
 
-declare module 'calypso/data/help/use-active-support-tickets-query' {
-	import { SupportTicket } from '../types';
-	export const useActiveSupportTicketsQuery: (
-		email: string,
-		queryOptions?: unknown
-	) => { isLoading: boolean; data?: SupportTicket[] };
+declare module 'calypso/state/data-layer/wpcom-api-middleware' {
+	const WpcomApiMiddleware = ( Function ) => Function;
+	export const WpcomApiMiddleware;
 }
 
 declare module 'calypso/state/reader/posts/selectors' {
@@ -107,7 +104,7 @@ declare module 'calypso/state/current-user/selectors' {
 	export const getCurrentUserId: ( state: unknown ) => string;
 }
 
-declare module 'calypso/state/inline-help/selectors/get-admin-help-results' {
+declare module 'calypso/state/selectors/get-admin-help-results' {
 	const getAdminHelpResults: (
 		state: unknown,
 		searchQuery: string,
@@ -123,7 +120,7 @@ declare module 'calypso/state/inline-help/selectors/get-admin-help-results' {
 }
 
 declare module 'calypso/lib/formatting' {
-	export const decodeEntities: ( text: string | React.ReactChild ) => string;
+	export const decodeEntities: ( text: string ) => string;
 	export const preventWidows: ( text: string, wordsToKeep?: number ) => string;
 }
 
@@ -140,10 +137,6 @@ declare module 'calypso/state/analytics/actions' {
 			}[];
 		};
 	};
-}
-
-declare module '@automattic/state-utils' {
-	export const createSelector = unknown;
 }
 
 declare module 'calypso/lib/mobile-app';

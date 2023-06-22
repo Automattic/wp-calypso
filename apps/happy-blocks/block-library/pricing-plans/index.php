@@ -18,11 +18,7 @@ function happyblocks_pricing_plans_enqueue_config_data( $handle ) {
 		$handle,
 		sprintf(
 			'window.A8C_HAPPY_BLOCKS_CONFIG = %s;
-			window.configData ||= {
-				features: {
-					"onboarding/2023-pricing-grid": true,
-				}
-			} ;',
+			window.configData ||= {};',
 			wp_json_encode( happyblocks_pricing_plans_get_config() )
 		),
 		'before'

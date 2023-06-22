@@ -1,6 +1,5 @@
 import { ProductIcon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
@@ -8,6 +7,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import versionCompare from 'calypso/lib/version-compare';
+import { useSelector } from 'calypso/state';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'calypso/state/sites/selectors';

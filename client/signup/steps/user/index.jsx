@@ -26,6 +26,7 @@ import flows from 'calypso/signup/config/flows';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
+	getFlowDestination,
 	getFlowSteps,
 	getNextStepName,
 	getPreviousStepName,
@@ -48,6 +49,9 @@ function getRedirectToAfterLoginUrl( {
 	oauth2Signup,
 	initialContext,
 	flowName,
+	localeSlug,
+	progress,
+	signupDependencies,
 	stepName,
 	userLoggedIn,
 } ) {
@@ -65,6 +69,21 @@ function getRedirectToAfterLoginUrl( {
 	const stepAfterRedirect =
 		getNextStepName( flowName, stepName, userLoggedIn ) ||
 		getPreviousStepName( flowName, stepName, userLoggedIn );
+
+	if ( ! stepAfterRedirect ) {
+		// This is the only step in the flow
+		const goesThroughCheckout = !! progress?.plans?.cartItem;
+		const destination = getFlowDestination(
+			flowName,
+			userLoggedIn,
+			signupDependencies,
+			localeSlug,
+			goesThroughCheckout
+		);
+		if ( destination ) {
+			return destination;
+		}
+	}
 
 	return (
 		window.location.origin +
@@ -94,10 +113,12 @@ export class UserStep extends Component {
 		subHeaderText: PropTypes.string,
 		isSocialSignupEnabled: PropTypes.bool,
 		initialContext: PropTypes.object,
+		showIsDevAccountCheckbox: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isSocialSignupEnabled: false,
+		showIsDevAccountCheckbox: false,
 	};
 
 	state = {
@@ -293,7 +314,10 @@ export class UserStep extends Component {
 				oauth2Signup,
 				...data,
 			},
-			dependencies
+			dependencies,
+			{
+				is_dev_account: data.userData.is_dev_account ?? false,
+			}
 		);
 	};
 
@@ -463,7 +487,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned, isPasswordless } = this.props;
+		const { oauth2Client, isReskinned, isPasswordless, showIsDevAccountCheckbox } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -495,6 +519,7 @@ export class UserStep extends Component {
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
 					isPasswordless={ isMobile() || isPasswordless }
+					showIsDevAccountCheckbox={ showIsDevAccountCheckbox }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }

@@ -16,6 +16,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import SearchFollowButton from 'calypso/reader/search-stream/search-follow-button';
 import { recordAction } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import {
 	SORT_BY_RELEVANCE,
@@ -97,12 +98,17 @@ class SearchStream extends React.Component {
 		updateQueryArg( { sort } );
 	};
 
+	trackTagsPageLinkClick = () => {
+		recordAction( 'clicked_reader_search_tags_page_link' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_search_tags_page_link_clicked' );
+	};
+
 	handleFixedAreaMounted = ( ref ) => ( this.fixedAreaRef = ref );
 
 	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions } = this.props;
+		const { query, translate, searchType, suggestions, isLoggedIn } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const segmentedControlClass = wideDisplay
@@ -189,9 +195,14 @@ class SearchStream extends React.Component {
 							wideDisplay={ wideDisplay }
 						/>
 					) }
-					{ ! query && <BlankSuggestions suggestions={ suggestionList } /> }
+					{ ! query && (
+						<BlankSuggestions
+							suggestions={ suggestionList }
+							trackTagsPageLinkClick={ this.trackTagsPageLinkClick }
+						/>
+					) }
 				</div>
-				<SpacerDiv domTarget={ this.fixedAreaRef } />
+				{ isLoggedIn && <SpacerDiv domTarget={ this.fixedAreaRef } /> }
 				{ ! hidePostsAndSites && wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
@@ -202,7 +213,6 @@ class SearchStream extends React.Component {
 								<SiteResults
 									query={ query }
 									sort={ pickSort( sortOrder ) }
-									showLastUpdatedDate={ false }
 									onReceiveSearchResults={ this.setSearchFeed }
 								/>
 							</div>
@@ -217,7 +227,6 @@ class SearchStream extends React.Component {
 							<SiteResults
 								query={ query }
 								sort={ pickSort( sortOrder ) }
-								showLastUpdatedDate={ true }
 								onReceiveSearchResults={ this.setSearchFeed }
 							/>
 						) }
@@ -243,6 +252,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		readerAliasedFollowFeedUrl:
 			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		recordReaderTracksEvent,

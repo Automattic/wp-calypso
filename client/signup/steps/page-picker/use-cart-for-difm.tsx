@@ -9,8 +9,8 @@ import { MinimalRequestCartProduct, useShoppingCart } from '@automattic/shopping
 import debugFactory from 'debug';
 import { LocalizeProps, useTranslate, TranslateResult } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
 import { requestProductsList } from 'calypso/state/products-list/actions';
@@ -69,7 +69,7 @@ function getDIFMPriceBreakdownSubLabel( {
 				<>
 					{ translate( 'Service: %(productCost)s one-time fee', {
 						args: {
-							productCost: formattedOneTimeFee,
+							productCost: formattedOneTimeFee as string,
 						},
 					} ) }
 					<br></br>

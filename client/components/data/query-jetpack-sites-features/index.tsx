@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { fetchJetpackSitesFeatures } from 'calypso/state/sites/features/actions';
 import isRequestingJetpackSitesFeatures from 'calypso/state/sites/selectors/is-requesting-jetpack-sites-features';
 

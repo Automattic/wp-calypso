@@ -32,16 +32,37 @@ class WP_REST_Help_Center_Authenticate extends \WP_REST_Controller {
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_chat_authentication' ),
 				'permission_callback' => array( $this, 'permission_callback' ),
+				'args'                => array(
+					'type'      => array(
+						'type'     => 'string',
+						'default'  => 'zendesk',
+						'required' => false,
+					),
+					'test_mode' => array(
+						'type'     => 'boolean',
+						'default'  => false,
+						'required' => false,
+					),
+				),
 			)
 		);
 	}
 
 	/**
 	 * Callback to authorize user for chat.
+	 *
+	 * @param \WP_REST_Request $request The request sent to the API.
+	 *
+	 * @return WP_REST_Response
 	 */
-	public function get_chat_authentication() {
+	public function get_chat_authentication( \WP_REST_Request $request ) {
+		$query_parameters = array(
+			'test_mode' => $request['test_mode'],
+			'type'      => $request['type'],
+		);
+
 		$body = Client::wpcom_json_api_request_as_user(
-			'help/authenticate/chat',
+			'help/authenticate/chat?' . http_build_query( $query_parameters ),
 			'2',
 			array(
 				'method' => 'POST',
@@ -52,11 +73,6 @@ class WP_REST_Help_Center_Authenticate extends \WP_REST_Controller {
 			return $body;
 		}
 		$response = json_decode( wp_remote_retrieve_body( $body ) );
-
-		// Return happychat staging for proxied users. The URL returned from the API request is not correct when coming from atomic sites.
-		$is_proxied    = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
-		$url           = $is_proxied ? 'https://happychat-io-staging.go-vip.co/customer' : 'https://happychat.io/customer';
-		$response->url = $url;
 
 		return rest_ensure_response( $response );
 	}

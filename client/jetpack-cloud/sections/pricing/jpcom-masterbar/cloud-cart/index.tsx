@@ -1,9 +1,9 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import MasterbarCartWrapper from 'calypso/layout/masterbar/masterbar-cart/masterbar-cart-wrapper';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useShoppingCartTracker } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-shopping-cart-tracker';
+import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CloudCartIcon from './cloud-cart-icon';

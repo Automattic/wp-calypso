@@ -322,10 +322,10 @@ a.notice__action {
 			a,
 			a:visited,
 			button.is-link {
-				color: inherit;
+				color: var(--color-link);
 
 				&:hover {
-					color: inherit;
+					color: var(--color-link);
 				}
 			}
 		}
@@ -384,7 +384,10 @@ a.notice__action {
 		flex-shrink: 0;
 		padding: 16px;
 		cursor: pointer;
-
+		&:hover,
+		&:focus {
+			color: var(--color-text);
+		}
 		.gridicon {
 			width: 18px;
 			height: 18px;

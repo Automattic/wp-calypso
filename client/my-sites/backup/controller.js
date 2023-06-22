@@ -12,6 +12,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setFilter } from 'calypso/state/activity-log/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import BackupContentsPage from './backup-contents-page';
 import BackupUpsell from './backup-upsell';
 import BackupCloneFlow from './clone-flow';
 import BackupsPage from './main';
@@ -156,5 +157,15 @@ export function backupClone( context, next ) {
 	const siteId = getSelectedSiteId( state );
 
 	context.primary = <BackupCloneFlow siteId={ siteId } />;
+	next();
+}
+
+/* handles /backup/:site/contents/:backupDate, see `backupContentsPath` */
+export function backupContents( context, next ) {
+	debug( 'controller: backupContents', context.params );
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	context.primary = <BackupContentsPage siteId={ siteId } rewindId={ context.params.rewindId } />;
 	next();
 }

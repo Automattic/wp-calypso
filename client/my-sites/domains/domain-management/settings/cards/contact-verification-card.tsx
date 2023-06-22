@@ -4,6 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { WhoisData } from '../types';
 
 import './style.scss';
@@ -15,6 +17,7 @@ interface Props {
 }
 
 const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ selectedFiles, setSelectedFiles ] = useState< FileList | null >( null );
 	const [ submitting, setSubmitting ] = useState( false );
@@ -84,7 +87,7 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 				</ul>
 				<p>
 					{ translate(
-						'Click on the button below to upload one or more documents and then click on the "Submit" button. You can upload images and/or PDF files up to 5MB each.'
+						'Click on the button below to upload up to three documents and then click on the "Submit" button. You can upload images (JPEG or PNG) and/or PDF files up to 5MB each.'
 					) }
 				</p>
 			</div>
@@ -92,6 +95,11 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 	};
 
 	const handleFilesSelected = ( files: FileList ) => {
+		if ( files.length > 3 ) {
+			dispatch( errorNotice( translate( 'You can only upload up to three documents.' ) ) );
+			return;
+		}
+
 		setSelectedFiles( files );
 		setError( false );
 	};
@@ -145,11 +153,15 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 
 				if ( error ) {
 					setError( true );
+					dispatch( errorNotice( error.message ) );
 					return;
 				}
 
 				setSubmitted( true );
 				setError( false );
+				dispatch(
+					successNotice( translate( 'Documents submitted for verification succcesfully!' ) )
+				);
 			}
 		);
 	};

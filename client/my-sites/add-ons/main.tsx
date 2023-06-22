@@ -3,7 +3,6 @@ import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -12,9 +11,11 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsGrid from './components/add-ons-grid';
+import useAddOnCheckoutLink from './hooks/use-add-on-checkout-link';
 import useAddOnPurchaseStatus from './hooks/use-add-on-purchase-status';
 import useAddOns from './hooks/use-add-ons';
 import type { ReactElement } from 'react';
@@ -117,8 +118,9 @@ interface Props {
 
 const AddOnsMain: React.FunctionComponent< Props > = () => {
 	const translate = useTranslate();
-	const addOns = useAddOns();
 	const selectedSite = useSelector( getSelectedSite );
+	const addOns = useAddOns( selectedSite?.ID );
+	const checkoutLink = useAddOnCheckoutLink();
 
 	const canManageSite = useSelector( ( state ) => {
 		if ( ! selectedSite ) {
@@ -132,12 +134,8 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 		return <NoAccess />;
 	}
 
-	const handleActionPrimary = ( addOnSlug: string ) => {
-		if ( 'no-adverts/no-adverts.php' === addOnSlug ) {
-			page.redirect( `/checkout/${ selectedSite?.slug }/no-ads` );
-			return;
-		}
-		page.redirect( `/checkout/${ selectedSite?.slug }/${ addOnSlug }` );
+	const handleActionPrimary = ( addOnSlug: string, quantity?: number ) => {
+		page.redirect( `${ checkoutLink( addOnSlug, quantity ) }` );
 	};
 
 	const handleActionSelected = () => {

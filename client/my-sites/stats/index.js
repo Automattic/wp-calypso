@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -55,11 +54,9 @@ export default function () {
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
 
-	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
-		// Stat Subscribers Page (do not cofuse with people/subscribers/)
-		statsPage( '/stats/subscribers/:site', subscribers );
-		statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
-	}
+	// Stat Subscribers Page (do not confuse with people/subscribers/)
+	statsPage( '/stats/subscribers/:site', subscribers );
+	statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
 
 	// Stat Site Pages
 	statsPage( `/stats/:period(${ validPeriods })/:site`, site );
@@ -88,13 +85,8 @@ export default function () {
 	page( '/stats/ads/(.*)', redirectToDefaultWordAdsPeriod );
 
 	// Email stats Pages
-	if ( config.isEnabled( 'newsletter/stats' ) ) {
-		statsPage(
-			`/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`,
-			emailStats
-		);
-		statsPage( `/stats/day/emails/:site`, emailSummary );
-	}
+	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
+	statsPage( `/stats/day/emails/:site`, emailSummary );
 
 	// Anything else should redirect to default stats page
 	page( '/stats/(.*)', redirectToDefaultSitePage );

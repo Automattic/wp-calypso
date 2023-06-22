@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
+import { useSelector } from 'calypso/state';
 import {
 	hasActivePartnerKey,
 	hasFetchedPartner,
@@ -24,6 +24,7 @@ export default function DashboardOverview( {
 	const hasActiveKey = useSelector( hasActivePartnerKey );
 	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
 	const [ selectedSites, setSelectedSites ] = useState< Site[] >( [] );
+	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
 
 	if ( hasFetched && ! hasActiveKey ) {
 		return <SelectPartnerKey />;
@@ -36,6 +37,14 @@ export default function DashboardOverview( {
 		}
 	};
 
+	const onShowLicenseInfo = ( license: string ) => {
+		setCurrentLicenseInfo( license );
+	};
+
+	const onHideLicenseInfo = () => {
+		setCurrentLicenseInfo( null );
+	};
+
 	if ( hasFetched ) {
 		const context = {
 			search,
@@ -46,6 +55,9 @@ export default function DashboardOverview( {
 			setIsBulkManagementActive: handleSetBulkManagementActive,
 			selectedSites,
 			setSelectedSites,
+			currentLicenseInfo,
+			showLicenseInfo: onShowLicenseInfo,
+			hideLicenseInfo: onHideLicenseInfo,
 		};
 		return (
 			<SitesOverviewContext.Provider value={ context }>

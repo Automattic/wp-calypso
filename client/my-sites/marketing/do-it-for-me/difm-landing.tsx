@@ -17,13 +17,13 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSitePlan } from 'calypso/state/sites/selectors';
@@ -270,9 +270,11 @@ export default function DIFMLanding( {
 		}
 	}, [ isFAQSectionOpen ] );
 
-	const planTitle = isEnabled( 'plans/pro-plan' )
-		? getPlan( PLAN_WPCOM_PRO )?.getTitle()
-		: getPlan( PLAN_PREMIUM )?.getTitle();
+	const planTitle = (
+		isEnabled( 'plans/pro-plan' )
+			? getPlan( PLAN_WPCOM_PRO )?.getTitle()
+			: getPlan( PLAN_PREMIUM )?.getTitle()
+	) as string; // It's guaranteed that getPlan will return a plan object when passing a valid plan slug, but the types aren't strong enough.
 
 	const headerText = translate(
 		'Let us build your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
@@ -312,7 +314,7 @@ export default function DIFMLanding( {
 				'{{sup}}*{{/sup}}One time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
 				{
 					args: {
-						plan: planTitle,
+						plan: planTitle ?? '',
 						freePages: 5,
 					},
 					components: {
@@ -461,7 +463,7 @@ export default function DIFMLanding( {
 									{
 										args: {
 											displayCost,
-											planTitle,
+											planTitle: planTitle ?? '',
 										},
 									}
 								) }
@@ -530,7 +532,7 @@ export default function DIFMLanding( {
 									'Although revisions aren’t included with this service, you will be able to edit all content of the site using the WordPress editor. You will be able to change images, edit text, and also add additional pages and posts. You could even try a new theme for a different look, and you will still have the professionally designed page layouts. Your %(planTitle)s plan comes with access to live chat and priority email support, so you can always contact support if you need help customizing your new site or have questions about this service.',
 									{
 										args: {
-											planTitle,
+											planTitle: planTitle,
 										},
 									}
 								) }

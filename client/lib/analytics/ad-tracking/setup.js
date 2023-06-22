@@ -1,3 +1,4 @@
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
@@ -73,6 +74,11 @@ if ( typeof window !== 'undefined' ) {
 	// AdRoll
 	if ( mayWeInitTracker( 'adroll' ) ) {
 		setupAdRollGlobal();
+	}
+
+	// GTM
+	if ( mayWeInitTracker( 'googleTagManager' ) ) {
+		setupGtmGtag();
 	}
 }
 
@@ -221,5 +227,12 @@ function setupWpcomFloodlightGtag() {
 
 	if ( mayWeTrackByTracker( 'floodlight' ) ) {
 		window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
+	}
+}
+
+function setupGtmGtag() {
+	if ( isAkismetCheckout() ) {
+		window.dataLayer = window.dataLayer || [];
+		window.dataLayer.push( { 'gtm.start': new Date().getTime(), event: 'gtm.js' } );
 	}
 }

@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
 import qrCenter from 'calypso/assets/images/qr-login/app.png';
 import ExternalLink from 'calypso/components/external-link';
@@ -53,7 +53,7 @@ function TokenQRCode( { tokenData } ) {
 		excavate: false,
 	};
 	return (
-		<QRCode
+		<QRCodeSVG
 			value={ `https://apps.wordpress.com/get/?campaign=login-qr-code#qr-code-login?token=${ token }&data=${ encrypted }` }
 			size={ 300 }
 			imageSettings={ imageSettings }

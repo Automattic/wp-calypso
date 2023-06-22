@@ -5,7 +5,7 @@ import {
 	__unstablePresetDuotoneFilter as PresetDuotoneFilter,
 } from '@wordpress/block-editor';
 import { useResizeObserver, useRefEffect } from '@wordpress/compose';
-import React, { useMemo, useState, useContext } from 'react';
+import React, { useMemo, useState, useContext, ReactNode } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import useParsedAssets from '../hooks/use-parsed-assets';
 import loadScripts from '../utils/load-scripts';
@@ -15,7 +15,7 @@ import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
 
 interface BlockRendererContainerProps {
-	children: React.ReactChild;
+	children: ReactNode;
 	styles?: RenderedStyle[];
 	scripts?: string;
 	inlineCss?: string;
@@ -59,7 +59,9 @@ const ScaledBlockRendererContainer = ( {
 	const styleAssets = useParsedAssets( assets?.styles ) as HTMLLinkElement[];
 
 	const editorStyles = useMemo( () => {
-		const mergedStyles = [ ...( styles || [] ), ...( customStyles || [] ) ];
+		const mergedStyles = [ ...( styles || [] ), ...( customStyles || [] ) ]
+			// Ignore svgs since the current version of EditorStyles doesn't support it
+			.filter( ( style: RenderedStyle ) => style.__unstableType !== 'svgs' );
 
 		if ( ! inlineCss ) {
 			return mergedStyles;

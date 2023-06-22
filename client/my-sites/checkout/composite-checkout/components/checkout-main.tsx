@@ -8,7 +8,6 @@ import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -25,6 +24,7 @@ import {
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -94,7 +94,6 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
-	useVariantPickerRadioButtons,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -123,8 +122,6 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
-	// This is just for unit tests.
-	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -725,7 +722,6 @@ export default function CheckoutMain( {
 					loadingContent={
 						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
 					}
-					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					customizedPreviousPath={ customizedPreviousPath }
 					isRemovingProductFromCart={ isRemovingProductFromCart }
 					areThereErrors={ areThereErrors }

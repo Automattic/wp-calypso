@@ -1,0 +1,85 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.empty-list-view {
+	color: $studio-gray-100;
+	font-family: "SF Pro Text", $sans;
+	margin-top: 92px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.empty-list-view__title {
+		font-size: $font-title-small;
+		font-weight: 500;
+		line-height: rem(26px);
+		margin-bottom: 8px;
+		letter-spacing: 0.38px;
+		text-align: center;
+	}
+
+	.empty-list-view__description {
+		font-size: $font-body;
+		font-weight: 400;
+		line-height: rem(24px);
+		margin-bottom: 24px;
+		text-align: center;
+	}
+
+	.empty-list-view__cta-link {
+		width: 571px;
+		height: 52px;
+		margin-bottom: 12px;
+		border: 1px solid $studio-gray-5;
+		border-radius: 4px;
+		box-shadow: none;
+
+		&:hover {
+			background: $studio-gray-0;
+			border: 1px solid $studio-gray-80;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		.empty-list-view__card-body {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 8px;
+			font-size: $font-body-small;
+			font-weight: 500;
+			line-height: rem(20px);
+		}
+
+		.empty-list-view__cta-link-text {
+			color: $studio-gray-80 !important;
+			flex-grow: 1;
+		}
+
+		.empty-list-view__cta-link-icon {
+			color: $studio-gray-90 !important;
+		}
+	}
+}
+
+@media screen and (max-width: $break-large) {
+	body:not(.is-sidebar-collapsed) {
+		.empty-list-view .empty-list-view__cta-link {
+			width: 100%;
+		}
+	}
+}
+
+@media screen and (max-width: $break-medium) {
+	.empty-list-view {
+		margin-top: 64px;
+		padding: 32px;
+
+		.empty-list-view__cta-link {
+			width: 100%;
+		}
+	}
+}

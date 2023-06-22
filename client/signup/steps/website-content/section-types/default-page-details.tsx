@@ -1,7 +1,6 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import {
 	TextAreaField,
 	HorizontalGrid,
@@ -9,6 +8,7 @@ import {
 	CheckboxField,
 } from 'calypso/signup/accordion-form/form-components';
 import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
+import { useSelector, useDispatch } from 'calypso/state';
 import {
 	mediaRemoved,
 	mediaUploaded,
@@ -120,9 +120,12 @@ export function DefaultPageDetails( {
 	};
 
 	const imageCaption = translate(
-		'Upload up to %(noOfImages)d images to be used on your %(pageTitle)s page.',
+		'Upload up to %(noOfImages)d images. You can find stock images {{a}}here{{/a}}, or we’ll select some during the build.',
 		{
-			args: { pageTitle, noOfImages: page.media.length },
+			args: { noOfImages: page.media.length },
+			components: {
+				a: <a href="https://www.pexels.com/" target="_blank" rel="noreferrer" />,
+			},
 		}
 	);
 	const videoCaption = translate(

@@ -38,3 +38,10 @@
 		background: var(--color-accent);
 	}
 }
+
+@mixin wpcom-migration-colors() {
+	--color-accent: var(--studio-blue);
+	--color-primary: var(--studio-blue-40);
+	--color-accent-dark: var(--studio-blue-60);
+	--color-accent-60: var(--studio-blue-60);
+}

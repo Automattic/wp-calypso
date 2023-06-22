@@ -3,7 +3,7 @@ import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/compo
 import { useState } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
 import GlobalStylesVariationPreview from './preview';
@@ -13,16 +13,18 @@ import './style.scss';
 interface GlobalStylesVariationProps {
 	globalStylesVariation: GlobalStylesObject;
 	isActive: boolean;
-	premiumBadge?: React.ReactNode;
 	showOnlyHoverView?: boolean;
 	onSelect: () => void;
+	showFreeBadge: boolean;
 }
 
 interface GlobalStylesVariationsProps {
 	globalStylesVariations: GlobalStylesObject[];
 	selectedGlobalStylesVariation: GlobalStylesObject | null;
-	premiumBadge?: React.ReactNode;
+	description?: TranslateResult;
 	showOnlyHoverViewDefaultVariation?: boolean;
+	splitPremiumVariations?: boolean;
+	displayFreeLabel?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
 
@@ -32,8 +34,8 @@ const isDefaultGlobalStyleVariationSlug = ( globalStylesVariation: GlobalStylesO
 const GlobalStylesVariation = ( {
 	globalStylesVariation,
 	isActive,
-	premiumBadge,
 	showOnlyHoverView,
+	showFreeBadge,
 	onSelect,
 }: GlobalStylesVariationProps ) => {
 	const [ isFocused, setIsFocused ] = useState( false );
@@ -75,7 +77,11 @@ const GlobalStylesVariation = ( {
 				} ) as string
 			}
 		>
-			{ premiumBadge }
+			{ showFreeBadge && (
+				<div className="global-styles-variations__free-badge">
+					<span>{ translate( 'Free' ) }</span>
+				</div>
+			) }
 			<div className="global-styles-variation__item-preview">
 				<GlobalStylesContext.Provider value={ context }>
 					<GlobalStylesVariationPreview
@@ -93,9 +99,11 @@ const GlobalStylesVariation = ( {
 const GlobalStylesVariations = ( {
 	globalStylesVariations,
 	selectedGlobalStylesVariation,
-	premiumBadge,
+	description,
 	showOnlyHoverViewDefaultVariation,
 	onSelect,
+	splitPremiumVariations = true,
+	displayFreeLabel = true,
 }: GlobalStylesVariationsProps ) => {
 	const baseGlobalStyles = useMemo(
 		() =>
@@ -113,28 +121,77 @@ const GlobalStylesVariations = ( {
 		[ globalStylesVariations ]
 	);
 
+	const premiumStylesDescription =
+		description ??
+		translate(
+			'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
+		);
+
+	const premiumStyles = globalStylesVariationsWithoutDefault.map(
+		( globalStylesVariation, index ) => (
+			<GlobalStylesVariation
+				key={ index }
+				showFreeBadge={ false }
+				globalStylesVariation={ globalStylesVariation }
+				isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
+				onSelect={ () => onSelect( globalStylesVariation ) }
+			/>
+		)
+	);
+
+	const headerText = splitPremiumVariations ? translate( 'Default Style' ) : translate( 'Styles' );
+
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
-			<div className="global-styles-variations">
-				<GlobalStylesVariation
-					key="base"
-					globalStylesVariation={ baseGlobalStyles }
-					isActive={
-						! selectedGlobalStylesVariation ||
-						isDefaultGlobalStyleVariationSlug( selectedGlobalStylesVariation )
-					}
-					showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
-					onSelect={ () => onSelect( baseGlobalStyles ) }
-				/>
-				{ globalStylesVariationsWithoutDefault.map( ( globalStylesVariation, index ) => (
-					<GlobalStylesVariation
-						key={ index }
-						globalStylesVariation={ globalStylesVariation }
-						premiumBadge={ premiumBadge }
-						isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
-						onSelect={ () => onSelect( globalStylesVariation ) }
-					/>
-				) ) }
+			<div className="global-styles-variations__container">
+				<div
+					className={ classnames( 'global-styles-variations__type', {
+						'combined-variations': ! splitPremiumVariations,
+					} ) }
+				>
+					<div className="global-styles-variations__header">
+						<h2>
+							{ headerText }
+							{ displayFreeLabel && (
+								<div className="global-styles-variations__free-badge">
+									<span>{ translate( 'Free' ) }</span>
+								</div>
+							) }
+						</h2>
+						{ ! splitPremiumVariations && (
+							<div>
+								<p>{ translate( 'You can change your style at any time.' ) }</p>
+							</div>
+						) }
+					</div>
+					<div className="global-styles-variations">
+						<GlobalStylesVariation
+							key="base"
+							showFreeBadge={ displayFreeLabel }
+							globalStylesVariation={ baseGlobalStyles }
+							isActive={
+								! selectedGlobalStylesVariation ||
+								isDefaultGlobalStyleVariationSlug( selectedGlobalStylesVariation )
+							}
+							showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
+							onSelect={ () => onSelect( baseGlobalStyles ) }
+						/>
+						{ ! splitPremiumVariations && premiumStyles }
+					</div>
+				</div>
+				{ splitPremiumVariations && (
+					<div className="global-styles-variations__type">
+						<div className="global-styles-variations__header">
+							<h2>
+								{ translate( 'Premium style', 'Premium styles', {
+									count: premiumStyles.length,
+								} ) }
+							</h2>
+							<p>{ premiumStylesDescription }</p>
+						</div>
+						<div className="global-styles-variations">{ premiumStyles }</div>
+					</div>
+				) }
 			</div>
 		</GlobalStylesContext.Provider>
 	);

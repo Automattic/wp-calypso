@@ -47,6 +47,18 @@ jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: () => [ false, null ],
 } ) );
 
+jest.mock( 'calypso/components/data/query-site-features', () => ( {
+	useQuerySiteFeatures: () => {
+		return;
+	},
+} ) );
+
+jest.mock( 'calypso/components/data/query-themes', () => ( {
+	useQueryThemes: () => {
+		return;
+	},
+} ) );
+
 /**
  * Mock wpcom-proxy-request so that we could use wpcom-xhr-request to call the endpoint
  * and get the response from nock

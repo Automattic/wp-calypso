@@ -4,8 +4,8 @@ import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 export type LinksForSection = {
 	readonly link: string;
 	post_id?: number;
-	readonly title: React.ReactChild;
-	readonly description?: React.ReactChild;
+	readonly title: string;
+	readonly description?: string;
 	readonly intent?: string;
 	icon?: string;
 };

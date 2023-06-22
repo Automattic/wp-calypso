@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import { Fragment, FunctionComponent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
@@ -16,6 +15,7 @@ import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { marketingConnections, pluginsPath } from 'calypso/my-sites/marketing/paths';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -107,7 +107,7 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button
 						onClick={ handleBuiltByWpClick }
-						href="https://wordpress.com/built-by/?ref=tools-banner"
+						href="https://wordpress.com/website-design-service/?ref=tools-banner"
 						target="_blank"
 					>
 						{ translate( 'Get started' ) }
@@ -250,7 +250,7 @@ export const MarketingTools: FunctionComponent = () => {
 					>
 						<Button
 							onClick={ handleSEOCourseClick }
-							href="https://wpcourses.com/course/intro-to-search-engine-optimization-seo/"
+							href="https://wordpress.com/learn/courses/intro-to-seo/"
 							target="_blank"
 						>
 							{ translate( 'Register now' ) }

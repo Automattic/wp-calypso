@@ -116,6 +116,7 @@ const DailyBackupStatus = ( {
 				deltas={ deltas }
 				selectedDate={ selectedDate }
 				lastBackupAttemptOnDate={ lastBackupAttemptOnDate }
+				availableActions={ [ 'rewind' ] }
 			/>
 		) : (
 			<BackupFailed backup={ backup } />

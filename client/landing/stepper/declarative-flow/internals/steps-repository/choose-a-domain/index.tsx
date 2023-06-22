@@ -1,14 +1,20 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
-import { START_WRITING_FLOW } from '@automattic/onboarding';
+import {
+	DESIGN_FIRST_FLOW,
+	START_WRITING_FLOW,
+	isBlogOnboardingFlow,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { useState } from 'react';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -23,7 +29,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const isVideoPressFlow = 'videopress' === flow;
-	const isStartWritingFlow = 'start-writing' === flow;
 	const { siteTitle, domain, productsList } = useSelect(
 		( select ) => ( {
 			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -32,7 +37,10 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} ),
 		[]
 	);
-	const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
+	const [ isCartPendingUpdate, setIsCartPendingUpdate ] = useState( false );
+	const [ isCartPendingUpdateDomain, setIsCartPendingUpdateDomain ] =
+		useState< DomainSuggestion >();
+	const site = useSite();
 
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
@@ -42,16 +50,10 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		submit?.( { domain: selectedDomain } );
 	};
 
-	const getInitialSuggestion = function () {
-		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
-		const [ , strippedHostname ] =
-			String( siteSlug ).match( wpcomSubdomainWithRandomNumberSuffix ) || [];
-		return strippedHostname ?? String( siteSlug ).split( '.' )[ 0 ];
-	};
-
 	const onSkip = async () => {
-		if ( isStartWritingFlow ) {
+		if ( isBlogOnboardingFlow( flow ) ) {
 			setDomain( null );
+			setDomainCartItem( undefined );
 			setHideFreePlan( false );
 			submit?.( { freeDomain: true } );
 		} else {
@@ -63,16 +65,19 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		recordUseYourDomainButtonClick( flow );
 		const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
 		window.location.assign(
-			addQueryArgs( `/setup/${ START_WRITING_FLOW }/use-my-domain`, {
+			addQueryArgs( `/setup/${ flow }/use-my-domain`, {
 				siteSlug,
 				flowToReturnTo: flow,
 				domainAndPlanPackage: true,
-				[ START_WRITING_FLOW ]: true,
+				[ flow ]: true,
 			} )
 		);
 	};
 
 	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
+		setIsCartPendingUpdate( true );
+		setIsCartPendingUpdateDomain( suggestion );
+
 		setDomain( suggestion );
 
 		if ( suggestion?.is_free ) {
@@ -88,18 +93,21 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			setDomainCartItem( domainCartItem );
 		}
 
-		submit?.( { freeDomain: suggestion?.is_free } );
+		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
-	const getStartWritingFlowStepContent = () => {
+	const getBlogOnboardingFlowStepContent = () => {
+		const siteName = site?.name;
+		const domainSuggestion = siteName && siteName !== 'Site Title' ? siteName : '';
+
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
-					suggestion={ getInitialSuggestion() }
+					suggestion={ domainSuggestion }
 					domainsWithPlansOnly={ true }
 					onAddDomain={ submitWithDomain }
 					includeWordPressDotCom={ true }
-					offerUnavailableOption={ true }
+					offerUnavailableOption={ false }
 					showAlreadyOwnADomain={ false }
 					isSignupStep={ true }
 					basePath=""
@@ -110,6 +118,8 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 						flowName: flow || undefined,
 					} ) }
 					handleClickUseYourDomain={ onClickUseYourDomain }
+					isCartPendingUpdate={ isCartPendingUpdate }
+					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -171,8 +181,9 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		switch ( flow ) {
 			case 'videopress':
 				return getVideoPressFlowStepContent();
-			case 'start-writing':
-				return getStartWritingFlowStepContent();
+			case START_WRITING_FLOW:
+			case DESIGN_FIRST_FLOW:
+				return getBlogOnboardingFlowStepContent();
 			default:
 				return getDefaultStepContent();
 		}
@@ -200,7 +211,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			);
 		}
 
-		if ( isStartWritingFlow ) {
+		if ( isBlogOnboardingFlow( flow ) ) {
 			return (
 				<FormattedHeader
 					id="choose-a-domain-writer-header"
@@ -208,10 +219,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					subHeaderText={
 						<>
 							{ __( 'Help your blog stand out with a custom domain. Not sure yet?' ) }
-							<button
-								className="button navigation-link step-container__navigation-link has-underline is-borderless"
-								onClick={ onSkip }
-							>
+							<button className="formatted-header__subtitle has-underline" onClick={ onSkip }>
 								{ __( 'Decide later.' ) }
 							</button>
 						</>
@@ -227,7 +235,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<QueryProductsList />
 			<StepContainer
 				stepName="chooseADomain"
-				shouldHideNavButtons={ isVideoPressFlow || isStartWritingFlow }
+				shouldHideNavButtons={ isVideoPressFlow || isBlogOnboardingFlow( flow ) }
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

@@ -1,4 +1,4 @@
-import { is2023PricingGridActivePage, getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
@@ -13,7 +13,6 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import wp from 'calypso/lib/wp';
 import PlansComparison, {
@@ -23,8 +22,8 @@ import PlansComparison, {
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
@@ -102,7 +101,6 @@ export class PlansStep extends Component {
 			selectedSite,
 			planTypes,
 			flowName,
-			showTreatmentPlansReorderTest,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 			eligibleForProPlan,
@@ -152,43 +150,29 @@ export class PlansStep extends Component {
 		return (
 			<div>
 				{ errorDisplay }
-				<ProvideExperimentData
-					name="calypso_wpcom_onboarding_plans_hide_free_202305"
-					options={ { isEligible: 'onboarding' === flowName && !! domainName } }
-				>
-					{ ( isLoading, experimentAssignment ) => {
-						if ( isLoading ) {
-							return this.renderLoading();
-						}
-						return (
-							<PlansFeaturesMain
-								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-								showFAQ={ this.state.isDesktop }
-								hideFreePlan={ hideFreePlan || 'treatment' === experimentAssignment?.variationName }
-								hideEcommercePlan={ this.shouldHideEcommercePlan() }
-								isInSignup={ true }
-								isLaunchPage={ isLaunchPage }
-								intervalType={ intervalType }
-								onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
-								domainName={ domainName }
-								customerType={ this.getCustomerType() }
-								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-								plansWithScroll={ this.state.isDesktop }
-								planTypes={ planTypes }
-								flowName={ flowName }
-								showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-								isAllPaidPlansShown={ true }
-								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-								isReskinned={ isReskinned }
-								hidePremiumPlan={ this.props.hidePremiumPlan }
-								hidePersonalPlan={ this.props.hidePersonalPlan }
-								hideEnterprisePlan={ this.props.hideEnterprisePlan }
-								replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
-							/>
-						);
-					} }
-				</ProvideExperimentData>
+				<PlansFeaturesMain
+					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					hideFreePlan={ hideFreePlan }
+					hideEcommercePlan={ this.shouldHideEcommercePlan() }
+					isInSignup={ true }
+					isLaunchPage={ isLaunchPage }
+					intervalType={ intervalType }
+					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
+					domainName={ domainName }
+					customerType={ this.getCustomerType() }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					plansWithScroll={ this.state.isDesktop }
+					planTypes={ planTypes }
+					flowName={ flowName }
+					isAllPaidPlansShown={ true }
+					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+					isReskinned={ isReskinned }
+					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hidePersonalPlan={ this.props.hidePersonalPlan }
+					hideEnterprisePlan={ this.props.hideEnterprisePlan }
+					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
+				/>
 			</div>
 		);
 	}
@@ -202,8 +186,7 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForProPlan, locale, is2023PricingGridVisible } =
-			this.props;
+		const { headerText, translate, eligibleForProPlan, locale } = this.props;
 
 		if ( headerText ) {
 			return headerText;
@@ -215,26 +198,12 @@ export class PlansStep extends Component {
 				: translate( 'Choose the plan that’s right for you' );
 		}
 
-		if ( is2023PricingGridVisible ) {
-			return translate( 'Choose your flavor of WordPress' );
-		}
-
-		if ( this.state.isDesktop ) {
-			return translate( 'Choose a plan' );
-		}
-
-		return translate( "Pick a plan that's right for you." );
+		return translate( 'Choose your flavor of WordPress' );
 	}
 
 	getSubHeaderText() {
-		const {
-			eligibleForProPlan,
-			hideFreePlan,
-			locale,
-			translate,
-			useEmailOnboardingSubheader,
-			is2023PricingGridVisible,
-		} = this.props;
+		const { eligibleForProPlan, hideFreePlan, locale, translate, useEmailOnboardingSubheader } =
+			this.props;
 
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
@@ -262,29 +231,6 @@ export class PlansStep extends Component {
 				{ components: { link: freePlanButton } }
 			);
 		}
-
-		if ( is2023PricingGridVisible ) {
-			return;
-		}
-
-		if ( this.state.isDesktop ) {
-			if ( hideFreePlan ) {
-				return translate( "Pick one that's right for you and unlock features that help you grow." );
-			}
-
-			return translate(
-				"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
-				{ components: { link: freePlanButton } }
-			);
-		}
-
-		if ( hideFreePlan ) {
-			return translate( 'Choose a plan.' );
-		}
-
-		return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
-			components: { link: freePlanButton },
-		} );
 	}
 
 	shouldHideEcommercePlan() {
@@ -293,15 +239,8 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			translate,
-			hasInitializedSitesBackUrl,
-			steps,
-			is2023PricingGridVisible,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
+			this.props;
 
 		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
@@ -329,6 +268,17 @@ export class PlansStep extends Component {
 					step: 'transfer-or-connect',
 					initialQuery: previousStep?.siteUrl,
 				};
+
+				// During onboarding, if the user chooses to use their own domain, but that domain needs to have
+				// its ownership verified, they can skip the domain selection step and the `domainItem` dependency
+				// is not provided. In that case, the "Back" button in the plan selection step needs to go back to
+				// the initial domain seleciton step and no to the "transfer or connect" step.
+				if (
+					'onboarding' === flowName &&
+					undefined === previousStep?.providedDependencies?.domainItem
+				) {
+					backUrl = getStepUrl( 'onboarding', 'domains' );
+				}
 			}
 		}
 
@@ -343,8 +293,8 @@ export class PlansStep extends Component {
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
-					isWideLayout={ ! is2023PricingGridVisible }
-					isExtraWideLayout={ is2023PricingGridVisible }
+					isWideLayout={ false }
+					isExtraWideLayout={ true }
 					stepContent={ this.plansFeaturesList() }
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }
@@ -357,11 +307,10 @@ export class PlansStep extends Component {
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
-			'in-vertically-scrolled-plans-experiment':
-				! this.props.is2023PricingGridVisible && this.props.isInVerticalScrollingPlansExperiment,
+			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment, // TODO clk: confirm this is still needed
 			'has-no-sidebar': true,
-			'is-wide-layout': ! this.props.is2023PricingGridVisible,
-			'is-extra-wide-layout': this.props.is2023PricingGridVisible,
+			'is-wide-layout': false,
+			'is-extra-wide-layout': true,
 		} );
 
 		return (
@@ -386,7 +335,6 @@ PlansStep.propTypes = {
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
-	isTreatmentPlansReorderTest: PropTypes.bool,
 };
 
 /**
@@ -406,10 +354,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 };
 
 export default connect(
-	(
-		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
-	) => ( {
+	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -419,8 +364,6 @@ export default connect(
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		showTreatmentPlansReorderTest:
-			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
 		isLoadingExperiment: false,
 		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
 		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
@@ -428,7 +371,6 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-		is2023PricingGridVisible: is2023PricingGridActivePage( window ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

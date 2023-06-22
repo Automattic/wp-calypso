@@ -24,6 +24,8 @@ export const TwitterPostPreview: React.FC< TwitterPreviewProps > = ( {
 	cardType,
 	url,
 } ) => {
+	const hasMedia = !! media?.length;
+
 	return (
 		<div className="twitter-preview__wrapper">
 			<div className="twitter-preview__container">
@@ -31,16 +33,18 @@ export const TwitterPostPreview: React.FC< TwitterPreviewProps > = ( {
 				<div className="twitter-preview__main">
 					<Header name={ name } screenName={ screenName } date={ date } />
 					<div className="twitter-preview__content">
-						<Text text={ text } url={ url || '' } />
-						<Media media={ media } />
-						<QuoteTweet tweet={ tweet } />
-						<Card
-							description={ description }
-							image={ image }
-							title={ title }
-							cardType={ cardType }
-							url={ url }
-						/>
+						{ text ? <Text text={ text } url={ url || '' } retainUrl={ hasMedia } /> : null }
+						{ hasMedia ? <Media media={ media } /> : null }
+						{ tweet ? <QuoteTweet tweet={ tweet } /> : null }
+						{ ! hasMedia && title && description && url && (
+							<Card
+								description={ description }
+								image={ image }
+								title={ title }
+								cardType={ cardType || '' }
+								url={ url }
+							/>
+						) }
 					</div>
 					<Footer />
 				</div>

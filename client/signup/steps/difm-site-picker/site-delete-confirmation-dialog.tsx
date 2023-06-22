@@ -2,10 +2,10 @@ import { Button, Dialog } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { useSelector } from 'calypso/state';
 import { getSiteDomain, getSiteTitle } from 'calypso/state/sites/selectors';
 
 const ExclamationIcon = () => (
@@ -105,8 +105,8 @@ function SiteDeleteConfirmationDialog( {
 										strong: <strong />,
 									},
 									args: {
-										siteTitle,
-										siteAddress: siteDomain,
+										siteTitle: siteTitle ?? '',
+										siteAddress: siteDomain ?? '',
 									},
 								}
 							) }

@@ -3,12 +3,15 @@ import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
 import { useFlowProgress, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import ErrorStep from './internals/steps-repository/error-step';
 import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import Processing from './internals/steps-repository/processing-step';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker/src/types';
@@ -20,6 +23,9 @@ const withThemeAssemblerFlow: Flow = {
 	useSideEffect() {
 		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = useQuery().get( 'theme' );
+
+		// We have to query theme for the Jetpack site.
+		useQueryTheme( 'wpcom', selectedTheme );
 
 		useEffect( () => {
 			if ( selectedTheme === BLANK_CANVAS_DESIGN.slug ) {
@@ -34,7 +40,8 @@ const withThemeAssemblerFlow: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'processing', component: Processing },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'error', component: ErrorStep },
 		];
 	},
 
@@ -59,11 +66,15 @@ const withThemeAssemblerFlow: Flow = {
 			return navigate( 'processing' );
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
 				case 'processing': {
+					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
+						return navigate( 'error' );
+					}
+
 					const params = new URLSearchParams( {
 						canvas: 'edit',
 						assembler: '1',
@@ -78,7 +89,15 @@ const withThemeAssemblerFlow: Flow = {
 			}
 		};
 
-		return { submit };
+		const goBack = () => {
+			switch ( _currentStep ) {
+				case 'patternAssembler': {
+					return window.location.assign( `/themes/${ siteSlug }` );
+				}
+			}
+		};
+
+		return { submit, goBack };
 	},
 };
 

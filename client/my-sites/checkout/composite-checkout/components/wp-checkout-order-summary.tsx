@@ -14,6 +14,8 @@ import {
 	isJetpackProduct,
 	isJetpackPlan,
 	isAkismetProduct,
+	planHasFeature,
+	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -22,7 +24,7 @@ import {
 	FormStatus,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { isNewsletterOrLinkInBioFlow, isHostingFlow } from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
@@ -33,10 +35,10 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
+import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
@@ -167,10 +169,14 @@ function CheckoutSummaryFeaturesWrapper( props: {
 } ) {
 	const { siteId, nextDomainIsFree } = props;
 	const signupFlowName = getSignupCompleteFlowName();
-	const shouldUseFlowFeatureList =
-		isNewsletterOrLinkInBioFlow( signupFlowName ) || isHostingFlow( signupFlowName );
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const planHasHostingFeature = responseCart.products.some( ( product ) =>
+		planHasFeature( product.product_slug, WPCOM_FEATURES_ATOMIC )
+	);
+	const shouldUseFlowFeatureList =
+		isNewsletterOrLinkInBioFlow( signupFlowName ) ||
+		( isAnyHostingFlow( signupFlowName ) && planHasHostingFeature );
 	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;
 
 	if ( responseCart.is_gift_purchase && giftSiteSlug ) {
@@ -178,7 +184,12 @@ function CheckoutSummaryFeaturesWrapper( props: {
 	}
 
 	if ( signupFlowName && shouldUseFlowFeatureList ) {
-		return <CheckoutSummaryFlowFeaturesList flowName={ signupFlowName } />;
+		return (
+			<CheckoutSummaryFlowFeaturesList
+				flowName={ signupFlowName }
+				nextDomainIsFree={ nextDomainIsFree }
+			/>
+		);
 	}
 
 	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
@@ -379,14 +390,39 @@ function CheckoutSummaryFeaturesList( props: {
 	);
 }
 
-function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
+function CheckoutSummaryFlowFeaturesList( {
+	flowName,
+	nextDomainIsFree,
+}: {
+	flowName: string;
+	nextDomainIsFree: boolean;
+} ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
-	const planFeatures = getFlowPlanFeatures( flowName, planInCart );
+	const hasDomainsInCart = responseCart.products.some(
+		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
+	);
+	const domains = responseCart.products.filter(
+		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
+	);
+	const hasRenewalInCart = responseCart.products.some(
+		( product ) => product.extra.purchaseType === 'renewal'
+	);
+	const planFeatures = getFlowPlanFeatures(
+		flowName,
+		planInCart,
+		hasDomainsInCart,
+		hasRenewalInCart,
+		nextDomainIsFree
+	);
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
+			{ hasDomainsInCart &&
+				domains.map( ( domain ) => {
+					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
+				} ) }
 			{ planFeatures.map( ( feature ) => {
 				return (
 					<CheckoutSummaryFeaturesListItem key={ `feature-list-${ feature.getSlug() }` }>
@@ -399,7 +435,7 @@ function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
-			{ isHostingFlow( flowName ) && (
+			{ isAnyHostingFlow( flowName ) && (
 				<CheckoutSummaryRefundWindows cart={ responseCart } highlight />
 			) }
 		</CheckoutSummaryFeaturesListWrapper>

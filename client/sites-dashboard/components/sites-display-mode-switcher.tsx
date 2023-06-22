@@ -3,7 +3,7 @@ import { css } from '@emotion/css';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 
@@ -23,8 +23,8 @@ export const useSitesDisplayMode = () => {
 };
 
 interface SitesDisplayModeSwitcherProps {
-	onDisplayModeChange( newValue: SitesDisplayMode ): void;
-	displayMode: ReturnType< typeof useSitesDisplayMode >[ 0 ];
+	onDisplayModeChange?( newValue: SitesDisplayMode ): void;
+	displayMode?: ReturnType< typeof useSitesDisplayMode >[ 0 ];
 }
 
 export const SitesDisplayModeSwitcher = ( {
@@ -56,7 +56,7 @@ export const SitesDisplayModeSwitcher = ( {
 				} else {
 					listRef.current?.focus();
 				}
-				onDisplayModeChange( newMode );
+				onDisplayModeChange?.( newMode );
 			}
 		},
 		[ onDisplayModeChange ]
@@ -68,7 +68,7 @@ export const SitesDisplayModeSwitcher = ( {
 				role="radio"
 				aria-label={ __( 'Tile view' ) }
 				title={ __( 'Switch to tile view' ) }
-				onClick={ () => onDisplayModeChange( 'tile' ) }
+				onClick={ () => onDisplayModeChange?.( 'tile' ) }
 				icon={ <Gridicon icon="grid" /> }
 				ref={ tileRef }
 				onKeyDown={ ( event: React.KeyboardEvent ) => handleKeyDown( event, 'tile' ) }
@@ -82,7 +82,7 @@ export const SitesDisplayModeSwitcher = ( {
 				role="radio"
 				aria-label={ __( 'List view' ) }
 				title={ __( 'Switch to list view' ) }
-				onClick={ () => onDisplayModeChange( 'list' ) }
+				onClick={ () => onDisplayModeChange?.( 'list' ) }
 				icon={ <Gridicon icon="list-unordered" /> }
 				ref={ listRef }
 				onKeyDown={ ( event: React.KeyboardEvent ) => handleKeyDown( event, 'list' ) }

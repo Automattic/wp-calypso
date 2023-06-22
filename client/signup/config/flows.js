@@ -1,6 +1,12 @@
-import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import {
+	BLANK_CANVAS_DESIGN,
+	PREMIUM_THEME,
+	DOT_ORG_THEME,
+	WOOCOMMERCE_THEME,
+	MARKETPLACE_THEME,
+} from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
-import { isDesktop } from '@automattic/viewport';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -112,12 +118,13 @@ function getThankYouNoSiteDestination() {
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
 	if ( isSiteAssemblerFlow( flowName ) && themeParameter === BLANK_CANVAS_DESIGN.slug ) {
 		// Go to the site assembler flow if viewport width >= 960px as the layout doesn't support small
-		// screen for now
-		if ( isDesktop() ) {
+		// screen for now.
+		if ( isWithinBreakpoint( '>=960px' ) ) {
 			return addQueryArgs(
 				{
 					theme: themeParameter,
 					siteSlug: siteSlug,
+					isNewSite: true,
 				},
 				`/setup/with-theme-assembler`
 			);
@@ -137,12 +144,12 @@ function getWithThemeDestination( {
 } ) {
 	if (
 		! cartItem &&
-		[ 'dot-org', 'premium', 'externally-managed', 'woocommerce' ].includes( themeType )
+		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, WOOCOMMERCE_THEME ].includes( themeType )
 	) {
 		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
 	}
 
-	if ( 'dot-org' === themeType ) {
+	if ( DOT_ORG_THEME === themeType ) {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
 	}
 
@@ -187,8 +194,14 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getSitesDestination( { siteSlug } ) {
-	return addQueryArgs( { 'new-site': siteSlug }, '/sites' );
+function getHostingFlowDestination( { siteId } ) {
+	return addQueryArgs(
+		{
+			'new-site': siteId,
+			'hosting-flow': true,
+		},
+		'/sites'
+	);
 }
 
 const flows = generateFlows( {
@@ -204,7 +217,7 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getSitesDestination,
+	getHostingFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

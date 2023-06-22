@@ -7,7 +7,7 @@ import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
@@ -40,7 +40,7 @@ const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
 	return columnsPerRow;
 };
 
-export const ThemesList = ( props ) => {
+export const ThemesList = ( { tabFilter, ...props } ) => {
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
 	const updateShowSecondUpsellNudge = useCallback( () => {
@@ -60,8 +60,8 @@ export const ThemesList = ( props ) => {
 	}, [ updateShowSecondUpsellNudge ] );
 
 	const selectedSite = useSelector( getSelectedSite );
-
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const siteEditorUrl = useSelector( ( state ) => getSiteEditorUrl( state, selectedSite?.ID ) );
 
 	const isPatternAssemblerCTAEnabled =
 		! isLoggedIn || isEnabled( 'pattern-assembler/logged-in-showcase' );
@@ -78,38 +78,30 @@ export const ThemesList = ( props ) => {
 			goes_to_assembler_step: shouldGoToAssemblerStep,
 		} );
 
-		const basePathname = isLoggedIn ? '/setup' : '/start';
-		const params = new URLSearchParams( {
-			ref: 'calypshowcase',
-			theme: BLANK_CANVAS_DESIGN.slug,
-		} );
+		let destinationUrl;
 
-		if ( selectedSite?.slug ) {
-			params.set( 'siteSlug', selectedSite.slug );
+		// We have to redirect the user to the site editor directly if the user has logged in but
+		// they're on the small screen because the Assembler doesn't support the small screen yet.
+		if ( ! isLoggedIn || shouldGoToAssemblerStep ) {
+			const basePathname = isLoggedIn ? '/setup' : '/start';
+			const params = new URLSearchParams( {
+				ref: 'calypshowcase',
+				theme: BLANK_CANVAS_DESIGN.slug,
+			} );
+
+			if ( selectedSite?.slug ) {
+				params.set( 'siteSlug', selectedSite.slug );
+			}
+
+			destinationUrl = `${ basePathname }/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }`;
+		} else {
+			destinationUrl = siteEditorUrl;
 		}
 
-		window.location.assign( `${ basePathname }/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
+		window.location.assign( destinationUrl );
 	};
 
-	const matchingWpOrgThemes = useMemo( () => {
-		const themeSlugs = props.themes.map( ( theme ) => theme.id );
-
-		return (
-			props.wpOrgThemes?.filter(
-				( wpOrgTheme ) =>
-					! themeSlugs.includes( wpOrgTheme?.id?.toLowerCase() ) && // Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
-					( wpOrgTheme?.name?.toLowerCase() === props.searchTerm.toLowerCase() ||
-						wpOrgTheme?.id?.toLowerCase() === props.searchTerm.toLowerCase() )
-			) || []
-		);
-	}, [ props.wpOrgThemes, props.searchTerm, props.themes ] );
-
-	const themes = useMemo(
-		() => [ ...props.themes, ...matchingWpOrgThemes ],
-		[ props.themes, matchingWpOrgThemes ]
-	);
-
-	if ( ! props.loading && themes.length === 0 ) {
+	if ( ! props.loading && props.themes.length === 0 ) {
 		return (
 			<Empty
 				isFSEActive={ props.isFSEActive }
@@ -131,14 +123,14 @@ export const ThemesList = ( props ) => {
 
 	return (
 		<div className="themes-list" ref={ themesListRef }>
-			{ themes.map( ( theme, index ) => (
+			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
 			{ /* Don't show second upsell nudge when less than 6 rows are present.
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ isPatternAssemblerCTAEnabled && themes.length > 0 && (
+			{ isPatternAssemblerCTAEnabled && tabFilter !== 'my-themes' && props.themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
 			) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
@@ -149,7 +141,6 @@ export const ThemesList = ( props ) => {
 
 ThemesList.propTypes = {
 	themes: PropTypes.array.isRequired,
-	wpOrgThemes: PropTypes.array,
 	loading: PropTypes.bool.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
 	fetchNextPage: PropTypes.func.isRequired,
@@ -179,7 +170,6 @@ ThemesList.defaultProps = {
 	loading: false,
 	searchTerm: '',
 	themes: [],
-	wpOrgThemes: [],
 	recordTracksEvent: noop,
 	fetchNextPage: noop,
 	placeholderCount: DEFAULT_THEME_QUERY.number,
@@ -192,9 +182,12 @@ ThemesList.defaultProps = {
 
 function ThemeBlock( props ) {
 	const { theme, index } = props;
+	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
+
 	if ( isEmpty( theme ) ) {
 		return null;
 	}
+
 	// Decide if we should pass ref for bookmark.
 	const { themesBookmark, siteId } = props;
 	const bookmarkRef = themesBookmark === theme.id ? props.bookmarkRef : null;
@@ -202,10 +195,13 @@ function ThemeBlock( props ) {
 	return (
 		<Theme
 			key={ 'theme-' + theme.id }
-			buttonContents={ props.getButtonOptions( theme.id ) }
-			screenshotClickUrl={ props.getScreenshotUrl && props.getScreenshotUrl( theme.id ) }
+			buttonContents={ props.getButtonOptions( theme.id, selectedStyleVariation ) }
+			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, selectedStyleVariation ) }
 			onScreenshotClick={ props.onScreenshotClick }
-			onStyleVariationClick={ props.onStyleVariationClick }
+			onStyleVariationClick={ ( themeId, themeIndex, variation ) => {
+				setSelectedStyleVariation( variation );
+				props.onStyleVariationClick?.( themeId, themeIndex, variation );
+			} }
 			onMoreButtonClick={ props.onMoreButtonClick }
 			onMoreButtonItemClick={ props.onMoreButtonItemClick }
 			actionLabel={ props.getActionLabel( theme.id ) }
@@ -218,6 +214,7 @@ function ThemeBlock( props ) {
 			bookmarkRef={ bookmarkRef }
 			siteId={ siteId }
 			softLaunched={ theme.soft_launched }
+			selectedStyleVariation={ selectedStyleVariation }
 		/>
 	);
 }
@@ -281,9 +278,9 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 				site_plan: sitePlan,
 				search_term: searchTerm,
 			} );
-			window.location.replace( 'https://wordpress.com/built-by/?ref=no-themes' );
+			window.location.replace( 'https://wordpress.com/website-design-service/?ref=no-themes' );
 		},
-		url: 'https://wordpress.com/built-by/?ref=no-themes',
+		url: 'https://wordpress.com/website-design-service/?ref=no-themes',
 		buttonText: translate( 'Hire an expert' ),
 	} );
 

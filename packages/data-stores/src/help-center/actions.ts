@@ -61,10 +61,24 @@ export const setIsMinimized = ( minimized: boolean ) =>
 		minimized,
 	} as const );
 
+export const setShowMessagingLauncher = ( show: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
+		show,
+	} as const );
+
+export const setShowMessagingWidget = ( show: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET',
+		show,
+	} as const );
+
 export const setShowHelpCenter = function* ( show: boolean ) {
 	if ( ! show ) {
 		yield setInitialRoute( undefined );
 		yield setIsMinimized( false );
+	} else {
+		yield setShowMessagingWidget( false );
 	}
 
 	return {
@@ -85,23 +99,6 @@ export const setMessage = ( message: string ) =>
 		message,
 	} as const );
 
-export const setChatTag = ( chatTag: string ) =>
-	( {
-		type: 'HELP_CENTER_SET_CHAT_TAG',
-		chatTag,
-	} as const );
-
-export const setIframe = ( iframe: null | HTMLIFrameElement ) =>
-	( {
-		type: 'HELP_CENTER_SET_IFRAME',
-		iframe,
-	} as const );
-
-export const resetIframe = () =>
-	( {
-		type: 'HELP_CENTER_RESET_IFRAME',
-	} as const );
-
 export const setUserDeclaredSiteUrl = ( url: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_USER_DECLARED_SITE_URL',
@@ -114,30 +111,36 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
-export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
-	yield setInitialRoute( '/inline-chat' );
-	yield setSite( site );
-	yield setMessage( message );
-	yield setShowHelpCenter( true );
-};
-
 export const resetStore = () =>
 	( {
 		type: 'HELP_CENTER_RESET_STORE',
 	} as const );
 
+export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
+	yield setInitialRoute( '/contact-form?mode=CHAT' );
+	yield setSite( site );
+	yield setMessage( message );
+	yield setShowHelpCenter( true );
+};
+
+export const setShowMessagingChat = function* () {
+	yield setShowHelpCenter( false );
+	yield setShowMessagingLauncher( true );
+	yield setShowMessagingWidget( true );
+	yield resetStore();
+};
+
 export type HelpCenterAction =
 	| ReturnType<
+			| typeof setShowMessagingLauncher
+			| typeof setShowMessagingWidget
 			| typeof setSite
 			| typeof setSubject
 			| typeof resetStore
 			| typeof receiveHasSeenWhatsNewModal
 			| typeof setMessage
-			| typeof setChatTag
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
-			| typeof resetIframe
-			| typeof setIframe
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 			| typeof setInitialRoute

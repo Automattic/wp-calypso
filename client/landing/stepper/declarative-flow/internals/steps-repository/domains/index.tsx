@@ -12,15 +12,13 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import {
 	domainRegistration,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -44,10 +42,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
 
 	const dispatch = useReduxDispatch();
-	const flowToReturnTo = useQuery().get( 'flowToReturnTo' );
-	const siteSlug = useSiteSlug();
 
-	const { submit, exitFlow } = navigation;
+	const { submit, exitFlow, goBack } = navigation;
 
 	const submitDomainStepSelection = ( suggestion: DomainSuggestion, section: string ) => {
 		let domainType = 'domain_reg';
@@ -239,13 +235,13 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		/>
 	);
 
-	const handleGoBack = () => {
+	const handleGoBack = ( goBack: ( () => void ) | undefined ) => {
 		if ( showUseYourDomain ) {
 			return setShowUseYourDomain( false );
 		}
 
 		if ( flow === DOMAIN_UPSELL_FLOW ) {
-			return exitFlow?.( `/setup/${ flowToReturnTo }/launchpad?siteSlug=${ siteSlug }` );
+			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
@@ -274,7 +270,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
-			goBack={ handleGoBack }
+			goBack={ () => handleGoBack( goBack ) }
 			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader

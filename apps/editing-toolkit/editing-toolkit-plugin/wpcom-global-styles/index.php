@@ -57,6 +57,11 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
+	// Do not limit Global Styles on self-hosted Jetpack sites.
+	if ( wpcom_global_styles_is_self_hosted_site( $blog_id ) ) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -98,16 +103,25 @@ function wpcom_global_styles_has_blog_sticker( $blog_sticker, $blog_id ) {
 }
 
 /**
+ * Wrapper to test whether a blog is a self-hosted site
+ *
+ * @param int $blog_id The WPCOM blog ID.
+ * @return bool Whether the site has the blog sticker.
+ */
+function wpcom_global_styles_is_self_hosted_site( $blog_id ) {
+	if ( ! function_exists( 'is_jetpack_site' ) || ! function_exists( 'is_blog_atomic' ) ) {
+		return true;
+	}
+
+	return is_jetpack_site( $blog_id ) && ! is_blog_atomic( get_blog_details( $blog_id ) );
+}
+
+/**
  * Enqueues the WP.com Global Styles scripts and styles for the block editor.
  *
  * @return void
  */
 function wpcom_global_styles_enqueue_block_editor_assets() {
-	$screen = get_current_screen();
-	if ( ! $screen || 'site-editor' !== $screen->id ) {
-		return;
-	}
-
 	if ( ! wpcom_should_limit_global_styles() ) {
 		return;
 	}
@@ -422,9 +436,9 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle&feature=style-customization';
 
 	if ( wpcom_is_previewing_global_styles() ) {
-		$preview_location = remove_query_arg( 'preview-global-styles' );
+		$preview_location = add_query_arg( 'hide-global-styles', '' );
 	} else {
-		$preview_location = add_query_arg( 'preview-global-styles', '' );
+		$preview_location = remove_query_arg( 'hide-global-styles' );
 	}
 
 	ob_start(); ?>
@@ -480,6 +494,17 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 				>
 					<?php echo esc_html__( 'Upgrade now', 'full-site-editing' ); ?>
 				</a>
+				<a
+					class="launch-bar-global-styles-reset"
+					href="https://wordpress.com/support/using-styles/#reset-all-styles"
+					target="_blank"
+				>
+					<svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M5.8125 5.6875C5.8125 4.75552 6.56802 4 7.5 4C8.43198 4 9.1875 4.75552 9.1875 5.6875C9.1875 6.55621 8.53108 7.2716 7.6872 7.36473C7.58427 7.37609 7.5 7.45895 7.5 7.5625V8.5M7.5 9.25V10.375M13.5 7C13.5 10.3137 10.8137 13 7.5 13C4.18629 13 1.5 10.3137 1.5 7C1.5 3.68629 4.18629 1 7.5 1C10.8137 1 13.5 3.68629 13.5 7Z" stroke="#1E1E1E" stroke-width="1.5"/>
+					</svg>
+					<?php echo esc_html__( 'Remove custom styles', 'full-site-editing' ); ?>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M18.2 17c0 .7-.6 1.2-1.2 1.2H7c-.7 0-1.2-.6-1.2-1.2V7c0-.7.6-1.2 1.2-1.2h3.2V4.2H7C5.5 4.2 4.2 5.5 4.2 7v10c0 1.5 1.2 2.8 2.8 2.8h10c1.5 0 2.8-1.2 2.8-2.8v-3.6h-1.5V17zM14.9 3v1.5h3.7l-6.4 6.4 1.1 1.1 6.4-6.4v3.7h1.5V3h-6.3z"></path></svg>
+				</a>
 				<a class="launch-bar-global-styles-preview" href="<?php echo esc_url( $preview_location ); ?>">
 					<label><input type="checkbox" <?php echo wpcom_is_previewing_global_styles() ? 'checked' : ''; ?>><span></span></label>
 					<?php echo esc_html__( 'Preview custom styles', 'full-site-editing' ); ?>
@@ -533,5 +558,5 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 	}
 
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	return isset( $_GET['preview-global-styles'] ) && user_can( $user_id, 'administrator' );
+	return ! isset( $_GET['hide-global-styles'] ) && user_can( $user_id, 'administrator' );
 }

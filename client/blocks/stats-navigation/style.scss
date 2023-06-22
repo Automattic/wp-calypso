@@ -3,6 +3,21 @@
 .stats-navigation {
 	box-shadow: inset 0 -1px 0 #0000000d;
 
+	.page-modules-settings {
+		display: flex;
+		align-items: center;
+
+		// Add gap for not open .section-nav on tablet and mobile.
+		@media ( max-width: $break-medium ) {
+			padding-right: 16px;
+		}
+
+		button {
+			height: 24px;
+			cursor: pointer;
+		}
+	}
+
 	.section-nav__panel {
 		padding-right: 0;
 
@@ -41,19 +56,40 @@
 
 	// Modernize styles except for GoogleMyBusinessStats and StatsOverview pages
 	&.stats-navigation--modernized {
+		// For aligning the `.page-modules-settings` action button.
+		position: relative;
+		display: flex;
+		align-items: center;
+
 		.section-nav {
 			margin: 0;
 			box-shadow: inset 0 -1px 0 #0000000d;
 
 			&.is-open {
-				.subscribers-count .button {
-					@media ( max-width: $break-mobile ) {
-						display: inline-block;
-						padding: 8px;
-						color: var(--color-neutral-60);
-						font-size: $font-body-small;
-						font-weight: 600;
-						line-height: 24px;
+				@media ( max-width: $break-mobile ) {
+					.subscribers-count {
+						&:hover,
+						&:focus {
+							.button {
+								color: var(--color-text-inverted);
+							}
+						}
+
+						.button {
+							display: inline-block;
+							padding: 8px;
+							color: var(--color-neutral-60);
+							font-size: $font-body-small;
+							font-weight: 600;
+							line-height: 24px;
+
+						}
+					}
+
+					& ~ .page-modules-settings {
+						position: absolute;
+						top: 11px;
+						right: 0;
 					}
 				}
 			}
@@ -85,9 +121,12 @@
 				font-size: $font-body-small;
 				line-height: 20px;
 
-				&:hover {
-					color: var(--color-neutral-60);
-					background-color: var(--color-surface);
+				@media ( min-width: $break-mobile ) {
+					&:hover,
+					&:focus {
+						color: var(--color-neutral-60);
+						background-color: var(--color-surface);
+					}
 				}
 
 				@media ( max-width: $break-medium ) {
@@ -96,6 +135,21 @@
 
 				@media ( max-width: $break-mobile ) {
 					padding: 8px;
+				}
+			}
+
+			@media ( max-width: $break-mobile ) {
+				& + .section-nav-tab {
+					margin-top: 1px;
+				}
+
+				.section-nav-tab__link {
+					&:hover,
+					&:focus {
+						color: var(--color-text-inverted);
+						background-color: var(--color-primary);
+						opacity: 0.65;
+					}
 				}
 			}
 
@@ -121,6 +175,21 @@
 				color: var(--color-neutral-80);
 				margin: 0;
 				padding: 7px 12px;
+			}
+
+			@media ( max-width: $break-mobile ) {
+				margin-top: 1px; // TODO: remove this after enabling Subscribers page and all nav items are of the same type
+
+				&:hover,
+				&:focus {
+					color: var(--color-text-inverted);
+					background-color: var(--color-primary);
+					opacity: 0.65;
+
+					.button {
+						color: var(--color-text-inverted);
+					}
+				}
 			}
 
 			.count {

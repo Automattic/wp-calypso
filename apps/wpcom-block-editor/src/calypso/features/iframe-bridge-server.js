@@ -29,9 +29,10 @@ let addedListener = false;
 // Replicates basic '$( el ).on( selector, cb )'.
 function addEditorListener( selector, cb ) {
 	clickOverrides[ selector ] = cb;
-
 	if ( ! addedListener ) {
-		document.querySelector( '#editor' )?.addEventListener( 'click', triggerOverrideHandler );
+		document
+			.querySelector( 'body.is-iframed' )
+			?.addEventListener( 'click', triggerOverrideHandler );
 		addedListener = true;
 	}
 }
@@ -530,6 +531,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
+		'.wpcom-block-editor-post-published-sharing-modal__view-post-link', // View Post button in sharing modal
 	].join( ',' );
 
 	addEditorListener( viewPostLinks, ( e ) => {
@@ -1000,20 +1002,6 @@ function handleCheckoutModal( calypsoPort ) {
 	};
 }
 
-function handleInlineHelpButton( calypsoPort ) {
-	addAction(
-		'a8c.wpcom-block-editor.toggleInlineHelpButton',
-		'a8c/wpcom-block-editor/toggleInlineHelpButton',
-		/** @type {({ hidden: boolean }) => void} */
-		( data ) => {
-			calypsoPort.postMessage( {
-				action: 'toggleInlineHelpButton',
-				payload: data,
-			} );
-		}
-	);
-}
-
 /**
  * Handles the back to Dashboard link after the removal of the previously-used Portal in Gutenberg 14.5
  *
@@ -1179,8 +1167,6 @@ function initPort( message ) {
 		handleEditorLoaded( calypsoPort );
 
 		handleCheckoutModal( calypsoPort );
-
-		handleInlineHelpButton( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
 

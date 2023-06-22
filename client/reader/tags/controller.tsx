@@ -2,7 +2,7 @@ import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import performanceMark, { PartialContext } from 'calypso/server/lib/performance-mark';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import TagsPage from './main';
 import type { Context as PageJSContext } from 'page';
 
@@ -27,7 +27,9 @@ export interface AlphabeticTagsResult {
 }
 
 export const tagsListing = ( context: PageJSContext, next: () => void ) => {
-	context.headerSection = renderHeaderSection();
+	if ( ! isUserLoggedIn( context.store.getState() ) ) {
+		context.headerSection = renderHeaderSection();
+	}
 	context.primary = (
 		<TagsPage
 			trendingTags={ context.params.trendingTags }

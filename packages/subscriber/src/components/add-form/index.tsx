@@ -43,6 +43,7 @@ interface Props {
 	onChangeIsImportValid?: ( isValid: boolean ) => void;
 	titleText?: string;
 	subtitleText?: string;
+	showSkipLink?: boolean;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -66,8 +67,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		recordTracksEvent,
 		onImportFinished,
 		onChangeIsImportValid,
+		onSkipBtnClick,
 		titleText,
 		subtitleText,
+		showSkipLink,
 	} = props;
 
 	const {
@@ -84,7 +87,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const emailControlPlaceholder = [
 		translate( 'bestie@email.com' ),
 		translate( 'chrisfromwork@email.com' ),
-		translate( 'mom@email.com' ),
+		translate( 'family@email.com' ),
 	];
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
@@ -96,7 +99,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
 	const [ submitAttemptCount, setSubmitAttemptCount ] = useState( 0 );
-	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
+
 	const importSelector = useSelect(
 		( select ) => select( Subscriber.store ).getImportSubscribersSelector(),
 		[]
@@ -112,6 +115,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const getValidEmails = useCallback( () => {
 		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
 	}, [ isValidEmails, emails ] );
+
+	// This useState call has been moved below getValidEmails() to resolve
+	// an error with calling getValidEmails() before it is initialized.
+	// The next line calls isSubmitButtonReady() which invokes getValidEmails()
+	// if submitBtnAlwaysEnable and allowEmptyFormSubmit are both false.
+	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
 
 	/**
 	 * ↓ Effects
@@ -349,14 +358,14 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						sprintf(
 							/* translators: the first string variable shows CTA button name */
 							translate(
-								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
+								'By clicking "%s," you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
 							),
 							submitBtnName
 						),
 						{
 							Button: createElement( Button, {
 								isLink: true,
-								target: '__blank',
+								target: '_blank',
 								href: localizeUrl(
 									'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
 								),
@@ -377,7 +386,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			uploadBtn: formFileUploadElement,
 			Button: createElement( Button, {
 				isLink: true,
-				target: '__blank',
+				target: '_blank',
 				rel: 'noreferrer',
 				href: localizeUrl(
 					'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
@@ -495,6 +504,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ renderEmptyFormValidationMsg() }
 
+					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
+
 					<NextButton
 						type="submit"
 						className="add-subscriber__form-submit-btn"
@@ -503,7 +514,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					>
 						{ submitBtnName }
 					</NextButton>
-					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
+					{ showSkipLink && (
+						<div className="add-subscriber__form-skip-link-wrapper">
+							<button className="add-subscriber__form-skip-link" onClick={ onSkipBtnClick }>
+								{ translate( 'Skip for now' ) }
+							</button>
+						</div>
+					) }
 				</form>
 			</div>
 		</div>

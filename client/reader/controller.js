@@ -148,7 +148,6 @@ export function following( context, next ) {
 		streamKey: 'following',
 		startDate,
 		recsStreamKey: 'custom_recs_posts_with_images',
-		showPrimaryFollowButtonOnCards: false,
 		trackScrollPage: trackScrollPage.bind(
 			null,
 			basePath,
@@ -209,7 +208,6 @@ export function feedListing( context, next ) {
 				mcKey
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-			showPrimaryFollowButtonOnCards={ false }
 			suppressSiteNameLink={ true }
 			showBack={ userHasHistory( context ) }
 			placeholder={ null }
@@ -244,7 +242,6 @@ export function blogListing( context, next ) {
 				mcKey
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-			showPrimaryFollowButtonOnCards={ false }
 			suppressSiteNameLink={ true }
 			showBack={ userHasHistory( context ) }
 			placeholder={ null }
@@ -280,7 +277,6 @@ export function readA8C( context, next ) {
 				analyticsPageTitle,
 				mcKey
 			) }
-			showPrimaryFollowButtonOnCards={ false }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			placeholder={ null }
 		/>
@@ -315,7 +311,6 @@ export function readFollowingP2( context, next ) {
 				analyticsPageTitle,
 				mcKey
 			) }
-			showPrimaryFollowButtonOnCards={ false }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			placeholder={ null }
 		/>
@@ -352,7 +347,7 @@ export async function blogDiscoveryByFeedId( context, next ) {
 
 export async function sitesSubscriptionManager( context, next ) {
 	if ( config.isEnabled( 'reader/subscription-management' ) ) {
-		context.primary = <AsyncLoad require="calypso/reader/subscriptions" />;
+		context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
 		return next();
 	}
 

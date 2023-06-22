@@ -8,6 +8,7 @@ import {
 } from 'calypso/reader/controller-helper';
 import { SEARCH_TYPES } from 'calypso/reader/search-stream/search-stream-header';
 import { recordTrack } from 'calypso/reader/stats';
+import renderHeaderSection from '../lib/header-section';
 
 const analyticsPageTitle = 'Reader';
 
@@ -55,6 +56,7 @@ const exported = {
 		function reportSortChange( newSort ) {
 			replaceSearchUrl( searchSlug, newSort !== 'relevance' ? newSort : undefined );
 		}
+		context.headerSection = renderHeaderSection();
 
 		context.primary = (
 			<AsyncLoad
@@ -73,11 +75,11 @@ const exported = {
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				showBack={ false }
-				showPrimaryFollowButtonOnCards={ false }
 				autoFocusInput={ autoFocusInput }
 				onQueryChange={ reportQueryChange }
 				onSortChange={ reportSortChange }
 				searchType={ show }
+				trendingTags={ context.params.trendingTags }
 			/>
 		);
 		next();

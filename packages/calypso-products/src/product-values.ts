@@ -11,7 +11,9 @@ export { getJetpackProductDisplayName } from './get-jetpack-product-display-name
 export { getJetpackProductShortName } from './get-jetpack-product-short-name';
 export { getJetpackProductTagline } from './get-jetpack-product-tagline';
 export { getJetpackProductWhatIsIncluded } from './get-jetpack-product-what-is-included';
+export { getJetpackProductWhatIsIncludedComingSoon } from './get-jetpack-product-what-is-included-coming-soon';
 export { getJetpackProductBenefits } from './get-jetpack-product-benefits';
+export { getJetpackProductBenefitsComingSoon } from './get-jetpack-product-benefits-coming-soon';
 export { getJetpackProductFAQs } from './get-jetpack-product-faqs';
 export { getJetpackProductRecommendedFor } from './get-jetpack-product-recommended-for';
 export { getJetpackPlanAlsoIncludedFeatures } from './get-jetpack-plan-also-included-features';
@@ -104,6 +106,7 @@ export { isSecurityT1 } from './is-security-t1';
 export { isSecurityT2 } from './is-security-t2';
 export { isJetpackSecuritySlug } from './is-jetpack-security-slug';
 export { isJetpackSecurityT1Slug } from './is-jetpack-security-t1-slug';
+export { isTieredVolumeSpaceAddon } from './is-tiered-volume-space-addon';
 export { isJetpackStarter } from './is-jetpack-starter';
 export { isJetpackStarterSlug } from './is-jetpack-starter-slug';
 export { isThemePurchase } from './is-theme-purchase';

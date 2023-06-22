@@ -1,12 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import isPluginActive from 'calypso/state/selectors/is-plugin-active';
+import { useSelector } from 'calypso/state';
+import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConfirmationTask from './confirmation-task';

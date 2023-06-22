@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
-import { START_WRITING_FLOW } from '@automattic/onboarding';
+import { START_WRITING_FLOW, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { WpcomTourKit, usePrefetchTourAssets } from '@automattic/tour-kit';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
@@ -49,13 +49,13 @@ function LaunchWpcomWelcomeTour() {
 	const localeSlug = useLocale();
 	const editorType = getEditorType();
 	const { siteIntent: intent } = useSiteIntent();
-	const isStartWritingFlow = intent === START_WRITING_FLOW;
-
+	// We check the URL param along with site intent because the param loads faster and prevents element flashing.
+	const isBlogOnboardingFlow = intent === START_WRITING_FLOW || intent === DESIGN_FIRST_FLOW;
 	// Preload first card image (others preloaded after open state confirmed)
 	usePrefetchTourAssets( [ getTourSteps( localeSlug, false, false, null, siteIntent )[ 0 ] ] );
 
 	useEffect( () => {
-		if ( isStartWritingFlow ) {
+		if ( isBlogOnboardingFlow ) {
 			return;
 		}
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
@@ -80,10 +80,10 @@ function LaunchWpcomWelcomeTour() {
 		siteIntent,
 		siteIntentFetched,
 		editorType,
-		isStartWritingFlow,
+		isBlogOnboardingFlow,
 	] );
 
-	if ( ! show || isNewPageLayoutModalOpen || isStartWritingFlow ) {
+	if ( ! show || isNewPageLayoutModalOpen || isBlogOnboardingFlow ) {
 		return null;
 	}
 

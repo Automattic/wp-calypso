@@ -1,7 +1,7 @@
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { resemblesUrl } from 'calypso/lib/url';
+import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { isJetpackSite, getSiteId } from 'calypso/state/sites/selectors';
 

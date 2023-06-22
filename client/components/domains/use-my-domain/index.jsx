@@ -40,6 +40,7 @@ function UseMyDomain( props ) {
 		transferDomainUrl,
 		initialMode,
 		onNextStep,
+		onSkip,
 	} = props;
 
 	const { __ } = useI18n();
@@ -272,6 +273,7 @@ function UseMyDomain( props ) {
 						? showOwnershipVerificationFlow
 						: onConnect
 				}
+				onSkip={ onSkip }
 				onTransfer={ onTransfer ?? showTransferDomainFlow }
 				transferDomainUrl={ transferDomainUrl }
 			/>
@@ -396,6 +398,7 @@ UseMyDomain.propTypes = {
 	analyticsSection: PropTypes.string,
 	basePath: PropTypes.string,
 	initialMode: PropTypes.string,
+	onSkip: PropTypes.func,
 };
 
 export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(

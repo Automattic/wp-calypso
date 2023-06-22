@@ -33,9 +33,9 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 				const code = transform( 'export default () => <AsyncLoad require="foo" />;' );
 
 				expect( code ).toBe(
-					'var _ref = function (callback) {\n  import(\n  /*webpackChunkName: "async-load-foo"*/\n  "foo").then(function load(mod) {\n' +
+					'var _ref = function (callback) {\n  import( /*webpackChunkName: "async-load-foo"*/"foo").then(function load(mod) {\n' +
 						'    callback(mod.default);\n' +
-						'  });\n};\n\nexport default (() => <AsyncLoad require={_ref} />);'
+						'  });\n};\nexport default (() => <AsyncLoad require={_ref} />);'
 				);
 			} );
 		} );
@@ -48,7 +48,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 
 				expect( code ).toBe(
 					'var _ref = function (callback) {\n  callback(require("foo").__esModule ? require("foo").default ' +
-						': require("foo"));\n};\n\nexport default (() => <AsyncLoad require={_ref} />);'
+						': require("foo"));\n};\nexport default (() => <AsyncLoad require={_ref} />);'
 				);
 			} );
 		} );
@@ -60,7 +60,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 				} );
 
 				expect( code ).toBe(
-					'var _ref = function (callback) {};\n\nexport default (() => <AsyncLoad require={_ref} />);'
+					'var _ref = function (callback) {};\nexport default (() => <AsyncLoad require={_ref} />);'
 				);
 			} );
 		} );
@@ -83,14 +83,14 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			test( 'should just issue the import if no callback is specified', () => {
 				const code = transform( 'asyncRequire( "foo/bar" );' );
 
-				expect( code ).toBe( 'import(\n/*webpackChunkName: "async-load-foo-bar"*/\n"foo/bar");' );
+				expect( code ).toBe( 'import( /*webpackChunkName: "async-load-foo-bar"*/"foo/bar");' );
 			} );
 
 			test( 'should invoke callback with require after ensure', () => {
 				const code = transform( 'asyncRequire( "foo/bar", cb );' );
 
 				expect( code ).toBe(
-					'import(\n/*webpackChunkName: "async-load-foo-bar"*/\n"foo/bar").then(function load(mod) {\n  cb(mod.default);\n});'
+					'import( /*webpackChunkName: "async-load-foo-bar"*/"foo/bar").then(function load(mod) {\n  cb(mod.default);\n});'
 				);
 			} );
 		} );
@@ -145,9 +145,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 		expect( transformResult.code ).toBe(
 			[
 				'<AsyncLoad require={function (callback) {',
-				'  patchedImport(',
-				'  /*webpackChunkName: "async-load-foo"*/',
-				'  "foo").then(function load(mod) {',
+				'  patchedImport( /*webpackChunkName: "async-load-foo"*/"foo").then(function load(mod) {',
 				'    callback(mod.default);',
 				'  });',
 				'}} />;',

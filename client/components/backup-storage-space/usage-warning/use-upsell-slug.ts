@@ -15,17 +15,18 @@ import {
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getRewindBytesAvailable, getRewindBytesUsed } from 'calypso/state/rewind/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 export type SelectorProductWithStorage = SelectorProduct & {
-	storage: React.ReactChild;
+	storage: TranslateResult;
 };
 
 const UPGRADEABLE_STORAGE_PRODUCT_SLUGS_T1 = [
@@ -67,7 +68,7 @@ export default ( siteId: number ) => {
 	const bytesUsed = useSelector( ( state ) => getRewindBytesUsed( state, siteId ) );
 
 	const upsellSlug = useMemo( () => {
-		const ADD_ON_STORAGE_MAP: Record< string, React.ReactChild > = {
+		const ADD_ON_STORAGE_MAP: Record< string, TranslateResult > = {
 			[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: TEN_GIGABYTES,
 			[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: HUNDRED_GIGABYTES,
 			[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: ONE_TERABYTES,

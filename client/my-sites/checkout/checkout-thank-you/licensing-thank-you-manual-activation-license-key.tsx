@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
-import { useSelector } from 'react-redux';
 import licensingActivationPluginBanner from 'calypso/assets/images/jetpack/licensing-activation-plugin-banner.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSelector } from 'calypso/state';
 import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
@@ -38,7 +38,7 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 			/>
 			<LicensingActivation
 				title={ translate( 'Activate your %(productName)s plan', {
-					args: { productName },
+					args: { productName: productName ?? '' },
 				} ) }
 				footerImage={ licensingActivationPluginBanner }
 				isLoading={ isProductListFetching }

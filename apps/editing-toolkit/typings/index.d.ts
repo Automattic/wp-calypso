@@ -26,5 +26,8 @@ declare global {
 		sharingModalOptions: {
 			isDismissed: boolean;
 		};
+		wpcomGutenberg?: {
+			blogPublic?: string;
+		};
 	}
 }

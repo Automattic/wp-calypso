@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { Button, Card, CompactCard, ProgressBar, Gridicon, Spinner } from '@automattic/components';
 import { getLocaleSlug, localize } from 'i18n-calypso';
@@ -83,7 +84,7 @@ export class SectionMigrate extends Component {
 			this.updateFromAPI();
 		}
 
-		if ( 'done' === this.state.migrationStatus ) {
+		if ( 'done' === this.state.migrationStatus && prevState.migrationStatus !== 'done' ) {
 			this.finishMigration();
 		}
 	}
@@ -231,8 +232,9 @@ export class SectionMigrate extends Component {
 
 	setUrl = ( event ) => this.setState( { url: event.target.value } );
 
-	startMigration = () => {
-		const { sourceSiteId, targetSiteId, targetSite } = this.props;
+	startMigration = ( trackingProps = {} ) => {
+		const { sourceSiteId, targetSiteId, targetSite, isMigrateFromWp } = this.props;
+		const shouldCheckMigrationPlugin = isMigrateFromWp && isEnabled( 'onboarding/import-redesign' );
 
 		if ( ! sourceSiteId || ! targetSiteId ) {
 			return;
@@ -250,12 +252,15 @@ export class SectionMigrate extends Component {
 
 		this.setMigrationState( { migrationStatus: 'backing-up', startTime: null } );
 
-		this.props.recordTracksEvent( 'calypso_site_migration_start_migration' );
+		this.props.recordTracksEvent( 'calypso_site_migration_start_migration', trackingProps );
 
 		wpcom.req
 			.post( {
 				path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
 				apiNamespace: 'wpcom/v2',
+				body: {
+					check_migration_plugin: shouldCheckMigrationPlugin,
+				},
 			} )
 			.then( () => this.updateFromAPI() )
 			.catch( ( error ) => {

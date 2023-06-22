@@ -48,11 +48,6 @@ declare global {
 		initialReduxState: object;
 	}
 }
-const savedWindow = window;
-global.window = Object.create( window );
-Object.defineProperty( window, 'location', {
-	value: { replace: replaceMock },
-} );
 
 const siteSlug = `testlinkinbio.wordpress.com`;
 const user = {
@@ -95,6 +90,7 @@ function renderLaunchpad(
 }
 
 describe( 'Launchpad', () => {
+	let savedLocation;
 	const props = {
 		siteSlug,
 		/* eslint-disable @typescript-eslint/no-empty-function */
@@ -105,6 +101,13 @@ describe( 'Launchpad', () => {
 		},
 		/* eslint-enable @typescript-eslint/no-empty-function */
 	};
+
+	beforeAll( () => {
+		savedLocation = window.location;
+		Object.defineProperty( window, 'location', {
+			value: { replace: replaceMock },
+		} );
+	} );
 
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
@@ -123,7 +126,9 @@ describe( 'Launchpad', () => {
 	} );
 
 	afterAll( () => {
-		global.window = savedWindow;
+		Object.defineProperty( window, 'location', {
+			value: savedLocation,
+		} );
 	} );
 
 	describe( 'when loading the Launchpad view', () => {

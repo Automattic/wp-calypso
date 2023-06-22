@@ -74,14 +74,14 @@ export function domainManagementRoot() {
 }
 
 /**
- * @param {string?} siteName
- * @param {string?} relativeTo
+ * @param {string|undefined} siteName
+ * @param {string|undefined} relativeTo
  */
 export function domainManagementList( siteName, relativeTo = null ) {
 	if ( isUnderDomainManagementAll( relativeTo ) || isUnderEmailManagementAll( relativeTo ) ) {
 		return domainManagementRoot();
 	}
-	return domainManagementRoot() + '/' + siteName;
+	return domainManagementRoot() + '/' + siteName ?? '';
 }
 
 export function domainManagementEdit( siteName, domainName, relativeTo ) {

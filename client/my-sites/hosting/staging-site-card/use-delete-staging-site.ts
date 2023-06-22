@@ -1,7 +1,7 @@
 import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { TransferStates } from 'calypso/state/automated-transfer/constants';
 import { SiteId } from 'calypso/types';
@@ -53,31 +53,29 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 		};
 	}, [ isDeletingInitiated, onReverted, queryClient, stagingSiteId ] );
 
-	const mutation = useMutation(
-		() => {
+	const mutation = useMutation( {
+		mutationFn: () => {
 			return wpcom.req.post( {
 				method: 'DELETE',
 				path: `/sites/${ siteId }/staging-site/${ stagingSiteId }`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		{
-			mutationKey: [ DELETE_STAGING_SITE_MUTATION_KEY, siteId ],
-			onMutate: () => {
-				onMutate?.();
-			},
-			onSuccess: async () => {
-				// Wait for the staging site async job to start
-				setTimeout( () => {
-					dispatch( fetchAutomatedTransferStatus( stagingSiteId ) );
-				}, 3000 );
-			},
-			onError: ( error: MutationError ) => {
-				setIsDeletingInitiated( false );
-				onError?.( error );
-			},
-		}
-	);
+		mutationKey: [ DELETE_STAGING_SITE_MUTATION_KEY, siteId ],
+		onMutate: () => {
+			onMutate?.();
+		},
+		onSuccess: async () => {
+			// Wait for the staging site async job to start
+			setTimeout( () => {
+				dispatch( fetchAutomatedTransferStatus( stagingSiteId ) );
+			}, 3000 );
+		},
+		onError: ( error: MutationError ) => {
+			setIsDeletingInitiated( false );
+			onError?.( error );
+		},
+	} );
 
 	// isMutating is returning a number. Greater than 0 means we have some pending mutations for
 	// the provided key. This is preserved across different pages, while isLoading it's not.

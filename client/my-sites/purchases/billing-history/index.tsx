@@ -3,7 +3,6 @@ import { CompactCard } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
@@ -23,6 +22,7 @@ import {
 import titles from 'calypso/me/purchases/titles';
 import { convertErrorToString } from 'calypso/my-sites/checkout/composite-checkout/lib/analytics';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

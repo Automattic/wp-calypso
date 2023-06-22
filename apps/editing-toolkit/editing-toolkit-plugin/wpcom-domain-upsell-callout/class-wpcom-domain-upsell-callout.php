@@ -83,7 +83,22 @@ class WPCOM_Domain_Upsell_Callout {
 	private function should_not_show_callout() {
 		$blog_id = defined( 'IS_WPCOM' ) && IS_WPCOM ? get_current_blog_id() : \Jetpack_Options::get_option( 'id' );
 
-		return $this->blog_has_custom_domain( $blog_id ) || $this->user_has_email_unverified() || $this->blog_is_p2( $blog_id );
+		return $this->has_unlaunched_launchpad() || $this->blog_has_custom_domain( $blog_id ) || $this->user_has_email_unverified() || $this->blog_is_p2( $blog_id );
+	}
+
+	/**
+	 * Check for site-intent and not launched site on launchpad.
+	 */
+	private function has_unlaunched_launchpad() {
+		$site_intent      = get_option( 'site_intent' );
+		$task_statuses    = get_option( 'launchpad_checklist_tasks_statuses', array() );
+		$site_is_launched = isset( $task_statuses['site_launched'] ) && $task_statuses['site_launched'];
+
+		if ( ! $site_intent || ( $site_intent && $site_is_launched ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

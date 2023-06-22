@@ -7,8 +7,10 @@ import {
 	useLocalizeUrl,
 } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
+import { useLayoutEffect, useState } from 'react';
 import SocialLogo from 'social-logos';
-import useAutomatticBrandingNoun from '../hooks/use-automattic-branding-noun';
+import { getAutomatticBrandingNoun } from '../utils';
 import type { FooterProps, PureFooterProps, LanguageOptions } from '../types';
 
 import './style.scss';
@@ -131,11 +133,13 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a
-										href={ localizeUrl( 'https://wordpress.com/built-by/?ref=footer_pricing' ) }
+										href={ localizeUrl(
+											'https://wordpress.com/website-design-service/?ref=footer_pricing'
+										) }
 										title="WordPress Website Building Service"
 										target="_self"
 									>
-										{ __( 'Built by WordPress.com', __i18n_text_domain__ ) }
+										{ __( 'Website Design Services', __i18n_text_domain__ ) }
 									</a>
 								</li>
 							</ul>
@@ -210,6 +214,13 @@ export const PureUniversalNavbarFooter = ( {
 									<a href={ localizeUrl( 'https://wordpress.com/logo-maker/' ) } target="_self">
 										{ __( 'Logo Maker', __i18n_text_domain__ ) }
 									</a>
+								</li>
+								<li>
+									{ isEnglishLocale && (
+										<a href={ localizeUrl( 'https://wordpress.com/tags/' ) } target="_self">
+											{ __( 'Popular Tags', __i18n_text_domain__ ) }
+										</a>
+									) }
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/webinars/' ) } target="_self">
@@ -462,10 +473,15 @@ const UniversalNavbarFooter = ( {
 }: FooterProps ) => {
 	const localizeUrl = useLocalizeUrl();
 	const locale = useLocale();
+	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const pathNameWithoutLocale =
 		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
-	const automatticBranding = useAutomatticBrandingNoun();
+	const [ automatticBranding, setAutomatticBranding ] = useState( { article: '', noun: '' } );
+
+	useLayoutEffect( () => {
+		setAutomatticBranding( getAutomatticBrandingNoun( translate ) );
+	}, [ translate ] );
 
 	return (
 		<PureUniversalNavbarFooter

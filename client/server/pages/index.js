@@ -392,10 +392,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					const searchParam = req.query.s || req.query.q;
 					if ( searchParam ) {
 						res.redirect(
-							'https://' +
-								req.context.lang +
-								'.search.wordpress.com/?q=' +
-								encodeURIComponent( searchParam )
+							'https://wordpress.com/read/search?q=' + encodeURIComponent( searchParam )
 						);
 						return;
 					}
@@ -689,16 +686,14 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( '/discover', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn ) {
+		if ( ! req.context.isLoggedIn && calypsoEnv !== 'development' ) {
 			res.redirect( config( 'discover_logged_out_redirect_url' ) );
 		} else {
 			next();
 		}
 	} );
-
-	// redirect logged-out searches to en.search.wordpress.com
 	app.get( '/read/search', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn && calypsoEnv !== 'development' ) {
+		if ( ! req.context.isLoggedIn && calypsoEnv === 'production' ) {
 			res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
 		} else {
 			next();
@@ -830,7 +825,7 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
-		if ( req.cookies.subkey || req.context.isLoggedIn ) {
+		if ( req.cookies.subkey || req.context.isLoggedIn || calypsoEnv !== 'production' ) {
 			// If the user is logged in, or has a subkey cookie, they are authorized to view the page
 			return next();
 		}

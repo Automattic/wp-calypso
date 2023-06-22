@@ -1,5 +1,6 @@
-import config from '@automattic/calypso-config';
+import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,11 +8,13 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import GooglePlusDeprication from './google-plus-deprecation';
 import Mastodon from './mastodon';
 import ServiceExample from './service-example';
+import './service-examples.scss';
 
 /**
  * Module constants
@@ -27,6 +30,7 @@ import ServiceExample from './service-example';
 const SERVICES_WITH_EXAMPLES = [
 	'bandpage',
 	'facebook',
+	'instagram-business',
 	'google_plus',
 	'google_my_business',
 	'instagram-basic-display',
@@ -178,6 +182,53 @@ class SharingServiceExamples extends Component {
 						image,
 					},
 			  ];
+	}
+
+	instagram_business() {
+		const label = (
+			<>
+				{ this.props.translate(
+					'Drive engagement and save time by automatically sharing images to Instagram when you publish blog posts.'
+				) }
+				<div className="instagram-business__requirements">
+					<h4>{ this.props.translate( 'Requirements for connecting Instagram:' ) }</h4>
+					<ol>
+						<li>{ this.props.translate( 'You must have an Instagram Business account.' ) }</li>
+						<li>
+							{ this.props.translate(
+								'Your Instagram Business account must be linked to a Facebook page.'
+							) }
+						</li>
+					</ol>
+				</div>
+				{ this.props.translate(
+					"{{italic}}When you click “connect” you'll be asked to {{strong}}log into Facebook{{/strong}}. If your Instagram Business account isn't listed, ensure it's linked to a Facebook page.{{/italic}}",
+					{
+						components: {
+							strong: <strong />,
+							italic: <i />,
+						},
+					}
+				) }
+				<br />
+				<ExternalLink
+					className="instagram-business__help-link"
+					href="https://jetpack.com/redirect/?source=jetpack-social-instagram-business-help"
+				>
+					{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
+				</ExternalLink>
+			</>
+		);
+
+		return [
+			{ label },
+			{
+				image: {
+					src: '/calypso/images/sharing/connections-instagram-business.png',
+					alt: this.props.translate( 'Add Instagram photo', { textOnly: true } ),
+				},
+			},
+		];
 	}
 
 	google_my_business() {
@@ -452,7 +503,7 @@ class SharingServiceExamples extends Component {
 			return <GooglePlusDeprication />;
 		}
 
-		if ( 'mastodon' === this.props.service.ID && config.isEnabled( 'mastodon' ) ) {
+		if ( 'mastodon' === this.props.service.ID && this.props.isMastodonEligible ) {
 			return (
 				<Mastodon
 					service={ this.props.service }
@@ -487,7 +538,12 @@ class SharingServiceExamples extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	site: getSelectedSite( state ),
-	hasJetpack: ! isJetpackCloud() || isJetpackSite( state, getSelectedSiteId( state ) ),
-} ) )( localize( SharingServiceExamples ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		site: getSelectedSite( state ),
+		hasJetpack: ! isJetpackCloud() || isJetpackSite( state, getSelectedSiteId( state ) ),
+		isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
+	};
+} )( localize( SharingServiceExamples ) );

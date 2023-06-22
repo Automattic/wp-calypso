@@ -1,8 +1,8 @@
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
-import { useDispatch as useRootDispatch, useSelector } from 'react-redux';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { useDispatch as useRootDispatch, useSelector } from 'calypso/state';
 import {
 	fetchSitePlugins,
 	installPlugin as installPluginAction,

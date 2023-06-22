@@ -44,15 +44,15 @@ export class SlideshowBlockFlow implements BlockFlow {
 			// We keep track of the names for later validation in the published post.
 			this.preparedImageFileNames.push( testFile.basename );
 
-			const editorParent = await context.editorPage.getEditorParent();
-			const fileInputLocator = editorParent.locator( selectors.fileInput );
+			const editorCanvas = await context.editorPage.getEditorCanvas();
+			const fileInputLocator = editorCanvas.locator( selectors.fileInput );
 			await Promise.all( [
 				fileInputLocator.setInputFiles( testFile.fullpath ),
 				context.page.waitForResponse(
 					( response ) => response.url().includes( 'media?' ) && response.ok()
 				),
 			] );
-			const uploadingIndicatorLocator = editorParent.locator( selectors.uploadingIndicator ).last();
+			const uploadingIndicatorLocator = editorCanvas.locator( selectors.uploadingIndicator ).last();
 			await uploadingIndicatorLocator.waitFor( { state: 'detached' } );
 		}
 	}

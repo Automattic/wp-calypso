@@ -1,7 +1,8 @@
-import { useSubscriberEmailAddress, useIsLoggedIn } from './hooks';
+import { useSubscriberEmailAddress, useIsLoggedIn, useCacheKey } from './hooks';
 import {
 	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
+	useSiteSubscribeMutation,
 	useSiteUnsubscribeMutation,
 	useUserSettingsMutation,
 	usePendingSiteConfirmMutation,
@@ -13,23 +14,21 @@ import {
 	useSiteEmailMeNewCommentsMutation,
 } from './mutations';
 import {
-	PostSubscriptionsSortBy,
-	SiteSubscriptionsSortBy,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
 	useSubscriptionsCountQuery,
 	useUserSettingsQuery,
 	usePendingSiteSubscriptionsQuery,
 	usePendingPostSubscriptionsQuery,
+	useSiteSubscriptionDetailsQuery,
 } from './queries';
 
 export const SubscriptionManager = {
-	PostSubscriptionsSortBy,
-	SiteSubscriptionsSortBy,
 	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
+	useSiteSubscribeMutation,
 	useSiteUnsubscribeMutation,
 	useSubscriptionsCountQuery,
 	useSubscriberEmailAddress,
@@ -45,7 +44,17 @@ export const SubscriptionManager = {
 	useSiteEmailMeNewPostsMutation,
 	useSiteEmailMeNewCommentsMutation,
 	useIsLoggedIn,
+	useSiteSubscriptionDetailsQuery,
+	useCacheKey,
 };
 
-export { EmailDeliveryFrequency } from './constants';
+export {
+	EmailDeliveryFrequency,
+	PostSubscriptionsSortBy,
+	SiteSubscriptionsFilterBy,
+	SiteSubscriptionsSortBy,
+} from './constants';
+
+export { isErrorResponse } from './helpers';
+
 export * from './types';

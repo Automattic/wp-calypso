@@ -8,9 +8,10 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -72,7 +73,6 @@ export default function WPCheckoutOrderReview( {
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
-	useVariantPickerRadioButtons,
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
@@ -81,8 +81,6 @@ export default function WPCheckoutOrderReview( {
 	siteUrl?: string;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
-	// This is just for unit tests.
-	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
@@ -163,7 +161,6 @@ export default function WPCheckoutOrderReview( {
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
-					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
 					onChangePlanLength={ onChangePlanLength }
@@ -177,13 +174,15 @@ export default function WPCheckoutOrderReview( {
 				/>
 			</WPOrderReviewSection>
 
-			<CouponFieldArea
-				isCouponFieldVisible={ isCouponFieldVisible }
-				setCouponFieldVisible={ setCouponFieldVisible }
-				isPurchaseFree={ isPurchaseFree }
-				couponStatus={ couponStatus }
-				couponFieldStateProps={ couponFieldStateProps }
-			/>
+			{ ! isAkismetCheckout() && (
+				<CouponFieldArea
+					isCouponFieldVisible={ isCouponFieldVisible }
+					setCouponFieldVisible={ setCouponFieldVisible }
+					isPurchaseFree={ isPurchaseFree }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
+			) }
 		</div>
 	);
 }

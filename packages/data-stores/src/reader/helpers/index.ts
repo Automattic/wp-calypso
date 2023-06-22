@@ -1,5 +1,6 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest from 'wpcom-proxy-request';
+import { ErrorResponse } from '../types';
 
 type callApiParams = {
 	apiNamespace?: string;
@@ -82,4 +83,35 @@ const applyCallbackToPages = < K extends string, T >(
 	};
 };
 
-export { callApi, applyCallbackToPages, getSubkey };
+// Subscriptions Management helper function to determine which API endpoint to call based on whether the user is logged in or not.
+const getSubscriptionMutationParams = (
+	action: 'new' | 'delete',
+	isLoggedIn: boolean,
+	blogId: number | string,
+	url?: string,
+	emailId?: string
+) => {
+	if ( isLoggedIn ) {
+		return {
+			path: `/read/following/mine/${ action }`,
+			apiVersion: '1.1',
+			body: { source: 'calypso', url: url, ...( emailId ? { email_id: emailId } : {} ) },
+		};
+	}
+
+	return {
+		path: `/read/site/${ blogId }/post_email_subscriptions/${ action }`,
+		apiVersion: '1.2',
+		body: { ...( emailId ? { email_id: emailId } : {} ) },
+	};
+};
+
+const isErrorResponse = (
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	response: any
+): response is ErrorResponse => {
+	// This is good enough for us to know that the response is an error response
+	return response && ( response.errors || response.error_data );
+};
+
+export { callApi, applyCallbackToPages, getSubkey, getSubscriptionMutationParams, isErrorResponse };

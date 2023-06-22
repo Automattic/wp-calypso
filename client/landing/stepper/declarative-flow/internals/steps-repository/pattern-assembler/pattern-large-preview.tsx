@@ -1,5 +1,5 @@
 import { PatternRenderer } from '@automattic/block-renderer';
-import { DeviceSwitcher } from '@automattic/components';
+import { Button, DeviceSwitcher } from '@automattic/components';
 import { useStyle } from '@automattic/global-styles';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { Icon, layout } from '@wordpress/icons';
@@ -50,7 +50,7 @@ const PatternLargePreview = ( {
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
-	const [ device, setDevice ] = useState< string >( 'desktop' );
+	const [ device, setDevice ] = useState< string >( 'computer' );
 	const [ blockGap ] = useStyle( 'spacing.blockGap' );
 	const [ backgroundColor ] = useStyle( 'color.background' );
 	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
@@ -81,22 +81,15 @@ const PatternLargePreview = ( {
 			return translate( "It's time to get creative. Add your first pattern to get started." );
 		}
 
-		return translate(
-			'You can view your color and font selections after you select a pattern. Get started by {{link}}adding a header pattern{{/link}}.',
-			{
-				components: {
-					link: (
-						// eslint-disable-next-line jsx-a11y/anchor-is-valid
-						<a
-							href="#"
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ handleAddHeaderClick }
-						/>
-					),
-				},
-			}
-		);
+		return translate( 'You can view your color and font selections after you select a pattern.' );
+	};
+
+	const getAction = () => {
+		if ( ! shouldShowSelectPatternHint ) {
+			return null;
+		}
+
+		return <Button onClick={ handleAddHeaderClick }>{ translate( 'Add header' ) }</Button>;
 	};
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
@@ -142,10 +135,12 @@ const PatternLargePreview = ( {
 		);
 	};
 
-	const updateViewportHeight = () => {
-		setViewportHeight( frameRef.current?.clientHeight );
+	const updateViewportHeight = ( height?: number ) => {
+		// Required for 100vh patterns
+		setViewportHeight( height );
 	};
 
+	// Scroll to newly added patterns
 	useEffect( () => {
 		let timerId: number;
 		const scrollIntoView = () => {
@@ -176,13 +171,6 @@ const PatternLargePreview = ( {
 		};
 	}, [ activePosition, header, sections, footer ] );
 
-	useEffect( () => {
-		const handleResize = () => updateViewportHeight();
-		window.addEventListener( 'resize', handleResize );
-
-		return () => window.removeEventListener( 'resize', handleResize );
-	} );
-
 	// Delay updating the styles to make the transition smooth
 	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
 	useEffect( () => {
@@ -197,15 +185,14 @@ const PatternLargePreview = ( {
 			className="pattern-large-preview"
 			isShowDeviceSwitcherToolbar
 			isShowFrameBorder
+			isShowFrameShadow={ false }
+			isFixedViewport={ !! hasSelectedPattern }
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
-				// Wait for the animation to end in 200ms
-				window.setTimeout( () => {
-					setDevice( device );
-					updateViewportHeight();
-				}, 205 );
+				setDevice( device );
 			} }
+			onViewportChange={ updateViewportHeight }
 		>
 			{ hasSelectedPattern ? (
 				<ul
@@ -219,9 +206,10 @@ const PatternLargePreview = ( {
 				</ul>
 			) : (
 				<div className="pattern-large-preview__placeholder">
-					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
+					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 56 } />
 					<h2>{ getTitle() }</h2>
 					<span>{ getDescription() }</span>
+					{ getAction() }
 				</div>
 			) }
 		</DeviceSwitcher>

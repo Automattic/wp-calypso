@@ -5,9 +5,9 @@ import {
 } from '@automattic/calypso-products';
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
-import { localize } from 'i18n-calypso';
+import i18n, { localize, getLocaleSlug } from 'i18n-calypso';
 import { orderBy } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +16,6 @@ import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -50,6 +49,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import CommissionFees from '../components/commission-fees';
 import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 
 import './style.scss';
@@ -73,7 +73,8 @@ class MembershipsSection extends Component {
 		}
 	}
 	renderEarnings() {
-		const { commission, currency, forecast, lastMonth, siteId, total, translate } = this.props;
+		const { commission, currency, forecast, lastMonth, siteId, siteSlug, total, translate } =
+			this.props;
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Earnings' ) } />
@@ -109,28 +110,12 @@ class MembershipsSection extends Component {
 							</li>
 						</ul>
 					</div>
-					<div className="memberships__earnings-breakdown-notes">
-						{ commission !== null &&
-							translate(
-								'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
-								{
-									args: {
-										commission: '' + parseFloat( commission ) * 100 + '%',
-										stripe: '2.9%+30c',
-									},
-									components: {
-										em: <em />,
-										br: <br />,
-										a: (
-											<ExternalLink
-												href="https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees"
-												icon={ true }
-											/>
-										),
-									},
-								}
-							) }
-					</div>
+					<CommissionFees
+						commission={ commission }
+						iconSize={ 12 }
+						siteSlug={ siteSlug }
+						className="memberships__earnings-breakdown-notes"
+					/>
 				</Card>
 			</div>
 		);
@@ -548,7 +533,7 @@ class MembershipsSection extends Component {
 	}
 
 	renderOnboarding( cta, intro ) {
-		const { translate } = this.props;
+		const { commission, translate, siteSlug } = this.props;
 
 		return (
 			<Card>
@@ -612,8 +597,23 @@ class MembershipsSection extends Component {
 						) }
 					</div>
 					<div>
-						<h3>{ translate( 'No membership fees' ) }</h3>
-						{ preventWidows( translate( 'No monthly or annual fees charged.' ) ) }
+						<h3>
+							{ englishLocales.includes( getLocaleSlug() ) ||
+							i18n.hasTranslation( 'Simple fees structure' )
+								? translate( 'Simple fees structure' )
+								: translate( 'No membership fees' ) }
+						</h3>
+						<p>
+							<CommissionFees commission={ commission } siteSlug={ siteSlug } />
+						</p>
+						<p>
+							{ preventWidows(
+								englishLocales.includes( getLocaleSlug() ) ||
+									i18n.hasTranslation( 'No fixed monthly or annual fees charged.' )
+									? translate( 'No fixed monthly or annual fees charged.' )
+									: translate( 'No monthly or annual fees charged.' )
+							) }
+						</p>
 					</div>
 					<div>
 						<h3>{ translate( 'Join thousands of others' ) }</h3>
@@ -678,6 +678,7 @@ class MembershipsSection extends Component {
 
 		return (
 			<div>
+				<QueryMembershipsEarnings siteId={ this.props.siteId } />
 				<QueryMembershipsSettings siteId={ this.props.siteId } source={ this.props.source } />
 				{ this.props.connectedAccountId && this.renderStripeConnected() }
 				{ this.props.connectUrl && ! this.props.connectedAccountId && this.renderConnectStripe() }

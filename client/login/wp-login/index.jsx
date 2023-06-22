@@ -3,6 +3,7 @@ import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -37,6 +38,7 @@ export class Login extends Component {
 		isLoggedIn: PropTypes.bool.isRequired,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
+		isFromMigrationPlugin: PropTypes.bool,
 		isWhiteLogin: PropTypes.bool.isRequired,
 		isPartnerSignup: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
@@ -237,6 +239,8 @@ export class Login extends Component {
 			path,
 			signupUrl,
 			action,
+			isWooCoreProfilerFlow,
+			isPartnerSignup,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -250,7 +254,8 @@ export class Login extends Component {
 			! socialConnect &&
 			! isJetpackMagicLinkSignUpFlow &&
 			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
-			! ( isWooOAuth2Client( this.props.oauth2Client ) && ! this.props.isPartnerSignup );
+			! ( isWooOAuth2Client( oauth2Client ) && ! isPartnerSignup ) &&
+			! isWooCoreProfilerFlow;
 
 		const footer = (
 			<>
@@ -296,12 +301,16 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate } = this.props;
+		const { locale, translate, isFromMigrationPlugin } = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
+		const mainClassNames = classNames( 'wp-login__main', {
+			'is-wpcom-migration': isFromMigrationPlugin,
+		} );
+
 		return (
 			<div>
 				{ this.props.isP2Login && this.renderP2Logo() }
-				<Main className="wp-login__main">
+				<Main className={ mainClassNames }>
 					{ this.renderI18nSuggestions() }
 
 					<DocumentHead
@@ -330,6 +339,12 @@ export default connect(
 			getCurrentQueryArguments( state ).email_address ||
 			getInitialQueryArguments( state ).email_address,
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
+		isFromMigrationPlugin: startsWith(
+			get( getCurrentQueryArguments( state ), 'from' ),
+			'wpcom-migration'
+		),
+		isWooCoreProfilerFlow:
+			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),

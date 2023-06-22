@@ -1,16 +1,16 @@
 import './style.scss';
-import { memo, useState } from '@wordpress/element';
+import { memo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { translate } from 'i18n-calypso';
+import { numberFormat, translate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { BlazeCreditStatus, useBlazeCredits } from 'calypso/lib/promote-post';
+import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 
 const CreditBalance = () => {
-	const [ balance ] = useState( 200 ); // Todo: Fetch balance from the API
-	const creditsEnabled = useBlazeCredits() === BlazeCreditStatus.ENABLED;
+	const creditBalance = useCreditBalanceQuery();
+	const { data: balance } = creditBalance;
 
-	if ( ! balance || ! creditsEnabled ) {
+	if ( ! balance || balance === 0 ) {
 		return null;
 	}
 
@@ -25,7 +25,7 @@ const CreditBalance = () => {
 
 	return (
 		<div className="credit-balance__nav-item">
-			{ __( `Credits: ` ) + `$${ balance }` }
+			{ __( `Credits: ` ) + `$${ numberFormat( balance, 2 ) }` }
 			<InfoPopover
 				className="credit-balance__help-icon"
 				icon="help-outline"

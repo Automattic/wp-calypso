@@ -10,11 +10,6 @@ import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import TagPost from 'calypso/blocks/reader-post-card/tag-post';
-import DiscoverFollowButton from 'calypso/reader/discover/follow-button';
-import {
-	getDiscoverBlogName,
-	getSourceFollowUrl as getDiscoverFollowUrl,
-} from 'calypso/reader/discover/helper';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -43,11 +38,9 @@ class ReaderPostCard extends Component {
 		isSelected: PropTypes.bool,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
-		showPrimaryFollowButton: PropTypes.bool,
 		discoverPost: PropTypes.object,
 		discoverSite: PropTypes.object,
 		showSiteName: PropTypes.bool,
-		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
@@ -100,6 +93,11 @@ class ReaderPostCard extends Component {
 			return;
 		}
 
+		// ignore clicks to close a dialog backdrop
+		if ( closest( event.target, '.dialog__backdrop', rootNode ) ) {
+			return;
+		}
+
 		// ignore clicks when highlighting text
 		if ( selection && selection.toString() ) {
 			return;
@@ -118,7 +116,6 @@ class ReaderPostCard extends Component {
 			currentRoute,
 			post,
 			discoverPost,
-			discoverSite,
 			site,
 			feed,
 			onCommentClick,
@@ -146,6 +143,7 @@ class ReaderPostCard extends Component {
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const isReaderTagPage = currentRoute.startsWith( '/tag/' );
+		const isReaderSearchPage = currentRoute.startsWith( '/read/search' );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
@@ -155,20 +153,8 @@ class ReaderPostCard extends Component {
 			'is-seen': isSeen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
-			'is-tag-post': isReaderTagPage,
+			'is-tag-post': isReaderTagPage || isDiscoverStream,
 		} );
-
-		let discoverFollowButton;
-
-		if ( isDiscover && ! compact ) {
-			const discoverBlogName = getDiscoverBlogName( post ) || null;
-			discoverFollowButton = discoverBlogName && (
-				<DiscoverFollowButton
-					siteName={ discoverBlogName }
-					followUrl={ getDiscoverFollowUrl( post ) }
-				/>
-			);
-		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const readerPostActions = (
@@ -180,6 +166,8 @@ class ReaderPostCard extends Component {
 				fullPost={ false }
 				onCommentClick={ onCommentClick }
 				showEdit={ false }
+				showViews={ !! post.views }
+				showSuggestedFollows={ isReaderSearchPage }
 				className="ignore-click"
 				iconSize={ 20 }
 			/>
@@ -187,41 +175,19 @@ class ReaderPostCard extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 		// Set up post byline
-		let postByline;
-
-		if ( isDiscoverStream && discoverPost && discoverSite ) {
-			// create a post like object with some props from the discover post
-			const postForByline = Object.assign( {}, discoverPost || {}, {
-				date: post.date,
-				URL: post.URL,
-				primary_tag: post.primary_tag,
-			} );
-			postByline = (
-				<PostByline
-					post={ postForByline }
-					site={ discoverSite }
-					showSiteName={ true }
-					teams={ teams }
-					showFollow={ ! isDiscover }
-					showPrimaryFollowButton={ showPrimaryFollowButton }
-					followSource={ followSource }
-				/>
-			);
-		} else {
-			postByline = (
-				<PostByline
-					post={ post }
-					site={ site }
-					feed={ feed }
-					showSiteName={ showSiteName || isDiscover }
-					showAvatar={ ! compact }
-					teams={ teams }
-					showFollow={ ! isDiscover }
-					showPrimaryFollowButton={ showPrimaryFollowButton }
-					followSource={ followSource }
-				/>
-			);
-		}
+		const postByline = (
+			<PostByline
+				post={ post }
+				site={ site }
+				feed={ feed }
+				showSiteName={ showSiteName || isDiscover }
+				showAvatar={ ! compact }
+				teams={ teams }
+				showFollow={ ! isDiscover }
+				showPrimaryFollowButton={ showPrimaryFollowButton }
+				followSource={ followSource }
+			/>
+		);
 
 		// Set up post card
 		let readerPostCard;
@@ -236,7 +202,7 @@ class ReaderPostCard extends Component {
 					onClick={ this.handleCardClick }
 				/>
 			);
-		} else if ( isReaderTagPage ) {
+		} else if ( isReaderTagPage || isDiscoverStream ) {
 			readerPostCard = (
 				<TagPost
 					post={ post }
@@ -246,6 +212,7 @@ class ReaderPostCard extends Component {
 					expandCard={ expandCard }
 					site={ site }
 					postKey={ postKey }
+					teams={ teams }
 				></TagPost>
 			);
 		} else if ( isPhotoPost ) {
@@ -259,7 +226,6 @@ class ReaderPostCard extends Component {
 					expandCard={ expandCard }
 					postKey={ postKey }
 				>
-					{ discoverFollowButton }
 					{ readerPostActions }
 				</PhotoPost>
 			);
@@ -288,7 +254,6 @@ class ReaderPostCard extends Component {
 					{ isDailyPostChallengeOrPrompt( post ) && site && (
 						<DailyPostButton post={ post } site={ site } />
 					) }
-					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
 			);
@@ -297,7 +262,7 @@ class ReaderPostCard extends Component {
 		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
-				{ ! compact && ! isReaderTagPage && postByline }
+				{ ! compact && ! isReaderTagPage && ! isDiscoverStream && postByline }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>

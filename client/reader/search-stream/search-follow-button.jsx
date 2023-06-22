@@ -8,7 +8,6 @@ import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'calypso/lib/url';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
-import { SEARCH_RESULTS_URL_INPUT } from 'calypso/reader/follow-sources';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
 import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import './style.scss';
@@ -80,7 +79,6 @@ class SearchFollowButton extends Component {
 						comment: '%s is the name of the site being followed. For example: "Discover"',
 					} ) }
 					siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
-					followSource={ SEARCH_RESULTS_URL_INPUT }
 					followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
 					followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 				/>
