@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
+import LegacyStatsNotices from './legacy-notices';
 import NewStatsNotices from './notices';
-import OldStatsNotices from './old-notices';
 
 import './style.scss';
 
@@ -20,6 +20,6 @@ export default function StatsNotices( { siteId, isOdysseyStats } ) {
 	return supportNewStatsNotices ? (
 		<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 	) : (
-		<OldStatsNotices siteId={ siteId } />
+		<LegacyStatsNotices siteId={ siteId } />
 	);
 }

@@ -7,7 +7,7 @@ import OptOutNotice from './opt-out-notice';
 
 import './style.scss';
 
-export default function StatsNotices( { siteId } ) {
+export default function LegacyStatsNotices( { siteId } ) {
 	const dispatch = useDispatch();
 
 	const showOptOutNotice = useSelector( ( state ) => hasOptOutNewStatsNotice( state, siteId ) );
