@@ -203,7 +203,27 @@ export default function NotificationSettings( {
 					};
 				} ),
 			};
-			eventParams.email_contacts = params.contacts.emails.length;
+			eventParams.email_contacts = params.contacts.emails?.length;
+		}
+		if ( isSMSNotificationEnabled ) {
+			params.sms_notifications = enableSMSNotification;
+			params.contacts = {
+				...( params.contacts?.emails ? params.contacts : {} ),
+				sms_numbers: allPhoneItems.map( ( item ) => {
+					const isVerified =
+						item.verified || verifiedContacts.phoneNumbers.includes( item.phoneNumberFull );
+					return {
+						name: item.name,
+						sms_number: item.phoneNumberFull,
+						number: item.phoneNumber,
+						country_code: item.countryCode,
+						country_numeric_code: item.countryNumericCode,
+						verified: isVerified,
+					};
+				} ),
+			};
+			eventParams.email_contacts = params.contacts.sms_numbers?.length;
+			eventParams.sms_notifications = params.sms_notifications;
 		}
 		recordEvent( 'notification_save_click', eventParams );
 		updateMonitorSettings( params );
@@ -240,10 +260,25 @@ export default function NotificationSettings( {
 		[ isBulkUpdate, translate ]
 	);
 
-	const getAllPhoneItems = useCallback( () => {
-		// TODO: Implement where we gonna pull phone list from MonitorSettings.
-		return [];
-	}, [] );
+	const getAllPhoneItems = useCallback(
+		( settings: MonitorSettings ) => {
+			let sitePhoneItems: Array< StateMonitorSettingsSMS > = [];
+
+			// If it is bulk update, we should not show the site phone numbers.
+			if ( ! isBulkUpdate && settings.monitor_notify_additional_user_sms ) {
+				sitePhoneItems = settings.monitor_notify_additional_user_sms.map( ( item ) => ( {
+					name: item.name,
+					countryCode: item.country_code,
+					countryNumericCode: item.country_numeric_code,
+					phoneNumber: item.number,
+					phoneNumberFull: item.sms_number,
+					verified: item.verified,
+				} ) );
+			}
+			return sitePhoneItems;
+		},
+		[ isBulkUpdate ]
+	);
 
 	const handleSetEmailItems = useCallback(
 		( settings: MonitorSettings ) => {
@@ -258,13 +293,23 @@ export default function NotificationSettings( {
 		[ getAllEmailItems, isMultipleEmailEnabled ]
 	);
 
+	const handleSetPhoneItems = useCallback(
+		( settings: MonitorSettings ) => {
+			if ( isSMSNotificationEnabled ) {
+				const allPhoneItems = getAllPhoneItems( settings );
+				setAllPhoneItems( allPhoneItems );
+			}
+		},
+		[ getAllPhoneItems, isSMSNotificationEnabled ]
+	);
+
 	const setInitialMonitorSettings = useCallback(
 		( settings: MonitorSettings ) => {
-			// Set all email items
+			// Set all email and phone items
 			handleSetEmailItems( settings );
-
+			handleSetPhoneItems( settings );
 			// Set SMS, email and mobile notification settings
-			const isSMSEnabled = false; // TODO: Implement when we have SMS notification settings.
+			const isSMSEnabled = !! settings.monitor_user_sms_notifications;
 			const isEmailEnabled = !! settings.monitor_user_email_notifications;
 			const isMobileEnabled = !! settings.monitor_user_wp_note_notifications;
 			setEnableSMSNotification( isSMSEnabled );
@@ -287,7 +332,7 @@ export default function NotificationSettings( {
 				enableMobileNotification: isMobileEnabled,
 				selectedDuration: foundDuration,
 				...( isMultipleEmailEnabled && { emailContacts: getAllEmailItems( settings ) } ),
-				...( isSMSNotificationEnabled && { phoneContacts: getAllPhoneItems() } ),
+				...( isSMSNotificationEnabled && { phoneContacts: getAllPhoneItems( settings ) } ),
 			} );
 		},
 		[
@@ -295,6 +340,7 @@ export default function NotificationSettings( {
 			getAllEmailItems,
 			getAllPhoneItems,
 			handleSetEmailItems,
+			handleSetPhoneItems,
 			isMultipleEmailEnabled,
 			isSMSNotificationEnabled,
 		]
@@ -318,7 +364,7 @@ export default function NotificationSettings( {
 				enableMobileNotification: false,
 				selectedDuration: defaultDuration,
 				...( isMultipleEmailEnabled && { emailContacts: getAllEmailItems( settings ) } ),
-				...( isSMSNotificationEnabled && { phoneContacts: getAllPhoneItems() } ),
+				...( isSMSNotificationEnabled && { phoneContacts: getAllPhoneItems( settings ) } ),
 			} );
 		},
 		[
