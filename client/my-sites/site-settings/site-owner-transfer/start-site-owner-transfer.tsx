@@ -51,7 +51,7 @@ const Title = styled.h2( {
 } );
 
 const Text = styled.p( {
-	marginBottom: '0.5em !important',
+	marginBottom: '12px !important',
 } );
 
 const List = styled.ul( {
@@ -152,21 +152,19 @@ const UpgradesCard = ( {
 	return (
 		<>
 			<Title>{ translate( 'Upgrades' ) }</Title>
-			<List>
-				<ListItem>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
-							// transer to
-							translate(
-								'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain with the site.'
-							),
-							{ siteSlug, siteOwner }
+			<Text>
+				{ createInterpolateElement(
+					sprintf(
+						// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
+						// transer to
+						translate(
+							'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain with the site.'
 						),
-						{ strong: <Strong /> }
-					) }
-				</ListItem>
-			</List>
+						{ siteSlug, siteOwner }
+					),
+					{ strong: <Strong /> }
+				) }
+			</Text>
 		</>
 	);
 };
