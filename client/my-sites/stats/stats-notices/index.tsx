@@ -4,13 +4,9 @@ import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpa
 import FeedbackNotice from './feedback-notice';
 import LegacyStatsNotices from './legacy-notices';
 import OptOutNotice from './opt-out-notice';
+import { StatsNoticesProps } from './types';
 
 import './style.scss';
-
-interface StatsNoticesProps {
-	siteId: number | null;
-	isOdysseyStats?: boolean;
-}
 
 /**
  * New notices aim to support Calypso and Odyssey stats.

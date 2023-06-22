@@ -3,13 +3,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
-import { StatsNoticeProps, FeedbackNoticeProps } from './types';
+import { StatsNoticeProps, FeedbackNoticeBodyProps } from './types';
 
 export const FeedbackNoticeBody = ( {
 	onTakeSurveyClick,
 	onRemindMeLaterClick,
 	onNoticeDismiss,
-}: FeedbackNoticeProps ) => {
+}: FeedbackNoticeBodyProps ) => {
 	const translate = useTranslate();
 
 	return (

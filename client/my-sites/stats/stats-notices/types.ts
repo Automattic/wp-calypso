@@ -2,11 +2,16 @@ export interface StatsNoticeProps {
 	siteId: number | null;
 }
 
-export interface NoticeProps {
-	onNoticeDismiss: () => void;
+export interface NoticeBodyProps {
+	onNoticeDismiss?: () => void;
 }
 
-export interface FeedbackNoticeProps extends NoticeProps {
+export interface FeedbackNoticeBodyProps extends NoticeBodyProps {
 	onTakeSurveyClick: () => void;
 	onRemindMeLaterClick: () => void;
+}
+
+export interface StatsNoticesProps {
+	siteId: number | null;
+	isOdysseyStats?: boolean;
 }

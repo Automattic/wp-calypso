@@ -5,8 +5,6 @@ import hasOptOutNewStatsNotice from 'calypso/state/sites/selectors/has-opt-out-n
 import FeedbackNotice from './feedback-notice';
 import OptOutNotice from './opt-out-notice';
 
-import './style.scss';
-
 export default function LegacyStatsNotices( { siteId } ) {
 	const dispatch = useDispatch();
 
