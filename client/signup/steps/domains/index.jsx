@@ -380,11 +380,6 @@ class DomainsStep extends Component {
 			Object.assign( { domainItem }, useThemeHeadstartItem )
 		);
 
-		// Skip the plans step if we are in the `domain-transfer` flow.
-		if ( 'domain-transfer' === this.props.flowName ) {
-			this.props.submitSignupStep( { stepName: 'plans', wasSkipped: true }, { cartItem: null } );
-		}
-
 		this.props.goToNextStep();
 	};
 
