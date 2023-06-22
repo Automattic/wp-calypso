@@ -40,6 +40,9 @@ interface SectionContext {
 	tour: string;
 	tourVersion: string;
 	isValid: ( when: ContextWhen ) => boolean;
+	isLastStep: boolean;
+	quit: ( context: Partial< SectionContext > ) => void;
+	start: ( context: Partial< SectionContext > ) => void;
 }
 
 interface RequiredProps {
@@ -88,6 +91,7 @@ export default class Step extends Component< Props, State > {
 	};
 
 	static contextTypes = contextTypes;
+	declare context: SectionContext;
 
 	lastTransitionTimestamp: TimestampMS | null = null;
 
