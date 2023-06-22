@@ -21,7 +21,7 @@ const FormText = styled( 'p' )( {
 } );
 
 const ButtonStyled = styled( Button )( {
-	marginBottom: '1em',
+	marginBottom: '1.5em',
 } );
 
 const Error = styled.div( {
