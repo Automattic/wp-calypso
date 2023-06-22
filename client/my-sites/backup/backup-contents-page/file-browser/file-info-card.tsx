@@ -1,0 +1,32 @@
+import { FunctionComponent } from 'react';
+import { FileBrowserItem } from './types';
+
+interface FileInfoCardProps {
+	item: FileBrowserItem;
+}
+
+const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { item } ) => {
+	// Do not display file info if the item is a directory
+	if ( item.type === 'dir' ) {
+		return null;
+	}
+
+	// Temporary: display the file info only for database tables
+	if ( item.type !== 'table' ) {
+		return null;
+	}
+
+	return (
+		<div className="file-card">
+			<div className="file-card__details">
+				<div className="file-card__row">
+					<span className="file-card__label">Rows: </span>
+					<span className="file-card__value">{ item.rowCount }</span>
+				</div>
+			</div>
+			<div className="file-card__actions"></div>
+		</div>
+	);
+};
+
+export default FileInfoCard;
