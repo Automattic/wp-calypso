@@ -639,3 +639,10 @@ export function emailSummary( context, next ) {
 
 	next();
 }
+
+export function participation( context, next ) {
+	context.primary = (
+		<AsyncLoad require="calypso/my-sites/stats/stats-participation" placeholder={ PageLoading } />
+	);
+	next();
+}

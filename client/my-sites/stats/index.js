@@ -16,6 +16,7 @@ import {
 	emailStats,
 	emailSummary,
 	subscribers,
+	participation,
 } from './controller';
 
 import './style.scss';
@@ -50,6 +51,9 @@ export default function () {
 	statsPage( `/stats/:period(${ validPeriods })`, overview );
 
 	statsPage( '/stats/insights', sites );
+
+	// Stat Insights Page
+	statsPage( '/stats/participation/:site', participation );
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
