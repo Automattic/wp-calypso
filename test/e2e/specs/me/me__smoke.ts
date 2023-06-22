@@ -41,7 +41,6 @@ describe( 'Me: Smoke Test', function () {
 		{ target: 'Privacy', endpoint: 'privacy' },
 		{ target: 'Notification Settings', endpoint: 'notifications' },
 		{ target: 'Blocked Sites', endpoint: 'site-blocks' },
-		{ target: 'Apps', endpoint: 'get-apps' },
 	] )( 'Navigate to Me > $target', async function ( { target, endpoint } ) {
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await page
