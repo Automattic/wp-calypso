@@ -67,6 +67,7 @@ export { isGSuiteOrExtraLicenseProductSlug } from './is-gsuite-or-extra-license-
 export { isGSuiteOrGoogleWorkspace } from './is-gsuite-or-google-workspace';
 export { isGSuiteOrGoogleWorkspaceProductSlug } from './is-gsuite-or-google-workspace-product-slug';
 export { isGSuiteProductSlug } from './is-gsuite-product-slug';
+export { isJetpackAISlug } from './is-jetpack-ai-slug';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackBackup } from './is-jetpack-backup';
