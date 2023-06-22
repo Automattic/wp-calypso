@@ -84,6 +84,15 @@ body.is-section-promote-post-i2 {
 						max-width: 1040px;
 						width: auto;
 					}
+
+					// Hide dropdown version of tabs
+					&.is-dropdown {
+						margin: 0;
+
+						.select-dropdown.section-nav-tabs__dropdown {
+							display: none;
+						}
+					}
 				}
 
 				.promote-post-i2__header-subtitle_mobile,
@@ -256,7 +265,7 @@ body.is-section-promote-post-i2 {
 			margin-right: 0;
 
 			@media screen and (max-width: $break-medium) {
-				margin: 0;
+				margin: 0 0 0 auto; // Align Credits tab to the right
 			}
 		}
 	}
@@ -468,6 +477,29 @@ $break-medium-expanded-menu: $break-medium + 272px;
 @media screen and (max-width: $break-medium-expanded-menu) {
 	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
 		@include blazepress-mobile;
+	}
+}
+
+// Tabs tweak for mobile screens smaller than 364px (the mentioned width can contain all tabs and margins)
+@media screen and (max-width: 364px) {
+	body.is-section-promote-post-i2 .layout__content .main.is-wide-layout {
+		.section-nav-tabs {
+			.section-nav-tabs__list {
+				width: 348px; // Equal to 364px - left margin of 16px to make sure it will add the right margin
+
+				.section-nav-tab.pull-right {
+					margin-left: 0;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.theme-default.is-section-promote-post-i2 .focus-content .layout__content {
+		padding-left: 0;
+		padding-right: 0;
+		padding-top: 47px;
 	}
 }
 
