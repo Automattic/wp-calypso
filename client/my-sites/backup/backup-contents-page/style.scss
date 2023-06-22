@@ -58,11 +58,30 @@
 		}
 
 		.components-button {
+			font-size: $font-body-small;
 			height: 32px;
 		}
 
 		.is-alternate {
 			background-color: var(--studio-gray-0);
+		}
+
+		.file-card {
+			background: var(--studio-gray-0);
+			margin: 4px 0;
+			padding: 20px 24px 24px;
+
+			span {
+				font-size: $font-body-small;
+			}
+
+			&__details {
+				padding-bottom: 16px;
+			}
+
+			&__label {
+				font-weight: bold;
+			}
 		}
 	}
 }
