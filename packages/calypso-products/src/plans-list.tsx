@@ -2298,7 +2298,7 @@ const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 } );
 
 // DO NOT import. Use `getPlan` instead.
-const PLANS_LIST_RAW = {
+const PLANS_LIST_RAW: Record< string, Partial< Plan > > = {
 	[ PLAN_FREE ]: {
 		...getPlanFreeDetails(),
 	},

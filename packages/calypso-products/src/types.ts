@@ -233,8 +233,11 @@ export type Plan = BillingTerm & {
 	get2023PricingGridSignupStorageOptions?: () => Feature[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
+	getMonthlySlug?: () => string;
+	getAnnualSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
 	getTitle: () => TranslateResult;
+	getSubTitle?: () => TranslateResult;
 	getDescription: () => TranslateResult;
 	getShortDescription?: () => TranslateResult;
 	getFeaturedDescription?: () => TranslateResult;
@@ -245,6 +248,7 @@ export type Plan = BillingTerm & {
 	getBenefits?: () => Array< TranslateResult >;
 	getRecommendedFor?: () => Array< JetpackTag >;
 	getTagline?: () => TranslateResult;
+	getAudience?: () => TranslateResult;
 	getPlanCardFeatures?: () => Feature[];
 	getCancellationFeatureList?: () => CancellationFeatureLists;
 	/**
@@ -268,6 +272,8 @@ export type Plan = BillingTerm & {
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
+	getPlanCompareFeatures?: () => Feature[];
+	getSignupFeatures?: () => Feature[];
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };

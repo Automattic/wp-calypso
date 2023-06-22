@@ -798,7 +798,7 @@ export const chooseDefaultCustomerType = ( {
 	}
 
 	const group = GROUP_WPCOM;
-	const businessPlanSlugs = [
+	const businessPlanSlugs: PlanSlug[] = [
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
 		findPlansKeys( { group, term: TERM_TRIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
@@ -818,8 +818,7 @@ export const chooseDefaultCustomerType = ( {
 	if ( selectedPlan ) {
 		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';
 	} else if ( currentPlan ) {
-		const isPlanInBusinessGroup =
-			businessPlanSlugs.indexOf( currentPlan.product_slug as PlanSlug ) !== -1;
+		const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
 		return isPlanInBusinessGroup ? 'business' : 'personal';
 	}
 
