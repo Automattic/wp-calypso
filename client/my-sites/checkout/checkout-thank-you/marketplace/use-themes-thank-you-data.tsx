@@ -6,7 +6,7 @@ import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you
 import { useDispatch, useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
-import { canUseTheme, getThemes } from 'calypso/state/themes/selectors';
+import { getThemes } from 'calypso/state/themes/selectors';
 import { hasExternallyManagedThemes as getHasExternallyManagedThemes } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
@@ -84,13 +84,7 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 	);
 	const isAtomicNeeded = hasDotOrgThemes || hasExternallyManagedThemes;
 
-	// theme will automatically activate if user has a plan that includes it
-	// the CTA is conditional to whether a theme activates automatically or not
-	const hasThemeIncludedInCurrentPlan = useSelector( ( state ) =>
-		allThemesFetched
-			? themesList.map( ( theme ) => siteId && canUseTheme( state, siteId, theme.id ) )
-			: false
-	);
+	const hasPaidThemes = themesList.some( ( theme ) => theme?.product_details || theme?.price );
 
 	// texts
 	const paidTitle = translate( 'Unveil the wow factor' );
@@ -111,8 +105,8 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 		themesSection,
 		allThemesFetched,
 		goBackSection,
-		hasThemeIncludedInCurrentPlan ? freeTitle : paidTitle,
-		hasThemeIncludedInCurrentPlan ? freeSubtitle : paidSubtitle,
+		hasPaidThemes ? paidTitle : freeTitle,
+		hasPaidThemes ? paidSubtitle : freeSubtitle,
 		thankyouSteps,
 		isAtomicNeeded,
 	];
