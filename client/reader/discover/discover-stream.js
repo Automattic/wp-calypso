@@ -53,7 +53,7 @@ const DiscoverStream = ( props ) => {
 		// Save scroll position for later reference.
 		scrollPosition.current = scrollRef.current?.scrollLeft;
 
-		// Determine and set visibility classes on scroll buttons.
+		// Determine and set visibility classes on scroll button wrappers.
 		const leftScrollButton = document.querySelector( `.${ DEFAULT_CLASS }__left-button-wrapper` );
 		const rightScrollButton = document.querySelector( `.${ DEFAULT_CLASS }__right-button-wrapper` );
 		shouldHideLeftScrollButton()

@@ -46,6 +46,7 @@
 	}
 }
 
+// Hide the buttons and not the wrappers as we still want the opacity/fade effect from wrappers.
 .accessible-focus .discover-stream-navigation .discover-stream-navigation__left-button,
 .accessible-focus .discover-stream-navigation .discover-stream-navigation__right-button {
 	display: none;
