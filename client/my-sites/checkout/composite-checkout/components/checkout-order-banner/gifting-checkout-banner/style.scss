@@ -7,12 +7,7 @@
 	margin: 0 auto 32px;
 	background: url(calypso/assets/images/gifting/pink-background.jpg) no-repeat top left;
 	background-size: cover;
-	@media ( min-width: 700px ) {
-		width: 554px;
-	}
-	@include break-large {
-		width: 905px;
-	}
+	width: 100%;
 }
 
 .gifting-checkout-banner img {

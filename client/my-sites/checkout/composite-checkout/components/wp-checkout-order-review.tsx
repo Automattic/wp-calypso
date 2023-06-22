@@ -25,34 +25,23 @@ import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-c
 const SiteSummary = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
-	margin-top: -10px;
+	margin-top: 0px;
 	word-break: break-word;
 
 	.is-summary & {
 		margin-bottom: 10px;
 	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		margin-top: -8px;
+	}
 `;
 
 const CouponLinkWrapper = styled.div`
 	font-size: 14px;
-	margin: 10px 0 20px;
-
-	.is-summary & {
-		margin-bottom: 0;
-	}
 `;
 
-const CouponField = styled( Coupon )`
-	margin: 20px 30px 20px 0;
-
-	.rtl & {
-		margin: 20px 0 20px 30px;
-	}
-
-	.is-summary & {
-		margin: 10px 0 0;
-	}
-`;
+const CouponField = styled( Coupon )``;
 
 const CouponEnableButton = styled.button`
 	cursor: pointer;

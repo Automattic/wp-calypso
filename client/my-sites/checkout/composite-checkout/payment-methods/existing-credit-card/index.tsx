@@ -5,12 +5,13 @@ import {
 	useFormStatus,
 	PaymentLogo,
 } from '@automattic/composite-checkout';
-import styled from '@emotion/styled';
+import { styled } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { Fragment } from 'react';
+import MaterialIcon from 'calypso/components/material-icon';
 import {
 	TaxInfoArea,
 	usePaymentMethodTaxInfo,
@@ -234,6 +235,21 @@ function ExistingCardPayButton( {
 	);
 }
 
+const CreditCardPayButtonWrapper = styled[ 'span' ]`
+	display: inline-flex;
+	align-items: flex-end;
+`;
+
+const StyledMaterialIcon = styled( MaterialIcon )`
+	fill: ${ ( { theme } ) => theme.colors.surface };
+	margin-right: 0.7em;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 0.7em;
+	}
+`;
+
 function ButtonContents( {
 	formStatus,
 	total,
@@ -248,8 +264,21 @@ function ButtonContents( {
 		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
+		const defaultText = (
+			<CreditCardPayButtonWrapper>
+				<StyledMaterialIcon icon="credit_card" />
+				{ getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'Pay %s now' )
+					? sprintf(
+							/* translators: %s is the total to be paid in localized currency */
+							__( 'Pay %s now' ),
+							total.amount.displayValue
+					  )
+					: /* translators: %s is the total to be paid in localized currency */
+					  sprintf( __( 'Pay %s' ), total.amount.displayValue ) }
+			</CreditCardPayButtonWrapper>
+		);
 		/* translators: %s is the total to be paid in localized currency */
-		return <>{ activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
+		return <>{ activeButtonText || defaultText }</>;
 	}
 	return <>{ __( 'Please wait…' ) }</>;
 }

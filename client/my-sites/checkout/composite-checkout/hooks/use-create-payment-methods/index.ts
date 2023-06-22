@@ -39,6 +39,7 @@ import type { StripeConfiguration, StripeLoadingError } from '@automattic/calyps
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 import type { Stripe } from '@stripe/stripe-js';
+import type { ReactNode } from 'react';
 
 export { useCreateExistingCards };
 
@@ -70,7 +71,7 @@ export function useCreateCreditCard( {
 	stripeLoadingError: StripeLoadingError;
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
-	activePayButtonText?: string | undefined;
+	activePayButtonText?: ReactNode;
 	initialUseForAllSubscriptions?: boolean;
 	allowUseForAllSubscriptions?: boolean;
 } ): PaymentMethod | null {

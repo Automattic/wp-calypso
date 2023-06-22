@@ -265,7 +265,7 @@ describe( 'Checkout contact step', () => {
 				validContactDetails.postal_code
 			);
 
-			await user.click( screen.getByText( 'Continue' ) );
+			await user.click( screen.getByText( 'Continue to payment' ) );
 
 			/* eslint-disable jest/no-conditional-expect */
 			if ( complete === 'does' ) {

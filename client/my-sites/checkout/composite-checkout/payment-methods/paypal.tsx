@@ -262,6 +262,9 @@ function TaxLabel() {
 		[]
 	);
 	const taxString = [ countryCode.value, postalCode.value ].filter( isValueTruthy ).join( ', ' );
+	if ( taxString.length < 1 ) {
+		return null;
+	}
 	return (
 		<div>
 			<span>{ taxString }</span>
