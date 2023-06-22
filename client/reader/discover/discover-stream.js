@@ -3,7 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { debounce } from 'lodash';
+import { throttle } from 'lodash';
 import { useState, useRef, useEffect } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import wpcom from 'calypso/lib/wp';
@@ -49,7 +49,7 @@ const DiscoverStream = ( props ) => {
 
 	// To keep track of the navigation tabs scroll position and keep it from appearing to reset
 	// after child render.
-	const handleScroll = debounce( () => {
+	const handleScroll = throttle( () => {
 		// Save scroll position for later reference.
 		scrollPosition.current = scrollRef.current?.scrollLeft;
 
