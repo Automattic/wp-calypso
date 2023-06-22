@@ -295,22 +295,6 @@
 	}
 
 	/**
- 	 * SECONDARY-VIEW HEADER
- 	 */
-	.inline-help__secondary-view {
-
-		&.inline-help__richresult,
-		&.inline-help__contact {
-			button.button.is-borderless {
-				display: flex;
-				align-items: center;
-				font-size: $font-body-small;
-				color: var(--studio-gray-100);
-			}
-		}
-	}
-
-	/**
  	 * CONTACT FORM
  	 */
 	.help-center-contact-page {

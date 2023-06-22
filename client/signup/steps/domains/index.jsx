@@ -15,6 +15,10 @@ import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explaine
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import Notice from 'calypso/components/notice';
 import {
+	SIGNUP_DOMAIN_ORIGIN,
+	setDomainOrigin,
+} from 'calypso/lib/analytics/utils/signup_domain_origin';
+import {
 	domainRegistration,
 	domainMapping,
 	domainTransfer,
@@ -155,6 +159,11 @@ class DomainsStep extends Component {
 	};
 
 	handleAddDomain = ( suggestion, position ) => {
+		const domainOrigin = suggestion?.is_free
+			? SIGNUP_DOMAIN_ORIGIN.free
+			: SIGNUP_DOMAIN_ORIGIN.custom;
+		setDomainOrigin( domainOrigin );
+
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
@@ -242,12 +251,14 @@ class DomainsStep extends Component {
 	};
 
 	handleDomainExplainerClick = () => {
+		setDomainOrigin( SIGNUP_DOMAIN_ORIGIN.choose_later );
 		const hideFreePlan = true;
 		this.handleSkip( undefined, hideFreePlan );
 	};
 
 	handleUseYourDomainClick = () => {
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
+		setDomainOrigin( SIGNUP_DOMAIN_ORIGIN.use_your_domain );
 		page( this.getUseYourDomainUrl() );
 	};
 

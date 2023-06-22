@@ -5,7 +5,7 @@ import { SectionContainer } from 'calypso/components/section';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getEarnPageUrl } from '../../helpers';
-import './styles.scss';
+import './style.scss';
 
 type GrowYourAudienceCardProps = {
 	icon: JSX.Element;

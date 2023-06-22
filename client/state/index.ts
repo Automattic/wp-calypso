@@ -21,7 +21,6 @@ export function createReduxStore(
 ): Store & WithAddReducer {
 	const isBrowser = typeof window === 'object';
 	const isDesktop = isEnabled( 'desktop' );
-	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
 	const middlewares = [
 		thunkMiddleware,
@@ -36,12 +35,9 @@ export function createReduxStore(
 		// responses. Therefore we need to inject the data layer
 		// as early as possible into the middleware chain.
 		wpcomApiMiddleware,
-		isBrowser && require( './happychat/middleware.js' ).default,
-		isBrowser && require( './happychat/middleware-calypso.js' ).default,
 		dynamicMiddlewares,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
-		isAudioSupported && require( './audio/middleware.js' ).default,
 		isDesktop && require( './desktop/middleware.js' ).default,
 	].filter( Boolean );
 

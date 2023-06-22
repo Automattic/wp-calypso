@@ -125,7 +125,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			width: 142px;
 			height: 12px;
 			background-color: #f5f5f5;
-			border-radius: 100%;
+			border-radius: 4px;
 			margin-top: 8px;
 			&.campaign-item__skeleton-text2 {
 				width: 97px;
@@ -151,7 +151,10 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			width: 108px; // TODO: adjust height and width for mobile devices as well.
 		}
 	}
+}
 
+.promote-post-i2__table,
+.campaign-item__header-status {
 	.badge {
 		border-radius: 4px;
 		font-size: 0.75rem;

@@ -8,7 +8,8 @@ const getEarnPaymentsPageUrl = ( siteSlug: string | null ) =>
 const getSubscribersCacheKey = (
 	siteId: number | null,
 	currentPage?: number,
-	perPage?: number
+	perPage?: number,
+	search?: string
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
 	if ( currentPage ) {
@@ -16,6 +17,9 @@ const getSubscribersCacheKey = (
 	}
 	if ( perPage ) {
 		cacheKey.push( 'per-page', perPage );
+	}
+	if ( search ) {
+		cacheKey.push( 'search', search );
 	}
 	return cacheKey;
 };

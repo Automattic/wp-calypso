@@ -55,7 +55,7 @@ export default function SiteSurveyBanner( { isDashboardView }: Props ) {
 			className="site-survey-banner"
 			title={ translate( 'Help Jetpack build better products for you' ) }
 			description={ translate(
-				'Take this 2 minute survey to help us understand your needs & build products that delivers more value to your clients.'
+				'Take this 2 minute survey to help us understand your needs & build products that deliver more value to your clients.'
 			) }
 			callToAction={ translate( 'Take survey' ) }
 			href="https://automattic.survey.fm/agency-partnership-usage-survey"
