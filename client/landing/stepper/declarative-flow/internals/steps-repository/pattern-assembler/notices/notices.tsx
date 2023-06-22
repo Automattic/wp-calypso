@@ -36,7 +36,6 @@ const withNotices = createHigherOrderComponent(
 				if ( existingNoticeWithSameId?.timer ) {
 					clearTimeout( existingNoticeWithSameId.timer );
 					delete existingNoticeWithSameId.timer;
-					4;
 				}
 
 				const newNotice = {
