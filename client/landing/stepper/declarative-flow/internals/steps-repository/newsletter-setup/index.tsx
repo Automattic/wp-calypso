@@ -36,7 +36,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		taglinePlaceholder: translate( `Letters from Emily Dickinson's garden` ),
 		iconPlaceholder: translate( 'Add a site icon' ),
 		colorLabel: translate( 'Choose an accent color' ),
-		buttonText: translate( 'Save and continue' ),
 	};
 
 	const {

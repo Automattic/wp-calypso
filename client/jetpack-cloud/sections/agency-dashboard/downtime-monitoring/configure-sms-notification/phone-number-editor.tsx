@@ -185,7 +185,7 @@ export default function PhoneNumberEditor( {
 
 	// Add phone item to the list once the phone number is verified
 	useEffect( () => {
-		if ( verifyPhoneNumber.isVerified ) {
+		if ( verifyPhoneNumber.isVerified || requestVerificationCode.isVerified ) {
 			handleSetPhoneItems();
 			setVerifiedPhoneNumber( phoneItem.phoneNumberFull );
 		}
@@ -194,6 +194,7 @@ export default function PhoneNumberEditor( {
 		phoneItem.phoneNumberFull,
 		handleSetPhoneItems,
 		setVerifiedPhoneNumber,
+		requestVerificationCode.isVerified,
 	] );
 
 	// Show error message when phone number verification fails
@@ -204,6 +205,13 @@ export default function PhoneNumberEditor( {
 			} );
 		}
 	}, [ translate, verifyPhoneNumber.errorMessage ] );
+
+	// Refetch verified contacts if failed
+	useEffect( () => {
+		verifiedContacts.refetchIfFailed();
+		// Disable linting because we only want to refetch once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	// Set help text when phone number verification fails
 	useEffect( () => {

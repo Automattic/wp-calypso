@@ -471,7 +471,6 @@ class ReaderStream extends Component {
 			streamHeader,
 			streamKey,
 			tag,
-			tags,
 			sites,
 			isDiscoverTags,
 			isDiscoverStream,
@@ -516,7 +515,6 @@ class ReaderStream extends Component {
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 					className="stream__list"
-					tags={ tags }
 				/>
 			);
 

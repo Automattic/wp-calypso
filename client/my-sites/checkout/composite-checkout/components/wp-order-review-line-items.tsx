@@ -29,7 +29,6 @@ import type {
 import type { PropsWithChildren } from 'react';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
-	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	box-sizing: border-box;
 	margin: 20px 0;
 	padding: 0;

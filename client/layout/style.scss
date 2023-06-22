@@ -51,6 +51,14 @@ body.is-focus-sites {
 		padding-left: 32px;
 	}
 
+	// Checkout sets it own padding/margin
+	.is-section-checkout &,
+	.is-section-checkout.has-no-sidebar &,
+	.is-section-checkout.has-no-sidebar .theme-default .focus-content & {
+		padding: 0;
+		margin: 0;
+	}
+
 	// Themes sets it own padding/margin
 	.is-section-theme &,
 	.is-section-themes.has-no-sidebar & {

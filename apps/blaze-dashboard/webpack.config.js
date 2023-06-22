@@ -187,7 +187,7 @@ module.exports = {
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/formatted-header$/,
-			'calypso/components/jetpack/jetpack-header'
+			path.resolve( __dirname, 'src/components/jetpack-blaze-header' )
 		),
 		...excludedPackagePlugins,
 		shouldEmitStats &&

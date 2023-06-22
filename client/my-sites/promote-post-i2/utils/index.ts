@@ -227,3 +227,27 @@ export const unifyCampaigns = (
 		};
 	} );
 };
+
+export const getShortDateString = ( date: string ) => {
+	const timestamp = moment( Date.parse( date ) );
+	const now = moment();
+
+	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
+	switch ( dateDiff ) {
+		case 0:
+			return __( 'hours ago' );
+		case 1:
+			return __( '1 day ago' );
+		default:
+			return timestamp.isSame( now, 'year' )
+				? moment( date ).format( 'MMM DD' )
+				: moment( date ).format( 'MMM DD, YYYY' );
+	}
+};
+
+export const getLongDateString = ( date: string ) => {
+	const timestamp = moment( Date.parse( date ) );
+	// translators: "ll" refers to date (eg. 21 Apr) & "LT" refers to time (eg. 18:00) - "at" is translated
+	const sameElse: string = __( 'll [at] LT' );
+	return timestamp.calendar( null, { sameElse } );
+};
