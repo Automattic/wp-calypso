@@ -17,8 +17,8 @@ import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-pr
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { Activity } from '../types';
+import DownloadButton from './buttons/download-button';
 import ViewFilesButton from './buttons/view-files-button';
-import downloadIcon from './download-icon.svg';
 
 type SingleSiteOwnProps = {
 	siteId: number;
@@ -100,21 +100,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 					</div>
 				) }
 				<ViewFilesButton siteSlug={ siteSlug } rewindId={ rewindId } />
-				<Button
-					borderless
-					compact
-					isPrimary={ false }
-					href={ backupDownloadPath( siteSlug, rewindId ) }
-					className="toolbar__download-button"
-				>
-					<img
-						src={ downloadIcon }
-						className="toolbar__download-button-icon"
-						role="presentation"
-						alt=""
-					/>
-					{ translate( 'Download backup' ) }
-				</Button>
+				<DownloadButton siteSlug={ siteSlug } rewindId={ rewindId } />
 			</PopoverMenu>
 		</>
 	);
