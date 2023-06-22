@@ -41,7 +41,7 @@ const SpacerDiv = withDimensions( ( { width } ) => (
 	<div
 		style={ {
 			width: `${ width }px`,
-			height: `60px`,
+			height: `130px`,
 		} }
 	/>
 ) );
@@ -114,7 +114,7 @@ class SearchStream extends React.Component {
 		const segmentedControlClass = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
-		const hidePostsAndSites = this.state.feed && this.state.feed.feed_ID?.length === 0;
+		const hidePostsAndSites = this.state.feed && this.state.feed?.feed_ID.length === 0;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {

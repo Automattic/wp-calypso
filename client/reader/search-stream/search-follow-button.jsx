@@ -18,13 +18,18 @@ class SearchFollowButton extends Component {
 		feed: PropTypes.object,
 	};
 
-	render() {
-		const { query, translate, readerAliasedFollowFeedUrl, feed } = this.props;
+	/**
+	 * Check if the query looks like a feed URL
+	 *
+	 * @param url
+	 * @returns {boolean}
+	 */
+	isPotentialFeedUrl = ( url ) => {
 		let isPotentialFeedUrl = false;
-		if ( resemblesUrl( query ) ) {
+		if ( resemblesUrl( url ) ) {
 			let parsedUrl;
 			try {
-				parsedUrl = new URL( query );
+				parsedUrl = new URL( url );
 			} catch {
 				// Do nothing.
 			}
@@ -32,7 +37,7 @@ class SearchFollowButton extends Component {
 			// If we got an invalid URL, add a protocol and try again.
 			if ( parsedUrl === undefined ) {
 				try {
-					parsedUrl = new URL( 'http://' + query );
+					parsedUrl = new URL( 'http://' + url );
 				} catch {
 					// Do nothing.
 				}
@@ -44,18 +49,36 @@ class SearchFollowButton extends Component {
 				);
 			}
 		}
+		return isPotentialFeedUrl;
+	};
 
-		// If not a potential feed then don't show the follow button
-		if ( ! isPotentialFeedUrl ) {
+	render() {
+		const { query, translate, readerAliasedFollowFeedUrl, feed } = this.props;
+
+		// If the search query hasn't found a feed and the query doesn't look like a feed URL then don't show the follow button
+		if ( ! feed && ! this.isPotentialFeedUrl( query ) ) {
 			return null;
 		}
 
 		let isFollowing = false;
 		let followTitle = withoutHttp( query );
+		let followUrl = readerAliasedFollowFeedUrl;
 
-		if ( feed && feed.name?.length ) {
+		// If we have a feed object from the search query then we can use it to create the follow button
+		if ( feed ) {
 			isFollowing = feed.is_following;
-			followTitle = feed.name;
+			// Use the feed name if available on the feed object
+			if ( feed?.name ) {
+				followTitle = feed.name;
+			}
+			// Use the feed URL if available on the feed object
+			if ( feed?.feed_URL ) {
+				followUrl = feed.feed_URL;
+			}
+			// Use the subscribe URL if available on the feed object
+			if ( feed?.subscribe_URL ) {
+				followUrl = feed.subscribe_URL;
+			}
 		}
 
 		// If already following this feed then don't show the follow button
@@ -78,7 +101,7 @@ class SearchFollowButton extends Component {
 						args: followTitle,
 						comment: '%s is the name of the site being followed. For example: "Discover"',
 					} ) }
-					siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
+					siteUrl={ addSchemeIfMissing( followUrl, 'http' ) }
 					followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
 					followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 				/>

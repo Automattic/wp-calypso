@@ -82,11 +82,14 @@ export default connect(
 		} );
 
 		// Check if searchResults has one item and if it has a feed_ID
-		if ( searchResults && searchResults.length === 1 ) {
+		if ( searchResults && searchResults.length > 0 ) {
 			let feed = searchResults[ 0 ];
-			if ( feed.feed_ID.length > 0 ) {
-				// If it has a feed_id, get the feed object from the state
-				feed = getFeed( state, feed.feed_ID );
+			if ( feed?.feed_ID.length > 0 ) {
+				// If it has a feed_ID, get the feed object from the state
+				const existingFeed = getFeed( state, feed.feed_ID );
+				if ( existingFeed ) {
+					feed = existingFeed;
+				}
 			}
 			ownProps.onReceiveSearchResults( feed );
 		}
