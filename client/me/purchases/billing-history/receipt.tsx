@@ -283,7 +283,7 @@ function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) 
 			<br />
 			{ translate( 'VAT #: %(vatCountry)s %(vatId)s', {
 				args: {
-					vatCountry: vatDetails.country,
+					vatCountry: vatDetails.country ?? '',
 					vatId: vatDetails.id,
 				},
 				comment: 'This is the user-supplied VAT number, format "UK 553557881".',

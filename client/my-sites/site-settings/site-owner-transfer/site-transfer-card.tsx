@@ -17,10 +17,10 @@ const ActionPanelStyled = styled( ActionPanel )( {
 
 export function SiteTransferCard( {
 	children,
-	backHref,
+	onClick,
 }: {
 	children: React.ReactNode;
-	backHref: string;
+	onClick: () => void;
 } ) {
 	const translate = useTranslate();
 	return (
@@ -42,7 +42,7 @@ export function SiteTransferCard( {
 				path="/settings/start-site-transfer/:site"
 				title="Settings > Start Site Transfer"
 			/>
-			<HeaderCake backHref={ backHref } isCompact={ true }>
+			<HeaderCake onClick={ onClick } isCompact={ true }>
 				<h1>{ translate( 'Site Transfer' ) }</h1>
 			</HeaderCake>
 			<ActionPanelStyled>{ children }</ActionPanelStyled>

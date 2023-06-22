@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { default as ActivityCard, useToggleContent } from 'calypso/components/activity-card';
@@ -71,18 +70,16 @@ const BackupSuccessful = ( {
 					{ isToday ? translate( 'Latest backup' ) : translate( 'Latest backup on this day' ) }
 				</div>
 
-				{ config.isEnabled( 'jetpack/backup-contents-page' ) && (
-					<div className="status-card__toolbar">
-						<Toolbar
-							siteId={ siteId }
-							activity={ backup }
-							isContentExpanded={ showContent }
-							onToggleContent={ toggleShowContent }
-							availableActions={ [ 'download', 'rewind', 'view' ] }
-							onClickClone={ onClickClone }
-						/>
-					</div>
-				) }
+				<div className="status-card__toolbar">
+					<Toolbar
+						siteId={ siteId }
+						activity={ backup }
+						isContentExpanded={ showContent }
+						onToggleContent={ toggleShowContent }
+						availableActions={ [ 'download', 'rewind', 'view' ] }
+						onClickClone={ onClickClone }
+					/>
+				</div>
 			</div>
 			<div className="status-card__hide-desktop">
 				<div className="status-card__title">{ displayDate }</div>

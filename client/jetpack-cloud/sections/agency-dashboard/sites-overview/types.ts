@@ -1,12 +1,10 @@
-import type { ReactChild } from 'react';
-
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
 	key: AllowedTypes;
-	title: ReactChild;
+	title: string;
 	className?: string;
 	isExpandable?: boolean;
 	isSortable?: boolean;
@@ -27,8 +25,17 @@ interface MonitorContactEmail {
 	email_address: string;
 	verified: boolean;
 }
+interface MonitorContactSMS {
+	name: string;
+	sms_number: string;
+	number: string;
+	country_code: string;
+	country_numeric_code: string;
+	verified: boolean;
+}
 interface MonitorContacts {
-	emails: Array< MonitorContactEmail >;
+	emails?: Array< MonitorContactEmail >;
+	sms_numbers?: Array< MonitorContactSMS >;
 }
 
 export interface MonitorSettings {
@@ -38,8 +45,10 @@ export interface MonitorSettings {
 	monitor_deferment_time: number;
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
+	monitor_user_sms_notifications: boolean;
 	monitor_user_wp_note_notifications: boolean;
 	monitor_notify_additional_user_emails: Array< MonitorContactEmail >;
+	monitor_notify_additional_user_sms: Array< MonitorContactSMS >;
 }
 
 interface StatsObject {
@@ -102,26 +111,26 @@ export interface BoostNode {
 export interface BackupNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 }
 
 export interface ScanNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 	threats: number;
 }
 
 interface PluginNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 	updates: number;
 }
 export interface MonitorNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 	error?: boolean;
 	settings?: MonitorSettings;
 }
@@ -140,12 +149,12 @@ export interface SiteData {
 
 export interface RowMetaData {
 	row: {
-		value: Site | SiteStats | BoostData | ReactChild;
+		value: Site | SiteStats | BoostData | string;
 		status: AllowedStatusTypes;
 	};
 	link: string;
 	isExternalLink: boolean;
-	tooltip: ReactChild | undefined;
+	tooltip?: string;
 	tooltipId: string;
 	siteDown?: boolean;
 	eventName: string | undefined;
@@ -163,7 +172,7 @@ export type StatusEventNames = {
 };
 
 export type StatusTooltip = {
-	[ key in AllowedStatusTypes ]?: ReactChild;
+	[ key in AllowedStatusTypes ]?: string;
 };
 
 export type AllowedActionTypes =
@@ -242,6 +251,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 	success: boolean;
 	settings: {
 		email_notifications: boolean;
+		sms_notifications: boolean;
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
 		contacts?: MonitorContacts;
@@ -251,6 +261,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 export interface UpdateMonitorSettingsParams {
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
+	sms_notifications?: boolean;
 	jetmon_defer_status_down_minutes?: number;
 	contacts?: MonitorContacts;
 }

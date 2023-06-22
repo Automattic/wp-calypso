@@ -71,10 +71,24 @@ describe( 'streams', () => {
 					},
 				},
 				{
-					stream: 'discover',
+					stream: 'discover:recommended',
 					expected: {
 						method: 'GET',
 						path: '/read/tags/cards',
+						apiNamespace: 'wpcom/v2',
+						query: {
+							...query,
+							tag_recs_per_card: 5,
+							site_recs_per_card: 5,
+							tags: [],
+						},
+					},
+				},
+				{
+					stream: 'discover:dailyprompt',
+					expected: {
+						method: 'GET',
+						path: `/read/tags/dailyprompt/posts`,
 						apiNamespace: 'wpcom/v2',
 						query: {
 							...query,

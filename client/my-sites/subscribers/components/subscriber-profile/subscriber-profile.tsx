@@ -1,4 +1,4 @@
-import './styles.scss';
+import './style.scss';
 
 type SubscriberProfileProps = {
 	avatar: string;

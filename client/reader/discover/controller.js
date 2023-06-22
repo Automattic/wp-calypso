@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import {
@@ -12,10 +11,9 @@ const ANALYTICS_PAGE_TITLE = 'Reader';
 
 const exported = {
 	discover( context, next ) {
-		const blogId = config( 'discover_blog_id' );
 		const basePath = sectionify( context.path );
-		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId;
-		const streamKey = `discover:${ blogId }`;
+		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Discover';
+		const streamKey = 'discover:recommended';
 		const mcKey = 'discover';
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -24,10 +22,9 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
-				require="calypso/reader/site-stream"
-				key={ 'site-' + blogId }
+				require="calypso/reader/discover/discover-stream"
+				key="discover-page"
 				streamKey={ streamKey }
-				siteId={ +blogId }
 				title="Discover"
 				trackScrollPage={ trackScrollPage.bind(
 					null,
@@ -38,10 +35,9 @@ const exported = {
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				suppressSiteNameLink={ true }
-				showPrimaryFollowButtonOnCards={ false }
 				isDiscoverStream={ true }
 				showBack={ false }
-				className="is-discover-stream is-site-stream"
+				className="is-discover-stream"
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

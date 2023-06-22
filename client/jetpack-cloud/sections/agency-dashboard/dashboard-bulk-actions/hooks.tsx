@@ -1,5 +1,5 @@
-import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback, useEffect, useState, useContext, RefObject } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useCallback, useEffect, useState, useContext, RefObject } from 'react';
 import acceptDialog from 'calypso/lib/accept';
 import {
 	useJetpackAgencyDashboardRecordTrackEvent,
@@ -14,8 +14,8 @@ import {
 import type { Site } from '../sites-overview/types';
 
 const dialogContent = (
-	heading: ReactChild,
-	description: ReactChild,
+	heading: string,
+	description: TranslateResult,
 	action: ( accepted: boolean ) => void
 ) => {
 	const content = (
@@ -50,7 +50,7 @@ export function useHandleToggleMonitor( selectedSites: Array< Site >, isLargeScr
 		( activate: boolean ) => {
 			const heading = activate ? translate( 'Resume Monitor' ) : translate( 'Pause Monitor' );
 			const monitorAction = activate ? translate( 'resume' ) : translate( 'pause' );
-			const siteCountText = getSiteCountText( selectedSites );
+			const siteCountText = getSiteCountText( selectedSites ) as string;
 			const content =
 				selectedSites.length > 1
 					? translate( 'You are about to %(monitorAction)s the monitor for %(siteCountText)s.', {
@@ -109,7 +109,7 @@ export function useHandleResetNotification(
 			strong: <strong />,
 		};
 
-		const siteCountText = getSiteCountText( selectedSites );
+		const siteCountText = getSiteCountText( selectedSites ) as string;
 
 		const content =
 			selectedSites.length > 1

@@ -56,7 +56,7 @@ function TeamInvite( props: Props ) {
 				<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 				<HeaderCake onClick={ goBack }>
 					{ translate( 'Add team members to %(sitename)s', {
-						args: { sitename: site.name },
+						args: { sitename: site.name ?? translate( 'this site' ) },
 					} ) }
 				</HeaderCake>
 				<PeopleSectionAddNav selectedFilter="team" />
@@ -76,7 +76,7 @@ function TeamInvite( props: Props ) {
 
 			<HeaderCake onClick={ goBack }>
 				{ translate( 'Add team members to %(sitename)s', {
-					args: { sitename: site.name },
+					args: { sitename: site.name ?? translate( 'this site' ) },
 				} ) }
 			</HeaderCake>
 

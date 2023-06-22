@@ -149,6 +149,10 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	opacity: 0;
 	transform-origin: 50% 0;
 	pointer-events: none;
+
+	.logged-in.admin-bar & {
+		top: 77px; //If logged in, we need to take into consideration the adminbar height.
+	}
 }
 
 .x-dropdown-bottom,

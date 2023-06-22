@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
+import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -40,7 +40,7 @@ interface Props {
 		postalCode?: string;
 		state?: string;
 	};
-	submitLabel: ReactChild;
+	submitLabel: string;
 }
 
 export default function CompanyDetailsForm( {

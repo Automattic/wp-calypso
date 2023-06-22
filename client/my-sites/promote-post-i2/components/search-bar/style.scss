@@ -17,12 +17,17 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	display: grid;
 	grid-template-columns: 1fr 480px;
 
+	&.wide {
+		grid-template-columns: 1fr 220px;
+	}
+
 	.promote-post-i2__search-bar-dropdown {
 		&.select-dropdown {
 			height: 50px;
 		}
 
 		.select-dropdown__container {
+			max-width: 220px;
 			width: 100%;
 		}
 

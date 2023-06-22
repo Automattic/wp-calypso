@@ -5,6 +5,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPartnerPortalLicenseCounts from 'calypso/components/data/query-jetpack-partner-portal-license-counts';
 import Main from 'calypso/components/main';
 import SiteAddLicenseNotification from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-add-license-notification';
+import SiteSurveyBanner from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-survey-banner';
 import SiteWelcomeBanner from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-welcome-banner';
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
@@ -68,7 +69,12 @@ export default function Licenses( {
 			<QueryJetpackPartnerPortalLicenseCounts />
 			<DocumentHead title={ translate( 'Licenses' ) } />
 			<SidebarNavigation />
-			{ isAgencyUser && <SiteWelcomeBanner bannerKey="licenses-page" /> }
+			{ isAgencyUser && (
+				<>
+					<SiteSurveyBanner />
+					<SiteWelcomeBanner bannerKey="licenses-page" />
+				</>
+			) }
 			<SiteAddLicenseNotification />
 			<div className="licenses__header">
 				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>

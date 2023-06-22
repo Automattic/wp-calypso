@@ -17,7 +17,6 @@ import {
 	getCampaignBudgetData,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
-	showDetails,
 } from '../../utils';
 import './style.scss';
 
@@ -71,7 +70,6 @@ export default function CampaignItem( props: Props ) {
 	const budgetString = campaignDays ? `$${ totalBudget } ${ totalBudgetLeftString }` : '-';
 	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
 
-	const shouldShowDetailsButton = showDetails( status );
 	const statusBadge = (
 		<Badge type={ getCampaignStatusBadgeColor( status ) }>{ getCampaignStatus( status ) }</Badge>
 	);
@@ -151,9 +149,7 @@ export default function CampaignItem( props: Props ) {
 			<td className="campaign-item__impressions">{ formatNumber( impressions_total ) }</td>
 			<td className="campaign-item__clicks">{ formatNumber( clicks_total ) }</td>
 			<td className="campaign-item__action">
-				{ shouldShowDetailsButton && (
-					<Button href={ openCampaignURL } isLink icon={ chevronRight } />
-				) }
+				<Button href={ openCampaignURL } isLink icon={ chevronRight } />
 			</td>
 		</tr>
 	);

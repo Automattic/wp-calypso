@@ -1,4 +1,7 @@
-import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import {
+	FEATURE_INSTALL_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES,
+} from '@automattic/calypso-products';
 import { compact, property, snakeCase } from 'lodash';
 import { default as pageRouter } from 'page';
 import PropTypes from 'prop-types';
@@ -315,6 +318,7 @@ export const ConnectedThemesSelection = connect(
 			siteId,
 			WPCOM_FEATURES_PREMIUM_THEMES
 		);
+		const canInstallThemes = siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
@@ -342,8 +346,21 @@ export const ConnectedThemesSelection = connect(
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
 
-		const shouldFetchWpOrgThemes = forceWpOrgSearch && sourceSiteId !== 'wporg' && !! search; // Only fetch WP.org themes when searching a term.
-		const wpOrgQuery = { ...query, page: 1 }; // We limit the WP.org themes to one page only.
+		const shouldFetchWpOrgThemes =
+			forceWpOrgSearch &&
+			sourceSiteId !== 'wporg' &&
+			// Only fetch WP.org themes when searching a term.
+			!! search &&
+			// WP.org themes are not a good fit for any of the tiers,
+			// unless the site can install themes, then they can be searched in the 'free' tier.
+			( ! tier || ( tier === 'free' && canInstallThemes ) );
+		const wpOrgQuery = {
+			...query,
+			// We limit the WP.org themes to one page only.
+			page: 1,
+			// WP.com theme filters don't match WP.org ones, so we add them to the search term.
+			search: filter ? `${ search } ${ filter.replace( /[+-]/g, ' ' ) }` : search,
+		};
 		const wpOrgThemes = shouldFetchWpOrgThemes
 			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []
 			: [];

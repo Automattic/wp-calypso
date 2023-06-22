@@ -128,7 +128,13 @@ class CancelAutoRenewalForm extends Component {
 			onClick: this.onSubmit,
 		};
 
-		const chat = <PrecancellationChatButton purchase={ purchase } onClick={ onClose } />;
+		const chat = (
+			<PrecancellationChatButton
+				purchase={ purchase }
+				onClick={ onClose }
+				className="cancel-auto-renewal-form__chat-button"
+			/>
+		);
 
 		return [ skip, submit, chat ];
 	};

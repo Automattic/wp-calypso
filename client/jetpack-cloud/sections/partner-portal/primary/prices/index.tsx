@@ -24,6 +24,14 @@ export default function Prices() {
 		const userYearlyProduct = Object.values( userProducts ).find(
 			( p ) => p.product_id === product.product_id
 		);
+
+		if ( userYearlyProduct === undefined ) {
+			return null;
+		}
+
+		const dailyAgencyPrice = ( product.amount * 12 ) / 365;
+		const dailyUserYearlyPrice = userYearlyProduct.cost / 365;
+
 		const userMonthlyProduct =
 			userYearlyProduct &&
 			Object.values( userProducts ).find(
@@ -31,10 +39,9 @@ export default function Prices() {
 					p.billing_product_slug === userYearlyProduct.billing_product_slug &&
 					p.product_term === 'month'
 			);
-
-		const dailyAgencyPrice = ( product.amount * 12 ) / 365;
-		const dailyUserMonthlyPrice = userMonthlyProduct ? ( userMonthlyProduct.cost * 12 ) / 365 : 0;
-		const dailyUserYearlyPrice = userYearlyProduct ? userYearlyProduct.cost / 365 : 0;
+		const dailyUserMonthlyPrice = userMonthlyProduct
+			? ( userMonthlyProduct.cost * 12 ) / 365
+			: undefined;
 
 		return (
 			<tr key={ product.product_id }>
@@ -43,26 +50,28 @@ export default function Prices() {
 					<LicenseBundleCardDescription product={ product } />
 				</td>
 				<td>
-					<div className="prices__mobile-description">
-						<div>{ translate( 'Jetpack.com Pricing' ) }</div>
-						<span className="prices__th-detail">{ translate( 'billed monthly' ) }</span>
-					</div>
-					<div>
-						{ translate( '%(price)s/day', {
-							args: {
-								price: formatCurrency( dailyUserMonthlyPrice, 'USD', currencyFormatOptions ),
-							},
-						} ) }
-					</div>
-					<div>
-						{ translate( '%(price)s/month', {
-							args: {
-								price:
-									userMonthlyProduct &&
-									formatCurrency( userMonthlyProduct.cost, 'USD', currencyFormatOptions ),
-							},
-						} ) }
-					</div>
+					{ userMonthlyProduct && dailyUserMonthlyPrice && (
+						<>
+							<div className="prices__mobile-description">
+								<div>{ translate( 'Jetpack.com Pricing' ) }</div>
+								<span className="prices__th-detail">{ translate( 'billed monthly' ) }</span>
+							</div>
+							<div>
+								{ translate( '%(price)s/day', {
+									args: {
+										price: formatCurrency( dailyUserMonthlyPrice, 'USD', currencyFormatOptions ),
+									},
+								} ) }
+							</div>
+							<div>
+								{ translate( '%(price)s/month', {
+									args: {
+										price: formatCurrency( userMonthlyProduct.cost, 'USD', currencyFormatOptions ),
+									},
+								} ) }
+							</div>
+						</>
+					) }
 				</td>
 				<td>
 					<div className="prices__mobile-description">
