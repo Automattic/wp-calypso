@@ -59,13 +59,11 @@
 	&.is-borderless {
 		margin: 0.8rem;
 		border-radius: 0;
-		border-top: 1px solid #e4e4e6;
-		margin-bottom: 0.5rem;
-		padding-top: 0.8rem;
 		display: flex;
 		justify-content: left;
 		align-items: center;
 		font-size: 0.875rem;
+		padding: 0;
 	}
 }
 
@@ -76,7 +74,6 @@
 
 .toolbar__restore-button {
 	margin: 0.8rem;
-	margin-bottom: 0;
 }
 
 .toolbar__credentials-warning {
@@ -101,4 +98,8 @@
 .toolbar__credentials-warning-text a.external-link {
 	color: var(--color-text);
 	text-decoration: underline;
+}
+
+.toolbar__actions-popover .popover__menu {
+	margin-bottom: 0.8rem;
 }

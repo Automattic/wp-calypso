@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { Icon, download as downloadIcon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import * as React from 'react';
@@ -18,7 +19,6 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { getSiteSlug, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { Activity } from '../types';
 import ViewFilesButton from './buttons/view-files-button';
-import downloadIcon from './download-icon.svg';
 
 type SingleSiteOwnProps = {
 	siteId: number;
@@ -107,12 +107,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 					href={ backupDownloadPath( siteSlug, rewindId ) }
 					className="toolbar__download-button"
 				>
-					<img
-						src={ downloadIcon }
-						className="toolbar__download-button-icon"
-						role="presentation"
-						alt=""
-					/>
+					<Icon icon={ downloadIcon } className="toolbar__download-button-icon" size={ 18 } />
 					{ translate( 'Download backup' ) }
 				</Button>
 			</PopoverMenu>
