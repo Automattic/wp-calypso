@@ -9,19 +9,21 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v3
+      - uses: actions/stale@v8
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           # Message to be added to stale issues.
-          stale-issue-message: 'This issue is stale because it has been 180 days with no activity. You can keep the issue open by adding a comment. If you do, please provide additional context and explain why you’d like it to remain open. You can also close the issue yourself — if you do, please add a brief explanation and apply one of relevant issue close labels.'
+          stale-issue-message: 'This issue is stale because 720 days have passed with no activity. A member of @kitkat-team will review and if required close this issue within 7 days. If you disagree and would like this issue to remain open, please provide additional context, updated reproduction steps and/or screenshots.'
           # Days before issue is considered stale.
-          days-before-issue-stale: 180
+          days-before-issue-stale: 720
+          # Override stale setting for PRs.
+          days-before-pr-stale: -1
           # Exempted issue labels.
-          exempt-issue-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open,[Status] Blocked / Hold'
+          exempt-issue-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open,'
           # Message to be added to stale PRs.
           stale-pr-message: 'This PR has been marked as stale due to lack of activity within the last 30 days.'
           # Exempted PR labels.
-          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open,[Status] Blocked / Hold'
+          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open'
           # Disable auto-close of both issues and PRs.
           days-before-close: -1
           # Get issues in ascending (oldest first) order.

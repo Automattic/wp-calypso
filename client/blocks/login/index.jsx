@@ -438,7 +438,12 @@ class Login extends Component {
 						"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
 				  )
 				: translate(
-						'In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below.'
+						"In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+						{
+							components: {
+								signupLink: <a href={ this.getSignupUrl() } />,
+							},
+						}
 				  );
 			headerText = currentQuery.lostpassword_flow ? null : (
 				<h3>{ translate( 'One last step' ) }</h3>

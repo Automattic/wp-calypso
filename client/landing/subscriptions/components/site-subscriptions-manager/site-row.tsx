@@ -64,6 +64,7 @@ type SiteRowProps = Reader.SiteSubscription & {
 
 const SiteRow = ( {
 	blog_ID,
+	feed_ID,
 	name,
 	site_icon,
 	URL: url,
@@ -118,14 +119,13 @@ const SiteRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( portal === ReaderPortal ) {
-			// TODO: This should be feed_ID but we will address it separately
-			return `/read/feeds/${ blog_ID }`;
+			return `/read/feeds/${ feed_ID }`;
 		}
 
 		if ( portal === SubscriptionsPortal ) {
 			return `/subscriptions/site/${ blog_ID }`;
 		}
-	}, [ blog_ID, portal ] );
+	}, [ blog_ID, feed_ID, portal ] );
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings

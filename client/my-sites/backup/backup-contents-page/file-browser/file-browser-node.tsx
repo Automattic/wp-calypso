@@ -83,7 +83,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const nodeClassName = classNames( 'file-browser-node', { 'is-alternate': isAlternate } );
-	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30 );
+	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
 
 	return (
 		<div className={ nodeClassName }>
