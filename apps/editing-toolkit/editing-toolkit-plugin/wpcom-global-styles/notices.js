@@ -59,13 +59,18 @@ function GlobalStylesViewNotice() {
 			return;
 		}
 
-		const footer = document.querySelector( '.edit-site-sidebar__footer' );
-		if ( ! footer ) {
+		const saveHub = document.querySelector( '.edit-site-save-hub' );
+		if ( ! saveHub ) {
 			return;
 		}
 
+		// Insert the notice as a sibling of the save hub instead of as a child,
+		// to prevent our notice from breaking the flex styles of the hub.
+		const container = saveHub.parentNode;
 		const noticeContainer = document.createElement( 'div' );
-		footer.prepend( noticeContainer );
+		noticeContainer.classList.add( 'wpcom-global-styles-notice-container' );
+		container.insertBefore( noticeContainer, saveHub );
+
 		render( <GlobalStylesWarningNotice />, noticeContainer );
 	}, [ canvas ] );
 
