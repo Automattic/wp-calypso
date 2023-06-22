@@ -42,12 +42,6 @@ const DiscoverStream = ( props ) => {
 		},
 	} );
 
-	// Filter followed tags out of interestTags to get recommendedTags.
-	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
-	const recommendedTags = interestTags.filter( ( tag ) => ! followedTagSlugs.includes( tag.slug ) );
-
-	const isDefaultTab = selectedTab === DEFAULT_TAB;
-
 	const shouldHideLeftScrollButton = () => scrollPosition.current < SHOW_SCROLL_THRESHOLD;
 	const shouldHideRightScrollButton = () =>
 		scrollPosition.current >
@@ -104,6 +98,12 @@ const DiscoverStream = ( props ) => {
 			}
 		}, 0 );
 	}, [ selectedTab ] );
+
+	const isDefaultTab = selectedTab === DEFAULT_TAB;
+
+	// Filter followed tags out of interestTags to get recommendedTags.
+	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
+	const recommendedTags = interestTags.filter( ( tag ) => ! followedTagSlugs.includes( tag.slug ) );
 
 	const DiscoverNavigation = () => (
 		<div className={ DEFAULT_CLASS }>
@@ -175,4 +175,5 @@ const DiscoverStream = ( props ) => {
 
 	return <Stream { ...streamProps } />;
 };
+
 export default DiscoverStream;
