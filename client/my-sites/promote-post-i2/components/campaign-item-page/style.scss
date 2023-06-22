@@ -113,7 +113,7 @@ body.is-section-promote-post-i2 {
 	&__search-bar-wrapper {
 		.form-text-input.search__input {
 			@include promote-post-i2-font;
-			// border-radius: 4px;
+
 			height: calc(100% - 4px) !important;
 			margin: 2px 2px 2px 0;
 		}

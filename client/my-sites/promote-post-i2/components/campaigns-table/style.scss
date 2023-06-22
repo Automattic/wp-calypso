@@ -48,7 +48,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 
 		&__data {
-			width: 30%;
+			width: 28%;
 
 			.campaign-item__status-mobile {
 				display: none;
@@ -56,7 +56,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 
 		&__user {
-			width: 14%;
+			width: 13%;
 		}
 
 		&__status {
@@ -64,11 +64,11 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 
 		&__ends {
-			width: 12%;
+			width: 13%;
 		}
 
 		&__budget {
-			width: 10%;
+			width: 12%;
 		}
 
 		&__impressions {
@@ -81,6 +81,13 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 		&__action {
 			width: 2%;
+
+			a {
+				color: $studio-black;
+				&:hover {
+					color: var(--color-accent);
+				}
+			}
 		}
 
 		&__header-image-skeleton {
