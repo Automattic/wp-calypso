@@ -887,6 +887,10 @@ a.masterbar__quick-language-switcher {
 
 	.masterbar--is-checkout & {
 		padding: 0 24px;
+
+		@include breakpoint-deprecated( "<480px" ) {
+			display: none;
+		}
 	}
 
 	svg {
