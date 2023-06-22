@@ -755,7 +755,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 					-:trunk
 				""".trimIndent()
 				triggerRules = """
-					-::**.md5
+					-:**.md
 				""".trimIndent()
 			}
 		},
