@@ -198,8 +198,7 @@ const ContentAndOwnershipCard = ( {
 				<ListItem>
 					{ createInterpolateElement(
 						sprintf(
-							// translators: siteSlug is the current site slug, username is the user that the site is going to
-							// transer to
+							// translators: username is the user that the site is going to transer to
 							translate(
 								'You will keep your admin access unless <strong>%(username)s</strong> removes you.'
 							),
