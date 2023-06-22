@@ -164,7 +164,7 @@ export default function CampaignItem( props: Props ) {
 				<div>{ formatNumber( clicks_total ) }</div>
 			</td>
 			<td className="campaign-item__action">
-				<Button href={ openCampaignURL } isLink icon={ chevronRight } />
+				<Button isLink icon={ chevronRight } />
 			</td>
 		</tr>
 	);

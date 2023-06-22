@@ -82,8 +82,9 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		&__action {
 			width: 2%;
 
-			a {
+			button {
 				color: $studio-black;
+
 				&:hover {
 					color: var(--color-accent);
 				}
