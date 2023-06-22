@@ -14,6 +14,9 @@ import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import './discover-stream.scss';
 
 const DEFAULT_TAB = 'recommended';
+const SHOW_SCROLL_THRESHOLD = 10;
+const showElement = ( element ) => element && element.classList.remove( 'display-none' );
+const hideElement = ( element ) => element && element.classList.add( 'display-none' );
 
 const DiscoverStream = ( props ) => {
 	const locale = useLocale();
@@ -49,39 +52,27 @@ const DiscoverStream = ( props ) => {
 	const handleScroll = debounce( () => {
 		// Save scroll position for later reference.
 		scrollPosition.current = scrollRef.current?.scrollLeft;
-		// Determine and set visibility on scroll buttons.
+
+		// Determine and set visibility classes on scroll buttons.
 		const leftScrollButton = document.querySelector( '.discover-stream__tabs-scroll-left-button' );
 		const rightScrollButton = document.querySelector(
 			'.discover-stream__tabs-scroll-right-button'
 		);
-		if ( scrollPosition.current < 10 ) {
-			// dont show left button, show right
-
-			if ( leftScrollButton ) {
-				leftScrollButton.classList.add( 'display-none' );
-			}
-			if ( rightScrollButton ) {
-				rightScrollButton.classList.remove( 'display-none' );
-			}
+		if ( scrollPosition.current < SHOW_SCROLL_THRESHOLD ) {
+			// Within threshold of left edge, only show right button.
+			showElement( rightScrollButton );
+			hideElement( leftScrollButton );
 		} else if (
 			scrollPosition.current >
-			scrollRef.current?.scrollWidth - scrollRef.current?.clientWidth - 10
+			scrollRef.current?.scrollWidth - scrollRef.current?.clientWidth - SHOW_SCROLL_THRESHOLD
 		) {
-			// show left, not right
-			if ( leftScrollButton ) {
-				leftScrollButton.classList.remove( 'display-none' );
-			}
-			if ( rightScrollButton ) {
-				rightScrollButton.classList.add( 'display-none' );
-			}
+			// Within threshold of right edge, only show left button.
+			showElement( leftScrollButton );
+			hideElement( rightScrollButton );
 		} else {
-			// show both.
-			if ( leftScrollButton ) {
-				leftScrollButton.classList.remove( 'display-none' );
-			}
-			if ( rightScrollButton ) {
-				rightScrollButton.classList.remove( 'display-none' );
-			}
+			// Otherwise show both.
+			showElement( leftScrollButton );
+			showElement( rightScrollButton );
 		}
 	}, 50 );
 
@@ -92,6 +83,7 @@ const DiscoverStream = ( props ) => {
 			scrollRef.current.scrollTo( { top: 0, left: finalPositionX, behavior: 'smooth' } );
 		}
 	};
+
 	const scrollRight = () => {
 		if ( scrollRef.current ) {
 			const finalPositionX =
