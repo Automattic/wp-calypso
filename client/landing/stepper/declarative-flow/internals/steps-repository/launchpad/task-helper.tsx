@@ -252,6 +252,7 @@ export function getEnhancedTasks(
 					};
 					break;
 				case 'design_selected':
+				case 'design_completed':
 					taskData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );

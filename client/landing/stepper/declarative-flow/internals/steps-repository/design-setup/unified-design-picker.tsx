@@ -1,7 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { Onboard, useStarterDesignBySlug, useStarterDesignsQuery } from '@automattic/data-stores';
+import {
+	Onboard,
+	updateLaunchpadSettings,
+	useStarterDesignBySlug,
+	useStarterDesignsQuery,
+} from '@automattic/data-stores';
 import {
 	isDefaultGlobalStylesVariationSlug,
 	UnifiedDesignPicker,
@@ -483,8 +488,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { setDesignOnSite, applyThemeWithPatterns } = useDispatch( SITE_STORE );
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
-	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
+	async function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
+
+		await updateLaunchpadSettings( siteSlug, {
+			checklist_statuses: { design_completed: true },
+		} );
+
 		if ( siteSlugOrId && _selectedDesign ) {
 			const positionIndex = designs.findIndex(
 				( design ) => design.slug === _selectedDesign?.slug
