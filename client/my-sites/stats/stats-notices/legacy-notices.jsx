@@ -2,8 +2,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateStatsNoticeStatusDirect } from 'calypso/state/sites/notices/actions';
 import hasNewStatsFeedbackNotice from 'calypso/state/sites/selectors/has-new-stats-feedback-notice';
 import hasOptOutNewStatsNotice from 'calypso/state/sites/selectors/has-opt-out-new-stats-notice';
-import FeedbackNotice from './feedback-notice';
-import OptOutNotice from './opt-out-notice';
+import { FeedbackNoticeBody } from './feedback-notice';
+import { OptOutNoticeBody } from './opt-out-notice';
 
 export default function LegacyStatsNotices( { siteId } ) {
 	const dispatch = useDispatch();
@@ -36,9 +36,9 @@ export default function LegacyStatsNotices( { siteId } ) {
 
 	return (
 		<>
-			{ showOptOutNotice && <OptOutNotice onNoticeDismiss={ dismissOptOutNotice } /> }
+			{ showOptOutNotice && <OptOutNoticeBody onNoticeDismiss={ dismissOptOutNotice } /> }
 			{ showFeedbackNotice && (
-				<FeedbackNotice
+				<FeedbackNoticeBody
 					onTakeSurveyClick={ onTakeSurveyClick }
 					onRemindMeLaterClick={ onRemindMeLaterClick }
 					onNoticeDismiss={ dismissFeedbackNotice }

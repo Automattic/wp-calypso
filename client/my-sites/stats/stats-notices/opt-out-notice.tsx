@@ -43,9 +43,11 @@ const OptOutNotice = ( { siteId }: StatsNoticeProps ) => {
 		dismissOptOutNoticeAsync();
 	};
 
-	return ! noticeDismissed && showOptOutNotice ? (
-		<OptOutNoticeBody onNoticeDismiss={ dismissOptOutNotice } />
-	) : null;
+	if ( noticeDismissed || ! showOptOutNotice ) {
+		return null;
+	}
+
+	return <OptOutNoticeBody onNoticeDismiss={ dismissOptOutNotice } />;
 };
 
 export default OptOutNotice;

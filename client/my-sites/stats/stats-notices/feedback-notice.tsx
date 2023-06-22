@@ -80,13 +80,17 @@ const FeedbackNotice = ( { siteId }: StatsNoticeProps ) => {
 		postponeNewStatsFeedbackAsync();
 	};
 
-	return ! noticeDismissed && showFeedbackNotice ? (
+	if ( noticeDismissed || ! showFeedbackNotice ) {
+		return null;
+	}
+
+	return (
 		<FeedbackNoticeBody
 			onTakeSurveyClick={ onTakeSurveyClick }
 			onRemindMeLaterClick={ onRemindMeLaterClick }
 			onNoticeDismiss={ dismissFeedbackNotice }
 		/>
-	) : null;
+	);
 };
 
 export default FeedbackNotice;
