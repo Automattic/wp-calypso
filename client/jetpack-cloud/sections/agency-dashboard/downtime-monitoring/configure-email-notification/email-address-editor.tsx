@@ -153,11 +153,17 @@ export default function EmailAddressEditor( {
 
 	// Add email item to the list once the email is verified
 	useEffect( () => {
-		if ( verifyEmail.isVerified ) {
+		if ( verifyEmail.isVerified || requestVerificationCode.isVerified ) {
 			handleSetEmailItems();
 			setVerifiedEmail( emailItem.email );
 		}
-	}, [ emailItem.email, handleSetEmailItems, setVerifiedEmail, verifyEmail.isVerified ] );
+	}, [
+		emailItem.email,
+		handleSetEmailItems,
+		requestVerificationCode.isVerified,
+		setVerifiedEmail,
+		verifyEmail.isVerified,
+	] );
 
 	// Show error message when email verification fails
 	useEffect( () => {

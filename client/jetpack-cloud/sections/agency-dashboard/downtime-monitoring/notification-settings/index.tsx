@@ -162,7 +162,7 @@ export default function NotificationSettings( {
 		}
 		setIsAddSMSModalOpen( ( isAddSMSModalOpen ) => ! isAddSMSModalOpen );
 		if ( isAddSMSModalOpen ) {
-			setSelectedEmail( undefined );
+			setSelectedPhone( undefined );
 			setSelectedAction( undefined );
 		}
 	};
