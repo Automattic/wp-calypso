@@ -36,6 +36,7 @@ const exported = {
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				suppressSiteNameLink={ true }
 				isDiscoverStream={ true }
+				useCompactCards={ true }
 				showBack={ false }
 				className="is-discover-stream"
 			/>
