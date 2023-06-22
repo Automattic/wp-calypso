@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { FileBrowserItem } from './types';
 
@@ -6,6 +7,8 @@ interface FileInfoCardProps {
 }
 
 const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { item } ) => {
+	const translate = useTranslate();
+
 	// Do not display file info if the item is a directory
 	if ( item.type === 'dir' ) {
 		return null;
@@ -20,7 +23,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { item } ) => {
 		<div className="file-card">
 			<div className="file-card__details">
 				<div className="file-card__row">
-					<span className="file-card__label">Rows: </span>
+					<span className="file-card__label">{ translate( 'Rows:' ) } </span>
 					<span className="file-card__value">{ item.rowCount }</span>
 				</div>
 			</div>
