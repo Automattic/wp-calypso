@@ -96,22 +96,6 @@ const ECommerceTrialExpired = (): JSX.Element => {
 					showIntervalToggle={ true }
 				/>
 
-				<div className="enterprise-ecommerce__banner">
-					<div className="enterprise-ecommerce__content">
-						<h3 className="enterprise-ecommerce__title">{ translate( 'Enterprise ecommerce' ) }</h3>
-						<div className="enterprise-ecommerce__subtitle">
-							{ translate(
-								'Learn how Woo can support the unique needs of high-volume stores throught dedicated support, discounts, and more.'
-							) }
-						</div>
-						<div className="enterprise-ecommerce__cta">
-							<Button href="https://woocommerce.com/enterprise-ecommerce/?utm_source=wooexpress&utm_campaign=plans_grid">
-								{ translate( 'Learn more' ) }
-							</Button>
-						</div>
-					</div>
-				</div>
-
 				<div className="ecommerce-trial-expired__footer">
 					<Button href={ exportUrl }>
 						<Gridicon icon="cloud-download" />
