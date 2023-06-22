@@ -46,10 +46,6 @@ const FeedbackNotice = ( { siteId }: StatsNoticeProps ) => {
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 	const { data: showFeedbackNotice } = useNoticeVisibilityQuery( siteId, 'new_stats_feedback' );
 
-	const { mutateAsync: dismissNewStatsFeedbackAsync } = useNoticeVisibilityMutation(
-		siteId,
-		'new_stats_feedback'
-	);
 	const { mutateAsync: dismissFeedbackNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
 		'new_stats_feedback'
@@ -61,7 +57,7 @@ const FeedbackNotice = ( { siteId }: StatsNoticeProps ) => {
 		30 * 24 * 3600
 	);
 	const onTakeSurveyClick = () => {
-		dismissNewStatsFeedbackAsync();
+		dismissFeedbackNoticeAsync();
 		// Leave some time for the notice to be dismissed.
 		setTimeout(
 			() =>
