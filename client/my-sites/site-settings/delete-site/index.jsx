@@ -101,7 +101,7 @@ class DeleteSite extends Component {
 			if ( useSitesAsLandingPage ) {
 				page.redirect( '/sites' );
 			} else {
-				page.redirect( '/stats' );
+				page.redirect( '/' );
 			}
 		}
 	}
