@@ -87,12 +87,16 @@ const DiscoverStream = ( props ) => {
 
 	const scrollLeft = () => {
 		if ( scrollRef.current ) {
-			scrollRef.current.scrollLeft -= scrollRef.current.clientWidth * ( 2 / 3 );
+			const finalPositionX =
+				scrollRef.current.scrollLeft - scrollRef.current.clientWidth * ( 2 / 3 );
+			scrollRef.current.scrollTo( { top: 0, left: finalPositionX, behavior: 'smooth' } );
 		}
 	};
 	const scrollRight = () => {
 		if ( scrollRef.current ) {
-			scrollRef.current.scrollLeft += scrollRef.current.clientWidth * ( 2 / 3 );
+			const finalPositionX =
+				scrollRef.current.scrollLeft + scrollRef.current.clientWidth * ( 2 / 3 );
+			scrollRef.current.scrollTo( { top: 0, left: finalPositionX, behavior: 'smooth' } );
 		}
 	};
 
