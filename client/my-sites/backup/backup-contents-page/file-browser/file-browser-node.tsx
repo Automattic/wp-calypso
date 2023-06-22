@@ -2,6 +2,7 @@ import { Button, Icon } from '@wordpress/components';
 import { chevronDown, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { FunctionComponent, useCallback, useState } from 'react';
+import FileInfoCard from './file-info-card';
 import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
 import { FileBrowserItem } from './types';
@@ -23,7 +24,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	isAlternate,
 } ) => {
 	const isRoot = path === '/';
-	const hasChildren = item.hasChildren;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 
@@ -34,17 +34,13 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	} = useBackupContentsQuery( siteId, rewindId, path, fetchContentsOnMount );
 
 	const handleClick = useCallback( () => {
-		if ( ! hasChildren ) {
-			return;
-		}
-
 		if ( ! isOpen ) {
 			setFetchContentsOnMount( true );
 			setIsOpen( true );
 		}
 
 		setIsOpen( ! isOpen );
-	}, [ hasChildren, isOpen ] );
+	}, [ isOpen ] );
 
 	const renderChildren = () => {
 		if ( isInitialLoading ) {
@@ -75,31 +71,41 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const renderExpandIcon = () => {
-		if ( ! hasChildren ) {
+		if ( ! item.hasChildren ) {
 			return null;
 		}
 
 		return <Icon icon={ isOpen ? chevronDown : chevronRight } />;
 	};
 
-	const nodeClassName = classNames( 'file-browser-node', { 'is-alternate': isAlternate } );
+	const nodeItemClassName = classNames( 'file-browser-node__item', {
+		'is-alternate': isAlternate,
+	} );
 	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
 
 	return (
-		<div className={ nodeClassName }>
-			{ isRoot ? null : (
-				<Button
-					icon={ renderExpandIcon }
-					className="file-browser-node__title has-icon"
-					onClick={ handleClick }
-					showTooltip={ isLabelTruncated }
-					label={ item.name }
-				>
-					<FileTypeIcon type={ item.type } /> { label }
-				</Button>
+		<div className="file-browser-node">
+			<div className={ nodeItemClassName }>
+				{ ! isRoot && (
+					<Button
+						icon={ renderExpandIcon }
+						className="file-browser-node__title has-icon"
+						onClick={ handleClick }
+						showTooltip={ isLabelTruncated }
+						label={ item.name }
+					>
+						<FileTypeIcon type={ item.type } /> { label }
+					</Button>
+				) }
+			</div>
+			{ isOpen && (
+				<>
+					<FileInfoCard item={ item } />
+					{ item.hasChildren && (
+						<div className="file-browser-node__contents">{ renderChildren() }</div>
+					) }
+				</>
 			) }
-
-			{ isOpen ? <div className="file-browser-node__contents">{ renderChildren() }</div> : null }
 		</div>
 	);
 };
