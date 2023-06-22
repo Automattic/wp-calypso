@@ -186,6 +186,7 @@ class VideoPressStatsModule extends Component {
 				impressions: numberFormat( item.impressions ),
 				watch_time:
 					item.watch_time > 1 ? numberFormat( item.watch_time, 1 ) : `< ${ numberFormat( 1, 1 ) }`,
+				retention_rate: item.retention_rate,
 			};
 		} );
 
@@ -215,6 +216,7 @@ class VideoPressStatsModule extends Component {
 									<>
 										<span>{ translate( 'Impressions' ) }</span>
 										<span>{ translate( 'Hours watched' ) }</span>
+										<span>{ translate( 'Retention Rate' ) }</span>
 									</>
 								),
 								body: ( item ) => (
@@ -232,6 +234,13 @@ class VideoPressStatsModule extends Component {
 											onKeyUp={ () => showStat( 'watch_time', item ) }
 										>
 											{ item.watch_time }
+										</span>
+										{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
+										<span
+											onClick={ () => showStat( 'retention_rate', item ) }
+											onKeyUp={ () => showStat( 'retention_rate', item ) }
+										>
+											{ 0 === item.value ? 'n/a' : `${ item.retention_rate }%` }
 										</span>
 									</>
 								),
@@ -269,6 +278,9 @@ class VideoPressStatsModule extends Component {
 									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
 										Views
 									</div>
+									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
+										Retention Rate
+									</div>
 								</div>
 								{ completeVideoStats.map( ( row, index ) => (
 									<div
@@ -305,6 +317,16 @@ class VideoPressStatsModule extends Component {
 												{ row.watch_time > 1
 													? numberFormat( row.watch_time, 1 )
 													: `< ${ numberFormat( 1, 1 ) }` }
+											</span>
+										</div>
+										<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+											<span
+												onClick={ () => showStat( 'retention_rate', row ) }
+												onKeyUp={ () => showStat( 'retention_rate', row ) }
+												tabIndex="0"
+												role="button"
+											>
+												{ 0 === row.value ? 'n/a' : `${ row.retention_rate }%` }
 											</span>
 										</div>
 										<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
