@@ -116,12 +116,13 @@ class ReaderPostCard extends Component {
 			currentRoute,
 			post,
 			discoverPost,
-			discoverSite,
 			site,
 			feed,
 			onCommentClick,
+			showPrimaryFollowButton,
 			isSelected,
 			showSiteName,
+			followSource,
 			isDiscoverStream,
 			postKey,
 			isExpanded,
@@ -152,7 +153,7 @@ class ReaderPostCard extends Component {
 			'is-seen': isSeen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
-			'is-tag-post': isReaderTagPage,
+			'is-tag-post': isReaderTagPage || isDiscoverStream,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -174,37 +175,19 @@ class ReaderPostCard extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 		// Set up post byline
-		let postByline;
-
-		if ( isDiscoverStream && discoverPost && discoverSite ) {
-			// create a post like object with some props from the discover post
-			const postForByline = Object.assign( {}, discoverPost || {}, {
-				date: post.date,
-				URL: post.URL,
-				primary_tag: post.primary_tag,
-			} );
-			postByline = (
-				<PostByline
-					post={ postForByline }
-					site={ discoverSite }
-					showSiteName={ true }
-					teams={ teams }
-					showFollow={ ! isDiscover }
-				/>
-			);
-		} else {
-			postByline = (
-				<PostByline
-					post={ post }
-					site={ site }
-					feed={ feed }
-					showSiteName={ showSiteName || isDiscover }
-					showAvatar={ ! compact }
-					teams={ teams }
-					showFollow={ ! isDiscover }
-				/>
-			);
-		}
+		const postByline = (
+			<PostByline
+				post={ post }
+				site={ site }
+				feed={ feed }
+				showSiteName={ showSiteName || isDiscover }
+				showAvatar={ ! compact }
+				teams={ teams }
+				showFollow={ ! isDiscover }
+				showPrimaryFollowButton={ showPrimaryFollowButton }
+				followSource={ followSource }
+			/>
+		);
 
 		// Set up post card
 		let readerPostCard;
@@ -219,7 +202,7 @@ class ReaderPostCard extends Component {
 					onClick={ this.handleCardClick }
 				/>
 			);
-		} else if ( isReaderTagPage ) {
+		} else if ( isReaderTagPage || isDiscoverStream ) {
 			readerPostCard = (
 				<TagPost
 					post={ post }
@@ -279,7 +262,7 @@ class ReaderPostCard extends Component {
 		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
-				{ ! compact && ! isReaderTagPage && postByline }
+				{ ! compact && ! isReaderTagPage && ! isDiscoverStream && postByline }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>

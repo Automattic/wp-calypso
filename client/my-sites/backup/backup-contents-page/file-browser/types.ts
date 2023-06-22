@@ -1,4 +1,4 @@
-export type ApiFileType = 'file' | 'dir' | 'wordpress' | 'table' | 'theme' | 'plugin';
+export type ApiFileType = 'file' | 'dir' | 'wordpress' | 'table' | 'theme' | 'plugin' | 'archive';
 export type FileType =
 	| 'dir'
 	| 'image'
@@ -12,6 +12,7 @@ export type FileType =
 	| 'translations'
 	| 'code'
 	| 'wordpress'
+	| 'archive'
 	| 'other';
 
 export interface FileBrowserItem {
@@ -36,5 +37,6 @@ export interface BackupLsResponseContents {
 		period?: string;
 		sort?: number;
 		manifest_path?: string;
+		label?: string;
 	};
 }

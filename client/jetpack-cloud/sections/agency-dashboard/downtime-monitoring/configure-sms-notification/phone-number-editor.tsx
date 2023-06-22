@@ -15,6 +15,7 @@ import {
 	useValidateVerificationCode,
 	useContactModalTitleAndSubtitle,
 } from '../hooks';
+import SMSItemContent from './sms-item-content';
 import type {
 	StateMonitorSettingsSMS,
 	Site,
@@ -28,6 +29,7 @@ interface Props {
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
 	setAllPhoneItems: ( phoneNumbers: Array< StateMonitorSettingsSMS > ) => void;
 	setVerifiedPhoneNumber: ( item: string ) => void;
+	isRemoveAction?: boolean;
 	sites: Array< Site >;
 }
 
@@ -78,6 +80,7 @@ export default function PhoneNumberEditor( {
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
 	const isVerifyAction = selectedAction === 'verify';
+	const isRemoveAction = selectedAction === 'remove';
 
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyPhoneNumber = useValidateVerificationCode();
@@ -182,7 +185,7 @@ export default function PhoneNumberEditor( {
 
 	// Add phone item to the list once the phone number is verified
 	useEffect( () => {
-		if ( verifyPhoneNumber.isVerified ) {
+		if ( verifyPhoneNumber.isVerified || requestVerificationCode.isVerified ) {
 			handleSetPhoneItems();
 			setVerifiedPhoneNumber( phoneItem.phoneNumberFull );
 		}
@@ -191,6 +194,7 @@ export default function PhoneNumberEditor( {
 		phoneItem.phoneNumberFull,
 		handleSetPhoneItems,
 		setVerifiedPhoneNumber,
+		requestVerificationCode.isVerified,
 	] );
 
 	// Show error message when phone number verification fails
@@ -201,6 +205,13 @@ export default function PhoneNumberEditor( {
 			} );
 		}
 	}, [ translate, verifyPhoneNumber.errorMessage ] );
+
+	// Refetch verified contacts if failed
+	useEffect( () => {
+		verifiedContacts.refetchIfFailed();
+		// Disable linting because we only want to refetch once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	// Set help text when phone number verification fails
 	useEffect( () => {
@@ -219,8 +230,27 @@ export default function PhoneNumberEditor( {
 		handleSetPhoneItems( false );
 	}
 
+	// Remove phone item when user confirms to remove the phone number
+	const handleRemove = () => {
+		//TODO: add tracks event
+		const phoneItems = [ ...allPhoneItems ];
+		const phoneItemIndex = phoneItems.findIndex(
+			( item ) => item.phoneNumberFull === phoneItem.phoneNumberFull
+		);
+		if ( phoneItemIndex > -1 ) {
+			phoneItems.splice( phoneItemIndex, 1 );
+		}
+		setAllPhoneItems( phoneItems );
+		toggleModal();
+	};
+
 	const onSave = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
+
+		if ( isRemoveAction ) {
+			return handleRemove();
+		}
+
 		setValidationError( undefined );
 		if ( validationStatus.isValid ) {
 			if (
@@ -309,80 +339,88 @@ export default function PhoneNumberEditor( {
 			<div className="notification-settings__sub-title">{ subtitle }</div>
 
 			<form className="configure-contact__form" onSubmit={ onSave }>
-				<>
-					<FormFieldset>
-						<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
-						<FormTextInput
-							id="name"
-							name="name"
-							value={ phoneItem.name }
-							onChange={ handleChange( 'name' ) }
-							aria-describedby={ ! isVerifyAction ? 'name-help-text' : undefined }
-							disabled={ showCodeVerification }
-						/>
-						{ ! isVerifyAction && (
-							<div className="configure-contact__help-text" id="name-help-text">
-								{ translate( 'Give this number a name for your personal reference.' ) }
-							</div>
-						) }
-					</FormFieldset>
-					<div className="configure-contact__phone-input-container">
-						{
-							// Fetch countries list only if not available
-							noCountryList && <QuerySmsCountries />
-						}
-						<FormPhoneInput
-							isDisabled={ noCountryList || showCodeVerification }
-							countriesList={ countriesList }
-							initialCountryCode={ phoneItem.countryCode }
-							initialPhoneNumber={ phoneItem.phoneNumber }
-							onChange={ onChangePhoneInput }
-							className="configure-contact__phone-input"
-						/>
-						{ validationError?.phone && (
-							<div className="notification-settings__footer-validation-error" role="alert">
-								{ validationError?.phone }
-							</div>
-						) }
-						{ ! isVerifyAction && (
-							<div className="configure-contact__help-text" id="phone-help-text">
-								{ translate( 'We’ll send a code to verify your phone number.' ) }
-							</div>
-						) }
-					</div>
-					{ showCodeVerification && (
+				{ isRemoveAction ? (
+					selectedPhone && (
+						<div className="margin-top-16">
+							<SMSItemContent isRemoveAction item={ selectedPhone } />
+						</div>
+					)
+				) : (
+					<>
 						<FormFieldset>
-							<FormLabel htmlFor="code">
-								{ translate( 'Please enter the code you received via SMS' ) }
-							</FormLabel>
+							<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
 							<FormTextInput
-								id="code"
-								name="code"
-								value={ phoneItem.verificationCode || '' }
-								onChange={ handleChange( 'verificationCode' ) }
+								id="name"
+								name="name"
+								value={ phoneItem.name }
+								onChange={ handleChange( 'name' ) }
+								aria-describedby={ ! isVerifyAction ? 'name-help-text' : undefined }
+								disabled={ showCodeVerification }
 							/>
-							{ validationError?.verificationCode && (
-								<div className="notification-settings__footer-validation-error" role="alert">
-									{ validationError.verificationCode }
+							{ ! isVerifyAction && (
+								<div className="configure-contact__help-text" id="name-help-text">
+									{ translate( 'Give this number a name for your personal reference.' ) }
 								</div>
 							) }
-							<div className="configure-contact__help-text" id="code-help-text">
-								{ helpText ??
-									translate(
-										'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
-										translationArgs
-									) }
-							</div>
 						</FormFieldset>
-					) }
-				</>
+						<div className="configure-contact__phone-input-container">
+							{
+								// Fetch countries list only if not available
+								noCountryList && <QuerySmsCountries />
+							}
+							<FormPhoneInput
+								isDisabled={ noCountryList || showCodeVerification }
+								countriesList={ countriesList }
+								initialCountryCode={ phoneItem.countryCode }
+								initialPhoneNumber={ phoneItem.phoneNumber }
+								onChange={ onChangePhoneInput }
+								className="configure-contact__phone-input"
+							/>
+							{ validationError?.phone && (
+								<div className="notification-settings__footer-validation-error" role="alert">
+									{ validationError?.phone }
+								</div>
+							) }
+							{ ! isVerifyAction && (
+								<div className="configure-contact__help-text" id="phone-help-text">
+									{ translate( 'We’ll send a code to verify your phone number.' ) }
+								</div>
+							) }
+						</div>
+						{ showCodeVerification && (
+							<FormFieldset>
+								<FormLabel htmlFor="code">
+									{ translate( 'Please enter the code you received via SMS' ) }
+								</FormLabel>
+								<FormTextInput
+									id="code"
+									name="code"
+									value={ phoneItem.verificationCode || '' }
+									onChange={ handleChange( 'verificationCode' ) }
+								/>
+								{ validationError?.verificationCode && (
+									<div className="notification-settings__footer-validation-error" role="alert">
+										{ validationError.verificationCode }
+									</div>
+								) }
+								<div className="configure-contact__help-text" id="code-help-text">
+									{ helpText ??
+										translate(
+											'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
+											translationArgs
+										) }
+								</div>
+							</FormFieldset>
+						) }
+					</>
+				) }
 				<div className="notification-settings__footer">
 					<div className="notification-settings__footer-buttons">
 						<Button onClick={ showCodeVerification ? onSaveLater : toggleModal }>
 							{ showCodeVerification ? translate( 'Later' ) : translate( 'Back' ) }
 						</Button>
 						<Button disabled={ isDisabled } type="submit" primary>
-							{ verificationButtonTitle }
+							{ isRemoveAction ? translate( 'Remove' ) : verificationButtonTitle }
 						</Button>
 					</div>
 				</div>

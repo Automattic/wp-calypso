@@ -13,6 +13,7 @@ import {
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_FOLLOW_COMPLETE,
+	READER_FOLLOWS_MARK_AS_STALE,
 } from 'calypso/state/reader/action-types';
 
 import 'calypso/state/data-layer/wpcom/read/following/mine';
@@ -191,5 +192,11 @@ export function unsubscribeToNewPostNotifications( blogId ) {
 		payload: {
 			blogId,
 		},
+	};
+}
+
+export function markFollowsAsStale() {
+	return {
+		type: READER_FOLLOWS_MARK_AS_STALE,
 	};
 }

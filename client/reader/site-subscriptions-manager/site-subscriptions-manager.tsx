@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -7,19 +8,36 @@ import {
 	SiteSubscriptionsManagerProvider,
 } from 'calypso/landing/subscriptions/components/site-subscriptions-manager';
 import {
-	SubscriptionManagerContextProvider,
 	ReaderPortal,
+	SubscriptionManagerContextProvider,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { RecommendedSites } from 'calypso/reader/recommended-sites';
+import { useDispatch } from 'calypso/state';
+import { markFollowsAsStale } from 'calypso/state/reader/follows/actions';
 import type { SubscriptionManagerContext } from 'calypso/landing/subscriptions/components/subscription-manager-context';
-
 import './style.scss';
+
+const useMarkFollowsAsStaleOnUnmount = () => {
+	const dispatch = useDispatch();
+	useEffect( () => {
+		return () => {
+			dispatch( markFollowsAsStale() );
+		};
+	}, [] );
+};
 
 const SiteSubscriptionsManager = () => {
 	const translate = useTranslate();
 	const context: SubscriptionManagerContext = {
 		portal: ReaderPortal,
 	};
+
+	// Mark follows as stale on unmount to ensure that the reader
+	// redux store is in a consistent state when the user navigates.
+	// This is necessary because the subscription manager does not
+	// sync its subscriptions state with the reader redux store.
+	useMarkFollowsAsStaleOnUnmount();
+
 	return (
 		<SubscriptionManagerContextProvider { ...context }>
 			<Main className="site-subscriptions-manager">
