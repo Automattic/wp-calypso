@@ -1,6 +1,6 @@
 import useUsersQuery from 'calypso/data/users/use-users-query';
 
-interface User {
+export interface User {
 	ID: number;
 	login: string;
 	email: string;
