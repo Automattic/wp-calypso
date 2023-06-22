@@ -132,14 +132,14 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				name = "Post Successful Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The \$buildName passed successfully!\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName passed successfully!\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 
 			exec {
 				name = "Post Failure Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The \$buildName failed! Could you have a look? @kitkat-team @calypso-platform-team!\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look? @kitkat-team @calypso-platform-team!\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 		},
 		buildFeatures = {
