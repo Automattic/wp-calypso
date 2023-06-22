@@ -51,8 +51,8 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 
 	const navigationItems: Item[] = [
 		{
-			label: 'Subscribers',
-			href: `/subscribers`,
+			label: translate( 'Subscribers' ),
+			href: `/subscribers/${ selectedSiteSlug }`,
 			helpBubble: (
 				<span>
 					{ translate(
