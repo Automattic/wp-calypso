@@ -164,3 +164,26 @@
 		display: none;
 	}
 }
+
+// Override styles for newsletter flow
+.newsletter.plans {
+	.step-container {
+		.step-wrapper__header {
+			.formatted-header {
+				h1.formatted-header__title {
+					font-size: rem(32px); //typography-exception
+					line-height: rem(40px); //typography-exception
+
+					@include break-medium {
+						font-size: rem(44px); //typography-exception
+						line-height: rem(52px); //typography-exception
+					}
+				}
+				.formatted-header__subtitle {
+					font-size: rem(16px);
+					line-height: rem(24px);
+				}
+			}
+		}
+	}
+}
