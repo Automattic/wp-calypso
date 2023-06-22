@@ -26,7 +26,7 @@ export const useToggleEdgeCacheMutation = (
 				path: `/sites/${ siteId }/hosting/edge-cache/active`,
 				apiNamespace: 'wpcom/v2',
 				body: {
-					active: active ? 1 : 0,
+					active,
 				},
 			} );
 		},
