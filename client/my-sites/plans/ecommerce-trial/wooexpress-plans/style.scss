@@ -41,7 +41,7 @@
 	}
 
 	.plan-price .plan-price__currency-symbol {
-		font-size: 1.5rem;
+		font-size: $woo-font-title-medium;
 	}
 
 	.plan-features-2023-grid__plan-comparison-grid-container .plan-comparison-grid .wp-brand-font {
@@ -99,6 +99,11 @@
 				border-color: #0675c4;
 				color: #0675c4;
 				width: 240px;
+
+				&:hover {
+					border-color: #044b7a;
+					color: #044b7a;
+				}
 
 				@media ( max-width: $break-small ) {
 					width: 100%;
