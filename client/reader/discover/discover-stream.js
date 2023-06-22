@@ -79,6 +79,7 @@ const DiscoverStream = ( props ) => {
 			const directionMultiplier = shouldScrollLeft ? -1 : 1;
 			const finalPositionX =
 				scrollRef.current.scrollLeft +
+				// 2/3 reflects the fraction of visible width that will scroll.
 				directionMultiplier * scrollRef.current.clientWidth * ( 2 / 3 );
 			scrollRef.current.scrollTo( { top: 0, left: finalPositionX, behavior: 'smooth' } );
 		}
