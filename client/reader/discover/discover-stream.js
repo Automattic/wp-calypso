@@ -3,7 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { debounce } from 'lodash';
+import { throttle } from 'lodash';
 import { useState, useRef, useEffect } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import wpcom from 'calypso/lib/wp';
@@ -49,17 +49,13 @@ const DiscoverStream = ( props ) => {
 
 	// To keep track of the navigation tabs scroll position and keep it from appearing to reset
 	// after child render.
-	const handleScroll = debounce( () => {
+	const handleScroll = throttle( () => {
 		// Save scroll position for later reference.
 		scrollPosition.current = scrollRef.current?.scrollLeft;
 
-		// Determine and set visibility classes on scroll buttons.
-		const leftScrollButton = document.querySelector(
-			`.${ DEFAULT_CLASS }__tabs-scroll-left-button`
-		);
-		const rightScrollButton = document.querySelector(
-			`.${ DEFAULT_CLASS }__tabs-scroll-right-button`
-		);
+		// Determine and set visibility classes on scroll button wrappers.
+		const leftScrollButton = document.querySelector( `.${ DEFAULT_CLASS }__left-button-wrapper` );
+		const rightScrollButton = document.querySelector( `.${ DEFAULT_CLASS }__right-button-wrapper` );
 		shouldHideLeftScrollButton()
 			? hideElement( leftScrollButton )
 			: showElement( leftScrollButton );
@@ -107,27 +103,35 @@ const DiscoverStream = ( props ) => {
 
 	const DiscoverNavigation = () => (
 		<div className={ DEFAULT_CLASS }>
-			<Button
-				className={ classNames( `${ DEFAULT_CLASS }__tabs-scroll-left-button`, {
+			<div
+				className={ classNames( `${ DEFAULT_CLASS }__left-button-wrapper`, {
 					'display-none': shouldHideLeftScrollButton(),
 				} ) }
-				onClick={ () => bumpScrollX( true ) }
-				tabIndex={ -1 }
 				aria-hidden={ true }
 			>
-				<Gridicon icon="chevron-left" />
-			</Button>
+				<Button
+					className={ `${ DEFAULT_CLASS }__left-button` }
+					onClick={ () => bumpScrollX( true ) }
+					tabIndex={ -1 }
+				>
+					<Gridicon icon="chevron-left" />
+				</Button>
+			</div>
 
-			<Button
-				className={ classNames( `${ DEFAULT_CLASS }__tabs-scroll-right-button`, {
+			<div
+				className={ classNames( `${ DEFAULT_CLASS }__right-button-wrapper`, {
 					'display-none': shouldHideRightScrollButton(),
 				} ) }
-				onClick={ () => bumpScrollX() }
-				tabIndex={ -1 }
 				aria-hidden={ true }
 			>
-				<Gridicon icon="chevron-right" />
-			</Button>
+				<Button
+					className={ `${ DEFAULT_CLASS }__right-button` }
+					onClick={ () => bumpScrollX() }
+					tabIndex={ -1 }
+				>
+					<Gridicon icon="chevron-right" />
+				</Button>
+			</div>
 
 			<div className={ `${ DEFAULT_CLASS }__tabs` } ref={ scrollRef } onScroll={ handleScroll }>
 				<SegmentedControl primary className={ `${ DEFAULT_CLASS }__tab-control` }>

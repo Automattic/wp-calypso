@@ -1,24 +1,34 @@
 .discover-stream-navigation {
 	position: relative;
 
-	.discover-stream-navigation__tabs-scroll-left-button,
-	.discover-stream-navigation__tabs-scroll-right-button {
-		border-radius: 50%;
-		padding: 6px 10px;
+	.discover-stream-navigation__left-button-wrapper,
+	.discover-stream-navigation__right-button-wrapper {
 		position: absolute;
-		top: 0;
 		z-index: 1;
+		pointer-events: none;
+		height: 100%;
 
 		&.display-none {
 			display: none;
 		}
+
+		.discover-stream-navigation__left-button,
+		.discover-stream-navigation__right-button {
+			border-radius: 50%;
+			padding: 6px 10px;
+			pointer-events: auto;
+		}
 	}
 
-	.discover-stream-navigation__tabs-scroll-right-button {
+	.discover-stream-navigation__right-button-wrapper {
 		right: 0;
+		padding-left: 30px;
+		background: linear-gradient(270deg, rgba(255, 255, 255, 1) 30%, rgba(255, 255, 255, 0.7) 40%, rgba(255, 255, 255, 0) 100%);
 	}
-	.discover-stream-navigation__tabs-scroll-left-button {
+	.discover-stream-navigation__left-button-wrapper {
 		left: 0;
+		padding-right: 30px;
+		background: linear-gradient(90deg, rgba(255, 255, 255, 1) 30%, rgba(255, 255, 255, 0.7) 40%, rgba(255, 255, 255, 0) 100%);
 	}
 
 	.discover-stream-navigation__tabs {
@@ -33,11 +43,11 @@
 			border-radius: 4px;
 			margin: 0 5px;
 		}
-
 	}
 }
 
-.accessible-focus .discover-stream-navigation .discover-stream-navigation__tabs-scroll-left-button,
-.accessible-focus .discover-stream-navigation .discover-stream-navigation__tabs-scroll-right-button {
+// Hide the buttons and not the wrappers as we still want the opacity/fade effect from wrappers.
+.accessible-focus .discover-stream-navigation .discover-stream-navigation__left-button,
+.accessible-focus .discover-stream-navigation .discover-stream-navigation__right-button {
 	display: none;
 }
