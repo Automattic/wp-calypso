@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	isMonthly,
+	isWooExpressPlan,
 	isWpComProPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
@@ -80,7 +81,7 @@ export default function getPlanFeatures(
 		].filter( isValueTruthy );
 	}
 
-	if ( isWpComEcommercePlan( productSlug ) ) {
+	if ( isWpComEcommercePlan( productSlug ) || isWooExpressPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
 			isMonthlyPlan && emailSupport,
