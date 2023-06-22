@@ -1,8 +1,8 @@
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
 import { UnsubscribeIcon } from '../icons';
-import { SettingsPopover } from '../settings-popover';
 
 type CommentSettingsProps = {
 	onUnsubscribe: () => void;
@@ -12,16 +12,16 @@ type CommentSettingsProps = {
 const CommentSettings = ( { onUnsubscribe, unsubscribing }: CommentSettingsProps ) => {
 	const translate = useTranslate();
 	return (
-		<SettingsPopover>
+		<SubscriptionsEllipsisMenu>
 			<Button
 				className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
 				disabled={ unsubscribing }
-				icon={ <UnsubscribeIcon className="settings-popover__item-icon" /> }
+				icon={ <UnsubscribeIcon className="subscriptions-ellipsis-menu__item-icon" /> }
 				onClick={ onUnsubscribe }
 			>
 				{ translate( 'Unsubscribe comments' ) }
 			</Button>
-		</SettingsPopover>
+		</SubscriptionsEllipsisMenu>
 	);
 };
 

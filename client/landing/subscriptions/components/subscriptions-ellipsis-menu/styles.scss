@@ -1,6 +1,6 @@
 @import "@automattic/color-studio/dist/color-variables";
 
-.settings-popover {
+.subscriptions-ellipsis-menu__popover {
 	outline: none;
 	min-width: 305px;
 
@@ -14,7 +14,7 @@
 	}
 
 	.delivery-frequency-input__control,
-	.settings-popover__item-button {
+	.subscriptions-ellipsis-menu__item-button {
 		&.is-loading {
 			cursor: default;
 			opacity: 0.5;
@@ -22,7 +22,7 @@
 		}
 	}
 
-	.settings-popover__item-button {
+	.subscriptions-ellipsis-menu__item-button {
 		font-size: $font-body-small;
 		line-height: $font-title-small;
 		display: flex;
@@ -35,13 +35,13 @@
 		&:focus {
 			color: $studio-blue-50;
 
-			.settings-popover__item-icon {
+			.subscriptions-ellipsis-menu__item-icon {
 				fill: $studio-blue-50;
 			}
 		}
 	}
 
-	.settings-popover__item-icon {
+	.subscriptions-ellipsis-menu__item-icon {
 		fill: $studio-gray-50;
 	}
 
@@ -69,18 +69,28 @@
 	}
 }
 
-.settings-popover__container {
+$rotateOnOpenDeg: 90deg;
+
+.subscriptions-ellipsis-menu {
 	height: 24px;
-}
 
-.settings-popover__toggle {
-	cursor: pointer;
+	&__toggle {
+		cursor: pointer;
 
-	.gridicons-ellipsis {
-		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	}
 
-	&.is-popover-visible .gridicons-ellipsis {
-		transform: rotate(90deg);
+		.gridicons-ellipsis {
+			transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		}
+
+		&.has-vertical-toggle:not(.is-popover-visible) .gridicons-ellipsis {
+			transform: rotate(90deg);
+		}
+		&.has-vertical-toggle.is-popover-visible .gridicons-ellipsis {
+			transform: rotate(180deg);
+		}
+
+		&:not(.has-vertical-toggle).is-popover-visible .gridicons-ellipsis {
+			transform: rotate(90deg);
+		}
 	}
 }
