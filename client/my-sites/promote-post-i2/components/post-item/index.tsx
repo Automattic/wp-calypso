@@ -114,18 +114,18 @@ export default function PostItem( { post }: Props ) {
 						{ sprintf(
 							// translators: %s is number of post's views
 							_n( '%s view', '%s views', viewCount ),
-							formatNumber( viewCount )
+							formatNumber( viewCount, true )
 						) }
 						{ mobileStatsSeparator }
 						{
 							// translators: %s is number of post's likes
-							sprintf( _n( '%s like', '%s likes', likeCount ), formatNumber( likeCount ) )
+							sprintf( _n( '%s like', '%s likes', likeCount ), formatNumber( likeCount, true ) )
 						}
 						{ mobileStatsSeparator }
 						{ sprintf(
 							// translators: %s is number of post's comments
 							_n( '%s comment', '%s comments', commentCount ),
-							formatNumber( commentCount )
+							formatNumber( commentCount, true )
 						) }
 					</div>
 					<div className="post-item__actions-mobile">
