@@ -30,6 +30,7 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -382,9 +383,13 @@ class StatsSite extends Component {
 			<EmptyContent
 				illustration={ illustration404 }
 				title={ translate( 'Looking for stats?' ) }
-				line={ translate(
-					'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
-				) }
+				line={
+					<p>
+						{ translate(
+							'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
+						) }
+					</p>
+				}
 				action={ translate( 'Enable Jetpack Stats' ) }
 				actionCallback={ this.enableStatsModule }
 			/>
@@ -392,11 +397,38 @@ class StatsSite extends Component {
 	}
 
 	componentDidMount() {
+		// TODO: Migrate to a query component pattern (i.e. <QueryStatsModuleSettings siteId={siteId} />).
 		this.props.requestModuleSettings( this.props.siteId );
 	}
 
+	renderInsufficientPermissionsPage() {
+		return (
+			<EmptyContent
+				illustration={ illustration404 }
+				title={ translate( 'Looking for stats?' ) }
+				line={
+					<p>
+						<div>
+							{ translate( "We're sorry, but you do not have permission to access this page." ) }
+						</div>
+						<div>{ translate( "Please contact your site's administrator for access." ) }</div>
+					</p>
+				}
+			/>
+		);
+	}
+
+	renderBody() {
+		if ( ! this.props.canUserViewStats ) {
+			return this.renderInsufficientPermissionsPage();
+		} else if ( this.props.showEnableStatsModule ) {
+			return this.renderEnableStatsModule();
+		}
+		return this.renderStats();
+	}
+
 	render() {
-		const { isJetpack, siteId, showEnableStatsModule, isOdysseyStats } = this.props;
+		const { isJetpack, siteId, isOdysseyStats } = this.props;
 		const { period } = this.props.period;
 
 		// Track the last viewed tab.
@@ -419,7 +451,7 @@ class StatsSite extends Component {
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
-				{ showEnableStatsModule ? this.renderEnableStatsModule() : this.renderStats() }
+				{ this.renderBody() }
 			</Main>
 		);
 	}
@@ -438,16 +470,27 @@ const enableJetpackStatsModule = ( siteId, path ) =>
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-		// Odyssey: if Stats is not enabled, the page will not be rendered.
+
+		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
 			! isOdysseyStats &&
 			siteId &&
 			isJetpack &&
-			isJetpackModuleActive( state, siteId, 'stats' ) === false;
+			isJetpackModuleActive( state, siteId, 'stats' ) === false &&
+			canUserManageOptions;
+
+		// Odyssey Stats: Access control is done in PHP, so skip capability check here.
+		// TODO: Fix incorrect view_stats permission on Calypso.
+		//       If the user's role is missing from the site's stats dashboard access allowlist (fetched via getJetpackSettings.role),
+		//       then it should be reflected in the user's view_stats capability.
+		const canUserViewStats =
+			isOdysseyStats || canUserManageOptions || canCurrentUser( state, siteId, 'view_stats' );
 
 		return {
+			canUserViewStats,
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,

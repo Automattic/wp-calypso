@@ -42,7 +42,7 @@
 			}
 		}
 
-		&__close-button {
+		&__dismiss-button {
 			color: $studio-gray-60;
 			padding: 0;
 			min-height: unset;
@@ -88,6 +88,14 @@
 			border-radius: 4px;
 			padding-left: 24px;
 			padding-right: 24px;
+		}
+
+		&__dismiss-button.is-placeholder,
+		&__site-title.is-placeholder,
+		&__site-url.is-placeholder,
+		&__site-description.is-placeholder,
+		&__subscribe-button.is-placeholder {
+			@include placeholder();
 		}
 	}
 

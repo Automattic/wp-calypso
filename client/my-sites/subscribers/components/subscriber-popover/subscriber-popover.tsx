@@ -6,7 +6,7 @@ import { useCallback, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
-import './styles.scss';
+import '../shared/popover-style.scss';
 
 type SubscriberPopoverProps = {
 	isCancelPaidSubscriptionButtonVisible?: boolean;

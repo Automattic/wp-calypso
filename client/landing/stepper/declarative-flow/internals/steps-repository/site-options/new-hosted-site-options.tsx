@@ -1,5 +1,5 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, Spinner } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelect } from '@wordpress/data';
@@ -45,7 +45,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 
 	const [ shouldOverrideSiteTitle, setShouldOverrideSiteTitle ] = useState( false );
 
-	const { refetch } = useGetSiteSuggestionsQuery( {
+	const { refetch, isFetching } = useGetSiteSuggestionsQuery( {
 		enabled: shouldOverrideSiteTitle,
 		refetchOnWindowFocus: false,
 		onSuccess: ( response ) => {
@@ -63,7 +63,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 
 	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
 	const isFormSubmitDisabled = isSiteTitleEmpty;
-	const hasChangedInput = useRef( { geoAffinity: false } );
+	const hasChangedInput = useRef( { title: false, geoAffinity: false } );
 	const isSmallScreen = useMobileBreakpoint();
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
@@ -87,6 +87,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		setFormTouched( true );
 
 		if ( event.currentTarget.name === 'siteTitle' ) {
+			hasChangedInput.current.title = true;
 			return setSiteTitle( event.currentTarget.value );
 		}
 	};
@@ -130,11 +131,21 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 							} else {
 								setShouldOverrideSiteTitle( true );
 							}
+
+							recordTracksEvent( 'calypso_signup_site_options_fetch_suggestion_click', {
+								source: 'site_title',
+								has_changed_title: hasChangedInput.current.title,
+							} );
 						} }
 						aria-label={ translate( 'Generate a random site name' ) }
 					>
-						<Icon icon={ shuffle } fill="currentColor" />
-						{ ! isSmallScreen && translate( 'Generate' ) }
+						{ ! isFetching && (
+							<>
+								<Icon icon={ shuffle } fill="currentColor" />
+								{ ! isSmallScreen && translate( 'Generate' ) }
+							</>
+						) }
+						{ isFetching && <Spinner size={ 16 } /> }
 					</Button>
 				</div>
 				{ siteTitleError ? (

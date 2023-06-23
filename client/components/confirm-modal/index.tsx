@@ -1,13 +1,13 @@
 import { Button } from '@automattic/components';
 import { Modal } from '@wordpress/components';
 import './styles.scss';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 
 type ConfirmModalProps = {
 	isVisible: boolean;
-	cancelButtonLabel?: string | React.ReactChild;
-	confirmButtonLabel?: string | React.ReactChild;
-	text?: string | React.ReactChild;
+	cancelButtonLabel?: TranslateResult;
+	confirmButtonLabel?: TranslateResult;
+	text?: TranslateResult;
 	title: string;
 	onCancel: () => void;
 	onConfirm: () => void;

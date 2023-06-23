@@ -1,42 +1,62 @@
+import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import page from 'page';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
 import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
-import Pagination from 'calypso/components/pagination';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { EmptyListView } from './components/empty-list-view';
-import { GrowYourAudience } from './components/grow-your-audience';
-import { SubscriberList } from './components/subscriber-list/subscriber-list';
+import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
+import { SubscribersListManagerProvider } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
+import { successNotice } from 'calypso/state/notices/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { AddSubscribersModal } from './components/add-subscribers-modal';
+import { SubscribersHeaderPopover } from './components/subscribers-header-popover';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
-import { usePagination, useUnsubscribeModal } from './hooks';
-import { useSubscribersQuery } from './queries';
-import './styles.scss';
+import { useUnsubscribeModal } from './hooks';
+import { Subscriber } from './types';
+import './style.scss';
 
 type SubscribersProps = {
-	page: number;
+	pageNumber: number;
 	pageChanged: ( page: number ) => void;
 };
 
-const DEFAULT_PER_PAGE = 10;
-
-export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
+const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const initialState = { data: { total: 0, subscribers: [], per_page: DEFAULT_PER_PAGE } };
-	const result = useSubscribersQuery( selectedSiteId, page, DEFAULT_PER_PAGE );
-	const {
-		data: { total, subscribers = [], per_page },
-	} = result && result.data ? result : initialState;
-	const { isFetching } = result;
-	const { pageClickCallback } = usePagination( page, pageChanged, isFetching );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
-		useUnsubscribeModal( selectedSiteId, page );
+		useUnsubscribeModal( selectedSiteId, pageNumber );
+	const onClickView = ( subscriber: Subscriber ) => {
+		if ( subscriber.user_id ) {
+			page.show( `/subscribers/${ selectedSiteSlug }/${ subscriber.user_id }` );
+		} else {
+			page.show( `/subscribers/external/${ selectedSiteSlug }/${ subscriber.subscription_id }` );
+		}
+	};
+	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
+	const dispatch = useDispatch();
+
+	const addSubscribersCallback = () => {
+		setShowAddSubscribersModal( false );
+		dispatch(
+			successNotice(
+				translate(
+					"Your subscriber list is being processed. We'll send you an email when it's finished importing."
+				),
+				{
+					duration: 5000,
+				}
+			)
+		);
+	};
 
 	const navigationItems: Item[] = [
 		{
-			label: 'Subscribers',
-			href: `/subscribers`,
+			label: translate( 'Subscribers' ),
+			href: `/subscribers/${ selectedSiteSlug }`,
 			helpBubble: (
 				<span>
 					{ translate(
@@ -60,37 +80,44 @@ export const Subscribers = ( { page, pageChanged }: SubscribersProps ) => {
 	return (
 		<Main wideLayout className="subscribers">
 			<DocumentHead title={ translate( 'Subscribers' ) } />
-			<FixedNavigationHeader navigationItems={ navigationItems }></FixedNavigationHeader>
+			<FixedNavigationHeader navigationItems={ navigationItems }>
+				<Button
+					className="add-subscribers-button"
+					primary
+					onClick={ () => setShowAddSubscribersModal( true ) }
+				>
+					<Gridicon icon="plus" size={ 24 } />
+					{ translate( 'Add subscribers' ) }
+				</Button>
+				<SubscribersHeaderPopover siteId={ selectedSiteId } />
+			</FixedNavigationHeader>
 
-			<section className="subscribers__section">
-				{ total ? (
-					<>
-						<div className="subscribers__header-count">
-							<span className="subscribers__title">{ translate( 'Total' ) }</span>{ ' ' }
-							<span className="subscribers__subscriber-count">{ total }</span>
-						</div>
-						<SubscriberList subscribers={ subscribers } onUnsubscribe={ onClickUnsubscribe } />
-					</>
-				) : (
-					<EmptyListView />
-				) }
-
-				<Pagination
-					className="subscribers__pagination"
-					page={ page }
-					perPage={ per_page }
-					total={ total }
-					pageClick={ pageClickCallback }
+			<SubscribersListManagerProvider
+				siteId={ selectedSiteId }
+				page={ pageNumber }
+				pageChanged={ pageChanged }
+			>
+				<SubscriberListContainer
+					onClickView={ onClickView }
+					onClickUnsubscribe={ onClickUnsubscribe }
 				/>
-			</section>
-
-			{ !! total && <GrowYourAudience /> }
+			</SubscribersListManagerProvider>
 
 			<UnsubscribeModal
 				subscriber={ currentSubscriber }
 				onCancel={ resetSubscriber }
 				onConfirm={ onConfirmModal }
 			/>
+			{ selectedSiteId && (
+				<AddSubscribersModal
+					siteId={ selectedSiteId }
+					showModal={ showAddSubscribersModal }
+					onClose={ () => setShowAddSubscribersModal( false ) }
+					onAddFinished={ () => addSubscribersCallback() }
+				/>
+			) }
 		</Main>
 	);
 };
+
+export default SubscribersPage;

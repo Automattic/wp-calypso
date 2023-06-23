@@ -71,7 +71,7 @@ export const FreeTrialPriceInformation = ( {
 
 	const translateArguments = {
 		args: {
-			firstRenewalPrice: getFirstRenewalPrice( product, currencyCode ?? '' ),
+			firstRenewalPrice: getFirstRenewalPrice( product, currencyCode ?? '' ) as string,
 			standardPrice: formatCurrency( product.cost ?? 0, currencyCode ?? '', { stripZeros: true } ),
 		},
 		comment:

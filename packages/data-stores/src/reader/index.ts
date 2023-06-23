@@ -1,4 +1,4 @@
-import { useSubscriberEmailAddress, useIsLoggedIn } from './hooks';
+import { useSubscriberEmailAddress, useIsLoggedIn, useCacheKey } from './hooks';
 import {
 	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
@@ -45,6 +45,7 @@ export const SubscriptionManager = {
 	useSiteEmailMeNewCommentsMutation,
 	useIsLoggedIn,
 	useSiteSubscriptionDetailsQuery,
+	useCacheKey,
 };
 
 export {

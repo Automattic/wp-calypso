@@ -1,7 +1,7 @@
 import { Card, Button, Gridicon } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useState, useRef, ReactChild } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import addEmailImage from 'calypso/assets/images/domains/add-email.svg';
 import createSiteImage from 'calypso/assets/images/domains/create-site.svg';
@@ -133,10 +133,10 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ) => {
 	}: {
 		actionUrl: string;
 		imageUrl: string;
-		title: ReactChild;
-		subtitle: ReactChild;
+		title: TranslateResult;
+		subtitle: TranslateResult;
 		ref: React.MutableRefObject< null >;
-		buttonLabel: ReactChild;
+		buttonLabel: string;
 		cardName: string;
 		cardNoticeType: UpsellCardNoticeType;
 		eventTrackViewName: string;

@@ -21,7 +21,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 type UpsellProps = {
-	children: React.ReactChild;
+	children?: React.ReactNode;
 	image: string;
 	title: TranslateResult;
 	acceptButtonText: TranslateResult;
@@ -277,7 +277,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							'But we’d love to see you stick around to build on what you started. ' +
 							'How about a free month of your %(currentPlan)s plan subscription to continue building your site?',
 						{
-							args: { planName: getPlan( purchase.productSlug )?.getTitle() },
+							args: { planName: getPlan( purchase.productSlug )?.getTitle() ?? '' },
 						}
 					) }
 				</Upsell>

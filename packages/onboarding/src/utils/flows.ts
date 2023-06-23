@@ -143,6 +143,10 @@ export const isSiteSetupFlow = ( flowName: string | null ) => {
 	return !! flowName && SITE_SETUP_FLOW === flowName;
 };
 
+export const isSenseiFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && SENSEI_FLOW === flowName );
+};
+
 export const ecommerceFlowRecurTypes = {
 	YEARLY: 'yearly',
 	MONTHLY: 'monthly',

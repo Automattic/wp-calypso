@@ -87,7 +87,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const emailControlPlaceholder = [
 		translate( 'bestie@email.com' ),
 		translate( 'chrisfromwork@email.com' ),
-		translate( 'mom@email.com' ),
+		translate( 'family@email.com' ),
 	];
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );

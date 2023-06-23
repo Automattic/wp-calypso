@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
-import { Modal } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState, useContext, useEffect, ReactChild, useMemo } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useCallback, useState, useContext, useEffect, useMemo } from 'react';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -9,12 +8,15 @@ import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useSelector } from 'calypso/state';
 import getCountries from 'calypso/state/selectors/get-countries';
+import DashboardModalForm from '../../dashboard-modal-form';
+import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
 	useRequestVerificationCode,
 	useValidateVerificationCode,
 	useContactModalTitleAndSubtitle,
 } from '../hooks';
+import SMSItemContent from './sms-item-content';
 import type {
 	StateMonitorSettingsSMS,
 	Site,
@@ -28,6 +30,7 @@ interface Props {
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
 	setAllPhoneItems: ( phoneNumbers: Array< StateMonitorSettingsSMS > ) => void;
 	setVerifiedPhoneNumber: ( item: string ) => void;
+	isRemoveAction?: boolean;
 	sites: Array< Site >;
 }
 
@@ -54,7 +57,7 @@ export default function PhoneNumberEditor( {
 
 	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ?? [] );
 
-	const [ helpText, setHelpText ] = useState< ReactChild | undefined >( undefined );
+	const [ helpText, setHelpText ] = useState< TranslateResult | undefined >( undefined );
 	const [ showCodeVerification, setShowCodeVerification ] = useState< boolean >( false );
 	const [ validationStatus, setValidationStatus ] = useState< {
 		isValid: boolean;
@@ -78,6 +81,7 @@ export default function PhoneNumberEditor( {
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
 	const isVerifyAction = selectedAction === 'verify';
+	const isRemoveAction = selectedAction === 'remove';
 
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyPhoneNumber = useValidateVerificationCode();
@@ -182,7 +186,7 @@ export default function PhoneNumberEditor( {
 
 	// Add phone item to the list once the phone number is verified
 	useEffect( () => {
-		if ( verifyPhoneNumber.isVerified ) {
+		if ( verifyPhoneNumber.isVerified || requestVerificationCode.isVerified ) {
 			handleSetPhoneItems();
 			setVerifiedPhoneNumber( phoneItem.phoneNumberFull );
 		}
@@ -191,6 +195,7 @@ export default function PhoneNumberEditor( {
 		phoneItem.phoneNumberFull,
 		handleSetPhoneItems,
 		setVerifiedPhoneNumber,
+		requestVerificationCode.isVerified,
 	] );
 
 	// Show error message when phone number verification fails
@@ -201,6 +206,13 @@ export default function PhoneNumberEditor( {
 			} );
 		}
 	}, [ translate, verifyPhoneNumber.errorMessage ] );
+
+	// Refetch verified contacts if failed
+	useEffect( () => {
+		verifiedContacts.refetchIfFailed();
+		// Disable linting because we only want to refetch once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	// Set help text when phone number verification fails
 	useEffect( () => {
@@ -219,8 +231,25 @@ export default function PhoneNumberEditor( {
 		handleSetPhoneItems( false );
 	}
 
-	const onSave = ( event: React.FormEvent< HTMLFormElement > ) => {
-		event.preventDefault();
+	// Remove phone item when user confirms to remove the phone number
+	const handleRemove = () => {
+		//TODO: add tracks event
+		const phoneItems = [ ...allPhoneItems ];
+		const phoneItemIndex = phoneItems.findIndex(
+			( item ) => item.phoneNumberFull === phoneItem.phoneNumberFull
+		);
+		if ( phoneItemIndex > -1 ) {
+			phoneItems.splice( phoneItemIndex, 1 );
+		}
+		setAllPhoneItems( phoneItems );
+		toggleModal();
+	};
+
+	const onSave = () => {
+		if ( isRemoveAction ) {
+			return handleRemove();
+		}
+
 		setValidationError( undefined );
 		if ( validationStatus.isValid ) {
 			if (
@@ -300,15 +329,19 @@ export default function PhoneNumberEditor( {
 		: translate( 'Verify' );
 
 	return (
-		<Modal
-			open={ true }
-			onRequestClose={ toggleModal }
+		<DashboardModalForm
 			title={ title }
-			className="notification-settings__modal"
+			subtitle={ subtitle }
+			onClose={ toggleModal }
+			onSubmit={ onSave }
 		>
-			<div className="notification-settings__sub-title">{ subtitle }</div>
-
-			<form className="configure-contact__form" onSubmit={ onSave }>
+			{ isRemoveAction ? (
+				selectedPhone && (
+					<div className="margin-top-16">
+						<SMSItemContent isRemoveAction item={ selectedPhone } />
+					</div>
+				)
+			) : (
 				<>
 					<FormFieldset>
 						<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
@@ -340,7 +373,7 @@ export default function PhoneNumberEditor( {
 							className="configure-contact__phone-input"
 						/>
 						{ validationError?.phone && (
-							<div className="notification-settings__footer-validation-error" role="alert">
+							<div className="dashboard-modal-form__footer-error" role="alert">
 								{ validationError?.phone }
 							</div>
 						) }
@@ -362,7 +395,7 @@ export default function PhoneNumberEditor( {
 								onChange={ handleChange( 'verificationCode' ) }
 							/>
 							{ validationError?.verificationCode && (
-								<div className="notification-settings__footer-validation-error" role="alert">
+								<div className="dashboard-modal-form__footer-error" role="alert">
 									{ validationError.verificationCode }
 								</div>
 							) }
@@ -376,17 +409,16 @@ export default function PhoneNumberEditor( {
 						</FormFieldset>
 					) }
 				</>
-				<div className="notification-settings__footer">
-					<div className="notification-settings__footer-buttons">
-						<Button onClick={ showCodeVerification ? onSaveLater : toggleModal }>
-							{ showCodeVerification ? translate( 'Later' ) : translate( 'Back' ) }
-						</Button>
-						<Button disabled={ isDisabled } type="submit" primary>
-							{ verificationButtonTitle }
-						</Button>
-					</div>
-				</div>
-			</form>
-		</Modal>
+			) }
+
+			<DashboardModalFormFooter>
+				<Button onClick={ showCodeVerification ? onSaveLater : toggleModal }>
+					{ showCodeVerification ? translate( 'Later' ) : translate( 'Back' ) }
+				</Button>
+				<Button disabled={ isDisabled } type="submit" primary>
+					{ isRemoveAction ? translate( 'Remove' ) : verificationButtonTitle }
+				</Button>
+			</DashboardModalFormFooter>
+		</DashboardModalForm>
 	);
 }

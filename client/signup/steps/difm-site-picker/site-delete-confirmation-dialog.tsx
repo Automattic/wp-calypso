@@ -105,8 +105,8 @@ function SiteDeleteConfirmationDialog( {
 										strong: <strong />,
 									},
 									args: {
-										siteTitle,
-										siteAddress: siteDomain,
+										siteTitle: siteTitle ?? '',
+										siteAddress: siteDomain ?? '',
 									},
 								}
 							) }

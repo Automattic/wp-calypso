@@ -31,6 +31,7 @@ import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import SiteContentHeader from './site-content-header';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
+import SiteSurveyBanner from './site-survey-banner';
 import SiteWelcomeBanner from './site-welcome-banner';
 import { getProductSlugFromProductType } from './utils';
 import type { Site } from '../sites-overview/types';
@@ -237,6 +238,7 @@ export default function SitesOverview() {
 			<div className="sites-overview__container">
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
+						<SiteSurveyBanner isDashboardView />
 						<SiteWelcomeBanner isDashboardView />
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader

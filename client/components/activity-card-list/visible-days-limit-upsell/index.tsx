@@ -56,7 +56,7 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 
 	const upsellRef = useTrackUpsellView( siteId );
 
-	if ( ! Number.isInteger( visibleDays ) ) {
+	if ( visibleDays == null || ! Number.isInteger( visibleDays ) ) {
 		return null;
 	}
 
@@ -81,7 +81,7 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 							'Restore backups older than %(retentionDays)d day',
 							'Restore backups older than %(retentionDays)d days',
 							{
-								count: visibleDays as number,
+								count: visibleDays,
 								args: { retentionDays: visibleDays },
 							}
 						)
@@ -93,7 +93,7 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 							'Your activity log spans more than %(retentionDays)d day. Upgrade your backup storage to access activity older than %(retentionDays)d day.',
 							'Your activity log spans more than %(retentionDays)d days. Upgrade your backup storage to access activity older than %(retentionDays)d days.',
 							{
-								count: visibleDays as number,
+								count: visibleDays,
 								args: { retentionDays: visibleDays },
 							}
 						)

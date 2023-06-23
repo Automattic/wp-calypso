@@ -112,6 +112,7 @@ import {
 	FEATURE_STORE_DESIGN,
 	FEATURE_STREAMLINED_CHECKOUT,
 	FEATURE_UNLIMITED_PRODUCTS,
+	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -224,6 +225,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_VIDEOPRESS_JP,
 			FEATURE_PREMIUM_CONTENT_JP,
 			FEATURE_PAID_SUBSCRIBERS_JP,
+			FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 		],
 	},
 };

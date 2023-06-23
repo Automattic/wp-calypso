@@ -55,14 +55,19 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		if ( isSuccess ) {
 			let childIsAlternate = isAlternate;
 
-			return backupFiles.map( ( item ) => {
+			return backupFiles.map( ( childItem ) => {
 				childIsAlternate = ! childIsAlternate;
+
+				// Let's hide archives that don't have an extension version
+				if ( childItem.type === 'archive' && ! item.extensionVersion ) {
+					return null;
+				}
 
 				return (
 					<FileBrowserNode
-						key={ item.name }
-						item={ item }
-						path={ `${ path }${ item.name }/` }
+						key={ childItem.name }
+						item={ childItem }
+						path={ `${ path }${ childItem.name }/` }
 						siteId={ siteId }
 						rewindId={ rewindId }
 						isAlternate={ childIsAlternate }
@@ -83,7 +88,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const nodeClassName = classNames( 'file-browser-node', { 'is-alternate': isAlternate } );
-	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30 );
+	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
 
 	return (
 		<div className={ nodeClassName }>

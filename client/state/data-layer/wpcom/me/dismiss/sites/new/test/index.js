@@ -5,7 +5,7 @@ import { requestSiteDismiss, receiveSiteDismiss, fromApi, receiveSiteDismissErro
 describe( 'site-dismissals', () => {
 	describe( 'requestSiteDismiss', () => {
 		test( 'should dispatch an http request', () => {
-			const action = dismissSite( 123 );
+			const action = dismissSite( { siteId: 123, seed: 456 } );
 			expect( requestSiteDismiss( action ) ).toEqual(
 				http(
 					{

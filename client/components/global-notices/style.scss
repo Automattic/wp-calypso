@@ -9,17 +9,29 @@
 	bottom: auto;
 	left: 0;
 
+	.is-section-checkout & {
+		top: var(--masterbar-checkout-height);
+	}
+
 	@include breakpoint-deprecated( ">660px" ) {
 		top: calc(var(--masterbar-height) + 16px);
 		right: 16px;
 		left: auto;
 		max-width: calc(100% - 32px);
+
+		.is-section-checkout & {
+			top: calc(var(--masterbar-checkout-height) + 16px);
+		}
 	}
 
 	@include breakpoint-deprecated( ">960px" ) {
 		top: calc(var(--masterbar-height) + 24px);
 		right: 24px;
 		max-width: calc(100% - 48px);
+
+		.is-section-checkout & {
+			top: calc(var(--masterbar-checkout-height) + 24px);
+		}
 	}
 
 	@include breakpoint-deprecated( ">1040px" ) {

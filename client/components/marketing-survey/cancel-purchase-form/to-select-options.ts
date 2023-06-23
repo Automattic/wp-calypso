@@ -1,9 +1,7 @@
-import type { ReactChild } from 'react';
-
-type TranslateReturnType = ReactChild | string;
+import { TranslateResult } from 'i18n-calypso';
 
 type OptionLike = {
-	label: TranslateReturnType;
+	label: TranslateResult;
 	value: string | number;
 };
 

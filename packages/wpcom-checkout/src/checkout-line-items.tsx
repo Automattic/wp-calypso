@@ -56,13 +56,17 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	justify-content: space-between;
 	font-weight: ${ ( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal ) };
 	color: ${ ( { theme, total } ) =>
-		total ? theme.colors.textColorDark : theme.colors.textColor };
+		total ? theme.colors.textColorDark : theme.colors.textColorLight };
 	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1.1em' ) };
+	line-height: 1em;
 	padding: ${ ( { total, tax, subtotal, coupon } ) =>
-		total || subtotal || tax || coupon ? '10px 0' : '20px 0' };
-	border-bottom: ${ ( { theme, total } ) =>
-		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
+		total || subtotal || tax || coupon ? '0' : '20px 0' };
 	position: relative;
+	margin-bottom: 8px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
 
 	.checkout-line-item__price {
 		position: relative;
@@ -76,10 +80,9 @@ export const LineItem = styled( WPLineItem )< {
 	flex-wrap: wrap;
 	justify-content: space-between;
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
-	color: ${ ( { theme } ) => theme.colors.textColor };
+	color: ${ ( { theme } ) => theme.colors.textColorDark };
 	font-size: 1.1em;
 	padding: 20px 0;
-	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
 
 	.checkout-line-item__price {
@@ -90,16 +93,6 @@ export const LineItem = styled( WPLineItem )< {
 export const CouponLineItem = styled( WPCouponLineItem )< {
 	theme?: Theme;
 } >`
-	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
-
-	&[data-partner-coupon='true'] ${ NonProductLineItem } {
-		border-bottom: none;
-	}
-
-	&:last-child {
-		border-bottom: none;
-	}
-
 	.jetpack-partner-logo {
 		padding-bottom: 20px;
 	}
@@ -146,14 +139,13 @@ const NotApplicableCallout = styled.div< { theme?: Theme } >`
 const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	flex: 1;
 	word-break: break-word;
-	font-size: 16px;
 	display: flex;
 	gap: 0.5em;
+	font-weight: ${ ( { theme } ) => theme.weights.bold };
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
-	font-size: 16px;
 
 	.rtl & {
 		margin-right: 12px;
@@ -752,7 +744,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	const isDomainMapping = productSlug === 'domain_map';
 
 	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
-		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : null;
+		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
 
 		return (
 			<>

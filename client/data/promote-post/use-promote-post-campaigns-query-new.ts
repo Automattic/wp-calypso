@@ -32,10 +32,10 @@ export type CampaignResponse = {
 		budget_left: number;
 		total_budget_used: number;
 		display_delivery_estimate: string;
-		visits_total: number;
-		visits_organic: number;
-		visits_organic_rate: number;
-		visits_ad_rate: number;
+		views_total: number;
+		views_organic: number;
+		views_organic_rate: number;
+		views_ad_rate: number;
 	};
 	billing_data: {
 		payment_method: string;

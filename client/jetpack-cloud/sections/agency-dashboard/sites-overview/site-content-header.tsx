@@ -1,14 +1,14 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
-import type { ReactChild } from 'react';
+import type { ReactNode } from 'react';
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 
 interface Props {
 	pageTitle: string;
 	showStickyContent: boolean;
-	content: ReactChild;
+	content: ReactNode;
 }
 
 export default function SiteContentHeader( { content, pageTitle, showStickyContent }: Props ) {

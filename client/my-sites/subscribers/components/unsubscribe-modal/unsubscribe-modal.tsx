@@ -23,7 +23,7 @@ const UnsubscribeModal = ( { subscriber, onCancel, onConfirm }: UnsubscribeModal
 		text: translate(
 			'Are you sure you want to remove %s from your list? They will no longer receive new notifications from your site.',
 			{
-				args: [ subscriber?.display_name ],
+				args: [ subscriber?.display_name as string ],
 				comment: "%s is the subscriber's public display name",
 			}
 		),
@@ -36,7 +36,7 @@ const UnsubscribeModal = ( { subscriber, onCancel, onConfirm }: UnsubscribeModal
 		text: translate(
 			'To remove %s from your list, you’ll need to cancel their paid subscription first.',
 			{
-				args: [ subscriber?.display_name ],
+				args: [ subscriber?.display_name as string ],
 				comment: "%s is the subscriber's public display name",
 			}
 		),

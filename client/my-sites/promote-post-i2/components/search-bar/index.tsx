@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
@@ -115,7 +116,12 @@ export default function SearchBar( props: Props ) {
 	};
 
 	return (
-		<div className="promote-post-i2__search-bar-wrapper">
+		<div
+			className={ classNames(
+				'promote-post-i2__search-bar-wrapper',
+				`${ mode === 'posts' ? 'wide' : '' }`
+			) }
+		>
 			<Search
 				className="promote-post-i2__search-bar-search"
 				initialValue={ searchInput }

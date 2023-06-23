@@ -94,7 +94,7 @@ function Subscribers( props: Props ) {
 							'You have %(number)d subscriber',
 							'You have %(number)d subscribers',
 							{
-								args: { number: subscribersTotal },
+								args: { number: subscribersTotal as number },
 								count: subscribersTotal as number,
 							}
 						) }
@@ -154,7 +154,7 @@ function Subscribers( props: Props ) {
 					<NoResults
 						image="/calypso/images/people/mystery-person.svg"
 						text={ translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
-							args: { searchTerm: search },
+							args: { searchTerm: search as string },
 							components: { em: <em /> },
 						} ) }
 					/>

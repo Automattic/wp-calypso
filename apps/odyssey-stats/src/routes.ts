@@ -57,6 +57,7 @@ export default function ( pageBase = '/' ) {
 
 	// Stat Subscribers Page (do not confuse with people/subscribers/)
 	statsPage( '/stats/subscribers/:site', subscribers );
+	statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
 
 	// Stat Site Pages
 	statsPage( `/stats/:period(${ validPeriods })/:site`, site );

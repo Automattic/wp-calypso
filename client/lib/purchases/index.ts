@@ -24,7 +24,7 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import i18n from 'i18n-calypso';
+import i18n, { TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -39,7 +39,6 @@ import type {
 	MembershipSubscriptionsSite,
 } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
-import type { ReactChild } from 'react';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -239,7 +238,7 @@ export function getName( purchase: Purchase ): string {
 	return purchase.productName;
 }
 
-export function getDisplayName( purchase: Purchase ): ReactChild | string | undefined {
+export function getDisplayName( purchase: Purchase ): TranslateResult {
 	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
 	if ( jetpackProductsDisplayNames[ purchase.productSlug ] ) {
 		return jetpackProductsDisplayNames[ purchase.productSlug ];
@@ -850,10 +849,14 @@ export function purchaseType( purchase: Purchase ) {
 		return purchase.productName;
 	}
 
+	if ( isAkismetProduct( purchase ) ) {
+		return null;
+	}
+
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return i18n.translate( 'Mailboxes and Productivity Tools at %(domain)s', {
 			args: {
-				domain: purchase.meta,
+				domain: purchase.meta as string,
 			},
 		} );
 	}
@@ -861,7 +864,7 @@ export function purchaseType( purchase: Purchase ) {
 	if ( isTitanMail( purchase ) ) {
 		return i18n.translate( 'Mailboxes at %(domain)s', {
 			args: {
-				domain: purchase.meta,
+				domain: purchase.meta as string,
 			},
 		} );
 	}

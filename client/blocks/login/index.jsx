@@ -298,9 +298,19 @@ class Login extends Component {
 		} else if ( action === 'lostpassword' ) {
 			headerText = <h3>{ translate( 'Forgot your password?' ) }</h3>;
 			postHeader = (
-				<p className="login__header-subtitle">
+				<p className="login__header-subtitle login__lostpassword-subtitle">
 					{ translate(
 						'It happens to the best of us. Enter the email address associated with your WordPress.com account and we’ll send you a link to reset your password.'
+					) }
+					{ isWooCoreProfilerFlow && (
+						<span>
+							<br />
+							{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+								components: {
+									signupLink: <a href={ this.getSignupUrl() } />,
+								},
+							} ) }
+						</span>
 					) }
 				</p>
 			);
@@ -423,15 +433,23 @@ class Login extends Component {
 				);
 			}
 		} else if ( isWooCoreProfilerFlow ) {
-			headerText = <h3>{ translate( 'One last step' ) }</h3>;
-			preHeader = null;
-			postHeader = (
-				<p className="login__header-subtitle">
-					{ translate(
-						'In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below.'
-					) }
-				</p>
+			const subtitle = currentQuery.lostpassword_flow
+				? translate(
+						"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
+				  )
+				: translate(
+						"In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+						{
+							components: {
+								signupLink: <a href={ this.getSignupUrl() } />,
+							},
+						}
+				  );
+			headerText = currentQuery.lostpassword_flow ? null : (
+				<h3>{ translate( 'One last step' ) }</h3>
 			);
+			preHeader = null;
+			postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
 		} else if ( isJetpackWooCommerceFlow ) {
 			headerText = translate( 'Log in to your WordPress.com account' );
 			preHeader = (
@@ -552,6 +570,8 @@ class Login extends Component {
 			translate,
 			isPartnerSignup,
 			action,
+			isWooCoreProfilerFlow,
+			currentQuery,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -571,16 +591,20 @@ class Login extends Component {
 						redirectToAfterLoginUrl={ this.props.redirectTo }
 						oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
 						locale={ locale }
+						isWooCoreProfilerFlow={ isWooCoreProfilerFlow }
+						from={ get( currentQuery, 'from' ) }
 					/>
-					<div className="login__lost-password-footer">
-						<p className="login__lost-password-no-account">
-							{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
-								components: {
-									signupLink: <a href={ this.getSignupUrl() } />,
-								},
-							} ) }
-						</p>
-					</div>
+					{ ! isWooCoreProfilerFlow && (
+						<div className="login__lost-password-footer">
+							<p className="login__lost-password-no-account">
+								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+									components: {
+										signupLink: <a href={ this.getSignupUrl() } />,
+									},
+								} ) }
+							</p>
+						</div>
+					) }
 				</Fragment>
 			);
 		}

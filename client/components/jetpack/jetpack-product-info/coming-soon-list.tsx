@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, ReactChild } from 'react';
+import { FunctionComponent, ReactNode } from 'react';
 
 type Props = {
-	items: ReactChild[];
+	items: ReactNode[];
 };
 
 const JetpackProductInfoComingSoonList: FunctionComponent< Props > = ( { items } ) => {

@@ -34,6 +34,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	hideProfessionalEmailStep,
 	type,
 } ) => {
+	const launchpadScreen = useSiteOption( 'launchpad_screen' );
+	const siteIntent = useSiteOption( 'site_intent' );
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];
 		return propsGetter( {
@@ -42,12 +44,21 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			email,
 			hasProfessionalEmail,
 			hideProfessionalEmailStep,
+			siteIntent,
+			launchpadScreen,
 		} );
-	}, [ type, domain, selectedSiteSlug, email, hasProfessionalEmail, hideProfessionalEmailStep ] );
+	}, [
+		type,
+		domain,
+		selectedSiteSlug,
+		email,
+		hasProfessionalEmail,
+		hideProfessionalEmailStep,
+		siteIntent,
+		launchpadScreen,
+	] );
 	const dispatch = useDispatch();
-	const launchpadScreen = useSiteOption( 'launchpad_screen' );
 	const isLaunchpadEnabled = launchpadScreen === 'full';
-	const siteIntent = useSiteOption( 'site_intent' );
 
 	useEffect( () => {
 		dispatch( hideMasterbar() );

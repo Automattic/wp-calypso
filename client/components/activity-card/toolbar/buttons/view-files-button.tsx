@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Icon, file as fileIcon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -17,10 +16,6 @@ const ViewFilesButton: FunctionComponent< ViewFilesButtonProps > = ( {
 	isPrimary = false,
 } ) => {
 	const translate = useTranslate();
-
-	if ( ! config.isEnabled( 'jetpack/backup-contents-page' ) ) {
-		return null;
-	}
 
 	return (
 		<Button

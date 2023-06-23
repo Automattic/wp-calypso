@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { ReactChild } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
@@ -53,7 +52,7 @@ const MasterbarStyled = ( {
 	showContact = true,
 }: {
 	onClick: () => void;
-	backText: ReactChild;
+	backText: string;
 	canGoBack: boolean;
 	contact?: JSX.Element | null;
 	showContact?: boolean;

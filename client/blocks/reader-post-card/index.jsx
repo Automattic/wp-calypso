@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
-import TagPost from 'calypso/blocks/reader-post-card/tag-post';
+import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -38,11 +38,9 @@ class ReaderPostCard extends Component {
 		isSelected: PropTypes.bool,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
-		showPrimaryFollowButton: PropTypes.bool,
 		discoverPost: PropTypes.object,
 		discoverSite: PropTypes.object,
 		showSiteName: PropTypes.bool,
-		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
@@ -118,15 +116,11 @@ class ReaderPostCard extends Component {
 			currentRoute,
 			post,
 			discoverPost,
-			discoverSite,
 			site,
 			feed,
 			onCommentClick,
-			showPrimaryFollowButton,
 			isSelected,
 			showSiteName,
-			followSource,
-			isDiscoverStream,
 			postKey,
 			isExpanded,
 			expandCard,
@@ -145,7 +139,7 @@ class ReaderPostCard extends Component {
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
-		const isReaderTagPage = currentRoute.startsWith( '/tag/' );
+		const isConversations = currentRoute.startsWith( '/read/conversations' );
 		const isReaderSearchPage = currentRoute.startsWith( '/read/search' );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
@@ -156,7 +150,6 @@ class ReaderPostCard extends Component {
 			'is-seen': isSeen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
-			'is-tag-post': isReaderTagPage,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -178,58 +171,35 @@ class ReaderPostCard extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 		// Set up post byline
-		let postByline;
-
-		if ( isDiscoverStream && discoverPost && discoverSite ) {
-			// create a post like object with some props from the discover post
-			const postForByline = Object.assign( {}, discoverPost || {}, {
-				date: post.date,
-				URL: post.URL,
-				primary_tag: post.primary_tag,
-			} );
-			postByline = (
-				<PostByline
-					post={ postForByline }
-					site={ discoverSite }
-					showSiteName={ true }
-					teams={ teams }
-					showFollow={ ! isDiscover }
-					showPrimaryFollowButton={ showPrimaryFollowButton }
-					followSource={ followSource }
-				/>
-			);
-		} else {
-			postByline = (
-				<PostByline
-					post={ post }
-					site={ site }
-					feed={ feed }
-					showSiteName={ showSiteName || isDiscover }
-					showAvatar={ ! compact }
-					teams={ teams }
-					showFollow={ ! isDiscover }
-					showPrimaryFollowButton={ showPrimaryFollowButton }
-					followSource={ followSource }
-				/>
-			);
-		}
+		const postByline = (
+			<PostByline
+				post={ post }
+				site={ site }
+				feed={ feed }
+				showSiteName={ showSiteName || isDiscover }
+				showAvatar={ ! compact }
+				teams={ teams }
+				showFollow={ ! isDiscover }
+				compact={ compact }
+			/>
+		);
 
 		// Set up post card
 		let readerPostCard;
-		if ( compact ) {
+		if ( isConversations ) {
 			readerPostCard = (
 				<ConversationPost
 					post={ post }
 					title={ title }
 					isDiscover={ isDiscover }
 					postByline={ postByline }
-					commentIds={ postKey.comments }
+					commentIds={ postKey.comments ?? [] }
 					onClick={ this.handleCardClick }
 				/>
 			);
-		} else if ( isReaderTagPage ) {
+		} else if ( compact ) {
 			readerPostCard = (
-				<TagPost
+				<CompactPostCard
 					post={ post }
 					title={ title }
 					isDiscover={ isDiscover }
@@ -237,8 +207,11 @@ class ReaderPostCard extends Component {
 					expandCard={ expandCard }
 					site={ site }
 					postKey={ postKey }
-					teams={ teams }
-				></TagPost>
+					postByline={ postByline }
+					onClick={ this.handleCardClick }
+				>
+					{ readerPostActions }
+				</CompactPostCard>
 			);
 		} else if ( isPhotoPost ) {
 			readerPostCard = (
@@ -284,10 +257,10 @@ class ReaderPostCard extends Component {
 			);
 		}
 
-		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
+		const onClick = ! isPhotoPost ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
-				{ ! compact && ! isReaderTagPage && postByline }
+				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>

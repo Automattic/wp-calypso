@@ -9,16 +9,16 @@ import type { AddOnMeta } from '../hooks/use-add-ons';
 
 export interface Props {
 	actionPrimary?: {
-		text: string | React.ReactChild;
+		text: string;
 		handler: ( productSlug: string, quantity?: number ) => void;
 	};
 	actionSecondary?: {
-		text: string | React.ReactChild;
+		text: string;
 		handler: ( productSlug: string ) => void;
 	};
 	useAddOnAvailabilityStatus?: ( addOnMeta: AddOnMeta ) => {
 		available: boolean;
-		text?: string | React.ReactChild;
+		text?: string;
 	};
 	highlightFeatured: boolean;
 	addOnMeta: AddOnMeta;

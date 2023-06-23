@@ -62,15 +62,6 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 	}
 };
 
-export const showDetails = ( status: string ) => {
-	return [
-		campaignStatus.CANCELED,
-		campaignStatus.ACTIVE,
-		campaignStatus.FINISHED,
-		campaignStatus.REJECTED,
-	].includes( status );
-};
-
 export const getCampaignStatus = ( status: string ) => {
 	switch ( status ) {
 		case campaignStatus.SCHEDULED: {
@@ -235,4 +226,28 @@ export const unifyCampaigns = (
 			...( stats ? stats : {} ),
 		};
 	} );
+};
+
+export const getShortDateString = ( date: string ) => {
+	const timestamp = moment( Date.parse( date ) );
+	const now = moment();
+
+	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
+	switch ( dateDiff ) {
+		case 0:
+			return __( 'hours ago' );
+		case 1:
+			return __( '1 day ago' );
+		default:
+			return timestamp.isSame( now, 'year' )
+				? moment( date ).format( 'MMM DD' )
+				: moment( date ).format( 'MMM DD, YYYY' );
+	}
+};
+
+export const getLongDateString = ( date: string ) => {
+	const timestamp = moment( Date.parse( date ) );
+	// translators: "ll" refers to date (eg. 21 Apr) & "LT" refers to time (eg. 18:00) - "at" is translated
+	const sameElse: string = __( 'll [at] LT' );
+	return timestamp.calendar( null, { sameElse } );
 };

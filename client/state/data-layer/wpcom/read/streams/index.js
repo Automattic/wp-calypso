@@ -167,7 +167,6 @@ export const SITE_LIMITER_FIELDS = [
 	'feed_item_ID',
 	'global_ID',
 	'metadata',
-	'tags',
 	'site_URL',
 	'URL',
 ];
@@ -199,7 +198,12 @@ const streamApis = {
 		dateProperty: 'date',
 	},
 	discover: {
-		path: () => '/read/tags/cards',
+		path: ( { streamKey } ) => {
+			if ( ! streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
+				return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
+			}
+			return '/read/tags/cards';
+		},
 		dateProperty: 'date',
 		query: ( extras, { tags } ) =>
 			getQueryString( {

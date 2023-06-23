@@ -1,0 +1,39 @@
+@import "@automattic/color-studio/dist/color-variables";
+
+.list-actions-bar {
+	margin-bottom: 57px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+
+	.search-component {
+		min-width: min(400px, 100%);
+		flex: 1;
+
+		max-width: 500px;
+		height: 48px;
+		box-sizing: border-box;
+
+		border: 1px solid $studio-gray-10;
+		border-radius: 2px;
+
+		.subscriptions-manager__search-icon {
+			margin-left: 18.5px;
+			margin-right: 14px;
+		}
+
+		input.search-component__input[type="search"]::placeholder {
+			color: $studio-gray-50;
+		}
+	}
+
+	.subscription-manager-sort-controls {
+		margin-left: auto;
+	}
+
+	&-spacer {
+		flex: 1;
+	}
+}
