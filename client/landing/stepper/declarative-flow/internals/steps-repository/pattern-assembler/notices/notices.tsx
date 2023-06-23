@@ -1,7 +1,7 @@
 import { NoticeList, SnackbarList } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import i18n from 'i18n-calypso';
-import { ComponentType, ReactNode, useState } from 'react';
+import { ComponentType, ReactNode, ReactChild, useState } from 'react';
 import type { Pattern } from '../types';
 import './notices.scss';
 
@@ -31,7 +31,7 @@ const withNotices = createHigherOrderComponent(
 				setNoticeList( ( current ) => current.filter( ( notice ) => notice.id !== id ) );
 			};
 
-			const createNotice = ( id: string, content: ReactNode ) => {
+			const createNotice = ( id: string, content: ReactChild ) => {
 				const existingNoticeWithSameId = noticeList.find( ( notice ) => notice.id === id );
 				if ( existingNoticeWithSameId?.timer ) {
 					clearTimeout( existingNoticeWithSameId.timer );
