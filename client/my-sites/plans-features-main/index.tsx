@@ -248,20 +248,19 @@ const PlansFeaturesMain = ( {
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const sitePlanSlug = useSelector( ( state: IAppState ) => getSitePlanSlug( state, siteId ) );
-	const userCanUpgradeToPlan = useSelector(
-		( state: IAppState ) =>
-			siteId && selectedPlan && canUpgradeToPlan( state, siteId, selectedPlan )
+	const userCanUpgradeToPersonalPlan = useSelector(
+		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
 
-	let defaultCustomerType = chooseDefaultCustomerType( {
+	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
 		selectedPlan,
 		currentPlan: { productSlug: currentPlan?.productSlug },
 	} );
 	// Make sure the plans for the default customer type can be purchased.
-	if ( defaultCustomerType === 'personal' && userCanUpgradeToPlan ) {
-		defaultCustomerType = 'business';
+	if ( _customerType === 'personal' && userCanUpgradeToPersonalPlan ) {
+		_customerType = 'business';
 	}
 
 	const isDisplayingPlansNeededForFeature = () => {
@@ -363,7 +362,7 @@ const PlansFeaturesMain = ( {
 		eligibleForWpcomMonthlyPlans,
 		isPlansInsideStepper,
 		intervalType,
-		customerType: defaultCustomerType,
+		customerType: _customerType,
 		siteSlug,
 		selectedPlan,
 		selectedFeature,
@@ -414,7 +413,7 @@ const PlansFeaturesMain = ( {
 					<OnboardingPricingGrid2023
 						plans={ plans }
 						visiblePlans={ visiblePlans }
-						customerType={ defaultCustomerType }
+						customerType={ _customerType }
 						domainName={ domainName }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
