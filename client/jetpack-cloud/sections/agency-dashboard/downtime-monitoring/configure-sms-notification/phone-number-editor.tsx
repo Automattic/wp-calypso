@@ -11,7 +11,7 @@ import getCountries from 'calypso/state/selectors/get-countries';
 import DashboardModalForm from '../../dashboard-modal-form';
 import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
-import ContactListItem from '../contact-list/contact-list-item';
+import ContactListItem from '../contact-list/item';
 import {
 	useRequestVerificationCode,
 	useValidateVerificationCode,

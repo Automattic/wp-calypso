@@ -7,7 +7,7 @@ import {
 	StateMonitorSettingsEmail,
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
-import ContactListItem from './contact-list-item';
+import ContactListItem from './item';
 import { getContactActionEventName, getContactItemValue } from './utils';
 
 import './style.scss';
