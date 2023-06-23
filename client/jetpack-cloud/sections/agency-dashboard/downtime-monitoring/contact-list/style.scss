@@ -60,7 +60,6 @@
 	}
 }
 
-
 .contact-list-item__heading {
 	@extend .handle-overflow;
 	font-weight: 500;
@@ -75,4 +74,8 @@
 	font-size: 0.75rem;
 	line-height: 18px;
 	color: var(--studio-gray-50);
+}
+
+.contact-list-item__popover-menu {
+	z-index: 999999;
 }

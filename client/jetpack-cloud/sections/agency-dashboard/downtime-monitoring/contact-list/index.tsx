@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import {
 	AllowedMonitorContactActions,
@@ -38,20 +39,30 @@ export default function ContactList( {
 		onAction?.();
 	};
 
+	const addButtonLabel = useMemo( () => {
+		switch ( type ) {
+			case 'email':
+				return translate( 'Add email address' );
+			case 'sms':
+				return translate( 'Add phone number' );
+			default:
+				// Fail-safe incase we forgot to add handler for new type of contacts.
+				return translate( 'Add contact' );
+		}
+	}, [ type, translate ] );
+
 	return (
 		<>
-			{ items.length === 0 && (
+			{ type === 'sms' && !! items.length && (
 				<div className="margin-top-16">
 					<AlertBanner type="warning">
-						{ type === 'email'
-							? translate( 'You need at least one email address' )
-							: translate( 'You need at least one phone number' ) }
+						{ translate( 'You need at least one phone number' ) }
 					</AlertBanner>
 				</div>
 			) }
 
 			<div className="contact-list">
-				{ items.map( ( item: StateMonitorSettingsEmail | StateMonitorSettingsSMS ) => (
+				{ items.map( ( item ) => (
 					<ContactListItem
 						type={ type }
 						key={ getContactItemValue( type, item ) }
@@ -64,7 +75,7 @@ export default function ContactList( {
 
 				<Button compact className="contact-list__button" onClick={ onAddContact }>
 					<Icon size={ 18 } icon={ plus } />
-					{ type === 'email' ? translate( 'Add email address' ) : translate( 'Add phone number' ) }
+					{ addButtonLabel }
 				</Button>
 			</div>
 		</>

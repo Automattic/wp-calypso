@@ -56,8 +56,8 @@ export default function ContactListItem( {
 
 	const isVerified =
 		item.verified ||
-		( type === 'email' && verifiedContacts?.emails.includes( value ) ) ||
-		( type === 'sms' && verifiedContacts?.phoneNumbers.includes( value ) );
+		( type === 'email' && value && verifiedContacts?.emails.includes( value ) ) ||
+		( type === 'sms' && value && verifiedContacts?.phoneNumbers.includes( value ) );
 
 	const isDefaultItem = type === 'email' && ( item as StateMonitorSettingsEmail ).isDefault;
 
