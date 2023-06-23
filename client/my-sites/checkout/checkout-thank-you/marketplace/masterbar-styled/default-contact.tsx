@@ -50,7 +50,7 @@ export function DefaultMasterbarContact() {
 		<ContactContainer>
 			<label>{ translate( 'Need extra help?' ) }</label>&nbsp;
 			<Button className="marketplace-thank-you-help-center" isLink onClick={ toggleHelpCenter }>
-				{ translate( 'Visit Help Center.' ) }
+				{ translate( 'Visit Help Center' ) }
 			</Button>
 		</ContactContainer>
 	);
