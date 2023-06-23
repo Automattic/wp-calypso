@@ -19,6 +19,7 @@ const ThankYouContainer = styled.div`
 	-ms-overflow-style: none;
 	/* Negative value to counteract default content padding */
 	margin-top: calc( -79px + var( --masterbar-height ) );
+	margin-bottom: 80px;
 `;
 
 const ThankYouSectionTitle = styled.h1`
