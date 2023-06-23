@@ -41,7 +41,7 @@ export type PlanTypeSelectorProps = {
 	selectedPlan?: string;
 	selectedFeature?: string;
 	showBiannualToggle?: boolean;
-	isInSignup: boolean; // TODO clk: deprecate use of isInSignup. determine from `siteSlug` prop instead
+	isInSignup: boolean;
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
 	isPlansInsideStepper: boolean;
