@@ -56,7 +56,6 @@ const ThankYouNextSteps = styled.div`
 
 	p {
 		color: var( --studio-gray-50 );
-		padding-right: 20px;
 	}
 	> div {
 		display: flex;
