@@ -56,6 +56,12 @@ class SearchStream extends React.Component {
 		feeds: [],
 	};
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.query !== this.props.query ) {
+			this.resetSearchFeeds();
+		}
+	}
+
 	resetSearchFeeds = () => {
 		this.setState( { feeds: [] } );
 	};
