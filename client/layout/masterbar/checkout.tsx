@@ -105,14 +105,16 @@ const CheckoutMasterbar = ( {
 			<div className="masterbar__secure-checkout">
 				{ showCloseButton && (
 					<Item
-						icon="cross"
+						icon="chevron-left"
 						className="masterbar__close-button"
 						onClick={ clickClose }
 						tooltip={ String( translate( 'Close Checkout' ) ) }
 						tipTarget="close"
 					/>
 				) }
-				{ checkoutType === 'wpcom' && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
+				{ checkoutType === 'wpcom' && (
+					<WordPressWordmark className="masterbar__wpcom-wordmark" color="#2c3338" />
+				) }
 				{ checkoutType === 'jetpack' && (
 					<JetpackLogo className="masterbar__jetpack-wordmark" full />
 				) }

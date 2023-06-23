@@ -24,9 +24,21 @@ const getSubscribersCacheKey = (
 	return cacheKey;
 };
 
+const getSubscriberDetailsCacheKey = ( siteId: number | null, queryString: string ) => [
+	'subscriber-details',
+	siteId,
+	queryString,
+];
+
 const sanitizeInt = ( intString: string ) => {
 	const parsedInt = parseInt( intString, 10 );
 	return ! Number.isNaN( parsedInt ) && parsedInt > 0 ? parsedInt : undefined;
 };
 
-export { getEarnPageUrl, getEarnPaymentsPageUrl, getSubscribersCacheKey, sanitizeInt };
+export {
+	getEarnPageUrl,
+	getEarnPaymentsPageUrl,
+	getSubscriberDetailsCacheKey,
+	getSubscribersCacheKey,
+	sanitizeInt,
+};

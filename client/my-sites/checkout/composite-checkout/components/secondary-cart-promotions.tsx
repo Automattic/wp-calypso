@@ -35,16 +35,12 @@ const UpsellWrapper = styled.div< DivProps >`
 	.cart__upsell-header {
 		border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		box-shadow: none;
-		margin-left: 20px;
-		margin-right: 20px;
-		padding-left: 0;
-		padding-right: 0;
+		padding-left: 20px;
+		padding-right: 20px;
 
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			border-top: none;
 			border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-			margin-left: 0;
-			margin-right: 0;
 			padding-left: 24px;
 			padding-right: 24px;
 		}

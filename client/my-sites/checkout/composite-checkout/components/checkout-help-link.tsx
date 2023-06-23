@@ -23,10 +23,13 @@ type StyledProps = {
 };
 
 const CheckoutHelpLinkWrapper = styled.div< StyledProps >`
-	background: ${ ( props ) => props.theme.colors.surface };
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	margin: 0;
 	padding: 20px;
+
+	&:empty {
+		display: none;
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		background: transparent;
@@ -143,10 +146,14 @@ export default function CheckoutHelpLink() {
 	}, [ isChatActive, setShowMessagingLauncher, isMessagingWidgetShown ] );
 
 	const shouldShowHelpLink = ! isChatActive && ! isPresalesChatAvailable;
+	if ( ! shouldShowHelpLink ) {
+		return null;
+	}
+
 	return (
 		<CheckoutHelpLinkWrapper>
 			{ isLoadingChat && <LoadingButton /> }
-			{ ! isLoadingChat && shouldShowHelpLink && (
+			{ ! isLoadingChat && (
 				<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
 					{ translate(
 						'Questions? {{underline}}Read more about plans and purchases{{/underline}}',

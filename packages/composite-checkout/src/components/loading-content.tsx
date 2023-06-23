@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 const LoadingContentWrapper = styled.div`
 	display: flex;
+	padding-top: 50px;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		align-items: flex-start;
@@ -25,21 +26,6 @@ const LoadingContentInnerWrapper = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin: 0;
-	}
-`;
-
-const LoadingSidebar = styled.div`
-	display: none;
-	width: 100%;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		display: block;
-		padding: 24px;
-		box-sizing: border-box;
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		max-width: 328px;
-		background: ${ ( props ) => props.theme.colors.surface };
-		margin-left: 24px;
 	}
 `;
 
@@ -115,17 +101,6 @@ const LoadingCopy = styled.p`
 	}
 `;
 
-const SideBarLoadingCopy = styled.p`
-	font-size: 14px;
-	height: 16px;
-	content: '';
-	background: ${ ( props ) => props.theme.colors.borderColorLight };
-	color: ${ ( props ) => props.theme.colors.borderColorLight };
-	margin: 8px 0 0 0;
-	padding: 0;
-	animation: ${ pulse } 2s ease-in-out infinite;
-`;
-
 const LoadingFooter = styled.div`
 	background: ${ ( props ) => props.theme.colors.background };
 	content: '';
@@ -167,12 +142,6 @@ export default function LoadingContent() {
 				</LoadingCard>
 				<LoadingFooter />
 			</LoadingContentInnerWrapper>
-
-			<LoadingSidebar>
-				<SideBarLoadingCopy />
-				<SideBarLoadingCopy />
-				<SideBarLoadingCopy />
-			</LoadingSidebar>
 		</LoadingContentWrapper>
 	);
 }
