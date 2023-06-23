@@ -10,7 +10,7 @@ import {
 import ContactListItem from './contact-list-item';
 import { getContactActionEventName, getContactItemValue } from './utils';
 
-import '.style.scss';
+import './style.scss';
 
 export type Props = {
 	items: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >;

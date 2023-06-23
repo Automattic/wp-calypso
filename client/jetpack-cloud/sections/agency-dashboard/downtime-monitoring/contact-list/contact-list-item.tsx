@@ -13,7 +13,7 @@ import type {
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
 
-import '.style.scss';
+import './style.scss';
 
 type Props = {
 	item: StateMonitorSettingsEmail | StateMonitorSettingsSMS;
