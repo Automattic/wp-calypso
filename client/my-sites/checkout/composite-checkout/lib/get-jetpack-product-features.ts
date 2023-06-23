@@ -16,6 +16,7 @@ import { useTranslate } from 'i18n-calypso';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
 
 type featureString =
+	| 'ai'
 	| 'anti-spam'
 	| 'backup-t1'
 	| 'boost'
