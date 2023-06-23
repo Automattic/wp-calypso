@@ -5,7 +5,7 @@ import usePopoverToggle from 'calypso/landing/subscriptions/hooks/use-popover-to
 import './styles.scss';
 
 type SettingsPopoverProps = {
-	children?: React.ReactNode;
+	children?: ( ( onClose: () => void ) => React.ReactNode ) | React.ReactNode;
 	className?: string;
 };
 
