@@ -212,7 +212,7 @@ const ContentAndOwnershipCard = ( {
 						sprintf(
 							// translators: siteSlug is the current site slug
 							translate(
-								'Your posts on <strong>%(siteSlug)s</strong> will remain authored your account.'
+								'Your posts on <strong>%(siteSlug)s</strong> will remain authored by your account.'
 							),
 							{ siteSlug }
 						),
