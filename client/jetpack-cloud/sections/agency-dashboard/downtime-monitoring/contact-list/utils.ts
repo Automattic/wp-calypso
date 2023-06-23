@@ -21,11 +21,13 @@ export const getContactActionEventName = (
 	const EVENT_NAMES =
 		type === 'email'
 			? {
+					add: 'downtime_monitoring_email_address_add_click',
 					edit: 'downtime_monitoring_email_address_edit_click',
 					remove: 'downtime_monitoring_email_address_remove_click',
 					verify: 'downtime_monitoring_email_address_verify_click',
 			  }
 			: {
+					add: 'downtime_monitoring_sms_number_add_click',
 					edit: 'downtime_monitoring_sms_number_edit_click',
 					remove: 'downtime_monitoring_sms_number_remove_click',
 					verify: 'downtime_monitoring_sms_number_verify_click',

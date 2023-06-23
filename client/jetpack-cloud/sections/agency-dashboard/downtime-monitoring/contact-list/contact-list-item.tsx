@@ -58,6 +58,8 @@ export default function ContactListItem( {
 		( type === 'email' && verifiedContacts?.emails.includes( value ) ) ||
 		( type === 'phone' && verifiedContacts?.phoneNumbers.includes( value ) );
 
+	const isDefaultItem = type === 'email' && ( item as StateMonitorSettingsEmail ).isDefault;
+
 	const handleOnAction = useCallback(
 		( action: AllowedMonitorContactActions ) => {
 			onAction?.( item, action );
@@ -75,7 +77,7 @@ export default function ContactListItem( {
 					<div className="contact-list-item__heading">{ value }</div>
 					<div className="contact-list-item__sub-heading">{ name }</div>
 				</span>
-				{ ! hasActionHandler && (
+				{ hasActionHandler && ! isDefaultItem && (
 					<>
 						{ ! isVerified && (
 							<span
