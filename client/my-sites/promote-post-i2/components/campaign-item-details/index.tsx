@@ -96,6 +96,7 @@ export default function CampaignItemDetails( props: Props ) {
 		total_budget,
 		total_budget_used,
 		views_organic,
+		stats_enabled,
 	} = campaign_stats || {};
 
 	const { card_name, payment_method, subtotal, credits, total } = billing_data || {};
@@ -425,9 +426,10 @@ export default function CampaignItemDetails( props: Props ) {
 											<span className="campaign-item-details__label">
 												{ translate( 'Traffic breakdown' ) }
 											</span>
+
 											{ databarTotal > 0 && (
 												<span className="campaign-item-details__label">
-													{ translate( 'Visits' ) }
+													{ translate( 'Views' ) }
 												</span>
 											) }
 										</div>
@@ -436,7 +438,9 @@ export default function CampaignItemDetails( props: Props ) {
 
 											{ ! isLoading && databarTotal === 0 && (
 												<div className="campaign-item-details__traffic-no-data">
-													{ translate( 'No data' ) }
+													{ stats_enabled
+														? translate( 'No data' )
+														: translate( 'Stats are disabled for this site' ) }
 												</div>
 											) }
 
