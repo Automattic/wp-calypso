@@ -8,17 +8,14 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import { focus } from '@wordpress/dom';
 import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
 import Survey from './survey';
-import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
 interface Props {
@@ -51,14 +48,9 @@ const ScreenMain = ( {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const { location } = useNavigator();
 	const isInitialLocation = location.isInitial && ! location.isBack;
-	const selectedDesign = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-		[]
+	const headerDescription = translate(
+		'Customize everything in your homepage by adding patterns and choosing styles.'
 	);
-
-	const headerDescription = selectedDesign?.is_virtual
-		? translate( 'Customize your homepage with our library of styles and patterns.' )
-		: translate( 'Customize everything in your homepage by adding patterns and choosing styles.' );
 
 	// Use the mousedown event to prevent either the button focusing or text selection
 	const handleMouseDown = ( event: MouseEvent< HTMLButtonElement > ) => {
