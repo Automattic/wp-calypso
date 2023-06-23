@@ -62,7 +62,7 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 	}
 };
 
-export const getCampaignStatus = ( status: string ) => {
+export const getCampaignStatus = ( status?: string ) => {
 	switch ( status ) {
 		case campaignStatus.SCHEDULED: {
 			return __( 'Scheduled' );
