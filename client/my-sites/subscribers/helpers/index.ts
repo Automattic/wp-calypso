@@ -9,7 +9,8 @@ const getSubscribersCacheKey = (
 	siteId: number | null,
 	currentPage?: number,
 	perPage?: number,
-	search?: string
+	search?: string,
+	sortTerm?: string
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
 	if ( currentPage ) {
@@ -21,12 +22,27 @@ const getSubscribersCacheKey = (
 	if ( search ) {
 		cacheKey.push( 'search', search );
 	}
+	if ( sortTerm ) {
+		cacheKey.push( 'sort-term', sortTerm );
+	}
 	return cacheKey;
 };
+
+const getSubscriberDetailsCacheKey = ( siteId: number | null, queryString: string ) => [
+	'subscriber-details',
+	siteId,
+	queryString,
+];
 
 const sanitizeInt = ( intString: string ) => {
 	const parsedInt = parseInt( intString, 10 );
 	return ! Number.isNaN( parsedInt ) && parsedInt > 0 ? parsedInt : undefined;
 };
 
-export { getEarnPageUrl, getEarnPaymentsPageUrl, getSubscribersCacheKey, sanitizeInt };
+export {
+	getEarnPageUrl,
+	getEarnPaymentsPageUrl,
+	getSubscriberDetailsCacheKey,
+	getSubscribersCacheKey,
+	sanitizeInt,
+};

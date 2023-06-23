@@ -436,14 +436,6 @@ $happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 </div>
 <div class="happy-blocks-mini-search">
 	<div class="happy-blocks-search-container">
-			<div class="happy-blocks-global-header__top">
-				<div class="happy-blocks-global-header__tabs">
-					<?php foreach ( $happy_blocks_tabs as $key => $happy_blocks_tab ) { ?>
-							<a href="<?php echo esc_attr( $happy_blocks_tab['url'] ); ?>" class="happy-blocks-global-header__tab<?php echo $happy_blocks_current_tab === $key ? ' active' : ''; ?>"><?php echo esc_html( $happy_blocks_tab['title'] ); ?></a>
-					<?php } ?>
-				</div>
-			</div>
-			<hr />
 			<div class="happy-blocks-global-header-site__title">
 				<?php if ( $args['include_site_title'] ) : ?>
 					<div class="happy-blocks-global-header-site__title__wrapper">
