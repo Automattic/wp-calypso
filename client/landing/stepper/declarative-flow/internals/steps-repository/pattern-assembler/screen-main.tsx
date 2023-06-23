@@ -171,7 +171,7 @@ const ScreenMain = ( {
 					onMouseDown={ handleMouseDown }
 					onClick={ handleClick }
 				>
-					{ translate( 'Continue' ) }
+					{ translate( 'Save and continue' ) }
 				</Button>
 			</div>
 		</>
