@@ -154,7 +154,7 @@ const ScreenMain = ( {
 			</div>
 			<div className="screen-container__footer">
 				<span className="screen-container__description">
-					{ translate( 'Ready? Go to the Site Editor to continue editing.' ) }
+					{ translate( 'Ready to keep editing?' ) }
 				</span>
 				<Button
 					className="pattern-assembler__button"
