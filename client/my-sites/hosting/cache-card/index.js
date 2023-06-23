@@ -47,10 +47,6 @@ const ToggleContainer = styled.div( {
 	},
 } );
 
-const CacheToggle = styled( ToggleControl )( {
-	marginBottom: '0px !important',
-} );
-
 const ToggleLabel = styled.p( {
 	marginBottom: '9px',
 	fontWeight: 600,
@@ -165,7 +161,7 @@ export const CacheCard = ( {
 							) : (
 								<>
 									<ToggleLabel>{ translate( 'Edge cache' ) }</ToggleLabel>
-									<CacheToggle
+									<ToggleControl
 										disabled={ clearEdgeCacheLoading || getEdgeCacheLoading }
 										checked={ isEdgeCacheActive }
 										onChange={ toggleEdgeCache }
