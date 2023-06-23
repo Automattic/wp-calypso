@@ -4,7 +4,7 @@ import {
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 } from '@automattic/calypso-products';
-import { getCurrentPlan } from '.';
+import { getSite } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -15,7 +15,7 @@ import type { AppState } from 'calypso/types';
  * @returns {boolean} Returns true if the site is on a Woo Express plan
  */
 export default function isSiteOnWooExpress( state: AppState, siteId: number ) {
-	const currentPlan = getCurrentPlan( state, siteId );
+	const site = getSite( state, siteId );
 	const wooExpressPlans = [
 		PLAN_WOOEXPRESS_MEDIUM,
 		PLAN_WOOEXPRESS_SMALL,
@@ -23,9 +23,9 @@ export default function isSiteOnWooExpress( state: AppState, siteId: number ) {
 		PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	];
 
-	if ( ! currentPlan ) {
+	if ( ! site?.plan?.product_slug ) {
 		return false;
 	}
 
-	return wooExpressPlans.includes( currentPlan.productSlug );
+	return wooExpressPlans.includes( site.plan.product_slug );
 }

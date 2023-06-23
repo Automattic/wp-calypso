@@ -1,5 +1,5 @@
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
-import { getCurrentPlan } from '.';
+import { getSite } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -10,11 +10,11 @@ import type { AppState } from 'calypso/types';
  * @returns {boolean} Returns true if the site is on the trial
  */
 export default function isSiteOnECommerceTrial( state: AppState, siteId: number ) {
-	const currentPlan = getCurrentPlan( state, siteId );
+	const site = getSite( state, siteId );
 
-	if ( ! currentPlan ) {
+	if ( ! site?.plan?.product_slug ) {
 		return false;
 	}
 
-	return currentPlan.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+	return site.plan.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 }
