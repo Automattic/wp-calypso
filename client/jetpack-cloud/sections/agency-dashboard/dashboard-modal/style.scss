@@ -1,0 +1,14 @@
+.dashboard-modal {
+	max-height: 100%;
+	width: 480px;
+	animation: components-modal__appear-animation 0.1s ease-out;
+	animation-fill-mode: forwards;
+}
+
+.dashboard-modal__sub-title {
+	font-size: 0.75rem;
+	line-height: 14px;
+	color: var(--studio-gray-50);
+	position: absolute;
+	inset-block-start: 50px;
+}

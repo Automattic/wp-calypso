@@ -16,6 +16,7 @@ import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
+import type { ReactNode } from 'react';
 
 export { createCreditCardPaymentMethodStore } from './store';
 
@@ -29,7 +30,7 @@ export function createCreditCardMethod( {
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
 	shouldShowTaxFields?: boolean;
-	activePayButtonText?: string;
+	activePayButtonText?: ReactNode;
 	allowUseForAllSubscriptions?: boolean;
 } ) {
 	return {

@@ -30,7 +30,11 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
 		useUnsubscribeModal( selectedSiteId, pageNumber );
 	const onClickView = ( subscriber: Subscriber ) => {
-		page.show( `/subscribers/${ selectedSiteSlug }/${ subscriber.subscription_id }` );
+		if ( subscriber.user_id ) {
+			page.show( `/subscribers/${ selectedSiteSlug }/${ subscriber.user_id }` );
+		} else {
+			page.show( `/subscribers/external/${ selectedSiteSlug }/${ subscriber.subscription_id }` );
+		}
 	};
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const dispatch = useDispatch();
@@ -51,8 +55,8 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 
 	const navigationItems: Item[] = [
 		{
-			label: 'Subscribers',
-			href: `/subscribers`,
+			label: translate( 'Subscribers' ),
+			href: `/subscribers/${ selectedSiteSlug }`,
 			helpBubble: (
 				<span>
 					{ translate(

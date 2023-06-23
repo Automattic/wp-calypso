@@ -3,17 +3,21 @@ import { Item } from 'calypso/components/breadcrumb';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscriberDetails } from './components/subscriber-details';
 import { SubscriberPopover } from './components/subscriber-popover';
+import useSubscriberDetailsQuery from './queries/use-subscriber-details-query';
 
 type SubscriberDetailsPageProps = {
-	subscriberId: number;
+	subscriberId?: number;
+	userId?: number;
 };
 
-const SubscriberDetailsPage = ( { subscriberId }: SubscriberDetailsPageProps ) => {
+const SubscriberDetailsPage = ( { subscriberId, userId }: SubscriberDetailsPageProps ) => {
 	const translate = useTranslate();
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const { data: subscriber } = useSubscriberDetailsQuery( selectedSiteId, subscriberId, userId );
 
 	const navigationItems: Item[] = [
 		{
@@ -26,22 +30,12 @@ const SubscriberDetailsPage = ( { subscriberId }: SubscriberDetailsPageProps ) =
 		},
 	];
 
-	const mockSubscriber = {
-		avatar: `https://secure.gravatar.com/avatar/${ subscriberId }`,
-		subscription_id: subscriberId,
-		email_address: 'mock.subscriber@email.com',
-		display_name: 'Mock Subscriber',
-		date_subscribed: '2021-01-01T00:00:00.000Z',
-		open_rate: 0,
-		user_id: 0,
-	};
-
 	return (
 		<Main wideLayout>
 			<FixedNavigationHeader navigationItems={ navigationItems }>
 				<SubscriberPopover onUnsubscribe={ () => undefined } />
 			</FixedNavigationHeader>
-			<SubscriberDetails subscriber={ mockSubscriber } />
+			{ subscriber && <SubscriberDetails subscriber={ subscriber } /> }
 		</Main>
 	);
 };

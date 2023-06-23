@@ -105,7 +105,7 @@ class FollowingManageSubscriptions extends Component {
 								className="following-manage__subscriptions-import-export-menu-item"
 								itemComponent="div"
 							>
-								<ReaderExportButton borderless exportType={ READER_EXPORT_TYPE_SUBSCRIPTIONS } />
+								<ReaderExportButton exportType={ READER_EXPORT_TYPE_SUBSCRIPTIONS } />
 							</PopoverMenuItem>
 						</EllipsisMenu>
 					</div>
