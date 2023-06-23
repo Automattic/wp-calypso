@@ -82,7 +82,7 @@ const useGetSharedCardData = () => {
 	return useCallback(
 		( slug: string ) => ( {
 			subheader: translate( 'of backup storage' ),
-			buttonLabel: JETPACK_BACKUP_ADDON_PRODUCTS.includes( slug )
+			buttonLabel: ( JETPACK_BACKUP_ADDON_PRODUCTS as ReadonlyArray< string > ).includes( slug )
 				? translate( 'Get add-on' )
 				: translate( 'Upgrade storage' ),
 			// description: <the default description of the product being upgraded>,
