@@ -3,19 +3,17 @@ import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'calypso/lib/url';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
-import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
 import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import './style.scss';
 
 class SearchFollowButton extends Component {
 	static propTypes = {
 		query: PropTypes.string,
-		feed: PropTypes.object,
+		feeds: PropTypes.array,
 	};
 
 	/**
@@ -53,36 +51,51 @@ class SearchFollowButton extends Component {
 	};
 
 	render() {
-		const { query, translate, readerAliasedFollowFeedUrl, feed } = this.props;
+		const { query, translate, feeds } = this.props;
 
 		// If the search query hasn't found a feed and the query doesn't look like a feed URL then don't show the follow button
-		if ( ! feed && ! this.isPotentialFeedUrl( query ) ) {
+		if ( ! feeds && ! this.isPotentialFeedUrl( query ) ) {
 			return null;
 		}
 
-		let isFollowing = false;
-		let followTitle = withoutHttp( query );
-		let followUrl = readerAliasedFollowFeedUrl;
-
-		// If we have a feed object from the search query then we can use it to create the follow button
-		if ( feed ) {
-			isFollowing = feed.is_following;
-			// Use the feed name if available on the feed object
-			if ( feed?.name ) {
-				followTitle = feed.name;
-			}
-			// Use the feed URL if available on the feed object
-			if ( feed?.feed_URL ) {
-				followUrl = feed.feed_URL;
-			}
-			// Use the subscribe URL if available on the feed object
-			if ( feed?.subscribe_URL ) {
-				followUrl = feed.subscribe_URL;
-			}
+		// Check that the query is a URL
+		// Then Loop through feeds and find the feed URL that contains the query
+		// If we find a feed then set the feed object
+		let feed;
+		if ( resemblesUrl( query ) ) {
+			feed = feeds?.find( ( f ) => f.feed_URL.includes( query ) );
 		}
 
+		// If no feed found, then don't show the follow button
+		if ( ! feed ) {
+			return null;
+		}
+
+		// We can use the feed to create a follow button
+
 		// If already following this feed then don't show the follow button
-		if ( isFollowing ) {
+		if ( feed.is_following !== undefined && feed.is_following === true ) {
+			return null;
+		}
+
+		let followTitle = withoutHttp( query );
+		// Use the feed name if available on the feed object
+		if ( feed?.name?.length > 0 ) {
+			followTitle = feed.name;
+		}
+
+		let followUrl = null;
+		// Use the feed URL if available on the feed object
+		if ( feed?.feed_URL ) {
+			followUrl = feed.feed_URL;
+		}
+		// Use the subscribe URL if available on the feed object
+		if ( feed?.subscribe_URL ) {
+			followUrl = feed.subscribe_URL;
+		}
+
+		// If the feed has no feed URL for some reason then don't show the follow button
+		if ( ! followUrl ) {
 			return null;
 		}
 
@@ -110,9 +123,4 @@ class SearchFollowButton extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
-		readerAliasedFollowFeedUrl:
-			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
-	};
-} )( localize( SearchFollowButton ) );
+export default localize( SearchFollowButton );

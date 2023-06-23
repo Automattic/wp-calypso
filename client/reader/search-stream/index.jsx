@@ -37,11 +37,11 @@ const updateQueryArg = ( params ) =>
 
 const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-const SpacerDiv = withDimensions( ( { width } ) => (
+const SpacerDiv = withDimensions( ( { width, height } ) => (
 	<div
 		style={ {
 			width: `${ width }px`,
-			height: `130px`,
+			height: `${ height - 73 }px`,
 		} }
 	/>
 ) );
@@ -53,11 +53,15 @@ class SearchStream extends React.Component {
 	};
 
 	state = {
-		feed: null,
+		feeds: [],
 	};
 
-	setSearchFeed = ( feed ) => {
-		this.setState( { feed: feed } );
+	resetSearchFeeds = () => {
+		this.setState( { feeds: [] } );
+	};
+
+	setSearchFeeds = ( feeds ) => {
+		this.setState( { feeds: feeds } );
 	};
 
 	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
@@ -114,7 +118,7 @@ class SearchStream extends React.Component {
 		const segmentedControlClass = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
-		const hidePostsAndSites = this.state.feed && this.state.feed?.feed_ID.length === 0;
+		const hidePostsAndSites = this.state.feeds && this.state.feeds?.length === 1;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -165,7 +169,7 @@ class SearchStream extends React.Component {
 						<SearchInput
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
-							onSearchChange={ () => this.setState( { feed: null } ) }
+							onSearchOpen={ this.resetSearchFeeds }
 							autoFocus={ this.props.autoFocusInput }
 							delaySearch={ true }
 							delayTimeout={ 500 }
@@ -174,7 +178,7 @@ class SearchStream extends React.Component {
 							value={ query || '' }
 						/>
 					</CompactCard>
-					<SearchFollowButton query={ query } feed={ this.state.feed ?? null } />
+					<SearchFollowButton query={ query } feeds={ this.state.feeds } />
 					{ query && (
 						<SegmentedControl compact className={ segmentedControlClass }>
 							<SegmentedControl.Item
@@ -213,7 +217,7 @@ class SearchStream extends React.Component {
 								<SiteResults
 									query={ query }
 									sort={ pickSort( sortOrder ) }
-									onReceiveSearchResults={ this.setSearchFeed }
+									onReceiveSearchResults={ this.setSearchFeeds }
 								/>
 							</div>
 						) }
@@ -227,7 +231,7 @@ class SearchStream extends React.Component {
 							<SiteResults
 								query={ query }
 								sort={ pickSort( sortOrder ) }
-								onReceiveSearchResults={ this.setSearchFeed }
+								onReceiveSearchResults={ this.setSearchFeeds }
 							/>
 						) }
 					</div>
