@@ -78,11 +78,13 @@ export default function CampaignItemDetails( props: Props ) {
 		width,
 		height,
 		status,
+		ui_status,
 		campaign_stats,
 		billing_data,
 		display_delivery_estimate = '',
 		target_urn,
 		delivery_percent,
+		created_at,
 	} = campaign || {};
 
 	const {
@@ -118,7 +120,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const overallSpendingFormatted = `$${ formatCents( total_budget_used || 0 ) }`;
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
-	const campaignCreatedFormatted = moment.utc( start_date ).format( 'MMMM DD, YYYY' );
+	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const countriesListFormatted = countriesList ? `${ countriesList }` : __( 'Everywhere' );
 	const osListFormatted = OSsList ? `${ OSsList }` : translate( 'All' );
@@ -255,8 +257,8 @@ export default function CampaignItemDetails( props: Props ) {
 
 					<div className="campaign-item__header-status">
 						{ ! isLoading && status ? (
-							<Badge type={ getCampaignStatusBadgeColor( status ) }>
-								{ getCampaignStatus( status ) }
+							<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
+								{ getCampaignStatus( ui_status ) }
 							</Badge>
 						) : (
 							<div

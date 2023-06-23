@@ -15,12 +15,14 @@ export type CampaignResponse = {
 	display_delivery_estimate: string;
 	campaign_id: number;
 	start_date: string;
+	created_at: string;
 	end_date: string;
 	display_name: string;
 	creative_html: string;
 	width: number;
 	height: number;
 	status: string;
+	ui_status: string;
 	target_urn: string;
 	delivery_percent: number;
 	campaign_stats: {
