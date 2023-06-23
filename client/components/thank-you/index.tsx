@@ -27,7 +27,7 @@ const ThankYouSectionTitle = styled.h1`
 `;
 
 const ThankYouSectionContainer = styled.div`
-	margin-bottom: 35px;
+	margin-top: 50px;
 	&:not( :first-child ) {
 		border-top: 1px solid var( --studio-gray-5 );
 	}
@@ -40,7 +40,6 @@ const ThankYouBody = styled.div`
 	width: 100%;
 	display: flex;
 	justify-content: center;
-	margin-top: 50px;
 	> div {
 		width: 600px;
 		padding: 0 20px;
