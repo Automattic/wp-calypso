@@ -18,7 +18,7 @@ import { getSitePlan, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 export type PlanNoticeProps = {
 	siteId: number;
 	visiblePlans: PlanSlug[];
-	isInSignup?: boolean;
+	isInSignup?: boolean; // TODO clk: deprecate use isInSignup. `siteId` should suffice
 	discountInformation?: {
 		withDiscount: string;
 		discountEndDate: Date;

@@ -73,7 +73,7 @@ interface PlansFeaturesMainProps {
 	hideEcommercePlan?: boolean; // to be deprecated
 	hideEnterprisePlan?: boolean; // to be deprecated
 	isStepperUpgradeFlow?: boolean;
-	isInSignup?: boolean;
+	isInSignup?: boolean; // to be deprecated
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
