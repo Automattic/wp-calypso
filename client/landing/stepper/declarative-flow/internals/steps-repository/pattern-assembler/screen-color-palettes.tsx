@@ -33,7 +33,7 @@ const ScreenColorPalettes = ( {
 				) }
 				onBack={ onBack }
 			/>
-			<div className="screen-container__body">
+			<div className="screen-container__body screen-container__body--extra-padding">
 				<ColorPaletteVariations
 					siteId={ siteId }
 					stylesheet={ stylesheet }

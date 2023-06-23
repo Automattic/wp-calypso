@@ -33,7 +33,7 @@ const ScreenFontPairings = ( {
 				) }
 				onBack={ onBack }
 			/>
-			<div className="screen-container__body">
+			<div className="screen-container__body screen-container__body--extra-padding">
 				<FontPairingVariations
 					siteId={ siteId }
 					stylesheet={ stylesheet }

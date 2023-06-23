@@ -213,7 +213,10 @@ $font-family: "SF Pro Text", $sans;
 		.pattern-selector__body {
 			position: relative;
 			margin-bottom: 32px;
-			padding: 2px;
+			padding: 2px 2px 32px;
+			// Rest pattern border to expand sides out of wrapper
+			margin-right: -2px;
+			margin-left: -2px;
 
 			&:last-child {
 				margin-bottom: 0;
@@ -272,17 +275,11 @@ $font-family: "SF Pro Text", $sans;
 		scrollbar-gutter: stable;
 	}
 
-	.screen-container__body--no-padding {
-		padding: 0;
-	}
-
-	.screen-container__body--align-sides {
-		// Reduce the padding bottom of .navigator-header__description
-		margin-top: -8px;
+	.screen-container__body--extra-padding {
+		padding-top: 14px;
 	}
 
 	.screen-container__footer {
-		padding: 2px;
 		margin-top: auto;
 	}
 

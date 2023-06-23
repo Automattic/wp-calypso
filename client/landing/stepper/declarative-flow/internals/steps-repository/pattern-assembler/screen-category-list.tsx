@@ -78,7 +78,7 @@ const ScreenCategoryList = ( {
 			<Composite
 				{ ...composite }
 				role="listbox"
-				className="screen-container__body screen-container__body--align-sides screen-category-list__body"
+				className="screen-container__body screen-category-list__body"
 				aria-label={ translate( 'Block pattern categories' ) }
 			>
 				{ categoriesInOrder.map( ( { name, label, description } ) => {
@@ -97,7 +97,7 @@ const ScreenCategoryList = ( {
 							role="option"
 							as="button"
 							{ ...composite }
-							className={ classNames( 'screen-category-list__category-button navigator-button', {
+							className={ classNames( 'screen-category-list__category-button', {
 								'screen-category-list__category-button--is-open': isOpen,
 							} ) }
 							aria-label={ label }

@@ -1,7 +1,8 @@
 @import "@automattic/typography/styles/fonts";
 
 .pattern-assembler {
-	.navigator-button {
+	.navigator-button,
+	.screen-category-list__category-button {
 		height: 44px;
 		padding: 0 8px;
 		margin: 0 -8px;
@@ -33,6 +34,10 @@
 
 		&:active {
 			background-color: var(--studio-blue-0);
+		}
+
+		.navigator-button__text {
+			padding-left: 1px;
 		}
 
 		&__checklist-item--checked {
