@@ -11,7 +11,7 @@ type PatternAssemblerCtaProps = {
 	onButtonClick: ( shouldGoToAssemblerStep: boolean ) => void;
 	showEditorFallback?: boolean;
 	showHeading?: boolean;
-	text?: string;
+	text?: string | JSX.Element;
 };
 
 const PatternAssemblerCta = ( {
@@ -35,18 +35,16 @@ const PatternAssemblerCta = ( {
 		return null;
 	}
 
-	let text = customText as string | JSX.Element;
+	let text = customText;
 	if ( ! text ) {
-		text = shouldGoToAssemblerStep ? (
+		text = (
 			<>
 				{ translate( 'Can’t find something you like?' ) }
 				<br />
-				{ translate( 'Use our library of styles and patterns to build a homepage.' ) }
+				{ shouldGoToAssemblerStep
+					? translate( 'Use our library of styles and patterns to build a homepage.' )
+					: translate( 'Jump right into the editor to design your homepage from scratch.' ) }
 			</>
-		) : (
-			translate(
-				"Can't find something you like? Jump right into the editor to design your homepage from scratch."
-			)
 		);
 	}
 
