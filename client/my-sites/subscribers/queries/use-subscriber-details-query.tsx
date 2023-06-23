@@ -5,22 +5,17 @@ import type { Subscriber } from '../types';
 
 const useSubscriberDetailsQuery = (
 	siteId: number | null,
-	subscriberId: number | undefined,
+	subscriptionId: number | undefined,
 	userId: number | undefined
 ) => {
-	let queryString = '';
-
-	if ( subscriberId ) {
-		queryString += `subscriber_id=${ subscriberId }`;
-	} else if ( userId ) {
-		queryString += `user_id=${ userId }`;
-	}
+	const type = userId ? 'wpcom' : 'email';
+	const individualSubscriptionId = userId ?? subscriptionId;
 
 	return useQuery< Subscriber >( {
-		queryKey: getSubscriberDetailsCacheKey( siteId, queryString ),
+		queryKey: getSubscriberDetailsCacheKey( siteId, individualSubscriptionId, type ),
 		queryFn: () =>
 			wpcom.req.get( {
-				path: `/sites/${ siteId }/subscribers/individual?${ queryString }`,
+				path: `/sites/${ siteId }/subscribers/individual?subscription_id=${ individualSubscriptionId }&type=${ type }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: !! siteId,
