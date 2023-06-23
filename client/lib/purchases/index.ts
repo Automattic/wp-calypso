@@ -849,6 +849,10 @@ export function purchaseType( purchase: Purchase ) {
 		return purchase.productName;
 	}
 
+	if ( isAkismetProduct( purchase ) ) {
+		return null;
+	}
+
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return i18n.translate( 'Mailboxes and Productivity Tools at %(domain)s', {
 			args: {

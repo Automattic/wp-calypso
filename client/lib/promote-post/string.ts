@@ -5,12 +5,14 @@ const BlazePressStrings = () => {
 	translate( 'Calculating' );
 	translate( 'Cannot calculate' );
 	translate(
-		'By clicking "Save and Submit" you agree to the {{linkTos}}Terms of Service{{/linkTos}} and {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}, and authorize your payment method to be charged for the budget and duration you chose. {{linkMoreAboutAds}}Learn more{{/linkMoreAboutAds}} about how budgets and payments for Promoted Posts work.'
+		'By clicking "Submit campaign" you agree to the {{linkTos}}Terms of Service{{/linkTos}} and {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}, and authorize your payment method to be charged for the budget and duration you chose. {{linkMoreAboutAds}}Learn more{{/linkMoreAboutAds}} about how budgets and payments for Promoted Posts work.'
 	);
 	translate( 'All topics' );
+	translate( 'All languages' );
 	translate( 'Everywhere' );
 	translate( 'Devices' );
 	translate( 'Location' );
+	translate( 'Language' );
 	translate( 'Interests' );
 	translate( 'OS' );
 	translate( 'days' );
@@ -84,15 +86,16 @@ const BlazePressStrings = () => {
 	translate( 'Appearance' );
 	translate( 'Image' );
 	translate( 'Title' );
-	translate( '%(charactersLeft)s characters remaining' );
+	translate( '%(charactersLeft)s character remaining' );
 	translate( 'Snippet' );
 	translate( 'Article Snippet' );
-	translate( '%(snippetCharactersLeft)s characters remaining' );
+	translate( '%(snippetCharactersLeft)s character remaining' );
 	translate( 'Destination URL' );
 	translate( 'The blog page' );
 	translate( 'The site home' );
 	translate( 'Card Number' );
 	translate( 'Exp. Date' );
+	translate( 'MM / YY' );
 	translate( 'CVV' );
 	translate( 'Pick a few categories, like food or movies, to narrow your audience.' );
 	translate( 'Previous' );
@@ -108,16 +111,33 @@ const BlazePressStrings = () => {
 	translate( 'Learn more' );
 	translate( "Don't show me this step again." );
 	translate( 'Select post to promote' );
+	translate( 'Fetching posts…' );
+	translate( 'Fetching %(searchPostType)ss…' );
+	translate( 'Fetching more %(searchPostType)ss…' );
+	translate( 'No %(searchPostType)ss found.' );
+	translate( 'Post' );
+	translate( 'Type' );
+	translate( 'Publish date' );
+	translate( 'Visitors' );
+	translate( 'Likes' );
+	translate( 'Comments' );
 	translate( 'Advanced Settings' );
 	translate( 'Targeted Devices' );
+	translate( 'The page URL' );
+	translate( 'The post URL' );
 	translate( 'Ad creative' );
 	translate( "Use post's media" );
+	translate( 'Page title' );
 	translate( 'Apply' );
 	translate( 'Reset' );
 	translate( 'Crop' );
 	translate( 'Drop image here' );
 	translate( 'Click or Drag an image here' );
+	translate(
+		'Based on the language of your site we suggest targeting %(lang)s speaking users to ensure the ad is seen by the right audience and to increase its effectiveness.'
+	);
 	translate( 'All Locations' );
+	translate( 'Pick a few categories, like food or pets, to narrow your audience.' );
 	translate( 'Budget and duration' );
 	translate( 'Daily spend for %(durationDays)s-day duration' );
 	translate( 'Estimated people reached per day' );
@@ -128,19 +148,24 @@ const BlazePressStrings = () => {
 	);
 	translate( 'day' );
 	translate( 'total' );
+	translate( 'Could not retrieve countries. Please try again later.' );
+	translate( 'Error submitting payment. Please check payment information.' );
 	translate( 'Search…' );
-	translate( 'Post' );
 	translate( 'Page' );
 	translate( 'Product' );
-	translate( 'Promote' );
+	translate( 'hours ago' );
+	translate( '1 day ago' );
 	translate( 'Untitled' );
 	translate( 'View' );
-	translate( 'Create campaign' );
+	translate( 'Promote' );
+	translate( 'Submit campaign' );
 	translate( 'Make changes' );
+	translate( 'Page Title' );
+	translate( 'Credits will be automatically applied to your order when available.' );
 	translate( 'Summary' );
-	translate( 'Max Budget' );
 	translate( 'Estimated Impressions' );
-	translate( 'Credits' );
+	translate( 'Max Budget' );
+	translate( 'Languages' );
 	translate( 'Destination' );
 	translate( 'Audience & Budget' );
 	translate( 'Save and Submit' );
@@ -149,7 +174,7 @@ const BlazePressStrings = () => {
 	translate( '%(field)s is required.' );
 	translate( 'This field is required.' );
 	translate( 'All fields marked as required ({{span}}*{{/span}}) must be completed to continue' );
-	translate( 'All' );
+	translate( 'All devices' );
 	translate( 'Mobile devices' );
 	translate( 'Desktop devices' );
 	translate( 'Credits' );

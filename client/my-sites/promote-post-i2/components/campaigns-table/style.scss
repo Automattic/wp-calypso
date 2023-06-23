@@ -13,7 +13,9 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 	.segmented-control {
 		background-color: transparent;
+		border-radius: 4px;
 		margin-left: 16px;
+		overflow: hidden;
 
 		.segmented-control__link {
 			align-items: center;
@@ -42,11 +44,11 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		&__budget,
 		&__impressions,
 		&__clicks {
-			padding-right: 5px;
+			padding-right: 16px;
 		}
 
 		&__data {
-			width: calc(32% - 5px);
+			width: 28%;
 
 			.campaign-item__status-mobile {
 				display: none;
@@ -54,31 +56,39 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 
 		&__user {
-			width: calc(11% - 5px);
+			width: 13%;
 		}
 
 		&__status {
-			width: calc(13% - 5px);
+			width: 12%;
 		}
 
 		&__ends {
-			width: calc(11% - 5px);
+			width: 13%;
 		}
 
 		&__budget {
-			width: calc(13% - 5px);
+			width: 12%;
 		}
 
 		&__impressions {
-			width: calc(13% - 5px);
+			width: 10%;
 		}
 
 		&__clicks {
-			width: calc(7% - 5px);
+			width: 10%;
 		}
 
 		&__action {
 			width: 2%;
+
+			button {
+				color: $studio-black;
+
+				&:hover {
+					color: var(--color-accent);
+				}
+			}
 		}
 
 		&__header-image-skeleton {
@@ -100,7 +110,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	}
 
 	td {
-		border-top: 1px solid #d8d8d8;
+		border-top: 1px solid #eee;
 		color: $studio-gray-60;
 		font-size: 0.875rem;
 		letter-spacing: -0.15px;
@@ -151,7 +161,10 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			width: 108px; // TODO: adjust height and width for mobile devices as well.
 		}
 	}
+}
 
+.promote-post-i2__table,
+.campaign-item__header-status {
 	.badge {
 		border-radius: 4px;
 		font-size: 0.75rem;
@@ -199,7 +212,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	.promote-post-i2__table {
 		tr {
 			&:not(:last-child) td {
-				border-bottom: 1px solid #d8d8d8;
+				border-bottom: 1px solid #eee;
 			}
 		}
 

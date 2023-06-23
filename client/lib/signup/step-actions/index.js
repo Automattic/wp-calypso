@@ -4,6 +4,7 @@ import {
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	isEcommerce,
+	isDomainTransfer,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
@@ -1180,7 +1181,7 @@ export function isAddOnsFulfilled( stepName, defaultDependencies, nextProps ) {
 }
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
+	const { isPaidPlan, sitePlanSlug, submitSignupStep, flowName, signupDependencies } = nextProps;
 	const fulfilledDependencies = [];
 	const dependenciesFromDefaults = {};
 
@@ -1189,6 +1190,11 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 		fulfilledDependencies.push( 'themeSlugWithRepo' );
 		dependenciesFromDefaults.themeSlugWithRepo = defaultDependencies.themeSlugWithRepo;
 	}
+
+	const isTransferSelectedInDomainTransferFlow =
+		'domain-transfer' === flowName &&
+		signupDependencies?.domainItem &&
+		isDomainTransfer( signupDependencies.domainItem );
 
 	if ( isPaidPlan ) {
 		const cartItem = undefined;
@@ -1205,6 +1211,14 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 			{ cartItem, ...dependenciesFromDefaults }
 		);
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
+		fulfilledDependencies.push( 'cartItem' );
+	} else if ( isTransferSelectedInDomainTransferFlow ) {
+		const cartItem = null;
+		submitSignupStep(
+			{ stepName, cartItem, wasSkipped: true },
+			{ cartItem, ...dependenciesFromDefaults }
+		);
+		recordExcludeStepEvent( stepName, sitePlanSlug );
 		fulfilledDependencies.push( 'cartItem' );
 	}
 
