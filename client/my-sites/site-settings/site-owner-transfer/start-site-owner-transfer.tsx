@@ -227,6 +227,7 @@ const ContentAndOwnershipCard = ( {
 					<ListItem>
 						{ createInterpolateElement(
 							sprintf(
+								// translators: siteSlug is the current site slug, username is the user that the site will be transerred to
 								translate(
 									'If your site <strong>%(siteSlug)s</strong> has a staging site, it will be transferred to <strong>%(username)s</strong>.'
 								),
