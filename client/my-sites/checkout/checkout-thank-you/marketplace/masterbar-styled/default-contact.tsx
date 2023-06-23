@@ -11,8 +11,11 @@ import { useTranslate } from 'i18n-calypso';
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const ContactContainer = styled.div`
-	margin-top: 24px;
-	margin-right: 24px;
+	display: flex;
+	align-items: center;
+	column-gap: 8px;
+	padding-right: 24px;
+	padding-left: 24px;
 	font-size: 14px;
 	line-height: 20px;
 	font-weight: 500;
@@ -48,7 +51,7 @@ export function DefaultMasterbarContact() {
 
 	return (
 		<ContactContainer>
-			<label>{ translate( 'Need extra help?' ) }</label>&nbsp;
+			<label>{ translate( 'Need extra help?' ) }</label>
 			<Button className="marketplace-thank-you-help-center" isLink onClick={ toggleHelpCenter }>
 				{ translate( 'Visit Help Center' ) }
 			</Button>
