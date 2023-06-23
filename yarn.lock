@@ -27884,18 +27884,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"social-logos@npm:^2.5.2":
-  version: 2.5.2
-  resolution: "social-logos@npm:2.5.2"
-  dependencies:
-    prop-types: ^15.5.7
-  peerDependencies:
-    react: 15 - 18
-  checksum: 60a5d5440b9b8b57a29bd60340ad62a063da7da29a2b437ebdbaaaf29596ebfa264cdd0aa1d09a3e4bc6e3cb2c220d6dbf8e8a17c2b27bc307a9059d3adddcbd
-  languageName: node
-  linkType: hard
-
-"social-logos@npm:^2.5.3":
+"social-logos@npm:^2.5.2, social-logos@npm:^2.5.3":
   version: 2.5.3
   resolution: "social-logos@npm:2.5.3"
   dependencies:
