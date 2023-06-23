@@ -27,6 +27,7 @@ import {
 	isInstallingTheme,
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
+import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
 import { addStyleVariation, trackClick, interlaceThemes } from './helpers';
 import SearchThemesTracks from './search-themes-tracks';
 import './themes-selection.scss';
@@ -313,6 +314,7 @@ export const ConnectedThemesSelection = connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
+		const hiddenFilters = getThemeHiddenFilters( state, siteId );
 		const hasUnlimitedPremiumThemes = siteHasFeature(
 			state,
 			siteId,
@@ -340,7 +342,7 @@ export const ConnectedThemesSelection = connect(
 			search,
 			page,
 			tier: premiumThemesEnabled ? tier : 'free',
-			filter: compact( [ filter, vertical ] ).join( ',' ),
+			filter: compact( [ filter, vertical, hiddenFilters ] ).join( ',' ),
 			number,
 		};
 
