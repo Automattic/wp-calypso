@@ -167,6 +167,11 @@ export default function NotificationSettings( {
 		}
 	};
 
+	const clearValidationError = useCallback( () => {
+		setValidationError( '' );
+		setHasUnsavedChanges( false );
+	}, [] );
+
 	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
 		setAllEmailItems( items );
 		setHasUnsavedChanges( false );
@@ -174,15 +179,24 @@ export default function NotificationSettings( {
 
 	const handleSetAllPhoneItems = ( items: StateMonitorSettingsSMS[] ) => {
 		setAllPhoneItems( items );
-		setHasUnsavedChanges( false );
+		clearValidationError();
 	};
 
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
 		event.preventDefault();
 
-		if ( ! enableMobileNotification && ! enableEmailNotification ) {
+		if (
+			! enableMobileNotification &&
+			! enableEmailNotification &&
+			! ( isSMSNotificationEnabled && enableSMSNotification )
+		) {
 			return setValidationError( translate( 'Please select at least one contact method.' ) );
 		}
+
+		if ( isSMSNotificationEnabled && enableSMSNotification && ! allPhoneItems.length ) {
+			return setValidationError( translate( 'Please add at least one phone number.' ) );
+		}
+
 		const params = {
 			wp_note_notifications: enableMobileNotification,
 			email_notifications: enableEmailNotification,
@@ -384,11 +398,15 @@ export default function NotificationSettings( {
 	}, [ bulkUpdateSettings, setBulkUpdateSettings ] );
 
 	useEffect( () => {
-		if ( enableMobileNotification || enableEmailNotification ) {
-			setValidationError( '' );
-			setHasUnsavedChanges( false );
+		if ( enableMobileNotification || enableEmailNotification || enableSMSNotification ) {
+			clearValidationError();
 		}
-	}, [ enableMobileNotification, enableEmailNotification ] );
+	}, [
+		enableMobileNotification,
+		enableEmailNotification,
+		enableSMSNotification,
+		clearValidationError,
+	] );
 
 	useEffect( () => {
 		if ( isComplete ) {
