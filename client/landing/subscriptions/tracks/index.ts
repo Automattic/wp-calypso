@@ -1,6 +1,6 @@
 export { default as useRecordSubscriptionsTracksEvent } from './use-record-subscriptions-tracks-event';
-// export { default as useRecordSiteSubscribed } from './use-record-site-subscribed';
-// export { default as useRecordSiteUnsubscribed } from './use-record-site-unsubscribed';
+export { default as useRecordSiteSubscribed } from './use-record-site-subscribed';
+export { default as useRecordSiteUnsubscribed } from './use-record-site-unsubscribed';
 export { default as useRecordSiteIconClicked } from './use-record-site-icon-clicked';
 export { default as useRecordSiteTitleClicked } from './use-record-site-title-clicked';
 export { default as useRecordSiteUrlClicked } from './use-record-site-url-clicked';
