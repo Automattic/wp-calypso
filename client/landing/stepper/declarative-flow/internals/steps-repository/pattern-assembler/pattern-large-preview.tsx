@@ -69,7 +69,7 @@ const PatternLargePreview = ( {
 
 	const getTitle = () => {
 		if ( ! shouldShowSelectPatternHint ) {
-			return translate( 'Welcome to your blank canvas.' );
+			return translate( 'Welcome to your homepage.' );
 		}
 
 		return translate( 'Ready to start designing?' );
