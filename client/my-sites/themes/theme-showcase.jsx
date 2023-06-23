@@ -451,6 +451,7 @@ class ThemeShowcase extends Component {
 			isSiteWooExpress,
 		} = this.props;
 		const tier = this.props.tier || '';
+		const isSiteWooExpressOrEcomFreeTrial = isSiteECommerceFreeTrial || isSiteWooExpress;
 
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
@@ -552,7 +553,9 @@ class ThemeShowcase extends Component {
 				</ThemesHeader>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
-
+					{ isSiteWooExpressOrEcomFreeTrial && (
+						<div className="themes__showcase">{ this.renderBanner() }</div>
+					) }
 					<div className="themes__controls">
 						<SearchThemes
 							query={ filterString + search }
@@ -584,7 +587,7 @@ class ThemeShowcase extends Component {
 						) }
 					</div>
 					<div className="themes__showcase">
-						{ this.renderBanner() }
+						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
