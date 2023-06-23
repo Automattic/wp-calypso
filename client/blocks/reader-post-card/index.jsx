@@ -193,7 +193,7 @@ class ReaderPostCard extends Component {
 					title={ title }
 					isDiscover={ isDiscover }
 					postByline={ postByline }
-					commentIds={ postKey.comments }
+					commentIds={ postKey.comments ?? [] }
 					onClick={ this.handleCardClick }
 				/>
 			);

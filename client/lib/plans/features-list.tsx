@@ -270,6 +270,7 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	FEATURE_PREMIUM_STORE_THEMES,
 	FEATURE_STORE_DESIGN,
 	FEATURE_UNLIMITED_PRODUCTS,
@@ -291,6 +292,7 @@ import {
 	isEcommercePlan,
 	isBusinessPlan,
 	isFreePlan,
+	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
@@ -314,6 +316,7 @@ export type FeatureObject = {
 	getCompareSubtitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
+	getFeatureGroup?: () => string;
 };
 export type FeatureList = {
 	[ key: string ]: FeatureObject;
@@ -1702,21 +1705,66 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
 		getTitle: () => i18n.translate( 'Import up to 100 subscribers' ),
 	},
+	[ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES ]: {
+		getSlug: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+		getTitle: () => i18n.translate( 'Transaction fees for payments' ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
-		getTitle: () => i18n.translate( '10% transaction fee for payments + Stripe fees' ),
+		getTitle: () =>
+			i18n.translate( '%(commission)d% transaction fee for payments', {
+				args: { commission: 10 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '10%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
-		getTitle: () => i18n.translate( '8% transaction fee for payments + Stripe fees' ),
+		getTitle: () =>
+			i18n.translate( '%(commission)d% transaction fee for payments', {
+				args: { commission: 8 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '8%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
-		getTitle: () => i18n.translate( '4% transaction fee for payments + Stripe fees' ),
+		getTitle: () =>
+			i18n.translate( '%(commission)d% transaction fee for payments', {
+				args: { commission: 4 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '4%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
-		getTitle: () => i18n.translate( '2% transaction fee for payments + Stripe fees' ),
+		getTitle: () =>
+			i18n.translate( '%(commission)d% transaction fee for payments', {
+				args: { commission: 2 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '2%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
+		getTitle: () =>
+			i18n.translate( '%(commission)d% transaction fee for payments', {
+				args: { commission: 0 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '0%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,

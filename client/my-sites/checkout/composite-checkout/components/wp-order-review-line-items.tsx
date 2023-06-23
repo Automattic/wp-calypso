@@ -184,13 +184,15 @@ function LineItemWrapper( {
 	const variants = useGetProductVariants( product, ( variant ) => {
 		// Only show term variants which are equal to or longer than the variant that
 		// was in the cart when checkout finished loading (not necessarily the
-		// current variant). For WordPress.com only, not Jetpack or Akismet. See
-		// https://github.com/Automattic/wp-calypso/issues/69633
+		// current variant). For WordPress.com only, not Jetpack, Akismet or Marketplace.
+		// See https://github.com/Automattic/wp-calypso/issues/69633
 		if ( ! initialVariantTerm ) {
 			return true;
 		}
 		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
-		if ( isJetpack || isAkismet ) {
+		const isMarketplace = product.extra?.is_marketplace_product;
+
+		if ( isJetpack || isAkismet || isMarketplace ) {
 			return true;
 		}
 
