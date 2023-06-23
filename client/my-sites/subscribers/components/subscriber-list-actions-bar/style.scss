@@ -27,7 +27,10 @@
 		input.search-component__input[type="search"]::placeholder {
 			color: $studio-gray-50;
 		}
+	}
 
+	.subscription-manager-sort-controls {
+		margin-left: auto;
 	}
 
 	&-spacer {
