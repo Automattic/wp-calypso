@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Modal } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
+import DashboardModalForm from '../../dashboard-modal-form';
 import {
 	useUpdateMonitorSettings,
 	useJetpackAgencyDashboardRecordTrackEvent,
@@ -162,7 +162,7 @@ export default function NotificationSettings( {
 		}
 		setIsAddSMSModalOpen( ( isAddSMSModalOpen ) => ! isAddSMSModalOpen );
 		if ( isAddSMSModalOpen ) {
-			setSelectedEmail( undefined );
+			setSelectedPhone( undefined );
 			setSelectedAction( undefined );
 		}
 	};
@@ -177,9 +177,7 @@ export default function NotificationSettings( {
 		setHasUnsavedChanges( false );
 	};
 
-	function onSave( event: React.FormEvent< HTMLFormElement > ) {
-		event.preventDefault();
-
+	const onSave = () => {
 		if ( ! enableMobileNotification && ! enableEmailNotification ) {
 			return setValidationError( translate( 'Please select at least one contact method.' ) );
 		}
@@ -227,7 +225,7 @@ export default function NotificationSettings( {
 		}
 		recordEvent( 'notification_save_click', eventParams );
 		updateMonitorSettings( params );
-	}
+	};
 
 	function selectDuration( duration: MonitorDuration ) {
 		recordEvent( 'duration_select', { duration: duration.time } );
@@ -426,59 +424,57 @@ export default function NotificationSettings( {
 	}
 
 	return (
-		<Modal
-			open={ true }
-			onRequestClose={ handleOnClose }
+		<DashboardModalForm
+			className="notification-settings"
 			title={ translate( 'Set custom notification' ) }
-			className="notification-settings__modal"
+			subtitle={ getSiteCountText( sites ) }
+			onClose={ handleOnClose }
+			onSubmit={ onSave }
 		>
-			<div className="notification-settings__sub-title">{ getSiteCountText( sites ) }</div>
-			<form onSubmit={ onSave }>
-				{ isBulkUpdate && (
-					<AlertBanner type="warning">
-						{ translate( 'Settings for selected sites will be overwritten.' ) }
-					</AlertBanner>
-				) }
-				<div className={ classNames( { 'notification-settings__content': ! isBulkUpdate } ) }>
-					<NotificationDuration
-						recordEvent={ recordEvent }
-						selectedDuration={ selectedDuration }
-						selectDuration={ selectDuration }
-					/>
-					{ isSMSNotificationEnabled && (
-						<SMSNotification
-							recordEvent={ recordEvent }
-							enableSMSNotification={ enableSMSNotification }
-							setEnableSMSNotification={ setEnableSMSNotification }
-							toggleModal={ toggleAddSMSModal }
-							allPhoneItems={ allPhoneItems }
-							verifiedItem={ verifiedItem }
-						/>
-					) }
-					<MobilePushNotification
-						recordEvent={ recordEvent }
-						enableMobileNotification={ enableMobileNotification }
-						setEnableMobileNotification={ setEnableMobileNotification }
-					/>
-					<EmailNotification
-						recordEvent={ recordEvent }
-						verifiedItem={ verifiedItem }
-						enableEmailNotification={ enableEmailNotification }
-						setEnableEmailNotification={ setEnableEmailNotification }
-						defaultUserEmailAddresses={ defaultUserEmailAddresses }
-						toggleAddEmailModal={ toggleAddEmailModal }
-						allEmailItems={ allEmailItems }
-					/>
-				</div>
-				<NotificationSettingsFormFooter
-					isLoading={ isLoading }
-					validationError={ validationError }
-					isBulkUpdate={ isBulkUpdate }
-					handleOnClose={ handleOnClose }
-					hasUnsavedChanges={ hasUnsavedChanges }
-					unsavedChangesExist={ unsavedChangesExist }
+			{ isBulkUpdate && (
+				<AlertBanner type="warning">
+					{ translate( 'Settings for selected sites will be overwritten.' ) }
+				</AlertBanner>
+			) }
+			<div className={ classNames( { 'notification-settings__content': ! isBulkUpdate } ) }>
+				<NotificationDuration
+					recordEvent={ recordEvent }
+					selectedDuration={ selectedDuration }
+					selectDuration={ selectDuration }
 				/>
-			</form>
-		</Modal>
+				{ isSMSNotificationEnabled && (
+					<SMSNotification
+						recordEvent={ recordEvent }
+						enableSMSNotification={ enableSMSNotification }
+						setEnableSMSNotification={ setEnableSMSNotification }
+						toggleModal={ toggleAddSMSModal }
+						allPhoneItems={ allPhoneItems }
+						verifiedItem={ verifiedItem }
+					/>
+				) }
+				<MobilePushNotification
+					recordEvent={ recordEvent }
+					enableMobileNotification={ enableMobileNotification }
+					setEnableMobileNotification={ setEnableMobileNotification }
+				/>
+				<EmailNotification
+					recordEvent={ recordEvent }
+					verifiedItem={ verifiedItem }
+					enableEmailNotification={ enableEmailNotification }
+					setEnableEmailNotification={ setEnableEmailNotification }
+					defaultUserEmailAddresses={ defaultUserEmailAddresses }
+					toggleAddEmailModal={ toggleAddEmailModal }
+					allEmailItems={ allEmailItems }
+				/>
+			</div>
+			<NotificationSettingsFormFooter
+				isLoading={ isLoading }
+				validationError={ validationError }
+				isBulkUpdate={ isBulkUpdate }
+				handleOnClose={ handleOnClose }
+				hasUnsavedChanges={ hasUnsavedChanges }
+				unsavedChangesExist={ unsavedChangesExist }
+			/>
+		</DashboardModalForm>
 	);
 }

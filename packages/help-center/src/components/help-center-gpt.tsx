@@ -142,7 +142,7 @@ export function HelpCenterGPT() {
 							<>
 								<p>
 									{ __(
-										'Our system is currently generating a possible solution for you, which typically takes about 45 seconds.',
+										'Our system is currently generating a possible solution for you, which typically takes about 30 seconds.',
 										__i18n_text_domain__
 									) }
 								</p>

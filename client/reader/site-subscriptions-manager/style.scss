@@ -2,31 +2,55 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "client/landing/subscriptions/styles/search-component";
 
-.site-subscriptions-manager.main {
-	max-width: 1168px;
-	min-height: 100vh;
-	margin: 0;
-	padding: 0 32px;
+.site-subscriptions-manager {
+	&.main {
+		max-width: 1168px;
+		min-height: 100vh;
+		margin: 0;
+		padding: 0 32px;
 
-	@extend %search-component-subscriptions-style;
+		@extend %search-component-subscriptions-style;
+	}
 
-	& .formatted-header {
-		&.is-left-align,
-		&.is-right-align {
-			margin: 0 0 26px;
+	&__header-h-stack {
+		margin: 0 0 26px;
+
+		& .formatted-header {
+			&.is-left-align,
+			&.is-right-align {
+				margin: 0;
+			}
+
+			&__title {
+				font-size: $font-title-medium;
+				line-height: $font-title-large;
+				color: $studio-gray-100;
+				margin-bottom: rem(4px);
+			}
+
+			&__subtitle {
+				font-size: $font-body-small;
+				line-height: $font-title-small;
+				color: $studio-gray-60;
+				margin-bottom: 0;
+			}
 		}
+	}
 
-		&__title {
-			font-size: $font-title-medium;
-			line-height: $font-title-large;
-			color: $studio-gray-100;
-			margin-bottom: rem(4px);
-		}
+	&__import-export-popover {
+		box-sizing: border-box;
+		width: 305px;
 
-		&__subtitle {
-			font-size: $font-body-small;
-			line-height: $font-title-small;
-			color: $studio-gray-60;
+		button.components-button {
+			svg {
+				fill: none;
+			}
+
+			justify-content: flex-start;
+
+			.reader-import-button__label {
+				padding-left: 8px;
+			}
 		}
 	}
 }

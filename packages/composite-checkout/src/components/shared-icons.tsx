@@ -7,7 +7,7 @@ const CheckIconSvg = styled.svg`
 export function CheckIcon( { className, id }: { className?: string; id: string } ) {
 	return (
 		<CheckIconSvg
-			width="20"
+			width="16"
 			height="20"
 			viewBox="0 0 20 20"
 			xmlns="http://www.w3.org/2000/svg"

@@ -12,13 +12,14 @@ import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { User } from './use-administrators';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 type Props = {
 	selectedSiteId: number | null;
 	selectedSiteSlug: string | null;
-	siteOwner?: string;
+	siteOwner: User;
 	customDomains: ResponseDomain[];
 	onSiteTransferSuccess: () => void;
 	onSiteTransferError: () => void;
@@ -51,7 +52,7 @@ const Title = styled.h2( {
 } );
 
 const Text = styled.p( {
-	marginBottom: '0.5em !important',
+	marginBottom: '1.5em !important',
 } );
 
 const List = styled.ul( {
@@ -87,7 +88,7 @@ const DomainsCard = ( {
 }: {
 	domains: ResponseDomain[];
 	siteSlug: string | null;
-	siteOwner?: string;
+	siteOwner: User;
 } ) => {
 	const translate = useTranslate();
 	return (
@@ -98,12 +99,12 @@ const DomainsCard = ( {
 					<ListItem>
 						{ createInterpolateElement(
 							sprintf(
-								// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
+								// translators: siteSlug is the current site slug, username is the user that the site is going to
 								// transer to
 								translate(
-									'The domain name <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site.'
+									'The domain name <strong>%(siteSlug)s</strong> will be transferred to <strong>%(username)s</strong> and will remain working on the site.'
 								),
-								{ siteSlug, siteOwner }
+								{ siteSlug, username: siteOwner.login }
 							),
 							{ strong: <Strong /> }
 						) }
@@ -114,11 +115,11 @@ const DomainsCard = ( {
 					<Text>
 						{ createInterpolateElement(
 							sprintf(
-								// translators: siteOwner is the user that the site is going to transfer to
+								// translators: username is the user that the site is going to transfer to
 								translate(
-									'The following domains will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site:'
+									'The following domains will be transferred to <strong>%(username)s</strong> and will remain working on the site:'
 								),
-								{ siteOwner }
+								{ username: siteOwner.login }
 							),
 							{ strong: <Strong /> }
 						) }
@@ -143,7 +144,7 @@ const UpgradesCard = ( {
 }: {
 	purchases: Purchase[];
 	siteSlug: string | null;
-	siteOwner?: string;
+	siteOwner: User;
 } ) => {
 	const translate = useTranslate();
 	if ( purchases.length === 0 ) {
@@ -152,21 +153,19 @@ const UpgradesCard = ( {
 	return (
 		<>
 			<Title>{ translate( 'Upgrades' ) }</Title>
-			<List>
-				<ListItem>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
-							// transer to
-							translate(
-								'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain with the site.'
-							),
-							{ siteSlug, siteOwner }
+			<Text>
+				{ createInterpolateElement(
+					sprintf(
+						// translators: siteSlug is the current site slug, username is the user that the site is going to
+						// transer to
+						translate(
+							'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(username)s</strong> and will remain with the site.'
 						),
-						{ strong: <Strong /> }
-					) }
-				</ListItem>
-			</List>
+						{ siteSlug, username: siteOwner.login }
+					),
+					{ strong: <Strong /> }
+				) }
+			</Text>
 		</>
 	);
 };
@@ -176,7 +175,7 @@ const ContentAndOwnershipCard = ( {
 	siteOwner,
 }: {
 	siteSlug: string | null;
-	siteOwner?: string;
+	siteOwner: User;
 } ) => {
 	const translate = useTranslate();
 	return (
@@ -186,12 +185,12 @@ const ContentAndOwnershipCard = ( {
 				<ListItem>
 					{ createInterpolateElement(
 						sprintf(
-							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
+							// translators: siteSlug is the current site slug, userInfo is the user that the site is going to
 							// transer to
 							translate(
-								'You’ll be removed as owner of <strong>%(siteSlug)s</strong> and <strong>%(siteOwner)s</strong> will be the new owner from now on.'
+								'You’ll be removed as owner of <strong>%(siteSlug)s</strong> and <strong>%(userInfo)s</strong> will be the new owner from now on.'
 							),
-							{ siteSlug, siteOwner }
+							{ siteSlug, userInfo: `${ siteOwner.login } (${ siteOwner.email })` }
 						),
 						{ strong: <Strong /> }
 					) }
@@ -199,12 +198,11 @@ const ContentAndOwnershipCard = ( {
 				<ListItem>
 					{ createInterpolateElement(
 						sprintf(
-							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
-							// transer to
+							// translators: username is the user that the site is going to transer to
 							translate(
-								'You will remain as an administrator on <strong>%(siteSlug)s</strong>, unless removed by <strong>%(siteOwner)s</strong>.'
+								'You will keep your admin access unless <strong>%(username)s</strong> removes you.'
 							),
-							{ siteSlug, siteOwner }
+							{ username: siteOwner.login }
 						),
 						{ strong: <Strong /> }
 					) }
@@ -212,12 +210,11 @@ const ContentAndOwnershipCard = ( {
 				<ListItem>
 					{ createInterpolateElement(
 						sprintf(
-							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
-							// transer to
+							// translators: siteSlug is the current site slug
 							translate(
-								'Your posts on <strong>%(siteSlug)s</strong> will remain with your account, unless they are transferred to <strong>%(siteOwner)s</strong>.'
+								'Your posts on <strong>%(siteSlug)s</strong> will remain authored by your account.'
 							),
-							{ siteSlug, siteOwner }
+							{ siteSlug }
 						),
 						{ strong: <Strong /> }
 					) }
@@ -264,10 +261,10 @@ const StartSiteOwnerTransfer = ( {
 
 	const handleFormSubmit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		if ( ! siteOwner ) {
+		if ( ! siteOwner?.email ) {
 			return;
 		}
-		startSiteOwnerTransfer( { newSiteOwner: siteOwner } );
+		startSiteOwnerTransfer( { newSiteOwner: siteOwner.email } );
 	};
 
 	const startSiteTransferForm = (
