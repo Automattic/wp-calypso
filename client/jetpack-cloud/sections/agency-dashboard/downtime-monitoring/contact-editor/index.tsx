@@ -40,7 +40,7 @@ import {
 
 type Props = {
 	type: AllowedMonitorContactTypes;
-	action: AllowedMonitorContactActions;
+	action?: AllowedMonitorContactActions;
 	selectedContact?: StateMonitorSettingsEmail | StateMonitorSettingsSMS;
 	contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >;
 	setContacts: ( contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS > ) => void;
@@ -52,7 +52,7 @@ type Props = {
 
 export default function ContactEditor( {
 	type,
-	action,
+	action = 'add',
 	onClose,
 	selectedContact,
 	contacts,
@@ -221,6 +221,10 @@ export default function ContactEditor( {
 		setValidationError( undefined );
 
 		if ( type === 'email' ) {
+			if ( ! isValidContactInfo( type, contactInfo ) ) {
+				return setValidationError( { email: translate( 'Please enter a valid email address.' ) } );
+			}
+
 			const isNewContact =
 				! selectedContact || ! isMatchingContactInfo( type, selectedContact, contactInfo );
 
@@ -228,10 +232,6 @@ export default function ContactEditor( {
 				return setValidationError( {
 					email: translate( 'This email address is already in use.' ),
 				} );
-			}
-
-			if ( isValidContactInfo( type, contactInfo ) ) {
-				return setValidationError( { email: translate( 'Please enter a valid email address.' ) } );
 			}
 		}
 
@@ -276,7 +276,7 @@ export default function ContactEditor( {
 	const isLoading = isSubmittingVerificationCode || isRequestingVerificationCode;
 
 	const isSubmitDisabled =
-		isCompleteContactInfo( type, contactInfo, showCodeVerification ) || isLoading;
+		! isCompleteContactInfo( type, contactInfo, showCodeVerification ) || isLoading;
 
 	const verificationButtonTitle = isSubmittingVerificationCode
 		? translate( 'Verifying…' )

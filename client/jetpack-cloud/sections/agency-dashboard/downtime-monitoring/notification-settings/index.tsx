@@ -14,8 +14,7 @@ import {
 	availableNotificationDurations as durations,
 	getSiteCountText,
 } from '../../sites-overview/utils';
-import EmailAddressEditor from '../configure-email-notification/email-address-editor';
-import PhoneNumberEditor from '../configure-sms-notification/phone-number-editor';
+import ContactEditor from '../contact-editor';
 import EmailNotification from './form-content/email-notification';
 import NotificationSettingsFormFooter from './form-content/footer';
 import MobilePushNotification from './form-content/mobile-push-notification';
@@ -172,13 +171,17 @@ export default function NotificationSettings( {
 		setHasUnsavedChanges( false );
 	}, [] );
 
-	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
-		setAllEmailItems( items );
+	const handleSetAllEmailItems = (
+		items: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >
+	) => {
+		setAllEmailItems( items as Array< StateMonitorSettingsEmail > );
 		setHasUnsavedChanges( false );
 	};
 
-	const handleSetAllPhoneItems = ( items: StateMonitorSettingsSMS[] ) => {
-		setAllPhoneItems( items );
+	const handleSetAllPhoneItems = (
+		items: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >
+	) => {
+		setAllPhoneItems( items as Array< StateMonitorSettingsSMS > );
 		clearValidationError();
 	};
 
@@ -414,14 +417,15 @@ export default function NotificationSettings( {
 
 	if ( isAddEmailModalOpen ) {
 		return (
-			<EmailAddressEditor
-				toggleModal={ toggleAddEmailModal }
-				selectedEmail={ selectedEmail }
-				selectedAction={ selectedAction }
-				allEmailItems={ allEmailItems }
-				setAllEmailItems={ handleSetAllEmailItems }
+			<ContactEditor
+				type="email"
+				onClose={ toggleAddEmailModal }
+				selectedContact={ selectedEmail }
+				action={ selectedAction }
+				contacts={ allEmailItems }
+				setContacts={ handleSetAllEmailItems }
 				recordEvent={ recordEvent }
-				setVerifiedEmail={ ( item ) => handleSetVerifiedItem( 'email', item ) }
+				setVerifiedContact={ ( item ) => handleSetVerifiedItem( 'email', item ) }
 				sites={ sites }
 			/>
 		);
@@ -429,14 +433,15 @@ export default function NotificationSettings( {
 
 	if ( isAddSMSModalOpen ) {
 		return (
-			<PhoneNumberEditor
-				toggleModal={ toggleAddSMSModal }
-				selectedPhone={ selectedPhone }
-				allPhoneItems={ allPhoneItems }
-				selectedAction={ selectedAction }
-				setAllPhoneItems={ handleSetAllPhoneItems }
+			<ContactEditor
+				type="sms"
+				onClose={ toggleAddSMSModal }
+				selectedContact={ selectedPhone }
+				action={ selectedAction }
+				contacts={ allPhoneItems }
+				setContacts={ handleSetAllPhoneItems }
 				recordEvent={ recordEvent }
-				setVerifiedPhoneNumber={ ( item ) => handleSetVerifiedItem( 'phone', item ) }
+				setVerifiedContact={ ( item ) => handleSetVerifiedItem( 'phone', item ) }
 				sites={ sites }
 			/>
 		);
