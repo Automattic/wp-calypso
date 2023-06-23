@@ -257,7 +257,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 					<div className="campaign-item__header-status">
 						{ ! isLoading && status ? (
-							<Badge type={ getCampaignStatusBadgeColor( status ) }>
+							<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
 								{ getCampaignStatus( ui_status ) }
 							</Badge>
 						) : (
