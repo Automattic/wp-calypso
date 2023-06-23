@@ -5,6 +5,14 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 const useRoutePath = () => {
 	const { pathname } = useLocation();
 
+	// We are doing manual path matching because we want to
+	// track matched route path, not the full url, e.g.
+	// GOOD: /subscriptions/site/:blogId
+	// BAD: /subscriptions/sites/123456
+	//
+	// The existing functions from react-router couldn't
+	// provide use with a useful matched route path.
+
 	if ( pathname.indexOf( '/subscriptions/settings' ) === 0 ) {
 		return '/subscriptions/settings';
 	}
