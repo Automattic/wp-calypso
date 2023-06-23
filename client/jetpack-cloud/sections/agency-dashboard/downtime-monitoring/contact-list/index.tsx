@@ -61,7 +61,7 @@ export default function ContactList( {
 					/>
 				) ) }
 
-				<Button compact className="contact-list__add-button" onClick={ onAddContact }>
+				<Button compact className="contact-list__button" onClick={ onAddContact }>
 					<Icon size={ 18 } icon={ plus } />
 					{ type === 'email' ? translate( 'Add email address' ) : translate( 'Add phone number' ) }
 				</Button>
