@@ -102,7 +102,7 @@ const Container = (
 	);
 };
 
-type PlanFeatures2023GridProps = {
+export type PlanFeatures2023GridProps = {
 	isInSignup: boolean;
 	siteId: number;
 	isLaunchPage: boolean;

@@ -50,6 +50,7 @@ import './style.scss';
 interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: Intent | null;
+	isInSignup?: boolean;
 	plansWithScroll?: boolean;
 	customerType?: string;
 	basePlansPath?: string;
@@ -73,7 +74,6 @@ interface PlansFeaturesMainProps {
 	hideEcommercePlan?: boolean; // to be deprecated
 	hideEnterprisePlan?: boolean; // to be deprecated
 	isStepperUpgradeFlow?: boolean;
-	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
@@ -156,6 +156,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		};
 	}
 
+	// TODO clk: Needs typing to PlanFeatures2023GridProps
 	const asyncProps = {
 		domainName,
 		isInSignup,
