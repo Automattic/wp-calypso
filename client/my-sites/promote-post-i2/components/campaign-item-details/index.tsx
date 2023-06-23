@@ -100,6 +100,9 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const { card_name, payment_method, subtotal, credits, total } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
+	const canDisplayPaymentSection =
+		( status === 'finished' || status === 'canceled' ) &&
+		( payment_method || ! isNaN( total || 0 ) );
 
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }`, // + campaignId,
@@ -524,7 +527,7 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 							</div>
 						</div>
-						{ ( status === 'finished' || status === 'canceled' ) && (
+						{ canDisplayPaymentSection ? (
 							<div className="campaign-item-details__payment-container">
 								<div className="campaign-item-details__payment">
 									<div className="campaign-item-details__payment-row">
@@ -541,7 +544,7 @@ export default function CampaignItemDetails( props: Props ) {
 												) }
 											</div>
 											<div>
-												{ subtotal ? (
+												{ ! isNaN( subtotal || 0 ) ? (
 													<span className="campaign-item-details__label">
 														<div>{ translate( 'Subtotal' ) }</div>
 														<div className="amount">{ subtotalFormatted }</div>
@@ -557,7 +560,7 @@ export default function CampaignItemDetails( props: Props ) {
 												) : (
 													[]
 												) }
-												{ total ? (
+												{ ! isNaN( total || 0 ) ? (
 													<>
 														<span className="campaign-item-details__label">
 															<div>{ translate( 'Total paid' ) }</div>
@@ -575,6 +578,8 @@ export default function CampaignItemDetails( props: Props ) {
 									</div>
 								</div>
 							</div>
+						) : (
+							[]
 						) }
 					</div>
 					<div className="campaign-item-details__preview">
