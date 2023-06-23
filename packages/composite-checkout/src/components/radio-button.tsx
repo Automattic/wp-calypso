@@ -97,13 +97,10 @@ interface LabelProps {
 /**
  * This is the label used by radio buttons. It includes a before/after which
  * are fake radio button dots whereas the actual radio button dots are hidden.
- *
- * The inner `span` is where the contents of the label actually goes.
  */
-// TODO: fix RTL
 const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelElement > >`
 	position: relative;
-	padding: 24px;
+	padding: 16px 14px 16px 56px;
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
@@ -116,7 +113,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	height: 72px;
 
 	.rtl & {
-		padding: 16px 40px 16px 14px;
+		padding: 16px 56px 16px 14px;
 	}
 
 	:hover {
@@ -160,10 +157,6 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 			right: 20px;
 			left: auto;
 		}
-	}
-
-	span {
-		padding-left: 32px;
 	}
 }
 
