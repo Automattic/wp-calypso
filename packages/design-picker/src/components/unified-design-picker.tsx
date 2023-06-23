@@ -137,12 +137,17 @@ interface DesignCardProps {
 	shouldLimitGlobalStyles?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	getBadge: (
-		themeId: string,
-		forcePremium: boolean,
-		tooltipHeader: string,
-		tooltipMessage: string
-	) => React.ReactNode;
+	getBadge: ( {
+		themeId,
+		isLockedStyleVariation,
+		tooltipHeader,
+		tooltipMessage,
+	}: {
+		themeId: string;
+		isLockedStyleVariation: boolean;
+		tooltipHeader: string;
+		tooltipMessage: string;
+	} ) => React.ReactNode;
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
@@ -155,17 +160,23 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onPreview,
 	getBadge,
 } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
 	const { style_variations = [] } = design;
 	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
 	const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
 
-	const isPremiumStyleVariation =
+	const isLockedStyleVariation =
 		( ! design.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
-	const badgeTooltipHeader = isPremiumStyleVariation ? __( 'Premium style' ) : '';
-	const badgeTooltipMessage = isPremiumStyleVariation
+	let tooltipHeader = '';
+	if ( isLockedStyleVariation ) {
+		tooltipHeader =
+			'en' === locale || hasTranslation( 'Custom style' )
+				? __( 'Custom style' )
+				: __( 'Premium style' );
+	}
+	const tooltipMessage = isLockedStyleVariation
 		? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
 		: '';
 
@@ -183,12 +194,12 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					styleVariation={ selectedStyleVariation }
 				/>
 			}
-			badge={ getBadge(
-				design.slug,
-				isPremiumStyleVariation,
-				badgeTooltipHeader,
-				badgeTooltipMessage
-			) }
+			badge={ getBadge( {
+				themeId: design.slug,
+				isLockedStyleVariation,
+				tooltipHeader,
+				tooltipMessage,
+			} ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
 			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
@@ -210,12 +221,17 @@ interface DesignPickerProps {
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: (
-		themeId: string,
-		forcePremium: boolean,
-		tooltipHeader: string,
-		tooltipMessage: string
-	) => React.ReactNode;
+	getBadge: ( {
+		themeId,
+		isLockedStyleVariation,
+		tooltipHeader,
+		tooltipMessage,
+	}: {
+		themeId: string;
+		isLockedStyleVariation: boolean;
+		tooltipHeader: string;
+		tooltipMessage: string;
+	} ) => React.ReactNode;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -290,12 +306,17 @@ export interface UnifiedDesignPickerProps {
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: (
-		themeId: string,
-		forcePremium: boolean,
-		tooltipHeader: string,
-		tooltipMessage: string
-	) => React.ReactNode;
+	getBadge: ( {
+		themeId,
+		isLockedStyleVariation,
+		tooltipHeader,
+		tooltipMessage,
+	}: {
+		themeId: string;
+		isLockedStyleVariation: boolean;
+		tooltipHeader: string;
+		tooltipMessage: string;
+	} ) => React.ReactNode;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {

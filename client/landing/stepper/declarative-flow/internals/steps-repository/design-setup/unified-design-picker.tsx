@@ -330,15 +330,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		[ site ]
 	);
 
-	const getBadge = (
-		themeId: string,
-		forcePremium: boolean,
-		tooltipHeader: string,
-		tooltipMessage: string
-	) => (
+	const getBadge = ( {
+		themeId,
+		isLockedStyleVariation,
+		tooltipHeader,
+		tooltipMessage,
+	}: {
+		themeId: string;
+		isLockedStyleVariation: boolean;
+		tooltipHeader: string;
+		tooltipMessage: string;
+	} ) => (
 		<ThemeTypeBadge
 			canGoToCheckout={ false }
-			forcePremium={ forcePremium }
+			isLockedStyleVariation={ isLockedStyleVariation }
 			siteId={ site?.ID ?? null }
 			siteSlug={ siteSlug }
 			themeId={ themeId }
