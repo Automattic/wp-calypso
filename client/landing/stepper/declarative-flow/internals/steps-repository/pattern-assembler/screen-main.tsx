@@ -120,10 +120,10 @@ const ScreenMain = ( {
 							checked={ hasSections }
 							path={ hasSections ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
-							aria-label={ translate( 'Homepage' ) }
+							aria-label={ translate( 'Sections' ) }
 							onClick={ () => onSelect( 'section' ) }
 						>
-							{ translate( 'Homepage' ) }
+							{ translate( 'Sections' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
 							checked={ hasFooter }

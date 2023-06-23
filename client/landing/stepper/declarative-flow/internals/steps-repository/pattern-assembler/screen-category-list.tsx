@@ -68,7 +68,7 @@ const ScreenCategoryList = ( {
 				title={
 					<NavigatorTitle
 						title={
-							replacePatternMode ? translate( 'Replace pattern' ) : translate( 'Add patterns' )
+							replacePatternMode ? translate( 'Replace section' ) : translate( 'Add sections' )
 						}
 					/>
 				}
