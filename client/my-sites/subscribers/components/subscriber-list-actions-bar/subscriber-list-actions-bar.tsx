@@ -1,17 +1,15 @@
-import { Reader } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { SortControls } from 'calypso/landing/subscriptions/components/sort-controls';
 import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
+import { SubscribersSortBy } from '../../constants';
 import './style.scss';
 
-const { SubscribersSortBy: SortBy } = Reader;
-
 const getSortOptions = ( translate: ReturnType< typeof useTranslate > ) => [
-	{ value: SortBy.Name, label: translate( 'Name' ) },
-	{ value: SortBy.DateSubscribed, label: translate( 'Recently subscribed' ) },
+	{ value: SubscribersSortBy.Name, label: translate( 'Name' ) },
+	{ value: SubscribersSortBy.DateSubscribed, label: translate( 'Recently subscribed' ) },
 ];
 
 const ListActionsBar = () => {

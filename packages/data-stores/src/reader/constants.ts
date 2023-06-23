@@ -21,8 +21,3 @@ export enum SiteSubscriptionsSortBy {
 	LastUpdated = 'last_updated',
 	DateSubscribed = 'date_subscribed',
 }
-
-export enum SubscribersSortBy {
-	Name = 'name',
-	DateSubscribed = 'date_subscribed',
-}

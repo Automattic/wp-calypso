@@ -1,6 +1,6 @@
-import { SubscribersSortBy } from '@automattic/data-stores/src/reader';
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import { SubscribersSortBy } from '../constants';
 import { getSubscribersCacheKey } from '../helpers';
 import type { SubscriberEndpointResponse } from '../types';
 
