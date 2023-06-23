@@ -11,9 +11,8 @@ const MasterbarStyledBlock = styled( Masterbar )`
 `;
 
 const WordPressLogoStyled = styled( WordPressLogo )`
-	max-height: calc( 100% - 47px );
-	align-self: center;
 	fill: rgb( 54, 54, 54 );
+	margin: 24px;
 `;
 
 const ItemStyled = styled( Item )`
@@ -58,7 +57,7 @@ const MasterbarStyled = ( {
 	showContact?: boolean;
 } ) => (
 	<MasterbarStyledBlock>
-		<WordPressLogoStyled />
+		<WordPressLogoStyled size={ 24 } />
 		{ canGoBack && (
 			<ItemStyled icon="chevron-left" onClick={ onClick }>
 				{ backText }
