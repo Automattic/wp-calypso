@@ -11182,7 +11182,7 @@ __metadata:
     redux-mock-store: ^1.5.4
     redux-thunk: ^2.4.2
     regenerator-runtime: ^0.13.9
-    social-logos: ^2.5.2
+    social-logos: ^2.5.3
     source-map-support: ^0.5.19
     store: ^2.0.12
     striptags: ^3.1.1
@@ -27892,6 +27892,17 @@ __metadata:
   peerDependencies:
     react: 15 - 18
   checksum: 60a5d5440b9b8b57a29bd60340ad62a063da7da29a2b437ebdbaaaf29596ebfa264cdd0aa1d09a3e4bc6e3cb2c220d6dbf8e8a17c2b27bc307a9059d3adddcbd
+  languageName: node
+  linkType: hard
+
+"social-logos@npm:^2.5.3":
+  version: 2.5.3
+  resolution: "social-logos@npm:2.5.3"
+  dependencies:
+    prop-types: ^15.5.7
+  peerDependencies:
+    react: 15 - 18
+  checksum: f7c3f1e4dae32af7c73de024c9c190b5ff47a0206743abdd02531948428ba2d6e62ee6abaab5f73ebd05c6b1b13aa613d4ad7025f5315658bf1c888c0dc46b21
   languageName: node
   linkType: hard
 
