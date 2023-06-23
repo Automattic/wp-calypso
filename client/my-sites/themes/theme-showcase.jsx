@@ -25,6 +25,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
 import {
@@ -375,11 +376,24 @@ class ThemeShowcase extends Component {
 	};
 
 	renderBanner = () => {
-		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner, isUpsellCardDisplayed } =
-			this.props;
+		const {
+			loggedOutComponent,
+			isExpertBannerDissmissed,
+			upsellBanner,
+			isUpsellCardDisplayed,
+			isSiteECommerceFreeTrial,
+		} = this.props;
 
 		// Don't show the banner if there is already an upsell card displayed
 		if ( isUpsellCardDisplayed ) {
+			return null;
+		}
+
+		// In ecommerce trial sites, we only want to show upsell banner.
+		if ( isSiteECommerceFreeTrial ) {
+			if ( upsellBanner ) {
+				return upsellBanner;
+			}
 			return null;
 		}
 
@@ -433,6 +447,8 @@ class ThemeShowcase extends Component {
 			isMultisite,
 			locale,
 			premiumThemesEnabled,
+			isSiteECommerceFreeTrial,
+			isSiteWooExpress,
 		} = this.props;
 		const tier = this.props.tier || '';
 
@@ -536,6 +552,7 @@ class ThemeShowcase extends Component {
 				</ThemesHeader>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
+
 					<div className="themes__controls">
 						<SearchThemes
 							query={ filterString + search }
@@ -544,15 +561,17 @@ class ThemeShowcase extends Component {
 						/>
 						{ tabFilters && (
 							<div className="theme__filters">
-								<ThemesToolbarGroup
-									items={ Object.values( tabFilters ) }
-									selectedKey={ this.state.tabFilter.key }
-									onSelect={ ( key ) =>
-										this.onFilterClick(
-											Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-										)
-									}
-								/>
+								{ ! isSiteECommerceFreeTrial && ! isSiteWooExpress && (
+									<ThemesToolbarGroup
+										items={ Object.values( tabFilters ) }
+										selectedKey={ this.state.tabFilter.key }
+										onSelect={ ( key ) =>
+											this.onFilterClick(
+												Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+											)
+										}
+									/>
+								) }
 								{ premiumThemesEnabled && ! isMultisite && (
 									<SimplifiedSegmentedControl
 										key={ tier }
@@ -597,6 +616,8 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
 		isUpsellCardDisplayed: isUpsellCardDisplayedSelector( state ),
+		isSiteECommerceFreeTrial: isSiteOnECommerceTrial( state, siteId ),
+		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 	};
 };
 
