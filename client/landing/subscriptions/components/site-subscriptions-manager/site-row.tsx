@@ -1,11 +1,20 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
 import { successNotice } from 'calypso/state/notices/actions';
+import {
+	useRecordSiteIconClicked,
+	useRecordSiteTitleClicked,
+	useRecordSiteUrlClicked,
+	useRecordNotificationsToggle,
+	useRecordPostEmailsToggle,
+	useRecordCommentEmailsToggle,
+	useRecordPostEmailsSetFrequency,
+} from '../../tracks';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
@@ -127,62 +136,68 @@ const SiteRow = ( {
 		}
 	}, [ blog_ID, feed_ID, portal ] );
 
+	// Tracks events recording
+	const recordSiteIconClicked = useRecordSiteIconClicked();
+	const recordSiteTitleClicked = useRecordSiteTitleClicked();
+	const recordSiteUrlClicked = useRecordSiteUrlClicked();
+	const recordNotificationsToggle = useRecordNotificationsToggle();
+	const recordPostEmailsToggle = useRecordPostEmailsToggle();
+	const recordCommentEmailsToggle = useRecordCommentEmailsToggle();
+	const recordPostEmailsSetFrequency = useRecordPostEmailsSetFrequency();
+	const blog_id = blog_ID; // makes object assignment a little easier
+
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings
-		updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } );
+		updateNotifyMeOfNewPosts( { blog_id, send_posts } );
 
 		// Record tracks event
-		const tracksProperties = { blog_id: blog_ID, portal };
-		if ( send_posts ) {
-			recordTracksEvent( 'calypso_subscriptions_notifications_toggle_on', tracksProperties );
-		} else {
-			recordTracksEvent( 'calypso_subscriptions_notifications_toggle_off', tracksProperties );
-		}
+		recordNotificationsToggle( send_posts, { blog_id } );
 	};
 
 	const handleEmailMeNewPostsChange = ( send_posts: boolean ) => {
 		// Update post emails settings
-		updateEmailMeNewPosts( { blog_id: blog_ID, send_posts } );
+		updateEmailMeNewPosts( { blog_id, send_posts } );
 
 		// Record tracks event
-		const tracksProperties = { blog_id: blog_ID, portal };
-		if ( send_posts ) {
-			recordTracksEvent( 'calypso_subscriptions_post_emails_toggle_on', tracksProperties );
-		} else {
-			recordTracksEvent( 'calypso_subscriptions_post_emails_toggle_off', tracksProperties );
-		}
+		recordPostEmailsToggle( send_posts, { blog_id } );
 	};
 
 	const handleEmailMeNewCommentsChange = ( send_comments: boolean ) => {
 		// Update comment emails settings
-		updateEmailMeNewComments( { blog_id: blog_ID, send_comments } );
+		updateEmailMeNewComments( { blog_id, send_comments } );
 
 		// Record tracks event
-		const tracksProperties = { blog_id: blog_ID, portal };
-		if ( send_comments ) {
-			recordTracksEvent( 'calypso_subscriptions_comment_emails_toggle_on', tracksProperties );
-		} else {
-			recordTracksEvent( 'calypso_subscriptions_comment_emails_toggle_off', tracksProperties );
-		}
+		recordCommentEmailsToggle( send_comments, { blog_id } );
 	};
 
 	const handleDeliveryFrequencyChange = ( delivery_frequency: Reader.EmailDeliveryFrequency ) => {
 		// Update post emails delivery frequency
-		updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } );
+		updateDeliveryFrequency( { blog_id, delivery_frequency } );
 
 		// Record tracks event
-		const tracksProperties = { blog_id: blog_ID, delivery_frequency, portal };
-		recordTracksEvent( 'calypso_subscriptions_post_emails_set_frequency', tracksProperties );
+		recordPostEmailsSetFrequency( { blog_id, delivery_frequency } );
 	};
 
 	return ! isDeleted ? (
 		<li className="row" role="row">
 			<span className="title-cell" role="cell">
-				<Link className="title-icon" href={ siteTitleUrl }>
+				<Link
+					className="title-icon"
+					href={ siteTitleUrl }
+					onClick={ () => {
+						recordSiteIconClicked( { blog_id } );
+					} }
+				>
 					<SiteIcon iconUrl={ site_icon } size={ 40 } siteName={ name } />
 				</Link>
 				<span className="title-column">
-					<Link className="title-name" href={ siteTitleUrl }>
+					<Link
+						className="title-name"
+						href={ siteTitleUrl }
+						onClick={ () => {
+							recordSiteTitleClicked( { blog_id } );
+						} }
+					>
 						{ name }
 						{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
 						{ !! is_paid_subscription && (
@@ -191,14 +206,17 @@ const SiteRow = ( {
 							</span>
 						) }
 					</Link>
-					<a
+					<ExternalLink
 						className="title-url"
 						{ ...( url && { href: url } ) }
 						rel="noreferrer noopener"
 						target="_blank"
+						onClick={ () => {
+							recordSiteUrlClicked( { blog_id } );
+						} }
 					>
 						{ hostname }
-					</a>
+					</ExternalLink>
 				</span>
 			</span>
 			<span className="date-cell" role="cell">
