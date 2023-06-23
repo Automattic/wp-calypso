@@ -1,13 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Button, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
+import { Button, CheckboxControl, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
 // import classNames from 'classnames';
 // import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import StatsParticipationSVG from './stats-participation-svg';
 import './styles.scss';
 
-const ProductCard = ( { site } ) => {
-	const [ subscriptionValue, setSubscriptionValue ] = useState( 0 );
+const COMPONENT_NAME = 'stats-participation-wizard';
+
+const ProductCard = ( { siteSlug } ) => {
+	const [ subscriptionValue, setSubscriptionValue ] = useState( 6 );
 	const [ wizardStep, setWizardStep ] = useState( 0 );
 	const [ siteType, setSiteType ] = useState( null );
 
@@ -16,40 +18,61 @@ const ProductCard = ( { site } ) => {
 		setWizardStep( 1 );
 	};
 
+	const toggleFirstStep = ( toggleState ) => {
+		// Never close on click but allow to open when a type was selected (to change).
+		if ( ! siteType || ! toggleState ) {
+			return;
+		}
+
+		setWizardStep( 0 );
+	};
+
 	return (
-		<div className="stats-participation-wizard">
+		<div className={ COMPONENT_NAME }>
 			<Card className="jetpack-upsell-card">
-				<div className="stats-participation-wizard__card">
+				<div className={ `${ COMPONENT_NAME }__card` }>
 					<div className="left">
 						<Panel
 							header="Jetpack Stats"
 							// title={ siteType ? siteType + " site" : "What site type is groovydomain.com?" }
 						>
 							<PanelBody
-								title={ `What site type is ${ site }?` }
+								title={ `What site type is ${ siteSlug }?` }
 								initialOpen
+								onToggle={ ( shouldOpen ) => toggleFirstStep( shouldOpen ) }
+								// onClick={ () => toggleFirstStep() }
 								opened={ wizardStep === 0 }
 							>
 								<PanelRow>
-									<div className="type">
-										<h3>Personal</h3>
-										<p>
-											Sites and blogs used for hobby or personal use. Doesn't generate any money in
-											a direct or an indirect way.
-										</p>
-										<Button isSecondary onClick={ () => handleTypeClick( 'Personal' ) }>
-											Personal site
-										</Button>
-									</div>
-									<div className="type">
-										<h3>Commercial</h3>
-										<p>
-											Sites and blogs used for commercial activities. Includes selling or
-											advertising a product/service, person or business.
-										</p>
-										<Button isSecondary onClick={ () => handleTypeClick( 'Commercial' ) }>
-											Commercial site
-										</Button>
+									<div className={ `${ COMPONENT_NAME }__card-grid` }>
+										<div className={ `${ COMPONENT_NAME }__card-grid-header--left` }>
+											<h3>Personal</h3>
+										</div>
+										<div className={ `${ COMPONENT_NAME }__card-grid-header--right` }>
+											<h3>Commercial</h3>
+										</div>
+										<div className={ `${ COMPONENT_NAME }__card-grid-body--left` }>
+											<p>
+												Sites and blogs used for hobby or personal use. Doesn't generate any money
+												in a direct or an indirect way.
+											</p>
+										</div>
+										<div className={ `${ COMPONENT_NAME }__card-grid-body--right` }>
+											<p>
+												Sites and blogs used for commercial activities. Includes selling or
+												advertising a product/service, person or business.
+											</p>
+										</div>
+										<div className={ `${ COMPONENT_NAME }__card-grid-action--left` }>
+											<Button isPrimary onClick={ () => handleTypeClick( 'Personal' ) }>
+												Personal site
+											</Button>
+										</div>
+										<div className={ `${ COMPONENT_NAME }__card-grid-action--right` }>
+											<Button isPrimary onClick={ () => handleTypeClick( 'Commercial' ) }>
+												Commercial site
+											</Button>
+										</div>
 									</div>
 								</PanelRow>
 							</PanelBody>
@@ -70,19 +93,22 @@ const ProductCard = ( { site } ) => {
 											<Button isSecondary onClick={ () => setSubscriptionValue( 45 ) }>
 												$45
 											</Button>
+											<Button isSecondary onClick={ () => setSubscriptionValue( 90 ) }>
+												$90
+											</Button>
 										</div>
 
-										<p class="average-price">The average person pays $6 per month</p>
+										<p className="average-price">The average person pays $6 per month</p>
 
-										<div class="benefits">
+										<div className="benefits">
 											{ subscriptionValue === 0 ? (
-												<ul class="not-included">
+												<ul className="not-included">
 													<li>No access to upcoming features</li>
 													<li>No priority support</li>
 													<li>You’ll see upsells and ads in the Stats page</li>
 												</ul>
 											) : (
-												<ul class="included">
+												<ul className="included">
 													<li>Instant access to upcoming features</li>
 													<li>Priority support</li>
 													<li>Ad-free experience</li>
@@ -94,43 +120,40 @@ const ProductCard = ( { site } ) => {
 										</div>
 
 										{ subscriptionValue === 0 && (
-											<div class="qualifications">
+											<div className="qualifications">
 												<p>
 													<strong>Please confirm non-commercial usage by checking each box:</strong>
 												</p>
 												<ul>
 													<li>
-														<label>
-															<input
-																type="checkbox"
-																// bind:group={ qualifications }
-																// name={ qualifications }
-																value="ads"
-															/>
-															I don’t have ads on my site
-														</label>
+														<CheckboxControl
+															type="checkbox"
+															// bind:group={ qualifications }
+															// name={ qualifications }
+															value="ads"
+															label="I don’t have ads on my site"
+															onChange={ () => {} }
+														/>
 													</li>
 													<li>
-														<label>
-															<input
-																type="checkbox"
-																// bind:group={ qualifications }
-																// name={ qualifications }
-																value="products"
-															/>
-															I don’t sell products/services on my site
-														</label>
+														<CheckboxControl
+															type="checkbox"
+															// bind:group={ qualifications }
+															// name={ qualifications }
+															value="products"
+															label="I don’t sell products/services on my site"
+															onChange={ () => {} }
+														/>
 													</li>
 													<li>
-														<label>
-															<input
-																type="checkbox"
-																// bind:group={ qualifications }
-																// name={ qualifications }
-																value="site"
-															/>
-															I don’t promote a business on my site
-														</label>
+														<CheckboxControl
+															type="checkbox"
+															// bind:group={ qualifications }
+															// name={ qualifications }
+															value="site"
+															label="I don’t promote a business on my site"
+															onChange={ () => {} }
+														/>
 													</li>
 												</ul>
 												<p>
@@ -150,11 +173,14 @@ const ProductCard = ( { site } ) => {
 										</p>
 
 										{ subscriptionValue === 0 ? (
-											<button disabled={ siteType === 'Personal' }>
+											// TODO: disbale if some checkboxes are not checked
+											<Button isPrimary disabled={ siteType !== 'Personal' }>
 												Continue with Jetpack Stats for free
-											</button>
+											</Button>
 										) : (
-											<button>Get Jetpack Stats for ${ subscriptionValue } per month</button>
+											<Button isPrimary>
+												Get Jetpack Stats for ${ subscriptionValue } per month
+											</Button>
 										) }
 									</div>
 								</PanelRow>
@@ -165,6 +191,7 @@ const ProductCard = ( { site } ) => {
 						<StatsParticipationSVG
 							isFree={ subscriptionValue === 0 }
 							hasHighlight={ subscriptionValue >= 40 }
+							extraMessage={ subscriptionValue >= 90 }
 						/>
 					</div>
 				</div>
@@ -173,8 +200,8 @@ const ProductCard = ( { site } ) => {
 	);
 };
 
-const StatsParticipationWizzard = () => {
-	return <ProductCard />;
+const StatsParticipationWizzard = ( { siteSlug } ) => {
+	return <ProductCard siteSlug={ siteSlug } />;
 };
 
 export default StatsParticipationWizzard;

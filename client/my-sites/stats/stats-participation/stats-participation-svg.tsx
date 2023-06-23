@@ -1,11 +1,13 @@
 interface StatsParticipationSVG {
 	isFree: boolean;
 	hasHighlight: boolean;
+	extraMessage: boolean;
 }
 
 const StatsParticipationSVG = ( {
 	isFree = false,
 	hasHighlight = false,
+	extraMessage = false,
 }: StatsParticipationSVG ) => {
 	return (
 		<>
@@ -181,7 +183,9 @@ const StatsParticipationSVG = ( {
 				<>
 					<div className="celebrate">
 						{ /* transition:fade */ }
-						<p className="biggest-supporters">Thanks for being one of our biggest supporters!</p>
+						{ extraMessage && (
+							<p className="biggest-supporters">Thanks for being one of our biggest supporters!</p>
+						) }
 						<svg xmlns="http://www.w3.org/2000/svg" width="456" height="596" fill="none">
 							<path
 								fill="#31CC9F"

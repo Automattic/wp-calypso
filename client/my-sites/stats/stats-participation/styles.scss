@@ -14,7 +14,6 @@
 		display: flex;
 		align-items: center;
 		width: 456px;
-		height: 100%;
 		background: #f9f9f6;
 		border-top-right-radius: 4px;
 		border-bottom-right-radius: 4px;
@@ -100,5 +99,11 @@
 
 	.type button {
 		margin-top: auto;
+	}
+
+	.stats-participation-wizard__card-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		grid-gap: 16px 32px;
 	}
 }

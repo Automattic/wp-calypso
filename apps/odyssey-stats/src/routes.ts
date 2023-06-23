@@ -7,7 +7,6 @@ import {
 	summary,
 	wordAds,
 	subscribers,
-	participation,
 	redirectToActivity,
 	redirectToDefaultModulePage,
 	redirectToDefaultWordAdsPeriod,
@@ -52,9 +51,6 @@ export default function ( pageBase = '/' ) {
 	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
 	page( '/', '/stats/day/:site' );
-
-	// Stat Insights Page
-	statsPage( '/stats/participation/:site', participation );
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
