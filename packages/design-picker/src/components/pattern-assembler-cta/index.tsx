@@ -35,15 +35,19 @@ const PatternAssemblerCta = ( {
 		return null;
 	}
 
-	let text = customText;
+	let text = customText as string | JSX.Element;
 	if ( ! text ) {
-		text = shouldGoToAssemblerStep
-			? translate(
-					'Can’t find something you like? Use our library of styles and patterns to build a homepage.'
-			  )
-			: translate(
-					"Can't find something you like? Jump right into the editor to design your homepage from scratch."
-			  );
+		text = shouldGoToAssemblerStep ? (
+			<>
+				{ translate( 'Can’t find something you like?' ) }
+				<br />
+				{ translate( 'Use our library of styles and patterns to build a homepage.' ) }
+			</>
+		) : (
+			translate(
+				"Can't find something you like? Jump right into the editor to design your homepage from scratch."
+			)
+		);
 	}
 
 	return (
