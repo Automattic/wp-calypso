@@ -89,7 +89,9 @@ function useThemeSteps(): FooterStep[] {
 		{
 			key: 'thank_you_footer_support_guides_themes',
 			title: translate( 'Your go-to theme resource' ),
-			description: translate( 'Discover everything you need to know about Themes.' ),
+			description: translate(
+				'Take a look at our comprehensive support documentation and learn more about themes.'
+			),
 			link: 'https://wordpress.com/support/themes/',
 			linkText: translate( 'Learn more about themes' ),
 			eventKey: 'calypso_plugin_thank_you_theme_support_click',
