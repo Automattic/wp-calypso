@@ -114,7 +114,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const devicesList = audience_list ? audience_list[ 'devices' ] : '';
 	const countriesList = audience_list ? audience_list[ 'countries' ] : '';
 	const topicsList = audience_list ? audience_list[ 'topics' ] : '';
-	const OSsList = audience_list ? audience_list[ 'OSs' ] : '';
+	const languagesList = audience_list ? audience_list[ 'languages' ] : '';
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
@@ -127,7 +127,9 @@ export default function CampaignItemDetails( props: Props ) {
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const countriesListFormatted = countriesList ? `${ countriesList }` : __( 'Everywhere' );
-	const osListFormatted = OSsList ? `${ OSsList }` : translate( 'All' );
+	const languagesListFormatted = languagesList
+		? `${ languagesList }`
+		: translate( 'All languages' );
 	const topicsListFormatted = topicsList ? `${ topicsList }` : __( 'All' );
 	const impressionsTotal = formatNumber( impressions_total );
 	const subtotalFormatted = `$${ formatCents( subtotal || 0 ) }`;
@@ -493,10 +495,10 @@ export default function CampaignItemDetails( props: Props ) {
 											{ ! isLoading ? countriesListFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__label">
-											{ translate( 'Operating systems' ) }
+											{ translate( 'Languages' ) }
 										</span>
 										<span className="campaign-item-details__details">
-											{ ! isLoading ? osListFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
 									<div className="campaign-item-details__interests">

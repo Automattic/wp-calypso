@@ -7,6 +7,7 @@ export type CampaignResponse = {
 		countries: string;
 		topics: string;
 		OSs: string;
+		languages: string;
 	};
 	content_config: {
 		clickUrl: string;
