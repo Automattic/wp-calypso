@@ -618,7 +618,10 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			) : (
 				<>
 					{ feature?.getIcon && (
-						<span className="plan-comparison-grid__plan-image">{ feature.getIcon() }</span>
+						<span className="plan-comparison-grid__plan-image">
+							{ /** Note: this approach may not work if the icon is not a string or ReactElement. */ }
+							{ feature.getIcon() as React.ReactNode }
+						</span>
 					) }
 					<span className="plan-comparison-grid__plan-title">
 						{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
