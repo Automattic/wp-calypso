@@ -22,7 +22,6 @@ const ContactContainer = styled.div`
 	}
 
 	button.marketplace-thank-you-help-center {
-		color: var( --studio-gray-100 );
 		text-decoration: underline;
 	}
 `;
