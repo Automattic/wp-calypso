@@ -14,7 +14,7 @@ const StatsParticipationPage = () => {
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const isPurchaseEnabled = config.isEnabled( 'stats/subscribers-purchase-section' );
+	const isPurchaseEnabled = config.isEnabled( 'stats/paid-stats' );
 
 	return (
 		<Main fullWidthLayout>
