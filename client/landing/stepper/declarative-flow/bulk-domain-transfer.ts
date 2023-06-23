@@ -3,7 +3,12 @@ import { useFlowProgress, BULK_DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useSiteSlug } from '../hooks/use-site-slug';
+import {
+	clearSignupDestinationCookie,
+	setSignupCompleteSlug,
+	persistSignupDestination,
+	setSignupCompleteFlowName,
+} from 'calypso/signup/storageUtils';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -38,7 +43,6 @@ const linkInBio: Flow = {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
-		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -47,12 +51,33 @@ const linkInBio: Flow = {
 
 		setStepProgress( flowProgress );
 
+		const logInUrl =
+			locale && locale !== 'en'
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domain`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/pattedomainrns`;
+
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
 				case 'intro':
-					return navigate( 'domains' );
+					clearSignupDestinationCookie();
+
+					if ( userIsLoggedIn ) {
+						return navigate( 'domains' );
+					}
+					return window.location.assign( logInUrl );
+				case 'domains': {
+					const destination = '/domains/manage?filter=owned-by-me';
+					persistSignupDestination( destination );
+					setSignupCompleteSlug( providedDependencies?.siteSlug );
+					setSignupCompleteFlowName( flowName );
+					const returnUrl = encodeURIComponent( destination );
+
+					return window.location.assign(
+						`/checkout/blog.omaralshaker.com?redirect_to=${ returnUrl }&signup=1`
+					);
+				}
 				default:
 					return;
 			}

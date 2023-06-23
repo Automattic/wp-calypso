@@ -1,8 +1,11 @@
 import { Button, Card, CardHeader, CardBody, CardFooter } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState, useCallback } from 'react';
 import { v4 as uuid } from 'uuid';
+import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
+import { ONBOARD_STORE } from '../../../../stores';
 import { DomainCodePair } from './domain-code-pair';
 
 export interface Props {
@@ -27,11 +30,31 @@ export const domains: Record<
 };
 
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
+	const { setDomainCartItem } = useDispatch( ONBOARD_STORE );
+
 	const { __ } = useI18n();
 
 	const [ domainsState, setDomainsState ] = useState< typeof domains >( domains );
+	const allGood = Object.values( domainsState ).every( ( { valid } ) => valid );
 
 	const changeKey = Object.entries( domainsState ).map( hash ).join( ',' );
+
+	const handleAddTransfer = () => {
+		if ( allGood ) {
+			Object.values( domainsState ).forEach( ( { domain, auth } ) => {
+				const domainCartItem = domainTransfer( {
+					domain,
+					extra: {
+						auth_code: auth,
+						signup: true,
+					},
+				} );
+				setDomainCartItem( domainCartItem );
+			} );
+
+			onSubmit?.();
+		}
+	};
 
 	const handleChange = useCallback(
 		( id: string, value: { domain: string; auth: string; valid: boolean } ) => {
@@ -52,8 +75,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		};
 		setDomainsState( newDomainsState );
 	}
-
-	const allGood = Object.values( domainsState ).every( ( { valid } ) => valid );
 
 	function removeDomain( key: string ) {
 		const newDomainsState = { ...domainsState };
@@ -88,6 +109,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					className="bulk-domain-transfer__cta"
 					isPrimary
 					style={ { width: '100%' } }
+					onClick={ handleAddTransfer }
 				>
 					{ __( 'Continue' ) }
 				</Button>
