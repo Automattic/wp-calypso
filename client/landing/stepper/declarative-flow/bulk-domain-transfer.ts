@@ -75,7 +75,7 @@ const linkInBio: Flow = {
 					const returnUrl = encodeURIComponent( destination );
 
 					return window.location.assign(
-						`/checkout/blog.omaralshaker.com?redirect_to=${ returnUrl }&signup=1`
+						`/checkout/[figure-this-out]?redirect_to=${ returnUrl }&signup=1`
 					);
 				}
 				default:
