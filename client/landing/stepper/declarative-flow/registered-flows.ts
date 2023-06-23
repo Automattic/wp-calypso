@@ -6,10 +6,16 @@ import {
 	DESIGN_FIRST_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
+	BULK_DOMAIN_TRANSFER,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
+	[ BULK_DOMAIN_TRANSFER ]: () =>
+		import(
+			/* webpackChunkName: "bulk-domain-transfer" */ '../declarative-flow/bulk-domain-transfer'
+		),
+
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ '../declarative-flow/site-setup-flow' ),
 
