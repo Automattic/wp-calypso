@@ -53,7 +53,7 @@ export default function ContactList( {
 
 	return (
 		<>
-			{ type === 'sms' && !! items.length && (
+			{ type === 'sms' && ! items.length && (
 				<div className="margin-top-16">
 					<AlertBanner type="warning">
 						{ translate( 'You need at least one phone number' ) }
