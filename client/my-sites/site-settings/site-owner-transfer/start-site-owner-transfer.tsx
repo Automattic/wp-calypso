@@ -22,7 +22,7 @@ type Props = {
 	selectedSiteSlug: string | null;
 	siteOwner: User;
 	customDomains: ResponseDomain[];
-	isAtomicSite: any;
+	isAtomicSite: boolean | null;
 	onSiteTransferSuccess: () => void;
 	onSiteTransferError: () => void;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
