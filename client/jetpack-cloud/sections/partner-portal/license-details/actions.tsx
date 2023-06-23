@@ -69,7 +69,7 @@ export default function LicenseDetailsActions( {
 	return (
 		<div className="license-details__actions">
 			{ hasDownloads &&
-				licenseState !== LicenseState.Revoked &&
+				licenseState === LicenseState.Attached &&
 				licenseType === LicenseType.Partner && (
 					<Button
 						compact
