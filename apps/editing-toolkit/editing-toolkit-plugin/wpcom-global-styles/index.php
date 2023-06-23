@@ -580,7 +580,9 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 		 * Flag site so users of the treatment group can always have access to Global Styles, even
 		 * if the A/B test has finished without expanding Global Styles to the Personal plan.
 		 */
-		add_blog_sticker( 'wpcom-global-styles-personal-plan', null, null, $blog_id );
+		if ( ! wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
+			add_blog_sticker( 'wpcom-global-styles-personal-plan', null, null, $blog_id );
+		}
 	}
 
 	/*
