@@ -47,7 +47,7 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 	}
 
 	// Do not limit Global Styles if the site paid for it.
-	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
+	if ( wpcom_site_has_global_styles_feature( $blog_id ) ) {
 		return false;
 	}
 
@@ -371,12 +371,6 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 		return wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exempt', $blog_id );
 	}
 
-	// Non-Simple sites on a lower plan are temporary edge cases.
-	// We exempt them to prevent unexpected temporary changes in their styles.
-	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
-		return true;
-	}
-
 	// If the current user cannot modify the `wp_global_styles` CPT, the exemption check is not needed;
 	// other conditions will determine whether they can use GS.
 	if ( ! wpcom_global_styles_current_user_can_edit_wp_global_styles( $blog_id ) ) {
@@ -559,4 +553,51 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	return ! isset( $_GET['hide-global-styles'] ) && user_can( $user_id, 'administrator' );
+}
+
+/**
+ * Checks whether the site has a plan that grants access to the Global Styles feature.
+ *
+ * @param  int $blog_id Blog ID.
+ * @return bool Whether the site has access to Global Styles.
+ */
+function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
+	/*
+	 * Non-Simple sites on a lower plan are temporary edge cases. We grant them access
+	 * to Global Styles to prevent unexpected temporary changes in their styles.
+	 */
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return true;
+	}
+
+	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
+		return true;
+	}
+
+	// Limited Global Styles on Personal A/B test.
+	if ( 'treatment' === \ExPlat\assign_current_user( 'wpcom_global_styles_personal' ) ) {
+		/*
+		 * Flag site so users of the treatment group can always have access to Global Styles, even
+		 * if the A/B test has finished without expanding Global Styles to the Personal plan.
+		 */
+		add_blog_sticker( 'wpcom-global-styles-personal-plan', null, null, $blog_id );
+	}
+
+	/*
+	 * Grant access to users that are/were part of the treatment group, as long as they still have
+	 * a Personal plan.
+	 */
+	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
+		$personal_plans = array_filter(
+			wpcom_get_site_purchases( $blog_id ),
+			function ( $purchase ) {
+				return strpos( $purchase->product_slug, 'personal-bundle' ) === 0;
+			}
+		);
+		if ( ! empty( $personal_plans ) ) {
+			return true;
+		}
+	}
+
+	return false;
 }
