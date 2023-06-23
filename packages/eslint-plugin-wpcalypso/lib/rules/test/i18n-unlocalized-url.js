@@ -17,6 +17,9 @@ const rule = require( '../i18n-unlocalized-url' );
 //------------------------------------------------------------------------------
 
 const localizableUrls = [
+	'https://apps.wordpress.com/',
+	'https://automattic.com/cookies/',
+	'https://automattic.com/privacy/',
 	'https://wordpress.com/support/test-article/',
 	'https://wordpress.com/forums/test-thread/',
 	'https://wordpress.com/tos/',
@@ -39,6 +42,7 @@ new RuleTester( {
 				`const url = '${ url }'; localizeUrl( url );`,
 				`const link = <a href={ localizeUrl( '${ url }' ) }></a>;`,
 				`const url = '${ url }'; const link = <a href={ localizeUrl( url ) }></a>;`,
+				`const url = localizeUrl( \`${ url }?param=test\` );`,
 			] );
 		}, [] ),
 		nonLocalizableUrls.reduce( ( cases, url ) => {
