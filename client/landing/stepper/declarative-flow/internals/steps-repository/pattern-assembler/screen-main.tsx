@@ -58,7 +58,7 @@ const ScreenMain = ( {
 
 	const headerDescription = selectedDesign?.is_virtual
 		? translate( 'Customize your homepage with our library of styles and patterns.' )
-		: translate( 'Use our library of styles and patterns to build a homepage.' );
+		: translate( 'Customize everything in your homepage by adding patterns and choosing styles.' );
 
 	// Use the mousedown event to prevent either the button focusing or text selection
 	const handleMouseDown = ( event: MouseEvent< HTMLButtonElement > ) => {
@@ -100,7 +100,7 @@ const ScreenMain = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ <NavigatorTitle title={ translate( 'Design your own' ) } /> }
+				title={ <NavigatorTitle title={ translate( 'Design your own homepage' ) } /> }
 				description={ headerDescription }
 				hideBack
 			/>
