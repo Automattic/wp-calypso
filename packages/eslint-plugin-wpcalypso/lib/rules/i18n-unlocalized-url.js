@@ -1,5 +1,5 @@
 /**
- * @file @todo
+ * @file Disallow using unlocalized URL strings
  * @author Automattic
  * @copyright 2023 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -9,7 +9,6 @@
 // Constants
 //------------------------------------------------------------------------------
 
-// @todo: should be replaced by url mapping from @automattic/i18n-calypso.
 const LOCALIZABLE_URLS = [
 	'apps.wordpress.com',
 	'automattic.com/cookies(/|$)',
