@@ -45,7 +45,7 @@ export default function SMSNotification( {
 			</div>
 			{ enableSMSNotification && (
 				<ContactList
-					type="phone"
+					type="sms"
 					onAction={ toggleModal }
 					items={ allPhoneItems }
 					recordEvent={ recordEvent }

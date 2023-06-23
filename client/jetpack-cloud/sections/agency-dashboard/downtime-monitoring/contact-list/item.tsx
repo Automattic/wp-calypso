@@ -11,6 +11,7 @@ import type {
 	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
 	StateMonitorSettingsSMS,
+	AllowedMonitorContactTypes,
 } from '../../sites-overview/types';
 
 import './style.scss';
@@ -23,7 +24,7 @@ type Props = {
 	) => void;
 	recordEvent?: ( action: string, params?: object ) => void;
 	showVerifiedBadge?: boolean;
-	type: 'email' | 'phone';
+	type: AllowedMonitorContactTypes;
 };
 
 export default function ContactListItem( {
@@ -56,7 +57,7 @@ export default function ContactListItem( {
 	const isVerified =
 		item.verified ||
 		( type === 'email' && verifiedContacts?.emails.includes( value ) ) ||
-		( type === 'phone' && verifiedContacts?.phoneNumbers.includes( value ) );
+		( type === 'sms' && verifiedContacts?.phoneNumbers.includes( value ) );
 
 	const isDefaultItem = type === 'email' && ( item as StateMonitorSettingsEmail ).isDefault;
 

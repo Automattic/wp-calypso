@@ -1,11 +1,12 @@
 import {
 	AllowedMonitorContactActions,
+	AllowedMonitorContactTypes,
 	StateMonitorSettingsEmail,
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
 
 export const getContactItemValue = (
-	type: 'email' | 'phone',
+	type: AllowedMonitorContactTypes,
 	item: StateMonitorSettingsEmail | StateMonitorSettingsSMS
 ) => {
 	if ( type === 'email' ) {
@@ -15,7 +16,7 @@ export const getContactItemValue = (
 };
 
 export const getContactActionEventName = (
-	type: 'email' | 'phone',
+	type: AllowedMonitorContactTypes,
 	action: AllowedMonitorContactActions
 ) => {
 	const EVENT_NAMES =

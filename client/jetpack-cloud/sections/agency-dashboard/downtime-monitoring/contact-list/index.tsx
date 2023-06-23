@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import {
 	AllowedMonitorContactActions,
+	AllowedMonitorContactTypes,
 	StateMonitorSettingsEmail,
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
@@ -19,7 +20,7 @@ export type Props = {
 		action?: AllowedMonitorContactActions
 	) => void;
 	recordEvent?: ( action: string, params?: object ) => void;
-	type: 'email' | 'phone';
+	type: AllowedMonitorContactTypes;
 	verifiedItemKey?: string;
 };
 

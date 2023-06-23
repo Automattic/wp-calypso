@@ -86,7 +86,7 @@ export default function PhoneNumberEditor( {
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyPhoneNumber = useValidateVerificationCode();
 
-	const { title, subtitle } = useContactModalTitleAndSubtitle( 'phone', selectedAction );
+	const { title, subtitle } = useContactModalTitleAndSubtitle( 'sms', selectedAction );
 
 	const handleSetPhoneItems = useCallback(
 		( isVerified = true ) => {
@@ -338,7 +338,7 @@ export default function PhoneNumberEditor( {
 			{ isRemoveAction ? (
 				selectedPhone && (
 					<div className="margin-top-16">
-						<ContactListItem type="phone" item={ selectedPhone } />
+						<ContactListItem type="sms" item={ selectedPhone } />
 					</div>
 				)
 			) : (
