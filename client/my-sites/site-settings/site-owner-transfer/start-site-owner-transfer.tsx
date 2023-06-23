@@ -10,11 +10,11 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import Notice from 'calypso/components/notice';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { User } from './use-administrators';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 type Props = {
