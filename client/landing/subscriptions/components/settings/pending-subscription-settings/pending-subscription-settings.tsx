@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { SettingsPopover } from '../settings-popover';
+import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
 
 type PendingSubscriptionSettingsProps = {
 	onConfirm: () => void;
@@ -20,7 +20,7 @@ const PendingSiteSettings = ( {
 		<>
 			<div className="setting-item">
 				<Button
-					className="settings-popover__item-button"
+					className="subscriptions-ellipsis-menu__item-button"
 					onClick={ onConfirm }
 					disabled={ confirming }
 				>
@@ -32,7 +32,7 @@ const PendingSiteSettings = ( {
 
 			<div className="setting-item">
 				<Button
-					className="settings-popover__item-button"
+					className="subscriptions-ellipsis-menu__item-button"
 					onClick={ onDelete }
 					disabled={ deleting }
 				>
@@ -44,9 +44,9 @@ const PendingSiteSettings = ( {
 };
 
 export const PendingSubscriptionSettingsPopover = ( props: PendingSubscriptionSettingsProps ) => (
-	<SettingsPopover>
+	<SubscriptionsEllipsisMenu>
 		<PendingSiteSettings { ...props } />
-	</SettingsPopover>
+	</SubscriptionsEllipsisMenu>
 );
 
 export default PendingSiteSettings;

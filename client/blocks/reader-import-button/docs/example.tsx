@@ -8,6 +8,4 @@ const ReaderImportButton = () => (
 	</div>
 );
 
-ReaderImportButton.displayName = 'ReaderImportButton';
-
 export default ReaderImportButton;
