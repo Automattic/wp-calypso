@@ -20,7 +20,6 @@ import {
 
 interface Props {
 	canGoToCheckout?: boolean;
-	isLockedStyleVariation?: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
 	themeId: string;
@@ -63,7 +62,6 @@ const ThemeTypeBadgeTooltipUpgradeLink = ( {
 
 const ThemeTypeBadgeTooltip = ( {
 	canGoToCheckout = true,
-	isLockedStyleVariation,
 	siteId,
 	siteSlug,
 	themeId,
@@ -71,8 +69,7 @@ const ThemeTypeBadgeTooltip = ( {
 	tooltipMessage,
 }: Props ) => {
 	const translate = useTranslate();
-	const _type = useSelector( ( state ) => getThemeType( state, themeId ) );
-	const type = isLockedStyleVariation ? PREMIUM_THEME : _type;
+	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
