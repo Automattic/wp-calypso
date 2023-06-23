@@ -152,6 +152,10 @@ class MasterbarLoggedIn extends Component {
 		}
 	};
 
+	clickDomains = () => {
+		this.props.setNextLayoutFocus( 'content' );
+	};
+
 	clickReader = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_reader_clicked' );
 		this.handleLayoutFocus( 'reader' );
@@ -175,6 +179,10 @@ class MasterbarLoggedIn extends Component {
 
 	preloadMySites = () => {
 		preload( this.props.domainOnlySite ? 'domains' : 'stats' );
+	};
+
+	preloadDomains = () => {
+		preload( 'domains' );
 	};
 
 	preloadReader = () => {
@@ -282,6 +290,25 @@ class MasterbarLoggedIn extends Component {
 				isLeavingAllowed={ ! isCheckoutPending }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
+		);
+	}
+
+	renderDomains( showLabel = true ) {
+		const { translate } = this.props;
+		return (
+			<Item
+				tipTarget="domains"
+				className="masterbar__domains"
+				url="/domains/manage"
+				icon="domains"
+				onClick={ this.clickDomains }
+				isActive={ this.isActive( 'domains' ) }
+				tooltip={ translate( 'Manage domains' ) }
+				preloadSection={ this.preloadDomains }
+			>
+				{ showLabel &&
+					translate( 'Domains', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+			</Item>
 		);
 	}
 
@@ -521,6 +548,7 @@ class MasterbarLoggedIn extends Component {
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderMySites() }
+							{ this.renderDomains( false ) }
 							{ this.renderReader( false ) }
 							{ this.renderLanguageSwitcher() }
 							{ this.renderSearch() }
@@ -541,6 +569,7 @@ class MasterbarLoggedIn extends Component {
 				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
 						{ this.renderMySites() }
+						{ this.renderDomains() }
 						{ this.renderReader() }
 						{ this.renderLanguageSwitcher() }
 						{ this.renderSearch() }
