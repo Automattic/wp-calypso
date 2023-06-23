@@ -2,7 +2,6 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { Button, DeviceSwitcher } from '@automattic/components';
 import { useStyle } from '@automattic/global-styles';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
-import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState, CSSProperties } from 'react';
@@ -206,7 +205,6 @@ const PatternLargePreview = ( {
 				</ul>
 			) : (
 				<div className="pattern-large-preview__placeholder">
-					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 56 } />
 					<h2>{ getTitle() }</h2>
 					<span>{ getDescription() }</span>
 					{ getAction() }
