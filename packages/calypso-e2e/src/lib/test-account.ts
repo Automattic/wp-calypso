@@ -37,7 +37,7 @@ export class TestAccount {
 	 */
 	async authenticate(
 		page: Page,
-		{ url, waitForFullLoad }: { url?: string | RegExp; waitForFullLoad?: boolean } = {}
+		{ url, waitUntilStable }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
 	): Promise< void > {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
@@ -54,7 +54,7 @@ export class TestAccount {
 		if ( url ) {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
 		}
-		if ( waitForFullLoad ) {
+		if ( waitUntilStable ) {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.waitForSidebarInitialization();
 		}

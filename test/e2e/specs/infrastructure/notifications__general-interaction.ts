@@ -15,7 +15,11 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( 'Notifications: Actions', function () {
+/**
+ * Tests general interaction with the notification panel, running through
+ * all actions once.
+ */
+describe( 'Notifications: General Interactions', function () {
 	const comment = DataHelper.getRandomPhrase() + ' notification-actions-spec';
 
 	// TestAccount and RestAPI instances.
@@ -56,7 +60,7 @@ describe( 'Notifications: Actions', function () {
 
 		// Log in as the user receiving the notification.
 		page = await browser.newPage();
-		await notificationsUser.authenticate( page, { waitForFullLoad: true } );
+		await notificationsUser.authenticate( page, { waitUntilStable: true } );
 	} );
 
 	it( 'Open Notifications panel', async function () {
