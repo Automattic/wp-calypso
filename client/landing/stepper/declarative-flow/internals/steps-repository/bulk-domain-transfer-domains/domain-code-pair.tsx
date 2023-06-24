@@ -29,6 +29,8 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 		onChange( id, { domain, auth, valid } );
 	}, [ domain, id, onChange, auth, valid, loading ] );
 
+	const shouldReportError = ! valid && ! loading && domain && auth;
+
 	return (
 		<div className="domains__domain-info-and-validation">
 			<div className="domains__domain-info">
@@ -37,11 +39,10 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 						{ showLabels && <FormLabel htmlFor={ id }>{ __( 'Domain name' ) }</FormLabel> }
 						<FormInput
 							disabled={ valid }
-							isError={ ! valid }
 							id={ id }
 							value={ domain }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-								onChange( id, { domain: event.target.value, auth, valid } )
+								onChange( id, { domain: event.target.value.trim(), auth, valid } )
 							}
 							placeholder={ __( 'example.com' ) }
 						/>
@@ -55,7 +56,7 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 							disabled={ valid }
 							value={ auth }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-								onChange( id, { domain, auth: event.target.value, valid } )
+								onChange( id, { domain, auth: event.target.value.trim(), valid } )
 							}
 							placeholder={ __( 'Auth code' ) }
 						/>
@@ -68,7 +69,7 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 					</FormFieldset>
 				</div>
 			</div>
-			{ message && ! loading && (
+			{ shouldReportError && (
 				<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
 			) }
 			{ message && loading && <FormExplanation>{ message }</FormExplanation> }

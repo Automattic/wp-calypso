@@ -68,7 +68,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 				.forCartKey( 'no-site' )
 				.actions.replaceProductsInCart( cartItems );
 
-			setPendingAction( cartPromise ).then( () => {
+			setPendingAction( () => cartPromise ).then( () => {
 				onSubmit?.();
 			} );
 		}
