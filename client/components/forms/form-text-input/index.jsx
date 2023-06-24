@@ -1,36 +1,35 @@
 import classNames from 'classnames';
-import React, { PureComponent, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 
 import './style.scss';
 
-type Props = {
-	isError?: boolean;
-	isValid?: boolean;
-	selectOnFocus?: boolean;
-	inputRef?:
-		| ReturnType< typeof useRef< HTMLInputElement | null > >
-		| ( ( element: HTMLInputElement ) => void );
-} & Partial< React.InputHTMLAttributes< HTMLInputElement > >;
+export default class FormTextInput extends PureComponent {
+	static propTypes = {
+		isError: PropTypes.bool,
+		isValid: PropTypes.bool,
+		selectOnFocus: PropTypes.bool,
+		className: PropTypes.string,
+	};
 
-export default class FormTextInput extends PureComponent< Props > {
 	state = {
 		value: this.props.value || '',
 	};
 
-	currentTextField: HTMLInputElement | undefined = undefined;
+	currentTextField = undefined;
 
-	componentDidUpdate( oldProps: Props ) {
+	componentDidUpdate( oldProps ) {
 		this.updateValueIfNeeded( oldProps.value );
 	}
 
-	updateValueIfNeeded( oldValue: Props[ 'value' ] ) {
+	updateValueIfNeeded( oldValue ) {
 		const { value } = this.props;
 		if ( oldValue !== value || value !== this.state.value ) {
 			this.setState( { value } );
 		}
 	}
 
-	textFieldRef = ( element: HTMLInputElement ) => {
+	textFieldRef = ( element ) => {
 		this.currentTextField = element;
 
 		const { inputRef } = this.props;
@@ -52,13 +51,13 @@ export default class FormTextInput extends PureComponent< Props > {
 		}
 	}
 
-	selectOnFocus = ( event: React.MouseEvent< HTMLInputElement > ) => {
+	selectOnFocus = ( event ) => {
 		if ( this.props.selectOnFocus ) {
-			event.currentTarget.select();
+			event.target.select();
 		}
 	};
 
-	onChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+	onChange = ( event ) => {
 		this.setState( { value: event.target.value } );
 		this.props.onChange?.( event );
 	};

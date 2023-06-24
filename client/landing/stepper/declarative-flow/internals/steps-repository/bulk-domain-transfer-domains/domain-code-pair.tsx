@@ -141,7 +141,9 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 							isError={ ! valid }
 							id={ id }
 							value={ domain }
-							onChange={ ( { target } ) => onChange( id, { domain: target.value, auth, valid } ) }
+							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+								onChange( id, { domain: event.target.value, auth, valid } )
+							}
 							placeholder={ __( 'example.com' ) }
 						/>
 					</FormFieldset>
@@ -153,7 +155,9 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 							id={ id + '-auth' }
 							disabled={ valid }
 							value={ auth }
-							onChange={ ( { target } ) => onChange( id, { domain, auth: target.value, valid } ) }
+							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+								onChange( id, { domain, auth: event.target.value, valid } )
+							}
 							placeholder={ __( 'Auth code' ) }
 						/>
 					</FormFieldset>

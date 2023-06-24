@@ -221,7 +221,7 @@ const AccountEmailField = ( {
 					name={ emailInputName }
 					isError={ emailInvalidReason !== EMAIL_VALIDATION_REASON_IS_VALID }
 					onFocus={ onFocus }
-					value={ emailAddress?.toString() }
+					value={ emailAddress }
 					onChange={ onEmailAddressChange }
 				/>
 
