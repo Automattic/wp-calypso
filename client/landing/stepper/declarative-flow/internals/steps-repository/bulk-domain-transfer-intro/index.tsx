@@ -27,6 +27,7 @@ const Intro: Step = function Intro( { navigation } ) {
 					id="bulk-domains-header"
 					headerText={ __( 'Transfer your domains to WordPress.com' ) }
 					align="left"
+					subHeaderText={ __( 'Give your domains a home that you can trust to stay live.' ) }
 				/>
 			}
 			stepContent={ <IntroStep onSubmit={ handleSubmit } /> }
