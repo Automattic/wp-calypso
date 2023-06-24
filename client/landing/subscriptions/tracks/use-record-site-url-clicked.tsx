@@ -4,7 +4,7 @@ const useRecordSiteUrlClicked = () => {
 	const recordSubscriptionsTracksEvent = useRecordSubscriptionsTracksEvent();
 
 	const recordSiteUrlClicked = ( tracksProps: { blog_id: string } ) => {
-		return recordSubscriptionsTracksEvent( 'calypso_subscriptions_site_url_clicked', tracksProps );
+		recordSubscriptionsTracksEvent( 'calypso_subscriptions_site_url_clicked', tracksProps );
 	};
 
 	return recordSiteUrlClicked;

@@ -10,15 +10,16 @@ const useRecordNotificationsToggle = () => {
 		}
 	) => {
 		if ( enabled ) {
-			return recordSubscriptionsTracksEvent(
+			recordSubscriptionsTracksEvent(
 				'calypso_subscriptions_notifications_toggle_on',
 				tracksProps
 			);
+		} else {
+			recordSubscriptionsTracksEvent(
+				'calypso_subscriptions_notifications_toggle_off',
+				tracksProps
+			);
 		}
-		return recordSubscriptionsTracksEvent(
-			'calypso_subscriptions_notifications_toggle_off',
-			tracksProps
-		);
 	};
 
 	return recordNotificationsToggle;

@@ -9,15 +9,10 @@ const useRecordPostEmailsToggle = () => {
 		}
 	) => {
 		if ( enabled ) {
-			return recordSubscriptionsTracksEvent(
-				'calypso_subscriptions_post_emails_toggle_on',
-				tracksProps
-			);
+			recordSubscriptionsTracksEvent( 'calypso_subscriptions_post_emails_toggle_on', tracksProps );
+		} else {
+			recordSubscriptionsTracksEvent( 'calypso_subscriptions_post_emails_toggle_off', tracksProps );
 		}
-		return recordSubscriptionsTracksEvent(
-			'calypso_subscriptions_post_emails_toggle_off',
-			tracksProps
-		);
 	};
 	return recordPostEmailsToggle;
 };

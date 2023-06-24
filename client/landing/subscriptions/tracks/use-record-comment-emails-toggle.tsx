@@ -10,15 +10,16 @@ const useRecordCommentEmailsToggle = () => {
 		}
 	) => {
 		if ( enabled ) {
-			return recordSubscriptionsTracksEvent(
+			recordSubscriptionsTracksEvent(
 				'calypso_subscriptions_comment_emails_toggle_on',
 				tracksProps
 			);
+		} else {
+			recordSubscriptionsTracksEvent(
+				'calypso_subscriptions_comment_emails_toggle_off',
+				tracksProps
+			);
 		}
-		return recordSubscriptionsTracksEvent(
-			'calypso_subscriptions_comment_emails_toggle_off',
-			tracksProps
-		);
 	};
 
 	return recordCommentEmailsToggle;

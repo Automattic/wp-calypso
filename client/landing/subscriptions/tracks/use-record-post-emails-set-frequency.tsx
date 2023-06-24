@@ -8,7 +8,7 @@ const useRecordPostEmailsSetFrequency = () => {
 		blog_id: string;
 		delivery_frequency: Reader.EmailDeliveryFrequency;
 	} ) => {
-		return recordSubscriptionsTracksEvent(
+		recordSubscriptionsTracksEvent(
 			'calypso_subscriptions_post_emails_set_frequency',
 			tracksProps
 		);
