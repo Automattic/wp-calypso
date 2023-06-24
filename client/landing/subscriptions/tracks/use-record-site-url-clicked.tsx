@@ -3,7 +3,11 @@ import useRecordSubscriptionsTracksEvent from './use-record-subscriptions-tracks
 const useRecordSiteUrlClicked = () => {
 	const recordSubscriptionsTracksEvent = useRecordSubscriptionsTracksEvent();
 
-	const recordSiteUrlClicked = ( tracksProps: { blog_id: string } ) => {
+	const recordSiteUrlClicked = ( tracksProps: {
+		blog_id: string;
+		feed_id: string;
+		source?: string;
+	} ) => {
 		recordSubscriptionsTracksEvent( 'calypso_subscriptions_site_url_clicked', tracksProps );
 	};
 
