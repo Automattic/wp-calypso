@@ -109,7 +109,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 		}
 	};
 
-	const siteTitleError = null;
+	const siteTitleError = false;
 
 	const stepContent = (
 		<form className="store-profiler__form" onSubmit={ handleSubmit }>

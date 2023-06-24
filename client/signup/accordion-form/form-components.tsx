@@ -135,7 +135,7 @@ const ClickableLabel = styled( Label )`
 interface TextInputFieldProps {
 	name: string;
 	label?: TranslateResult;
-	placeholder?: TranslateResult;
+	placeholder?: string;
 	value: string;
 	error?: TranslateResult | null;
 	sublabel?: TranslateResult;

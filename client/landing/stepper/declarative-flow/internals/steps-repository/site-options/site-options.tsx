@@ -128,13 +128,7 @@ export const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) =
 				<FormLabel htmlFor="tagline" optional>
 					{ taglineLabel }
 				</FormLabel>
-				<FormInput
-					name="tagline"
-					id="tagline"
-					value={ tagline }
-					onChange={ onChange }
-					placeholder={ null }
-				/>
+				<FormInput name="tagline" id="tagline" value={ tagline } onChange={ onChange } />
 				<FormSettingExplanation>
 					<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
 					{ taglineExplanation }

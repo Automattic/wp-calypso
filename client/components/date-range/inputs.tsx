@@ -42,7 +42,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	 * @returns the partially applied function ready to receive event data
 	 */
 	const handleInputFocus = useCallback(
-		( startOrEnd: StartOrEnd ) => ( e: Event ) => {
+		( startOrEnd: StartOrEnd ) => ( e: React.FocusEvent< HTMLInputElement > ) => {
 			const { value } = e.target as HTMLInputElement;
 			onInputFocus( value, startOrEnd );
 		},
@@ -57,7 +57,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	 * @returns the partially applied function ready to receive event data
 	 */
 	const handleInputBlur = useCallback(
-		( startOrEnd: StartOrEnd ) => ( e: Event ) => {
+		( startOrEnd: StartOrEnd ) => ( e: React.FocusEvent< HTMLInputElement > ) => {
 			const { value } = e.target as HTMLInputElement;
 			onInputBlur( value, startOrEnd );
 		},
@@ -72,8 +72,8 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	 * @returns the partially applied function ready to receive event data
 	 */
 	const handleInputChange = useCallback(
-		( startOrEnd: StartOrEnd ) => ( e: Event ) => {
-			const { value } = e.target as HTMLInputElement;
+		( startOrEnd: StartOrEnd ) => ( e: React.ChangeEvent< HTMLInputElement > ) => {
+			const { value } = e.target;
 			onInputChange( value, startOrEnd );
 		},
 		[ onInputChange ]
