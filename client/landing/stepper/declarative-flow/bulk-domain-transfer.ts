@@ -28,6 +28,10 @@ const bulkDomainTransfer: Flow = {
 				slug: 'domains',
 				asyncComponent: () => import( './internals/steps-repository/bulk-domain-transfer-domains' ),
 			},
+			{
+				slug: 'processing',
+				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+			},
 		];
 	},
 
@@ -56,6 +60,9 @@ const bulkDomainTransfer: Flow = {
 					}
 					return window.location.assign( logInUrl );
 				case 'domains': {
+					return navigate( 'processing' );
+				}
+				case 'processing': {
 					const destination = '/domains/manage?filter=owned-by-me';
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
@@ -63,7 +70,7 @@ const bulkDomainTransfer: Flow = {
 					const returnUrl = encodeURIComponent( destination );
 
 					return window.location.assign(
-						`/checkout/[figure-this-out]?redirect_to=${ returnUrl }&signup=1`
+						`/checkout/no-site?redirect_to=${ returnUrl }&signup=0&isDomainOnly=1`
 					);
 				}
 				default:

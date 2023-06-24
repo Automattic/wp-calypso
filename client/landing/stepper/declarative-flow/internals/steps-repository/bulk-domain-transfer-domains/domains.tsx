@@ -5,11 +5,13 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useState, useCallback } from 'react';
 import { v4 as uuid } from 'uuid';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
+import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { ONBOARD_STORE } from '../../../../stores';
 import { DomainCodePair } from './domain-code-pair';
 
 export interface Props {
 	onSubmit: () => void;
+	flow: string;
 }
 
 export const domains: Record<
@@ -28,7 +30,7 @@ export const domains: Record<
 };
 
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
-	const { setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	const { __ } = useI18n();
 
@@ -38,20 +40,25 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	// create a string key representing the current state of the domains
 	const changeKey = JSON.stringify( domainsState );
 
-	const handleAddTransfer = () => {
+	const handleAddTransfer = async () => {
 		if ( allGood ) {
-			Object.values( domainsState ).forEach( ( { domain, auth } ) => {
-				const domainCartItem = domainTransfer( {
+			const cartItems = Object.values( domainsState ).map( ( { domain, auth } ) =>
+				domainTransfer( {
 					domain,
 					extra: {
 						auth_code: auth,
-						signup: true,
+						signup: false,
 					},
-				} );
-				setDomainCartItem( domainCartItem );
-			} );
+				} )
+			);
 
-			onSubmit?.();
+			const cartPromise = cartManagerClient
+				.forCartKey( 'no-site' )
+				.actions.addProductsToCart( cartItems );
+
+			setPendingAction( cartPromise ).then( () => {
+				onSubmit?.();
+			} );
 		}
 	};
 
