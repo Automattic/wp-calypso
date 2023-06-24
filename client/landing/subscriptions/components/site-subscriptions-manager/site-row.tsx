@@ -7,6 +7,8 @@ import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
 import { successNotice } from 'calypso/state/notices/actions';
 import {
+	useRecordSiteUnsubscribed,
+	useRecordSiteResubscribed,
 	useRecordSiteIconClicked,
 	useRecordSiteTitleClicked,
 	useRecordSiteUrlClicked,
@@ -110,15 +112,34 @@ const SiteRow = ( {
 		SubscriptionManager.useSiteUnsubscribeMutation();
 	const { mutate: resubscribe } = SubscriptionManager.useSiteSubscribeMutation();
 
+	// Tracks events recording
+	const recordSiteIconClicked = useRecordSiteIconClicked();
+	const recordSiteTitleClicked = useRecordSiteTitleClicked();
+	const recordSiteUrlClicked = useRecordSiteUrlClicked();
+	const recordNotificationsToggle = useRecordNotificationsToggle();
+	const recordPostEmailsToggle = useRecordPostEmailsToggle();
+	const recordCommentEmailsToggle = useRecordCommentEmailsToggle();
+	const recordPostEmailsSetFrequency = useRecordPostEmailsSetFrequency();
+	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
+	const recordSiteResubscribed = useRecordSiteResubscribed();
+	const blog_id = blog_ID; // makes object assignment a little easier
+
 	const unsubscribeSuccessCallback = () => {
+		recordSiteUnsubscribed( { blog_id, url, source: 'subscriptions-site-list' } );
 		dispatch(
 			successNotice(
 				translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
 				{
 					duration: 5000,
 					button: translate( 'Resubscribe' ),
-					onClick: () =>
-						resubscribe( { blog_id: blog_ID, url, doNotInvalidateSiteSubscriptions: true } ),
+					onClick: () => {
+						resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+						recordSiteResubscribed( {
+							blog_id,
+							url,
+							source: 'unsubscribed-notice-resubscribe-button',
+						} );
+					},
 				}
 			)
 		);
@@ -135,16 +156,6 @@ const SiteRow = ( {
 			return `/subscriptions/site/${ blog_ID }`;
 		}
 	}, [ blog_ID, feed_ID, portal ] );
-
-	// Tracks events recording
-	const recordSiteIconClicked = useRecordSiteIconClicked();
-	const recordSiteTitleClicked = useRecordSiteTitleClicked();
-	const recordSiteUrlClicked = useRecordSiteUrlClicked();
-	const recordNotificationsToggle = useRecordNotificationsToggle();
-	const recordPostEmailsToggle = useRecordPostEmailsToggle();
-	const recordCommentEmailsToggle = useRecordCommentEmailsToggle();
-	const recordPostEmailsSetFrequency = useRecordPostEmailsSetFrequency();
-	const blog_id = blog_ID; // makes object assignment a little easier
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings

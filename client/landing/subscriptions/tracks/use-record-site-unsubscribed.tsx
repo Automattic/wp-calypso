@@ -11,7 +11,6 @@ const useRecordSiteUnsubscribed = () => {
 	const recordSiteUnsubscribed = ( tracksProps: {
 		blog_id: string;
 		url: string;
-		ui_algo?: string;
 		source?: string;
 	} ) => {
 		// reader: calypso_reader_site_unfollowed, ui_algo: following_manage

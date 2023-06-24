@@ -6,7 +6,11 @@ const useRecordSiteResubscribed = () => {
 
 	const recordSiteSubscribed = useRecordSiteSubscribed();
 
-	const recordSiteResubscribed = ( tracksProps: { blog_id: string; url: string } ) => {
+	const recordSiteResubscribed = ( tracksProps: {
+		blog_id: string;
+		url: string;
+		source?: string;
+	} ) => {
 		recordSubscriptionsTracksEvent( 'calypso_subscriptions_site_resubscribed', tracksProps );
 
 		// Also record the calypso_subscriptions_site_subscribed event.
