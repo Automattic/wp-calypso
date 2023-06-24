@@ -122,10 +122,14 @@ const SiteRow = ( {
 	const recordPostEmailsSetFrequency = useRecordPostEmailsSetFrequency();
 	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
 	const recordSiteResubscribed = useRecordSiteResubscribed();
-	const blog_id = blog_ID; // makes object assignment a little easier
+
+	// Make object assignment a little easier
+	const SOURCE_SUBSCRIPTIONS_SITE_LIST = 'subscriptions-site-list';
+	const blog_id = blog_ID;
+	const feed_id = feed_ID;
 
 	const unsubscribeSuccessCallback = () => {
-		recordSiteUnsubscribed( { blog_id, url, source: 'subscriptions-site-list' } );
+		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 		dispatch(
 			successNotice(
 				translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
@@ -137,7 +141,7 @@ const SiteRow = ( {
 						recordSiteResubscribed( {
 							blog_id,
 							url,
-							source: 'unsubscribed-notice-resubscribe-button',
+							source: 'subscriptions-unsubscribed-notice',
 						} );
 					},
 				}
@@ -196,7 +200,7 @@ const SiteRow = ( {
 					className="title-icon"
 					href={ siteTitleUrl }
 					onClick={ () => {
-						recordSiteIconClicked( { blog_id } );
+						recordSiteIconClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 					} }
 				>
 					<SiteIcon iconUrl={ site_icon } size={ 40 } siteName={ name } />
@@ -206,7 +210,11 @@ const SiteRow = ( {
 						className="title-name"
 						href={ siteTitleUrl }
 						onClick={ () => {
-							recordSiteTitleClicked( { blog_id } );
+							recordSiteTitleClicked( {
+								blog_id,
+								feed_id,
+								source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
+							} );
 						} }
 					>
 						{ name }
@@ -223,7 +231,7 @@ const SiteRow = ( {
 						rel="noreferrer noopener"
 						target="_blank"
 						onClick={ () => {
-							recordSiteUrlClicked( { blog_id } );
+							recordSiteUrlClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 						} }
 					>
 						{ hostname }
