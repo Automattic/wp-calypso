@@ -8,7 +8,7 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
-const Intro: Step = function Intro( { navigation } ) {
+const Intro: Step = function Intro( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
 
@@ -17,6 +17,7 @@ const Intro: Step = function Intro( { navigation } ) {
 	};
 	return (
 		<StepContainer
+			flowName={ flow }
 			stepName="domains"
 			goBack={ goBack }
 			isHorizontalLayout

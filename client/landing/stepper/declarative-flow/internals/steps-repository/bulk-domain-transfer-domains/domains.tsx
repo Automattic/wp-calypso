@@ -11,7 +11,6 @@ import { DomainCodePair } from './domain-code-pair';
 
 export interface Props {
 	onSubmit: () => void;
-	flow: string;
 }
 
 export const domains: Record<
