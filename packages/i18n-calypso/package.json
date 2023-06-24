@@ -27,7 +27,7 @@
 		"lodash": "^4.17.21",
 		"lru": "^3.1.0",
 		"tannin": "^1.1.1",
-		"use-subscription": "^1.8.0"
+		"use-subscription": "1.6.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

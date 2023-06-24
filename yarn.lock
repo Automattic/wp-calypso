@@ -17734,7 +17734,7 @@ __metadata:
     react-dom: ^18.2.0
     react-test-renderer: ^18.2.0
     tannin: ^1.1.1
-    use-subscription: ^1.8.0
+    use-subscription: 1.6.0
   peerDependencies:
     react: ^18.2.0
   languageName: unknown
@@ -29897,14 +29897,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-subscription@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "use-subscription@npm:1.8.0"
-  dependencies:
-    use-sync-external-store: ^1.2.0
+"use-subscription@npm:1.6.0":
+  version: 1.6.0
+  resolution: "use-subscription@npm:1.6.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 66edf17aa894390aad53ca6cf5c381a9527e82a09e09e1290eaf64c3fcd36671f23f036e24fa433a35743325cb713a6570918f09bf9c0e1df07b503e515b9742
+    react: ^18.0.0
+  checksum: 0721b8cbe5f7c4abb32c999c795b9f64c217d4a4dca0a072664a93f20cbce361441307e43e5b4310a3b9113cc47a430483ce068cd61a00cc62f98cd532466da4
   languageName: node
   linkType: hard
 
