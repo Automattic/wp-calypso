@@ -1,20 +1,19 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, BULK_DOMAIN_TRANSFER } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { BULK_DOMAIN_TRANSFER } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
-const linkInBio: Flow = {
+const bulkDomainTransfer: Flow = {
 	name: BULK_DOMAIN_TRANSFER,
 	get title() {
 		return translate( 'Bulk domain transfer' );
@@ -32,24 +31,13 @@ const linkInBio: Flow = {
 		];
 	},
 
-	useSideEffect() {
-		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
-		useEffect( () => {
-			setHidePlansFeatureComparison( true );
-		} );
-	},
-
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
 		const locale = useLocale();
-
-		setStepProgress( flowProgress );
 
 		const logInUrl =
 			locale && locale !== 'en'
@@ -81,8 +69,6 @@ const linkInBio: Flow = {
 				default:
 					return;
 			}
-
-			return providedDependencies;
 		};
 
 		const goBack = () => {
@@ -98,4 +84,4 @@ const linkInBio: Flow = {
 	},
 };
 
-export default linkInBio;
+export default bulkDomainTransfer;
