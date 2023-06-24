@@ -12,8 +12,6 @@ export interface Props {
 	onSubmit: () => void;
 }
 
-const hash = ( [ key, value ] ) => `${ key }:${ value }`;
-
 export const domains: Record<
 	string,
 	{
@@ -37,7 +35,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const [ domainsState, setDomainsState ] = useState< typeof domains >( domains );
 	const allGood = Object.values( domainsState ).every( ( { valid } ) => valid );
 
-	const changeKey = Object.entries( domainsState ).map( hash ).join( ',' );
+	// create a string key representing the current state of the domains
+	const changeKey = JSON.stringify( domainsState );
 
 	const handleAddTransfer = () => {
 		if ( allGood ) {
