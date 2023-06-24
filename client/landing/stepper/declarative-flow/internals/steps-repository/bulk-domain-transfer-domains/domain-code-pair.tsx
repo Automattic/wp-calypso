@@ -142,6 +142,7 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 							id={ id }
 							value={ domain }
 							onChange={ ( { target } ) => onChange( id, { domain: target.value, auth, valid } ) }
+							placeholder={ __( 'example.com' ) }
 						/>
 					</FormFieldset>
 				</div>
@@ -153,6 +154,7 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 							disabled={ valid }
 							value={ auth }
 							onChange={ ( { target } ) => onChange( id, { domain, auth: target.value, valid } ) }
+							placeholder={ __( 'Auth code' ) }
 						/>
 					</FormFieldset>
 				</div>
