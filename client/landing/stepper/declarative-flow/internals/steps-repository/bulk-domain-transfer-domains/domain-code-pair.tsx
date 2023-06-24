@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 
 function useValidationMessage( domain: string, auth: string ) {
@@ -169,9 +170,10 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 					</FormFieldset>
 				</div>
 			</div>
-			{ message && (
+			{ message && ! loading && (
 				<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
 			) }
+			{ message && loading && <FormExplanation>{ message }</FormExplanation> }
 		</div>
 	);
 }
