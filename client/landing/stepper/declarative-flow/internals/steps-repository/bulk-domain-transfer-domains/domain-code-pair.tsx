@@ -29,7 +29,7 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 		onChange( id, { domain, auth, valid } );
 	}, [ domain, id, onChange, auth, valid, loading ] );
 
-	const shouldReportError = ! valid && ! loading && domain && auth;
+	const shouldReportError = ! loading && domain && auth;
 
 	return (
 		<div className="domains__domain-info-and-validation">
