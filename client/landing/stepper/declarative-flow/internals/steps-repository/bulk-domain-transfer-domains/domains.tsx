@@ -28,6 +28,18 @@ export const domains: Record<
 	},
 };
 
+/**
+ * Remove duplicate domains from the list
+ *
+ * @param domainsWithDupes domains
+ */
+function distinctItems( domainsWithDupes: typeof domains ) {
+	return Object.values( domainsWithDupes ).reduce( ( items, item ) => {
+		items[ item.domain ] = item.auth;
+		return items;
+	}, {} as Record< string, string > );
+}
+
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
@@ -41,7 +53,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	const handleAddTransfer = async () => {
 		if ( allGood ) {
-			const cartItems = Object.values( domainsState ).map( ( { domain, auth } ) =>
+			const distinctDomains = distinctItems( domainsState );
+			const cartItems = Object.entries( distinctDomains ).map( ( [ domain, auth ] ) =>
 				domainTransfer( {
 					domain,
 					extra: {
