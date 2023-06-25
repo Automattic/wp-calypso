@@ -9,19 +9,13 @@ import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { ONBOARD_STORE } from '../../../../stores';
 import { DomainCodePair } from './domain-code-pair';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 export interface Props {
 	onSubmit: () => void;
 }
 
-const defaultState: Record<
-	string,
-	{
-		domain: string;
-		auth: string;
-		valid: boolean;
-	}
-> = {
+const defaultState: BulkDomainTransferData = {
 	[ uuid() ]: {
 		domain: '',
 		auth: '',
@@ -42,8 +36,12 @@ function distinctItems( domainsWithDupes: BulkDomainTransferData ) {
 }
 
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
-	const domainsState =
-		useSelect( ( select ) => select( ONBOARD_STORE ).getBulkDomainsData(), [] ) || defaultState;
+	const { getBulkDomainsData } = useSelect(
+		( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+		[]
+	);
+
+	const domainsState = getBulkDomainsData() || defaultState;
 
 	const { setPendingAction, setBulkDomainsData } = useDispatch( ONBOARD_STORE );
 
