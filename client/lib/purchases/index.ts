@@ -20,6 +20,7 @@ import {
 	isDIFMProduct,
 	isJetpackSearchFree,
 	isAkismetProduct,
+	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
@@ -243,6 +244,11 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 	if ( jetpackProductsDisplayNames[ purchase.productSlug ] ) {
 		return jetpackProductsDisplayNames[ purchase.productSlug ];
 	}
+
+	if ( purchase.productSlug === PRODUCT_1GB_SPACE && purchase.purchaseRenewalQuantity ) {
+		return `${ getName( purchase ) } ${ purchase.purchaseRenewalQuantity } GB`;
+	}
+
 	return getName( purchase );
 }
 
