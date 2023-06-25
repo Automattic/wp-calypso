@@ -60,7 +60,9 @@ const bulkDomainTransfer: Flow = {
 					}
 					return window.location.assign( logInUrl );
 				case 'domains': {
-					return navigate( 'processing' );
+					// go to processing step without pushing it to history
+					// so the back button would go back to domains step
+					return navigate( 'processing', undefined );
 				}
 				case 'processing': {
 					const destination = '/domains/manage?filter=owned-by-me';
@@ -69,8 +71,13 @@ const bulkDomainTransfer: Flow = {
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
 
-					return window.location.assign(
-						`/checkout/no-site?redirect_to=${ returnUrl }&signup=0&isDomainOnly=1`
+					const checkoutBackURL = new URL( window.location.href );
+
+					// use replace instead of assign to remove the processing URL from history
+					return window.location.replace(
+						`/checkout/no-site?redirect_to=${ returnUrl }&signup=0&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
+							checkoutBackURL.href
+						) }`
 					);
 				}
 				default:

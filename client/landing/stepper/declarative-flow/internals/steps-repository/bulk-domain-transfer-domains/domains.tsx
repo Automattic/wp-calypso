@@ -54,7 +54,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	// create a string key representing the current state of the domains
 	const changeKey = JSON.stringify( domainsState );
 
-	const handleAddTransfer = async () => {
+	const handleAddTransfer = () => {
 		if ( allGood ) {
 			const distinctDomains = distinctItems( domainsState );
 			const cartItems = Object.entries( distinctDomains ).map( ( [ domain, auth ] ) =>
