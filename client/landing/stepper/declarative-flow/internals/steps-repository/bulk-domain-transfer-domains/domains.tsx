@@ -1,8 +1,9 @@
+import { BulkDomainTransferData } from '@automattic/data-stores';
 import { Button, Card, CardHeader, CardBody, CardFooter } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { v4 as uuid } from 'uuid';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
@@ -13,7 +14,7 @@ export interface Props {
 	onSubmit: () => void;
 }
 
-export const domains: Record<
+const defaultState: Record<
 	string,
 	{
 		domain: string;
@@ -33,7 +34,7 @@ export const domains: Record<
  *
  * @param domainsWithDupes domains
  */
-function distinctItems( domainsWithDupes: typeof domains ) {
+function distinctItems( domainsWithDupes: BulkDomainTransferData ) {
 	return Object.values( domainsWithDupes ).reduce( ( items, item ) => {
 		items[ item.domain ] = item.auth;
 		return items;
@@ -41,11 +42,13 @@ function distinctItems( domainsWithDupes: typeof domains ) {
 }
 
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const domainsState =
+		useSelect( ( select ) => select( ONBOARD_STORE ).getBulkDomainsData(), [] ) || defaultState;
+
+	const { setPendingAction, setBulkDomainsData } = useDispatch( ONBOARD_STORE );
 
 	const { __ } = useI18n();
 
-	const [ domainsState, setDomainsState ] = useState< typeof domains >( domains );
 	const allGood = Object.values( domainsState ).every( ( { valid } ) => valid );
 
 	// create a string key representing the current state of the domains
@@ -78,7 +81,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		( id: string, value: { domain: string; auth: string; valid: boolean } ) => {
 			const newDomainsState = { ...domainsState };
 			newDomainsState[ id ] = value;
-			setDomainsState( newDomainsState );
+			setBulkDomainsData( newDomainsState );
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ changeKey ]
@@ -91,13 +94,13 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			auth: '',
 			valid: false,
 		};
-		setDomainsState( newDomainsState );
+		setBulkDomainsData( newDomainsState );
 	}
 
 	function removeDomain( key: string ) {
 		const newDomainsState = { ...domainsState };
 		delete newDomainsState[ key ];
-		setDomainsState( newDomainsState );
+		setBulkDomainsData( newDomainsState );
 	}
 
 	return (
