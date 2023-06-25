@@ -36,12 +36,12 @@ function distinctItems( domainsWithDupes: BulkDomainTransferData ) {
 }
 
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
-	const { getBulkDomainsData } = useSelect(
-		( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+	const storedDomainsState = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getBulkDomainsData(),
 		[]
 	);
 
-	const domainsState = getBulkDomainsData() || defaultState;
+	const domainsState = storedDomainsState || defaultState;
 
 	const { setPendingAction, setBulkDomainsData } = useDispatch( ONBOARD_STORE );
 
