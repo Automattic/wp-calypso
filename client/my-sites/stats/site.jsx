@@ -238,7 +238,7 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
+				<StatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
