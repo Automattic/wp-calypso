@@ -93,6 +93,7 @@ class ReaderStream extends Component {
 		intro: PropTypes.object,
 		forcePlaceholders: PropTypes.bool,
 		recsStreamKey: PropTypes.string,
+		showFollowButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -107,6 +108,7 @@ class ReaderStream extends Component {
 		useCompactCards: false,
 		intro: null,
 		forcePlaceholders: false,
+		showFollowButton: true,
 	};
 
 	state = {
@@ -457,6 +459,7 @@ class ReaderStream extends Component {
 					index={ index }
 					compact={ this.props.useCompactCards }
 					siteId={ primarySiteId }
+					showFollowButton={ this.props.showFollowButton }
 				/>
 				{ index === 0 && <PerformanceTrackerStop /> }
 			</Fragment>
