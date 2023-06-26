@@ -127,7 +127,7 @@ const ScreenMain = ( {
 							{ translate( 'Footer' ) }
 						</NavigationButtonAsItem>
 					</NavigatorItemGroup>
-					<NavigatorItemGroup title={ translate( 'Style' ) }>
+					<NavigatorItemGroup title={ translate( 'Styles' ) }>
 						<>
 							<NavigationButtonAsItem
 								checked={ hasColor }
