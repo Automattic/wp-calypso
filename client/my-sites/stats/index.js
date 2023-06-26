@@ -16,7 +16,7 @@ import {
 	emailStats,
 	emailSummary,
 	subscribers,
-	participation,
+	purchase,
 } from './controller';
 
 import './style.scss';
@@ -53,7 +53,7 @@ export default function () {
 	statsPage( '/stats/insights', sites );
 
 	// Stat Insights Page
-	statsPage( '/stats/participation/:site', participation );
+	statsPage( '/stats/purchase/:site', purchase );
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
