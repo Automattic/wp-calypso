@@ -34,6 +34,7 @@ export function register(): typeof STORE_KEY {
 			'anchorPodcastId',
 			'anchorEpisodeId',
 			'anchorSpotifyUrl',
+			'bulkDomains',
 			'domain',
 			'domainSearch',
 			'domainForm',
