@@ -25,11 +25,7 @@ const SubscriberDetailsPage = ( { subscriptionId, userId }: SubscriberDetailsPag
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const { data: subscriber, isLoading } = useSubscriberDetailsQuery(
-		selectedSiteId,
-		subscriptionId,
-		userId
-	);
+	const { data: subscriber } = useSubscriberDetailsQuery( selectedSiteId, subscriptionId, userId );
 	const { mutate, isSuccess } = useDetailsPageSubscriberRemoveMutation(
 		selectedSiteId,
 		subscriptionId,
