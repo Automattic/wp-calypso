@@ -97,7 +97,7 @@ const ScreenCategoryList = ( {
 							role="option"
 							as="button"
 							{ ...composite }
-							className={ classNames( 'screen-category-list__category-button', {
+							className={ classNames( 'screen-category-list__category-button navigator-button', {
 								'screen-category-list__category-button--is-open': isOpen,
 							} ) }
 							aria-label={ label }
