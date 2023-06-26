@@ -190,7 +190,7 @@ const DiscoverStream = ( props ) => {
 		...props,
 		isDiscoverTags: ! isDefaultTab,
 		streamKey,
-		streamHeader: <DiscoverNavigation />,
+		streamHeader: recommendedTags.length ? <DiscoverNavigation /> : null,
 		useCompactCards: true,
 	};
 
