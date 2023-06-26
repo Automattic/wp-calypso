@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .marketplace-thank-you__container {
 	min-height: 100vh;
 	display: flex;
@@ -15,7 +18,12 @@
 	.thank-you__container-header {
 		min-height: auto;
 		padding: 0;
-		padding-top: 60px;
+
+		margin-top: 30px;
+
+		@include break-mobile {
+			margin-top: 60px;
+		}
 	}
 
 	.thank-you__body {
