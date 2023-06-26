@@ -40,8 +40,8 @@ type Props = {
 	contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >;
 	onAdd: (
 		contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS,
-		sourceEvent: string,
-		verified: boolean
+		verified: boolean,
+		sourceEvent?: string
 	) => void;
 	onClose: () => void;
 	recordEvent: ( action: string, params?: object ) => void;
@@ -124,6 +124,15 @@ export default function VerifyContactForm( {
 	// Verify email when user clicks on Verify button
 	const handleSubmitVerificationCode = () => {
 		setHelpText( undefined );
+
+		if ( type === 'email' ) {
+			recordEvent( 'downtime_monitoring_verify_email' );
+		}
+
+		if ( type === 'sms' ) {
+			recordEvent( 'downtime_monitoring_verify_phone_number' );
+		}
+
 		if ( contactInfo?.verificationCode ) {
 			submitVerificationCode( {
 				...getContactInfoPayload( type, contactInfo ),
@@ -134,11 +143,14 @@ export default function VerifyContactForm( {
 
 	// Add email item to the list if the email is already verified
 	const handleAddVerifiedContact = () => {
-		onAdd(
-			contactInfo as StateMonitorSettingsEmail | StateMonitorSettingsSMS,
-			`downtime_monitoring_${ type }_already_verified`,
-			true
-		);
+		let actionEvent;
+		if ( type === 'email' ) {
+			actionEvent = 'downtime_monitoring_email__already_verified';
+		} else if ( type === 'sms' ) {
+			actionEvent = 'downtime_monitoring_phone_number_already_verified';
+		}
+
+		onAdd( contactInfo as StateMonitorSettingsEmail | StateMonitorSettingsSMS, true, actionEvent );
 	};
 
 	// Function to handle resending verification code
@@ -217,11 +229,15 @@ export default function VerifyContactForm( {
 	};
 
 	const onSaveLater = () => {
-		onAdd(
-			contactInfo as StateMonitorSettingsEmail | StateMonitorSettingsSMS,
-			`downtime_monitoring_verify_${ type }_later`,
-			false
-		);
+		let actionEvent;
+
+		if ( type === 'email' ) {
+			actionEvent = 'downtime_monitoring_verify_email_later';
+		} else if ( type === 'sms' ) {
+			actionEvent = 'downtime_monitoring_verify_phone_number_later';
+		}
+
+		onAdd( contactInfo as StateMonitorSettingsEmail | StateMonitorSettingsSMS, false, actionEvent );
 	};
 
 	const handleInputChange = useCallback(
@@ -313,13 +329,7 @@ export default function VerifyContactForm( {
 	// Add email item to the list once the email is verified
 	useEffect( () => {
 		if ( isSubmittingVerificationCodeSuccess || isRequestingVerificationCodeAlreadyVerified ) {
-			onAdd(
-				contactInfo as StateMonitorSettingsEmail | StateMonitorSettingsSMS,
-				isRequestingVerificationCodeAlreadyVerified
-					? `downtime_monitoring_${ type }_already_verified`
-					: `downtime_monitoring_verify_${ type }`,
-				true
-			);
+			onAdd( contactInfo as StateMonitorSettingsEmail | StateMonitorSettingsSMS, true );
 		}
 	}, [
 		contactInfo,

@@ -48,10 +48,13 @@ export default function ContactEditor( {
 
 	const onAddContact = (
 		contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS,
-		sourceEvent: string,
-		asVerified: boolean
+		asVerified: boolean,
+		sourceEvent?: string
 	) => {
-		recordEvent( sourceEvent );
+		if ( sourceEvent ) {
+			recordEvent( sourceEvent );
+		}
+
 		setContacts( addToContactList( type, contacts, contact, asVerified ) );
 
 		if ( type === 'email' ) {
@@ -66,7 +69,12 @@ export default function ContactEditor( {
 	};
 
 	const onRemoveContact = ( contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS ) => {
-		recordEvent( `downtime_monitoring_remove_${ type === 'email' ? 'email' : 'phone' }` );
+		if ( type === 'email' ) {
+			recordEvent( `downtime_monitoring_remove_email` );
+		} else if ( type === 'sms' ) {
+			recordEvent( `downtime_monitoring_remove_phone_number` );
+		}
+
 		setContacts( removeFromContactList( type, contacts, contact ) );
 		onClose();
 	};
