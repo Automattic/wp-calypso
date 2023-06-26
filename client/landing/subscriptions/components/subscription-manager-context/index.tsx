@@ -6,8 +6,8 @@ export type Portal = typeof SubscriptionsPortal | typeof ReaderPortal;
 
 export interface SubscriptionManagerContext {
 	portal: Portal;
-	isSubscriptionsPortal: boolean;
-	isReaderPortal: boolean;
+	isSubscriptionsPortal?: boolean;
+	isReaderPortal?: boolean;
 }
 
 const SubscriptionManagerContext = createContext< SubscriptionManagerContext >(
