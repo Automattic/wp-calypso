@@ -564,7 +564,7 @@ class ThemeShowcase extends Component {
 						/>
 						{ tabFilters && (
 							<div className="theme__filters">
-								{ ! isSiteECommerceFreeTrial && ! isSiteWooExpress && (
+								{ ! isSiteWooExpressOrEcomFreeTrial && (
 									<ThemesToolbarGroup
 										items={ Object.values( tabFilters ) }
 										selectedKey={ this.state.tabFilter.key }
