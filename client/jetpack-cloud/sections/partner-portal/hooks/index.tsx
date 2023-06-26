@@ -186,7 +186,7 @@ export function useAssignLicenses(
 	return [ assignMultipleLicenses, isLoading ];
 }
 
-export { default as useIssueMultipleLicenses } from './use-issue-multiple-licenses';
+export { default as useIssueMultipleLicenses } from './use-issue-and-assign-multiple-licenses';
 
 /**
  * Handle multiple license assignment

@@ -21,7 +21,7 @@ import getSites from 'calypso/state/selectors/get-sites';
  * Handle multiple license issue and assign
  *
  */
-function useIssueMultipleLicenses(
+function useIssueAndAssignMultipleLicenses(
 	selectedProducts: Array< string >,
 	selectedSite?: { ID: number; domain: string } | null,
 	suggestedProducts: Array< string > = []
@@ -29,7 +29,6 @@ function useIssueMultipleLicenses(
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const products = useProductsQuery();
-
 	const sites = useSelector( getSites ).length;
 
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
@@ -84,7 +83,7 @@ function useIssueMultipleLicenses(
 
 	const isLoading = assignLicense.isLoading || issueLicense.isLoading;
 
-	const issue = useCallback( async () => {
+	const issueAndAssign = useCallback( async () => {
 		if ( isLoading && ! selectedProducts.length ) {
 			return;
 		}
@@ -286,7 +285,7 @@ function useIssueMultipleLicenses(
 		assignLicense,
 	] );
 
-	return [ issue, isLoading ];
+	return [ issueAndAssign, isLoading ];
 }
 
-export default useIssueMultipleLicenses;
+export default useIssueAndAssignMultipleLicenses;
