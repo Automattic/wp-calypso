@@ -9,7 +9,7 @@ type Props = {
 	title: string;
 };
 
-export const NavigatorItemGroup = ( { children, title }: Props ) => {
+const NavigatorItemGroup = ( { children, title }: Props ) => {
 	return (
 		<section className="navigator-item-group">
 			<HStack direction="column" alignment="top" spacing="0">
@@ -19,3 +19,5 @@ export const NavigatorItemGroup = ( { children, title }: Props ) => {
 		</section>
 	);
 };
+
+export default NavigatorItemGroup;

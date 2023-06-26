@@ -1,9 +1,10 @@
 import { Button } from '@automattic/components';
 import { FontPairingVariations } from '@automattic/global-styles';
+import { NavigatorHeader } from '@automattic/onboarding';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import NavigatorHeader from './navigator-header';
+import NavigatorTitle from './navigator-title';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
 interface Props {
@@ -29,7 +30,7 @@ const ScreenFontPairings = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Fonts' ) }
+				title={ <NavigatorTitle title={ translate( 'Fonts' ) } /> }
 				description={ translate(
 					'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
 				) }
