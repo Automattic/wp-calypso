@@ -72,7 +72,12 @@ export default function ContactEditor( {
 	};
 
 	return (
-		<DashboardModal title={ title } subtitle={ subtitle } onClose={ onClose }>
+		<DashboardModal
+			title={ title }
+			subtitle={ subtitle }
+			onClose={ onClose }
+			shouldCloseOnClickOutside={ false }
+		>
 			{ action === 'remove' ? (
 				selectedContact && (
 					<RemoveContactForm
