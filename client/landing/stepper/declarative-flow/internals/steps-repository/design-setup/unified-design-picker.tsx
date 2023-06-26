@@ -13,11 +13,9 @@ import {
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
-	BLANK_CANVAS_DESIGN,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
@@ -53,13 +51,13 @@ import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
 import { RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
+import useRecipe from './hooks/use-recipe';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { OnboardSelect, SiteSelect, StarterDesigns } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
-import type { GlobalStylesObject } from '@automattic/global-styles';
 
 const SiteIntent = Onboard.SiteIntent;
 const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
@@ -72,8 +70,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const translate = useTranslate();
 	const locale = useLocale();
-
-	const isDesktop = useViewportMatch( 'large' );
 
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -88,6 +84,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
 	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
+	const hideBackFromQueryString = queryParams.get( 'hideBack' );
 
 	const { goToCheckout } = useCheckout();
 
@@ -172,82 +169,42 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	// ********** Logic for selecting a design and style variation
-
-	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
+	const {
+		isPreviewingDesign,
+		selectedDesign,
+		selectedStyleVariation,
+		selectedFontVariation,
+		globalStyles,
+		setSelectedDesign,
+		previewDesign,
+		previewDesignVariation,
+		setSelectedFontVariation,
+		setGlobalStyles,
+		resetPreview,
+	} = useRecipe(
+		site?.ID,
+		allDesigns,
+		pickDesign,
+		recordPreviewDesign,
+		recordPreviewStyleVariation
+	);
 
 	// Make sure people is at the top when entering/leaving preview mode.
 	useEffect( () => {
 		window.scrollTo( { top: 0 } );
 	}, [ isPreviewingDesign ] );
 
-	const selectedDesign = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-		[]
-	);
-	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
-
 	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
+		select: ( design: Design ) => {
+			if ( isDesignFirstFlow && selectedDesignDetails?.style_variations ) {
+				design.style_variations = [];
+			}
+
+			return design;
+		},
 	} );
-
-	if ( isDesignFirstFlow && selectedDesignDetails?.style_variations ) {
-		selectedDesignDetails.style_variations = [];
-	}
-
-	const selectedStyleVariation = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedStyleVariation(),
-		[]
-	);
-	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
-
-	const [ selectedFontVariation, setSelectedFontVariation ] = useState< GlobalStylesObject | null >(
-		null
-	);
-
-	const [ globalStyles, setGlobalStyles ] = useState< GlobalStylesObject | null >( null );
-
-	// Unset the selected design, thus restarting the design picking experience.
-	useEffect( () => {
-		setSelectedDesign( undefined );
-		setSelectedStyleVariation( undefined );
-	}, [] );
-
-	// When the theme or style query strings parameters are present,
-	// automatically switch to previewing that theme (if it's a valid theme)
-	// and that style variation (if it's a valid style variation).
-	const themeFromQueryString = queryParams.get( 'theme' );
-	const styleFromQueryString = queryParams.get( 'style' );
-	const hideBackFromQueryString = queryParams.get( 'hideBack' );
-
-	useEffect( () => {
-		if ( ! themeFromQueryString || ! allDesigns ) {
-			return;
-		}
-
-		const { designs } = allDesigns;
-		const requestedDesign = designs.find( ( design ) => design.slug === themeFromQueryString );
-		if ( ! requestedDesign ) {
-			return;
-		}
-
-		if ( styleFromQueryString ) {
-			const requestedStyleVariation = requestedDesign.style_variations?.find(
-				( styleVariation ) => styleVariation.slug === styleFromQueryString
-			);
-
-			setSelectedStyleVariation( requestedStyleVariation );
-		}
-
-		setSelectedDesign( requestedDesign );
-		setIsPreviewingDesign( true );
-	}, [
-		themeFromQueryString,
-		styleFromQueryString,
-		allDesigns,
-		setSelectedDesign,
-		setSelectedStyleVariation,
-	] );
 
 	function getEventPropsByDesign( design: Design, styleVariation?: StyleVariation ) {
 		return {
@@ -263,30 +220,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		};
 	}
 
-	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
-		// Redirect to Site Assembler if the design_type is set to "assembler".
-		const shouldGoToAssembler = isDesktop && design.design_type === 'assembler';
-
-		if ( shouldGoToAssembler ) {
-			design = {
-				...design,
-				design_type: BLANK_CANVAS_DESIGN.design_type,
-			} as Design;
-		}
-
+	function recordPreviewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
+	}
 
-		if ( shouldGoToAssembler ) {
-			pickDesign( design );
-			return;
-		}
-
-		setSelectedDesign( design );
-		if ( styleVariation ) {
-			setSelectedStyleVariation( styleVariation );
-		}
-
-		setIsPreviewingDesign( true );
+	function recordPreviewStyleVariation( design: Design, styleVariation?: StyleVariation ) {
+		recordTracksEvent(
+			'calypso_signup_design_preview_style_variation_preview_click',
+			getEventPropsByDesign( design, styleVariation )
+		);
 	}
 
 	function onChangeVariation( design: Design, styleVariation?: StyleVariation ) {
@@ -301,15 +243,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			intent,
 			category: categorization?.selection,
 		} );
-	}
-
-	function previewDesignVariation( variation: StyleVariation ) {
-		recordTracksEvent(
-			'calypso_signup_design_preview_style_variation_preview_click',
-			getEventPropsByDesign( selectedDesign as Design, variation )
-		);
-
-		setSelectedStyleVariation( variation );
 	}
 
 	// ********** Logic for unlocking a selected premium design
@@ -396,23 +329,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 
 		if ( siteSlugOrId ) {
-			// When the user is done with checkout, send them back to the current url
-			const destUrl = new URL( window.location.href );
-			const destSearchP = destUrl.searchParams;
-
-			// If we have a theme selected, add &theme=slug to the query params
-			if ( selectedDesign?.slug ) {
-				destSearchP.set( 'theme', selectedDesign?.slug );
-				destUrl.search = destSearchP.toString();
-			}
-
-			const destString = destUrl.toString().replace( window.location.origin, '' );
-
 			goToCheckout( {
 				flowName: flow,
 				stepName,
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
-				destination: destString,
+				// When the user is done with checkout, send them back to the current url
+				destination: window.location.href.replace( window.location.origin, '' ),
 				plan,
 			} );
 
@@ -453,24 +375,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
 			);
 
-			// When the user is done with checkout, send them back to the current url
-			const destUrl = new URL( window.location.href );
-			const destSearchP = destUrl.searchParams;
-
-			// Add &theme=theme_slug&style=style_slug to the query params
-			if ( selectedDesign.slug && selectedStyleVariation.slug ) {
-				destSearchP.set( 'theme', selectedDesign.slug );
-				destSearchP.set( 'style', selectedStyleVariation.slug );
-				destUrl.search = destSearchP.toString();
-			}
-
-			const destString = destUrl.toString().replace( window.location.origin, '' );
-
 			goToCheckout( {
 				flowName: flow,
 				stepName,
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
-				destination: destString,
+				// When the user is done with checkout, send them back to the current url
+				destination: window.location.href.replace( window.location.origin, '' ),
 				plan: 'premium',
 			} );
 
@@ -579,11 +489,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				getEventPropsByDesign( selectedDesign as Design, selectedStyleVariation )
 			);
 
-			setSelectedDesign( undefined );
-			setSelectedStyleVariation( undefined );
-			setGlobalStyles( null );
-			setSelectedFontVariation( null );
-			setIsPreviewingDesign( false );
+			resetPreview();
 			return;
 		}
 
