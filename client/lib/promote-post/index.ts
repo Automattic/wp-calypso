@@ -6,7 +6,12 @@ import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	getSiteOption,
+	isJetpackSite,
+	isJetpackModuleActive,
+	isJetpackMinimumVersion,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 declare global {
@@ -179,10 +184,35 @@ export enum PromoteWidgetStatus {
  */
 export const usePromoteWidget = (): PromoteWidgetStatus => {
 	const selectedSite = useSelector( getSelectedSite );
+	const siteId = selectedSite?.ID ?? 0;
 
-	const value = useSelector( ( state ) => getSiteOption( state, selectedSite?.ID, 'can_blaze' ) );
+	// On Jetpack sites, starting with v. 12.3-a.9,
+	// folks can also use the Blaze module to enable/disable the Blaze feature.
+	const isBlazeModuleActive = ( state: object, siteId: number ) => {
+		// On WordPress.com sites, the Blaze module is always active.
+		if ( ! isJetpackSite( state, siteId ) ) {
+			return true;
+		}
 
-	switch ( value ) {
+		// On old versions of Jetpack, there is no module.
+		if ( ! isJetpackMinimumVersion( state, siteId, '12.3-a.9' ) ) {
+			return true;
+		}
+
+		return isJetpackModuleActive( state, siteId, 'blaze' );
+	};
+
+	const isSiteEligible = useSelector( ( state ) => {
+		// First, check status form the API.
+		const isEligible = getSiteOption( state, siteId, 'can_blaze' );
+
+		// Then check if the Blaze module is active.
+		const isModuleActive = isBlazeModuleActive( state, siteId );
+
+		return isEligible && isModuleActive;
+	} );
+
+	switch ( isSiteEligible ) {
 		case false:
 			return PromoteWidgetStatus.DISABLED;
 		case true:
