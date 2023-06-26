@@ -310,6 +310,14 @@ export class SiteSelector extends Component {
 			sites = sites.filter( ( site ) => site.slug !== this.props.selected );
 		}
 
+		// Previously, each domain-only site would correspond to one site in the list.
+		// Soon, bulk transfers of many domains will be attached to a single domain-only site.
+		// Because of this, it no longer makes sense to show domain-only sites in the
+		// site selector.
+
+		// Eventually, we'll want to filter out domain-only sites at the API boundary instead.
+		sites = sites.filter( ( site ) => ! site?.options?.is_domain_only );
+
 		return sites;
 	}
 
