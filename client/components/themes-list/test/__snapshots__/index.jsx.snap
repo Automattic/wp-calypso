@@ -32,8 +32,8 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
         class="pattern-assembler-cta__subtitle"
       >
         Can’t find something you like? 
-        <br />
-        Jump right into the editor to design your homepage from scratch. 
+        <br /> 
+        Jump right into the editor to design your homepage from scratch.
       </p>
       <button
         class="button pattern-assembler-cta__button is-primary"
