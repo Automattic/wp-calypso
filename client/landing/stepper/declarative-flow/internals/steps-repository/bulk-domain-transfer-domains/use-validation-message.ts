@@ -20,7 +20,7 @@ export function useValidationMessage( domain: string, auth: string ) {
 	const { data: isDomainUnlocked, isInitialLoading: isLoadingLock } = useIsDomainsUnlocked(
 		domainDebounced,
 		{
-			enabled: ! passed && passedLocalValidation,
+			enabled: Boolean( ! passed && passedLocalValidation ),
 		}
 	);
 
@@ -30,7 +30,7 @@ export function useValidationMessage( domain: string, auth: string ) {
 			auth: authDebounced,
 		},
 		{
-			enabled: ! passed && passedLocalValidation && isDomainUnlocked?.unlocked,
+			enabled: Boolean( ! passed && passedLocalValidation && isDomainUnlocked?.unlocked ),
 		}
 	);
 
