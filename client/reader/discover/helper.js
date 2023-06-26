@@ -3,6 +3,9 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { find, get } from 'lodash';
 import { getSiteUrl as readerRouteGetSiteUrl } from 'calypso/reader/route';
 
+// Used to populate the recommended discover feed when no tags are followed by the user.
+export const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
+
 function hasDiscoverSlug( post, searchSlug ) {
 	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );
 	return !! ( metaData && find( metaData, { slug: searchSlug } ) );

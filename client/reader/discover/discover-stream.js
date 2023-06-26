@@ -10,6 +10,7 @@ import wpcom from 'calypso/lib/wp';
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { DEFAULT_DISCOVER_TAGS } from './helper';
 
 import './discover-stream.scss';
 
@@ -23,7 +24,7 @@ const DiscoverStream = ( props ) => {
 	const scrollRef = useRef();
 	const scrollPosition = useRef( 0 );
 	const locale = useLocale();
-	const followedTags = useSelector( getReaderFollowedTags ) || [];
+	const followedTags = useSelector( getReaderFollowedTags ) || DEFAULT_DISCOVER_TAGS;
 	const [ selectedTab, setSelectedTab ] = useState( DEFAULT_TAB );
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
