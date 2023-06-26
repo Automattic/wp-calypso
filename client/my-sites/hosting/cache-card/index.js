@@ -31,6 +31,8 @@ const EdgeCacheDescription = styled.p( {
 } );
 
 const EdgeCacheNotice = styled.p( {
+	fontSize: '14px',
+	fontStyle: 'italic',
 	color: '#646970',
 	marginTop: '18px',
 } );
