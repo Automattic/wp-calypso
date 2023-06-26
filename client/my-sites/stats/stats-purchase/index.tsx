@@ -7,7 +7,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
-import StatsPurchaseWizard from './stats-participation-wizard';
+import StatsPurchaseWizard from './stats-purchase-wizard';
 
 const StatsPurchasePage = () => {
 	const translate = useTranslate();

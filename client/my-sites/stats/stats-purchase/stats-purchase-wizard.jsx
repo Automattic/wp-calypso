@@ -3,7 +3,7 @@ import { Button, CheckboxControl, Card, Panel, PanelRow, PanelBody } from '@word
 // import classNames from 'classnames';
 // import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
-import StatsPurchaseSVG from './stats-participation-svg';
+import StatsPurchaseSVG from './stats-purchase-svg';
 import './styles.scss';
 
 const COMPONENT_NAME = 'stats-purchase-wizard';
