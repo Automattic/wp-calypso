@@ -17,8 +17,13 @@
 		}
 	}
 
+	.components-modal__header {
+		background: var(--studio-white);
+		padding-block-end: 24px;
+	}
+
 	form {
-		margin-block-start: 32px;
+		margin-block-start: 48px;
 
 		@include break-mobile {
 			margin-block-start: 16px;
@@ -30,9 +35,7 @@
 	font-size: 0.75rem;
 	line-height: 14px;
 	color: var(--studio-gray-50);
-
-	@include break-mobile {
-		position: absolute;
-		inset-block-start: 50px;
-	}
+	position: absolute;
+	inset-block-start: 38px;
+	z-index: 99;
 }
