@@ -234,7 +234,7 @@ export default function NotificationSettings( {
 					};
 				} ),
 			};
-			eventParams.email_contacts = params.contacts.sms_numbers?.length;
+			eventParams.sms_contacts = params.contacts.sms_numbers?.length;
 			eventParams.sms_notifications = params.sms_notifications;
 		}
 		recordEvent( 'notification_save_click', eventParams );
@@ -435,6 +435,7 @@ export default function NotificationSettings( {
 				allPhoneItems={ allPhoneItems }
 				selectedAction={ selectedAction }
 				setAllPhoneItems={ handleSetAllPhoneItems }
+				recordEvent={ recordEvent }
 				setVerifiedPhoneNumber={ ( item ) => handleSetVerifiedItem( 'phone', item ) }
 				sites={ sites }
 			/>
