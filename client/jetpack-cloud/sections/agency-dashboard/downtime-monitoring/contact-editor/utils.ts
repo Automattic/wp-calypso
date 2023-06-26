@@ -119,14 +119,14 @@ export const addToContactList = (
 	asVerified: boolean
 ) => {
 	let isANewContact = true;
-	const newContacts = contacts.map( ( item ) => {
+	const updatedContactList = contacts.map( ( item ) => {
 		if (
 			type === 'email' &&
 			( item as StateMonitorSettingsEmail ).email === ( contact as StateMonitorSettingsEmail ).email
 		) {
 			isANewContact = false;
 			return {
-				...( item as StateMonitorSettingsEmail ),
+				...contact,
 				verified: asVerified,
 			};
 		}
@@ -138,7 +138,7 @@ export const addToContactList = (
 		) {
 			isANewContact = false;
 			return {
-				...( item as StateMonitorSettingsSMS ),
+				...contacts,
 				verified: asVerified,
 			};
 		}
@@ -147,13 +147,13 @@ export const addToContactList = (
 	} );
 
 	if ( isANewContact ) {
-		newContacts.push( {
+		updatedContactList.push( {
 			...contact,
 			verified: asVerified,
 		} );
 	}
 
-	return newContacts;
+	return updatedContactList;
 };
 
 export const removeFromContactList = (

@@ -172,12 +172,12 @@ export default function VerifyContactForm( {
 
 		setValidationError( undefined );
 
+		const isNewContact = ! contact || ! isMatchingContactInfo( type, contact, contactInfo );
+
 		if ( type === 'email' ) {
 			if ( ! isValidContactInfo( type, contactInfo ) ) {
 				return setValidationError( { email: translate( 'Please enter a valid email address.' ) } );
 			}
-
-			const isNewContact = ! contact || ! isMatchingContactInfo( type, contact, contactInfo );
 
 			if ( isContactAlreadyExists( type, contacts, contactInfo ) && isNewContact ) {
 				return setValidationError( {
@@ -190,8 +190,6 @@ export default function VerifyContactForm( {
 			if ( ! phoneValidationStatus.isValid ) {
 				return setValidationError( { phone: phoneValidationStatus.errorMessage } );
 			}
-
-			const isNewContact = ! contact || ! isMatchingContactInfo( type, contact, contactInfo );
 
 			if ( isContactAlreadyExists( type, contacts, contactInfo ) && isNewContact ) {
 				return setValidationError( {
