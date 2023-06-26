@@ -21,15 +21,11 @@ import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
 const ThemeSectionContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	width: 720px;
+	width: 100%;
 	box-sizing: border-box;
 
-	@media ( max-width: 740px ) {
-		width: 500px;
-	}
-
-	@media ( max-width: 520px ) {
-		width: 280px;
+	@media ( min-width: 782px ) {
+		width: 720px;
 	}
 `;
 

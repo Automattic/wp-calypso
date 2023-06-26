@@ -28,10 +28,15 @@
 
 	.thank-you__body {
 		> div {
-			width: auto;
+
 			display: flex;
 			flex-direction: column;
-			align-items: center;
+			width: 100%;
+			align-items: left;
+			@include break-mobile {
+				width: auto;
+				align-items: center;
+			}
 		}
 
 		div {
