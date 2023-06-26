@@ -32,6 +32,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"bulk-domain-transfer-flow": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,

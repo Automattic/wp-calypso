@@ -25,6 +25,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"bulk-domain-transfer-flow": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": false,
