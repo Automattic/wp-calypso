@@ -44,16 +44,25 @@
 		margin-bottom: 16px;
 	}
 
+	.thank-you__header-title,
+	.thank-you__header-subtitle {
+		text-align: left;
+		padding: 0 24px;
+
+		@media ( min-width: 480px ) {
+			text-align: center;
+			padding: 0 16px;
+		}
+	}
+
 	.thank-you__header-title {
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 44px; // typography-exception
 		line-height: 60px;
-		padding: 0 16px;
 	}
 
 	.thank-you__header-subtitle {
 		margin: 8px auto;
-		padding: 0 16px;
 		max-width: 500px;
 		line-height: 24px;
 		font-size: $font-body;
