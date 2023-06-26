@@ -78,23 +78,25 @@
 		max-width: 1072px;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 40px;
+
+		gap: 30px;
+		@include break-mobile {
+			gap: 40px;
+		}
 		justify-content: center;
 
 		.thank-you__step {
 			display: flex;
 			flex-direction: column;
 			flex-wrap: wrap;
-			min-width: 280px;
 			border-top: none;
 
-			@media ( max-width: 740px ) {
-				min-width: auto;
-				max-width: 420px;
-			}
+			min-width: auto;
+			max-width: 100%;
 
-			@media ( max-width: 520px ) {
-				max-width: 200px;
+			@include break-mobile {
+				min-width: auto;
+				max-width: 280px;
 			}
 
 			h3 {
@@ -121,9 +123,6 @@
 				font-weight: 500;
 				font-size: $font-body-small;
 				line-height: 20px;
-				color: var(--studio-gray-100);
-				text-decoration: none;
-				border-bottom: 1px solid var(--studio-gray-100);
 			}
 		}
 
