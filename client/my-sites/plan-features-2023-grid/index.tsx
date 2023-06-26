@@ -1093,7 +1093,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible( props.siteId, props.plans );
-	const [ , globalStylesOnPersonalExperiment ] = useExperiment( 'wpcom_global_styles_personal' );
+	const [ , globalStylesOnPersonalExperiment ] = useExperiment( 'calypso_global_styles_personal' );
 
 	if ( props.isInSignup ) {
 		return (
