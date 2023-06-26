@@ -39,7 +39,11 @@ const useRecipe = (
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
 
-	const fontVariations = useFontPairingVariations( siteId, stylesheet );
+	const fontVariations = useFontPairingVariations(
+		siteId,
+		stylesheet,
+		! preselectedFontVariationTitle
+	);
 
 	const handleSelectedDesignChange = ( design?: Design ) => {
 		setSelectedDesign( design );
