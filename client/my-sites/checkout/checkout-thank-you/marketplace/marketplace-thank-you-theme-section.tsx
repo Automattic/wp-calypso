@@ -59,6 +59,7 @@ const ThemeSectionName = styled.div`
 	font-size: 16px;
 	font-weight: 500;
 	line-height: 24px;
+	flex-grow: 1;
 	color: var( --studio-gray-100 );
 	& small {
 		font-size: 14px;
@@ -85,6 +86,13 @@ const ThemeSectionButtons = styled.div`
 
 const ThemeButton = styled( Button )`
 	border-radius: 4px;
+`;
+
+const ThemeNameSectionWrapper = styled.div`
+	display: flex;
+	row-gap: 12px;
+	flex-grow: 1;
+	flex-wrap: wrap;
 `;
 
 export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
@@ -126,34 +134,36 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 			<QueryActiveTheme siteId={ siteId } />
 			<AutoLoadingHomepageModal source="details" />
 			<ThemeSectionContent>
-				<ThemeSectionName>
-					<h5>{ theme.name }</h5>
-					<small>
-						{ theme.author
-							? translate( 'by %(author)s', { args: { author: theme.author } } )
-							: null }
-					</small>
-				</ThemeSectionName>
-				<ThemeSectionButtons>
-					<ThemeButton
-						primary
-						busy={ ( isActivating && ! hasActivated ) || isLoading }
-						onClick={ handleActivateTheme }
-						href={ isActive ? customizeUrl : undefined }
-						disabled={ ! isValidThankyouSectionTheme }
-					>
-						{ isActive
-							? translate( 'Customize this design' )
-							: translate( 'Activate this design' ) }
-					</ThemeButton>
-
-					{ isActive ? (
-						<ThemeButton href={ siteUrl } disabled={ ! isValidThankyouSectionTheme }>
-							<Gridicon size={ 18 } icon="external" />
-							{ translate( 'View site' ) }
+				<ThemeNameSectionWrapper>
+					<ThemeSectionName>
+						<h5>{ theme.name }</h5>
+						<small>
+							{ theme.author
+								? translate( 'by %(author)s', { args: { author: theme.author } } )
+								: null }
+						</small>
+					</ThemeSectionName>
+					<ThemeSectionButtons>
+						<ThemeButton
+							primary
+							busy={ ( isActivating && ! hasActivated ) || isLoading }
+							onClick={ handleActivateTheme }
+							href={ isActive ? customizeUrl : undefined }
+							disabled={ ! isValidThankyouSectionTheme }
+						>
+							{ isActive
+								? translate( 'Customize this design' )
+								: translate( 'Activate this design' ) }
 						</ThemeButton>
-					) : null }
-				</ThemeSectionButtons>
+
+						{ isActive ? (
+							<ThemeButton href={ siteUrl } disabled={ ! isValidThankyouSectionTheme }>
+								<Gridicon size={ 18 } icon="external" />
+								{ translate( 'View site' ) }
+							</ThemeButton>
+						) : null }
+					</ThemeSectionButtons>
+				</ThemeNameSectionWrapper>
 				<ThemeSectionImageContainer>
 					<ThemeSectionImage
 						src={ theme.screenshot }
