@@ -58,6 +58,7 @@ import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { OnboardSelect, SiteSelect, StarterDesigns } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 
 const SiteIntent = Onboard.SiteIntent;
 const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
@@ -174,6 +175,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		selectedDesign,
 		selectedStyleVariation,
 		selectedFontVariation,
+		hasSelectedGlobalStyles,
 		globalStyles,
 		setSelectedDesign,
 		previewDesign,
@@ -206,9 +208,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		},
 	} );
 
-	function getEventPropsByDesign( design: Design, styleVariation?: StyleVariation ) {
+	function getEventPropsByDesign(
+		design: Design,
+		styleVariation?: StyleVariation,
+		fontVariation?: GlobalStylesObject | null
+	) {
 		return {
-			...getDesignEventProps( { flow, intent, design, styleVariation } ),
+			...getDesignEventProps( { flow, intent, design, styleVariation, fontVariation } ),
 			category: categorization.selection,
 			...( design.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 			...( design.recipe?.header_pattern_ids && {
@@ -262,9 +268,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
 
 	const shouldUpgrade =
-		( ( selectedDesign?.is_premium || !! selectedFontVariation ) &&
-			! isPremiumThemeAvailable &&
-			! didPurchaseSelectedTheme ) ||
+		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( ! isPluginBundleEligible && isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
@@ -347,7 +351,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function unlockPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && selectedStyleVariation ) {
+		if ( selectedDesign && hasSelectedGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_show',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -358,7 +362,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function closePremiumGlobalStylesModal() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && selectedStyleVariation ) {
+		if ( selectedDesign && hasSelectedGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_close_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -369,7 +373,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function handleCheckoutForPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && selectedStyleVariation && siteSlugOrId ) {
+		if ( selectedDesign && hasSelectedGlobalStyles && siteSlugOrId ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_checkout_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -390,7 +394,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function tryPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && selectedStyleVariation ) {
+		if ( selectedDesign && hasSelectedGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_try_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -519,11 +523,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 
 		const selectStyle = () => {
-			if (
-				shouldLimitGlobalStyles &&
-				! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) &&
-				!! selectedFontVariation
-			) {
+			if ( shouldLimitGlobalStyles && hasSelectedGlobalStyles ) {
 				unlockPremiumGlobalStyles();
 			} else {
 				pickDesign();

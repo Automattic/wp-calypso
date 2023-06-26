@@ -1,3 +1,4 @@
+import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { useFontPairingVariations } from '@automattic/global-styles';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -32,6 +33,11 @@ const useRecipe = (
 	const [ selectedFontVariation, setSelectedFontVariation ] = useState< GlobalStylesObject | null >(
 		null
 	);
+
+	const hasSelectedGlobalStyles =
+		! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) ||
+		!! selectedFontVariation;
+
 	const [ globalStyles, setGlobalStyles ] = useState< GlobalStylesObject | null >( null );
 	const preselectedTheme = searchParams.get( 'theme' );
 	const preselectedStyle = searchParams.get( 'style_variation' );
@@ -183,6 +189,7 @@ const useRecipe = (
 		selectedDesign,
 		selectedStyleVariation,
 		selectedFontVariation,
+		hasSelectedGlobalStyles,
 		globalStyles,
 		previewDesign,
 		previewDesignVariation,

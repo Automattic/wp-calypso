@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import {
+	useSyncGlobalStylesUserConfig,
+	getVariationTitle,
+	getVariationType,
+} from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer, isSiteAssemblerFlow, isSiteSetupFlow } from '@automattic/onboarding';
 import {
@@ -43,7 +47,7 @@ import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
 import ScreenSection from './screen-section';
-import { encodePatternId, getVariationTitle, getVariationType } from './utils';
+import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
 import type { StepProps } from '../../types';
