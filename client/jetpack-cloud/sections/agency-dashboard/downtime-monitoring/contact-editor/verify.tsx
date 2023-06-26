@@ -193,7 +193,7 @@ export default function VerifyContactForm( {
 
 			if ( isContactAlreadyExists( type, contacts, contactInfo ) && isNewContact ) {
 				return setValidationError( {
-					email: translate( 'This phone number is already in use.' ),
+					phone: translate( 'This phone number is already in use.' ),
 				} );
 			}
 		}
