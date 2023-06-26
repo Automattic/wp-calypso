@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import TimeSince from 'calypso/components/time-since';
 import useSubscriptionPlans from '../../hooks/use-subscription-plans';
@@ -39,6 +40,7 @@ export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: Subscriber
 				<SubscriberPopover
 					onView={ () => onView( subscriber ) }
 					onUnsubscribe={ () => onUnsubscribe( subscriber ) }
+					isViewButtonVisible={ isEnabled( 'subscribers/view-subscriber-details' ) }
 				/>
 			</span>
 		</li>
