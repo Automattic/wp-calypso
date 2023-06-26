@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	WeeklyHighlightCards,
 	PAST_THIRTY_DAYS,
@@ -5,9 +6,11 @@ import {
 	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
 } from '@automattic/components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import version_compare from 'calypso/lib/version-compare';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';
 import { getHighlights } from 'calypso/state/stats/highlights/selectors';
 import { updateModuleSettings } from 'calypso/state/stats/module-settings/actions';
@@ -78,6 +81,15 @@ export default function HighlightsSection( {
 		return mutateNoticeVisbilityAsync().finally( refetchNotices );
 	}, [ settingsTooltipDismissed, showSettingsTooltip ] );
 
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	// Highlights settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
+	const isHighlightsSettingsSupported =
+		! config.isEnabled( 'is_running_in_jetpack_site' ) ||
+		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
+
 	return (
 		<WeeklyHighlightCards
 			className="has-odyssey-stats-bg-color"
@@ -92,6 +104,7 @@ export default function HighlightsSection( {
 			currentPeriod={ currentPeriod }
 			showSettingsTooltip={ !! showSettingsTooltip && ! settingsTooltipDismissed }
 			onSettingsTooltipDismiss={ dismissSettingsTooltip }
+			isHighlightsSettingsSupported={ isHighlightsSettingsSupported }
 		/>
 	);
 }

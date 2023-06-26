@@ -1,8 +1,9 @@
 import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
-import { ReactChild, ReactElement } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
+import SenseiLogo from '../sensei-logo';
 import StepNavigationLink from '../step-navigation-link';
 import VideoPressLogo from '../videopress-logo';
 import './style.scss';
@@ -19,9 +20,9 @@ interface Props {
 	hideNext?: boolean;
 	skipButtonAlign?: 'top' | 'bottom';
 	skipHeadingText?: string;
-	backLabelText?: string | ReactChild;
-	skipLabelText?: string | ReactChild;
-	nextLabelText?: string | ReactChild;
+	backLabelText?: TranslateResult;
+	skipLabelText?: TranslateResult;
+	nextLabelText?: TranslateResult;
 	formattedHeader?: ReactElement;
 	hideFormattedHeader?: boolean;
 	headerImageUrl?: string;
@@ -44,6 +45,7 @@ interface Props {
 	showJetpackPowered?: boolean;
 	showHeaderWooCommercePowered?: boolean;
 	showFooterWooCommercePowered?: boolean;
+	showSenseiPowered?: boolean;
 	showVideoPressPowered?: boolean;
 }
 
@@ -81,6 +83,7 @@ const StepContainer: React.FC< Props > = ( {
 	showHeaderJetpackPowered,
 	showHeaderWooCommercePowered,
 	showJetpackPowered,
+	showSenseiPowered,
 	showVideoPressPowered,
 	showFooterWooCommercePowered,
 } ) => {
@@ -226,6 +229,13 @@ const StepContainer: React.FC< Props > = ( {
 					<WooCommerceWooLogo /> <span>{ translate( 'WooCommerce powered' ) }</span>
 				</div>
 			) }
+
+			{ showSenseiPowered && (
+				<div className="step-container__sensei-powered">
+					<SenseiLogo /> <span>{ translate( 'Powered by Sensei' ) }</span>
+				</div>
+			) }
+
 			{ showVideoPressPowered && (
 				<div className="step-container__videopress-powered">
 					<VideoPressLogo size={ 24 } /> <span>{ translate( 'Powered by VideoPress' ) }</span>

@@ -10,11 +10,13 @@ import {
 	isJetpackSocialAdvancedSlug,
 	isJetpackStarterSlug,
 	isJetpackVideoPressSlug,
+	isJetpackAISlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
 
 type featureString =
+	| 'ai'
 	| 'anti-spam'
 	| 'backup-t1'
 	| 'boost'
@@ -32,6 +34,13 @@ function getFeatureStrings(
 	translate: ReturnType< typeof useTranslate >
 ): string[] {
 	switch ( feature ) {
+		case 'ai':
+			return [
+				translate( 'Prompt based content generation' ),
+				translate( 'Adaptive Tone Adjustment' ),
+				translate( 'Superior spelling and Grammar Correction' ),
+				translate( 'Title & summary generation' ),
+			];
 		case 'anti-spam':
 			return [
 				translate( 'Comment and form spam protection' ),
@@ -54,6 +63,8 @@ function getFeatureStrings(
 				translate( 'Deferred non-essential JavaScript' ),
 				translate( 'Optimized CSS loading' ),
 				translate( 'Lazy image loading' ),
+				translate( 'CDN for images' ),
+				translate( 'Image optimization guide' ),
 			];
 		case 'complete':
 			return [
@@ -113,6 +124,10 @@ export default function getJetpackProductFeatures(
 	product: WithSnakeCaseSlug,
 	translate: ReturnType< typeof useTranslate >
 ): string[] {
+	if ( isJetpackAISlug( product.product_slug ) ) {
+		return getFeatureStrings( 'ai', translate );
+	}
+
 	if ( isJetpackAntiSpamSlug( product.product_slug ) ) {
 		return getFeatureStrings( 'anti-spam', translate );
 	}

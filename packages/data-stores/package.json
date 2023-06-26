@@ -32,7 +32,6 @@
 	},
 	"dependencies": {
 		"@automattic/format-currency": "workspace:^",
-		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
 		"@wordpress/api-fetch": "^6.19.0",

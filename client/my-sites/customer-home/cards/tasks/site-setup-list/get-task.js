@@ -344,6 +344,30 @@ export const getTask = (
 				isSkippable: true,
 			};
 			break;
+		case CHECKLIST_KNOWN_TASKS.INSTALL_CUSTOM_PLUGIN:
+			taskData = {
+				timing: 5,
+				title: translate( 'Install a custom plugin' ),
+				description: translate(
+					'Add new features to your site with plugins. Choose from thousands of free and premium plugins or upload your own to make your site stand out.'
+				),
+				actionText: translate( 'Install' ),
+				actionUrl: `/plugins/${ siteSlug }`,
+				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.SETUP_SSH:
+			taskData = {
+				timing: 5,
+				title: translate( 'Set up SSH' ),
+				description: translate(
+					'Connect to your site via SSH to run commands and manage files on your server.'
+				),
+				actionText: translate( 'Setup' ),
+				actionUrl: `/hosting-config/${ siteSlug }#sftp-credentials`,
+				isSkippable: false,
+			};
+			break;
 	}
 
 	const enhancedTask = {

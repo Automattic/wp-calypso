@@ -100,7 +100,7 @@ object BuildDockerImage : BuildType({
 
 		// We want calypso.live and Calypso e2e tests to run even if there's a merge conflict,
 		// just to keep things going. However, if we can merge, the webpack cache
-		// can be better utilized, since it's kept up-to-date for trunk commits. 
+		// can be better utilized, since it's kept up-to-date for trunk commits.
 		// Note that this only happens on non-trunk
 		mergeTrunk( skipIfConflict = true )
 
@@ -396,7 +396,7 @@ object RunAllUnitTests : BuildType({
 						return 1
 					fi
 				}
-				
+
 				function prevent_duplicated_packages {
 					if ! DUPLICATED_PACKAGES=${'$'}(
 						set +e
@@ -753,6 +753,9 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 					+:*
 					-:pull*
 					-:trunk
+				""".trimIndent()
+				triggerRules = """
+					-:**.md
 				""".trimIndent()
 			}
 		},

@@ -9,7 +9,6 @@ jest.mock( 'calypso/components/async-load', () => ( { visiblePlans, popularPlanS
 		<div data-testid="popular-plan-spec">{ JSON.stringify( popularPlanSpec ) }</div>
 	</div>
 ) );
-jest.mock( 'calypso/my-sites/plans-features-main/components/wpcom-faq', () => () => 'WpcomFAQ' );
 jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector', () => () => (
 	<div>PlanTypeSelector</div>
 ) );

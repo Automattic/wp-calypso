@@ -239,6 +239,8 @@ export class Login extends Component {
 			path,
 			signupUrl,
 			action,
+			isWooCoreProfilerFlow,
+			isPartnerSignup,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -252,7 +254,8 @@ export class Login extends Component {
 			! socialConnect &&
 			! isJetpackMagicLinkSignUpFlow &&
 			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
-			! ( isWooOAuth2Client( this.props.oauth2Client ) && ! this.props.isPartnerSignup );
+			! ( isWooOAuth2Client( oauth2Client ) && ! isPartnerSignup ) &&
+			! isWooCoreProfilerFlow;
 
 		const footer = (
 			<>
@@ -340,6 +343,8 @@ export default connect(
 			get( getCurrentQueryArguments( state ), 'from' ),
 			'wpcom-migration'
 		),
+		isWooCoreProfilerFlow:
+			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),

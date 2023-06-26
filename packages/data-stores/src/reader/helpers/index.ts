@@ -88,20 +88,21 @@ const getSubscriptionMutationParams = (
 	action: 'new' | 'delete',
 	isLoggedIn: boolean,
 	blogId: number | string,
-	url?: string
+	url?: string,
+	emailId?: string
 ) => {
 	if ( isLoggedIn ) {
 		return {
 			path: `/read/following/mine/${ action }`,
 			apiVersion: '1.1',
-			body: { source: 'calypso', url: url },
+			body: { source: 'calypso', url: url, ...( emailId ? { email_id: emailId } : {} ) },
 		};
 	}
 
 	return {
 		path: `/read/site/${ blogId }/post_email_subscriptions/${ action }`,
 		apiVersion: '1.2',
-		body: {},
+		body: { ...( emailId ? { email_id: emailId } : {} ) },
 	};
 };
 

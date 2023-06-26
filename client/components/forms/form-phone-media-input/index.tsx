@@ -4,7 +4,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import PhoneInput from 'calypso/components/phone-input';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PhoneInputValue } from 'calypso/components/phone-input';
-import type { FC, MutableRefObject } from 'react';
+import type { FC, MutableRefObject, ReactNode } from 'react';
 
 export type FormPhoneMediaInputProps = {
 	additionalClasses?: string;
@@ -13,7 +13,7 @@ export type FormPhoneMediaInputProps = {
 	value: PhoneInputValue;
 	className?: string;
 	disabled?: boolean;
-	errorMessage?: string;
+	errorMessage?: ReactNode;
 	isError?: boolean;
 	onChange: ( newValueAndCountry: PhoneInputValue ) => void;
 	countriesList: CountryListItem[];

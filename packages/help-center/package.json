@@ -31,7 +31,6 @@
 	},
 	"dependencies": {
 		"@automattic/components": "workspace:^",
-		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/site-picker": "workspace:^",
 		"@automattic/viewport": "workspace:^",

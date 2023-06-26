@@ -39,7 +39,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 							'Migrating themes, plugins, users, and settings requires a %(plan)s plan',
 							{
 								args: {
-									plan: plan?.getTitle(),
+									plan: plan?.getTitle() ?? '',
 								},
 							}
 						) }

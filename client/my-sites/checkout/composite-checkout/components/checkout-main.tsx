@@ -94,7 +94,6 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
-	useVariantPickerRadioButtons,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -123,8 +122,6 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
-	// This is just for unit tests.
-	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -725,7 +722,6 @@ export default function CheckoutMain( {
 					loadingContent={
 						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
 					}
-					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					customizedPreviousPath={ customizedPreviousPath }
 					isRemovingProductFromCart={ isRemovingProductFromCart }
 					areThereErrors={ areThereErrors }

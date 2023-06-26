@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -55,11 +54,9 @@ export default function () {
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
 
-	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
-		// Stat Subscribers Page (do not confuse with people/subscribers/)
-		statsPage( '/stats/subscribers/:site', subscribers );
-		statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
-	}
+	// Stat Subscribers Page (do not confuse with people/subscribers/)
+	statsPage( '/stats/subscribers/:site', subscribers );
+	statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
 
 	// Stat Site Pages
 	statsPage( `/stats/:period(${ validPeriods })/:site`, site );

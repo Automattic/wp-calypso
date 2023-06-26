@@ -184,8 +184,8 @@ export const HelpCenterContactForm = () => {
 		supportSite = currentSite as HelpCenterSite;
 	}
 
-	const [ debouncedMessage ] = useDebounce( message || '', 3000 );
-	const [ debouncedSubject ] = useDebounce( subject || '', 3000 );
+	const [ debouncedMessage ] = useDebounce( message || '', 5000 );
+	const [ debouncedSubject ] = useDebounce( subject || '', 5000 );
 
 	const enableGPTResponse =
 		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
@@ -309,7 +309,7 @@ export const HelpCenterContactForm = () => {
 						section: sectionName,
 					} );
 
-					openChatWidget( supportSite, message, () => setHasSubmittingError( true ) );
+					openChatWidget( message, supportSite.URL, () => setHasSubmittingError( true ) );
 					break;
 				}
 				break;

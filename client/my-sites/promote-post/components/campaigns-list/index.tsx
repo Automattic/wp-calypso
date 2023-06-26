@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import ListEnd from 'calypso/components/list-end';
 import Notice from 'calypso/components/notice';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/types';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import CampaignItem from 'calypso/my-sites/promote-post/components/campaign-item';
 import './style.scss';

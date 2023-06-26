@@ -28,8 +28,9 @@ export default function StoreHeader() {
 			<div className={ headerClass }>
 				<JetpackHeader
 					partnerSlug={ partnerSlug }
-					isWoo={ false }
+					isWooOnboarding={ false }
 					isWooDna={ false }
+					isWooCoreProfiler={ false }
 					darkColorScheme
 				/>
 			</div>

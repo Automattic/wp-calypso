@@ -54,7 +54,6 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
-		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/newspack-blocks": "^1.60.0",

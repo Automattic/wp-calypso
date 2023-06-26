@@ -1016,17 +1016,6 @@ describe( 'main app', () => {
 		} );
 	} );
 
-	describe( 'Route /read/search', () => {
-		it( 'redirects to public search for anonymous users', async () => {
-			const { response } = await app.run( {
-				request: { url: '/read/search', query: { q: 'my query' } },
-			} );
-			expect( response.redirect ).toHaveBeenCalledWith(
-				'https://en.search.wordpress.com/?q=my%20query'
-			);
-		} );
-	} );
-
 	describe( 'Route /plans', () => {
 		it( 'redirects to login if the request is for jetpack', async () => {
 			const { response } = await app.run( {
@@ -1203,7 +1192,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://en.search.wordpress.com/?q=my%20search'
+					'https://wordpress.com/read/search?q=my%20search'
 				);
 			} );
 
@@ -1218,7 +1207,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://en.search.wordpress.com/?q=my%20search'
+					'https://wordpress.com/read/search?q=my%20search'
 				);
 			} );
 

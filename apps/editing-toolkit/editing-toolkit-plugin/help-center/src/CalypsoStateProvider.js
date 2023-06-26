@@ -14,7 +14,6 @@ import analyticsMiddleware from 'calypso/state/analytics/middleware';
 import consoleDispatcher from 'calypso/state/console-dispatch';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import currentUser from 'calypso/state/current-user/reducer';
-import happychatMiddleware from 'calypso/state/happychat/middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -31,7 +30,7 @@ const store = createStore(
 	compose(
 		consoleDispatcher,
 		addReducerEnhancer,
-		applyMiddleware( thunkMiddleware, analyticsMiddleware, happychatMiddleware )
+		applyMiddleware( thunkMiddleware, analyticsMiddleware )
 	)
 );
 

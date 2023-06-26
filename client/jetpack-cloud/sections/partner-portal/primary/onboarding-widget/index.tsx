@@ -48,7 +48,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			description: translate(
 				'Manage features and monitor your clients’ sites by adding them to your Jetpack Pro Dashboard. To do so, connect the sites to Jetpack using your {{strong}}%(userEmail)s{{/strong}} user account.',
 				{
-					args: { userEmail: user?.email },
+					args: { userEmail: user?.email ?? '' },
 					components: {
 						strong: <strong />,
 					},

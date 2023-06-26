@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { commentAuthorAvatar, video } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
@@ -80,14 +79,11 @@ const assembleNavItems = () => {
 	const navItems = {
 		traffic,
 		insights,
+		subscribers,
 		store,
 		wordads,
 		googleMyBusiness,
 	} as NavItems;
-
-	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
-		navItems.subscribers = subscribers;
-	}
 
 	return navItems;
 };

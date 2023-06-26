@@ -7,7 +7,6 @@ const usePagination = (
 ) => {
 	const [ currentPage, setCurrentPage ] = useState( page );
 	const pageClickCallback = ( page: number ) => setCurrentPage( page );
-
 	useEffect( () => {
 		if ( ! isFetching && currentPage !== page ) {
 			pageChanged( currentPage );

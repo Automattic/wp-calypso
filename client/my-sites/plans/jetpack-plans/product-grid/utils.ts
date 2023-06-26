@@ -96,7 +96,10 @@ export const getProductsToDisplay = ( {
 		// However, allow products that ONLY have a monthly term to come through in either view
 		.filter(
 			( product ): product is SelectorProduct =>
-				product?.term === duration || JETPACK_MONTHLY_ONLY_PRODUCTS.includes( product?.productSlug )
+				product?.term === duration ||
+				( JETPACK_MONTHLY_ONLY_PRODUCTS as ReadonlyArray< string > ).includes(
+					product?.productSlug
+				)
 		)
 		// Remove duplicates (only happens if the site somehow has the same product
 		// both purchased and included in a plan, very unlikely)

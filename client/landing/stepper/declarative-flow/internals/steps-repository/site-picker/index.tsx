@@ -77,7 +77,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 					),
 					{
 						sourceSite: sourceSiteSlug,
-						targetSite: destinationSite?.slug,
+						targetSite: destinationSite?.slug.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' ),
 					}
 				) }
 			</p>

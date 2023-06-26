@@ -326,8 +326,8 @@ export function useIssueMultipleLicenses(
 				.filter( ( license ) => license );
 
 			if ( assignedLicenses.length > 0 ) {
-				const initialLicenseList = assignedLicenses.slice( 0, -1 );
-				const lastLicenseItem = assignedLicenses.slice( -1 )[ 0 ];
+				const initialLicenseList = assignedLicenses.slice( 0, -1 ) as string[];
+				const lastLicenseItem = assignedLicenses.slice( -1 )[ 0 ] as string;
 
 				const commaCharacter = translate( ',', {
 					comment:

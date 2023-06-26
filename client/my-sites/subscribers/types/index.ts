@@ -13,6 +13,7 @@ export type SubscriptionPlan = {
 	currency: string;
 	renewal_period: string;
 	renewal_price: number;
+	renew_interval: string;
 	start_date: string;
 	end_date: string;
 };
@@ -26,4 +27,5 @@ export type Subscriber = {
 	display_name: string;
 	plans?: SubscriptionPlan[];
 	open_rate?: number;
+	subscriptions?: string[];
 };

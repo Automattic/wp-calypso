@@ -7,7 +7,7 @@ import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
@@ -101,25 +101,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		window.location.assign( destinationUrl );
 	};
 
-	const matchingWpOrgThemes = useMemo( () => {
-		const themeSlugs = props.themes.map( ( theme ) => theme.id );
-
-		return (
-			props.wpOrgThemes?.filter(
-				( wpOrgTheme ) =>
-					! themeSlugs.includes( wpOrgTheme?.id?.toLowerCase() ) && // Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
-					( wpOrgTheme?.name?.toLowerCase() === props.searchTerm.toLowerCase() ||
-						wpOrgTheme?.id?.toLowerCase() === props.searchTerm.toLowerCase() )
-			) || []
-		);
-	}, [ props.wpOrgThemes, props.searchTerm, props.themes ] );
-
-	const themes = useMemo(
-		() => [ ...props.themes, ...matchingWpOrgThemes ],
-		[ props.themes, matchingWpOrgThemes ]
-	);
-
-	if ( ! props.loading && themes.length === 0 ) {
+	if ( ! props.loading && props.themes.length === 0 ) {
 		return (
 			<Empty
 				isFSEActive={ props.isFSEActive }
@@ -141,14 +123,14 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 
 	return (
 		<div className="themes-list" ref={ themesListRef }>
-			{ themes.map( ( theme, index ) => (
+			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
 			{ /* Don't show second upsell nudge when less than 6 rows are present.
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ isPatternAssemblerCTAEnabled && tabFilter !== 'my-themes' && themes.length > 0 && (
+			{ isPatternAssemblerCTAEnabled && tabFilter !== 'my-themes' && props.themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
 			) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
@@ -159,7 +141,6 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 
 ThemesList.propTypes = {
 	themes: PropTypes.array.isRequired,
-	wpOrgThemes: PropTypes.array,
 	loading: PropTypes.bool.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
 	fetchNextPage: PropTypes.func.isRequired,
@@ -189,7 +170,6 @@ ThemesList.defaultProps = {
 	loading: false,
 	searchTerm: '',
 	themes: [],
-	wpOrgThemes: [],
 	recordTracksEvent: noop,
 	fetchNextPage: noop,
 	placeholderCount: DEFAULT_THEME_QUERY.number,

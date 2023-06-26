@@ -194,7 +194,7 @@ export function FreePlanPaidDomainDialog( {
 								translate( 'Get %(planTitle)s - %(planPrice)s/month', {
 									comment: 'Eg: Get Personal - $4/month',
 									args: {
-										planTitle,
+										planTitle: planTitle as string,
 										planPrice: formatCurrency(
 											planPrices.discountedRawPrice || planPrices.rawPrice,
 											currencyCode,

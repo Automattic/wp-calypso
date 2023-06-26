@@ -1,4 +1,3 @@
-import { useLocale } from '@automattic/i18n-utils';
 import Banner from 'calypso/components/banner';
 import './survey.scss';
 
@@ -7,13 +6,6 @@ interface Props {
 }
 
 const Survey = ( { setSurveyDismissed }: Props ) => {
-	const locale = useLocale();
-
-	// We only target English locale variations
-	if ( ! locale.includes( 'en' ) ) {
-		return null;
-	}
-
 	return (
 		<Banner
 			className="pattern-assembler__survey"

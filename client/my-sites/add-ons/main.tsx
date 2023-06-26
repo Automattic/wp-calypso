@@ -118,8 +118,8 @@ interface Props {
 
 const AddOnsMain: React.FunctionComponent< Props > = () => {
 	const translate = useTranslate();
-	const addOns = useAddOns();
 	const selectedSite = useSelector( getSelectedSite );
+	const addOns = useAddOns( selectedSite?.ID );
 	const checkoutLink = useAddOnCheckoutLink();
 
 	const canManageSite = useSelector( ( state ) => {

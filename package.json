@@ -142,7 +142,6 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/design-carousel": "workspace:^",
-		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",
@@ -308,7 +307,12 @@
 		"@wordpress/base-styles": "4.13.0",
 		"@wordpress/interface@^4.8.0": "patch:@wordpress/interface@npm%3A4.8.0#./.yarn/patches/@wordpress-interface-npm-4.8.0-8a39ad37cf.patch",
 		"@wordpress/data-controls": "2.22.0",
-		"@wordpress/element": "4.20.0"
+		"@wordpress/element": "4.20.0",
+		"node-abi": "3.35.0",
+		"@types/react@*": "patch:@types/react@npm%3A17.0.39#./.yarn/patches/@types-react-npm-17.0.39-b4ac1f7bfe.patch",
+		"@types/react@^17.0.39": "patch:@types/react@npm%3A17.0.39#./.yarn/patches/@types-react-npm-17.0.39-b4ac1f7bfe.patch",
+		"@types/react@>=16.9.0": "patch:@types/react@npm%3A17.0.39#./.yarn/patches/@types-react-npm-17.0.39-b4ac1f7bfe.patch",
+		"@types/react@^17.0.37": "patch:@types/react@npm%3A17.0.39#./.yarn/patches/@types-react-npm-17.0.39-b4ac1f7bfe.patch"
 	},
 	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {

@@ -26,7 +26,6 @@ import {
 	getPlanPath,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
-	TITAN_MAIL_MONTHLY_SLUG,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -45,16 +44,10 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
-import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import WpcomFAQ from 'calypso/my-sites/plans-features-main/components/wpcom-faq';
-import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
-import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
-import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -187,21 +180,6 @@ export class PlansFeaturesMain extends Component {
 	state = {
 		isFreePlanPaidDomainDialogOpen: false,
 	};
-
-	componentDidUpdate( prevProps ) {
-		/**
-		 * Happychat does not update with the selected site right now :(
-		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
-		 * page, for example between a Jetpack and Simple site.
-		 *
-		 * TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
-		 */
-		const { siteId } = this.props;
-		const { siteId: prevSiteId } = prevProps;
-		if ( siteId && siteId !== prevSiteId ) {
-			this.props.selectHappychatSiteId( siteId );
-		}
-	}
 
 	isDisplayingPlansNeededForFeature() {
 		const { selectedFeature, selectedPlan, previousRoute, planTypeSelector } = this.props;
@@ -411,20 +389,6 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
-	mayRenderFAQ() {
-		const { isInSignup, titanMonthlyRenewalCost, showFAQ } = this.props;
-
-		if ( ! showFAQ ) {
-			return;
-		}
-
-		if ( isInSignup ) {
-			return <PlanFAQ titanMonthlyRenewalCost={ titanMonthlyRenewalCost } />;
-		}
-
-		return <WpcomFAQ />;
-	}
-
 	render() {
 		const {
 			siteId,
@@ -464,7 +428,6 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
-				<HappychatConnection />
 				<PlanNotice
 					visiblePlans={ visiblePlans }
 					siteId={ siteId }
@@ -489,7 +452,6 @@ export class PlansFeaturesMain extends Component {
 					visiblePlans={ visiblePlans }
 					onUpgradeClick={ this.onUpgradeClick }
 				/>
-				{ this.mayRenderFAQ() }
 			</div>
 		);
 	}
@@ -507,7 +469,6 @@ PlansFeaturesMain.propTypes = {
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly', '3yearly' ] ),
-	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	isStepperUpgradeFlow: PropTypes.bool,
@@ -515,7 +476,6 @@ PlansFeaturesMain.propTypes = {
 	redirectTo: PropTypes.string,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
-	showFAQ: PropTypes.bool,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 	isAllPaidPlansShown: PropTypes.bool,
@@ -534,8 +494,6 @@ PlansFeaturesMain.defaultProps = {
 	hidePremiumPlan: false,
 	hideEnterprisePlan: false,
 	intervalType: 'yearly',
-	isChatAvailable: false,
-	showFAQ: true,
 	siteId: null,
 	siteSlug: '',
 	plansWithScroll: false,
@@ -546,64 +504,55 @@ PlansFeaturesMain.defaultProps = {
 	isStepperUpgradeFlow: false,
 };
 
-export default connect(
-	( state, props ) => {
-		const siteId = get( props.site, [ 'ID' ] );
-		const sitePlan = getSitePlan( state, siteId );
-		const currentPlan = getCurrentPlan( state, siteId );
-		const currentPurchase = getByPurchaseId( state, currentPlan?.id );
-		const sitePlanSlug = sitePlan?.product_slug;
-		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
-		const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
-		const siteSlug = getSiteSlug( state, get( props.site, [ 'ID' ] ) );
+export default connect( ( state, props ) => {
+	const siteId = get( props.site, [ 'ID' ] );
+	const sitePlan = getSitePlan( state, siteId );
+	const currentPlan = getCurrentPlan( state, siteId );
+	const currentPurchase = getByPurchaseId( state, currentPlan?.id );
+	const sitePlanSlug = sitePlan?.product_slug;
+	const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
+	const siteSlug = getSiteSlug( state, get( props.site, [ 'ID' ] ) );
 
-		let customerType = chooseDefaultCustomerType( {
-			currentCustomerType: props.customerType,
-			selectedPlan: props.selectedPlan,
-			sitePlan,
-		} );
+	let customerType = chooseDefaultCustomerType( {
+		currentCustomerType: props.customerType,
+		selectedPlan: props.selectedPlan,
+		sitePlan,
+	} );
 
-		// Make sure the plans for the default customer type can be purchased.
-		if (
-			! props.customerType &&
-			customerType === 'personal' &&
-			! canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
-		) {
-			customerType = 'business';
-		}
-		const planTypeSelectorProps = {
-			basePlansPath: props.basePlansPath,
-			isStepperUpgradeFlow: props.isStepperUpgradeFlow,
-			isInSignup: props.isInSignup,
-			eligibleForWpcomMonthlyPlans: eligibleForWpcomMonthlyPlans,
-			isPlansInsideStepper: props.isPlansInsideStepper,
-			intervalType: props.intervalType,
-			customerType: customerType,
-			hidePersonalPlan: props.hidePersonalPlan,
-			siteSlug,
-			selectedPlan: props.selectedPlan,
-			selectedFeature: props.selectedFeature,
-		};
-
-		return {
-			isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
-			currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
-			customerType,
-			domains: getDomainsBySiteId( state, siteId ),
-			isChatAvailable: isHappychatAvailable( state ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isMultisite: isJetpackSiteMultiSite( state, siteId ),
-			previousRoute: getPreviousRoute( state ),
-			siteId,
-			siteSlug,
-			sitePlanSlug,
-			eligibleForWpcomMonthlyPlans,
-			titanMonthlyRenewalCost,
-			showFAQ: false,
-			planTypeSelectorProps,
-		};
-	},
-	{
-		selectHappychatSiteId,
+	// Make sure the plans for the default customer type can be purchased.
+	if (
+		! props.customerType &&
+		customerType === 'personal' &&
+		! canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
+	) {
+		customerType = 'business';
 	}
-)( localize( PlansFeaturesMain ) );
+	const planTypeSelectorProps = {
+		basePlansPath: props.basePlansPath,
+		isStepperUpgradeFlow: props.isStepperUpgradeFlow,
+		isInSignup: props.isInSignup,
+		eligibleForWpcomMonthlyPlans: eligibleForWpcomMonthlyPlans,
+		isPlansInsideStepper: props.isPlansInsideStepper,
+		intervalType: props.intervalType,
+		customerType: customerType,
+		hidePersonalPlan: props.hidePersonalPlan,
+		siteSlug,
+		selectedPlan: props.selectedPlan,
+		selectedFeature: props.selectedFeature,
+	};
+
+	return {
+		isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
+		currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
+		customerType,
+		domains: getDomainsBySiteId( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isMultisite: isJetpackSiteMultiSite( state, siteId ),
+		previousRoute: getPreviousRoute( state ),
+		siteId,
+		siteSlug,
+		sitePlanSlug,
+		eligibleForWpcomMonthlyPlans,
+		planTypeSelectorProps,
+	};
+} )( localize( PlansFeaturesMain ) );

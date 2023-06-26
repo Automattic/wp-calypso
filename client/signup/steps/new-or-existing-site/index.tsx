@@ -54,12 +54,11 @@ export default function NewOrExistingSiteStep( props: Props ) {
 		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus an additional purchase of the %(plan)s plan.',
 		{
 			args: {
-				displayCost,
+				displayCost: displayCost as string,
 				fulfillmentDays: 4,
-				plan:
-					props.flowName === 'do-it-for-me-store'
-						? getPlan( PLAN_BUSINESS )?.getTitle()
-						: getPlan( PLAN_PREMIUM )?.getTitle(),
+				plan: ( props.flowName === 'do-it-for-me-store'
+					? getPlan( PLAN_BUSINESS )?.getTitle()
+					: getPlan( PLAN_PREMIUM )?.getTitle() ) as string,
 			},
 			components: {
 				PriceWrapper: isLoading ? <Placeholder /> : <strong />,

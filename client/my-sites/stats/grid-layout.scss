@@ -30,7 +30,6 @@ $grid-vertical-gutters: 32px;
 }
 
 .stats__module-list.stats__module--unified.subscribers-page {
-
 	@include stats-desktop-grid(
 		"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
 		"emails emails emails emails emails emails emails emails emails emails emails emails",
@@ -74,54 +73,33 @@ $grid-vertical-gutters: 32px;
 	&.is-jetpack {
 		@include stats-desktop-grid(
 			"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
-			"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
 			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers",
-			3
+			2
 		);
 
 		@include stats-tablet-grid(
-			"tags-categories tags-categories tags-categories tags-categories comments comments comments comments"
-			"followers followers followers followers followers followers followers followers"
-			"publicize publicize publicize publicize latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
-			"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers",
+			"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories"
+			"comments comments comments comments comments comments comments comments"
+			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
+			"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers",
 			4
-		);
-
-		@include stats-mobile-grid(
-			"tags-categories tags-categories tags-categories tags-categories"
-			"comments comments comments comments"
-			"followers followers followers followers"
-			"publicize publicize publicize publicize"
-			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
-			"social-followers social-followers social-followers social-followers",
-			6
 		);
 	}
 
 	@include stats-desktop-grid(
-		"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
-		"shares shares shares shares followers followers followers followers publicize publicize publicize publicize"
+		"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories"
+		"comments comments comments comments comments comments shares shares shares shares shares shares"
 		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers",
 		3
 	);
 
 	@include stats-tablet-grid(
-		"tags-categories tags-categories tags-categories tags-categories comments comments comments comments"
-		"shares shares shares shares followers followers followers followers"
-		"publicize publicize publicize publicize latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
+		"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories"
+		"comments comments comments comments comments comments comments comments"
+		"shares shares shares shares shares shares shares shares"
+		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
 		"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers",
-		4
-	);
-
-	@include stats-mobile-grid(
-		"tags-categories tags-categories tags-categories tags-categories"
-		"comments comments comments comments"
-		"shares shares shares shares"
-		"followers followers followers followers"
-		"publicize publicize publicize publicize"
-		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
-		"social-followers social-followers social-followers social-followers",
-		7
+		5
 	);
 
 	.stats__module-wrapper--tags-categories,
@@ -139,11 +117,6 @@ $grid-vertical-gutters: 32px;
 		grid-area: shares;
 	}
 
-	.stats__module-wrapper--followers,
-	.list-followers {
-		grid-area: followers;
-	}
-
 	.stats__module-wrapper--total-followers,
 	.list-total-followers {
 		grid-area: social-followers;
@@ -152,11 +125,6 @@ $grid-vertical-gutters: 32px;
 	.stats__module-wrapper--latest-post-summary,
 	.list-latest-post-summary {
 		grid-area: latest-post-summary;
-	}
-
-	.stats__module-wrapper--publicize,
-	.list-publicize {
-		grid-area: publicize;
 	}
 }
 

@@ -17,8 +17,8 @@ function mutationIssueLicense( { product }: MutationIssueLicenseVariables ): Pro
 export default function useIssueLicenseMutation< TContext = unknown >(
 	options?: UseMutationOptions< APILicense, APIError, MutationIssueLicenseVariables, TContext >
 ): UseMutationResult< APILicense, APIError, MutationIssueLicenseVariables, TContext > {
-	return useMutation< APILicense, APIError, MutationIssueLicenseVariables, TContext >(
-		mutationIssueLicense,
-		options
-	);
+	return useMutation< APILicense, APIError, MutationIssueLicenseVariables, TContext >( {
+		...options,
+		mutationFn: mutationIssueLicense,
+	} );
 }

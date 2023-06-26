@@ -21,14 +21,16 @@ type SubscriptionManagerTab = {
 
 const getPath = ( subpath: string ) => `/subscriptions/${ subpath }`;
 
-const getPathWithLocale = ( subpath: string, locale: string ) =>
-	getPath( subpath ) + ( locale !== 'en' ? '/' + locale : '' );
+// Localed path only applies for external users, WPCOM users inherits locale from user's language settings.
+const getPathWithLocale = ( subpath: string, locale: string, isLoggedIn: boolean ) =>
+	getPath( subpath ) + ( ! isLoggedIn && locale !== 'en' ? '/' + locale : '' );
 
 const useTabs = (): SubscriptionManagerTab[] => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const translate = useTranslate();
 	const locale = useLocale();
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 
 	return useMemo( () => {
@@ -37,32 +39,32 @@ const useTabs = (): SubscriptionManagerTab[] => {
 				id: 'sites',
 				label: translate( 'Sites' ),
 				count: counts?.blogs || undefined,
-				onClick: () => navigate( getPathWithLocale( 'sites', locale ) ),
+				onClick: () => navigate( getPathWithLocale( 'sites', locale, isLoggedIn ) ),
 				selected: pathname.startsWith( getPath( 'sites' ) ),
 			},
 			{
 				id: 'comments',
 				label: translate( 'Comments' ),
 				count: undefined, // temporarily disable inaccurate comments count
-				onClick: () => navigate( getPathWithLocale( 'comments', locale ) ),
+				onClick: () => navigate( getPathWithLocale( 'comments', locale, isLoggedIn ) ),
 				selected: pathname.startsWith( getPath( 'comments' ) ),
 			},
 			{
 				id: 'pending',
 				label: translate( 'Pending' ),
 				count: counts?.pending || undefined,
-				onClick: () => navigate( getPathWithLocale( 'pending', locale ) ),
+				onClick: () => navigate( getPathWithLocale( 'pending', locale, isLoggedIn ) ),
 				selected: pathname.startsWith( getPath( 'pending' ) ),
 				hide: ! counts?.pending && ! pathname.includes( 'pending' ),
 			},
 			{
 				id: 'settings',
 				label: translate( 'Settings' ),
-				onClick: () => navigate( getPathWithLocale( 'settings', locale ) ),
+				onClick: () => navigate( getPathWithLocale( 'settings', locale, isLoggedIn ) ),
 				selected: pathname.startsWith( getPath( 'settings' ) ),
 			},
 		];
-	}, [ counts?.blogs, counts?.pending, locale, navigate, pathname, translate ] );
+	}, [ counts?.blogs, counts?.pending, locale, isLoggedIn, navigate, pathname, translate ] );
 };
 
 const TabsSwitcher = () => {

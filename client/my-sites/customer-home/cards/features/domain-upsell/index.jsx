@@ -5,6 +5,7 @@ import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
+import { isRTL } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -189,7 +190,12 @@ export function RenderDomainUpsell( {
 
 	const domainNameSVG = (
 		<svg viewBox="0 0 40 18" id="map">
-			<text x="-115" y="15">
+			<text
+				x={ isRTL() ? 115 : -115 }
+				y="15"
+				textAnchor={ isRTL() ? 'end' : 'start' }
+				direction="ltr"
+			>
 				{ domainSuggestionName.length > 34
 					? `${ domainSuggestionName.slice( 0, 32 ) }...`
 					: domainSuggestionName }

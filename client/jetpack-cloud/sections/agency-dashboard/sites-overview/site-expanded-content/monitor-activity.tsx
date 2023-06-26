@@ -9,7 +9,6 @@ import { useToggleActivateMonitor } from '../../hooks';
 import { getMonitorDowntimeText } from '../utils';
 import ExpandedCard from './expanded-card';
 import type { Site } from '../types';
-import type { ReactChild } from 'react';
 
 interface Props {
 	hasMonitor: boolean;
@@ -32,7 +31,7 @@ const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 		const { date, status, downtime_in_minutes } = data;
 
 		let className = 'site-expanded-content__chart-bar-no-data';
-		let tooltipLabel: ReactChild = 'No data';
+		let tooltipLabel = 'No data';
 
 		if ( status === 'up' ) {
 			className = 'site-expanded-content__chart-bar-is-uptime';

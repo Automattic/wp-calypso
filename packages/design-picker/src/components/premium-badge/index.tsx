@@ -12,6 +12,7 @@ interface Props {
 	tooltipClassName?: string;
 	tooltipPosition?: string;
 	isPremiumThemeAvailable?: boolean;
+	shouldCompactWithAnimation?: boolean;
 	shouldHideIcon?: boolean;
 	shouldHideTooltip?: boolean;
 	focusOnShow?: boolean;
@@ -24,6 +25,7 @@ const PremiumBadge: FunctionComponent< Props > = ( {
 	tooltipClassName,
 	tooltipPosition = 'bottom left',
 	isPremiumThemeAvailable,
+	shouldCompactWithAnimation,
 	shouldHideIcon,
 	shouldHideTooltip,
 	focusOnShow,
@@ -42,12 +44,22 @@ const PremiumBadge: FunctionComponent< Props > = ( {
 
 	const divRef = useRef( null );
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
+	const [ isHovered, setIsHovered ] = useState( false );
 	return (
 		<div
-			className={ classNames( 'premium-badge', className ) }
+			className={ classNames( 'premium-badge', className, {
+				'premium-badge__compact-animation': shouldCompactWithAnimation,
+				'premium-badge--compact': shouldCompactWithAnimation && ! isHovered,
+			} ) }
 			ref={ divRef }
-			onMouseEnter={ () => setIsPopoverVisible( true ) }
-			onMouseLeave={ () => setIsPopoverVisible( false ) }
+			onMouseEnter={ () => {
+				setIsPopoverVisible( true );
+				setIsHovered( true );
+			} }
+			onMouseLeave={ () => {
+				setIsPopoverVisible( false );
+				setIsHovered( false );
+			} }
 		>
 			{ ! shouldHideIcon && (
 				<>
@@ -55,7 +67,7 @@ const PremiumBadge: FunctionComponent< Props > = ( {
 					<Gridicon className="premium-badge__logo" icon="star" size={ 14 } />
 				</>
 			) }
-			<span>{ labelText || __( 'Premium' ) }</span>
+			<span className="premium-badge__label">{ labelText || __( 'Premium' ) }</span>
 			{ ! shouldHideTooltip && (
 				<Popover
 					className={ classNames( 'premium-badge__popover', tooltipClassName ) }

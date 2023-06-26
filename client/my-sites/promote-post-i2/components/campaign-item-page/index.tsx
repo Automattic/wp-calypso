@@ -33,7 +33,7 @@ export default function CampaignItemPage( props: Props ) {
 
 	if ( isError ) {
 		return (
-			<Notice status="is-error" icon="mention">
+			<Notice status="is-error" icon="mention" showDismiss={ false }>
 				{ noCampaignListMessage }
 			</Notice>
 		);

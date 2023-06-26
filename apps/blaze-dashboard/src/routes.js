@@ -1,6 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
-import { promoteWidget, promotedPosts } from 'calypso/my-sites/promote-post-i2/controller';
+import {
+	campaignDetails,
+	promoteWidget,
+	promotedPosts,
+} from 'calypso/my-sites/promote-post-i2/controller';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
@@ -32,6 +36,8 @@ export default function ( pageBase = '/' ) {
 	blazePage( getAdvertisingDashboardPath( '/:site/:tab' ), promotedPosts );
 
 	blazePage( getAdvertisingDashboardPath( '/:site/:tab/promote/:item' ), promoteWidget );
+
+	blazePage( getAdvertisingDashboardPath( '/:site?/campaigns/:campaignId' ), campaignDetails );
 
 	// Anything else should redirect to default advertising dashboard page
 	blazePage( '*', redirectToReadyToPromote );

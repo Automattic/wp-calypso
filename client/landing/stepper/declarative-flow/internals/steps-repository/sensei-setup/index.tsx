@@ -126,7 +126,11 @@ const SenseiSetup: Step = ( { navigation } ) => {
 					{ ! isDesktop && preview }
 					<div className="sensei-onboarding-action">
 						<div className="sensei-onboarding-action__content">
-							<button className="sensei-button" disabled={ ! siteTitle } onClick={ handleSubmit }>
+							<button
+								className="sensei-button"
+								disabled={ siteTitle.length < 2 }
+								onClick={ handleSubmit }
+							>
 								{ __( 'Continue' ) }
 							</button>
 							<p className="sensei-style-notice">

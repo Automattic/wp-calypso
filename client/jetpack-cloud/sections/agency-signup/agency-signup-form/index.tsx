@@ -6,7 +6,7 @@ import CardHeading from 'calypso/components/card-heading';
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
+import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -69,7 +69,7 @@ export default function AgencySignupForm() {
 	// Redirect the user if they are already a partner or the form was submitted successfully.
 	useEffect( () => {
 		if ( partner ) {
-			page.redirect( partnerPortalBasePath() );
+			page.redirect( dashboardPath() );
 		}
 	} );
 

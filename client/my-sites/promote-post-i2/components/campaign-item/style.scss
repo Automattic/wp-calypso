@@ -6,6 +6,11 @@
 	.campaign-item__ {
 		@include blazepress-data-row;
 	}
+
+	.campaign-item__impressions,
+	.campaign-item__item__clicks {
+		text-align: center;
+	}
 }
 
 @mixin blazepress-campaign-item-mobile {

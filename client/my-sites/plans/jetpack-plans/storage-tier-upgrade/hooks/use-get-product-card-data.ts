@@ -114,7 +114,9 @@ export const useGetMonthlyBackupsCardData = (): StorageUpgradeGetter => {
 			const features = {
 				items: [
 					{
-						text: translate( '%(storageAmount)s backup storage', { args: { storageAmount } } ),
+						text: translate( '%(storageAmount)s backup storage', {
+							args: { storageAmount: storageAmount as string },
+						} ),
 						slug: 'jetpack-backup-storage',
 					},
 					{
@@ -166,7 +168,9 @@ export const useGetYearlyBackupsCardData = (): StorageUpgradeGetter => {
 			const features = {
 				items: [
 					{
-						text: translate( '%(storageAmount)s backup storage', { args: { storageAmount } } ),
+						text: translate( '%(storageAmount)s backup storage', {
+							args: { storageAmount: storageAmount as string },
+						} ),
 						slug: 'jetpack-backup-storage',
 						isHighlighted: true,
 					},
@@ -202,7 +206,7 @@ export const useGetYearlyBackupsCardData = (): StorageUpgradeGetter => {
 				buttonLabel,
 				description: translate(
 					'Go back in time and recover all your information for up to a year, with %(storageAmount)s storage space.',
-					{ args: { storageAmount } }
+					{ args: { storageAmount: storageAmount as string } }
 				),
 				features,
 				disclaimer: getDisclaimer( product?.productSlug as string, features.items ),

@@ -47,7 +47,7 @@ function TeamMembers( props: Props ) {
 		}
 
 		return translate( 'You have %(number)d team member', 'You have %(number)d team members', {
-			args: { number: membersTotal, searchTerm: search },
+			args: { number: membersTotal as number, searchTerm: search as string },
 			count: membersTotal as number,
 		} );
 	}
@@ -108,7 +108,7 @@ function TeamMembers( props: Props ) {
 					<NoResults
 						image="/calypso/images/people/mystery-person.svg"
 						text={ translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
-							args: { searchTerm: search },
+							args: { searchTerm: search as string },
 							components: { em: <em /> },
 						} ) }
 					/>

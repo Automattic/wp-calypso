@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Modal } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
+import DashboardModalForm from '../../dashboard-modal-form';
 import {
 	useUpdateMonitorSettings,
 	useJetpackAgencyDashboardRecordTrackEvent,
@@ -31,6 +31,7 @@ import type {
 	MonitorDuration,
 	InitialMonitorSettings,
 	StateMonitorSettingsSMS,
+	MonitorSettingsContact,
 } from '../../sites-overview/types';
 
 import './style.scss';
@@ -77,12 +78,15 @@ export default function NotificationSettings( {
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
 	const [ isAddSMSModalOpen, setIsAddSMSModalOpen ] = useState< boolean >( false );
 	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
+	const [ selectedPhone, setSelectedPhone ] = useState< StateMonitorSettingsSMS | undefined >();
 	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
 	const [ initialSettings, setInitialSettings ] = useState< InitialMonitorSettings >( {
+		enableSMSNotification: false,
 		enableEmailNotification: false,
 		enableMobileNotification: false,
 		selectedDuration: defaultDuration,
 		emailContacts: [],
+		phoneContacts: [],
 	} );
 	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState< boolean >( false );
 
@@ -94,17 +98,36 @@ export default function NotificationSettings( {
 		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
 
-	const mapAndStringifyEmails = ( emails: MonitorSettingsEmail[] ) => {
-		return JSON.stringify( emails.map( ( { name, email } ) => ( { name, email } ) ) );
+	const isContactListMatch = (
+		list1: ReadonlyArray< MonitorSettingsContact >,
+		list2: ReadonlyArray< MonitorSettingsContact >
+	): boolean => {
+		const stringifyContacts = ( list: ReadonlyArray< MonitorSettingsContact > ): string => {
+			return JSON.stringify(
+				list.map( ( item: MonitorSettingsContact ) => {
+					const property = (
+						'email' in item ? 'email' : 'phoneNumberFull'
+					) as keyof MonitorSettingsContact;
+					return {
+						name: item.name,
+						[ property ]: item[ property ],
+					};
+				} )
+			);
+		};
+
+		return stringifyContacts( list1 ) === stringifyContacts( list2 );
 	};
 
 	const unsavedChangesExist =
+		enableSMSNotification !== initialSettings.enableSMSNotification ||
 		enableMobileNotification !== initialSettings.enableMobileNotification ||
 		enableEmailNotification !== initialSettings.enableEmailNotification ||
 		selectedDuration?.time !== initialSettings.selectedDuration?.time ||
 		( isMultipleEmailEnabled &&
-			mapAndStringifyEmails( allEmailItems ) !==
-				mapAndStringifyEmails( initialSettings?.emailContacts ?? [] ) );
+			! isContactListMatch( allEmailItems, initialSettings?.emailContacts ?? [] ) ) ||
+		( isSMSNotificationEnabled &&
+			! isContactListMatch( allPhoneItems, initialSettings?.phoneContacts ?? [] ) );
 
 	// Check if any unsaved changes are present and prompt user to confirm before closing the modal.
 	const handleOnClose = useCallback( () => {
@@ -129,9 +152,25 @@ export default function NotificationSettings( {
 		}
 	};
 
-	const toggleAddSMSModal = () => {
+	const toggleAddSMSModal = (
+		item?: StateMonitorSettingsSMS,
+		action?: AllowedMonitorContactActions
+	) => {
+		if ( item && action ) {
+			setSelectedPhone( item );
+			setSelectedAction( action );
+		}
 		setIsAddSMSModalOpen( ( isAddSMSModalOpen ) => ! isAddSMSModalOpen );
+		if ( isAddSMSModalOpen ) {
+			setSelectedPhone( undefined );
+			setSelectedAction( undefined );
+		}
 	};
+
+	const clearValidationError = useCallback( () => {
+		setValidationError( '' );
+		setHasUnsavedChanges( false );
+	}, [] );
 
 	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
 		setAllEmailItems( items );
@@ -140,15 +179,22 @@ export default function NotificationSettings( {
 
 	const handleSetAllPhoneItems = ( items: StateMonitorSettingsSMS[] ) => {
 		setAllPhoneItems( items );
-		setHasUnsavedChanges( false );
+		clearValidationError();
 	};
 
-	function onSave( event: React.FormEvent< HTMLFormElement > ) {
-		event.preventDefault();
-
-		if ( ! enableMobileNotification && ! enableEmailNotification ) {
+	function onSave() {
+		if (
+			! enableMobileNotification &&
+			! enableEmailNotification &&
+			! ( isSMSNotificationEnabled && enableSMSNotification )
+		) {
 			return setValidationError( translate( 'Please select at least one contact method.' ) );
 		}
+
+		if ( isSMSNotificationEnabled && enableSMSNotification && ! allPhoneItems.length ) {
+			return setValidationError( translate( 'Please add at least one phone number.' ) );
+		}
+
 		const params = {
 			wp_note_notifications: enableMobileNotification,
 			email_notifications: enableEmailNotification,
@@ -169,7 +215,27 @@ export default function NotificationSettings( {
 					};
 				} ),
 			};
-			eventParams.email_contacts = params.contacts.emails.length;
+			eventParams.email_contacts = params.contacts.emails?.length;
+		}
+		if ( isSMSNotificationEnabled ) {
+			params.sms_notifications = enableSMSNotification;
+			params.contacts = {
+				...( params.contacts?.emails ? params.contacts : {} ),
+				sms_numbers: allPhoneItems.map( ( item ) => {
+					const isVerified =
+						item.verified || verifiedContacts.phoneNumbers.includes( item.phoneNumberFull );
+					return {
+						name: item.name,
+						sms_number: item.phoneNumberFull,
+						number: item.phoneNumber,
+						country_code: item.countryCode,
+						country_numeric_code: item.countryNumericCode,
+						verified: isVerified,
+					};
+				} ),
+			};
+			eventParams.sms_contacts = params.contacts.sms_numbers?.length;
+			eventParams.sms_notifications = params.sms_notifications;
 		}
 		recordEvent( 'notification_save_click', eventParams );
 		updateMonitorSettings( params );
@@ -206,6 +272,26 @@ export default function NotificationSettings( {
 		[ isBulkUpdate, translate ]
 	);
 
+	const getAllPhoneItems = useCallback(
+		( settings: MonitorSettings ) => {
+			let sitePhoneItems: Array< StateMonitorSettingsSMS > = [];
+
+			// If it is bulk update, we should not show the site phone numbers.
+			if ( ! isBulkUpdate && settings.monitor_notify_additional_user_sms ) {
+				sitePhoneItems = settings.monitor_notify_additional_user_sms.map( ( item ) => ( {
+					name: item.name,
+					countryCode: item.country_code,
+					countryNumericCode: item.country_numeric_code,
+					phoneNumber: item.number,
+					phoneNumberFull: item.sms_number,
+					verified: item.verified,
+				} ) );
+			}
+			return sitePhoneItems;
+		},
+		[ isBulkUpdate ]
+	);
+
 	const handleSetEmailItems = useCallback(
 		( settings: MonitorSettings ) => {
 			const userEmails = settings.monitor_user_emails || [];
@@ -219,14 +305,26 @@ export default function NotificationSettings( {
 		[ getAllEmailItems, isMultipleEmailEnabled ]
 	);
 
+	const handleSetPhoneItems = useCallback(
+		( settings: MonitorSettings ) => {
+			if ( isSMSNotificationEnabled ) {
+				const allPhoneItems = getAllPhoneItems( settings );
+				setAllPhoneItems( allPhoneItems );
+			}
+		},
+		[ getAllPhoneItems, isSMSNotificationEnabled ]
+	);
+
 	const setInitialMonitorSettings = useCallback(
 		( settings: MonitorSettings ) => {
-			// Set all email items
+			// Set all email and phone items
 			handleSetEmailItems( settings );
-
-			// Set email and mobile notification settings
+			handleSetPhoneItems( settings );
+			// Set SMS, email and mobile notification settings
+			const isSMSEnabled = !! settings.monitor_user_sms_notifications;
 			const isEmailEnabled = !! settings.monitor_user_email_notifications;
 			const isMobileEnabled = !! settings.monitor_user_wp_note_notifications;
+			setEnableSMSNotification( isSMSEnabled );
 			setEnableEmailNotification( isEmailEnabled );
 			setEnableMobileNotification( isMobileEnabled );
 
@@ -241,13 +339,23 @@ export default function NotificationSettings( {
 
 			// Set initial settings
 			setInitialSettings( {
+				enableSMSNotification: isSMSEnabled,
 				enableEmailNotification: isEmailEnabled,
 				enableMobileNotification: isMobileEnabled,
 				selectedDuration: foundDuration,
 				...( isMultipleEmailEnabled && { emailContacts: getAllEmailItems( settings ) } ),
+				...( isSMSNotificationEnabled && { phoneContacts: getAllPhoneItems( settings ) } ),
 			} );
 		},
-		[ defaultDuration, getAllEmailItems, handleSetEmailItems, isMultipleEmailEnabled ]
+		[
+			defaultDuration,
+			getAllEmailItems,
+			getAllPhoneItems,
+			handleSetEmailItems,
+			handleSetPhoneItems,
+			isMultipleEmailEnabled,
+			isSMSNotificationEnabled,
+		]
 	);
 
 	useEffect( () => {
@@ -263,13 +371,22 @@ export default function NotificationSettings( {
 
 			// Set initial settings
 			setInitialSettings( {
+				enableSMSNotification: false,
 				enableEmailNotification: false,
 				enableMobileNotification: false,
 				selectedDuration: defaultDuration,
 				...( isMultipleEmailEnabled && { emailContacts: getAllEmailItems( settings ) } ),
+				...( isSMSNotificationEnabled && { phoneContacts: getAllPhoneItems( settings ) } ),
 			} );
 		},
-		[ defaultDuration, getAllEmailItems, handleSetEmailItems, isMultipleEmailEnabled ]
+		[
+			defaultDuration,
+			getAllEmailItems,
+			getAllPhoneItems,
+			handleSetEmailItems,
+			isMultipleEmailEnabled,
+			isSMSNotificationEnabled,
+		]
 	);
 
 	useEffect( () => {
@@ -279,11 +396,15 @@ export default function NotificationSettings( {
 	}, [ bulkUpdateSettings, setBulkUpdateSettings ] );
 
 	useEffect( () => {
-		if ( enableMobileNotification || enableEmailNotification ) {
-			setValidationError( '' );
-			setHasUnsavedChanges( false );
+		if ( enableMobileNotification || enableEmailNotification || enableSMSNotification ) {
+			clearValidationError();
 		}
-	}, [ enableMobileNotification, enableEmailNotification ] );
+	}, [
+		enableMobileNotification,
+		enableEmailNotification,
+		enableSMSNotification,
+		clearValidationError,
+	] );
 
 	useEffect( () => {
 		if ( isComplete ) {
@@ -310,8 +431,11 @@ export default function NotificationSettings( {
 		return (
 			<PhoneNumberEditor
 				toggleModal={ toggleAddSMSModal }
+				selectedPhone={ selectedPhone }
 				allPhoneItems={ allPhoneItems }
+				selectedAction={ selectedAction }
 				setAllPhoneItems={ handleSetAllPhoneItems }
+				recordEvent={ recordEvent }
 				setVerifiedPhoneNumber={ ( item ) => handleSetVerifiedItem( 'phone', item ) }
 				sites={ sites }
 			/>
@@ -319,58 +443,57 @@ export default function NotificationSettings( {
 	}
 
 	return (
-		<Modal
-			open={ true }
-			onRequestClose={ handleOnClose }
+		<DashboardModalForm
+			className="notification-settings"
 			title={ translate( 'Set custom notification' ) }
-			className="notification-settings__modal"
+			subtitle={ getSiteCountText( sites ) }
+			onClose={ handleOnClose }
+			onSubmit={ onSave }
 		>
-			<div className="notification-settings__sub-title">{ getSiteCountText( sites ) }</div>
-			<form onSubmit={ onSave }>
-				{ isBulkUpdate && (
-					<AlertBanner type="warning">
-						{ translate( 'Settings for selected sites will be overwritten.' ) }
-					</AlertBanner>
-				) }
-				<div className={ classNames( { 'notification-settings__content': ! isBulkUpdate } ) }>
-					<NotificationDuration
-						recordEvent={ recordEvent }
-						selectedDuration={ selectedDuration }
-						selectDuration={ selectDuration }
-					/>
-					{ isSMSNotificationEnabled && (
-						<SMSNotification
-							enableSMSNotification={ enableSMSNotification }
-							setEnableSMSNotification={ setEnableSMSNotification }
-							toggleModal={ toggleAddSMSModal }
-							allPhoneItems={ allPhoneItems }
-							verifiedItem={ verifiedItem }
-						/>
-					) }
-					<MobilePushNotification
-						recordEvent={ recordEvent }
-						enableMobileNotification={ enableMobileNotification }
-						setEnableMobileNotification={ setEnableMobileNotification }
-					/>
-					<EmailNotification
-						recordEvent={ recordEvent }
-						verifiedItem={ verifiedItem }
-						enableEmailNotification={ enableEmailNotification }
-						setEnableEmailNotification={ setEnableEmailNotification }
-						defaultUserEmailAddresses={ defaultUserEmailAddresses }
-						toggleAddEmailModal={ toggleAddEmailModal }
-						allEmailItems={ allEmailItems }
-					/>
-				</div>
-				<NotificationSettingsFormFooter
-					isLoading={ isLoading }
-					validationError={ validationError }
-					isBulkUpdate={ isBulkUpdate }
-					handleOnClose={ handleOnClose }
-					hasUnsavedChanges={ hasUnsavedChanges }
-					unsavedChangesExist={ unsavedChangesExist }
+			{ isBulkUpdate && (
+				<AlertBanner type="warning">
+					{ translate( 'Settings for selected sites will be overwritten.' ) }
+				</AlertBanner>
+			) }
+			<div className={ classNames( { 'notification-settings__content': ! isBulkUpdate } ) }>
+				<NotificationDuration
+					recordEvent={ recordEvent }
+					selectedDuration={ selectedDuration }
+					selectDuration={ selectDuration }
 				/>
-			</form>
-		</Modal>
+				{ isSMSNotificationEnabled && (
+					<SMSNotification
+						recordEvent={ recordEvent }
+						enableSMSNotification={ enableSMSNotification }
+						setEnableSMSNotification={ setEnableSMSNotification }
+						toggleModal={ toggleAddSMSModal }
+						allPhoneItems={ allPhoneItems }
+						verifiedItem={ verifiedItem }
+					/>
+				) }
+				<MobilePushNotification
+					recordEvent={ recordEvent }
+					enableMobileNotification={ enableMobileNotification }
+					setEnableMobileNotification={ setEnableMobileNotification }
+				/>
+				<EmailNotification
+					recordEvent={ recordEvent }
+					verifiedItem={ verifiedItem }
+					enableEmailNotification={ enableEmailNotification }
+					setEnableEmailNotification={ setEnableEmailNotification }
+					defaultUserEmailAddresses={ defaultUserEmailAddresses }
+					toggleAddEmailModal={ toggleAddEmailModal }
+					allEmailItems={ allEmailItems }
+				/>
+			</div>
+			<NotificationSettingsFormFooter
+				isLoading={ isLoading }
+				validationError={ validationError }
+				isBulkUpdate={ isBulkUpdate }
+				handleOnClose={ handleOnClose }
+				hasUnsavedChanges={ hasUnsavedChanges }
+				unsavedChangesExist={ unsavedChangesExist }
+			/>
+		</DashboardModalForm>
 	);
 }

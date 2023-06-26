@@ -51,6 +51,7 @@ import {
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
+import { getIAmDeveloperCopy } from 'calypso/me/profile/get-i-am-a-developer-copy';
 import { isP2Flow } from 'calypso/signup/utils';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
@@ -664,7 +665,7 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned || this.props.isWoo
+							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooCoreProfilerFlow )
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -949,16 +950,7 @@ class SignupForm extends Component {
 					this.setState( { isDevAccount } );
 				} }
 			>
-				{ preventWidows(
-					translate(
-						"{{strong}}I'm a developer.{{/strong}} Boost my WordPress.com experience and give me early access to developer features",
-						{
-							components: {
-								strong: <span className="signup-form__is-dev-account-strong" />,
-							},
-						}
-					)
-				) }
+				{ preventWidows( getIAmDeveloperCopy( translate ) ) }
 			</SelectCardCheckbox>
 		);
 	}
@@ -1296,6 +1288,9 @@ function TrackRender( { children, eventName } ) {
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
+		const isWooCoreProfilerFlow =
+			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' );
+
 		return {
 			currentUser: getCurrentUser( state ),
 			oauth2Client,
@@ -1305,7 +1300,8 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-			isWoo: isWooOAuth2Client( oauth2Client ),
+			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
+			isWooCoreProfilerFlow,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 		};

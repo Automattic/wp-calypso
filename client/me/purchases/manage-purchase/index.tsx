@@ -943,7 +943,7 @@ class ManagePurchase extends Component<
 					'with {{strong}}%(domain)s{{/strong}}, making it easier to remember and easier to share.',
 				{
 					args: {
-						domain: purchase.meta,
+						domain: purchase.meta as string,
 						wpcom_url: purchase.domain,
 					},
 					components: {
@@ -980,7 +980,7 @@ class ManagePurchase extends Component<
 								count: purchase.purchaseRenewalQuantity,
 								args: {
 									numberOfMailboxes: purchase.purchaseRenewalQuantity,
-									domain: purchase.meta,
+									domain: purchase.meta as string,
 								},
 							}
 						) }
@@ -993,7 +993,10 @@ class ManagePurchase extends Component<
 		if ( isDIFMProduct( purchase ) ) {
 			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
 			if ( difmTieredPurchaseDetails && ( difmTieredPurchaseDetails.extraPageCount ?? 0 ) > 0 ) {
-				const { extraPageCount, numberOfIncludedPages } = difmTieredPurchaseDetails;
+				// We know there are some pages due to the above check.
+				const extraPageCount = difmTieredPurchaseDetails.extraPageCount as number;
+				const numberOfIncludedPages = difmTieredPurchaseDetails.numberOfIncludedPages as number;
+
 				return (
 					<>
 						{ numberOfIncludedPages === 1
@@ -1181,7 +1184,7 @@ class ManagePurchase extends Component<
 								<div className="manage-purchase__contact-partner">
 									{ translate( 'Please contact your site host %(partnerName)s for details', {
 										args: {
-											partnerName: getPartnerName( purchase ),
+											partnerName: getPartnerName( purchase ) ?? '',
 										},
 									} ) }
 								</div>

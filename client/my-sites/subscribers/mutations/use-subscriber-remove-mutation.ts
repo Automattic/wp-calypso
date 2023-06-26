@@ -3,7 +3,7 @@ import wpcom from 'calypso/lib/wp';
 import { getSubscribersCacheKey } from '../helpers';
 import type { SubscriberEndpointResponse, Subscriber } from '../types';
 
-const useSubscriberRemoveMutation = ( siteId: number, currentPage: number ) => {
+const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number ) => {
 	const queryClient = useQueryClient();
 
 	return useMutation( {

@@ -9,9 +9,9 @@
 <!-- TOC -->
 
 - [Setup](#setup)
-    - [Regular setup](#regular-setup)
-    - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
-    - [Apple Silicon arm64](#apple-silicon-arm64)
+  - [Regular setup](#regular-setup)
+  - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
+  - [Apple Silicon arm64](#apple-silicon-arm64)
 
 <!-- /TOC -->
 
@@ -65,7 +65,7 @@ arch -x86_64 npm install yarn
 7. install all dependencies from repo root:
 
 ```
-arch -x86_64 yarn install --frozen-lockfile
+arch -x86_64 yarn install --immutable
 ```
 
 At any point, run `arch` to verify whether shell is running with Rosetta 2 emulation.

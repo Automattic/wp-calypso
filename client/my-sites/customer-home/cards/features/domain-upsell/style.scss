@@ -68,3 +68,12 @@ body .customer-home__layout .domain-upsell__card {
 	}
 
 }
+
+html[dir="rtl"] {
+	.domain-upsell-illustration {
+		&,
+		text {
+			transform: scale(-1, 1);
+		}
+	}
+}

@@ -68,7 +68,7 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 	);
 };
 
-export const isHostingFlow = ( flowName: string | null ) => {
+export const isHostingSignupFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
 };
 
@@ -78,6 +78,13 @@ export const isNewHostedSiteCreationFlow = ( flowName: string | null ) => {
 
 export const isTransferringHostedSiteCreationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && TRANSFERRING_HOSTED_SITE_FLOW === flowName );
+};
+
+export const isAnyHostingFlow = ( flowName: string | null ) => {
+	return Boolean(
+		flowName &&
+			[ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW, TRANSFERRING_HOSTED_SITE_FLOW ].includes( flowName )
+	);
 };
 
 export const isMigrationFlow = ( flowName: string | null ) => {
@@ -134,6 +141,10 @@ export const isWithThemeFlow = ( flowName: string | null ) => {
 
 export const isSiteSetupFlow = ( flowName: string | null ) => {
 	return !! flowName && SITE_SETUP_FLOW === flowName;
+};
+
+export const isSenseiFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && SENSEI_FLOW === flowName );
 };
 
 export const ecommerceFlowRecurTypes = {

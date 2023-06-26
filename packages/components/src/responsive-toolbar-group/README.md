@@ -17,7 +17,7 @@ import Discover from 'calypso/my-sites/plugins/categories/responsive-toolbar-gro
 
 ## Props
 
-- `children`[ReactChild]: A group of react components to be rendered.
+- `children`[ReactNode]: A group of react components to be rendered.
 - `className`[string]: A classname to add to the ToolBarGroupComponent. (optional).
 - `hideRatio`[number]: The ratio in chich the components are considered to be hidden ([take a look at the IntersectionObserver docs](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#thresholds)) (optional).
 - `showRatio`[number]: The ratio in chich the components are considered to be shown ([take a look at the IntersectionObserver docs](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#thresholds)) (optional).

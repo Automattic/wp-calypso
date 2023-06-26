@@ -1,19 +1,21 @@
 import { Button } from '@automattic/components';
-import { Modal } from '@wordpress/components';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
-import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback, useContext, useEffect, useState, useMemo } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useCallback, useContext, useEffect, useState, useMemo } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import DashboardModalForm from '../../dashboard-modal-form';
+import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
+import ContactListItem from '../contact-list/item';
 import {
 	useRequestVerificationCode,
 	useValidateVerificationCode,
 	useResendVerificationCode,
+	useContactModalTitleAndSubtitle,
 } from '../hooks';
-import EmailItemContent from './email-item-content';
 import type {
 	AllowedMonitorContactActions,
 	StateMonitorSettingsEmail,
@@ -58,17 +60,18 @@ export default function EmailAddressEditor( {
 		id: '',
 	} );
 	const [ resendCodeClicked, setResendCodeClicked ] = useState< boolean >( false );
-	const [ helpText, setHelpText ] = useState< ReactChild | undefined >( undefined );
+	const [ helpText, setHelpText ] = useState< TranslateResult | undefined >( undefined );
 
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
 	const isVerifyAction = selectedAction === 'verify';
-	const isEditAction = selectedAction === 'edit';
 	const isRemoveAction = selectedAction === 'remove';
 
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyEmail = useValidateVerificationCode();
 	const resendCode = useResendVerificationCode();
+
+	const { title, subtitle } = useContactModalTitleAndSubtitle( 'email', selectedAction );
 
 	// Function to handle resending verification code
 	const handleResendCode = useCallback( () => {
@@ -151,11 +154,17 @@ export default function EmailAddressEditor( {
 
 	// Add email item to the list once the email is verified
 	useEffect( () => {
-		if ( verifyEmail.isVerified ) {
+		if ( verifyEmail.isVerified || requestVerificationCode.isVerified ) {
 			handleSetEmailItems();
 			setVerifiedEmail( emailItem.email );
 		}
-	}, [ emailItem.email, handleSetEmailItems, setVerifiedEmail, verifyEmail.isVerified ] );
+	}, [
+		emailItem.email,
+		handleSetEmailItems,
+		requestVerificationCode.isVerified,
+		setVerifiedEmail,
+		verifyEmail.isVerified,
+	] );
 
 	// Show error message when email verification fails
 	useEffect( () => {
@@ -264,9 +273,7 @@ export default function EmailAddressEditor( {
 		setVerifiedEmail( emailItem.email );
 	};
 
-	const onSave = ( event: React.FormEvent< HTMLFormElement > ) => {
-		event.preventDefault();
-
+	const onSave = () => {
 		if ( isRemoveAction ) {
 			return handleRemove();
 		}
@@ -298,24 +305,6 @@ export default function EmailAddressEditor( {
 		handleSetEmailItems( false );
 	}
 
-	let title = translate( 'Add new email address' );
-	let subTitle = translate( 'Please use only your number or one you have access to.' );
-
-	if ( isVerifyAction ) {
-		title = translate( 'Verify your email address' );
-		subTitle = translate( 'We’ll send a code to verify your email address.' );
-	}
-
-	if ( isEditAction ) {
-		title = translate( 'Edit your email address' );
-		subTitle = translate( 'If you update your email address, you’ll need to verify it.' );
-	}
-
-	if ( isRemoveAction ) {
-		title = translate( 'Remove Email' );
-		subTitle = translate( 'Are you sure you want to remove this email address?' );
-	}
-
 	const handleChange = useCallback(
 		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setEmailItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
@@ -328,108 +317,107 @@ export default function EmailAddressEditor( {
 		: translate( 'Verify' );
 
 	return (
-		<Modal
-			open={ true }
-			onRequestClose={ toggleModal }
+		<DashboardModalForm
 			title={ title }
-			className="notification-settings__modal"
+			subtitle={ subtitle }
+			onClose={ toggleModal }
+			onSubmit={ onSave }
 		>
-			<div className="notification-settings__sub-title">{ subTitle }</div>
-
-			<form className="configure-contact__form" onSubmit={ onSave }>
-				{ isRemoveAction ? (
-					selectedEmail && <EmailItemContent isRemoveAction item={ selectedEmail } />
-				) : (
-					<>
-						<FormFieldset>
-							<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
-							<FormTextInput
-								id="name"
-								name="name"
-								value={ emailItem.name }
-								disabled={ showCodeVerification }
-								onChange={ handleChange( 'name' ) }
-								aria-describedby={ ! isVerifyAction ? 'name-help-text' : undefined }
-							/>
-							{ ! isVerifyAction && (
-								<div className="configure-contact__help-text" id="name-help-text">
-									{ translate( 'Give this email a nickname for your personal reference.' ) }
-								</div>
-							) }
-						</FormFieldset>
-
-						<FormFieldset>
-							<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
-							<FormTextInput
-								id="email"
-								name="email"
-								value={ emailItem.email }
-								disabled={ showCodeVerification }
-								onChange={ handleChange( 'email' ) }
-								aria-describedby={ ! isVerifyAction ? 'email-help-text' : undefined }
-							/>
-							{ validationError?.email && (
-								<div className="notification-settings__footer-validation-error" role="alert">
-									{ validationError.email }
-								</div>
-							) }
-							{ ! isVerifyAction && (
-								<div className="configure-contact__help-text" id="email-help-text">
-									{ translate( 'We’ll send a code to verify your email address.' ) }
-								</div>
-							) }
-						</FormFieldset>
-
-						{ showCodeVerification && (
-							<FormFieldset>
-								<FormLabel htmlFor="code">
-									{ translate( 'Please enter the code you received via email' ) }
-								</FormLabel>
-								<FormTextInput
-									id="code"
-									name="code"
-									value={ emailItem.code || '' }
-									onChange={ handleChange( 'code' ) }
-								/>
-								{ validationError?.code && (
-									<div className="notification-settings__footer-validation-error" role="alert">
-										{ validationError.code }
-									</div>
-								) }
-								<div className="configure-contact__help-text" id="code-help-text">
-									{ helpText ??
-										( resendCodeClicked && resendCode.isLoading
-											? translate( 'Sending code' )
-											: translate(
-													'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
-													translationArgs
-											  ) ) }
-								</div>
-							</FormFieldset>
-						) }
-					</>
-				) }
-				<div className="notification-settings__footer">
-					<div className="notification-settings__footer-buttons">
-						<Button onClick={ showCodeVerification ? onSaveLater : toggleModal }>
-							{ showCodeVerification ? translate( 'Later' ) : translate( 'Back' ) }
-						</Button>
-						<Button
-							disabled={
-								! emailItem.name ||
-								! emailItem.email ||
-								( showCodeVerification && ! emailItem.code ) ||
-								verifyEmail.isLoading ||
-								requestVerificationCode.isLoading
-							}
-							type="submit"
-							primary
-						>
-							{ isRemoveAction ? translate( 'Remove' ) : verificationButtonTitle }
-						</Button>
+			{ isRemoveAction ? (
+				selectedEmail && (
+					<div className="margin-top-16">
+						<ContactListItem type="email" item={ selectedEmail } />
 					</div>
-				</div>
-			</form>
-		</Modal>
+				)
+			) : (
+				<>
+					<FormFieldset>
+						<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
+						<FormTextInput
+							id="name"
+							name="name"
+							value={ emailItem.name }
+							disabled={ showCodeVerification }
+							onChange={ handleChange( 'name' ) }
+							aria-describedby={ ! isVerifyAction ? 'name-help-text' : undefined }
+						/>
+						{ ! isVerifyAction && (
+							<div className="configure-contact__help-text" id="name-help-text">
+								{ translate( 'Give this email a nickname for your personal reference.' ) }
+							</div>
+						) }
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
+						<FormTextInput
+							id="email"
+							name="email"
+							value={ emailItem.email }
+							disabled={ showCodeVerification }
+							onChange={ handleChange( 'email' ) }
+							aria-describedby={ ! isVerifyAction ? 'email-help-text' : undefined }
+						/>
+						{ validationError?.email && (
+							<div className="dashboard-modal-form__footer-error" role="alert">
+								{ validationError.email }
+							</div>
+						) }
+						{ ! isVerifyAction && (
+							<div className="configure-contact__help-text" id="email-help-text">
+								{ translate( 'We’ll send a code to verify your email address.' ) }
+							</div>
+						) }
+					</FormFieldset>
+
+					{ showCodeVerification && (
+						<FormFieldset>
+							<FormLabel htmlFor="code">
+								{ translate( 'Please enter the code you received via email' ) }
+							</FormLabel>
+							<FormTextInput
+								id="code"
+								name="code"
+								value={ emailItem.code || '' }
+								onChange={ handleChange( 'code' ) }
+							/>
+							{ validationError?.code && (
+								<div className="dashboard-modal-form__footer-error" role="alert">
+									{ validationError.code }
+								</div>
+							) }
+							<div className="configure-contact__help-text" id="code-help-text">
+								{ helpText ??
+									( resendCodeClicked && resendCode.isLoading
+										? translate( 'Sending code' )
+										: translate(
+												'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
+												translationArgs
+										  ) ) }
+							</div>
+						</FormFieldset>
+					) }
+				</>
+			) }
+
+			<DashboardModalFormFooter>
+				<Button onClick={ showCodeVerification ? onSaveLater : toggleModal }>
+					{ showCodeVerification ? translate( 'Later' ) : translate( 'Back' ) }
+				</Button>
+				<Button
+					disabled={
+						! emailItem.name ||
+						! emailItem.email ||
+						( showCodeVerification && ! emailItem.code ) ||
+						verifyEmail.isLoading ||
+						requestVerificationCode.isLoading
+					}
+					type="submit"
+					primary
+				>
+					{ isRemoveAction ? translate( 'Remove' ) : verificationButtonTitle }
+				</Button>
+			</DashboardModalFormFooter>
+		</DashboardModalForm>
 	);
 }

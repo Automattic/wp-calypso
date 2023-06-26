@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -24,8 +24,8 @@ import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 import UpdatedGravatarString from './updated-gravatar-string';
-
 import './style.scss';
 
 class Profile extends Component {
@@ -145,14 +145,7 @@ class Profile extends Component {
 								disabled={ this.props.isFetchingUserSettings }
 								checked={ this.props.getSetting( 'is_dev_account' ) }
 								onChange={ this.toggleIsDevAccount }
-								label={ translate(
-									'{{spanLead}}I am a developer.{{/spanLead}} Make my WordPress.com experience more powerful and grant me early access to developer features.',
-									{
-										components: {
-											spanLead: <strong />,
-										},
-									}
-								) }
+								label={ getIAmDeveloperCopy( this.props.translate ) }
 							/>
 						</FormFieldset>
 

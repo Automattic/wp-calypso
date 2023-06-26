@@ -7,7 +7,7 @@ import wpcom from 'calypso/lib/wp';
 
 const useFetchMonitorData = ( siteId: number, period: AllowedMonitorPeriods ) => {
 	return useQuery( {
-		queryKey: [ 'jetpack-monitor-uptime', siteId ],
+		queryKey: [ 'jetpack-monitor-uptime', siteId, period ],
 		queryFn: () =>
 			wpcom.req.get(
 				{

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
-import type { FunctionComponent, ReactChild } from 'react';
+import { TranslateResult } from 'i18n-calypso';
+import type { FunctionComponent } from 'react';
 
 type FormFieldWrapperProps = {
 	isError: boolean;
@@ -49,7 +50,7 @@ type FormFieldAnnotationProps = {
 	// Semantic props
 	labelText: string;
 	normalDescription?: string;
-	errorDescription?: ReactChild;
+	errorDescription?: TranslateResult;
 
 	// Functional props
 	isError?: boolean; // default false
@@ -115,7 +116,7 @@ type RenderedDescriptionProps = {
 	descriptionText?: string;
 	descriptionId?: string;
 	isError?: boolean;
-	errorMessage?: ReactChild;
+	errorMessage?: TranslateResult;
 };
 
 type DescriptionProps = {

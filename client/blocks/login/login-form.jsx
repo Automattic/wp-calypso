@@ -79,6 +79,7 @@ export class LoginForm extends Component {
 		isPartnerSignup: PropTypes.bool,
 		locale: PropTypes.string,
 		showSocialLoginFormOnly: PropTypes.bool,
+		currentQuery: PropTypes.object,
 	};
 
 	state = {
@@ -338,9 +339,9 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, wccomFrom } = this.props;
+		const { translate, isWoo, wccomFrom, isWooCoreProfilerFlow } = this.props;
 		if ( this.isPasswordView() || this.isFullView() ) {
-			if ( isWoo && ! wccomFrom ) {
+			if ( isWoo && ! wccomFrom && ! isWooCoreProfilerFlow ) {
 				return translate( 'Get started' );
 			}
 
@@ -494,6 +495,9 @@ export class LoginForm extends Component {
 
 	renderUsernameorEmailLabel() {
 		if ( this.props.isP2Login || ( this.props.isWoo && ! this.props.isPartnerSignup ) ) {
+			if ( this.props.isWooCoreProfilerFlow ) {
+				return this.props.translate( 'Your email address' );
+			}
 			return this.props.translate( 'Your email address or username' );
 		}
 
@@ -515,8 +519,9 @@ export class LoginForm extends Component {
 							login( {
 								redirectTo: this.props.redirectTo,
 								locale: this.props.locale,
-								action: 'lostpassword',
+								action: this.props.isWooCoreProfilerFlow ? 'jetpack/lostpassword' : 'lostpassword',
 								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+								from: get( this.props.currentQuery, 'from' ),
 							} )
 						);
 					} }
@@ -539,12 +544,6 @@ export class LoginForm extends Component {
 	}
 
 	render() {
-		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
-
-		const isSubmitButtonDisabled =
-			this.props.isWoo && ! this.props.isPartnerSignup
-				? this.state.usernameOrEmail.trim().length === 0 || this.state.password.trim().length === 0
-				: isFormDisabled;
 		const {
 			accountType,
 			oauth2Client,
@@ -561,9 +560,16 @@ export class LoginForm extends Component {
 			showSocialLoginFormOnly,
 			isWoo,
 			isPartnerSignup,
+			isWooCoreProfilerFlow,
 		} = this.props;
+
+		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
+		const isFormFilled =
+			this.state.usernameOrEmail.trim().length === 0 || this.state.password.trim().length === 0;
+		const isSubmitButtonDisabled = isWoo && ! isPartnerSignup ? isFormFilled : isFormDisabled;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
+		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
 
 		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
@@ -730,7 +736,7 @@ export class LoginForm extends Component {
 					</div>
 
 					<p className="login__form-terms">{ socialToS }</p>
-					{ this.props.isWoo && ! this.props.isPartnerSignup && this.renderLostPasswordLink() }
+					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isSubmitButtonDisabled }>
 							{ this.getLoginButtonText() }
@@ -751,7 +757,7 @@ export class LoginForm extends Component {
 					) }
 				</Card>
 
-				{ config.isEnabled( 'signup/social' ) && (
+				{ config.isEnabled( 'signup/social' ) && ! isCoreProfilerLostPasswordFlow && (
 					<Fragment>
 						<Divider>{ this.props.translate( 'or' ) }</Divider>
 						<SocialLoginForm
@@ -792,8 +798,12 @@ export default connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+			isWooCoreProfilerFlow:
+				'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-			isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+			isWoo:
+				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
+				'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
 			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),

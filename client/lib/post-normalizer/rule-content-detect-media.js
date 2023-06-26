@@ -1,7 +1,7 @@
 /* eslint-disable jsdoc/no-undefined-types */
 
-import getEmbedMetadata from 'get-video-id';
 import { map, compact, includes, some, filter } from 'lodash';
+import getEmbedMetadata from 'calypso/lib/get-video-id';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
 
@@ -70,6 +70,7 @@ const detectImage = ( image ) => {
 const getAutoplayIframe = ( iframe ) => {
 	const KNOWN_SERVICES = [ 'youtube', 'vimeo', 'videopress' ];
 	const metadata = getEmbedMetadata( iframe.src );
+
 	if ( metadata && includes( KNOWN_SERVICES, metadata.service ) ) {
 		const autoplayIframe = iframe.cloneNode();
 		if ( autoplayIframe.src.indexOf( '?' ) === -1 ) {
@@ -77,6 +78,12 @@ const getAutoplayIframe = ( iframe ) => {
 		} else {
 			autoplayIframe.src += '&autoplay=1';
 		}
+
+		// ?autoplay=1 is no longer sufficient for YouTube - we also need to add autoplay to the allow attribute.
+		const allow = ( autoplayIframe.allow || '' ).split( /\s*;\s*/g );
+		allow.push( 'autoplay' );
+		autoplayIframe.setAttribute( 'allow', allow.filter( ( s ) => s.length > 0 ).join( '; ' ) );
+
 		return autoplayIframe.outerHTML;
 	}
 	return null;
@@ -90,7 +97,15 @@ const getEmbedType = ( iframe ) => {
 		if ( ! node.className ) {
 			continue;
 		}
+
+		// Match elements like <span class="embed-youtube"><iframe ... /></span>
 		matches = node.className.match( /\bembed-([-a-zA-Z0-9_]+)\b/ );
+		if ( matches ) {
+			return matches[ 1 ];
+		}
+
+		// Match elements like <figure class="wp-block-video wp-block-embed is-type-video is-provider-videopress">...</figure>
+		matches = node.className.match( /\bis-provider-([-a-zA-Z0-9_]+)\b/ );
 		if ( matches ) {
 			return matches[ 1 ];
 		}

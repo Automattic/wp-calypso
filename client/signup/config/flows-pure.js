@@ -21,9 +21,7 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: isEnabled( 'hosting-onboarding-i2' )
-				? [ 'user-hosting' ]
-				: [ 'plans-hosting', 'user-hosting', 'domains' ],
+			steps: [ 'user-hosting' ],
 			destination: getHostingFlowDestination,
 			description:
 				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
@@ -126,6 +124,17 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
+			showRecaptcha: true,
+		},
+		{
+			name: 'domain-transfer',
+			steps: isEnabled( 'signup/professional-email-step' )
+				? [ 'user', 'domains', 'emails', 'plans' ]
+				: [ 'user', 'domains', 'plans' ],
+			destination: ( dependencies ) => `/domains/manage/${ dependencies.siteSlug }`,
+			description:
+				'Onboarding flow specifically for domain transfers. Read more in https://wp.me/pdhack-Hk.',
+			lastModified: '2023-06-19',
 			showRecaptcha: true,
 		},
 		{

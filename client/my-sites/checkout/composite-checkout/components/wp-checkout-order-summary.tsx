@@ -14,6 +14,8 @@ import {
 	isJetpackProduct,
 	isJetpackPlan,
 	isAkismetProduct,
+	planHasFeature,
+	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -22,7 +24,7 @@ import {
 	FormStatus,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { isNewsletterOrLinkInBioFlow, isHostingFlow } from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
@@ -167,10 +169,14 @@ function CheckoutSummaryFeaturesWrapper( props: {
 } ) {
 	const { siteId, nextDomainIsFree } = props;
 	const signupFlowName = getSignupCompleteFlowName();
-	const shouldUseFlowFeatureList =
-		isNewsletterOrLinkInBioFlow( signupFlowName ) || isHostingFlow( signupFlowName );
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const planHasHostingFeature = responseCart.products.some( ( product ) =>
+		planHasFeature( product.product_slug, WPCOM_FEATURES_ATOMIC )
+	);
+	const shouldUseFlowFeatureList =
+		isNewsletterOrLinkInBioFlow( signupFlowName ) ||
+		( isAnyHostingFlow( signupFlowName ) && planHasHostingFeature );
 	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;
 
 	if ( responseCart.is_gift_purchase && giftSiteSlug ) {
@@ -178,7 +184,12 @@ function CheckoutSummaryFeaturesWrapper( props: {
 	}
 
 	if ( signupFlowName && shouldUseFlowFeatureList ) {
-		return <CheckoutSummaryFlowFeaturesList flowName={ signupFlowName } />;
+		return (
+			<CheckoutSummaryFlowFeaturesList
+				flowName={ signupFlowName }
+				nextDomainIsFree={ nextDomainIsFree }
+			/>
+		);
 	}
 
 	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
@@ -379,14 +390,39 @@ function CheckoutSummaryFeaturesList( props: {
 	);
 }
 
-function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
+function CheckoutSummaryFlowFeaturesList( {
+	flowName,
+	nextDomainIsFree,
+}: {
+	flowName: string;
+	nextDomainIsFree: boolean;
+} ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
-	const planFeatures = getFlowPlanFeatures( flowName, planInCart );
+	const hasDomainsInCart = responseCart.products.some(
+		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
+	);
+	const domains = responseCart.products.filter(
+		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
+	);
+	const hasRenewalInCart = responseCart.products.some(
+		( product ) => product.extra.purchaseType === 'renewal'
+	);
+	const planFeatures = getFlowPlanFeatures(
+		flowName,
+		planInCart,
+		hasDomainsInCart,
+		hasRenewalInCart,
+		nextDomainIsFree
+	);
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
+			{ hasDomainsInCart &&
+				domains.map( ( domain ) => {
+					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
+				} ) }
 			{ planFeatures.map( ( feature ) => {
 				return (
 					<CheckoutSummaryFeaturesListItem key={ `feature-list-${ feature.getSlug() }` }>
@@ -399,7 +435,7 @@ function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
-			{ isHostingFlow( flowName ) && (
+			{ isAnyHostingFlow( flowName ) && (
 				<CheckoutSummaryRefundWindows cart={ responseCart } highlight />
 			) }
 		</CheckoutSummaryFeaturesListWrapper>
@@ -597,32 +633,33 @@ const CheckoutSummaryCard = styled( CheckoutSummaryCardUnstyled )`
 `;
 
 const CheckoutSummaryFeatures = styled.div`
-	padding: 24px 24px 0;
+	padding: 24px 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 24px;
+		padding: 50px 0 24px;
 	}
 `;
 
 const CheckoutSummaryFeaturesUpsell = styled( CheckoutSummaryFeatures )`
-	padding: 12px 24px 0;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 0 24px 24px;
-	}
+	padding: 0 0 24px;
 
 	& svg {
 		opacity: 50%;
 	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		padding: 0 0 24px;
+	}
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
-	font-size: 14px;
+	font-size: 20px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
-	margin-bottom: 6px;
+	line-height: 26px;
+	margin-bottom: 12px;
 
 	& button {
-		font-size: 14px;
+		font-size: 20px;
 		font-weight: ${ ( props ) => props.theme.weights.bold };
 		text-decoration: none;
 	}
@@ -682,18 +719,23 @@ CheckoutSummaryFeaturesListItem.defaultProps = {
 };
 
 const CheckoutSummaryAmountWrapper = styled.div`
-	padding: 24px;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	}
+	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	padding: 20px 0;
 `;
 
 const CheckoutSummaryLineItem = styled.div`
 	display: flex;
 	flex-wrap: wrap;
+	font-size: 14px;
 	justify-content: space-between;
+	line-heigh: 20px;
 	margin-bottom: 4px;
+
+	&:nth-last-of-type( 2 ) {
+		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		margin-bottom: 20px;
+		padding-bottom: 20px;
+	}
 
 	.is-loading & {
 		animation: ${ pulse } 1.5s ease-in-out infinite;
@@ -701,7 +743,10 @@ const CheckoutSummaryLineItem = styled.div`
 `;
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 20px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
+	line-height: 26px;
 `;
 
 const LoadingCopy = styled.p`

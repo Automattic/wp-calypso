@@ -2,10 +2,11 @@ import { safeImageUrl } from '@automattic/calypso-url';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
+import page from 'page';
 import { useMemo } from 'react';
 import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -17,14 +18,12 @@ import {
 	getCampaignBudgetData,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
-	isCampaignFinished,
 } from '../../utils';
 import './style.scss';
 
 interface Props {
 	campaign: Campaign;
 }
-
 const getCampaignEndText = ( localizedMomentInstance: any, status: string, end_date: string ) => {
 	if (
 		[ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.REJECTED ].includes( status )
@@ -45,7 +44,7 @@ export default function CampaignItem( props: Props ) {
 		name,
 		content_config,
 		display_name,
-		status,
+		ui_status,
 		end_date,
 		budget_cents,
 		start_date,
@@ -71,20 +70,26 @@ export default function CampaignItem( props: Props ) {
 	const budgetString = campaignDays ? `$${ totalBudget } ${ totalBudgetLeftString }` : '-';
 	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
 
-	const campaignContainsData = isCampaignFinished( status );
 	const statusBadge = (
-		<Badge type={ getCampaignStatusBadgeColor( status ) }>{ getCampaignStatus( status ) }</Badge>
+		<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
+			{ getCampaignStatus( ui_status ) }
+		</Badge>
 	);
 	const openCampaignURL = getAdvertisingDashboardPath(
 		`/${ selectedSiteSlug }/campaigns/${ campaign.campaign_id }`
 	);
+
+	const navigateToDetailsPage = ( event: React.MouseEvent< HTMLTableRowElement > ) => {
+		event.stopPropagation();
+		page.show( openCampaignURL );
+	};
 
 	function getMobileStats() {
 		const statElements = [];
 		if ( impressions_total > 0 ) {
 			statElements[ statElements.length ] = sprintf(
 				// translators: %s is formatted number of views
-				_n( '%s impressions', '%s impression', impressions_total ),
+				_n( '%s impression', '%s impressions', impressions_total ),
 				formatNumber( impressions_total )
 			);
 		}
@@ -92,7 +97,7 @@ export default function CampaignItem( props: Props ) {
 		if ( clicks_total > 0 ) {
 			statElements[ statElements.length ] = sprintf(
 				// translators: %s is formatted number of clicks
-				_n( '%s clicks', '%s click', clicks_total ),
+				_n( '%s click', '%s clicks', clicks_total ),
 				formatNumber( clicks_total )
 			);
 		}
@@ -118,7 +123,7 @@ export default function CampaignItem( props: Props ) {
 	}
 
 	return (
-		<tr>
+		<tr onClick={ navigateToDetailsPage }>
 			<td className="campaign-item__data">
 				<div className="campaign-item__data-row">
 					<div className="promote-post-i2__campaign-item-wrapper">
@@ -142,17 +147,26 @@ export default function CampaignItem( props: Props ) {
 					</div>
 				</div>
 			</td>
-			<td className="campaign-item__user">{ display_name }</td>
-			<td className="campaign-item__status">{ statusBadge }</td>
-			<td className="campaign-item__ends">
-				{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }
+			<td className="campaign-item__user">
+				<div>{ display_name }</div>
 			</td>
-			<td className="campaign-item__budget">{ budgetString }</td>
-			{ /* TODO: Return these columns back when backend is ready to provide the data */ }
-			{ /* <td className="campaign-item__impressions">{ formatNumber( impressions_total ) }</td> */ }
-			{ /* <td className="campaign-item__clicks">{ formatNumber( clicks_total ) }</td> */ }
+			<td className="campaign-item__status">
+				<div>{ statusBadge }</div>
+			</td>
+			<td className="campaign-item__ends">
+				<div>{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }</div>
+			</td>
+			<td className="campaign-item__budget">
+				<div>{ budgetString }</div>
+			</td>
+			<td className="campaign-item__impressions">
+				<div>{ formatNumber( impressions_total ) }</div>
+			</td>
+			<td className="campaign-item__clicks">
+				<div>{ formatNumber( clicks_total ) }</div>
+			</td>
 			<td className="campaign-item__action">
-				{ campaignContainsData && <Button href={ openCampaignURL } isLink icon={ chevronRight } /> }
+				<Button isLink icon={ chevronRight } />
 			</td>
 		</tr>
 	);

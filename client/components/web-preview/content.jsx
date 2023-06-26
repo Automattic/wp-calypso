@@ -500,8 +500,6 @@ WebPreviewContent.propTypes = {
 	isModalWindow: PropTypes.bool,
 	// The site/post description passed to the SeoPreviewPane
 	frontPageMetaDescription: PropTypes.string,
-	// Whether the inline help popup is open
-	isInlineHelpPopoverVisible: PropTypes.bool,
 	// A post object used to override the selected post in the SEO preview
 	overridePost: PropTypes.object,
 	// A customized Toolbar element

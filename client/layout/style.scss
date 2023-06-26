@@ -51,6 +51,14 @@ body.is-focus-sites {
 		padding-left: 32px;
 	}
 
+	// Checkout sets it own padding/margin
+	.is-section-checkout &,
+	.is-section-checkout.has-no-sidebar &,
+	.is-section-checkout.has-no-sidebar .theme-default .focus-content & {
+		padding: 0;
+		margin: 0;
+	}
+
 	// Themes sets it own padding/margin
 	.is-section-theme &,
 	.is-section-themes.has-no-sidebar & {
@@ -347,21 +355,6 @@ body.is-focus-sites {
 	}
 	&.has-no-sidebar .layout__content {
 		padding-top: 0;
-	}
-}
-
-// layout adjustments for docked Happychat window
-@include breakpoint-deprecated( ">1040px" ) {
-	.layout.has-docked-chat {
-		// add space in the main column for the docked sidebar
-		.layout__content {
-			padding: 79px 304px 32px;
-		}
-
-		// make space in customizer
-		.main.customize.is-iframe {
-			right: 272px;
-		}
 	}
 }
 

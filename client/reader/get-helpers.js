@@ -2,6 +2,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
 
 /**
@@ -57,7 +58,7 @@ export const getSiteDomain = ( { feed, site } = {} ) => {
 
 	const siteUrl = getSiteUrl( { feed, site } );
 	const hostname = getUrlParts( siteUrl ).hostname;
-	return hostname === '' ? siteUrl : hostname.replace( /^www\./, '' );
+	return formatUrlForDisplay( hostname === '' ? siteUrl : hostname );
 };
 
 /**

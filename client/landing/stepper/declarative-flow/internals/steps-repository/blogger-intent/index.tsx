@@ -25,6 +25,8 @@ const BlogIntent: Step = function BlogIntent() {
 		[]
 	);
 
+	const username = currentUser?.display_name ?? currentUser?.username;
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'Create your blog' ) } />
@@ -37,9 +39,11 @@ const BlogIntent: Step = function BlogIntent() {
 				stepContent={
 					<div className="blogger-intent__container">
 						<h2 className="blogger-intent__heading">
-							{ translate( "Let's start your blog, %(username)s!", {
-								args: { username: currentUser?.display_name || currentUser?.username },
-							} ) }
+							{ username
+								? translate( "Let's start your blog, %(username)s!", {
+										args: { username },
+								  } )
+								: translate( "Let's start your blog!" ) }
 						</h2>
 						<div className="blogger-intent__content">
 							<div className="blogger-intent__row">

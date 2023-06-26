@@ -4,14 +4,12 @@ import {
 	isWpComMonthlyPlan,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
-import { SUPPORT_HAPPYCHAT } from '@automattic/help-center';
 import { Button as GutenbergButton, CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -24,15 +22,12 @@ import { submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
-import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import {
 	getDowngradePlanRawPrice,
 	getDowngradePlanToMonthlyRawPrice,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -668,14 +663,14 @@ class CancelPurchaseForm extends Component {
 				} );
 			case 'offsite_redirect':
 				/* 	Translators: If canceled product is site redirect,
-					displays canceled product and domain site is being directed to 
+					displays canceled product and domain site is being directed to
 					eg: "Remove product: Site Redirect to redirectedsite.com" */
 				return translate( '%(headerTitle)s: %(productName)s to %(purchaseMeta)s', {
 					args: { headerTitle, productName, purchaseMeta: meta },
 				} );
 			default:
 				/* Translators: If canceled product is site plan or other product,
-					displays plan or product being canceled and primary address of product being canceled 
+					displays plan or product being canceled and primary address of product being canceled
 					eg: "Cancel plan: WordPress.com Business for primarydomain.com" */
 				return translate( '%(headerTitle)s: %(productName)s for %(siteSlug)s', {
 					args: { headerTitle, productName, siteSlug: slug },
@@ -683,10 +678,8 @@ class CancelPurchaseForm extends Component {
 		}
 	}
 	render() {
-		const { isChatActive, isChatAvailable, purchase, site, supportVariation } = this.props;
+		const { purchase, site } = this.props;
 		const { surveyStep } = this.state;
-		const shouldShowChatButton =
-			( isChatAvailable || isChatActive ) && supportVariation === SUPPORT_HAPPYCHAT;
 
 		if ( ! surveyStep ) {
 			return null;
@@ -696,7 +689,6 @@ class CancelPurchaseForm extends Component {
 			<>
 				<QueryPlans />
 				{ site && <QuerySitePlans siteId={ site.ID } /> }
-				<QuerySupportTypes />
 				{ this.props.isVisible && (
 					<BlankCanvas className="cancel-purchase-form">
 						<BlankCanvas.Header onBackClick={ this.closeDialog }>
@@ -705,29 +697,17 @@ class CancelPurchaseForm extends Component {
 									{ this.getCanceledProduct() }
 								</span>
 							) }
-							{ shouldShowChatButton && (
-								<PrecancellationChatButton
-									icon="chat_bubble"
-									onClick={ this.closeDialog }
-									purchase={ purchase }
-									surveyStep={ surveyStep }
-									atBottom={ false }
-								/>
-							) }
+							<PrecancellationChatButton
+								icon="chat_bubble"
+								onClick={ this.closeDialog }
+								purchase={ purchase }
+								surveyStep={ surveyStep }
+							/>
 						</BlankCanvas.Header>
 						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
 								<div className="cancel-purchase-form__buttons">{ this.renderStepButtons() }</div>
-								{ shouldShowChatButton && (
-									<PrecancellationChatButton
-										icon="chat_bubble"
-										onClick={ this.closeDialog }
-										purchase={ purchase }
-										surveyStep={ surveyStep }
-										atBottom={ true }
-									/>
-								) }
 							</div>
 						</BlankCanvas.Footer>
 					</BlankCanvas>
@@ -739,13 +719,10 @@ class CancelPurchaseForm extends Component {
 
 export default connect(
 	( state, { purchase, linkedPurchases } ) => ( {
-		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: hasActiveHappychatSession( state ),
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
 		downgradePlanToPersonalPrice: getDowngradePlanRawPrice( state, purchase ),
 		downgradePlanToMonthlyPrice: getDowngradePlanToMonthlyRawPrice( state, purchase ),
-		supportVariation: getSupportVariation( state ),
 		site: getSite( state, purchase.siteId ),
 		willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(
 			state,

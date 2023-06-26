@@ -53,6 +53,7 @@ export function recordSelectedDesign( {
 export function getDesignTypeProps( design?: Design ) {
 	return {
 		goes_to_assembler_step: design?.design_type === 'assembler',
+		assembler_source: getAssemblerSource( design ),
 	};
 }
 
@@ -89,4 +90,30 @@ export function getVirtualDesignProps( design: Design ) {
 		is_virtual: design.is_virtual,
 		slug: design.is_virtual ? design.recipe?.slug : design.slug,
 	};
+}
+
+/**
+ * Tracks prop
+ *  name: assembler_source
+ *  values:
+ *		• virtual-theme
+ *		• blank-canvas-theme
+ * 		• standard
+ * 		• premium
+ * 		• default
+ */
+export function getAssemblerSource( design?: Design ) {
+	const { design_type, is_virtual } = design ?? {};
+
+	if ( is_virtual ) {
+		return 'virtual-theme';
+	}
+
+	if ( design_type === 'assembler' ) {
+		// blank-canvas-theme
+		return 'design-your-own';
+	}
+
+	// Standard, premium, default...
+	return design?.design_type;
 }

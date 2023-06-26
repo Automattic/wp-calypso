@@ -10,8 +10,12 @@ interface MigrateProvisionMutationOptions {
 }
 
 export const useMigrateProvisionMutation = ( onSuccessCallback: () => void ) => {
-	const mutation = useMutation(
-		( { targetBlogId, sourceBlogId, checkMigrationPlugin }: MigrateProvisionMutationOptions ) => {
+	const mutation = useMutation( {
+		mutationFn: ( {
+			targetBlogId,
+			sourceBlogId,
+			checkMigrationPlugin,
+		}: MigrateProvisionMutationOptions ) => {
 			const path =
 				`/sites/${ targetBlogId }/migrate-provision/${ sourceBlogId }` +
 				( checkMigrationPlugin ? '?check_migration_plugin=true' : '' );
@@ -20,10 +24,8 @@ export const useMigrateProvisionMutation = ( onSuccessCallback: () => void ) => 
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		{
-			onSuccess: onSuccessCallback,
-		}
-	);
+		onSuccess: onSuccessCallback,
+	} );
 
 	const { mutate } = mutation;
 	const migrateProvision = useCallback(

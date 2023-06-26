@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { translate, useTranslate } from 'i18n-calypso';
+import { useState, useMemo } from 'react';
 import useRequestContactVerificationCode from 'calypso/state/jetpack-agency-dashboard/hooks/use-request-contact-verification-code';
 import useResendVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-resend-contact-verification-code';
 import useValidateVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-validate-contact-verification-code';
@@ -8,6 +8,8 @@ import {
 	RequestVerificationCodeParams,
 	ValidateVerificationCodeParams,
 	ResendVerificationCodeParams,
+	AllowedMonitorContactActions,
+	AllowedMonitorContactTypes,
 } from '../sites-overview/types';
 
 export function useRequestVerificationCode(): {
@@ -15,10 +17,25 @@ export function useRequestVerificationCode(): {
 	isError: boolean;
 	isLoading: boolean;
 	isSuccess: boolean;
+	isVerified: boolean;
 } {
-	return useRequestContactVerificationCode( {
+	const [ isAlreadyVerifed, setIsAlreadyVerifed ] = useState( false );
+
+	const data = useRequestContactVerificationCode( {
 		retry: false,
+		onError: async ( error ) => {
+			// Add the contact to the list of contacts if already verified
+			if (
+				error?.code &&
+				[ 'existing_verified_email_contact', 'existing_verified_sms_contact' ].includes(
+					error.code
+				)
+			) {
+				setIsAlreadyVerifed( true );
+			}
+		},
 	} );
+	return { ...data, isVerified: isAlreadyVerifed };
 }
 
 const verificationErrorMessages: { [ key: string ]: string } = {
@@ -50,10 +67,18 @@ export function useValidateVerificationCode(): {
 		// Optimistically update the contacts
 		queryClient.setQueryData( queryKey, ( oldContacts: any ) => {
 			const type = params.type;
+
+			const newEmailItem = { email_address: params.value, verified: data.verified };
+			const newSMSItem = {
+				sms_number: params.value,
+				verified: data.verified,
+			};
+
 			if ( ! oldContacts ) {
 				// If there are no contacts, create a new object
 				return {
-					emails: [ { email_address: params.value, verified: data.verified } ],
+					...( type === 'email' && { emails: [ newEmailItem ] } ),
+					...( type === 'sms' && { sms_numbers: [ newSMSItem ] } ),
 				};
 			}
 			return {
@@ -64,7 +89,16 @@ export function useValidateVerificationCode(): {
 						...oldContacts.emails.filter(
 							( email: { email_address: string } ) => email.email_address !== params.value
 						),
-						{ email_address: params.value, verified: data.verified },
+						newEmailItem,
+					],
+				} ),
+				...( type === 'sms' && {
+					// Replace if it exists, otherwise add it
+					sms_numbers: [
+						...oldContacts.sms_numbers.filter(
+							( sms: { sms_number: string } ) => sms.sms_number !== params.value
+						),
+						newSMSItem,
 					],
 				} ),
 			};
@@ -77,8 +111,8 @@ export function useValidateVerificationCode(): {
 			await handleSetMonitoringContacts( data, params );
 		},
 		onError: async ( error, params ) => {
+			// Add the contact to the list of contacts if already verified
 			if ( error?.code === 'jetpack_agency_contact_is_verified' ) {
-				// Add the contact to the list of contacts if already verified
 				setIsAlreadyVerifed( true );
 				await handleSetMonitoringContacts( { verified: true }, params );
 			}
@@ -107,4 +141,62 @@ export function useResendVerificationCode(): {
 			return false;
 		},
 	} );
+}
+
+export function useContactModalTitleAndSubtitle(
+	type: AllowedMonitorContactTypes,
+	action: AllowedMonitorContactActions
+): {
+	title: string;
+	subtitle: string;
+} {
+	const translate = useTranslate();
+
+	const getContactModalTitleAndSubTitle = useMemo(
+		() => ( {
+			email: {
+				add: {
+					title: translate( 'Add new email address' ),
+					subtitle: translate(
+						'Please use an email address that is accessible. Only alerts will be sent.'
+					),
+				},
+				edit: {
+					title: translate( 'Edit your email address' ),
+					subtitle: translate( 'If you update your email address, you’ll need to verify it.' ),
+				},
+				remove: {
+					title: translate( 'Remove Email' ),
+					subtitle: translate( 'Are you sure you want to remove this email address?' ),
+				},
+				verify: {
+					title: translate( 'Verify your email address' ),
+					subtitle: translate( 'We’ll send a code to verify your email address.' ),
+				},
+			},
+			sms: {
+				add: {
+					title: translate( 'Add your phone number' ),
+					subtitle: translate(
+						'Please use phone number that is accessible. Only alerts will be sent.'
+					),
+				},
+				edit: {
+					title: translate( 'Edit your phone number' ),
+					subtitle: translate( 'If you update your number, you’ll need to verify it.' ),
+				},
+				remove: {
+					title: translate( 'Remove Phone Number' ),
+					subtitle: translate( 'Are you sure you want to remove this phone number?' ),
+				},
+				verify: {
+					title: translate( 'Verify your phone number' ),
+					subtitle: translate( 'We’ll send a code to verify your phone number.' ),
+				},
+			},
+		} ),
+		[ translate ]
+	);
+
+	return getContactModalTitleAndSubTitle[ type ][ action ];
 }

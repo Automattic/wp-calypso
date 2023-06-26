@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
@@ -19,6 +19,7 @@ const selectors = {
  */
 export class MyHomePage {
 	private page: Page;
+	private anchor: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -27,6 +28,7 @@ export class MyHomePage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.anchor = page.getByRole( 'main' );
 	}
 
 	/**
@@ -53,27 +55,43 @@ export class MyHomePage {
 	}
 
 	/**
-	 * Validates the domain upsell is showing
+	 * Clicks on the button with matching text.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * @param {string|RegExp} text Text to match on the button.
 	 */
-	async validateDomainUpsell(): Promise< void > {
-		await this.page.locator( selectors.domainUpsellCard ).waitFor();
+	async clickButton( text: string | RegExp ): Promise< void > {
+		await this.anchor.getByRole( 'button', { name: text } ).click();
 	}
 
 	/**
-	 * Get suggested domain name.
+	 * Returns whether a heading matching the text is present.
 	 *
-	 * @returns {string} No return value.
+	 * Returns true if present. False otherwise.
+	 *
+	 * @param {string|RegExp} text Text to match on for the card title.
 	 */
-	async suggestedDomainName(): Promise< string | null > {
-		await this.page.locator( selectors.domainUpsellSuggestedDomain ).waitFor();
+	async isHeadingPresent( text: string | RegExp ): Promise< boolean > {
+		try {
+			await this.anchor.getByRole( 'heading', { name: new RegExp( text ) } ).waitFor();
+			return true;
+		} catch {
+			return false;
+		}
+	}
 
-		const locator = this.page.locator( selectors.domainUpsellSuggestedDomain );
-
-		await locator.waitFor();
-
-		return await locator.locator( 'text' ).textContent();
+	/**
+	 * Get the suggested domain in the upsell card.
+	 *
+	 * @returns {string} Suggested domain. Empty string if not found.
+	 */
+	async getSuggestedUpsellDomain(): Promise< string > {
+		const locator = this.anchor.locator( '.domain-upsell-illustration' );
+		try {
+			await locator.waitFor();
+			return await locator.innerText();
+		} catch {
+			return '';
+		}
 	}
 
 	/**

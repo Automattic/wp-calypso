@@ -16,9 +16,12 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import {
+	READER_SEARCH_POPULAR_SITES,
+	READER_DISCOVER_POPULAR_SITES,
+} from 'calypso/reader/follow-sources';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
-import ReaderSearchSidebar from 'calypso/reader/stream/reader-search-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
@@ -28,6 +31,7 @@ import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/like
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
 	requestPage,
@@ -41,6 +45,7 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
+import { getReaderTags } from 'calypso/state/reader/tags/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -49,6 +54,7 @@ import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import ReaderListFollowedSites from './reader-list-followed-sites';
+import ReaderPopularSitesSidebar from './reader-popular-sites-sidebar';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 900;
@@ -79,7 +85,6 @@ class ReaderStream extends Component {
 		emptyContent: PropTypes.object,
 		className: PropTypes.string,
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
-		showPrimaryFollowButtonOnCards: PropTypes.bool,
 		placeholderFactory: PropTypes.func,
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
@@ -97,7 +102,6 @@ class ReaderStream extends Component {
 		onUpdatesShown: noop,
 		className: '',
 		showDefaultEmptyContentIfMissing: true,
-		showPrimaryFollowButtonOnCards: false,
 		isDiscoverStream: false,
 		isMain: true,
 		useCompactCards: false,
@@ -134,6 +138,7 @@ class ReaderStream extends Component {
 			this.props.requestPage( {
 				streamKey: this.props.recsStreamKey,
 				pageHandle: this.props.recsStream.pageHandle,
+				tags: this.props.recsStream.tags,
 			} );
 		}
 	}
@@ -375,12 +380,12 @@ class ReaderStream extends Component {
 	};
 
 	poll = () => {
-		const { streamKey } = this.props;
-		this.props.requestPage( { streamKey, isPoll: true } );
+		const { streamKey, tags } = this.props;
+		this.props.requestPage( { streamKey, isPoll: true, tags } );
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		const { streamKey, stream, startDate } = props;
+		const { streamKey, stream, startDate, tags } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
@@ -388,7 +393,7 @@ class ReaderStream extends Component {
 			props.trackScrollPage( pageId );
 		}
 		const pageHandle = stream.pageHandle || { before: startDate };
-		props.requestPage( { streamKey, pageHandle } );
+		props.requestPage( { streamKey, pageHandle, tags } );
 	};
 
 	showUpdates = () => {
@@ -442,7 +447,6 @@ class ReaderStream extends Component {
 					suppressSiteNameLink={ this.props.suppressSiteNameLink }
 					showPostHeader={ this.props.showPostHeader }
 					showFollowInHeader={ this.props.showFollowInHeader }
-					showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
 					isDiscoverStream={ this.props.isDiscoverStream }
 					showSiteName={ this.props.showSiteNameOnCards }
 					selectedPostKey={ undefined }
@@ -460,7 +464,17 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag } = this.props;
+		const {
+			translate,
+			forcePlaceholders,
+			lastPage,
+			streamHeader,
+			streamKey,
+			tag,
+			sites,
+			isDiscoverTags,
+			isDiscoverStream,
+		} = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -507,12 +521,21 @@ class ReaderStream extends Component {
 			let sidebarContent = null;
 			let tabTitle = translate( 'Sites' );
 
-			if ( isTagPage ) {
+			if ( isTagPage || isDiscoverTags ) {
 				sidebarContent = <ReaderTagSidebar tag={ tag } />;
 				tabTitle = translate( 'Related' );
 				baseClassnames = classnames( 'tag-stream__main', this.props.className );
 			} else if ( isSearchPage ) {
-				sidebarContent = <ReaderSearchSidebar items={ items } />;
+				sidebarContent = (
+					<ReaderPopularSitesSidebar items={ items } followSource={ READER_SEARCH_POPULAR_SITES } />
+				);
+			} else if ( isDiscoverStream ) {
+				sidebarContent = (
+					<ReaderPopularSitesSidebar
+						items={ sites }
+						followSource={ READER_DISCOVER_POPULAR_SITES }
+					/>
+				);
 			} else {
 				sidebarContent = <ReaderListFollowedSites path={ path } />;
 			}
@@ -566,7 +589,10 @@ class ReaderStream extends Component {
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
-		const shouldPoll = streamType !== 'search' && streamType !== 'custom_recs_posts_with_images';
+		// Check array of streamTypes to see if we should poll for updates;
+		const shouldPoll = ! [ 'search', 'custom_recs_posts_with_images', 'discover' ].includes(
+			streamType
+		);
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
@@ -588,6 +614,7 @@ export default connect(
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
 		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
+		const recommendedSites = getReaderRecommendedSites( state, 'discover-recommendations' ) || [];
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -607,6 +634,8 @@ export default connect(
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			tag: streamKeySuffix,
+			tags: getReaderTags( state ),
+			sites: recommendedSites,
 		};
 	},
 	{

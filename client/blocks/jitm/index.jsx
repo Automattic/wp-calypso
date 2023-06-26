@@ -65,9 +65,14 @@ function renderTemplate( template, props ) {
 }
 
 function getEventHandlers( props, dispatch ) {
-	const { jitm, currentSite, messagePath } = props;
+	const { jitm, currentSite, messagePath, searchQuery } = props;
 	const tracks = jitm.tracks || {};
-	const eventProps = { id: jitm.id, jitm: true, template: jitm?.template ?? 'default' };
+	const eventProps = {
+		id: jitm.id,
+		jitm: true,
+		template: jitm?.template ?? 'default',
+		...( searchQuery && { search_query: searchQuery } ),
+	};
 	const handlers = {};
 
 	if ( tracks.display ) {

@@ -44,8 +44,7 @@ export default function DIFMLiteThankYou() {
 			<Card className="difm-lite-thank-you__feature">
 				<HappinessSupport
 					isJetpack={ false }
-					liveChatButtonEventName="calypso_plans_autoconfig_chat_initiated"
-					showLiveChatButton={ true }
+					contactButtonEventName="calypso_plans_autoconfig_chat_initiated"
 				/>
 			</Card>
 		</Card>
