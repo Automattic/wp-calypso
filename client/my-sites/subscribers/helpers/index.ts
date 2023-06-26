@@ -28,6 +28,18 @@ const getSubscribersCacheKey = (
 	return cacheKey;
 };
 
+const getSubscriberDetailsUrl = (
+	siteSlug: string | null,
+	subscription_id: number | undefined,
+	user_id: number | undefined
+) => {
+	if ( user_id ) {
+		return `/subscribers/${ siteSlug }/${ user_id }`;
+	}
+
+	return `/subscribers/external/${ siteSlug }/${ subscription_id }`;
+};
+
 const getSubscriberDetailsCacheKey = ( siteId: number | null, queryString: string ) => [
 	'subscriber-details',
 	siteId,
@@ -43,6 +55,7 @@ export {
 	getEarnPageUrl,
 	getEarnPaymentsPageUrl,
 	getSubscriberDetailsCacheKey,
+	getSubscriberDetailsUrl,
 	getSubscribersCacheKey,
 	sanitizeInt,
 };
