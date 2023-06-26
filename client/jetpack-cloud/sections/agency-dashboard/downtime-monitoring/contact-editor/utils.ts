@@ -45,6 +45,7 @@ export const getDefaultContactInfo = (
 			countryNumericCode: countryNumericCode ?? '',
 			phoneNumber: phoneNumber ?? '',
 			phoneNumberFull: phoneNumberFull ?? '',
+			email: '',
 			id: phoneNumberFull ?? '',
 		};
 	}
@@ -56,11 +57,21 @@ export const getDefaultContactInfo = (
 			name: name ?? '',
 			email: email ?? '',
 			id: email ?? '',
+			countryCode: '',
+			countryNumericCode: '',
+			phoneNumber: '',
+			phoneNumberFull: '',
 		};
 	}
 
 	return {
 		name: '',
+		countryCode: '',
+		countryNumericCode: '',
+		phoneNumber: '',
+		phoneNumberFull: '',
+		email: '',
+		id: '',
 	};
 };
 
@@ -101,23 +112,67 @@ export const getContactInfoPayload = (
 	return { type, value: '', site_ids: [] };
 };
 
+export const addToContactList = (
+	type: AllowedMonitorContactTypes,
+	contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >,
+	contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS,
+	asVerified: boolean
+) => {
+	let isANewContact = true;
+	const newContacts = contacts.map( ( item ) => {
+		if (
+			type === 'email' &&
+			( item as StateMonitorSettingsEmail ).email === ( contact as StateMonitorSettingsEmail ).email
+		) {
+			isANewContact = false;
+			return {
+				...( item as StateMonitorSettingsEmail ),
+				verified: asVerified,
+			};
+		}
+
+		if (
+			type === 'sms' &&
+			( item as StateMonitorSettingsSMS ).phoneNumberFull ===
+				( contact as StateMonitorSettingsSMS ).phoneNumberFull
+		) {
+			isANewContact = false;
+			return {
+				...( item as StateMonitorSettingsSMS ),
+				verified: asVerified,
+			};
+		}
+
+		return item;
+	} );
+
+	if ( isANewContact ) {
+		newContacts.push( {
+			...contact,
+			verified: asVerified,
+		} );
+	}
+
+	return newContacts;
+};
+
 export const removeFromContactList = (
 	type: AllowedMonitorContactTypes,
 	contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >,
-	contactToRemove: StateMonitorSettingsEmail | StateMonitorSettingsSMS
+	contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS
 ) => {
-	return contacts.filter( ( contact ) => {
+	return contacts.filter( ( item ) => {
 		if ( type === 'email' ) {
 			return (
-				( contact as StateMonitorSettingsEmail ).email !==
-				( contactToRemove as StateMonitorSettingsEmail ).email
+				( item as StateMonitorSettingsEmail ).email !==
+				( contact as StateMonitorSettingsEmail ).email
 			);
 		}
 
 		if ( type === 'sms' ) {
 			return (
-				( contact as StateMonitorSettingsSMS ).phoneNumberFull !==
-				( contactToRemove as StateMonitorSettingsSMS ).phoneNumberFull
+				( item as StateMonitorSettingsSMS ).phoneNumberFull !==
+				( contact as StateMonitorSettingsSMS ).phoneNumberFull
 			);
 		}
 
