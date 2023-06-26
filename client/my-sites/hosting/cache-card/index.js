@@ -104,7 +104,7 @@ export const CacheCard = ( {
 	const isClearingCache = isClearingWordpressCache || clearEdgeCacheLoading;
 
 	const clearCache = () => {
-		if ( isEdgeCacheActive ) {
+		if ( isEdgeCacheActive && showEdgeCache ) {
 			clearEdgeCache();
 		}
 		clearAtomicWordPressCache( siteId, 'Manually clearing again.' );
@@ -121,8 +121,7 @@ export const CacheCard = ( {
 						disabled ||
 						isClearingCache ||
 						shouldRateLimitCacheClear ||
-						getEdgeCacheLoading ||
-						toggleEdgeCacheLoading
+						( showEdgeCache && ( getEdgeCacheLoading || toggleEdgeCacheLoading ) )
 					}
 				>
 					<span>{ translate( 'Clear cache' ) }</span>
