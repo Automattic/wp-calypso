@@ -18,6 +18,7 @@ import {
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 	READER_FOLLOW_COMPLETE,
+	READER_FOLLOWS_MARK_AS_STALE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { items as itemsSchema } from './schema';
@@ -307,6 +308,9 @@ export const lastSyncTime = ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_FOLLOWS_SYNC_START: {
 			return Date.now();
+		}
+		case READER_FOLLOWS_MARK_AS_STALE: {
+			return null;
 		}
 	}
 

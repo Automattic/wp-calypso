@@ -58,6 +58,7 @@ open class E2EBuildType(
 	var buildTriggers: Triggers.() -> Unit = {},
 	var buildDependencies: Dependencies.() -> Unit = {},
 	var addWpcomVcsRoot: Boolean = false,
+	var buildSteps: BuildSteps.() -> Unit = {}
 
 ): BuildType() {
 	init {
@@ -71,6 +72,7 @@ open class E2EBuildType(
 		val buildDependencies = buildDependencies
 		val params = params
 		val addWpcomVcsRoot = addWpcomVcsRoot
+		val buildSteps = buildSteps
 
 		id( buildId )
 		uuid = buildUuid
@@ -167,6 +169,7 @@ open class E2EBuildType(
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
+			buildSteps()
 		}
 
 		features {

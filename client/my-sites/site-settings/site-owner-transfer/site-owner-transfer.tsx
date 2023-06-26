@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ResponseDomain } from 'calypso/lib/domains/types';
@@ -13,6 +14,7 @@ import PendingDomainTransfer from './pending-domain-transfer';
 import SiteOwnerTransferEligibility from './site-owner-user-search';
 import { SiteTransferCard } from './site-transfer-card';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
+import { User } from './use-administrators';
 import { useConfirmationTransferHash } from './use-confirmation-transfer-hash';
 
 const Strong = styled( 'strong' )( {
@@ -43,7 +45,7 @@ const SiteTransferComplete = () => {
 const SiteOwnerTransfer = () => {
 	useQueryUserPurchases();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-	const [ newSiteOwner, setNewSiteOwner ] = useState( '' );
+	const [ newSiteOwner, setNewSiteOwner ] = useState< User | null >( null );
 	const [ transferSiteSuccess, setSiteTransferSuccess ] = useState( false );
 
 	const translate = useTranslate();
@@ -61,23 +63,29 @@ const SiteOwnerTransfer = () => {
 		return null;
 	}
 
-	const backHref = '/settings/general/' + selectedSite.slug;
+	const onBackClick = () => {
+		if ( ! pendingDomain && newSiteOwner && ! transferSiteSuccess ) {
+			setNewSiteOwner( null );
+		} else {
+			page( '/settings/general/' + selectedSite.slug );
+		}
+	};
+
 	if ( confirmationHash ) {
 		return (
-			<SiteTransferCard backHref={ backHref }>
+			<SiteTransferCard onClick={ onBackClick }>
 				<ConfirmationTransfer siteId={ selectedSite.ID } confirmationHash={ confirmationHash } />
 			</SiteTransferCard>
 		);
 	}
 
 	return (
-		<SiteTransferCard backHref={ backHref }>
+		<SiteTransferCard onClick={ onBackClick }>
 			{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
 			{ ! pendingDomain && ! newSiteOwner && (
 				<SiteOwnerTransferEligibility
 					siteId={ selectedSite.ID }
 					siteSlug={ selectedSite.slug }
-					siteOwner={ newSiteOwner }
 					onNewUserOwnerSubmit={ ( newOwner ) => setNewSiteOwner( newOwner ) }
 				/>
 			) }

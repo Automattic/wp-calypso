@@ -12,7 +12,9 @@ import { Campaign } from 'calypso/data/promote-post/types';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-stats-query';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
-import usePostsQueryPaged from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
+import usePostsQueryPaged, {
+	getSearchOptionsQueryParams,
+} from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
@@ -57,6 +59,10 @@ export type PagedBlazeContentData = {
 
 export type PagedBlazeSearchResponse = {
 	pages: PagedBlazeContentData[];
+};
+
+const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
+	order: SORT_OPTIONS_DEFAULT,
 };
 
 export default function PromotedPosts( { tab }: Props ) {
@@ -109,9 +115,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	/* query for posts */
-	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >( {
-		order: SORT_OPTIONS_DEFAULT,
-	} );
+	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >(
+		POST_DEFAULT_SEARCH_OPTIONS
+	);
 	const postsQuery = usePostsQueryPaged( selectedSiteId ?? 0, postsSearchOptions );
 
 	const {
@@ -128,7 +134,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	const initialPostQueryState = queryClient.getQueryState( [
 		'promote-post-posts',
 		selectedSiteId,
-		'',
+		getSearchOptionsQueryParams( POST_DEFAULT_SEARCH_OPTIONS ),
 	] );
 
 	const { has_more_pages: postsHasMorePages, items: posts } = getPagedBlazeSearchData(

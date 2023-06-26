@@ -44,7 +44,7 @@ export default function CampaignsFilter( props: Props ) {
 			label: translate( 'In moderation', { context: 'comment status' } ),
 		},
 		{
-			value: 'finiasdasdd',
+			value: 'finished',
 			label: translate( 'Completed', { context: 'comment status' } ),
 		},
 		{
