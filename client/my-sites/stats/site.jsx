@@ -62,7 +62,7 @@ const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
-	date: endOf.format( 'YYYY-MM-DD' ),
+	date: endOf,
 } ) );
 
 const CHART_VIEWS = {
@@ -186,7 +186,7 @@ class StatsSite extends Component {
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
-		const query = memoizedQuery( period, endOf );
+		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
 		// For period option links
 		const traffic = {
