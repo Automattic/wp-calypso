@@ -163,6 +163,7 @@
 		"subscription-management-comments-view": true,
 		"subscription-management-pending-view": true,
 		"subscription-management/comments-list-controls": true,
+		"themes/assemble-site": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/block-theme-previews-poc": true,
 		"themes/display-thank-you-page-for-woo": true,

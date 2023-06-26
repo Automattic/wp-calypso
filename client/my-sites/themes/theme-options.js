@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
@@ -218,6 +219,25 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! isThemeActive( state, themeId, siteId ),
 	};
 
+	const assembleSite = {
+		label: translate( 'Assemble your site' ),
+		getUrl: ( state, themeId, siteId ) => {
+			const slug = getSiteSlug( state, siteId );
+
+			return addQueryArgs( `/setup/with-theme-assembler`, {
+				siteSlug: slug,
+				theme: themeId,
+			} );
+		},
+		hideForTheme: ( state, themeId, siteId ) =>
+			! isEnabled( 'themes/assemble-site' ) ||
+			! isUserLoggedIn( state ) ||
+			isJetpackSiteMultiSite( state, siteId ) ||
+			( isExternallyManagedTheme( state, themeId ) &&
+				! isMarketplaceThemeSubscribed( state, themeId, siteId ) ) ||
+			( ! isWpcomTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ),
+	};
+
 	if ( isFSEActive ) {
 		customize.label = translate( 'Edit', { comment: "label for button to edit a theme's design" } );
 		customize.extendedLabel = translate( 'Edit this design' );
@@ -297,6 +317,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		tryandcustomize,
 		deleteTheme,
 		signup,
+		assembleSite,
 		separator,
 		info,
 	};
