@@ -46,7 +46,7 @@ const ThemeSectionContent = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: 16px;
+	row-gap: 16px;
 
 	padding: 24px;
 	@media ( min-width: 480px ) {
@@ -71,13 +71,10 @@ const ThemeSectionName = styled.div`
 
 const ThemeSectionButtons = styled.div`
 	display: flex;
-	gap: 16px;
+	column-gap: 16px;
+	row-gap: 12px;
+	align-items: flex-start;
 	flex-wrap: wrap;
-
-	& a {
-		flex-grow: 1;
-		justify-content: center;
-	}
 
 	.gridicon.gridicons-external {
 		margin-right: 4px;
@@ -91,6 +88,7 @@ const ThemeButton = styled( Button )`
 const ThemeNameSectionWrapper = styled.div`
 	display: flex;
 	row-gap: 12px;
+	column-gap: 16px;
 	flex-grow: 1;
 	flex-wrap: wrap;
 `;
