@@ -295,6 +295,7 @@ export class PlanFeatures2023Grid extends Component<
 			selectedPlan,
 			selectedFeature,
 			intent,
+			isGlobalStylesOnPersonal,
 		} = this.props;
 		return (
 			<PlansGridContextProvider intent={ intent }>
@@ -344,6 +345,7 @@ export class PlanFeatures2023Grid extends Component<
 								siteId={ siteId }
 								selectedPlan={ selectedPlan }
 								selectedFeature={ selectedFeature }
+								isGlobalStylesOnPersonal={ isGlobalStylesOnPersonal }
 							/>
 							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 								<Button onClick={ this.toggleShowPlansComparisonGrid }>

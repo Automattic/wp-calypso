@@ -317,6 +317,7 @@ type PlanComparisonGridProps = {
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
 	selectedFeature?: string;
+	isGlobalStylesOnPersonal?: boolean;
 };
 
 type PlanComparisonGridHeaderProps = {
@@ -767,6 +768,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	planActionOverrides,
 	selectedPlan,
 	selectedFeature,
+	isGlobalStylesOnPersonal,
 } ) => {
 	const translate = useTranslate();
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -890,7 +892,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 
 			const wpcomFeatures = planObject.get2023PlanComparisonFeatureOverride
 				? planObject.get2023PlanComparisonFeatureOverride().slice()
-				: planObject.get2023PricingGridSignupWpcomFeatures?.().slice() ?? [];
+				: planObject.get2023PricingGridSignupWpcomFeatures?.( isGlobalStylesOnPersonal ).slice() ??
+				  [];
 
 			const jetpackFeatures = planObject.get2023PlanComparisonJetpackFeatureOverride
 				? planObject.get2023PlanComparisonJetpackFeatureOverride().slice()
