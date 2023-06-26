@@ -47,7 +47,11 @@ const ThemeSectionContent = styled.div`
 	align-items: center;
 	flex-wrap: wrap;
 	gap: 16px;
-	padding: 20px 25px;
+
+	padding: 24px;
+	@media ( min-width: 480px ) {
+		padding: 20px 25px;
+	}
 	border: 1px solid var( --color-border-subtle );
 `;
 
