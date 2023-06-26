@@ -28,34 +28,22 @@ const useHighlightLabel = ( { planName, currentSitePlanSlug, selectedPlan }: Pro
 		selectedPlan && planLevelsMatch( planName, selectedPlan ) && isAvailableForPurchase;
 	const { intent } = usePlansGridContext();
 
-	if ( 'plans-newsletter' === intent ) {
+	if ( isCurrentPlan ) {
+		return translate( 'Your plan' );
+	} else if ( isSuggestedPlan ) {
+		return translate( 'Suggested' );
+	} else if ( 'plans-newsletter' === intent ) {
 		if ( isPersonalPlan( planName ) ) {
 			return translate( 'Best for Newsletter' );
-		}
-
-		if ( isCurrentPlan ) {
-			return translate( 'Your plan' );
 		}
 	} else if ( 'plans-link-in-bio' === intent ) {
 		if ( isPremiumPlan( planName ) ) {
 			return translate( 'Best for Link in Bio' );
 		}
-
-		if ( isCurrentPlan ) {
-			return translate( 'Your plan' );
-		}
 	} else if ( 'plans-blog-onboarding' === intent ) {
 		if ( isPremiumPlan( planName ) ) {
 			return translate( 'Best for Blog' );
 		}
-
-		if ( isCurrentPlan ) {
-			return translate( 'Your plan' );
-		}
-	} else if ( isCurrentPlan ) {
-		return translate( 'Your plan' );
-	} else if ( isSuggestedPlan ) {
-		return translate( 'Suggested' );
 	} else if ( isBusinessPlan( planName ) && ! selectedPlan ) {
 		return translate( 'Best for devs' );
 	} else if ( isPopularPlan( planName ) && ! selectedPlan ) {
