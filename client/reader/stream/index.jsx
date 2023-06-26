@@ -49,7 +49,6 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-import ReaderListFollowedSites from './reader-list-followed-sites';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 900;
@@ -512,8 +511,6 @@ class ReaderStream extends Component {
 				sidebarContent = (
 					<ReaderPopularSitesSidebar items={ items } followSource={ READER_SEARCH_POPULAR_SITES } />
 				);
-			} else {
-				sidebarContent = <ReaderListFollowedSites path={ path } />;
 			}
 
 			if ( excludesSidebar.includes( streamType ) ) {
