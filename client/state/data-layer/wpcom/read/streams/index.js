@@ -209,7 +209,7 @@ const streamApis = {
 		query: ( extras, { tags } ) =>
 			getQueryString( {
 				...extras,
-				// Do not supply an empty fallback as null is good info for tagsToLoad
+				// Do not supply an empty fallback as null is good info for getDiscoverStreamTags
 				tags: getDiscoverStreamTags( tags && Object.values( tags )?.map( ( tag ) => tag.slug ) ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,

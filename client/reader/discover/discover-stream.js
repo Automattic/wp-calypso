@@ -102,7 +102,7 @@ const DiscoverStream = ( props ) => {
 	const followedTagSlugs = followedTags ? followedTags.map( ( tag ) => tag.slug ) : [];
 	const recommendedTags = interestTags.filter( ( tag ) => ! followedTagSlugs.includes( tag.slug ) );
 
-	// Do not supply a fallback empty array as null is good data for tagsToLoad.
+	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags.
 	const recommendedStreamTags = getDiscoverStreamTags(
 		followedTags && followedTags.map( ( tag ) => tag.slug )
 	);
@@ -167,9 +167,10 @@ const DiscoverStream = ( props ) => {
 	let streamKey = `discover:${ selectedTab }`;
 	// We want a different stream key for recommended depending on the followed tags that are available.
 	if ( isDefaultTab ) {
-		// Ensures a different key depending on the users stream tags list. So the stream can
-		// update when the user follows/unfollows other tags. Sort the list first so the key is the
-		// same per same tags followed. This is necessary since we load a default tag list at first.
+		// Ensures a different key depending on the users stream tags list. So the stream can update
+		// when the user follows/unfollows other tags. Sort the list first so the key is the same
+		// per same tags followed. This is necessary since we load a default tag list when none are
+		// followed.
 		recommendedStreamTags.sort();
 		streamKey += recommendedStreamTags.reduce( ( acc, val ) => acc + `-${ val }`, '' );
 	}
