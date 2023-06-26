@@ -28,7 +28,7 @@ const useHighlightLabel = ( { planName, currentSitePlanSlug, selectedPlan }: Pro
 		selectedPlan && planLevelsMatch( planName, selectedPlan ) && isAvailableForPurchase;
 	const { intent } = usePlansGridContext();
 
-	if ( 'newsletter' === intent ) {
+	if ( 'plans-newsletter' === intent ) {
 		if ( isPersonalPlan( planName ) ) {
 			return translate( 'Best for Newsletter' );
 		}
@@ -36,7 +36,7 @@ const useHighlightLabel = ( { planName, currentSitePlanSlug, selectedPlan }: Pro
 		if ( isCurrentPlan ) {
 			return translate( 'Your plan' );
 		}
-	} else if ( 'link-in-bio' === intent ) {
+	} else if ( 'plans-link-in-bio' === intent ) {
 		if ( isPremiumPlan( planName ) ) {
 			return translate( 'Best for Link in Bio' );
 		}
@@ -44,7 +44,7 @@ const useHighlightLabel = ( { planName, currentSitePlanSlug, selectedPlan }: Pro
 		if ( isCurrentPlan ) {
 			return translate( 'Your plan' );
 		}
-	} else if ( 'blog-onboarding' === intent ) {
+	} else if ( 'plans-blog-onboarding' === intent ) {
 		if ( isPremiumPlan( planName ) ) {
 			return translate( 'Best for Blog' );
 		}
