@@ -33,7 +33,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
-import type { Intent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
+import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
 import './style.scss';
 
 type IntervalType = 'yearly' | 'monthly';
@@ -44,17 +44,17 @@ interface Props {
 	hostingFlow: boolean;
 }
 
-function getIntent( flowName: string | null, hostingFlow: boolean ): Intent | null {
+function getPlansIntent( flowName: string | null, hostingFlow: boolean ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 		case DESIGN_FIRST_FLOW:
-			return 'blog-onboarding';
+			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
-			return 'newsletter';
+			return 'plans-newsletter';
 		case LINK_IN_BIO_FLOW:
-			return 'link-in-bio';
+			return 'plans-link-in-bio';
 		case NEW_HOSTED_SITE_FLOW:
-			return hostingFlow ? 'new-hosted-site-hosting-flow' : 'new-hosted-site';
+			return hostingFlow ? 'plans-new-hosted-site-hosting-flow' : 'plans-new-hosted-site';
 		default:
 			return null;
 	}
@@ -87,9 +87,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
-	const intent = getIntent( props?.flowName, props.hostingFlow );
+	const intent = getPlansIntent( props?.flowName, props.hostingFlow );
 	const hideFreePlan = intent
-		? reduxHideFreePlan && 'blog-onboarding' === intent
+		? reduxHideFreePlan && 'plans-blog-onboarding' === intent
 		: reduxHideFreePlan;
 
 	const onSelectPlan = ( selectedPlan: any ) => {
@@ -149,7 +149,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<div>
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
-					site={ site || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					siteId={ site?.ID }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
@@ -159,9 +159,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
 					flowName={ flowName }
-					isAllPaidPlansShown={ true }
-					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ intent }

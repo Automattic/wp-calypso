@@ -16,6 +16,8 @@ jest.mock( '../hooks/use-intent-from-site-meta', () => jest.fn() );
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
+jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => jest.fn() );
+jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
 
 import {
 	GROUP_WPCOM,
@@ -37,9 +39,10 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import useIntentFromSiteMeta from '../hooks/use-intent-from-site-meta';
-import { PlansFeaturesMain } from '../index';
+import PlansFeaturesMain from '../index';
 
 const props = {
 	selectedPlan: PLAN_FREE,
@@ -72,14 +75,14 @@ describe( 'PlansFeaturesMain', () => {
 		} );
 
 		test( 'Should render <PlanFeatures /> with Newsletter plans when called with newsletter intent', () => {
-			renderWithProvider( <PlansFeaturesMain { ...props } intent="newsletter" /> );
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-newsletter" /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
 				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
 			);
 		} );
 
 		test( 'Should render <PlanFeatures /> with LinkInBio plans when called with link-in-bio intent', () => {
-			renderWithProvider( <PlansFeaturesMain { ...props } intent="link-in-bio" /> );
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-link-in-bio" /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
 				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
 			);
@@ -88,7 +91,7 @@ describe( 'PlansFeaturesMain', () => {
 		test( 'Should render <PlanFeatures /> with Newsletter plans when site with newsletter intent', () => {
 			useIntentFromSiteMeta.mockImplementation( () => ( {
 				processing: false,
-				intent: 'newsletter',
+				intent: 'plans-newsletter',
 			} ) );
 			renderWithProvider( <PlansFeaturesMain { ...props } /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
@@ -290,7 +293,8 @@ describe( 'PlansFeaturesMain', () => {
 		} );
 
 		test( 'Highlights TYPE_BUSINESS as popular plan for empty customer type', () => {
-			renderWithProvider( <PlansFeaturesMain { ...myProps } /> );
+			canUpgradeToPlan.mockReturnValue( true );
+			renderWithProvider( <PlansFeaturesMain { ...myProps } siteId={ 1 } /> );
 
 			expect( screen.getByTestId( 'popular-plan-spec' ) ).toHaveTextContent(
 				JSON.stringify( {

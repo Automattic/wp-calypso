@@ -10,32 +10,37 @@ import {
 	isBloggerPlan,
 } from '@automattic/calypso-products';
 
-export type Intent =
-	| 'blog-onboarding'
-	| 'newsletter'
-	| 'link-in-bio'
-	| 'new-hosted-site'
-	| 'new-hosted-site-hosting-flow'
-	| 'plugins'
-	| 'jetpack-app' // newly added
-	| 'import'
+export type PlansIntent =
+	| 'plans-blog-onboarding'
+	| 'plans-newsletter'
+	| 'plans-link-in-bio'
+	| 'plans-new-hosted-site'
+	| 'plans-new-hosted-site-hosting-flow'
+	| 'plans-plugins'
+	| 'plans-jetpack-app'
+	| 'plans-import'
 	| 'default';
 
 interface Props {
-	intent: Intent;
-	selectedPlan: string;
-	sitePlanSlug: string;
-	hideEnterprisePlan: boolean;
+	intent: PlansIntent;
+	selectedPlan?: string;
+	sitePlanSlug?: string | null;
+	hideEnterprisePlan?: boolean;
 }
 
 interface PlanTypesWithIntent {
-	intent: Intent;
 	planTypes: string[];
 }
 
-const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent | null => {
-	const { selectedPlan, sitePlanSlug, hideEnterprisePlan, intent } = props;
-	const isBloggerAvailable = isBloggerPlan( selectedPlan ) || isBloggerPlan( sitePlanSlug );
+const usePlanTypesWithIntent = ( {
+	selectedPlan,
+	sitePlanSlug,
+	hideEnterprisePlan,
+	intent,
+}: Props ): PlanTypesWithIntent => {
+	const isBloggerAvailable =
+		( selectedPlan && isBloggerPlan( selectedPlan ) ) ||
+		( sitePlanSlug && isBloggerPlan( sitePlanSlug ) );
 
 	// TODO:
 	// this should fall into the processing function for the visible plans
@@ -59,44 +64,42 @@ const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent | null => {
 	];
 
 	switch ( intent ) {
-		case 'blog-onboarding':
+		case 'plans-blog-onboarding':
 			return {
-				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
 			};
-		case 'newsletter':
-		case 'link-in-bio':
+		case 'plans-newsletter':
+		case 'plans-link-in-bio':
 			return {
-				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ],
 			};
-		case 'new-hosted-site':
+		case 'plans-new-hosted-site':
 			return {
-				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ],
 			};
-		case 'new-hosted-site-hosting-flow':
+		case 'plans-new-hosted-site-hosting-flow':
 			return {
-				intent,
 				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
 			};
-		case 'import':
+		case 'plans-import':
 			return {
-				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
 			};
-		case 'plugins': // is this used?
+		case 'plans-plugins': // is this used?
 			return {
-				intent,
 				planTypes: [
 					...( currentSitePlanType ? [ currentSitePlanType ] : [] ),
 					TYPE_BUSINESS, // this can match the currentSitePlanType. needs investigation.
 					TYPE_ECOMMERCE, // this can match the currentSitePlanType. needs investigation.
 				],
 			};
+		// The Jetpack mobile app only wants to display two plans -- personal and premium
+		case 'plans-jetpack-app':
+			return {
+				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
+			};
 		default:
 			return {
-				intent: 'default',
 				planTypes: defaultPlanTypes,
 			};
 	}

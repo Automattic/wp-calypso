@@ -1,8 +1,8 @@
 import { createContext, useContext } from '@wordpress/element';
-import type { Intent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
+import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
 
 interface PlansGridContext {
-	intent: Intent;
+	intent: PlansIntent;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -16,6 +16,6 @@ const PlansGridContextProvider: React.FunctionComponent< PlansGridContext > = ( 
 
 export const usePlansGridContext = (): PlansGridContext => useContext( PlansGridContext );
 
-export type { Intent };
+export type { PlansIntent };
 
 export default PlansGridContextProvider;

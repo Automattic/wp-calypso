@@ -77,7 +77,7 @@ import useHighlightLabel from './hooks/use-highlight-label';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
-import type { Intent } from './grid-context';
+import type { PlansIntent } from './grid-context';
 import type { PlanActionOverrides } from './types';
 import type { IAppState } from 'calypso/state/types';
 
@@ -102,7 +102,7 @@ const Container = (
 	);
 };
 
-type PlanFeatures2023GridProps = {
+export type PlanFeatures2023GridProps = {
 	isInSignup: boolean;
 	siteId: number;
 	isLaunchPage: boolean;
@@ -114,7 +114,6 @@ type PlanFeatures2023GridProps = {
 	flowName: string;
 	domainName: string;
 	placeholder?: string;
-	isLandingPage?: boolean;
 	intervalType: string;
 	currentSitePlanSlug?: string;
 	hidePlansFeatureComparison: boolean;
@@ -124,7 +123,7 @@ type PlanFeatures2023GridProps = {
 	selectedPlan?: string;
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
-	intent: Intent;
+	intent: PlansIntent;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -908,7 +907,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const {
 			placeholder,
 			plans,
-			isLandingPage,
 			visiblePlans,
 			isInSignup,
 			siteId,
@@ -943,17 +941,17 @@ const ConnectedPlanFeatures2023Grid = connect(
 			let jetpackFeatures: FeatureObject[] = [];
 			let tagline = '';
 
-			if ( 'newsletter' === intent ) {
+			if ( 'plans-newsletter' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
-			} else if ( 'link-in-bio' === intent ) {
+			} else if ( 'plans-link-in-bio' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
-			} else if ( 'blog-onboarding' === intent ) {
+			} else if ( 'plans-blog-onboarding' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getBlogOnboardingSignupFeatures?.() ?? []
 				);
@@ -1053,7 +1051,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				current: isCurrentPlan,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
-				isLandingPage,
 				isPlaceholder,
 				isVisible,
 				planConstantObj,

@@ -1,11 +1,11 @@
 import { useSiteIntent } from '@automattic/data-stores';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { Intent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
+import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
 
 interface IntentFromSiteMeta {
 	processing: boolean;
-	intent: Intent | null | undefined;
+	intent: PlansIntent | null | undefined;
 }
 
 const useIntentFromSiteMeta = (): IntentFromSiteMeta => {
@@ -22,7 +22,7 @@ const useIntentFromSiteMeta = (): IntentFromSiteMeta => {
 	if ( 'newsletter' === ( intent.data?.site_intent as string ) ) {
 		return {
 			processing: false,
-			intent: 'newsletter',
+			intent: 'plans-newsletter',
 		};
 	}
 

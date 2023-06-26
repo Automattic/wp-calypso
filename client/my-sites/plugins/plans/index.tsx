@@ -95,12 +95,10 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 			<div className="plans">
 				<PlansFeaturesMain
 					basePlansPath="/plugins/plans"
-					site={ selectedSite }
+					siteId={ selectedSite?.ID }
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
-					intent="plugins"
-					isInMarketplace
-					shouldShowPlansFeatureComparison
+					intent="plans-plugins"
 					isReskinned
 				/>
 			</div>
