@@ -48,6 +48,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import Divider from './divider';
 import SocialLoginForm from './social';
 
@@ -798,12 +799,11 @@ export default connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-			isWooCoreProfilerFlow:
-				'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
+			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			isWoo:
 				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
-				'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
+				isWooCommerceCoreProfilerFlow( state ),
 			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
