@@ -32,10 +32,10 @@ export const getContactActionEventName = (
 			verify: 'downtime_monitoring_email_address_verify_click',
 		},
 		sms: {
-			add: 'downtime_monitoring_sms_number_add_click',
-			edit: 'downtime_monitoring_sms_number_edit_click',
-			remove: 'downtime_monitoring_sms_number_remove_click',
-			verify: 'downtime_monitoring_sms_number_verify_click',
+			add: 'downtime_monitoring_phone_number_add_click',
+			edit: 'downtime_monitoring_phone_number_edit_click',
+			remove: 'downtime_monitoring_phone_number_remove_click',
+			verify: 'downtime_monitoring_phone_number_verify_click',
 		},
 	};
 
