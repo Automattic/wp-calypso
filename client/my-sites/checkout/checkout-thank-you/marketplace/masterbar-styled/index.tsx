@@ -12,7 +12,11 @@ const MasterbarStyledBlock = styled( Masterbar )`
 
 const WordPressLogoStyled = styled( WordPressLogo )`
 	fill: rgb( 54, 54, 54 );
-	margin: 24px;
+	margin: 24px 12px 24px 24px;
+
+	@media ( min-width: 480px ) {
+		margin: 24px;
+	}
 `;
 
 const ItemStyled = styled( Item )`
@@ -37,8 +41,9 @@ const ItemStyled = styled( Item )`
 	}
 
 	@media ( max-width: 480px ) {
-		.masterbar__item-content {
+		.gridicon + .masterbar__item-content {
 			display: block;
+			padding: 0 0 0 2px;
 		}
 	}
 `;
