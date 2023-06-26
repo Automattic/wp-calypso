@@ -11,12 +11,12 @@ import getCountries from 'calypso/state/selectors/get-countries';
 import DashboardModalForm from '../../dashboard-modal-form';
 import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
+import ContactListItem from '../contact-list/item';
 import {
 	useRequestVerificationCode,
 	useValidateVerificationCode,
 	useContactModalTitleAndSubtitle,
 } from '../hooks';
-import SMSItemContent from './sms-item-content';
 import type {
 	StateMonitorSettingsSMS,
 	Site,
@@ -86,7 +86,7 @@ export default function PhoneNumberEditor( {
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyPhoneNumber = useValidateVerificationCode();
 
-	const { title, subtitle } = useContactModalTitleAndSubtitle( 'phone', selectedAction );
+	const { title, subtitle } = useContactModalTitleAndSubtitle( 'sms', selectedAction );
 
 	const handleSetPhoneItems = useCallback(
 		( isVerified = true ) => {
@@ -338,7 +338,7 @@ export default function PhoneNumberEditor( {
 			{ isRemoveAction ? (
 				selectedPhone && (
 					<div className="margin-top-16">
-						<SMSItemContent isRemoveAction item={ selectedPhone } />
+						<ContactListItem type="sms" item={ selectedPhone } />
 					</div>
 				)
 			) : (
