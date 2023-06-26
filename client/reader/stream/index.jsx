@@ -19,7 +19,6 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
-import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
@@ -49,6 +48,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
+import ReaderPopularSitesSidebar from './reader-popular-sites-sidebar';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 900;
@@ -57,16 +57,6 @@ const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
-const excludesSidebar = [
-	'a8c',
-	'conversations',
-	'conversations-a8c',
-	'feed',
-	'likes',
-	'search',
-	'list',
-	'p2',
-];
 
 class ReaderStream extends Component {
 	static propTypes = {
@@ -461,8 +451,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, streamSidebar } =
-			this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -505,15 +494,16 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			let sidebarContent = null;
+			let sidebarContent = this.props.streamSidebar;
 
+			// TODO: use `streamSidebar` prop in search stream component, rather that using a conditionals here.
 			if ( isSearchPage ) {
 				sidebarContent = (
 					<ReaderPopularSitesSidebar items={ items } followSource={ READER_SEARCH_POPULAR_SITES } />
 				);
 			}
 
-			if ( excludesSidebar.includes( streamType ) ) {
+			if ( ! sidebarContent || streamType === 'search' ) {
 				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {
 				body = (
@@ -522,9 +512,7 @@ class ReaderStream extends Component {
 							{ streamHeader }
 							{ bodyContent }
 						</div>
-						{ ( streamSidebar || sidebarContent ) && (
-							<div className="stream__right-column">{ streamSidebar || sidebarContent }</div>
-						) }
+						{ sidebarContent && <div className="stream__right-column">{ sidebarContent }</div> }
 					</div>
 				);
 				baseClassnames = classnames( 'reader-two-column', baseClassnames );
@@ -555,8 +543,8 @@ class ReaderStream extends Component {
 						{ this.state.selectedTab === 'posts' && (
 							<div className="reader__content">{ bodyContent }</div>
 						) }
-						{ ( streamSidebar || sidebarContent ) && this.state.selectedTab === 'sites' && (
-							<div className="stream__right-column">{ streamSidebar || sidebarContent }</div>
+						{ sidebarContent && this.state.selectedTab === 'sites' && (
+							<div className="stream__right-column">{ sidebarContent }</div>
 						) }
 					</>
 				);
