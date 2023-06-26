@@ -16,13 +16,10 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import {
-	READER_SEARCH_POPULAR_SITES,
-	READER_DISCOVER_POPULAR_SITES,
-} from 'calypso/reader/follow-sources';
+import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
-import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
+import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
@@ -31,7 +28,6 @@ import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/like
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
 	requestPage,
@@ -54,7 +50,6 @@ import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import ReaderListFollowedSites from './reader-list-followed-sites';
-import ReaderPopularSitesSidebar from './reader-popular-sites-sidebar';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 900;
@@ -467,17 +462,8 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const {
-			translate,
-			forcePlaceholders,
-			lastPage,
-			streamHeader,
-			streamKey,
-			tag,
-			sites,
-			isDiscoverTags,
-			isDiscoverStream,
-		} = this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, streamSidebar } =
+			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -491,7 +477,6 @@ class ReaderStream extends Component {
 		}
 
 		const path = window.location.pathname;
-		const isTagPage = path.startsWith( '/tag/' );
 		const isSearchPage = path.startsWith( '/read/search' );
 		const streamType = getStreamType( streamKey );
 
@@ -522,22 +507,10 @@ class ReaderStream extends Component {
 			);
 
 			let sidebarContent = null;
-			let tabTitle = translate( 'Sites' );
 
-			if ( isTagPage || isDiscoverTags ) {
-				sidebarContent = <ReaderTagSidebar tag={ tag } />;
-				tabTitle = translate( 'Related' );
-				baseClassnames = classnames( 'tag-stream__main', this.props.className );
-			} else if ( isSearchPage ) {
+			if ( isSearchPage ) {
 				sidebarContent = (
 					<ReaderPopularSitesSidebar items={ items } followSource={ READER_SEARCH_POPULAR_SITES } />
-				);
-			} else if ( isDiscoverStream ) {
-				sidebarContent = (
-					<ReaderPopularSitesSidebar
-						items={ sites }
-						followSource={ READER_DISCOVER_POPULAR_SITES }
-					/>
 				);
 			} else {
 				sidebarContent = <ReaderListFollowedSites path={ path } />;
@@ -552,7 +525,9 @@ class ReaderStream extends Component {
 							{ streamHeader }
 							{ bodyContent }
 						</div>
-						<div className="stream__right-column">{ sidebarContent }</div>
+						{ ( streamSidebar || sidebarContent ) && (
+							<div className="stream__right-column">{ streamSidebar || sidebarContent }</div>
+						) }
 					</div>
 				);
 				baseClassnames = classnames( 'reader-two-column', baseClassnames );
@@ -575,7 +550,7 @@ class ReaderStream extends Component {
 										selected={ this.state.selectedTab === 'sites' }
 										onClick={ this.handleSitesSelected }
 									>
-										{ tabTitle }
+										{ this.props.sidebarTabTitle || translate( 'Sites' ) }
 									</NavItem>
 								</NavTabs>
 							</SectionNav>
@@ -583,8 +558,8 @@ class ReaderStream extends Component {
 						{ this.state.selectedTab === 'posts' && (
 							<div className="reader__content">{ bodyContent }</div>
 						) }
-						{ this.state.selectedTab === 'sites' && (
-							<div className="stream__right-column">{ sidebarContent }</div>
+						{ ( streamSidebar || sidebarContent ) && this.state.selectedTab === 'sites' && (
+							<div className="stream__right-column">{ streamSidebar || sidebarContent }</div>
 						) }
 					</>
 				);
@@ -616,8 +591,6 @@ export default connect(
 	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
-		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
-		const recommendedSites = getReaderRecommendedSites( state, 'discover-recommendations' ) || [];
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -636,9 +609,7 @@ export default connect(
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
-			tag: streamKeySuffix,
 			tags: getReaderTags( state ),
-			sites: recommendedSites,
 		};
 	},
 	{

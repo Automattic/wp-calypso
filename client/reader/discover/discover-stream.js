@@ -7,9 +7,13 @@ import { throttle } from 'lodash';
 import { useState, useRef, useEffect } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import wpcom from 'calypso/lib/wp';
+import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
+import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
+import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { useSelector } from 'calypso/state';
+import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { getDiscoverStreamTags } from './helper';
 
@@ -26,6 +30,9 @@ const DiscoverStream = ( props ) => {
 	const scrollPosition = useRef( 0 );
 	const locale = useLocale();
 	const followedTags = useSelector( getReaderFollowedTags );
+	const recommendedSites = useSelector(
+		( state ) => getReaderRecommendedSites( state, 'discover-recommendations' ) || []
+	);
 	const [ selectedTab, setSelectedTab ] = useState( DEFAULT_TAB );
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
@@ -186,12 +193,22 @@ const DiscoverStream = ( props ) => {
 		streamKey += recommendedStreamTags.reduce( ( acc, val ) => acc + `-${ val }`, '' );
 	}
 
+	const streamSidebar = isDefaultTab ? (
+		<ReaderPopularSitesSidebar
+			items={ recommendedSites }
+			followSource={ READER_DISCOVER_POPULAR_SITES }
+		/>
+	) : (
+		<ReaderTagSidebar tag={ selectedTab } />
+	);
+
 	const streamProps = {
 		...props,
-		isDiscoverTags: ! isDefaultTab,
 		streamKey,
 		streamHeader: recommendedTags.length ? <DiscoverNavigation /> : null,
 		useCompactCards: true,
+		streamSidebar,
+		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
 	};
 
 	return <Stream { ...streamProps } />;

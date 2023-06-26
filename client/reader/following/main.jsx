@@ -8,7 +8,7 @@ function FollowingStream( { ...props } ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<>
-			<Stream { ...props }>
+			<Stream { ...props } className="following">
 				<FollowingIntro />
 			</Stream>
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
