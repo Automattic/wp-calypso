@@ -1,7 +1,7 @@
-.stats-participation-wizard {
+.stats-purchase-wizard {
 	max-width: 90%;
 
-	.stats-participation-wizard__card {
+	.stats-purchase-wizard__card {
 		display: flex;
 	}
 
@@ -101,7 +101,7 @@
 		margin-top: auto;
 	}
 
-	.stats-participation-wizard__card-grid {
+	.stats-purchase-wizard__card-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		grid-gap: 16px 32px;

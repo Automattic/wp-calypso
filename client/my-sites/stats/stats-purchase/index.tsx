@@ -7,9 +7,9 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
-import StatsParticipationWizard from './stats-participation-wizard';
+import StatsPurchaseWizard from './stats-participation-wizard';
 
-const StatsParticipationPage = () => {
+const StatsPurchasePage = () => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -22,7 +22,7 @@ const StatsParticipationPage = () => {
 			<PageViewTracker path="/stats/participation/:site" title="Stats > Purchase" />
 			<div className="stats">
 				{ isPurchaseEnabled ? (
-					<StatsParticipationWizard siteSlug={ siteSlug } />
+					<StatsPurchaseWizard siteSlug={ siteSlug } />
 				) : (
 					<p>This page is empty.</p>
 				) }
@@ -32,4 +32,4 @@ const StatsParticipationPage = () => {
 	);
 };
 
-export default StatsParticipationPage;
+export default StatsPurchasePage;

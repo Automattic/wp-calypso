@@ -3,10 +3,10 @@ import { Button, CheckboxControl, Card, Panel, PanelRow, PanelBody } from '@word
 // import classNames from 'classnames';
 // import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
-import StatsParticipationSVG from './stats-participation-svg';
+import StatsPurchaseSVG from './stats-participation-svg';
 import './styles.scss';
 
-const COMPONENT_NAME = 'stats-participation-wizard';
+const COMPONENT_NAME = 'stats-purchase-wizard';
 
 const ProductCard = ( { siteSlug } ) => {
 	const [ subscriptionValue, setSubscriptionValue ] = useState( 6 );
@@ -188,7 +188,7 @@ const ProductCard = ( { siteSlug } ) => {
 						</Panel>
 					</div>
 					<div className="right">
-						<StatsParticipationSVG
+						<StatsPurchaseSVG
 							isFree={ subscriptionValue === 0 }
 							hasHighlight={ subscriptionValue >= 40 }
 							extraMessage={ subscriptionValue >= 90 }
@@ -200,8 +200,8 @@ const ProductCard = ( { siteSlug } ) => {
 	);
 };
 
-const StatsParticipationWizzard = ( { siteSlug } ) => {
+const StatsPurchaseWizard = ( { siteSlug } ) => {
 	return <ProductCard siteSlug={ siteSlug } />;
 };
 
-export default StatsParticipationWizzard;
+export default StatsPurchaseWizard;

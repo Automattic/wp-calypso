@@ -1,14 +1,14 @@
-interface StatsParticipationSVG {
+interface StatsPurchaseSVG {
 	isFree: boolean;
 	hasHighlight: boolean;
 	extraMessage: boolean;
 }
 
-const StatsParticipationSVG = ( {
+const StatsPurchaseSVG = ( {
 	isFree = false,
 	hasHighlight = false,
 	extraMessage = false,
-}: StatsParticipationSVG ) => {
+}: StatsPurchaseSVG ) => {
 	return (
 		<>
 			<svg xmlns="http://www.w3.org/2000/svg" width="456" height="383" fill="none">
@@ -364,4 +364,4 @@ const StatsParticipationSVG = ( {
 	);
 };
 
-export default StatsParticipationSVG;
+export default StatsPurchaseSVG;
