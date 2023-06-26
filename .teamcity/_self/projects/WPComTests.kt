@@ -116,16 +116,19 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 
 			if (nightly) {
 				param("env.GUTENBERG_NIGHTLY", "true");
+			}
+
+			if (edge) {
+				param("env.GUTENBERG_EDGE", "true")
+			}
+
+			if (edge || nightly) {
 				password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
 				// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
 				// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
 				// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
 				password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
 				text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
-			}
-
-			if (edge) {
-				param("env.GUTENBERG_EDGE", "true")
 			}
 		},
 		buildSteps = {
