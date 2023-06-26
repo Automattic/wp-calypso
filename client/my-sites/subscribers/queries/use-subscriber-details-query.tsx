@@ -5,15 +5,15 @@ import type { Subscriber } from '../types';
 
 const useSubscriberDetailsQuery = (
 	siteId: number | null,
-	subscriberId: number | undefined,
+	subscriptionId: number | undefined,
 	userId: number | undefined
 ) => {
 	let queryString = '';
 
-	if ( subscriberId ) {
-		queryString += `subscriber_id=${ subscriberId }`;
-	} else if ( userId ) {
-		queryString += `user_id=${ userId }`;
+	if ( userId ) {
+		queryString = `user_id=${ userId }&type=wpcom`;
+	} else {
+		queryString = `subscription_id=${ subscriptionId }&type=email`;
 	}
 
 	return useQuery< Subscriber >( {

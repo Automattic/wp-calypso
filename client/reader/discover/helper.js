@@ -3,6 +3,28 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { find, get } from 'lodash';
 import { getSiteUrl as readerRouteGetSiteUrl } from 'calypso/reader/route';
 
+const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
+
+/**
+ * Filters tags data and returns the tags intended to be loaded by the discover pages recommended
+ * section. If tags is null, we return an empty array as we have yet to recieve the users followed
+ * tags list. If the users followed tags list is empty, we return a default array of tags used to
+ * load the feed. Otherwise, load the feed based on the users follwed tags.
+ *
+ * @param {Array | null} tags Array of tag slugs to evaluate
+ * @returns {Array} Array of tag slugs that will be used for the discover stream.
+ */
+export function getDiscoverStreamTags( tags ) {
+	// If tags === [], we load default discover tags. If tags is falsy, we need to wait for the data
+	// before determining whether or not to load defaults or use the followed tags array.
+	if ( ! tags ) {
+		return [];
+	} else if ( tags.length === 0 ) {
+		return DEFAULT_DISCOVER_TAGS;
+	}
+	return tags;
+}
+
 function hasDiscoverSlug( post, searchSlug ) {
 	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );
 	return !! ( metaData && find( metaData, { slug: searchSlug } ) );
