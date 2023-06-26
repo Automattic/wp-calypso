@@ -2202,7 +2202,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_CONTENT_JP ]: {
 		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
-		getTitle: () => i18n.translate( 'Add paid subscriptions and gated content' ),
+		getTitle: () => i18n.translate( 'Gated content' ),
 		getDescription: () => i18n.translate( 'Sell access to premium content, right from your site.' ),
 	},
 	[ FEATURE_VIDEOPRESS_JP ]: {
