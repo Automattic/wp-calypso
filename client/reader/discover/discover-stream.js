@@ -10,7 +10,7 @@ import wpcom from 'calypso/lib/wp';
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import { DEFAULT_DISCOVER_TAGS } from './helper';
+import { tagsToLoad } from './helper';
 
 import './discover-stream.scss';
 
@@ -24,7 +24,9 @@ const DiscoverStream = ( props ) => {
 	const scrollRef = useRef();
 	const scrollPosition = useRef( 0 );
 	const locale = useLocale();
-	const followedTags = useSelector( getReaderFollowedTags ) || DEFAULT_DISCOVER_TAGS;
+	const readerFollowedTags = useSelector( getReaderFollowedTags );
+	// Determine if we want to show a default list if the user has no tags follwed.
+	const followedTags = tagsToLoad( readerFollowedTags );
 	const [ selectedTab, setSelectedTab ] = useState( DEFAULT_TAB );
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
@@ -162,13 +164,11 @@ const DiscoverStream = ( props ) => {
 	let streamKey = `discover:${ selectedTab }`;
 	// We want a different stream key for recommended depending on the followed tags that are available.
 	if ( isDefaultTab ) {
-		if ( ! followedTags.length ) {
-			streamKey += '-no-tags';
-		} else {
-			// Ensures a different key depending on the users followed tags list. So the stream can
-			// update when the user follows/unfollows other tags.
-			streamKey += followedTagSlugs.reduce( ( acc, val ) => acc + `-${ val }`, '' );
-		}
+		// Ensures a different key depending on the users followed tags list. So the stream can
+		// update when the user follows/unfollows other tags. Sort the list first so the key is the
+		// same per same tags followed. This is necessary since we load a default tag list at first.
+		followedTagSlugs.sort();
+		streamKey += followedTagSlugs.reduce( ( acc, val ) => acc + `-${ val }`, '' );
 	}
 
 	const streamProps = {

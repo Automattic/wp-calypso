@@ -1,6 +1,6 @@
 import warn from '@wordpress/warning';
 import { random, map, includes, get } from 'lodash';
-import { DEFAULT_DISCOVER_TAGS } from 'calypso/reader/discover/helper';
+import { tagsToLoad } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -206,13 +206,14 @@ const streamApis = {
 			return '/read/tags/cards';
 		},
 		dateProperty: 'date',
-		query: ( extras, { tags } ) =>
-			getQueryString( {
+		query: ( extras, { tags } ) => {
+			return getQueryString( {
 				...extras,
-				tags: tags ? Object.values( tags )?.map( ( tag ) => tag.slug ) : DEFAULT_DISCOVER_TAGS,
+				tags: tagsToLoad( tags ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
-			} ),
+			} );
+		},
 		apiNamespace: 'wpcom/v2',
 	},
 	site: {

@@ -6,6 +6,17 @@ import { getSiteUrl as readerRouteGetSiteUrl } from 'calypso/reader/route';
 // Used to populate the recommended discover feed when no tags are followed by the user.
 export const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
 
+export function tagsToLoad( tags ) {
+	// If tags === [], we load default discover tags. If tags is falsy, we need to wait for the data
+	// before determining whether or not to load defaults or use the followed tags array.
+	if ( ! tags ) {
+		return [];
+	} else if ( tags.length === 0 ) {
+		return DEFAULT_DISCOVER_TAGS;
+	}
+	return tags;
+}
+
 function hasDiscoverSlug( post, searchSlug ) {
 	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );
 	return !! ( metaData && find( metaData, { slug: searchSlug } ) );
