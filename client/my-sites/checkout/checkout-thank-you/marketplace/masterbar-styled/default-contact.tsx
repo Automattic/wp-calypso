@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Gridicon } from '@automattic/components';
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -27,6 +28,24 @@ const ContactContainer = styled.div`
 	button.marketplace-thank-you-help-center {
 		text-decoration: underline;
 	}
+
+	.gridicon {
+		display: block;
+		fill: var( --studio-gray-60 );
+	}
+	label,
+	span {
+		display: none;
+	}
+	@media ( min-width: 480px ) {
+		.gridicon {
+			display: none;
+		}
+		label,
+		span {
+			display: block;
+		}
+	}
 `;
 
 export function DefaultMasterbarContact() {
@@ -53,7 +72,8 @@ export function DefaultMasterbarContact() {
 		<ContactContainer>
 			<label>{ translate( 'Need extra help?' ) }</label>
 			<Button className="marketplace-thank-you-help-center" isLink onClick={ toggleHelpCenter }>
-				{ translate( 'Visit Help Center' ) }
+				<Gridicon icon="help-outline" />
+				<span>{ translate( 'Visit Help Center' ) }</span>
 			</Button>
 		</ContactContainer>
 	);
