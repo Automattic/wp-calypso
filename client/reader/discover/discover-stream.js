@@ -7,6 +7,7 @@ import { throttle } from 'lodash';
 import { useState, useRef, useEffect } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import wpcom from 'calypso/lib/wp';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
@@ -41,6 +42,16 @@ const DiscoverStream = ( props ) => {
 			return data.interests;
 		},
 	} );
+
+	const recordTabClick = () => {
+		recordAction( 'click_discover_tab' );
+		recordGaEvent( 'Clicked Discover Tab' );
+	};
+
+	const menuTabClick = ( tab ) => {
+		setSelectedTab( tab );
+		recordTabClick();
+	};
 
 	const shouldHideLeftScrollButton = () => scrollPosition.current < SHOW_SCROLL_THRESHOLD;
 	const shouldHideRightScrollButton = () =>
@@ -138,7 +149,7 @@ const DiscoverStream = ( props ) => {
 					<SegmentedControl.Item
 						key={ DEFAULT_TAB }
 						selected={ isDefaultTab }
-						onClick={ () => setSelectedTab( DEFAULT_TAB ) }
+						onClick={ () => menuTabClick( DEFAULT_TAB ) }
 					>
 						{ translate( 'Recommended' ) }
 					</SegmentedControl.Item>
@@ -147,7 +158,7 @@ const DiscoverStream = ( props ) => {
 							<SegmentedControl.Item
 								key={ tag.slug }
 								selected={ tag.slug === selectedTab }
-								onClick={ () => setSelectedTab( tag.slug ) }
+								onClick={ () => menuTabClick( tag.slug ) }
 							>
 								{ tag.title }
 							</SegmentedControl.Item>
