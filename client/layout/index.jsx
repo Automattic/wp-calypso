@@ -211,7 +211,8 @@ class Layout extends Component {
 
 		return (
 			<MasterbarComponent
-				section={ this.props.sectionGroup }
+				sectionGroup={ this.props.sectionGroup }
+				section={ this.props.sectionName }
 				isCheckout={ this.props.sectionName === 'checkout' }
 				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 				loadHelpCenterIcon={ loadHelpCenterIcon }

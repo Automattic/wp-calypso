@@ -61,7 +61,8 @@ class MasterbarLoggedIn extends Component {
 	static propTypes = {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
-		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		sectionGroup: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		section: PropTypes.string,
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -86,12 +87,12 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	handleLayoutFocus = ( currentSection ) => {
-		if ( currentSection !== this.props.section ) {
-			// When current section is not focused then open the sidebar.
+	handleLayoutFocus = ( currentSectionGroup ) => {
+		if ( currentSectionGroup !== this.props.sectionGroup ) {
+			// When current group is not focused then open the sidebar.
 			this.props.setNextLayoutFocus( 'sidebar' );
 		} else {
-			// When current section is focused then open or close the sidebar depending on current state.
+			// When current group is focused then open or close the sidebar depending on current state.
 			'sidebar' === this.props.currentLayoutFocus
 				? this.props.setNextLayoutFocus( 'content' )
 				: this.props.setNextLayoutFocus( 'sidebar' );
@@ -153,7 +154,8 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	clickDomains = () => {
-		this.props.setNextLayoutFocus( 'content' );
+		this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' );
+		this.handleLayoutFocus( 'sites' );
 	};
 
 	clickReader = () => {
@@ -202,8 +204,16 @@ class MasterbarLoggedIn extends Component {
 		this.props.recordTracksEvent( 'calypso_masterbar_cart_remove_product', { uuid } );
 	};
 
-	isActive = ( section ) => {
-		return section === this.props.section && ! this.props.isNotificationsShowing;
+	isActive = ( sectionGroup ) => {
+		return sectionGroup === this.props.sectionGroup && ! this.props.isNotificationsShowing;
+	};
+
+	isDomainsActive = () => {
+		return (
+			this.isActive( 'sites' ) &&
+			'domains' === this.props.section &&
+			( this.props.domainOnlySite || ! this.props.currentSelectedSiteId )
+		);
 	};
 
 	wordpressIcon = () => {
@@ -223,7 +233,7 @@ class MasterbarLoggedIn extends Component {
 			siteSlug,
 			translate,
 			isCustomerHomeEnabled,
-			section,
+			sectionGroup,
 		} = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
@@ -236,10 +246,10 @@ class MasterbarLoggedIn extends Component {
 		const icon =
 			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
 
-		if ( 'sites' === section && isResponsiveMenu ) {
+		if ( 'sites' === sectionGroup && isResponsiveMenu ) {
 			mySitesUrl = '';
 		}
-		if ( ! siteSlug && section === 'sites-dashboard' ) {
+		if ( ! siteSlug && sectionGroup === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
 			return <Item icon={ icon } disabled />;
 		}
@@ -250,7 +260,7 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="my-sites"
 				icon={ icon }
 				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
+				isActive={ this.isActive( 'sites' ) && ! this.isDomainsActive() && ! isMenuOpen }
 				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
 			>
@@ -302,7 +312,7 @@ class MasterbarLoggedIn extends Component {
 				url="/domains/manage"
 				icon="domains"
 				onClick={ this.clickDomains }
-				isActive={ this.isActive( 'domains' ) }
+				isActive={ this.isDomainsActive() }
 				tooltip={ translate( 'Manage domains' ) }
 				preloadSection={ this.preloadDomains }
 			>

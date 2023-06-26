@@ -236,7 +236,7 @@ const sections = [
 		name: 'domains',
 		paths: [ '/domains' ],
 		module: 'calypso/my-sites/domains',
-		group: 'domains',
+		group: 'sites',
 	},
 	{
 		name: 'incoming-redirect',
