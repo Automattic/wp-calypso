@@ -28,7 +28,10 @@ const ThankYouSectionTitle = styled.h1`
 `;
 
 const ThankYouSectionContainer = styled.div`
-	margin-top: 50px;
+	margin-top: 40px;
+	@media ( min-width: 480px ) {
+		margin-top: 50px;
+	}
 	&:not( :first-child ) {
 		border-top: 1px solid var( --studio-gray-5 );
 	}
