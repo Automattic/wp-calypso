@@ -575,7 +575,8 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 	}
 
 	// Limited Global Styles on Personal A/B test.
-	if ( 'treatment' === \ExPlat\assign_current_user( 'calypso_global_styles_personal' ) ) {
+	$owner = get_userdata( wpcom_get_blog_owner( $blog_id ) );
+	if ( 'treatment' === \ExPlat\get_user_assignment( 'calypso_global_styles_personal', $owner ) ) {
 		/*
 		 * Flag site so users of the treatment group can always have access to Global Styles, even
 		 * if the A/B test has finished without expanding Global Styles to the Personal plan.
