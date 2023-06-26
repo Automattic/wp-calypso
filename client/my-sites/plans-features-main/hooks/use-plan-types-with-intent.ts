@@ -29,7 +29,6 @@ interface Props {
 }
 
 interface PlanTypesWithIntent {
-	intent: PlansIntent;
 	planTypes: string[];
 }
 
@@ -67,33 +66,27 @@ const usePlanTypesWithIntent = ( {
 	switch ( intent ) {
 		case 'plans-blog-onboarding':
 			return {
-				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
 			};
 		case 'plans-newsletter':
 		case 'plans-link-in-bio':
 			return {
-				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ],
 			};
 		case 'plans-new-hosted-site':
 			return {
-				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ],
 			};
 		case 'plans-new-hosted-site-hosting-flow':
 			return {
-				intent,
 				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
 			};
 		case 'plans-import':
 			return {
-				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
 			};
 		case 'plans-plugins': // is this used?
 			return {
-				intent,
 				planTypes: [
 					...( currentSitePlanType ? [ currentSitePlanType ] : [] ),
 					TYPE_BUSINESS, // this can match the currentSitePlanType. needs investigation.
@@ -103,12 +96,10 @@ const usePlanTypesWithIntent = ( {
 		// The Jetpack mobile app only wants to display two plans -- personal and premium
 		case 'plans-jetpack-app':
 			return {
-				intent,
 				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
 			};
 		default:
 			return {
-				intent: 'default',
 				planTypes: defaultPlanTypes,
 			};
 	}

@@ -433,7 +433,7 @@ const PlansFeaturesMain = ( {
 						hidePlansFeatureComparison={ hidePlansFeatureComparison }
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
-						intent={ planTypesWithIntent.intent }
+						intent={ intent }
 					/>
 				</>
 			) }
