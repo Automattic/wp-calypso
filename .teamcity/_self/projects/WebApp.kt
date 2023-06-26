@@ -823,8 +823,14 @@ object PreReleaseE2ETests : BuildType({
 				cd test/e2e
 				mkdir temp
 
+				# Disable exit on error to support retries.
+				set +o errexit
+
 				# Run suite.
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release
+
+				# Restore exit on error.
+				set -o errexit
 
 				# Retry failed tests only.
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures
