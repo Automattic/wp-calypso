@@ -792,11 +792,12 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_COLLECT_PAYMENTS_V2,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 	],
-	get2023PricingGridSignupWpcomFeatures: () => [
+	get2023PricingGridSignupWpcomFeatures: ( isGlobalStylesOnPersonal = false ) => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_SUPPORT_EMAIL,
+		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [ FEATURE_PREMIUM_CONTENT_JP ],
@@ -808,6 +809,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_AD_FREE_EXPERIENCE,
@@ -824,6 +826,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
@@ -832,6 +835,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
 	getBlogOnboardingSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_SUPPORT_EMAIL,
@@ -1346,12 +1350,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
-	get2023PricingGridSignupWpcomFeatures: () => [
+	get2023PricingGridSignupWpcomFeatures: ( isGlobalStylesOnPersonal = false ) => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
-		FEATURE_STYLE_CUSTOMIZATION,
+		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [

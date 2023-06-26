@@ -200,7 +200,7 @@ export type Plan = BillingTerm & {
 	 * this feature list will be ignored in the plans comparison table only.
 	 * Context - pdgrnI-26j
 	 */
-	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
+	get2023PricingGridSignupWpcomFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
 
 	/**
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.

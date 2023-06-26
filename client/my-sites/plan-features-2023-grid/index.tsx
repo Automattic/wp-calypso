@@ -45,6 +45,7 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import FoldableCard from 'calypso/components/foldable-card';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { useExperiment } from 'calypso/lib/explat';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
@@ -136,6 +137,7 @@ type PlanFeatures2023GridConnectedProps = {
 	manageHref: string;
 	selectedSiteSlug: string | null;
 	isPlanUpgradeCreditEligible: boolean;
+	isGlobalStylesOnPersonal?: boolean;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -903,7 +905,7 @@ const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
-	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
+	( state: IAppState, ownProps: PlanFeatures2023GridType ) => {
 		const {
 			placeholder,
 			plans,
@@ -913,6 +915,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			currentSitePlanSlug,
 			selectedFeature,
 			intent,
+			isGlobalStylesOnPersonal,
 		} = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
@@ -962,7 +965,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( isGlobalStylesOnPersonal ) ?? []
 				);
 
 				jetpackFeatures = getPlanFeaturesObject(
@@ -1090,12 +1093,14 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible( props.siteId, props.plans );
+	const [ , globalStylesOnPersonalExperiment ] = useExperiment( 'wpcom_global_styles_personal' );
 
 	if ( props.isInSignup ) {
 		return (
 			<ConnectedPlanFeatures2023Grid
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				isGlobalStylesOnPersonal={ globalStylesOnPersonalExperiment?.variationName === 'treatment' }
 			/>
 		);
 	}
@@ -1105,6 +1110,7 @@ const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 			<ConnectedPlanFeatures2023Grid
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				isGlobalStylesOnPersonal={ globalStylesOnPersonalExperiment?.variationName === 'treatment' }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
