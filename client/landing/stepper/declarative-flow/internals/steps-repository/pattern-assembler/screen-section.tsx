@@ -36,7 +36,7 @@ const ScreenSection = ( {
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Sections' ) } /> }
 				description={ translate(
-					'Add and arrange patterns to make your homepage unique and help people understand instantly what the site’s about. '
+					'Add and arrange patterns to make your homepage unique and showcase the content of your site.'
 				) }
 			/>
 			<div className="screen-container__body">
