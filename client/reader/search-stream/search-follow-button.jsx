@@ -71,11 +71,6 @@ class SearchFollowButton extends Component {
 			return null;
 		}
 
-		// If already following this feed then don't show the follow button
-		if ( feed.is_following === true ) {
-			return null;
-		}
-
 		let followTitle = withoutHttp( query );
 		// Use the feed name if available on the feed object
 		if ( feed?.name?.length > 0 ) {

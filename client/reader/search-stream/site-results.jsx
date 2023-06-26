@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
+import { urlToDomainAndPath } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderInfiniteStream from 'calypso/reader/components/reader-infinite-stream';
 import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-stream/row-renderers';
@@ -89,7 +90,7 @@ export default connect(
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 			const feedResults = feeds.reduce( ( uniqueFeeds, feed ) => {
 				// Strip out the URL scheme for subscribe_URL
-				const strippedSubscribeURL = feed.subscribe_URL?.replace( /^https?:\/\//, '' );
+				const strippedSubscribeURL = urlToDomainAndPath( feed.subscribe_URL );
 
 				// Check if the array already has an item with the same strippedSubscribeURL or feed_ID
 				const foundItem = uniqueFeeds.find(
@@ -97,7 +98,7 @@ export default connect(
 					( uniqueFeed ) =>
 						( ! feed.feed_ID &&
 							uniqueFeed.subscribe_URL &&
-							uniqueFeed.subscribe_URL?.replace( /^https?:\/\//, '' ) === strippedSubscribeURL ) ||
+							urlToDomainAndPath( uniqueFeed.subscribe_URL ) === strippedSubscribeURL ) ||
 						( feed.feed_ID && uniqueFeed.feed_ID === feed.feed_ID )
 				);
 
@@ -117,7 +118,14 @@ export default connect(
 				return uniqueFeeds;
 			}, [] );
 
-			ownProps.onReceiveSearchResults( feedResults );
+			// Rremove single result if it does not match the query
+			if ( feedResults.length === 1 ) {
+				const isMatch = feedResults[ 0 ].feed_URL?.includes( urlToDomainAndPath( ownProps.query ) );
+
+				if ( ! isMatch ) {
+					feedResults.pop();
+				}
+			}
 		}
 		return {
 			searchResults: searchResults,
