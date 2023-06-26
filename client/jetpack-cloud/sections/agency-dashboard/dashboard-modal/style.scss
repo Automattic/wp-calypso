@@ -1,14 +1,38 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
 .dashboard-modal {
 	max-height: 100%;
 	width: 480px;
 	animation: components-modal__appear-animation 0.1s ease-out;
 	animation-fill-mode: forwards;
+
+	.components-modal__content {
+		margin-block-start: 50px;
+		padding-block-end: 120px;
+
+		@include break-mobile {
+			margin-block-start: 76px;
+			padding-block-end: 32px;
+		}
+	}
+
+	form {
+		margin-block-start: 32px;
+
+		@include break-mobile {
+			margin-block-start: 16px;
+		}
+	}
 }
 
 .dashboard-modal__sub-title {
 	font-size: 0.75rem;
 	line-height: 14px;
 	color: var(--studio-gray-50);
-	position: absolute;
-	inset-block-start: 50px;
+
+	@include break-mobile {
+		position: absolute;
+		inset-block-start: 50px;
+	}
 }
