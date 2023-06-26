@@ -84,6 +84,11 @@
 			gap: 40px;
 		}
 		justify-content: center;
+		margin-bottom: 80px;
+
+		@media ( max-width: 480px ) {
+			margin-top: -16px;
+		}
 
 		.thank-you__step {
 			display: flex;

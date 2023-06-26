@@ -19,7 +19,6 @@ const ThankYouContainer = styled.div`
 	-ms-overflow-style: none;
 	/* Negative value to counteract default content padding */
 	margin-top: calc( -79px + var( --masterbar-height ) );
-	margin-bottom: 80px;
 `;
 
 const ThankYouSectionTitle = styled.h1`
@@ -28,10 +27,7 @@ const ThankYouSectionTitle = styled.h1`
 `;
 
 const ThankYouSectionContainer = styled.div`
-	margin-top: 40px;
-	@media ( min-width: 480px ) {
-		margin-top: 50px;
-	}
+	margin-bottom: 35px;
 	&:not( :first-child ) {
 		border-top: 1px solid var( --studio-gray-5 );
 	}
@@ -44,6 +40,7 @@ const ThankYouBody = styled.div`
 	width: 100%;
 	display: flex;
 	justify-content: center;
+	margin-top: 50px;
 	> div {
 		width: 600px;
 		padding: 0 20px;
@@ -60,6 +57,7 @@ const ThankYouNextSteps = styled.div`
 
 	p {
 		color: var( --studio-gray-50 );
+		padding-right: 20px;
 	}
 	> div {
 		display: flex;
