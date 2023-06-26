@@ -140,7 +140,6 @@ export default function VatInfoPage() {
 						{ translate(
 							'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.',
 							{
-								args: { taxName: taxName ?? translate( 'tax (VAT/GST/CT)', { textOnly: true } ) },
 								components: {
 									learnMoreLink: (
 										<InlineSupportLink
