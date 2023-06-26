@@ -37,7 +37,7 @@ const ContactContainer = styled.div`
 	span {
 		display: none;
 	}
-	@media ( min-width: 480px ) {
+	@media ( min-width: 600px ) {
 		.gridicon {
 			display: none;
 		}
