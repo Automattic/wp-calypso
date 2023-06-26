@@ -685,7 +685,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						! isPluginBundleEligible
 					}
 					title={ headerDesignTitle }
-					description={ selectedDesign.description }
+					description={ ! selectedDesign.is_virtual && selectedDesign.description }
 					variations={
 						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
 					}
