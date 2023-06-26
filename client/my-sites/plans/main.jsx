@@ -273,7 +273,7 @@ class Plans extends Component {
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
-				intent={ isJetpackAppPlans ? 'jetpack-app' : null }
+				intent={ isJetpackAppPlans ? 'plans-jetpack-app' : null }
 			/>
 		);
 	}

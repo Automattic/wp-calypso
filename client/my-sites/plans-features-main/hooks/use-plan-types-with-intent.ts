@@ -10,26 +10,26 @@ import {
 	isBloggerPlan,
 } from '@automattic/calypso-products';
 
-export type Intent =
-	| 'blog-onboarding'
-	| 'newsletter'
-	| 'link-in-bio'
-	| 'new-hosted-site'
-	| 'new-hosted-site-hosting-flow'
-	| 'plugins'
-	| 'jetpack-app'
-	| 'import'
+export type PlansIntent =
+	| 'plans-blog-onboarding'
+	| 'plans-newsletter'
+	| 'plans-link-in-bio'
+	| 'plans-new-hosted-site'
+	| 'plans-new-hosted-site-hosting-flow'
+	| 'plans-plugins'
+	| 'plans-jetpack-app'
+	| 'plans-import'
 	| 'default';
 
 interface Props {
-	intent: Intent;
+	intent: PlansIntent;
 	selectedPlan?: string;
 	sitePlanSlug?: string | null;
 	hideEnterprisePlan?: boolean;
 }
 
 interface PlanTypesWithIntent {
-	intent: Intent;
+	intent: PlansIntent;
 	planTypes: string[];
 }
 
@@ -61,33 +61,33 @@ const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent => {
 	];
 
 	switch ( intent ) {
-		case 'blog-onboarding':
+		case 'plans-blog-onboarding':
 			return {
 				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
 			};
-		case 'newsletter':
-		case 'link-in-bio':
+		case 'plans-newsletter':
+		case 'plans-link-in-bio':
 			return {
 				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ],
 			};
-		case 'new-hosted-site':
+		case 'plans-new-hosted-site':
 			return {
 				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ],
 			};
-		case 'new-hosted-site-hosting-flow':
+		case 'plans-new-hosted-site-hosting-flow':
 			return {
 				intent,
 				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
 			};
-		case 'import':
+		case 'plans-import':
 			return {
 				intent,
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
 			};
-		case 'plugins': // is this used?
+		case 'plans-plugins': // is this used?
 			return {
 				intent,
 				planTypes: [
@@ -97,7 +97,7 @@ const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent => {
 				],
 			};
 		// The Jetpack mobile app only wants to display two plans -- personal and premium
-		case 'jetpack-app':
+		case 'plans-jetpack-app':
 			return {
 				intent,
 				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],

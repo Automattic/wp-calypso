@@ -75,14 +75,14 @@ describe( 'PlansFeaturesMain', () => {
 		} );
 
 		test( 'Should render <PlanFeatures /> with Newsletter plans when called with newsletter intent', () => {
-			renderWithProvider( <PlansFeaturesMain { ...props } intent="newsletter" /> );
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-newsletter" /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
 				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
 			);
 		} );
 
 		test( 'Should render <PlanFeatures /> with LinkInBio plans when called with link-in-bio intent', () => {
-			renderWithProvider( <PlansFeaturesMain { ...props } intent="link-in-bio" /> );
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-link-in-bio" /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
 				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
 			);
@@ -91,7 +91,7 @@ describe( 'PlansFeaturesMain', () => {
 		test( 'Should render <PlanFeatures /> with Newsletter plans when site with newsletter intent', () => {
 			useIntentFromSiteMeta.mockImplementation( () => ( {
 				processing: false,
-				intent: 'newsletter',
+				intent: 'plans-newsletter',
 			} ) );
 			renderWithProvider( <PlansFeaturesMain { ...props } /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(

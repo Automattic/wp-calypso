@@ -39,7 +39,7 @@ import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanTypesWithIntent from './hooks/use-plan-types-with-intent';
 import usePlansFromTypes from './hooks/use-plans-from-types';
 import useVisiblePlansForPlanFeatures from './hooks/use-visible-plans-for-plan-features';
-import type { Intent } from './hooks/use-plan-types-with-intent';
+import type { PlansIntent } from './hooks/use-plan-types-with-intent';
 import type { IntervalType } from './types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
@@ -49,7 +49,7 @@ import './style.scss';
 
 interface PlansFeaturesMainProps {
 	siteId?: number | null;
-	intent?: Intent | null;
+	intent?: PlansIntent | null;
 	isInSignup?: boolean;
 	plansWithScroll?: boolean;
 	customerType?: string;
