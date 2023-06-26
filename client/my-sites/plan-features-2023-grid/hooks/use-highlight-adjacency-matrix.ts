@@ -30,9 +30,9 @@ const useHighlightIndices = ( { visiblePlans, currentSitePlanSlug, selectedPlan 
 		const isCurrentPlan = currentSitePlanSlug === planName;
 		const isSuggestedPlan = !! ( selectedPlan && planLevelsMatch( planName, selectedPlan ) );
 
-		if ( 'newsletter' === intent ) {
+		if ( 'plans-newsletter' === intent ) {
 			isHighlight = isPersonalPlan( planName ) || isCurrentPlan;
-		} else if ( 'link-in-bio' === intent ) {
+		} else if ( 'plans-link-in-bio' === intent ) {
 			isHighlight = isPremiumPlan( planName ) || isCurrentPlan;
 		} else {
 			isHighlight =
