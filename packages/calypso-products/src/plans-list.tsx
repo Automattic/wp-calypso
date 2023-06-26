@@ -807,10 +807,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
 		),
-	getNewsletterSignupFeatures: () => [
+	getNewsletterSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
+		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
@@ -824,18 +824,18 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with email support to help get your site just right.'
 		),
-	getLinkInBioSignupFeatures: () => [
+	getLinkInBioSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_STYLE_CUSTOMIZATION,
+		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 		FEATURE_PAID_SUBSCRIBERS_JP,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
-	getBlogOnboardingSignupFeatures: () => [
+	getBlogOnboardingSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_STYLE_CUSTOMIZATION,
+		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_SUPPORT_EMAIL,
@@ -1281,10 +1281,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Take your Newsletter further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
-	getNewsletterSignupFeatures: () => [
+	getNewsletterSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
-		FEATURE_STYLE_CUSTOMIZATION,
+		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_VIDEOPRESS_JP,
@@ -1302,20 +1302,20 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Take your site further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
-	getLinkInBioSignupFeatures: () => [
+	getLinkInBioSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_PREMIUM_THEMES_V2,
-		FEATURE_STYLE_CUSTOMIZATION,
+		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_WORDADS,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
-	getBlogOnboardingSignupFeatures: () => [
+	getBlogOnboardingSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_PREMIUM_THEMES_V2,
-		FEATURE_STYLE_CUSTOMIZATION,
+		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_WORDADS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,

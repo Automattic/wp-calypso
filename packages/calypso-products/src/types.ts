@@ -261,9 +261,9 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
-	getNewsletterSignupFeatures?: () => Feature[];
-	getLinkInBioSignupFeatures?: () => Feature[];
-	getBlogOnboardingSignupFeatures?: () => Feature[];
+	getNewsletterSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
+	getLinkInBioSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
+	getBlogOnboardingSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 };

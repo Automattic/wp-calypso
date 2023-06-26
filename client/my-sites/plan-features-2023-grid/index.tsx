@@ -946,17 +946,17 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			if ( 'plans-newsletter' === intent ) {
 				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
+					planConstantObj?.getNewsletterSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
 				);
 				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
 			} else if ( 'plans-link-in-bio' === intent ) {
 				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
+					planConstantObj?.getLinkInBioSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
 				);
 				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
 			} else if ( 'plans-blog-onboarding' === intent ) {
 				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.getBlogOnboardingSignupFeatures?.() ?? []
+					planConstantObj?.getBlogOnboardingSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
 				);
 
 				jetpackFeatures = getPlanFeaturesObject(
