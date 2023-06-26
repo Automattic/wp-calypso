@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'calypso/lib/url';
+import { resemblesUrl, withoutHttp, addSchemeIfMissing, urlToDomainAndPath } from 'calypso/lib/url';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
@@ -63,7 +63,7 @@ class SearchFollowButton extends Component {
 		// If we find a feed then set the feed object
 		let feed;
 		if ( resemblesUrl( query ) ) {
-			feed = feeds?.find( ( f ) => f.feed_URL.includes( query ) );
+			feed = feeds?.find( ( f ) => f.feed_URL.includes( urlToDomainAndPath( query ) ) );
 		}
 
 		// If no feed found, then don't show the follow button
@@ -71,10 +71,8 @@ class SearchFollowButton extends Component {
 			return null;
 		}
 
-		// We can use the feed to create a follow button
-
 		// If already following this feed then don't show the follow button
-		if ( feed.is_following !== undefined && feed.is_following === true ) {
+		if ( feed.is_following === true ) {
 			return null;
 		}
 
