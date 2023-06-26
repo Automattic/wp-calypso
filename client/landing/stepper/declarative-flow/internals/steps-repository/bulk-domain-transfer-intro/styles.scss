@@ -9,6 +9,18 @@
 	display: flex;
 	align-items: center;
 
+	&.intro {
+		@media ( max-width: $break-medium ) {
+			header {
+				text-align: center;
+			}
+			flex-direction: column;
+			gap: 0;
+			justify-content: flex-start;
+			margin-top: 24px;
+		}
+	}
+
 	.signup-header {
 		z-index: 1;
 	}

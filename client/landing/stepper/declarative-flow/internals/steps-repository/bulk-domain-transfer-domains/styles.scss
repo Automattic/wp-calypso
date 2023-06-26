@@ -10,6 +10,20 @@
 	align-items: center;
 	gap: 30px;
 
+	&.domains {
+		@media ( max-width: $break-medium ) {
+
+			header {
+				text-align: center;
+			}
+			flex-direction: column;
+			gap: 0;
+			justify-content: flex-start;
+			margin-top: 24px;
+		}
+	}
+
+
 	.domains .step-container__content {
 		width: 100%;
 	}
