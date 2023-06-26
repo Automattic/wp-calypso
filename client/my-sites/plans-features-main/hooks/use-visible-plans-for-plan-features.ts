@@ -13,7 +13,6 @@ import {
 	isPremiumPlan,
 	planMatches,
 } from '@automattic/calypso-products';
-import useOnboardStoreFilters from './use-onboard-store-filters';
 
 interface Props {
 	availablePlans: PlanSlug[];
@@ -52,8 +51,6 @@ const useVisiblePlansForPlanFeatures = ( {
 				}
 		  } )
 		: availablePlans;
-
-	plans = useOnboardStoreFilters( plans );
 
 	if ( hideFreePlan ) {
 		plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );

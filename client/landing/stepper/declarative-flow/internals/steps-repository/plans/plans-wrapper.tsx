@@ -61,7 +61,11 @@ function getPlansIntent( flowName: string | null, hostingFlow: boolean ): PlansI
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
-	const { hideFreePlan, domainCartItem, hidePlansFeatureComparison } = useSelect( ( select ) => {
+	const {
+		hideFreePlan: reduxHideFreePlan,
+		domainCartItem,
+		hidePlansFeatureComparison,
+	} = useSelect( ( select ) => {
 		return {
 			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
@@ -84,6 +88,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
 	const intent = getPlansIntent( props?.flowName, props.hostingFlow );
+	const hideFreePlan = intent
+		? reduxHideFreePlan && 'plans-blog-onboarding' === intent
+		: reduxHideFreePlan;
 
 	const onSelectPlan = ( selectedPlan: any ) => {
 		if ( selectedPlan ) {
@@ -143,6 +150,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
+					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
