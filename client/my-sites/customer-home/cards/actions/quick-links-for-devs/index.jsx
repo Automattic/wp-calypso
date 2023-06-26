@@ -1,3 +1,4 @@
+import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -77,6 +78,22 @@ const QuickLinks = () => {
 					hideLinkIndicator
 					gridicon="my-sites"
 					label={ translate( 'WP Admin Dashboard' ) }
+				/>
+			) }
+			{ isAtomic && (
+				<ActionBox
+					href={ `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-boost` }
+					hideLinkIndicator
+					label={ translate( 'Speed up your site' ) }
+					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
+				/>
+			) }
+			{ isAtomic && (
+				<ActionBox
+					href={ `/backup/${ siteSlug }` }
+					hideLinkIndicator
+					label={ translate( 'Restore a backup' ) }
+					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
 				/>
 			) }
 		</div>

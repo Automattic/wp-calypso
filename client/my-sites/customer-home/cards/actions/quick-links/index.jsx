@@ -1,3 +1,4 @@
+import { JetpackLogo } from '@automattic/components';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -65,6 +66,7 @@ export const QuickLinks = ( {
 	siteSlug,
 	isFSEActive,
 	siteEditorUrl,
+	isAtomic,
 } ) => {
 	const translate = useTranslate();
 	const [
@@ -212,6 +214,22 @@ export const QuickLinks = ( {
 						iconSrc={ fiverrIcon }
 					/>
 				</>
+			) }
+			{ isAtomic && (
+				<ActionBox
+					href={ `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-boost` }
+					hideLinkIndicator
+					label={ translate( 'Speed up your site' ) }
+					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
+				/>
+			) }
+			{ isAtomic && (
+				<ActionBox
+					href={ `/backup/${ siteSlug }` }
+					hideLinkIndicator
+					label={ translate( 'Restore a backup' ) }
+					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
+				/>
 			) }
 		</div>
 	);
