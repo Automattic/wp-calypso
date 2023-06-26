@@ -56,12 +56,10 @@ const useRecipe = (
 		setSearchParams( ( currentSearchParams ) => {
 			if ( design && design.is_virtual && design.recipe?.slug ) {
 				currentSearchParams.set( 'theme', design.recipe?.slug );
-				currentSearchParams.set( 'is_virtual', 'true' );
 			} else if ( design ) {
 				currentSearchParams.set( 'theme', design.slug );
 			} else {
 				currentSearchParams.delete( 'theme' );
-				currentSearchParams.delete( 'is_virtual' );
 			}
 
 			return currentSearchParams;
