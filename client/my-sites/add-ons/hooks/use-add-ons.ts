@@ -32,6 +32,7 @@ export interface AddOnMeta {
 	description: string | null;
 	displayCost: TranslateResult | null;
 	purchased?: boolean;
+	isLoading?: boolean;
 }
 
 // some memoization. executes far too many times
@@ -84,7 +85,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 	// if upgrade is bought - show as manage
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
-	const { billingTransactions } = usePastBillingTransactions();
+	const { billingTransactions, isLoading } = usePastBillingTransactions();
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		const filter = getBillingTransactionFilters( state, 'past' );
@@ -126,11 +127,22 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 						return null;
 					}
 
+					// if storage add on hasn't loaded yet
+					if ( isLoading || ! product ) {
+						return {
+							...addOn,
+							name,
+							description,
+							isLoading,
+						};
+					}
+
 					// if storage add on is already purchased
 					if (
 						spaceUpgradesPurchased.findIndex(
 							( spaceUpgrade ) => spaceUpgrade === addOn.quantity
-						) >= 0
+						) >= 0 &&
+						product
 					) {
 						return {
 							...addOn,
