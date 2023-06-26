@@ -118,7 +118,7 @@ export default connect(
 				return uniqueFeeds;
 			}, [] );
 
-			// Rremove single result if it does not match the query
+			// Remove single result if it does not match the query
 			if ( feedResults.length === 1 ) {
 				const isMatch = feedResults[ 0 ].feed_URL?.includes( urlToDomainAndPath( ownProps.query ) );
 
