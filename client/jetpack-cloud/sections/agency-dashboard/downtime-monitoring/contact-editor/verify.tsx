@@ -121,7 +121,7 @@ export default function VerifyContactForm( {
 		} );
 	};
 
-	// Verify email when user clicks on Verify button
+	// Verify contact when user clicks on Verify button
 	const handleSubmitVerificationCode = () => {
 		setHelpText( undefined );
 
