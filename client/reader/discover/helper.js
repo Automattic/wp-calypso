@@ -41,7 +41,7 @@ export function isDiscoverFeed( feedId ) {
 }
 
 export function isDiscoverEnabled() {
-	return config.isEnabled( 'reader/discover' );
+	return true;
 }
 
 export function isDiscoverPost( post ) {

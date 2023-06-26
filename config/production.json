@@ -123,7 +123,6 @@
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
 		"reader": true,
-		"reader/discover": false,
 		"reader/full-errors": false,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,

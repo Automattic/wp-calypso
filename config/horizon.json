@@ -102,7 +102,6 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
-		"reader/discover": false,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
 		"reader/subscription-management": true,
