@@ -155,7 +155,16 @@ class MasterbarLoggedIn extends Component {
 
 	clickDomains = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' );
-		this.handleLayoutFocus( 'sites' );
+
+		if ( 'domains' !== this.props.section ) {
+			// When switching to domains we close the sidebar.
+			this.props.setNextLayoutFocus( 'content' );
+		} else {
+			// When current group is focused then open or close the sidebar depending on current state.
+			'sidebar' === this.props.currentLayoutFocus
+				? this.props.setNextLayoutFocus( 'content' )
+				: this.props.setNextLayoutFocus( 'sidebar' );
+		}
 	};
 
 	clickReader = () => {
@@ -234,6 +243,7 @@ class MasterbarLoggedIn extends Component {
 			translate,
 			isCustomerHomeEnabled,
 			sectionGroup,
+			section,
 		} = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
@@ -246,7 +256,7 @@ class MasterbarLoggedIn extends Component {
 		const icon =
 			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
 
-		if ( 'sites' === sectionGroup && isResponsiveMenu ) {
+		if ( 'sites' === sectionGroup && 'domains' !== section && isResponsiveMenu ) {
 			mySitesUrl = '';
 		}
 		if ( ! siteSlug && sectionGroup === 'sites-dashboard' ) {
