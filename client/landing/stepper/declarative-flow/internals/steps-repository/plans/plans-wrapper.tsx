@@ -87,9 +87,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
-	const intent = getPlansIntent( props?.flowName, props.hostingFlow );
-	const hideFreePlan = intent
-		? reduxHideFreePlan && 'plans-blog-onboarding' === intent
+	const plansIntent = getPlansIntent( props?.flowName, props.hostingFlow );
+	const hideFreePlan = plansIntent
+		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
 	const onSelectPlan = ( selectedPlan: any ) => {
@@ -161,7 +161,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					flowName={ flowName }
 					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
-					intent={ intent }
+					intent={ plansIntent }
 				/>
 			</div>
 		);
