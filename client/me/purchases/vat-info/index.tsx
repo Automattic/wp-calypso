@@ -103,7 +103,7 @@ export default function VatInfoPage() {
 							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
 							'The %(taxName)s details saved on this page will be applied to all receipts in your account.',
 							{
-								args: { taxName: taxName ?? translate( 'tax (VAT/GST/CT)', { textOnly: true } ) },
+								args: { taxName: taxName ?? fallbackTaxName },
 							}
 						) }
 						<br />
@@ -113,13 +113,13 @@ export default function VatInfoPage() {
 							/* translators: This is a list of tax-related reasons a customer might need to contact support */
 							'If you:' +
 								'{{ul}}' +
-								'{{li}}Need to update existing Tax ID details{{/li}}' +
+								'{{li}}Need to update existing %(taxName)s details{{/li}}' +
 								'{{li}}Have been charged VAT as a VAT-Registered Business subject to reverse charges{{/li}}' +
 								'{{li}}Do not see your country listed in this form{{/li}}' +
 								'{{/ul}}' +
 								'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.',
 							{
-								args: { taxName: taxName ?? translate( 'tax', { textOnly: true } ) },
+								args: { taxName: taxName ?? fallbackTaxName },
 								components: {
 									ul: <ul />,
 									li: <li />,
