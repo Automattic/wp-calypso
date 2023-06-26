@@ -468,6 +468,8 @@ class ReaderStream extends Component {
 		const isSearchPage = path.startsWith( '/read/search' );
 		const streamType = getStreamType( streamKey );
 
+		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
+		// to be updated before we can remove it.
 		let baseClassnames = classnames( 'following', this.props.className );
 
 		// @TODO: has error of invalid tag?
@@ -496,7 +498,7 @@ class ReaderStream extends Component {
 
 			let sidebarContent = this.props.streamSidebar;
 
-			// TODO: use `streamSidebar` prop in search stream component, rather that using a conditionals here.
+			// TODO: use `streamSidebar` prop in search stream component, rather that using conditionals here.
 			if ( isSearchPage ) {
 				sidebarContent = (
 					<ReaderPopularSitesSidebar items={ items } followSource={ READER_SEARCH_POPULAR_SITES } />
