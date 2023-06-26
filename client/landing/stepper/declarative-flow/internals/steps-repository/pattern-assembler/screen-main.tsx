@@ -101,10 +101,7 @@ const ScreenMain = ( {
 				description={ headerDescription }
 				hideBack
 			/>
-			<div
-				className="screen-container__body screen-container__body--extra-padding"
-				ref={ wrapperRef }
-			>
+			<div className="screen-container__body" ref={ wrapperRef }>
 				<HStack direction="column" alignment="top" spacing="4" expanded={ false }>
 					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
 						<NavigationButtonAsItem

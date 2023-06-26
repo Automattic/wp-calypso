@@ -273,11 +273,13 @@ $font-family: "SF Pro Text", $sans;
 		overflow-y: auto;
 		// Reserve space for the scrollbar to prevent unwanted layout change
 		scrollbar-gutter: stable;
+
+		&.screen-category-list__body {
+			// Reduces .navigator-header margin
+			margin-top: -10px;
+		}
 	}
 
-	.screen-container__body--extra-padding {
-		padding-top: 14px;
-	}
 
 	.screen-container__footer {
 		margin-top: auto;
