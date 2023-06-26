@@ -83,12 +83,9 @@
 			align-items: center;
 			min-width: 0;
 
-			.site-icon {
-				fill: var(--color-text-subtle);
+			.subscriptions__site-icon {
 				width: 40px;
 				height: 40px;
-				flex: none;
-				border-radius: 50%;
 			}
 
 			.title-column {
