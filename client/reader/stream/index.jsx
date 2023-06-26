@@ -514,7 +514,7 @@ class ReaderStream extends Component {
 							{ streamHeader }
 							{ bodyContent }
 						</div>
-						{ sidebarContent && <div className="stream__right-column">{ sidebarContent }</div> }
+						<div className="stream__right-column">{ sidebarContent }</div>
 					</div>
 				);
 				baseClassnames = classnames( 'reader-two-column', baseClassnames );
@@ -545,7 +545,7 @@ class ReaderStream extends Component {
 						{ this.state.selectedTab === 'posts' && (
 							<div className="reader__content">{ bodyContent }</div>
 						) }
-						{ sidebarContent && this.state.selectedTab === 'sites' && (
+						{ this.state.selectedTab === 'sites' && (
 							<div className="stream__right-column">{ sidebarContent }</div>
 						) }
 					</>
