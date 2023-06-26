@@ -1,4 +1,5 @@
 import {
+	PlanSlug,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 	TYPE_ENTERPRISE_GRID_WPCOM,
@@ -12,6 +13,18 @@ import {
 	isPremiumPlan,
 	planMatches,
 } from '@automattic/calypso-products';
+import useOnboardStoreFilters from './use-onboard-store-filters';
+
+interface Props {
+	availablePlans: PlanSlug[];
+	isDisplayingPlansNeededForFeature: boolean;
+	selectedPlan?: string;
+	hideFreePlan?: boolean;
+	hidePersonalPlan?: boolean;
+	hidePremiumPlan?: boolean;
+	hideBusinessPlan?: boolean;
+	hideEcommercePlan?: boolean;
+}
 
 const useVisiblePlansForPlanFeatures = ( {
 	availablePlans,
@@ -22,16 +35,7 @@ const useVisiblePlansForPlanFeatures = ( {
 	hidePremiumPlan,
 	hideBusinessPlan,
 	hideEcommercePlan,
-}: {
-	availablePlans: string[];
-	isDisplayingPlansNeededForFeature: boolean;
-	selectedPlan?: string;
-	hideFreePlan?: boolean;
-	hidePersonalPlan?: boolean;
-	hidePremiumPlan?: boolean;
-	hideBusinessPlan?: boolean;
-	hideEcommercePlan?: boolean;
-} ) => {
+}: Props ) => {
 	const isPlanOneOfType = ( plan: string, types: string[] ) =>
 		types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
 
@@ -48,6 +52,8 @@ const useVisiblePlansForPlanFeatures = ( {
 				}
 		  } )
 		: availablePlans;
+
+	plans = useOnboardStoreFilters( plans );
 
 	if ( hideFreePlan ) {
 		plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );

@@ -80,8 +80,8 @@ interface PlansFeaturesMainProps {
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
-	visiblePlans: string[];
-	plans: string[];
+	visiblePlans: PlanSlug[];
+	plans: PlanSlug[];
 	customerType: string;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	sitePlanSlug?: string | null;
@@ -321,24 +321,25 @@ const PlansFeaturesMain = ( {
 		sitePlanSlug,
 		hideEnterprisePlan,
 	} );
-	const visiblePlanTypes = usePlanTypesWithIntent( {
+	const planTypesWithIntent = usePlanTypesWithIntent( {
 		intent,
 		selectedPlan,
 		sitePlanSlug,
 		hideEnterprisePlan,
 	} );
-	const plans = usePlansFromTypes( {
+	const defaultPlans = usePlansFromTypes( {
 		planTypes: defaultPlanTypes?.planTypes || [],
+		group: GROUP_WPCOM,
+		term,
+	} );
+	const plansWithIntent = usePlansFromTypes( {
+		planTypes: planTypesWithIntent?.planTypes || [],
 		group: GROUP_WPCOM,
 		term,
 	} );
 	const visiblePlans =
 		useVisiblePlansForPlanFeatures( {
-			availablePlans: usePlansFromTypes( {
-				planTypes: visiblePlanTypes?.planTypes || [],
-				group: GROUP_WPCOM,
-				term,
-			} ),
+			availablePlans: plansWithIntent,
 			isDisplayingPlansNeededForFeature: isDisplayingPlansNeededForFeature(),
 			selectedPlan,
 			hideFreePlan,
@@ -395,7 +396,7 @@ const PlansFeaturesMain = ( {
 			) }
 			{ siteId && (
 				<PlanNotice
-					visiblePlans={ visiblePlans as PlanSlug[] }
+					visiblePlans={ visiblePlans }
 					siteId={ siteId }
 					isInSignup={ isInSignup }
 					{ ...( withDiscount &&
@@ -412,7 +413,7 @@ const PlansFeaturesMain = ( {
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<OnboardingPricingGrid2023
-						plans={ plans }
+						plans={ defaultPlans }
 						visiblePlans={ visiblePlans }
 						customerType={ _customerType }
 						domainName={ domainName }
@@ -432,7 +433,7 @@ const PlansFeaturesMain = ( {
 						hidePlansFeatureComparison={ hidePlansFeatureComparison }
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
-						intent={ visiblePlanTypes.intent }
+						intent={ planTypesWithIntent.intent }
 					/>
 				</>
 			) }

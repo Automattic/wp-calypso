@@ -33,8 +33,12 @@ interface PlanTypesWithIntent {
 	planTypes: string[];
 }
 
-const usePlanTypesWithIntent = ( props: Props ): PlanTypesWithIntent => {
-	const { selectedPlan, sitePlanSlug, hideEnterprisePlan, intent } = props;
+const usePlanTypesWithIntent = ( {
+	selectedPlan,
+	sitePlanSlug,
+	hideEnterprisePlan,
+	intent,
+}: Props ): PlanTypesWithIntent => {
 	const isBloggerAvailable =
 		( selectedPlan && isBloggerPlan( selectedPlan ) ) ||
 		( sitePlanSlug && isBloggerPlan( sitePlanSlug ) );
