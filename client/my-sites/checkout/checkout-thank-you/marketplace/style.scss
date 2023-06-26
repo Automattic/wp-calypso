@@ -32,7 +32,6 @@
 			display: flex;
 			flex-direction: column;
 			width: 100%;
-			align-items: left;
 			@include break-mobile {
 				width: auto;
 				align-items: center;
