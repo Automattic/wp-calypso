@@ -10,16 +10,16 @@ interface IntentFromSiteMeta {
 
 const useIntentFromSiteMeta = (): IntentFromSiteMeta => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
-	const intent = useSiteIntent( selectedSiteId );
+	const siteIntent = useSiteIntent( selectedSiteId );
 
-	if ( intent.isFetching ) {
+	if ( siteIntent.isFetching ) {
 		return {
 			processing: true,
 			intent: undefined, // undefined -> we haven't observed any metadata yet
 		};
 	}
 
-	if ( 'newsletter' === ( intent.data?.site_intent as string ) ) {
+	if ( 'newsletter' === ( siteIntent.data?.site_intent as string ) ) {
 		return {
 			processing: false,
 			intent: 'plans-newsletter',
