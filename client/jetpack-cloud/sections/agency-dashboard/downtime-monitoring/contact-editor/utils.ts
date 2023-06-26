@@ -153,7 +153,7 @@ export const addToContactList = (
 		} );
 	}
 
-	return updatedContactList;
+	return updatedContactList as Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >;
 };
 
 export const removeFromContactList = (
