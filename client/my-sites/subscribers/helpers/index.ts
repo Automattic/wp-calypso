@@ -40,11 +40,11 @@ const getSubscriberDetailsUrl = (
 	return `/subscribers/external/${ siteSlug }/${ subscription_id }`;
 };
 
-const getSubscriberDetailsCacheKey = (
-	siteId: number | null,
-	subscriptionId: number | undefined,
-	type: string
-) => [ 'subscriber-details', siteId, subscriptionId, type ];
+const getSubscriberDetailsCacheKey = ( siteId: number | null, queryString: string ) => [
+	'subscriber-details',
+	siteId,
+	queryString,
+];
 
 const sanitizeInt = ( intString: string ) => {
 	const parsedInt = parseInt( intString, 10 );

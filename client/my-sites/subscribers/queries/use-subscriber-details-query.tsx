@@ -8,14 +8,19 @@ const useSubscriberDetailsQuery = (
 	subscriptionId: number | undefined,
 	userId: number | undefined
 ) => {
-	const type = userId ? 'wpcom' : 'email';
-	const individualSubscriptionId = userId ?? subscriptionId;
+	let queryString = '';
+
+	if ( userId ) {
+		queryString = `user_id=${ userId }&type=wpcom`;
+	} else {
+		queryString = `subscription_id=${ subscriptionId }&type=email`;
+	}
 
 	return useQuery< Subscriber >( {
-		queryKey: getSubscriberDetailsCacheKey( siteId, individualSubscriptionId, type ),
+		queryKey: getSubscriberDetailsCacheKey( siteId, queryString ),
 		queryFn: () =>
 			wpcom.req.get( {
-				path: `/sites/${ siteId }/subscribers/individual?subscription_id=${ individualSubscriptionId }&type=${ type }`,
+				path: `/sites/${ siteId }/subscribers/individual?${ queryString }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: !! siteId,
