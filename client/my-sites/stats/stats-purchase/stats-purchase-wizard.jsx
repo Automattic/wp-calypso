@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Button, CheckboxControl, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
-// import classNames from 'classnames';
-// import { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import PersonalPurchase from './stats-purchase-personal';
 import StatsPurchaseSVG from './stats-purchase-svg';
 import './styles.scss';
 
@@ -15,61 +15,6 @@ const TYPE_COMMERCIAL = 'Commercial';
 const FLAT_COMMERTIAL_PRICE = 10;
 
 // TODO: import
-const PersonalPurchase = ( { subscriptionValue, setSubscriptionValue } ) => {
-	return (
-		<div>
-			<div>
-				<span>Slider test</span>
-				<Button isSecondary onClick={ () => setSubscriptionValue( 0 ) }>
-					$0
-				</Button>
-				<Button isSecondary onClick={ () => setSubscriptionValue( 10 ) }>
-					$10
-				</Button>
-				<Button isSecondary onClick={ () => setSubscriptionValue( 30 ) }>
-					$30
-				</Button>
-				<Button isSecondary onClick={ () => setSubscriptionValue( 45 ) }>
-					$45
-				</Button>
-				<Button isSecondary onClick={ () => setSubscriptionValue( 90 ) }>
-					$90
-				</Button>
-			</div>
-
-			<p className="average-price">The average person pays $6 per month</p>
-
-			<div className="benefits">
-				{ subscriptionValue === 0 ? (
-					<ul className="not-included">
-						<li>No access to upcoming features</li>
-						<li>No priority support</li>
-						<li>You’ll see upsells and ads in the Stats page</li>
-					</ul>
-				) : (
-					<ul className="included">
-						<li>Instant access to upcoming features</li>
-						<li>Priority support</li>
-						<li>Ad-free experience</li>
-						{ subscriptionValue >= 90 && <li>You’re one of the top supporters — thank you!</li> }
-					</ul>
-				) }
-			</div>
-
-			<p>
-				By clicking the button below, you agree to our <a href="#">Terms of Service</a> and to{ ' ' }
-				<a href="#">share details</a> with WordPress.com.
-			</p>
-
-			{ subscriptionValue === 0 ? (
-				<Button isSecondary>Continue with Jetpack Stats for free</Button>
-			) : (
-				<Button isPrimary>Get Jetpack Stats for ${ subscriptionValue } per month</Button>
-			) }
-		</div>
-	);
-};
-
 const CommercialPurchase = () => {
 	return (
 		<div>
@@ -103,9 +48,10 @@ const ProductCard = ( { siteSlug } ) => {
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
+	const translate = useTranslate();
 
-	const personalLabel = 'Personal site';
-	const commertialLabel = 'Commercial site';
+	const personalLabel = translate( 'Personal site' );
+	const commertialLabel = translate( 'Commercial site' );
 	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commertialLabel;
 
 	const handleTypeClick = ( type ) => {
@@ -135,7 +81,15 @@ const ProductCard = ( { siteSlug } ) => {
 					<div className="left">
 						<Panel className={ `${ COMPONENT_NAME }__card-panel` } header="Jetpack Stats">
 							<PanelBody
-								title={ ! siteType ? `What site type is ${ siteSlug }?` : selectedTypeLabel }
+								title={
+									! siteType
+										? translate( 'What site type is %(site)s?', {
+												args: {
+													site: siteSlug,
+												},
+										  } )
+										: selectedTypeLabel
+								}
 								initialOpen
 								onToggle={ ( shouldOpen ) => toggleFirstStep( shouldOpen ) }
 								opened={ wizardStep === SCREEN_TYPE_SELECTION }
@@ -143,31 +97,33 @@ const ProductCard = ( { siteSlug } ) => {
 								<PanelRow>
 									<div className={ `${ COMPONENT_NAME }__card-grid` }>
 										<div className={ `${ COMPONENT_NAME }__card-grid-header--left` }>
-											<h3>Personal</h3>
+											<h3>{ translate( 'Personal' ) }</h3>
 										</div>
 										<div className={ `${ COMPONENT_NAME }__card-grid-header--right` }>
-											<h3>Commercial</h3>
+											<h3>{ translate( 'Commercial' ) }</h3>
 										</div>
 										<div className={ `${ COMPONENT_NAME }__card-grid-body--left` }>
 											<p>
-												Sites and blogs used for hobby or personal use. Doesn't generate any money
-												in a direct or an indirect way.
+												{ translate(
+													`Sites and blogs used for hobby or personal use. Doesn't generate any money in a direct or an indirect way.`
+												) }
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_NAME }__card-grid-body--right` }>
 											<p>
-												Sites and blogs used for commercial activities. Includes selling or
-												advertising a product/service, person or business.
+												{ translate(
+													`Sites and blogs used for commercial activities. Includes selling or advertising a product/service, person or business.`
+												) }
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_NAME }__card-grid-action--left` }>
 											<Button isPrimary onClick={ () => handleTypeClick( TYPE_PERSONAL ) }>
-												Personal site
+												{ translate( 'Personal site' ) }
 											</Button>
 										</div>
 										<div className={ `${ COMPONENT_NAME }__card-grid-action--right` }>
 											<Button isPrimary onClick={ () => handleTypeClick( TYPE_COMMERCIAL ) }>
-												Commercial site
+												{ translate( 'Commercial site' ) }
 											</Button>
 										</div>
 									</div>
@@ -177,14 +133,16 @@ const ProductCard = ( { siteSlug } ) => {
 								<PanelRow>
 									<div className="qualifications">
 										<p>
-											<strong>Please confirm non-commercial usage by checking each box:</strong>
+											<strong>
+												{ translate( 'Please confirm non-commercial usage by checking each box:' ) }
+											</strong>
 										</p>
 										<p>
 											<ul>
 												<li>
 													<CheckboxControl
 														checked={ isAdsChecked }
-														label="I don’t have ads on my site"
+														label={ translate( `I don’t have ads on my site` ) }
 														onChange={ ( value ) => {
 															setAdsChecked( value );
 														} }
@@ -193,7 +151,7 @@ const ProductCard = ( { siteSlug } ) => {
 												<li>
 													<CheckboxControl
 														checked={ isSellingChecked }
-														label="I don’t sell products/services on my site"
+														label={ translate( `I don’t sell products/services on my site` ) }
 														onChange={ ( value ) => {
 															setSellingChecked( value );
 														} }
@@ -202,7 +160,7 @@ const ProductCard = ( { siteSlug } ) => {
 												<li>
 													<CheckboxControl
 														checked={ isBusinessChecked }
-														label="I don’t promote a business on my site"
+														label={ translate( `I don’t promote a business on my site` ) }
 														onChange={ ( value ) => {
 															setBusinessChecked( value );
 														} }
@@ -211,9 +169,9 @@ const ProductCard = ( { siteSlug } ) => {
 											</ul>
 										</p>
 										<p>
-											If your site doesn’t meet these criteria,{ ' ' }
+											{ translate( `If your site doesn’t meet these criteria,` ) }
 											<a href="#" onClick={ () => handlePlanSwap() }>
-												you will need to use the commercial plan
+												{ translate( `you will need to use the commercial plan` ) }
 											</a>
 											.
 										</p>
@@ -223,7 +181,7 @@ const ProductCard = ( { siteSlug } ) => {
 												onClick={ () => setWizardStep( SCREEN_PURCHASE ) }
 												disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
 											>
-												Confirm personal site
+												{ translate( 'Confirm personal site' ) }
 											</Button>
 										</p>
 									</div>
