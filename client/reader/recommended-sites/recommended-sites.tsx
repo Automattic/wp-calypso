@@ -26,7 +26,9 @@ type RecommendedSite = {
 	railcar?: Railcar;
 };
 
-const RecommendedSitesResponsiveContainer: React.FC = ( { children } ) => {
+const RecommendedSitesResponsiveContainer: React.FC< { children: React.ReactNode } > = ( {
+	children,
+} ) => {
 	const displayAsDotPager = useBreakpoint( '<1040px' );
 	if ( displayAsDotPager ) {
 		return <DotPager isClickEnabled>{ children }</DotPager>;

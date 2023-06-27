@@ -41,7 +41,7 @@ export default function TermsOfServiceConsent() {
 	const [ checkedTOS, setCheckedTOS ] = useState( false );
 
 	const checkTOS = useCallback(
-		( event ) => {
+		( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setCheckedTOS( event.target.checked );
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_tos_toggle', {

@@ -182,7 +182,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		'header__content-background-wrapper--sticky': shouldShowCart && hasCrossed,
 	} );
 
-	const onLinkClick = useCallback( ( e ) => {
+	const onLinkClick = useCallback( ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
 			nav_item: e.currentTarget
 				.getAttribute( 'href' )

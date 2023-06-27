@@ -42,7 +42,7 @@ export default function InvoicesList() {
 	const invoices = useInvoicesQuery( pagination );
 	const hasMore = invoices.isSuccess ? invoices.data.hasMore : false;
 	const onNavigateCallback = useCallback(
-		( page, direction ) => {
+		( page: number, direction: 'next' | 'prev' ) => {
 			if ( ! invoices.isSuccess || invoices.data.items.length === 0 ) {
 				return;
 			}

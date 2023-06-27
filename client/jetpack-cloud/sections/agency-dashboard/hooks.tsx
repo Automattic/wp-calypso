@@ -240,7 +240,7 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 	} );
 
 	const update = useCallback(
-		async ( params ) => {
+		async ( params: UpdateMonitorSettingsParams ) => {
 			setStatus( 'loading' );
 
 			const requests: any = [];
@@ -366,7 +366,7 @@ export function useJetpackAgencyDashboardRecordTrackEvent(
 	}, [ sites ] );
 
 	const dispatchTrackingEvent = useCallback(
-		( action, args = {} ) => {
+		( action: string, args = {} ) => {
 			const name = buildEventName( action );
 
 			const properties = {

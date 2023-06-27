@@ -279,7 +279,7 @@ export default function PhoneNumberEditor( {
 	};
 
 	const handleChange = useCallback(
-		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		( key: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setPhoneItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
 		},
 		[]
