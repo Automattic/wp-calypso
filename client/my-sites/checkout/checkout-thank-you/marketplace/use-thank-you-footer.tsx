@@ -1,5 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { ThankYouSectionProps, ThankYouNextStepProps } from 'calypso/components/thank-you/types';
@@ -47,14 +49,25 @@ export function useThankYouFoooter(
 
 function usePluginSteps(): FooterStep[] {
 	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
+	const locale = useLocale();
+	const newText =
+		'Check out our support documentation for step-by-step instructions and expert guidance on your plugin setup.';
+
+	const descriptionText =
+		locale.startsWith( 'en' ) || hasTranslation?.( newText )
+			? translate(
+					'Check out our support documentation for step-by-step instructions and expert guidance on your plugin setup.'
+			  )
+			: translate(
+					'Check out our support documentation for step-by-step instructions and expert guidance on your plugin set up.'
+			  );
 
 	return [
 		{
 			key: 'thank_you_footer_explore',
 			title: translate( 'Need help setting your plugin up?' ),
-			description: translate(
-				'Check out our support documentation for step-by-step instructions and expert guidance on your plugin setup.'
-			),
+			description: descriptionText,
 			link: `https://wordpress.com/support/plugins/use-your-plugins/`,
 			linkText: translate( 'Plugin setup guide' ),
 			eventKey: 'calypso_plugin_thank_you_explore_plugins_click',
