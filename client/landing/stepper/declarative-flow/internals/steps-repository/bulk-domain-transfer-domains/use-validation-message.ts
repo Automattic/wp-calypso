@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-export function useValidationMessage( domain: string, auth: string ) {
+export function useValidationMessage( domain: string, auth: string, hasDuplicates: boolean ) {
 	// record passed domains to avoid revalidation
 	const [ passed, setPassed ] = useState( false );
 	const { __ } = useI18n();
@@ -15,7 +15,7 @@ export function useValidationMessage( domain: string, auth: string ) {
 	const hasGoodDomain = doesStringResembleDomain( domainDebounced );
 	const hasGoodAuthCode = hasGoodDomain && auth.trim().length > 0;
 
-	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode;
+	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode && ! hasDuplicates;
 
 	const {
 		data: validationResult,
@@ -30,6 +30,14 @@ export function useValidationMessage( domain: string, auth: string ) {
 			enabled: Boolean( ! passed && passedLocalValidation ),
 		}
 	);
+
+	if ( hasDuplicates ) {
+		return {
+			valid: false,
+			loading: false,
+			message: __( 'This domain is a duplicated.' ),
+		};
+	}
 
 	if ( passed ) {
 		setPassed( true );

@@ -151,6 +151,10 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 							domain={ domain.domain }
 							auth={ domain.auth }
 							showLabels={ index === 0 }
+							hasDuplicates={ Object.values( domainsState ).some(
+								( { domain: otherDomain }, otherIndex ) =>
+									otherDomain && otherDomain === domain.domain && otherIndex < index
+							) }
 						/>
 					) ) }
 					<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>

@@ -16,12 +16,21 @@ type Props = {
 	onChange: ( id: string, value: { domain: string; auth: string; valid: boolean } ) => void;
 	onRemove: ( id: string ) => void;
 	showLabels: boolean;
+	hasDuplicates: boolean;
 };
 
-export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabels }: Props ) {
+export function DomainCodePair( {
+	id,
+	domain,
+	auth,
+	onChange,
+	onRemove,
+	showLabels,
+	hasDuplicates,
+}: Props ) {
 	const { __ } = useI18n();
 
-	const validation = useValidationMessage( domain, auth );
+	const validation = useValidationMessage( domain, auth, hasDuplicates );
 
 	const { valid, loading, message, refetch } = validation;
 
@@ -29,7 +38,7 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 		onChange( id, { domain, auth, valid } );
 	}, [ domain, id, onChange, auth, valid, loading ] );
 
-	const shouldReportError = ! loading && domain && auth;
+	const shouldReportError = hasDuplicates || ( ! loading && domain && auth );
 
 	return (
 		<div className="domains__domain-info-and-validation">
@@ -55,7 +64,7 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 						) }
 						<FormInput
 							id={ id + '-auth' }
-							disabled={ valid }
+							disabled={ valid || hasDuplicates }
 							value={ auth }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, { domain, auth: event.target.value.trim(), valid } )
