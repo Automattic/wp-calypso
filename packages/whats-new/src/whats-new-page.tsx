@@ -37,13 +37,7 @@ const WhatsNewPage: React.FC< Props > = ( {
 					{ /* eslint-disable-next-line react/no-danger */ }
 					{ description && <p dangerouslySetInnerHTML={ { __html: description } } /> }
 					{ link && (
-						<Button
-							className="whats-new-page__link"
-							href={ link }
-							isTertiary
-							isLink
-							target="_blank"
-						>
+						<Button className="whats-new-page__link" href={ link } variant="link" target="_blank">
 							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
 							{ /* @ts-ignore This is declared as a global variable and provided by webpack. */ }
 							{ __( 'Learn more', __i18n_text_domain__ ) }
