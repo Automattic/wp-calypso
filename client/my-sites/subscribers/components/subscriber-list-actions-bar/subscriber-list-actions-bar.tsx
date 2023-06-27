@@ -6,6 +6,7 @@ import { SortControls } from 'calypso/landing/subscriptions/components/sort-cont
 import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
 import { SubscribersSortBy } from '../../constants';
 import './style.scss';
+import { useRecordSort } from '../../tracks';
 
 const getSortOptions = ( translate: ReturnType< typeof useTranslate > ) => [
 	{ value: SubscribersSortBy.Name, label: translate( 'Name' ) },
@@ -16,6 +17,7 @@ const ListActionsBar = () => {
 	const translate = useTranslate();
 	const { handleSearch, sortTerm, setSortTerm } = useSubscriberListManager();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
+	const recordSort = useRecordSort();
 
 	return (
 		<div className="list-actions-bar">
@@ -25,7 +27,14 @@ const ListActionsBar = () => {
 				onSearch={ handleSearch }
 			/>
 
-			<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
+			<SortControls
+				options={ sortOptions }
+				value={ sortTerm }
+				onChange={ ( term ) => {
+					setSortTerm( term );
+					recordSort( { sort_field: term } );
+				} }
+			/>
 		</div>
 	);
 };

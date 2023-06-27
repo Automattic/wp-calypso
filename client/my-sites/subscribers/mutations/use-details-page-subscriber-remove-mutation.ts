@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { getSubscriberDetailsCacheKey, getSubscriberDetailsType } from '../helpers';
+import { useRecordSubscriberRemoved } from '../tracks';
 import type { Subscriber } from '../types';
 
 const useDetailsPageSubscriberRemoveMutation = (
@@ -10,6 +11,7 @@ const useDetailsPageSubscriberRemoveMutation = (
 ) => {
 	const queryClient = useQueryClient();
 	const type = getSubscriberDetailsType( userId );
+	const recordSubscriberRemoved = useRecordSubscriberRemoved();
 
 	return useMutation( {
 		mutationFn: async ( subscriber: Subscriber ) => {
@@ -45,6 +47,13 @@ const useDetailsPageSubscriberRemoveMutation = (
 					context.previousData
 				);
 			}
+		},
+		onSuccess: () => {
+			recordSubscriberRemoved( {
+				site_id: siteId,
+				subscription_id: subscriptionId,
+				user_id: userId,
+			} );
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries(
