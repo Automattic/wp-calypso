@@ -5,26 +5,26 @@ import {
 	AllowedMonitorContactActions,
 	AllowedMonitorContactTypes,
 	Site,
+	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
 import { useContactModalTitleAndSubtitle } from './hooks';
 import RemoveContactForm from './remove';
-import { ContactInfo } from './types';
 import { addToContactList, getContactInfoValue, removeFromContactList } from './utils';
 import VerifyContactForm from './verify';
 
-type Props< T > = {
+type Props = {
 	type: AllowedMonitorContactTypes;
 	action?: AllowedMonitorContactActions;
-	selectedContact?: T;
-	contacts: Array< T >;
-	setContacts: ( contacts: Array< T > ) => void;
+	selectedContact?: StateMonitoringSettingsContact;
+	contacts: Array< StateMonitoringSettingsContact >;
+	setContacts: ( contacts: Array< StateMonitoringSettingsContact > ) => void;
 	setVerifiedContact: ( item: string ) => void;
 	recordEvent: ( action: string, params?: object ) => void;
 	onClose: () => void;
 	sites: Array< Site >;
 };
 
-export default function ContactEditor< T extends Partial< ContactInfo > >( {
+export default function ContactEditor( {
 	type,
 	action = 'add',
 	onClose,
@@ -34,7 +34,7 @@ export default function ContactEditor< T extends Partial< ContactInfo > >( {
 	recordEvent,
 	setVerifiedContact,
 	sites,
-}: Props< T > ) {
+}: Props ) {
 	const { title, subtitle } = useContactModalTitleAndSubtitle( type, action );
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
@@ -45,25 +45,29 @@ export default function ContactEditor< T extends Partial< ContactInfo > >( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const onAddContact = ( contact: T, asVerified: boolean, sourceEvent?: string ) => {
+	const onAddContact = (
+		contact: StateMonitoringSettingsContact,
+		asVerified: boolean,
+		sourceEvent?: string
+	) => {
 		if ( sourceEvent ) {
 			recordEvent( sourceEvent );
 		}
 
-		setContacts( addToContactList< T >( type, contacts, contact, asVerified ) );
+		setContacts( addToContactList( type, contacts, contact, asVerified ) );
 		setVerifiedContact( getContactInfoValue( type, contact ) );
 
 		onClose();
 	};
 
-	const onRemoveContact = ( contact: T ) => {
+	const onRemoveContact = ( contact: StateMonitoringSettingsContact ) => {
 		if ( type === 'email' ) {
 			recordEvent( `downtime_monitoring_remove_email` );
 		} else if ( type === 'sms' ) {
 			recordEvent( `downtime_monitoring_remove_phone_number` );
 		}
 
-		setContacts( removeFromContactList< T >( type, contacts, contact ) );
+		setContacts( removeFromContactList( type, contacts, contact ) );
 		onClose();
 	};
 

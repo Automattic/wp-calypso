@@ -4,6 +4,7 @@ import {
 	RequestVerificationCodeParams,
 	StateMonitorSettingsEmail,
 	StateMonitorSettingsSMS,
+	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
 import { ContactInfo } from './types';
 
@@ -157,10 +158,10 @@ export const getContactInfoPayload = (
  *
  * @returns {boolean}
  */
-export const isMatchingContactInfo = < T extends Partial< ContactInfo > >(
+export const isMatchingContactInfo = (
 	type: AllowedMonitorContactTypes,
-	contact: T,
-	contactInfo: Partial< ContactInfo >
+	contact: StateMonitoringSettingsContact,
+	contactInfo: ContactInfo
 ) => {
 	return getContactInfoValue( type, contact ) === getContactInfoValue( type, contactInfo );
 };
@@ -174,9 +175,9 @@ export const isMatchingContactInfo = < T extends Partial< ContactInfo > >(
  *
  * @returns {boolean}
  */
-export const isContactAlreadyExists = < T extends Partial< ContactInfo > >(
+export const isContactAlreadyExists = (
 	type: AllowedMonitorContactTypes,
-	contacts: Array< T >,
+	contacts: Array< StateMonitoringSettingsContact >,
 	contact: ContactInfo
 ) => {
 	return contacts.find( ( item ) => {
@@ -191,10 +192,10 @@ export const isContactAlreadyExists = < T extends Partial< ContactInfo > >(
  * @param {Array} contacts
  * @param {ContactInfo} contactInfo
  */
-export const removeFromContactList = < T extends Partial< ContactInfo > >(
+export const removeFromContactList = (
 	type: AllowedMonitorContactTypes,
-	contacts: Array< T >,
-	contact: T
+	contacts: Array< StateMonitoringSettingsContact >,
+	contact: StateMonitoringSettingsContact
 ) => {
 	return contacts.filter( ( item ) => ! isMatchingContactInfo( type, item, contact ) );
 };
@@ -207,10 +208,10 @@ export const removeFromContactList = < T extends Partial< ContactInfo > >(
  * @param {ContactInfo} contactInfo
  * @param {boolean} asVerified
  */
-export const addToContactList = < T extends Partial< ContactInfo > >(
+export const addToContactList = (
 	type: AllowedMonitorContactTypes,
-	contacts: Array< T >,
-	contact: T,
+	contacts: Array< StateMonitoringSettingsContact >,
+	contact: StateMonitoringSettingsContact,
 	asVerified: boolean
 ) => {
 	let isANewContact = true;
@@ -233,7 +234,7 @@ export const addToContactList = < T extends Partial< ContactInfo > >(
 		} );
 	}
 
-	return updatedContactList as Array< T >;
+	return updatedContactList as Array< StateMonitoringSettingsContact >;
 };
 
 /*

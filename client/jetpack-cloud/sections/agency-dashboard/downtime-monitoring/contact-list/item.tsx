@@ -10,27 +10,27 @@ import { getContactActionEventName, getContactItemValue } from './utils';
 import type {
 	AllowedMonitorContactActions,
 	AllowedMonitorContactTypes,
+	StateMonitorSettingsEmail,
+	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
 
 import './style.scss';
 
-type Props< T > = {
-	item: T;
-	onAction?: ( item: T, action: AllowedMonitorContactActions ) => void;
+type Props = {
+	item: StateMonitoringSettingsContact;
+	onAction?: ( item: StateMonitoringSettingsContact, action: AllowedMonitorContactActions ) => void;
 	recordEvent?: ( action: string, params?: object ) => void;
 	showVerifiedBadge?: boolean;
 	type: AllowedMonitorContactTypes;
 };
 
-export type ContactListItemType = { name: string; verified: boolean; isDefault?: boolean };
-
-export default function ContactListItem< T extends ContactListItemType >( {
+export default function ContactListItem( {
 	item,
 	onAction,
 	recordEvent,
 	showVerifiedBadge,
 	type,
-}: Props< T > ) {
+}: Props ) {
 	const translate = useTranslate();
 
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -56,7 +56,7 @@ export default function ContactListItem< T extends ContactListItemType >( {
 		( type === 'email' && value && verifiedContacts?.emails.includes( value ) ) ||
 		( type === 'sms' && value && verifiedContacts?.phoneNumbers.includes( value ) );
 
-	const isDefaultItem = type === 'email' && item.isDefault;
+	const isDefaultItem = type === 'email' && ( item as StateMonitorSettingsEmail ).isDefault;
 
 	const handleOnAction = useCallback(
 		( action: AllowedMonitorContactActions ) => {

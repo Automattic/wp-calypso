@@ -15,6 +15,7 @@ import {
 	AllowedMonitorContactActions,
 	AllowedMonitorContactTypes,
 	Site,
+	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
 import {
 	useRequestVerificationCode,
@@ -33,18 +34,22 @@ import {
 	isValidContactInfo,
 } from './utils';
 
-type Props< T > = {
+type Props = {
 	action: AllowedMonitorContactActions;
-	contact?: T;
-	contacts: Array< T >;
-	onAdd: ( contact: T, verified: boolean, sourceEvent?: string ) => void;
+	contact?: StateMonitoringSettingsContact;
+	contacts: Array< StateMonitoringSettingsContact >;
+	onAdd: (
+		contact: StateMonitoringSettingsContact,
+		verified: boolean,
+		sourceEvent?: string
+	) => void;
 	onClose: () => void;
 	recordEvent: ( action: string, params?: object ) => void;
 	type: AllowedMonitorContactTypes;
 	sites: Array< Site >;
 };
 
-export default function VerifyContactForm< T extends Partial< ContactInfo > >( {
+export default function VerifyContactForm( {
 	action,
 	contact,
 	contacts,
@@ -53,7 +58,7 @@ export default function VerifyContactForm< T extends Partial< ContactInfo > >( {
 	onAdd,
 	onClose,
 	sites,
-}: Props< T > ) {
+}: Props ) {
 	const translate = useTranslate();
 	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ?? [] );
 
@@ -145,7 +150,7 @@ export default function VerifyContactForm< T extends Partial< ContactInfo > >( {
 			actionEvent = 'downtime_monitoring_phone_number_already_verified';
 		}
 
-		onAdd( contactInfo as T, true, actionEvent );
+		onAdd( contactInfo as StateMonitoringSettingsContact, true, actionEvent );
 	};
 
 	// Function to handle resending verification code
@@ -232,7 +237,7 @@ export default function VerifyContactForm< T extends Partial< ContactInfo > >( {
 			actionEvent = 'downtime_monitoring_verify_phone_number_later';
 		}
 
-		onAdd( contactInfo as T, false, actionEvent );
+		onAdd( contactInfo as StateMonitoringSettingsContact, false, actionEvent );
 	};
 
 	const handleInputChange = useCallback(
@@ -324,7 +329,7 @@ export default function VerifyContactForm< T extends Partial< ContactInfo > >( {
 	// Add contact to the list once the it is verified
 	useEffect( () => {
 		if ( isSubmittingVerificationCodeSuccess || isRequestingVerificationCodeAlreadyVerified ) {
-			onAdd( contactInfo as T, true );
+			onAdd( contactInfo as StateMonitoringSettingsContact, true );
 		}
 	}, [
 		contactInfo,

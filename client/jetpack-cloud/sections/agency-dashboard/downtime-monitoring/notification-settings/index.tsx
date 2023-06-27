@@ -31,6 +31,7 @@ import type {
 	InitialMonitorSettings,
 	StateMonitorSettingsSMS,
 	MonitorSettingsContact,
+	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
 
 import './style.scss';
@@ -171,13 +172,13 @@ export default function NotificationSettings( {
 		setHasUnsavedChanges( false );
 	}, [] );
 
-	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
-		setAllEmailItems( items );
+	const handleSetAllEmailItems = ( items: StateMonitoringSettingsContact[] ) => {
+		setAllEmailItems( items as StateMonitorSettingsEmail[] );
 		setHasUnsavedChanges( false );
 	};
 
-	const handleSetAllPhoneItems = ( items: StateMonitorSettingsSMS[] ) => {
-		setAllPhoneItems( items );
+	const handleSetAllPhoneItems = ( items: StateMonitoringSettingsContact[] ) => {
+		setAllPhoneItems( items as StateMonitorSettingsSMS[] );
 		clearValidationError();
 	};
 
