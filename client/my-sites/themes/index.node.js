@@ -27,7 +27,7 @@ export default function ( router ) {
 	];
 	router(
 		showcaseRoutes,
-		ssrSetupLocale,
+		// ssrSetupLocale,
 		// fetchThemeFilters,
 		// validateVertical,
 		// validateFilters,
