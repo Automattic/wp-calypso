@@ -22,6 +22,7 @@ import {
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 	isJetpackBoostSlug,
+	isJetpackStatsSlug,
 	planHasAtLeastOneFeature,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
@@ -75,6 +76,11 @@ export const productHasSearch = ( productSlug: string ): boolean => {
 		// check plans for Jetpack search features
 		( isJetpackPlanSlug( productSlug ) && planHasAtLeastOneFeature( productSlug, SEARCH_FEATURES ) )
 	);
+};
+
+export const productHasStats = ( productSlug: string ): boolean => {
+	// TODO: add plan feature check once we have a plan with stats.
+	return isJetpackStatsSlug( productSlug );
 };
 
 export const productHasAntiSpam = ( productSlug: string ): boolean => {
