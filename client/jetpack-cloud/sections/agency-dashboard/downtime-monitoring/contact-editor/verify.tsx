@@ -400,7 +400,7 @@ export default function VerifyContactForm( {
 				<FormTextInput
 					id="name"
 					name="name"
-					value={ contactInfo.name }
+					value={ contactInfo.name || '' }
 					disabled={ showCodeVerification }
 					onChange={ handleInputChange( 'name' ) }
 					aria-describedby={ ! isVerifyAction ? 'name-help-text' : undefined }
@@ -418,7 +418,7 @@ export default function VerifyContactForm( {
 					<FormTextInput
 						id="email"
 						name="email"
-						value={ contactInfo.email }
+						value={ contactInfo.email || '' }
 						disabled={ showCodeVerification }
 						onChange={ handleInputChange( 'email' ) }
 						aria-describedby={ ! isVerifyAction ? 'email-help-text' : undefined }

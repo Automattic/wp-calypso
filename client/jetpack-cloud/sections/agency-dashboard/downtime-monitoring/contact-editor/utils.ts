@@ -64,7 +64,6 @@ export const getDefaultContactInfo = (
 			countryNumericCode: countryNumericCode ?? '',
 			phoneNumber: phoneNumber ?? '',
 			phoneNumberFull: phoneNumberFull ?? '',
-			email: '',
 			id: phoneNumberFull ?? '',
 		};
 	}
@@ -76,21 +75,11 @@ export const getDefaultContactInfo = (
 			name: name ?? '',
 			email: email ?? '',
 			id: email ?? '',
-			countryCode: '',
-			countryNumericCode: '',
-			phoneNumber: '',
-			phoneNumberFull: '',
 		};
 	}
 
 	return {
 		name: '',
-		countryCode: '',
-		countryNumericCode: '',
-		phoneNumber: '',
-		phoneNumberFull: '',
-		email: '',
-		id: '',
 	};
 };
 
