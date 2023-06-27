@@ -6,7 +6,7 @@ import {
 	AllowedMonitorContactTypes,
 	Site,
 } from '../../sites-overview/types';
-import { useContactModalTitleAndSubtitle } from '../hooks';
+import { useContactModalTitleAndSubtitle } from './hooks';
 import RemoveContactForm from './remove';
 import { ContactInfo } from './types';
 import { addToContactList, getContactInfoValue, removeFromContactList } from './utils';

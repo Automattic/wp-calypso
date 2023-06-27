@@ -137,7 +137,7 @@ export const getContactInfoPayload = (
 	if ( type === 'sms' ) {
 		return {
 			type,
-			value: `${ contactInfo.countryNumericCode }${ contactInfo.phoneNumber }`,
+			value: contactInfo.phoneNumberFull ?? '',
 			number: contactInfo.phoneNumber,
 			country_code: contactInfo.countryCode,
 			country_numeric_code: contactInfo.countryNumericCode,

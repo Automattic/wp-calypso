@@ -21,6 +21,7 @@ import {
 	useResendVerificationCode,
 	useValidateVerificationCode,
 } from '../hooks';
+import { useContactFormInputHelpText } from './hooks';
 import { ContactInfo } from './types';
 import {
 	getContactInfoPayload,
@@ -97,7 +98,7 @@ export default function VerifyContactForm< T >( {
 		isLoading: isResendingVerificationCode,
 		isSuccess: isResendingVerificationCodeSuccess,
 		isError: isResendingVerificationCodeFailed,
-		mutate: resendingVerificationCode,
+		mutate: resendVerificationCode,
 	} = useResendVerificationCode();
 
 	const { verifiedContacts } = useContext( DashboardDataContext );
@@ -152,7 +153,7 @@ export default function VerifyContactForm< T >( {
 		if ( contactInfo.email ) {
 			setValidationError( undefined );
 			if ( type === 'email' ) {
-				resendingVerificationCode( {
+				resendVerificationCode( {
 					type,
 					value: getContactInfoValue( type, contactInfo ),
 				} );
@@ -380,6 +381,13 @@ export default function VerifyContactForm< T >( {
 		}
 	}, [ isResendingVerificationCodeFailed, translate ] );
 
+	const {
+		name: nameHelpText,
+		verificationCode: verificationCodeHelpText,
+		email: emailHelpText,
+		phoneNumber: phoneNumberHelpText,
+	} = useContactFormInputHelpText( type );
+
 	return (
 		<form onSubmit={ onSubmit }>
 			<FormFieldset>
@@ -394,10 +402,7 @@ export default function VerifyContactForm< T >( {
 				/>
 				{ ! isVerifyAction && (
 					<div className="configure-contact__help-text" id="name-help-text">
-						{ type === 'email' &&
-							translate( 'Give this email a nickname for your personal reference.' ) }
-						{ type === 'sms' &&
-							translate( 'Give this number a nickname for your personal reference.' ) }
+						{ nameHelpText }
 					</div>
 				) }
 			</FormFieldset>
@@ -420,7 +425,7 @@ export default function VerifyContactForm< T >( {
 					) }
 					{ ! isVerifyAction && (
 						<div className="configure-contact__help-text" id="email-help-text">
-							{ translate( 'We’ll send a code to verify your email address.' ) }
+							{ emailHelpText }
 						</div>
 					) }
 				</FormFieldset>
@@ -447,7 +452,7 @@ export default function VerifyContactForm< T >( {
 					) }
 					{ ! isVerifyAction && (
 						<div className="configure-contact__help-text" id="phone-help-text">
-							{ translate( 'We’ll send a code to verify your phone number.' ) }
+							{ phoneNumberHelpText }
 						</div>
 					) }
 				</div>
@@ -455,10 +460,7 @@ export default function VerifyContactForm< T >( {
 
 			{ showCodeVerification && (
 				<FormFieldset>
-					<FormLabel htmlFor="code">
-						{ type === 'email' && translate( 'Please enter the code you received via email' ) }
-						{ type === 'sms' && translate( 'Please enter the code you received via SMS' ) }
-					</FormLabel>
+					<FormLabel htmlFor="code">{ verificationCodeHelpText }</FormLabel>
 					<FormTextInput
 						id="code"
 						name="code"
