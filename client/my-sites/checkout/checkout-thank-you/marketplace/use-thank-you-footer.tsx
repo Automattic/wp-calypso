@@ -53,7 +53,7 @@ function usePluginSteps(): FooterStep[] {
 			key: 'thank_you_footer_explore',
 			title: translate( 'Need help setting your plugin up?' ),
 			description: translate(
-				'Check out our support documentation for step-by-step instructions and expert guidance on your plugin set up.'
+				'Check out our support documentation for step-by-step instructions and expert guidance on your plugin setup.'
 			),
 			link: `https://wordpress.com/support/plugins/use-your-plugins/`,
 			linkText: translate( 'Plugin setup guide' ),
