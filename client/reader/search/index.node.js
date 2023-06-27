@@ -3,7 +3,6 @@ import { makeLayout, render as clientRender, ssrSetupLocale } from 'calypso/cont
 import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchTrendingTags } from '../tags/controller';
-import {}
 import { search } from './controller';
 
 const fetchTrendingTagsIfLoggedOut = ( context, next ) => {
