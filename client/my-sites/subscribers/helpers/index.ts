@@ -40,22 +40,26 @@ const getSubscriberDetailsUrl = (
 	return `/subscribers/external/${ siteSlug }/${ subscription_id }`;
 };
 
-const getSubscriberDetailsCacheKey = ( siteId: number | null, queryString: string ) => [
-	'subscriber-details',
-	siteId,
-	queryString,
-];
+const getSubscriberDetailsCacheKey = (
+	siteId: number | null,
+	subscriptionId: number | undefined,
+	userId: number | undefined,
+	type: string
+) => [ 'subscriber-details', siteId, subscriptionId, userId, type ];
 
 const sanitizeInt = ( intString: string ) => {
 	const parsedInt = parseInt( intString, 10 );
 	return ! Number.isNaN( parsedInt ) && parsedInt > 0 ? parsedInt : undefined;
 };
 
+const getSubscriberDetailsType = ( userId: number | undefined ) => ( userId ? 'wpcom' : 'email' );
+
 export {
 	getEarnPageUrl,
 	getEarnPaymentsPageUrl,
 	getSubscriberDetailsCacheKey,
 	getSubscriberDetailsUrl,
+	getSubscriberDetailsType,
 	getSubscribersCacheKey,
 	sanitizeInt,
 };
