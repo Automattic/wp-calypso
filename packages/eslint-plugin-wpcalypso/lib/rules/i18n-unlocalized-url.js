@@ -13,14 +13,10 @@ const LOCALIZABLE_URLS = [
 	'apps.wordpress.com',
 	'automattic.com/cookies(/|$)',
 	'automattic.com/privacy(/|$)',
-	'jetpack.com/?$',
-	'wordpress.com/?$',
 	'wordpress.com/blog(/|$)',
 	'wordpress.com/forums(/|$)',
 	'wordpress.com/go(/|$)',
 	'wordpress.com/support(/|$)',
-	'wordpress.com/theme(/|$)',
-	'wordpress.com/themes(/|$)',
 	'wordpress.com/tos(/|$)',
 ];
 
