@@ -610,7 +610,7 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
+				{ this.productRelatedMessages() }
 			</Main>
 		);
 	}
@@ -739,64 +739,68 @@ export class CheckoutThankYou extends Component<
 
 		if ( ! this.isDataLoaded() ) {
 			return (
-				<div>
-					<CheckoutThankYouHeader
-						isDataLoaded={ false }
-						isSimplified={ isSimplified }
-						selectedSite={ selectedSite }
-						upgradeIntent={ upgradeIntent }
-						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
-						displayMode={ displayMode }
-					/>
+				<Card className="checkout-thank-you__content">
+					<div>
+						<CheckoutThankYouHeader
+							isDataLoaded={ false }
+							isSimplified={ isSimplified }
+							selectedSite={ selectedSite }
+							upgradeIntent={ upgradeIntent }
+							siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
+							displayMode={ displayMode }
+						/>
 
-					{ ! isSimplified && (
-						<>
-							<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
+						{ ! isSimplified && (
+							<>
+								<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
 
-							<div className="checkout-thank-you__purchase-details-list">
-								<PurchaseDetail isPlaceholder />
-								<PurchaseDetail isPlaceholder />
-								<PurchaseDetail isPlaceholder />
-							</div>
-						</>
-					) }
-				</div>
+								<div className="checkout-thank-you__purchase-details-list">
+									<PurchaseDetail isPlaceholder />
+									<PurchaseDetail isPlaceholder />
+									<PurchaseDetail isPlaceholder />
+								</div>
+							</>
+						) }
+					</div>
+				</Card>
 			);
 		}
 
 		return (
-			<div>
-				<CheckoutThankYouHeader
-					isDataLoaded={ this.isDataLoaded() }
-					isSimplified={ isSimplified }
-					primaryPurchase={ primaryPurchase }
-					selectedSite={ selectedSite }
-					hasFailedPurchases={ hasFailedPurchases }
-					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
-					upgradeIntent={ upgradeIntent }
-					primaryCta={ this.primaryCta }
-					displayMode={ displayMode }
-					purchases={ purchases }
-				>
-					{ ! isSimplified && primaryPurchase && (
-						<CheckoutThankYouFeaturesHeader
-							isDataLoaded={ this.isDataLoaded() }
-							isGenericReceipt={ this.isGenericReceipt() }
-							purchases={ purchases }
-							hasFailedPurchases={ hasFailedPurchases }
-						/>
-					) }
-
-					{ ! isSimplified && component && (
-						<div className="checkout-thank-you__purchase-details-list">
-							<PurchaseDetailsWrapper
-								{ ...this.props }
-								componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
+			<Card className="checkout-thank-you__content">
+				<div>
+					<CheckoutThankYouHeader
+						isDataLoaded={ this.isDataLoaded() }
+						isSimplified={ isSimplified }
+						primaryPurchase={ primaryPurchase }
+						selectedSite={ selectedSite }
+						hasFailedPurchases={ hasFailedPurchases }
+						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
+						upgradeIntent={ upgradeIntent }
+						primaryCta={ this.primaryCta }
+						displayMode={ displayMode }
+						purchases={ purchases }
+					>
+						{ ! isSimplified && primaryPurchase && (
+							<CheckoutThankYouFeaturesHeader
+								isDataLoaded={ this.isDataLoaded() }
+								isGenericReceipt={ this.isGenericReceipt() }
+								purchases={ purchases }
+								hasFailedPurchases={ hasFailedPurchases }
 							/>
-						</div>
-					) }
-				</CheckoutThankYouHeader>
-			</div>
+						) }
+
+						{ ! isSimplified && component && (
+							<div className="checkout-thank-you__purchase-details-list">
+								<PurchaseDetailsWrapper
+									{ ...this.props }
+									componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
+								/>
+							</div>
+						) }
+					</CheckoutThankYouHeader>
+				</div>
+			</Card>
 		);
 	};
 }
