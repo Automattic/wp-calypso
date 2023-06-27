@@ -82,8 +82,19 @@ body.is-section-promote-post-i2 {
 						height: 55px;
 						margin: 0 64px;
 						max-width: 1040px;
-						overflow: hidden;
 						width: auto;
+
+						@media screen and (max-width: $break-medium) {
+							overflow: auto;
+
+							/* Hide scrollbar for Chrome, Safari and Opera */
+							&::-webkit-scrollbar {
+								display: none;
+							}
+							/* Hide scrollbar for IE, Edge and Firefox */
+							-ms-overflow-style: none;  /* IE and Edge */
+							scrollbar-width: none;  /* Firefox */
+						}
 					}
 
 					// Hide dropdown version of tabs
@@ -222,18 +233,6 @@ body.is-section-promote-post-i2 {
 
 		.section-nav__mobile-header {
 			display: none;
-		}
-
-		@media screen and (max-width: $break-medium) {
-			overflow: auto;
-
-			/* Hide scrollbar for Chrome, Safari and Opera */
-			&::-webkit-scrollbar {
-				display: none;
-			}
-			/* Hide scrollbar for IE, Edge and Firefox */
-			-ms-overflow-style: none;  /* IE and Edge */
-			scrollbar-width: none;  /* Firefox */
 		}
 	}
 
