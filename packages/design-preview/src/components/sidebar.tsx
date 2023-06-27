@@ -5,10 +5,14 @@ import {
 	ColorPaletteVariations,
 	FontPairingVariations,
 } from '@automattic/global-styles';
+import { NavigatorScreens } from '@automattic/onboarding';
 import { useState } from '@wordpress/element';
+import { color, styles, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
+import type { NavigatorScreenObject } from '@automattic/onboarding';
 
 interface CategoryBadgeProps {
 	category: Category;
@@ -77,94 +81,135 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
 	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
 
-	return (
-		<div className="design-preview__sidebar">
-			<div className="design-preview__sidebar-content">
-				<div className="design-preview__sidebar-title">
-					<h1>{ title }</h1>
-				</div>
-				{ author && (
-					<div className="design-preview__sidebar-author">
-						{ translate( 'By %(author)s', { args: { author } } ) }
-					</div>
-				) }
-				{ ( pricingBadge || categories.length > 0 ) && (
-					<div className="design-preview__sidebar-badges">
-						{ pricingBadge }
-						{ categories.map( ( category ) => (
-							<CategoryBadge
-								key={ category.slug }
-								category={ category }
-								onClick={ onClickCategory }
-							/>
-						) ) }
-					</div>
-				) }
-				{ ( description || shortDescription ) && (
-					<div className="design-preview__sidebar-description">
-						<p>
-							{ isShowDescriptionToggle ? (
-								<>
-									{ isShowFullDescription ? description : shortDescription }
-									<Button
-										borderless
-										onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
-									>
-										{ isShowFullDescription ? translate( 'Read less' ) : translate( 'Read more' ) }
-									</Button>
-								</>
-							) : (
-								description ?? shortDescription
-							) }
-						</p>
-					</div>
-				) }
-				{ variations && variations.length > 0 && (
-					<div className="design-preview__sidebar-variations">
-						<div className="design-preview__sidebar-variations-grid">
-							<GlobalStylesVariations
-								globalStylesVariations={ variations as GlobalStylesObject[] }
-								selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
-								splitPremiumVariations={ splitPremiumVariations }
-								displayFreeLabel={ splitPremiumVariations }
-								showOnlyHoverViewDefaultVariation={ false }
-								onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
-									onSelectVariation( globalStyleVariation as StyleVariation )
-								}
-							/>
-						</div>
-					</div>
-				) }
-				{ variations &&
-					variations.length === 0 &&
-					isEnabled( 'signup/design-picker-preview-colors' ) && (
-						<div className="design-preview__sidebar-variations">
-							<ColorPaletteVariations
-								siteId={ siteId }
-								stylesheet={ stylesheet }
-								selectedColorPaletteVariation={ selectedColorVariation }
-								onSelect={ onSelectColorVariation }
-								limitGlobalStyles={ limitGlobalStyles }
-							/>
-						</div>
-					) }
-				{ variations &&
-					variations.length === 0 &&
-					isEnabled( 'signup/design-picker-preview-fonts' ) && (
-						<div className="design-preview__sidebar-variations">
-							<FontPairingVariations
-								siteId={ siteId }
-								stylesheet={ stylesheet }
-								selectedFontPairingVariation={ selectedFontVariation }
-								onSelect={ onSelectFontVariation }
-								limitGlobalStyles={ limitGlobalStyles }
-							/>
-						</div>
-					) }
+	const InitialScreen = ( { children }: { children: JSX.Element} ) => (
+		<>
+			<div className="design-preview__sidebar-title">
+				<h1>{ title }</h1>
 			</div>
+			{ author && (
+				<div className="design-preview__sidebar-author">
+					{ translate( 'By %(author)s', { args: { author } } ) }
+				</div>
+			) }
+			{ ( pricingBadge || categories.length > 0 ) && (
+				<div className="design-preview__sidebar-badges">
+					{ pricingBadge }
+					{ categories.map( ( category ) => (
+						<CategoryBadge
+							key={ category.slug }
+							category={ category }
+							onClick={ onClickCategory }
+						/>
+					) ) }
+				</div>
+			) }
+			{ ( description || shortDescription ) && (
+				<div className="design-preview__sidebar-description">
+					<p>
+						{ isShowDescriptionToggle ? (
+							<>
+								{ isShowFullDescription ? description : shortDescription }
+								<Button
+									borderless
+									onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
+								>
+									{ isShowFullDescription ? translate( 'Read less' ) : translate( 'Read more' ) }
+								</Button>
+							</>
+						) : (
+							description ?? shortDescription
+						) }
+					</p>
+				</div>
+			) }
+			{ children }
 			{ actionButtons && (
 				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
 			) }
+		</>
+	);
+
+	const screens = useMemo(
+		() =>
+			[
+				variations &&
+					variations.length > 0 && {
+						icon: styles,
+						label: translate( 'Styles' ),
+						path: '/style-variations',
+						content: (
+							<div className="design-preview__sidebar-variations">
+								<div className="design-preview__sidebar-variations-grid">
+									<GlobalStylesVariations
+										globalStylesVariations={ variations as GlobalStylesObject[] }
+										selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
+										splitPremiumVariations={ splitPremiumVariations }
+										displayFreeLabel={ splitPremiumVariations }
+										showOnlyHoverViewDefaultVariation={ false }
+										onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
+											onSelectVariation( globalStyleVariation as StyleVariation )
+										}
+									/>
+								</div>
+							</div>
+						),
+						actionText: translate( 'Save styles' ),
+					},
+				variations &&
+					variations.length === 0 &&
+					isEnabled( 'signup/design-picker-preview-colors' ) && {
+						icon: color,
+						label: translate( 'Colors' ),
+						path: '/color-palettes',
+						title: translate( 'Colors' ),
+						description: translate(
+							'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+						),
+						content: (
+							<div className="design-preview__sidebar-variations">
+								<ColorPaletteVariations
+									siteId={ siteId }
+									stylesheet={ stylesheet }
+									selectedColorPaletteVariation={ selectedColorVariation }
+									limitGlobalStyles={ limitGlobalStyles }
+									onSelect={ onSelectColorVariation }
+								/>
+							</div>
+						),
+						actionText: translate( 'Save colors' ),
+					},
+				variations &&
+					variations.length === 0 &&
+					isEnabled( 'signup/design-picker-preview-fonts' ) && {
+						icon: typography,
+						label: translate( 'Fonts' ),
+						path: '/font-pairings',
+						title: translate( 'Fonts' ),
+						description: translate(
+							'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
+						),
+						content: (
+							<div className="design-preview__sidebar-variations">
+								<FontPairingVariations
+									siteId={ siteId }
+									stylesheet={ stylesheet }
+									selectedFontPairingVariation={ selectedFontVariation }
+									limitGlobalStyles={ limitGlobalStyles }
+									onSelect={ onSelectFontVariation }
+								/>
+							</div>
+						),
+						actionText: translate( 'Save fonts' ),
+					},
+			].filter( Boolean ) as NavigatorScreenObject[],
+		[ variations ]
+	);
+
+	return (
+		<div className="design-preview__sidebar">
+			<div className="design-preview__sidebar-content">
+				<NavigatorScreens screens={ screens } InitialScreen={ InitialScreen } />
+			</div>
 		</div>
 	);
 };
