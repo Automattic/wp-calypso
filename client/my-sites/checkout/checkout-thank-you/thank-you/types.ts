@@ -39,7 +39,7 @@ export type ThankYouProps = {
 	headerBackgroundColor?: string;
 	headerClassName?: string;
 	headerTextColor?: string;
-	sections: ThankYouSectionProps[];
+	sections?: ThankYouSectionProps[];
 	showSupportSection?: boolean;
 	customSupportSection?: ThankYouSupportSectionProps;
 	thankYouImage?: {
@@ -52,6 +52,7 @@ export type ThankYouProps = {
 	thankYouSubtitle?: string | TranslateResult;
 	thankYouHeaderBody?: React.ReactElement | null;
 	thankYouNotice?: ThankYouNoticeProps;
+	children?: React.ReactElement | null;
 };
 
 export type ThankYouData = [

@@ -114,7 +114,7 @@ const ThankYouNextStep = ( props: ThankYouNextStepProps ) => {
 	);
 };
 
-const ThankYouSection = ( props: ThankYouSectionProps ) => {
+export const ThankYouSection = ( props: ThankYouSectionProps ) => {
 	const { nextSteps, sectionTitle, nextStepsClassName } = props;
 
 	const nextStepComponents = nextSteps.map( ( nextStepProps, index ) => (
@@ -171,13 +171,14 @@ export const ThankYou = ( props: ThankYouProps ) => {
 		headerClassName,
 		headerTextColor = 'var( --studio-white )',
 		containerClassName,
-		sections,
+		sections = [],
 		showSupportSection = true,
 		thankYouTitle,
 		thankYouSubtitle,
 		thankYouImage = null,
 		thankYouNotice,
 		thankYouHeaderBody = null,
+		children = null,
 	} = props;
 
 	const ThankYouTitleContainer = styled.div`
@@ -248,6 +249,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 				<ThankYouBody className="thank-you__body">
 					<div>
 						{ thankYouSections }
+						{ children }
 
 						{ showSupportSection && <ThankYouSupportSection { ...defaultSupportSectionProps } /> }
 					</div>

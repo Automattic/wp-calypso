@@ -40,6 +40,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isExternal } from 'calypso/lib/url';
 import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
+import { ThankYou } from 'calypso/my-sites/checkout/checkout-thank-you/thank-you';
 import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
@@ -81,7 +82,6 @@ import DomainRegistrationDetails from './domain-registration-details';
 import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
-import CheckoutThankYouFeaturesHeader from './features-header';
 import GoogleAppsDetails from './google-apps-details';
 import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
@@ -90,6 +90,7 @@ import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
+import PurchaseActions from './thank-you/purchase-actions';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import type { SitesPlansResult } from '../composite-checkout/hooks/product-variants';
@@ -752,7 +753,7 @@ export class CheckoutThankYou extends Component<
 
 						{ ! isSimplified && (
 							<>
-								<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
+								<PurchaseActions isDataLoaded={ false } />
 
 								<div className="checkout-thank-you__purchase-details-list">
 									<PurchaseDetail isPlaceholder />
@@ -782,7 +783,7 @@ export class CheckoutThankYou extends Component<
 						purchases={ purchases }
 					>
 						{ ! isSimplified && primaryPurchase && (
-							<CheckoutThankYouFeaturesHeader
+							<PurchaseActions
 								isDataLoaded={ this.isDataLoaded() }
 								isGenericReceipt={ this.isGenericReceipt() }
 								purchases={ purchases }
