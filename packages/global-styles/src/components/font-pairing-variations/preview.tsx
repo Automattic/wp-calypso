@@ -47,7 +47,7 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 
 	const getFontFamilyName = ( targetFontFamily: string ) => {
 		const fontFamily = fontFamilies.find( ( { fontFamily } ) => fontFamily === targetFontFamily );
-		return fontFamily ? fontFamily.name : targetFontFamily;
+		return fontFamily?.name || fontFamily?.fontFamily || targetFontFamily;
 	};
 
 	const textFontFamilyName = useMemo(
