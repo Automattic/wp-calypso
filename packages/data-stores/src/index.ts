@@ -13,7 +13,6 @@ import * as User from './user';
 import * as WpcomPlansUI from './wpcom-plans-ui';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useJetpackSearchAIQuery } from './queries/use-jetpack-search-ai';
-export { useSiteIntent } from './queries/use-site-intent';
 export * from './starter-designs-queries';
 export * from './site/types';
 export * from './templates';
