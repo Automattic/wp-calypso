@@ -2,7 +2,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { useMutation } from '@tanstack/react-query';
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import type { AnalysisReport } from '@automattic/data-stores';
+import type { AnalysisReport } from './types';
 
 type ForumTopic = {
 	site?: SiteDetails;

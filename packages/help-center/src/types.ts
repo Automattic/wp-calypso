@@ -1,4 +1,5 @@
-import type { HelpCenterSite, AnalysisReport } from '@automattic/data-stores';
+import type { AnalysisReport } from './data/types';
+import type { HelpCenterSite } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 export interface Container {

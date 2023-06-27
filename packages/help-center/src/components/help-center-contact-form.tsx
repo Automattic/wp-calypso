@@ -6,14 +6,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
-import {
-	useSiteAnalysis,
-	useUserSites,
-	AnalysisReport,
-	SiteDetails,
-	HelpCenterSite,
-	useJetpackSearchAIQuery,
-} from '@automattic/data-stores';
+import { SiteDetails, HelpCenterSite, useJetpackSearchAIQuery } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
@@ -32,8 +25,10 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
 import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
+import { useUserSites } from '../data/use-user-sites';
 import { useChatStatus, useContactFormTitle, useChatWidget, useZendeskMessaging } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
@@ -43,6 +38,7 @@ import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
 import { HelpCenterSitePicker } from './help-center-site-picker';
 import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
+import type { AnalysisReport } from '../data/types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 

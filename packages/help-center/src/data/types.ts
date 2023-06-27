@@ -1,3 +1,5 @@
+import type { SiteDetails, HelpCenterSite } from '@automattic/data-stores';
+
 interface Availability {
 	presale: boolean;
 	precancellation: boolean;
@@ -36,3 +38,19 @@ export interface SupportActivity {
 	timestamp: number;
 	channel: string;
 }
+
+type ResultType =
+	| 'DISABLED'
+	| 'LOADING'
+	| 'OWNED_BY_USER'
+	| 'WPORG'
+	| 'UNKNOWN'
+	| 'NOT_OWNED_BY_USER'
+	| 'UNKNOWN';
+
+export type AnalysisReport = {
+	result: ResultType;
+	site?: SiteDetails | HelpCenterSite;
+	siteURL: string | undefined;
+	isWpcom: boolean;
+};
