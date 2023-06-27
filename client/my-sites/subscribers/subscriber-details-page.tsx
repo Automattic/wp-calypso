@@ -1,3 +1,4 @@
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect } from 'react';
@@ -11,9 +12,11 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { SubscriberDetails } from './components/subscriber-details';
 import { SubscriberPopover } from './components/subscriber-popover';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
+import { getSubscriberDetailsUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
 import useDetailsPageSubscriberRemoveMutation from './mutations/use-details-page-subscriber-remove-mutation';
 import useSubscriberDetailsQuery from './queries/use-subscriber-details-query';
+import './subscriber-details-style.scss';
 
 type SubscriberDetailsPageProps = {
 	subscriptionId?: number;
@@ -25,12 +28,18 @@ const SubscriberDetailsPage = ( { subscriptionId, userId }: SubscriberDetailsPag
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const { data: subscriber } = useSubscriberDetailsQuery( selectedSiteId, subscriptionId, userId );
+
+	const { data: subscriber, isLoading } = useSubscriberDetailsQuery(
+		selectedSiteId,
+		subscriptionId,
+		userId
+	);
 	const { mutate, isSuccess } = useDetailsPageSubscriberRemoveMutation(
 		selectedSiteId,
 		subscriptionId,
 		userId
 	);
+
 	const {
 		currentSubscriber: modalSubscriber,
 		onClickUnsubscribe,
@@ -76,21 +85,22 @@ const SubscriberDetailsPage = ( { subscriptionId, userId }: SubscriberDetailsPag
 		},
 		{
 			label: translate( 'Details' ),
-			href: `/subscribers/${ selectedSiteSlug }/${ subscriptionId }`,
+			href: getSubscriberDetailsUrl( selectedSiteSlug, subscriptionId, userId ),
 		},
 	];
 
 	return (
-		<Main wideLayout>
+		<Main wideLayout className="subscriber-details-page">
 			<FixedNavigationHeader navigationItems={ navigationItems }>
 				<SubscriberPopover onUnsubscribe={ unsubscribeClickHandler } />
 			</FixedNavigationHeader>
-			{ subscriber && <SubscriberDetails subscriber={ subscriber } /> }
+			{ subscriber && ! isLoading && <SubscriberDetails subscriber={ subscriber } /> }
 			<UnsubscribeModal
 				subscriber={ modalSubscriber }
 				onCancel={ resetSubscriber }
 				onConfirm={ onConfirmModal }
 			/>
+			{ isLoading && <Spinner /> }
 		</Main>
 	);
 };
