@@ -1,6 +1,6 @@
 import { FormInputValidation } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { trash } from '@wordpress/icons';
+import { trash, update } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -23,7 +23,7 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 
 	const validation = useValidationMessage( domain, auth );
 
-	const { valid, loading, message } = validation;
+	const { valid, loading, message, refetch } = validation;
 
 	useEffect( () => {
 		onChange( id, { domain, auth, valid } );
@@ -50,7 +50,9 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 				</div>
 				<div className="domains__domain-key">
 					<FormFieldset>
-						{ showLabels && <FormLabel htmlFor={ id + '-auth' }>{ __( 'Auth code' ) }</FormLabel> }
+						{ showLabels && (
+							<FormLabel htmlFor={ id + '-auth' }>{ __( 'Authentication code' ) }</FormLabel>
+						) }
 						<FormInput
 							id={ id + '-auth' }
 							disabled={ valid }
@@ -58,8 +60,14 @@ export function DomainCodePair( { id, domain, auth, onChange, onRemove, showLabe
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, { domain, auth: event.target.value.trim(), valid } )
 							}
-							placeholder={ __( 'Auth code' ) }
+							placeholder={ __( 'Authentication code' ) }
 						/>
+					</FormFieldset>
+				</div>
+				<div className="domains__domain-delete">
+					<FormFieldset>
+						{ showLabels && <FormLabel htmlFor={ id }>{ __( 'Refresh' ) }</FormLabel> }
+						<Button disabled={ ! refetch } icon={ update } onClick={ () => refetch?.() } />
 					</FormFieldset>
 				</div>
 				<div className="domains__domain-delete">

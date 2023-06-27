@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import sha256 from 'hash.js/lib/hash/sha/256';
 import wpcomRequest from 'wpcom-proxy-request';
 
+const VERSION = 1;
+
 /**
  * Irreversibly hash the auth code to avoid storing it as query key.
  *
@@ -33,7 +35,7 @@ type DomainCodePair = { domain: string; auth: string };
 
 export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) {
 	return useQuery( {
-		queryKey: [ 'domain-code-valid', pair.domain, hashAuthCode( pair.auth ) ],
+		queryKey: [ 'domain-code-valid', VERSION, pair.domain, hashAuthCode( pair.auth ) ],
 		queryFn: async () => {
 			try {
 				const { unlocked } = await wpcomRequest< DomainLockResponse >( {
@@ -57,7 +59,7 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 							pair.domain
 						) }/inbound-transfer-check-auth-code`,
 						query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
-					} );
+					} ).catch( () => ( { success: false } ) );
 
 					return {
 						domain: pair.domain,

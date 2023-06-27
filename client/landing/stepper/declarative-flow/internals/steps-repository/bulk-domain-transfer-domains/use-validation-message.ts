@@ -17,7 +17,11 @@ export function useValidationMessage( domain: string, auth: string ) {
 
 	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode;
 
-	const { data: validationResult, isInitialLoading: isValidating } = useIsDomainCodeValid(
+	const {
+		data: validationResult,
+		isFetching: isValidating,
+		refetch,
+	} = useIsDomainCodeValid(
 		{
 			domain: domainDebounced,
 			auth: authDebounced,
@@ -49,7 +53,7 @@ export function useValidationMessage( domain: string, auth: string ) {
 		return {
 			valid: false,
 			loading: false,
-			message: __( 'Please enter a valid auth code.' ),
+			message: __( 'Please enter a valid authentication code.' ),
 		};
 	}
 
@@ -69,6 +73,7 @@ export function useValidationMessage( domain: string, auth: string ) {
 			message: __(
 				'An unknown error occurred while checking the domain transferability. Please try again or contact support'
 			),
+			refetch,
 		};
 	}
 
@@ -87,6 +92,7 @@ export function useValidationMessage( domain: string, auth: string ) {
 			valid: false,
 			loading: false,
 			message: __( 'This domain is unlocked but the authentication code seems incorrect.' ),
+			refetch,
 		};
 	} else if ( validationResult?.registered === false ) {
 		return {
@@ -99,6 +105,7 @@ export function useValidationMessage( domain: string, auth: string ) {
 			valid: false,
 			loading: false,
 			message: __( 'This domain does not seem to be unlocked.' ),
+			refetch,
 		};
 	}
 	return {
@@ -107,5 +114,6 @@ export function useValidationMessage( domain: string, auth: string ) {
 		message: __(
 			'An unknown error occurred while checking the domain transferability. Please try again or contact support'
 		),
+		refetch,
 	};
 }
