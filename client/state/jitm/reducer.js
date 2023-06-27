@@ -18,10 +18,6 @@ export const isFetching = ( _, { type } ) => {
 		return true;
 	}
 
-	if ( type === JITM_SET ) {
-		return false;
-	}
-
 	return false;
 };
 

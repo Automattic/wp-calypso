@@ -142,6 +142,7 @@ const PluginsBrowserList = ( {
 				<AsyncLoad
 					require="calypso/blocks/jitm"
 					template="spotlight"
+					jitmPlaceholder={ SpotlightPlaceholder }
 					messagePath={ `calypso:${ sectionJitmPath }:spotlight` }
 				/>
 			) }
