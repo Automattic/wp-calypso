@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### Breaking changes
+
+- Remove all custom query and mutation hooks (based on `@tanstack/query`) from `support-queries/*`. These are moved to `@automattic/help-center`.
+- Move the following query and mutation hooks (based on `@tanstack/query`) from `queries/*` to `@automattic/help-center`
+  - `use-is-wporg-site.ts`
+  - `use-site-analysis.ts`
+  - `use-jetpack-search-ai.ts`
+  - `use-submit-forums-topic.ts`
+  - `use-support-availability.ts`
+  - `use-support-activity.ts`
+  - `use-update-zendesk-user-fields.ts`
+  - `use-user-sites.ts`
+  - `use-wpcom-site.ts`
+
 ## 3.0.1
 
 - Add missing dependency @automattic/domain-utils, use-debounce
