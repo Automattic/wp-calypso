@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import { useDebounce } from 'use-debounce';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
+import { SubscribersSortBy } from '../../constants';
 import { useSubscribersQuery } from '../../queries';
 
 type SubscriberListManagerProviderProps = {
@@ -21,6 +22,8 @@ type SubscriberListManagerContextProps = {
 	total: number;
 	grandTotal: number;
 	pageClickCallback: ( page: number ) => void;
+	sortTerm: SubscribersSortBy;
+	setSortTerm: ( term: SubscribersSortBy ) => void;
 };
 
 const SubscriberListManagerContext = createContext< SubscriberListManagerContextProps | undefined >(
@@ -37,6 +40,7 @@ export const SubscribersListManagerProvider = ( {
 }: SubscriberListManagerProviderProps ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
+	const [ sortTerm, setSortTerm ] = useState( SubscribersSortBy.DateSubscribed );
 
 	const handleSearch = useCallback( ( term: string ) => {
 		setSearchTerm( term );
@@ -52,6 +56,7 @@ export const SubscribersListManagerProvider = ( {
 		perPage,
 		search: debouncedSearchTerm,
 		siteId,
+		sortTerm,
 	} );
 
 	const { total, per_page, subscribers } = subscribersQueryResult.data || {
@@ -84,6 +89,8 @@ export const SubscribersListManagerProvider = ( {
 				setPerPage,
 				subscribers,
 				pageClickCallback,
+				sortTerm,
+				setSortTerm,
 			} }
 		>
 			{ children }

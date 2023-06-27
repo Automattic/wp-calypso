@@ -1,5 +1,6 @@
 import warn from '@wordpress/warning';
 import { random, map, includes, get } from 'lodash';
+import { getDiscoverStreamTags } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -208,7 +209,8 @@ const streamApis = {
 		query: ( extras, { tags } ) =>
 			getQueryString( {
 				...extras,
-				tags: tags ? Object.values( tags )?.map( ( tag ) => tag.slug ) : [],
+				// Do not supply an empty fallback as null is good info for getDiscoverStreamTags
+				tags: getDiscoverStreamTags( tags && Object.values( tags )?.map( ( tag ) => tag.slug ) ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
 			} ),

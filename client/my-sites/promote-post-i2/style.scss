@@ -107,6 +107,11 @@ body.is-section-promote-post-i2 {
 					max-width: 1040px;
 					width: calc(100% - 128px);
 				}
+				.campaigns-list__table {
+					td > div {
+						cursor: pointer;
+					}
+				}
 			}
 
 			.advertising__page-header {
@@ -201,6 +206,7 @@ body.is-section-promote-post-i2 {
 	}
 
 	.section-nav {
+		margin-bottom: 32px;
 		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 
 		.is-selected .section-nav-tab__link {
@@ -288,6 +294,7 @@ body.is-section-promote-post-i2 {
 		.form-text-input.search__input {
 			@include promote-post-i2-font;
 
+			color: $studio-gray-100;
 			height: calc(100% - 4px) !important;
 			margin: 2px 2px 2px 0;
 		}

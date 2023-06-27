@@ -42,15 +42,16 @@ $masterbar-color-secondary: #101517;
 		border-bottom: 1px solid var(--studio-orange-60);
 	}
 
-	&.masterbar--is-checkout.masterbar--is-jetpack {
-		background-color: var(--color-jetpack-masterbar-background);
-		border-bottom: 1px solid var(--color-jetpack-masterbar-border);
-		color: var(--color-jetpack-masterbar-text);
-	}
+	&.masterbar--is-checkout {
+		background-color: var(--studio-white);
+		border-bottom: none 0;
+		color: var(--color-checkout-masterbar-text);
+		height: var(--masterbar-checkout-height);
+		position: absolute;
 
-	&.masterbar--is-checkout.masterbar--is-akismet {
-		background-color: var(--color-akismet-masterbar-background);
-		border-bottom: 1px solid var(--color-akismet-masterbar-border);
+		@include breakpoint-deprecated( ">960px" ) {
+			background-color: var(--color-checkout-masterbar-background);
+		}
 	}
 
 	// stylelint-disable-next-line unit-allowed-list
@@ -202,6 +203,11 @@ $masterbar-color-secondary: #101517;
 	transition: all 0.2s ease-in-out;
 	justify-content: center;
 
+	.masterbar--is-checkout & {
+		height: var(--masterbar-checkout-height);
+		line-height: var(--masterbar-checkout-height);
+	}
+
 	&:visited {
 		color: var(--color-masterbar-text);
 	}
@@ -213,13 +219,17 @@ $masterbar-color-secondary: #101517;
 	.masterbar__item-content {
 		white-space: nowrap;
 		color: var(--color-masterbar-text);
+
+		.masterbar--is-checkout & {
+			color: var(--color-checkout-masterbar-text);
+		}
 	}
 
 	.gridicon {
 		fill: var(--color-masterbar-text); // only because safari gets currentColor wrong
 
-		.masterbar--is-checkout.masterbar--is-jetpack & {
-			fill: var(--color-jetpack-masterbar-text);
+		.masterbar--is-checkout & {
+			fill: var(--color-checkout-masterbar-text);
 		}
 	}
 
@@ -232,9 +242,9 @@ $masterbar-color-secondary: #101517;
 			background: var(--color-masterbar-item-hover-background);
 			color: var(--color-masterbar-text);
 
-			.masterbar--is-checkout.masterbar--is-jetpack & {
-				background: var(--color-jetpack-masterbar-item-hover-background);
-				color: var(--color-jetpack-masterbar-text);
+			.masterbar--is-checkout & {
+				background: var(--color-checkout-masterbar-item-hover-background);
+				color: var(--color-checkout-masterbar-text);
 			}
 		}
 	}
@@ -247,9 +257,9 @@ $masterbar-color-secondary: #101517;
 			color: var(--color-masterbar-text);
 		}
 
-		.masterbar--is-checkout.masterbar--is-jetpack & {
-			box-shadow: inset 0 0 0 2px var(--color-jetpack-masterbar-item-hover-background);
-			color: var(--color-jetpack-masterbar-text);
+		.masterbar--is-checkout & {
+			box-shadow: inset 0 0 0 2px var(--color-checkout-masterbar-item-hover-background);
+			color: var(--color-checkout-masterbar-text);
 		}
 	}
 
@@ -275,13 +285,8 @@ $masterbar-color-secondary: #101517;
 	}
 
 	&.masterbar__close-button {
-		border-right: 1px solid var(--color-masterbar-border);
-		margin-right: 15px;
+		color: var(--color-checkout-masterbar-text);
 		cursor: pointer;
-
-		.masterbar--is-checkout.masterbar--is-jetpack & {
-			border-right: 1px solid var(--color-jetpack-masterbar-border);
-		}
 
 		.masterbar__item-content {
 			display: none;
@@ -837,8 +842,11 @@ a.masterbar__quick-language-switcher {
 .masterbar__secure-checkout {
 	display: flex;
 	align-items: center;
+	margin-left: 24px;
 
 	.masterbar__wpcom-wordmark {
+		color: var(--color-checkout-masterbar-text);
+		fill: var(--color-checkout-masterbar-text);
 		margin-right: 5px;
 	}
 
@@ -852,8 +860,7 @@ a.masterbar__quick-language-switcher {
 	}
 
 	.masterbar__secure-checkout-text {
-		color: var(--color-primary-5);
-		transform: translateY(1px);
+		color: var(--color-checkout-masterbar-text);
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.2em;
 		font-size: 0.75rem;
@@ -866,12 +873,10 @@ a.masterbar__quick-language-switcher {
 		}
 
 		.masterbar--is-jetpack & {
-			color: var(--color-jetpack-masterbar-text);
 			transform: translateY(-1px);
 		}
 
 		.masterbar--is-akismet & {
-			color: var(--color-jetpack-masterbar-text);
 			transform: translateY(4px);
 		}
 	}
@@ -880,8 +885,21 @@ a.masterbar__quick-language-switcher {
 .masterbar__item-help {
 	padding: 0 11px;
 
+	.masterbar--is-checkout & {
+		padding: 0 24px;
+
+		@include breakpoint-deprecated( "<480px" ) {
+			display: none;
+		}
+	}
+
 	svg {
 		fill: var(--color-masterbar-text);
+
+		.masterbar--is-checkout & {
+			fill: var(--color-checkout-masterbar-text);
+			margin-right: 6px;
+		}
 	}
 }
 

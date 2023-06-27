@@ -13,6 +13,9 @@ const ActionPanelStyled = styled( ActionPanel )( {
 	'.action-panel__body': {
 		color: 'var(--studio-gray-70)',
 	},
+	'&.action-panel': {
+		paddingBottom: '0px',
+	},
 } );
 
 export function SiteTransferCard( {

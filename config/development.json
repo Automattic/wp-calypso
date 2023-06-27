@@ -32,6 +32,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"bulk-domain-transfer-flow": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -60,6 +61,7 @@
 		"domains/premium-domain-purchases": true,
 		"email-accounts/enabled": true,
 		"external-media": true,
+		"yolo/edge-cache-i1": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
@@ -159,7 +161,6 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/comment-polling": false,
-		"reader/discover": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,

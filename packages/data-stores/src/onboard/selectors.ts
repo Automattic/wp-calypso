@@ -2,6 +2,7 @@ import type { State } from './reducer';
 export const getAnchorPodcastId = ( state: State ) => state.anchorPodcastId;
 export const getAnchorEpisodeId = ( state: State ) => state.anchorEpisodeId;
 export const getAnchorSpotifyUrl = ( state: State ) => state.anchorSpotifyUrl;
+export const getBulkDomainsData = ( state: State ) => state.bulkDomains;
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;
 export const getPlanCartItem = ( state: State ) => state.planCartItem;

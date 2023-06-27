@@ -26,7 +26,6 @@ open class WPComPluginBuild(
 	var buildSteps: BuildSteps.() -> Unit = {},
 	var buildParams: ParametrizedWithType.() -> Unit = {},
 ) : BuildType() {
-
 	init {
 		// This block allows us to use variable names without having to prefix them with `this.@WPComPluginBuild.`
 		val workingDir = "apps/$pluginSlug"
@@ -57,9 +56,14 @@ open class WPComPluginBuild(
 		triggers {
 			vcs {
 				branchFilter = """
-				+:*
-				-:pull*
-			""".trimIndent()
+					+:*
+					-:pull*
+				""".trimIndent()
+				triggerRules = """
+					-:test/e2e/**.md
+					-:docs/**.md
+					-:comment=stress test:**
+				""".trimIndent()
 			}
 		}
 

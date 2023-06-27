@@ -24,9 +24,18 @@ export function subscribers( context, next ) {
 
 export function subscriberDetails( context, next ) {
 	const { path } = context;
+	const userId = path.split( '/' ).pop();
+
+	context.primary = <SubscriberDetailsPage userId={ userId } />;
+
+	next();
+}
+
+export function externalSubscriberDetails( context, next ) {
+	const { path } = context;
 	const subscriberId = path.split( '/' ).pop();
 
-	context.primary = <SubscriberDetailsPage subscriberId={ subscriberId } />;
+	context.primary = <SubscriberDetailsPage subscriptionId={ subscriberId } />;
 
 	next();
 }
