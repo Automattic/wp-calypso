@@ -27,18 +27,6 @@ const defaultState: BulkDomainTransferData = {
 	},
 };
 
-/**
- * Remove duplicate domains from the list
- *
- * @param domainsWithDupes domains
- */
-function distinctItems( domainsWithDupes: BulkDomainTransferData ) {
-	return Object.values( domainsWithDupes ).reduce( ( items, item ) => {
-		items[ item.domain ] = item.auth;
-		return items;
-	}, {} as Record< string, string > );
-}
-
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
 	const [ ignoreCart, setIgnoreCart ] = useState( false );
@@ -74,8 +62,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	const handleAddTransfer = () => {
 		if ( allGood ) {
-			const distinctDomains = distinctItems( domainsState );
-			const cartItems = Object.entries( distinctDomains ).map( ( [ domain, auth ] ) =>
+			const cartItems = Object.values( domainsState ).map( ( { domain, auth } ) =>
 				domainTransfer( {
 					domain,
 					extra: {
