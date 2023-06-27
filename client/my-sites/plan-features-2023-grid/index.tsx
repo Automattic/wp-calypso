@@ -104,14 +104,14 @@ const Container = (
 
 export type PlanFeatures2023GridProps = {
 	isInSignup?: boolean;
-	siteId: number;
+	siteId?: number | null;
 	isLaunchPage?: boolean | null;
 	isReskinned: boolean;
-	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
+	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PlanSlug[];
 	visiblePlans: Array< string >;
-	flowName: string;
+	flowName?: string | null;
 	domainName?: string;
 	placeholder?: string;
 	intervalType: string;
@@ -130,7 +130,7 @@ type PlanFeatures2023GridConnectedProps = {
 	translate: LocalizeProps[ 'translate' ];
 	recordTracksEvent: ( slug: string ) => void;
 	planProperties: Array< PlanProperties >;
-	canUserPurchasePlan: boolean;
+	canUserPurchasePlan: boolean | null;
 	current: boolean;
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	manageHref: string;
@@ -638,13 +638,15 @@ export class PlanFeatures2023Grid extends Component<
 		const { onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
 		const { cartItemForPlan, planName } = singlePlanProperties;
 
-		if ( ownPropsOnUpgradeClick && cartItemForPlan ) {
-			ownPropsOnUpgradeClick( cartItemForPlan );
+		// TODO: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
+
+		if ( cartItemForPlan ) {
+			ownPropsOnUpgradeClick?.( cartItemForPlan );
 			return;
 		}
 
 		if ( isFreePlan( planName ) ) {
-			ownPropsOnUpgradeClick( null );
+			ownPropsOnUpgradeClick?.( null );
 			return;
 		}
 	};
@@ -718,7 +720,7 @@ export class PlanFeatures2023Grid extends Component<
 	maybeRenderRefundNotice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { translate, flowName } = this.props;
 
-		if ( ! isAnyHostingFlow( flowName ) ) {
+		if ( ! isAnyHostingFlow( flowName ?? null ) ) {
 			return false;
 		}
 
@@ -914,9 +916,10 @@ const ConnectedPlanFeatures2023Grid = connect(
 			selectedFeature,
 			intent,
 		} = ownProps;
-		const canUserPurchasePlan =
-			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
-		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
+		const canUserPurchasePlan = siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null;
+		const purchaseId = siteId && getCurrentPlanPurchaseId( state, siteId );
 		const selectedSiteSlug = getSiteSlug( state, siteId );
 
 		const planProperties: PlanProperties[] = plans.map( ( plan: PlanSlug ) => {
@@ -1040,7 +1043,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 				( planConstantObj.get2023PricingGridSignupStorageOptions &&
 					planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
 				[];
-			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
+			const availableForPurchase =
+				isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 			const isCurrentPlan = currentSitePlanSlug === plan;
 			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
 

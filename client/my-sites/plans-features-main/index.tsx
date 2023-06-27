@@ -42,10 +42,10 @@ import useVisiblePlansForPlanFeatures from './hooks/use-visible-plans-for-plan-f
 import type { PlansIntent } from './hooks/use-plan-types-with-intent';
 import type { IntervalType } from './types';
 import type { DomainSuggestion } from '@automattic/data-stores';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
 interface PlansFeaturesMainProps {
@@ -57,7 +57,7 @@ interface PlansFeaturesMainProps {
 	basePlansPath?: string;
 	selectedPlan?: string;
 	selectedFeature?: string;
-	onUpgradeClick?: ( cartItemForPlan?: { product_slug: string } | null ) => void;
+	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	domainName?: string;

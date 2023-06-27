@@ -22,7 +22,7 @@ import type { PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
-	canUserPurchasePlan: boolean;
+	canUserPurchasePlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string;
 	current: boolean;
@@ -35,7 +35,7 @@ type PlanFeaturesActionsButtonProps = {
 	onUpgradeClick: () => void;
 	planName: TranslateResult;
 	planType: string;
-	flowName: string;
+	flowName?: string | null;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
 	isWooExpressPlusPlan?: boolean;
@@ -150,7 +150,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	planType: string;
 	current?: boolean;
 	manageHref?: string;
-	canUserPurchasePlan?: boolean;
+	canUserPurchasePlan?: boolean | null;
 	currentSitePlanSlug?: string;
 	buttonText?: string;
 	selectedSiteSlug: string | null;
