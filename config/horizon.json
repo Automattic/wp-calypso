@@ -13,6 +13,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"bulk-domain-transfer-flow": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -101,7 +102,6 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
-		"reader/discover": false,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
 		"reader/subscription-management": true,
@@ -114,6 +114,7 @@
 		"settings/security/monitor": true,
 		"sign-in-with-apple": false,
 		"signup/design-picker-pattern-assembler": true,
+		"signup/design-picker-preview-fonts": true,
 		"signup/professional-email-step": false,
 		"signup/social": true,
 		"signup/woo-verify-email": false,

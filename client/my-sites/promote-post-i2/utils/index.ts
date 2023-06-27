@@ -34,7 +34,7 @@ export const getPostType = ( type: string ) => {
 	}
 };
 
-export const getCampaignStatusBadgeColor = ( status: string ) => {
+export const getCampaignStatusBadgeColor = ( status?: string ) => {
 	switch ( status ) {
 		case campaignStatus.SCHEDULED: {
 			return 'info-blue';
@@ -62,7 +62,7 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 	}
 };
 
-export const getCampaignStatus = ( status: string ) => {
+export const getCampaignStatus = ( status?: string ) => {
 	switch ( status ) {
 		case campaignStatus.SCHEDULED: {
 			return __( 'Scheduled' );

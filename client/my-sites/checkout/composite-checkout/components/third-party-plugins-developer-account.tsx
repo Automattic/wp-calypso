@@ -4,7 +4,7 @@ import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 
-const CheckboxTermsWrapper = styled( FormLabel )`
+const CheckboxTermsWrapper = styled.div`
 	column-gap: 8px;
 	display: grid;
 	grid-template-areas:
@@ -65,17 +65,19 @@ function ThirdPartyDevsAccount( { isAccepted, isSubmitted, onChange, translate }
 	};
 
 	return (
-		<CheckboxTermsWrapper>
-			<StyledFormCheckbox
-				onChange={ handleChange }
-				onBlur={ () => setTouched( true ) }
-				checked={ isAccepted }
-			/>
-			<MessageWrapper displayErrorMessage={ displayErrorMessage }>{ message }</MessageWrapper>
-			{ displayErrorMessage && (
-				<ErrorMessage>{ translate( 'The terms above need to be accepted' ) }</ErrorMessage>
-			) }
-		</CheckboxTermsWrapper>
+		<FormLabel>
+			<CheckboxTermsWrapper>
+				<StyledFormCheckbox
+					onChange={ handleChange }
+					onBlur={ () => setTouched( true ) }
+					checked={ isAccepted }
+				/>
+				<MessageWrapper displayErrorMessage={ displayErrorMessage }>{ message }</MessageWrapper>
+				{ displayErrorMessage && (
+					<ErrorMessage>{ translate( 'The terms above need to be accepted' ) }</ErrorMessage>
+				) }
+			</CheckboxTermsWrapper>
+		</FormLabel>
 	);
 }
 

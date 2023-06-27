@@ -1,7 +1,6 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import AlertBanner from 'calypso/components/jetpack/alert-banner';
-import ConfigureSMSNotification from '../../configure-sms-notification';
+import ContactList from '../../contact-list';
 import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
 interface Props {
@@ -24,7 +23,7 @@ export default function SMSNotification( {
 	const translate = useTranslate();
 
 	const handleToggleClick = ( isEnabled: boolean ) => {
-		// Record event here
+		recordEvent( isEnabled ? 'sms_notification_enable' : 'sms_notification_disable' );
 		setEnableSMSNotification( isEnabled );
 	};
 
@@ -45,21 +44,13 @@ export default function SMSNotification( {
 				</div>
 			</div>
 			{ enableSMSNotification && (
-				<>
-					{ allPhoneItems.length === 0 && (
-						<div className="margin-top-16">
-							<AlertBanner type="warning">
-								{ translate( 'You need at least one phone number' ) }
-							</AlertBanner>
-						</div>
-					) }
-					<ConfigureSMSNotification
-						toggleModal={ toggleModal }
-						allPhoneItems={ allPhoneItems }
-						recordEvent={ recordEvent }
-						verifiedPhoneNumber={ verifiedItem?.phone }
-					/>
-				</>
+				<ContactList
+					type="sms"
+					onAction={ toggleModal }
+					items={ allPhoneItems }
+					recordEvent={ recordEvent }
+					verifiedItemKey={ verifiedItem?.phone }
+				/>
 			) }
 		</>
 	);

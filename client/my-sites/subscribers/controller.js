@@ -35,7 +35,7 @@ export function externalSubscriberDetails( context, next ) {
 	const { path } = context;
 	const subscriberId = path.split( '/' ).pop();
 
-	context.primary = <SubscriberDetailsPage subscriberId={ subscriberId } />;
+	context.primary = <SubscriberDetailsPage subscriptionId={ subscriberId } />;
 
 	next();
 }

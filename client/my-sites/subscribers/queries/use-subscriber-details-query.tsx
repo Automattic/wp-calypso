@@ -1,26 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { getSubscriberDetailsCacheKey } from '../helpers';
+import { getSubscriberDetailsCacheKey, getSubscriberDetailsType } from '../helpers';
 import type { Subscriber } from '../types';
 
 const useSubscriberDetailsQuery = (
 	siteId: number | null,
-	subscriberId: number | undefined,
+	subscriptionId: number | undefined,
 	userId: number | undefined
 ) => {
-	let queryString = '';
-
-	if ( subscriberId ) {
-		queryString += `subscriber_id=${ subscriberId }`;
-	} else if ( userId ) {
-		queryString += `user_id=${ userId }`;
-	}
+	const type = getSubscriberDetailsType( userId );
 
 	return useQuery< Subscriber >( {
-		queryKey: getSubscriberDetailsCacheKey( siteId, queryString ),
+		queryKey: getSubscriberDetailsCacheKey( siteId, subscriptionId, userId, type ),
 		queryFn: () =>
 			wpcom.req.get( {
-				path: `/sites/${ siteId }/subscribers/individual?${ queryString }`,
+				path: userId
+					? `/sites/${ siteId }/subscribers/individual?user_id=${ userId }&type=${ type }`
+					: `/sites/${ siteId }/subscribers/individual?subscription_id=${ subscriptionId }&type=${ type }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: !! siteId,

@@ -17,7 +17,16 @@
 		font-weight: 500;
 		letter-spacing: -0.15px;
 		line-height: 1.4;
-		padding: 0 2px;
-		margin-bottom: 4px;
+		margin-bottom: 8px;
+	}
+
+	.navigator-item-group__item-wrapper {
+		display: flex;
+
+		.navigator-button {
+			flex: 1;
+			// Expand sides out of wrapper in main screen
+			margin: 0 -11px;
+		}
 	}
 }

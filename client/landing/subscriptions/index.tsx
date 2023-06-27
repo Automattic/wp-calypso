@@ -23,6 +23,7 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import RecordPageView from './tracks/record-page-view';
 import './styles/styles.scss';
 
 const setupReduxStore = ( user: CurrentUser ) => {
@@ -60,6 +61,7 @@ window.AppBoot = async () => {
 					<MomentProvider>
 						<WindowLocaleEffectManager />
 						<BrowserRouter>
+							<RecordPageView />
 							<Routes>
 								<Route path="/subscriptions/site/:blogId/*" element={ <SiteSubscriptionPage /> } />
 								<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />

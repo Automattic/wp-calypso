@@ -11,12 +11,12 @@ import getCountries from 'calypso/state/selectors/get-countries';
 import DashboardModalForm from '../../dashboard-modal-form';
 import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
+import ContactListItem from '../contact-list/item';
 import {
 	useRequestVerificationCode,
 	useValidateVerificationCode,
 	useContactModalTitleAndSubtitle,
 } from '../hooks';
-import SMSItemContent from './sms-item-content';
 import type {
 	StateMonitorSettingsSMS,
 	Site,
@@ -32,6 +32,7 @@ interface Props {
 	setVerifiedPhoneNumber: ( item: string ) => void;
 	isRemoveAction?: boolean;
 	sites: Array< Site >;
+	recordEvent: ( action: string, params?: object ) => void;
 }
 
 interface FormPhoneInputChangeResult {
@@ -52,6 +53,7 @@ export default function PhoneNumberEditor( {
 	setAllPhoneItems,
 	setVerifiedPhoneNumber,
 	sites,
+	recordEvent,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -86,7 +88,7 @@ export default function PhoneNumberEditor( {
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyPhoneNumber = useValidateVerificationCode();
 
-	const { title, subtitle } = useContactModalTitleAndSubtitle( 'phone', selectedAction );
+	const { title, subtitle } = useContactModalTitleAndSubtitle( 'sms', selectedAction );
 
 	const handleSetPhoneItems = useCallback(
 		( isVerified = true ) => {
@@ -112,8 +114,9 @@ export default function PhoneNumberEditor( {
 	const handleResendCodeClick = useCallback( () => {
 		setHelpText( undefined );
 		setPhoneItem( { ...phoneItem, verificationCode: undefined } );
+		recordEvent( 'downtime_monitoring_resend_sms_verification_code' );
 		// TODO: Make API call to resend verification code
-	}, [ phoneItem ] );
+	}, [ phoneItem, recordEvent ] );
 
 	const translationArgs = useMemo(
 		() => ( {
@@ -132,6 +135,7 @@ export default function PhoneNumberEditor( {
 
 	// Function to handle request verification code
 	const handleRequestVerificationCode = () => {
+		recordEvent( 'downtime_monitoring_request_sms_verification_code' );
 		requestVerificationCode.mutate( {
 			type: 'sms',
 			value: `${ phoneItem.countryNumericCode }${ phoneItem.phoneNumber }`,
@@ -142,7 +146,7 @@ export default function PhoneNumberEditor( {
 		} );
 	};
 
-	// Trigger resend code when user chooses to verify email action
+	// Trigger resend code when user chooses to verify phone number action
 	useEffect( () => {
 		if ( isVerifyAction ) {
 			setShowCodeVerification( true );
@@ -168,6 +172,7 @@ export default function PhoneNumberEditor( {
 
 	// Add phone item to the list if the phone number is already verified
 	const handleAddVerifiedPhoneNumber = () => {
+		recordEvent( 'downtime_monitoring_phone_number_already_verified' );
 		handleSetPhoneItems();
 		setVerifiedPhoneNumber( phoneItem.phoneNumberFull );
 	};
@@ -175,6 +180,7 @@ export default function PhoneNumberEditor( {
 	// Verify phone number when user clicks on Verify button
 	const handleVerifyPhoneNumber = () => {
 		setHelpText( undefined );
+		recordEvent( 'downtime_monitoring_verify_phone_number' );
 		if ( phoneItem?.verificationCode ) {
 			verifyPhoneNumber.mutate( {
 				type: 'sms',
@@ -228,12 +234,13 @@ export default function PhoneNumberEditor( {
 
 	// Save unverified phone number to the list when user clicks on Later button
 	function onSaveLater() {
+		recordEvent( 'downtime_monitoring_verify_phone_number_later' );
 		handleSetPhoneItems( false );
 	}
 
 	// Remove phone item when user confirms to remove the phone number
 	const handleRemove = () => {
-		//TODO: add tracks event
+		recordEvent( 'downtime_monitoring_remove_phone_number' );
 		const phoneItems = [ ...allPhoneItems ];
 		const phoneItemIndex = phoneItems.findIndex(
 			( item ) => item.phoneNumberFull === phoneItem.phoneNumberFull
@@ -338,7 +345,7 @@ export default function PhoneNumberEditor( {
 			{ isRemoveAction ? (
 				selectedPhone && (
 					<div className="margin-top-16">
-						<SMSItemContent isRemoveAction item={ selectedPhone } />
+						<ContactListItem type="sms" item={ selectedPhone } />
 					</div>
 				)
 			) : (

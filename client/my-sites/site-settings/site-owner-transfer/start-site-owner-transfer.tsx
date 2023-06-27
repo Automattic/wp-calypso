@@ -10,6 +10,7 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import Notice from 'calypso/components/notice';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { User } from './use-administrators';
@@ -21,6 +22,7 @@ type Props = {
 	selectedSiteSlug: string | null;
 	siteOwner: User;
 	customDomains: ResponseDomain[];
+	isAtomicSite: boolean | null;
 	onSiteTransferSuccess: () => void;
 	onSiteTransferError: () => void;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
@@ -173,9 +175,11 @@ const UpgradesCard = ( {
 const ContentAndOwnershipCard = ( {
 	siteSlug,
 	siteOwner,
+	isAtomicSite,
 }: {
 	siteSlug: string | null;
 	siteOwner: User;
+	isAtomicSite: any;
 } ) => {
 	const translate = useTranslate();
 	return (
@@ -219,6 +223,20 @@ const ContentAndOwnershipCard = ( {
 						{ strong: <Strong /> }
 					) }
 				</ListItem>
+				{ isAtomicSite && (
+					<ListItem>
+						{ createInterpolateElement(
+							sprintf(
+								// translators: siteSlug is the current site slug, username is the user that the site will be transerred to
+								translate(
+									'If your site <strong>%(siteSlug)s</strong> has a staging site, it will be transferred to <strong>%(username)s</strong>.'
+								),
+								{ siteSlug, username: siteOwner.login }
+							),
+							{ strong: <Strong /> }
+						) }
+					</ListItem>
+				) }
 			</List>
 		</>
 	);
@@ -229,6 +247,7 @@ const StartSiteOwnerTransfer = ( {
 	selectedSiteSlug,
 	siteOwner,
 	customDomains,
+	isAtomicSite,
 	onSiteTransferSuccess,
 	onSiteTransferError,
 	translate,
@@ -330,7 +349,11 @@ const StartSiteOwnerTransfer = ( {
 						'Please read the following actions that will take place when you transfer this site'
 					) }
 				</Notice>
-				<ContentAndOwnershipCard siteSlug={ selectedSiteSlug } siteOwner={ siteOwner } />
+				<ContentAndOwnershipCard
+					siteSlug={ selectedSiteSlug }
+					siteOwner={ siteOwner }
+					isAtomicSite={ isAtomicSite }
+				/>
 				<UpgradesCard
 					purchases={ purchases }
 					siteSlug={ selectedSiteSlug }
@@ -350,4 +373,5 @@ const StartSiteOwnerTransfer = ( {
 export default connect( ( state: IAppState ) => ( {
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
+	isAtomicSite: isSiteAutomatedTransfer( state, getSelectedSiteId( state ) ),
 } ) )( localize( StartSiteOwnerTransfer ) );

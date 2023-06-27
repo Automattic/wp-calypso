@@ -44,7 +44,7 @@ export default function CampaignItem( props: Props ) {
 		name,
 		content_config,
 		display_name,
-		status,
+		ui_status,
 		end_date,
 		budget_cents,
 		start_date,
@@ -71,7 +71,9 @@ export default function CampaignItem( props: Props ) {
 	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
 
 	const statusBadge = (
-		<Badge type={ getCampaignStatusBadgeColor( status ) }>{ getCampaignStatus( status ) }</Badge>
+		<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
+			{ getCampaignStatus( ui_status ) }
+		</Badge>
 	);
 	const openCampaignURL = getAdvertisingDashboardPath(
 		`/${ selectedSiteSlug }/campaigns/${ campaign.campaign_id }`

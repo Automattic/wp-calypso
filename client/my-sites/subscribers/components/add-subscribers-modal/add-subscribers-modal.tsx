@@ -1,3 +1,5 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -28,6 +30,8 @@ const AddSubscribersModal = ( {
 						onImportFinished={ onAddFinished }
 						showTitle={ false }
 						showSubtitle={ false }
+						showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+						recordTracksEvent={ recordTracksEvent }
 					/>
 				</Modal>
 			) }

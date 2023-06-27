@@ -4,6 +4,8 @@ import {
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import ReaderExportButton from 'calypso/blocks/reader-export-button';
+import { READER_EXPORT_TYPE_SUBSCRIPTIONS } from 'calypso/blocks/reader-export-button/constants';
 import ReaderImportButton from 'calypso/blocks/reader-import-button';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -17,10 +19,10 @@ import {
 	SubscriptionManagerContextProvider,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { SubscriptionsEllipsisMenu } from 'calypso/landing/subscriptions/components/subscriptions-ellipsis-menu';
+import { downloadCloud, uploadCloud } from 'calypso/reader/icons';
 import { RecommendedSites } from 'calypso/reader/recommended-sites';
 import { useDispatch } from 'calypso/state';
 import { markFollowsAsStale } from 'calypso/state/reader/follows/actions';
-import { uploadCloud } from './upload-cloud';
 import type { SubscriptionManagerContext } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import './style.scss';
 
@@ -64,6 +66,11 @@ const SiteSubscriptionsManager = () => {
 					>
 						<VStack>
 							<ReaderImportButton icon={ uploadCloud } iconSize={ 20 } />
+							<ReaderExportButton
+								icon={ downloadCloud }
+								iconSize={ 20 }
+								exportType={ READER_EXPORT_TYPE_SUBSCRIPTIONS }
+							/>
 						</VStack>
 					</SubscriptionsEllipsisMenu>
 				</HStack>
