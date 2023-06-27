@@ -2,10 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { GlobalStylesObject } from '../types';
 
+type Options = {
+	enabled?: boolean;
+};
+
 const useFontPairingVariations = (
 	siteId: number | string,
 	stylesheet: string,
-	disabled = false
+	{ enabled = true }: Options = {}
 ) => {
 	const { data } = useQuery< any, unknown, GlobalStylesObject[] >( {
 		queryKey: [ 'global-styles-font-pairings', siteId, stylesheet ],
@@ -18,7 +22,7 @@ const useFontPairingVariations = (
 			} ),
 		refetchOnMount: 'always',
 		staleTime: Infinity,
-		enabled: !! ( siteId && stylesheet && ! disabled ),
+		enabled: !! siteId && !! stylesheet && enabled,
 	} );
 
 	return data;
