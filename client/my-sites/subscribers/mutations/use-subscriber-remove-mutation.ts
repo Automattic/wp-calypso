@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { getSubscribersCacheKey } from '../helpers';
+import { useRecordSubscriberRemoved } from '../tracks';
 import type { SubscriberEndpointResponse, Subscriber } from '../types';
 
 const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number ) => {
 	const queryClient = useQueryClient();
+	const recordSubscriberRemoved = useRecordSubscriberRemoved();
 
 	return useMutation( {
 		mutationFn: async ( subscriber: Subscriber ) => {
@@ -100,6 +102,13 @@ const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number
 					queryClient.setQueryData( getSubscribersCacheKey( siteId, page ), previousSubscribers );
 				} );
 			}
+		},
+		onSuccess: ( data, subscriber ) => {
+			recordSubscriberRemoved( {
+				site_id: siteId,
+				subscription_id: subscriber.subscription_id,
+				user_id: subscriber.user_id,
+			} );
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries( getSubscribersCacheKey( siteId ) );

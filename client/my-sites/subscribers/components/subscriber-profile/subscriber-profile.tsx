@@ -13,6 +13,10 @@ const SubscriberProfile = ( {
 	email,
 	compact = true,
 }: SubscriberProfileProps ) => {
+	// When adding a click event for this, make sure to also track it
+	// import { useRecordSubscriberClicked } from '../../tracks';
+	// const recordSubscriberClicked = useRecordSubscriberClicked();
+	// recordSubscriberClicked( 'title', { } ); & recordSubscriberClicked( 'icon', { } );
 	return (
 		<div className={ `subscriber-profile ${ compact ? 'subscriber-profile--compact' : '' }` }>
 			<img src={ avatar } className="subscriber-profile__user-image" alt="Profile pic" />
