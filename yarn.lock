@@ -664,6 +664,7 @@ __metadata:
     "@automattic/design-picker": "workspace:^"
     "@automattic/global-styles": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/onboarding": "workspace:^"
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
     "@wordpress/components": ^23.0.0
