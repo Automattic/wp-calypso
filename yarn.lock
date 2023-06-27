@@ -32646,7 +32646,6 @@ __metadata:
     "@wordpress/i18n": ^4.36.0
     "@wordpress/icons": ^9.26.0
     "@wordpress/is-shallow-equal": ^4.36.0
-    "@wordpress/jest-preset-default": ^11.7.0
     "@wordpress/primitives": ^3.34.0
     "@wordpress/stylelint-config": ^21.19.0
     "@wordpress/url": ^3.37.0
