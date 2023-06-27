@@ -38,11 +38,7 @@ type Props = {
 	action: AllowedMonitorContactActions;
 	contact?: StateMonitoringSettingsContact;
 	contacts: Array< StateMonitoringSettingsContact >;
-	onAdd: (
-		contact: StateMonitoringSettingsContact,
-		verified: boolean,
-		sourceEvent?: string
-	) => void;
+	onAdd: ( contact: ContactInfo, verified: boolean, sourceEvent?: string ) => void;
 	onClose: () => void;
 	recordEvent: ( action: string, params?: object ) => void;
 	type: AllowedMonitorContactTypes;
@@ -150,7 +146,7 @@ export default function VerifyContactForm( {
 			actionEvent = 'downtime_monitoring_phone_number_already_verified';
 		}
 
-		onAdd( contactInfo as StateMonitoringSettingsContact, true, actionEvent );
+		onAdd( contactInfo, true, actionEvent );
 	};
 
 	// Function to handle resending verification code
@@ -237,7 +233,7 @@ export default function VerifyContactForm( {
 			actionEvent = 'downtime_monitoring_verify_phone_number_later';
 		}
 
-		onAdd( contactInfo as StateMonitoringSettingsContact, false, actionEvent );
+		onAdd( contactInfo, false, actionEvent );
 	};
 
 	const handleInputChange = useCallback(
@@ -329,7 +325,7 @@ export default function VerifyContactForm( {
 	// Add contact to the list once the it is verified
 	useEffect( () => {
 		if ( isSubmittingVerificationCodeSuccess || isRequestingVerificationCodeAlreadyVerified ) {
-			onAdd( contactInfo as StateMonitoringSettingsContact, true );
+			onAdd( contactInfo, true );
 		}
 	}, [
 		contactInfo,

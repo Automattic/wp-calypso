@@ -200,12 +200,13 @@ export const removeFromContactList = (
 export const addToContactList = (
 	type: AllowedMonitorContactTypes,
 	contacts: Array< StateMonitoringSettingsContact >,
-	contact: StateMonitoringSettingsContact,
+	contact: ContactInfo,
 	asVerified: boolean
 ) => {
 	let isANewContact = true;
 	const updatedContactList = contacts.map( ( item ) => {
-		if ( isMatchingContactInfo( type, item, contact ) ) {
+		// We need to compare it with the id because it points to the original contact value.
+		if ( contact.id && getContactInfoValue( type, item ) === contact.id ) {
 			isANewContact = false;
 			return {
 				...contact,

@@ -9,6 +9,7 @@ import {
 } from '../../sites-overview/types';
 import { useContactModalTitleAndSubtitle } from './hooks';
 import RemoveContactForm from './remove';
+import { ContactInfo } from './types';
 import { addToContactList, getContactInfoValue, removeFromContactList } from './utils';
 import VerifyContactForm from './verify';
 
@@ -45,11 +46,7 @@ export default function ContactEditor( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const onAddContact = (
-		contact: StateMonitoringSettingsContact,
-		asVerified: boolean,
-		sourceEvent?: string
-	) => {
+	const onAddContact = ( contact: ContactInfo, asVerified: boolean, sourceEvent?: string ) => {
 		if ( sourceEvent ) {
 			recordEvent( sourceEvent );
 		}
