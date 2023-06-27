@@ -153,54 +153,98 @@ export default function IssueMultipleLicensesForm( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ selectedBundle ] );
 
-	const selectedSiteDomain = selectedSite?.domain;
+	if ( isLoadingProducts ) {
+		return (
+			<div className="issue-multiple-licenses-form">
+				<div className="issue-multiple-licenses-form__placeholder" />
+			</div>
+		);
+	}
 
+	const selectedSiteDomain = selectedSite?.domain;
 	const selectedLicenseCount = selectedProductSlugs.length;
 
 	return (
 		<div className="issue-multiple-licenses-form">
-			{ isLoadingProducts && <div className="issue-multiple-licenses-form__placeholder" /> }
-
-			{ ! isLoadingProducts && (
-				<>
-					<QueryProductsList type="jetpack" currency="USD" />
-					<div className="issue-multiple-licenses-form__top">
-						<p className="issue-multiple-licenses-form__description">
-							{ selectedSiteDomain
-								? translate(
-										'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}:',
-										{
-											args: { selectedSiteDomain },
-											components: { strong: <strong /> },
-										}
-								  )
-								: translate(
-										'Select the Jetpack products you would like to issue a new license for:'
-								  ) }
-						</p>
-						<div className="issue-multiple-licenses-form__controls">
-							<TotalCost />
-							{ selectedLicenseCount > 0 && (
-								<Button
-									primary
-									className="issue-multiple-licenses-form__select-license"
-									busy={ isLoading }
+			<QueryProductsList type="jetpack" currency="USD" />
+			<div className="issue-multiple-licenses-form__top">
+				<p className="issue-multiple-licenses-form__description">
+					{ selectedSiteDomain
+						? translate(
+								'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}:',
+								{
+									args: { selectedSiteDomain },
+									components: { strong: <strong /> },
+								}
+						  )
+						: translate(
+								'Select the Jetpack products you would like to issue a new license for:'
+						  ) }
+				</p>
+				<div className="issue-multiple-licenses-form__controls">
+					<TotalCost />
+					{ selectedLicenseCount > 0 && (
+						<Button
+							primary
+							className="issue-multiple-licenses-form__select-license"
+							busy={ isLoading }
 							onClick={ issueAndAssignLicenses }
-								>
-									{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-										context: 'button label',
-										count: selectedLicenseCount,
-										args: {
-											numLicenses: selectedLicenseCount,
-										},
-									} ) }
-								</Button>
-							) }
-						</div>
-					</div>
+						>
+							{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicenseCount,
+								args: {
+									numLicenses: selectedLicenseCount,
+								},
+							} ) }
+						</Button>
+					) }
+				</div>
+			</div>
+			<div className="issue-multiple-licenses-form__bottom">
+				{ products &&
+					products.map( ( productOption, i ) => (
+						<LicenseProductCard
+							isMultiSelect
+							key={ productOption.slug }
+							product={ productOption }
+							onSelectProduct={ onSelectProduct }
+							isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
+							tabIndex={ 100 + i }
+							suggestedProduct={ suggestedProduct }
+						/>
+					) ) }
+			</div>
+			{ bundles && (
+				<>
+					<hr className="issue-multiple-licenses-form__separator" />
+					<p className="issue-multiple-licenses-form__description">
+						{ translate( 'Or select any of our {{strong}}recommended bundles{{/strong}}:', {
+							components: { strong: <strong /> },
+						} ) }
+					</p>
 					<div className="issue-multiple-licenses-form__bottom">
-						{ products &&
-							products.map( ( productOption, i ) => (
+						{ bundles.map( ( productOption, i ) => (
+							<LicenseBundleCard
+								key={ productOption.slug }
+								product={ productOption }
+								onSelectProduct={ onSelectProduct }
+								tabIndex={ 100 + ( products?.length || 0 ) + i }
+							/>
+						) ) }
+					</div>
+				</>
+			) }
+			{ config.isEnabled( 'jetpack/pro-dashboard-woo-extensions' ) && wooExtensions && (
+				<>
+					<hr className="issue-multiple-licenses-form__separator" />
+					<p className="issue-multiple-licenses-form__description">
+						{ translate( 'WooCommerce Extensions:' ) }
+					</p>
+					<div className="issue-multiple-licenses-form__bottom">
+						{ wooExtensions &&
+							wooExtensions.map( ( productOption, i ) => (
 								<LicenseProductCard
 									isMultiSelect
 									key={ productOption.slug }
@@ -213,49 +257,6 @@ export default function IssueMultipleLicensesForm( {
 								/>
 							) ) }
 					</div>
-					{ bundles && (
-						<>
-							<hr className="issue-multiple-licenses-form__separator" />
-							<p className="issue-multiple-licenses-form__description">
-								{ translate( 'Or select any of our {{strong}}recommended bundles{{/strong}}:', {
-									components: { strong: <strong /> },
-								} ) }
-							</p>
-							<div className="issue-multiple-licenses-form__bottom">
-								{ bundles.map( ( productOption, i ) => (
-									<LicenseBundleCard
-										key={ productOption.slug }
-										product={ productOption }
-										onSelectProduct={ onSelectProduct }
-										tabIndex={ 100 + ( products?.length || 0 ) + i }
-									/>
-								) ) }
-							</div>
-						</>
-					) }
-					{ config.isEnabled( 'jetpack/pro-dashboard-woo-extensions' ) && wooExtensions && (
-						<>
-							<hr className="issue-multiple-licenses-form__separator" />
-							<p className="issue-multiple-licenses-form__description">
-								{ translate( 'WooCommerce Extensions:' ) }
-							</p>
-							<div className="issue-multiple-licenses-form__bottom">
-								{ wooExtensions &&
-									wooExtensions.map( ( productOption, i ) => (
-										<LicenseProductCard
-											isMultiSelect
-											key={ productOption.slug }
-											product={ productOption }
-											onSelectProduct={ onSelectProduct }
-											isSelected={ selectedProductSlugs.includes( productOption.slug ) }
-											isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-											tabIndex={ 100 + i }
-											suggestedProduct={ suggestedProduct }
-										/>
-									) ) }
-							</div>
-						</>
-					) }
 				</>
 			) }
 		</div>
