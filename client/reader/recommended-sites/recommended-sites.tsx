@@ -20,12 +20,11 @@ const displayRecommendedSitesTotal = 2;
 export const seed = Math.floor( Math.random() * 10001 );
 
 type RecommendedSiteType = {
-	ID: number;
-	URL: string;
 	blogId: number;
 	feedId: number;
-	feedUrl: string;
-	railcar?: Railcar;
+	railcar: Railcar;
+	title: string;
+	url: string;
 };
 
 const RecommendedSitesResponsiveContainer: React.FC = ( { children } ) => {
