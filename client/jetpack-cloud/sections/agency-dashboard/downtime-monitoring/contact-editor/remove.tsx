@@ -1,21 +1,22 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
-import {
-	AllowedMonitorContactTypes,
-	StateMonitorSettingsEmail,
-	StateMonitorSettingsSMS,
-} from '../../sites-overview/types';
-import ContactListItem from '../contact-list/item';
+import { AllowedMonitorContactTypes } from '../../sites-overview/types';
+import ContactListItem, { ContactListItemType } from '../contact-list/item';
 
-type Props = {
-	contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS;
+type Props< T > = {
+	contact: T;
 	onCancel: () => void;
-	onRemove: ( contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS ) => void;
+	onRemove: ( contact: T ) => void;
 	type: AllowedMonitorContactTypes;
 };
 
-export default function RemoveContactForm( { contact, onCancel, onRemove, type }: Props ) {
+export default function RemoveContactForm< T >( {
+	contact,
+	onCancel,
+	onRemove,
+	type,
+}: Props< T > ) {
 	const translate = useTranslate();
 
 	const handleOnRemove = ( event: React.FormEvent< HTMLFormElement > ) => {
@@ -26,7 +27,7 @@ export default function RemoveContactForm( { contact, onCancel, onRemove, type }
 	return (
 		<form onSubmit={ handleOnRemove }>
 			<div className="margin-top-16">
-				<ContactListItem type={ type } item={ contact } />
+				<ContactListItem type={ type } item={ contact as ContactListItemType } />
 			</div>
 			<DashboardModalFormFooter>
 				<Button onClick={ onCancel }>{ translate( 'Back' ) }</Button>

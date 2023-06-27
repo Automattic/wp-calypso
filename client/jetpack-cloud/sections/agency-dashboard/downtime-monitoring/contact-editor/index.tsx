@@ -5,27 +5,26 @@ import {
 	AllowedMonitorContactActions,
 	AllowedMonitorContactTypes,
 	Site,
-	StateMonitorSettingsEmail,
-	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
 import { useContactModalTitleAndSubtitle } from '../hooks';
 import RemoveContactForm from './remove';
-import { addToContactList, removeFromContactList } from './utils';
+import { ContactInfo } from './types';
+import { addToContactList, getContactInfoValue, removeFromContactList } from './utils';
 import VerifyContactForm from './verify';
 
-type Props = {
+type Props< T > = {
 	type: AllowedMonitorContactTypes;
 	action?: AllowedMonitorContactActions;
-	selectedContact?: StateMonitorSettingsEmail | StateMonitorSettingsSMS;
-	contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >;
-	setContacts: ( contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS > ) => void;
+	selectedContact?: T;
+	contacts: Array< T >;
+	setContacts: ( contacts: Array< T > ) => void;
 	setVerifiedContact: ( item: string ) => void;
 	recordEvent: ( action: string, params?: object ) => void;
 	onClose: () => void;
 	sites: Array< Site >;
 };
 
-export default function ContactEditor( {
+export default function ContactEditor< T >( {
 	type,
 	action = 'add',
 	onClose,
@@ -35,7 +34,7 @@ export default function ContactEditor( {
 	recordEvent,
 	setVerifiedContact,
 	sites,
-}: Props ) {
+}: Props< T > ) {
 	const { title, subtitle } = useContactModalTitleAndSubtitle( type, action );
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
@@ -46,36 +45,25 @@ export default function ContactEditor( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const onAddContact = (
-		contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS,
-		asVerified: boolean,
-		sourceEvent?: string
-	) => {
+	const onAddContact = ( contact: T, asVerified: boolean, sourceEvent?: string ) => {
 		if ( sourceEvent ) {
 			recordEvent( sourceEvent );
 		}
 
-		setContacts( addToContactList( type, contacts, contact, asVerified ) );
-
-		if ( type === 'email' ) {
-			setVerifiedContact( ( contact as StateMonitorSettingsEmail ).email );
-		}
-
-		if ( type === 'sms' ) {
-			setVerifiedContact( ( contact as StateMonitorSettingsSMS ).phoneNumberFull );
-		}
+		setContacts( addToContactList< T >( type, contacts, contact, asVerified ) );
+		setVerifiedContact( getContactInfoValue( type, contact as ContactInfo ) );
 
 		onClose();
 	};
 
-	const onRemoveContact = ( contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS ) => {
+	const onRemoveContact = ( contact: T ) => {
 		if ( type === 'email' ) {
 			recordEvent( `downtime_monitoring_remove_email` );
 		} else if ( type === 'sms' ) {
 			recordEvent( `downtime_monitoring_remove_phone_number` );
 		}
 
-		setContacts( removeFromContactList( type, contacts, contact ) );
+		setContacts( removeFromContactList< T >( type, contacts, contact ) );
 		onClose();
 	};
 

@@ -32,10 +32,7 @@ export const isCompleteContactInfo = (
 	return false;
 };
 
-export const getDefaultContactInfo = (
-	type: AllowedMonitorContactTypes,
-	contact?: StateMonitorSettingsEmail | StateMonitorSettingsSMS
-) => {
+export const getDefaultContactInfo = ( type: AllowedMonitorContactTypes, contact?: unknown ) => {
 	if ( contact && type === 'sms' ) {
 		const { name, countryCode, countryNumericCode, phoneNumber, phoneNumberFull } =
 			contact as StateMonitorSettingsSMS;
@@ -112,10 +109,10 @@ export const getContactInfoPayload = (
 	return { type, value: '', site_ids: [] };
 };
 
-export const addToContactList = (
+export const addToContactList = < T >(
 	type: AllowedMonitorContactTypes,
-	contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >,
-	contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS,
+	contacts: Array< T >,
+	contact: T,
 	asVerified: boolean
 ) => {
 	let isANewContact = true;
@@ -153,13 +150,13 @@ export const addToContactList = (
 		} );
 	}
 
-	return updatedContactList as Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >;
+	return updatedContactList as Array< T >;
 };
 
-export const removeFromContactList = (
+export const removeFromContactList = < T >(
 	type: AllowedMonitorContactTypes,
-	contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >,
-	contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS
+	contacts: Array< T >,
+	contact: T
 ) => {
 	return contacts.filter( ( item ) => {
 		if ( type === 'email' ) {
@@ -180,9 +177,9 @@ export const removeFromContactList = (
 	} );
 };
 
-export const isContactAlreadyExists = (
+export const isContactAlreadyExists = < T >(
 	type: AllowedMonitorContactTypes,
-	contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >,
+	contacts: Array< T >,
 	contactInfo: ContactInfo
 ) => {
 	return contacts.find( ( contact ) => {
@@ -204,9 +201,9 @@ export const isContactAlreadyExists = (
 	} );
 };
 
-export const isMatchingContactInfo = (
+export const isMatchingContactInfo = < T >(
 	type: AllowedMonitorContactTypes,
-	contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS,
+	contact: T,
 	contactInfo: ContactInfo
 ) => {
 	if ( type === 'email' ) {

@@ -5,10 +5,7 @@ import {
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
 
-export const getContactItemValue = (
-	type: AllowedMonitorContactTypes,
-	item: StateMonitorSettingsEmail | StateMonitorSettingsSMS
-) => {
+export const getContactItemValue = < T >( type: AllowedMonitorContactTypes, item: T ) => {
 	if ( type === 'email' ) {
 		return ( item as StateMonitorSettingsEmail ).email;
 	}

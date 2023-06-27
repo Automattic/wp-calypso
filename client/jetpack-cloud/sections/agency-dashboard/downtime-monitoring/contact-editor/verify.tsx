@@ -15,8 +15,6 @@ import {
 	AllowedMonitorContactActions,
 	AllowedMonitorContactTypes,
 	Site,
-	StateMonitorSettingsEmail,
-	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
 import {
 	useRequestVerificationCode,
@@ -34,22 +32,18 @@ import {
 	isValidContactInfo,
 } from './utils';
 
-type Props = {
+type Props< T > = {
 	action: AllowedMonitorContactActions;
-	contact?: StateMonitorSettingsEmail | StateMonitorSettingsSMS;
-	contacts: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >;
-	onAdd: (
-		contact: StateMonitorSettingsEmail | StateMonitorSettingsSMS,
-		verified: boolean,
-		sourceEvent?: string
-	) => void;
+	contact?: T;
+	contacts: Array< T >;
+	onAdd: ( contact: T, verified: boolean, sourceEvent?: string ) => void;
 	onClose: () => void;
 	recordEvent: ( action: string, params?: object ) => void;
 	type: AllowedMonitorContactTypes;
 	sites: Array< Site >;
 };
 
-export default function VerifyContactForm( {
+export default function VerifyContactForm< T >( {
 	action,
 	contact,
 	contacts,
@@ -58,7 +52,7 @@ export default function VerifyContactForm( {
 	onAdd,
 	onClose,
 	sites,
-}: Props ) {
+}: Props< T > ) {
 	const translate = useTranslate();
 	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ?? [] );
 
@@ -150,7 +144,7 @@ export default function VerifyContactForm( {
 			actionEvent = 'downtime_monitoring_phone_number_already_verified';
 		}
 
-		onAdd( contactInfo as StateMonitorSettingsEmail | StateMonitorSettingsSMS, true, actionEvent );
+		onAdd( contactInfo as T, true, actionEvent );
 	};
 
 	// Function to handle resending verification code
@@ -237,7 +231,7 @@ export default function VerifyContactForm( {
 			actionEvent = 'downtime_monitoring_verify_phone_number_later';
 		}
 
-		onAdd( contactInfo as StateMonitorSettingsEmail | StateMonitorSettingsSMS, false, actionEvent );
+		onAdd( contactInfo as T, false, actionEvent );
 	};
 
 	const handleInputChange = useCallback(
@@ -329,7 +323,7 @@ export default function VerifyContactForm( {
 	// Add contact to the list once the it is verified
 	useEffect( () => {
 		if ( isSubmittingVerificationCodeSuccess || isRequestingVerificationCodeAlreadyVerified ) {
-			onAdd( contactInfo as StateMonitorSettingsEmail | StateMonitorSettingsSMS, true );
+			onAdd( contactInfo as T, true );
 		}
 	}, [
 		contactInfo,

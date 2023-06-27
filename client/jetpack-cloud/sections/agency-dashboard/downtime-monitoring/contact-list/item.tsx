@@ -8,32 +8,29 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import { getContactActionEventName, getContactItemValue } from './utils';
 import type {
-	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
-	StateMonitorSettingsSMS,
 	AllowedMonitorContactTypes,
 } from '../../sites-overview/types';
 
 import './style.scss';
 
-type Props = {
-	item: StateMonitorSettingsEmail | StateMonitorSettingsSMS;
-	onAction?: (
-		item: StateMonitorSettingsEmail | StateMonitorSettingsSMS,
-		action: AllowedMonitorContactActions
-	) => void;
+type Props< T > = {
+	item: T;
+	onAction?: ( item: T, action: AllowedMonitorContactActions ) => void;
 	recordEvent?: ( action: string, params?: object ) => void;
 	showVerifiedBadge?: boolean;
 	type: AllowedMonitorContactTypes;
 };
 
-export default function ContactListItem( {
+export type ContactListItemType = { name: string; verified: boolean; isDefault?: boolean };
+
+export default function ContactListItem< T extends ContactListItemType >( {
 	item,
 	onAction,
 	recordEvent,
 	showVerifiedBadge,
 	type,
-}: Props ) {
+}: Props< T > ) {
 	const translate = useTranslate();
 
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -59,7 +56,7 @@ export default function ContactListItem( {
 		( type === 'email' && value && verifiedContacts?.emails.includes( value ) ) ||
 		( type === 'sms' && value && verifiedContacts?.phoneNumbers.includes( value ) );
 
-	const isDefaultItem = type === 'email' && ( item as StateMonitorSettingsEmail ).isDefault;
+	const isDefaultItem = type === 'email' && item.isDefault;
 
 	const handleOnAction = useCallback(
 		( action: AllowedMonitorContactActions ) => {

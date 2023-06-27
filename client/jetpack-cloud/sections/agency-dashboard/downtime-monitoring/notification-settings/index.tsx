@@ -171,17 +171,13 @@ export default function NotificationSettings( {
 		setHasUnsavedChanges( false );
 	}, [] );
 
-	const handleSetAllEmailItems = (
-		items: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >
-	) => {
-		setAllEmailItems( items as Array< StateMonitorSettingsEmail > );
+	const handleSetAllEmailItems = ( items: Array< StateMonitorSettingsEmail > ) => {
+		setAllEmailItems( items );
 		setHasUnsavedChanges( false );
 	};
 
-	const handleSetAllPhoneItems = (
-		items: Array< StateMonitorSettingsEmail | StateMonitorSettingsSMS >
-	) => {
-		setAllPhoneItems( items as Array< StateMonitorSettingsSMS > );
+	const handleSetAllPhoneItems = ( items: Array< StateMonitorSettingsSMS > ) => {
+		setAllPhoneItems( items );
 		clearValidationError();
 	};
 
