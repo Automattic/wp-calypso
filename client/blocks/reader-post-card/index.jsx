@@ -275,11 +275,9 @@ export default connect(
 			ownProps.postKey &&
 			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
 				isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
-		hasOrganization: hasReaderFollowOrganization(
-			state,
-			ownProps.postKey.feedId,
-			ownProps.postKey.blogId
-		),
+		hasOrganization:
+			ownProps.postKey &&
+			hasReaderFollowOrganization( state, ownProps.postKey.feedId, ownProps.postKey.blogId ),
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 		teams: getReaderTeams( state ),
 	} ),
