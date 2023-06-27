@@ -4,6 +4,7 @@ import type { Design } from '@automattic/design-picker/src/types';
 
 interface Options extends QueryOptions< Design, unknown > {
 	enabled?: boolean;
+	select?: ( response: Design ) => Design;
 }
 
 export function useStarterDesignBySlug(

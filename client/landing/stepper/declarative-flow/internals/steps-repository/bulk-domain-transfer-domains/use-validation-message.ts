@@ -1,11 +1,11 @@
-import { useIsDomainsUnlocked, useIsDomainCodeValid } from '@automattic/data-stores';
+import { useIsDomainCodeValid } from '@automattic/data-stores';
 import { doesStringResembleDomain } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-export function useValidationMessage( domain: string, auth: string ) {
-	// record pass domains to avoid revalidation
+export function useValidationMessage( domain: string, auth: string, hasDuplicates: boolean ) {
+	// record passed domains to avoid revalidation
 	const [ passed, setPassed ] = useState( false );
 	const { __ } = useI18n();
 
@@ -13,26 +13,31 @@ export function useValidationMessage( domain: string, auth: string ) {
 	const [ authDebounced ] = useDebounce( auth, 500 );
 
 	const hasGoodDomain = doesStringResembleDomain( domainDebounced );
-	const hasGoodAuthCode = hasGoodDomain && authDebounced.trim().length > 0;
+	const hasGoodAuthCode = hasGoodDomain && auth.trim().length > 0;
 
-	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode;
+	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode && ! hasDuplicates;
 
-	const { data: isDomainUnlocked, isInitialLoading: isLoadingLock } = useIsDomainsUnlocked(
-		domainDebounced,
-		{
-			enabled: Boolean( ! passed && passedLocalValidation ),
-		}
-	);
-
-	const { data: isDomainCodeValid, isInitialLoading: isLoadingCode } = useIsDomainCodeValid(
+	const {
+		data: validationResult,
+		isFetching: isValidating,
+		refetch,
+	} = useIsDomainCodeValid(
 		{
 			domain: domainDebounced,
 			auth: authDebounced,
 		},
 		{
-			enabled: Boolean( ! passed && passedLocalValidation && isDomainUnlocked?.unlocked ),
+			enabled: Boolean( ! passed && passedLocalValidation ),
 		}
 	);
+
+	if ( hasDuplicates ) {
+		return {
+			valid: false,
+			loading: false,
+			message: __( 'This domain is a duplicated.' ),
+		};
+	}
 
 	if ( passed ) {
 		setPassed( true );
@@ -56,12 +61,12 @@ export function useValidationMessage( domain: string, auth: string ) {
 		return {
 			valid: false,
 			loading: false,
-			message: __( 'Please enter a valid auth code.' ),
+			message: __( 'Please enter a valid authentication code.' ),
 		};
 	}
 
 	// local validation passed, but we're still loading
-	if ( isLoadingLock ) {
+	if ( isValidating || ! validationResult ) {
 		return {
 			valid: false,
 			loading: true,
@@ -69,16 +74,19 @@ export function useValidationMessage( domain: string, auth: string ) {
 		};
 	}
 
-	if ( isLoadingCode ) {
+	if ( validationResult?.error ) {
 		return {
 			valid: false,
-			loading: true,
-			message: __( 'Checking domain authentication code.' ),
+			loading: false,
+			message: __(
+				'An unknown error occurred while checking the domain transferability. Please try again or contact support'
+			),
+			refetch,
 		};
 	}
 
 	// final success
-	if ( isDomainCodeValid?.success ) {
+	if ( validationResult.auth_code_valid ) {
 		return {
 			valid: true,
 			loading: false,
@@ -87,31 +95,33 @@ export function useValidationMessage( domain: string, auth: string ) {
 	}
 
 	// partial success
-	if ( isDomainUnlocked?.unlocked ) {
+	if ( validationResult?.unlocked ) {
 		return {
 			valid: false,
 			loading: false,
 			message: __( 'This domain is unlocked but the authentication code seems incorrect.' ),
+			refetch,
 		};
-	} else if ( isDomainUnlocked?.unlocked === null ) {
+	} else if ( validationResult?.registered === false ) {
 		return {
 			valid: false,
 			loading: false,
 			message: __( 'This domain does not seem to be registered.' ),
 		};
-	} else if ( isDomainUnlocked?.unlocked === false ) {
+	} else if ( validationResult?.unlocked === false ) {
 		return {
 			valid: false,
 			loading: false,
 			message: __( 'This domain does not seem to be unlocked.' ),
+			refetch,
 		};
 	}
-
 	return {
 		valid: false,
 		loading: false,
 		message: __(
 			'An unknown error occurred while checking the domain transferability. Please try again or contact support'
 		),
+		refetch,
 	};
 }

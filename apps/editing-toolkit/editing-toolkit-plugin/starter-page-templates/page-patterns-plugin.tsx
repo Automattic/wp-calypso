@@ -76,7 +76,7 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 	);
 
 	const insertPattern = useCallback(
-		( title, blocks ) => {
+		( title: string | null, blocks: unknown[] ) => {
 			// Add filter to let the tracking library know we are inserting a template.
 			addFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE, () => true );
 

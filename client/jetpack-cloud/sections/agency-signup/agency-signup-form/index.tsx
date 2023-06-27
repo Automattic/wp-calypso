@@ -17,7 +17,7 @@ import {
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { translateInvalidPartnerParameterError } from 'calypso/state/partner-portal/partner/utils';
-import type { APIError } from 'calypso/state/partner-portal/types';
+import type { APIError, PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
 export default function AgencySignupForm() {
@@ -43,7 +43,7 @@ export default function AgencySignupForm() {
 	} );
 
 	const onSubmit = useCallback(
-		( payload ) => {
+		( payload: PartnerDetailsPayload ) => {
 			dispatch( removeNotice( notificationId ) );
 
 			createPartner.mutate( payload );

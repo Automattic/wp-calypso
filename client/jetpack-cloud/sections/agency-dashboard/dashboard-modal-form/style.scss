@@ -2,13 +2,15 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .dashboard-modal-form__footer {
-	margin-block-end: 32px;
 	width: calc(100% - 64px); // reducing the left and right padding
 	display: flex;
 	justify-content: flex-start;
 	flex-direction: column;
 	position: absolute;
 	bottom: 0;
+	left: 0;
+	padding: 16px 32px;
+	background: var(--studio-white);
 
 	.dashboard-modal-form__footer-buttons {
 		display: flex;
@@ -29,8 +31,8 @@
 		justify-content: right;
 		flex-direction: initial;
 		margin-block-start: 32px;
-		margin-block-end: 0;
 		width: auto;
+		padding: 0;
 
 		.dashboard-modal-form__footer-buttons {
 			justify-content: end;
