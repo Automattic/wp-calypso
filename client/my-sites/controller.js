@@ -255,7 +255,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		`/purchases/billing-history/${ slug }`,
 		`/purchases/payment-methods/${ slug }`,
 		`/purchases/subscriptions/${ slug }`,
-		// Any page under the `/domsina/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
+		// Any page under `/domsina/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
 		'/domains/manage/all/',
 	];
 
