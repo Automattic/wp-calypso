@@ -17,7 +17,7 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 	enabled = true
 ) {
 	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >( {
-		queryKey: [ supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability' ],
+		queryKey: [ 'support-availability', supportType ],
 		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {

@@ -7,8 +7,6 @@ import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import {
-	useSubmitTicketMutation,
-	useSubmitForumsMutation,
 	useSiteAnalysis,
 	useUserSites,
 	AnalysisReport,
@@ -34,6 +32,8 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
+import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
 import { useChatStatus, useContactFormTitle, useChatWidget, useZendeskMessaging } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
