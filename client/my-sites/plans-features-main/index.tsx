@@ -154,7 +154,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		};
 	}
 
-	// TODO clk: Needs typing to PlanFeatures2023GridProps
 	const asyncProps: PlanFeatures2023GridProps = {
 		domainName,
 		isInSignup,
