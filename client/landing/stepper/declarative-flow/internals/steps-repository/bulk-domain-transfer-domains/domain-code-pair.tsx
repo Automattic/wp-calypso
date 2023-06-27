@@ -51,7 +51,7 @@ export function DomainCodePair( {
 							id={ id }
 							value={ domain }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-								onChange( id, { domain: event.target.value.trim(), auth, valid } )
+								onChange( id, { domain: event.target.value.trim().toLowerCase(), auth, valid } )
 							}
 							placeholder={ __( 'example.com' ) }
 						/>
