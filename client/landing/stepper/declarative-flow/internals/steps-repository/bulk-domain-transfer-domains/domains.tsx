@@ -1,7 +1,10 @@
+import { domainProductSlugs } from '@automattic/calypso-products';
 import { BulkDomainTransferData } from '@automattic/data-stores';
 import { useDataLossWarning } from '@automattic/onboarding';
-import { Button, Card, CardHeader, CardBody, CardFooter } from '@wordpress/components';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { ButtonGroup, Button, Card, CardHeader, CardBody, CardFooter } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState } from 'react';
@@ -37,20 +40,29 @@ function distinctItems( domainsWithDupes: BulkDomainTransferData ) {
 }
 
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
+	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
+	const [ ignoreCart, setIgnoreCart ] = useState( false );
+
 	const storedDomainsState = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getBulkDomainsData(),
 		[]
 	);
-
-	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
-
 	const domainsState = storedDomainsState || defaultState;
+
+	const { responseCart } = useShoppingCart( 'no-site' );
+
+	const domainTransfersInCart = responseCart?.products.filter( ( { product_slug } ) => {
+		return product_slug === domainProductSlugs.TRANSFER_IN;
+	} );
+
+	const hasDomainsInCart = domainTransfersInCart?.length > 0;
 
 	const { setPendingAction, setBulkDomainsData } = useDispatch( ONBOARD_STORE );
 
-	const { __ } = useI18n();
+	const { __, _n } = useI18n();
 
 	const allGood = Object.values( domainsState ).every( ( { valid } ) => valid );
+
 	const hasAnyDomains = Object.values( domainsState ).some(
 		( { domain, auth } ) => domain.trim() || auth.trim()
 	);
@@ -116,32 +128,55 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			<CardHeader>
 				<h2>{ __( 'Domains' ) }</h2>
 			</CardHeader>
-			<CardBody>
-				{ Object.entries( domainsState ).map( ( [ key, domain ], index ) => (
-					<DomainCodePair
-						key={ key }
-						id={ key }
-						onChange={ handleChange }
-						onRemove={ removeDomain }
-						domain={ domain.domain }
-						auth={ domain.auth }
-						showLabels={ index === 0 }
-					/>
-				) ) }
-				<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-					{ __( 'Add domain' ) }
-				</Button>
-			</CardBody>
+			{ hasDomainsInCart && ! ignoreCart ? (
+				<CardBody>
+					{ sprintf(
+						/* translators: %s: number of domains in cart */
+						_n(
+							'You already have %s domain in cart. Would you like to proceed to checkout or start over?',
+							'You already have %s domains in cart. Would you like to proceed to checkout or start over?',
+							domainTransfersInCart.length
+						),
+						domainTransfersInCart.length
+					) }
+				</CardBody>
+			) : (
+				<CardBody>
+					{ Object.entries( domainsState ).map( ( [ key, domain ], index ) => (
+						<DomainCodePair
+							key={ key }
+							id={ key }
+							onChange={ handleChange }
+							onRemove={ removeDomain }
+							domain={ domain.domain }
+							auth={ domain.auth }
+							showLabels={ index === 0 }
+						/>
+					) ) }
+					<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
+						{ __( 'Add domain' ) }
+					</Button>
+				</CardBody>
+			) }
 			<CardFooter>
-				<Button
-					disabled={ ! allGood }
-					className="bulk-domain-transfer__cta"
-					isPrimary
-					style={ { width: '100%' } }
-					onClick={ handleAddTransfer }
-				>
-					{ __( 'Continue' ) }
-				</Button>
+				{ hasDomainsInCart && ! ignoreCart ? (
+					<ButtonGroup style={ { width: '100%' } }>
+						<Button onClick={ () => setIgnoreCart( true ) }>{ __( 'Start over' ) }</Button>
+						<Button isPrimary onClick={ () => onSubmit() }>
+							{ __( 'Continue to checkout' ) }
+						</Button>
+					</ButtonGroup>
+				) : (
+					<Button
+						disabled={ ! allGood }
+						className="bulk-domain-transfer__cta"
+						isPrimary
+						style={ { width: '100%' } }
+						onClick={ handleAddTransfer }
+					>
+						{ __( 'Continue' ) }
+					</Button>
+				) }
 			</CardFooter>
 		</Card>
 	);
