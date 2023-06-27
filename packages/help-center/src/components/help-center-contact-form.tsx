@@ -6,7 +6,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
-import { SiteDetails, HelpCenterSite, useJetpackSearchAIQuery } from '@automattic/data-stores';
+import { SiteDetails, HelpCenterSite } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
@@ -25,6 +25,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
 import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
