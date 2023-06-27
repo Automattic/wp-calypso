@@ -360,11 +360,10 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/search', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/read/search', '/recommendations' ],
+		paths: [ '/read/search', '/recommendations' ],
 		module: 'calypso/reader/search',
 		group: 'reader',
 		enableLoggedOut: true,
-		isomorphic: true,
 		trackLoadPerformance: true,
 	},
 	{
