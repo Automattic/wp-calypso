@@ -12,6 +12,7 @@ import './style.scss';
 
 interface PopupMessagesProps {
 	anchorRect?: DOMRect;
+	children: React.ReactNode;
 }
 
 export const PopupMessages: React.FunctionComponent< PopupMessagesProps > = ( {
@@ -48,6 +49,7 @@ export interface PlansIntervalToggleProps {
 	onChange: ( selectedValue: Plans.PlanBillingPeriod ) => void;
 	maxMonthlyDiscountPercentage?: number;
 	className?: string;
+	children?: React.ReactNode;
 }
 
 const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > = ( {

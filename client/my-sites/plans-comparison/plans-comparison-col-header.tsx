@@ -1,6 +1,7 @@
 import { TYPE_STARTER, TERM_MONTHLY } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
+import React from 'react';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import type { Plan } from '@automattic/calypso-products';
 import type { translate } from 'i18n-calypso';
@@ -9,6 +10,7 @@ interface Props {
 	plan: Plan;
 	onClick?: ( productSlug: string ) => void;
 	translate: typeof translate;
+	children?: React.ReactNode;
 }
 
 const PlanTitle = styled.h2`

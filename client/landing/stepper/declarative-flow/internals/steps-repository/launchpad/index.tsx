@@ -101,8 +101,8 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 				stepName="launchpad"
 				goNext={ navigation.goNext }
 				isFullLayout={ true }
-				skipLabelText={ translate( 'Skip to dashboard' ) }
-				skipButtonAlign="bottom"
+				skipLabelText={ translate( 'Skip for now' ) }
+				skipButtonAlign="top"
 				hideBack={ true }
 				stepContent={
 					<StepContent

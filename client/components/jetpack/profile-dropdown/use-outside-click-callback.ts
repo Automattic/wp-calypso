@@ -22,8 +22,8 @@ export default function useOutsideClickCallback(
 	);
 
 	const handleClick = useCallback(
-		( { target } ) => {
-			if ( ref.current && ! ref.current.contains( target ) ) {
+		( { target }: MouseEvent ) => {
+			if ( ref.current && ! ref.current.contains( target as Node ) ) {
 				callback();
 			}
 		},

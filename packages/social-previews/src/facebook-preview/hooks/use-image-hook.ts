@@ -15,10 +15,11 @@ const useImage: UseImage = ( { mode: initialMode } ) => {
 	const [ mode, setMode ] = useState< ImageMode | undefined >( initialMode );
 	const [ isLoadingImage, setLoadingImage ] = useState< boolean >( true );
 
-	const onLoad = useCallback(
+	const onLoad = useCallback< ImageEventHandler >(
 		( { target } ) => {
 			if ( ! mode ) {
-				setMode( target.naturalWidth > target.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE );
+				const image = target as HTMLImageElement;
+				setMode( image.naturalWidth > image.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE );
 			}
 			setLoadingImage( false );
 		},

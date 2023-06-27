@@ -93,6 +93,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 type PopupMessageProps = {
 	context?: HTMLElement;
 	isVisible: boolean;
+	children?: React.ReactNode;
 };
 
 // eslint-disable @typescript-eslint/no-use-before-define
@@ -204,7 +205,11 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 						} ) }
 						isPlansInsideStepper={ props.isPlansInsideStepper }
 					>
-						<span ref={ intervalType === 'monthly' ? ( ref ) => ref && setSpanRef( ref ) : null }>
+						<span
+							ref={
+								intervalType === 'monthly' ? ( ref ) => ref && ! spanRef && setSpanRef( ref ) : null
+							}
+						>
 							{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
 							{ interval === 'yearly' && ! showBiannualToggle ? translate( 'Pay annually' ) : null }
 							{ interval === 'yearly' && showBiannualToggle ? translate( 'Pay 1 year' ) : null }

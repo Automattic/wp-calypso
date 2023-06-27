@@ -1,11 +1,11 @@
 import { Gridicon, Popover } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { FunctionComponent, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import './style.scss';
 
-interface Props {
+interface BadgeProps {
 	className?: string;
 	labelText?: string;
 	tooltipContent?: string | React.ReactElement;
@@ -18,7 +18,7 @@ interface Props {
 	focusOnShow?: boolean;
 }
 
-const PremiumBadge: FunctionComponent< Props > = ( {
+const PremiumBadge = ( {
 	className,
 	labelText,
 	tooltipContent,
@@ -29,7 +29,7 @@ const PremiumBadge: FunctionComponent< Props > = ( {
 	shouldHideIcon,
 	shouldHideTooltip,
 	focusOnShow,
-} ) => {
+}: BadgeProps ) => {
 	const { __ } = useI18n();
 
 	const tooltipText = isPremiumThemeAvailable

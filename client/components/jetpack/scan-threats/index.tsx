@@ -168,9 +168,9 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 	}, [ actionToPerform, closeDialog, updateThreat ] );
 
 	const confirmFixAllThreats = React.useCallback(
-		( fixableThreats ) => {
+		( fixableThreats: Threat[] ) => {
 			setShowFixAllThreatsDialog( false );
-			fixThreats( fixableThreats );
+			fixThreats( fixableThreats as FixableThreat[] );
 		},
 		[ fixThreats ]
 	);
