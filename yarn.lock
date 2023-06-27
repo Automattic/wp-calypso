@@ -147,7 +147,7 @@ __metadata:
     utility-types: ^3.10.0
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     "@wordpress/element": ^5.0.0
     "@wordpress/i18n": ^4.22.0
     debug: ^4.3.3
@@ -499,7 +499,7 @@ __metadata:
     utility-types: ^3.10.0
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     react: ^18.2.0
     react-dom: ^18.2.0
   languageName: unknown
@@ -574,7 +574,7 @@ __metadata:
     wait-for-expect: ^3.0.2
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     react: ^18.2.0
     react-dom: ^18.2.0
   languageName: unknown
@@ -602,7 +602,7 @@ __metadata:
     webpack: ^5.68.0
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     "@wordpress/element": ^5.0.0
     "@wordpress/i18n": ^4.22.0
     debug: ^4.3.3
@@ -641,7 +641,7 @@ __metadata:
     utility-types: ^3.10.0
     webpack: ^5.68.0
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     "@wordpress/element": ^5.0.0
     "@wordpress/i18n": ^4.22.0
     debug: ^4.3.3
@@ -672,7 +672,7 @@ __metadata:
     tslib: ^2.3.0
     typescript: ^4.7.4
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     "@wordpress/element": ^5.0.0
     "@wordpress/i18n": ^4.22.0
     debug: ^4.3.3
@@ -709,7 +709,7 @@ __metadata:
     use-debounce: ^3.1.0
     uuid: ^8.3.2
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     "@wordpress/element": ^5.0.0
     "@wordpress/i18n": ^4.22.0
     react: ^18.2.0
@@ -815,7 +815,7 @@ __metadata:
     typescript: ^4.7.4
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     "@wordpress/element": ^5.0.0
     "@wordpress/i18n": ^4.22.0
     debug: ^4.3.3
@@ -850,7 +850,7 @@ __metadata:
     react-draggable: ^4.4.4
     typescript: ^4.7.4
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     "@wordpress/element": ^5.0.0
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -930,7 +930,7 @@ __metadata:
     "@wordpress/react-i18n": ^3.33.0
     typescript: ^4.7.4
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     react: ^18.2.0
     react-dom: ^18.2.0
     redux: ^4.1.2
@@ -985,7 +985,7 @@ __metadata:
     webpack: ^5.68.0
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     "@wordpress/element": ^5.0.0
     "@wordpress/i18n": ^4.22.0
     debug: ^4.3.3
@@ -1232,7 +1232,7 @@ __metadata:
     resize-observer-polyfill: 1.5.1
     typescript: ^4.7.4
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     react: ^18.2.0
     redux: ^4.1.2
   languageName: unknown
@@ -1257,7 +1257,7 @@ __metadata:
     tslib: ^2.3.0
     typescript: ^4.7.4
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     "@wordpress/element": ^5.0.0
     "@wordpress/i18n": ^4.22.0
     react: ^18.2.0
@@ -1391,7 +1391,7 @@ __metadata:
     classnames: ^2.3.1
     typescript: ^4.7.4
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     react: ^18.2.0
     react-dom: ^18.2.0
     redux: ^4.1.2
@@ -1407,7 +1407,7 @@ __metadata:
     "@testing-library/react": ^14.0.0
     typescript: ^4.7.4
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     react: ^18.2.0
     react-dom: ^18.2.0
     redux: ^4.1.2
@@ -1484,7 +1484,7 @@ __metadata:
     react-popper: ^2.3.0
     typescript: ^4.5.5
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     react: ^18.2.0
     react-dom: ^18.2.0
     redux: ^4.1.2
@@ -1517,7 +1517,7 @@ __metadata:
     react-popper: ^2.3.0
     typescript: ^4.7.4
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     react: ^18.2.0
     react-dom: ^18.2.0
     redux: ^4.1.2
@@ -1633,7 +1633,7 @@ __metadata:
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     react: ^18.2.0
     react-dom: ^18.2.0
     redux: ^4.1.2
@@ -1846,7 +1846,7 @@ __metadata:
     social-logos: ^2.5.2
     typescript: ^4.7.4
   peerDependencies:
-    "@wordpress/data": ^8.0.0
+    "@wordpress/data": ^9.5.0
     react: ^18.2.0
     react-dom: ^18.2.0
   languageName: unknown
