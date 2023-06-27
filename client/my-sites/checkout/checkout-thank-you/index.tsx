@@ -30,7 +30,6 @@ import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PurchaseDetail from 'calypso/components/purchase-detail';
@@ -47,7 +46,6 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
-import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import {
@@ -464,9 +462,7 @@ export class CheckoutThankYou extends Component<
 		const { translate, email, domainOnlySiteFlow, selectedFeature } = this.props;
 		let purchases: ReceiptPurchase[] = [];
 		let failedPurchases = [];
-		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let showHappinessSupport = ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
 		let wasDomainProduct = false;
@@ -481,9 +477,7 @@ export class CheckoutThankYou extends Component<
 			wasGSuiteOrGoogleWorkspace = purchases.some( isGSuiteOrGoogleWorkspace );
 			wasTitanEmailProduct = purchases.some( isTitanMail );
 			failedPurchases = getFailedPurchases( this.props );
-			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
-			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
@@ -498,9 +492,6 @@ export class CheckoutThankYou extends Component<
 				purchases.every(
 					( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
 				);
-		} else if ( isStarterPlanEnabled() ) {
-			// Don't show the Happiness support until we figure out the user doesn't have a starter plan
-			showHappinessSupport = false;
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -619,16 +610,7 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
-				{ showHappinessSupport && (
-					<Card className="checkout-thank-you__footer">
-						<HappinessSupport
-							isJetpack={ wasJetpackPlanPurchased }
-							contactButtonEventName="calypso_plans_autoconfig_chat_initiated"
-						/>
-					</Card>
-				) }
 			</Main>
 		);
 	}
