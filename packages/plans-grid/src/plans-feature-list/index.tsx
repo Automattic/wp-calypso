@@ -210,7 +210,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 				<Button
 					className={ classnames( domainFeatureItem.wrapperClassName, className ) }
 					onClick={ onPickDomain }
-					isLink
+					variant="link"
 				>
 					{ children }
 				</Button>
