@@ -848,20 +848,20 @@ export class JetpackAuthorize extends Component {
 				<Fragment>
 					<div className="jetpack-connect__logged-in-content">
 						<Card className="jetpack-connect__logged-in-card">
-							<Gravatar user={ user } size={ 40 } />
-							<div>
+							<div className="jetpack-connect__logged-in-form-user">
+								<Gravatar user={ user } size={ 40 } />
 								<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
-								<LoggedOutFormLinkItem
-									href={ login( {
-										isJetpack: true,
-										redirectTo: window.location.href,
-										from: authQuery.from,
-									} ) }
-									onClick={ this.handleSignIn }
-								>
-									{ translate( 'Sign in as a different user' ) }
-								</LoggedOutFormLinkItem>
 							</div>
+							<LoggedOutFormLinkItem
+								href={ login( {
+									isJetpack: true,
+									redirectTo: window.location.href,
+									from: authQuery.from,
+								} ) }
+								onClick={ this.handleSignIn }
+							>
+								{ translate( 'Sign in as a different user' ) }
+							</LoggedOutFormLinkItem>
 						</Card>
 						<div className="jetpack-connect__logged-in-bottom">
 							{ this.renderStateAction() }
