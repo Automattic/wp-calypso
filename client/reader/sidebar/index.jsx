@@ -44,6 +44,8 @@ import ReaderSidebarTags from './reader-sidebar-tags';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
 
+const isSubscriptionManagerEnabled = isEnabled( 'reader/subscription-management' );
+
 export class ReaderSidebar extends Component {
 	state = {};
 
@@ -176,7 +178,9 @@ export class ReaderSidebar extends Component {
 					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
 						'sidebar-streams__following': true,
 					} ) }
-					label={ translate( 'Following' ) }
+					label={
+						isSubscriptionManagerEnabled ? translate( 'Subscriptions' ) : translate( 'Following' )
+					}
 					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 					customIcon={ <ReaderFollowingIcon /> }
 					link="/read"
