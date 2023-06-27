@@ -30,7 +30,7 @@ type PlanFeaturesActionsButtonProps = {
 	manageHref: string;
 	isPlaceholder?: boolean;
 	isPopular?: boolean;
-	isInSignup: boolean;
+	isInSignup?: boolean;
 	isLaunchPage?: boolean;
 	onUpgradeClick: () => void;
 	planName: TranslateResult;

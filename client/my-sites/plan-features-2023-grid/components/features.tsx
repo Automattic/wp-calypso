@@ -40,7 +40,7 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planName: string;
-	domainName: string;
+	domainName?: string;
 	hideUnavailableFeatures: boolean;
 	selectedFeature?: string;
 } > = ( { features, planName, domainName, hideUnavailableFeatures, selectedFeature } ) => {
@@ -82,7 +82,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 						<PlanFeaturesItem>
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
-									{ isFreePlanAndCustomDomainFeature ? (
+									{ isFreePlanAndCustomDomainFeature && domainName ? (
 										<Plans2023Tooltip
 											text={ translate( '%s is not included', {
 												args: [ domainName ],

@@ -4,7 +4,7 @@ import PlanPill from 'calypso/components/plans/plan-pill';
 import useHighlightLabel from '../hooks/use-highlight-label';
 
 const PopularBadge: React.FunctionComponent< {
-	isInSignup: boolean;
+	isInSignup?: boolean;
 	planName: string;
 	additionalClassName?: string;
 	currentSitePlanSlug?: string;

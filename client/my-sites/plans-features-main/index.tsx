@@ -42,6 +42,7 @@ import useVisiblePlansForPlanFeatures from './hooks/use-visible-plans-for-plan-f
 import type { PlansIntent } from './hooks/use-plan-types-with-intent';
 import type { IntervalType } from './types';
 import type { DomainSuggestion } from '@automattic/data-stores';
+import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
 
@@ -158,7 +159,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	}
 
 	// TODO clk: Needs typing to PlanFeatures2023GridProps
-	const asyncProps = {
+	const asyncProps: PlanFeatures2023GridProps = {
 		domainName,
 		isInSignup,
 		isLaunchPage,

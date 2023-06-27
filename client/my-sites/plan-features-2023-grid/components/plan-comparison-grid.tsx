@@ -97,7 +97,7 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	` ) }
 `;
 
-const Grid = styled.div< { isInSignup: boolean } >`
+const Grid = styled.div< { isInSignup?: boolean } >`
 	display: grid;
 	margin-top: ${ ( props ) => ( props.isInSignup ? '90px' : '64px' ) };
 	background: #fff;
@@ -305,7 +305,7 @@ type PlanComparisonGridProps = {
 	planProperties?: Array< PlanProperties >;
 	intervalType: string;
 	planTypeSelectorProps: PlanTypeSelectorProps;
-	isInSignup: boolean;
+	isInSignup?: boolean;
 	isLaunchPage?: boolean;
 	flowName: string;
 	currentSitePlanSlug?: string;
@@ -322,7 +322,7 @@ type PlanComparisonGridProps = {
 type PlanComparisonGridHeaderProps = {
 	displayedPlansProperties: Array< PlanProperties >;
 	visiblePlansProperties: Array< PlanProperties >;
-	isInSignup: boolean;
+	isInSignup?: boolean;
 	isLaunchPage?: boolean;
 	isFooter?: boolean;
 	flowName: string;

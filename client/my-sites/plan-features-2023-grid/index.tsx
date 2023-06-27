@@ -103,7 +103,7 @@ const Container = (
 };
 
 export type PlanFeatures2023GridProps = {
-	isInSignup: boolean;
+	isInSignup?: boolean;
 	siteId: number;
 	isLaunchPage: boolean;
 	isReskinned: boolean;
@@ -112,7 +112,7 @@ export type PlanFeatures2023GridProps = {
 	plans: PlanSlug[];
 	visiblePlans: Array< string >;
 	flowName: string;
-	domainName: string;
+	domainName?: string;
 	placeholder?: string;
 	intervalType: string;
 	currentSitePlanSlug?: string;
@@ -152,7 +152,7 @@ const PlanLogo: React.FunctionComponent< {
 	planIndex: number;
 	planProperties: PlanProperties;
 	isMobile?: boolean;
-	isInSignup: boolean;
+	isInSignup?: boolean;
 	currentSitePlanSlug?: string;
 	selectedPlan?: string;
 } > = ( {
