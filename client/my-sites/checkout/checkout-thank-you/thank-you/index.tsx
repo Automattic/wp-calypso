@@ -13,7 +13,7 @@ import type {
 	ThankYouSectionProps,
 	ThankYouSupportSectionProps,
 	ThankYouNoticeProps,
-} from 'calypso/components/thank-you/types';
+} from './types';
 
 import './style.scss';
 
