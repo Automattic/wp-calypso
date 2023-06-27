@@ -5,6 +5,7 @@ import { SubscriberList } from 'calypso/my-sites/subscribers/components/subscrib
 import { SubscriberListActionsBar } from 'calypso/my-sites/subscribers/components/subscriber-list-actions-bar';
 import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
+import { useRecordSearch } from '../../tracks';
 import './style.scss';
 
 type SubscriberListContainerProps = {
@@ -17,6 +18,7 @@ const SubscriberListContainer = ( {
 	onClickUnsubscribe,
 }: SubscriberListContainerProps ) => {
 	const { grandTotal, total, perPage, page, pageClickCallback } = useSubscriberListManager();
+	useRecordSearch();
 
 	return (
 		<section className="subscriber-list-container">

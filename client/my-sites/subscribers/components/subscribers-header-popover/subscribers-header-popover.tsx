@@ -7,7 +7,7 @@ import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-
+import { useRecordExport } from '../../tracks';
 import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
@@ -23,6 +23,8 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'email' },
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
+	const recordExport = useRecordExport();
+
 	const onDownloadCsvClick = () => {
 		dispatch(
 			recordGoogleEvent(
@@ -30,6 +32,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 				'Clicked Download email subscribers as CSV menu item on Subscribers'
 			)
 		);
+		recordExport();
 	};
 
 	return (
