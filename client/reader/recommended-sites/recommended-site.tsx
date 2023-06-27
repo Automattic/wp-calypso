@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AnyAction } from 'redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import { Railcar } from 'calypso/data/marketplace/types';
+import { useSubscriptionManagerContext } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import connectSite from 'calypso/lib/reader-connect-site';
@@ -32,7 +33,6 @@ import { Site } from 'calypso/state/data-layer/wpcom/read/sites/types';
 import { follow } from 'calypso/state/reader/follows/actions';
 import isReaderFollowFeedLoading from 'calypso/state/reader/follows/selectors/is-reader-follow-feed-loading';
 import { dismissSite } from 'calypso/state/reader/site-dismissals/actions';
-import { useSubscriptionManagerContext } from '../../landing/subscriptions/components/subscription-manager-context';
 import {
 	useRecordSiteIconClicked,
 	useRecordSiteTitleClicked,
@@ -102,7 +102,7 @@ const RecommendedSite = ( {
 	useEffect( () => {
 		if ( railcar ) {
 			// reader: railcar, ui_algo: following_manage_recommended_site, ui_position, fetch_algo, fetch_position, rec_blog_id (incorrect: fetch_lang, action)
-			// submain: railcar, ui_algo: subscriptions_recommended_site, ui_position, fetch_algo, fetch_position, rec_blog_id
+			// subman: railcar, ui_algo: subscriptions_recommended_site, ui_position, fetch_algo, fetch_position, rec_blog_id
 			recordTrainTracksRender( {
 				railcarId,
 				uiAlgo: 'subscriptions_recommended_site',
