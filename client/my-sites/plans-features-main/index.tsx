@@ -43,6 +43,7 @@ import type { IntervalType } from './types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
+import type { PlanActionOverrides } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
@@ -86,6 +87,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	sitePlanSlug?: string | null;
 	siteSlug?: string | null;
+	intent: PlansIntent;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -118,8 +120,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		onUpgradeClick,
 		selectedFeature,
 		selectedPlan,
-		withDiscount,
-		discountEndDate,
 		siteId,
 		plansWithScroll,
 		isReskinned,
@@ -137,19 +137,19 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		setShowDomainUpsellDialog( true );
 	}, [ setShowDomainUpsellDialog ] );
 
-	let planActionOverrides;
+	let planActionOverrides: PlanActionOverrides | undefined;
 	if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
 		planActionOverrides = {
 			loggedInFreePlan: domainFromHomeUpsellFlow
 				? {
 						callback: showDomainUpsellDialog,
-						text: translate( 'Keep my plan', { context: 'verb' } ),
+						text: translate( 'Keep my plan', { context: 'verb' } ) as string,
 				  }
 				: {
 						callback: () => {
 							page.redirect( `/add-ons/${ siteSlug }` );
 						},
-						text: translate( 'Manage add-ons', { context: 'verb' } ),
+						text: translate( 'Manage add-ons', { context: 'verb' } ) as string,
 				  },
 		};
 	}
@@ -165,9 +165,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		visiblePlans,
 		selectedFeature,
 		selectedPlan,
-		withDiscount,
-		discountEndDate,
-		withScroll: plansWithScroll,
 		siteId,
 		isReskinned,
 		intervalType,
