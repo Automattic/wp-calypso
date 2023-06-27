@@ -30,6 +30,7 @@ class SitePicker extends Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
 		showManageSitesButton: PropTypes.bool,
+		showManageDomainsButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -103,6 +104,7 @@ class SitePicker extends Component {
 					maxResults={ this.props.maxResults }
 					showHiddenSites={ this.props.showHiddenSites }
 					showManageSitesButton={ this.props.showManageSitesButton }
+					showManageDomainsButton={ this.props.showManageDomainsButton }
 					isPlaceholder={ ! this.state.isRendered }
 					indicator={ true }
 					showAddNewSite={ true }
