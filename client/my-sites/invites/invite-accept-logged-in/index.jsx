@@ -155,7 +155,7 @@ class InviteAcceptLoggedIn extends Component {
 
 export default connect(
 	( state ) => ( {
-		emailVerificationSecret: getCurrentQueryArguments( state ).email_verification_secret,
+		emailVerificationSecret: getCurrentQueryArguments( state )?.email_verification_secret,
 	} ),
 	{ acceptInvite }
 )( localize( InviteAcceptLoggedIn ) );

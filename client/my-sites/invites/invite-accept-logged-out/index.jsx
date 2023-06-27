@@ -200,7 +200,7 @@ class InviteAcceptLoggedOut extends Component {
 
 export default connect(
 	( state ) => ( {
-		emailVerificationSecret: getCurrentQueryArguments( state ).email_verification_secret,
+		emailVerificationSecret: getCurrentQueryArguments( state )?.email_verification_secret,
 	} ),
 	{ createAccount, acceptInvite }
 )( localize( InviteAcceptLoggedOut ) );
