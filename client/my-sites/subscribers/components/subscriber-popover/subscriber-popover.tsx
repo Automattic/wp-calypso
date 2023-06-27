@@ -30,6 +30,7 @@ const SubscriberPopover = ( {
 	return (
 		<div className="subscriber-popover__container">
 			<button
+				aria-label="Open subscriber menu"
 				className={ classNames( 'subscriber-popover__toggle', {
 					'is-popover-visible': isVisible,
 				} ) }
