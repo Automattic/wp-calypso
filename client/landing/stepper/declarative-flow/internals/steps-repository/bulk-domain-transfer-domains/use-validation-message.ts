@@ -13,7 +13,7 @@ export function useValidationMessage( domain: string, auth: string ) {
 	const [ authDebounced ] = useDebounce( auth, 500 );
 
 	const hasGoodDomain = doesStringResembleDomain( domainDebounced );
-	const hasGoodAuthCode = hasGoodDomain && authDebounced.trim().length > 0;
+	const hasGoodAuthCode = hasGoodDomain && auth.trim().length > 0;
 
 	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode;
 
