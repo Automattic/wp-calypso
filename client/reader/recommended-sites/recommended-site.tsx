@@ -166,7 +166,7 @@ const RecommendedSite = ( {
 		} );
 
 		// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang,rec_blog_id, (incorrect: only railcar & action accepted)
-		// subman: action: recommended
+		// subman: action: recommended_site_subscribed, railcar
 		recordTrainTracksInteract( {
 			railcarId,
 			action: 'recommended_site_subscribed',
