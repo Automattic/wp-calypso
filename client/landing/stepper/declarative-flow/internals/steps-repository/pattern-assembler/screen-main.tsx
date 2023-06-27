@@ -49,7 +49,7 @@ const ScreenMain = ( {
 	const { location } = useNavigator();
 	const isInitialLocation = location.isInitial && ! location.isBack;
 	const headerDescription = translate(
-		'Customize everything in your homepage by first adding patterns and then choosing styles.'
+		'Customize everything by first adding patterns and then choosing styles.'
 	);
 
 	// Use the mousedown event to prevent either the button focusing or text selection

@@ -34,7 +34,7 @@ const ScreenFooter = ( {
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Add footer' ) } /> }
 				description={ translate(
-					'Pick the footer that appears at the bottom of every page and shows useful links and your contact information.'
+					'Pick the footer that appears at the bottom of every page and shows useful links and contact information.'
 				) }
 				onBack={ onBack }
 			/>
