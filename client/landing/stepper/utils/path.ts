@@ -67,5 +67,7 @@ export const useLoginUrl = ( params: {
 			}
 		} );
 
+	nonEmptyQueryParameters.push( [ 'toStepper', true ] );
+
 	return addQueryArgs( loginPath, Object.fromEntries( nonEmptyQueryParameters ) );
 };
