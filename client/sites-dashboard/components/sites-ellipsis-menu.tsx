@@ -311,7 +311,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const displayUpsell = ! hasFeatureSFTP;
 	const submenuItems = useSubmenuItems( site );
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
-		offsetTop: -8,
+		offset: -8,
 	} );
 
 	if ( submenuItems.length === 0 ) {
