@@ -4,6 +4,9 @@ import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import MasterbarStyled from './masterbar-styled';
 import type {
 	ThankYouNextStepProps,
 	ThankYouProps,
@@ -159,6 +162,7 @@ const ThankYouSupportSection = ( props: ThankYouSupportSectionProps ) => {
 };
 
 export const ThankYou = ( props: ThankYouProps ) => {
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 
@@ -220,27 +224,35 @@ export const ThankYou = ( props: ThankYouProps ) => {
 	) );
 
 	return (
-		<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
-			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
-				{ thankYouImage && <img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } /> }
-				{ thankYouTitle && (
-					<ThankYouTitleContainer>
-						<h1 className="thank-you__header-title wp-brand-font">{ thankYouTitle }</h1>
-						{ thankYouSubtitle && (
-							<h2 className="thank-you__header-subtitle">{ thankYouSubtitle }</h2>
-						) }
-						{ thankYouHeaderBody }
-					</ThankYouTitleContainer>
-				) }
-			</ThankYouHeader>
-			{ thankYouNotice && <ThankYouNotice { ...thankYouNotice } /> }
-			<ThankYouBody className="thank-you__body">
-				<div>
-					{ thankYouSections }
+		<>
+			<MasterbarStyled
+				onClick={ () => page( `/home/${ siteSlug }` ) }
+				backText={ translate( 'Back to dashboard' ) }
+				canGoBack={ true }
+				showContact={ true }
+			/>
+			<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
+				<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
+					{ thankYouImage && <img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } /> }
+					{ thankYouTitle && (
+						<ThankYouTitleContainer>
+							<h1 className="thank-you__header-title wp-brand-font">{ thankYouTitle }</h1>
+							{ thankYouSubtitle && (
+								<h2 className="thank-you__header-subtitle">{ thankYouSubtitle }</h2>
+							) }
+							{ thankYouHeaderBody }
+						</ThankYouTitleContainer>
+					) }
+				</ThankYouHeader>
+				{ thankYouNotice && <ThankYouNotice { ...thankYouNotice } /> }
+				<ThankYouBody className="thank-you__body">
+					<div>
+						{ thankYouSections }
 
-					{ showSupportSection && <ThankYouSupportSection { ...defaultSupportSectionProps } /> }
-				</div>
-			</ThankYouBody>
-		</ThankYouContainer>
+						{ showSupportSection && <ThankYouSupportSection { ...defaultSupportSectionProps } /> }
+					</div>
+				</ThankYouBody>
+			</ThankYouContainer>
+		</>
 	);
 };
