@@ -82,6 +82,7 @@ body.is-section-promote-post-i2 {
 						height: 55px;
 						margin: 0 64px;
 						max-width: 1040px;
+						overflow: hidden;
 						width: auto;
 					}
 
@@ -484,21 +485,6 @@ $break-medium-expanded-menu: $break-medium + 272px;
 @media screen and (max-width: $break-medium-expanded-menu) {
 	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
 		@include blazepress-mobile;
-	}
-}
-
-// Tabs tweak for mobile screens smaller than 364px (the mentioned width can contain all tabs and margins)
-@media screen and (max-width: 364px) {
-	body.is-section-promote-post-i2 .layout__content .main.is-wide-layout {
-		.section-nav-tabs {
-			.section-nav-tabs__list {
-				width: 348px; // Equal to 364px - left margin of 16px to make sure it will add the right margin
-
-				.section-nav-tab.pull-right {
-					margin-left: 0;
-				}
-			}
-		}
 	}
 }
 
