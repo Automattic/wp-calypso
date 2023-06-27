@@ -1,10 +1,11 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef } from 'react';
+import { Dispatch, RefObject, SetStateAction, useMemo, useRef, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
+import Tooltip from 'calypso/components/tooltip';
 import { successNotice } from 'calypso/state/notices/actions';
 import {
 	useRecordSiteUnsubscribed,
@@ -28,6 +29,21 @@ import {
 	SubscriptionsPortal,
 } from '../subscription-manager-context';
 
+const getIcon = (
+	ref: RefObject< SVGSVGElement >,
+	setTooltipVisible: Dispatch< SetStateAction< boolean > >,
+	color: 'green' | 'red'
+) => (
+	<Gridicon
+		ref={ ref }
+		icon={ color === 'green' ? 'checkmark' : 'cross' }
+		size={ 16 }
+		className={ color }
+		onMouseEnter={ () => setTooltipVisible( true ) }
+		onMouseLeave={ () => setTooltipVisible( false ) }
+	/>
+);
+
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
 
@@ -46,10 +62,6 @@ const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliver
 	);
 };
 
-const RedCross = () => <Gridicon icon="cross" size={ 16 } className="red" />;
-
-const GreenCheck = () => <Gridicon icon="checkmark" size={ 16 } className="green" />;
-
 const SelectedNewPostDeliveryMethods = ( {
 	isEmailMeNewPostsSelected,
 	isNotifyMeOfNewPostsSelected,
@@ -60,7 +72,7 @@ const SelectedNewPostDeliveryMethods = ( {
 	const translate = useTranslate();
 
 	if ( ! isEmailMeNewPostsSelected && ! isNotifyMeOfNewPostsSelected ) {
-		return <RedCross />;
+		return <Gridicon icon="cross" size={ 16 } className="red" />;
 	}
 
 	const emailDelivery = isEmailMeNewPostsSelected ? translate( 'Email' ) : null;
@@ -90,6 +102,8 @@ const SiteRow = ( {
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const [ isTooltipVisible, setTooltipVisible ] = useState< boolean >( false );
+	const tooltip = useRef< SVGSVGElement >( null );
 
 	const unsubscribeInProgress = useRef( false );
 	const resubscribePending = useRef( false );
@@ -197,6 +211,16 @@ const SiteRow = ( {
 		recordPostEmailsSetFrequency( { blog_id, delivery_frequency } );
 	};
 
+	const newColumnIcon = useMemo(
+		() =>
+			getIcon(
+				tooltip,
+				setTooltipVisible,
+				delivery_methods.email?.send_comments ? 'green' : 'red'
+			),
+		[ delivery_methods.email?.send_comments ]
+	);
+
 	return ! isDeleted ? (
 		<li className="row" role="row">
 			<span className="title-cell" role="cell">
@@ -260,7 +284,24 @@ const SiteRow = ( {
 			) }
 			{ isLoggedIn && (
 				<span className="new-comments-cell" role="cell">
-					{ delivery_methods.email?.send_comments ? <GreenCheck /> : <RedCross /> }
+					{ newColumnIcon }
+					<Tooltip
+						className="new-comments-tooltip"
+						isVisible={ isTooltipVisible }
+						position="top"
+						context={ tooltip.current }
+						showOnMobile
+					>
+						<div className="new-comments-tooltip__content">
+							{ delivery_methods.email?.send_comments
+								? translate(
+										'You will receive emails when new comments are published on this site.'
+								  )
+								: translate(
+										"You won't receive emails when new comments are published on this site."
+								  ) }
+						</div>
+					</Tooltip>
 				</span>
 			) }
 			<span className="email-frequency-cell" role="cell">
