@@ -68,20 +68,9 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 	const sites = useSelector( getSites );
 
-	const returnQueryArg = useMemo(
-		() => ( getQueryArg( window.location.href, 'return' ) || '' ).toString(),
-		[ window.location.href, getQueryArg ]
-	);
-
-	const products = useMemo(
-		() => ( getQueryArg( window.location.href, 'products' ) || '' ).toString(),
-		[]
-	);
-
-	const siteId = useMemo(
-		() => ( getQueryArg( window.location.href, 'site_id' ) || '' ).toString(),
-		[]
-	);
+	const returnQueryArg = ( getQueryArg( window.location.href, 'return' ) ?? '' ).toString();
+	const products = ( getQueryArg( window.location.href, 'products' ) ?? '' ).toString();
+	const siteId = ( getQueryArg( window.location.href, 'site_id' ) ?? '' ).toString();
 
 	const source = useMemo(
 		() => ( getQueryArg( window.location.href, 'source' ) || '' ).toString(),
