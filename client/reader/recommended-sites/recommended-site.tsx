@@ -1,4 +1,8 @@
-import { recordTrainTracksRender, recordTrainTracksInteract } from '@automattic/calypso-analytics';
+import {
+	recordTrainTracksRender,
+	recordTrainTracksInteract,
+	Railcar,
+} from '@automattic/calypso-analytics';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -16,8 +20,14 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AnyAction } from 'redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import { Railcar } from 'calypso/data/marketplace/types';
 import { useSubscriptionManagerContext } from 'calypso/landing/subscriptions/components/subscription-manager-context';
+import {
+	useRecordSiteIconClicked,
+	useRecordSiteTitleClicked,
+	useRecordSiteUrlClicked,
+	useRecordRecommendedSiteSubscribed,
+	useRecordRecommendedSiteDismissed,
+} from 'calypso/landing/subscriptions/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import connectSite from 'calypso/lib/reader-connect-site';
@@ -33,13 +43,6 @@ import { Site } from 'calypso/state/data-layer/wpcom/read/sites/types';
 import { follow } from 'calypso/state/reader/follows/actions';
 import isReaderFollowFeedLoading from 'calypso/state/reader/follows/selectors/is-reader-follow-feed-loading';
 import { dismissSite } from 'calypso/state/reader/site-dismissals/actions';
-import {
-	useRecordSiteIconClicked,
-	useRecordSiteTitleClicked,
-	useRecordSiteUrlClicked,
-	useRecordRecommendedSiteSubscribed,
-	useRecordRecommendedSiteDismissed,
-} from '../../landing/subscriptions/tracks';
 import { RecommendedSitePlaceholder } from './placeholder';
 import { seed as recommendedSitesSeed } from './recommended-sites';
 
@@ -59,12 +62,12 @@ const useInvalidateSiteSubscriptionsCache = ( isSubscribeLoading: boolean ) => {
 		if ( wasSubscribeLoading && ! isSubscribeLoading ) {
 			queryClient.invalidateQueries( siteSubscriptionsCacheKey );
 		}
-	}, [ isSubscribeLoading, wasSubscribeLoading, queryClient ] );
+	}, [ isSubscribeLoading, wasSubscribeLoading, queryClient, siteSubscriptionsCacheKey ] );
 };
 
 type RecommendedSiteProps = {
 	siteId: number;
-	feedId?: number;
+	feedId: number; // Used for train-tracks
 	siteTitle: string;
 	siteDescription: string;
 	siteDomain: string;
@@ -72,8 +75,8 @@ type RecommendedSiteProps = {
 	streamUrl: string;
 	siteIcon?: string;
 	feedIcon?: string;
-	railcar?: Railcar;
-	uiPosition?: number; // For analytics
+	railcar?: Railcar; // Used for train-tracks
+	uiPosition?: number; // Used for train-tracks
 };
 
 const RecommendedSite = ( {
@@ -91,7 +94,6 @@ const RecommendedSite = ( {
 }: RecommendedSiteProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const railcarId = railcar?.railcar as string;
 
 	const isSubscribeLoading: boolean = useSelector( ( state ) =>
 		isReaderFollowFeedLoading( state, siteUrl )
@@ -102,22 +104,25 @@ const RecommendedSite = ( {
 	useEffect( () => {
 		if ( railcar ) {
 			// reader: railcar, ui_algo: following_manage_recommended_site, ui_position, fetch_algo, fetch_position, rec_blog_id (incorrect: fetch_lang, action)
-			// subman: railcar, ui_algo: subscriptions_recommended_site, ui_position, fetch_algo, fetch_position, rec_blog_id
+			// subscriptions: railcar, ui_algo: subscriptions_recommended_site, ui_position, fetch_algo, fetch_position, rec_blog_id
 			recordTrainTracksRender( {
-				railcarId,
+				railcarId: railcar.railcar,
 				uiAlgo: 'subscriptions_recommended_site',
-				uiPosition: uiPosition as unknown as number,
-				fetchAlgo: railcar?.fetch_algo as string,
-				fetchPosition: railcar?.fetch_position as number,
-				recBlogId: railcar?.ui_blog_id as string,
+				uiPosition: uiPosition ?? -1,
+				fetchAlgo: railcar.fetch_algo,
+				fetchPosition: railcar.fetch_position,
+				recBlogId: railcar.rec_blog_id,
 			} );
 		}
-	}, [ railcar, railcarId, uiPosition ] );
+	}, [ railcar, uiPosition ] );
 
 	const { isReaderPortal } = useSubscriptionManagerContext();
 
-	const blog_id = siteId as unknown as string;
-	const feed_id = feedId as unknown as string;
+	const blog_id = String( siteId );
+	if ( feedId === undefined ) {
+		throw new Error( 'feedId is undefined' );
+	}
+	const feed_id = String( feedId );
 
 	const recordSiteIconClicked = useRecordSiteIconClicked();
 	const recordSiteTitleClicked = useRecordSiteTitleClicked();
@@ -131,25 +136,27 @@ const RecommendedSite = ( {
 	const recordRecommendedSiteSubscribed = useRecordRecommendedSiteSubscribed();
 	const recordRecommendedSiteDismissed = useRecordRecommendedSiteDismissed();
 
-	const handleDimissButtonOnClick = () => {
+	const handleDismissButtonOnClick = () => {
 		// reader: calypso_reader_recommended_site_dismissed
-		// subman: calypso_subscriptions_recommended_site_dismissed
+		// subscriptions: calypso_subscriptions_recommended_site_dismissed
 		recordRecommendedSiteDismissed( {
 			blog_id,
 			url: siteUrl,
 			source: 'recommended-site-dismiss-button',
 		} );
 
-		// reader: action, ui_algo, ui_position (incorrect: only railcar & action accepted)
-		// subman: railcar, action
-		recordTrainTracksInteract( {
-			railcarId,
-			action: 'recommended_site_dismissed',
-		} );
+		if ( railcar ) {
+			// reader: action, ui_algo, ui_position (incorrect: only railcar & action accepted)
+			// subscriptions: railcar, action
+			recordTrainTracksInteract( {
+				railcarId: railcar.railcar,
+				action: 'recommended_site_dismissed',
+			} );
+		}
 
 		if ( isReaderPortal ) {
 			// reader: calypso_reader_recommended_site_dismissed (incorrect: too long)
-			// subman: dismissed_recommended_site
+			// subscriptions: dismissed_recommended_site
 			bumpStat( 'reader_actions', 'dismissed_recommended_site' );
 		}
 
@@ -158,31 +165,33 @@ const RecommendedSite = ( {
 
 	const handleSubscribeButtonOnClick = () => {
 		// reader: calypso_reader_site_followed (ui_algo, url, source, follow_source)
-		// subman: calypso_subscriptions_recommended_site_subscribed & calypso_subscriptions_site_subscribed (blog_id, url, source, ui_algo: (removed), follow_source: (removed))
+		// subscriptions: calypso_subscriptions_recommended_site_subscribed & calypso_subscriptions_site_subscribed (blog_id, url, source, ui_algo: (removed), follow_source: (removed))
 		recordRecommendedSiteSubscribed( {
 			blog_id,
 			url: siteUrl,
 			source: 'recommended-site-subscribe-button',
 		} );
 
-		// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang,rec_blog_id, (incorrect: only railcar & action accepted)
-		// subman: action: recommended_site_subscribed, railcar
-		recordTrainTracksInteract( {
-			railcarId,
-			action: 'recommended_site_subscribed',
-		} );
+		if ( railcar ) {
+			// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang,rec_blog_id, (incorrect: only railcar & action accepted)
+			// subscriptions: action: recommended_site_subscribed, railcar
+			recordTrainTracksInteract( {
+				railcarId: railcar.railcar,
+				action: 'recommended_site_subscribed',
+			} );
+		}
 
 		if ( isReaderPortal ) {
 			// reader: reader-following-manage-recommendation
-			// subman: reader-subscriptions-sites-recommendation
+			// subscriptions: reader-subscriptions-sites-recommendation
 			bumpStat( 'reader_follows', 'reader-subscriptions-sites-recommendation' );
 
 			// reader: followed_blog
-			// subman: subscribed_blog
+			// subscriptions: subscribed_blog
 			bumpStat( 'reader_actions', 'subscribed_blog' );
 
 			// reader: 'Reader', 'Clicked Follow Blog', 'reader-following-manage-recommendation'
-			// subman: 'Reader', 'Clicked Subscribed Blog', 'reader-subscriptions-sites-recommendation'
+			// subscriptions: 'Reader', 'Clicked Subscribed Blog', 'reader-subscriptions-sites-recommendation'
 			gaRecordEvent(
 				'Reader',
 				'Clicked Subscribed Blog',
@@ -207,7 +216,7 @@ const RecommendedSite = ( {
 					icon={ close }
 					iconSize={ 20 }
 					title={ translate( 'Dismiss this recommendation' ) }
-					onClick={ handleDimissButtonOnClick }
+					onClick={ handleDismissButtonOnClick }
 				/>
 			</Flex>
 			<HStack justify="flex-start" spacing="4">
@@ -250,11 +259,11 @@ const RecommendedSite = ( {
 
 type ConnectSiteComponentProps = {
 	siteId?: number;
-	feedId?: number;
+	feedId?: number; // Used for train-tracks
 	site?: Site;
 	feed?: Feed;
-	railcar?: Railcar;
-	uiPosition?: number; // For analytics
+	railcar?: Railcar; // Used for train-tracks
+	uiPosition?: number; // Used for train-tracks
 };
 
 const RecommendedSiteWithConnectedSite = ( {
@@ -269,8 +278,8 @@ const RecommendedSiteWithConnectedSite = ( {
 		return <RecommendedSitePlaceholder />;
 	}
 
-	if ( ! railcar ) {
-		throw new Error( 'Railcar is required to render recommended site' );
+	if ( ! feedId ) {
+		throw new Error( 'feedId is required to render RecommendedSite' );
 	}
 
 	const siteTitle = getSiteName( { site, feed } );
@@ -284,6 +293,7 @@ const RecommendedSiteWithConnectedSite = ( {
 	return (
 		<RecommendedSite
 			siteId={ siteId }
+			feedId={ feedId }
 			siteTitle={ siteTitle }
 			siteDescription={ siteDescription }
 			siteDomain={ siteDomain }

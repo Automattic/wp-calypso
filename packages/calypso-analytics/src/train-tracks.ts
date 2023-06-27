@@ -1,6 +1,14 @@
 import { v4 as uuid } from 'uuid';
 import { recordTracksEvent } from './tracks';
 
+export type Railcar = {
+	railcar: string;
+	fetch_algo: string;
+	fetch_lang: string;
+	fetch_position: number;
+	rec_blog_id: string;
+} & Record< string, string | number >;
+
 interface TrainTracksRenderProps {
 	railcarId: string;
 	uiAlgo: string;
