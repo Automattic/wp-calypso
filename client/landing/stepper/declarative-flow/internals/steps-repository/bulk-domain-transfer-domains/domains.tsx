@@ -1,9 +1,10 @@
 import { BulkDomainTransferData } from '@automattic/data-stores';
+import { useDataLossWarning } from '@automattic/onboarding';
 import { Button, Card, CardHeader, CardBody, CardFooter } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
@@ -41,6 +42,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		[]
 	);
 
+	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
+
 	const domainsState = storedDomainsState || defaultState;
 
 	const { setPendingAction, setBulkDomainsData } = useDispatch( ONBOARD_STORE );
@@ -48,6 +51,11 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const { __ } = useI18n();
 
 	const allGood = Object.values( domainsState ).every( ( { valid } ) => valid );
+	const hasAnyDomains = Object.values( domainsState ).some(
+		( { domain, auth } ) => domain.trim() || auth.trim()
+	);
+
+	useDataLossWarning( hasAnyDomains && enabledDataLossWarning );
 
 	// create a string key representing the current state of the domains
 	const changeKey = JSON.stringify( domainsState );
@@ -68,6 +76,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			const cartPromise = cartManagerClient
 				.forCartKey( 'no-site' )
 				.actions.replaceProductsInCart( cartItems );
+
+			setEnabledDataLossWarning( false );
 
 			setPendingAction( () => cartPromise ).then( () => {
 				onSubmit?.();
