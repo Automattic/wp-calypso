@@ -47,7 +47,7 @@ const SubscriberDetails = ( { subscriber }: SubscriberDetailsProps ) => {
 						{ subscriptionPlans &&
 							subscriptionPlans.map( ( subscriptionPlan, index ) => (
 								<div className="subscriber-details__content-value" key={ index }>
-									{ subscriptionPlan.plan }
+									{ `${ subscriptionPlan.title }: ${ subscriptionPlan.plan }` }
 								</div>
 							) ) }
 					</div>

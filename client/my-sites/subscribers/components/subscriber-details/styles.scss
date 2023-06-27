@@ -46,6 +46,7 @@
 		}
 
 		.subscriber-details__content-value {
+			display: block;
 			color: $studio-gray-60;
 			font-size: $font-body-small;
 			line-height: rem(20px);
