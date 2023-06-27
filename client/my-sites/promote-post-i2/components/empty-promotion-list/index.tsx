@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -8,6 +9,8 @@ type Props = {
 
 export default function EmptyPromotionList( props: Props ) {
 	const { type } = props;
+
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const translate = useTranslate();
 
@@ -20,7 +23,13 @@ export default function EmptyPromotionList( props: Props ) {
 			'You have not created any campaigns Click {{learnMoreLink}}Promote{{/learnMoreLink}} to get started.',
 			{
 				components: {
-					learnMoreLink: <InlineSupportLink supportContext="advertising" showIcon={ false } />,
+					learnMoreLink: (
+						<InlineSupportLink
+							supportContext="advertising"
+							showIcon={ false }
+							showSupportModal={ ! isRunningInJetpack }
+						/>
+					),
 				},
 			}
 		);

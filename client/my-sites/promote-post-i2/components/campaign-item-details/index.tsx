@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import './style.scss';
 import {
 	Button,
@@ -58,6 +59,8 @@ const getPostIdFromURN = ( targetUrn: string ) => {
 };
 
 export default function CampaignItemDetails( props: Props ) {
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const translate = useTranslate();
@@ -646,6 +649,7 @@ export default function CampaignItemDetails( props: Props ) {
 									className="is-link components-button campaign-item-details__support-link"
 									supportContext="advertising"
 									showIcon={ false }
+									showSupportModal={ ! isRunningInJetpack }
 								>
 									{ translate( 'View documentation' ) }
 									<Gridicon icon="external" size={ 16 } />
