@@ -49,6 +49,10 @@ describe( 'Help Center: Interact with Results', function () {
 			await supportComponent.goBack();
 		} );
 
+		it( 'Clear search results', async function () {
+			await supportComponent.clearSearch();
+		} );
+
 		it( 'Search for "domain"', async function () {
 			await supportComponent.search( 'domain' );
 		} );
