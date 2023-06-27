@@ -68,6 +68,12 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 						auth_code_valid: response.success,
 					};
 				}
+				return {
+					domain: pair.domain,
+					registered: true,
+					unlocked: false,
+					auth_code_valid: false,
+				};
 			} catch ( error ) {
 				return {
 					error: 'Failed to check domain lock status.',
