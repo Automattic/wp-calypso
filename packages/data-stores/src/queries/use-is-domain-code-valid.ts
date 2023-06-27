@@ -1,25 +1,82 @@
 import { useQuery } from '@tanstack/react-query';
+import sha256 from 'hash.js/lib/hash/sha/256';
 import wpcomRequest from 'wpcom-proxy-request';
+
+/**
+ * Irreversibly hash the auth code to avoid storing it as query key.
+ *
+ * @param code The domain auth code.
+ * @returns the hash.
+ */
+function hashAuthCode( code: string ) {
+	return sha256().update( code ).digest( 'hex' );
+}
 
 type DomainCodeResponse = {
 	success: boolean;
 };
 
-type DomainCodePair = { domain: string; auth: string };
+type DomainLockResponse = {
+	transfer_restriction_status?: string;
+	transfer_eligible_date?: any;
+	term_maximum_in_years?: number;
+	admin_email?: string;
+	creation_date?: string;
+	registrar?: string;
+	registrar_iana_id?: string;
+	privacy?: boolean;
+	unlocked: boolean | null | undefined;
+	in_redemption?: boolean;
+};
 
-const key = ( domain: DomainCodePair ) => [ domain.domain, domain.auth ].join( ':' );
+type DomainCodePair = { domain: string; auth: string };
 
 export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) {
 	return useQuery( {
-		queryKey: [ 'domain-code-valid', key( pair ) ],
-		queryFn: () =>
-			wpcomRequest< DomainCodeResponse >( {
-				apiVersion: '1.1',
-				path: `/domains/${ encodeURIComponent( pair.domain ) }/inbound-transfer-check-auth-code`,
-				query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
-			} ),
+		queryKey: [ 'domain-code-valid', pair.domain, hashAuthCode( pair.auth ) ],
+		queryFn: async () => {
+			try {
+				const { unlocked } = await wpcomRequest< DomainLockResponse >( {
+					apiVersion: '1.1',
+					path: `/domains/${ encodeURIComponent( pair.domain ) }/inbound-transfer-status`,
+				} );
+
+				if ( unlocked === null ) {
+					return {
+						domain: pair.domain,
+						registered: false,
+						unlocked: false,
+						auth_code_valid: false,
+					};
+				}
+
+				if ( unlocked ) {
+					const response = await wpcomRequest< DomainCodeResponse >( {
+						apiVersion: '1.1',
+						path: `/domains/${ encodeURIComponent(
+							pair.domain
+						) }/inbound-transfer-check-auth-code`,
+						query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
+					} );
+
+					return {
+						domain: pair.domain,
+						registered: true,
+						unlocked: true,
+						auth_code_valid: response.success,
+					};
+				}
+			} catch ( error ) {
+				return {
+					error: 'Failed to check domain lock status.',
+				};
+			}
+		},
 		staleTime: 5 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
 		keepPreviousData: true,
+		refetchOnWindowFocus: false,
+		refetchOnMount: false,
 		...queryOptions,
 	} );
 }
