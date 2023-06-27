@@ -20,10 +20,9 @@ describe( 'Help Center: Interact with Results', function () {
 		page = await browser.newPage();
 
 		const testAccount = new TestAccount( 'defaultUser' );
-		await testAccount.authenticate( page );
+		await testAccount.authenticate( page, { waitUntilStable: true } );
 
 		supportComponent = new SupportComponent( page );
-		await page.waitForLoadState( 'networkidle' );
 	} );
 
 	describe( 'Search for Help article', function () {
