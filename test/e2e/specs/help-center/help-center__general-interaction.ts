@@ -35,8 +35,8 @@ describe( 'Help Center: Interact with Results', function () {
 			await supportComponent.search( 'domain' );
 		} );
 
-		it( 'Click on the first Help Docs result', async function () {
-			await supportComponent.clickResultByIndex( 'Docs', 0 );
+		it( 'Click on the second Help Docs result', async function () {
+			await supportComponent.clickResultByIndex( 'Docs', 1 );
 		} );
 
 		it( 'Help Doc article is shown', async function () {

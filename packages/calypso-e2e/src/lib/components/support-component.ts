@@ -3,7 +3,7 @@ import { Locator, Page } from 'playwright';
 export type ResultsCategory = 'Docs' | 'Calypso Link';
 
 /**
- * Represnts the Help Center popover.
+ * Represents the Help Center popover.
  */
 export class SupportComponent {
 	private page: Page;
