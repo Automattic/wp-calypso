@@ -306,7 +306,7 @@ export default function EmailAddressEditor( {
 	}
 
 	const handleChange = useCallback(
-		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		( key: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setEmailItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
 		},
 		[]

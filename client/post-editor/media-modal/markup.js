@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { createElement } from 'react';
-import ReactDomServer from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server.browser';
 import * as MediaUtils from 'calypso/lib/media/utils';
 import { deserialize } from 'calypso/lib/media-serialization';
 import { parse, stringify } from 'calypso/lib/shortcode';
@@ -51,7 +51,7 @@ const Markup = {
 			media.title
 		);
 
-		return ReactDomServer.renderToStaticMarkup( element );
+		return renderToStaticMarkup( element );
 	},
 
 	/**
@@ -165,7 +165,7 @@ const Markup = {
 				'data-istransient': media.transient ? 'istransient' : null,
 			} );
 
-			let markup = ReactDomServer.renderToStaticMarkup( img );
+			let markup = renderToStaticMarkup( img );
 			if ( media.caption && width ) {
 				markup = stringify( {
 					tag: 'caption',

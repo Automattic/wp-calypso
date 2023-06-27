@@ -15,7 +15,7 @@ const SubscriptionManagerContext = createContext< SubscriptionManagerContext >(
 );
 
 export const SubscriptionManagerContextProvider: React.FunctionComponent<
-	SubscriptionManagerContext
+	SubscriptionManagerContext & { children: React.ReactNode }
 > = ( { children, ...context } ) => {
 	const helpers = {
 		isSubscriptionsPortal: context.portal === SubscriptionsPortal,

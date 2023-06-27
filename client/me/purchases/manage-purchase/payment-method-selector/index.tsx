@@ -112,7 +112,7 @@ export default function PaymentMethodSelector( {
 	);
 
 	const showSuccessMessage = useCallback(
-		( message ) => {
+		( message: TranslateResult ) => {
 			reduxDispatch( successNotice( message, { displayOnNextPage: true, duration: 5000 } ) );
 		},
 		[ reduxDispatch ]
