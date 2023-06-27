@@ -41,7 +41,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planName: string;
 	domainName?: string;
-	hideUnavailableFeatures: boolean;
+	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
 } > = ( { features, planName, domainName, hideUnavailableFeatures, selectedFeature } ) => {
 	const translate = useTranslate();

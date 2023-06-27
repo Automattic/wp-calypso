@@ -87,7 +87,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	sitePlanSlug?: string | null;
 	siteSlug?: string | null;
-	intent: PlansIntent;
+	intent?: PlansIntent;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {

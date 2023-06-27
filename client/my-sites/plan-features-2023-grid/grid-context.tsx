@@ -2,7 +2,7 @@ import { createContext, useContext } from '@wordpress/element';
 import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
 
 interface PlansGridContext {
-	intent: PlansIntent;
+	intent?: PlansIntent;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );

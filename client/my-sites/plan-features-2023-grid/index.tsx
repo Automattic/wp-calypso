@@ -117,13 +117,13 @@ export type PlanFeatures2023GridProps = {
 	intervalType?: string;
 	currentSitePlanSlug?: string | null;
 	hidePlansFeatureComparison?: boolean;
-	hideUnavailableFeatures: boolean;
+	hideUnavailableFeatures?: boolean; // used by Woo to hide features that are not available
 	planActionOverrides?: PlanActionOverrides;
 	// Value of the `?plan=` query param, so we can highlight a given plan.
 	selectedPlan?: string;
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
-	intent: PlansIntent;
+	intent?: PlansIntent;
 };
 
 type PlanFeatures2023GridConnectedProps = {
