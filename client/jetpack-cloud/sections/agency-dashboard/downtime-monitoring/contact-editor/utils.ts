@@ -7,11 +7,21 @@ import {
 } from '../../sites-overview/types';
 import { ContactInfo } from './types';
 
+/*
+ * Returns true if the contact info is complete.
+ * If withVerificationCode is true, it will also check if the verification code is present.
+ *
+ * @param {AllowedMonitorContactTypes} type
+ * @param {ContactInfo} contact
+ * @param {boolean} withVerificationCode
+ *
+ * @returns {boolean}
+ */
 export const isCompleteContactInfo = (
 	type: AllowedMonitorContactTypes,
 	contact: ContactInfo,
 	withVerificationCode: boolean
-) => {
+): boolean => {
 	if ( type === 'email' ) {
 		return !! (
 			contact.name &&
@@ -32,7 +42,18 @@ export const isCompleteContactInfo = (
 	return false;
 };
 
-export const getDefaultContactInfo = ( type: AllowedMonitorContactTypes, contact?: unknown ) => {
+/*
+ * Returns the default contact info values from existing contact.
+ *
+ * @param {AllowedMonitorContactTypes} type
+ * @param {unknown} contact
+ *
+ * @returns {ContactInfo}
+ */
+export const getDefaultContactInfo = (
+	type: AllowedMonitorContactTypes,
+	contact?: unknown
+): ContactInfo => {
 	if ( contact && type === 'sms' ) {
 		const { name, countryCode, countryNumericCode, phoneNumber, phoneNumberFull } =
 			contact as StateMonitorSettingsSMS;
@@ -72,6 +93,15 @@ export const getDefaultContactInfo = ( type: AllowedMonitorContactTypes, contact
 	};
 };
 
+/*
+ * Returns the value of a Contact info from given type. (e.g. email, phone number, etc.)
+ * If the type is not supported, it will return the name.
+ *
+ * @param {AllowedMonitorContactTypes} type
+ * @param {ContactInfo} contactInfo
+ *
+ * @returns {string}
+ */
 export const getContactInfoValue = (
 	type: AllowedMonitorContactTypes,
 	contactInfo: ContactInfo
@@ -84,9 +114,18 @@ export const getContactInfoValue = (
 		return contactInfo.phoneNumberFull ?? '';
 	}
 
-	return '';
+	return contactInfo.name;
 };
 
+/*
+ * Returns the payload of a contact info that will be submitted to the backend endpoint.
+ * Site ids are set to empty array and will be supplied else where.
+ *
+ * @param {AllowedMonitorContactTypes} type
+ * @param {ContactInfo} contactInfo
+ *
+ * @returns {payload}
+ */
 export const getContactInfoPayload = (
 	type: AllowedMonitorContactTypes,
 	contactInfo: ContactInfo
@@ -109,6 +148,69 @@ export const getContactInfoPayload = (
 	return { type, value: '', site_ids: [] };
 };
 
+/*
+ * Returns true if a contact object matches a contact info object.
+ *
+ * @param {AllowedMonitorContactTypes} type
+ * @param {T} contact
+ * @param {ContactInfo} contactInfo
+ *
+ * @returns {boolean}
+ */
+export const isMatchingContactInfo = < T >(
+	type: AllowedMonitorContactTypes,
+	contact: T,
+	contactInfo: ContactInfo
+) => {
+	return (
+		getContactInfoValue( type, contact as ContactInfo ) === getContactInfoValue( type, contactInfo )
+	);
+};
+
+/*
+ * Returns true if a contact info already exist in the contact list.
+ *
+ * @param {AllowedMonitorContactTypes} type
+ * @param {Array} contacts
+ * @param {ContactInfo} contactInfo
+ *
+ * @returns {boolean}
+ */
+export const isContactAlreadyExists = < T >(
+	type: AllowedMonitorContactTypes,
+	contacts: Array< T >,
+	contact: ContactInfo
+) => {
+	return contacts.find( ( item ) => {
+		return isMatchingContactInfo( type, item, contact );
+	} );
+};
+
+/*
+ * Helper function to remove a contact from a contact list.
+ *
+ * @param {AllowedMonitorContactTypes} type
+ * @param {Array} contacts
+ * @param {ContactInfo} contactInfo
+ */
+export const removeFromContactList = < T >(
+	type: AllowedMonitorContactTypes,
+	contacts: Array< T >,
+	contact: T
+) => {
+	return contacts.filter(
+		( item ) => ! isMatchingContactInfo( type, item, contact as ContactInfo )
+	);
+};
+
+/*
+ * Helper function to add a contact to a contact list. if asVerified is true. Add the contact as verified.
+ *
+ * @param {AllowedMonitorContactTypes} type
+ * @param {Array} contacts
+ * @param {ContactInfo} contactInfo
+ * @param {boolean} asVerified
+ */
 export const addToContactList = < T >(
 	type: AllowedMonitorContactTypes,
 	contacts: Array< T >,
@@ -117,25 +219,10 @@ export const addToContactList = < T >(
 ) => {
 	let isANewContact = true;
 	const updatedContactList = contacts.map( ( item ) => {
-		if (
-			type === 'email' &&
-			( item as StateMonitorSettingsEmail ).email === ( contact as StateMonitorSettingsEmail ).email
-		) {
+		if ( isMatchingContactInfo( type, item, contact as ContactInfo ) ) {
 			isANewContact = false;
 			return {
 				...contact,
-				verified: asVerified,
-			};
-		}
-
-		if (
-			type === 'sms' &&
-			( item as StateMonitorSettingsSMS ).phoneNumberFull ===
-				( contact as StateMonitorSettingsSMS ).phoneNumberFull
-		) {
-			isANewContact = false;
-			return {
-				...contacts,
 				verified: asVerified,
 			};
 		}
@@ -153,70 +240,14 @@ export const addToContactList = < T >(
 	return updatedContactList as Array< T >;
 };
 
-export const removeFromContactList = < T >(
-	type: AllowedMonitorContactTypes,
-	contacts: Array< T >,
-	contact: T
-) => {
-	return contacts.filter( ( item ) => {
-		if ( type === 'email' ) {
-			return (
-				( item as StateMonitorSettingsEmail ).email !==
-				( contact as StateMonitorSettingsEmail ).email
-			);
-		}
-
-		if ( type === 'sms' ) {
-			return (
-				( item as StateMonitorSettingsSMS ).phoneNumberFull !==
-				( contact as StateMonitorSettingsSMS ).phoneNumberFull
-			);
-		}
-
-		return true;
-	} );
-};
-
-export const isContactAlreadyExists = < T >(
-	type: AllowedMonitorContactTypes,
-	contacts: Array< T >,
-	contactInfo: ContactInfo
-) => {
-	return contacts.find( ( contact ) => {
-		if ( type === 'email' ) {
-			return (
-				( contact as StateMonitorSettingsEmail ).email ===
-				( contactInfo as StateMonitorSettingsEmail ).email
-			);
-		}
-
-		if ( type === 'sms' ) {
-			return (
-				( contact as StateMonitorSettingsSMS ).phoneNumberFull ===
-				( contactInfo as StateMonitorSettingsSMS ).phoneNumberFull
-			);
-		}
-
-		return false;
-	} );
-};
-
-export const isMatchingContactInfo = < T >(
-	type: AllowedMonitorContactTypes,
-	contact: T,
-	contactInfo: ContactInfo
-) => {
-	if ( type === 'email' ) {
-		return ( contact as StateMonitorSettingsEmail ).email === contactInfo.email;
-	}
-
-	if ( type === 'sms' ) {
-		return ( contact as StateMonitorSettingsSMS ).phoneNumberFull === contactInfo.phoneNumberFull;
-	}
-
-	return false;
-};
-
+/*
+ * Returns true if a contact info has valid value.
+ *
+ * @param {AllowedMonitorContactTypes} type
+ * @param {Array} contacts
+ *
+ * @returns {boolean}
+ */
 export const isValidContactInfo = ( type: AllowedMonitorContactTypes, contact: ContactInfo ) => {
 	if ( type === 'email' ) {
 		return contact.email && EmailValidator.validate( contact.email );
