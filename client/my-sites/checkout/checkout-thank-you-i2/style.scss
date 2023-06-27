@@ -1,0 +1,31 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.thank-you-redesign-i2 {
+	display: flex;
+	padding: 30px 24px 80px 24px;
+	flex-direction: column;
+	align-items: center;
+	gap: 60px;
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	&__title {
+		font-size: $font-title-large;
+
+		@include break-mobile {
+			font-size: $font-headline-medium;
+		}
+
+	}
+
+	&__subtitle {
+		color: var(--studio-gray-60);
+	}
+
+}
