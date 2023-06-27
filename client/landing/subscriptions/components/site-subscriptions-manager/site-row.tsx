@@ -16,6 +16,8 @@ import {
 	useRecordPostEmailsToggle,
 	useRecordCommentEmailsToggle,
 	useRecordPostEmailsSetFrequency,
+	SOURCE_SUBSCRIPTIONS_SITE_LIST,
+	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from '../../tracks';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
@@ -74,8 +76,8 @@ type SiteRowProps = Reader.SiteSubscription & {
 };
 
 const SiteRow = ( {
-	blog_ID,
-	feed_ID,
+	blog_ID: blog_id,
+	feed_ID: feed_id,
 	name,
 	site_icon,
 	URL: url,
@@ -123,11 +125,6 @@ const SiteRow = ( {
 	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
 	const recordSiteResubscribed = useRecordSiteResubscribed();
 
-	// Make object assignment a little easier
-	const SOURCE_SUBSCRIPTIONS_SITE_LIST = 'subscriptions-site-list';
-	const blog_id = blog_ID;
-	const feed_id = feed_ID;
-
 	const unsubscribeSuccessCallback = () => {
 		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 		dispatch(
@@ -141,7 +138,7 @@ const SiteRow = ( {
 						recordSiteResubscribed( {
 							blog_id,
 							url,
-							source: 'subscriptions-unsubscribed-notice',
+							source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 						} );
 					},
 				}
@@ -153,13 +150,13 @@ const SiteRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( portal === ReaderPortal ) {
-			return `/read/feeds/${ feed_ID }`;
+			return `/read/feeds/${ feed_id }`;
 		}
 
 		if ( portal === SubscriptionsPortal ) {
-			return `/subscriptions/site/${ blog_ID }`;
+			return `/subscriptions/site/${ blog_id }`;
 		}
-	}, [ blog_ID, feed_ID, portal ] );
+	}, [ blog_id, feed_id, portal ] );
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings
@@ -285,7 +282,7 @@ const SiteRow = ( {
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
 					onUnsubscribe={ () =>
 						unsubscribe(
-							{ blog_id: blog_ID, url, doNotInvalidateSiteSubscriptions: true },
+							{ blog_id, url, doNotInvalidateSiteSubscriptions: true },
 							{ onSuccess: unsubscribeSuccessCallback }
 						)
 					}
