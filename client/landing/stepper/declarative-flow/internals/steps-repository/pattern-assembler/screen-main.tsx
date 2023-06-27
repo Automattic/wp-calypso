@@ -49,7 +49,7 @@ const ScreenMain = ( {
 	const { location } = useNavigator();
 	const isInitialLocation = location.isInitial && ! location.isBack;
 	const headerDescription = translate(
-		'Customize everything in your homepage by adding patterns and choosing styles.'
+		'Customize everything in your homepage by first adding patterns and then choosing styles.'
 	);
 
 	// Use the mousedown event to prevent either the button focusing or text selection
@@ -153,9 +153,6 @@ const ScreenMain = ( {
 				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
 			</div>
 			<div className="screen-container__footer">
-				<span className="screen-container__description">
-					{ translate( 'Ready to keep editing?' ) }
-				</span>
 				<Button
 					className="pattern-assembler__button"
 					primary
