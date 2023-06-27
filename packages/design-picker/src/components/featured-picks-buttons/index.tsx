@@ -25,7 +25,7 @@ const FeaturedPicksButtons: React.FC< Props > = ( { className, designs, onSelect
 				<Button
 					key={ design.slug }
 					className={ classnames( 'featured-picks-buttons__button', className ) }
-					isSecondary
+					variant="secondary"
 					onClick={ () => onSelect( design ) }
 				>
 					{ isBlankCanvasDesign( design )

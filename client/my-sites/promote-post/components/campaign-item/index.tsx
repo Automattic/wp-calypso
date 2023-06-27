@@ -301,7 +301,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 				</div>
 				<div className="campaign-item__payment-and-action">
 					{ canCancelCampaign( campaignStatus ) && (
-						<Button isLink isDestructive onClick={ () => setShowDeleteDialog( true ) }>
+						<Button variant="link" isDestructive onClick={ () => setShowDeleteDialog( true ) }>
 							{ cancelCampaignButtonText }
 						</Button>
 					) }

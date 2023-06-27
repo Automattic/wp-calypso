@@ -354,7 +354,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 						</p>
 						<div className="page-pattern-modal__button-container">
 							<Button
-								isSecondary
+								variant="secondary"
 								onClick={ () => this.setPattern( 'blank' ) }
 								className="page-pattern-modal__blank-button"
 							>

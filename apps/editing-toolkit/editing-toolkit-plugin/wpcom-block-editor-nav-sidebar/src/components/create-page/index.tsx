@@ -47,7 +47,7 @@ export default function CreatePage( { postType }: Props ) {
 			target={
 				applyFilters( 'a8c.WpcomBlockEditorNavSidebar.linkTarget', undefined ) as string | undefined
 			}
-			isPrimary
+			variant="primary"
 			className="wpcom-block-editor-nav-sidebar-create-page"
 			href={ url }
 			icon={ plus }

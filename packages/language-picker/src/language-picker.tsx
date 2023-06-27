@@ -208,7 +208,7 @@ function LanguagePicker< TLanguage extends Language >( {
 				<div className="language-picker-component__language-buttons">
 					{ languagesToRender.map( ( language ) => (
 						<Button
-							isPrimary={ selectedLanguage && language.langSlug === selectedLanguage.langSlug }
+							variant={ language.langSlug === selectedLanguage?.langSlug ? 'primary' : undefined }
 							className="language-picker-component__language-button"
 							key={ language.langSlug }
 							onClick={ () => onSelectLanguage( language ) }
