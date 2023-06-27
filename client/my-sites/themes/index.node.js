@@ -28,12 +28,12 @@ export default function ( router ) {
 	router(
 		showcaseRoutes,
 		ssrSetupLocale,
-		fetchThemeFilters,
-		validateVertical,
-		validateFilters,
-		fetchThemeData,
-		setHrefLangLinks,
-		setLocalizedCanonicalUrl,
+		// fetchThemeFilters,
+		// validateVertical,
+		// validateFilters,
+		// fetchThemeData,
+		// setHrefLangLinks,
+		// setLocalizedCanonicalUrl,
 		loggedOut,
 		makeLayout
 	);

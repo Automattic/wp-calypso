@@ -62,9 +62,9 @@ export default function ( router ) {
 
 	router(
 		routesWithoutSites,
-		redirectWithoutLocaleParamIfLoggedIn,
-		fetchAndValidateVerticalsAndFilters,
-		selectSiteIfLoggedIn, // This has to be after fetchAndValidateVerticalsAndFilters or else the redirect to theme/:theme will not work properly.
+		// redirectWithoutLocaleParamIfLoggedIn,
+		// fetchAndValidateVerticalsAndFilters,
+		// selectSiteIfLoggedIn, // This has to be after fetchAndValidateVerticalsAndFilters or else the redirect to theme/:theme will not work properly.
 		loggedOut,
 		makeLayout,
 		clientRender
