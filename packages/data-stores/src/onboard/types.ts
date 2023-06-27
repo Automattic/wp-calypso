@@ -11,3 +11,12 @@ export type DomainForm = {
 export interface ProfilerData {
 	[ key: string ]: string | number | boolean | string[] | number[];
 }
+
+export type BulkDomainTransferData = Record<
+	string,
+	{
+		domain: string;
+		auth: string;
+		valid: boolean;
+	}
+>;

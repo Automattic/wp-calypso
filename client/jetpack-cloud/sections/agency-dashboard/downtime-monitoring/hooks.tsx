@@ -9,6 +9,7 @@ import {
 	ValidateVerificationCodeParams,
 	ResendVerificationCodeParams,
 	AllowedMonitorContactActions,
+	AllowedMonitorContactTypes,
 } from '../sites-overview/types';
 
 export function useRequestVerificationCode(): {
@@ -143,7 +144,7 @@ export function useResendVerificationCode(): {
 }
 
 export function useContactModalTitleAndSubtitle(
-	type: 'email' | 'phone',
+	type: AllowedMonitorContactTypes,
 	action: AllowedMonitorContactActions
 ): {
 	title: string;
@@ -173,7 +174,7 @@ export function useContactModalTitleAndSubtitle(
 					subtitle: translate( 'We’ll send a code to verify your email address.' ),
 				},
 			},
-			phone: {
+			sms: {
 				add: {
 					title: translate( 'Add your phone number' ),
 					subtitle: translate(

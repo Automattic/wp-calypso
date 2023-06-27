@@ -75,7 +75,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		entrypoint: 'promoted_posts-header',
 	} );
 
-	const { data: creditBalance = 0 } = useCreditBalanceQuery();
+	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
@@ -161,9 +161,9 @@ export default function PromotedPosts( { tab }: Props ) {
 			id: 'credits',
 			name: translate( 'Credits' ),
 			className: 'pull-right',
-			itemCount: creditBalance,
+			itemCount: parseFloat( creditBalance ),
 			isCountAmount: true,
-			enabled: creditBalance > 0,
+			enabled: parseFloat( creditBalance ) > 0,
 		},
 	];
 

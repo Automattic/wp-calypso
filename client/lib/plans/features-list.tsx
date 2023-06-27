@@ -230,6 +230,7 @@ import {
 	FEATURE_PLUGIN_AUTOUPDATE_JP,
 	FEATURE_PREMIUM_CONTENT_JP,
 	FEATURE_SITE_ACTIVITY_LOG_JP,
+	FEATURE_DONATIONS_AND_TIPS_JP,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_AUTOMATED_EMAIL_TRIGGERS,
 	FEATURE_CART_ABANDONMENT_EMAILS,
@@ -2202,7 +2203,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_CONTENT_JP ]: {
 		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
-		getTitle: () => i18n.translate( 'Add paid subscriptions and gated content' ),
+		getTitle: () => i18n.translate( 'Gated content' ),
 		getDescription: () => i18n.translate( 'Sell access to premium content, right from your site.' ),
 	},
 	[ FEATURE_VIDEOPRESS_JP ]: {
@@ -2270,6 +2271,12 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Site activity log' ),
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
+	},
+	[ FEATURE_DONATIONS_AND_TIPS_JP ]: {
+		getSlug: () => FEATURE_DONATIONS_AND_TIPS_JP,
+		getTitle: () => i18n.translate( 'Donations and tips' ),
+		getDescription: () =>
+			i18n.translate( 'Allow your audience to support your work easily with donations and tips.' ),
 	},
 	[ FEATURE_PREMIUM_STORE_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_STORE_THEMES,
