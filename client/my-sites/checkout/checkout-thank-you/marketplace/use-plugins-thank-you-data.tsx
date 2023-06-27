@@ -24,12 +24,15 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-
 	// texts
-	const title = translate( "Congrats on your site's new superpowers!" );
+	const title = translate( 'Your site, more powerful than ever' );
 	const subtitle = translate(
-		"Now you're really getting the most out of WordPress. Dig in and explore more of our favorite plugins."
-	);
+		'All set! Time to put your new plugin to work and take your site further.',
+		'All set! Time to put your new plugins to work and take your site further.',
+		{
+			count: pluginSlugs.length,
+		}
+	).toString();
 
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( pluginSlugs );

@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { ThankYouSectionProps, ThankYouNextStepProps } from 'calypso/components/thank-you/types';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function useThankYouFoooter(
 	pluginSlugs: Array< string >,
@@ -26,7 +26,7 @@ export function useThankYouFoooter(
 	 * If only plugins are present
 	 */
 	if ( hasPlugins && ! hasThemes ) {
-		footerSteps = [ pluginExploreStep, pluginSupportStep, themeSupportStep ];
+		footerSteps = [ pluginExploreStep, pluginSupportStep ];
 	}
 
 	/**
@@ -47,26 +47,27 @@ export function useThankYouFoooter(
 
 function usePluginSteps(): FooterStep[] {
 	const translate = useTranslate();
-	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	return [
 		{
 			key: 'thank_you_footer_explore',
-			title: translate( 'Keep growing' ),
+			title: translate( 'Need help setting your plugin up?' ),
 			description: translate(
-				'Take your site to the next level. We have all the solutions to help you.'
+				'Check out our support documentation for step-by-step instructions and expert guidance on your plugin set up.'
 			),
-			link: `/plugins/${ siteSlug }`,
-			linkText: translate( 'Explore plugins' ),
+			link: `https://wordpress.com/support/plugins/use-your-plugins/`,
+			linkText: translate( 'Plugin setup guide' ),
 			eventKey: 'calypso_plugin_thank_you_explore_plugins_click',
 			blankTarget: false,
 		},
 		{
 			key: 'thank_you_footer_support_guides',
-			title: translate( 'Learn More' ),
-			description: translate( 'Discover everything you need to know about Plugins.' ),
-			link: 'https://wordpress.com/support/plugins/',
-			linkText: translate( 'Plugin Support' ),
+			title: translate( 'All-in-one plugin documentation' ),
+			description: translate(
+				`Unlock your plugin's potential with our comprehensive support documentation.`
+			),
+			link: 'https://wordpress.com/support/category/plugins-and-integrations/',
+			linkText: translate( 'Plugin documentation' ),
 			eventKey: 'calypso_plugin_thank_you_plugin_support_click',
 		},
 	];
