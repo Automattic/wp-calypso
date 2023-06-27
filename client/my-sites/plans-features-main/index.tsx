@@ -1,7 +1,6 @@
 import {
 	chooseDefaultCustomerType,
 	getPlan,
-	getPopularPlanSpec,
 	isFreePlan,
 	isPersonalPlan,
 	getPlanPath,
@@ -31,7 +30,7 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useIntentFromSiteMeta from './hooks/use-intent-from-site-meta';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
@@ -84,7 +83,6 @@ interface PlansFeaturesMainProps {
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	visiblePlans: PlanSlug[];
 	plans: PlanSlug[];
-	customerType: string;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	sitePlanSlug?: string | null;
 	siteSlug?: string | null;
@@ -113,7 +111,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	const {
 		plans,
 		visiblePlans,
-		customerType,
 		domainName,
 		isInSignup,
 		isLaunchPage,
@@ -136,7 +133,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
-	const isJetpack = useSelector( ( state: IAppState ) => isJetpackSite( state, siteId ) ) ?? false;
 	const showDomainUpsellDialog = useCallback( () => {
 		setShowDomainUpsellDialog( true );
 	}, [ setShowDomainUpsellDialog ] );
@@ -172,12 +168,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		withDiscount,
 		discountEndDate,
 		withScroll: plansWithScroll,
-		popularPlanSpec: getPopularPlanSpec( {
-			flowName,
-			customerType,
-			isJetpack,
-			availablePlans: visiblePlans,
-		} ),
 		siteId,
 		isReskinned,
 		intervalType,
@@ -197,15 +187,9 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 
 	return (
 		<div
-			className={ classNames(
-				'plans-features-main__group',
-				'is-wpcom',
-				`is-customer-${ customerType }`,
-				'is-2023-pricing-grid',
-				{
-					'is-scrollable': plansWithScroll,
-				}
-			) }
+			className={ classNames( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
+				'is-scrollable': plansWithScroll,
+			} ) }
 			data-e2e-plans="wpcom"
 		>
 			{ asyncPlanFeatures2023Grid }
@@ -421,7 +405,6 @@ const PlansFeaturesMain = ( {
 					<OnboardingPricingGrid2023
 						plans={ defaultPlans }
 						visiblePlans={ visiblePlans }
-						customerType={ _customerType }
 						domainName={ domainName }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }

@@ -24,7 +24,7 @@ type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
 	canUserPurchasePlan?: boolean | null;
 	className: string;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	current: boolean;
 	freePlan: boolean;
 	manageHref: string;
@@ -151,7 +151,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	current?: boolean;
 	manageHref?: string;
 	canUserPurchasePlan?: boolean | null;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	buttonText?: string;
 	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;

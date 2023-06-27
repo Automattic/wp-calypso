@@ -303,12 +303,12 @@ const FeatureFootnote = styled.span`
 
 type PlanComparisonGridProps = {
 	planProperties?: Array< PlanProperties >;
-	intervalType: string;
+	intervalType?: string;
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
 	flowName?: string | null;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	manageHref: string;
 	canUserPurchasePlan?: boolean | null;
 	selectedSiteSlug: string | null;
@@ -327,7 +327,7 @@ type PlanComparisonGridHeaderProps = {
 	isFooter?: boolean;
 	flowName?: string | null;
 	onPlanChange: ( currentPlan: string, event: ChangeEvent< HTMLSelectElement > ) => void;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	manageHref: string;
 	canUserPurchasePlan?: boolean | null;
 	selectedSiteSlug: string | null;
@@ -554,7 +554,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	planName: string;
 	isStorageFeature: boolean;
 	flowName?: string | null;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	selectedPlan?: string;
 } > = ( {
 	feature,
@@ -677,7 +677,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	restructuredFootnotes: RestructuredFootnotes;
 	isStorageFeature: boolean;
 	flowName?: string | null;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	isHighlighted: boolean;
 	selectedPlan?: string;
 } > = ( {

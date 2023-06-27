@@ -11,7 +11,7 @@ interface PlanFeatures2023GridHeaderPriceProps {
 	planProperties: PlanProperties;
 	isLargeCurrency: boolean;
 	isPlanUpgradeCreditEligible: boolean;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	siteId?: number | null;
 }
 

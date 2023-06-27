@@ -106,7 +106,7 @@ export type PlanFeatures2023GridProps = {
 	isInSignup?: boolean;
 	siteId?: number | null;
 	isLaunchPage?: boolean | null;
-	isReskinned: boolean;
+	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PlanSlug[];
@@ -114,9 +114,9 @@ export type PlanFeatures2023GridProps = {
 	flowName?: string | null;
 	domainName?: string;
 	placeholder?: string;
-	intervalType: string;
-	currentSitePlanSlug?: string;
-	hidePlansFeatureComparison: boolean;
+	intervalType?: string;
+	currentSitePlanSlug?: string | null;
+	hidePlansFeatureComparison?: boolean;
 	hideUnavailableFeatures: boolean;
 	planActionOverrides?: PlanActionOverrides;
 	// Value of the `?plan=` query param, so we can highlight a given plan.
@@ -153,7 +153,7 @@ const PlanLogo: React.FunctionComponent< {
 	planProperties: PlanProperties;
 	isMobile?: boolean;
 	isInSignup?: boolean;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	selectedPlan?: string;
 } > = ( {
 	planPropertiesObj,
