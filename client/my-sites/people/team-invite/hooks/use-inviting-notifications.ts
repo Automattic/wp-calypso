@@ -12,9 +12,15 @@ export function useInvitingNotifications( tokenValues: string[] ) {
 	const noticeConfig = { displayOnNextPage: true };
 
 	useEffect( () => setPrevProgress( progress ), [ progress ] );
-	useEffect( () => prevProgress && error && showInvitingErrorNotice(), [ error ] );
-	useEffect( () => prevProgress && success && showInvitingSuccessNotice(), [ success ] );
-	useEffect( () => prevProgress && failure && showInvitingFailureNotice(), [ failure ] );
+	useEffect( () => {
+		prevProgress && error && showInvitingErrorNotice();
+	}, [ error ] );
+	useEffect( () => {
+		prevProgress && success && showInvitingSuccessNotice();
+	}, [ success ] );
+	useEffect( () => {
+		prevProgress && failure && showInvitingFailureNotice();
+	}, [ failure ] );
 
 	function showInvitingErrorNotice() {
 		let msg;
