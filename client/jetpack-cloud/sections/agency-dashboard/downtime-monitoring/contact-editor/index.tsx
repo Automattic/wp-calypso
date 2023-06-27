@@ -24,7 +24,7 @@ type Props< T > = {
 	sites: Array< Site >;
 };
 
-export default function ContactEditor< T >( {
+export default function ContactEditor< T extends Partial< ContactInfo > >( {
 	type,
 	action = 'add',
 	onClose,
@@ -51,7 +51,7 @@ export default function ContactEditor< T >( {
 		}
 
 		setContacts( addToContactList< T >( type, contacts, contact, asVerified ) );
-		setVerifiedContact( getContactInfoValue( type, contact as ContactInfo ) );
+		setVerifiedContact( getContactInfoValue( type, contact ) );
 
 		onClose();
 	};

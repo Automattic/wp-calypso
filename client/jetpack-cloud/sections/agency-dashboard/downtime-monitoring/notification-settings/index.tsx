@@ -171,12 +171,12 @@ export default function NotificationSettings( {
 		setHasUnsavedChanges( false );
 	}, [] );
 
-	const handleSetAllEmailItems = ( items: Array< StateMonitorSettingsEmail > ) => {
+	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
 		setAllEmailItems( items );
 		setHasUnsavedChanges( false );
 	};
 
-	const handleSetAllPhoneItems = ( items: Array< StateMonitorSettingsSMS > ) => {
+	const handleSetAllPhoneItems = ( items: StateMonitorSettingsSMS[] ) => {
 		setAllPhoneItems( items );
 		clearValidationError();
 	};

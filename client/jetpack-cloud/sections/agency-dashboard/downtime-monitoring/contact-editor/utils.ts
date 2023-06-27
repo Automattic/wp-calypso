@@ -104,8 +104,8 @@ export const getDefaultContactInfo = (
  */
 export const getContactInfoValue = (
 	type: AllowedMonitorContactTypes,
-	contactInfo: ContactInfo
-) => {
+	contactInfo: Partial< ContactInfo >
+): string => {
 	if ( type === 'email' ) {
 		return contactInfo.email ?? '';
 	}
@@ -114,7 +114,7 @@ export const getContactInfoValue = (
 		return contactInfo.phoneNumberFull ?? '';
 	}
 
-	return contactInfo.name;
+	return contactInfo.name ?? '';
 };
 
 /*
@@ -157,14 +157,12 @@ export const getContactInfoPayload = (
  *
  * @returns {boolean}
  */
-export const isMatchingContactInfo = < T >(
+export const isMatchingContactInfo = < T extends Partial< ContactInfo > >(
 	type: AllowedMonitorContactTypes,
 	contact: T,
-	contactInfo: ContactInfo
+	contactInfo: Partial< ContactInfo >
 ) => {
-	return (
-		getContactInfoValue( type, contact as ContactInfo ) === getContactInfoValue( type, contactInfo )
-	);
+	return getContactInfoValue( type, contact ) === getContactInfoValue( type, contactInfo );
 };
 
 /*
@@ -176,7 +174,7 @@ export const isMatchingContactInfo = < T >(
  *
  * @returns {boolean}
  */
-export const isContactAlreadyExists = < T >(
+export const isContactAlreadyExists = < T extends Partial< ContactInfo > >(
 	type: AllowedMonitorContactTypes,
 	contacts: Array< T >,
 	contact: ContactInfo
@@ -193,14 +191,12 @@ export const isContactAlreadyExists = < T >(
  * @param {Array} contacts
  * @param {ContactInfo} contactInfo
  */
-export const removeFromContactList = < T >(
+export const removeFromContactList = < T extends Partial< ContactInfo > >(
 	type: AllowedMonitorContactTypes,
 	contacts: Array< T >,
 	contact: T
 ) => {
-	return contacts.filter(
-		( item ) => ! isMatchingContactInfo( type, item, contact as ContactInfo )
-	);
+	return contacts.filter( ( item ) => ! isMatchingContactInfo( type, item, contact ) );
 };
 
 /*
@@ -211,7 +207,7 @@ export const removeFromContactList = < T >(
  * @param {ContactInfo} contactInfo
  * @param {boolean} asVerified
  */
-export const addToContactList = < T >(
+export const addToContactList = < T extends Partial< ContactInfo > >(
 	type: AllowedMonitorContactTypes,
 	contacts: Array< T >,
 	contact: T,
@@ -219,7 +215,7 @@ export const addToContactList = < T >(
 ) => {
 	let isANewContact = true;
 	const updatedContactList = contacts.map( ( item ) => {
-		if ( isMatchingContactInfo( type, item, contact as ContactInfo ) ) {
+		if ( isMatchingContactInfo( type, item, contact ) ) {
 			isANewContact = false;
 			return {
 				...contact,

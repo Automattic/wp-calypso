@@ -44,7 +44,7 @@ type Props< T > = {
 	sites: Array< Site >;
 };
 
-export default function VerifyContactForm< T >( {
+export default function VerifyContactForm< T extends Partial< ContactInfo > >( {
 	action,
 	contact,
 	contacts,
