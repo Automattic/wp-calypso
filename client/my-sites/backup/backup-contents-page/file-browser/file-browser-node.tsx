@@ -1,7 +1,7 @@
 import { Button, Icon } from '@wordpress/components';
 import { chevronDown, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
-import { FunctionComponent, useCallback, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import FileInfoCard from './file-info-card';
 import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
@@ -14,6 +14,8 @@ interface FileBrowserNodeProps {
 	siteId: number;
 	rewindId: number;
 	isAlternate: boolean; // This decides if the node will have a background color or not
+	setActiveNodePath: ( path: string ) => void;
+	activeNodePath: string;
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -22,8 +24,11 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	siteId,
 	rewindId,
 	isAlternate,
+	setActiveNodePath,
+	activeNodePath,
 } ) => {
 	const isRoot = path === '/';
+	const isCurrentNodeClicked = activeNodePath === path;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 
@@ -33,14 +38,28 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		data: backupFiles,
 	} = useBackupContentsQuery( siteId, rewindId, path, fetchContentsOnMount );
 
+	useEffect( () => {
+		// When it is no longer the current node clicked, close the node
+		if ( ! isCurrentNodeClicked && ! isRoot ) {
+			setIsOpen( false );
+		}
+	}, [ isCurrentNodeClicked, isRoot ] );
+
 	const handleClick = useCallback( () => {
 		if ( ! isOpen ) {
 			setFetchContentsOnMount( true );
-			setIsOpen( true );
+		}
+
+		if ( ! item.hasChildren ) {
+			if ( ! isOpen ) {
+				setActiveNodePath( path );
+			} else {
+				setActiveNodePath( '' );
+			}
 		}
 
 		setIsOpen( ! isOpen );
-	}, [ isOpen ] );
+	}, [ isOpen, item.hasChildren, path, setActiveNodePath ] );
 
 	const renderChildren = () => {
 		if ( isInitialLoading ) {
@@ -67,6 +86,8 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						siteId={ siteId }
 						rewindId={ rewindId }
 						isAlternate={ childIsAlternate }
+						activeNodePath={ activeNodePath }
+						setActiveNodePath={ setActiveNodePath }
 					/>
 				);
 			} );
@@ -103,9 +124,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					</Button>
 				) }
 			</div>
+			{ isCurrentNodeClicked && <FileInfoCard item={ item } /> }
 			{ isOpen && (
 				<>
-					<FileInfoCard item={ item } />
 					{ item.hasChildren && (
 						<div className="file-browser-node__contents">{ renderChildren() }</div>
 					) }
