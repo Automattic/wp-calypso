@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
@@ -89,6 +89,9 @@ const SiteRow = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const unsubscribeInProgress = useRef( false );
+	const resubscribePending = useRef( false );
+
 	const hostname = useMemo( () => {
 		try {
 			return new URL( url ).hostname;
@@ -128,7 +131,7 @@ const SiteRow = ( {
 	const blog_id = blog_ID;
 	const feed_id = feed_ID;
 
-	const unsubscribeSuccessCallback = () => {
+	const unsubscribeCallback = () => {
 		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 		dispatch(
 			successNotice(
@@ -137,7 +140,11 @@ const SiteRow = ( {
 					duration: 5000,
 					button: translate( 'Resubscribe' ),
 					onClick: () => {
-						resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+						if ( unsubscribeInProgress.current ) {
+							resubscribePending.current = true;
+						} else {
+							resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+						}
 						recordSiteResubscribed( {
 							blog_id,
 							url,
@@ -283,12 +290,24 @@ const SiteRow = ( {
 					emailMeNewComments={ !! delivery_methods.email?.send_comments }
 					onEmailMeNewCommentsChange={ handleEmailMeNewCommentsChange }
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () =>
+					onUnsubscribe={ () => {
+						unsubscribeInProgress.current = true;
+						unsubscribeCallback();
+
 						unsubscribe(
 							{ blog_id: blog_ID, url, doNotInvalidateSiteSubscriptions: true },
-							{ onSuccess: unsubscribeSuccessCallback }
-						)
-					}
+							{
+								onSuccess: () => {
+									unsubscribeInProgress.current = false;
+
+									if ( resubscribePending ) {
+										resubscribePending.current = false;
+										resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+									}
+								},
+							}
+						);
+					} }
 					unsubscribing={ unsubscribing }
 				/>
 			</span>
