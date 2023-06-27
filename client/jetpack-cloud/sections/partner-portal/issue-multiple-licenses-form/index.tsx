@@ -4,7 +4,7 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { useIssueMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { useIssueAndAssignLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
@@ -106,7 +106,7 @@ export default function IssueMultipleLicensesForm( {
 		?.toString()
 		.split( ',' );
 
-	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses(
+	const [ issueAndAssignLicenses, isLoading ] = useIssueAndAssignLicenses(
 		selectedBundle ? [ selectedBundle ] : selectedProductSlugs,
 		selectedSite,
 		suggestedProductSlugs
@@ -146,7 +146,7 @@ export default function IssueMultipleLicensesForm( {
 					)
 				);
 			}
-			issueLicenses();
+			issueAndAssignLicenses();
 		}
 		// Do not update the dependency array with issueLicenses since
 		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
@@ -185,7 +185,7 @@ export default function IssueMultipleLicensesForm( {
 									primary
 									className="issue-multiple-licenses-form__select-license"
 									busy={ isLoading }
-									onClick={ issueLicenses }
+							onClick={ issueAndAssignLicenses }
 								>
 									{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 										context: 'button label',

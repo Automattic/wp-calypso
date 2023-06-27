@@ -20,7 +20,7 @@ import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/cre
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
 import {
 	useReturnUrl,
-	useIssueMultipleLicenses,
+	useIssueAndAssignLicenses,
 } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
 import { getStripeConfiguration } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-stripe-configuration';
@@ -88,7 +88,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		[]
 	);
 
-	const [ issueMultipleLicense, isIssuingMultipleLicenses ] = useIssueMultipleLicenses(
+	const [ issueandAssignLicenses, isIssueAndAssignLicensesLoading ] = useIssueAndAssignLicenses(
 		products ? products.split( ',' ) : [],
 		siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null
 	);
@@ -145,7 +145,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 	useEffect( () => {
 		if ( ! paymentMethodRequired && products ) {
-			issueMultipleLicense();
+			issueandAssignLicenses();
 		}
 		// Do not update the dependency array with issueMultipleLicense since
 		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
@@ -244,7 +244,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 								<Button
 									className="payment-method-add__back-button"
 									href={ getPreviousPageLink() }
-									disabled={ isStripeLoading || isIssuingMultipleLicenses }
+									disabled={ isStripeLoading || isIssueAndAssignLicensesLoading }
 									onClick={ onGoToPaymentMethods }
 								>
 									{ translate( 'Go back' ) }
