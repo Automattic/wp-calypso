@@ -9,8 +9,8 @@ interface FileInfoCardProps {
 const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { item } ) => {
 	const translate = useTranslate();
 
-	// Do not display file info if the item is a directory
-	if ( item.type === 'dir' ) {
+	// Do not display file info if the item hasChildren (it could be a directory, plugins, themes, etc.)
+	if ( item.hasChildren ) {
 		return null;
 	}
 
