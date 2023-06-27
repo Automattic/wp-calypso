@@ -6,7 +6,6 @@ export type CampaignResponse = {
 		devices: string;
 		countries: string;
 		topics: string;
-		OSs: string;
 		languages: string;
 	};
 	content_config: {
