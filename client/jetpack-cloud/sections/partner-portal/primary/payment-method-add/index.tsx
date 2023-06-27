@@ -77,10 +77,10 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		[]
 	);
 
-	const [ issueandAssignLicenses, isIssueAndAssignLicensesLoading ] = useIssueAndAssignLicenses(
-		products ? products.split( ',' ) : [],
-		siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null
-	);
+	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
+		useIssueAndAssignLicenses(
+			siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null
+		);
 
 	useReturnUrl( ! paymentMethodRequired );
 
@@ -134,7 +134,8 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 	useEffect( () => {
 		if ( ! paymentMethodRequired && products ) {
-			issueandAssignLicenses();
+			const itemsToIssue = products.split( ',' );
+			issueAndAssignLicenses( itemsToIssue );
 		}
 		// Do not update the dependency array with issueMultipleLicense since
 		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
@@ -233,7 +234,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 								<Button
 									className="payment-method-add__back-button"
 									href={ getPreviousPageLink() }
-									disabled={ isStripeLoading || isIssueAndAssignLicensesLoading }
+									disabled={ isStripeLoading || ! isIssueAndAssignLicensesReady }
 									onClick={ onGoToPaymentMethods }
 								>
 									{ translate( 'Go back' ) }

@@ -106,11 +106,8 @@ export default function IssueMultipleLicensesForm( {
 		?.toString()
 		.split( ',' );
 
-	const [ issueAndAssignLicenses, isLoading ] = useIssueAndAssignLicenses(
-		selectedBundle ? [ selectedBundle ] : selectedProductSlugs,
-		selectedSite,
-		suggestedProductSlugs
-	);
+	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
+		useIssueAndAssignLicenses( selectedSite, suggestedProductSlugs );
 
 	const onSelectProduct = useCallback(
 		( product: APIProductFamilyProduct ) => {
@@ -135,23 +132,26 @@ export default function IssueMultipleLicensesForm( {
 	);
 
 	useEffect( () => {
-		// In the case of a bundle, we want to take the user immediately to the next step since
-		// they can't select any additional item after selecting a bundle.
-		if ( selectedBundle ) {
-			// Identify if a user had an existing standalone product license already before purchased a bundle.
-			if ( hasPurchasedProductsWithoutBundle ) {
-				dispatch(
-					recordTracksEvent(
-						'calypso_partner_portal_issue_bundle_license_with_existing_standalone_products'
-					)
-				);
-			}
-			issueAndAssignLicenses();
+		if ( ! selectedBundle ) {
+			return;
 		}
-		// Do not update the dependency array with issueLicenses since
-		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ selectedBundle ] );
+
+		// People aren't allowed to select anything else after selecting a bundle;
+		// thus, after someone selects a bundle, we immediately issue a license
+		// for it (including any necessary page redirects on the front end).
+
+		if ( hasPurchasedProductsWithoutBundle ) {
+			// If this person already had an existing standalone product license
+			// before purchasing this bundle, let's make a note of it
+			dispatch(
+				recordTracksEvent(
+					'calypso_partner_portal_issue_bundle_license_with_existing_standalone_products'
+				)
+			);
+		}
+
+		issueAndAssignLicenses( [ selectedBundle ] );
+	}, [ dispatch, hasPurchasedProductsWithoutBundle, issueAndAssignLicenses, selectedBundle ] );
 
 	if ( isLoadingProducts ) {
 		return (
@@ -163,6 +163,7 @@ export default function IssueMultipleLicensesForm( {
 
 	const selectedSiteDomain = selectedSite?.domain;
 	const selectedLicenseCount = selectedProductSlugs.length;
+	const itemsToIssue = selectedBundle ? [ selectedBundle ] : selectedProductSlugs;
 
 	return (
 		<div className="issue-multiple-licenses-form">
@@ -187,8 +188,8 @@ export default function IssueMultipleLicensesForm( {
 						<Button
 							primary
 							className="issue-multiple-licenses-form__select-license"
-							busy={ isLoading }
-							onClick={ issueAndAssignLicenses }
+							busy={ ! isIssueAndAssignLicensesReady }
+							onClick={ () => issueAndAssignLicenses( itemsToIssue ) }
 						>
 							{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 								context: 'button label',

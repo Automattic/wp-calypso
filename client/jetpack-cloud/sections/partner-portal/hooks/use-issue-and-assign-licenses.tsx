@@ -70,7 +70,7 @@ const useIssueLicenses = () => {
 		};
 
 		return {
-			isLoading: issueLicenseMutation.isLoading,
+			isReady: issueLicenseMutation.isIdle,
 			issueLicenses,
 		};
 	}, [ issueLicenseMutation ] );
@@ -101,7 +101,7 @@ const useAssignLicensesToSite = ( siteId: number | undefined ) => {
 		};
 
 		return {
-			isLoading: assignLicenseMutation.isLoading,
+			isReady: assignLicenseMutation.isIdle,
 			assignLicensesToSite,
 		};
 	}, [ siteId, assignLicenseMutation ] );
@@ -187,10 +187,9 @@ const containEquivalentItems = ( arr1: string[], arr2: string[] ) => {
 };
 
 function useIssueAndAssignLicenses(
-	selectedProducts: Array< string >,
 	selectedSite?: { ID: number; domain: string } | null,
-	suggestedProducts: Array< string > = []
-): [ () => void, boolean ] {
+	suggestedProducts: string[] = []
+) {
 	const dispatch = useDispatch();
 	const products = useProductsQuery();
 	const sitesCount = useSelector( getSites ).length;
@@ -203,10 +202,10 @@ function useIssueAndAssignLicenses(
 	const getLicenseIssuedMessage = useGetLicenseIssuedMessage();
 
 	return useMemo( () => {
-		const isLoading = issueLicenses.isLoading || assignLicensesToSite.isLoading;
+		const isReady = issueLicenses.isReady && assignLicensesToSite.isReady;
 
-		const issueAndAssign = async () => {
-			if ( isLoading || selectedProducts.length === 0 ) {
+		const issueAndAssignLicenses = async ( selectedProducts: string[] ) => {
+			if ( ! isReady || selectedProducts.length === 0 ) {
 				return;
 			}
 
@@ -332,7 +331,7 @@ function useIssueAndAssignLicenses(
 			return page.redirect( partnerPortalBasePath( '/licenses' ) );
 		};
 
-		return [ issueAndAssign, isLoading ];
+		return { issueAndAssignLicenses, isReady };
 	}, [
 		assignLicensesToSite,
 		dispatch,
@@ -340,7 +339,6 @@ function useIssueAndAssignLicenses(
 		issueLicenses,
 		paymentMethodRequired,
 		products?.data,
-		selectedProducts,
 		selectedSite,
 		sitesCount,
 		suggestedProducts,
