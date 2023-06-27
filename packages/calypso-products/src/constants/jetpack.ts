@@ -23,6 +23,9 @@ export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
 export const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
 export const PRODUCT_JETPACK_SEARCH_FREE = 'jetpack_search_free';
 export const PRODUCT_JETPACK_SEARCH_MONTHLY = 'jetpack_search_monthly';
+export const PRODUCT_JETPACK_STATS_MONTHLY = 'jetpack_stats_monthly';
+export const PRODUCT_JETPACK_STATS_FREE_YEARLY = 'jetpack_stats_free_yearly';
+export const PRODUCT_JETPACK_STATS_PWYW_YEARLY = 'jetpack_stats_pwyw_yearly';
 export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
 export const PRODUCT_JETPACK_CRM_FREE = 'jetpack_crm_free';
@@ -160,6 +163,13 @@ export const JETPACK_SEARCH_PRODUCTS = <const>[
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 ];
 
+// Stats
+export const JETPACK_STATS_PRODUCTS = <const>[
+	PRODUCT_JETPACK_STATS_MONTHLY,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE_YEARLY,
+];
+
 // CRM
 export const JETPACK_CRM_PRODUCTS = <const>[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
 export const JETPACK_CRM_FREE_PRODUCTS = <const>[
@@ -183,6 +193,7 @@ export const JETPACK_PRODUCTS_LIST = <const>[
 	...JETPACK_SCAN_PRODUCTS,
 	...JETPACK_ANTI_SPAM_PRODUCTS,
 	...JETPACK_SEARCH_PRODUCTS,
+	...JETPACK_STATS_PRODUCTS,
 	...JETPACK_VIDEOPRESS_PRODUCTS,
 	...JETPACK_SOCIAL_PRODUCTS,
 	...JETPACK_BACKUP_ADDON_PRODUCTS,
@@ -284,6 +295,7 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 		relatedProduct: PRODUCT_JETPACK_SEARCH_MONTHLY,
 		ratio: 12,
 	},
+	// STATS?
 	[ PRODUCT_JETPACK_SCAN ]: {
 		relatedProduct: PRODUCT_JETPACK_SCAN_MONTHLY,
 		ratio: 12,
@@ -467,6 +479,7 @@ export const JETPACK_PRODUCT_CATEGORIES = <const>[
 // URL
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
 export const JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/search/';
+export const JETPACK_STATS_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/stats/';
 export const JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/scan/';
 export const JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/anti-spam/';
 export const JETPACK_BOOST_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/boost/';
