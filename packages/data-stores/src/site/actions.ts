@@ -1,4 +1,3 @@
-import { Design, DesignOptions } from '@automattic/design-picker/src/types';
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -35,6 +34,7 @@ import type {
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type { RequestTemplate } from '../templates';
+import type { Design, DesignOptions } from '@automattic/design-picker/src/types'; // Import from a specific file directly to avoid the circular dependencies
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {
@@ -366,12 +366,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
-	function* setThemeOnSite(
-		siteSlug: string,
-		theme: string,
-		styleVariationSlug?: string,
-		keepHomepage = true
-	) {
+	function* setThemeOnSite( siteSlug: string, theme: string, options: DesignOptions = {} ) {
+		const { keepHomepage = true, styleVariation, globalStyles } = options;
 		const activatedTheme: ActiveTheme = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
@@ -382,7 +378,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			method: 'POST',
 		} );
 
-		if ( styleVariationSlug ) {
+		// @todo Always use the global styles for consistency
+		if ( styleVariation?.slug ) {
 			const variations: GlobalStyles[] = yield getGlobalStylesVariations(
 				siteSlug,
 				activatedTheme.stylesheet
@@ -390,7 +387,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			const currentVariation = variations.find(
 				( variation ) =>
 					variation.title &&
-					variation.title.split( ' ' ).join( '-' ).toLowerCase() === styleVariationSlug
+					variation.title.split( ' ' ).join( '-' ).toLowerCase() === styleVariation?.slug
 			);
 
 			if ( currentVariation ) {
@@ -402,6 +399,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				);
 			}
 		}
+
+		if ( globalStyles ) {
+			yield setGlobalStyles( siteSlug, activatedTheme.stylesheet, globalStyles, activatedTheme );
+		}
+
 		return activatedTheme;
 	}
 
@@ -455,7 +457,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		const theme = yield* setThemeOnSite(
 			siteSlug,
 			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
-			options?.styleVariation?.slug
+			options
 		);
 
 		yield* runThemeSetupOnSite( siteSlug, selectedDesign, options );
@@ -509,7 +511,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		// We have to switch theme first. Otherwise, the unique suffix might append to
 		// the slug of newly created Home template if the current activated theme has
 		// modified Home template.
-		const activatedTheme: ActiveTheme = yield setThemeOnSite( siteSlug, theme, undefined, false );
+		const activatedTheme: ActiveTheme = yield setThemeOnSite( siteSlug, theme, {
+			keepHomepage: false,
+		} );
 
 		if ( globalStyles ) {
 			yield setGlobalStyles( siteSlug, stylesheet, globalStyles, activatedTheme );

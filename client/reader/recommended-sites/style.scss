@@ -56,6 +56,7 @@
 			font-size: $font-body;
 			line-height: rem(22px);
 			color: $studio-gray-100;
+			margin-right: 36px; // width of dismiss button
 			@extend %ellipsis;
 		}
 

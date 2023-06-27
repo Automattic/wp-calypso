@@ -28,21 +28,38 @@ const getSubscribersCacheKey = (
 	return cacheKey;
 };
 
-const getSubscriberDetailsCacheKey = ( siteId: number | null, queryString: string ) => [
-	'subscriber-details',
-	siteId,
-	queryString,
-];
+const getSubscriberDetailsUrl = (
+	siteSlug: string | null,
+	subscription_id: number | undefined,
+	user_id: number | undefined
+) => {
+	if ( user_id ) {
+		return `/subscribers/${ siteSlug }/${ user_id }`;
+	}
+
+	return `/subscribers/external/${ siteSlug }/${ subscription_id }`;
+};
+
+const getSubscriberDetailsCacheKey = (
+	siteId: number | null,
+	subscriptionId: number | undefined,
+	userId: number | undefined,
+	type: string
+) => [ 'subscriber-details', siteId, subscriptionId, userId, type ];
 
 const sanitizeInt = ( intString: string ) => {
 	const parsedInt = parseInt( intString, 10 );
 	return ! Number.isNaN( parsedInt ) && parsedInt > 0 ? parsedInt : undefined;
 };
 
+const getSubscriberDetailsType = ( userId: number | undefined ) => ( userId ? 'wpcom' : 'email' );
+
 export {
 	getEarnPageUrl,
 	getEarnPaymentsPageUrl,
 	getSubscriberDetailsCacheKey,
+	getSubscriberDetailsUrl,
+	getSubscriberDetailsType,
 	getSubscribersCacheKey,
 	sanitizeInt,
 };

@@ -72,9 +72,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const { getPlanCartItem } = useSelect(
+	const { getPlanCartItem, getDomainCartItem } = useSelect(
 		( select ) => ( {
 			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
+			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
 		} ),
 		[]
 	);
@@ -91,7 +92,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			flow,
 			isEmailVerified,
 			checklistStatuses,
-			getPlanCartItem()?.product_slug ?? null
+			getPlanCartItem(),
+			getDomainCartItem()
 		);
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;

@@ -48,7 +48,7 @@ const getActiveTab = ( chartTab, statType ) => {
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
-	date: endOf.format( 'YYYY-MM-DD' ),
+	date: endOf,
 } ) );
 
 class StatsEmailDetail extends Component {
@@ -187,7 +187,7 @@ class StatsEmailDetail extends Component {
 			path: `/stats/email/${ statType }`,
 		};
 
-		const query = memoizedQuery( period, endOf );
+		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}/${ postId }${ slugPath }`;
 		return (

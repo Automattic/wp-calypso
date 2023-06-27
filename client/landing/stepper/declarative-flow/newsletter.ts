@@ -1,4 +1,3 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -14,6 +13,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
+import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
@@ -84,17 +84,15 @@ const newsletter: Flow = {
 			flowName,
 		} );
 		setStepProgress( flowProgress );
-		const locale = useLocale();
-
-		const getStartUrl = () => {
-			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`;
-		};
+		const logInUrl = useLoginUrl( {
+			flowName,
+			redirectTo: `/setup/${ flowName }/newsletterSetup`,
+			pageTitle: 'Newsletter',
+		} );
 
 		// Unless showing intro step, send non-logged-in users to account screen.
 		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
-			window.location.assign( getStartUrl() );
+			window.location.assign( logInUrl );
 		}
 
 		// trigger guides on step movement, we don't care about failures or response
@@ -111,7 +109,6 @@ const newsletter: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
-			const logInUrl = getStartUrl();
 
 			switch ( _currentStep ) {
 				case 'intro':

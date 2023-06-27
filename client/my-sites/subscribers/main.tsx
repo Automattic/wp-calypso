@@ -14,7 +14,9 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { SubscribersHeaderPopover } from './components/subscribers-header-popover';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
+import { getSubscriberDetailsUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
+import { useSubscriberRemoveMutation } from './mutations';
 import { Subscriber } from './types';
 import './style.scss';
 
@@ -26,15 +28,11 @@ type SubscribersProps = {
 const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-
+	const { mutate } = useSubscriberRemoveMutation( selectedSiteId, pageNumber );
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
-		useUnsubscribeModal( selectedSiteId, pageNumber );
-	const onClickView = ( subscriber: Subscriber ) => {
-		if ( subscriber.user_id ) {
-			page.show( `/subscribers/${ selectedSiteSlug }/${ subscriber.user_id }` );
-		} else {
-			page.show( `/subscribers/external/${ selectedSiteSlug }/${ subscriber.subscription_id }` );
-		}
+		useUnsubscribeModal( mutate );
+	const onClickView = ( { subscription_id, user_id }: Subscriber ) => {
+		page.show( getSubscriberDetailsUrl( selectedSiteSlug, subscription_id, user_id ) );
 	};
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const dispatch = useDispatch();

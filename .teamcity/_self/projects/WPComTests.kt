@@ -116,15 +116,19 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 
 			if (nightly) {
 				param("env.GUTENBERG_NIGHTLY", "true");
-				password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
-				// Once we move back to #gutenberg-on-dotcom in Gutenbot, change this to `GB_ANNOUNCEMENT_SLACK_CHANNEL_ID` that points
-				// to a token that has the corresponding channel id.
-				password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
-				text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
 			}
 
 			if (edge) {
 				param("env.GUTENBERG_EDGE", "true")
+			}
+
+			if (edge || nightly) {
+				password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
+				// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
+				// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
+				// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
+				password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
+				text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
 			}
 		},
 		buildSteps = {
@@ -132,14 +136,14 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				name = "Post Successful Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName passed successfully!\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName passed successfully! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 
 			exec {
 				name = "Post Failure Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look? @kitkat-team @calypso-platform-team!\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look? @kitkat-team @calypso-platform-team! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 		},
 		buildFeatures = {

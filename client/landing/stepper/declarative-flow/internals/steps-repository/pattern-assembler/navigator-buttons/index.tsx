@@ -41,7 +41,7 @@ const GenericButton = ( { icon, children, className, checked, ...props }: Props 
 	}
 
 	return (
-		<Item { ...props }>
+		<Item { ...{ className, ...props } }>
 			<HStack justify="space-between">
 				<FlexItem>{ children }</FlexItem>
 				<Icon icon={ forwardIcon } size={ 24 } />
@@ -55,6 +55,7 @@ export const NavigationButtonAsItem = ( { className, ...props }: Props ) => {
 		<NavigatorButton
 			as={ GenericButton }
 			className={ classnames( 'navigator-button', className ) }
+			wrapperClassName="navigator-item-group__item-wrapper"
 			{ ...props }
 		/>
 	);
