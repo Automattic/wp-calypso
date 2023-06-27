@@ -7,15 +7,110 @@ import StatsPurchaseSVG from './stats-purchase-svg';
 import './styles.scss';
 
 const COMPONENT_NAME = 'stats-purchase-wizard';
+const SCREEN_TYPE_SELECTION = 0;
+const SCREEN_PERSONAL_CHECKLIST = 1;
+const SCREEN_PURCHASE = 2;
+const TYPE_PERSONAL = 'Personal';
+const TYPE_COMMERCIAL = 'Commercial';
+const FLAT_COMMERTIAL_PRICE = 10;
+
+// TODO: import
+const PersonalPurchase = ( { subscriptionValue, setSubscriptionValue } ) => {
+	return (
+		<div>
+			<div>
+				<span>Slider test</span>
+				<Button isSecondary onClick={ () => setSubscriptionValue( 0 ) }>
+					$0
+				</Button>
+				<Button isSecondary onClick={ () => setSubscriptionValue( 10 ) }>
+					$10
+				</Button>
+				<Button isSecondary onClick={ () => setSubscriptionValue( 30 ) }>
+					$30
+				</Button>
+				<Button isSecondary onClick={ () => setSubscriptionValue( 45 ) }>
+					$45
+				</Button>
+				<Button isSecondary onClick={ () => setSubscriptionValue( 90 ) }>
+					$90
+				</Button>
+			</div>
+
+			<p className="average-price">The average person pays $6 per month</p>
+
+			<div className="benefits">
+				{ subscriptionValue === 0 ? (
+					<ul className="not-included">
+						<li>No access to upcoming features</li>
+						<li>No priority support</li>
+						<li>You’ll see upsells and ads in the Stats page</li>
+					</ul>
+				) : (
+					<ul className="included">
+						<li>Instant access to upcoming features</li>
+						<li>Priority support</li>
+						<li>Ad-free experience</li>
+						{ subscriptionValue >= 90 && <li>You’re one of the top supporters — thank you!</li> }
+					</ul>
+				) }
+			</div>
+
+			<p>
+				By clicking the button below, you agree to our <a href="#">Terms of Service</a> and to{ ' ' }
+				<a href="#">share details</a> with WordPress.com.
+			</p>
+
+			{ subscriptionValue === 0 ? (
+				<Button isSecondary>Continue with Jetpack Stats for free</Button>
+			) : (
+				<Button isPrimary>Get Jetpack Stats for ${ subscriptionValue } per month</Button>
+			) }
+		</div>
+	);
+};
+
+const CommercialPurchase = () => {
+	return (
+		<div>
+			<p>Notice...</p>
+
+			<p>${ `${ FLAT_COMMERTIAL_PRICE }` }/month</p>
+
+			<div className="benefits">
+				<ul className="included">
+					<li>Instant access to upcoming features</li>
+					<li>Priority support</li>
+					<li>Ad-free experience</li>
+				</ul>
+			</div>
+
+			<p>
+				By clicking the button below, you agree to our <a href="#">Terms of Service</a> and to{ ' ' }
+				<a href="#">share details</a> with WordPress.com.
+			</p>
+
+			<Button isPrimary>Get Jetpack Stats for ${ FLAT_COMMERTIAL_PRICE } per month</Button>
+			<Button isSecondary>Continue for free</Button>
+		</div>
+	);
+};
 
 const ProductCard = ( { siteSlug } ) => {
 	const [ subscriptionValue, setSubscriptionValue ] = useState( 6 );
-	const [ wizardStep, setWizardStep ] = useState( 0 );
+	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
 	const [ siteType, setSiteType ] = useState( null );
+	const [ isAdsChecked, setAdsChecked ] = useState( false );
+	const [ isSellingChecked, setSellingChecked ] = useState( false );
+	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
+
+	const personalLabel = 'Personal site';
+	const commertialLabel = 'Commercial site';
+	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commertialLabel;
 
 	const handleTypeClick = ( type ) => {
 		setSiteType( type );
-		setWizardStep( 1 );
+		setWizardStep( type === TYPE_PERSONAL ? SCREEN_PERSONAL_CHECKLIST : SCREEN_PURCHASE );
 	};
 
 	const toggleFirstStep = ( toggleState ) => {
@@ -24,7 +119,13 @@ const ProductCard = ( { siteSlug } ) => {
 			return;
 		}
 
-		setWizardStep( 0 );
+		setWizardStep( SCREEN_TYPE_SELECTION );
+	};
+
+	// change the plan to commertial on the personal plan confirmation
+	const handlePlanSwap = () => {
+		setSiteType( TYPE_COMMERCIAL );
+		setWizardStep( SCREEN_PURCHASE );
 	};
 
 	return (
@@ -32,16 +133,12 @@ const ProductCard = ( { siteSlug } ) => {
 			<Card className="jetpack-upsell-card">
 				<div className={ `${ COMPONENT_NAME }__card` }>
 					<div className="left">
-						<Panel
-							header="Jetpack Stats"
-							// title={ siteType ? siteType + " site" : "What site type is groovydomain.com?" }
-						>
+						<Panel className={ `${ COMPONENT_NAME }__card-panel` } header="Jetpack Stats">
 							<PanelBody
-								title={ `What site type is ${ siteSlug }?` }
+								title={ ! siteType ? `What site type is ${ siteSlug }?` : selectedTypeLabel }
 								initialOpen
 								onToggle={ ( shouldOpen ) => toggleFirstStep( shouldOpen ) }
-								// onClick={ () => toggleFirstStep() }
-								opened={ wizardStep === 0 }
+								opened={ wizardStep === SCREEN_TYPE_SELECTION }
 							>
 								<PanelRow>
 									<div className={ `${ COMPONENT_NAME }__card-grid` }>
@@ -64,125 +161,87 @@ const ProductCard = ( { siteSlug } ) => {
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_NAME }__card-grid-action--left` }>
-											<Button isPrimary onClick={ () => handleTypeClick( 'Personal' ) }>
+											<Button isPrimary onClick={ () => handleTypeClick( TYPE_PERSONAL ) }>
 												Personal site
 											</Button>
 										</div>
 										<div className={ `${ COMPONENT_NAME }__card-grid-action--right` }>
-											<Button isPrimary onClick={ () => handleTypeClick( 'Commercial' ) }>
+											<Button isPrimary onClick={ () => handleTypeClick( TYPE_COMMERCIAL ) }>
 												Commercial site
 											</Button>
 										</div>
 									</div>
 								</PanelRow>
 							</PanelBody>
-							<PanelBody title="What is Jetpack Stats worth to you?" opened={ wizardStep === 1 }>
+							<PanelBody opened={ wizardStep === SCREEN_PERSONAL_CHECKLIST }>
 								<PanelRow>
-									<div>
-										<div>
-											<span>Slider test</span>
-											<Button isSecondary onClick={ () => setSubscriptionValue( 0 ) }>
-												$0
-											</Button>
-											<Button isSecondary onClick={ () => setSubscriptionValue( 10 ) }>
-												$10
-											</Button>
-											<Button isSecondary onClick={ () => setSubscriptionValue( 30 ) }>
-												$30
-											</Button>
-											<Button isSecondary onClick={ () => setSubscriptionValue( 45 ) }>
-												$45
-											</Button>
-											<Button isSecondary onClick={ () => setSubscriptionValue( 90 ) }>
-												$90
-											</Button>
-										</div>
-
-										<p className="average-price">The average person pays $6 per month</p>
-
-										<div className="benefits">
-											{ subscriptionValue === 0 ? (
-												<ul className="not-included">
-													<li>No access to upcoming features</li>
-													<li>No priority support</li>
-													<li>You’ll see upsells and ads in the Stats page</li>
-												</ul>
-											) : (
-												<ul className="included">
-													<li>Instant access to upcoming features</li>
-													<li>Priority support</li>
-													<li>Ad-free experience</li>
-													{ subscriptionValue >= 90 && (
-														<li>You’re one of the top supporters — thank you!</li>
-													) }
-												</ul>
-											) }
-										</div>
-
-										{ subscriptionValue === 0 && (
-											<div className="qualifications">
-												<p>
-													<strong>Please confirm non-commercial usage by checking each box:</strong>
-												</p>
-												<ul>
-													<li>
-														<CheckboxControl
-															type="checkbox"
-															// bind:group={ qualifications }
-															// name={ qualifications }
-															value="ads"
-															label="I don’t have ads on my site"
-															onChange={ () => {} }
-														/>
-													</li>
-													<li>
-														<CheckboxControl
-															type="checkbox"
-															// bind:group={ qualifications }
-															// name={ qualifications }
-															value="products"
-															label="I don’t sell products/services on my site"
-															onChange={ () => {} }
-														/>
-													</li>
-													<li>
-														<CheckboxControl
-															type="checkbox"
-															// bind:group={ qualifications }
-															// name={ qualifications }
-															value="site"
-															label="I don’t promote a business on my site"
-															onChange={ () => {} }
-														/>
-													</li>
-												</ul>
-												<p>
-													If your site doesn’t meet these criteria,{ ' ' }
-													<a href="#" onClick={ () => setWizardStep( 0 ) }>
-														you will need to use the commercial plan
-													</a>
-													.
-												</p>
-											</div>
-										) }
-
+									<div className="qualifications">
 										<p>
-											By clicking the button below, you agree to our{ ' ' }
-											<a href="#">Terms of Service</a> and to <a href="#">share details</a> with
-											WordPress.com.
+											<strong>Please confirm non-commercial usage by checking each box:</strong>
 										</p>
-
-										{ subscriptionValue === 0 ? (
-											// TODO: disbale if some checkboxes are not checked
-											<Button isPrimary disabled={ siteType !== 'Personal' }>
-												Continue with Jetpack Stats for free
+										<p>
+											<ul>
+												<li>
+													<CheckboxControl
+														checked={ isAdsChecked }
+														label="I don’t have ads on my site"
+														onChange={ ( value ) => {
+															setAdsChecked( value );
+														} }
+													/>
+												</li>
+												<li>
+													<CheckboxControl
+														checked={ isSellingChecked }
+														label="I don’t sell products/services on my site"
+														onChange={ ( value ) => {
+															setSellingChecked( value );
+														} }
+													/>
+												</li>
+												<li>
+													<CheckboxControl
+														checked={ isBusinessChecked }
+														label="I don’t promote a business on my site"
+														onChange={ ( value ) => {
+															setBusinessChecked( value );
+														} }
+													/>
+												</li>
+											</ul>
+										</p>
+										<p>
+											If your site doesn’t meet these criteria,{ ' ' }
+											<a href="#" onClick={ () => handlePlanSwap() }>
+												you will need to use the commercial plan
+											</a>
+											.
+										</p>
+										<p>
+											<Button
+												isPrimary
+												onClick={ () => setWizardStep( SCREEN_PURCHASE ) }
+												disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
+											>
+												Confirm personal site
 											</Button>
-										) : (
-											<Button isPrimary>
-												Get Jetpack Stats for ${ subscriptionValue } per month
-											</Button>
-										) }
+										</p>
 									</div>
+								</PanelRow>
+							</PanelBody>
+							<PanelBody
+								title="What is Jetpack Stats worth to you?"
+								opened={ wizardStep === SCREEN_PURCHASE }
+							>
+								<PanelRow>
+									{ siteType === TYPE_PERSONAL ? (
+										<PersonalPurchase
+											subscriptionValue={ subscriptionValue }
+											setSubscriptionValue={ setSubscriptionValue }
+										/>
+									) : (
+										<CommercialPurchase />
+									) }
 								</PanelRow>
 							</PanelBody>
 						</Panel>

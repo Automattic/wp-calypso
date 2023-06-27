@@ -106,4 +106,41 @@
 		grid-template-columns: repeat(2, 1fr);
 		grid-gap: 16px 32px;
 	}
+
+	.stats-purchase-wizard__card-panel {
+		border: 0;
+
+		> div {
+			border: 0;
+		}
+
+		h2 {
+			font-weight: 700;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 36px;
+		}
+
+		.components-panel__body-title {
+			button {
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				font-size: 20px;
+				font-weight: 500;
+			}
+		}
+	}
+
+	.stats-purchase-wizard__card-grid-header--left,
+	.stats-purchase-wizard__card-grid-header--right {
+		font-weight: 600;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 16px;
+	}
+
+	.stats-purchase-wizard__card-grid-action--left,
+	.stats-purchase-wizard__card-grid-action--right {
+		.components-button {
+			width: 100%;
+			justify-content: center;
+		}
+	}
 }
