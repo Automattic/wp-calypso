@@ -9,7 +9,8 @@ const getSubscribersCacheKey = (
 	siteId: number | null,
 	currentPage?: number,
 	perPage?: number,
-	search?: string
+	search?: string,
+	sortTerm?: string
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
 	if ( currentPage ) {
@@ -21,7 +22,22 @@ const getSubscribersCacheKey = (
 	if ( search ) {
 		cacheKey.push( 'search', search );
 	}
+	if ( sortTerm ) {
+		cacheKey.push( 'sort-term', sortTerm );
+	}
 	return cacheKey;
+};
+
+const getSubscriberDetailsUrl = (
+	siteSlug: string | null,
+	subscription_id: number | undefined,
+	user_id: number | undefined
+) => {
+	if ( user_id ) {
+		return `/subscribers/${ siteSlug }/${ user_id }`;
+	}
+
+	return `/subscribers/external/${ siteSlug }/${ subscription_id }`;
 };
 
 const getSubscriberDetailsCacheKey = ( siteId: number | null, queryString: string ) => [
@@ -39,6 +55,7 @@ export {
 	getEarnPageUrl,
 	getEarnPaymentsPageUrl,
 	getSubscriberDetailsCacheKey,
+	getSubscriberDetailsUrl,
 	getSubscribersCacheKey,
 	sanitizeInt,
 };

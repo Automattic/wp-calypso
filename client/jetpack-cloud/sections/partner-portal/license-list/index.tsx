@@ -88,6 +88,7 @@ export default function LicenseList() {
 								username={ license.username }
 								blogId={ license.blogId }
 								siteUrl={ license.siteUrl }
+								hasDownloads={ license.hasDownloads }
 								issuedAt={ license.issuedAt }
 								attachedAt={ license.attachedAt }
 								revokedAt={ license.revokedAt }

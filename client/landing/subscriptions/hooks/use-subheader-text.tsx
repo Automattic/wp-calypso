@@ -20,7 +20,7 @@ const useSubheaderText = () => {
 				}
 			);
 		}
-		return translate( 'Manage your WordPress.com newsletter and blog subscriptions.' );
+		return translate( 'Manage your WordPress.com blog and newsletter subscriptions.' );
 	}, [ emailAddress, translate ] );
 };
 

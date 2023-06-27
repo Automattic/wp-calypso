@@ -27,6 +27,7 @@ export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
+export const BULK_DOMAIN_TRANSFER = 'bulk-domain-transfer';
 
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
@@ -141,6 +142,10 @@ export const isWithThemeFlow = ( flowName: string | null ) => {
 
 export const isSiteSetupFlow = ( flowName: string | null ) => {
 	return !! flowName && SITE_SETUP_FLOW === flowName;
+};
+
+export const isSenseiFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && SENSEI_FLOW === flowName );
 };
 
 export const ecommerceFlowRecurTypes = {

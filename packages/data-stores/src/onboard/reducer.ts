@@ -1,7 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
 import type { OnboardAction } from './actions';
-import type { DomainForm, ProfilerData } from './types';
+import type { DomainForm, ProfilerData, BulkDomainTransferData } from './types';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
@@ -519,6 +519,23 @@ export const profilerData: Reducer< ProfilerData | undefined, OnboardAction > = 
 	return state;
 };
 
+export const bulkDomains: Reducer< BulkDomainTransferData | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_BULK_DOMAINS_DATA' ) {
+		// we don't want to store empty objects
+		if ( action.bulkDomainsData && Object.keys( action.bulkDomainsData ).length > 0 ) {
+			return action.bulkDomainsData;
+		}
+		return undefined;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_PAID_SUBSCRIBERS' ) {
 		return action.paidSubscribers;
@@ -542,6 +559,7 @@ const reducer = combineReducers( {
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
 	selectedFeatures,
+	bulkDomains,
 	storeType,
 	selectedFonts,
 	selectedDesign,

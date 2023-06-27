@@ -9,15 +9,15 @@ import { SubscriberPopover } from './components/subscriber-popover';
 import useSubscriberDetailsQuery from './queries/use-subscriber-details-query';
 
 type SubscriberDetailsPageProps = {
-	subscriberId?: number;
+	subscriptionId?: number;
 	userId?: number;
 };
 
-const SubscriberDetailsPage = ( { subscriberId, userId }: SubscriberDetailsPageProps ) => {
+const SubscriberDetailsPage = ( { subscriptionId, userId }: SubscriberDetailsPageProps ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const { data: subscriber } = useSubscriberDetailsQuery( selectedSiteId, subscriberId, userId );
+	const { data: subscriber } = useSubscriberDetailsQuery( selectedSiteId, subscriptionId, userId );
 
 	const navigationItems: Item[] = [
 		{
@@ -26,7 +26,7 @@ const SubscriberDetailsPage = ( { subscriberId, userId }: SubscriberDetailsPageP
 		},
 		{
 			label: translate( 'Details' ),
-			href: `/subscribers/${ selectedSiteSlug }/${ subscriberId }`,
+			href: `/subscribers/${ selectedSiteSlug }/${ subscriptionId }`,
 		},
 	];
 
