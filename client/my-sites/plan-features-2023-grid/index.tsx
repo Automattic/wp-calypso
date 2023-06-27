@@ -105,7 +105,7 @@ const Container = (
 export type PlanFeatures2023GridProps = {
 	isInSignup?: boolean;
 	siteId: number;
-	isLaunchPage: boolean;
+	isLaunchPage?: boolean | null;
 	isReskinned: boolean;
 	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop

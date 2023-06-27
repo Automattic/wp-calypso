@@ -31,7 +31,7 @@ type PlanFeaturesActionsButtonProps = {
 	isPlaceholder?: boolean;
 	isPopular?: boolean;
 	isInSignup?: boolean;
-	isLaunchPage?: boolean;
+	isLaunchPage?: boolean | null;
 	onUpgradeClick: () => void;
 	planName: TranslateResult;
 	planType: string;

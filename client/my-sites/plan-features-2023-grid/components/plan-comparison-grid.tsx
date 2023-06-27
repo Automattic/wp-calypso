@@ -306,7 +306,7 @@ type PlanComparisonGridProps = {
 	intervalType: string;
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	isInSignup?: boolean;
-	isLaunchPage?: boolean;
+	isLaunchPage?: boolean | null;
 	flowName: string;
 	currentSitePlanSlug?: string;
 	manageHref: string;
@@ -323,7 +323,7 @@ type PlanComparisonGridHeaderProps = {
 	displayedPlansProperties: Array< PlanProperties >;
 	visiblePlansProperties: Array< PlanProperties >;
 	isInSignup?: boolean;
-	isLaunchPage?: boolean;
+	isLaunchPage?: boolean | null;
 	isFooter?: boolean;
 	flowName: string;
 	onPlanChange: ( currentPlan: string, event: ChangeEvent< HTMLSelectElement > ) => void;
