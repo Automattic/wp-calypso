@@ -47,6 +47,10 @@ const PluginSectionContent = styled.div`
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
+	flex-basis: 100%;
+	@media ( min-width: 480px ) {
+		flex-basis: initial;
+	}
 `;
 
 const PluginSectionName = styled.div`
