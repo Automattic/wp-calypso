@@ -141,7 +141,7 @@ export default function VerifyContactForm( {
 		}
 	};
 
-	// Add email item to the list if the email is already verified
+	// Add contact to the list if the email is already verified
 	const handleAddVerifiedContact = () => {
 		let actionEvent;
 		if ( type === 'email' ) {
@@ -302,7 +302,7 @@ export default function VerifyContactForm( {
 		[ handleResendCodeClick, isResendingVerificationCode ]
 	);
 
-	// Trigger resend code when user chooses to verify email action
+	// Trigger resend code when user chooses to verify contact action
 	useEffect( () => {
 		if ( isVerifyAction ) {
 			setShowCodeVerification( true );
@@ -326,7 +326,7 @@ export default function VerifyContactForm( {
 		}
 	}, [ isRequestingVerificationCodeFailed, translate ] );
 
-	// Add email item to the list once the email is verified
+	// Add contact to the list once the it is verified
 	useEffect( () => {
 		if ( isSubmittingVerificationCodeSuccess || isRequestingVerificationCodeAlreadyVerified ) {
 			onAdd( contactInfo as StateMonitorSettingsEmail | StateMonitorSettingsSMS, true );
@@ -339,7 +339,7 @@ export default function VerifyContactForm( {
 		type,
 	] );
 
-	// Show error message when email verification fails
+	// Show error message when contact verification fails
 	useEffect( () => {
 		if ( submitVerificationCodeErrorMessage ) {
 			setValidationError( {
@@ -348,7 +348,7 @@ export default function VerifyContactForm( {
 		}
 	}, [ translate, submitVerificationCodeErrorMessage ] );
 
-	// Set help text when email verification fails
+	// Set help text when contact verification fails
 	useEffect( () => {
 		if ( isSubmittingVerificationCodeFailed ) {
 			setHelpText(
