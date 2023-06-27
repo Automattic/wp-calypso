@@ -240,6 +240,14 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		);
 	}
 
+	// We now allow domain-only sites to have multiple domains, so we need to allow them to be managed
+	// See https://wp.me/pdhack-Hk for more context on the motivation for this decision
+	if ( contextParams.domain ) {
+		domainManagementPaths = domainManagementPaths.concat(
+			allPaths.map( ( pathFactory ) => pathFactory( slug, contextParams.domain ) )
+		);
+	}
+
 	const startsWithPaths = [
 		'/checkout/',
 		`/me/purchases/${ slug }`,
@@ -247,6 +255,8 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		`/purchases/billing-history/${ slug }`,
 		`/purchases/payment-methods/${ slug }`,
 		`/purchases/subscriptions/${ slug }`,
+		// Any page under the `/domsina/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
+		'/domains/manage/all/',
 	];
 
 	if ( some( startsWithPaths, ( startsWithPath ) => startsWith( path, startsWithPath ) ) ) {
