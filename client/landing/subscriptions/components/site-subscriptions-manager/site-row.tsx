@@ -296,7 +296,7 @@ const SiteRow = ( {
 								onSuccess: () => {
 									unsubscribeInProgress.current = false;
 
-									if ( resubscribePending ) {
+									if ( resubscribePending.current ) {
 										resubscribePending.current = false;
 										resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
 										recordSiteResubscribed( {
