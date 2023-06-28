@@ -17,8 +17,6 @@
 
 		&.is-discover-stream {
 			.reader-tag-sidebar-recommended-sites {
-				max-width: 270px;
-
 				.reader-subscription-list-item .follow-button__label,
 				.reader-subscription-list-item__settings-label {
 					display: none;
@@ -713,7 +711,7 @@
 	.reader-tag-sidebar-related-tags,
 	.reader-tag-sidebar-related-sites {
 		h2 {
-			font-size: $font-body-small;
+			font-size: $font-body;
 			margin-bottom: 14px;
 		}
 	}
@@ -820,6 +818,11 @@
 	}
 }
 
+// Stop the sidebar from expanding too wide when shown in a 2 column layout.
+.stream__two-column .stream__right-column {
+	max-width: 270px;
+}
+
 .stream__header .section-nav-group {
 	display: flex;
 	flex: 1 0 0%;
@@ -890,3 +893,13 @@
 	}
 }
 
+.is-reader-page .is-site-stream {
+	// Temporary, remove when site stream header is resigned and follow button moved to sidebar.
+	.stream__two-column {
+		border-top: 1px solid var(--color-neutral-10);
+	}
+
+	.reader-post-card.card:nth-child(2) {
+		border-top: none;
+	}
+}
