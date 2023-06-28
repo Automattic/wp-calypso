@@ -2,7 +2,6 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { TabsSwitcher } from 'calypso/landing/subscriptions/components/tabs-switcher';
@@ -30,7 +29,6 @@ const SubscriptionManagementPage = () => {
 				isLoggedIn={ isLoggedIn }
 			/>
 			<Main className="subscription-manager__container">
-				<DocumentHead title="Subscriptions" />
 				<FormattedHeader
 					brandFont
 					headerText={ translate( 'Subscription management' ) }

@@ -47,6 +47,7 @@ class ReaderPostCard extends Component {
 		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
 		hasOrganization: PropTypes.bool,
+		showFollowButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -54,6 +55,7 @@ class ReaderPostCard extends Component {
 		onCommentClick: noop,
 		isSelected: false,
 		showSiteName: true,
+		showFollowButton: true,
 	};
 
 	propagateCardClick = () => {
@@ -128,6 +130,7 @@ class ReaderPostCard extends Component {
 			hasOrganization,
 			isWPForTeamsItem,
 			teams,
+			showFollowButton,
 		} = this.props;
 
 		let isSeen = false;
@@ -158,6 +161,7 @@ class ReaderPostCard extends Component {
 				post={ discoverPost || post }
 				site={ site }
 				visitUrl={ post.URL }
+				showFollow={ showFollowButton }
 				showVisit={ true }
 				fullPost={ false }
 				onCommentClick={ onCommentClick }
@@ -275,11 +279,9 @@ export default connect(
 			ownProps.postKey &&
 			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
 				isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
-		hasOrganization: hasReaderFollowOrganization(
-			state,
-			ownProps.postKey.feedId,
-			ownProps.postKey.blogId
-		),
+		hasOrganization:
+			ownProps.postKey &&
+			hasReaderFollowOrganization( state, ownProps.postKey.feedId, ownProps.postKey.blogId ),
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 		teams: getReaderTeams( state ),
 	} ),

@@ -362,6 +362,6 @@ export interface InitialMonitorSettings {
 	phoneContacts?: StateMonitorSettingsSMS[] | [];
 }
 export interface ResendVerificationCodeParams {
-	type: 'email';
+	type: 'email' | 'sms';
 	value: string;
 }

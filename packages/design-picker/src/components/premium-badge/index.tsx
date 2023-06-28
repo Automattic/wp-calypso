@@ -1,7 +1,7 @@
 import { Gridicon, Popover } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import './style.scss';
 
@@ -16,6 +16,7 @@ interface BadgeProps {
 	shouldHideIcon?: boolean;
 	shouldHideTooltip?: boolean;
 	focusOnShow?: boolean;
+	isClickable?: boolean;
 }
 
 const PremiumBadge = ( {
@@ -29,6 +30,7 @@ const PremiumBadge = ( {
 	shouldHideIcon,
 	shouldHideTooltip,
 	focusOnShow,
+	isClickable,
 }: BadgeProps ) => {
 	const { __ } = useI18n();
 
@@ -45,21 +47,55 @@ const PremiumBadge = ( {
 	const divRef = useRef( null );
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
 	const [ isHovered, setIsHovered ] = useState( false );
+	const [ isPressed, setIsPressed ] = useState( false );
+
+	const isClickableProps = useMemo( () => {
+		if ( ! isClickable ) {
+			return {};
+		}
+
+		return {
+			role: 'button',
+			tabIndex: 0,
+			onBlur: () => {
+				setIsPressed( false );
+				setIsPopoverVisible( false );
+			},
+			onClick: () => {
+				setIsPressed( ! isPopoverVisible );
+				setIsPopoverVisible( ! isPopoverVisible );
+			},
+			onKeyDown: ( event: React.KeyboardEvent ) => {
+				if ( event.key === 'Enter' || event.key === ' ' ) {
+					event.preventDefault();
+					setIsPressed( ! isPopoverVisible );
+					setIsPopoverVisible( ! isPopoverVisible );
+				}
+			},
+		};
+	}, [ isClickable, isPopoverVisible ] );
+
 	return (
 		<div
 			className={ classNames( 'premium-badge', className, {
 				'premium-badge__compact-animation': shouldCompactWithAnimation,
 				'premium-badge--compact': shouldCompactWithAnimation && ! isHovered,
+				'premium-badge--is-clickable': isClickable,
 			} ) }
 			ref={ divRef }
 			onMouseEnter={ () => {
-				setIsPopoverVisible( true );
-				setIsHovered( true );
+				if ( ! isPressed ) {
+					setIsPopoverVisible( true );
+					setIsHovered( true );
+				}
 			} }
 			onMouseLeave={ () => {
-				setIsPopoverVisible( false );
-				setIsHovered( false );
+				if ( ! isPressed ) {
+					setIsPopoverVisible( false );
+					setIsHovered( false );
+				}
 			} }
+			{ ...isClickableProps }
 		>
 			{ ! shouldHideIcon && (
 				<>

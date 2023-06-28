@@ -496,27 +496,33 @@ class Signup extends Component {
 			intent,
 			startingPoint,
 		};
-		debug( 'Tracking signup completion.', debugProps );
 
-		recordSignupComplete( {
-			flow: this.props.flowName,
-			siteId,
-			isNewUser,
-			hasCartItems,
-			planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
-			domainProductSlug:
-				undefined !== domainItem && domainItem.is_domain_registration
-					? domainItem.product_slug
-					: undefined,
-			isNew7DUserSite,
-			// Record the following values so that we can know the user completed which branch under the hero flow
-			theme: selectedDesign?.theme,
-			intent,
-			startingPoint,
-			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
-			isMapping: domainItem && isDomainMapping( domainItem ),
-			isTransfer: domainItem && isDomainTransfer( domainItem ),
-		} );
+		// In case of the flow just serves as a bridge to a Stepper flow, do not fire
+		// the signup completion event. Theoretically speaking this can be applied to other scenarios,
+		// but it's not recommended outside of this, hence the name toStepper. See Automattic/growth-foundations#72 for more context.
+		if ( ! dependencies.toStepper ) {
+			debug( 'Tracking signup completion.', debugProps );
+
+			recordSignupComplete( {
+				flow: this.props.flowName,
+				siteId,
+				isNewUser,
+				hasCartItems,
+				planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
+				domainProductSlug:
+					undefined !== domainItem && domainItem.is_domain_registration
+						? domainItem.product_slug
+						: undefined,
+				isNew7DUserSite,
+				// Record the following values so that we can know the user completed which branch under the hero flow
+				theme: selectedDesign?.theme,
+				intent,
+				startingPoint,
+				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
+				isMapping: domainItem && isDomainMapping( domainItem ),
+				isTransfer: domainItem && isDomainTransfer( domainItem ),
+			} );
+		}
 	};
 
 	handleDestination( dependencies, destination ) {

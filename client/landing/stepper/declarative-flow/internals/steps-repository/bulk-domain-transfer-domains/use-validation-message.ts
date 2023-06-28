@@ -28,6 +28,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		},
 		{
 			enabled: Boolean( ! passed && passedLocalValidation ),
+			retry: false,
 		}
 	);
 

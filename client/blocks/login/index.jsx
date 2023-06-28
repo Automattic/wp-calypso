@@ -38,7 +38,9 @@ import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
@@ -239,8 +241,17 @@ class Login extends Component {
 	};
 
 	getSignupUrl = () => {
-		const { currentRoute, oauth2Client, currentQuery, pathname, locale, signupUrl, isWoo } =
-			this.props;
+		const {
+			currentRoute,
+			oauth2Client,
+			currentQuery,
+			initialQuery,
+			pathname,
+			locale,
+			signupUrl,
+			isWoo,
+			isWooCoreProfilerFlow,
+		} = this.props;
 
 		if ( signupUrl ) {
 			return signupUrl;
@@ -249,6 +260,10 @@ class Login extends Component {
 		if ( isWoo && isEmpty( currentQuery ) ) {
 			// if query is empty, return to the woo start flow
 			return 'https://woocommerce.com/start/';
+		}
+
+		if ( isWooCoreProfilerFlow && isEmpty( currentQuery ) ) {
+			return getSignupUrl( initialQuery, currentRoute, oauth2Client, locale, pathname );
 		}
 
 		return getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
@@ -433,21 +448,32 @@ class Login extends Component {
 				);
 			}
 		} else if ( isWooCoreProfilerFlow ) {
-			const subtitle = currentQuery.lostpassword_flow
-				? translate(
+			const isLostPasswordFlow = currentQuery.lostpassword_flow;
+			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
+
+			let subtitle = null;
+
+			switch ( true ) {
+				case isLostPasswordFlow:
+					headerText = null;
+					subtitle = translate(
 						"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
-				  )
-				: translate(
+					);
+					break;
+				case isTwoFactorAuthFlow:
+					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
+					break;
+				default:
+					headerText = <h3>{ translate( 'One last step' ) }</h3>;
+					subtitle = translate(
 						"In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 						{
 							components: {
 								signupLink: <a href={ this.getSignupUrl() } />,
 							},
 						}
-				  );
-			headerText = currentQuery.lostpassword_flow ? null : (
-				<h3>{ translate( 'One last step' ) }</h3>
-			);
+					);
+			}
 			preHeader = null;
 			postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
 		} else if ( isJetpackWooCommerceFlow ) {
@@ -624,7 +650,7 @@ class Login extends Component {
 						rebootAfterLogin={ this.rebootAfterLogin }
 						switchTwoFactorAuthType={ this.handleTwoFactorRequested }
 					/>
-					{ isWoo && ! isPartnerSignup && (
+					{ ( isWoo || isWooCoreProfilerFlow ) && ! isPartnerSignup && (
 						<div className="login__two-factor-footer">
 							<p className="login__two-factor-no-account">
 								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
@@ -746,8 +772,7 @@ export default connect(
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		isWooCoreProfilerFlow:
-			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
+		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
@@ -757,6 +782,7 @@ export default connect(
 			'wpcom-migration'
 		),
 		currentQuery: getCurrentQueryArguments( state ),
+		initialQuery: getInitialQueryArguments( state ),
 		currentRoute: getCurrentRoute( state ),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,

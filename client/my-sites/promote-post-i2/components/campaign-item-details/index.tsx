@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import './style.scss';
 import {
 	Button,
@@ -58,6 +59,8 @@ const getPostIdFromURN = ( targetUrn: string ) => {
 };
 
 export default function CampaignItemDetails( props: Props ) {
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const translate = useTranslate();
@@ -114,7 +117,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const devicesList = audience_list ? audience_list[ 'devices' ] : '';
 	const countriesList = audience_list ? audience_list[ 'countries' ] : '';
 	const topicsList = audience_list ? audience_list[ 'topics' ] : '';
-	const OSsList = audience_list ? audience_list[ 'OSs' ] : '';
+	const languagesList = audience_list ? audience_list[ 'languages' ] : '';
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
@@ -127,7 +130,9 @@ export default function CampaignItemDetails( props: Props ) {
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const countriesListFormatted = countriesList ? `${ countriesList }` : __( 'Everywhere' );
-	const osListFormatted = OSsList ? `${ OSsList }` : translate( 'All' );
+	const languagesListFormatted = languagesList
+		? `${ languagesList }`
+		: translate( 'All languages' );
 	const topicsListFormatted = topicsList ? `${ topicsList }` : __( 'All' );
 	const impressionsTotal = formatNumber( impressions_total );
 	const subtotalFormatted = `$${ formatCents( subtotal || 0 ) }`;
@@ -493,10 +498,10 @@ export default function CampaignItemDetails( props: Props ) {
 											{ ! isLoading ? countriesListFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__label">
-											{ translate( 'Operating systems' ) }
+											{ translate( 'Languages' ) }
 										</span>
 										<span className="campaign-item-details__details">
-											{ ! isLoading ? osListFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
 									<div className="campaign-item-details__interests">
@@ -646,6 +651,7 @@ export default function CampaignItemDetails( props: Props ) {
 									className="is-link components-button campaign-item-details__support-link"
 									supportContext="advertising"
 									showIcon={ false }
+									showSupportModal={ ! isRunningInJetpack }
 								>
 									{ translate( 'View documentation' ) }
 									<Gridicon icon="external" size={ 16 } />

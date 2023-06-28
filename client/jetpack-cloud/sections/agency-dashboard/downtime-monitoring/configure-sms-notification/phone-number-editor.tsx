@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useContext, useEffect, useMemo } from 'react';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
@@ -15,6 +16,7 @@ import ContactListItem from '../contact-list/item';
 import {
 	useRequestVerificationCode,
 	useValidateVerificationCode,
+	useResendVerificationCode,
 	useContactModalTitleAndSubtitle,
 } from '../hooks';
 import type {
@@ -59,6 +61,7 @@ export default function PhoneNumberEditor( {
 
 	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ?? [] );
 
+	const [ resendCodeClicked, setResendCodeClicked ] = useState< boolean >( false );
 	const [ helpText, setHelpText ] = useState< TranslateResult | undefined >( undefined );
 	const [ showCodeVerification, setShowCodeVerification ] = useState< boolean >( false );
 	const [ validationStatus, setValidationStatus ] = useState< {
@@ -87,6 +90,7 @@ export default function PhoneNumberEditor( {
 
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyPhoneNumber = useValidateVerificationCode();
+	const resendCode = useResendVerificationCode();
 
 	const { title, subtitle } = useContactModalTitleAndSubtitle( 'sms', selectedAction );
 
@@ -110,28 +114,70 @@ export default function PhoneNumberEditor( {
 		[ allPhoneItems, phoneItem, setAllPhoneItems, toggleModal ]
 	);
 
+	// Function to handle resending verification code
+	const handleResendCode = useCallback( () => {
+		if ( phoneItem.phoneNumberFull ) {
+			setValidationError( undefined );
+			resendCode.mutate( { type: 'sms', value: phoneItem.phoneNumberFull } );
+		}
+		// Disabled because we don't want to re-run this effect when resendCode changes
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ phoneItem.phoneNumberFull ] );
+
 	// Function to handle resend code button click
 	const handleResendCodeClick = useCallback( () => {
 		setHelpText( undefined );
+		setResendCodeClicked( true );
+		handleResendCode();
 		setPhoneItem( { ...phoneItem, verificationCode: undefined } );
 		recordEvent( 'downtime_monitoring_resend_sms_verification_code' );
-		// TODO: Make API call to resend verification code
-	}, [ phoneItem, recordEvent ] );
+	}, [ phoneItem, handleResendCode, recordEvent ] );
 
 	const translationArgs = useMemo(
 		() => ( {
 			components: {
 				button: (
 					<Button
-						className="configure-contact__resend-code-button"
+						className={ classNames( 'configure-contact__resend-code-button', {
+							'is-loading': resendCode.isLoading,
+						} ) }
 						borderless
 						onClick={ handleResendCodeClick }
+						disabled={ resendCode.isLoading }
 					/>
 				),
 			},
 		} ),
-		[ handleResendCodeClick ]
+		[ handleResendCodeClick, resendCode.isLoading ]
 	);
+
+	// Set help text when resend code is successful and resend button is clicked
+	useEffect( () => {
+		if ( resendCodeClicked && resendCode.isSuccess ) {
+			setHelpText(
+				<>
+					<div>{ translate( 'We just sent you a new code. Please wait for a minute.' ) }</div>
+					<div>
+						{ translate(
+							'Click to {{button}}resend{{/button}} if you didn’t receive it. If you still experience issues, please reach out to our support.',
+							translationArgs
+						) }
+					</div>
+				</>
+			);
+		}
+	}, [ resendCodeClicked, resendCode.isSuccess, translate, translationArgs ] );
+
+	// Show error message when resend code fails
+	useEffect( () => {
+		if ( resendCode.isError ) {
+			setValidationError( {
+				verificationCode: translate(
+					'Something went wrong. Please try again by clicking the resend button.'
+				),
+			} );
+		}
+	}, [ resendCode.isError, translate ] );
 
 	// Function to handle request verification code
 	const handleRequestVerificationCode = () => {
@@ -150,9 +196,9 @@ export default function PhoneNumberEditor( {
 	useEffect( () => {
 		if ( isVerifyAction ) {
 			setShowCodeVerification( true );
-			// TODO: call resend verification code API
+			handleResendCode();
 		}
-	}, [ isVerifyAction ] );
+	}, [ handleResendCode, isVerifyAction ] );
 
 	// Show code input when verification code request is successful
 	useEffect( () => {
@@ -408,10 +454,12 @@ export default function PhoneNumberEditor( {
 							) }
 							<div className="configure-contact__help-text" id="code-help-text">
 								{ helpText ??
-									translate(
-										'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
-										translationArgs
-									) }
+									( resendCodeClicked && resendCode.isLoading
+										? translate( 'Sending code' )
+										: translate(
+												'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
+												translationArgs
+										  ) ) }
 							</div>
 						</FormFieldset>
 					) }

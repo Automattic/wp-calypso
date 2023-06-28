@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import './style.scss';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
@@ -66,6 +67,7 @@ const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 };
 
 export default function PromotedPosts( { tab }: Props ) {
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 	const selectedTab = tab && [ 'campaigns', 'posts', 'credits' ].includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID || 0;
@@ -237,6 +239,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
+						showSupportModal={ ! isRunningInJetpack }
 					/>
 					<Button isPrimary onClick={ onClickPromote }>
 						{ translate( 'Promote' ) }

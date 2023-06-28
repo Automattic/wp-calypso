@@ -1,10 +1,11 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
+import Tooltip from 'calypso/components/tooltip';
 import { successNotice } from 'calypso/state/notices/actions';
 import {
 	useRecordSiteUnsubscribed,
@@ -28,6 +29,27 @@ import {
 	SubscriptionsPortal,
 } from '../subscription-manager-context';
 
+interface NotificationStatusProps {
+	tooltipRef: React.RefObject< SVGSVGElement >;
+	setTooltipVisible: React.Dispatch< React.SetStateAction< boolean > >;
+	notificationDisabled: boolean;
+}
+
+const NotificationStatus: React.FC< NotificationStatusProps > = ( {
+	tooltipRef,
+	setTooltipVisible,
+	notificationDisabled,
+} ) => (
+	<Gridicon
+		ref={ tooltipRef }
+		icon={ notificationDisabled ? 'cross' : 'checkmark' }
+		size={ 16 }
+		className={ notificationDisabled ? 'red' : 'green' }
+		onMouseEnter={ () => setTooltipVisible( true ) }
+		onMouseLeave={ () => setTooltipVisible( false ) }
+	/>
+);
+
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
 
@@ -46,10 +68,6 @@ const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliver
 	);
 };
 
-const RedCross = () => <Gridicon icon="cross" size={ 16 } className="red" />;
-
-const GreenCheck = () => <Gridicon icon="checkmark" size={ 16 } className="green" />;
-
 const SelectedNewPostDeliveryMethods = ( {
 	isEmailMeNewPostsSelected,
 	isNotifyMeOfNewPostsSelected,
@@ -60,7 +78,7 @@ const SelectedNewPostDeliveryMethods = ( {
 	const translate = useTranslate();
 
 	if ( ! isEmailMeNewPostsSelected && ! isNotifyMeOfNewPostsSelected ) {
-		return <RedCross />;
+		return <Gridicon icon="cross" size={ 16 } className="red" />;
 	}
 
 	const emailDelivery = isEmailMeNewPostsSelected ? translate( 'Email' ) : null;
@@ -90,6 +108,11 @@ const SiteRow = ( {
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const [ isTooltipVisible, setTooltipVisible ] = useState< boolean >( false );
+	const tooltip = useRef< SVGSVGElement >( null );
+
+	const unsubscribeInProgress = useRef( false );
+	const resubscribePending = useRef( false );
 
 	const hostname = useMemo( () => {
 		try {
@@ -125,7 +148,7 @@ const SiteRow = ( {
 	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
 	const recordSiteResubscribed = useRecordSiteResubscribed();
 
-	const unsubscribeSuccessCallback = () => {
+	const unsubscribeCallback = () => {
 		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 		dispatch(
 			successNotice(
@@ -134,12 +157,16 @@ const SiteRow = ( {
 					duration: 5000,
 					button: translate( 'Resubscribe' ),
 					onClick: () => {
-						resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
-						recordSiteResubscribed( {
-							blog_id,
-							url,
-							source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
-						} );
+						if ( unsubscribeInProgress.current ) {
+							resubscribePending.current = true;
+						} else {
+							resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+							recordSiteResubscribed( {
+								blog_id,
+								url,
+								source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+							} );
+						}
 					},
 				}
 			)
@@ -253,7 +280,28 @@ const SiteRow = ( {
 			) }
 			{ isLoggedIn && (
 				<span className="new-comments-cell" role="cell">
-					{ delivery_methods.email?.send_comments ? <GreenCheck /> : <RedCross /> }
+					<NotificationStatus
+						tooltipRef={ tooltip }
+						setTooltipVisible={ setTooltipVisible }
+						notificationDisabled={ ! delivery_methods.email?.send_comments }
+					/>
+					<Tooltip
+						className="new-comments-tooltip"
+						isVisible={ isTooltipVisible }
+						position="top"
+						context={ tooltip.current }
+						showOnMobile
+					>
+						<div className="new-comments-tooltip__content">
+							{ delivery_methods.email?.send_comments
+								? translate(
+										'You will receive emails notifications for new comments on this site.'
+								  )
+								: translate(
+										"You won't receive email notifications for new comments on this site."
+								  ) }
+						</div>
+					</Tooltip>
 				</span>
 			) }
 			<span className="email-frequency-cell" role="cell">
@@ -280,12 +328,28 @@ const SiteRow = ( {
 					emailMeNewComments={ !! delivery_methods.email?.send_comments }
 					onEmailMeNewCommentsChange={ handleEmailMeNewCommentsChange }
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () =>
+					onUnsubscribe={ () => {
+						unsubscribeInProgress.current = true;
+						unsubscribeCallback();
 						unsubscribe(
 							{ blog_id, url, doNotInvalidateSiteSubscriptions: true },
-							{ onSuccess: unsubscribeSuccessCallback }
-						)
-					}
+							{
+								onSuccess: () => {
+									unsubscribeInProgress.current = false;
+
+									if ( resubscribePending.current ) {
+										resubscribePending.current = false;
+										resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+										recordSiteResubscribed( {
+											blog_id,
+											url,
+											source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+										} );
+									}
+								},
+							}
+						);
+					} }
 					unsubscribing={ unsubscribing }
 				/>
 			</span>

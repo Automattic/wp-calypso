@@ -81,11 +81,15 @@ const TransferPage = ( props: TransferPageProps ) => {
 			{
 				// translators: Internet domains, e.g. mygroovydomain.com
 				label: __( 'Domains' ),
-				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+				href: domainManagementList(
+					selectedSite?.slug,
+					selectedDomainName,
+					selectedSite?.options?.is_domain_only
+				),
 			},
 			{
 				label: selectedDomainName,
-				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
 				// translators: Verb - Transfer a domain somewhere else
@@ -99,7 +103,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 				__( 'Back to %s' ),
 				selectedDomainName
 			),
-			href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+			href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
@@ -118,7 +122,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 				<ActionCard
 					key="transfer-to-another-user"
 					buttonHref={ domainManagementTransferToAnotherUser(
-						selectedSite.slug,
+						selectedSite?.slug,
 						selectedDomainName,
 						currentRoute
 					) }
@@ -152,7 +156,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 			<ActionCard
 				key="transfer-to-another-site"
 				buttonHref={ domainManagementTransferToOtherSite(
-					selectedSite.slug,
+					selectedSite?.slug,
 					selectedDomainName,
 					currentRoute
 				) }
