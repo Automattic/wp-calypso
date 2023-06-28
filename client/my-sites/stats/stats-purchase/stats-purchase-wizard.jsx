@@ -18,7 +18,7 @@ const FLAT_COMMERTIAL_PRICE = 10;
 const CommercialPurchase = () => {
 	return (
 		<div>
-			<p>Notice...</p>
+			{ /* TODO: Add notice */ }
 
 			<p>${ `${ FLAT_COMMERTIAL_PRICE }` }/month</p>
 
