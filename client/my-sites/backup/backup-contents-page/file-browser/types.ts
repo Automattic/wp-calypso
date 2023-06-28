@@ -21,6 +21,7 @@ export interface FileBrowserItem {
 	hasChildren: boolean;
 	period?: string;
 	sort?: number;
+	rowCount?: number;
 	children?: FileBrowserItem[];
 	extensionVersion?: string;
 }
@@ -39,6 +40,7 @@ export interface BackupLsResponseContents {
 		sort?: number;
 		manifest_path?: string;
 		label?: string;
+		row_count?: number;
 		extension_version?: string;
 	};
 }

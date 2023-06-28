@@ -44,6 +44,8 @@ import ReaderSidebarTags from './reader-sidebar-tags';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
 
+const isSubscriptionManagerEnabled = isEnabled( 'reader/subscription-management' );
+
 export class ReaderSidebar extends Component {
 	state = {};
 
@@ -160,6 +162,16 @@ export class ReaderSidebar extends Component {
 
 				<SidebarSeparator />
 
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
+						'sidebar-streams__following': true,
+					} ) }
+					label={ isSubscriptionManagerEnabled ? translate( 'Latest' ) : translate( 'Following' ) }
+					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+					customIcon={ <ReaderFollowingIcon /> }
+					link="/read"
+				/>
+
 				{ isDiscoverEnabled() && (
 					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
@@ -171,16 +183,6 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 				) }
-
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
-						'sidebar-streams__following': true,
-					} ) }
-					label={ translate( 'Following' ) }
-					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
-					customIcon={ <ReaderFollowingIcon /> }
-					link="/read"
-				/>
 
 				<SidebarItem
 					label={ translate( 'Likes' ) }

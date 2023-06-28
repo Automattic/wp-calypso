@@ -132,7 +132,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 	}, [ canGoToNextDate, dispatch, onDateChange, nextDate ] );
 
 	const goToCalendarDate = useCallback(
-		( selectedDate ) => {
+		( selectedDate: Moment ) => {
 			if ( ! canGoToDate( selectedDate ) ) {
 				return false;
 			}

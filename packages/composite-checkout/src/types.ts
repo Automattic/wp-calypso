@@ -282,6 +282,7 @@ export interface LineItemsState {
 export interface LineItemsProviderProps {
 	items: LineItem[];
 	total: LineItem;
+	children?: React.ReactNode;
 }
 
 export type StepIdMap = Record< string, number >;

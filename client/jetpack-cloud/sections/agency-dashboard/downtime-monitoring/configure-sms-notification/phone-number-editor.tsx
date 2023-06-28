@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useContext, useEffect, useMemo } from 'react';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
@@ -11,12 +12,13 @@ import getCountries from 'calypso/state/selectors/get-countries';
 import DashboardModalForm from '../../dashboard-modal-form';
 import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
+import ContactListItem from '../contact-list/item';
 import {
 	useRequestVerificationCode,
 	useValidateVerificationCode,
+	useResendVerificationCode,
 	useContactModalTitleAndSubtitle,
 } from '../hooks';
-import SMSItemContent from './sms-item-content';
 import type {
 	StateMonitorSettingsSMS,
 	Site,
@@ -32,6 +34,7 @@ interface Props {
 	setVerifiedPhoneNumber: ( item: string ) => void;
 	isRemoveAction?: boolean;
 	sites: Array< Site >;
+	recordEvent: ( action: string, params?: object ) => void;
 }
 
 interface FormPhoneInputChangeResult {
@@ -52,11 +55,13 @@ export default function PhoneNumberEditor( {
 	setAllPhoneItems,
 	setVerifiedPhoneNumber,
 	sites,
+	recordEvent,
 }: Props ) {
 	const translate = useTranslate();
 
 	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ?? [] );
 
+	const [ resendCodeClicked, setResendCodeClicked ] = useState< boolean >( false );
 	const [ helpText, setHelpText ] = useState< TranslateResult | undefined >( undefined );
 	const [ showCodeVerification, setShowCodeVerification ] = useState< boolean >( false );
 	const [ validationStatus, setValidationStatus ] = useState< {
@@ -85,8 +90,9 @@ export default function PhoneNumberEditor( {
 
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyPhoneNumber = useValidateVerificationCode();
+	const resendCode = useResendVerificationCode();
 
-	const { title, subtitle } = useContactModalTitleAndSubtitle( 'phone', selectedAction );
+	const { title, subtitle } = useContactModalTitleAndSubtitle( 'sms', selectedAction );
 
 	const handleSetPhoneItems = useCallback(
 		( isVerified = true ) => {
@@ -108,30 +114,74 @@ export default function PhoneNumberEditor( {
 		[ allPhoneItems, phoneItem, setAllPhoneItems, toggleModal ]
 	);
 
+	// Function to handle resending verification code
+	const handleResendCode = useCallback( () => {
+		if ( phoneItem.phoneNumberFull ) {
+			setValidationError( undefined );
+			resendCode.mutate( { type: 'sms', value: phoneItem.phoneNumberFull } );
+		}
+		// Disabled because we don't want to re-run this effect when resendCode changes
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ phoneItem.phoneNumberFull ] );
+
 	// Function to handle resend code button click
 	const handleResendCodeClick = useCallback( () => {
 		setHelpText( undefined );
+		setResendCodeClicked( true );
+		handleResendCode();
 		setPhoneItem( { ...phoneItem, verificationCode: undefined } );
-		// TODO: Make API call to resend verification code
-	}, [ phoneItem ] );
+		recordEvent( 'downtime_monitoring_resend_sms_verification_code' );
+	}, [ phoneItem, handleResendCode, recordEvent ] );
 
 	const translationArgs = useMemo(
 		() => ( {
 			components: {
 				button: (
 					<Button
-						className="configure-contact__resend-code-button"
+						className={ classNames( 'configure-contact__resend-code-button', {
+							'is-loading': resendCode.isLoading,
+						} ) }
 						borderless
 						onClick={ handleResendCodeClick }
+						disabled={ resendCode.isLoading }
 					/>
 				),
 			},
 		} ),
-		[ handleResendCodeClick ]
+		[ handleResendCodeClick, resendCode.isLoading ]
 	);
+
+	// Set help text when resend code is successful and resend button is clicked
+	useEffect( () => {
+		if ( resendCodeClicked && resendCode.isSuccess ) {
+			setHelpText(
+				<>
+					<div>{ translate( 'We just sent you a new code. Please wait for a minute.' ) }</div>
+					<div>
+						{ translate(
+							'Click to {{button}}resend{{/button}} if you didn’t receive it. If you still experience issues, please reach out to our support.',
+							translationArgs
+						) }
+					</div>
+				</>
+			);
+		}
+	}, [ resendCodeClicked, resendCode.isSuccess, translate, translationArgs ] );
+
+	// Show error message when resend code fails
+	useEffect( () => {
+		if ( resendCode.isError ) {
+			setValidationError( {
+				verificationCode: translate(
+					'Something went wrong. Please try again by clicking the resend button.'
+				),
+			} );
+		}
+	}, [ resendCode.isError, translate ] );
 
 	// Function to handle request verification code
 	const handleRequestVerificationCode = () => {
+		recordEvent( 'downtime_monitoring_request_sms_verification_code' );
 		requestVerificationCode.mutate( {
 			type: 'sms',
 			value: `${ phoneItem.countryNumericCode }${ phoneItem.phoneNumber }`,
@@ -142,13 +192,13 @@ export default function PhoneNumberEditor( {
 		} );
 	};
 
-	// Trigger resend code when user chooses to verify email action
+	// Trigger resend code when user chooses to verify phone number action
 	useEffect( () => {
 		if ( isVerifyAction ) {
 			setShowCodeVerification( true );
-			// TODO: call resend verification code API
+			handleResendCode();
 		}
-	}, [ isVerifyAction ] );
+	}, [ handleResendCode, isVerifyAction ] );
 
 	// Show code input when verification code request is successful
 	useEffect( () => {
@@ -168,6 +218,7 @@ export default function PhoneNumberEditor( {
 
 	// Add phone item to the list if the phone number is already verified
 	const handleAddVerifiedPhoneNumber = () => {
+		recordEvent( 'downtime_monitoring_phone_number_already_verified' );
 		handleSetPhoneItems();
 		setVerifiedPhoneNumber( phoneItem.phoneNumberFull );
 	};
@@ -175,6 +226,7 @@ export default function PhoneNumberEditor( {
 	// Verify phone number when user clicks on Verify button
 	const handleVerifyPhoneNumber = () => {
 		setHelpText( undefined );
+		recordEvent( 'downtime_monitoring_verify_phone_number' );
 		if ( phoneItem?.verificationCode ) {
 			verifyPhoneNumber.mutate( {
 				type: 'sms',
@@ -228,12 +280,13 @@ export default function PhoneNumberEditor( {
 
 	// Save unverified phone number to the list when user clicks on Later button
 	function onSaveLater() {
+		recordEvent( 'downtime_monitoring_verify_phone_number_later' );
 		handleSetPhoneItems( false );
 	}
 
 	// Remove phone item when user confirms to remove the phone number
 	const handleRemove = () => {
-		//TODO: add tracks event
+		recordEvent( 'downtime_monitoring_remove_phone_number' );
 		const phoneItems = [ ...allPhoneItems ];
 		const phoneItemIndex = phoneItems.findIndex(
 			( item ) => item.phoneNumberFull === phoneItem.phoneNumberFull
@@ -272,7 +325,7 @@ export default function PhoneNumberEditor( {
 	};
 
 	const handleChange = useCallback(
-		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		( key: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setPhoneItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
 		},
 		[]
@@ -338,7 +391,7 @@ export default function PhoneNumberEditor( {
 			{ isRemoveAction ? (
 				selectedPhone && (
 					<div className="margin-top-16">
-						<SMSItemContent isRemoveAction item={ selectedPhone } />
+						<ContactListItem type="sms" item={ selectedPhone } />
 					</div>
 				)
 			) : (
@@ -401,10 +454,12 @@ export default function PhoneNumberEditor( {
 							) }
 							<div className="configure-contact__help-text" id="code-help-text">
 								{ helpText ??
-									translate(
-										'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
-										translationArgs
-									) }
+									( resendCodeClicked && resendCode.isLoading
+										? translate( 'Sending code' )
+										: translate(
+												'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
+												translationArgs
+										  ) ) }
 							</div>
 						</FormFieldset>
 					) }

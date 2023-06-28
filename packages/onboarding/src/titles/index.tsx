@@ -7,6 +7,7 @@ type AllowedTagNames = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p';
 interface TitlesProps {
 	className?: string;
 	tagName?: AllowedTagNames;
+	children?: string | React.ReactNode;
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

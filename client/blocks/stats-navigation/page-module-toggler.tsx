@@ -29,10 +29,12 @@ export default function PageModuleToggler( {
 	const translate = useTranslate();
 
 	// Use state to update the ref of the setting action button to avoid null element.
-	const [ settingsActionRef, setSettingsActionRef ] = useState( useRef( null ) );
+	const [ settingsActionRef, setSettingsActionRef ] = useState(
+		useRef< HTMLButtonElement >( null )
+	);
 	const [ isSettingsMenuVisible, setIsSettingsMenuVisible ] = useState( false );
 
-	const buttonRefCallback = useCallback( ( node ) => {
+	const buttonRefCallback = useCallback( ( node: HTMLButtonElement ) => {
 		if ( settingsActionRef.current === null ) {
 			setSettingsActionRef( { current: node } );
 		}

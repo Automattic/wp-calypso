@@ -9,13 +9,13 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import DashboardModalForm from '../../dashboard-modal-form';
 import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
+import ContactListItem from '../contact-list/item';
 import {
 	useRequestVerificationCode,
 	useValidateVerificationCode,
 	useResendVerificationCode,
 	useContactModalTitleAndSubtitle,
 } from '../hooks';
-import EmailItemContent from './email-item-content';
 import type {
 	AllowedMonitorContactActions,
 	StateMonitorSettingsEmail,
@@ -306,7 +306,7 @@ export default function EmailAddressEditor( {
 	}
 
 	const handleChange = useCallback(
-		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		( key: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setEmailItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
 		},
 		[]
@@ -326,7 +326,7 @@ export default function EmailAddressEditor( {
 			{ isRemoveAction ? (
 				selectedEmail && (
 					<div className="margin-top-16">
-						<EmailItemContent isRemoveAction item={ selectedEmail } />
+						<ContactListItem type="email" item={ selectedEmail } />
 					</div>
 				)
 			) : (

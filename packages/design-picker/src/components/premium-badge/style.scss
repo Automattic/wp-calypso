@@ -12,6 +12,14 @@
 	background: var(--studio-black);
 	z-index: 1;
 
+	&--is-clickable {
+		cursor: pointer;
+
+		.accessible-focus &:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+	}
+
 	.design-picker .design-picker__option-meta & {
 		min-height: 0;
 	}

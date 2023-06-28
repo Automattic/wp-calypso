@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { SiteSubscriptionsSortBy } from '../../constants';
@@ -54,7 +54,7 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 			total_subscriptions: 6,
 		} );
 
-		const { result, waitFor } = renderHook( () => useSiteSubscriptionsQuery( { number: 2 } ), {
+		const { result } = renderHook( () => useSiteSubscriptionsQuery( { number: 2 } ), {
 			wrapper,
 		} );
 
@@ -75,10 +75,9 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 			total_subscriptions: 2,
 		} );
 
-		const { result, waitFor } = renderHook(
-			() => useSiteSubscriptionsQuery( { searchTerm: 'Site 1' } ),
-			{ wrapper }
-		);
+		const { result } = renderHook( () => useSiteSubscriptionsQuery( { searchTerm: 'Site 1' } ), {
+			wrapper,
+		} );
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 
@@ -141,7 +140,7 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 			total_subscriptions: 3,
 		} );
 
-		const { result, waitFor } = renderHook( () => useSiteSubscriptionsQuery( { sortTerm } ), {
+		const { result } = renderHook( () => useSiteSubscriptionsQuery( { sortTerm } ), {
 			wrapper,
 		} );
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useRecordPaged } from '../tracks';
 
 const usePagination = (
 	page: number,
@@ -6,7 +7,12 @@ const usePagination = (
 	isFetching: boolean
 ) => {
 	const [ currentPage, setCurrentPage ] = useState( page );
-	const pageClickCallback = ( page: number ) => setCurrentPage( page );
+	const recordPaged = useRecordPaged();
+	const pageClickCallback = ( page: number ) => {
+		recordPaged( { page } );
+		setCurrentPage( page );
+	};
+
 	useEffect( () => {
 		if ( ! isFetching && currentPage !== page ) {
 			pageChanged( currentPage );

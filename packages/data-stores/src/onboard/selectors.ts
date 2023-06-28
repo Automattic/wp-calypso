@@ -1,7 +1,29 @@
+import { BulkDomainTransferData } from './types';
 import type { State } from './reducer';
 export const getAnchorPodcastId = ( state: State ) => state.anchorPodcastId;
 export const getAnchorEpisodeId = ( state: State ) => state.anchorEpisodeId;
 export const getAnchorSpotifyUrl = ( state: State ) => state.anchorSpotifyUrl;
+/**
+ * Merge persisted domain names with unpersisted auth codes.
+ * We don't want to persist auth codes due to their sensitive nature.
+ *
+ * @param state
+ * @returns
+ */
+export const getBulkDomainsData = ( state: State ) => {
+	if ( ! state.bulkDomainNames ) {
+		return undefined;
+	}
+	const bulkDomainTransferData: BulkDomainTransferData = {};
+	for ( const key in state.bulkDomainNames ) {
+		bulkDomainTransferData[ key ] = {
+			domain: state.bulkDomainNames[ key ],
+			auth: state.bulkDomainAuthCodes?.[ key ].auth ?? '',
+			valid: state.bulkDomainAuthCodes?.[ key ].valid ?? false,
+		};
+	}
+	return bulkDomainTransferData;
+};
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;
 export const getPlanCartItem = ( state: State ) => state.planCartItem;

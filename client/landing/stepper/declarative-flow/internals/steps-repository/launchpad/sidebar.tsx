@@ -29,6 +29,7 @@ type SidebarProps = {
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
 	flow: string | null;
+	hideNavigation: boolean | null;
 };
 
 function getUrlInfo( url: string ) {
@@ -42,7 +43,15 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: SidebarProps ) => {
+const Sidebar = ( {
+	sidebarDomain,
+	siteSlug,
+	submit,
+	goNext,
+	goToStep,
+	flow,
+	hideNavigation,
+}: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	let showClipboardButton = false;
@@ -72,9 +81,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const { getPlanCartItem } = useSelect(
+	const { getPlanCartItem, getDomainCartItem } = useSelect(
 		( select ) => ( {
 			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
+			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
 		} ),
 		[]
 	);
@@ -91,7 +101,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			flow,
 			isEmailVerified,
 			checklistStatuses,
-			getPlanCartItem()?.product_slug ?? null
+			getPlanCartItem(),
+			getDomainCartItem()
 		);
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
@@ -216,17 +227,19 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 					makeLastTaskPrimaryAction={ true }
 				/>
 			</div>
-			<div className="launchpad__sidebar-admin-link">
-				<StepNavigationLink
-					direction="forward"
-					handleClick={ () => {
-						recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
-						goNext?.();
-					} }
-					label={ translate( 'Skip to dashboard' ) }
-					borderless={ true }
-				/>
-			</div>
+			{ ! hideNavigation && (
+				<div className="launchpad__sidebar-admin-link">
+					<StepNavigationLink
+						direction="forward"
+						handleClick={ () => {
+							recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
+							goNext?.();
+						} }
+						label={ translate( 'Skip to dashboard' ) }
+						borderless={ true }
+					/>
+				</div>
+			) }
 		</div>
 	);
 };

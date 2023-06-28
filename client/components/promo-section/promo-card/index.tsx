@@ -33,6 +33,7 @@ export interface Props {
 	isPrimary?: boolean;
 	badge?: string | ReactElement;
 	className?: string;
+	children?: React.ReactNode;
 }
 
 const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnProperty( 'path' );

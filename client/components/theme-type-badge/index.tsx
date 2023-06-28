@@ -65,6 +65,8 @@ const ThemeTypeBadge = ( {
 			/>
 		),
 		tooltipPosition: 'top',
+		focusOnShow: false,
+		isClickable: true,
 	};
 
 	let badgeContent;

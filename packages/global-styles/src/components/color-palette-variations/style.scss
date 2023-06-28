@@ -21,7 +21,7 @@
 	font-size: $font-body-small;
 	font-weight: 500;
 	letter-spacing: -0.15px;
-	line-height: 1.4;
+	line-height: 1.7;
 }
 
 .global-styles-variation__item {
@@ -62,4 +62,8 @@
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
+}
+
+.global-styles-variation__item-preview {
+	padding: 1px;
 }

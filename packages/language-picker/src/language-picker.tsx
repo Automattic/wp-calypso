@@ -26,6 +26,7 @@ const Flex = WpFlex as ComponentType< {
 	direction?: string;
 	expanded?: boolean;
 	justify?: string;
+	children?: ReactNode;
 } >;
 
 type Props< TLanguage extends Language > = {

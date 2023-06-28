@@ -58,7 +58,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
 			! isWpcomStagingSite &&
 			! ( site?.options?.is_domain_only ?? false ) &&
-			site.ID !== this.props.selectedSite.ID
+			site.ID !== this.props.selectedSite?.ID
 		);
 	};
 
@@ -89,7 +89,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		this.setState( { disableDialogButtons: true } );
 		wpcom.req
 			.post(
-				`/sites/${ selectedSite.ID }/domains/${ selectedDomainName }/transfer-to-site/${ targetSite.ID }`
+				`/sites/${ selectedSite?.ID }/domains/${ selectedDomainName }/transfer-to-site/${ targetSite.ID }`
 			)
 			.then(
 				() => {
@@ -99,7 +99,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 						const transferedTo = this.props.sites.find( ( site ) => site.ID === targetSite.ID );
 						page( domainManagementList( transferedTo?.slug ?? '' ) );
 					} else {
-						page( domainManagementList( this.props.selectedSite.slug ) );
+						page( domainManagementList( this.props.selectedSite?.slug ) );
 					}
 				},
 				( error: Error ) => {
@@ -127,7 +127,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 
 	render() {
 		const { selectedSite, selectedDomainName, currentRoute, translate } = this.props;
-		const { slug } = selectedSite;
+		const slug = selectedSite?.slug;
 		const componentClassName = 'transfer-domain-to-other-site';
 		if ( ! this.isDataReady() ) {
 			return (
@@ -165,22 +165,26 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const items = [
 			{
 				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+				href: domainManagementList(
+					selectedSite?.slug,
+					selectedDomainName,
+					selectedSite?.options?.is_domain_only
+				),
 			},
 			{
 				label: selectedDomainName,
-				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
 				label: translate( 'Transfer' ),
-				href: domainManagementTransfer( selectedSite.slug, selectedDomainName, currentRoute ),
+				href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{ label: translate( 'To another WordPress.com site' ) },
 		];
 
 		const mobileItem = {
 			label: translate( 'Back to Transfer' ),
-			href: domainManagementTransfer( selectedSite.slug, selectedDomainName, currentRoute ),
+			href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 

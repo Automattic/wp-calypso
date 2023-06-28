@@ -328,8 +328,10 @@ export type MonitorSettingsContact = Partial< MonitorSettingsEmail > &
 
 export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
 
+export type AllowedMonitorContactTypes = 'email' | 'sms';
+
 export interface RequestVerificationCodeParams {
-	type: 'email' | 'sms';
+	type: AllowedMonitorContactTypes;
 	value: string;
 	site_ids: Array< number >;
 	// For SMS contacts
@@ -339,7 +341,7 @@ export interface RequestVerificationCodeParams {
 }
 
 export interface ValidateVerificationCodeParams {
-	type: 'email' | 'sms';
+	type: AllowedMonitorContactTypes;
 	value: string;
 	verification_code: number;
 }
@@ -360,6 +362,6 @@ export interface InitialMonitorSettings {
 	phoneContacts?: StateMonitorSettingsSMS[] | [];
 }
 export interface ResendVerificationCodeParams {
-	type: 'email';
+	type: 'email' | 'sms';
 	value: string;
 }
