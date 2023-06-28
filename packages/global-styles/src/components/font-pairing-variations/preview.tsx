@@ -97,12 +97,12 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 									overflow: 'hidden',
 								} }
 							>
-								<VStack spacing={ 1 } style={ { margin: '12px', width: '100%' } }>
+								<VStack spacing={ 1 } style={ { margin: '10px', width: '100%' } }>
 									<div
 										aria-label={ headingFontFamilyName }
 										style={ {
 											...DEFAULT_FONT_STYLES,
-											fontSize: '18px',
+											fontSize: '13.5vw', // 18px for min-width wide breakpoint
 											lineHeight: '22px',
 											letterSpacing: headingLetterSpacing,
 											fontWeight: headingFontWeight,
