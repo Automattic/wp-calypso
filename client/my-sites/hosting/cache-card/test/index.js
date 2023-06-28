@@ -172,7 +172,7 @@ describe( 'CacheCard component', () => {
 		expect( screen.queryByRole( 'checkbox' ) ).toBeFalsy();
 	} );
 
-	it( 'shows the Clear Cache button regradless of the feature status', () => {
+	it( 'shows the Clear Cache button regardless of the feature status', () => {
 		// The loading is true in case the feature is disabled
 		useEdgeCacheQuery.mockReturnValue( { data: true, isLoading: true } );
 		useClearEdgeCacheMutation.mockReturnValue( {
