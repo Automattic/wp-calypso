@@ -152,6 +152,11 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				let contextIndex = 1;
 
 				const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
+				const datetime = new Date()
+					.toISOString()
+					.replace( /T/, '_' )
+					.replace( /\..+/, '' )
+					.replace( /:/g, '-' );
 
 				for await ( const context of contexts ) {
 					let pageIndex = 1;
@@ -164,7 +169,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 					await context.tracing.stop( { path: traceFilePath } );
 
 					for await ( const page of context.pages() ) {
-						const pageName = `${ artifactFilename }__${ contextIndex }-${ pageIndex }`;
+						const pageName = `${ artifactFilename }__${ datetime }__${ contextIndex }-${ pageIndex }`;
 						// Define artifact filename.
 						const mediaFilePath = path.join( this.testArtifactsPath, pageName );
 
