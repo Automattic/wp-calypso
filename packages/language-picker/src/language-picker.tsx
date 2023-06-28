@@ -166,7 +166,11 @@ function LanguagePicker< TLanguage extends Language >( {
 					hideLabelFromVision
 					value={ selectControlOptions.find( ( option ) => option.key === filter ) }
 					options={ selectControlOptions }
-					onChange={ ( { selectedItem } ) => selectedItem && setFilter( selectedItem.key ) }
+					onChange={ ( {
+						selectedItem,
+					}: {
+						selectedItem: ( typeof selectControlOptions )[ number ];
+					} ) => selectedItem && setFilter( selectedItem.key ) }
 				/>
 				<div className="language-picker-component__search-mobile">
 					<Search
