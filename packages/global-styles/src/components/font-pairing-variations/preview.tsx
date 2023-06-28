@@ -15,6 +15,7 @@ import FontFamiliesLoader from './font-families-loader';
 import type { FontFamily } from '../../types';
 
 const DEFAULT_FONT_STYLES: React.CSSProperties = {
+	fontSize: '13.5vw', // 18px for min-width wide breakpoint and 15px for max-width wide
 	textAlign: 'center',
 	color: '#000000',
 };
@@ -102,7 +103,6 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 										aria-label={ headingFontFamilyName }
 										style={ {
 											...DEFAULT_FONT_STYLES,
-											fontSize: '13.5vw', // 18px for min-width wide breakpoint
 											lineHeight: '22px',
 											letterSpacing: headingLetterSpacing,
 											fontWeight: headingFontWeight,
@@ -141,13 +141,12 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 							>
 								<div
 									style={ {
+										...DEFAULT_FONT_STYLES,
+										lineHeight: '1em',
+										letterSpacing: textLetterSpacing,
+										fontWeight: textFontWeight,
 										fontFamily: textFontFamily,
 										fontStyle: textFontStyle,
-										color: '#000000',
-										fontSize: '16px',
-										fontWeight: textFontWeight,
-										lineHeight: '1em',
-										textAlign: 'center',
 									} }
 								>
 									{ translate( 'Default' ) }
