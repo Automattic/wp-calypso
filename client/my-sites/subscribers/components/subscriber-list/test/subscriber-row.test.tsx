@@ -68,7 +68,7 @@ describe( 'SubscriberRow', () => {
 		const ellipsisButton = screen.getByRole( 'button', { name: /open subscriber menu/i } );
 		fireEvent.click( ellipsisButton );
 
-		const unsubscribeButton = await screen.findByRole( 'menuitem', { name: /unsubscribe/i } );
+		const unsubscribeButton = await screen.findByRole( 'menuitem', { name: /remove/i } );
 		fireEvent.click( unsubscribeButton );
 
 		expect( mockOnUnsubscribe ).toHaveBeenCalledWith( commonProps.subscriber );
