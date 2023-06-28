@@ -155,6 +155,7 @@
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
+		"stats/paid-stats": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": false,
 		"subscriber-csv-upload": true,
