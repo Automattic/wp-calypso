@@ -21,5 +21,6 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 		staleTime: 5 * 60 * 1000,
 		keepPreviousData: true,
 		...queryOptions,
+		retry: false,
 	} );
 }
