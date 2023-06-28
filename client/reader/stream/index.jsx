@@ -504,6 +504,7 @@ class ReaderStream extends Component {
 				);
 			}
 
+			// Exclude the sidebar layout when there's a search query, since it's handled by `<SiteResults>`.
 			if ( ! sidebarContent || streamType === 'search' ) {
 				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {
