@@ -449,7 +449,7 @@ class Login extends Component {
 			}
 		} else if ( isWooCoreProfilerFlow ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow;
-			const isTwoFactorAuthnFlow = this.props.twoFactorEnabled;
+			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
 
 			let subtitle = null;
 
@@ -460,7 +460,7 @@ class Login extends Component {
 						"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
 					);
 					break;
-				case isTwoFactorAuthnFlow:
+				case isTwoFactorAuthFlow:
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
 					break;
 				default:
