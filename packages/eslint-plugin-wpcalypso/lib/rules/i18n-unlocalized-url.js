@@ -14,25 +14,25 @@ const LOCALIZABLE_URLS = [
 	/^(https?:)?\/\/apps\.wordpress\.com/i,
 
 	// automattic.com/cookies/
-	/^(https?:)?\/\/automattic\.com\/cookies\/?$/i,
+	/^(https?:)?\/\/automattic\.com\/cookies\/?((#|\?).*)?$/i,
 
 	// automattic.com/privacy/
-	/^(https?:)?\/\/automattic\.com\/privacy\/?$/i,
+	/^(https?:)?\/\/automattic\.com\/privacy\/?((#|\?).*)?$/i,
 
 	// wordpress.com/tos/
-	/^(https?:)?\/\/wordpress\.com\/tos\/?$/i,
+	/^(https?:)?\/\/wordpress\.com\/tos\/?((#|\?).*)?$/i,
 
 	// wordpress.com/blog/
-	/^(https?:)?\/\/wordpress\.com\/blog\/?$/i,
+	/^(https?:)?\/\/wordpress\.com\/blog\/?((#|\?).*)?$/i,
 
 	// wordpress.com/forums/
-	/^(https?:)?\/\/wordpress\.com\/forums\/?$/i,
+	/^(https?:)?\/\/wordpress\.com\/forums\/?((#|\?).*)?$/i,
 
 	// wordpress.com/go/**
-	/^(https?:)?\/\/wordpress\.com\/go($|\/.*)/i,
+	/^(https?:)?\/\/wordpress\.com\/go($|(\/|\?|#).*)/i,
 
 	// wordpress.com/support/**
-	/^(https?:)?\/\/wordpress\.com\/support($|\/.*)/i,
+	/^(https?:)?\/\/wordpress\.com\/support($|(\/|\?|#).*)/i,
 ];
 
 //------------------------------------------------------------------------------

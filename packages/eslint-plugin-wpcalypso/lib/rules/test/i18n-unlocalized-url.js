@@ -17,29 +17,28 @@ const rule = require( '../i18n-unlocalized-url' );
 //------------------------------------------------------------------------------
 
 const localizableUrls = [
-	'https://apps.wordpress.com/',
 	'https://apps.wordpress.com',
-	'https://apps.wordpress.com/mobile/',
 	'https://apps.wordpress.com/mobile',
-	'https://automattic.com/cookies/',
 	'https://automattic.com/cookies',
-	'https://automattic.com/privacy/',
 	'https://automattic.com/privacy',
-	'https://wordpress.com/tos/',
 	'https://wordpress.com/tos',
-	'https://wordpress.com/blog/',
 	'https://wordpress.com/blog',
-	'https://wordpress.com/forums/',
 	'https://wordpress.com/forums',
-	'https://wordpress.com/go/',
 	'https://wordpress.com/go',
-	'https://wordpress.com/go/some-page/',
 	'https://wordpress.com/go/some-page',
-	'https://wordpress.com/support/',
 	'https://wordpress.com/support',
-	'https://wordpress.com/support/some-article/',
 	'https://wordpress.com/support/some-article',
-];
+].reduce( ( urls, url ) => {
+	// For each individual localizable URL, add the original URL and variants with trailing slash, hash and query string.
+	return urls.concat( [
+		url,
+		`${ url }/`,
+		`${ url }#hash`,
+		`${ url }/#hash`,
+		`${ url }?query-string`,
+		`${ url }/?query-string`,
+	] );
+}, [] );
 
 const nonLocalizableUrls = [
 	'https://example.com',
