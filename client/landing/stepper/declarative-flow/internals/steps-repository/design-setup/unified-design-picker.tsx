@@ -278,13 +278,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		[ site ]
 	);
 
-	const getBadge = ( {
-		themeId,
-		isLockedStyleVariation,
-	}: {
-		themeId: string;
-		isLockedStyleVariation: boolean;
-	} ) => (
+	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
 		<ThemeTypeBadge
 			canGoToCheckout={ false }
 			isLockedStyleVariation={ isLockedStyleVariation }

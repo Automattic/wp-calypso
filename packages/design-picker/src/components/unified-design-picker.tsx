@@ -136,13 +136,7 @@ interface DesignCardProps {
 	shouldLimitGlobalStyles?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	getBadge: ( {
-		themeId,
-		isLockedStyleVariation,
-	}: {
-		themeId: string;
-		isLockedStyleVariation: boolean;
-	} ) => React.ReactNode;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
@@ -178,10 +172,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					styleVariation={ selectedStyleVariation }
 				/>
 			}
-			badge={ getBadge( {
-				themeId: design.slug,
-				isLockedStyleVariation,
-			} ) }
+			badge={ getBadge( design.slug, isLockedStyleVariation ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
 			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
@@ -203,13 +194,7 @@ interface DesignPickerProps {
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: ( {
-		themeId,
-		isLockedStyleVariation,
-	}: {
-		themeId: string;
-		isLockedStyleVariation: boolean;
-	} ) => React.ReactNode;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -284,13 +269,7 @@ export interface UnifiedDesignPickerProps {
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: ( {
-		themeId,
-		isLockedStyleVariation,
-	}: {
-		themeId: string;
-		isLockedStyleVariation: boolean;
-	} ) => React.ReactNode;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
