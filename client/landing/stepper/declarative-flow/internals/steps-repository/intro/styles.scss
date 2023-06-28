@@ -35,6 +35,32 @@
 		}
 	}
 
+	&.newsletter {
+		.step-container {
+			background-color: var(--studio-gray-0);
+			background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-neutral.webp);
+
+			@include break-medium {
+				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-neutral.webp);
+			}
+		}
+		.intro__description {
+			max-width: 520px;
+		}
+		.intro__button::before {
+			content: " ";
+			height: 20px;
+			width: 20px;
+			background-image: url(calypso/assets/images/onboarding/newsletter-intro-button-icon.svg);
+			background-size: contain;
+			background-repeat: no-repeat;
+			display: inline-block;
+			position: relative;
+			padding-right: 4px;
+			top: 5px;
+		}
+	}
+
 	&.link-in-bio {
 		background-color: #d0cce3;
 
