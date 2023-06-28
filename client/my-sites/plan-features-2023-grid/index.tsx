@@ -50,7 +50,7 @@ import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-20
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlan, getPlanRawPrice, getPlanSlug } from 'calypso/state/plans/selectors';
+import { getPlan, getPlanRawPrice } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
@@ -1041,7 +1041,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			return {
 				availableForPurchase,
-				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ?? '' ),
+				cartItemForPlan: isWpcomEnterpriseGridPlan( plan ) ? null : getCartItemForPlan( plan ),
+				// TODO: derive currencyCode from planObject
 				currencyCode: getCurrentUserCurrencyCode( state ),
 				current: isCurrentPlan,
 				features: planFeaturesTransformed,
