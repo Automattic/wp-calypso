@@ -1,7 +1,5 @@
 import {
 	applyTestFiltersToPlansList,
-	findPlansKeys,
-	getPlan as getPlanFromKey,
 	getPlanClass,
 	isFreePlan,
 	isPersonalPlan,
@@ -9,7 +7,6 @@ import {
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
-	TERM_MONTHLY,
 	isBusinessPlan,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
@@ -104,7 +101,7 @@ export type PlanFeatures2023GridProps = {
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PlanSlug[];
-	visiblePlans: Array< string >;
+	visiblePlans: PlanSlug[];
 	flowName?: string | null;
 	domainName?: string;
 	placeholder?: string;
@@ -924,7 +921,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
 			const planObject = getPlan( state, planProductId );
-			const billingPeriod = planObject?.bill_period;
 			const isMonthlyPlan = isMonthly( plan );
 
 			if ( placeholder || ( ! planObject && plan !== PLAN_ENTERPRISE_GRID_WPCOM ) ) {
@@ -967,14 +963,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			const rawPrice = getPlanRawPrice( state, planProductId, true );
 
-			const monthlyPlanKey = findPlansKeys( {
-				group: planConstantObj.group,
-				term: TERM_MONTHLY,
-				type: planConstantObj.type,
-			} )[ 0 ];
-			const monthlyPlanProductId = getPlanFromKey( monthlyPlanKey )?.getProductId();
 			// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
-			const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId ?? 0, true );
 			const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
 			let planFeaturesTransformed: Array< TransformedFeatureObject > = [];
 			let jetpackFeaturesTransformed: Array< TransformedFeatureObject > = [];
@@ -1036,29 +1025,26 @@ const ConnectedPlanFeatures2023Grid = connect(
 				[];
 			const availableForPurchase =
 				isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
-			const isCurrentPlan = currentSitePlanSlug === plan;
-			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
 
 			return {
 				availableForPurchase,
 				cartItemForPlan: isWpcomEnterpriseGridPlan( plan ) ? null : getCartItemForPlan( plan ),
 				// TODO: derive currencyCode from planObject
 				currencyCode: getCurrentUserCurrencyCode( state ),
-				current: isCurrentPlan,
+				current: currentSitePlanSlug === plan,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
 				isPlaceholder,
-				isVisible,
+				isVisible: visiblePlans?.indexOf( plan ) !== -1,
 				planConstantObj,
 				planName: plan,
 				// TODO: snake_case?
 				product_name_short,
 				rawPrice,
-				rawPriceForMonthlyPlan,
 				isMonthlyPlan,
 				tagline,
 				storageOptions,
-				billingPeriod,
+				billingPeriod: planObject?.bill_period,
 			};
 		} );
 

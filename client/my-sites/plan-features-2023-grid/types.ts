@@ -20,7 +20,6 @@ export type PlanProperties = {
 	planName: PlanSlug;
 	product_name_short: string;
 	rawPrice: number | null;
-	rawPriceForMonthlyPlan: number | null;
 	isMonthlyPlan: boolean;
 	tagline: string;
 	storageOptions: string[];
