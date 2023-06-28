@@ -24,7 +24,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class Theme extends Component {
+export class Theme extends Component {
 	static propTypes = {
 		theme: PropTypes.shape( {
 			// Theme ID (theme-slug)
