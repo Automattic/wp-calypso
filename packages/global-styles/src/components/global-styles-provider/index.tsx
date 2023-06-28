@@ -3,11 +3,11 @@ import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-br
 import { useGetGlobalStylesBaseConfig } from '../../hooks';
 import type { GlobalStylesObject } from '../../types';
 
-const cleanEmptyObject = ( object ) => {
+const cleanEmptyObject = < T, >( object: T ) => {
 	if ( object === null || typeof object !== 'object' || Array.isArray( object ) ) {
 		return object;
 	}
-	const cleanedNestedObjects = Object.fromEntries(
+	const cleanedNestedObjects: T = Object.fromEntries(
 		Object.entries( object )
 			.map( ( [ key, value ] ) => [ key, cleanEmptyObject( value ) ] )
 			.filter( ( [ , value ] ) => value !== undefined )
