@@ -10,14 +10,14 @@
 //------------------------------------------------------------------------------
 
 const LOCALIZABLE_URLS = [
-	'apps.wordpress.com',
-	'automattic.com/cookies(/|$)',
-	'automattic.com/privacy(/|$)',
-	'wordpress.com/blog(/|$)',
-	'wordpress.com/forums(/|$)',
-	'wordpress.com/go(/|$)',
-	'wordpress.com/support(/|$)',
-	'wordpress.com/tos(/|$)',
+	/^(https?:)?\/\/apps\.wordpress\.com/i,
+	/^(https?:)?\/\/automattic\.com\/cookies\/?$/i,
+	/^(https?:)?\/\/automattic\.com\/privacy\/?$/i,
+	/^(https?:)?\/\/wordpress\.com\/tos\/?$/i,
+	/^(https?:)?\/\/wordpress\.com\/blog\/?$/i,
+	/^(https?:)?\/\/wordpress\.com\/forums\/?$/i,
+	/^(https?:)?\/\/wordpress\.com\/go($|\/.*)/i,
+	/^(https?:)?\/\/wordpress\.com\/support($|\/.*)/i,
 ];
 
 //------------------------------------------------------------------------------
@@ -25,28 +25,6 @@ const LOCALIZABLE_URLS = [
 //------------------------------------------------------------------------------
 
 const getCallee = require( '../util/get-callee' );
-
-/**
- * Check whether the provided string is localizable string.
- *
- * @param   {string}  string String to be tested
- * @returns {boolean}
- */
-function isLocalizableUrlString( string ) {
-	return LOCALIZABLE_URLS.some( ( url ) =>
-		new RegExp( `^(https?:)?//${ url.replace( '.', '\\.' ) }`, 'i' ).test( string )
-	);
-}
-
-/**
- * Check whether the provided node type is variable declarator.
- *
- * @param   {string}  type Node type
- * @returns {boolean}
- */
-function isVariableDeclarationValue( type ) {
-	return type === 'VariableDeclarator';
-}
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -57,7 +35,7 @@ const rule = ( module.exports = function ( context ) {
 	const urlVariables = new Set();
 
 	/**
-	 * Check whether the node is unlocalized url.
+	 * Check whether the node is an unlocalized URL.
 	 *
 	 * @param   {Object} node
 	 * @param   {string} nodeValueString
@@ -70,12 +48,12 @@ const rule = ( module.exports = function ( context ) {
 		}
 
 		// Check whether the string value of the node is localizable string.
-		if ( ! isLocalizableUrlString( nodeValueString ) ) {
+		if ( ! LOCALIZABLE_URLS.some( ( url ) => url.test( nodeValueString ) ) ) {
 			return;
 		}
 
-		// Url string is assigned to a variable and variable is possibly later used in a localizeUrl call;
-		if ( isVariableDeclarationValue( node.parent.type ) ) {
+		// URL string is assigned to a variable and variable is possibly later used in a localizeUrl call;
+		if ( node.parent.type === 'VariableDeclarator' ) {
 			variableDeclarationValues.push( node );
 		} else {
 			// Report unlocalized url.
