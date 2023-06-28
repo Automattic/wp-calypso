@@ -46,7 +46,7 @@ const MarketplaceThankYou = ( {
 		pluginSubtitle,
 		pluginsProgressbarSteps,
 		isAtomicNeededForPlugins,
-		thankyouHeaderAction,
+		thankYouHeaderAction,
 	] = usePluginsThankYouData( pluginSlugs );
 	const [
 		themesSection,
@@ -156,7 +156,7 @@ const MarketplaceThankYou = ( {
 						showSupportSection={ false }
 						thankYouTitle={ title }
 						thankYouSubtitle={ subtitle }
-						thankYouHeaderAction={ thankyouHeaderAction }
+						thankYouHeaderBody={ thankYouHeaderAction }
 						headerBackgroundColor="#fff"
 						headerTextColor="#000"
 					/>

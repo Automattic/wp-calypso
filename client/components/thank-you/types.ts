@@ -52,7 +52,6 @@ export type ThankYouProps = {
 	thankYouSubtitle?: string | TranslateResult;
 	thankYouHeaderBody?: React.ReactElement | null;
 	thankYouNotice?: ThankYouNoticeProps;
-	thankYouHeaderAction: React.ReactElement | null;
 };
 
 export type ThankYouData = [

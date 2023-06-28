@@ -185,14 +185,14 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		[ siteId ]
 	);
 
-	const ThankyouHeaderActionButton = styled( Button )`
+	const ThankYouHeaderActionButton = styled( Button )`
 		border-radius: 4px;
 		margin-top: 20px;
 	`;
 
-	const thankyouHeaderAction =
+	const thankYouHeaderAction =
 		pluginsInformationList.length > 1 ? (
-			<ThankyouHeaderActionButton
+			<ThankYouHeaderActionButton
 				primary
 				href={ `https://${ siteSlug }/wp-admin/plugins.php` }
 				onClick={ () => {
@@ -200,7 +200,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 				} }
 			>
 				{ translate( 'Setup the plugins' ) }
-			</ThankyouHeaderActionButton>
+			</ThankYouHeaderActionButton>
 		) : null;
 
 	// Plugins are only installed in atomic sites
@@ -215,7 +215,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		subtitle,
 		thankyouSteps,
 		isAtomicNeeded,
-		thankyouHeaderAction,
+		thankYouHeaderAction,
 	];
 }
 
