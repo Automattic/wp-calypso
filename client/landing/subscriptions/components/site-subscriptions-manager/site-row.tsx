@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { Dispatch, RefObject, SetStateAction, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
@@ -29,16 +29,22 @@ import {
 	SubscriptionsPortal,
 } from '../subscription-manager-context';
 
-const getIcon = (
-	ref: RefObject< SVGSVGElement >,
-	setTooltipVisible: Dispatch< SetStateAction< boolean > >,
-	color: 'green' | 'red'
-) => (
+interface NotificationStatusProps {
+	tooltipRef: React.RefObject< SVGSVGElement >;
+	setTooltipVisible: React.Dispatch< React.SetStateAction< boolean > >;
+	notificationDisabled: boolean;
+}
+
+const NotificationStatus: React.FC< NotificationStatusProps > = ( {
+	tooltipRef,
+	setTooltipVisible,
+	notificationDisabled,
+} ) => (
 	<Gridicon
-		ref={ ref }
-		icon={ color === 'green' ? 'checkmark' : 'cross' }
+		ref={ tooltipRef }
+		icon={ notificationDisabled ? 'cross' : 'checkmark' }
 		size={ 16 }
-		className={ color }
+		className={ notificationDisabled ? 'red' : 'green' }
 		onMouseEnter={ () => setTooltipVisible( true ) }
 		onMouseLeave={ () => setTooltipVisible( false ) }
 	/>
@@ -211,16 +217,6 @@ const SiteRow = ( {
 		recordPostEmailsSetFrequency( { blog_id, delivery_frequency } );
 	};
 
-	const newColumnIcon = useMemo(
-		() =>
-			getIcon(
-				tooltip,
-				setTooltipVisible,
-				delivery_methods.email?.send_comments ? 'green' : 'red'
-			),
-		[ delivery_methods.email?.send_comments ]
-	);
-
 	return ! isDeleted ? (
 		<li className="row" role="row">
 			<span className="title-cell" role="cell">
@@ -284,7 +280,11 @@ const SiteRow = ( {
 			) }
 			{ isLoggedIn && (
 				<span className="new-comments-cell" role="cell">
-					{ newColumnIcon }
+					<NotificationStatus
+						tooltipRef={ tooltip }
+						setTooltipVisible={ setTooltipVisible }
+						notificationDisabled={ ! delivery_methods.email?.send_comments }
+					/>
 					<Tooltip
 						className="new-comments-tooltip"
 						isVisible={ isTooltipVisible }
