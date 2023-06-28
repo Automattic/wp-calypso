@@ -1040,7 +1040,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				isMonthlyPlan,
 				tagline,
 				storageOptions,
-				cartItemForPlan: isWpcomEnterpriseGridPlan( plan ) ? null : getCartItemForPlan( plan ),
+				cartItemForPlan: getCartItemForPlan( plan ),
 				current: currentSitePlanSlug === plan,
 				isVisible: visiblePlans?.indexOf( plan ) !== -1,
 				billingPeriod: planObject?.bill_period,
