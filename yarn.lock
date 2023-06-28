@@ -1423,7 +1423,6 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
-    "@types/wordpress__components": ^23.0.1
     "@wordpress/components": ^25.1.0
     "@wordpress/element": ^5.13.0
     "@wordpress/i18n": ^4.36.0
@@ -1770,7 +1769,6 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
     "@types/node": ^18.11.18
-    "@types/wordpress__plugins": ^3.0.0
     "@wordpress/a11y": ^3.36.0
     "@wordpress/api-fetch": ^6.33.0
     "@wordpress/base-styles": ^4.27.0
@@ -8233,13 +8231,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/tinycolor2@npm:*":
-  version: 1.4.2
-  resolution: "@types/tinycolor2@npm:1.4.2"
-  checksum: e4116cf95e6f7c4d024f5250ac13d357f1a5f1f9d2a3ee9cf1ff85c11012f611fa1aa4d75880cc7620ba61436b945f556e9d779b9c221f7f03d7219fe87417c9
-  languageName: node
-  linkType: hard
-
 "@types/totp-generator@npm:^0.0.3":
   version: 0.0.3
   resolution: "@types/totp-generator@npm:0.0.3"
@@ -8307,6 +8298,31 @@ __metadata:
   version: 1.16.3
   resolution: "@types/webpack-env@npm:1.16.3"
   checksum: 136ece45e58fbcb4d8e02fe7892213105d6874223a66209bccaf4a18ca78ab81a10d121ee9d0944904cfad1274ca730efc9643b9cd8444239f505676adee22a0
+  languageName: node
+  linkType: hard
+
+"@types/webpack-sources@npm:*":
+  version: 2.1.0
+  resolution: "@types/webpack-sources@npm:2.1.0"
+  dependencies:
+    "@types/node": "*"
+    "@types/source-list-map": "*"
+    source-map: ^0.7.3
+  checksum: 58a0be9bd45dc778b4c3a1529265bef5343476db0e01795bf6ad57e9722b0575aa5691ec58959fc1cfd001373d854f54574e16f89e5d17fc2c6cbdecc0b31b8d
+  languageName: node
+  linkType: hard
+
+"@types/webpack@npm:^4.4.31":
+  version: 4.41.30
+  resolution: "@types/webpack@npm:4.41.30"
+  dependencies:
+    "@types/node": "*"
+    "@types/tapable": ^1
+    "@types/uglify-js": "*"
+    "@types/webpack-sources": "*"
+    anymatch: ^3.0.0
+    source-map: ^0.6.0
+  checksum: 15d7a1778b9ee0dbd08ff30231d010feefe95d9821ca71d7c2afb309a253b69a73bc5a8157709984fc065c3885d2908179bcd79624f9d442a293570e55b3a381
   languageName: node
   linkType: hard
 
@@ -33223,8 +33239,6 @@ __metadata:
     "@types/uuid": ^8.3.4
     "@types/validator": ^13.7.1
     "@types/webpack-env": ^1.16.3
-    "@types/wordpress__components": ^23.0.1
-    "@types/wordpress__data-controls": ^2.30.0
     "@typescript-eslint/eslint-plugin": ^5.53.0
     "@typescript-eslint/parser": ^5.53.0
     "@wordpress/base-styles": ^4.27.0
