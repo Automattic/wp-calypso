@@ -20,11 +20,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import {
-	getCurrentPlan,
-	isSiteOnECommerceTrial,
-	isSiteOnWooExpress,
-} from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -79,7 +75,6 @@ export const UpsellNudge = ( {
 	tracksImpressionName,
 	tracksImpressionProperties,
 	displayAsLink,
-	isSiteWooExpressOrEcomFreeTrial,
 } ) => {
 	const shouldNotDisplay =
 		isVip ||
@@ -118,8 +113,7 @@ export const UpsellNudge = ( {
 		{ 'is-upgrade-business': plan && isBusinessPlan( plan ) },
 		{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
 		{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
-		{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
-		{ 'is-wooexpress-or-free-trial-plan': isSiteWooExpressOrEcomFreeTrial }
+		{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) }
 	);
 
 	if ( dismissPreferenceName && forceHref && href ) {
@@ -182,8 +176,6 @@ export default connect( ( state, ownProps ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isVip: isVipSite( state, siteId ),
-		isSiteWooExpressOrEcomFreeTrial:
-			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 		currentPlan: getCurrentPlan( state, siteId ),
 		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
