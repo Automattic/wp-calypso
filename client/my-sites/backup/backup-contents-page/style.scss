@@ -75,10 +75,6 @@
 				font-size: $font-body-small;
 			}
 
-			&__details {
-				padding-bottom: 16px;
-			}
-
 			@include break-mobile {
 				&__detail-group {
 					display: flex;
