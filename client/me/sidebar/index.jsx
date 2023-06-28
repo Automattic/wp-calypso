@@ -115,6 +115,15 @@ class MeSidebar extends Component {
 						/>
 
 						<SidebarItem
+							selected={ itemLinkMatches( '/domains', path ) }
+							link="/me/domains"
+							label={ translate( 'Domains' ) }
+							materialIcon="settings"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="domains"
+						/>
+
+						<SidebarItem
 							selected={ itemLinkMatches( '/privacy', path ) }
 							link="/me/privacy"
 							label={ translate( 'Privacy' ) }

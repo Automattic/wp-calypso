@@ -37,6 +37,12 @@ const sections = [
 		group: 'me',
 	},
 	{
+		name: 'domains',
+		paths: [ '/me/domains' ],
+		module: 'calypso/me/domains',
+		group: 'me',
+	},
+	{
 		name: 'notification-settings',
 		paths: [ '/me/notifications' ],
 		module: 'calypso/me/notification-settings',
