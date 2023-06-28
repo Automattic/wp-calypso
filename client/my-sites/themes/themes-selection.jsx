@@ -342,7 +342,7 @@ export const ConnectedThemesSelection = connect(
 			search,
 			page,
 			tier: premiumThemesEnabled ? tier : 'free',
-			filter: compact( [ filter, vertical, hiddenFilters ] ).join( ',' ),
+			filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
 			number,
 		};
 
