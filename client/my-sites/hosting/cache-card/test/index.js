@@ -173,7 +173,8 @@ describe( 'CacheCard component', () => {
 	} );
 
 	it( 'shows the Clear Cache button regradless of the feature status', () => {
-		useEdgeCacheQuery.mockReturnValue( { data: true, isLoading: false } );
+		// The loading is true in case the feature is disabled
+		useEdgeCacheQuery.mockReturnValue( { data: true, isLoading: true } );
 		useClearEdgeCacheMutation.mockReturnValue( {
 			clearEdgeCache: jest.fn(),
 			isLoading: false,
@@ -185,10 +186,8 @@ describe( 'CacheCard component', () => {
 			</Provider>
 		);
 		expect( screen.queryByRole( 'button' ) ).toBeTruthy();
-		expect( screen.queryByRole( 'button' ) ).toBeEnabled();
+		expect( screen.queryByRole( 'button' ) ).toBeDisabled();
 		fireEvent.click( screen.getByRole( 'button' ) );
-		expect( useClearEdgeCacheMutation().clearEdgeCache ).toHaveBeenCalledTimes( 1 );
-		useClearEdgeCacheMutation().clearEdgeCache.mockClear();
 		config.disable( EDGE_CACHE_FEATURE );
 		rerender(
 			<Provider store={ store }>
