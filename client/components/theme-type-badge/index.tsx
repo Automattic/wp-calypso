@@ -68,15 +68,7 @@ const ThemeTypeBadge = ( {
 
 	let badgeContent;
 	if ( isLockedStyleVariation ) {
-		badgeContent = (
-			<PremiumBadge
-				{ ...badgeContentProps }
-				labelText={ translate( 'Paid', {
-					context: 'Refers to paid service, such as paid theme',
-					textOnly: true,
-				} ) }
-			/>
-		);
+		badgeContent = <PremiumBadge { ...badgeContentProps } labelText={ translate( 'Upgrade' ) } />;
 	} else if ( type === FREE_THEME ) {
 		badgeContent = <>{ translate( 'Free' ) }</>;
 	} else if ( type === DOT_ORG_THEME ) {
