@@ -289,6 +289,7 @@
 		"webpack-cli": "^4.9.2",
 		"webpack-dev-middleware": "^5.3.1",
 		"whybundled": "^2.0.0",
+		"ws": "^8.13.0",
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {

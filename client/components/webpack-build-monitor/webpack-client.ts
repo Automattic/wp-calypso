@@ -102,30 +102,24 @@ function processUpdate( message: UpdateMessage, setBuildState: BuildStateSetter 
 }
 
 export default function connectToWebpackServer( setBuildState: BuildStateSetter ) {
-	if ( typeof EventSource === 'undefined' ) {
-		if ( process.env.NODE_ENV !== 'production' ) {
-			console.warn( '[webpack] build monitor disabled. No `EventSource`.' );
-		}
-		return;
-	}
+	const socket = new WebSocket( 'ws://localhost:8355' );
 
-	const source = new EventSource( '/__webpack_hmr' );
-
-	source.onopen = () => {
+	socket.onopen = () => {
 		console.log( '[webpack] build monitor connected to server' );
 		setBuildState( BuildState.IDLE );
 	};
 
-	source.onerror = ( error ) => {
-		console.log( '[webpack] build monitor disconnected from server:', error );
+	socket.onerror = ( error ) => {
+		console.error( '[webpack] build monitor encountered an error:', error );
 		setBuildState( BuildState.DISCONNECTED );
 	};
 
-	source.onmessage = ( m ) => {
-		if ( m.data === '💓' ) {
-			return;
-		}
+	socket.onclose = () => {
+		console.log( '[webpack] build monitor disconnected from server' );
+		setBuildState( BuildState.DISCONNECTED );
+	};
 
+	socket.onmessage = ( m ) => {
 		const message = JSON.parse( m.data );
 
 		switch ( message.action ) {
@@ -141,6 +135,6 @@ export default function connectToWebpackServer( setBuildState: BuildStateSetter 
 	};
 
 	return () => {
-		source.close();
+		socket.close();
 	};
 }
