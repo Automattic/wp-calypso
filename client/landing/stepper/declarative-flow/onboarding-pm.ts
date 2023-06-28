@@ -1,5 +1,4 @@
 import { UserSelect } from '@automattic/data-stores';
-import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { ONBOARDING_PM_FLOW, useFlowProgress } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -11,7 +10,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useDomainParams } from '../hooks/use-domain-params';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { getLoginPath } from '../utils/path';
+import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { AssertConditionState, ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
@@ -131,14 +130,11 @@ const onboarding: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
-		const locale = useLocale();
-		const localizeUrl = useLocalizeUrl();
-
-		const logInUrl = localizeUrl(
-			getLoginPath( `/setup/${ flowName }/`, 'Onboarding', flowName, `/start/${ flowName }` ),
-			locale,
-			userIsLoggedIn
-		);
+		const logInUrl = useLoginUrl( {
+			flowName,
+			redirectTo: `/setup/${ flowName }`,
+			pageTitle: 'Onboarding',
+		} );
 
 		if ( ! userIsLoggedIn ) {
 			window.location.assign( logInUrl );
