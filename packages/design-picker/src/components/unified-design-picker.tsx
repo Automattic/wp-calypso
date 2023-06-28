@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
-import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -140,13 +139,9 @@ interface DesignCardProps {
 	getBadge: ( {
 		themeId,
 		isLockedStyleVariation,
-		tooltipHeader,
-		tooltipMessage,
 	}: {
 		themeId: string;
 		isLockedStyleVariation: boolean;
-		tooltipHeader: string;
-		tooltipMessage: string;
 	} ) => React.ReactNode;
 }
 
@@ -160,7 +155,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onPreview,
 	getBadge,
 } ) => {
-	const { __, hasTranslation } = useI18n();
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
 	const { style_variations = [] } = design;
@@ -169,16 +163,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 
 	const isLockedStyleVariation =
 		( ! design.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
-	let tooltipHeader = '';
-	if ( isLockedStyleVariation ) {
-		tooltipHeader =
-			'en' === locale || hasTranslation( 'Custom style' )
-				? __( 'Custom style' )
-				: __( 'Premium style' );
-	}
-	const tooltipMessage = isLockedStyleVariation
-		? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
-		: '';
 
 	return (
 		<ThemeCard
@@ -197,8 +181,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 			badge={ getBadge( {
 				themeId: design.slug,
 				isLockedStyleVariation,
-				tooltipHeader,
-				tooltipMessage,
 			} ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
@@ -224,13 +206,9 @@ interface DesignPickerProps {
 	getBadge: ( {
 		themeId,
 		isLockedStyleVariation,
-		tooltipHeader,
-		tooltipMessage,
 	}: {
 		themeId: string;
 		isLockedStyleVariation: boolean;
-		tooltipHeader: string;
-		tooltipMessage: string;
 	} ) => React.ReactNode;
 }
 
@@ -309,13 +287,9 @@ export interface UnifiedDesignPickerProps {
 	getBadge: ( {
 		themeId,
 		isLockedStyleVariation,
-		tooltipHeader,
-		tooltipMessage,
 	}: {
 		themeId: string;
 		isLockedStyleVariation: boolean;
-		tooltipHeader: string;
-		tooltipMessage: string;
 	} ) => React.ReactNode;
 }
 

@@ -20,11 +20,10 @@ import {
 
 interface Props {
 	canGoToCheckout?: boolean;
+	isLockedStyleVariation?: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
 	themeId: string;
-	tooltipHeader?: string;
-	tooltipMessage?: string;
 }
 
 const ThemeTypeBadgeTooltipUpgradeLink = ( {
@@ -62,11 +61,10 @@ const ThemeTypeBadgeTooltipUpgradeLink = ( {
 
 const ThemeTypeBadgeTooltip = ( {
 	canGoToCheckout = true,
+	isLockedStyleVariation,
 	siteId,
 	siteSlug,
 	themeId,
-	tooltipHeader,
-	tooltipMessage,
 }: Props ) => {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
@@ -100,8 +98,8 @@ const ThemeTypeBadgeTooltip = ( {
 	}, [ themeId ] );
 
 	const getHeader = (): string | null => {
-		if ( tooltipHeader ) {
-			return tooltipHeader;
+		if ( isLockedStyleVariation ) {
+			return null;
 		}
 
 		const headers = {
@@ -122,8 +120,10 @@ const ThemeTypeBadgeTooltip = ( {
 	};
 
 	let message;
-	if ( tooltipMessage ) {
-		message = tooltipMessage;
+	if ( isLockedStyleVariation ) {
+		message = translate(
+			'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
+		);
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );

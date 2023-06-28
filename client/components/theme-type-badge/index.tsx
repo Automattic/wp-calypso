@@ -23,8 +23,6 @@ interface Props {
 	siteId: number | null;
 	siteSlug: string | null;
 	themeId: string;
-	tooltipHeader?: string;
-	tooltipMessage?: string;
 }
 
 const ThemeTypeBadge = ( {
@@ -33,8 +31,6 @@ const ThemeTypeBadge = ( {
 	siteId,
 	siteSlug,
 	themeId,
-	tooltipHeader,
-	tooltipMessage,
 }: Props ) => {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
@@ -59,8 +55,6 @@ const ThemeTypeBadge = ( {
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				themeId={ themeId }
-				tooltipHeader={ tooltipHeader }
-				tooltipMessage={ tooltipMessage }
 			/>
 		),
 		tooltipPosition: 'top',
