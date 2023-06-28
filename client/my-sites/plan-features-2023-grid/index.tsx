@@ -1050,7 +1050,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				isVisible,
 				planConstantObj,
 				planName: plan,
-				planObject: planObject,
 				// TODO: snake_case?
 				product_name_short,
 				rawPrice,

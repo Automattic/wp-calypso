@@ -1,6 +1,5 @@
 import { applyTestFiltersToPlansList, PlanSlug } from '@automattic/calypso-products';
 import { FeatureObject } from 'calypso/lib/plans/features-list';
-import type { PricedAPIPlan } from '@automattic/data-stores';
 
 export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
@@ -19,7 +18,6 @@ export type PlanProperties = {
 	isVisible: boolean;
 	planConstantObj: ReturnType< typeof applyTestFiltersToPlansList >;
 	planName: PlanSlug;
-	planObject: PricedAPIPlan | undefined;
 	product_name_short: string;
 	rawPrice: number | null;
 	rawPriceForMonthlyPlan: number | null;
