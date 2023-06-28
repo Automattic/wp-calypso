@@ -155,7 +155,7 @@ export function SitesDashboard( {
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
-		( site ) => ! site.options.is_domain_only
+		( site ) => ! site.options?.is_domain_only
 	);
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
