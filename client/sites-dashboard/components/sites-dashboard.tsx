@@ -153,7 +153,10 @@ export function SitesDashboard( {
 		ref: 'topbar',
 	} );
 	const { __, _n } = useI18n();
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options.is_domain_only
+	);
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 	const userPreferencesLoaded = hasSitesSortingPreferenceLoaded && 'none' !== displayMode;
