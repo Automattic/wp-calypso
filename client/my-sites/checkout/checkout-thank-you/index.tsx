@@ -87,6 +87,7 @@ import CheckoutThankYouFeaturesHeader from './features-header';
 import GoogleAppsDetails from './google-apps-details';
 import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
+import MasterbarStyled from './masterbar-styled';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
@@ -619,7 +620,12 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-
+				<MasterbarStyled
+					onClick={ () => page( `/home/${ this.props.selectedSiteSlug ?? '' }` ) }
+					backText={ translate( 'Back to dashboard' ) }
+					canGoBack={ true }
+					showContact={ true }
+				/>
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
 				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
