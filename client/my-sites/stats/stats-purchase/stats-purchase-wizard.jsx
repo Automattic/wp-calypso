@@ -6,13 +6,13 @@ import PersonalPurchase from './stats-purchase-personal';
 import StatsPurchaseSVG from './stats-purchase-svg';
 import './styles.scss';
 
-const COMPONENT_NAME = 'stats-purchase-wizard';
+const COMPONENT_CLASS_NAME = 'stats-purchase-wizard';
 const SCREEN_TYPE_SELECTION = 0;
 const SCREEN_PERSONAL_CHECKLIST = 1;
 const SCREEN_PURCHASE = 2;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
-const FLAT_COMMERTIAL_PRICE = 10;
+const FLAT_COMMERCIAL_PRICE = 10;
 
 // TODO: import
 const CommercialPurchase = () => {
@@ -20,7 +20,7 @@ const CommercialPurchase = () => {
 		<div>
 			<p>Notice...</p>
 
-			<p>${ `${ FLAT_COMMERTIAL_PRICE }` }/month</p>
+			<p>${ `${ FLAT_COMMERCIAL_PRICE }` }/month</p>
 
 			<div className="benefits">
 				<ul className="included">
@@ -35,7 +35,7 @@ const CommercialPurchase = () => {
 				<a href="#">share details</a> with WordPress.com.
 			</p>
 
-			<Button isPrimary>Get Jetpack Stats for ${ FLAT_COMMERTIAL_PRICE } per month</Button>
+			<Button isPrimary>Get Jetpack Stats for ${ FLAT_COMMERCIAL_PRICE } per month</Button>
 			<Button isSecondary>Continue for free</Button>
 		</div>
 	);
@@ -51,8 +51,8 @@ const ProductCard = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
 	const personalLabel = translate( 'Personal site' );
-	const commertialLabel = translate( 'Commercial site' );
-	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commertialLabel;
+	const commercialLabel = translate( 'Commercial site' );
+	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
 
 	const handleTypeClick = ( type ) => {
 		setSiteType( type );
@@ -75,11 +75,11 @@ const ProductCard = ( { siteSlug } ) => {
 	};
 
 	return (
-		<div className={ COMPONENT_NAME }>
+		<div className={ COMPONENT_CLASS_NAME }>
 			<Card className="jetpack-upsell-card">
-				<div className={ `${ COMPONENT_NAME }__card` }>
+				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
 					<div className="left">
-						<Panel className={ `${ COMPONENT_NAME }__card-panel` } header="Jetpack Stats">
+						<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` } header="Jetpack Stats">
 							<PanelBody
 								title={
 									! siteType
@@ -95,33 +95,33 @@ const ProductCard = ( { siteSlug } ) => {
 								opened={ wizardStep === SCREEN_TYPE_SELECTION }
 							>
 								<PanelRow>
-									<div className={ `${ COMPONENT_NAME }__card-grid` }>
-										<div className={ `${ COMPONENT_NAME }__card-grid-header--left` }>
+									<div className={ `${ COMPONENT_CLASS_NAME }__card-grid` }>
+										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-header--left` }>
 											<h3>{ translate( 'Personal' ) }</h3>
 										</div>
-										<div className={ `${ COMPONENT_NAME }__card-grid-header--right` }>
+										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-header--right` }>
 											<h3>{ translate( 'Commercial' ) }</h3>
 										</div>
-										<div className={ `${ COMPONENT_NAME }__card-grid-body--left` }>
+										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-body--left` }>
 											<p>
 												{ translate(
 													`Sites and blogs used for hobby or personal use. Doesn't generate any money in a direct or an indirect way.`
 												) }
 											</p>
 										</div>
-										<div className={ `${ COMPONENT_NAME }__card-grid-body--right` }>
+										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-body--right` }>
 											<p>
 												{ translate(
 													`Sites and blogs used for commercial activities. Includes selling or advertising a product/service, person or business.`
 												) }
 											</p>
 										</div>
-										<div className={ `${ COMPONENT_NAME }__card-grid-action--left` }>
+										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--left` }>
 											<Button isPrimary onClick={ () => handleTypeClick( TYPE_PERSONAL ) }>
 												{ translate( 'Personal site' ) }
 											</Button>
 										</div>
-										<div className={ `${ COMPONENT_NAME }__card-grid-action--right` }>
+										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--right` }>
 											<Button isPrimary onClick={ () => handleTypeClick( TYPE_COMMERCIAL ) }>
 												{ translate( 'Commercial site' ) }
 											</Button>

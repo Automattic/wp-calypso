@@ -16,16 +16,16 @@ const StatsPurchasePage = () => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isPurchaseEnabled = config.isEnabled( 'stats/paid-stats' );
 
+	if ( ! isPurchaseEnabled ) {
+		page( '/stats', '/stats/day' );
+	}
+
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/participation/:site" title="Stats > Purchase" />
 			<div className="stats">
-				{ isPurchaseEnabled ? (
-					<StatsPurchaseWizard siteSlug={ siteSlug } />
-				) : (
-					<p>This page is empty.</p>
-				) }
+				{ isPurchaseEnabled && <StatsPurchaseWizard siteSlug={ siteSlug } /> }
 				<JetpackColophon />
 			</div>
 		</Main>
