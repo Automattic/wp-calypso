@@ -464,8 +464,6 @@ class ReaderStream extends Component {
 			isRequesting = true;
 		}
 
-		const path = window.location.pathname;
-		const isSearchPage = path.startsWith( '/read/search' );
 		const streamType = getStreamType( streamKey );
 
 		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
@@ -498,8 +496,9 @@ class ReaderStream extends Component {
 
 			let sidebarContent = this.props.streamSidebar;
 
-			// TODO: use `streamSidebar` prop in search stream component, rather that using conditionals here.
-			if ( isSearchPage ) {
+			// Add the sidebar on the search page when there's no search input. Sidebar is handled by `<SiteResults>' when there's a search query.
+			// TODO: use `streamSidebar` prop in search stream component, rather than using conditionals here.
+			if ( streamType === 'custom_recs_sites_with_images' ) {
 				sidebarContent = (
 					<ReaderPopularSitesSidebar items={ items } followSource={ READER_SEARCH_POPULAR_SITES } />
 				);
