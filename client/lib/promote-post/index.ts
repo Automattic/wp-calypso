@@ -131,8 +131,16 @@ export async function showDSP(
  * @param {string} entryPoint - A slug describing the entry point.
  */
 export function recordDSPEntryPoint( entryPoint: string ) {
+	let origin = 'wpcom';
+	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+		origin = 'jetpack';
+	} else if ( isWpMobileApp() ) {
+		origin = 'wp-mobile-app';
+	}
+
 	const eventProps = {
 		entry_point: entryPoint,
+		origin,
 	};
 
 	return composeAnalytics(
