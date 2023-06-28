@@ -164,7 +164,7 @@ module.exports = {
 	},
 	overrides: [
 		{
-			files: [ '**/test/*', '*.json' ],
+			files: [ '**/test/*', '*.json', '*.md' ],
 			rules: {
 				'wpcalypso/i18n-unlocalized-url': 'off',
 			},
