@@ -173,6 +173,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 		thankYouSubtitle,
 		thankYouImage = null,
 		thankYouNotice,
+		thankYouHeaderAction,
 		thankYouHeaderBody = null,
 	} = props;
 
@@ -232,6 +233,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 						{ thankYouHeaderBody }
 					</ThankYouTitleContainer>
 				) }
+				{ thankYouHeaderAction }
 			</ThankYouHeader>
 			{ thankYouNotice && <ThankYouNotice { ...thankYouNotice } /> }
 			<ThankYouBody className="thank-you__body">
