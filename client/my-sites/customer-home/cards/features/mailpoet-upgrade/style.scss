@@ -1,0 +1,50 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+body .customer-home__layout .mailpoet-upgrade__card {
+	padding: 16px 16px 20px;
+
+	@include break-small {
+		padding: 40px 46px;
+	}
+}
+
+.mailpoet-upgrade__card {
+	h3 {
+		font-family: $brand-serif;
+		font-style: normal;
+		font-weight: 400;
+		font-size: rem(32px);
+		line-height: 40px;
+		color: var(--studio-gray-100);
+	}
+
+	p {
+		margin-top: 8px;
+	}
+
+	&-dismiss {
+		position: absolute;
+		width: 18px;
+		height: 18px;
+		top: 16px;
+		right: 16px;
+		color: var(--color-text-subtle);
+		button {
+			cursor: pointer;
+			height: 18px;
+		}
+
+	}
+
+	.mailpoet-upgrade-actions {
+		display: flex;
+		flex-direction: column;
+		justify-content: right;
+		padding: 28px 0 0;
+		gap: 16px;
+		@media (min-width: ( $break-large + 1 )) {
+			flex-direction: row-reverse;
+		}
+	}
+}
