@@ -59,7 +59,6 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/offer-complete-after-activation": false,
-		"jetpack-social/multiple-connections": false,
 		"jitms": true,
 		"lasagna": true,
 		"launchpad-updates": false,

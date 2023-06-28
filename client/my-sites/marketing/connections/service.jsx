@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
@@ -232,26 +232,12 @@ export class SharingService extends Component {
 	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
 	createOrUpdateConnection = ( keyringConnectionId, externalUserId = 0 ) => {
-		if ( isEnabled( 'jetpack-social/multiple-connections' ) ) {
-			return this.props.createSiteConnection(
-				this.props.siteId,
-				keyringConnectionId,
-				externalUserId
-			);
-		}
-
-		const existingConnection = find( this.props.siteUserConnections, {
-			keyring_connection_ID: keyringConnectionId,
-		} );
-
-		if ( this.props.siteId && existingConnection ) {
-			// If a Keyring connection is already in use by another connection,
-			// we should trigger an update. There should only be one connection,
-			// so we're correct in using the connection ID from the first
-			this.props.updateSiteConnection( existingConnection, { external_user_ID: externalUserId } );
-		} else {
-			this.props.createSiteConnection( this.props.siteId, keyringConnectionId, externalUserId );
-		}
+		// We now always create a new connection
+		return this.props.createSiteConnection(
+			this.props.siteId,
+			keyringConnectionId,
+			externalUserId
+		);
 	};
 
 	connectAnother = () => {
@@ -674,7 +660,7 @@ export class SharingService extends Component {
 							>
 								{ connections.map( ( connection ) => (
 									<Connection
-										key={ connection.keyring_connection_ID }
+										key={ connection.ID }
 										connection={ connection }
 										isDisconnecting={ this.state.isDisconnecting }
 										isRefreshing={ this.state.isRefreshing }

@@ -70,7 +70,7 @@
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack-social/advanced-plan": false,
 		"jetpack/offer-complete-after-activation": false,
-		"jetpack-social/multiple-connections": false,
+		"jetpack/zendesk-chat-for-logged-in-users": true,
 		"jitms": true,
 		"lasagna": true,
 		"launchpad-updates": false,
