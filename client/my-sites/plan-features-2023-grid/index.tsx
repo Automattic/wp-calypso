@@ -1,6 +1,5 @@
 import {
 	applyTestFiltersToPlansList,
-	getMonthlyPlanByYearly,
 	findPlansKeys,
 	getPlan as getPlanFromKey,
 	getPlanClass,
@@ -51,12 +50,7 @@ import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-20
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import {
-	getPlan,
-	getPlanBySlug,
-	getPlanRawPrice,
-	getPlanSlug,
-} from 'calypso/state/plans/selectors';
+import { getPlan, getPlanRawPrice, getPlanSlug } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
@@ -932,10 +926,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 			const planObject = getPlan( state, planProductId );
 			const billingPeriod = planObject?.bill_period;
 			const isMonthlyPlan = isMonthly( plan );
-			const showMonthly = ! isMonthlyPlan;
-			const relatedMonthlyPlan = showMonthly
-				? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
-				: null;
 
 			// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 			const showMonthlyPrice = true;
@@ -1067,7 +1057,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				product_name_short,
 				rawPrice,
 				rawPriceForMonthlyPlan,
-				relatedMonthlyPlan,
 				isMonthlyPlan,
 				tagline,
 				storageOptions,

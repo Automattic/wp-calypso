@@ -23,7 +23,6 @@ export type PlanProperties = {
 	product_name_short: string;
 	rawPrice: number | null;
 	rawPriceForMonthlyPlan: number | null;
-	relatedMonthlyPlan: null | PricedAPIPlan | undefined;
 	isMonthlyPlan: boolean;
 	tagline: string;
 	storageOptions: string[];
