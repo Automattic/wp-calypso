@@ -7,6 +7,7 @@ declare module '@wordpress/block-editor' {
 	export const __unstableEditorStyles: React.ComponentType< Props >;
 
 	export const privateApis: unknown;
+	export const transformStyles: ( styles: unknown[], wrapperClassName: string ) => string;
 }
 
 declare module '@wordpress/components' {

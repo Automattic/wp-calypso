@@ -3,7 +3,7 @@
  * on our own as this kind of internal apis might be drastically changed from time to time.
  * See https://github.com/Automattic/wp-calypso/issues/77048
  */
-import { privateApis as blockEditorPrivateApis } from '@wordpress/block-editor';
+import { privateApis as blockEditorPrivateApis, transformStyles } from '@wordpress/block-editor';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import deepmerge from 'deepmerge';
@@ -51,6 +51,7 @@ export {
 	cleanEmptyObject,
 	ExperimentalBlockEditorProvider,
 	GlobalStylesContext,
+	transformStyles,
 	useGlobalStylesOutput,
 	useGlobalSetting,
 	useGlobalStyle,
