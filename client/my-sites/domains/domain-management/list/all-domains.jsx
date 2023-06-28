@@ -584,7 +584,7 @@ class AllDomains extends Component {
 		);
 	}
 
-	maybeRenderSeeAllDomainsButton() {
+	maybeRenderSeeAllDomainsLink() {
 		const { context, translate, dispatch } = this.props;
 
 		const selectedFilter = context?.query?.filter || 'all-domains';
@@ -669,7 +669,7 @@ class AllDomains extends Component {
 		};
 
 		const buttons = [
-			this.maybeRenderSeeAllDomainsButton(),
+			this.maybeRenderSeeAllDomainsLink(),
 			this.renderDomainTableFilterButton(),
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
