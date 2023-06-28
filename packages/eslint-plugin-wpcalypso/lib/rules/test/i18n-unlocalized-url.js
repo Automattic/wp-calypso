@@ -18,14 +18,37 @@ const rule = require( '../i18n-unlocalized-url' );
 
 const localizableUrls = [
 	'https://apps.wordpress.com/',
+	'https://apps.wordpress.com',
+	'https://apps.wordpress.com/mobile/',
+	'https://apps.wordpress.com/mobile',
 	'https://automattic.com/cookies/',
+	'https://automattic.com/cookies',
 	'https://automattic.com/privacy/',
-	'https://wordpress.com/support/test-article/',
-	'https://wordpress.com/forums/',
+	'https://automattic.com/privacy',
 	'https://wordpress.com/tos/',
+	'https://wordpress.com/tos',
+	'https://wordpress.com/blog/',
+	'https://wordpress.com/blog',
+	'https://wordpress.com/forums/',
+	'https://wordpress.com/forums',
+	'https://wordpress.com/go/',
+	'https://wordpress.com/go',
+	'https://wordpress.com/go/some-page/',
+	'https://wordpress.com/go/some-page',
+	'https://wordpress.com/support/',
+	'https://wordpress.com/support',
+	'https://wordpress.com/support/some-article/',
+	'https://wordpress.com/support/some-article',
 ];
 
-const nonLocalizableUrls = [ 'https://example.com', 'https://wordpress.com/forums/some-thread' ];
+const nonLocalizableUrls = [
+	'https://example.com',
+	'https://automattic.com/cookies/some-page/',
+	'https://automattic.com/privacy/some-page/',
+	'https://wordpress.com/tos/some-page/',
+	'https://wordpress.com/blog/some-post/',
+	'https://wordpress.com/forums/some-thread',
+];
 
 new RuleTester( {
 	parserOptions: {
