@@ -1,6 +1,6 @@
 import 'calypso/state/themes/init';
 
-import { getTheme, isExternallyManagedTheme } from '.';
+import { getTheme, doesThemeBundleSoftwareSet, isExternallyManagedTheme } from '.';
 
 /**
  * Returns whether it should redirect to thank you page
@@ -11,7 +11,8 @@ import { getTheme, isExternallyManagedTheme } from '.';
  * @returns {boolean}
  */
 export function shouldRedirectToThankYouPage( state, themeId ) {
+	const isWooTheme = doesThemeBundleSoftwareSet( state, themeId );
 	const isDotComTheme = !! getTheme( state, 'wpcom', themeId );
 	const isExternallyManaged = isExternallyManagedTheme( state, themeId );
-	return isDotComTheme && ! isExternallyManaged;
+	return isDotComTheme && ! isWooTheme && ! isExternallyManaged;
 }
