@@ -541,27 +541,11 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	render() {
-		const { isDataLoaded, isSimplified, hasFailedPurchases, primaryPurchase } = this.props;
+		const { isDataLoaded, isSimplified, primaryPurchase } = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
-
-		let svg = 'thank-you.svg';
-		if ( hasFailedPurchases ) {
-			svg = 'items-failed.svg';
-		} else if (
-			primaryPurchase &&
-			( ( isDomainMapping( primaryPurchase ) && ! primaryPurchase.isRootDomainWithUs ) ||
-				isDelayedDomainTransfer( primaryPurchase ) )
-		) {
-			svg = 'publish-button.svg';
-		} else if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
-			svg = 'check-emails-desktop.svg';
-		}
 
 		return (
 			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
-				<div className="checkout-thank-you__header-icon">
-					<img src={ `/calypso/images/upgrades/${ svg }` } alt="" />
-				</div>
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
 						<h1 className="checkout-thank-you__header-heading">{ this.getHeading() }</h1>
