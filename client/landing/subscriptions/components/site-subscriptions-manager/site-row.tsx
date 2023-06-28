@@ -295,10 +295,10 @@ const SiteRow = ( {
 						<div className="new-comments-tooltip__content">
 							{ delivery_methods.email?.send_comments
 								? translate(
-										'You will receive emails when new comments are published on this site.'
+										'You will receive emails notifications for new comments on this site.'
 								  )
 								: translate(
-										"You won't receive emails when new comments are published on this site."
+										"You won't receive email notifications for new comments on this site."
 								  ) }
 						</div>
 					</Tooltip>
