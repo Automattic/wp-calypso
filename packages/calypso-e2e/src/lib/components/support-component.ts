@@ -134,10 +134,12 @@ export class SupportComponent {
 
 	/**
 	 * Clears the search field of all keywords.
-	 *
-	 * @returns {Promise<void>} No return value.
 	 */
 	async clearSearch(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Close Search' } ).click();
+		const locator = this.page.getByRole( 'button', { name: 'Close Search' } );
+
+		if ( await locator.count() ) {
+			await locator.click();
+		}
 	}
 }
