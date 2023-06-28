@@ -21,12 +21,11 @@ const localizableUrls = [
 	'https://automattic.com/cookies/',
 	'https://automattic.com/privacy/',
 	'https://wordpress.com/support/test-article/',
-	'https://wordpress.com/forums/test-thread/',
-	'https://wordpress.com/tos/',
+	'https://wordpress.com/forums/',
 	'https://wordpress.com/tos/',
 ];
 
-const nonLocalizableUrls = [ 'https://example.com' ];
+const nonLocalizableUrls = [ 'https://example.com', 'https://wordpress.com/forums/some-thread' ];
 
 new RuleTester( {
 	parserOptions: {
