@@ -79,6 +79,13 @@
 				padding-bottom: 16px;
 			}
 
+			@include break-mobile {
+				&__detail-group {
+					display: flex;
+					justify-content: space-between;
+				}
+			}
+
 			&__label {
 				font-weight: bold;
 			}
