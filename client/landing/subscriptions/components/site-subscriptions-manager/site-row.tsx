@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
@@ -16,6 +16,8 @@ import {
 	useRecordPostEmailsToggle,
 	useRecordCommentEmailsToggle,
 	useRecordPostEmailsSetFrequency,
+	SOURCE_SUBSCRIPTIONS_SITE_LIST,
+	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from '../../tracks';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
@@ -74,8 +76,8 @@ type SiteRowProps = Reader.SiteSubscription & {
 };
 
 const SiteRow = ( {
-	blog_ID,
-	feed_ID,
+	blog_ID: blog_id,
+	feed_ID: feed_id,
 	name,
 	site_icon,
 	URL: url,
@@ -88,6 +90,9 @@ const SiteRow = ( {
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const unsubscribeInProgress = useRef( false );
+	const resubscribePending = useRef( false );
 
 	const hostname = useMemo( () => {
 		try {
@@ -123,12 +128,7 @@ const SiteRow = ( {
 	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
 	const recordSiteResubscribed = useRecordSiteResubscribed();
 
-	// Make object assignment a little easier
-	const SOURCE_SUBSCRIPTIONS_SITE_LIST = 'subscriptions-site-list';
-	const blog_id = blog_ID;
-	const feed_id = feed_ID;
-
-	const unsubscribeSuccessCallback = () => {
+	const unsubscribeCallback = () => {
 		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 		dispatch(
 			successNotice(
@@ -137,12 +137,16 @@ const SiteRow = ( {
 					duration: 5000,
 					button: translate( 'Resubscribe' ),
 					onClick: () => {
-						resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
-						recordSiteResubscribed( {
-							blog_id,
-							url,
-							source: 'subscriptions-unsubscribed-notice',
-						} );
+						if ( unsubscribeInProgress.current ) {
+							resubscribePending.current = true;
+						} else {
+							resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+							recordSiteResubscribed( {
+								blog_id,
+								url,
+								source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+							} );
+						}
 					},
 				}
 			)
@@ -153,13 +157,13 @@ const SiteRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( portal === ReaderPortal ) {
-			return `/read/feeds/${ feed_ID }`;
+			return `/read/feeds/${ feed_id }`;
 		}
 
 		if ( portal === SubscriptionsPortal ) {
-			return `/subscriptions/site/${ blog_ID }`;
+			return `/subscriptions/site/${ blog_id }`;
 		}
-	}, [ blog_ID, feed_ID, portal ] );
+	}, [ blog_id, feed_id, portal ] );
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings
@@ -283,12 +287,28 @@ const SiteRow = ( {
 					emailMeNewComments={ !! delivery_methods.email?.send_comments }
 					onEmailMeNewCommentsChange={ handleEmailMeNewCommentsChange }
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () =>
+					onUnsubscribe={ () => {
+						unsubscribeInProgress.current = true;
+						unsubscribeCallback();
 						unsubscribe(
-							{ blog_id: blog_ID, url, doNotInvalidateSiteSubscriptions: true },
-							{ onSuccess: unsubscribeSuccessCallback }
-						)
-					}
+							{ blog_id, url, doNotInvalidateSiteSubscriptions: true },
+							{
+								onSuccess: () => {
+									unsubscribeInProgress.current = false;
+
+									if ( resubscribePending.current ) {
+										resubscribePending.current = false;
+										resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+										recordSiteResubscribed( {
+											blog_id,
+											url,
+											source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+										} );
+									}
+								},
+							}
+						);
+					} }
 					unsubscribing={ unsubscribing }
 				/>
 			</span>

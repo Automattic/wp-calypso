@@ -51,6 +51,7 @@
 		{ "path": "./viewport" },
 		{ "path": "./viewport-react" },
 		{ "path": "./whats-new" },
-		{ "path": "./wpcom-checkout" }
+		{ "path": "./wpcom-checkout" },
+		{ "path": "./wpcom-template-parts" }
 	]
 }

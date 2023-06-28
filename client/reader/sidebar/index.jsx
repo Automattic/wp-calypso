@@ -162,6 +162,16 @@ export class ReaderSidebar extends Component {
 
 				<SidebarSeparator />
 
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
+						'sidebar-streams__following': true,
+					} ) }
+					label={ isSubscriptionManagerEnabled ? translate( 'Latest' ) : translate( 'Following' ) }
+					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+					customIcon={ <ReaderFollowingIcon /> }
+					link="/read"
+				/>
+
 				{ isDiscoverEnabled() && (
 					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
@@ -173,18 +183,6 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 				) }
-
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
-						'sidebar-streams__following': true,
-					} ) }
-					label={
-						isSubscriptionManagerEnabled ? translate( 'Subscriptions' ) : translate( 'Following' )
-					}
-					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
-					customIcon={ <ReaderFollowingIcon /> }
-					link="/read"
-				/>
 
 				<SidebarItem
 					label={ translate( 'Likes' ) }

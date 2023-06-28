@@ -136,7 +136,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
-				cancelCampaign( siteId, campaign.campaign_id );
+				cancelCampaign( siteId ?? 0, campaign.campaign_id );
 			},
 		},
 	];

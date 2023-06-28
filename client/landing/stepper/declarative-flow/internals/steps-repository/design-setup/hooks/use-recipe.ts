@@ -1,5 +1,5 @@
 import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
-import { useFontPairingVariations } from '@automattic/global-styles';
+import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from 'react';
@@ -30,20 +30,31 @@ const useRecipe = (
 	}, [] );
 
 	const { setSelectedDesign, setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
+
+	const [ selectedColorVariation, setSelectedColorVariation ] =
+		useState< GlobalStylesObject | null >( null );
+
 	const [ selectedFontVariation, setSelectedFontVariation ] = useState< GlobalStylesObject | null >(
 		null
 	);
 
 	const hasSelectedGlobalStyles =
 		! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) ||
+		!! selectedColorVariation ||
 		!! selectedFontVariation;
 
 	const [ globalStyles, setGlobalStyles ] = useState< GlobalStylesObject | null >( null );
+
 	const preselectedTheme = searchParams.get( 'theme' );
 	const preselectedStyle = searchParams.get( 'style_variation' );
+	const preselectedColorVariationTitle = searchParams.get( 'color_variation_title' );
 	const preselectedFontVariationTitle = searchParams.get( 'font_variation_title' );
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
+
+	const colorVariations = useColorPaletteVariations( siteId, stylesheet, {
+		enabled: !! preselectedColorVariationTitle,
+	} );
 
 	const fontVariations = useFontPairingVariations( siteId, stylesheet, {
 		enabled: !! preselectedFontVariationTitle,
@@ -72,6 +83,22 @@ const useRecipe = (
 					currentSearchParams.set( 'style_variation', variation.slug );
 				} else {
 					currentSearchParams.delete( 'style_variation' );
+				}
+
+				return currentSearchParams;
+			},
+			{ replace: true }
+		);
+	};
+
+	const handleSelectedColorVariationChange = ( variation: GlobalStyles | null ) => {
+		setSelectedColorVariation( variation );
+		setSearchParams(
+			( currentSearchParams ) => {
+				if ( variation && variation.title ) {
+					currentSearchParams.set( 'color_variation_title', variation.title );
+				} else {
+					currentSearchParams.delete( 'color_variation_title' );
 				}
 
 				return currentSearchParams;
@@ -121,6 +148,7 @@ const useRecipe = (
 	const resetPreview = () => {
 		handleSelectedDesignChange();
 		handleSelectedStyleVariationChange();
+		handleSelectedColorVariationChange( null );
 		handleSelectedFontVariationChange( null );
 		setGlobalStyles( null );
 		setIsPreviewingDesign( false );
@@ -165,6 +193,22 @@ const useRecipe = (
 	] );
 
 	/**
+	 * Initialize the preselected colors
+	 */
+	useEffect( () => {
+		if ( ! colorVariations || ! preselectedColorVariationTitle ) {
+			return;
+		}
+
+		const preselectedColorVariation = colorVariations.find(
+			( { title } ) => title === preselectedColorVariationTitle
+		);
+		if ( preselectedColorVariation ) {
+			setSelectedColorVariation( preselectedColorVariation );
+		}
+	}, [ colorVariations, preselectedColorVariationTitle ] );
+
+	/**
 	 * Initialize the preselected fonts
 	 */
 	useEffect( () => {
@@ -184,6 +228,7 @@ const useRecipe = (
 		isPreviewingDesign,
 		selectedDesign,
 		selectedStyleVariation,
+		selectedColorVariation,
 		selectedFontVariation,
 		hasSelectedGlobalStyles,
 		globalStyles,
@@ -191,6 +236,7 @@ const useRecipe = (
 		previewDesignVariation,
 		setSelectedDesign,
 		setSelectedStyleVariation,
+		setSelectedColorVariation: handleSelectedColorVariationChange,
 		setSelectedFontVariation: handleSelectedFontVariationChange,
 		setGlobalStyles,
 		resetPreview,

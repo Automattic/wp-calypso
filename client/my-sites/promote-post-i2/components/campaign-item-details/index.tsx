@@ -206,7 +206,7 @@ export default function CampaignItemDetails( props: Props ) {
 			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
-				cancelCampaign( siteId, campaignId );
+				cancelCampaign( siteId ?? 0, campaignId ?? 0 );
 			},
 		},
 	];

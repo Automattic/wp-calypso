@@ -78,7 +78,11 @@ const Settings = ( {
 	}, [ contactInformation, selectedDomainName ] );
 
 	const renderBreadcrumbs = () => {
-		const previousPath = domainManagementList( selectedSite?.slug, currentRoute );
+		const previousPath = domainManagementList(
+			selectedSite?.slug,
+			currentRoute,
+			selectedSite?.options?.is_domain_only
+		);
 
 		const items = [
 			{
@@ -124,7 +128,7 @@ const Settings = ( {
 	};
 
 	const renderStatusSection = () => {
-		if ( ! ( domain && selectedSite.options?.is_domain_only ) ) {
+		if ( ! ( domain && selectedSite?.options?.is_domain_only ) ) {
 			return null;
 		}
 
@@ -149,7 +153,7 @@ const Settings = ( {
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
 					key="main"
-					expanded={ ! selectedSite.options?.is_domain_only }
+					expanded={ ! selectedSite?.options?.is_domain_only }
 				>
 					<RegisteredDomainDetails
 						domain={ domain }
@@ -381,7 +385,7 @@ const Settings = ( {
 				<Button
 					onClick={ handleTransferDomainClick }
 					href={ domainUseMyDomain(
-						selectedSite.slug,
+						selectedSite?.slug,
 						domain.name,
 						useMyDomainInputMode.transferDomain
 					) }
@@ -404,7 +408,7 @@ const Settings = ( {
 		}
 
 		const contactInformationUpdateLink =
-			selectedSite && domain && domainManagementEditContactInfo( selectedSite.slug, domain.name );
+			selectedSite && domain && domainManagementEditContactInfo( selectedSite?.slug, domain.name );
 
 		return (
 			<Accordion
@@ -461,7 +465,7 @@ const Settings = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
-			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
+			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />

@@ -174,12 +174,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		isPreviewingDesign,
 		selectedDesign,
 		selectedStyleVariation,
+		selectedColorVariation,
 		selectedFontVariation,
 		hasSelectedGlobalStyles,
 		globalStyles,
 		setSelectedDesign,
 		previewDesign,
 		previewDesignVariation,
+		setSelectedColorVariation,
 		setSelectedFontVariation,
 		setGlobalStyles,
 		resetPreview,
@@ -211,10 +213,18 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function getEventPropsByDesign(
 		design: Design,
 		styleVariation?: StyleVariation,
+		colorVariation?: GlobalStylesObject | null,
 		fontVariation?: GlobalStylesObject | null
 	) {
 		return {
-			...getDesignEventProps( { flow, intent, design, styleVariation, fontVariation } ),
+			...getDesignEventProps( {
+				flow,
+				intent,
+				design,
+				styleVariation,
+				colorVariation,
+				fontVariation,
+			} ),
 			category: categorization.selection,
 			...( design.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 			...( design.recipe?.header_pattern_ids && {
@@ -601,6 +611,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					recordDeviceClick={ recordDeviceClick }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
+					selectedColorVariation={ selectedColorVariation }
+					onSelectColorVariation={ setSelectedColorVariation }
 					selectedFontVariation={ selectedFontVariation }
 					onSelectFontVariation={ setSelectedFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }

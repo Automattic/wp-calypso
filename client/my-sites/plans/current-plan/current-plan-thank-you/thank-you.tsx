@@ -89,7 +89,7 @@ export const ThankYouCard: FC< Props > = ( {
 		[ currentRoute, queryArgs ]
 	);
 	const recordThankYouClick = useCallback(
-		( productName, value ) => {
+		( productName: string, value?: string ) => {
 			dispatchRecordTracksEvent( 'calypso_jetpack_product_thankyou', {
 				product_name: productName,
 				site: 'jetpack',

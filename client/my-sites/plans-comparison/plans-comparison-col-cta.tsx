@@ -8,6 +8,7 @@ interface Props {
 	price?: number;
 	originalPrice?: number;
 	onClick?: ( productSlug: string ) => void;
+	children?: React.ReactNode;
 }
 
 const PriceContainer = styled.div`

@@ -20,6 +20,7 @@
 	.components-modal__header {
 		background: var(--studio-white);
 		padding-block-end: 24px;
+		padding-block-start: 12px;
 	}
 
 	form {
@@ -36,7 +37,7 @@
 	line-height: 14px;
 	color: var(--studio-gray-50);
 	position: absolute;
-	inset-block-start: 38px;
+	inset-block-start: 44px;
 	z-index: 99;
 	padding-inline-end: 50px;
 }

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -8,6 +9,8 @@ import { useClearEdgeCacheMutation } from 'calypso/my-sites/hosting/cache-card/u
 import { useEdgeCacheQuery } from 'calypso/my-sites/hosting/cache-card/use-edge-cache';
 import { useToggleEdgeCacheMutation } from 'calypso/my-sites/hosting/cache-card/use-toggle-edge-cache';
 import { CacheCard } from '..';
+
+const EDGE_CACHE_FEATURE = 'yolo/edge-cache-i1';
 
 const INITIAL_STATE = {
 	sites: {
@@ -151,5 +154,49 @@ describe( 'CacheCard component', () => {
 		fireEvent.click( screen.getByRole( 'button' ) );
 		expect( useClearEdgeCacheMutation().clearEdgeCache ).toHaveBeenCalledTimes( 1 );
 		expect( defaultProps.clearAtomicWordPressCache ).toHaveBeenCalledTimes( 1 );
+	} );
+	it( 'hides the checkbox button when the feature is disabled', () => {
+		config.enable( EDGE_CACHE_FEATURE );
+		const { rerender } = render(
+			<Provider store={ store }>
+				<CacheCard { ...{ ...defaultProps } } />
+			</Provider>
+		);
+		expect( screen.queryByRole( 'checkbox' ) ).toBeTruthy();
+		config.disable( EDGE_CACHE_FEATURE );
+		rerender(
+			<Provider store={ store }>
+				<CacheCard { ...{ ...defaultProps } } />
+			</Provider>
+		);
+		expect( screen.queryByRole( 'checkbox' ) ).toBeFalsy();
+	} );
+
+	it( 'shows the Clear Cache button regardless of the feature status', () => {
+		// The loading is true in case the feature is disabled
+		useEdgeCacheQuery.mockReturnValue( { data: true, isLoading: true } );
+		useClearEdgeCacheMutation.mockReturnValue( {
+			clearEdgeCache: jest.fn(),
+			isLoading: false,
+		} );
+		config.enable( EDGE_CACHE_FEATURE );
+		const { rerender } = render(
+			<Provider store={ store }>
+				<CacheCard { ...{ ...defaultProps } } />
+			</Provider>
+		);
+		expect( screen.queryByRole( 'button' ) ).toBeTruthy();
+		expect( screen.queryByRole( 'button' ) ).toBeDisabled();
+		fireEvent.click( screen.getByRole( 'button' ) );
+		config.disable( EDGE_CACHE_FEATURE );
+		rerender(
+			<Provider store={ store }>
+				<CacheCard { ...{ ...defaultProps } } />
+			</Provider>
+		);
+		expect( screen.queryByRole( 'button' ) ).toBeTruthy();
+		expect( screen.queryByRole( 'button' ) ).toBeEnabled();
+		fireEvent.click( screen.getByRole( 'button' ) );
+		expect( useClearEdgeCacheMutation().clearEdgeCache ).toHaveBeenCalledTimes( 0 );
 	} );
 } );

@@ -28,12 +28,14 @@ interface DesignPreviewProps {
 	recordDeviceClick: ( device: string ) => void;
 	siteId: number;
 	stylesheet: string;
+	selectedColorVariation: GlobalStylesObject | null;
+	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 	onGlobalStylesChange: ( globalStyles: GlobalStylesObject | null ) => void;
 }
 
-const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; };`;
+const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; }`;
 
 const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
 	variations.find( ( variation ) => variation.slug === slug );
@@ -56,13 +58,16 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	recordDeviceClick,
 	siteId,
 	stylesheet,
+	selectedColorVariation,
+	onSelectColorVariation,
 	selectedFontVariation,
 	onSelectFontVariation,
 	onGlobalStylesChange,
 } ) => {
 	const selectedVariations = useMemo(
-		() => [ selectedFontVariation ].filter( Boolean ) as GlobalStylesObject[],
-		[ selectedFontVariation ]
+		() =>
+			[ selectedColorVariation, selectedFontVariation ].filter( Boolean ) as GlobalStylesObject[],
+		[ selectedColorVariation, selectedFontVariation ]
 	);
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
@@ -106,6 +111,8 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				actionButtons={ actionButtons }
 				siteId={ siteId }
 				stylesheet={ stylesheet }
+				selectedColorVariation={ selectedColorVariation }
+				onSelectColorVariation={ onSelectColorVariation }
 				selectedFontVariation={ selectedFontVariation }
 				onSelectFontVariation={ onSelectFontVariation }
 			/>

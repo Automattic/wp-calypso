@@ -93,7 +93,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	}, [ jetpackTemporarySiteId, productSlug, source, receiptId ] );
 
 	const onContinue = useCallback(
-		( e ) => {
+		( e: React.MouseEvent ) => {
 			e.preventDefault();
 			setError( false );
 			if ( selectedSite === 'activate-license-manually' ) {

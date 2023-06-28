@@ -15,7 +15,12 @@
 		}
 
 		.subscriber-list-container__subscriber-count {
+			font-weight: 500;
 			color: $studio-gray-40;
 		}
+	}
+
+	.subscriber-list-container__pagination {
+		margin-top: 48px;
 	}
 }

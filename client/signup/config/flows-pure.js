@@ -33,11 +33,13 @@ export function generateFlows( {
 			steps: [ 'user' ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
-			lastModified: '2020-08-12',
+			lastModified: '2023-06-16',
 			get pageTitle() {
 				return translate( 'Create an account' );
 			},
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'business',

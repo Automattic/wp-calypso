@@ -40,6 +40,9 @@ interface SectionContext {
 	tour: string;
 	tourVersion: string;
 	isValid: ( when: ContextWhen ) => boolean;
+	isLastStep: boolean;
+	quit: ( context: Partial< SectionContext > ) => void;
+	start: ( context: Partial< SectionContext > ) => void;
 }
 
 interface RequiredProps {
@@ -118,11 +121,11 @@ export default class Step extends Component< Props, State > {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		this.wait( this.props, this.context ).then( () => {
+		this.wait( this.props, this.context as SectionContext ).then( () => {
 			this.start();
-			this.setStepSection( this.context, { init: true } );
+			this.setStepSection( this.context as SectionContext, { init: true } );
 			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
-			this.skipIfInvalidContext( this.props, this.context );
+			this.skipIfInvalidContext( this.props, this.context as SectionContext );
 			this.scrollContainer = query( this.props.scrollContainer ?? 'body' )[ 0 ];
 			// Don't pass `shouldScrollTo` as argument since mounting hasn't occured at this point yet.
 			this.setStepPosition( this.props );
@@ -132,7 +135,7 @@ export default class Step extends Component< Props, State > {
 
 	componentDidMount() {
 		this.mounted = true;
-		this.wait( this.props, this.context ).then( () => {
+		this.wait( this.props, this.context as SectionContext ).then( () => {
 			window.addEventListener( 'resize', this.onScrollOrResize );
 			this.watchTarget();
 		} );
@@ -173,7 +176,7 @@ export default class Step extends Component< Props, State > {
 	 * Needed for analytics, since GT is selector-driven
 	 */
 	start() {
-		const { start, step, tour, tourVersion } = this.context;
+		const { start, step, tour, tourVersion } = this.context as SectionContext;
 		start( { step, tour, tourVersion } );
 	}
 
@@ -225,8 +228,8 @@ export default class Step extends Component< Props, State > {
 				if ( ! targetEl && onTargetDisappear && ( ! waitForTarget || this.state.seenTarget ) ) {
 					debug( 'Step#watchTarget: Target has disappeared' );
 					onTargetDisappear( {
-						quit: () => this.context.quit( this.context ),
-						next: () => this.skipToNext( this.props, this.context ),
+						quit: () => ( this.context as SectionContext ).quit( this.context as SectionContext ),
+						next: () => this.skipToNext( this.props, this.context as SectionContext ),
 					} );
 				} else if ( targetEl ) {
 					this.safeSetState( { seenTarget: true } );
@@ -268,10 +271,14 @@ export default class Step extends Component< Props, State > {
 			nextContext.sectionName
 		);
 
-		if ( this.context.step !== nextContext.step ) {
+		if ( ( this.context as SectionContext ).step !== nextContext.step ) {
 			// invalidate if waiting for section
 			this.stepSection = nextContext.shouldPause ? null : nextContext.sectionName;
-		} else if ( this.context.shouldPause && ! nextContext.shouldPause && ! this.stepSection ) {
+		} else if (
+			( this.context as SectionContext ).shouldPause &&
+			! nextContext.shouldPause &&
+			! this.stepSection
+		) {
 			// only write if previously invalidated
 			this.stepSection = nextContext.sectionName;
 		}
@@ -279,8 +286,8 @@ export default class Step extends Component< Props, State > {
 
 	quitIfInvalidRoute( nextProps: Props, nextContext: SectionContext ) {
 		if (
-			nextContext.step !== this.context.step ||
-			nextContext.sectionName === this.context.sectionName ||
+			nextContext.step !== ( this.context as SectionContext ).step ||
+			nextContext.sectionName === ( this.context as SectionContext ).sectionName ||
 			! nextContext.sectionName
 		) {
 			return;
@@ -295,7 +302,7 @@ export default class Step extends Component< Props, State > {
 			'step',
 			step,
 			'previousStep',
-			this.context.step,
+			( this.context as SectionContext ).step,
 			'hasContinue',
 			hasContinue,
 			'hasJustNavigated',
@@ -311,17 +318,17 @@ export default class Step extends Component< Props, State > {
 		if ( ! hasContinue && hasJustNavigated && this.isDifferentSection( lastAction.path ) ) {
 			defer( () => {
 				debug( 'Step.quitIfInvalidRoute: quitting (different section)' );
-				this.context.quit( this.context );
+				( this.context as SectionContext ).quit( this.context as SectionContext );
 			} );
 		}
 
 		// quit if we have a target but cant find it
 		defer( () => {
-			const { quit } = this.context;
+			const { quit } = this.context as SectionContext;
 			const target = targetForSlug( this.props.target );
 			if ( this.props.target && ! target ) {
 				debug( 'Step.quitIfInvalidRoute: quitting (cannot find target)' );
-				quit( this.context );
+				quit( this.context as SectionContext );
 			} else {
 				debug( 'Step.quitIfInvalidRoute: not quitting' );
 			}
@@ -351,7 +358,10 @@ export default class Step extends Component< Props, State > {
 	}
 
 	setAnalyticsTimestamp( { step, shouldPause }: { step: string; shouldPause?: boolean } ) {
-		if ( this.context.step !== step || ( this.context.shouldPause && ! shouldPause ) ) {
+		if (
+			( this.context as SectionContext ).step !== step ||
+			( ( this.context as SectionContext ).shouldPause && ! shouldPause )
+		) {
 			this.lastTransitionTimestamp = Date.now();
 		}
 	}
@@ -400,19 +410,19 @@ export default class Step extends Component< Props, State > {
 		// `children` is a render prop where the value is not the usual JSX markup,
 		// but a React component to render, i.e., function or a class.
 		const { when, children: ContentComponent, target, waitForTarget } = this.props;
-		const { isLastStep } = this.context;
+		const { isLastStep } = this.context as SectionContext;
 
 		if ( ! this.state.initialized ) {
 			return null;
 		}
 
 		debug( 'Step#render' );
-		if ( this.context.shouldPause ) {
+		if ( ( this.context as SectionContext ).shouldPause ) {
 			debug( 'Step: shouldPause' );
 			return null;
 		}
 
-		if ( when && ! this.context.isValid( when ) ) {
+		if ( when && ! ( this.context as SectionContext ).isValid( when ) ) {
 			return null;
 		}
 
@@ -428,7 +438,7 @@ export default class Step extends Component< Props, State > {
 			'guided-tours__step',
 			'guided-tours__step-glow',
 			this.props.dark && 'guided-tours__step-dark',
-			this.context.step === 'init' && 'guided-tours__step-first',
+			( this.context as SectionContext ).step === 'init' && 'guided-tours__step-first',
 			isLastStep && 'guided-tours__step-finish',
 			targetSlug && 'guided-tours__step-pointing',
 			targetSlug &&
