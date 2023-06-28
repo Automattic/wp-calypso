@@ -42,17 +42,21 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 	const [ isLoaded, setIsLoaded ] = useState( ! externalFontFamilies.length );
 	const getFontFamilyName = ( targetFontFamily: string ) => {
 		const fontFamily = fontFamilies.find( ( { fontFamily } ) => fontFamily === targetFontFamily );
-		return fontFamily ? fontFamily.name : targetFontFamily;
+		return fontFamily?.name || fontFamily?.fontFamily || targetFontFamily;
 	};
+
 	const textFontFamilyName = useMemo(
 		() => getFontFamilyName( textFontFamily ),
 		[ textFontFamily, fontFamilies ]
 	);
+
 	const headingFontFamilyName = useMemo(
 		() => getFontFamilyName( headingFontFamily ),
 		[ headingFontFamily, fontFamilies ]
 	);
+
 	const handleOnLoad = () => setIsLoaded( true );
+
 	return (
 		<GlobalStylesVariationContainer
 			width={ width }

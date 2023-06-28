@@ -1,5 +1,5 @@
 import { PatternRenderer } from '@automattic/block-renderer';
-import { DeviceSwitcher } from '@automattic/components';
+import { Button, DeviceSwitcher } from '@automattic/components';
 import { useGlobalStyle } from '@automattic/global-styles';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { Icon, layout } from '@wordpress/icons';
@@ -50,7 +50,7 @@ const PatternLargePreview = ( {
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
-	const [ device, setDevice ] = useState< string >( 'desktop' );
+	const [ device, setDevice ] = useState< string >( 'computer' );
 	const [ blockGap ] = useGlobalStyle( 'spacing.blockGap' );
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {

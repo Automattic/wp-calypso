@@ -28,8 +28,10 @@ const PatternAssemblerContainer = ( {
 	>
 		<PatternsRendererProvider
 			// Site used to render site-related things on the previews,
-			// such as the logo, title, and tagline.
-			siteId={ PLACEHOLDER_SITE_ID }
+			// such as the logo, title, tagline, pages, posts, etc.
+			// For the newly created site, we use the placeholder site to render the content.
+			// Otherwise, we use the current site to display the site-related blocks.
+			siteId={ isNewSite ? PLACEHOLDER_SITE_ID : siteId }
 			stylesheet={ stylesheet }
 			patternIds={ patternIds }
 			// Use siteInfo to overwrite site-related things such as title, and tagline.

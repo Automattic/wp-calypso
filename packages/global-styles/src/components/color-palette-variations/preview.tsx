@@ -38,6 +38,7 @@ const ColorPaletteVariationPreview = ( { title }: Props ) => {
 			( color ) => color !== backgroundColor
 		)
 		.slice( 0, 2 );
+
 	return (
 		<GlobalStylesVariationContainer
 			width={ width }

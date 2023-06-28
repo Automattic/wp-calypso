@@ -84,25 +84,33 @@ const FontPairingVariations = ( {
 		<Composite
 			{ ...composite }
 			role="listbox"
-			className="font-pairing-variations"
 			aria-label={ translate( 'Font pairing variations' ) }
 		>
-			<FontPairingVariation
-				key="base"
-				fontPairingVariation={ base }
-				isActive={ ! selectedFontPairingVariation }
-				composite={ composite }
-				onSelect={ () => onSelect( null ) }
-			/>
-			{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
+			<h3 className="global-styles-variation__title">{ translate( 'Free font' ) }</h3>
+			<div className="font-pairing-variations">
 				<FontPairingVariation
-					key={ index }
-					fontPairingVariation={ fontPairingVariation }
-					isActive={ fontPairingVariation.title === selectedFontPairingVariation?.title }
+					key="base"
+					fontPairingVariation={ { ...base, title: translate( 'Free font' ) } }
+					isActive={ ! selectedFontPairingVariation }
 					composite={ composite }
-					onSelect={ () => onSelect( fontPairingVariation ) }
+					onSelect={ () => onSelect( null ) }
 				/>
-			) ) }
+			</div>
+			<h3 className="global-styles-variation__title">
+				{ translate( 'Premium fonts' ) }
+				<PremiumBadge shouldHideTooltip shouldCompactWithAnimation />
+			</h3>
+			<div className="font-pairing-variations">
+				{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
+					<FontPairingVariation
+						key={ index }
+						fontPairingVariation={ fontPairingVariation }
+						isActive={ fontPairingVariation.title === selectedFontPairingVariation?.title }
+						composite={ composite }
+						onSelect={ () => onSelect( fontPairingVariation ) }
+					/>
+				) ) }
+			</div>
 		</Composite>
 	);
 };
