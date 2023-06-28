@@ -124,7 +124,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					</Button>
 				) }
 			</div>
-			{ isCurrentNodeClicked && <FileInfoCard item={ item } /> }
+			{ isCurrentNodeClicked && <FileInfoCard siteId={ siteId } item={ item } /> }
 			{ isOpen && (
 				<>
 					{ item.hasChildren && (
