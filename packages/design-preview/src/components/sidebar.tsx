@@ -75,9 +75,6 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
 	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
 
-	// The variations is undefined when we're still loading the design details
-	const hasStyleVariations = ! variations || variations.length > 0;
-
 	return (
 		<div className="design-preview__sidebar">
 			<div className="design-preview__sidebar-content">
@@ -120,7 +117,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 						</p>
 					</div>
 				) }
-				{ hasStyleVariations && (
+				{ variations && variations.length > 0 && (
 					<div className="design-preview__sidebar-variations">
 						<div className="design-preview__sidebar-variations-grid">
 							<GlobalStylesVariations
@@ -136,26 +133,30 @@ const Sidebar: React.FC< SidebarProps > = ( {
 						</div>
 					</div>
 				) }
-				{ ! hasStyleVariations && isEnabled( 'signup/design-picker-preview-colors' ) && (
-					<div className="design-preview__sidebar-variations">
-						<ColorPaletteVariations
-							siteId={ siteId }
-							stylesheet={ stylesheet }
-							selectedColorPaletteVariation={ selectedColorVariation }
-							onSelect={ onSelectColorVariation }
-						/>
-					</div>
-				) }
-				{ ! hasStyleVariations && isEnabled( 'signup/design-picker-preview-fonts' ) && (
-					<div className="design-preview__sidebar-variations">
-						<FontPairingVariations
-							siteId={ siteId }
-							stylesheet={ stylesheet }
-							selectedFontPairingVariation={ selectedFontVariation }
-							onSelect={ onSelectFontVariation }
-						/>
-					</div>
-				) }
+				{ variations &&
+					variations.length === 0 &&
+					isEnabled( 'signup/design-picker-preview-colors' ) && (
+						<div className="design-preview__sidebar-variations">
+							<ColorPaletteVariations
+								siteId={ siteId }
+								stylesheet={ stylesheet }
+								selectedColorPaletteVariation={ selectedColorVariation }
+								onSelect={ onSelectColorVariation }
+							/>
+						</div>
+					) }
+				{ variations &&
+					variations.length === 0 &&
+					isEnabled( 'signup/design-picker-preview-fonts' ) && (
+						<div className="design-preview__sidebar-variations">
+							<FontPairingVariations
+								siteId={ siteId }
+								stylesheet={ stylesheet }
+								selectedFontPairingVariation={ selectedFontVariation }
+								onSelect={ onSelectFontVariation }
+							/>
+						</div>
+					) }
 			</div>
 			{ actionButtons && (
 				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>

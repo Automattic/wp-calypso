@@ -89,8 +89,8 @@ export function getDesignEventProps( {
 		has_style_variations: ( design.style_variations || [] ).length > 0,
 		is_style_variation: is_style_variation,
 		...( colorVariation && {
-			font_variation_title: getVariationTitle( colorVariation ),
-			font_variation_type: getVariationType( colorVariation ),
+			color_variation_title: getVariationTitle( colorVariation ),
+			color_variation_type: getVariationType( colorVariation ),
 		} ),
 		...( fontVariation && {
 			font_variation_title: getVariationTitle( fontVariation ),
