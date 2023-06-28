@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { memo } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -12,6 +13,8 @@ const CreditBalance = ( { balance = '0.00' }: Props ) => {
 		return null;
 	}
 
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	return (
 		<div className="promote-post-i2__aux-wrapper">
 			<div className="empty-promotion-list__container">
@@ -22,7 +25,11 @@ const CreditBalance = ( { balance = '0.00' }: Props ) => {
 						{
 							components: {
 								learnMoreLink: (
-									<InlineSupportLink supportContext="blaze_credits" showIcon={ false } />
+									<InlineSupportLink
+										supportContext="blaze_credits"
+										showIcon={ false }
+										showSupportModal={ ! isRunningInJetpack }
+									/>
 								),
 							},
 						}
