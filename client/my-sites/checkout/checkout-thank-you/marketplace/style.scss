@@ -59,8 +59,14 @@
 
 	.thank-you__header-title {
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 44px; // typography-exception
+		font-size: 48px;
 		line-height: 60px;
+		letter-spacing: -0.32px;
+		@media ( max-width: 480px ) {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 32px; // typography-exception
+			line-height: 40px;
+		}
 	}
 
 	.thank-you__header-subtitle {
