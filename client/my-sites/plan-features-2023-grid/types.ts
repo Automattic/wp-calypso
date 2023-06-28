@@ -11,7 +11,7 @@ export type PlanProperties = {
 	cartItemForPlan: {
 		product_slug: string;
 	} | null;
-	currencyCode: string | null;
+	currencyCode?: string | null;
 	features: TransformedFeatureObject[];
 	jpFeatures: TransformedFeatureObject[];
 	isPlaceholder?: boolean;

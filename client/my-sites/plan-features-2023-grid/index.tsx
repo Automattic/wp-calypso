@@ -46,12 +46,12 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlan, getPlanRawPrice } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+// TODO clk: remove - use ShoppingCartProvider from shopping-cart package
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
@@ -94,14 +94,14 @@ const Container = (
 };
 
 export type PlanFeatures2023GridProps = {
+	// either you specify the plans prop or isPlaceholder prop
+	plans: PlanSlug[];
+	visiblePlans: PlanSlug[];
 	isInSignup?: boolean;
 	siteId?: number | null;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
-	// either you specify the plans prop or isPlaceholder prop
-	plans: PlanSlug[];
-	visiblePlans: PlanSlug[];
 	flowName?: string | null;
 	domainName?: string;
 	placeholder?: string;
@@ -240,6 +240,7 @@ export class PlanFeatures2023Grid extends Component<
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
 
 	componentDidMount() {
+		// TODO clk: move these to PlansFeaturesMain (after Woo plans migrate)
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
 	}
@@ -629,7 +630,7 @@ export class PlanFeatures2023Grid extends Component<
 		const { onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
 		const { cartItemForPlan, planName } = singlePlanProperties;
 
-		// TODO: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
+		// TODO clk: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
 
 		if ( cartItemForPlan ) {
 			ownPropsOnUpgradeClick?.( cartItemForPlan );
@@ -907,15 +908,15 @@ const ConnectedPlanFeatures2023Grid = connect(
 			selectedFeature,
 			intent,
 		} = ownProps;
-		// TODO: canUserManagePlan should be passed through props instead of being calculated here
+		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = siteId
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 			: null;
 		const purchaseId = siteId && getCurrentPlanPurchaseId( state, siteId );
-		// TODO selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
+		// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
 		const selectedSiteSlug = getSiteSlug( state, siteId );
 
-		// TODO: plan properties should be passed through props instead of being calculated here
+		// TODO clk: plan properties should be passed through props instead of being calculated here
 		const planProperties: PlanProperties[] = plans.map( ( plan: PlanSlug ) => {
 			let isPlaceholder = false;
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
@@ -1028,23 +1029,22 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			return {
 				availableForPurchase,
-				cartItemForPlan: isWpcomEnterpriseGridPlan( plan ) ? null : getCartItemForPlan( plan ),
-				// TODO: derive currencyCode from planObject
-				currencyCode: getCurrentUserCurrencyCode( state ),
-				current: currentSitePlanSlug === plan,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
 				isPlaceholder,
-				isVisible: visiblePlans?.indexOf( plan ) !== -1,
 				planConstantObj,
 				planName: plan,
-				// TODO: snake_case?
+				// TODO clk: snake_case?
 				product_name_short,
 				rawPrice,
 				isMonthlyPlan,
 				tagline,
 				storageOptions,
+				cartItemForPlan: isWpcomEnterpriseGridPlan( plan ) ? null : getCartItemForPlan( plan ),
+				current: currentSitePlanSlug === plan,
+				isVisible: visiblePlans?.indexOf( plan ) !== -1,
 				billingPeriod: planObject?.bill_period,
+				currencyCode: planObject?.currency_code,
 			};
 		} );
 
