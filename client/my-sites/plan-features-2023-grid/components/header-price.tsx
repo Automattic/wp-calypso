@@ -131,11 +131,11 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	siteId,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const translate = useTranslate();
-	const { planName, showMonthlyPrice } = planProperties;
+	const { planName } = planProperties;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const planPrices = usePlanPricesDisplay( {
 		planSlug: planName as PlanSlug,
-		returnMonthly: showMonthlyPrice,
+		returnMonthly: true,
 		currentSitePlanSlug,
 		siteId,
 	} );

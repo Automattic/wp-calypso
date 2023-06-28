@@ -927,8 +927,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 			const billingPeriod = planObject?.bill_period;
 			const isMonthlyPlan = isMonthly( plan );
 
-			// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
-			const showMonthlyPrice = true;
 			if ( placeholder || ( ! planObject && plan !== PLAN_ENTERPRISE_GRID_WPCOM ) ) {
 				isPlaceholder = true;
 			}
@@ -967,7 +965,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				tagline = planConstantObj.getPlanTagline?.() ?? '';
 			}
 
-			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
+			const rawPrice = getPlanRawPrice( state, planProductId, true );
 
 			const monthlyPlanKey = findPlansKeys( {
 				group: planConstantObj.group,
@@ -1061,7 +1059,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				tagline,
 				storageOptions,
 				billingPeriod,
-				showMonthlyPrice,
 			};
 		} );
 
