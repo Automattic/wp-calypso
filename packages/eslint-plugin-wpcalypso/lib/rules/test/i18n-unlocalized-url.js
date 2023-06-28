@@ -42,6 +42,10 @@ new RuleTester( {
 				`const link = <a href={ localizeUrl( '${ url }' ) }></a>;`,
 				`const url = '${ url }'; const link = <a href={ localizeUrl( url ) }></a>;`,
 				`const url = localizeUrl( \`${ url }?param=test\` );`,
+				`const url = localizeUrl( true ? '${ url }' : 'https://example.com' );`,
+				`const url = true ? '${ url }' : 'https://example.com'; localizeUrl( url );`,
+				`const url = localizeUrl( false || \`${ url }\` );`,
+				`const url = false || \`${ url }\`; localizeUrl( url );`,
 			] );
 		}, [] ),
 		nonLocalizableUrls.reduce( ( cases, url ) => {
@@ -60,6 +64,10 @@ new RuleTester( {
 			},
 			{
 				code: `const link = <a href={ '${ url }' }></a>;`,
+				errors: [ { message: rule.ERROR_MESSAGE } ],
+			},
+			{
+				code: `isLink ? '${ url }' : ''`,
 				errors: [ { message: rule.ERROR_MESSAGE } ],
 			},
 		] );

@@ -41,6 +41,21 @@ const LOCALIZABLE_URLS = [
 
 const getCallee = require( '../util/get-callee' );
 
+/**
+ * A helper funciton that would return the parent node which is relevant to the specific rule checks.
+ *
+ * @param   {Object} node
+ * @returns {Object}
+ */
+function getRelevantNodeParent( node ) {
+	// In case the node is operand in ternary or logical operator, return the grand parent.
+	if ( [ 'ConditionalExpression', 'LogicalExpression' ].includes( node.parent.type ) ) {
+		return getRelevantNodeParent( node.parent );
+	}
+
+	return node.parent;
+}
+
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
@@ -58,7 +73,7 @@ const rule = ( module.exports = function ( context ) {
 	 */
 	function handleUnlocalizedUrls( node, nodeValueString ) {
 		// Node is wrapped in localizeUrl, therefore we can assume it's localized and we don't need to do any further checks.
-		if ( getCallee( node.parent ).name === 'localizeUrl' ) {
+		if ( getCallee( getRelevantNodeParent( node ) ).name === 'localizeUrl' ) {
 			return;
 		}
 
@@ -68,7 +83,7 @@ const rule = ( module.exports = function ( context ) {
 		}
 
 		// URL string is assigned to a variable and variable is possibly later used in a localizeUrl call;
-		if ( node.parent.type === 'VariableDeclarator' ) {
+		if ( getRelevantNodeParent( node ).type === 'VariableDeclarator' ) {
 			variableDeclarationValues.push( node );
 		} else {
 			// Report unlocalized url.
@@ -82,7 +97,7 @@ const rule = ( module.exports = function ( context ) {
 	return {
 		'Program:exit': function () {
 			for ( const node of variableDeclarationValues ) {
-				if ( ! urlVariables.has( node.parent?.id?.name ) ) {
+				if ( ! urlVariables.has( getRelevantNodeParent( node )?.id?.name ) ) {
 					// Report unlocalized url.
 					context.report( {
 						node,
