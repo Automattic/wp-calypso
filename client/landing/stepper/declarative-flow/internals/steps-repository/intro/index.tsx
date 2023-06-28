@@ -88,7 +88,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			return {
 				title: __( 'Write. Grow. Earn. This is Newsletter.' ),
 				text: __(
-					'Unlimitd subscribers. Beauiful design. And everything you need to grow your audience. Powered by WordPress.com'
+					'Unlimited subscribers. Beautiful design. And everything you need to grow your audience. Powered by WordPress.com'
 				),
 				buttonText: __( 'Launch my newsletter' ),
 			};
