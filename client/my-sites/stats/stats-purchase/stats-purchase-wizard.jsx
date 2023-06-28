@@ -68,7 +68,7 @@ const ProductCard = ( { siteSlug } ) => {
 		setWizardStep( SCREEN_TYPE_SELECTION );
 	};
 
-	// change the plan to commertial on the personal plan confirmation
+	// change the plan to commercial on the personal plan confirmation
 	const handlePlanSwap = () => {
 		setSiteType( TYPE_COMMERCIAL );
 		setWizardStep( SCREEN_PURCHASE );
