@@ -950,12 +950,12 @@ const ConnectedPlanFeatures2023Grid = connect(
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getNewsletterSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
 				);
-				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
+				tagline = planConstantObj.getNewsletterTagLine?.( isGlobalStylesOnPersonal ) ?? '';
 			} else if ( 'plans-link-in-bio' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getLinkInBioSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
 				);
-				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
+				tagline = planConstantObj.getLinkInBioTagLine?.( isGlobalStylesOnPersonal ) ?? '';
 			} else if ( 'plans-blog-onboarding' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getBlogOnboardingSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
@@ -964,7 +964,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				jetpackFeatures = getPlanFeaturesObject(
 					planConstantObj.getBlogOnboardingSignupJetpackFeatures?.() ?? []
 				);
-				tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
+				tagline = planConstantObj.getBlogOnboardingTagLine?.( isGlobalStylesOnPersonal ) ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( isGlobalStylesOnPersonal ) ?? []
@@ -973,7 +973,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				jetpackFeatures = getPlanFeaturesObject(
 					planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
 				);
-				tagline = planConstantObj.getPlanTagline?.() ?? '';
+				tagline = planConstantObj.getPlanTagline?.( isGlobalStylesOnPersonal ) ?? '';
 			}
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );

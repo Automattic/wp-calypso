@@ -40,10 +40,10 @@ export interface WPComPlan extends Plan {
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
-	getPlanTagline?: () => string;
-	getNewsletterTagLine?: () => string;
-	getLinkInBioTagLine?: () => string;
-	getBlogOnboardingTagLine?: () => string;
+	getPlanTagline?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getNewsletterTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getLinkInBioTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getBlogOnboardingTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,

@@ -733,17 +733,34 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
-	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
-	getNewsletterTagLine: () =>
-		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
-	getLinkInBioTagLine: () =>
-		i18n.translate(
-			'Take Link In Bio to the next level with gated content, paid subscribers, and an ad-free site.'
-		),
-	getBlogOnboardingTagLine: () =>
-		i18n.translate(
-			'Take the next step with gated content, paid subscribers, and an ad-free site.'
-		),
+	getPlanTagline: ( isGlobalStylesOnPersonal = false ) =>
+		isGlobalStylesOnPersonal
+			? i18n.translate(
+					'Create your home on the web with a custom domain name and powerful design tools.'
+			  )
+			: i18n.translate( 'Create your home on the web with a custom domain name.' ),
+	getNewsletterTagLine: ( isGlobalStylesOnPersonal = false ) =>
+		isGlobalStylesOnPersonal
+			? i18n.translate(
+					'Monetize your writing, go ad-free, and expand your media content with powerful design tools.'
+			  )
+			: i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
+	getLinkInBioTagLine: ( isGlobalStylesOnPersonal = false ) =>
+		isGlobalStylesOnPersonal
+			? i18n.translate(
+					'Take Link In Bio to the next level with gated content, paid subscribers, and an ad-free site with powerful design tools.'
+			  )
+			: i18n.translate(
+					'Take Link In Bio to the next level with gated content, paid subscribers, and an ad-free site.'
+			  ),
+	getBlogOnboardingTagLine: ( isGlobalStylesOnPersonal = false ) =>
+		isGlobalStylesOnPersonal
+			? i18n.translate(
+					'Take the next step with gated content, paid subscribers, and an ad-free site with powerful design tools.'
+			  )
+			: i18n.translate(
+					'Take the next step with gated content, paid subscribers, and an ad-free site.'
+			  ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -1223,15 +1240,28 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
-	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
-	getNewsletterTagLine: () =>
-		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
-	getLinkInBioTagLine: () =>
-		i18n.translate( 'Make a great first impression with premium designs and style customization.' ),
-	getBlogOnboardingTagLine: () =>
-		i18n.translate(
-			'Make it even more memorable with premium designs, 4K video, and style customization.'
-		),
+	getPlanTagline: ( isGlobalStylesOnPersonal = false ) =>
+		isGlobalStylesOnPersonal
+			? i18n.translate( 'Build a unique website with premium designs.' )
+			: i18n.translate( 'Build a unique website with powerful design tools.' ),
+	getNewsletterTagLine: ( isGlobalStylesOnPersonal = false ) =>
+		isGlobalStylesOnPersonal
+			? i18n.translate( 'Make it even more memorable with premium designs.' )
+			: i18n.translate(
+					'Make it even more memorable with premium designs and style customization.'
+			  ),
+	getLinkInBioTagLine: ( isGlobalStylesOnPersonal = false ) =>
+		isGlobalStylesOnPersonal
+			? i18n.translate( 'Make a great first impression with premium designs.' )
+			: i18n.translate(
+					'Make a great first impression with premium designs and style customization.'
+			  ),
+	getBlogOnboardingTagLine: ( isGlobalStylesOnPersonal = false ) =>
+		isGlobalStylesOnPersonal
+			? i18n.translate( 'Make it even more memorable with premium designs, and 4K video.' )
+			: i18n.translate(
+					'Make it even more memorable with premium designs, 4K video, and style customization.'
+			  ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
