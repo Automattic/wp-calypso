@@ -1,7 +1,6 @@
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -14,16 +13,20 @@ import { SubscriberPopover } from './components/subscriber-popover';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
 import { getSubscriberDetailsUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
-import useDetailsPageSubscriberRemoveMutation from './mutations/use-details-page-subscriber-remove-mutation';
 import useSubscriberDetailsQuery from './queries/use-subscriber-details-query';
 import './subscriber-details-style.scss';
 
 type SubscriberDetailsPageProps = {
 	subscriptionId?: number;
 	userId?: number;
+	pageNumber?: number;
 };
 
-const SubscriberDetailsPage = ( { subscriptionId, userId }: SubscriberDetailsPageProps ) => {
+const SubscriberDetailsPage = ( {
+	subscriptionId,
+	userId,
+	pageNumber = 1,
+}: SubscriberDetailsPageProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -34,49 +37,35 @@ const SubscriberDetailsPage = ( { subscriptionId, userId }: SubscriberDetailsPag
 		subscriptionId,
 		userId
 	);
-	const { mutate, isSuccess } = useDetailsPageSubscriberRemoveMutation(
-		selectedSiteId,
-		subscriptionId,
-		userId
-	);
+
+	const removeSubscriberSuccess = () => {
+		page.show( `/subscribers/${ selectedSiteSlug }?page=${ pageNumber }` );
+
+		dispatch(
+			successNotice(
+				translate( 'You have successfully removed %s from your list.', {
+					args: [ subscriber?.display_name as string ],
+					comment: "%s is the subscriber's public display name",
+				} ),
+				{
+					duration: 5000,
+				}
+			)
+		);
+	};
 
 	const {
 		currentSubscriber: modalSubscriber,
 		onClickUnsubscribe,
 		onConfirmModal,
 		resetSubscriber,
-	} = useUnsubscribeModal( mutate );
+	} = useUnsubscribeModal( selectedSiteId, pageNumber, true, removeSubscriberSuccess );
 
 	const unsubscribeClickHandler = () => {
 		if ( subscriber ) {
 			onClickUnsubscribe( subscriber );
 		}
 	};
-
-	useEffect( () => {
-		if ( isSuccess ) {
-			resetSubscriber();
-			page.show( `/subscribers/${ selectedSiteSlug }` );
-			dispatch(
-				successNotice(
-					translate( 'You have successfully removed %s from your list.', {
-						args: [ subscriber?.display_name as string ],
-						comment: "%s is the subscriber's public display name",
-					} ),
-					{
-						duration: 5000,
-					}
-				)
-			);
-		}
-	}, [
-		dispatch,
-		isSuccess,
-		resetSubscriber,
-		selectedSiteSlug,
-		subscriber?.display_name,
-		translate,
-	] );
 
 	const navigationItems: Item[] = [
 		{
@@ -85,7 +74,7 @@ const SubscriberDetailsPage = ( { subscriptionId, userId }: SubscriberDetailsPag
 		},
 		{
 			label: translate( 'Details' ),
-			href: getSubscriberDetailsUrl( selectedSiteSlug, subscriptionId, userId ),
+			href: getSubscriberDetailsUrl( selectedSiteSlug, subscriptionId, userId, pageNumber ),
 		},
 	];
 

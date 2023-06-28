@@ -16,7 +16,6 @@ import { SubscribersHeaderPopover } from './components/subscribers-header-popove
 import { UnsubscribeModal } from './components/unsubscribe-modal';
 import { getSubscriberDetailsUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
-import { useSubscriberRemoveMutation } from './mutations';
 import { Subscriber } from './types';
 import './style.scss';
 
@@ -28,11 +27,10 @@ type SubscribersProps = {
 const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const { mutate } = useSubscriberRemoveMutation( selectedSiteId, pageNumber );
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
-		useUnsubscribeModal( mutate );
+		useUnsubscribeModal( selectedSiteId, pageNumber );
 	const onClickView = ( { subscription_id, user_id }: Subscriber ) => {
-		page.show( getSubscriberDetailsUrl( selectedSiteSlug, subscription_id, user_id ) );
+		page.show( getSubscriberDetailsUrl( selectedSiteSlug, subscription_id, user_id, pageNumber ) );
 	};
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const dispatch = useDispatch();
