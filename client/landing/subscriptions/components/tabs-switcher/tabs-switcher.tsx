@@ -3,6 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import DocumentHead from 'calypso/components/data/document-head';
 import Nav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -68,10 +69,18 @@ const useTabs = (): SubscriptionManagerTab[] => {
 };
 
 const TabsSwitcher = () => {
+	const translate = useTranslate();
 	const tabs = useTabs();
 	const { label: selectedText, count: selectedCount } = tabs.find( ( tab ) => tab.selected ) ?? {};
 	return (
 		<>
+			<DocumentHead
+				title={ translate( 'Subscriptions: %s', {
+					args: selectedText,
+					comment:
+						'%s is the selected tab. Example: "Subscriptions: Sites" or "Subscriptions: Comments"',
+				} ) }
+			/>
 			<Nav
 				className="subscription-manager-tab-switcher"
 				selectedText={ selectedText }
