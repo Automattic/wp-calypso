@@ -25,6 +25,7 @@ export default function FeedStream( props ) {
 		const _feed = getFeed( state, feedId );
 
 		if ( _feed ) {
+			// Add site icon to feed object so have icon for external feeds
 			_feed.site_icon = getReaderFollowForFeed( state, parseInt( feedId ) )?.site_icon;
 		}
 
