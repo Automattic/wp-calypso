@@ -595,6 +595,14 @@ $masterbar-color-secondary: #101517;
 }
 
 .masterbar__reader {
+	@media only screen and ( max-width: 782px ) {
+		.gridicon + .masterbar__item-content {
+			padding-left: 6px;
+		}
+	}
+}
+
+.masterbar__agency {
 	@include breakpoint-deprecated( ">480px" ) {
 		margin-right: auto;
 	}
@@ -603,6 +611,10 @@ $masterbar-color-secondary: #101517;
 		.gridicon + .masterbar__item-content {
 			padding-left: 6px;
 		}
+	}
+	.gridicon {
+		height: 20px;
+		width: 20px;
 	}
 }
 

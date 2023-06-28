@@ -157,6 +157,11 @@ class MasterbarLoggedIn extends Component {
 		this.handleLayoutFocus( 'reader' );
 	};
 
+	clickAgency = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_agency_clicked' );
+		this.handleLayoutFocus( 'agency' );
+	};
+
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
 		window.scrollTo( 0, 0 );
@@ -179,6 +184,10 @@ class MasterbarLoggedIn extends Component {
 
 	preloadReader = () => {
 		preload( 'reader' );
+	};
+
+	preloadAgency = () => {
+		preload( 'agency' );
 	};
 
 	preloadMe = () => {
@@ -300,6 +309,26 @@ class MasterbarLoggedIn extends Component {
 			>
 				{ showLabel &&
 					translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+			</Item>
+		);
+	}
+
+	renderAgency( showLabel = true ) {
+		const { translate } = this.props;
+
+		return (
+			<Item
+				tipTarget="agency"
+				className="masterbar__agency"
+				url="/agency"
+				icon="briefcase"
+				onClick={ this.clickAgency }
+				isActive={ this.isActive( 'agency' ) }
+				tooltip={ translate( 'Manage your business with Jetpack Pro tools' ) }
+				preloadSection={ this.preloadAgency }
+			>
+				{ showLabel &&
+					translate( 'Agency', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 			</Item>
 		);
 	}
@@ -522,6 +551,7 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderMySites() }
 							{ this.renderReader( false ) }
+							{ this.renderAgency( false ) }
 							{ this.renderLanguageSwitcher() }
 							{ this.renderSearch() }
 						</div>
@@ -542,6 +572,7 @@ class MasterbarLoggedIn extends Component {
 					<div className="masterbar__section masterbar__section--left">
 						{ this.renderMySites() }
 						{ this.renderReader() }
+						{ this.renderAgency() }
 						{ this.renderLanguageSwitcher() }
 						{ this.renderSearch() }
 					</div>

@@ -140,6 +140,7 @@ export class ReaderSidebar extends Component {
 
 	renderSidebar() {
 		const { path, translate, teams } = this.props;
+
 		return (
 			<SidebarMenu>
 				<QueryReaderLists />
