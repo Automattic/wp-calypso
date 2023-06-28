@@ -38,7 +38,6 @@ const CommercialPurchase = () => {
 			</p>
 
 			<Button isPrimary>Get Jetpack Stats for ${ FLAT_COMMERTIAL_PRICE } per month</Button>
-			<Button isSecondary>Continue for free</Button>
 		</div>
 	);
 };
