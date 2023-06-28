@@ -12,6 +12,7 @@ import {
 	isTitanMail,
 	isConciergeSession,
 	getJetpackProductsDisplayNames,
+	getStorageAddOnDisplayName,
 	isWpComPlan,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -20,7 +21,7 @@ import {
 	isDIFMProduct,
 	isJetpackSearchFree,
 	isAkismetProduct,
-	PRODUCT_1GB_SPACE,
+	isTieredVolumeSpaceAddon,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
@@ -240,13 +241,15 @@ export function getName( purchase: Purchase ): string {
 }
 
 export function getDisplayName( purchase: Purchase ): TranslateResult {
+	const { productName, productSlug, purchaseRenewalQuantity } = purchase;
+
 	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
-	if ( jetpackProductsDisplayNames[ purchase.productSlug ] ) {
-		return jetpackProductsDisplayNames[ purchase.productSlug ];
+	if ( jetpackProductsDisplayNames[ productSlug ] ) {
+		return jetpackProductsDisplayNames[ productSlug ];
 	}
 
-	if ( purchase.productSlug === PRODUCT_1GB_SPACE && purchase.purchaseRenewalQuantity ) {
-		return `${ getName( purchase ) } ${ purchase.purchaseRenewalQuantity } GB`;
+	if ( isTieredVolumeSpaceAddon( purchase ) ) {
+		return getStorageAddOnDisplayName( productName, purchaseRenewalQuantity );
 	}
 
 	return getName( purchase );
