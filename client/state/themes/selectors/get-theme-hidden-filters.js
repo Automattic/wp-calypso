@@ -11,7 +11,7 @@ export function getThemeHiddenFilters( state, siteId ) {
 	const filters = [];
 
 	if ( isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ) ) {
-		filters.push( 'woo-on-plans' );
+		filters.push( 'store' );
 	}
 
 	return filters;
