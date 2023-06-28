@@ -21,7 +21,6 @@ export type PlanProperties = {
 	planName: PlanSlug;
 	planObject: PricedAPIPlan | undefined;
 	product_name_short: string;
-	hideMonthly?: boolean;
 	rawPrice: number | null;
 	rawPriceForMonthlyPlan: number | null;
 	relatedMonthlyPlan: null | PricedAPIPlan | undefined;

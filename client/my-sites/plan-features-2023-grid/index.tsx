@@ -916,12 +916,15 @@ const ConnectedPlanFeatures2023Grid = connect(
 			selectedFeature,
 			intent,
 		} = ownProps;
+		// TODO: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = siteId
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 			: null;
 		const purchaseId = siteId && getCurrentPlanPurchaseId( state, siteId );
+		// TODO selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
 		const selectedSiteSlug = getSiteSlug( state, siteId );
 
+		// TODO: plan properties should be passed through props instead of being calculated here
 		const planProperties: PlanProperties[] = plans.map( ( plan: PlanSlug ) => {
 			let isPlaceholder = false;
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
@@ -1060,8 +1063,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 				planConstantObj,
 				planName: plan,
 				planObject: planObject,
+				// TODO: snake_case?
 				product_name_short,
-				hideMonthly: false,
 				rawPrice,
 				rawPriceForMonthlyPlan,
 				relatedMonthlyPlan,
