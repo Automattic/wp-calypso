@@ -78,6 +78,7 @@ class ReaderPostCardAdapter extends Component {
 				isDiscoverStream={ this.props.isDiscoverStream }
 				postKey={ this.props.postKey }
 				compact={ this.props.compact }
+				showFollowButton={ this.props.showFollowButton }
 			>
 				{ feedId && <QueryReaderFeed feedId={ feedId } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } /> }
