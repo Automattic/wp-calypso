@@ -13,6 +13,14 @@
 	background: var(--woocommerce-purple-50);
 	z-index: 1;
 
+	&--is-clickable {
+		cursor: pointer;
+
+		.accessible-focus &:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+	}
+
 	svg {
 		height: 20px;
 		margin-right: 5px;
