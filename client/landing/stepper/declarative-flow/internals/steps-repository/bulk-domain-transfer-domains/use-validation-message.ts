@@ -3,6 +3,7 @@ import { doesStringResembleDomain } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
+import { getAvailabilityErrorMessage } from 'calypso/components/domains/use-my-domain/utilities';
 
 export function useValidationMessage( domain: string, auth: string, hasDuplicates: boolean ) {
 	// record passed domains to avoid revalidation
@@ -117,12 +118,21 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			refetch,
 		};
 	}
+
+	const message = getAvailabilityErrorMessage( {
+		availabilityData: validationResult,
+		domainName: domainDebounced,
+		selectedSite: {},
+	} );
+
 	return {
 		valid: false,
 		loading: false,
-		message: __(
-			'An unknown error occurred while checking the domain transferability. Please try again or contact support'
-		),
+		message:
+			message ||
+			__(
+				'An unknown error occurred while checking the domain transferability. Please try again or contact support'
+			),
 		refetch,
 	};
 }
