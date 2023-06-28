@@ -1,10 +1,17 @@
 .licenses {
+	max-width: 1500px;
+	margin: auto;
+
 	&__header {
 		display: flex;
 		align-items: center;
 
 		> * + * {
 			margin-left: 24px;
+		}
+
+		.card-heading {
+			margin-block-start: initial;
 		}
 	}
 }
