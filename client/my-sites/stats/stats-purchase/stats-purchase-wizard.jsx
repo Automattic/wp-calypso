@@ -24,6 +24,7 @@ const CommercialPurchase = () => {
 
 			<div className="benefits">
 				<ul className="included">
+					{ /* TODO: Translate the copy below */ }
 					<li>Instant access to upcoming features</li>
 					<li>Priority support</li>
 					<li>Ad-free experience</li>
