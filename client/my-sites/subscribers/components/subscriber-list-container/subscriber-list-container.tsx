@@ -6,6 +6,7 @@ import { SubscriberListActionsBar } from 'calypso/my-sites/subscribers/component
 import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useRecordSearch } from '../../tracks';
+import { GrowYourAudience } from '../grow-your-audience';
 import './style.scss';
 
 type SubscriberListContainerProps = {
@@ -31,20 +32,20 @@ const SubscriberListContainer = ( {
 					<SubscriberListActionsBar />
 
 					<SubscriberList onView={ onClickView } onUnsubscribe={ onClickUnsubscribe } />
+
+					<Pagination
+						className="subscriber-list-container__pagination"
+						page={ page }
+						perPage={ perPage }
+						total={ total }
+						pageClick={ pageClickCallback }
+					/>
+
+					<GrowYourAudience />
 				</>
 			) : (
-				<>
-					<EmptyListView />
-				</>
+				<EmptyListView />
 			) }
-
-			<Pagination
-				className="subscriber-list-container__pagination"
-				page={ page }
-				perPage={ perPage }
-				total={ total }
-				pageClick={ pageClickCallback }
-			/>
 		</section>
 	);
 };
