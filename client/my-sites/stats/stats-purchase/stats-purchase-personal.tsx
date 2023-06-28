@@ -8,6 +8,7 @@ interface PersonalPurchaseProps {
 }
 
 const PersonalPurchase = ( { subscriptionValue, setSubscriptionValue }: PersonalPurchaseProps ) => {
+	// TODO: Add translate calls to copy.
 	const sliderLabel = ( ( props, state ) => {
 		return <div { ...props }>${ state?.valueNow || subscriptionValue }/month</div>;
 	} ) as RenderThumbFunction;

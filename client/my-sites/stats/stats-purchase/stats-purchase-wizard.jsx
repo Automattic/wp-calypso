@@ -18,12 +18,13 @@ const FLAT_COMMERCIAL_PRICE = 10;
 const CommercialPurchase = () => {
 	return (
 		<div>
-			<p>Notice...</p>
+			{ /* TODO: Add notice */ }
 
 			<p>${ `${ FLAT_COMMERCIAL_PRICE }` }/month</p>
 
 			<div className="benefits">
 				<ul className="included">
+					{ /* TODO: Translate the copy below */ }
 					<li>Instant access to upcoming features</li>
 					<li>Priority support</li>
 					<li>Ad-free experience</li>
@@ -31,12 +32,12 @@ const CommercialPurchase = () => {
 			</div>
 
 			<p>
+				{ /* TODO: Translate the copy below */ }
 				By clicking the button below, you agree to our <a href="#">Terms of Service</a> and to{ ' ' }
 				<a href="#">share details</a> with WordPress.com.
 			</p>
 
 			<Button isPrimary>Get Jetpack Stats for ${ FLAT_COMMERCIAL_PRICE } per month</Button>
-			<Button isSecondary>Continue for free</Button>
 		</div>
 	);
 };
@@ -68,7 +69,7 @@ const ProductCard = ( { siteSlug } ) => {
 		setWizardStep( SCREEN_TYPE_SELECTION );
 	};
 
-	// change the plan to commertial on the personal plan confirmation
+	// change the plan to commercial on the personal plan confirmation
 	const handlePlanSwap = () => {
 		setSiteType( TYPE_COMMERCIAL );
 		setWizardStep( SCREEN_PURCHASE );
