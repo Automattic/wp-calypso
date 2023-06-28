@@ -11,10 +11,16 @@ import { useCallback, useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { withoutHttp } from 'calypso/lib/url';
+import {
+	trackAddDomainClick,
+	trackAddDomainMenuClick,
+} from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
+import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
@@ -209,6 +215,17 @@ export function SitesDashboard( {
 							icon="arrow-down"
 						>
 							<span>{ __( 'Import an existing site' ) }</span>
+						</PopoverMenuItem>
+						<PopoverMenuSeparator />
+						<PopoverMenuItem icon="search" href={ domainAddNew() } onClick={ trackAddDomainClick }>
+							<span>{ __( 'Search for a domain' ) }</span>
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							icon="domains"
+							onClick={ () => trackAddDomainMenuClick( domainUseMyDomain() ) }
+							href={ domainUseMyDomain() }
+						>
+							<span>{ __( 'Use a domain I own' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
 				</HeaderControls>

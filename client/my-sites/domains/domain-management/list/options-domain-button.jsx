@@ -147,13 +147,13 @@ class AddDomainButton extends Component {
 	}
 }
 
-const trackAddDomainClick = () =>
+export const trackAddDomainClick = () =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in List' ),
 		recordTracksEvent( 'calypso_domain_management_list_add_domain_click' )
 	);
 
-const trackAddDomainMenuClick = ( menuUrl ) =>
+export const trackAddDomainMenuClick = ( menuUrl ) =>
 	recordTracksEvent( 'calypso_domain_management_list_add_domain_menu_click', {
 		menu_slug: menuUrl,
 	} );
