@@ -32,6 +32,7 @@ const CommercialPurchase = () => {
 			</div>
 
 			<p>
+				{ /* TODO: Translate the copy below */ }
 				By clicking the button below, you agree to our <a href="#">Terms of Service</a> and to{ ' ' }
 				<a href="#">share details</a> with WordPress.com.
 			</p>
