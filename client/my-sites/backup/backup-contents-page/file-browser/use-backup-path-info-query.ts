@@ -23,7 +23,7 @@ export const useBackupPathInfoQuery = (
 				}
 			);
 		},
-		enabled: !! siteId && !! rewindId,
+		enabled: !! siteId,
 		meta: { persist: false },
 		select: parseBackupPathInfo,
 		staleTime: Infinity,
