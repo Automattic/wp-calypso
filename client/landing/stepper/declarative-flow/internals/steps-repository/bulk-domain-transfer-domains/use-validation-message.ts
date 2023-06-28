@@ -3,8 +3,13 @@ import { doesStringResembleDomain } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
+import { getAvailabilityErrorMessage } from 'calypso/components/domains/use-my-domain/utilities';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useDomainIsAvailable } from './use-domain-availability';
 
 export function useValidationMessage( domain: string, auth: string ) {
+	const selectedSite = useSelector( getSelectedSiteId );
 	// record pass domains to avoid revalidation
 	const [ passed, setPassed ] = useState( false );
 	const { __ } = useI18n();
@@ -16,11 +21,23 @@ export function useValidationMessage( domain: string, auth: string ) {
 	const hasGoodAuthCode = hasGoodDomain && authDebounced.trim().length > 0;
 
 	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode;
+	const { data: availabilityData, isInitialLoading: isLoadingAvailability } = useDomainIsAvailable(
+		domainDebounced,
+		{
+			enabled: Boolean( ! passed && passedLocalValidation ),
+		}
+	);
+
+	const availabilityErrorMessage = getAvailabilityErrorMessage( {
+		availabilityData: availabilityData || {},
+		domainName: domainDebounced,
+		selectedSite,
+	} );
 
 	const { data: isDomainUnlocked, isInitialLoading: isLoadingLock } = useIsDomainsUnlocked(
 		domainDebounced,
 		{
-			enabled: Boolean( ! passed && passedLocalValidation ),
+			enabled: Boolean( ! passed && passedLocalValidation && ! availabilityErrorMessage ),
 		}
 	);
 
@@ -30,9 +47,22 @@ export function useValidationMessage( domain: string, auth: string ) {
 			auth: authDebounced,
 		},
 		{
-			enabled: Boolean( ! passed && passedLocalValidation && isDomainUnlocked?.unlocked ),
+			enabled: Boolean(
+				! passed &&
+					passedLocalValidation &&
+					isDomainUnlocked?.unlocked &&
+					! availabilityErrorMessage
+			),
 		}
 	);
+
+	if ( availabilityErrorMessage ) {
+		return {
+			valid: false,
+			loading: false,
+			message: availabilityErrorMessage,
+		};
+	}
 
 	if ( passed ) {
 		setPassed( true );
@@ -61,7 +91,7 @@ export function useValidationMessage( domain: string, auth: string ) {
 	}
 
 	// local validation passed, but we're still loading
-	if ( isLoadingLock ) {
+	if ( isLoadingAvailability || isLoadingLock ) {
 		return {
 			valid: false,
 			loading: true,
