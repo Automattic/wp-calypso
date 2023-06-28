@@ -45,7 +45,9 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 			<div className="file-card__details">
 				{ item.type === 'table' && (
 					<div className="file-card__detail">
-						<span className="file-card__label">{ translate( 'Rows:' ) } </span>
+						<span className="file-card__label">
+							{ translate( 'Rows:', { comment: 'Rows refers to database table rows.' } ) }{ ' ' }
+						</span>
 						<span className="file-card__value">{ item.rowCount }</span>
 					</div>
 				) }
@@ -53,14 +55,20 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 				<div className="file-card__detail-group">
 					{ modifiedTime && (
 						<div className="file-card__detail">
-							<span className="file-card__label">{ translate( 'Modified:' ) } </span>
+							<span className="file-card__label">
+								{ translate( 'Modified:', { comment: 'Date when the file was modified.' } ) }{ ' ' }
+							</span>
 							<span className="file-card__value">{ modifiedTime }</span>
 						</div>
 					) }
 
 					{ size && (
 						<div className="file-card__detail">
-							<span className="file-card__label">{ translate( 'Size:' ) } </span>
+							<span className="file-card__label">
+								{ translate( 'Size:', {
+									comment: 'This refers to file size (bytes, kilobytes, gigabytes, etc.',
+								} ) }{ ' ' }
+							</span>
 							<span className="file-card__value">
 								{ size.unitAmount } { size.unit }
 							</span>
@@ -70,7 +78,11 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 
 				{ fileInfo?.hash && (
 					<div className="file-card__detail">
-						<span className="file-card__label">{ translate( 'Hash:' ) } </span>
+						<span className="file-card__label">
+							{ translate( 'Hash:', {
+								comment: 'This refers to a unique identifier or checksum.',
+							} ) }{ ' ' }
+						</span>
 						<span className="file-card__value">{ fileInfo.hash }</span>
 					</div>
 				) }
