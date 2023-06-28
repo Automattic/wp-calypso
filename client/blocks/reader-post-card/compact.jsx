@@ -1,3 +1,4 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import PropTypes from 'prop-types';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
@@ -20,6 +21,8 @@ const CompactPost = ( {
 			? () => expandCard( { postKey, post, site } )
 			: null;
 
+	const isSmallScreen = useBreakpoint( '<660px' );
+
 	return (
 		<div className="reader-post-card__post">
 			<div className="reader-post-card__post-content">
@@ -35,7 +38,7 @@ const CompactPost = ( {
 							</AutoDirection>
 							{ postByline }
 						</div>
-						{ ! post.canonical_media && (
+						{ ( ! post.canonical_media || isSmallScreen ) && (
 							<ReaderPostEllipsisMenu
 								site={ site }
 								teams={ teams }
@@ -48,12 +51,14 @@ const CompactPost = ( {
 				</div>
 				{ post.canonical_media && (
 					<div className="reader-post-card__post-media">
-						<ReaderPostEllipsisMenu
-							site={ site }
-							teams={ teams }
-							post={ post }
-							showFollow={ false }
-						/>
+						{ ! isSmallScreen && (
+							<ReaderPostEllipsisMenu
+								site={ site }
+								teams={ teams }
+								post={ post }
+								showFollow={ false }
+							/>
+						) }
 						<FeaturedAsset
 							post={ post }
 							canonicalMedia={ post.canonical_media }
