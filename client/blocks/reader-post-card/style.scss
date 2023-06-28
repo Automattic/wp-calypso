@@ -140,6 +140,13 @@
 			width: 200px !important;
 			min-height: 140px;
 			max-height: 140px;
+
+			@include breakpoint-deprecated( "<660px" ) {
+				width: unset !important;
+				height: 300px !important;
+				min-height: 300px;
+				max-height: 300px;
+			}
 		}
 
 		.reader-post-card__post {
@@ -156,6 +163,10 @@
 			flex-direction: row;
 			gap: 24px;
 			margin-bottom: 8px;
+
+			@include breakpoint-deprecated( "<660px" ) {
+				flex-direction: column-reverse;
+			}
 		}
 
 		.reader-post-card__post-details {
