@@ -1,7 +1,8 @@
+import { registerCoreBlocks } from '@wordpress/block-library';
 import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
 import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import { isEmpty, mapValues } from 'lodash';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useGetGlobalStylesBaseConfig } from '../../hooks';
 import type { GlobalStylesObject } from '../../types';
 
@@ -86,6 +87,12 @@ interface Props {
 
 const GlobalStylesProvider = ( { siteId, stylesheet, children, placeholder = null }: Props ) => {
 	const context = useGlobalStylesContext( siteId, stylesheet );
+
+	// The block-level styles have effects only when the specific blocks are registered so we have to register core blocks.
+	// See https://github.com/WordPress/gutenberg/blob/16486bd946f918d581e4818b73ceaaed82349f71/packages/block-editor/src/components/global-styles/use-global-styles-output.js#L1190
+	useEffect( () => {
+		registerCoreBlocks();
+	}, [] );
 
 	if ( ! context.isReady ) {
 		return placeholder;
