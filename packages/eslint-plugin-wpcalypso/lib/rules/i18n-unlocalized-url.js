@@ -10,13 +10,28 @@
 //------------------------------------------------------------------------------
 
 const LOCALIZABLE_URLS = [
+	// apps.wordpress.com/**
 	/^(https?:)?\/\/apps\.wordpress\.com/i,
+
+	// automattic.com/cookies/
 	/^(https?:)?\/\/automattic\.com\/cookies\/?$/i,
+
+	// automattic.com/privacy/
 	/^(https?:)?\/\/automattic\.com\/privacy\/?$/i,
+
+	// wordpress.com/tos/
 	/^(https?:)?\/\/wordpress\.com\/tos\/?$/i,
+
+	// wordpress.com/blog/
 	/^(https?:)?\/\/wordpress\.com\/blog\/?$/i,
+
+	// wordpress.com/forums/
 	/^(https?:)?\/\/wordpress\.com\/forums\/?$/i,
+
+	// wordpress.com/go/**
 	/^(https?:)?\/\/wordpress\.com\/go($|\/.*)/i,
+
+	// wordpress.com/support/**
 	/^(https?:)?\/\/wordpress\.com\/support($|\/.*)/i,
 ];
 
@@ -96,6 +111,6 @@ const rule = ( module.exports = function ( context ) {
 	};
 } );
 
-rule.ERROR_MESSAGE = "Url string should be wrapped in 'localizeUrl' function call";
+rule.ERROR_MESSAGE = "URL string should be wrapped in a 'localizeUrl' function call";
 
 rule.schema = [];
