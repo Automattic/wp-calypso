@@ -252,7 +252,7 @@ class Plans extends Component {
 
 		const hideFreePlan = this.props.isDomainAndPlanPackageFlow;
 		// The Jetpack mobile app only wants to display two plans -- personal and premium
-		const isJetpackAppPlans = this.props.jetpackAppPlans;
+		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
 		const hidePlanTypeSelector =
 			this.props.domainAndPlanPackage &&
 			( ! this.props.isDomainUpsell ||
@@ -273,7 +273,7 @@ class Plans extends Component {
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
-				intent={ isJetpackAppPlans ? 'plans-jetpack-app' : null }
+				intent={ plansIntent }
 			/>
 		);
 	}
