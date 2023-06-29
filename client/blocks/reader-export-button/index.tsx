@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, ComponentProps } from 'react';
 import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	READER_EXPORT_TYPE_LIST,
@@ -20,7 +20,7 @@ type ExportResponse = {
 	opml: string;
 };
 
-type ReaderExportButtonProps = Button.ButtonProps & {
+type ReaderExportButtonProps = ComponentProps< typeof Button > & {
 	exportType?: ExportType;
 	filename?: string;
 	listId?: number;
@@ -36,7 +36,7 @@ const ReaderExportButton = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isMounted = useRef( false );
-	const [ isExportInProgress, setExportInProgress ] = useState( false );
+	const [ isExportInProgress, setExportInProgress ] = useState< boolean >( false );
 
 	useEffect( () => {
 		isMounted.current = true;
