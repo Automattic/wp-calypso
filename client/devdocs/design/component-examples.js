@@ -1,7 +1,6 @@
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export { default as Animate } from 'calypso/components/animate/docs/example';
 export { default as BackButton } from 'calypso/components/back-button/docs/example';
-export { default as Badge } from 'calypso/components/badge/docs/example';
 export { default as Banner } from 'calypso/components/banner/docs/example';
 export { default as BulkSelect } from 'calypso/components/bulk-select/docs/example';
 export { default as ButtonGroups } from 'calypso/components/button-group/docs/example';
@@ -65,7 +64,7 @@ export { default as SegmentedControl } from 'calypso/components/segmented-contro
 export { default as SelectDropdown } from 'calypso/components/select-dropdown/docs/example';
 export { default as ShareButton } from 'calypso/components/share-button/docs/example';
 export { default as SocialLogos } from 'calypso/components/social-logo/docs/example';
-export { Spinner } from '@automattic/components';
+export { Badge, Spinner } from '@automattic/components';
 export { default as SpinnerButton } from 'calypso/components/spinner-button/docs/example';
 export { default as SpinnerLine } from 'calypso/components/spinner-line/docs/example';
 export { default as SplitButton } from 'calypso/components/split-button/docs/example';
