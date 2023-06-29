@@ -1,9 +1,9 @@
+import Search from '@automattic/search';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import { SitesSearch } from 'calypso/sites-dashboard/components/sites-search';
 import { SitesSearchIcon } from 'calypso/sites-dashboard/components/sites-search-icon';
 import CampaignsFilter, { CampaignsFilterType } from '../campaigns-filter';
 
@@ -123,7 +123,7 @@ export default function SearchBar( props: Props ) {
 				`${ mode === 'posts' ? 'wide' : '' }`
 			) }
 		>
-			<SitesSearch
+			<Search
 				searchIcon={ <SitesSearchIcon /> }
 				className="promote-post-i2__search-bar-search"
 				defaultValue={ searchInput }
