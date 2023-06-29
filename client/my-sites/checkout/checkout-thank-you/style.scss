@@ -194,14 +194,12 @@ body.is-section-checkout-thank-you {
 
 // Header subcomponent styles
 .checkout-thank-you__header {
-	position: relative;
 	color: var(--color-text-subtle);
-	padding: 12px 24px 48px;
-	text-align: center;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		padding-bottom: 72px;
+	padding: 0 24px;
+	@include break-mobile {
+		padding: 0 0 0 0;
 	}
+	text-align: center;
 }
 .checkout-thank-you__header::before {
 	content: "";
@@ -265,7 +263,12 @@ body.is-section-checkout-thank-you {
 }
 
 .checkout-thank-you__header-button {
-	margin: 2em 0;
+	margin: 50px 0;
+	padding: 20px 25px;
+	width: 650px;
+	height: auto;
+	border-radius: 2px;
+	border: 1px solid var(--studio-gray-5);
 
 	button:nth-child(2) {
 		margin-left: 10px;
@@ -280,7 +283,10 @@ body.is-section-checkout-thank-you {
 	font-size: $font-headline-small;
 	color: var(--color-text);
 	font-weight: 400;
-	margin: 24px 0 8px;
+	margin: 30px 0 8px 0;
+	@include break-mobile {
+		margin: 60px 0 8px 0;
+	}
 }
 
 .checkout-thank-you__header-text {
