@@ -139,7 +139,11 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row campaign-item__data-row-mobile">
 					<div className="campaign-item__stats-mobile">{ getMobileStats() }</div>
 					<div className="campaign-item__actions-mobile">
-						<Button onClick={ navigateToDetailsPage } isLink className="campaign-item__view-link">
+						<Button
+							onClick={ navigateToDetailsPage }
+							variant="link"
+							className="campaign-item__view-link"
+						>
 							{ __( 'Open details' ) }
 						</Button>
 					</div>
@@ -164,7 +168,7 @@ export default function CampaignItem( props: Props ) {
 				<div>{ formatNumber( clicks_total ) }</div>
 			</td>
 			<td className="campaign-item__action">
-				<Button onClick={ navigateToDetailsPage } isLink icon={ chevronRight } />
+				<Button onClick={ navigateToDetailsPage } variant="link" icon={ chevronRight } />
 			</td>
 		</tr>
 	);

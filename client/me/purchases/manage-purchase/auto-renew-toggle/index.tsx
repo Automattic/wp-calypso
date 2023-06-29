@@ -240,7 +240,7 @@ class AutoRenewToggle extends Component<
 				'…'
 			) : (
 				<Button
-					isLink
+					variant="link"
 					className="is-link"
 					onClick={ this.onToggleAutoRenew }
 					disabled={ shouldDisable }

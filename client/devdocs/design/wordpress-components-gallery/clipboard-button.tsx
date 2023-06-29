@@ -8,7 +8,6 @@ const ClipboardButtonExample = () => {
 	return (
 		<ClipboardButton
 			text={ text }
-			isPrimary
 			onCopy={ () => setCopied( true ) }
 			onFinishCopy={ () => setCopied( false ) }
 		>
