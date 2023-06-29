@@ -190,7 +190,7 @@ export function SitesDashboard( {
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
-					<ManageAllDomainsButton transparent href="/domains/manage">
+					<ManageAllDomainsButton href="/domains/manage">
 						{ __( 'Manage all domains' ) }
 					</ManageAllDomainsButton>
 					<SplitButton
