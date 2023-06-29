@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
 import { createSitesListComponent } from '@automattic/sites';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
@@ -140,6 +141,10 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 	}
 `;
 
+const ManageAllDomainsButton = styled( Button )`
+	margin-right: 10px;
+`;
+
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
@@ -174,6 +179,8 @@ export function SitesDashboard( {
 		smoothScrolling: true,
 	} );
 
+	const isMobile = useMobileBreakpoint();
+
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
 
@@ -183,14 +190,18 @@ export function SitesDashboard( {
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
+					<ManageAllDomainsButton transparent href="/domains/manage">
+						{ __( 'Manage all domains' ) }
+					</ManageAllDomainsButton>
 					<SplitButton
 						primary
 						whiteSeparator
-						label={ __( 'Add new site' ) }
+						label={ isMobile ? undefined : __( 'Add new site' ) }
 						onClick={ () => {
 							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
 						} }
 						href={ createSiteUrl }
+						toggleIcon={ isMobile ? 'plus' : undefined }
 					>
 						<PopoverMenuItem
 							onClick={ () => {
