@@ -10,9 +10,9 @@ function FollowingStream( { ...props } ) {
 	return (
 		<>
 			<Stream
+				{ ...props }
 				className="following"
 				streamSidebar={ <ReaderListFollowedSites path={ window.location.pathname } /> }
-				{ ...props }
 			>
 				<FollowingIntro />
 			</Stream>
