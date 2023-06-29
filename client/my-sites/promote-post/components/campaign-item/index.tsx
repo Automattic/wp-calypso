@@ -146,6 +146,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 			label: __( 'Contact support' ),
 			onClick: async () => {
 				setShowErrorDialog( false );
+				// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 				window.open( 'https://wordpress.com/support/', '_blank' );
 			},
 		},
@@ -315,6 +316,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 								components: {
 									wpcomTos: (
 										<a
+											// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 											href="https://wordpress.com/tos/"
 											target="_blank"
 											rel="noopener noreferrer"
