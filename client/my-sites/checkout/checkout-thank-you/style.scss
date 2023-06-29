@@ -2,6 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+body.is-section-checkout-thank-you {
+	// Override default theme colors
+	--color-text: var(--studio-black);
+	--color-text-subtle: var(--studio-gray-60);
+}
+
 .layout__content {
 	overflow: visible;
 }
@@ -170,6 +176,10 @@
 	display: flex;
 	text-align: left;
 	margin-top: 15px;
+	font-size: $font-title-small;
+	font-weight: 400;
+	word-break: break-word;
+
 
 	.gridicons-checkmark-circle {
 		position: relative;
@@ -199,14 +209,14 @@
 }
 
 .checkout-thank-you__header-heading {
-	font-size: $font-title-medium;
+	font-size: $font-headline-small;
+	color: var(--color-text);
 	font-weight: 400;
 	margin: 24px 0 8px;
 }
 
-.checkout-thank-you__header-text,
-.checkout-thank-you__success-message-item {
-	font-size: $font-title-small;
+.checkout-thank-you__header-text {
+	color: var(--color-text-subtle);
 	font-weight: 400;
 	margin-top: 15px;
 	word-break: break-word;

@@ -548,7 +548,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
-						<h1 className="checkout-thank-you__header-heading">{ this.getHeading() }</h1>
+						<h1 className="checkout-thank-you__header-heading wp-brand-font">
+							{ this.getHeading() }
+						</h1>
 
 						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
 							this.renderSimplifiedContent()
