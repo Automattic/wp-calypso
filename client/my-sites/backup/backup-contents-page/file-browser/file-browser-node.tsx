@@ -50,7 +50,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			setFetchContentsOnMount( true );
 		}
 
-		if ( ! item.hasChildren ) {
+		if ( ! item.hasChildren && item.type !== 'wordpress' ) {
 			if ( ! isOpen ) {
 				setActiveNodePath( path );
 			} else {
@@ -59,7 +59,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		}
 
 		setIsOpen( ! isOpen );
-	}, [ isOpen, item.hasChildren, path, setActiveNodePath ] );
+	}, [ isOpen, item, path, setActiveNodePath ] );
 
 	const renderChildren = () => {
 		if ( isInitialLoading ) {
@@ -124,7 +124,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					</Button>
 				) }
 			</div>
-			{ isCurrentNodeClicked && <FileInfoCard item={ item } /> }
+			{ isCurrentNodeClicked && <FileInfoCard siteId={ siteId } item={ item } /> }
 			{ isOpen && (
 				<>
 					{ item.hasChildren && (
