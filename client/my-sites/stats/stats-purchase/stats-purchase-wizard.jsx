@@ -3,6 +3,7 @@ import { Button, CheckboxControl, Card, Panel, PanelRow, PanelBody } from '@word
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import CommercialPurchase from './stats-purchase-commercial';
 import PersonalPurchase from './stats-purchase-personal';
 import StatsPurchaseSVG from './stats-purchase-svg';
 import './styles.scss';
@@ -13,35 +14,6 @@ const SCREEN_PERSONAL_CHECKLIST = 1;
 const SCREEN_PURCHASE = 2;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
-const FLAT_COMMERCIAL_PRICE = 10;
-
-// TODO: import
-const CommercialPurchase = () => {
-	return (
-		<div>
-			{ /* TODO: Add notice */ }
-
-			<p>${ `${ FLAT_COMMERCIAL_PRICE }` }/month</p>
-
-			<div className="benefits">
-				<ul className="included">
-					{ /* TODO: Translate the copy below */ }
-					<li>Instant access to upcoming features</li>
-					<li>Priority support</li>
-					<li>Ad-free experience</li>
-				</ul>
-			</div>
-
-			<p>
-				{ /* TODO: Translate the copy below */ }
-				By clicking the button below, you agree to our <a href="#">Terms of Service</a> and to{ ' ' }
-				<a href="#">share details</a> with WordPress.com.
-			</p>
-
-			<Button isPrimary>Get Jetpack Stats for ${ FLAT_COMMERCIAL_PRICE } per month</Button>
-		</div>
-	);
-};
 
 const TitleNode = ( { label, indicatorNumber, active } ) => {
 	return (
@@ -251,4 +223,4 @@ const StatsPurchaseWizard = ( { siteSlug } ) => {
 	return <ProductCard siteSlug={ siteSlug } />;
 };
 
-export default StatsPurchaseWizard;
+export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME };

@@ -104,6 +104,39 @@
 		margin-top: auto;
 	}
 
+	.stats-purchase-wizard__notice {
+		padding: 8px 12px;
+		background: #d0e6b8;
+		border-radius: 4px;
+	}
+
+	.stats-purchase-wizard__pricing {
+		margin-bottom: 1.5rem;
+
+		.stats-purchase-wizard__pricing-value {
+			display: flex;
+			align-items: flex-start;
+			gap: 2px;
+			margin-bottom: -1em;
+		}
+
+		.stats-purchase-wizard__pricing-currency {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 24px;
+			line-height: 60px;
+		}
+
+		.stats-purchase-wizard__pricing-amount {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 54px;
+			font-weight: 700;
+		}
+
+		.stats-purchase-wizard__pricing-cadency {
+			color: #787c82;
+		}
+	}
+
 	.stats-purchase-wizard__card-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
@@ -185,7 +218,11 @@
 		background-color: transparent;
 	}
 
-	.components-panel__body-toggle.components-button .components-panel__arrow {
-		display: none;
+	.components-panel__body-toggle.components-button {
+		padding: 16px;
+
+		.components-panel__arrow {
+			display: none;
+		}
 	}
 }
