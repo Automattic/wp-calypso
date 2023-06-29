@@ -93,6 +93,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
 			return preventWidows( translate( 'Almost done!' ) );
 		}
+		if ( primaryPurchase && isPlan( primaryPurchase ) ) {
+			return translate( 'Get the best out of your site' );
+		}
 
 		return translate( 'Congratulations on your purchase!' );
 	}
@@ -457,6 +460,26 @@ export class CheckoutThankYouHeader extends PureComponent {
 		return { title: buttonTitle, url: targetUrl };
 	}
 
+	getPlanDetails() {
+		const { selectedSite, translate } = this.props;
+		return (
+			<div className="checkout-thank-you__header-details">
+				<div className="checkout-thank-you__header-details-content">
+					<div className="checkout-thank-you__header-details-content-name">PlanName</div>
+					<div className="checkout-thank-you__header-details-content-expiry">
+						Available until June 20, 2022
+					</div>
+				</div>
+				<div className="checkout-thank-you__header-details-buttons">
+					{ this.getButtons() }
+					<Button href={ `/plans/my-plan/${ selectedSite.slug }` }>
+						{ translate( 'Manage plan' ) }
+					</Button>
+				</div>
+			</div>
+		);
+	}
+
 	getButtons() {
 		const {
 			hasFailedPurchases,
@@ -557,7 +580,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
 						) }
 
-						{ this.getButtons() }
+						{ primaryPurchase && isPlan( primaryPurchase )
+							? this.getPlanDetails()
+							: this.getButtons() }
 
 						{ this.props.children }
 					</div>
