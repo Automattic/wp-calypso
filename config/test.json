@@ -102,7 +102,7 @@
 		"stats/subscribers-chart-section": false,
 		"stats/paid-stats": false,
 		"stepper-woocommerce-poc": true,
-		"storage-addon": false,
+		"storage-addon": true,
 		"themes/interlaced-dotorg-themes": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
