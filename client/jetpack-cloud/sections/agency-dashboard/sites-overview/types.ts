@@ -330,6 +330,8 @@ export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
 
 export type AllowedMonitorContactTypes = 'email' | 'sms';
 
+export type StateMonitoringSettingsContact = StateMonitorSettingsEmail | StateMonitorSettingsSMS;
+
 export interface RequestVerificationCodeParams {
 	type: AllowedMonitorContactTypes;
 	value: string;
