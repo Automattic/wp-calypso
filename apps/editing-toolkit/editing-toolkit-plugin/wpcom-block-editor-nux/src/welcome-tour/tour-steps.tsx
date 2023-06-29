@@ -323,7 +323,6 @@ function getTourSteps(
 									'https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/#how-to-use-the-payments-block-video',
 									localeSlug
 								) }
-								target="_blank"
 								rel="noopener noreferrer"
 							>
 								{ __( 'Learn more', 'full-site-editing' ) }
