@@ -175,10 +175,18 @@ export const QuickLinks = ( {
 							hideLinkIndicator
 							onClick={ trackAddDomainAction }
 							label={ translate( 'Add a domain' ) }
-							gridicon="domains"
+							gridicon="add-outline"
 						/>
 					) }
 				</>
+			) }
+			{ canManageSite && (
+				<ActionBox
+					href="/domains/manage"
+					hideLinkIndicator
+					label={ translate( 'Manage all domains' ) }
+					gridicon="domains"
+				/>
 			) }
 			{ siteAdminUrl && (
 				<ActionBox
