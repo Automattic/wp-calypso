@@ -134,6 +134,7 @@ const onboarding: Flow = {
 			flowName,
 			redirectTo: `/setup/${ flowName }`,
 			pageTitle: 'Onboarding',
+			loginPath: `/start/${ flowName }/`,
 		} );
 
 		if ( ! userIsLoggedIn ) {
