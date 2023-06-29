@@ -179,4 +179,13 @@
 			border-color: #2c3338;
 		}
 	}
+
+	// override panel
+	.components-panel__body > .components-panel__body-title:hover {
+		background-color: transparent;
+	}
+
+	.components-panel__body-toggle.components-button .components-panel__arrow {
+		display: none;
+	}
 }
