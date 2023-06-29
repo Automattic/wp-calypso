@@ -1,9 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, LoadingPlaceholder } from '@automattic/components';
+import { LoadingPlaceholder } from '@automattic/components';
 import { HelpCenterSelect, useJetpackSearchAIQuery } from '@automattic/data-stores';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
