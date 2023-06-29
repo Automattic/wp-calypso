@@ -1,4 +1,4 @@
-import hasSiteProductJetpackStats from 'state/sites/selectors/has-site-product-jetpack-stats';
+import hasSiteProductJetpackStats from 'calypso/state/sites/selectors/has-site-product-jetpack-stats';
 
 const stateWithFreeStats = {
 	sites: {
