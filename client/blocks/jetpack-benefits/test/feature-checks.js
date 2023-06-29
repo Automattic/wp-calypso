@@ -20,6 +20,9 @@ import {
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
+	PRODUCT_JETPACK_STATS_MONTHLY,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE_YEARLY,
 } from '@automattic/calypso-products';
 import {
 	productHasAntiSpam,
@@ -207,34 +210,40 @@ describe( 'JetpackBenefits Feature Checks', () => {
 	} );
 
 	//productHasStats
-	test( 'Plans and products with stats return true for productHasSearch', () => {
-		const plansWithSearch = [ ...JETPACK_STATS_PRODUCTS ];
+	test( 'Plans and products with stats return true for productHasStats', () => {
+		const plansWithStats = [ ...JETPACK_STATS_PRODUCTS ];
 
-		plansWithSearch.forEach( ( plan ) => {
+		plansWithStats.forEach( ( plan ) => {
 			expect( productHasStats( plan ) ).toBe( true );
 		} );
 	} );
 
-	test( 'Plans and products without stats return false for productHasSearch', () => {
-		const plansWithSearch = [
+	test( 'Plans and products without stats return false for productHasStats', () => {
+		const plansWithoutStats = [
 			...JETPACK_SEARCH_PRODUCTS,
 			...JETPACK_ANTI_SPAM_PRODUCTS,
-			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_PERSONAL_MONTHLY,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_JETPACK_SECURITY_DAILY,
-			PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-			PLAN_JETPACK_SECURITY_REALTIME,
-			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-			PLAN_JETPACK_SECURITY_T1_MONTHLY,
-			PLAN_JETPACK_SECURITY_T1_YEARLY,
-			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 			PLAN_JETPACK_SECURITY_T2_YEARLY,
 		];
 
-		plansWithSearch.forEach( ( plan ) => {
-			expect( productHasStats( plan ) ).toBe( true );
+		plansWithoutStats.forEach( ( plan ) => {
+			expect( productHasStats( plan ) ).toBe( false );
+		} );
+	} );
+
+	test( 'Plans and products with paid stats return true for productHasStats', () => {
+		const plansWithPaidStats = [ PRODUCT_JETPACK_STATS_MONTHLY, PRODUCT_JETPACK_STATS_PWYW_YEARLY ];
+
+		plansWithPaidStats.forEach( ( plan ) => {
+			expect( productHasStats( plan, true ) ).toBe( true );
+		} );
+	} );
+
+	test( 'Plans and products with free stats return false for productHasStats onlyPaid', () => {
+		const plansWithoutPaidStats = [ PRODUCT_JETPACK_STATS_FREE_YEARLY ];
+
+		plansWithoutPaidStats.forEach( ( plan ) => {
+			expect( productHasStats( plan, true ) ).toBe( false );
 		} );
 	} );
 } );
