@@ -9,22 +9,3 @@ declare module '@wordpress/block-editor' {
 	export const privateApis: unknown;
 	export const transformStyles: ( styles: unknown[], wrapperClassName: string ) => string;
 }
-
-declare module '@wordpress/block-library' {
-	export const registerCoreBlocks: () => void;
-}
-
-declare module '@wordpress/components' {
-	interface Props {
-		[ key: string ]: unknown;
-	}
-
-	export const __unstableComposite: React.ComponentType< Props >;
-	export const __unstableCompositeItem: React.ComponentType< Props >;
-	export const __unstableMotion: React.ComponenType< Props >;
-	export const __unstableUseCompositeState: ( props?: {
-		orientation?: 'horizontal' | 'vertical';
-	} ) => any;
-	export const __experimentalHStack: React.ComponentType< Props >;
-	export const __experimentalVStack: React.ComponentType< Props >;
-}
