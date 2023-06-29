@@ -74,10 +74,7 @@ const bulkDomainTransfer: Flow = {
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
 
-					const checkoutBackURL = new URL(
-						'/setup/bulk-domain-transfer/domains',
-						window.location.href
-					);
+					const checkoutBackURL = new URL( '/setup/domain-transfer/domains', window.location.href );
 
 					// use replace instead of assign to remove the processing URL from history
 					return window.location.replace(
