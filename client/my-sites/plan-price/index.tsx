@@ -1,8 +1,8 @@
+import { Badge } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Component, createElement } from 'react';
-import Badge from 'calypso/components/badge';
 
 import './style.scss';
 

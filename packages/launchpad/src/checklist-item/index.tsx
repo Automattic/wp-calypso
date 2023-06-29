@@ -1,7 +1,6 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Badge, Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
-import Badge from '../badge';
 import { Task } from '../types';
 
 import './style.scss';
