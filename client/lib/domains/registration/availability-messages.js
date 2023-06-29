@@ -243,10 +243,12 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 		case domainAvailability.TLD_NOT_SUPPORTED:
 		case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE:
 		case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
-			/* translators: %s: TLD (eg .com, .pl) */
-			message = translate( 'Sorry, WordPress.com does not support the %(tld)s TLD.', {
-				args: { tld },
-			} );
+			if ( isForTransferOnly ) {
+				/* translators: %s: TLD (eg .com, .pl) */
+				message = translate( 'Sorry, WordPress.com does not support the %(tld)s TLD.', {
+					args: { tld },
+				} );
+			}
 			break;
 		case domainAvailability.UNKNOWN:
 			// unavailable domains are displayed in the search results, not as a notice OR
