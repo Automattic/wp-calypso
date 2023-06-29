@@ -150,7 +150,7 @@ export const CacheCard = ( {
 	const edgeCacheToggleDescription = isEdgeCacheEligible
 		? translate( 'Enable edge caching for faster content delivery.' )
 		: translate(
-				'Edge cache can only be enabled for public sites. {{a}}Confirm privacy settings{{/a}}.',
+				'Edge cache can only be enabled for public sites. {{a}}Review privacy settings.{{/a}}',
 				{
 					components: {
 						a: <a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />,
