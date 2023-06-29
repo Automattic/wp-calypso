@@ -134,8 +134,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( isPlan( primaryPurchase ) ) {
 			return preventWidows(
 				translate(
-					'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-						"It's doing somersaults in excitement!",
+					'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
 					{
 						args: { productName: primaryPurchase.productName },
 						components: { strong: <strong /> },
@@ -571,8 +570,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const { translate, primaryPurchase } = this.props;
 		const messages = [
 			translate(
-				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-					'Enjoy your powerful new features!',
+				'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
 				{
 					args: { productName: primaryPurchase.productName },
 					components: { strong: <strong /> },
