@@ -12,9 +12,6 @@ import { PLANS_STORE } from '../stores';
 import type { CTAVariation, PopularBadgeVariation } from './types';
 import type { DomainSuggestions, Plans, PlansSelect } from '@automattic/data-stores';
 
-// TODO: remove when all needed core types are available
-/*#__PURE__*/ import '../types-patch';
-
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 const ChevronDown = (
