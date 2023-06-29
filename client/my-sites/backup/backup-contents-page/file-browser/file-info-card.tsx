@@ -1,9 +1,12 @@
+import { Button, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useCallback, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import wp from 'calypso/lib/wp';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { convertBytes } from './util';
+
 interface FileInfoCardProps {
 	siteId: number;
 	item: FileBrowserItem;
@@ -26,6 +29,26 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
 	const size = fileInfo?.size ? convertBytes( fileInfo.size ) : null;
+
+	const [ isDownloading, setIsDownloading ] = useState< boolean >( false );
+	const downloadFile = useCallback( () => {
+		setIsDownloading( true );
+		const manifestPath = window.btoa( item.manifestPath ?? '' );
+
+		wp.req
+			.get( {
+				path: `/sites/${ siteId }/rewind/backup/${ item.period }/file/${ manifestPath }/url`,
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( ( response: { url: string } ) => {
+				const downloadUrl = new URL( response.url );
+				downloadUrl.searchParams.append( 'disposition', 'attachment' );
+				window.open( downloadUrl, '_blank' );
+				setIsDownloading( false );
+			} );
+	}, [ siteId, item ] );
+
+	const showActions = item.type !== 'table' && item.extensionType !== 'changed';
 
 	// Do not display file info if the item hasChildren (it could be a directory, plugins, themes, etc.)
 	if ( item.hasChildren ) {
@@ -87,7 +110,14 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 					</div>
 				) }
 			</div>
-			<div className="file-card__actions"></div>
+
+			{ showActions && (
+				<div className="file-card__actions">
+					<Button className="file-card__action" onClick={ downloadFile }>
+						{ isDownloading ? <Spinner /> : translate( 'Download' ) }
+					</Button>
+				</div>
+			) }
 		</div>
 	);
 };
