@@ -145,8 +145,3 @@ export interface SelectorProduct extends SelectorProductCost {
 export type SiteProduct = {
 	tierUsage: number;
 };
-
-export type ProductDescription = {
-	value: TranslateResult;
-	calloutText?: TranslateResult;
-};

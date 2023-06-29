@@ -75,7 +75,6 @@ const exported = {
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				showBack={ false }
-				showPrimaryFollowButtonOnCards={ false }
 				autoFocusInput={ autoFocusInput }
 				onQueryChange={ reportQueryChange }
 				onSortChange={ reportSortChange }

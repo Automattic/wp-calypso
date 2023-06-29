@@ -147,7 +147,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 		case PLAN_PERSONAL_MONTHLY:
 			planText = translate( 'Included in the Personal plan (%(cost)s/%(periodicity)s):', {
 				args: {
-					cost: planDisplayCost,
+					cost: planDisplayCost as string,
 					periodicity: periodicityLabel,
 				},
 			} );
@@ -156,7 +156,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 		case PLAN_BUSINESS_MONTHLY:
 			planText = translate( 'Included in the Business plan (%(cost)s/%(periodicity)s):', {
 				args: {
-					cost: planDisplayCost,
+					cost: planDisplayCost as string,
 					periodicity: periodicityLabel,
 				},
 			} );

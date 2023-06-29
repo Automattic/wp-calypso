@@ -34,5 +34,23 @@ describe( 'helpers', () => {
 			const interlacedThemes = interlaceThemes( wpComThemes, wpOrgThemes, 'wporg-theme-2', true );
 			expect( interlacedThemes[ 0 ] ).toEqual( { id: 'wporg-theme-2' } );
 		} );
+
+		test( 'prioritizes WP.org block themes over WP.org classic themes', () => {
+			const wpOrgClassicAndBlockThemes = [
+				{ id: 'wporg-classic-theme' },
+				{
+					id: 'wporg-block-theme',
+					taxonomies: { theme_feature: [ { slug: 'full-site-editing' } ] },
+				},
+			];
+			const interlacedThemes = interlaceThemes(
+				wpComThemes,
+				wpOrgClassicAndBlockThemes,
+				'test',
+				true
+			);
+			expect( interlacedThemes[ 2 ].id ).toEqual( 'wporg-block-theme' );
+			expect( interlacedThemes[ 3 ].id ).toEqual( 'wporg-classic-theme' );
+		} );
 	} );
 } );

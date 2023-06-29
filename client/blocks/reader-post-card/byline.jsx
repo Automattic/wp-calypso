@@ -8,9 +8,6 @@ import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/read
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import TimeSince from 'calypso/components/time-since';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
-import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
-import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
-import FollowButton from 'calypso/reader/follow-button';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { getStreamUrl } from 'calypso/reader/route';
@@ -26,8 +23,7 @@ class PostByline extends Component {
 		showAvatar: PropTypes.bool,
 		teams: PropTypes.array,
 		showFollow: PropTypes.bool,
-		showPrimaryFollowButton: PropTypes.bool,
-		followSource: PropTypes.string,
+		compact: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -44,18 +40,8 @@ class PostByline extends Component {
 	};
 
 	render() {
-		const {
-			post,
-			site,
-			feed,
-			isDiscoverPost,
-			showSiteName,
-			showAvatar,
-			teams,
-			showPrimaryFollowButton,
-			followSource,
-		} = this.props;
-		const followUrl = feed ? feed.feed_URL : post.site_URL;
+		const { post, site, feed, isDiscoverPost, showSiteName, showAvatar, teams, compact } =
+			this.props;
 		const feedId = feed ? feed.feed_ID : get( post, 'feed_ID' );
 		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 		const siteId = get( site, 'ID' );
@@ -67,6 +53,7 @@ class PostByline extends Component {
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 		const shouldDisplayAuthor =
 			! isDiscoverPost &&
+			! compact &&
 			hasAuthorName &&
 			! isAuthorNameBlocked( post.author.name ) &&
 			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
@@ -87,7 +74,7 @@ class PostByline extends Component {
 					/>
 				) }
 				<div className="reader-post-card__byline-details">
-					{ ( shouldDisplayAuthor || showSiteName ) && (
+					{ ( shouldDisplayAuthor || showSiteName ) && ! compact && (
 						<div className="reader-post-card__byline-author-site">
 							{ shouldDisplayAuthor && (
 								<ReaderAuthorLink
@@ -122,7 +109,8 @@ class PostByline extends Component {
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									{ siteSlug }
+									{ /* Use the siteName if not showing it above, otherwise use the slug */ }
+									{ ! showSiteName ? siteName : siteSlug }
 								</a>
 								<span className="reader-post-card__timestamp-bullet">·</span>
 								<a
@@ -137,18 +125,16 @@ class PostByline extends Component {
 							</span>
 						) }
 					</div>
-					<TagsList post={ post } />
+					{ ! compact && <TagsList post={ post } /> }
 				</div>
-				{ showPrimaryFollowButton && followUrl && (
-					<FollowButton
-						siteUrl={ followUrl }
-						followSource={ followSource }
-						railcar={ post.railcar }
-						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
+				{ ! compact && (
+					<ReaderPostEllipsisMenu
+						site={ site }
+						teams={ teams }
+						post={ post }
+						showFollow={ false }
 					/>
 				) }
-				<ReaderPostEllipsisMenu site={ site } teams={ teams } post={ post } showFollow={ false } />
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */

@@ -1,6 +1,6 @@
 {
 	"name": "wpcom-proxy-request",
-	"version": "7.0.0",
+	"version": "7.0.3",
 	"description": "Proxied cookie-authenticated REST API requests to WordPress.com.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -34,7 +34,9 @@
 	],
 	"types": "types",
 	"scripts": {
-		"prepack": "Echo 'no need to prepack vanilla JS package'"
+		"clean": "rm -rf dist",
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
 		"debug": "^4.3.3",
@@ -43,7 +45,10 @@
 		"wp-error": "^1.3.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"postcss": "^8.4.5",
+		"webpack": "^5.68.0"
 	}
 }

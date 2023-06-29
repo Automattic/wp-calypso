@@ -16,10 +16,9 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
-import ReaderSearchSidebar from 'calypso/reader/stream/reader-search-sidebar';
-import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
@@ -41,6 +40,7 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
+import { getReaderTags } from 'calypso/state/reader/tags/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -48,7 +48,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-import ReaderListFollowedSites from './reader-list-followed-sites';
+import ReaderPopularSitesSidebar from './reader-popular-sites-sidebar';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 900;
@@ -57,52 +57,45 @@ const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
-const excludesSidebar = [
-	'a8c',
-	'conversations',
-	'conversations-a8c',
-	'feed',
-	'likes',
-	'search',
-	'list',
-	'p2',
-];
 
 class ReaderStream extends Component {
 	static propTypes = {
-		translate: PropTypes.func,
-		trackScrollPage: PropTypes.func.isRequired,
-		suppressSiteNameLink: PropTypes.bool,
-		showPostHeader: PropTypes.bool,
-		showFollowInHeader: PropTypes.bool,
-		onUpdatesShown: PropTypes.func,
-		emptyContent: PropTypes.object,
 		className: PropTypes.string,
-		showDefaultEmptyContentIfMissing: PropTypes.bool,
-		showPrimaryFollowButtonOnCards: PropTypes.bool,
-		placeholderFactory: PropTypes.func,
+		emptyContent: PropTypes.object,
 		followSource: PropTypes.string,
-		isDiscoverStream: PropTypes.bool,
-		useCompactCards: PropTypes.bool,
-		isMain: PropTypes.bool,
-		intro: PropTypes.object,
 		forcePlaceholders: PropTypes.bool,
+		intro: PropTypes.object,
+		isDiscoverStream: PropTypes.bool,
+		isMain: PropTypes.bool,
+		onUpdatesShown: PropTypes.func,
+		placeholderFactory: PropTypes.func,
 		recsStreamKey: PropTypes.string,
+		showDefaultEmptyContentIfMissing: PropTypes.bool,
+		showFollowButton: PropTypes.bool,
+		showFollowInHeader: PropTypes.bool,
+		showPostHeader: PropTypes.bool,
+		sidebarTabTitle: PropTypes.string,
+		streamHeader: PropTypes.element,
+		streamSidebar: PropTypes.element,
+		suppressSiteNameLink: PropTypes.bool,
+		trackScrollPage: PropTypes.func.isRequired,
+		translate: PropTypes.func,
+		useCompactCards: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		showPostHeader: true,
-		suppressSiteNameLink: false,
-		showFollowInHeader: false,
-		onUpdatesShown: noop,
 		className: '',
-		showDefaultEmptyContentIfMissing: true,
-		showPrimaryFollowButtonOnCards: false,
+		forcePlaceholders: false,
+		intro: null,
 		isDiscoverStream: false,
 		isMain: true,
+		onUpdatesShown: noop,
+		showDefaultEmptyContentIfMissing: true,
+		showFollowButton: true,
+		showFollowInHeader: false,
+		showPostHeader: true,
+		suppressSiteNameLink: false,
 		useCompactCards: false,
-		intro: null,
-		forcePlaceholders: false,
 	};
 
 	state = {
@@ -134,6 +127,7 @@ class ReaderStream extends Component {
 			this.props.requestPage( {
 				streamKey: this.props.recsStreamKey,
 				pageHandle: this.props.recsStream.pageHandle,
+				tags: this.props.recsStream.tags,
 			} );
 		}
 	}
@@ -375,12 +369,12 @@ class ReaderStream extends Component {
 	};
 
 	poll = () => {
-		const { streamKey } = this.props;
-		this.props.requestPage( { streamKey, isPoll: true } );
+		const { streamKey, tags } = this.props;
+		this.props.requestPage( { streamKey, isPoll: true, tags } );
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		const { streamKey, stream, startDate } = props;
+		const { streamKey, stream, startDate, tags } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
@@ -388,7 +382,7 @@ class ReaderStream extends Component {
 			props.trackScrollPage( pageId );
 		}
 		const pageHandle = stream.pageHandle || { before: startDate };
-		props.requestPage( { streamKey, pageHandle } );
+		props.requestPage( { streamKey, pageHandle, tags } );
 	};
 
 	showUpdates = () => {
@@ -442,7 +436,6 @@ class ReaderStream extends Component {
 					suppressSiteNameLink={ this.props.suppressSiteNameLink }
 					showPostHeader={ this.props.showPostHeader }
 					showFollowInHeader={ this.props.showFollowInHeader }
-					showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
 					isDiscoverStream={ this.props.isDiscoverStream }
 					showSiteName={ this.props.showSiteNameOnCards }
 					selectedPostKey={ undefined }
@@ -453,6 +446,7 @@ class ReaderStream extends Component {
 					index={ index }
 					compact={ this.props.useCompactCards }
 					siteId={ primarySiteId }
+					showFollowButton={ this.props.showFollowButton }
 				/>
 				{ index === 0 && <PerformanceTrackerStop /> }
 			</Fragment>
@@ -460,7 +454,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -473,11 +467,10 @@ class ReaderStream extends Component {
 			isRequesting = true;
 		}
 
-		const path = window.location.pathname;
-		const isTagPage = path.startsWith( '/tag/' );
-		const isSearchPage = path.startsWith( '/read/search' );
 		const streamType = getStreamType( streamKey );
 
+		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
+		// to be updated before we can remove it.
 		let baseClassnames = classnames( 'following', this.props.className );
 
 		// @TODO: has error of invalid tag?
@@ -504,20 +497,18 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			let sidebarContent = null;
-			let tabTitle = translate( 'Sites' );
+			let sidebarContent = this.props.streamSidebar;
 
-			if ( isTagPage ) {
-				sidebarContent = <ReaderTagSidebar tag={ tag } />;
-				tabTitle = translate( 'Related' );
-				baseClassnames = classnames( 'tag-stream__main', this.props.className );
-			} else if ( isSearchPage ) {
-				sidebarContent = <ReaderSearchSidebar items={ items } />;
-			} else {
-				sidebarContent = <ReaderListFollowedSites path={ path } />;
+			// Add the sidebar on the search page when there's no search input. Sidebar is handled by `<SiteResults>' when there's a search query.
+			// TODO: use `streamSidebar` prop in search stream component, rather than using conditionals here.
+			if ( streamType === 'custom_recs_sites_with_images' ) {
+				sidebarContent = (
+					<ReaderPopularSitesSidebar items={ items } followSource={ READER_SEARCH_POPULAR_SITES } />
+				);
 			}
 
-			if ( excludesSidebar.includes( streamType ) ) {
+			// Exclude the sidebar layout when there's a search query, since it's handled by `<SiteResults>`.
+			if ( ! sidebarContent || streamType === 'search' ) {
 				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {
 				body = (
@@ -549,7 +540,7 @@ class ReaderStream extends Component {
 										selected={ this.state.selectedTab === 'sites' }
 										onClick={ this.handleSitesSelected }
 									>
-										{ tabTitle }
+										{ this.props.sidebarTabTitle || translate( 'Sites' ) }
 									</NavItem>
 								</NavTabs>
 							</SectionNav>
@@ -566,7 +557,10 @@ class ReaderStream extends Component {
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
-		const shouldPoll = streamType !== 'search' && streamType !== 'custom_recs_posts_with_images';
+		// Check array of streamTypes to see if we should poll for updates;
+		const shouldPoll = ! [ 'search', 'custom_recs_posts_with_images', 'discover' ].includes(
+			streamType
+		);
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
@@ -587,7 +581,6 @@ export default connect(
 	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
-		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -606,7 +599,7 @@ export default connect(
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
-			tag: streamKeySuffix,
+			tags: getReaderTags( state ),
 		};
 	},
 	{

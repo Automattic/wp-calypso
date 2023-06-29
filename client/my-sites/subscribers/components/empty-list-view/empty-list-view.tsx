@@ -1,7 +1,7 @@
 import { Card, CardBody, Icon } from '@wordpress/components';
 import { chartBar, chevronRight, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import './styles.scss';
+import './style.scss';
 
 type EmptyListCTALinkProps = {
 	icon: JSX.Element;

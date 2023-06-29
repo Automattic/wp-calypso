@@ -2,8 +2,8 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
 import { UnsubscribeIcon } from '../icons';
-import SettingsPopover from '../settings-popover/settings-popover';
 import DeliveryFrequencyInput from './delivery-frequency-input';
 import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
@@ -88,20 +88,27 @@ export const SiteSettingsPopover = ( {
 }: SiteSettingsPopoverProps ) => {
 	const translate = useTranslate();
 	return (
-		<SettingsPopover className="site-settings-popover">
-			<SiteSettings { ...props } />
+		<SubscriptionsEllipsisMenu popoverClassName="site-settings-popover">
+			{ ( close: () => void ) => (
+				<>
+					<SiteSettings { ...props } />
 
-			<hr className="subscriptions__separator" />
+					<hr className="subscriptions__separator" />
 
-			<Button
-				className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
-				disabled={ unsubscribing }
-				icon={ <UnsubscribeIcon className="settings-popover__item-icon" /> }
-				onClick={ onUnsubscribe }
-			>
-				{ translate( 'Unsubscribe' ) }
-			</Button>
-		</SettingsPopover>
+					<Button
+						className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
+						disabled={ unsubscribing }
+						icon={ <UnsubscribeIcon className="subscriptions-ellipsis-menu__item-icon" /> }
+						onClick={ () => {
+							onUnsubscribe();
+							close();
+						} }
+					>
+						{ translate( 'Unsubscribe' ) }
+					</Button>
+				</>
+			) }
+		</SubscriptionsEllipsisMenu>
 	);
 };
 

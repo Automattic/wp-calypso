@@ -28,6 +28,7 @@ interface Props {
 	username: string | null;
 	blogId: number | null;
 	siteUrl: string | null;
+	hasDownloads: boolean;
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
@@ -41,6 +42,7 @@ export default function LicensePreview( {
 	username,
 	blogId,
 	siteUrl,
+	hasDownloads,
 	issuedAt,
 	attachedAt,
 	revokedAt,
@@ -195,6 +197,7 @@ export default function LicensePreview( {
 					siteUrl={ siteUrl }
 					username={ username }
 					blogId={ blogId }
+					hasDownloads={ hasDownloads }
 					issuedAt={ issuedAt }
 					attachedAt={ attachedAt }
 					revokedAt={ revokedAt }

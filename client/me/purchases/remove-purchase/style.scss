@@ -35,7 +35,8 @@
 }
 
 .dialog__action-buttons {
-	.remove-domain-dialog__chat-button.precancellation-chat-button__main-button.button {
+	.remove-domain-dialog__chat-button.precancellation-chat-button__main-button.button,
+	.cancel-auto-renewal-form__chat-button.precancellation-chat-button__main-button.button {
 		display: block;
 		float: left;
 		font-size: 0.875rem;

@@ -15,6 +15,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportT
 import jetbrains.buildServer.configs.kotlin.v2019_2.Triggers
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -77,10 +79,12 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 		else -> "production"
 	}
 
+	val buildName = "Gutenberg $siteType E2E tests $releaseType ($targetDevice)"
+
 	return E2EBuildType (
 		buildId = "WPComTests_gutenberg_${siteType}_${releaseType}_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "Gutenberg $siteType E2E tests $releaseType ($targetDevice)",
+		buildName = buildName,
 		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
 		testGroup = "gutenberg",
 		buildParams = {
@@ -107,18 +111,39 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				// The reason for this is an inconsistent issue breaking the login in AT test sites when
 				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
 				param("JEST_E2E_WORKERS", "1")
+
 			}
 
-			// Nightlies only make sense in the AT context for now, but we leave it here to make it easier
-			// to setup a new nightly build for simple in the future. Nightly+edge doesn't make sense,
-			// but I don't think guarding against that here is worth the additional logic, as this is
-			// a factory function and a mistake like that should be clear by checking the arguments.
 			if (nightly) {
 				param("env.GUTENBERG_NIGHTLY", "true");
 			}
 
 			if (edge) {
 				param("env.GUTENBERG_EDGE", "true")
+			}
+
+			if (edge || nightly) {
+				password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
+				// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
+				// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
+				// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
+				password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
+				text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
+			}
+		},
+		buildSteps = {
+			exec {
+				name = "Post Successful Message to Slack"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+				path = "./bin/post-threaded-slack-message.sh"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName passed successfully! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+			}
+
+			exec {
+				name = "Post Failure Message to Slack"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				path = "./bin/post-threaded-slack-message.sh"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look? @kitkat-team @calypso-platform-team! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 		},
 		buildFeatures = {
@@ -205,15 +230,10 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 	val triggers: Triggers.() -> Unit = {
 		if (jetpackTarget == "wpcom-staging") {
 			vcs {
-				// Trigger only when the "trunk" branch is modified, i.e. back-end merges
-				branchFilter = """
-					+:trunk
-				""".trimIndent()
-
 				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM connection
 				triggerRules = """
-					+:root=wpcom:**/sun/**
-					+:root=wpcom:**/moon/**
+					+:root=wpcom:**/mu-plugins/jetpack*-plugin/moon/*
+					+:root=wpcom:**/mu-plugins/jetpack*-plugin/sun/*
 				""".trimIndent()
 			}
 		} else {

@@ -8,7 +8,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { JITM_OPEN_HELP_CENTER } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { dismissJITM, openHelpCenterFromJITM, setupDevTool } from 'calypso/state/jitm/actions';
-import { getTopJITM } from 'calypso/state/jitm/selectors';
+import { getTopJITM, isFetchingJITM } from 'calypso/state/jitm/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import 'calypso/state/data-layer/wpcom/marketing';
@@ -65,9 +65,14 @@ function renderTemplate( template, props ) {
 }
 
 function getEventHandlers( props, dispatch ) {
-	const { jitm, currentSite, messagePath } = props;
+	const { jitm, currentSite, messagePath, searchQuery } = props;
 	const tracks = jitm.tracks || {};
-	const eventProps = { id: jitm.id, jitm: true, template: jitm?.template ?? 'default' };
+	const eventProps = {
+		id: jitm.id,
+		jitm: true,
+		template: jitm?.template ?? 'default',
+		...( searchQuery && { search_query: searchQuery } ),
+	};
 	const handlers = {};
 
 	if ( tracks.display ) {
@@ -116,7 +121,8 @@ function useDevTool( { currentSite }, dispatch ) {
 }
 
 export function JITM( props ) {
-	const { jitm, currentSite, messagePath, searchQuery, isJetpack } = props;
+	const { jitm, isFetching, currentSite, messagePath, searchQuery, isJetpack, jitmPlaceholder } =
+		props;
 	const dispatch = useDispatch();
 
 	useDevTool( props, dispatch );
@@ -138,6 +144,7 @@ export function JITM( props ) {
 				messagePath={ messagePath }
 				searchQuery={ searchQuery }
 			/>
+			{ isFetching && jitmPlaceholder }
 			{ jitm &&
 				renderTemplate( jitm.template || props.template, {
 					...jitm,
@@ -152,10 +159,13 @@ JITM.propTypes = {
 	template: PropTypes.string,
 	messagePath: PropTypes.string.isRequired,
 	searchQuery: PropTypes.string,
+	jitmPlaceholder: PropTypes.node,
+	isFetching: PropTypes.bool,
 };
 
 JITM.defaultProps = {
 	template: 'default',
+	isFetching: false,
 };
 
 const mapStateToProps = ( state, { messagePath } ) => {
@@ -163,6 +173,7 @@ const mapStateToProps = ( state, { messagePath } ) => {
 	return {
 		currentSite,
 		jitm: getTopJITM( state, messagePath ),
+		isFetching: isFetchingJITM( state, messagePath ),
 		isJetpack: currentSite && isJetpackSite( state, currentSite.ID ),
 	};
 };

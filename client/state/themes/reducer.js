@@ -100,11 +100,16 @@ export const activeThemes = withSchemaValidation( activeThemesSchema, ( state = 
 export function activationRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case THEME_ACTIVATE:
+			return {
+				...state,
+				[ action.siteId ]: true,
+				themeId: action.themeId,
+			};
 		case THEME_ACTIVATE_SUCCESS:
 		case THEME_ACTIVATE_FAILURE:
 			return {
 				...state,
-				[ action.siteId ]: THEME_ACTIVATE === action.type,
+				[ action.siteId ]: false,
 			};
 	}
 

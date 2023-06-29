@@ -99,7 +99,6 @@ function createMockReduxStoreForPurchase( purchaseForRedux ) {
 	return createReduxStore(
 		{
 			currentUser: { id: Number( purchaseForRedux.user_id ) },
-			happychat: { chat: { status: '' } },
 			plans: { items: [] },
 			purchases: {
 				data: [ purchaseForRedux ],

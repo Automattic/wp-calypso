@@ -1,6 +1,15 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .backup-contents-page {
+	&__back-button.components-button.is-link {
+		color: #000;
+		text-decoration: none;
+
+		svg {
+			margin-right: 2px;
+		}
+	}
+
 	&__header {
 		padding-bottom: 30px;
 
@@ -11,10 +20,13 @@
 
 	&__body {
 		border-top: 1px solid var(--studio-gray-5);
+		overflow-x: scroll;
 		padding-top: 30px;
 	}
 
 	.file-browser-node {
+		min-width: max-content;
+
 		&__loading {
 			&.placeholder {
 				height: 26px;
@@ -24,9 +36,19 @@
 		}
 
 		&__contents {
+			display: flex;
+			flex-direction: column;
+			overflow-x: auto;
+			background-color: #fff;
+
 			&:not(:first-child) {
 				padding-left: 26px;
 			}
+		}
+
+		.file-browser-node__title {
+			white-space: nowrap;
+			overflow: hidden;
 		}
 
 		.components-button.has-icon.has-text svg {
@@ -36,16 +58,32 @@
 		}
 
 		.components-button {
+			font-size: $font-body-small;
 			height: 32px;
 		}
 
-		&:not(:first-child) {
-			&:nth-child(even) {
-				background-color: var(--studio-gray-0);
+		.is-alternate {
+			background-color: var(--studio-gray-0);
+		}
+
+		.file-card {
+			background: var(--studio-gray-0);
+			margin: 4px 0;
+			padding: 20px 24px 24px;
+
+			span {
+				font-size: $font-body-small;
 			}
 
-			&:nth-child(odd) {
-				background-color: #fff;
+			@include break-mobile {
+				&__detail-group {
+					display: flex;
+					justify-content: space-between;
+				}
+			}
+
+			&__label {
+				font-weight: bold;
 			}
 		}
 	}

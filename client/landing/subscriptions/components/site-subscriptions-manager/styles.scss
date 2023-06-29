@@ -32,89 +32,65 @@
 				}
 			}
 
+			&.deleted {
+				opacity: 0.5;
+			}
+
 			.title-cell {
 				display: flex;
 				align-items: center;
 				flex: 1.83;
 				min-width: 0;
+			}
 
-				> button,
-				> a {
-					flex: 0;
+			.title-icon {
+				display: flex;
+				flex: 0;
+				min-width: 40px;
+			}
+
+			.title-column {
+				display: flex;
+				flex-direction: column;
+				min-width: 0;
+				padding-left: 12px;
+			}
+
+			.title-name {
+				font-weight: 600;
+				font-size: $font-code;
+				line-height: 22px;
+				color: $studio-gray-100;
+				letter-spacing: -0.24px;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				overflow: hidden;
+				padding-right: 10px;
+
+				&:hover {
+					text-decoration: underline;
 				}
 
-				.components-button svg {
-					fill: var(--color-text-subtle);
+				.p2-label {
+					@extend %p2-label;
 				}
 
-				.components-button.has-icon {
-					padding: 0;
-					margin: 0;
-					min-width: 40px;
-					min-height: 40px;
-
-					@media (max-width: $break-small) {
-						display: none;
-					}
+				.paid-label {
+					@extend %paid-label;
 				}
+			}
 
-				.vertical-stack {
-					display: flex;
-					flex-direction: column;
-					min-width: 0;
-					padding-left: 12px;
+			.title-url {
+				font-weight: 400;
+				font-size: $font-body-extra-small;
+				line-height: 18px;
+				color: $studio-gray-40;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				overflow: hidden;
 
-					@media (max-width: $break-small) {
-						padding-left: 0;
-					}
-
-					.horizontal-stack {
-						align-items: center;
-						overflow: hidden;
-						white-space: nowrap;
-
-						.name {
-							display: inline-block;
-							padding: 0 10px 0 0;
-							max-width: 100%;
-							color: $studio-gray-100;
-							font-weight: 600;
-							font-size: $font-code;
-							line-height: 22px;
-							letter-spacing: -0.24px;
-							overflow: hidden;
-							text-overflow: ellipsis;
-							white-space: nowrap;
-
-							&:hover {
-								text-decoration: underline;
-							}
-						}
-
-						.p2-label {
-							vertical-align: text-top;
-							@extend %p2-label;
-						}
-
-						.paid-label {
-							vertical-align: text-top;
-							@extend %paid-label;
-						}
-					}
-
-					.url {
-						font-weight: 400;
-						font-size: $font-body-extra-small;
-						line-height: 18px;
-						color: $studio-gray-40;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						overflow: hidden;
-
-						&:hover {
-							text-decoration: underline;
-						}
-					}
+				&:hover {
+					text-decoration: underline;
 				}
 			}
 
@@ -182,4 +158,8 @@
 		}
 	}
 
+}
+
+.new-comments-tooltip__content {
+	width: 200px;
 }

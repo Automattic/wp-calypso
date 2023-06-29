@@ -18,6 +18,7 @@ export type StepNavigator = {
 	goToWpAdminWordPressPluginPage?: () => void;
 	navigate?: ( path: string ) => void;
 	goToAddDomainPage?: () => void;
+	goToSitePickerPage?: () => void;
 };
 
 export interface ImportError {

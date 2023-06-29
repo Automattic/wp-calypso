@@ -2,7 +2,7 @@ import { FormInputValidation } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/icons';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { ChangeEvent, ChangeEventHandler, ReactChild } from 'react';
+import { ChangeEvent, ChangeEventHandler, ReactNode } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -145,13 +145,7 @@ interface TextInputFieldProps {
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 }
 
-export function LabelBlock( {
-	inputName,
-	children,
-}: {
-	inputName?: string;
-	children: ReactChild | ReactChild[];
-} ) {
+export function LabelBlock( { inputName, children }: { inputName?: string; children: ReactNode } ) {
 	return (
 		<LabelContainer>
 			<Label htmlFor={ inputName }>{ children }</Label>

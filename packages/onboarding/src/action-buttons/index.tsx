@@ -9,6 +9,7 @@ import './style.scss';
 interface ActionButtonsProps {
 	className?: string;
 	sticky?: boolean | null;
+	children?: React.ReactNode;
 }
 
 const ActionButtons: React.FunctionComponent< ActionButtonsProps > = ( {

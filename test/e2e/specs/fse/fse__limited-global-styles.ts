@@ -2,8 +2,9 @@
  * @group gutenberg
  */
 
-import { TestAccount, FullSiteEditorPage } from '@automattic/calypso-e2e';
+import { envVariables, TestAccount, FullSiteEditorPage } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -12,8 +13,12 @@ declare const browser: Browser;
  * style variations (eg. Twenty Twenty-Three).
  *
  * @see https://github.com/Automattic/wp-calypso/issues/78107
+ *
+ * We skip Atomic sites because they are not affected by Limited Global Styles.
+ *
+ * @see https://github.com/Automattic/wp-calypso/pull/71333#issuecomment-1592490057
  */
-describe( 'Site Editor: Limited Global Styles', function () {
+skipDescribeIf( envVariables.TEST_ON_ATOMIC )( 'Site Editor: Limited Global Styles', function () {
 	let page: Page;
 	let fullSiteEditorPage: FullSiteEditorPage;
 	let testAccount: TestAccount;

@@ -42,7 +42,7 @@
 			}
 		}
 
-		&__close-button {
+		&__dismiss-button {
 			color: $studio-gray-60;
 			padding: 0;
 			min-height: unset;
@@ -56,6 +56,7 @@
 			font-size: $font-body;
 			line-height: rem(22px);
 			color: $studio-gray-100;
+			margin-right: 36px; // width of dismiss button
 			@extend %ellipsis;
 		}
 
@@ -88,6 +89,14 @@
 			border-radius: 4px;
 			padding-left: 24px;
 			padding-right: 24px;
+		}
+
+		&__dismiss-button.is-placeholder,
+		&__site-title.is-placeholder,
+		&__site-url.is-placeholder,
+		&__site-description.is-placeholder,
+		&__subscribe-button.is-placeholder {
+			@include placeholder();
 		}
 	}
 

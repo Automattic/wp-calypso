@@ -1,7 +1,7 @@
 import { Popover } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { FunctionComponent, useRef, useState } from 'react';
+import { FunctionComponent, useRef, useMemo, useState } from 'react';
 
 import './style.scss';
 
@@ -10,6 +10,8 @@ interface Props {
 	tooltipContent?: React.ReactElement;
 	tooltipClassName?: string;
 	tooltipPosition?: string;
+	focusOnShow?: boolean;
+	isClickable?: boolean;
 }
 
 const WooCommerceBundledBadge: FunctionComponent< Props > = ( {
@@ -17,6 +19,8 @@ const WooCommerceBundledBadge: FunctionComponent< Props > = ( {
 	tooltipContent,
 	tooltipClassName,
 	tooltipPosition = 'bottom right',
+	focusOnShow,
+	isClickable,
 } ) => {
 	const { __ } = useI18n();
 
@@ -27,13 +31,51 @@ const WooCommerceBundledBadge: FunctionComponent< Props > = ( {
 
 	const divRef = useRef( null );
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
+	const [ isPressed, setIsPressed ] = useState( false );
+
+	const isClickableProps = useMemo( () => {
+		if ( ! isClickable ) {
+			return {};
+		}
+
+		return {
+			role: 'button',
+			tabIndex: 0,
+			onBlur: () => {
+				setIsPressed( false );
+				setIsPopoverVisible( false );
+			},
+			onClick: () => {
+				setIsPressed( ! isPopoverVisible );
+				setIsPopoverVisible( ! isPopoverVisible );
+			},
+			onKeyDown: ( event: React.KeyboardEvent ) => {
+				if ( event.key === 'Enter' || event.key === ' ' ) {
+					event.preventDefault();
+					setIsPressed( ! isPopoverVisible );
+					setIsPopoverVisible( ! isPopoverVisible );
+				}
+			},
+		};
+	}, [ isClickable, isPopoverVisible ] );
 
 	return (
 		<div
-			className={ classNames( 'woocommerce-bundled-badge', className ) }
+			className={ classNames( 'woocommerce-bundled-badge', className, {
+				'woocommerce-bundled-badge--is-clickable': isClickable,
+			} ) }
 			ref={ divRef }
-			onMouseEnter={ () => setIsPopoverVisible( true ) }
-			onMouseLeave={ () => setIsPopoverVisible( false ) }
+			onMouseEnter={ () => {
+				if ( ! isPressed ) {
+					setIsPopoverVisible( true );
+				}
+			} }
+			onMouseLeave={ () => {
+				if ( ! isPressed ) {
+					setIsPopoverVisible( false );
+				}
+			} }
+			{ ...isClickableProps }
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -61,6 +103,7 @@ const WooCommerceBundledBadge: FunctionComponent< Props > = ( {
 				context={ divRef.current }
 				isVisible={ isPopoverVisible }
 				position={ tooltipPosition }
+				focusOnShow={ focusOnShow }
 			>
 				{ tooltipContent || tooltipText }
 			</Popover>

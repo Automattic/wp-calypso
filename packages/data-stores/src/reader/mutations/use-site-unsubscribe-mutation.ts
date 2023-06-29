@@ -10,6 +10,8 @@ import {
 type UnsubscribeParams = {
 	blog_id: number | string;
 	url?: string;
+	doNotInvalidateSiteSubscriptions?: boolean;
+	emailId?: string;
 };
 
 type UnsubscribeResponse = {
@@ -42,7 +44,8 @@ const useSiteUnsubscribeMutation = ( blog_id?: string ) => {
 				'delete',
 				isLoggedIn,
 				params.blog_id,
-				params.url
+				params.url,
+				params.emailId
 			);
 
 			const response = await callApi< UnsubscribeResponse >( {
@@ -80,10 +83,12 @@ const useSiteUnsubscribeMutation = ( blog_id?: string ) => {
 					pages: previousSiteSubscriptions.pages.map( ( page ) => {
 						return {
 							...page,
-							subscriptions: page.subscriptions.filter(
-								( siteSubscription ) => siteSubscription.blog_ID !== params.blog_id
-							),
 							total_subscriptions: page.total_subscriptions - 1,
+							subscriptions: page.subscriptions.map( ( siteSubscription ) => ( {
+								...siteSubscription,
+								isDeleted:
+									siteSubscription.blog_ID === params.blog_id ? true : siteSubscription.isDeleted,
+							} ) ),
 						};
 					} ),
 				} );
@@ -139,8 +144,10 @@ const useSiteUnsubscribeMutation = ( blog_id?: string ) => {
 				);
 			}
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+		onSettled: ( _data, _error, params ) => {
+			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
+				queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+			}
 			queryClient.invalidateQueries( subscriptionsCountCacheKey );
 			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey, { refetchType: 'none' } );
 		},

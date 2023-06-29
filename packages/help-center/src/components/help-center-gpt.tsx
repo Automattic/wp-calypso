@@ -1,9 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, LoadingPlaceholder } from '@automattic/components';
+import { LoadingPlaceholder } from '@automattic/components';
 import { HelpCenterSelect, useJetpackSearchAIQuery } from '@automattic/data-stores';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -142,7 +143,7 @@ export function HelpCenterGPT() {
 							<>
 								<p>
 									{ __(
-										'Our system is currently generating a possible solution for you, which typically takes about 45 seconds.',
+										'Our system is currently generating a possible solution for you, which typically takes about 30 seconds.',
 										__i18n_text_domain__
 									) }
 								</p>

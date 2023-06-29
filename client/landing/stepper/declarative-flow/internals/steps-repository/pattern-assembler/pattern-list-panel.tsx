@@ -9,11 +9,13 @@ type PatternListPanelProps = {
 	categories: Category[];
 	selectedCategory: string | null;
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
+	selectedPatterns: Pattern[];
 };
 
 const PatternListPanel = ( {
 	onSelect,
 	selectedPattern,
+	selectedPatterns,
 	selectedCategory,
 	categories,
 	patternsMapByCategory,
@@ -37,6 +39,7 @@ const PatternListPanel = ( {
 				patterns={ categoryPatterns }
 				onSelect={ onSelect }
 				selectedPattern={ selectedPattern }
+				selectedPatterns={ selectedPatterns }
 			/>
 		</div>
 	);

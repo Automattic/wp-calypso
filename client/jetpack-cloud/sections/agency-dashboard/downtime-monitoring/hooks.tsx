@@ -15,10 +15,25 @@ export function useRequestVerificationCode(): {
 	isError: boolean;
 	isLoading: boolean;
 	isSuccess: boolean;
+	isVerified: boolean;
 } {
-	return useRequestContactVerificationCode( {
+	const [ isAlreadyVerifed, setIsAlreadyVerifed ] = useState( false );
+
+	const data = useRequestContactVerificationCode( {
 		retry: false,
+		onError: async ( error ) => {
+			// Add the contact to the list of contacts if already verified
+			if (
+				error?.code &&
+				[ 'existing_verified_email_contact', 'existing_verified_sms_contact' ].includes(
+					error.code
+				)
+			) {
+				setIsAlreadyVerifed( true );
+			}
+		},
 	} );
+	return { ...data, isVerified: isAlreadyVerifed };
 }
 
 const verificationErrorMessages: { [ key: string ]: string } = {
@@ -50,10 +65,18 @@ export function useValidateVerificationCode(): {
 		// Optimistically update the contacts
 		queryClient.setQueryData( queryKey, ( oldContacts: any ) => {
 			const type = params.type;
+
+			const newEmailItem = { email_address: params.value, verified: data.verified };
+			const newSMSItem = {
+				sms_number: params.value,
+				verified: data.verified,
+			};
+
 			if ( ! oldContacts ) {
 				// If there are no contacts, create a new object
 				return {
-					emails: [ { email_address: params.value, verified: data.verified } ],
+					...( type === 'email' && { emails: [ newEmailItem ] } ),
+					...( type === 'sms' && { sms_numbers: [ newSMSItem ] } ),
 				};
 			}
 			return {
@@ -64,7 +87,16 @@ export function useValidateVerificationCode(): {
 						...oldContacts.emails.filter(
 							( email: { email_address: string } ) => email.email_address !== params.value
 						),
-						{ email_address: params.value, verified: data.verified },
+						newEmailItem,
+					],
+				} ),
+				...( type === 'sms' && {
+					// Replace if it exists, otherwise add it
+					sms_numbers: [
+						...oldContacts.sms_numbers.filter(
+							( sms: { sms_number: string } ) => sms.sms_number !== params.value
+						),
+						newSMSItem,
 					],
 				} ),
 			};
@@ -77,8 +109,8 @@ export function useValidateVerificationCode(): {
 			await handleSetMonitoringContacts( data, params );
 		},
 		onError: async ( error, params ) => {
+			// Add the contact to the list of contacts if already verified
 			if ( error?.code === 'jetpack_agency_contact_is_verified' ) {
-				// Add the contact to the list of contacts if already verified
 				setIsAlreadyVerifed( true );
 				await handleSetMonitoringContacts( { verified: true }, params );
 			}

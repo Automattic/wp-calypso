@@ -21,3 +21,5 @@ export {
 	recordTrainTracksInteract,
 	getNewRailcarId,
 } from './train-tracks';
+
+export type { Railcar } from './train-tracks';

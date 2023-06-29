@@ -26,6 +26,10 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 		[ options, value ]
 	);
 
+	if ( ! sortingLabel ) {
+		throw new Error( 'In SortControl, props.value must exist in props.options.' );
+	}
+
 	return (
 		<Dropdown
 			className="subscription-manager-sort-controls"

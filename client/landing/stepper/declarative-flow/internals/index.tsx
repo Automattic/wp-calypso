@@ -1,6 +1,11 @@
-import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
+import {
+	isNewsletterOrLinkInBioFlow,
+	isSenseiFlow,
+	isWooExpressFlow,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
+import { useI18n } from '@wordpress/react-i18n';
+import { useEffect, useState, useCallback, Suspense, lazy, useRef } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -43,6 +48,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const location = useLocation();
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
+	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
@@ -55,8 +61,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		[]
 	);
 
+	const urlQueryParams = useQuery();
+	const isInHostingFlow = useRef( urlQueryParams.get( 'hosting-flow' ) === 'true' ).current;
+
 	const site = useSite();
-	const ref = useQuery().get( 'ref' ) || '';
+	const ref = urlQueryParams.get( 'ref' ) || '';
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
@@ -137,6 +146,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		if ( ! isReEnteringStep ) {
 			recordStepStart( flow.name, kebabCase( currentStepRoute ), {
 				intent,
+				is_in_hosting_flow: isInHostingFlow,
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 			} );
 		}
@@ -179,6 +189,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const getDocumentHeadTitle = () => {
 		if ( isNewsletterOrLinkInBioFlow( flow.name ) ) {
 			return flow.title;
+		} else if ( isSenseiFlow( flow.name ) ) {
+			return __( 'Course Creator' );
 		}
 	};
 

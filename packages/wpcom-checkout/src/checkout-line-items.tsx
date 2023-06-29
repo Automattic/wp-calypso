@@ -56,13 +56,17 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	justify-content: space-between;
 	font-weight: ${ ( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal ) };
 	color: ${ ( { theme, total } ) =>
-		total ? theme.colors.textColorDark : theme.colors.textColor };
+		total ? theme.colors.textColorDark : theme.colors.textColorLight };
 	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1.1em' ) };
+	line-height: 1em;
 	padding: ${ ( { total, tax, subtotal, coupon } ) =>
-		total || subtotal || tax || coupon ? '10px 0' : '20px 0' };
-	border-bottom: ${ ( { theme, total } ) =>
-		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
+		total || subtotal || tax || coupon ? '0' : '20px 0' };
 	position: relative;
+	margin-bottom: 8px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
 
 	.checkout-line-item__price {
 		position: relative;
@@ -76,10 +80,9 @@ export const LineItem = styled( WPLineItem )< {
 	flex-wrap: wrap;
 	justify-content: space-between;
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
-	color: ${ ( { theme } ) => theme.colors.textColor };
+	color: ${ ( { theme } ) => theme.colors.textColorDark };
 	font-size: 1.1em;
 	padding: 20px 0;
-	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
 
 	.checkout-line-item__price {
@@ -90,16 +93,6 @@ export const LineItem = styled( WPLineItem )< {
 export const CouponLineItem = styled( WPCouponLineItem )< {
 	theme?: Theme;
 } >`
-	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
-
-	&[data-partner-coupon='true'] ${ NonProductLineItem } {
-		border-bottom: none;
-	}
-
-	&:last-child {
-		border-bottom: none;
-	}
-
 	.jetpack-partner-logo {
 		padding-bottom: 20px;
 	}
@@ -146,14 +139,13 @@ const NotApplicableCallout = styled.div< { theme?: Theme } >`
 const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	flex: 1;
 	word-break: break-word;
-	font-size: 16px;
 	display: flex;
 	gap: 0.5em;
+	font-weight: ${ ( { theme } ) => theme.weights.bold };
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
-	font-size: 16px;
 
 	.rtl & {
 		margin-right: 12px;
@@ -752,7 +744,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	const isDomainMapping = productSlug === 'domain_map';
 
 	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
-		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : null;
+		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
 
 		return (
 			<>
@@ -776,19 +768,17 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
-function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct } ) {
+function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const planSlug = product.product_slug;
 	const origCost = product.item_original_subtotal_integer;
 	const finalCost = product.item_subtotal_integer;
+	const upgradeCredit = origCost - finalCost;
+	const planSlug = product.product_slug;
 	const isRenewal = product.is_renewal;
 
-	// Do not display discount reason if there is an introductory offer.
-	if ( product.introductory_offer_terms?.enabled ) {
-		return null;
-	}
-
 	if (
+		// Do not display discount reason if there is an introductory offer.
+		product.introductory_offer_terms?.enabled ||
 		// Do not display discount reason for non-wpcom, non-jetpack products.
 		( ! isWpComPlan( planSlug ) && ! isJetpackProductSlug( planSlug ) ) ||
 		// Do not display discount reason if there is no discount.
@@ -800,19 +790,59 @@ function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct }
 	) {
 		return null;
 	}
-
 	if ( isMonthlyProduct( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first month' ) }</DiscountCallout>;
+		return (
+			<>
+				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
+					comment:
+						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+					args: {
+						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</>
+		);
 	}
 
 	if ( isYearly( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+		return (
+			<>
+				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
+					comment:
+						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+					args: {
+						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</>
+		);
 	}
 
 	if ( isBiennially( product ) || isTriennially( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
+		return (
+			<>
+				{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
+					comment:
+						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+					args: {
+						discount: formatCurrency( upgradeCredit, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</>
+		);
 	}
-
 	return null;
 }
 
@@ -997,13 +1027,17 @@ function WPLineItem( {
 			</span>
 
 			{ product && ! containsPartnerCoupon && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice product={ product } />
-					<DomainDiscountCallout product={ product } />
-					<FirstTermDiscountCallout product={ product } />
-					<CouponDiscountCallout product={ product } />
-					<IntroductoryOfferCallout product={ product } />
-				</LineItemMeta>
+				<>
+					<LineItemMeta>
+						<UpgradeCreditInformation product={ product } />
+					</LineItemMeta>
+					<LineItemMeta>
+						<LineItemSublabelAndPrice product={ product } />
+						<DomainDiscountCallout product={ product } />
+						<CouponDiscountCallout product={ product } />
+						<IntroductoryOfferCallout product={ product } />
+					</LineItemMeta>
+				</>
 			) }
 
 			{ product && containsPartnerCoupon && (

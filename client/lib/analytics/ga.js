@@ -5,6 +5,7 @@ import {
 	fireGoogleAnalyticsPageView,
 	fireGoogleAnalyticsEvent,
 } from 'calypso/lib/analytics/ad-tracking';
+import isAkismetCheckout from '../akismet/is-akismet-checkout';
 import { mayWeTrackByTracker } from './tracker-buckets';
 
 const gaDebug = debug( 'calypso:analytics:ga' );
@@ -17,6 +18,19 @@ function initialize() {
 			send_page_view: false,
 			...getGoogleAnalyticsDefaultConfig(),
 		};
+
+		// We enable custom cross-domain linking only for Akismet checkouts
+		if ( isAkismetCheckout() ) {
+			const queryParams = new URLSearchParams( location.search );
+			const gl = queryParams.get( '_gl' );
+
+			// If we have a _gl query param, cross-domain linking is done automatically
+			if ( ! gl ) {
+				// Setting cross-domain manually: https://support.google.com/analytics/answer/10071811?hl=en#zippy=%2Cmanual-setup
+				params.client_id = queryParams.get( '_gl_cid' );
+				params.session_id = queryParams.get( '_gl_sid' );
+			}
+		}
 
 		gaDebug( 'parameters:', params );
 

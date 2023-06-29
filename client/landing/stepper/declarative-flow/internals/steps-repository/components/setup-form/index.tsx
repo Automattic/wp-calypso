@@ -2,7 +2,7 @@
 import { Button, FormInputValidation } from '@automattic/components';
 import { TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { Dispatch, FormEvent, ReactChild, SetStateAction, useEffect } from 'react';
+import { Dispatch, FormEvent, ReactNode, SetStateAction, useEffect } from 'react';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -36,7 +36,7 @@ interface SetupFormProps {
 	translatedText?: TranslatedStrings;
 	isLoading?: boolean;
 	isSubmitError?: boolean;
-	children?: ReactChild | ReactChild[];
+	children?: ReactNode;
 }
 
 const SetupForm = ( {

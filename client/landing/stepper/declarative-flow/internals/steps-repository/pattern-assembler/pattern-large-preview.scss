@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "./keyframes";
 
 .pattern-large-preview {
@@ -13,7 +15,11 @@
 	transition: margin-inline-start 0.2s ease-out;
 
 	.pattern-assembler__pattern-panel-list--is-open & {
-		margin-inline-start: 365px;
+		margin-inline-start: 360px;
+
+		@include break-wide {
+			margin-inline-start: 365px;
+		}
 	}
 }
 

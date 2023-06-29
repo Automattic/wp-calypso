@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useState, useRef } from 'react';
+import { ReactNode, useState, useRef } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';
@@ -17,7 +17,7 @@ interface Props {
 	site: Site;
 	status: AllowedStatusTypes | string;
 	settings: MonitorSettings | undefined;
-	tooltip: ReactChild | undefined;
+	tooltip: ReactNode;
 	tooltipId: string;
 	siteError: boolean;
 	isLargeScreen?: boolean;

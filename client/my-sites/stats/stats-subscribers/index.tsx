@@ -16,8 +16,8 @@ import StatsPageHeader from '../stats-page-header';
 import PageViewTracker from '../stats-page-view-tracker';
 import Reach from '../stats-reach';
 import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
+import SubscribersHighlightSection from '../stats-subscribers-highlight-section';
 import SubscribersOverview from '../stats-subscribers-overview';
-import SubscribersHighlightSection from './subscribers-highlight-section';
 import type { Moment } from 'moment';
 
 interface StatsSubscribersPageProps {

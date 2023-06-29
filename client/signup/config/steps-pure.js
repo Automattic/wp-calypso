@@ -147,7 +147,7 @@ export function generateSteps( {
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				isPasswordless: true,
-				showIsDevAccountCheckbox: config.isEnabled( 'hosting-onboarding-i2' ),
+				showIsDevAccountCheckbox: true,
 			},
 		},
 

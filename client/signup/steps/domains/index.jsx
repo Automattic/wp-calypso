@@ -15,6 +15,10 @@ import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explaine
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import Notice from 'calypso/components/notice';
 import {
+	SIGNUP_DOMAIN_ORIGIN,
+	setDomainOrigin,
+} from 'calypso/lib/analytics/utils/signup_domain_origin';
+import {
 	domainRegistration,
 	domainMapping,
 	domainTransfer,
@@ -155,6 +159,11 @@ class DomainsStep extends Component {
 	};
 
 	handleAddDomain = ( suggestion, position ) => {
+		const domainOrigin = suggestion?.is_free
+			? SIGNUP_DOMAIN_ORIGIN.free
+			: SIGNUP_DOMAIN_ORIGIN.custom;
+		setDomainOrigin( domainOrigin );
+
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
@@ -242,12 +251,14 @@ class DomainsStep extends Component {
 	};
 
 	handleDomainExplainerClick = () => {
+		setDomainOrigin( SIGNUP_DOMAIN_ORIGIN.choose_later );
 		const hideFreePlan = true;
 		this.handleSkip( undefined, hideFreePlan );
 	};
 
 	handleUseYourDomainClick = () => {
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
+		setDomainOrigin( SIGNUP_DOMAIN_ORIGIN.use_your_domain );
 		page( this.getUseYourDomainUrl() );
 	};
 
@@ -656,7 +667,11 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
+			return (
+				! stepSectionName &&
+				'domain-transfer' !== this.props.flowName &&
+				translate( 'Enter some descriptive keywords to get started' )
+			);
 		}
 
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
@@ -667,7 +682,7 @@ class DomainsStep extends Component {
 	getHeaderText() {
 		const { headerText, isAllDomains, isReskinned, stepSectionName, translate } = this.props;
 
-		if ( stepSectionName === 'use-your-domain' ) {
+		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === this.props.flowName ) {
 			return '';
 		}
 
@@ -714,6 +729,11 @@ class DomainsStep extends Component {
 			sideContent = this.getSideContent();
 		}
 
+		if ( 'domain-transfer' === this.props.flowName && ! this.props.stepSectionName ) {
+			content = this.useYourDomainForm();
+			sideContent = null;
+		}
+
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			content = (
 				<div className="domains__step-section-wrapper">
@@ -737,7 +757,10 @@ class DomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
-		if ( 'use-your-domain' !== this.props.stepSectionName ) {
+		if (
+			'use-your-domain' !== this.props.stepSectionName &&
+			'domain-transfer' !== this.props.flowName
+		) {
 			return null;
 		}
 
@@ -799,6 +822,9 @@ class DomainsStep extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
+		} else if ( ! previousStepBackUrl && 'domain-transfer' === this.props.flowName ) {
+			backUrl = null;
+			backLabelText = null;
 		} else {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
 

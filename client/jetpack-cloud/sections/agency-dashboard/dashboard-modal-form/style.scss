@@ -1,0 +1,57 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+.dashboard-modal-form__footer {
+	width: calc(100% - 64px); // reducing the left and right padding
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	padding: 16px 32px;
+	background: var(--studio-white);
+
+	.dashboard-modal-form__footer-buttons {
+		display: flex;
+		flex-direction: column;
+	}
+
+	button {
+		height: 36px;
+		line-height: 18px;
+
+		&:nth-child(2) {
+			margin-block-start: 16px;
+		}
+	}
+
+	@include break-mobile {
+		position: static;
+		justify-content: right;
+		flex-direction: initial;
+		margin-block-start: 32px;
+		width: auto;
+		padding: 0;
+
+		.dashboard-modal-form__footer-buttons {
+			justify-content: end;
+			width: 100%;
+			flex-direction: initial;
+		}
+
+		button {
+			&:nth-child(2) {
+				margin-inline-start: 12px;
+				margin-block-start: 0;
+			}
+		}
+	}
+}
+
+.dashboard-modal-form__footer-error {
+	font-size: 0.75rem;
+	line-height: 14px;
+	color: var(--color-scary-40);
+	margin-block-end: 16px;
+}

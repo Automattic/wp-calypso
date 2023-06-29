@@ -1,11 +1,54 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
+import Tooltip from 'calypso/components/tooltip';
+import { successNotice } from 'calypso/state/notices/actions';
+import {
+	useRecordSiteUnsubscribed,
+	useRecordSiteResubscribed,
+	useRecordSiteIconClicked,
+	useRecordSiteTitleClicked,
+	useRecordSiteUrlClicked,
+	useRecordNotificationsToggle,
+	useRecordPostEmailsToggle,
+	useRecordCommentEmailsToggle,
+	useRecordPostEmailsSetFrequency,
+	SOURCE_SUBSCRIPTIONS_SITE_LIST,
+	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+} from '../../tracks';
+import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
+import {
+	useSubscriptionManagerContext,
+	ReaderPortal,
+	SubscriptionsPortal,
+} from '../subscription-manager-context';
+
+interface NotificationStatusProps {
+	tooltipRef: React.RefObject< SVGSVGElement >;
+	setTooltipVisible: React.Dispatch< React.SetStateAction< boolean > >;
+	notificationDisabled: boolean;
+}
+
+const NotificationStatus: React.FC< NotificationStatusProps > = ( {
+	tooltipRef,
+	setTooltipVisible,
+	notificationDisabled,
+} ) => (
+	<Gridicon
+		ref={ tooltipRef }
+		icon={ notificationDisabled ? 'cross' : 'checkmark' }
+		size={ 16 }
+		className={ notificationDisabled ? 'red' : 'green' }
+		onMouseEnter={ () => setTooltipVisible( true ) }
+		onMouseLeave={ () => setTooltipVisible( false ) }
+	/>
+);
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
@@ -25,10 +68,6 @@ const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliver
 	);
 };
 
-const RedCross = () => <Gridicon icon="cross" size={ 16 } className="red" />;
-
-const GreenCheck = () => <Gridicon icon="checkmark" size={ 16 } className="green" />;
-
 const SelectedNewPostDeliveryMethods = ( {
 	isEmailMeNewPostsSelected,
 	isNotifyMeOfNewPostsSelected,
@@ -39,7 +78,7 @@ const SelectedNewPostDeliveryMethods = ( {
 	const translate = useTranslate();
 
 	if ( ! isEmailMeNewPostsSelected && ! isNotifyMeOfNewPostsSelected ) {
-		return <RedCross />;
+		return <Gridicon icon="cross" size={ 16 } className="red" />;
 	}
 
 	const emailDelivery = isEmailMeNewPostsSelected ? translate( 'Email' ) : null;
@@ -51,11 +90,12 @@ const SelectedNewPostDeliveryMethods = ( {
 };
 
 type SiteRowProps = Reader.SiteSubscription & {
-	onSiteTitleClick: () => void;
+	successNotice: typeof successNotice;
 };
 
-export default function SiteRow( {
-	blog_ID,
+const SiteRow = ( {
+	blog_ID: blog_id,
+	feed_ID: feed_id,
 	name,
 	site_icon,
 	URL: url,
@@ -63,9 +103,17 @@ export default function SiteRow( {
 	delivery_methods,
 	is_wpforteams_site,
 	is_paid_subscription,
-	onSiteTitleClick,
-}: SiteRowProps ) {
+	isDeleted,
+	successNotice,
+}: SiteRowProps ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const [ isTooltipVisible, setTooltipVisible ] = useState< boolean >( false );
+	const tooltip = useRef< SVGSVGElement >( null );
+
+	const unsubscribeInProgress = useRef( false );
+	const resubscribePending = useRef( false );
+
 	const hostname = useMemo( () => {
 		try {
 			return new URL( url ).hostname;
@@ -87,37 +135,133 @@ export default function SiteRow( {
 		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
+	const { mutate: resubscribe } = SubscriptionManager.useSiteSubscribeMutation();
 
-	return (
+	// Tracks events recording
+	const recordSiteIconClicked = useRecordSiteIconClicked();
+	const recordSiteTitleClicked = useRecordSiteTitleClicked();
+	const recordSiteUrlClicked = useRecordSiteUrlClicked();
+	const recordNotificationsToggle = useRecordNotificationsToggle();
+	const recordPostEmailsToggle = useRecordPostEmailsToggle();
+	const recordCommentEmailsToggle = useRecordCommentEmailsToggle();
+	const recordPostEmailsSetFrequency = useRecordPostEmailsSetFrequency();
+	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
+	const recordSiteResubscribed = useRecordSiteResubscribed();
+
+	const unsubscribeCallback = () => {
+		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
+		dispatch(
+			successNotice(
+				translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
+				{
+					duration: 5000,
+					button: translate( 'Resubscribe' ),
+					onClick: () => {
+						if ( unsubscribeInProgress.current ) {
+							resubscribePending.current = true;
+						} else {
+							resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+							recordSiteResubscribed( {
+								blog_id,
+								url,
+								source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+							} );
+						}
+					},
+				}
+			)
+		);
+	};
+
+	const { portal } = useSubscriptionManagerContext();
+
+	const siteTitleUrl = useMemo( () => {
+		if ( portal === ReaderPortal ) {
+			return `/read/feeds/${ feed_id }`;
+		}
+
+		if ( portal === SubscriptionsPortal ) {
+			return `/subscriptions/site/${ blog_id }`;
+		}
+	}, [ blog_id, feed_id, portal ] );
+
+	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
+		// Update post notification settings
+		updateNotifyMeOfNewPosts( { blog_id, send_posts } );
+
+		// Record tracks event
+		recordNotificationsToggle( send_posts, { blog_id } );
+	};
+
+	const handleEmailMeNewPostsChange = ( send_posts: boolean ) => {
+		// Update post emails settings
+		updateEmailMeNewPosts( { blog_id, send_posts } );
+
+		// Record tracks event
+		recordPostEmailsToggle( send_posts, { blog_id } );
+	};
+
+	const handleEmailMeNewCommentsChange = ( send_comments: boolean ) => {
+		// Update comment emails settings
+		updateEmailMeNewComments( { blog_id, send_comments } );
+
+		// Record tracks event
+		recordCommentEmailsToggle( send_comments, { blog_id } );
+	};
+
+	const handleDeliveryFrequencyChange = ( delivery_frequency: Reader.EmailDeliveryFrequency ) => {
+		// Update post emails delivery frequency
+		updateDeliveryFrequency( { blog_id, delivery_frequency } );
+
+		// Record tracks event
+		recordPostEmailsSetFrequency( { blog_id, delivery_frequency } );
+	};
+
+	return ! isDeleted ? (
 		<li className="row" role="row">
-			<div className="title-cell" role="cell">
-				<Button
-					icon={ <SiteIcon iconUrl={ site_icon } siteName={ name } /> }
-					iconSize={ 40 }
-					onClick={ onSiteTitleClick }
-				/>
-				<div className="vertical-stack">
-					<div className="horizontal-stack">
-						<Button className="name" onClick={ onSiteTitleClick }>
-							{ name }
-						</Button>
+			<span className="title-cell" role="cell">
+				<Link
+					className="title-icon"
+					href={ siteTitleUrl }
+					onClick={ () => {
+						recordSiteIconClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
+					} }
+				>
+					<SiteIcon iconUrl={ site_icon } size={ 40 } siteName={ name } />
+				</Link>
+				<span className="title-column">
+					<Link
+						className="title-name"
+						href={ siteTitleUrl }
+						onClick={ () => {
+							recordSiteTitleClicked( {
+								blog_id,
+								feed_id,
+								source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
+							} );
+						} }
+					>
+						{ name }
 						{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
 						{ !! is_paid_subscription && (
 							<span className="paid-label">
 								{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
 							</span>
 						) }
-					</div>
-					<a
-						className="url"
+					</Link>
+					<ExternalLink
+						className="title-url"
 						{ ...( url && { href: url } ) }
 						rel="noreferrer noopener"
 						target="_blank"
+						onClick={ () => {
+							recordSiteUrlClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
+						} }
 					>
 						{ hostname }
-					</a>
-				</div>
-			</div>
+					</ExternalLink>
+				</span>
+			</span>
 			<span className="date-cell" role="cell">
 				<TimeSince
 					date={
@@ -136,7 +280,28 @@ export default function SiteRow( {
 			) }
 			{ isLoggedIn && (
 				<span className="new-comments-cell" role="cell">
-					{ delivery_methods.email?.send_comments ? <GreenCheck /> : <RedCross /> }
+					<NotificationStatus
+						tooltipRef={ tooltip }
+						setTooltipVisible={ setTooltipVisible }
+						notificationDisabled={ ! delivery_methods.email?.send_comments }
+					/>
+					<Tooltip
+						className="new-comments-tooltip"
+						isVisible={ isTooltipVisible }
+						position="top"
+						context={ tooltip.current }
+						showOnMobile
+					>
+						<div className="new-comments-tooltip__content">
+							{ delivery_methods.email?.send_comments
+								? translate(
+										'You will receive emails notifications for new comments on this site.'
+								  )
+								: translate(
+										"You won't receive email notifications for new comments on this site."
+								  ) }
+						</div>
+					</Tooltip>
 				</span>
 			) }
 			<span className="email-frequency-cell" role="cell">
@@ -146,35 +311,50 @@ export default function SiteRow( {
 				<SiteSettingsPopover
 					// NotifyMeOfNewPosts
 					notifyMeOfNewPosts={ !! delivery_methods.notification?.send_posts }
-					onNotifyMeOfNewPostsChange={ ( send_posts ) =>
-						updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } )
-					}
+					onNotifyMeOfNewPostsChange={ handleNotifyMeOfNewPostsChange }
 					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
 					// EmailMeNewPosts
 					emailMeNewPosts={ !! delivery_methods.email?.send_posts }
 					updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
-					onEmailMeNewPostsChange={ ( send_posts ) =>
-						updateEmailMeNewPosts( { blog_id: blog_ID, send_posts } )
-					}
+					onEmailMeNewPostsChange={ handleEmailMeNewPostsChange }
 					// DeliveryFrequency
 					deliveryFrequency={
 						delivery_methods.email?.post_delivery_frequency ??
 						Reader.EmailDeliveryFrequency.Instantly
 					}
-					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
-						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
-					}
+					onDeliveryFrequencyChange={ handleDeliveryFrequencyChange }
 					updatingFrequency={ updatingFrequency }
 					// EmailMeNewComments
 					emailMeNewComments={ !! delivery_methods.email?.send_comments }
-					onEmailMeNewCommentsChange={ ( send_comments ) =>
-						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
-					}
+					onEmailMeNewCommentsChange={ handleEmailMeNewCommentsChange }
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID, url: url } ) }
+					onUnsubscribe={ () => {
+						unsubscribeInProgress.current = true;
+						unsubscribeCallback();
+						unsubscribe(
+							{ blog_id, url, doNotInvalidateSiteSubscriptions: true },
+							{
+								onSuccess: () => {
+									unsubscribeInProgress.current = false;
+
+									if ( resubscribePending.current ) {
+										resubscribePending.current = false;
+										resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+										recordSiteResubscribed( {
+											blog_id,
+											url,
+											source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+										} );
+									}
+								},
+							}
+						);
+					} }
 					unsubscribing={ unsubscribing }
 				/>
 			</span>
 		</li>
-	);
-}
+	) : null;
+};
+
+export default connect( null, { successNotice } )( SiteRow );

@@ -1,5 +1,6 @@
 import warn from '@wordpress/warning';
 import { random, map, includes, get } from 'lodash';
+import { getDiscoverStreamTags } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -8,6 +9,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
+import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
 
 const noop = () => {};
@@ -50,6 +52,103 @@ function analyticsForStream( { streamKey, algorithm, items } ) {
 }
 const getAlgorithmForStream = ( streamKey ) => analyticsAlgoMap.get( streamKey );
 
+function createStreamItemFromPost( post, dateProperty ) {
+	return {
+		...keyForPost( post ),
+		date: post[ dateProperty ],
+		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
+		url: post.URL,
+		site_icon: post.site_icon?.ico,
+		site_description: post.description,
+		site_name: post.site_name,
+		feed_URL: post.feed_URL,
+		feed_ID: post.feed_ID,
+		xPostMetadata: XPostHelper.getXPostMetadata( post ),
+	};
+}
+
+function createStreamItemFromSiteAndPost( site, post, dateProperty ) {
+	return {
+		...keyForPost( post ),
+		date: post[ dateProperty ],
+		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
+		url: post.URL,
+		site_icon: site.icon?.ico,
+		site_description: site.description,
+		site_name: site.name,
+		feed_URL: post.feed_URL,
+		feed_ID: post.feed_ID,
+		xPostMetadata: XPostHelper.getXPostMetadata( post ),
+	};
+}
+
+function createStreamDataFromPosts( posts, dateProperty ) {
+	const streamItems = Array.isArray( posts )
+		? posts.map( ( post ) => createStreamItemFromPost( post, dateProperty ) )
+		: [];
+	const streamPosts = posts;
+	return { streamItems, streamPosts };
+}
+
+function createStreamItemFromSite( site, dateProperty ) {
+	const post = site.posts[ 0 ] ?? null;
+	if ( ! post ) {
+		return null;
+	}
+	return createStreamItemFromSiteAndPost( site, post, dateProperty );
+}
+
+function createStreamDataFromCards( cards, dateProperty ) {
+	// TODO: We may want to extract the related tags and update related tags stream too
+	const cardPosts = [];
+	let cardRecommendedSites = [];
+	cards.forEach( ( card ) => {
+		if ( card.type === 'post' ) {
+			cardPosts.push( card.data );
+		} else if ( card.type === 'recommended_blogs' ) {
+			cardRecommendedSites = card.data;
+		}
+	} );
+	const streamSites = createStreamSitesFromRecommendedSites( cardRecommendedSites );
+	return { ...createStreamDataFromPosts( cardPosts, dateProperty ), streamSites };
+}
+
+function createStreamDataFromSites( sites, dateProperty ) {
+	const streamItems = [];
+	const streamPosts = [];
+
+	sites.forEach( ( site ) => {
+		const streamItem = createStreamItemFromSite( site, dateProperty );
+		if ( streamItem !== null ) {
+			streamItems.push( streamItem );
+		}
+
+		const post = site.posts[ 0 ];
+		if ( post !== undefined ) {
+			streamPosts.push( post );
+		}
+	} );
+
+	return { streamItems, streamPosts };
+}
+
+function createStreamSitesFromRecommendedSites( sites ) {
+	const streamSites = sites.map( ( site ) => {
+		return {
+			feed_ID: site.feed_ID,
+			url: site.URL,
+			site_icon: site.icon?.ico,
+			site_description: site.description,
+			site_name: site.name,
+			feed_URL: site.feed_URL,
+			feedId: site.feed_ID, // filtered by feedId in receiveRecommendedSites reducer
+		};
+	} );
+
+	// Filter out nulls
+	return streamSites.filter( ( item ) => item !== null );
+}
+
 export const PER_FETCH = 7;
 export const INITIAL_FETCH = 4;
 const PER_POLL = 40;
@@ -69,7 +168,6 @@ export const SITE_LIMITER_FIELDS = [
 	'feed_item_ID',
 	'global_ID',
 	'metadata',
-	'tags',
 	'site_URL',
 	'URL',
 ];
@@ -99,6 +197,24 @@ const streamApis = {
 	feed: {
 		path: ( { streamKey } ) => `/read/feed/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
+	},
+	discover: {
+		path: ( { streamKey } ) => {
+			if ( ! streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
+				return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
+			}
+			return '/read/tags/cards';
+		},
+		dateProperty: 'date',
+		query: ( extras, { tags } ) =>
+			getQueryString( {
+				...extras,
+				// Do not supply an empty fallback as null is good info for getDiscoverStreamTags
+				tags: getDiscoverStreamTags( tags && Object.values( tags )?.map( ( tag ) => tag.slug ) ),
+				tag_recs_per_card: 5,
+				site_recs_per_card: 5,
+			} ),
+		apiNamespace: 'wpcom/v2',
 	},
 	site: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/posts`,
@@ -217,6 +333,7 @@ export function requestPage( action ) {
 		method: 'GET',
 		path: path( { ...action.payload } ),
 		apiVersion,
+		apiNamespace: api.apiNamespace ?? null,
 		query: isPoll
 			? pollQuery( [], { ...algorithm } )
 			: query( { ...pageHandle, ...algorithm, number }, action.payload ),
@@ -225,81 +342,73 @@ export function requestPage( action ) {
 	} );
 }
 
-export function handlePage( action, data ) {
-	const { posts, date_range, meta, next_page, sites } = data;
-	const { streamKey, query, isPoll, gap, streamType } = action.payload;
-	const { dateProperty } = streamApis[ streamType ];
-	let pageHandle = {};
-
+function get_page_handle( streamType, action, data ) {
+	const { date_range, meta, next_page, next_page_handle } = data;
 	if ( includes( streamType, 'rec' ) ) {
 		const offset = get( action, 'payload.pageHandle.offset', 0 ) + PER_FETCH;
-		pageHandle = { offset };
+		return { offset };
 	} else if ( next_page || ( meta && meta.next_page ) ) {
 		// sites give page handles nested within the meta key
-		pageHandle = { page_handle: next_page || meta.next_page };
+		return { page_handle: next_page || meta.next_page };
 	} else if ( date_range && date_range.after ) {
 		// feeds use date_range. no next_page handles here
 		// search api will give you a date_range but for relevance search it will have before/after=null
 		// and offsets must be used
 		const { after } = date_range;
-		pageHandle = { before: after };
+		return { before: after };
+	} else if ( next_page_handle ) {
+		return { page_handle: next_page_handle };
+	}
+	return null;
+}
+
+export function handlePage( action, data ) {
+	const { posts, sites, cards } = data;
+	const { streamKey, query, isPoll, gap, streamType } = action.payload;
+	const pageHandle = get_page_handle( streamType, action, data );
+	const { dateProperty } = streamApis[ streamType ];
+
+	let streamItems = [];
+	let streamPosts = [];
+	let streamSites = [];
+
+	// If the payload has posts, then this stream is intended to be a post stream
+	// If the payload has sites, then we need to extract the posts from the sites and update the post stream
+	// If the payload has cards, then we need to extract the posts from the cards and update the post stream
+	// Cards also contain recommended sites which we need to extract and update the sites stream
+	if ( posts ) {
+		const streamData = createStreamDataFromPosts( posts, dateProperty );
+		streamItems = streamData.streamItems;
+		streamPosts = streamData.streamPosts;
+	} else if ( sites ) {
+		const streamData = createStreamDataFromSites( sites, dateProperty );
+		streamItems = streamData.streamItems;
+		streamPosts = streamData.streamPosts;
+	} else if ( cards ) {
+		// Need to extract the posts and recommended sites from the cards
+		const streamData = createStreamDataFromCards( cards, dateProperty );
+		streamItems = streamData.streamItems;
+		streamPosts = streamData.streamPosts;
+		streamSites = streamData.streamSites;
 	}
 
 	const actions = analyticsForStream( {
 		streamKey,
 		algorithm: data.algorithm,
-		items: posts || sites,
+		items: streamPosts || sites,
 	} );
-
-	let streamItems = [];
-	let streamPosts = posts;
-
-	if ( posts ) {
-		streamItems = posts.map( ( post ) => ( {
-			...keyForPost( post ),
-			date: post[ dateProperty ],
-			...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
-			url: post.URL,
-			site_icon: post.site_icon?.ico,
-			site_description: post.description,
-			site_name: post.site_name,
-			feed_URL: post.feed_URL,
-			feed_ID: post.feed_ID,
-			xPostMetadata: XPostHelper.getXPostMetadata( post ),
-		} ) );
-	} else if ( sites ) {
-		streamItems = sites.map( ( site ) => {
-			const post = site.posts[ 0 ] ?? null;
-			if ( ! post ) {
-				return null;
-			}
-			return {
-				...keyForPost( post ),
-				date: post[ dateProperty ],
-				...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
-				url: post.URL,
-				site_icon: site.icon?.ico,
-				site_description: site.description,
-				site_name: site.name,
-				feed_URL: post.feed_URL,
-				feed_ID: post.feed_ID,
-				xPostMetadata: XPostHelper.getXPostMetadata( post ),
-			};
-		} );
-
-		// Filter out nulls
-		streamItems = streamItems.filter( ( item ) => item !== null );
-
-		// get array of posts from sites object
-		streamPosts = sites.map( ( site ) => {
-			return site.posts[ 0 ];
-		} );
-	}
 
 	if ( isPoll ) {
 		actions.push( receiveUpdates( { streamKey, streamItems, query } ) );
 	} else {
-		actions.push( receivePosts( streamPosts ) );
+		if ( streamPosts.length > 0 ) {
+			actions.push( receivePosts( streamPosts ) );
+		}
+		if ( streamSites.length > 0 ) {
+			actions.push(
+				receiveRecommendedSites( { seed: 'discover-recommendations', sites: streamSites } )
+			);
+		}
 		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
 	}
 

@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
-import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -137,12 +136,7 @@ interface DesignCardProps {
 	shouldLimitGlobalStyles?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	getBadge: (
-		themeId: string,
-		forcePremium: boolean,
-		tooltipHeader: string,
-		tooltipMessage: string
-	) => React.ReactNode;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
@@ -155,19 +149,14 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onPreview,
 	getBadge,
 } ) => {
-	const { __ } = useI18n();
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
 	const { style_variations = [] } = design;
 	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
 	const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
 
-	const isPremiumStyleVariation =
+	const isLockedStyleVariation =
 		( ! design.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
-	const badgeTooltipHeader = isPremiumStyleVariation ? __( 'Premium style' ) : '';
-	const badgeTooltipMessage = isPremiumStyleVariation
-		? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
-		: '';
 
 	return (
 		<ThemeCard
@@ -183,12 +172,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					styleVariation={ selectedStyleVariation }
 				/>
 			}
-			badge={ getBadge(
-				design.slug,
-				isPremiumStyleVariation,
-				badgeTooltipHeader,
-				badgeTooltipMessage
-			) }
+			badge={ getBadge( design.slug, isLockedStyleVariation ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
 			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
@@ -210,12 +194,7 @@ interface DesignPickerProps {
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: (
-		themeId: string,
-		forcePremium: boolean,
-		tooltipHeader: string,
-		tooltipMessage: string
-	) => React.ReactNode;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -290,12 +269,7 @@ export interface UnifiedDesignPickerProps {
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: (
-		themeId: string,
-		forcePremium: boolean,
-		tooltipHeader: string,
-		tooltipMessage: string
-	) => React.ReactNode;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {

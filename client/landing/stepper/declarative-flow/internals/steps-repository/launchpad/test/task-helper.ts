@@ -43,7 +43,7 @@ describe( 'Task Helpers', () => {
 		describe( 'when checking if the first post is published', () => {
 			describe( 'and the flow is start-writing', () => {
 				it( 'disable the click link so the user will not get distracted going back to the post', () => {
-					const fakeTasks = [ buildTask( { id: 'first_post_published', completed: false } ) ];
+					const fakeTasks = [ buildTask( { id: 'first_post_published', completed: true } ) ];
 					const enhancedTasks = getEnhancedTasks(
 						fakeTasks,
 						'fake.wordpress.com',

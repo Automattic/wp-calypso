@@ -30,12 +30,11 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isOffline } from 'calypso/state/application/selectors';
-import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
-import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -199,32 +198,6 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
-	shouldShowHappyChatButton() {
-		if ( ! config.isEnabled( 'happychat' ) ) {
-			return false;
-		}
-
-		if ( isWpMobileApp() ) {
-			return false;
-		}
-
-		if ( ! this.props.hasActiveHappyChat ) {
-			return false;
-		}
-
-		const exemptedSections = [ 'happychat', 'devdocs' ];
-		const exemptedRoutes = [ '/log-in/jetpack' ];
-		const exemptedRoutesStartingWith = [ '/start/p2' ];
-
-		return (
-			! exemptedSections.includes( this.props.sectionName ) &&
-			! exemptedRoutes.includes( this.props.currentRoute ) &&
-			! exemptedRoutesStartingWith.some( ( startsWithString ) =>
-				this.props.currentRoute.startsWith( startsWithString )
-			)
-		);
-	}
-
 	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
@@ -253,7 +226,6 @@ class Layout extends Component {
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
-			'has-docked-chat': this.props.chatIsOpen && this.props.chatIsDocked,
 			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
@@ -283,10 +255,6 @@ class Layout extends Component {
 				shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) ) &&
 			this.props.userAllowedToHelpCenter;
 
-		const loadInlineHelp =
-			config.isEnabled( 'inline-help' ) &&
-			shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) &&
-			! loadHelpCenter;
 		return (
 			<div className={ sectionClass }>
 				<HelpCenterLoader
@@ -341,27 +309,11 @@ class Layout extends Component {
 					</div>
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
-				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
-					<AsyncLoad require="calypso/components/happychat" />
-				) }
 				{ 'development' === process.env.NODE_ENV && (
 					<>
 						<SympathyDevWarning />
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					</>
-				) }
-				{ loadInlineHelp && (
-					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
-				) }
-				{ this.shouldShowHappyChatButton() && (
-					<AsyncLoad
-						require="calypso/components/happychat/button"
-						placeholder={ null }
-						allowMobileRedirect
-						borderless={ false }
-						floating
-						withOffset={ loadInlineHelp }
-					/>
 				) }
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
@@ -393,7 +345,7 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			'woocommerce-core-profiler' === currentQuery?.from;
+			isWooCommerceCoreProfilerFlow( state );
 		const noMasterbarForRoute =
 			isJetpackLogin || currentRoute === '/me/account/closed' || isDomainAndPlanPackageFlow;
 		const noMasterbarForSection =
@@ -422,7 +374,6 @@ export default withCurrentRoute(
 			'comments',
 		].includes( sectionName );
 		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
-		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
 		const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
 
@@ -444,9 +395,6 @@ export default withCurrentRoute(
 			sectionJitmPath,
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			chatIsOpen: isHappychatOpen( state ),
-			chatIsDocked,
-			hasActiveHappyChat: hasActiveHappychatSession( state ),
 			colorSchemePreference: getPreference( state, 'colorScheme' ),
 			siteId,
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would

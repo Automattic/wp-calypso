@@ -117,7 +117,30 @@ module.exports = {
 					'return-await': 'off',
 					semi: 'off',
 					'space-before-function-paren': 'off',
-
+					'@typescript-eslint/ban-types': [
+						'error',
+						{
+							types: {
+								ReactText: {
+									message:
+										"It's deprecated, so we don't want new uses. Inline the required type (such as string or number) instead.",
+								},
+								[ 'React.ReactText' ]: {
+									message:
+										"It's deprecated, so we don't want new uses. Inline the required type (such as string or number) instead.",
+								},
+								ReactChild: {
+									message:
+										"It's deprecated, so we don't want new uses. Prefer types like ReactElement, string, or number instead. If the type should be nullable, use ReactNode.",
+								},
+								[ 'React.ReactChild' ]: {
+									message:
+										"It's deprecated, so we don't want new uses. Prefer types like ReactElement, string, or number instead. If the type should be nullable, use ReactNode.",
+								},
+							},
+							extendDefaults: true,
+						},
+					],
 					'@typescript-eslint/explicit-function-return-type': 'off',
 					'@typescript-eslint/explicit-member-accessibility': 'off',
 					'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
@@ -539,6 +562,5 @@ module.exports = {
 		// @TODO remove these lines once we fixed the warnings so
 		// they'll become errors for new code added to the codebase
 		'@tanstack/query/exhaustive-deps': 'warn',
-		'@tanstack/query/prefer-query-object-syntax': 'warn',
 	},
 };

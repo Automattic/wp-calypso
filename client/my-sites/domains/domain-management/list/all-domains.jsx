@@ -266,7 +266,7 @@ class AllDomains extends Component {
 
 		const { isSavingContactInfo } = this.state;
 
-		const selectedFilter = context?.query?.filter || 'owned-by-me';
+		const selectedFilter = context?.query?.filter || 'all-domains';
 
 		const domains =
 			selectedFilter === 'domain-only'
@@ -584,23 +584,48 @@ class AllDomains extends Component {
 		);
 	}
 
+	maybeRenderSeeAllDomainsLink() {
+		const { context, translate, dispatch } = this.props;
+
+		const selectedFilter = context?.query?.filter || 'all-domains';
+
+		if ( selectedFilter === 'all-domains' ) {
+			return null;
+		}
+
+		const handleClick = () => {
+			dispatch( recordTracksEvent( 'calypso_domain_management_see_all_domains_link_click' ) );
+		};
+
+		return (
+			<a
+				className="domains-table-see-all-domains-link"
+				href={ domainManagementRoot() }
+				key="breadcrumb_see_all_domains_link"
+				onClick={ handleClick }
+			>
+				{ translate( 'See all domains' ) }
+			</a>
+		);
+	}
+
 	renderDomainTableFilterButton() {
 		const { context, translate, sites } = this.props;
 
-		const selectedFilter = context?.query?.filter || 'owned-by-me';
+		const selectedFilter = context?.query?.filter || 'all-domains';
 		const nonWpcomDomains = this.mergeFilteredDomainsWithDomainsDetails();
 
 		const filterOptions = [
 			{
 				label: translate( 'All domains' ),
 				value: 'all-domains',
-				path: domainManagementRoot() + '?' + stringify( { filter: 'all-domains' } ),
+				path: domainManagementRoot(),
 				count: nonWpcomDomains?.length,
 			},
 			{
 				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
-				path: domainManagementRoot(),
+				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
@@ -644,6 +669,7 @@ class AllDomains extends Component {
 		};
 
 		const buttons = [
+			this.maybeRenderSeeAllDomainsLink(),
 			this.renderDomainTableFilterButton(),
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,

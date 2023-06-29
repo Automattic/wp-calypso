@@ -6,17 +6,10 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import supportImage from 'calypso/assets/images/illustrations/dotcom-support.svg';
-import HappychatButton from 'calypso/components/happychat/button';
-import HappychatConnection from 'calypso/components/happychat/connection-connected';
+import SupportButton from 'calypso/components/support-button';
 import { preventWidows } from 'calypso/lib/formatting';
-import {
-	CALYPSO_CONTACT,
-	JETPACK_CONTACT_SUPPORT,
-	JETPACK_SUPPORT,
-	SUPPORT_ROOT,
-} from 'calypso/lib/url/support';
+import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 
 import './style.scss';
 
@@ -25,19 +18,17 @@ export class HappinessSupport extends Component {
 		isJetpack: PropTypes.bool,
 		isJetpackFreePlan: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
-		liveChatButtonEventName: PropTypes.string,
-		showLiveChatButton: PropTypes.bool,
+		contactButtonEventName: PropTypes.string,
 	};
 
 	static defaultProps = {
 		isJetpack: false,
 		isJetpackFreePlan: false,
-		showLiveChatButton: false,
 	};
 
-	onLiveChatButtonClick = () => {
-		if ( this.props.liveChatButtonEventName ) {
-			this.props.recordTracksEvent( this.props.liveChatButtonEventName );
+	onContactButtonClick = () => {
+		if ( this.props.contactButtonEventName ) {
+			this.props.recordTracksEvent( this.props.contactButtonEventName );
 		}
 	};
 
@@ -67,53 +58,39 @@ export class HappinessSupport extends Component {
 	}
 
 	getSupportButtons() {
-		const { isJetpackFreePlan, liveChatAvailable, showLiveChatButton } = this.props;
-
-		if ( isJetpackFreePlan ) {
-			return (
-				<div className="happiness-support__buttons">
-					{ this.renderSupportButton() }
-					{ this.renderContactButton() }
-				</div>
-			);
-		}
+		const { isJetpack } = this.props;
 
 		return (
 			<div className="happiness-support__buttons">
-				{ showLiveChatButton && <HappychatConnection /> }
-				{ showLiveChatButton && liveChatAvailable
-					? this.renderLiveChatButton()
-					: this.renderContactButton() }
+				{ isJetpack ? this.renderJetpackContactButton() : this.renderHelpCenterButton() }
 				{ this.renderSupportButton() }
 			</div>
 		);
 	}
 
-	renderContactButton() {
-		let url = CALYPSO_CONTACT;
-		let target = '';
-
-		if ( this.props.isJetpack ) {
-			url = JETPACK_CONTACT_SUPPORT;
-			target = '_blank';
-		}
-
+	renderJetpackContactButton() {
 		return (
-			<Button href={ url } target={ target } className="happiness-support__contact-button">
+			<Button
+				href={ JETPACK_CONTACT_SUPPORT }
+				target="_blank"
+				onClick={ this.onContactButtonClick }
+				className="happiness-support__contact-button"
+			>
 				{ this.props.translate( 'Ask a question' ) }
 			</Button>
 		);
 	}
 
-	renderLiveChatButton() {
+	renderHelpCenterButton() {
 		return (
-			<HappychatButton
-				borderless={ false }
-				onClick={ this.onLiveChatButtonClick }
+			<SupportButton
+				isLink={ false }
+				onClick={ this.onContactButtonClick }
 				className="happiness-support__livechat-button"
+				skipToContactOptions
 			>
 				{ this.props.translate( 'Ask a question' ) }
-			</HappychatButton>
+			</SupportButton>
 		);
 	}
 
@@ -167,9 +144,4 @@ export class HappinessSupport extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		liveChatAvailable: isHappychatAvailable( state ),
-	} ),
-	{ recordTracksEvent }
-)( localize( HappinessSupport ) );
+export default connect( null, { recordTracksEvent } )( localize( HappinessSupport ) );

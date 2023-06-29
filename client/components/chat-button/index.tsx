@@ -6,7 +6,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import type { MessagingGroup } from '@automattic/help-center/src/hooks/use-messaging-availability';
 import type { FC } from 'react';
-import './style.scss';
 
 type ChatIntent = 'SUPPORT' | 'PRESALES' | 'PRECANCELLATION';
 
@@ -14,13 +13,12 @@ type Props = {
 	borderless?: boolean;
 	chatIntent?: ChatIntent;
 	className?: string;
-	floating?: boolean;
 	initialMessage: string;
 	onClick?: () => void;
 	onError?: () => void;
 	primary?: boolean;
 	siteUrl?: string;
-	withOffset?: boolean;
+	children?: React.ReactNode;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -42,13 +40,11 @@ const ChatButton: FC< Props > = ( {
 	chatIntent = 'SUPPORT',
 	children,
 	className = '',
-	floating = false,
 	initialMessage,
 	onClick,
 	onError,
 	primary = false,
 	siteUrl,
-	withOffset = false,
 } ) => {
 	const { __ } = useI18n();
 
@@ -101,10 +97,7 @@ const ChatButton: FC< Props > = ( {
 		}
 	};
 
-	const classes = classnames( 'chat-button', className, {
-		'is-floating': floating,
-		'with-offset': withOffset,
-	} );
+	const classes = classnames( 'chat-button', className );
 
 	if ( ! shouldShowChatButton() ) {
 		return null;

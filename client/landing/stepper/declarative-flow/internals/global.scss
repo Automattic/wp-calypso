@@ -6,6 +6,7 @@
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/onboarding/styles/variables";
+@import "@automattic/components/src/styles/typography";
 
 /**
  * General onboarding styling
@@ -75,6 +76,7 @@ button {
 .patterns,
 .link-in-bio-setup,
 .link-in-bio-post-setup,
+.anchor-fm,
 .subscribers,
 .ecommerce,
 .wooexpress,
@@ -210,6 +212,30 @@ button {
 	}
 }
 
+/*
+ * Override font sizes for all newsletter onboarding screens
+ */
+.newsletter,
+.newsletter:not(.domains) {
+	.step-container {
+		.step-container__content h1,
+		.step-container__header h1.formatted-header__title {
+			font-size: rem(32px); //typography-exception
+			line-height: rem(40px); //typography-exception
+
+			@include break-medium {
+				font-size: rem(44px); //typography-exception
+				line-height: rem(52px); //typography-exception
+			}
+		}
+		.step-container__header .formatted-header .formatted-header__subtitle {
+			font-size: rem(16px); //typography-exception
+			line-height: rem(24px); //typography-exception
+			font-family: $font-sf-pro-display;
+		}
+	}
+}
+
 .store-profiler__form,
 .newsletter,
 .link-in-bio,
@@ -331,15 +357,6 @@ button {
 
 	.gridicon {
 		fill: currentColor;
-	}
-}
-
-
-@media ( max-width: 660px ) {
-	body.is-section-stepper .wpcom-site {
-		.inline-help {
-			bottom: 74px;
-		}
 	}
 }
 

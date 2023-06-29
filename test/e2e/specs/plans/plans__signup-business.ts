@@ -92,9 +92,7 @@ describe(
 
 			it( 'Skip Launchpad', async function () {
 				await page.waitForURL( /launchpad/, { waitUntil: 'networkidle' } );
-				await page
-					.getByRole( 'button', { name: 'Skip to dashboard' } )
-					.click( { timeout: 20 * 1000 } );
+				await page.getByRole( 'button', { name: 'Skip for now' } ).click( { timeout: 20 * 1000 } );
 
 				// Launchpad redirects to `/view` when skipped.
 				await page.waitForURL( /view/ );

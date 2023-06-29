@@ -20,15 +20,19 @@ export const getSiteSuggestions = (): Promise< SuggestionsResponse > =>
 export const useGetSiteSuggestionsQuery = ( {
 	enabled,
 	onSuccess,
+	refetchOnWindowFocus,
 }: {
 	enabled: boolean;
 	onSuccess?: ( response: SuggestionsResponse ) => void;
+	refetchOnWindowFocus?: boolean;
 } ) =>
 	useQuery( {
 		cacheTime: 0,
 		queryFn: getSiteSuggestions,
+		refetchOnWindowFocus,
 		enabled,
 		onSuccess,
+		queryKey: [ 'site-suggestions' ],
 		meta: {
 			persist: false,
 		},

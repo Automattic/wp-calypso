@@ -54,7 +54,6 @@ export class PlansStepPM extends Component {
 				{ errorDisplay }
 				<PlansFeaturesMainPM
 					site={ {} }
-					showFAQ={ true }
 					hideFreePlan={ true }
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ ( cartItem ) => buildUpgradeFunction( this.props, cartItem ) }

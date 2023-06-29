@@ -48,7 +48,6 @@ body.is-section-promote-post-i2 {
 				&-data-row {
 					.post-item__post-title {
 						display: flex;
-						flex-direction: column;
 						justify-content: flex-start;
 
 						.post-item__post-subheading-mobile {
@@ -61,7 +60,7 @@ body.is-section-promote-post-i2 {
 
 		&-type {
 			font-size: 0.875rem;
-			width: 7.4%;
+			width: 11%;
 		}
 
 		&-publish-date {
@@ -69,15 +68,15 @@ body.is-section-promote-post-i2 {
 		}
 
 		&-visitors {
-			width: 9.2%;
+			width: 10%;
 		}
 
 		&-likes {
-			width: 9.2%;
+			width: 10%;
 		}
 
 		&-comments {
-			width: 9.2%;
+			width: 10%;
 		}
 
 		&-view {
@@ -101,6 +100,7 @@ body.is-section-promote-post-i2 {
 
 		&:hover {
 			color: var(--studio-gray-60);
+			text-decoration-line: none;
 		}
 	}
 
@@ -117,6 +117,7 @@ body.is-section-promote-post-i2 {
 
 			&:hover:not(:disabled) {
 				color: var(--studio-simplenote-blue-50);
+				text-decoration: underline;
 			}
 		}
 	}
@@ -124,6 +125,11 @@ body.is-section-promote-post-i2 {
 	.post-item__post-title {
 		color: $studio-gray-100;
 		margin-left: 16px;
+		max-width: 180px;
+
+		&-content {
+			display: flex;
+		}
 	}
 
 	.post-item__post-thumbnail-wrapper {
@@ -147,6 +153,10 @@ body.is-section-promote-post-i2 {
 			justify-content: center;
 		}
 	}
+}
+
+.popover-title {
+	color: $studio-gray-100;
 }
 
 .blazepress-mobile-stats-mid-dot {
@@ -180,6 +190,9 @@ body.is-section-promote-post-i2 {
 						}
 
 						.post-item__post-title {
+							flex-direction: column;
+							max-width: unset;
+
 							.post-item__post-subheading-mobile {
 								@include blazepress-data-row-font-mobile;
 

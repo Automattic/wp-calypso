@@ -24,6 +24,7 @@ export type Campaign = {
 		snippet: string;
 	};
 	content_image: string;
+	created_at: string;
 	start_date: string; // "2022-07-18T01:51:12.000Z"
 	end_date: string;
 	status_smart: CampaignStatus;
@@ -39,6 +40,7 @@ export type Campaign = {
 	display_delivery_estimate: string;
 	delivery_percent: number;
 	status: string;
+	ui_status: string;
 	target_url: string;
 	deliver_margin_multiplier: number;
 	audience_list: AudienceList;

@@ -31,9 +31,9 @@ import {
 } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
-
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -168,7 +168,6 @@ const LayoutLoggedOut = ( {
 			) }
 			<div id="content" className="layout__content">
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
-				{ isCheckout && <AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } /> }
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
@@ -253,7 +252,7 @@ export default withCurrentRoute(
 			! isWooOAuth2Client( oauth2Client ) &&
 			[ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
-		const isWooCoreProfilerFlow = 'woocommerce-core-profiler' === currentQuery?.from;
+		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;

@@ -1,3 +1,4 @@
+import React from 'react';
 import { LocalizeProps } from 'calypso/../packages/i18n-calypso/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { requestSites } from 'calypso/state/sites/actions';
@@ -22,6 +23,7 @@ export type TransferDomainToOtherSitePassedProps = {
 	isRequestingSiteDomains: boolean;
 	selectedDomainName: string;
 	selectedSite: SiteDataExtraInfo;
+	children?: React.ReactNode;
 };
 
 // state props

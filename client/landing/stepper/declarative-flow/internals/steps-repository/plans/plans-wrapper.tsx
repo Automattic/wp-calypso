@@ -167,7 +167,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ onSelectPlan }
-					showFAQ={ false }
 					domainName={ getDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }

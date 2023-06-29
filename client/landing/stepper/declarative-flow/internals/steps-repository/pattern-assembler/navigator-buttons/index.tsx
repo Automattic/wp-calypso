@@ -5,7 +5,7 @@ import {
 	FlexItem,
 } from '@wordpress/components';
 import { isRTL } from '@wordpress/i18n';
-import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
+import { Icon, chevronLeft, chevronRight, check } from '@wordpress/icons';
 import classnames from 'classnames';
 import './style.scss';
 
@@ -13,20 +13,26 @@ interface Props {
 	path: string;
 	className?: string;
 	icon?: JSX.Element;
-	children: JSX.Element;
+	children: JSX.Element | string;
 	onClick?: () => void;
+	checked?: boolean;
 }
 
-const GenericButton = ( { icon, children, ...props }: Props ) => {
+const GenericButton = ( { icon, children, className, checked, ...props }: Props ) => {
 	const forwardIcon = isRTL() ? chevronLeft : chevronRight;
 
 	if ( icon ) {
 		return (
-			<Item { ...props }>
+			<Item
+				{ ...props }
+				className={ classnames( className, {
+					'navigator-button__checklist-item--checked': checked,
+				} ) }
+			>
 				<HStack justify="space-between">
 					<HStack justify="flex-start">
-						<Icon icon={ icon } size={ 24 } />
-						<FlexItem>{ children }</FlexItem>
+						<Icon className="navigator-button__icon" icon={ checked ? check : icon } size={ 24 } />
+						<FlexItem className="navigator-button__text">{ children }</FlexItem>
 					</HStack>
 					<Icon icon={ forwardIcon } size={ 24 } />
 				</HStack>
@@ -35,7 +41,7 @@ const GenericButton = ( { icon, children, ...props }: Props ) => {
 	}
 
 	return (
-		<Item { ...props }>
+		<Item { ...{ className, ...props } }>
 			<HStack justify="space-between">
 				<FlexItem>{ children }</FlexItem>
 				<Icon icon={ forwardIcon } size={ 24 } />
@@ -49,6 +55,7 @@ export const NavigationButtonAsItem = ( { className, ...props }: Props ) => {
 		<NavigatorButton
 			as={ GenericButton }
 			className={ classnames( 'navigator-button', className ) }
+			wrapperClassName="navigator-item-group__item-wrapper"
 			{ ...props }
 		/>
 	);

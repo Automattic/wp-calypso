@@ -26,6 +26,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginLinks from './login-links';
 import PrivateSite from './private-site';
@@ -343,8 +344,7 @@ export default connect(
 			get( getCurrentQueryArguments( state ), 'from' ),
 			'wpcom-migration'
 		),
-		isWooCoreProfilerFlow:
-			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
+		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),

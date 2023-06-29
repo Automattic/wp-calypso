@@ -34,7 +34,7 @@ export const getPostType = ( type: string ) => {
 	}
 };
 
-export const getCampaignStatusBadgeColor = ( status: string ) => {
+export const getCampaignStatusBadgeColor = ( status?: string ) => {
 	switch ( status ) {
 		case campaignStatus.SCHEDULED: {
 			return 'info-blue';
@@ -62,13 +62,7 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 	}
 };
 
-export const isCampaignFinished = ( status: string ) => {
-	return [ campaignStatus.CANCELED, campaignStatus.ACTIVE, campaignStatus.FINISHED ].includes(
-		status
-	);
-};
-
-export const getCampaignStatus = ( status: string ) => {
+export const getCampaignStatus = ( status?: string ) => {
 	switch ( status ) {
 		case campaignStatus.SCHEDULED: {
 			return __( 'Scheduled' );
@@ -165,8 +159,8 @@ export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string
 	return `${ ( +minEstimate ).toLocaleString() } - ${ ( +maxEstimate ).toLocaleString() }`;
 };
 
-export const formatNumber = ( number: number ) => {
-	if ( ! number ) {
+export const formatNumber = ( number: number, onlyPositives = false ): string => {
+	if ( ! number || ( onlyPositives && number < 0 ) ) {
 		return '-';
 	}
 	return number.toLocaleString();
@@ -232,4 +226,28 @@ export const unifyCampaigns = (
 			...( stats ? stats : {} ),
 		};
 	} );
+};
+
+export const getShortDateString = ( date: string ) => {
+	const timestamp = moment( Date.parse( date ) );
+	const now = moment();
+
+	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
+	switch ( dateDiff ) {
+		case 0:
+			return __( 'hours ago' );
+		case 1:
+			return __( '1 day ago' );
+		default:
+			return timestamp.isSame( now, 'year' )
+				? moment( date ).format( 'MMM DD' )
+				: moment( date ).format( 'MMM DD, YYYY' );
+	}
+};
+
+export const getLongDateString = ( date: string ) => {
+	const timestamp = moment( Date.parse( date ) );
+	// translators: "ll" refers to date (eg. 21 Apr) & "LT" refers to time (eg. 18:00) - "at" is translated
+	const sameElse: string = __( 'll [at] LT' );
+	return timestamp.calendar( null, { sameElse } );
 };

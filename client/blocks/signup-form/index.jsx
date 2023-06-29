@@ -51,6 +51,7 @@ import {
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
+import { getIAmDeveloperCopy } from 'calypso/me/profile/get-i-am-a-developer-copy';
 import { isP2Flow } from 'calypso/signup/utils';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
@@ -58,6 +59,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
@@ -949,16 +951,7 @@ class SignupForm extends Component {
 					this.setState( { isDevAccount } );
 				} }
 			>
-				{ preventWidows(
-					translate(
-						"{{strong}}I'm a developer.{{/strong}} Boost my WordPress.com experience and give me early access to developer features",
-						{
-							components: {
-								strong: <span className="signup-form__is-dev-account-strong" />,
-							},
-						}
-					)
-				) }
+				{ preventWidows( getIAmDeveloperCopy( translate ) ) }
 			</SelectCardCheckbox>
 		);
 	}
@@ -1296,8 +1289,7 @@ function TrackRender( { children, eventName } ) {
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
-		const isWooCoreProfilerFlow =
-			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' );
+		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 
 		return {
 			currentUser: getCurrentUser( state ),

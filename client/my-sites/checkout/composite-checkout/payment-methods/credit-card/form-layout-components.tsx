@@ -67,26 +67,10 @@ export const StripeErrorMessage = styled.span`
 `;
 
 export const CreditCardFieldsWrapper = styled.div< { isLoaded?: boolean } >`
-	padding: 16px;
+	padding: 0 24px 24px 24px;
 	position: relative;
 	display: ${ ( props ) => ( props.isLoaded ? 'block' : 'none' ) };
 	position: relative;
-
-	::after {
-		display: block;
-		width: calc( 100% - 6px );
-		height: 1px;
-		content: '';
-		background: ${ ( props ) => props.theme.colors.borderColorLight };
-		position: absolute;
-		top: 0;
-		left: 3px;
-
-		.rtl & {
-			right: 3px;
-			left: auto;
-		}
-	}
 `;
 
 export const CreditCardField = styled( Field )`

@@ -12,6 +12,14 @@
 	background: var(--studio-black);
 	z-index: 1;
 
+	&--is-clickable {
+		cursor: pointer;
+
+		.accessible-focus &:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+	}
+
 	.design-picker .design-picker__option-meta & {
 		min-height: 0;
 	}
@@ -20,6 +28,40 @@
 		margin-top: -1px;
 		margin-right: 3px;
 		fill: currentColor;
+	}
+
+	&.premium-badge__compact-animation {
+		position: relative;
+		padding: 0 10px 0 25px;
+		cursor: default;
+
+		&,
+		.premium-badge__logo {
+			transition-property: all;
+			transition-duration: 0.1s;
+			transition-timing-function: ease-out;
+		}
+
+		.premium-badge__logo {
+			position: absolute;
+			left: 7px;
+			width: 14px;
+			height: 14px;
+			margin: 0;
+		}
+
+		&.premium-badge--compact {
+			padding: 0 0 0 20px;
+
+			.premium-badge__logo {
+				left: 3px;
+			}
+
+			.premium-badge__label {
+				width: 0;
+				overflow: hidden;
+			}
+		}
 	}
 
 	.components-tooltip .components-popover__content {
