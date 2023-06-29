@@ -556,25 +556,12 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 }
 
 /**
- * Checks whether the site has a plan that grants access to the Global Styles feature.
+ * Checks whether the site has access to Global Styles with a Personal plan as part of an A/B test.
  *
  * @param  int $blog_id Blog ID.
- * @return bool Whether the site has access to Global Styles.
+ * @return bool Whether the site has access to Global Styles with a Personal plan.
  */
-function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
-	/*
-	 * Non-Simple sites on a lower plan are temporary edge cases. We grant them access
-	 * to Global Styles to prevent unexpected temporary changes in their styles.
-	 */
-	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
-		return true;
-	}
-
-	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
-		return true;
-	}
-
-	// Limited Global Styles on Personal A/B test.
+function wpcom_site_has_global_styles_in_personal_plan( $blog_id = 0 ) {
 	$owner_id = wpcom_get_blog_owner( $blog_id );
 	if ( ! $owner_id ) {
 		return false;
@@ -585,12 +572,14 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 		return false;
 	}
 
-	if ( 'treatment' === \ExPlat\get_user_assignment( 'calypso_global_styles_personal', $owner ) ) {
-		/*
-		 * Flag site so users of the treatment group can always have access to Global Styles, even
-		 * if the A/B test has finished without expanding Global Styles to the Personal plan.
-		 */
-		if ( ! wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
+	// For performance reasons, do not check the A/B assignment if it has been already checked.
+	if ( ! wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan-ab-assignment-checked', $blog_id ) ) {
+		add_blog_sticker( 'wpcom-global-styles-personal-plan-ab-assignment-checked', null, null, $blog_id );
+		if ( 'treatment' === \ExPlat\get_user_assignment( 'calypso_global_styles_personal', $owner ) ) {
+			/*
+			 * Flag site so users of the treatment group can always have access to Global Styles, even
+			 * if the A/B test has finished without expanding Global Styles to the Personal plan.
+			 */
 			add_blog_sticker( 'wpcom-global-styles-personal-plan', null, null, $blog_id );
 		}
 	}
@@ -609,6 +598,32 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 		if ( ! empty( $personal_plans ) ) {
 			return true;
 		}
+	}
+
+	return false;
+}
+
+/**
+ * Checks whether the site has a plan that grants access to the Global Styles feature.
+ *
+ * @param  int $blog_id Blog ID.
+ * @return bool Whether the site has access to Global Styles.
+ */
+function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
+	/*
+	 * Non-Simple sites on a lower plan are temporary edge cases. We grant them access
+	 * to Global Styles to prevent unexpected temporary changes in their styles.
+	 */
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return true;
+	}
+
+	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
+		return true;
+	}
+
+	if ( wpcom_site_has_global_styles_in_personal_plan( $blog_id ) ) {
+		return true;
 	}
 
 	return false;
