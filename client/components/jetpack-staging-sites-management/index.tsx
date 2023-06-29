@@ -68,12 +68,6 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 		</svg>
 	);
 
-	const StagingToggleControl = ToggleControl as React.ComponentType<
-		ToggleControl.Props & {
-			disabled?: boolean;
-		}
-	>;
-
 	return (
 		<>
 			<QueryBackupStagingSite siteId={ siteId } />
@@ -85,7 +79,8 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 				<Card className="setting-content">
 					<div className="setting-option">
 						<div className="setting-option__toggle">
-							<StagingToggleControl
+							<ToggleControl
+								label={ translate( 'Set staging site.' ) }
 								disabled={ isLoading }
 								checked={ isStaging }
 								onChange={ toggleStagingFlag }

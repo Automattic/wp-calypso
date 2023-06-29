@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, ComponentProps } from 'react';
 import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	READER_EXPORT_TYPE_LIST,
@@ -21,7 +21,7 @@ type ExportResponse = {
 	opml: string;
 };
 
-type ReaderExportButtonProps = Button.ButtonProps & {
+type ReaderExportButtonProps = ComponentProps< typeof Button > & {
 	exportType?: ExportType;
 	filename?: string;
 	listId?: number;
@@ -38,7 +38,7 @@ const ReaderExportButton = ( {
 	const translate = useTranslate();
 	const { hasTranslation } = useI18n();
 	const isMounted = useRef( false );
-	const [ isExportInProgress, setExportInProgress ] = useState( false );
+	const [ isExportInProgress, setExportInProgress ] = useState< boolean >( false );
 
 	useEffect( () => {
 		isMounted.current = true;
