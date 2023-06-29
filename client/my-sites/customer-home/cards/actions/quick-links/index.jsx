@@ -57,6 +57,7 @@ export const QuickLinks = ( {
 	trackDesignLogoAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
+	trackManageAllDomainsAction,
 	trackExplorePluginsAction,
 	isExpanded,
 	updateHomeQuickLinksToggleStatus,
@@ -184,6 +185,7 @@ export const QuickLinks = ( {
 				<ActionBox
 					href="/domains/manage"
 					hideLinkIndicator
+					onClick={ trackManageAllDomainsAction }
 					label={ translate( 'Manage all domains' ) }
 					gridicon="domains"
 				/>
@@ -375,6 +377,17 @@ const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
+const trackManageAllDomainsAction = ( isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_customer_home_my_site_manage_all_domains_click', {
+				is_static_home_page: isStaticHomePage,
+			} ),
+			bumpStat( 'calypso_customer_home', 'my_site_manage_all_domains' )
+		)
+	);
+};
+
 /**
  * Select a list of domains that are eligible to add email to from a larger list.
  * WPCOM-specific domains like free and staging sub-domains are filtered from this list courtesy of `canCurrentUserAddEmail`
@@ -434,6 +447,7 @@ const mapDispatchToProps = {
 	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
+	trackManageAllDomainsAction,
 	trackExplorePluginsAction,
 	updateHomeQuickLinksToggleStatus: ( status ) =>
 		savePreference( 'homeQuickLinksToggleStatus', status ),
@@ -456,6 +470,8 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
 		trackAddEmailAction: () => dispatchProps.trackAddEmailAction( isStaticHomePage ),
 		trackAddDomainAction: () => dispatchProps.trackAddDomainAction( isStaticHomePage ),
+		trackManageAllDomainsAction: () =>
+			dispatchProps.trackManageAllDomainsAction( isStaticHomePage ),
 		trackExplorePluginsAction: () => dispatchProps.trackExplorePluginsAction( isStaticHomePage ),
 		...ownProps,
 	};
