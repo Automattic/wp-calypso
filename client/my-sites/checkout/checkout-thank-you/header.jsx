@@ -385,7 +385,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isPlan( primaryPurchase ) ) {
-			return translate( 'View my new features' );
+			return translate( 'Let’s work on the site' );
 		}
 
 		if (
