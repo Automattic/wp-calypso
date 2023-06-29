@@ -4,12 +4,15 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { InView, IntersectionObserverProps } from 'react-intersection-observer';
+import {
+	GlobalStylesContext,
+	mergeBaseAndUserConfigs,
+	withExperimentalBlockEditorProvider,
+} from '../../gutenberg-bridge';
 import { useFontPairingVariations } from '../../hooks';
 import FontPairingVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -44,7 +47,6 @@ const FontPairingVariation = ( {
 			merged: mergeBaseAndUserConfigs( base, fontPairingVariation ),
 		};
 	}, [ fontPairingVariation, base ] );
-
 	return (
 		<CompositeItem
 			role="option"
@@ -90,7 +92,6 @@ const FontPairingVariations = ( {
 	// The theme font pairings don't include the default font pairing
 	const fontPairingVariations = useFontPairingVariations( siteId, stylesheet ) ?? [];
 	const composite = useCompositeState();
-
 	return (
 		<Composite
 			{ ...composite }
@@ -139,4 +140,4 @@ const FontPairingVariations = ( {
 	);
 };
 
-export default FontPairingVariations;
+export default withExperimentalBlockEditorProvider( FontPairingVariations );

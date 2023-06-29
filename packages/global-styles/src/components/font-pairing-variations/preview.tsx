@@ -3,10 +3,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useResizeObserver, useViewportMatch } from '@wordpress/compose';
-import {
-	useSetting,
-	useStyle,
-} from '@wordpress/edit-site/build-module/components/global-styles/hooks';
+import { translate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import {
 	FONT_PREVIEW_LARGE_WIDTH,
@@ -15,6 +12,7 @@ import {
 	FONT_PREVIEW_HEIGHT,
 	SYSTEM_FONT_SLUG,
 } from '../../constants';
+import { useGlobalSetting, useGlobalStyle } from '../../gutenberg-bridge';
 import GlobalStylesVariationContainer from '../global-styles-variation-container';
 import FontFamiliesLoader from './font-families-loader';
 import type { FontFamily } from '../../types';
@@ -26,21 +24,23 @@ const DEFAULT_LARGE_FONT_STYLES: React.CSSProperties = {
 };
 
 const FontPairingVariationPreview = () => {
-	const [ fontFamilies ] = useSetting( 'typography.fontFamilies' ) as [ FontFamily[] ];
+	const [ fontFamilies ] = useGlobalSetting( 'typography.fontFamilies.theme' ) as [ FontFamily[] ];
 
-	const [ textFontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
-	const [ textFontStyle = 'normal' ] = useStyle( 'typography.fontStyle' );
-	const [ textLetterSpacing = '-0.15px' ] = useStyle( 'typography.letterSpacing' );
-	const [ textFontWeight = 400 ] = useStyle( 'typography.fontWeight' );
+	const [ textFontFamily = 'serif' ] = useGlobalStyle( 'typography.fontFamily' );
+	const [ textFontStyle = 'normal' ] = useGlobalStyle( 'typography.fontStyle' );
+	const [ textLetterSpacing = '-0.15px' ] = useGlobalStyle( 'typography.letterSpacing' );
+	const [ textFontWeight = 400 ] = useGlobalStyle( 'typography.fontWeight' );
 
-	const [ headingFontFamily = textFontFamily ] = useStyle(
+	const [ headingFontFamily = textFontFamily ] = useGlobalStyle(
 		'elements.heading.typography.fontFamily'
 	);
-	const [ headingFontStyle = textFontStyle ] = useStyle( 'elements.heading.typography.fontStyle' );
-	const [ headingFontWeight = textFontWeight ] = useStyle(
+	const [ headingFontStyle = textFontStyle ] = useGlobalStyle(
+		'elements.heading.typography.fontStyle'
+	);
+	const [ headingFontWeight = textFontWeight ] = useGlobalStyle(
 		'elements.heading.typography.fontWeight'
 	);
-	const [ headingLetterSpacing = textLetterSpacing ] = useStyle(
+	const [ headingLetterSpacing = textLetterSpacing ] = useGlobalStyle(
 		'elements.heading.typography.letterSpacing'
 	);
 
@@ -52,7 +52,6 @@ const FontPairingVariationPreview = () => {
 	const normalizedHeight = Math.ceil( defaultHeight * ratio );
 	const externalFontFamilies = fontFamilies.filter( ( { slug } ) => slug !== SYSTEM_FONT_SLUG );
 	const [ isLoaded, setIsLoaded ] = useState( ! externalFontFamilies.length );
-
 	const getFontFamilyName = ( targetFontFamily: string ) => {
 		const fontFamily = fontFamilies.find( ( { fontFamily } ) => fontFamily === targetFontFamily );
 		return fontFamily?.name || fontFamily?.fontFamily || targetFontFamily;
