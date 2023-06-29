@@ -7,7 +7,6 @@ import {
 	useSetting,
 	useStyle,
 } from '@wordpress/edit-site/build-module/components/global-styles/hooks';
-import { translate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { FONT_PREVIEW_WIDTH, FONT_PREVIEW_HEIGHT, SYSTEM_FONT_SLUG } from '../../constants';
 import GlobalStylesVariationContainer from '../global-styles-variation-container';
@@ -20,11 +19,7 @@ const DEFAULT_FONT_STYLES: React.CSSProperties = {
 	color: '#000000',
 };
 
-interface Props {
-	title?: string;
-}
-
-const FontPairingVariationPreview = ( { title }: Props ) => {
+const FontPairingVariationPreview = () => {
 	const [ fontFamilies ] = useSetting( 'typography.fontFamilies' ) as [ FontFamily[] ];
 
 	const [ textFontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
@@ -89,70 +84,44 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 							overflow: 'hidden',
 						} }
 					>
-						{ title ? (
-							<HStack
-								spacing={ 10 * ratio }
-								justify="flex-start"
-								style={ {
-									height: '100%',
-									overflow: 'hidden',
-								} }
-							>
-								<VStack spacing={ 1 } style={ { margin: '10px', width: '100%' } }>
-									<div
-										aria-label={ headingFontFamilyName }
-										style={ {
-											...DEFAULT_FONT_STYLES,
-											lineHeight: '22px',
-											letterSpacing: headingLetterSpacing,
-											fontWeight: headingFontWeight,
-											fontFamily: headingFontFamily,
-											fontStyle: headingFontStyle,
-										} }
-									>
-										{ headingFontFamilyName }
-									</div>
-									<div
-										aria-label={ textFontFamilyName }
-										style={ {
-											...DEFAULT_FONT_STYLES,
-											fontSize: '13px',
-											lineHeight: '23px',
-											letterSpacing: textLetterSpacing,
-											fontWeight: textFontWeight,
-											fontFamily: textFontFamily,
-											fontStyle: textFontStyle,
-										} }
-									>
-										{ textFontFamilyName }
-									</div>
-								</VStack>
-							</HStack>
-						) : (
-							<HStack
-								align="center"
-								justify="flex-start"
-								style={ {
-									height: '100%',
-									overflow: 'hidden',
-									padding: '16px',
-									boxSizing: 'border-box',
-								} }
-							>
+						<HStack
+							spacing={ 10 * ratio }
+							justify="flex-start"
+							style={ {
+								height: '100%',
+								overflow: 'hidden',
+							} }
+						>
+							<VStack spacing={ 1 } style={ { margin: '10px', width: '100%' } }>
 								<div
+									aria-label={ headingFontFamilyName }
 									style={ {
 										...DEFAULT_FONT_STYLES,
-										width: '100%',
+										lineHeight: '22px',
+										letterSpacing: headingLetterSpacing,
+										fontWeight: headingFontWeight,
+										fontFamily: headingFontFamily,
+										fontStyle: headingFontStyle,
+									} }
+								>
+									{ headingFontFamilyName }
+								</div>
+								<div
+									aria-label={ textFontFamilyName }
+									style={ {
+										...DEFAULT_FONT_STYLES,
+										fontSize: '13px',
+										lineHeight: '23px',
 										letterSpacing: textLetterSpacing,
 										fontWeight: textFontWeight,
 										fontFamily: textFontFamily,
 										fontStyle: textFontStyle,
 									} }
 								>
-									{ translate( 'Default' ) }
+									{ textFontFamilyName }
 								</div>
-							</HStack>
-						) }
+							</VStack>
+						</HStack>
 					</div>
 				</div>
 				<FontFamiliesLoader fontFamilies={ externalFontFamilies } onLoad={ handleOnLoad } />
