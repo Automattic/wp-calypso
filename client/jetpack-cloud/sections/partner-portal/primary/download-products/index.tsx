@@ -4,7 +4,6 @@ import { useEffect, useLayoutEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import AssignLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
 import DownloadProductsForm from 'calypso/jetpack-cloud/sections/partner-portal/download-products-form';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
@@ -26,7 +25,7 @@ export default function DownloadProducts() {
 	}, [] );
 
 	useEffect( () => {
-		const layoutClass = 'layout__content--partner-portal-assign-license';
+		const layoutClass = 'layout__content--partner-portal-download-products';
 		const content = document.getElementById( 'content' );
 
 		if ( content ) {
@@ -37,7 +36,7 @@ export default function DownloadProducts() {
 	}, [] );
 
 	return (
-		<Main wideLayout className="assign-license">
+		<Main wideLayout className="download-products">
 			<DocumentHead
 				title={ translate(
 					'Download and Install your product',
