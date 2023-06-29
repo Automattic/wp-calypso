@@ -83,7 +83,6 @@ import DomainRegistrationDetails from './domain-registration-details';
 import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
-import CheckoutThankYouFeaturesHeader from './features-header';
 import GoogleAppsDetails from './google-apps-details';
 import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
@@ -775,8 +774,6 @@ export class CheckoutThankYou extends Component<
 
 					{ ! isSimplified && (
 						<>
-							<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
-
 							<div className="checkout-thank-you__purchase-details-list">
 								<PurchaseDetail isPlaceholder />
 								<PurchaseDetail isPlaceholder />
@@ -802,15 +799,6 @@ export class CheckoutThankYou extends Component<
 					displayMode={ displayMode }
 					purchases={ purchases }
 				>
-					{ ! isSimplified && primaryPurchase && (
-						<CheckoutThankYouFeaturesHeader
-							isDataLoaded={ this.isDataLoaded() }
-							isGenericReceipt={ this.isGenericReceipt() }
-							purchases={ purchases }
-							hasFailedPurchases={ hasFailedPurchases }
-						/>
-					) }
-
 					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
 							<PurchaseDetailsWrapper
