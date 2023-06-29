@@ -1,3 +1,4 @@
+import { isDomainTransfer } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
@@ -21,6 +22,11 @@ class CheckoutTerms extends Component {
 		const { cart } = this.props;
 		const isGiftPurchase = cart.is_gift_purchase;
 
+		// Domain transfer is a one-time purchase, but it creates a renewable
+		// subscription behind the scenes so we need to show the full TOS including
+		// renewal text.
+		const hasDomainTransfer = cart.products.some( ( product ) => isDomainTransfer( product ) );
+
 		return (
 			<Fragment>
 				<div className="checkout__terms" id="checkout-terms">
@@ -33,7 +39,7 @@ class CheckoutTerms extends Component {
 				</div>
 
 				<TermsOfService
-					hasRenewableSubscription={ hasRenewableSubscription( cart ) }
+					hasRenewableSubscription={ hasRenewableSubscription( cart ) || hasDomainTransfer }
 					isGiftPurchase={ isGiftPurchase }
 				/>
 				{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
