@@ -37,7 +37,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: false,
-			message: __( 'This domain is a duplicated.' ),
+			message: __( 'This domain has already been entered.' ),
 		};
 	}
 
