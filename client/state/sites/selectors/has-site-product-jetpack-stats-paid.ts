@@ -1,8 +1,8 @@
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { AppState } from 'calypso/types';
 import hasSiteProductJetpackStats from './has-site-product-jetpack-stats';
+import type { AppState } from 'calypso/types';
 
-export const hasPaidJetpackStats = (
+export const hasSiteProductJetpackStatsPaid = (
 	state: AppState,
 	siteId = getSelectedSiteId( state )
 ): boolean => {
