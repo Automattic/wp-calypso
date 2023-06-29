@@ -142,7 +142,7 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 								<div
 									style={ {
 										...DEFAULT_FONT_STYLES,
-										lineHeight: '1em',
+										width: '100%',
 										letterSpacing: textLetterSpacing,
 										fontWeight: textFontWeight,
 										fontFamily: textFontFamily,
