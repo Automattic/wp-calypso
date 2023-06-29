@@ -757,8 +757,7 @@ export class CheckoutThankYou extends Component<
 
 					{ ! isSimplified && (
 						<>
-							<div className="checkout-thank-you__purchase-details-list">
-								<PurchaseDetail isPlaceholder />
+							<div className="checkout-thank-you__purchase-details-list placeholder">
 								<PurchaseDetail isPlaceholder />
 								<PurchaseDetail isPlaceholder />
 							</div>

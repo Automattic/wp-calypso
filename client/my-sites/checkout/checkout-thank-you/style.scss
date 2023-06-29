@@ -115,12 +115,80 @@ body.is-section-checkout-thank-you {
 	}
 }
 
+// Design i2 overrides, the purchase-detail component is also used by the /plans/my-plan page to render plan features.
 .checkout-thank-you__purchase-details-list {
-	text-align: center;
+	margin-bottom: 80px;
+	display: flex;
+	justify-content: center;
 
-	@include breakpoint-deprecated( ">660px" ) {
-		margin: 0 24px;
-		padding-bottom: 48px;
+	// Each of the checkout thank you pages "details" component sections specifically wrap
+	// all purchase details in a single unclassed div, so we need to target it for the
+	// flexbox styles instead of .checkout-thank-you__purchase-details-list directly.
+	> div {
+		display: grid;
+		grid-template-columns: 280px 280px;
+		grid-template-rows: auto;
+
+		row-gap: 30px;
+		column-gap: 30px;
+		@include break-mobile {
+			column-gap: 40px;
+		}
+	}
+
+	.purchase-detail {
+		margin: 0;
+		box-shadow: none;
+		height: auto;
+		width: 600px;
+		@include break-mobile {
+			min-width: auto;
+			max-width: 280px;
+		}
+	}
+
+	.purchase-detail__content {
+		padding: 0;
+	}
+
+
+	.purchase-detail__image {
+		display: none;
+	}
+
+	.purchase-detail__title {
+		font-size: $font-body-small;
+		line-height: 20px;
+		font-weight: 500;
+		color: var(--color-text);
+	}
+
+	.purchase-detail__description {
+		font-size: $font-body-small;
+		line-height: 20px;
+		font-weight: 400;
+		color: var(--color-text-subtle);
+	}
+
+	// Undo a.button styles
+	a.purchase-detail__button {
+		border: none;
+		display: inline;
+		margin: inherit;
+		outline: inherit;
+		overflow: inherit;
+		text-align: left;
+		text-overflow: inherit;
+		text-decoration: underline;
+		vertical-align: inherit;
+		box-sizing: border-box;
+		padding: 0;
+		appearance: none;
+		background-color: var(--color-surface);
+		font-size: $font-body-small;
+		line-height: 20px;
+		font-weight: 500;
+		color: var(--studio-blue-50);
 	}
 }
 
@@ -224,11 +292,11 @@ body.is-section-checkout-thank-you {
 
 .checkout-thank-you__header.is-placeholder {
 	@include breakpoint-deprecated( "<660px" ) {
-		padding-top: 170px;
+		padding-top: 70px;
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
-		padding-left: 190px;
+		padding-left: 70px;
 	}
 
 	.checkout-thank-you__header-icon {
