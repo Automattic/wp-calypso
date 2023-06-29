@@ -1,13 +1,10 @@
 import { useIsDomainCodeValid } from '@automattic/data-stores';
 import { doesStringResembleDomain } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 
 export function useValidationMessage( domain: string, auth: string, hasDuplicates: boolean ) {
-	// record passed domains to avoid revalidation
-	const [ passed, setPassed ] = useState( false );
 	const { __ } = useI18n();
 
 	const [ domainDebounced ] = useDebounce( domain, 500 );
@@ -28,7 +25,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			auth: authDebounced,
 		},
 		{
-			enabled: Boolean( ! passed && passedLocalValidation ),
+			enabled: Boolean( passedLocalValidation ),
 			retry: false,
 		}
 	);
@@ -42,16 +39,6 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 	}
 
 	const availabilityNotice = getAvailabilityNotice( domainDebounced, validationResult?.status );
-
-	if ( passed ) {
-		setPassed( true );
-
-		return {
-			valid: true,
-			loading: false,
-			message: __( 'This domain is unlocked and ready to be transferred.' ),
-		};
-	}
 
 	if ( ! hasGoodDomain ) {
 		return {
