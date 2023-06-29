@@ -12,6 +12,7 @@ jest.mock( '@automattic/calypso-config' );
 jest.mock( '../../../hooks/use-subscription-plans' );
 
 describe( 'SubscriberRow', () => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const commonProps: any = {
 		user_id: 123,
 		subscription_id: 456,

@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -34,6 +35,7 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	};
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const dispatch = useDispatch();
+	const localizeUrl = useLocalizeUrl();
 
 	const addSubscribersCallback = () => {
 		setShowAddSubscribersModal( false );
@@ -61,7 +63,9 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 							components: {
 								link: (
 									<a
-										href="https://wordpress.com/support/launch-a-newsletter/#about-your-subscribers"
+										href={ localizeUrl(
+											'https://wordpress.com/support/launch-a-newsletter/#about-your-subscribers'
+										) }
 										target="blank"
 									/>
 								),
