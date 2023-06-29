@@ -1,5 +1,6 @@
 const path = require( 'path' );
 const base = require( '@automattic/calypso-jest' );
+
 module.exports = {
 	...base,
 	rootDir: '../../client',
@@ -12,7 +13,9 @@ module.exports = {
 	transformIgnorePatterns: [
 		'node_modules[\\/\\\\](?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)',
 	],
-	testURL: 'https://example.com',
+	testEnvironmentOptions: {
+		url: 'https://example.com',
+	},
 	setupFiles: [ 'jest-canvas-mock' ],
 	setupFilesAfterEnv: [ '<rootDir>/../test/client/setup-test-framework.js' ],
 	globals: {
