@@ -149,22 +149,21 @@ export default function VerifyContactForm( {
 		onAdd( contactInfo, true, actionEvent );
 	};
 
+	const contactInfoValue = getContactInfoValue( type, contactInfo );
+
 	// Function to handle resending verification code
 	const handleResendCode = useCallback( () => {
-		if ( contactInfo.email ) {
-			setValidationError( undefined );
-			if ( type === 'email' ) {
-				resendVerificationCode( {
-					type,
-					value: getContactInfoValue( type, contactInfo ),
-				} );
-			}
-
-			// TO-DO, add logic for resending SMS verification code
+		if ( ! contactInfoValue ) {
+			return;
 		}
-		// Disabled because we don't want to re-run this effect when resendCode changes
+		setValidationError( undefined );
+		resendVerificationCode( {
+			type,
+			value: contactInfoValue,
+		} );
+		// Disabled because we don't want to re-run this effect when resendingVerificationCode changes
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ contactInfo ] );
+	}, [ type, contactInfoValue ] );
 
 	// Function to handle resend code button click
 	const handleResendCodeClick = useCallback( () => {
