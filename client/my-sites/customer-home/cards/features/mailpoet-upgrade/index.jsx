@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +18,10 @@ export default function MailPoetUpgrade() {
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 
 	const shouldNotShowCard = ! hasPreferences || isDismissed;
+
+	if ( ! isEnabled( 'upgrades/mailpoet-opt-in' ) ) {
+		return null;
+	}
 
 	if ( shouldNotShowCard ) {
 		return null;

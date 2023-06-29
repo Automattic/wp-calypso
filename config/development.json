@@ -203,6 +203,7 @@
 		"themes/theme-switch-persist-template": false,
 		"titan/iframe-control-panel": false,
 		"unified-pages/virtual-home-page": true,
+		"upgrades/mailpoet-opt-in": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
