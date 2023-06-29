@@ -15,6 +15,8 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 
 	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode && ! hasDuplicates;
 
+	const isDebouncing = domainDebounced !== domain || authDebounced !== auth;
+
 	const {
 		data: validationResult,
 		isFetching: isValidating,
@@ -55,7 +57,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 	}
 
 	// local validation passed, but we're still loading
-	if ( isValidating ) {
+	if ( isValidating || isDebouncing ) {
 		return {
 			valid: false,
 			loading: true,
@@ -63,7 +65,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		};
 	}
 
-	const availabilityNotice = getAvailabilityNotice( domain, validationResult?.status );
+	const availabilityNotice = getAvailabilityNotice( domain, validationResult?.status, null, true );
 
 	// final success
 	if ( validationResult?.auth_code_valid ) {

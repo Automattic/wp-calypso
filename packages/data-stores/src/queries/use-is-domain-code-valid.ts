@@ -39,17 +39,17 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 		queryKey: [ 'domain-code-valid', VERSION, pair.domain, hashAuthCode( pair.auth ) ],
 		queryFn: async () => {
 			try {
-				const availabity = await wpcomRequest< DomainLockResponse >( {
+				const availability = await wpcomRequest< DomainLockResponse >( {
 					apiVersion: '1.3',
 					path: `/domains/${ encodeURIComponent( pair.domain ) }/is-available`,
 				} );
 
-				const isUnlocked = availabity.status === 'transferrable';
+				const isUnlocked = availability.status === 'transferrable';
 
 				if ( ! isUnlocked ) {
 					return {
 						domain: pair.domain,
-						status: availabity.status,
+						status: availability.status,
 						unlocked: false,
 						auth_code_valid: false,
 					};
@@ -66,7 +66,7 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					registered: true,
 					unlocked: true,
 					auth_code_valid: response.success,
-					status: availabity.status,
+					status: availability.status,
 				};
 			} catch ( error ) {
 				return {
