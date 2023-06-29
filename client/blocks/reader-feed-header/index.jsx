@@ -11,6 +11,7 @@ import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notificat
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import SiteIcon from 'calypso/blocks/site-icon';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteDescription,
@@ -19,7 +20,6 @@ import {
 	isEligibleForUnseen,
 } from 'calypso/reader/get-helpers';
 import HeaderBack from 'calypso/reader/header-back';
-import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
@@ -85,9 +85,9 @@ class FeedHeader extends Component {
 			isEmailBlocked,
 			hasOrganization,
 			isWPForTeamsItem,
+			width,
 		} = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
-		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
 		const description = getSiteDescription( { site, feed } );
 		const siteTitle = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
@@ -134,77 +134,70 @@ class FeedHeader extends Component {
 					<a href={ siteUrl } className="reader-feed-header__site-icon">
 						{ siteIconElement }
 					</a>
-					<div className="reader-feed-header__site-title">
-						{ site && (
-							<span className="reader-feed-header__site-badge">
-								<ReaderFeedHeaderSiteBadge site={ site } />
-								<BlogStickers blogId={ site.ID } />
-							</span>
-						) }
-						<a className="reader-feed-header__site-title-link" href={ siteUrl }>
-							{ siteTitle }
-						</a>
-					</div>
 					<div className="reader-feed-header__details">
-						<span className="reader-feed-header__description">{ description }</span>
-						{ ownerDisplayName && ! isAuthorNameBlocked( ownerDisplayName ) && (
-							<span className="reader-feed-header__byline">
-								{ translate( 'by %(author)s', {
-									args: {
-										author: ownerDisplayName,
-									},
-								} ) }
-							</span>
-						) }
-					</div>
-				</Card>
-				<div className="reader-feed-header__back-and-follow">
-					<div className="reader-feed-header__follow">
-						{ followerCount && (
-							<span className="reader-feed-header__follow-count">
-								{ ' ' }
-								{ translate( '%s follower', '%s followers', {
-									count: followerCount,
-									args: [ this.props.numberFormat( followerCount ) ],
-									comment: '%s is the number of followers. For example: "12,000,000"',
-								} ) }
-							</span>
-						) }
-						<div className="reader-feed-header__follow-and-settings">
-							{ siteUrl && (
-								<div className="reader-feed-header__follow-button">
-									<ReaderFollowButton
-										siteUrl={ siteUrl }
-										iconSize={ 24 }
-										onFollowToggle={ this.openSuggestedFollowsModal }
-									/>
-								</div>
-							) }
-
-							{ site && following && ! isEmailBlocked && (
-								<div className="reader-feed-header__email-settings">
-									<ReaderSiteNotificationSettings siteId={ siteId } />
-								</div>
-							) }
-
-							{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && feed && (
-								<button
-									onClick={ this.markAllAsSeen }
-									className="reader-feed-header__seen-button"
-									disabled={ feed.unseen_count === 0 }
-								>
-									<Gridicon icon="visible" size={ 24 } />
-									<span
-										className="reader-feed-header__visibility"
-										title={ translate( 'Mark all as seen' ) }
-									>
-										{ translate( 'Mark all as seen' ) }
-									</span>
-								</button>
+						<div className="reader-feed-header__site-title">
+							<a className="reader-feed-header__site-title-link" href={ siteUrl }>
+								{ siteTitle }
+							</a>
+							{ site && (
+								<span className="reader-feed-header__site-badge">
+									<ReaderFeedHeaderSiteBadge site={ site } />
+									<BlogStickers blogId={ site.ID } />
+								</span>
 							) }
 						</div>
+						<span className="reader-feed-header__description">{ description }</span>
 					</div>
-				</div>
+				</Card>
+				{ width < 900 && (
+					<div className="reader-feed-header__back-and-follow">
+						<div className="reader-feed-header__follow">
+							{ followerCount && (
+								<span className="reader-feed-header__follow-count">
+									{ ' ' }
+									{ translate( '%s follower', '%s followers', {
+										count: followerCount,
+										args: [ this.props.numberFormat( followerCount ) ],
+										comment: '%s is the number of followers. For example: "12,000,000"',
+									} ) }
+								</span>
+							) }
+							<div className="reader-feed-header__follow-and-settings">
+								{ siteUrl && (
+									<div className="reader-feed-header__follow-button">
+										<ReaderFollowButton
+											siteUrl={ siteUrl }
+											iconSize={ 24 }
+											onFollowToggle={ this.openSuggestedFollowsModal }
+										/>
+									</div>
+								) }
+
+								{ site && following && ! isEmailBlocked && (
+									<div className="reader-feed-header__email-settings">
+										<ReaderSiteNotificationSettings siteId={ siteId } />
+									</div>
+								) }
+
+								{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && feed && (
+									<button
+										onClick={ this.markAllAsSeen }
+										className="reader-feed-header__seen-button"
+										disabled={ feed.unseen_count === 0 }
+									>
+										<Gridicon icon="visible" size={ 24 } />
+										<span
+											className="reader-feed-header__visibility"
+											title={ translate( 'Mark all as seen' ) }
+										>
+											{ translate( 'Mark all as seen' ) }
+										</span>
+									</button>
+								) }
+							</div>
+						</div>
+					</div>
+				) }
 				{ siteId && (
 					<ReaderSuggestedFollowsDialog
 						onClose={ this.onCloseSuggestedFollowModal }
@@ -246,4 +239,4 @@ const mapStateToProps = ( state, ownProps ) => {
 export default connect( mapStateToProps, {
 	requestMarkAllAsSeen,
 	recordReaderTracksEvent,
-} )( localize( FeedHeader ) );
+} )( localize( withDimensions( FeedHeader ) ) );

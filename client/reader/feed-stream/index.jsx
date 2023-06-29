@@ -58,8 +58,11 @@ export default function FeedStream( props ) {
 
 	const streamSidebar = (
 		<FeedStreamSidebar
+			feed={ feed }
 			followerCount={ followerCount }
 			postCount={ postCount }
+			site={ site }
+			streamKey={ props.streamKey }
 			tags={ siteTags.data }
 		/>
 	);
