@@ -1130,8 +1130,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.jetpack-connect__logged-in-card {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
+		align-items: center;
 		padding: 16px 24px;
+		gap: 16px;
 		background: #fff;
 		border: 1px solid $gray-400;
 		border-radius: 2px;
@@ -1140,12 +1142,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		@include breakpoint-deprecated( "<660px" ) {
 			max-width: 100%;
-		}
-
-		.jetpack-connect__logged-in-form-user {
-			display: flex;
-			gap: 16px;
-			align-items: center;
 		}
 
 		.gravatar {
@@ -1167,7 +1163,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.logged-out-form__link-item {
-			margin: 8px 0 0 56px;
+			margin: 8px 0 0;
 			padding: 0;
 			text-align: left;
 			text-decoration: none;
