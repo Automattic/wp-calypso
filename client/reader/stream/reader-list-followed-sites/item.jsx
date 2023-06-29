@@ -61,7 +61,7 @@ const ReaderListFollowingItem = ( props ) => {
 						feedIcon={ feedIcon }
 						preferGravatar={ true }
 						isCompact={ true }
-						iconSize={ 24 }
+						iconSize={ 32 }
 					/>
 				</span>
 				<span className="reader-sidebar-site_sitename">
