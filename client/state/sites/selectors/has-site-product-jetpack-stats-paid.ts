@@ -8,3 +8,5 @@ export const hasSiteProductJetpackStatsPaid = (
 ): boolean => {
 	return hasSiteProductJetpackStats( state, true, siteId );
 };
+
+export default hasSiteProductJetpackStatsPaid;
