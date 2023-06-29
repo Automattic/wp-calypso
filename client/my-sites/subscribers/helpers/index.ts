@@ -30,14 +30,15 @@ const getSubscribersCacheKey = (
 
 const getSubscriberDetailsUrl = (
 	siteSlug: string | null,
-	subscription_id: number | undefined,
-	user_id: number | undefined
+	subscriptionId: number | undefined,
+	userId: number | undefined,
+	pageNumber = 1
 ) => {
-	if ( user_id ) {
-		return `/subscribers/${ siteSlug }/${ user_id }`;
+	if ( userId ) {
+		return `/subscribers/${ siteSlug }/${ userId }?page=${ pageNumber }`;
 	}
 
-	return `/subscribers/external/${ siteSlug }/${ subscription_id }`;
+	return `/subscribers/external/${ siteSlug }/${ subscriptionId }?page=${ pageNumber }`;
 };
 
 const getSubscriberDetailsCacheKey = (

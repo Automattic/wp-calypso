@@ -53,8 +53,15 @@ body.is-focus-sites {
 
 	// Checkout sets it own padding/margin
 	.is-section-checkout &,
-	.is-section-checkout.has-no-sidebar &,
-	.is-section-checkout.has-no-sidebar .theme-default .focus-content & {
+	.is-section-checkout.has-no-sidebar & {
+		padding: 0;
+		margin: 0;
+	}
+	// Note that we have to use a 0,0,3,1 specificity selector to override the
+	// one in `client/my-sites/sidebar/style.scss` which has 0,0,3,0 in case it
+	// loads second, which happens if checkout is not the first page of calypso
+	// to load.
+	.theme-default.is-section-checkout div.is-section-checkout.focus-content & {
 		padding: 0;
 		margin: 0;
 	}

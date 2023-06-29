@@ -8,7 +8,7 @@
 
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon, JetpackLogo } from '@automattic/components';
-import { Button, Card, Modal } from '@wordpress/components';
+import { Button, Card } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes } from 'lodash';
@@ -49,8 +49,6 @@ import MainWrapper from './main-wrapper';
 import { authQueryPropTypes } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
-import { WooLoader } from './woo-loader';
-import { CreatingYourAccountStage } from './woo-loader-stages';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 const noop = () => {};
@@ -457,28 +455,8 @@ export class JetpackSignup extends Component {
 		if ( this.getWooDnaConfig().isWooDnaFlow() ) {
 			return this.renderWooDna();
 		}
-		const { isCreatingAccount, newUsername, bearerToken } = this.state;
+		const { isCreatingAccount } = this.state;
 		const isWooCoreProfiler = this.isWooCoreProfiler();
-
-		const isLogging = newUsername && bearerToken;
-		if ( isWooCoreProfiler && ( isCreatingAccount || isLogging ) ) {
-			return (
-				// Wrap the loader in a modal to show it in full screen
-				<Modal
-					open
-					title=""
-					overlayClassName="jetpack-connect-woocommerce-loader__modal-overlay"
-					className="jetpack-connect-woocommerce-loader__modal"
-					shouldCloseOnClickOutside={ false }
-					shouldCloseOnEsc={ false }
-					isDismissible={ false }
-				>
-					<WooLoader stages={ [ CreatingYourAccountStage ] } />
-					{ this.renderLoginUser() }
-				</Modal>
-			);
-		}
-
 		return (
 			<MainWrapper
 				isWooOnboarding={ this.isWooOnboarding() }

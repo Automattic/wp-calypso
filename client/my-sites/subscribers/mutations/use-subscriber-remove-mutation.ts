@@ -1,10 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { getSubscribersCacheKey } from '../helpers';
+import {
+	getSubscriberDetailsCacheKey,
+	getSubscriberDetailsType,
+	getSubscribersCacheKey,
+} from '../helpers';
 import { useRecordSubscriberRemoved } from '../tracks';
 import type { SubscriberEndpointResponse, Subscriber } from '../types';
 
-const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number ) => {
+const useSubscriberRemoveMutation = (
+	siteId: number | null,
+	currentPage: number,
+	invalidateDetailsCache = false
+) => {
 	const queryClient = useQueryClient();
 	const recordSubscriberRemoved = useRecordSubscriberRemoved();
 
@@ -92,8 +100,24 @@ const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number
 				}
 			}
 
+			let previousDetailsData;
+
+			if ( invalidateDetailsCache ) {
+				const cacheKey = getSubscriberDetailsCacheKey(
+					siteId,
+					subscriber.subscription_id,
+					subscriber.user_id,
+					getSubscriberDetailsType( subscriber.user_id )
+				);
+
+				await queryClient.cancelQueries( cacheKey );
+
+				previousDetailsData = queryClient.getQueryData< Subscriber >( cacheKey );
+			}
+
 			return {
 				previousPages,
+				previousDetailsData,
 			};
 		},
 		onError: ( error, variables, context ) => {
@@ -101,6 +125,17 @@ const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number
 				context.previousPages?.forEach( ( previousSubscribers, page ) => {
 					queryClient.setQueryData( getSubscribersCacheKey( siteId, page ), previousSubscribers );
 				} );
+			}
+
+			if ( context?.previousDetailsData ) {
+				const cacheKey = getSubscriberDetailsCacheKey(
+					siteId,
+					context.previousDetailsData.subscription_id,
+					context.previousDetailsData.user_id,
+					getSubscriberDetailsType( context.previousDetailsData.user_id )
+				);
+
+				queryClient.setQueryData( cacheKey, context.previousDetailsData );
 			}
 		},
 		onSuccess: ( data, subscriber ) => {
@@ -110,8 +145,19 @@ const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number
 				user_id: subscriber.user_id,
 			} );
 		},
-		onSettled: () => {
+		onSettled: ( data, error, subscriber ) => {
 			queryClient.invalidateQueries( getSubscribersCacheKey( siteId ) );
+
+			if ( invalidateDetailsCache ) {
+				const cacheKey = getSubscriberDetailsCacheKey(
+					siteId,
+					subscriber.subscription_id,
+					subscriber.user_id,
+					getSubscriberDetailsType( subscriber.user_id )
+				);
+
+				queryClient.invalidateQueries( cacheKey );
+			}
 		},
 	} );
 };
