@@ -11515,7 +11515,7 @@ __metadata:
     is-my-json-valid: ^2.20.5
     jest: ^29.5.0
     jest-fetch-mock: ^3.0.3
-    jest-mock-process: ^1.4.1
+    jest-mock-process: ^2.0.0
     jest-when: ^3.5.1
     lodash: ^4.17.21
     lodash-es: ^4.17.21
@@ -20186,12 +20186,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-mock-process@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "jest-mock-process@npm:1.4.1"
+"jest-mock-process@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "jest-mock-process@npm:2.0.0"
   peerDependencies:
-    jest: ">=23.4 <28"
-  checksum: d7da937ba1792c1548011716224211bb64195b2fce583d5414a50adec8b04a9f0eaa3459dab69d11f57570e74f5df57b6b4175d71fc2ef514dbc4cc071b2e184
+    jest: ">=23.4"
+  checksum: 5c9d456e70d7f14f0667306c9fb7f1a91a53a158a55df4d400bf89a243cf7a894dcea036eabacf3a7244cdcc5ce214a37d5d8beeebc68c7a6df39fd210c1ecce
   languageName: node
   linkType: hard
 
