@@ -27,7 +27,7 @@ export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: Subscriber
 			<span className="subscriber-list__subscription-type-column" role="cell">
 				{ subscriptionPlans &&
 					subscriptionPlans.map( ( subscriptionPlan, index ) => (
-						<div key={ index }>{ subscriptionPlan }</div>
+						<div key={ index }>{ subscriptionPlan.plan }</div>
 					) ) }
 			</span>
 			<span className="subscriber-list__rate-column hidden" role="cell">

@@ -35,7 +35,7 @@ describe( 'SubscriberRow', () => {
 	>;
 
 	beforeEach( () => {
-		mockUseSubscriptionPlans.mockReturnValue( [ 'Plan 1', 'Plan 2' ] );
+		mockUseSubscriptionPlans.mockReturnValue( [ { plan: 'Plan 1' }, { plan: 'Plan 2' } ] );
 		( isEnabled as jest.MockedFunction< typeof isEnabled > ).mockReturnValue( true );
 
 		render(

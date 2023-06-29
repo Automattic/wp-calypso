@@ -28,4 +28,9 @@ export type Subscriber = {
 	plans?: SubscriptionPlan[];
 	open_rate?: number;
 	subscriptions?: string[];
+	country?: {
+		code: string;
+		name: string;
+	};
+	url?: string;
 };
