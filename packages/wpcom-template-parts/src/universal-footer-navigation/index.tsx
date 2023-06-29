@@ -272,7 +272,7 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
-									<a href="https://automattic.com/privacy/" data-is_external="1">
+									<a href={ localizeUrl( 'https://automattic.com/privacy/' ) } data-is_external="1">
 										{ __( 'Privacy', __i18n_text_domain__ ) }{ ' ' }
 										<span className="lp-link-chevron-external">
 											{ __( 'Policy', __i18n_text_domain__ ) }
@@ -466,9 +466,9 @@ const UniversalNavbarFooter = ( {
 	const isEnglishLocale = useIsEnglishLocale();
 	const pathNameWithoutLocale =
 		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
-	const [ automatticBranding, setAutomatticBranding ] = useState< React.ReactChild >(
-		<AutomatticBrand />
-	);
+	const [ automatticBranding, setAutomatticBranding ] = useState<
+		React.ReactElement | string | number
+	>( <AutomatticBrand /> );
 
 	// Since this component renders in SSR, effects don't run there. As a result,
 	// the markup needs to look ok _before_ any effects run. Using the isomorphic
