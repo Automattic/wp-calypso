@@ -65,7 +65,7 @@ export { default as SegmentedControl } from 'calypso/components/segmented-contro
 export { default as SelectDropdown } from 'calypso/components/select-dropdown/docs/example';
 export { default as ShareButton } from 'calypso/components/share-button/docs/example';
 export { default as SocialLogos } from 'calypso/components/social-logo/docs/example';
-export { Spinner } from '@automattic/components';
+export { Badge, Spinner } from '@automattic/components';
 export { default as SpinnerButton } from 'calypso/components/spinner-button/docs/example';
 export { default as SpinnerLine } from 'calypso/components/spinner-line/docs/example';
 export { default as SplitButton } from 'calypso/components/split-button/docs/example';
