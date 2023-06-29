@@ -47,6 +47,15 @@
 				font-family: "SF Pro Text", $sans;
 				font-weight: 400;
 				color: $studio-gray-40;
+
+				.external-link {
+					color: $studio-gray-40;
+					white-space: nowrap;
+
+					&:hover {
+						text-decoration: underline;
+					}
+				}
 			}
 		}
 	}
@@ -137,9 +146,12 @@
 		margin: 64px 0 32px;
 	}
 
+	.site-subscription-page__manage-button {
+		margin-right: 10px;
+	}
+
 	.site-subscription-page__unsubscribe-button {
 		border: 1px solid $studio-gray-20;
-		margin-left: 10px;
 	}
 }
 

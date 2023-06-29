@@ -10,7 +10,15 @@ jest.mock( 'calypso/data/promote-post/use-promote-post-credit-balance-query' );
 
 describe( 'CreditBalance component', () => {
 	test( 'displays null when balance is not available', () => {
-		useCreditBalanceQuery.mockReturnValue( { data: null } );
+		useCreditBalanceQuery.mockReturnValue( { data: undefined } );
+
+		render( <CreditBalance /> );
+
+		expect( screen.queryByText( /Credits: \$.+/ ) ).toBeNull();
+	} );
+
+	test( 'displays null when balance is invalid', () => {
+		useCreditBalanceQuery.mockReturnValue( { data: NaN } );
 
 		render( <CreditBalance /> );
 
@@ -26,12 +34,12 @@ describe( 'CreditBalance component', () => {
 		expect( screen.queryByText( /Credits: \$.+/ ) ).toBeNull();
 	} );
 
-	test( 'displays "Credits: $10" when balance is set to 10', () => {
+	test( 'displays "Credits: $10.00" when balance is set to 10', () => {
 		const mockBalance = '10.00';
 		useCreditBalanceQuery.mockReturnValue( { data: mockBalance } );
 
 		render( <CreditBalance /> );
 
-		expect( screen.getByText( /Credits: \$.+/ ) ).toHaveTextContent( `Credits: $${ mockBalance }` );
+		expect( screen.getByText( /Credits: \$.+/ ) ).toHaveTextContent( 'Credits: $10.00' );
 	} );
 } );

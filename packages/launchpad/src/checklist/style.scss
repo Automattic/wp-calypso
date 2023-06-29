@@ -6,8 +6,4 @@
 	list-style: none;
 	margin: 0;
 	padding: 0;
-
-	@include break-large {
-		margin: 20px auto;
-	}
 }

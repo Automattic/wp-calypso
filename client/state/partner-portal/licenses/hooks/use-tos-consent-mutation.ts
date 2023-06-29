@@ -14,5 +14,8 @@ function mutationTOSConsent(): Promise< APIPartner > {
 export default function useTOSConsentMutation< TVariables = void, TContext = unknown >(
 	options?: UseMutationOptions< APIPartner, Error, TVariables, TContext >
 ): UseMutationResult< APIPartner, Error, TVariables, TContext > {
-	return useMutation< APIPartner, Error, TVariables, TContext >( mutationTOSConsent, options );
+	return useMutation< APIPartner, Error, TVariables, TContext >( {
+		...options,
+		mutationFn: mutationTOSConsent,
+	} );
 }

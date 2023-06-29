@@ -17,6 +17,7 @@ import {
 	emailStats,
 	emailSummary,
 	subscribers,
+	purchase,
 } from './controller';
 
 import './style.scss';
@@ -52,14 +53,17 @@ export default function () {
 
 	statsPage( '/stats/insights', sites );
 
+	// Stat Purchase Page
+	if ( config.isEnabled( 'stats/paid-stats' ) ) {
+		statsPage( '/stats/purchase/:site', purchase );
+	}
+
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
 
-	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
-		// Stat Subscribers Page (do not cofuse with people/subscribers/)
-		statsPage( '/stats/subscribers/:site', subscribers );
-		statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
-	}
+	// Stat Subscribers Page (do not confuse with people/subscribers/)
+	statsPage( '/stats/subscribers/:site', subscribers );
+	statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
 
 	// Stat Site Pages
 	statsPage( `/stats/:period(${ validPeriods })/:site`, site );

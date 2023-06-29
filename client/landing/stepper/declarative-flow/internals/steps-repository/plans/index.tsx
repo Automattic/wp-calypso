@@ -1,4 +1,3 @@
-import { is2023PricingGridActivePage } from '@automattic/calypso-products';
 import {
 	isBlogOnboardingFlow,
 	isDomainUpsellFlow,
@@ -27,7 +26,6 @@ const plans: Step = function Plans( { navigation, flow } ) {
 
 		submit?.( providedDependencies );
 	};
-	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
 	const isAllowedToGoBack =
 		isDomainUpsellFlow( flow ) || ( isNewHostedSiteCreationFlow( flow ) && hostingFlow );
@@ -37,18 +35,12 @@ const plans: Step = function Plans( { navigation, flow } ) {
 			stepName="plans"
 			goBack={ goBack }
 			isHorizontalLayout={ false }
-			isWideLayout={ ! is2023PricingGridVisible }
-			isFullLayout={ is2023PricingGridVisible }
+			isWideLayout={ false }
+			isFullLayout={ true }
 			hideFormattedHeader={ true }
 			isLargeSkipLayout={ false }
 			hideBack={ ! isAllowedToGoBack }
-			stepContent={
-				<PlansWrapper
-					flowName={ flow }
-					onSubmit={ handleSubmit }
-					is2023PricingGridVisible={ is2023PricingGridVisible }
-				/>
-			}
+			stepContent={ <PlansWrapper flowName={ flow } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

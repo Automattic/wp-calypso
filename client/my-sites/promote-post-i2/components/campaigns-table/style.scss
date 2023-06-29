@@ -1,6 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "../../style.scss";
 
 $font-sf-pro-display: "SF Pro Display", $sans;
 $font-sf-pro-text: "SF Pro Text", $sans;
@@ -12,7 +13,9 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 	.segmented-control {
 		background-color: transparent;
+		border-radius: 4px;
 		margin-left: 16px;
+		overflow: hidden;
 
 		.segmented-control__link {
 			align-items: center;
@@ -29,6 +32,69 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 .promote-post-i2__table {
 	th {
+		@include promote-post-i2-font;
+		padding-bottom: 8px;
+	}
+
+	.campaign-item {
+		&__data,
+		&__user,
+		&__status,
+		&__ends,
+		&__budget,
+		&__impressions,
+		&__clicks {
+			padding-right: 16px;
+		}
+
+		&__data {
+			width: 28%;
+
+			.campaign-item__status-mobile {
+				display: none;
+			}
+		}
+
+		&__user {
+			width: 13%;
+		}
+
+		&__status {
+			width: 12%;
+		}
+
+		&__ends {
+			width: 13%;
+		}
+
+		&__budget {
+			width: 12%;
+		}
+
+		&__impressions {
+			width: 10%;
+		}
+
+		&__clicks {
+			width: 10%;
+		}
+
+		&__action {
+			width: 2%;
+
+			button {
+				color: $studio-black;
+
+				&:hover {
+					color: var(--color-accent);
+				}
+			}
+		}
+
+		&__header-image-skeleton {
+			margin-right: 16px;
+		}
+
 		font-family: $font-sf-pro-text;
 		font-style: normal;
 		font-weight: 400;
@@ -44,14 +110,19 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	}
 
 	td {
+		border-top: 1px solid #eee;
 		color: $studio-gray-60;
-		padding-top: 16px;
-		padding-bottom: 16px;
-		border-top: 1px solid #d8d8d8; /* #EEEEEE if bg is white */
 		font-size: 0.875rem;
-		vertical-align: middle;
-		line-height: 1.43;
 		letter-spacing: -0.15px;
+		line-height: 1.43; /* #EEEEEE if bg is white */
+		padding-bottom: 16px;
+		padding-right: 16px;
+		padding-top: 16px;
+		vertical-align: middle;
+	}
+
+	td:last-child {
+		padding-right: 0;
 	}
 
 	.promote-post-i2__campaign-item-wrapper {
@@ -64,7 +135,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			width: 142px;
 			height: 12px;
 			background-color: #f5f5f5;
-			border-radius: 100%;
+			border-radius: 4px;
 			margin-top: 8px;
 			&.campaign-item__skeleton-text2 {
 				width: 97px;
@@ -73,17 +144,27 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 	}
 
-	.campaign-item__header-image img,
-	.campaign-item__header-image-skeleton {
-		border: 1px solid #eee;
-		border-radius: 4px;
-		width: 108px;
+	.campaign-item__header-image {
 		height: 78px;
 		margin-right: 16px;
-		display: block;
-		background-color: #f5f5f5;
-	}
+		min-width: 108px;
+		width: 108px; // TODO: adjust height and width for mobile devices as well.
 
+		img,
+		&-skeleton {
+			background-color: #f5f5f5;
+			border: 1px solid #eee;
+			border-radius: 4px;
+			display: block;
+			height: 78px;
+			min-width: 108px;
+			width: 108px; // TODO: adjust height and width for mobile devices as well.
+		}
+	}
+}
+
+.promote-post-i2__table,
+.campaign-item__header-status {
 	.badge {
 		border-radius: 4px;
 		font-size: 0.75rem;
@@ -129,8 +210,37 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 @mixin blazepress-campaigns-table-mobile {
 	.promote-post-i2__table {
+		tr {
+			&:not(:last-child) td {
+				border-bottom: 1px solid #eee;
+			}
+		}
+
 		td {
+			border-top: none;
 			padding-bottom: 14px;
+			padding-right: 0;
+		}
+
+		.campaign-item {
+			&__user,
+			&__status,
+			&__ends,
+			&__budget,
+			&__impressions,
+			&__clicks,
+			&__action {
+				display: none;
+			}
+
+			&__status-mobile {
+				display: block;
+				margin-top: 8px;
+			}
+		}
+
+		th.campaign-item__data {
+			display: none; // Hide the column name according to the design
 		}
 	}
 }

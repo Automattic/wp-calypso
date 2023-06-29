@@ -58,6 +58,7 @@ export class SiteSelector extends Component {
 		navigateToSite: PropTypes.func.isRequired,
 		isReskinned: PropTypes.bool,
 		showManageSitesButton: PropTypes.bool,
+		showManageDomainsButton: PropTypes.bool,
 		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
 		hasSiteWithPlugins: PropTypes.bool,
@@ -66,6 +67,7 @@ export class SiteSelector extends Component {
 	static defaultProps = {
 		sites: {},
 		showManageSitesButton: false,
+		showManageDomainsButton: false,
 		showAddNewSite: false,
 		showAllSites: false,
 		showHiddenSites: false,
@@ -240,6 +242,10 @@ export class SiteSelector extends Component {
 		this.props.recordTracksEvent( 'calypso_manage_sites_click' );
 	};
 
+	onManageDomainsClick = () => {
+		this.props.recordTracksEvent( 'calypso_manage_domains_click' );
+	};
+
 	onSiteHover = ( event, siteId ) => {
 		if ( this.lastMouseHover !== siteId ) {
 			debug( `${ siteId } hovered` );
@@ -309,6 +315,12 @@ export class SiteSelector extends Component {
 		if ( this.props.hideSelected && this.props.selected ) {
 			sites = sites.filter( ( site ) => site.slug !== this.props.selected );
 		}
+
+		// Bulk transfers of many domains get attached to a single domain-only site.
+		// Because of this, it doesn't make sense to show domain-only sites in the site selector.
+
+		// Eventually, we'll want to filter out domain-only sites at the API boundary instead.
+		sites = sites.filter( ( site ) => ! site?.options?.is_domain_only );
 
 		return sites;
 	}
@@ -458,8 +470,15 @@ export class SiteSelector extends Component {
 						</span>
 					) }
 				</div>
-				{ ( this.props.showManageSitesButton || this.props.showAddNewSite ) && (
+				{ ( this.props.showManageSitesButton ||
+					this.props.showAddNewSite ||
+					this.props.showManageDomainsButton ) && (
 					<div className="site-selector__actions">
+						{ this.props.showManageDomainsButton && (
+							<Button transparent onClick={ this.onManageDomainsClick } href="/domains/manage">
+								{ this.props.translate( 'Manage domains' ) }
+							</Button>
+						) }
 						{ this.props.showManageSitesButton && (
 							<Button
 								transparent
@@ -504,7 +523,7 @@ const navigateToSite =
 				}
 
 				// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-				if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
+				if ( path.match( /^\/backup\/.*\/(download|restore|contents)/ ) ) {
 					return '/backup';
 				}
 
@@ -564,7 +583,7 @@ const navigateToSite =
 			}
 
 			// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-			if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
+			if ( path.match( /^\/backup\/.*\/(download|restore|contents)/ ) ) {
 				path = '/backup';
 			}
 

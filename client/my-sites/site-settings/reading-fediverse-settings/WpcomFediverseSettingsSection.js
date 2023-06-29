@@ -37,9 +37,8 @@ const EnabledSettingsSection = ( { siteId } ) => {
 	return (
 		<Card className="site-settings__card">
 			<p>
-				{ translate(
-					'Lots of cool customizations and bonus features coming soon with WordPress.com Premium and up!'
-				) }
+				Lots of cool customizations and bonus features coming soon with WordPress.com Premium and
+				up!
 			</p>
 			<hr />
 			<p>{ translate( 'The fediverse can follow your site with this alias:' ) }</p>
@@ -84,14 +83,12 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 		<>
 			<Card className="site-settings__card">
 				<p>
-					{ translate(
-						'The fediverse is a network of social media sites like Mastodon and Pixelfed and Calckey and Peertube and Pleroma, oh my!'
-					) }
+					The fediverse is a network of social media sites like Mastodon and Pixelfed and Calckey
+					and Peertube and Pleroma, oh my!
 				</p>
 				<p>
-					{ translate(
-						'Your site can publish to the same ActivityPub protocol that powers all of them, just enable:'
-					) }
+					Your site can publish to the same ActivityPub protocol that powers all of them, just
+					enable:
 				</p>
 				<ToggleControl
 					label={ translate( 'Enter the fediverse' ) }

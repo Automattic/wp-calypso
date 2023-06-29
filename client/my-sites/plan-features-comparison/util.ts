@@ -2,7 +2,7 @@ import { IncompleteWPcomPlan } from '@automattic/calypso-products';
 import {
 	NEWSLETTER_FLOW,
 	isLinkInBioFlow,
-	isHostingFlow,
+	isAnyHostingFlow,
 	isNewsletterOrLinkInBioFlow,
 	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
@@ -16,7 +16,7 @@ const linkInBioFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 };
 
 const hostingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isHostingFlow( flowName ) && plan.getHostingSignupFeatures?.( plan.term );
+	return isAnyHostingFlow( flowName ) && plan.getHostingSignupFeatures?.( plan.term );
 };
 
 const blogOnboardingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {

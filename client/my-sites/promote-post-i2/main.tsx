@@ -1,36 +1,47 @@
+import config from '@automattic/calypso-config';
 import './style.scss';
-import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import Main from 'calypso/components/main';
-import useCampaignsQueryPaged, {
-	Campaign,
-} from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
-import usePostsQueryPaged from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
+import { Campaign } from 'calypso/data/promote-post/types';
+import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
+import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-stats-query';
+import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
+import usePostsQueryPaged, {
+	getSearchOptionsQueryParams,
+} from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
-import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
-import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils';
+import {
+	SORT_OPTIONS_DEFAULT,
+	SearchOptions,
+} from 'calypso/my-sites/promote-post-i2/components/search-bar';
+import { getPagedBlazeSearchData, unifyCampaigns } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import CreditBalance from './components/credit-balance';
+import MainWrapper from './components/main-wrapper';
 import { BlazablePost } from './components/post-item';
 import PostsListBanner from './components/posts-list-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 
-export type TabType = 'posts' | 'campaigns';
+export type TabType = 'posts' | 'campaigns' | 'credits';
 export type TabOption = {
 	id: TabType;
 	name: string;
-	itemCount: number | null;
+	itemCount?: number;
+	isCountAmount?: boolean;
+	className?: string;
+	enabled?: boolean;
 };
 
 interface Props {
@@ -51,8 +62,13 @@ export type PagedBlazeSearchResponse = {
 	pages: PagedBlazeContentData[];
 };
 
+const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
+	order: SORT_OPTIONS_DEFAULT,
+};
+
 export default function PromotedPosts( { tab }: Props ) {
-	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+	const selectedTab = tab && [ 'campaigns', 'posts', 'credits' ].includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();
@@ -60,6 +76,8 @@ export default function PromotedPosts( { tab }: Props ) {
 		keyValue: 'post-0', // post 0 means to open post selector in widget
 		entrypoint: 'promoted_posts-header',
 	} );
+
+	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
@@ -82,9 +100,15 @@ export default function PromotedPosts( { tab }: Props ) {
 		'',
 	] );
 
-	const { has_more_pages: campaignsHasMorePages, items: campaigns } = getPagedBlazeSearchData(
+	const { has_more_pages: campaignsHasMorePages, items: pagedCampaigns } = getPagedBlazeSearchData(
 		'campaigns',
 		campaignsData
+	);
+
+	const { data: campaignsStatsData } = useCampaignsStatsQuery( selectedSiteId ?? 0 );
+	const campaigns = useMemo(
+		() => unifyCampaigns( pagedCampaigns as Campaign[], campaignsStatsData ),
+		[ pagedCampaigns, campaignsStatsData ]
 	);
 
 	const { total_items: totalCampaignsUnfiltered } = getPagedBlazeSearchData(
@@ -93,7 +117,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	/* query for posts */
-	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >( {} );
+	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >(
+		POST_DEFAULT_SEARCH_OPTIONS
+	);
 	const postsQuery = usePostsQueryPaged( selectedSiteId ?? 0, postsSearchOptions );
 
 	const {
@@ -110,7 +136,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	const initialPostQueryState = queryClient.getQueryState( [
 		'promote-post-posts',
 		selectedSiteId,
-		'',
+		getSearchOptionsQueryParams( POST_DEFAULT_SEARCH_OPTIONS ),
 	] );
 
 	const { has_more_pages: postsHasMorePages, items: posts } = getPagedBlazeSearchData(
@@ -126,18 +152,22 @@ export default function PromotedPosts( { tab }: Props ) {
 		{
 			id: 'posts',
 			name: translate( 'Ready to promote' ),
-			itemCount: totalPostsUnfiltered || null,
+			itemCount: totalPostsUnfiltered,
 		},
 		{
 			id: 'campaigns',
 			name: translate( 'Campaigns' ),
-			itemCount: totalCampaignsUnfiltered || null,
+			itemCount: totalCampaignsUnfiltered,
+		},
+		{
+			id: 'credits',
+			name: translate( 'Credits' ),
+			className: 'pull-right',
+			itemCount: parseFloat( creditBalance ),
+			isCountAmount: true,
+			enabled: parseFloat( creditBalance ) > 0,
 		},
 	];
-
-	useEffect( () => {
-		document.querySelector( 'body' )?.classList.add( 'is-section-promote-post-i2' );
-	}, [] );
 
 	if ( selectedSite?.is_coming_soon || selectedSite?.is_private ) {
 		return (
@@ -190,7 +220,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	};
 
 	return (
-		<Main wideLayout className="promote-post-i2">
+		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising' ) } />
 
 			<div className="promote-post-i2__top-bar">
@@ -205,10 +235,13 @@ export default function PromotedPosts( { tab }: Props ) {
 				/>
 
 				<div className="promote-post-i2__top-bar-buttons">
-					<Button compact className="posts-list-banner__learn-more">
-						<InlineSupportLink supportContext="advertising" showIcon={ false } />
-					</Button>
-					<Button primary onClick={ onClickPromote }>
+					<InlineSupportLink
+						supportContext="advertising"
+						className="button posts-list-banner__learn-more"
+						showIcon={ false }
+						showSupportModal={ ! isRunningInJetpack }
+					/>
+					<Button isPrimary onClick={ onClickPromote }>
 						{ translate( 'Promote' ) }
 					</Button>
 				</div>
@@ -218,7 +251,9 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ showBanner && <PostsListBanner /> }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
-			{ selectedTab === 'campaigns' ? (
+
+			{ /* Render campaigns tab */ }
+			{ selectedTab === 'campaigns' && (
 				<>
 					<PageViewTracker
 						path={ getAdvertisingDashboardPath( '/:site/campaigns' ) }
@@ -235,25 +270,38 @@ export default function PromotedPosts( { tab }: Props ) {
 						campaigns={ campaigns as Campaign[] }
 					/>
 				</>
-			) : (
-				<PageViewTracker
-					path={ getAdvertisingDashboardPath( '/:site/posts' ) }
-					title="Advertising > Ready to Blaze"
-				/>
 			) }
 
-			{ selectedTab === 'posts' && (
-				<PostsList
-					isLoading={ postsIsLoadingNewContent }
-					isFetching={ postIsFetching }
-					isError={ postError as DSPMessage }
-					fetchNextPage={ fetchPostsNextPage }
-					handleSearchOptions={ setPostsSearchOptions }
-					totalCampaigns={ totalPostsUnfiltered || 0 }
-					hasMorePages={ postsHasMorePages }
-					posts={ posts as BlazablePost[] }
-				/>
+			{ /* Render credits tab */ }
+			{ selectedTab === 'credits' && (
+				<>
+					<PageViewTracker
+						path={ getAdvertisingDashboardPath( '/:site/credits' ) }
+						title="Advertising > Credits"
+					/>
+					<CreditBalance balance={ creditBalance } />
+				</>
 			) }
-		</Main>
+
+			{ /* Render posts tab */ }
+			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && (
+				<>
+					<PageViewTracker
+						path={ getAdvertisingDashboardPath( '/:site/posts' ) }
+						title="Advertising > Ready to Promote"
+					/>
+					<PostsList
+						isLoading={ postsIsLoadingNewContent }
+						isFetching={ postIsFetching }
+						isError={ postError as DSPMessage }
+						fetchNextPage={ fetchPostsNextPage }
+						handleSearchOptions={ setPostsSearchOptions }
+						totalCampaigns={ totalPostsUnfiltered || 0 }
+						hasMorePages={ postsHasMorePages }
+						posts={ posts as BlazablePost[] }
+					/>
+				</>
+			) }
+		</MainWrapper>
 	);
 }

@@ -15,18 +15,22 @@ const siteIdsHash = ( siteIds ) => {
 	return siteIds.join( '_' );
 };
 
+export function useQuerySiteFeatures( siteIds ) {
+	const dispatch = useDispatch();
+	const hashedSiteIds = siteIdsHash( siteIds );
+
+	useEffect( () => {
+		siteIds.forEach( ( siteId ) => dispatch( request( siteId ) ) );
+	}, [ dispatch, hashedSiteIds ] );
+}
+
 /**
  * Makes an API request to fetch the features for the given array of siteIds.
  * This will make one request per site, so if you have a large number of sites
  * then consider using QueryJetpackSitesFeatures or something similar.
  */
 export default function QuerySiteFeatures( { siteIds } ) {
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		siteIds.forEach( ( siteId ) => dispatch( request( siteId ) ) );
-	}, [ dispatch, siteIdsHash( siteIds ) ] );
-
+	useQuerySiteFeatures( siteIds );
 	return null;
 }
 

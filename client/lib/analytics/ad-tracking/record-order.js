@@ -477,22 +477,6 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 		debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
 		window.gtag( ...params );
 	}
-
-	// Akismet
-	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsAkismetProducts ) {
-		const params = [
-			'event',
-			'conversion',
-			{
-				send_to: TRACKING_IDS.akismetGoogleAdsGtagPurchase,
-				value: wpcomJetpackCartInfo.akismetCost,
-				currency: cart.currency,
-				transaction_id: orderId,
-			},
-		];
-		debug( 'recordOrderInGoogleAds: Record Akismet Purchase', params );
-		window.gtag( ...params );
-	}
 }
 
 function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo ) {

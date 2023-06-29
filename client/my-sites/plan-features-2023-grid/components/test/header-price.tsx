@@ -31,7 +31,6 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 		showMonthlyPrice: false,
 	} as PlanProperties;
 	const defaultProps = {
-		is2023OnboardingPricingGrid: true,
 		isLargeCurrency: false,
 		planProperties,
 	};

@@ -1,86 +1,70 @@
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
-import commentIcon from 'calypso/assets/images/jetpack/block-post-comments.svg';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import Banner from 'calypso/components/banner';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
-	JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE as preferenceName,
-	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE as homePagePreferenceName,
+	JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE,
 	getJetpackDashboardPreference as getPreference,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import type { PreferenceType } from '../types';
+import { PreferenceType } from '../types';
 
 import './style.scss';
 
-export default function SiteSurveyBanner() {
-	const surveyHref = 'https://automattic.survey.fm/jetpack-pro-survey-hosting-needs';
+interface Props {
+	isDashboardView?: boolean;
+}
 
+export default function SiteSurveyBanner( { isDashboardView }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const preferenceName = JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE;
+
 	const preference = useSelector( ( state ) => getPreference( state, preferenceName ) );
-	const homePagePreference = useSelector( ( state ) =>
-		getPreference( state, homePagePreferenceName )
-	);
+
+	const isDismissed = preference?.dismiss;
 
 	const savePreferenceType = useCallback(
 		( type: PreferenceType ) => {
 			dispatch( savePreference( preferenceName, { ...preference, [ type ]: true } ) );
 		},
-		[ dispatch, preference ]
+		[ dispatch, preference, preferenceName ]
 	);
 
-	const handleTrackEvent = useCallback(
-		( eventName: string ) => {
-			dispatch( recordTracksEvent( eventName ) );
-		},
-		[ dispatch ]
-	);
-
-	const dismissBanner = useCallback( () => {
+	const dismissAndRecordEvent = ( eventName: string ) => {
 		savePreferenceType( 'dismiss' );
-		handleTrackEvent( 'calypso_jetpack_agency_dashboard_survey_banner_dismiss' );
-	}, [ handleTrackEvent, savePreferenceType ] );
 
-	const isDismissed = preference?.dismiss;
-	const isWelcomeBannerDismissed = homePagePreference?.dismiss;
-	const hideBanner = isDismissed || ! isWelcomeBannerDismissed;
+		const eventNamePrefix = isDashboardView
+			? 'calypso_jetpack_agency_dashboard_'
+			: 'calypso_partner_portal_';
 
-	useEffect( () => {
-		if ( ! hideBanner ) {
-			savePreferenceType( 'view' );
-			handleTrackEvent( 'calypso_jetpack_agency_dashboard_survey_banner_view' );
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
-
-	const trackClickEvent = () => {
-		handleTrackEvent( 'calypso_jetpack_agency_dashboard_survey_banner_click' );
-
-		// Dismiss banner but don't track "dismiss" event since we are automatically dismissing it after CTA click
-		savePreferenceType( 'dismiss' );
+		dispatch( recordTracksEvent( eventNamePrefix + eventName ) );
 	};
 
-	// Hide the banner if it has already been dismissed or if the welcome banner is showing
-	if ( hideBanner ) {
+	// This survey is only available in English only.
+	const isEnglishLocale = getLocaleSlug() === 'en' || getLocaleSlug() === 'en-gb';
+
+	if ( isDismissed || ! isEnglishLocale ) {
 		return null;
 	}
 
 	return (
 		<Banner
-			className="dashboard__site-survey-banner"
-			title={ translate( 'Interested in better hosting?' ) }
-			description={ translate( 'Let us know what would make your ideal hosting experience.' ) }
-			horizontal
-			iconPath={ commentIcon }
-			callToAction={ translate( 'Take our quick survey' ) }
-			href={ surveyHref }
-			onClick={ trackClickEvent }
-			onDismiss={ dismissBanner }
-			dismissPreferenceName={ preferenceName }
+			className="site-survey-banner"
+			title={ translate( 'Help Jetpack build better products for you' ) }
+			description={ translate(
+				'Take this 2 minute survey to help us understand your needs & build products that deliver more value to your clients.'
+			) }
+			callToAction={ translate( 'Take survey' ) }
+			href="https://automattic.survey.fm/agency-partnership-usage-survey"
 			target="_blank"
+			jetpack
+			dismissWithoutSavingPreference
+			horizontal
+			onClick={ () => dismissAndRecordEvent( 'survey_banner_accept' ) }
+			onDismiss={ () => dismissAndRecordEvent( 'survey_banner_dismiss' ) }
 		/>
 	);
 }

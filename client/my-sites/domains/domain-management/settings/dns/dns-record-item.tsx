@@ -26,7 +26,7 @@ const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ) 
 				return translate( '%(data)s with priority %(aux)d', {
 					args: {
 						data,
-						aux,
+						aux: aux as number,
 					},
 					comment: '%(data)s is a hostname',
 				} );
@@ -35,9 +35,9 @@ const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ) 
 				return translate( '%(target)s:%(port)d, with priority %(aux)d and weight %(weight)d', {
 					args: {
 						target,
-						port,
-						aux,
-						weight,
+						port: port as number,
+						aux: aux as number,
+						weight: weight as number,
 						comment: '%(target)s is a hostname',
 					},
 				} );

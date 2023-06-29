@@ -1,0 +1,114 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+%ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+%ellipsis-after-two-lines {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+.recommended-sites {
+
+	&__heading {
+		margin: 0 0 16px 0;
+	}
+
+	&__horizontal-list {
+		margin: 0;
+	}
+
+	.recommended-site {
+		width: 100%;
+		margin: 0 0 56px;
+		padding: 20px 24px 24px 24px;
+		border-radius: 4px;
+		list-style-type: none;
+
+		.reader-avatar {
+			margin: 0;
+			color: $studio-gray-50;
+
+			&.is-compact {
+				max-height: 40px;
+			}
+		}
+
+		&__dismiss-button {
+			color: $studio-gray-60;
+			padding: 0;
+			min-height: unset;
+			height: fit-content;
+		}
+
+		&__site-title {
+			font-family: "SF Pro Text", $sans;
+			font-style: normal;
+			font-weight: 600;
+			font-size: $font-body;
+			line-height: rem(22px);
+			color: $studio-gray-100;
+			margin-right: 36px; // width of dismiss button
+			@extend %ellipsis;
+		}
+
+		&__site-url {
+			font-family: "SF Pro Text", $sans;
+			font-style: normal;
+			font-weight: 400;
+			font-size: $font-body-extra-small;
+			line-height: rem(18px);
+			color: $studio-gray-40;
+			@extend %ellipsis;
+		}
+
+		&__site-description {
+			margin: 16px 0  24px 0;
+			$site-description-line-height: rem(20px);
+			height: $site-description-line-height * 2;
+			font-family: "SF Pro Text", $sans;
+			font-style: normal;
+			font-weight: 400;
+			font-size: $font-body-small;
+			line-height: $site-description-line-height;
+			color: $studio-gray-60;
+
+			@extend %ellipsis-after-two-lines;
+		}
+
+		&__subscribe-button {
+			margin: 0;
+			border-radius: 4px;
+			padding-left: 24px;
+			padding-right: 24px;
+		}
+
+		&__dismiss-button.is-placeholder,
+		&__site-title.is-placeholder,
+		&__site-url.is-placeholder,
+		&__site-description.is-placeholder,
+		&__subscribe-button.is-placeholder {
+			@include placeholder();
+		}
+	}
+
+	.dot-pager {
+		&__controls {
+			padding: 0 4px;
+		}
+
+		.recommended-site {
+			width: auto;
+			margin: 1px 1px 32px 1px;
+		}
+	}
+}
+

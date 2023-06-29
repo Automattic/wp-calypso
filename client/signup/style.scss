@@ -883,12 +883,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
-
-	.inline-help {
-		@include breakpoint-deprecated( "<660px" ) {
-			bottom: 74px;
-		}
-	}
 }
 
 body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow).is-gravatar {

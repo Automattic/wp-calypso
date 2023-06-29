@@ -51,7 +51,7 @@ const EditContactInfoPage = ( {
 		}
 
 		const previousPath = domainManagementEdit(
-			selectedSite.slug,
+			selectedSite?.slug,
 			selectedDomainName,
 			currentRoute
 		);
@@ -59,7 +59,11 @@ const EditContactInfoPage = ( {
 		const items = [
 			{
 				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite.slug, currentRoute ),
+				href: domainManagementList(
+					selectedSite?.slug,
+					currentRoute,
+					selectedSite?.options?.is_domain_only
+				),
 			},
 			{
 				label: selectedDomainName,
@@ -96,7 +100,7 @@ const EditContactInfoPage = ( {
 			return (
 				<EditContactInfoPrivacyEnabledCard
 					selectedDomainName={ selectedDomainName }
-					selectedSiteSlug={ selectedSite.slug }
+					selectedSiteSlug={ selectedSite?.slug }
 				/>
 			);
 		}

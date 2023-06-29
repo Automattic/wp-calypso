@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { MigrationEnabledResponse } from 'calypso/data/site-migration/types';
 import { useMigrationEnabledInfoQuery } from 'calypso/data/site-migration/use-migration-enabled';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestSites } from 'calypso/state/sites/actions';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import { SiteId } from 'calypso/types';

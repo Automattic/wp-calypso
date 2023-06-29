@@ -311,6 +311,7 @@
 @include sharing-service( "linkedin", var( --color-linkedin ) );
 @include sharing-service( "instagram-basic-display", var( --color-instagram ) );
 @include sharing-service( "mastodon", var( --color-mastodon ) );
+@include sharing-service( "instagram-business", var( --color-instagram ) );
 
 .sharing-service__name {
 	clear: none;
@@ -966,6 +967,7 @@
 @include sharing-button-service( "telegram", var( --color-telegram ) );
 @include sharing-button-service( "jetpack-whatsapp", var( --color-whatsapp ) );
 @include sharing-button-service( "mastodon", var( --color-mastodon ) );
+@include sharing-button-service( "nextdoor", var( --color-nextdoor ) );
 
 .sharing-buttons-preview__panel {
 	position: relative;

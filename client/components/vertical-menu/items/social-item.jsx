@@ -8,8 +8,9 @@ import './style.scss';
 
 const services = ( translate = ( string ) => string ) => ( {
 	facebook: { icon: 'facebook', label: translate( 'Facebook' ) },
+	'instagram-business': { icon: 'instagram', label: translate( 'Instagram' ) },
 	google: { icon: 'google', label: translate( 'Google search' ) },
-	google_plus: { icon: 'google-plus', label: translate( 'Google+ ' ) },
+	google_plus: { icon: 'google-plus', label: translate( 'Google+' ) },
 	linkedin: { icon: 'linkedin', label: translate( 'LinkedIn' ) },
 	tumblr: { icon: 'tumblr', label: translate( 'Tumblr' ) },
 	mastodon: { icon: 'mastodon', label: translate( 'Mastodon' ) },

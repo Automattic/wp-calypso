@@ -143,7 +143,11 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	return (
 		<>
 			{ ( () => {
-				if ( isNotAtomicJetpack() || ! hasAllSitesFetched ) {
+				if (
+					isNotAtomicJetpack() ||
+					! hasAllSitesFetched ||
+					( WPImportOption.EVERYTHING === option && ! siteItem )
+				) {
 					return <LoadingEllipsis />;
 				} else if ( undefined === option && fromSite ) {
 					return (

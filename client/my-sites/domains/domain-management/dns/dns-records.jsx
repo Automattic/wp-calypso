@@ -41,11 +41,15 @@ class DnsRecords extends Component {
 		const items = [
 			{
 				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+				href: domainManagementList(
+					selectedSite?.slug,
+					selectedDomainName,
+					selectedSite?.options?.is_domain_only
+				),
 			},
 			{
 				label: selectedDomainName,
-				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{ label: translate( 'DNS records' ) },
 		];
@@ -53,7 +57,7 @@ class DnsRecords extends Component {
 		const mobileItem = {
 			// translators: %(domain)s is the domain name (e.g. example.com) to which settings page the user will return to when pressing the link
 			label: translate( 'Back to %(domain)s', { args: { domain: selectedDomainName } } ),
-			href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+			href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
@@ -69,7 +73,7 @@ class DnsRecords extends Component {
 		const buttons = [
 			<DnsAddNewRecordButton
 				key="add-new-record-button"
-				site={ selectedSite.slug }
+				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
 			/>,
 			optionsButton,
@@ -78,7 +82,7 @@ class DnsRecords extends Component {
 		const mobileButtons = [
 			<DnsAddNewRecordButton
 				key="mobile-add-new-record-button"
-				site={ selectedSite.slug }
+				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
 				isMobile={ true }
 			/>,
@@ -142,8 +146,8 @@ class DnsRecords extends Component {
 export default connect(
 	( state, { selectedDomainName } ) => {
 		const selectedSite = getSelectedSite( state );
-		const domains = getDomainsBySiteId( state, selectedSite.ID );
-		const isRequestingDomains = isRequestingSiteDomains( state, selectedSite.ID );
+		const domains = getDomainsBySiteId( state, selectedSite?.ID );
+		const isRequestingDomains = isRequestingSiteDomains( state, selectedSite?.ID );
 		const dns = getDomainDns( state, selectedDomainName );
 		const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
 

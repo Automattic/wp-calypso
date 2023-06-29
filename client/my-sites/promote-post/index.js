@@ -1,6 +1,7 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
+import { campaignDetails } from 'calypso/my-sites/promote-post-i2/controller';
 import { promoteWidget, promotedPosts, redirectToPrimarySite } from './controller';
 import { getAdvertisingDashboardPath } from './utils';
 
@@ -39,6 +40,16 @@ export default () => {
 		siteSelection,
 		navigation,
 		promoteWidget,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/advertising/:site?/campaigns/:campaignId',
+		redirectToPrimarySite,
+		siteSelection,
+		navigation,
+		campaignDetails,
 		makeLayout,
 		clientRender
 	);

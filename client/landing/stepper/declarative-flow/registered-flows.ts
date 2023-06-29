@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	LINK_IN_BIO_DOMAIN_FLOW,
 	START_WRITING_FLOW,
@@ -6,6 +7,7 @@ import {
 	DESIGN_FIRST_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
+	BULK_DOMAIN_TRANSFER,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -80,6 +82,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
 
+	blog: () => import( /* webpackChunkName: "blog" */ '../declarative-flow/blog' ),
+
 	[ START_WRITING_FLOW ]: () =>
 		import( /* webpackChunkName: "start-writing-flow" */ './start-writing' ),
 
@@ -102,5 +106,12 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 availableFlows[ 'plugin-bundle' ] = () =>
 	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
+
+if ( config.isEnabled( 'bulk-domain-transfer-flow' ) ) {
+	availableFlows[ BULK_DOMAIN_TRANSFER ] = () =>
+		import(
+			/* webpackChunkName: "bulk-domain-transfer" */ '../declarative-flow/bulk-domain-transfer'
+		);
+}
 
 export default availableFlows;

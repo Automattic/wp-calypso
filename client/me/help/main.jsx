@@ -144,7 +144,7 @@ class Help extends PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href="https://wpcourses.com/?ref=wpcom-help-more-resources"
+					href="https://wordpress.com/learn/courses?ref=wpcom-help-more-resources"
 					target="_blank"
 				>
 					<Gridicon icon="mail" size={ 36 } />

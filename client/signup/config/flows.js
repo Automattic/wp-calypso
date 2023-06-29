@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	BLANK_CANVAS_DESIGN,
 	PREMIUM_THEME,
@@ -7,7 +6,7 @@ import {
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
-import { isDesktop } from '@automattic/viewport';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -119,8 +118,8 @@ function getThankYouNoSiteDestination() {
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
 	if ( isSiteAssemblerFlow( flowName ) && themeParameter === BLANK_CANVAS_DESIGN.slug ) {
 		// Go to the site assembler flow if viewport width >= 960px as the layout doesn't support small
-		// screen for now
-		if ( isDesktop() ) {
+		// screen for now.
+		if ( isWithinBreakpoint( '>=960px' ) ) {
 			return addQueryArgs(
 				{
 					theme: themeParameter,
@@ -199,7 +198,7 @@ function getHostingFlowDestination( { siteId } ) {
 	return addQueryArgs(
 		{
 			'new-site': siteId,
-			'hosting-flow': isEnabled( 'hosting-onboarding-i2' ) ? true : null,
+			'hosting-flow': true,
 		},
 		'/sites'
 	);

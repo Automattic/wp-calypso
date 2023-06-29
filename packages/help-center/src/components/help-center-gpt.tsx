@@ -1,9 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, LoadingPlaceholder } from '@automattic/components';
+import { LoadingPlaceholder } from '@automattic/components';
 import { HelpCenterSelect, useJetpackSearchAIQuery } from '@automattic/data-stores';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -82,6 +83,7 @@ export function HelpCenterGPT() {
 		if ( data?.response ) {
 			recordTracksEvent( 'calypso_helpcenter_show_gpt_response', {
 				location: 'help-center',
+				answer_source: data?.source,
 			} );
 		}
 	}, [ data ] );
@@ -101,18 +103,24 @@ export function HelpCenterGPT() {
 		delayBetweenWords: 1400,
 	} );
 
-	const doThumbsUp = () => {
-		setFeedbackGiven( true );
-		recordTracksEvent( 'calypso_helpcenter_gpt_response_thumbs_up', {
-			location: 'help-center',
-		} );
+	const doThumbsUp = ( source: string ) => {
+		return () => {
+			setFeedbackGiven( true );
+			recordTracksEvent( 'calypso_helpcenter_gpt_response_thumbs_up', {
+				location: 'help-center',
+				answer_source: source,
+			} );
+		};
 	};
 
-	const doThumbsDown = () => {
-		setFeedbackGiven( true );
-		recordTracksEvent( 'calypso_helpcenter_gpt_response_thumbs_down', {
-			location: 'help-center',
-		} );
+	const doThumbsDown = ( source: string ) => {
+		return () => {
+			setFeedbackGiven( true );
+			recordTracksEvent( 'calypso_helpcenter_gpt_response_thumbs_down', {
+				location: 'help-center',
+				answer_source: source,
+			} );
+		};
 	};
 
 	return (
@@ -135,7 +143,7 @@ export function HelpCenterGPT() {
 							<>
 								<p>
 									{ __(
-										'Our system is currently generating a possible solution for you, which typically takes about 45 seconds.',
+										'Our system is currently generating a possible solution for you, which typically takes about 30 seconds.',
 										__i18n_text_domain__
 									) }
 								</p>
@@ -175,8 +183,8 @@ export function HelpCenterGPT() {
 										</div>
 									) : (
 										<>
-											<Button onClick={ doThumbsUp }>&#128077;</Button>
-											<Button onClick={ doThumbsDown }>&#128078;</Button>
+											<Button onClick={ doThumbsUp( data?.source ) }>&#128077;</Button>
+											<Button onClick={ doThumbsDown( data?.source ) }>&#128078;</Button>
 										</>
 									) }
 								</div>

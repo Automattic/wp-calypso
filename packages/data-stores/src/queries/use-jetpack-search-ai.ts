@@ -24,6 +24,7 @@ export type JetpackSearchAIResult = {
 	step: string;
 	urls: AIResponseURL[];
 	terms: string[];
+	source: string;
 };
 
 export function useJetpackSearchAIQuery( config: JetpackSearchAIConfig ) {
@@ -47,5 +48,8 @@ export function useJetpackSearchAIQuery( config: JetpackSearchAIConfig ) {
 		keepPreviousData: false,
 		enabled: config.enabled && !! config.query,
 		retry: false,
+		select: ( data ) => {
+			return { ...data, source: data.source ?? 'sitebot' };
+		},
 	} );
 }

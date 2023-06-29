@@ -1,0 +1,62 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+.configure-downtime-notification__help-text {
+	font-weight: 400;
+	font-size: 0.75rem;
+	line-height: 15px;
+	color: var(--studio-gray-40);
+}
+
+.configure-downtime-notification__form {
+	margin-block-start: 24px;
+
+	.notification-settings__footer-validation-error {
+		margin-block: 8px;
+	}
+}
+
+.configure-contact__help-text {
+	font-weight: 400;
+	font-size: 0.75rem;
+	color: var(--studio-gray-40);
+	margin-block-start: 8px;
+
+	.configure-contact__resend-code-button {
+		@extend .configure-contact__help-text;
+		padding: 0;
+		color: var(--studio-green-50);
+		text-decoration: underline;
+		margin-block-start: 0;
+		line-height: 1.5;
+	}
+}
+
+.configure-contact__phone-input-container {
+	margin-block-end: 20px;
+}
+
+.configure-contact__phone-input {
+	fieldset {
+		margin-block-end: 0;
+
+		&:first-child {
+			width: 100%;
+			margin-block-end: 16px;
+
+			select {
+				width: inherit;
+			}
+
+			@include break-mobile {
+				width: 50%;
+				margin-inline-end: 8px;
+				margin-block-end: 0;
+			}
+		}
+	}
+
+	@include break-mobile {
+		display: flex;
+	}
+}

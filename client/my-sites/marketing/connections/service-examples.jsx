@@ -188,7 +188,7 @@ class SharingServiceExamples extends Component {
 		const label = (
 			<>
 				{ this.props.translate(
-					'Drive engagement and save time by automatically sharing images and video reels to Instagram when you publish blog posts.'
+					'Drive engagement and save time by automatically sharing images to Instagram when you publish blog posts.'
 				) }
 				<div className="instagram-business__requirements">
 					<h4>{ this.props.translate( 'Requirements for connecting Instagram:' ) }</h4>

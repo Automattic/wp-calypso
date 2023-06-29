@@ -58,7 +58,7 @@
 }
 
 .reader-subscription-list-item .site-icon {
-	margin-top: 5px;
+	margin-top: 4px;
 
 	img {
 		border-radius: 100%;
@@ -239,10 +239,6 @@
 	.reader-subscription-list-item__follow {
 		width: 20px;
 		height: 20px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			width: 16px * 1.5 * 3;
-		}
 	}
 }
 

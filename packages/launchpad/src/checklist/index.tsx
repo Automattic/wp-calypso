@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import ChecklistItem from '../checklist-item';
 import { Task } from '../types';
 
@@ -5,17 +6,23 @@ import './style.scss';
 
 interface ChecklistProps {
 	tasks: Task[] | null;
+	makeLastTaskPrimaryAction?: boolean;
 }
 
-const Checklist = ( { tasks }: ChecklistProps ) => {
+const Checklist = ( { tasks, makeLastTaskPrimaryAction }: ChecklistProps ) => {
 	return (
-		<ul className="checklist__tasks" aria-label="Launchpad Checklist">
+		<ul
+			className={ classNames( 'checklist__tasks', {
+				'checklist__has-primary-action': makeLastTaskPrimaryAction,
+			} ) }
+			aria-label="Launchpad Checklist"
+		>
 			{ tasks &&
 				tasks.map( ( task: Task, index: number ) => (
 					<ChecklistItem
 						key={ task.id }
 						task={ task }
-						isPrimaryAction={ tasks.length - 1 === index }
+						isPrimaryAction={ makeLastTaskPrimaryAction && index === tasks.length - 1 }
 					/>
 				) ) }
 		</ul>

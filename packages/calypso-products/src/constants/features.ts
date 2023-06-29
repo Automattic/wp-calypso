@@ -197,6 +197,7 @@ export const FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY = PRODUCT_JETPACK_SOCIAL_BASIC
 export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
 export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
 export const FEATURE_SOCIAL_MASTODON_CONNECTION = 'social-mastodon-connection';
+export const FEATURE_SOCIAL_INSTAGRAM_CONNECTION = 'social-instagram-connection';
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_1GB_BACKUP_STORAGE = 'jetpack-1gb-backup-storage';
@@ -290,6 +291,8 @@ export const FEATURE_PAYMENT_TRANSACTION_FEES_10 = 'payment-transaction-fees-10'
 export const FEATURE_PAYMENT_TRANSACTION_FEES_8 = 'payment-transaction-fees-8';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_4 = 'payment-transaction-fees-4';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_2 = 'payment-transaction-fees-2';
+export const FEATURE_PAYMENT_TRANSACTION_FEES_0 = 'payment-transaction-fees-0';
+export const FEATURE_GROUP_PAYMENT_TRANSACTION_FEES = 'payment-transaction-fees-group';
 export const FEATURE_THE_READER = 'the-reader';
 
 // Pricing Grid 2023 Features
@@ -363,6 +366,7 @@ export const FEATURE_ES_SEARCH_JP = 'es-search-jp';
 export const FEATURE_PLUGIN_AUTOUPDATE_JP = 'plugin-autoupdate-jp';
 export const FEATURE_PREMIUM_CONTENT_JP = 'premium-content-jp';
 export const FEATURE_SITE_ACTIVITY_LOG_JP = 'site-activity-log-jp';
+export const FEATURE_DONATIONS_AND_TIPS_JP = 'donations-and-tips-jp';
 export const FEATURE_AUTOMATTIC_DATACENTER_FAILOVER = 'automattic-datacenter-fail-over';
 export const FEATURE_PREMIUM_STORE_THEMES = 'premium-store-themes';
 export const FEATURE_STORE_DESIGN = 'store-design';

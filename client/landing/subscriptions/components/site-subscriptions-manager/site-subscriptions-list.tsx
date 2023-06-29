@@ -4,11 +4,7 @@ import { Notice, NoticeType } from '../notice';
 import SiteRow from './site-row';
 import { useSiteSubscriptionsManager } from './site-subscriptions-manager-context';
 
-type SiteSubscriptionsListProps = {
-	onSiteTitleClick: ( blogId: number | string ) => void;
-};
-
-const SiteSubscriptionsList = ( { onSiteTitleClick }: SiteSubscriptionsListProps ) => {
+const SiteSubscriptionsList = () => {
 	const translate = useTranslate();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const { filterOption, siteSubscriptionsQueryResult, searchTerm } = useSiteSubscriptionsManager();
@@ -58,11 +54,7 @@ const SiteSubscriptionsList = ( { onSiteTitleClick }: SiteSubscriptionsListProps
 				<span className="actions-cell" role="columnheader" />
 			</li>
 			{ subscriptions.map( ( siteSubscription ) => (
-				<SiteRow
-					key={ `sites.siteRow.${ siteSubscription.ID }` }
-					onSiteTitleClick={ () => onSiteTitleClick( siteSubscription.blog_ID ) }
-					{ ...siteSubscription }
-				/>
+				<SiteRow key={ `sites.siteRow.${ siteSubscription.ID }` } { ...siteSubscription } />
 			) ) }
 		</ul>
 	);

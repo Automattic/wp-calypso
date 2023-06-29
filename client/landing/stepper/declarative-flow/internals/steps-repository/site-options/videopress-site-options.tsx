@@ -66,9 +66,9 @@ export const VideoPressSiteOptions = ( { navigation }: Pick< StepProps, 'navigat
 
 		switch ( inputName ) {
 			case 'siteTitle':
-				return setSiteTitle( event.currentTarget.value.trim() );
+				return setSiteTitle( event.currentTarget.value );
 			case 'tagline':
-				return setTagline( event.currentTarget.value.trim() );
+				return setTagline( event.currentTarget.value );
 		}
 	};
 

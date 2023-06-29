@@ -12,7 +12,6 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
-import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
@@ -234,13 +233,7 @@ class Plans extends Component {
 	};
 
 	renderPlansMain() {
-		const {
-			currentPlan,
-			selectedSite,
-			isWPForTeamsSite,
-			currentPlanIntervalType,
-			is2023PricingGridVisible,
-		} = this.props;
+		const { currentPlan, selectedSite, isWPForTeamsSite, currentPlanIntervalType } = this.props;
 
 		if ( ! this.props.plansLoaded || ! currentPlan ) {
 			// Maybe we should show a loading indicator here?
@@ -259,7 +252,7 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan = ! is2023PricingGridVisible || this.props.isDomainAndPlanPackageFlow;
+		const hideFreePlan = this.props.isDomainAndPlanPackageFlow;
 		// The Jetpack mobile app only wants to display two plans -- personal and premium
 		const planTypes = this.props.jetpackAppPlans ? [ TYPE_PERSONAL, TYPE_PREMIUM ] : null;
 
@@ -282,7 +275,6 @@ class Plans extends Component {
 				site={ selectedSite }
 				plansWithScroll={ false }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
-				is2023PricingGridVisible={ is2023PricingGridVisible }
 				planTypes={ planTypes }
 			/>
 		);
@@ -346,7 +338,6 @@ class Plans extends Component {
 			canAccessPlans,
 			currentPlan,
 			domainAndPlanPackage,
-			is2023PricingGridVisible,
 			isDomainAndPlanPackageFlow,
 			isJetpackNotAtomic,
 			isDomainUpsell,
@@ -435,10 +426,7 @@ class Plans extends Component {
 						) }
 						<div id="plans" className="plans plans__has-sidebar">
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
-							<Main
-								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
-								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
-							>
+							<Main fullWidthLayout={ ! isEcommerceTrial } wideLayout={ isEcommerceTrial }>
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
@@ -459,9 +447,8 @@ class Plans extends Component {
 	}
 }
 
-const ConnectedPlans = connect( ( state, props ) => {
+const ConnectedPlans = connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
-
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
@@ -476,8 +463,6 @@ const ConnectedPlans = connect( ( state, props ) => {
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		is2023PricingGridVisible:
-			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window ),
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 		isDomainUpsell:

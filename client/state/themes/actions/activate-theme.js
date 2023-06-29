@@ -84,6 +84,7 @@ export function activateTheme(
 				dispatch(
 					themeActivated( themeStylesheet, siteId, source, purchased, styleVariationSlug )
 				);
+				return themeStylesheet;
 			} )
 			.catch( ( error ) => {
 				if ( isMarketplaceThemeSubscribed( getState(), themeId, siteId ) ) {

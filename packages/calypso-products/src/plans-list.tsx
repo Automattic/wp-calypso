@@ -324,6 +324,7 @@ import {
 	FEATURE_PREMIUM_CONTENT_JP,
 	FEATURE_ONE_CLICK_RESTORE_V2,
 	FEATURE_SITE_ACTIVITY_LOG_JP,
+	FEATURE_DONATIONS_AND_TIPS_JP,
 	FEATURE_CLOUD_CRITICAL_CSS,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
@@ -388,6 +389,7 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	TYPE_WOOEXPRESS_SMALL,
 	TYPE_WOOEXPRESS_MEDIUM,
 	FEATURE_PREMIUM_STORE_THEMES,
@@ -408,7 +410,6 @@ import {
 	FEATURE_SHIPPING_INTEGRATIONS,
 	FEATURE_THE_READER,
 } from './constants';
-import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
 	BillingTerm,
 	Plan,
@@ -534,6 +535,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SECURITY_BRUTE_FORCE,
 		FEATURE_SMART_REDIRECTS,
 		FEATURE_ALWAYS_ONLINE,
+		FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	],
 
 	get2023PlanComparisonFeatureOverride: () => [
@@ -556,12 +558,15 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SECURITY_DDOS,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
+		FEATURE_DONATIONS_AND_TIPS_JP,
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
 		FEATURE_CONTACT_FORM_JP,
 	],
 	get2023PlanComparisonJetpackFeatureOverride: () => [
+		FEATURE_PAID_SUBSCRIBERS_JP,
+		FEATURE_DONATIONS_AND_TIPS_JP,
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
 		FEATURE_CONTACT_FORM_JP,
@@ -572,6 +577,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getNewsletterSignupFeatures: () => [
 		FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+		FEATURE_PREMIUM_CONTENT_JP,
 		FEATURE_NEWSLETTERS_RSS,
 		FEATURE_UNLIMITED_EMAILS,
 		FEATURE_STATS_JP,
@@ -762,6 +768,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
+			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		] ),
 	getSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
@@ -790,11 +797,9 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_SUPPORT_EMAIL,
+		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
-	get2023PricingGridSignupJetpackFeatures: () => [
-		FEATURE_PAID_SUBSCRIBERS_JP,
-		FEATURE_PREMIUM_CONTENT_JP,
-	],
+	get2023PricingGridSignupJetpackFeatures: () => [ FEATURE_PREMIUM_CONTENT_JP ],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_6GB_STORAGE ],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getNewsletterDescription: () =>
@@ -804,8 +809,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
-		FEATURE_PREMIUM_CONTENT_JP,
-		FEATURE_PAID_SUBSCRIBERS_JP,
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
@@ -872,14 +875,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	} ),
 } );
 
-const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
-
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
-	getTitle: () =>
-		is2023OnboardingPricingGrid ? i18n.translate( 'Commerce' ) : i18n.translate( 'eCommerce' ),
+	getTitle: () => i18n.translate( 'Commerce' ),
 	getAudience: () => i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
@@ -933,6 +933,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 			FEATURE_ECOMMERCE_MARKETING,
 			FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
+			FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_200GB_STORAGE,
@@ -992,6 +993,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STREAMLINED_CHECKOUT,
 		FEATURE_SELL_60_COUNTRIES,
 		FEATURE_SHIPPING_INTEGRATIONS,
+		FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
@@ -1259,6 +1261,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REPUBLICIZE,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
+			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -1350,6 +1353,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
 		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_VIDEOPRESS_JP,
@@ -1456,6 +1460,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_UPLOAD_THEMES,
 			FEATURE_SFTP_DATABASE,
 			FEATURE_NO_BRANDING,
+			FEATURE_PAYMENT_TRANSACTION_FEES_2,
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_200GB_STORAGE,
@@ -1512,6 +1517,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_STAGING_SITES,
 		FEATURE_WP_UPDATES,
 		FEATURE_MULTI_SITE,
+		FEATURE_PAYMENT_TRANSACTION_FEES_2,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_REALTIME_BACKUPS_JP,

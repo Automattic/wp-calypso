@@ -57,6 +57,11 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
+	// Do not limit Global Styles on self-hosted Jetpack sites.
+	if ( wpcom_global_styles_is_self_hosted_site( $blog_id ) ) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -95,6 +100,20 @@ function wpcom_global_styles_has_blog_sticker( $blog_sticker, $blog_id ) {
 		return true;
 	}
 	return false;
+}
+
+/**
+ * Wrapper to test whether a blog is a self-hosted site
+ *
+ * @param int $blog_id The WPCOM blog ID.
+ * @return bool Whether the site has the blog sticker.
+ */
+function wpcom_global_styles_is_self_hosted_site( $blog_id ) {
+	if ( ! function_exists( 'is_jetpack_site' ) || ! function_exists( 'is_blog_atomic' ) ) {
+		return true;
+	}
+
+	return is_jetpack_site( $blog_id ) && ! is_blog_atomic( get_blog_details( $blog_id ) );
 }
 
 /**

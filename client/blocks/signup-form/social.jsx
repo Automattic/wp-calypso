@@ -13,6 +13,7 @@ import { isWpccFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import SocialSignupToS from './social-signup-tos';
 
 class SocialSignupForm extends Component {
@@ -187,7 +188,9 @@ export default connect(
 	( state ) => ( {
 		currentRoute: getCurrentRoute( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
-		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+		isWoo:
+			isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
+			isWooCommerceCoreProfilerFlow( state ),
 	} ),
 	{ recordTracksEvent }
 )( localize( SocialSignupForm ) );

@@ -1,0 +1,96 @@
+@import "@automattic/color-studio/dist/color-variables";
+
+.subscriptions-ellipsis-menu__popover {
+	outline: none;
+	min-width: 305px;
+
+	&.popover {
+		.popover__inner {
+			border: none;
+			box-shadow: 0 3px 8px rgba($studio-black, 0.12), 0 3px 1px rgba($studio-black, 0.04);
+			padding: 21px;
+			text-align: left;
+		}
+	}
+
+	.delivery-frequency-input__control,
+	.subscriptions-ellipsis-menu__item-button {
+		&.is-loading {
+			cursor: default;
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
+
+	.subscriptions-ellipsis-menu__item-button {
+		font-size: $font-body-small;
+		line-height: $font-title-small;
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		width: 100%;
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			color: $studio-blue-50;
+
+			.subscriptions-ellipsis-menu__item-icon {
+				fill: $studio-blue-50;
+			}
+		}
+	}
+
+	.subscriptions-ellipsis-menu__item-icon {
+		fill: $studio-gray-50;
+	}
+
+	.settings-popover__item-label {
+		margin-bottom: 8px;
+		text-align: left;
+	}
+
+	.segmented-control__link {
+		padding-top: 10px;
+		padding-bottom: 10px;
+		line-height: $font-body;
+	}
+
+	.setting-item__hint {
+		width: 212px;
+	}
+
+	.unsubscribe-button.components-button.has-icon,
+	.resubscribe-button.components-button.has-icon {
+		height: auto;
+		padding: 0;
+		font-size: $font-body-small;
+		line-height: $font-title-small;
+	}
+}
+
+$rotateOnOpenDeg: 90deg;
+
+.subscriptions-ellipsis-menu {
+	height: 24px;
+
+	&__toggle {
+		cursor: pointer;
+
+
+		.gridicons-ellipsis {
+			transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		}
+
+		&.has-vertical-toggle:not(.is-popover-visible) .gridicons-ellipsis {
+			transform: rotate(90deg);
+		}
+		&.has-vertical-toggle.is-popover-visible .gridicons-ellipsis {
+			transform: rotate(180deg);
+		}
+
+		&:not(.has-vertical-toggle).is-popover-visible .gridicons-ellipsis {
+			transform: rotate(90deg);
+		}
+	}
+}

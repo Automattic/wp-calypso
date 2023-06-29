@@ -3,7 +3,6 @@ import { dispatch, select, subscribe } from '@wordpress/data';
 import { render } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close, globe, Icon } from '@wordpress/icons';
-import useSiteIntent from '../../dotcom-fse/lib/site-intent/use-site-intent';
 
 import './domain-upsell-callout.scss';
 
@@ -35,12 +34,6 @@ const shouldShowDomainUpsell = () => {
 };
 
 const DomainUpsellCallout = () => {
-	const { siteIntent: intent, siteIntentFetched: intentFetched } = useSiteIntent();
-
-	if ( ! intentFetched || intent ) {
-		return;
-	}
-
 	const siteSlug = window.location.hostname;
 	const target = '_parent';
 	const trackEventView = 'calypso_block_editor_domain_upsell_callout_view';

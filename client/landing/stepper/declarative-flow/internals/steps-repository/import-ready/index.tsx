@@ -29,7 +29,7 @@ const ImportReady: Step = function ImportStep( props ) {
 	/**
 	 ↓ Methods
 	 */
-	function goToImporterPage() {
+	const goToImporterPage = () => {
 		const url = getFinalImporterUrl(
 			siteSlug as string,
 			urlData.url,
@@ -39,7 +39,7 @@ const ImportReady: Step = function ImportStep( props ) {
 		);
 
 		navigation.submit?.( { url, platform: urlData.platform } );
-	}
+	};
 
 	function goToHomeStep() {
 		navigation.goToStep?.( BASE_ROUTE );

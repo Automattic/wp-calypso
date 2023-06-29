@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/colors";
 @import "../../../sensei-variables";
 
-.sensei {
+.sensei:not(.intro) {
 	.signup-header {
 		display: none;
 	}

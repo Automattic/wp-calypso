@@ -36,8 +36,12 @@ type TranslateFunc = ReturnType< typeof useTranslate >;
 function getButtonText( props: Partial< Props >, translate: TranslateFunc ): TranslateResult {
 	const { isCurrentPlan, plan } = props;
 
-	const planTitle = plan?.getTitle();
-	const planSlug = plan?.getStoreSlug() || '';
+	if ( ! plan ) {
+		return translate( 'Start' );
+	}
+
+	const planTitle = plan.getTitle();
+	const planSlug = plan.getStoreSlug();
 
 	if ( [ PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ].includes( planSlug ) ) {
 		return 'en' === i18n.getLocaleSlug() || i18n.hasTranslation( 'Choose Pro' )
@@ -53,10 +57,8 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 		return props.canPurchase ? translate( 'Manage plan' ) : translate( 'View plan' );
 	}
 
-	return translate( 'Start with %(plan)s', {
-		args: {
-			plan: planTitle,
-		},
+	return translate( 'Start with %(planTitle)s', {
+		args: { planTitle },
 	} );
 }
 

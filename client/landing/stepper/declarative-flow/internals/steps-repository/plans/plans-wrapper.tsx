@@ -2,7 +2,6 @@
 import {
 	getPlan,
 	PLAN_FREE,
-	is2023PricingGridActivePage,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -49,7 +48,6 @@ interface Props {
 	flowName: string | null;
 	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
-	is2023PricingGridVisible: boolean;
 	hostingFlow: boolean;
 }
 
@@ -169,7 +167,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ onSelectPlan }
-					showFAQ={ false }
 					domainName={ getDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
@@ -179,7 +176,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					is2023PricingGridVisible={ props.is2023PricingGridVisible }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 				/>
 			</div>
@@ -223,6 +219,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return;
 		}
 
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate( 'Welcome to the best place for your WordPress website.' );
+		}
+
 		if ( ! hideFreePlan ) {
 			return translate(
 				`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
@@ -232,7 +232,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 		return;
 	};
-	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
 	const plansFeaturesSelection = () => {
 		const { flowName } = props;
@@ -250,8 +249,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					shouldHideNavButtons={ true }
 					fallbackHeaderText={ fallbackHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
-					isWideLayout={ ! is2023PricingGridVisible }
-					isExtraWideLayout={ is2023PricingGridVisible }
+					isWideLayout={ false }
+					isExtraWideLayout={ true }
 					stepContent={ plansFeaturesList() }
 					allowBackFirstStep={ false }
 				/>
@@ -262,8 +261,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const classes = classNames( 'plans-step', {
 		'in-vertically-scrolled-plans-experiment': isInVerticalScrollingPlansExperiment,
 		'has-no-sidebar': true,
-		'is-wide-layout': ! is2023PricingGridVisible,
-		'is-extra-wide-layout': is2023PricingGridVisible,
+		'is-wide-layout': false,
+		'is-extra-wide-layout': true,
 	} );
 
 	return (

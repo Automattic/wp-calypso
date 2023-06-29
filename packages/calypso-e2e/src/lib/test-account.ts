@@ -8,6 +8,7 @@ import { EmailClient } from '../email-client';
 import envVariables from '../env-variables';
 import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
+import { SidebarComponent } from './components/sidebar-component';
 import { LoginPage } from './pages/login-page';
 import type { TestAccountCredentials } from '../secrets';
 
@@ -34,7 +35,10 @@ export class TestAccount {
 	 * @param {Page} page Page object.
 	 * @param {string} [url] URL to expect once authenticated and redirections are finished.
 	 */
-	async authenticate( page: Page, { url }: { url?: string | RegExp } = {} ): Promise< void > {
+	async authenticate(
+		page: Page,
+		{ url, waitUntilStable }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
+	): Promise< void > {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
 
@@ -49,6 +53,10 @@ export class TestAccount {
 
 		if ( url ) {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
+		}
+		if ( waitUntilStable ) {
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.waitForSidebarInitialization();
 		}
 	}
 

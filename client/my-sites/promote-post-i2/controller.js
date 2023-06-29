@@ -1,4 +1,5 @@
 import BlazePressWidget from 'calypso/components/blazepress-widget';
+import CampaignItemPage from 'calypso/my-sites/promote-post-i2/components/campaign-item-page';
 import PromotedPostsRedesignI2 from 'calypso/my-sites/promote-post-i2/main';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -6,6 +7,12 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export const promotedPosts = ( context, next ) => {
 	const { tab } = context.params;
 	context.primary = <PromotedPostsRedesignI2 tab={ tab } />;
+	next();
+};
+
+export const campaignDetails = ( context, next ) => {
+	const { campaignId } = context.params;
+	context.primary = <CampaignItemPage campaignId={ campaignId } />;
 	next();
 };
 

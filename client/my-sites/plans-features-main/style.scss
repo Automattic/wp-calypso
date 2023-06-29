@@ -99,18 +99,6 @@
 }
 
 // Required additional specificity
-.plans-features-main .plans-features-main__happychat-button {
-	color: var(--color-primary);
-	font-weight: 400;
-	padding: 0;
-	text-decoration: underline;
-
-	&:hover,
-	&:focus {
-		color: var(--color-primary);
-	}
-}
-
 .plans-features-main__banner {
 	text-align: center;
 	padding: 5px 0;

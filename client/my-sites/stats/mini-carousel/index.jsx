@@ -1,15 +1,18 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import YoastLogo from 'calypso/assets/images/icons/yoast-logo.svg';
+import GoogleAnalyticsLogo from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import writePost from 'calypso/assets/images/onboarding/site-options.svg';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import DotPager from 'calypso/components/dot-pager';
 import { useHasNeverPublishedPost } from 'calypso/data/stats/use-has-never-published-post';
 import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MiniCarouselBlock from './mini-carousel-block';
@@ -29,6 +32,9 @@ const EVENT_PRIVATE_SITE_BANNER_DISMISS = 'calypso_stats_private_site_banner_dis
 const EVENT_NO_CONTENT_BANNER_VIEW = 'calypso_stats_no_content_banner_view';
 const EVENT_NO_CONTENT_BANNER_CLICK = 'calypso_stats_no_content_banner_click';
 const EVENT_NO_CONTENT_BANNER_DISMISS = 'calypso_stats_no_content_banner_dismiss';
+const EVENT_GOOGLE_ANALYTICS_BANNER_VIEW = 'calypso_stats_google_analytics_banner_view';
+const EVENT_GOOGLE_ANALYTICS_BANNER_CLICK = 'calypso_stats_google_analytics_banner_click';
+const EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS = 'calypso_stats_google_analytics_banner_dismiss';
 
 const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -41,6 +47,10 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
 	);
+
+	const currentPlanSlug = useSelector( ( state ) =>
+		getCurrentPlan( state, selectedSiteId )
+	)?.productSlug;
 
 	// Keep a replica of the pager index state.
 	// TODO: Figure out an approach that doesn't require replicating state value from DotPager.
@@ -68,14 +78,25 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const showYoastPromo =
 		! useSelector( isBlockDismissed( EVENT_YOAST_PROMO_DISMISS ) ) && ! jetpackNonAtomic;
 
+	const showGoogleAnalyticsPromo =
+		! useSelector( isBlockDismissed( EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS ) ) &&
+		( isFreePlan( currentPlanSlug ) || isPersonalPlan( currentPlanSlug ) );
+
 	const viewEvents = useMemo( () => {
 		const events = [];
 		isSitePrivate && events.push( EVENT_PRIVATE_SITE_BANNER_VIEW );
 		showWriteAPostBanner && events.push( EVENT_NO_CONTENT_BANNER_VIEW );
 		showBlazePromo && events.push( EVENT_TRAFFIC_BLAZE_PROMO_VIEW );
 		showYoastPromo && events.push( EVENT_YOAST_PROMO_VIEW );
+		showGoogleAnalyticsPromo && events.push( EVENT_GOOGLE_ANALYTICS_BANNER_VIEW );
 		return events;
-	}, [ isSitePrivate, showWriteAPostBanner, showBlazePromo, showYoastPromo ] );
+	}, [
+		isSitePrivate,
+		showWriteAPostBanner,
+		showBlazePromo,
+		showYoastPromo,
+		showGoogleAnalyticsPromo,
+	] );
 
 	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
@@ -161,12 +182,34 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 		);
 	}
 
+	if ( showGoogleAnalyticsPromo ) {
+		blocks.push(
+			<MiniCarouselBlock
+				clickEvent={ EVENT_GOOGLE_ANALYTICS_BANNER_CLICK }
+				dismissEvent={ EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS }
+				image={ <img src={ GoogleAnalyticsLogo } alt="" width={ 45 } height={ 45 } /> }
+				headerText={ translate( 'Connect your site to Google Analytics' ) }
+				contentText={ translate(
+					'Linking Google Analytics to your account is effortless with our Premium plan – no coding required. Gain valuable insights in seconds.'
+				) }
+				ctaText={ translate( 'Get Premium' ) }
+				href={ `/checkout/premium/${ slug || '' }` }
+				key="google-analytics"
+			/>
+		);
+	}
+
 	if ( blocks.length === 0 ) {
 		return null;
 	}
 
 	return (
-		<DotPager className="mini-carousel" hasDynamicHeight onPageSelected={ pagerDidSelectPage }>
+		<DotPager
+			className="mini-carousel"
+			hasDynamicHeight
+			onPageSelected={ pagerDidSelectPage }
+			rotateTime={ 5000 }
+		>
 			{ blocks }
 		</DotPager>
 	);

@@ -97,7 +97,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					handleShowCancel,
 					handleShowTopBar,
 					localeSlug,
-					config.isEnabled( 'promote-post/redesign-i2' )
+					config.isEnabled( 'promote-post/widget-i2' )
 				);
 				setIsLoading( false );
 			} )();

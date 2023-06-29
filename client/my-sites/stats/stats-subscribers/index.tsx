@@ -6,7 +6,6 @@ import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -14,13 +13,21 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import StatsPageHeader from '../stats-page-header';
+import PageViewTracker from '../stats-page-view-tracker';
 import Reach from '../stats-reach';
 import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
+import SubscribersHighlightSection from '../stats-subscribers-highlight-section';
 import SubscribersOverview from '../stats-subscribers-overview';
-import SubscribersHighlightSection from './subscribers-highlight-section';
+import type { Moment } from 'moment';
 
 interface StatsSubscribersPageProps {
-	period: PeriodType;
+	period: {
+		// Subscribers page only use this period but other properties and this format is needed for StatsModule to construct a URL to email's summary page
+		period: PeriodType;
+		key: string;
+		startOf: Moment;
+		endOf: Moment;
+	};
 }
 
 const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
@@ -31,7 +38,9 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	// Run-time configuration.
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const showEmailSection = config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats;
+	const isChartVisible = config.isEnabled( 'stats/subscribers-chart-section' );
+
+	const today = new Date().toISOString().slice( 0, 10 );
 
 	const statsModuleListClass = classNames(
 		'stats__module-list stats__module--unified',
@@ -46,7 +55,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	// Necessary to properly configure the fixed navigation headers.
 	// sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' );
 
-	// TODO: should be refactored into separate components
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
@@ -56,21 +64,29 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					page="subscribers"
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				/>
+				{ siteId && (
+					<div>
+						<DomainTip
+							siteId={ siteId }
+							event="stats_subscribers_domain"
+							vendor={ getSuggestionsVendor() }
+						/>
+					</div>
+				) }
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				<SubscribersHighlightSection siteId={ siteId } />
-				{ siteId && (
-					<DomainTip
-						siteId={ siteId }
-						event="stats_subscribers_domain"
-						vendor={ getSuggestionsVendor() }
-					/>
+				{ isChartVisible && (
+					<>
+						<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period.period } />
+						<SubscribersOverview siteId={ siteId } />
+					</>
 				) }
-				<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period } />
-				<SubscribersOverview siteId={ siteId } />
 				<div className={ statsModuleListClass }>
 					<Followers path="followers" />
 					<Reach />
-					{ showEmailSection && <StatsModuleEmails /> }
+					{ ! isOdysseyStats && period && (
+						<StatsModuleEmails period={ period } query={ { period, date: today } } />
+					) }
 				</div>
 				<JetpackColophon />
 			</div>

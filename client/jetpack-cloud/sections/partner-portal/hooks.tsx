@@ -326,8 +326,8 @@ export function useIssueMultipleLicenses(
 				.filter( ( license ) => license );
 
 			if ( assignedLicenses.length > 0 ) {
-				const initialLicenseList = assignedLicenses.slice( 0, -1 );
-				const lastLicenseItem = assignedLicenses.slice( -1 )[ 0 ];
+				const initialLicenseList = assignedLicenses.slice( 0, -1 ) as string[];
+				const lastLicenseItem = assignedLicenses.slice( -1 )[ 0 ] as string;
 
 				const commaCharacter = translate( ',', {
 					comment:
@@ -549,6 +549,9 @@ export function useProductDescription( productSlug: string ): {
 				break;
 			case 'jetpack-search':
 				description = translate( 'Help your site visitors find answers instantly.' );
+				break;
+			case 'jetpack-ai':
+				description = translate( 'Unleash the power of AI to boost your content creation.' );
 				break;
 		}
 

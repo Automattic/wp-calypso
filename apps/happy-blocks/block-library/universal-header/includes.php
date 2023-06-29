@@ -27,13 +27,9 @@ $happy_blocks_header_css = happy_blocks_get_asset( is_rtl() ? 'index.rtl.css' : 
 wp_enqueue_style( 'happy-blocks-search-style', $happy_blocks_header_css['path'], array(), $happy_blocks_header_css['version'] );
 wp_enqueue_script( 'happy-blocks-search-script', $happy_blocks_header_js['path'], array(), $happy_blocks_header_js['version'], true );
 
-// Only show WPCom nav bar for logged out users.
-if ( ! is_user_logged_in() ) {
-	$wpcom_nav_bar_js  = happy_blocks_get_asset( 'view.js' );
-	$wpcom_nav_bar_css = happy_blocks_get_asset( is_rtl() ? 'view.rtl.css' : 'view.css' );
+// Including view.js and view.css, we are adding the styling and functionality of the wpcom nav bar.
+$wpcom_nav_bar_js  = happy_blocks_get_asset( 'view.js' );
+$wpcom_nav_bar_css = happy_blocks_get_asset( is_rtl() ? 'view.rtl.css' : 'view.css' );
 
-	wp_enqueue_style( 'happy-blocks-search-style_logged_out', $wpcom_nav_bar_css['path'], array(), $wpcom_nav_bar_css['version'] );
-	wp_enqueue_script( 'happy-blocks-search-script_logged_out', $wpcom_nav_bar_js['path'], array(), $wpcom_nav_bar_js['version'], true );
-}
-
-
+wp_enqueue_style( 'happy-blocks-search-style_logged_out', $wpcom_nav_bar_css['path'], array(), $wpcom_nav_bar_css['version'] );
+wp_enqueue_script( 'happy-blocks-search-script_logged_out', $wpcom_nav_bar_js['path'], array(), $wpcom_nav_bar_js['version'], true );

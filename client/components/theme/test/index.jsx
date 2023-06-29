@@ -8,6 +8,7 @@ import { Theme } from '../';
 
 jest.mock( 'calypso/components/popover-menu', () => 'components--popover--menu' );
 jest.mock( 'calypso/components/popover-menu/item', () => 'components--popover--menu-item' );
+jest.mock( 'calypso/components/theme-type-badge', () => 'components--theme-type-badge' );
 
 describe( 'Theme', () => {
 	const props = {

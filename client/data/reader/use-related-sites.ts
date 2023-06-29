@@ -59,17 +59,26 @@ export const useRelatedSites = (
 	postId?: number
 ): UseQueryResult< RelatedSite[] | null > => {
 	const SITE_RECOMMENDATIONS_COUNT = 5;
-	let path = `/read/site/${ siteId }/sites/related?size_global=${ SITE_RECOMMENDATIONS_COUNT }&http_envelope=1`;
-	if ( postId && postId > 0 ) {
-		path += `&post_id=${ postId }`;
-	}
-	return useQuery(
-		[ `related-sites-${ SITE_RECOMMENDATIONS_COUNT }`, siteId ],
-		() => wpcom.req.get( { path: path, apiNamespace: 'rest/v1.2' } ),
-		{
-			enabled: !! siteId,
-			staleTime: 3600000, // 1 hour
-			select: selectRelatedSites,
-		}
-	);
+	return useQuery( {
+		queryKey: [ `related-sites`, SITE_RECOMMENDATIONS_COUNT, siteId, postId ],
+		queryFn: () =>
+			wpcom.req.get(
+				{
+					path: `/read/site/${ siteId }/sites/related`,
+					apiNamespace: 'rest/v1.2',
+				},
+				{
+					size_global: SITE_RECOMMENDATIONS_COUNT,
+					post_id: postId,
+					http_envelope: 1,
+				}
+			),
+		enabled: !! siteId,
+		staleTime: 3600000, // 1 hour
+		select: selectRelatedSites,
+		retry: false,
+		refetchOnMount: false,
+		retryOnMount: false,
+		refetchOnWindowFocus: false,
+	} );
 };

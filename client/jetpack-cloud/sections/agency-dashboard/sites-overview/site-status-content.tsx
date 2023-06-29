@@ -261,15 +261,16 @@ export default function SiteStatusContent( {
 
 		switch ( status ) {
 			case 'critical': {
-				content = <div className="sites-overview__critical">{ value }</div>;
+				// We know value is a string because we've handled the other types of non-string values above.
+				content = <div className="sites-overview__critical">{ value as string }</div>;
 				break;
 			}
 			case 'failed': {
-				content = <div className="sites-overview__failed">{ value }</div>;
+				content = <div className="sites-overview__failed">{ value as string }</div>;
 				break;
 			}
 			case 'warning': {
-				content = <div className="sites-overview__warning">{ value }</div>;
+				content = <div className="sites-overview__warning">{ value as string }</div>;
 				break;
 			}
 			case 'success': {

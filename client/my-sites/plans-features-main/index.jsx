@@ -26,9 +26,6 @@ import {
 	getPlanPath,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
-	TITAN_MAIL_MONTHLY_SLUG,
-	PLAN_FREE,
-	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -47,19 +44,10 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
-import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import PlanFeatures from 'calypso/my-sites/plan-features';
-import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
-import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import WpcomFAQ from 'calypso/my-sites/plans-features-main/components/wpcom-faq';
-import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
-import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
-import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -137,7 +125,7 @@ const OnboardingPricingGrid2023 = ( props ) => {
 		isLandingPage,
 		isLaunchPage,
 		onUpgradeClick,
-		plans,
+		plans, // We need all the plans in order to show the correct features in the plan comparison table
 		flowName,
 		redirectTo,
 		visiblePlans,
@@ -193,30 +181,14 @@ export class PlansFeaturesMain extends Component {
 		isFreePlanPaidDomainDialogOpen: false,
 	};
 
-	componentDidUpdate( prevProps ) {
-		/**
-		 * Happychat does not update with the selected site right now :(
-		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
-		 * page, for example between a Jetpack and Simple site.
-		 *
-		 * TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
-		 */
-		const { siteId } = this.props;
-		const { siteId: prevSiteId } = prevProps;
-		if ( siteId && siteId !== prevSiteId ) {
-			this.props.selectHappychatSiteId( siteId );
-		}
-	}
-
 	isDisplayingPlansNeededForFeature() {
-		const { selectedFeature, selectedPlan, previousRoute } = this.props;
+		const { selectedFeature, selectedPlan, previousRoute, planTypeSelector } = this.props;
 
 		if (
 			isValidFeatureKey( selectedFeature ) &&
 			getPlan( selectedPlan ) &&
 			! isPersonalPlan( selectedPlan ) &&
-			( this.getKindOfPlanTypeSelector( this.props ) === 'interval' ||
-				! previousRoute.startsWith( '/plans/' ) )
+			( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) )
 		) {
 			return true;
 		}
@@ -230,22 +202,27 @@ export class PlansFeaturesMain extends Component {
 
 	onUpgradeClick = ( cartItemForPlan ) => {
 		const { domainName, onUpgradeClick, siteSlug, flowName } = this.props;
+
 		// The `cartItemForPlan` var is null if the free plan is selected
 		if ( cartItemForPlan == null && 'onboarding' === flowName && domainName ) {
 			this.toggleIsFreePlanPaidDomainDialogOpen();
 			return;
 		}
+
 		if ( onUpgradeClick ) {
 			onUpgradeClick( cartItemForPlan );
 			return;
 		}
+
 		const planPath = getPlanPath( cartItemForPlan?.product_slug ) || '';
 		const checkoutUrlWithArgs = `/checkout/${ siteSlug }/${ planPath }`;
+
 		page( checkoutUrlWithArgs );
 	};
 
 	renderFreePlanPaidDomainModal = () => {
 		const { domainName, replacePaidDomainWithFreeDomain, onUpgradeClick } = this.props;
+
 		return (
 			<FreePlanPaidDomainDialog
 				domainName={ domainName }
@@ -263,129 +240,6 @@ export class PlansFeaturesMain extends Component {
 		);
 	};
 
-	// TODO:
-	// These legacy components should also be loaded in async.
-	renderLegacyPricingGrid( plans, visiblePlans ) {
-		const {
-			basePlansPath,
-			busyOnUpgradeClick,
-			customerType,
-			disableBloggerPlanWithNonBlogDomain,
-			domainName,
-			isInSignup,
-			isJetpack,
-			isLandingPage,
-			isLaunchPage,
-			isFAQCondensedExperiment,
-			isReskinned,
-			onUpgradeClick,
-			selectedFeature,
-			selectedPlan,
-			shouldShowPlansFeatureComparison,
-			withDiscount,
-			discountEndDate,
-			redirectTo,
-			siteId,
-			plansWithScroll,
-			isInVerticalScrollingPlansExperiment,
-			redirectToAddDomainFlow,
-			hidePlanTypeSelector,
-			flowName,
-			isPlansInsideStepper,
-		} = this.props;
-
-		if ( shouldShowPlansFeatureComparison ) {
-			return (
-				<div
-					className={ classNames(
-						'plans-features-main__group',
-						'is-wpcom',
-						`is-customer-${ customerType }`,
-						{
-							'is-scrollable': plansWithScroll,
-						}
-					) }
-					data-e2e-plans="wpcom"
-				>
-					<PlanFeaturesComparison
-						basePlansPath={ basePlansPath }
-						domainName={ domainName }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						isLaunchPage={ isLaunchPage }
-						onUpgradeClick={ onUpgradeClick }
-						plans={ plans }
-						flowName={ flowName }
-						redirectTo={ redirectTo }
-						visiblePlans={ visiblePlans }
-						selectedFeature={ selectedFeature }
-						selectedPlan={ selectedPlan }
-						withDiscount={ withDiscount }
-						discountEndDate={ discountEndDate }
-						withScroll={ plansWithScroll }
-						popularPlanSpec={ getPopularPlanSpec( {
-							flowName,
-							customerType,
-							isJetpack,
-							availablePlans: visiblePlans,
-						} ) }
-						siteId={ siteId }
-						isReskinned={ isReskinned }
-						isFAQCondensedExperiment={ isFAQCondensedExperiment }
-						isPlansInsideStepper={ isPlansInsideStepper }
-						busyOnUpgradeClick={ busyOnUpgradeClick }
-					/>
-				</div>
-			);
-		}
-
-		return (
-			<div
-				className={ classNames(
-					'plans-features-main__group',
-					'is-wpcom',
-					`is-customer-${ customerType }`,
-					{
-						'is-scrollable': plansWithScroll,
-					}
-				) }
-				data-e2e-plans="wpcom"
-			>
-				<PlanFeatures
-					redirectToAddDomainFlow={ redirectToAddDomainFlow }
-					hidePlanTypeSelector={ hidePlanTypeSelector }
-					basePlansPath={ basePlansPath }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-					domainName={ domainName }
-					nonDotBlogDomains={ this.filterDotBlogDomains() }
-					isInSignup={ isInSignup }
-					isLandingPage={ isLandingPage }
-					isLaunchPage={ isLaunchPage }
-					onUpgradeClick={ onUpgradeClick }
-					plans={ plans }
-					redirectTo={ redirectTo }
-					visiblePlans={ visiblePlans }
-					selectedFeature={ selectedFeature }
-					selectedPlan={ selectedPlan }
-					withDiscount={ withDiscount }
-					discountEndDate={ discountEndDate }
-					withScroll={ plansWithScroll }
-					popularPlanSpec={ getPopularPlanSpec( {
-						flowName,
-						customerType,
-						isJetpack,
-						availablePlans: visiblePlans,
-					} ) }
-					flowName={ flowName }
-					siteId={ siteId }
-					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
-					isPlansInsideStepper={ isPlansInsideStepper }
-				/>
-			</div>
-		);
-	}
-
 	getPlanBillingPeriod( intervalType, defaultValue = null ) {
 		const plans = {
 			monthly: TERM_MONTHLY,
@@ -398,15 +252,13 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getDefaultPlanTypes() {
-		const { selectedPlan, sitePlanSlug, hideEnterprisePlan, is2023PricingGridVisible } = this.props;
-
+		const { selectedPlan, sitePlanSlug, hideEnterprisePlan } = this.props;
 		const isBloggerAvailable = isBloggerPlan( selectedPlan ) || isBloggerPlan( sitePlanSlug );
-
 		// TODO:
 		// this should fall into the processing function for the visible plans
 		// however, the Enterprise plan isn't a real plan and lack of some required support
 		// from the utility functions right now.
-		const isEnterpriseAvailable = is2023PricingGridVisible && ! hideEnterprisePlan;
+		const isEnterpriseAvailable = ! hideEnterprisePlan;
 
 		return [
 			TYPE_FREE,
@@ -448,13 +300,7 @@ export class PlansFeaturesMain extends Component {
 
 	getVisiblePlansForPlanFeatures( availablePlans ) {
 		const {
-			customerType,
 			selectedPlan,
-			plansWithScroll,
-			isAllPaidPlansShown,
-			isInMarketplace,
-			sitePlanSlug,
-			is2023PricingGridVisible,
 			hideFreePlan,
 			hidePersonalPlan,
 			hidePremiumPlan,
@@ -499,62 +345,18 @@ export class PlansFeaturesMain extends Component {
 			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 		}
 
-		if ( is2023PricingGridVisible ) {
-			plans = plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [
-					TYPE_FREE,
-					TYPE_PERSONAL,
-					TYPE_PREMIUM,
-					TYPE_BUSINESS,
-					TYPE_ECOMMERCE,
-					TYPE_ENTERPRISE_GRID_WPCOM,
-				] )
-			);
-
-			return plans;
-		}
-
-		if ( plansWithScroll ) {
-			return plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [
-					TYPE_BLOGGER,
-					TYPE_PERSONAL,
-					TYPE_PREMIUM,
-					TYPE_BUSINESS,
-					TYPE_ECOMMERCE,
-				] )
-			);
-		}
-
-		const withIntervalSelector = this.getKindOfPlanTypeSelector( this.props ) === 'interval';
-
-		if ( isInMarketplace ) {
-			// workaround to show free plan on both monthly/yearly toggle
-			if ( sitePlanSlug === PLAN_FREE && ! plans.includes( PLAN_FREE ) ) {
-				// elements are rendered in order, needs to be the first one
-				plans.unshift( PLAN_FREE );
-			}
-			return plans.filter(
-				( plan ) =>
-					plan === sitePlanSlug || isPlanOneOfType( plan, [ TYPE_BUSINESS, TYPE_ECOMMERCE ] )
-			);
-		}
-
-		if ( isAllPaidPlansShown || withIntervalSelector ) {
-			return plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
-			);
-		}
-
-		if ( customerType === 'personal' && this.isPersonalCustomerTypePlanVisible() ) {
-			return plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_BLOGGER, TYPE_PERSONAL, TYPE_PREMIUM ] )
-			);
-		}
-
-		return plans.filter( ( plan ) =>
-			isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
+		plans = plans.filter( ( plan ) =>
+			isPlanOneOfType( plan, [
+				TYPE_FREE,
+				TYPE_PERSONAL,
+				TYPE_PREMIUM,
+				TYPE_BUSINESS,
+				TYPE_ECOMMERCE,
+				TYPE_ENTERPRISE_GRID_WPCOM,
+			] )
 		);
+
+		return plans;
 	}
 
 	renderSecondaryFormattedHeader() {
@@ -587,74 +389,28 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
-	mayRenderFAQ() {
-		const { isInSignup, titanMonthlyRenewalCost, showFAQ } = this.props;
-
-		if ( ! showFAQ ) {
-			return;
-		}
-
-		if ( isInSignup ) {
-			return <PlanFAQ titanMonthlyRenewalCost={ titanMonthlyRenewalCost } />;
-		}
-
-		return <WpcomFAQ />;
-	}
-
-	getKindOfPlanTypeSelector( props ) {
-		return props.planTypeSelector;
-	}
-
-	renderPlansGrid( plans, visiblePlans ) {
-		return this.props.is2023PricingGridVisible ? (
-			<OnboardingPricingGrid2023
-				{ ...this.props }
-				plans={ plans }
-				visiblePlans={ visiblePlans }
-				onUpgradeClick={ this.onUpgradeClick }
-			/>
-		) : (
-			this.renderLegacyPricingGrid( plans, visiblePlans )
-		);
-	}
-
 	render() {
 		const {
 			siteId,
 			redirectToAddDomainFlow,
 			hidePlanTypeSelector,
-			is2023PricingGridVisible,
 			planTypeSelectorProps,
 			intervalType,
 			selectedPlan,
+			planTypeSelector,
+			planTypes,
 		} = this.props;
-
-		/*
-		 * We need to pass all the plans in order to show the correct features in the plan comparison table.
-		 * Pleas use the getVisiblePlansForPlanFeatures selector to filter out the plans that should not be visible.
-		 * we pass `visiblePlans` to its `plans` prop.
-		 */
 		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
 		const defaultPlanTypes = this.getDefaultPlanTypes();
-		const planTypes = this.props.planTypes || defaultPlanTypes;
-		let plans = this.getPlansFromTypes( planTypes, GROUP_WPCOM, term );
-		const filteredPlans = plans;
-
-		/*
-		 * We need to keep all the plans in the plans variable,
-		 * The filtered planTypes should be reflected in visible plans only.
-		 */
-		if ( is2023PricingGridVisible ) {
-			plans = this.getPlansFromTypes( defaultPlanTypes, GROUP_WPCOM, term );
-		}
-
-		const visiblePlans = this.getVisiblePlansForPlanFeatures( filteredPlans );
-
-		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
+		// We need all the plans in order to show the correct features in the plan comparison table
+		const plans = this.getPlansFromTypes( defaultPlanTypes, GROUP_WPCOM, term );
+		const visiblePlans = this.getVisiblePlansForPlanFeatures(
+			this.getPlansFromTypes( planTypes || defaultPlanTypes, GROUP_WPCOM, term )
+		);
 
 		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
 		let hidePlanSelector =
-			kindOfPlanTypeSelector === 'customer' && this.isDisplayingPlansNeededForFeature();
+			'customer' === planTypeSelector && this.isDisplayingPlansNeededForFeature();
 
 		// In the "purchase a plan and free domain" flow we do not want to show
 		// monthly plans because monthly plans do not come with a free domain.
@@ -664,14 +420,14 @@ export class PlansFeaturesMain extends Component {
 
 		return (
 			<div
-				className={ classNames( 'plans-features-main', {
-					'is-pricing-grid-2023-plans-features-main ': is2023PricingGridVisible,
-				} ) }
+				className={ classNames(
+					'plans-features-main',
+					'is-pricing-grid-2023-plans-features-main'
+				) }
 			>
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
-				<HappychatConnection />
 				<PlanNotice
 					visiblePlans={ visiblePlans }
 					siteId={ siteId }
@@ -685,27 +441,19 @@ export class PlansFeaturesMain extends Component {
 				{ ! hidePlanSelector && (
 					<PlanTypeSelector
 						{ ...planTypeSelectorProps }
-						kind={ kindOfPlanTypeSelector }
+						kind={ planTypeSelector }
 						plans={ visiblePlans }
 					/>
 				) }
 				{ this.state.isFreePlanPaidDomainDialogOpen && this.renderFreePlanPaidDomainModal() }
-				{ this.renderPlansGrid( plans, visiblePlans ) }
-				{ this.mayRenderFAQ() }
+				<OnboardingPricingGrid2023
+					{ ...this.props }
+					plans={ plans }
+					visiblePlans={ visiblePlans }
+					onUpgradeClick={ this.onUpgradeClick }
+				/>
 			</div>
 		);
-	}
-
-	filterDotBlogDomains() {
-		const domains = get( this.props, 'domains', [] );
-		return domains.filter( function ( domainInfo ) {
-			if ( domainInfo.type === 'WPCOM' ) {
-				return false;
-			}
-
-			const domainName = get( domainInfo, [ 'domain' ], '' );
-			return ! 'blog'.startsWith( getTld( domainName ) );
-		} );
 	}
 }
 
@@ -721,7 +469,6 @@ PlansFeaturesMain.propTypes = {
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly', '3yearly' ] ),
-	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	isStepperUpgradeFlow: PropTypes.bool,
@@ -729,7 +476,6 @@ PlansFeaturesMain.propTypes = {
 	redirectTo: PropTypes.string,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
-	showFAQ: PropTypes.bool,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 	isAllPaidPlansShown: PropTypes.bool,
@@ -748,8 +494,6 @@ PlansFeaturesMain.defaultProps = {
 	hidePremiumPlan: false,
 	hideEnterprisePlan: false,
 	intervalType: 'yearly',
-	isChatAvailable: false,
-	showFAQ: true,
 	siteId: null,
 	siteSlug: '',
 	plansWithScroll: false,
@@ -760,67 +504,55 @@ PlansFeaturesMain.defaultProps = {
 	isStepperUpgradeFlow: false,
 };
 
-export default connect(
-	( state, props ) => {
-		const siteId = get( props.site, [ 'ID' ] );
-		const sitePlan = getSitePlan( state, siteId );
-		const currentPlan = getCurrentPlan( state, siteId );
-		const currentPurchase = getByPurchaseId( state, currentPlan?.id );
-		const sitePlanSlug = sitePlan?.product_slug;
-		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
-		const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
-		const siteSlug = getSiteSlug( state, get( props.site, [ 'ID' ] ) );
+export default connect( ( state, props ) => {
+	const siteId = get( props.site, [ 'ID' ] );
+	const sitePlan = getSitePlan( state, siteId );
+	const currentPlan = getCurrentPlan( state, siteId );
+	const currentPurchase = getByPurchaseId( state, currentPlan?.id );
+	const sitePlanSlug = sitePlan?.product_slug;
+	const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
+	const siteSlug = getSiteSlug( state, get( props.site, [ 'ID' ] ) );
 
-		let customerType = chooseDefaultCustomerType( {
-			currentCustomerType: props.customerType,
-			selectedPlan: props.selectedPlan,
-			sitePlan,
-		} );
+	let customerType = chooseDefaultCustomerType( {
+		currentCustomerType: props.customerType,
+		selectedPlan: props.selectedPlan,
+		sitePlan,
+	} );
 
-		// Make sure the plans for the default customer type can be purchased.
-		if (
-			! props.customerType &&
-			customerType === 'personal' &&
-			! canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
-		) {
-			customerType = 'business';
-		}
-		const is2023PricingGridVisible =
-			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window );
-		const planTypeSelectorProps = {
-			basePlansPath: props.basePlansPath,
-			isStepperUpgradeFlow: props.isStepperUpgradeFlow,
-			isInSignup: props.isInSignup,
-			eligibleForWpcomMonthlyPlans: eligibleForWpcomMonthlyPlans,
-			isPlansInsideStepper: props.isPlansInsideStepper,
-			intervalType: props.intervalType,
-			customerType: customerType,
-			hidePersonalPlan: props.hidePersonalPlan,
-			siteSlug,
-			selectedPlan: props.selectedPlan,
-			selectedFeature: props.selectedFeature,
-		};
-
-		return {
-			isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
-			currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
-			customerType,
-			domains: getDomainsBySiteId( state, siteId ),
-			isChatAvailable: isHappychatAvailable( state ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isMultisite: isJetpackSiteMultiSite( state, siteId ),
-			previousRoute: getPreviousRoute( state ),
-			siteId,
-			siteSlug,
-			sitePlanSlug,
-			eligibleForWpcomMonthlyPlans,
-			titanMonthlyRenewalCost,
-			is2023PricingGridVisible,
-			showFAQ: !! props.showFAQ && ! is2023PricingGridVisible,
-			planTypeSelectorProps,
-		};
-	},
-	{
-		selectHappychatSiteId,
+	// Make sure the plans for the default customer type can be purchased.
+	if (
+		! props.customerType &&
+		customerType === 'personal' &&
+		! canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
+	) {
+		customerType = 'business';
 	}
-)( localize( PlansFeaturesMain ) );
+	const planTypeSelectorProps = {
+		basePlansPath: props.basePlansPath,
+		isStepperUpgradeFlow: props.isStepperUpgradeFlow,
+		isInSignup: props.isInSignup,
+		eligibleForWpcomMonthlyPlans: eligibleForWpcomMonthlyPlans,
+		isPlansInsideStepper: props.isPlansInsideStepper,
+		intervalType: props.intervalType,
+		customerType: customerType,
+		hidePersonalPlan: props.hidePersonalPlan,
+		siteSlug,
+		selectedPlan: props.selectedPlan,
+		selectedFeature: props.selectedFeature,
+	};
+
+	return {
+		isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
+		currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
+		customerType,
+		domains: getDomainsBySiteId( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isMultisite: isJetpackSiteMultiSite( state, siteId ),
+		previousRoute: getPreviousRoute( state ),
+		siteId,
+		siteSlug,
+		sitePlanSlug,
+		eligibleForWpcomMonthlyPlans,
+		planTypeSelectorProps,
+	};
+} )( localize( PlansFeaturesMain ) );

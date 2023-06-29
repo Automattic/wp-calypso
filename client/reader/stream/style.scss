@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 // Reader-specific tweaks to components
 
 // Overrides default 720px width
@@ -11,6 +13,19 @@
 		.reader__content,
 		.tag-stream__header {
 			max-width: 600px;
+		}
+
+		&.is-discover-stream {
+			.reader-tag-sidebar-recommended-sites {
+				.reader-subscription-list-item .follow-button__label,
+				.reader-subscription-list-item__settings-label {
+					display: none;
+				}
+
+				.reader-site-notification-settings__button-label {
+					display: none;
+				}
+			}
 		}
 	}
 }
@@ -590,6 +605,11 @@
 
 .reader__content {
 	position: relative;
+	width: 100%;
+
+	.stream__list {
+		width: 100%;
+	}
 }
 
 .stream__right-column {
@@ -691,7 +711,7 @@
 	.reader-tag-sidebar-related-tags,
 	.reader-tag-sidebar-related-sites {
 		h2 {
-			font-size: $font-body-small;
+			font-size: $font-body;
 			margin-bottom: 14px;
 		}
 	}
@@ -777,11 +797,30 @@
 	border-bottom: 1px solid var(--color-neutral-10);
 	box-shadow: none;
 	margin-bottom: 0;
+	margin-top: 60px;
 	padding-bottom: 0;
 
 	@include breakpoint-deprecated( ">480px" ) {
 		height: 58px;
 	}
+
+	// Add margin so that suggestions dont cover tabs on smaller devices.
+	@include break-mobile {
+		margin-top: 40px;
+	}
+
+	@include break-small {
+		margin-top: 20px;
+	}
+
+	@include break-medium {
+		margin-top: 0;
+	}
+}
+
+// Stop the sidebar from expanding too wide when shown in a 2 column layout.
+.stream__two-column .stream__right-column {
+	max-width: 270px;
 }
 
 .stream__header .section-nav-group {
@@ -851,5 +890,16 @@
 	.blogging-prompt__card,
 	.blogging-prompt__prompt-answers a {
 		border-radius: 6px; /* stylelint-disable-line scales/radii */
+	}
+}
+
+.is-reader-page .is-site-stream {
+	// Temporary, remove when site stream header is resigned and follow button moved to sidebar.
+	.stream__two-column {
+		border-top: 1px solid var(--color-neutral-10);
+	}
+
+	.reader-post-card.card:nth-child(2) {
+		border-top: none !important;
 	}
 }

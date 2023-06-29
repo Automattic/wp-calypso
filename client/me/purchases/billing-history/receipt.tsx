@@ -283,7 +283,7 @@ function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) 
 			<br />
 			{ translate( 'VAT #: %(vatCountry)s %(vatId)s', {
 				args: {
-					vatCountry: vatDetails.country,
+					vatCountry: vatDetails.country ?? '',
 					vatId: vatDetails.id,
 				},
 				comment: 'This is the user-supplied VAT number, format "UK 553557881".',
@@ -388,7 +388,7 @@ function EmptyReceiptDetails() {
 	// When the content of the text area is empty, hide the "Billing Details" label for printing.
 	const [ hideDetailsLabelOnPrint, setHideDetailsLabelOnPrint ] = useState( true );
 	const onChange = useCallback(
-		( e ) => {
+		( e: React.ChangeEvent< HTMLTextAreaElement > ) => {
 			const value = e.target.value.trim();
 			if ( hideDetailsLabelOnPrint && value.length > 0 ) {
 				setHideDetailsLabelOnPrint( false );

@@ -11,7 +11,7 @@ import { navigate } from 'calypso/lib/navigate';
 import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
 import P2InviteAcceptLoggedIn from 'calypso/my-sites/invites/p2/invite-accept-logged-in';
 import { acceptInvite } from 'calypso/state/invites/actions';
-
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import './style.scss';
 
 class InviteAcceptLoggedIn extends Component {
@@ -20,7 +20,7 @@ class InviteAcceptLoggedIn extends Component {
 	accept = () => {
 		this.setState( { submitting: true } );
 		this.props
-			.acceptInvite( this.props.invite )
+			.acceptInvite( this.props.invite, this.props.emailVerificationSecret )
 			.then( () => {
 				navigate( this.props.redirectTo );
 			} )
@@ -153,4 +153,9 @@ class InviteAcceptLoggedIn extends Component {
 	}
 }
 
-export default connect( null, { acceptInvite } )( localize( InviteAcceptLoggedIn ) );
+export default connect(
+	( state ) => ( {
+		emailVerificationSecret: getCurrentQueryArguments( state )?.email_verification_secret,
+	} ),
+	{ acceptInvite }
+)( localize( InviteAcceptLoggedIn ) );

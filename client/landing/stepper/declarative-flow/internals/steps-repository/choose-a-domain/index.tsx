@@ -14,6 +14,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -39,7 +40,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const [ isCartPendingUpdate, setIsCartPendingUpdate ] = useState( false );
 	const [ isCartPendingUpdateDomain, setIsCartPendingUpdateDomain ] =
 		useState< DomainSuggestion >();
-	const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
+	const site = useSite();
 
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
@@ -47,13 +48,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const onAddDomain = ( selectedDomain: any ) => {
 		setDomain( selectedDomain );
 		submit?.( { domain: selectedDomain } );
-	};
-
-	const getInitialSuggestion = function () {
-		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
-		const [ , strippedHostname ] =
-			String( siteSlug ).match( wpcomSubdomainWithRandomNumberSuffix ) || [];
-		return strippedHostname ?? String( siteSlug ).split( '.' )[ 0 ];
 	};
 
 	const onSkip = async () => {
@@ -103,10 +97,13 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const getBlogOnboardingFlowStepContent = () => {
+		const siteName = site?.name;
+		const domainSuggestion = siteName && siteName !== 'Site Title' ? siteName : '';
+
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
-					suggestion={ getInitialSuggestion() }
+					suggestion={ domainSuggestion }
 					domainsWithPlansOnly={ true }
 					onAddDomain={ submitWithDomain }
 					includeWordPressDotCom={ true }
@@ -222,10 +219,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					subHeaderText={
 						<>
 							{ __( 'Help your blog stand out with a custom domain. Not sure yet?' ) }
-							<button
-								className="button navigation-link step-container__navigation-link has-underline is-borderless"
-								onClick={ onSkip }
-							>
+							<button className="formatted-header__subtitle has-underline" onClick={ onSkip }>
 								{ __( 'Decide later.' ) }
 							</button>
 						</>

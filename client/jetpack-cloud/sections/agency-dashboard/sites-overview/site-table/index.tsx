@@ -1,4 +1,4 @@
-import { Icon, starFilled } from '@wordpress/icons';
+import { Icon, starFilled, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useContext, useState, forwardRef, Ref } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -9,6 +9,7 @@ import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteSort from '../site-sort';
 import SiteTableRow from '../site-table-row';
+import { getProductSlugFromProductType } from '../utils';
 import type { SiteData, SiteColumns } from '../types';
 
 interface Props {
@@ -18,7 +19,7 @@ interface Props {
 }
 
 const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableElement > ) => {
-	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+	const { isBulkManagementActive, showLicenseInfo } = useContext( SitesOverviewContext );
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, true );
 
@@ -30,6 +31,13 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 			site_id: blogId,
 		} );
 		setExpandedRow( expandedRow === blogId ? null : blogId );
+	};
+
+	const onShowLicenseInfo = ( license: string ) => {
+		recordEvent( 'show_license_info', {
+			product: license,
+		} );
+		showLicenseInfo( license );
 	};
 
 	return (
@@ -51,6 +59,15 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 										) }
 										<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
 											{ column.title }
+
+											{ !! getProductSlugFromProductType( column.key ) && (
+												<Icon
+													className="site-table__tooltip-icon"
+													size={ 16 }
+													icon={ info }
+													onClick={ () => onShowLicenseInfo( column.key ) }
+												/>
+											) }
 										</span>
 									</SiteSort>
 								</th>

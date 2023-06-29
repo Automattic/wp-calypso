@@ -585,7 +585,9 @@ describe( 'CheckoutMain', () => {
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalled();
 		} );
-		expect( await screen.findByText( /You have no items in your cart/ ) ).toBeInTheDocument();
+		await waitFor( async () => {
+			expect( await screen.findByText( /You have no items in your cart/ ) ).toBeInTheDocument();
+		} );
 
 		// Noticing the error message is a little difficult because we are not
 		// mounting the error display components. Instead, we spy on the

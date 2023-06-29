@@ -9,11 +9,11 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import DatePicker from './stats-date-picker';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
+import PageViewTracker from './stats-page-view-tracker';
 import SiteOverview from './stats-site-overview';
 
 class StatsOverview extends Component {

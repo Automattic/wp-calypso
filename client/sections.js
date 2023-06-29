@@ -37,12 +37,6 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'happychat',
-		paths: [ '/me/chat' ],
-		module: 'calypso/me/happychat',
-		group: 'me',
-	},
-	{
 		name: 'notification-settings',
 		paths: [ '/me/notifications' ],
 		module: 'calypso/me/notification-settings',
@@ -369,6 +363,7 @@ const sections = [
 		paths: [ '/read/search', '/recommendations' ],
 		module: 'calypso/reader/search',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -394,7 +389,7 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [ '/read/subscriptions' ],
-		module: 'calypso/reader/subscriptions',
+		module: 'calypso/reader/site-subscriptions-manager',
 		group: 'reader',
 	},
 	{
@@ -402,6 +397,12 @@ const sections = [
 		paths: [ '/help' ],
 		module: 'calypso/me/help',
 		enableLoggedOut: true,
+		group: 'me',
+	},
+	{
+		name: 'help',
+		paths: [ '/me/chat' ],
+		module: 'calypso/me/help',
 		group: 'me',
 	},
 	{

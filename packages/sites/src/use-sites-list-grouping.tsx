@@ -18,7 +18,7 @@ export const siteLaunchStatusGroupValues = [
 export type GroupableSiteLaunchStatuses = ( typeof siteLaunchStatusGroupValues )[ number ];
 
 export interface Status {
-	title: React.ReactChild;
+	title: string;
 	name: GroupableSiteLaunchStatuses;
 	count: number;
 	hiddenCount: number;

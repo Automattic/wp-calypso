@@ -1,21 +1,24 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import {
+	useSyncGlobalStylesUserConfig,
+	getVariationTitle,
+	getVariationType,
+} from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer, isSiteAssemblerFlow, isSiteSetupFlow } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
 	__experimentalUseNavigator as useNavigator,
-	withNotices,
 } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { activateOrInstallThenActivate, setActiveTheme } from 'calypso/state/themes/actions';
 import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
 import { useQuery } from '../../../../hooks/use-query';
@@ -23,8 +26,8 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
-import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE, PATTERN_TYPES, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
+import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
+import { SITE_TAGLINE, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoryAll from './hooks/use-category-all';
 import useDotcomPatterns from './hooks/use-dotcom-patterns';
@@ -33,7 +36,7 @@ import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import { usePrefetchImages } from './hooks/use-prefetch-images';
 import useRecipe from './hooks/use-recipe';
-import Notices, { getNoticeContent } from './notices/notices';
+import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
 import ScreenActivation from './screen-activation';
@@ -44,7 +47,7 @@ import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
 import ScreenSection from './screen-section';
-import { encodePatternId, getVariationTitle, getVariationType } from './utils';
+import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
 import type { StepProps } from '../../types';
@@ -53,21 +56,24 @@ import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import type { FC } from 'react';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 import './style.scss';
 
 const PatternAssembler = ( {
 	navigation,
 	flow,
 	stepName,
-	noticeList,
 	noticeOperations,
-}: StepProps & withNotices.Props ) => {
+	noticeUI,
+}: StepProps & NoticesProps ) => {
+	const translate = useTranslate();
 	const navigator = useNavigator();
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
-	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
+	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { applyThemeWithPatterns, assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -87,7 +93,6 @@ const PatternAssembler = ( {
 	const locale = useLocale();
 	// New sites are created from 'site-setup' and 'with-site-assembler' flows
 	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
-	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
@@ -127,6 +132,7 @@ const PatternAssembler = ( {
 				color_variation_type: getVariationType( colorVariation ),
 				font_variation_title: getVariationTitle( fontVariation ),
 				font_variation_type: getVariationType( fontVariation ),
+				assembler_source: getAssemblerSource( selectedDesign ),
 			} ),
 		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
 	);
@@ -209,10 +215,6 @@ const PatternAssembler = ( {
 		} );
 	};
 
-	const showNotice = ( action: string, pattern: Pattern ) => {
-		noticeOperations.createNotice( { content: getNoticeContent( action, pattern ) } );
-	};
-
 	const getDesign = () =>
 		( {
 			...selectedDesign,
@@ -234,12 +236,12 @@ const PatternAssembler = ( {
 		updateActivePatternPosition( -1 );
 		if ( pattern ) {
 			if ( header ) {
-				showNotice( 'replace', pattern );
+				noticeOperations.showPatternReplacedNotice( pattern );
 			} else {
-				showNotice( 'add', pattern );
+				noticeOperations.showPatternInsertedNotice( pattern );
 			}
 		} else if ( header ) {
-			showNotice( 'remove', header );
+			noticeOperations.showPatternRemovedNotice( header );
 		}
 	};
 
@@ -253,12 +255,12 @@ const PatternAssembler = ( {
 		activateFooterPosition( !! pattern );
 		if ( pattern ) {
 			if ( footer ) {
-				showNotice( 'replace', pattern );
+				noticeOperations.showPatternReplacedNotice( pattern );
 			} else {
-				showNotice( 'add', pattern );
+				noticeOperations.showPatternInsertedNotice( pattern );
 			}
 		} else if ( footer ) {
-			showNotice( 'remove', footer );
+			noticeOperations.showPatternRemovedNotice( footer );
 		}
 	};
 
@@ -273,7 +275,7 @@ const PatternAssembler = ( {
 				...sections.slice( sectionPosition + 1 ),
 			] );
 			updateActivePatternPosition( sectionPosition );
-			showNotice( 'replace', pattern );
+			noticeOperations.showPatternReplacedNotice( pattern );
 		}
 	};
 
@@ -286,11 +288,11 @@ const PatternAssembler = ( {
 			},
 		] );
 		updateActivePatternPosition( sections.length );
-		showNotice( 'add', pattern );
+		noticeOperations.showPatternInsertedNotice( pattern );
 	};
 
 	const deleteSection = ( position: number ) => {
-		showNotice( 'remove', sections[ position ] );
+		noticeOperations.showPatternRemovedNotice( sections[ position ] );
 		setSections( [ ...sections.slice( 0, position ), ...sections.slice( position + 1 ) ] );
 		updateActivePatternPosition( position );
 	};
@@ -395,11 +397,17 @@ const PatternAssembler = ( {
 				Promise.resolve()
 					.then( () =>
 						reduxDispatch(
-							activateOrInstallThenActivate( themeId, site?.ID, 'assembler', false, false )
+							activateOrInstallThenActivate(
+								themeId,
+								site?.ID,
+								'assembler',
+								false,
+								false
+							) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 						)
 					)
-					.then( () =>
-						assembleSite( siteSlugOrId, isSiteJetpack ? themeId : stylesheet, {
+					.then( ( activeThemeStylesheet: string ) =>
+						assembleSite( siteSlugOrId, activeThemeStylesheet, {
 							homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
 							headerHtml: header?.html,
 							footerHtml: footer?.html,
@@ -478,10 +486,6 @@ const PatternAssembler = ( {
 	};
 
 	const onMainItemSelect = ( name: string ) => {
-		if ( PATTERN_TYPES.includes( name ) ) {
-			trackEventPatternAdd( name );
-		}
-
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
 	};
 
@@ -555,7 +559,7 @@ const PatternAssembler = ( {
 			ref={ wrapperRef }
 			tabIndex={ -1 }
 		>
-			<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
+			{ noticeUI }
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
@@ -564,6 +568,11 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
+						hasSections={ Boolean( sections.length ) }
+						hasHeader={ Boolean( header ) }
+						hasFooter={ Boolean( footer ) }
+						hasColor={ Boolean( colorVariation ) }
+						hasFont={ Boolean( fontVariation ) }
 					/>
 				</NavigatorScreen>
 
@@ -607,9 +616,9 @@ const PatternAssembler = ( {
 						replacePatternMode={ sectionPosition !== null }
 						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
 						onSelect={ onSelect }
-						wrapperRef={ wrapperRef }
-						onTogglePatternPanelList={ setIsPatternPanelListOpen }
 						recordTracksEvent={ recordTracksEvent }
+						onTogglePatternPanelList={ setIsPatternPanelListOpen }
+						selectedPatterns={ sections }
 					/>
 				</NavigatorScreen>
 
@@ -661,7 +670,12 @@ const PatternAssembler = ( {
 			stepName="pattern-assembler"
 			hideBack={
 				navigator.location.path !== NAVIGATOR_PATHS.ACTIVATION &&
-				( navigator.location.path !== NAVIGATOR_PATHS.MAIN || isSiteAssemblerFlow( flow ) )
+				navigator.location.path !== NAVIGATOR_PATHS.MAIN
+			}
+			backLabelText={
+				isSiteAssemblerFlow( flow ) && navigator.location.path === NAVIGATOR_PATHS.MAIN
+					? translate( 'Back to themes' )
+					: undefined
 			}
 			goBack={ onBack }
 			goNext={ goNext }
@@ -684,7 +698,7 @@ const PatternAssembler = ( {
 	);
 };
 
-const PatternAssemblerStep = ( props: StepProps & withNotices.Props ) => (
+const PatternAssemblerStep = ( props: StepProps & NoticesProps ) => (
 	<NavigatorProvider initialPath={ NAVIGATOR_PATHS.MAIN } tabIndex={ -1 }>
 		<PatternAssembler { ...props } />
 	</NavigatorProvider>

@@ -43,6 +43,13 @@ export function useStepNavigator(
 		} );
 	}
 
+	function goToDashboardPage() {
+		navigation.submit?.( {
+			type: 'redirect',
+			url: '/',
+		} );
+	}
+
 	function goToWpAdminImportPage() {
 		navigation.submit?.( {
 			type: 'redirect',
@@ -89,15 +96,21 @@ export function useStepNavigator(
 		} );
 	}
 
+	function goToSitePickerPage() {
+		navigation.goToStep?.( `sitePicker?from=${ fromSite }` );
+	}
+
 	return {
 		supportLinkModal: false,
 		goToIntentPage,
 		goToImportCapturePage,
 		goToSiteViewPage,
+		goToDashboardPage,
 		goToCheckoutPage,
 		goToWpAdminImportPage,
 		goToWpAdminWordPressPluginPage,
 		goToAddDomainPage,
+		goToSitePickerPage,
 		navigate: ( path ) => navigator( path ),
 	};
 }

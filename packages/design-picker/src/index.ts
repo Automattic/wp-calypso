@@ -18,11 +18,13 @@ export {
 	getDesignUrl,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
+	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
 } from './utils';
 export {
 	FONT_PAIRINGS,
 	ANCHORFM_FONT_PAIRINGS,
+	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,

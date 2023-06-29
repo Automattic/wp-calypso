@@ -1,5 +1,6 @@
 import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard } from '@automattic/components';
+import { Icon, globe } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -7,6 +8,7 @@ import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { login } from 'calypso/lib/paths';
 import versionCompare from 'calypso/lib/version-compare';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors';
@@ -16,7 +18,8 @@ import { authQueryPropTypes } from './utils';
 export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
-		isWoo: PropTypes.bool,
+		isWooOnboarding: PropTypes.bool,
+		isWooCoreProfiler: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 
@@ -48,7 +51,14 @@ export class AuthFormHeader extends Component {
 	}
 
 	getHeaderText() {
-		const { translate, partnerSlug, isWoo, wooDnaConfig, isWpcomMigration } = this.props;
+		const {
+			translate,
+			partnerSlug,
+			isWooOnboarding,
+			isWooCoreProfiler,
+			wooDnaConfig,
+			isWpcomMigration,
+		} = this.props;
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
 			return wooDnaConfig.getServiceName();
@@ -82,13 +92,17 @@ export class AuthFormHeader extends Component {
 
 		const currentState = this.getState();
 
-		if ( isWoo ) {
+		if ( isWooOnboarding ) {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate( 'Create a Jetpack account' );
 				default:
 					return translate( 'Connecting your store' );
 			}
+		}
+
+		if ( isWooCoreProfiler ) {
+			return translate( 'One last step!' );
 		}
 
 		if ( isWpcomMigration ) {
@@ -110,10 +124,11 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, isWoo, wooDnaConfig, isWpcomMigration } = this.props;
+		const { translate, isWooOnboarding, isWooCoreProfiler, wooDnaConfig, isWpcomMigration } =
+			this.props;
 		const currentState = this.getState();
 
-		if ( isWoo ) {
+		if ( isWooOnboarding ) {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate(
@@ -121,6 +136,35 @@ export class AuthFormHeader extends Component {
 					);
 				default:
 					return translate( "Once connected we'll continue setting up your store" );
+			}
+		}
+
+		if ( isWooCoreProfiler ) {
+			switch ( currentState ) {
+				case 'logged-out':
+					return translate(
+						"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+						{
+							components: {
+								br: <br />,
+								a: (
+									<a
+										href={ login( {
+											isJetpack: true,
+											redirectTo: window.location.href,
+											from: this.props.authQuery.from,
+										} ) }
+									/>
+								),
+							},
+							comment:
+								'Link displayed on the Jetpack Connect signup page for users to log in with a WordPress.com account',
+						}
+					);
+				default:
+					return translate(
+						"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack, you'll need to connect your store to your WordPress.com account."
+					);
 			}
 		}
 
@@ -160,7 +204,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSiteCard() {
-		const { isWpcomMigration } = this.props;
+		const { isWpcomMigration, isWooCoreProfiler } = this.props;
 		const { jpVersion } = this.props.authQuery;
 		if ( ! versionCompare( jpVersion, '4.0.3', '>' ) ) {
 			return null;
@@ -188,7 +232,7 @@ export class AuthFormHeader extends Component {
 
 		return (
 			<CompactCard className="jetpack-connect__site">
-				<Site site={ site } />
+				<Site site={ site } defaultIcon={ isWooCoreProfiler ? <Icon icon={ globe } /> : null } />
 			</CompactCard>
 		);
 	}

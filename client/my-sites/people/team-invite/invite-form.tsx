@@ -67,7 +67,9 @@ function InviteForm( props: Props ) {
 	useEffect( toggleShowContractorCb, [ role ] );
 	useEffect( checkSubmitReadiness, [ tokenErrors, validationProgress ] );
 	useEffect( reactOnInvitationSuccess, [ invitingSuccess ] );
-	useEffect( () => ( prevInvitingProgress.current = invitingProgress ), [ invitingProgress ] );
+	useEffect( () => {
+		prevInvitingProgress.current = invitingProgress;
+	}, [ invitingProgress ] );
 	useValidationNotifications();
 	useInvitingNotifications( tokenValues );
 

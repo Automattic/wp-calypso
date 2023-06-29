@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import * as wpcomProxyRequest from 'wpcom-proxy-request';
@@ -18,19 +19,14 @@ import {
 } from '../mocks';
 import UnifiedDesignPickerStep from '../unified-design-picker';
 
+jest.mock( '@automattic/global-styles', () => ( {
+	useColorPaletteVariations: jest.fn( () => [] ),
+	useFontPairingVariations: jest.fn( () => [] ),
+} ) );
+
 jest.mock( '@wordpress/compose', () => ( {
 	...jest.requireActual( '@wordpress/compose' ),
 	useViewportMatch: jest.fn( () => false ),
-} ) );
-
-jest.mock( 'react-router-dom', () => ( {
-	...jest.requireActual( 'react-router-dom' ),
-	useLocation: jest.fn().mockImplementation( () => ( {
-		pathname: '/setup/site-setup/designSetup',
-		search: '?siteSlug=test.wordpress.com',
-		hash: '',
-		state: undefined,
-	} ) ),
 } ) );
 
 jest.mock( 'wpcom-proxy-request', () => jest.requireActual( 'wpcom-proxy-request' ) );
@@ -45,6 +41,18 @@ jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
 
 jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: () => [ false, null ],
+} ) );
+
+jest.mock( 'calypso/components/data/query-site-features', () => ( {
+	useQuerySiteFeatures: () => {
+		return;
+	},
+} ) );
+
+jest.mock( 'calypso/components/data/query-themes', () => ( {
+	useQueryThemes: () => {
+		return;
+	},
 } ) );
 
 /**
@@ -71,9 +79,13 @@ const renderComponent = ( component, initialState = {} ) => {
 		...initialState,
 	} );
 
+	const initialEntries = [ `/setup/site-setup/designSetup?siteSlug=test.wordpress.com` ];
+
 	return render(
 		<Provider store={ store }>
-			<QueryClientProvider client={ queryClient }>{ component }</QueryClientProvider>
+			<QueryClientProvider client={ queryClient }>
+				<MemoryRouter initialEntries={ initialEntries }>{ component }</MemoryRouter>
+			</QueryClientProvider>
 		</Provider>
 	);
 };

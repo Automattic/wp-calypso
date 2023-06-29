@@ -35,7 +35,7 @@ import {
 	WooLogo,
 } from '@automattic/components';
 import {
-	isHostingFlow,
+	isAnyHostingFlow,
 	isLinkInBioFlow,
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
@@ -532,7 +532,6 @@ export class PlanFeatures2023Grid extends Component<
 							<PlanFeatures2023GridHeaderPrice
 								isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 								planProperties={ properties }
-								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
 								currentSitePlanSlug={ currentSitePlanSlug }
 								siteId={ siteId }
@@ -725,7 +724,7 @@ export class PlanFeatures2023Grid extends Component<
 	maybeRenderRefundNotice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { translate, flowName } = this.props;
 
-		if ( ! isHostingFlow( flowName ) ) {
+		if ( ! isAnyHostingFlow( flowName ) ) {
 			return false;
 		}
 
@@ -737,17 +736,19 @@ export class PlanFeatures2023Grid extends Component<
 					className="plan-features-2023-grid__table-item"
 					isMobile={ options?.isMobile }
 				>
-					<div
-						className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
-							planProperties.planName
-						) }` }
-					>
-						{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
-							args: {
-								dayCount: planProperties.billingPeriod === 365 ? 14 : 7,
-							},
-						} ) }
-					</div>
+					{ ! isFreePlan( planProperties.planName ) && (
+						<div
+							className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
+								planProperties.planName
+							) }` }
+						>
+							{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
+								args: {
+									dayCount: planProperties.billingPeriod === 365 ? 14 : 7,
+								},
+							} ) }
+						</div>
+					) }
 				</Container>
 			) );
 	}

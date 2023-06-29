@@ -1,5 +1,6 @@
+import { translate } from 'i18n-calypso';
 import React from 'react';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/types';
 import CampaignItem from '../campaign-item';
 import './style.scss';
 
@@ -31,28 +32,63 @@ export const CampaignItemLoading = ( { totalRows = 7 }: { totalRows?: number } )
 export default function CampaignsTable( props: Props ) {
 	const { campaigns, isLoading, isFetchingPageResults } = props;
 
+	type CampaignColumn = {
+		key: string;
+		title: string;
+	};
+	const columns: CampaignColumn[] = [
+		{
+			key: 'data',
+			title: translate( 'Campaign' ),
+		},
+		{
+			key: 'user',
+			title: translate( 'User' ),
+		},
+		{
+			key: 'status',
+			title: translate( 'Status' ),
+		},
+		{
+			key: 'ends',
+			title: translate( 'Ends' ),
+		},
+		{
+			key: 'budget',
+			title: translate( 'Budget' ),
+		},
+		{
+			key: 'impressions',
+			title: translate( 'Impressions' ),
+		},
+		{
+			key: 'clicks',
+			title: translate( 'Clicks' ),
+		},
+		{
+			key: 'action',
+			title: '',
+		},
+	];
+
 	return (
 		<div>
 			<table className="promote-post-i2__table campaigns-list__table">
 				<thead>
 					<tr>
-						<th key="campaign">Campaign</th>
-						<th key="user">User</th>
-						<th key="status">Status</th>
-						<th key="ends">Ends</th>
-						<th key="budget">Budget</th>
-						<th key="impressions">Impressions</th>
-						<th key="clicks">Clicks</th>
+						{ columns.map( ( item, key ) => (
+							<th className={ `campaign-item__${ item.key }` } key={ key }>
+								{ item.title }
+							</th>
+						) ) }
 					</tr>
 				</thead>
 				<tbody>
 					{ isLoading && ! isFetchingPageResults ? (
 						<>
-							<CampaignItemLoading />
-							<CampaignItemLoading />
-							<CampaignItemLoading />
-							<CampaignItemLoading />
-							<CampaignItemLoading />
+							{ columns.map( ( item, key ) => (
+								<CampaignItemLoading key={ key } />
+							) ) }
 						</>
 					) : (
 						<>

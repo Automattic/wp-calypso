@@ -1,6 +1,6 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
-import { Checklist } from '@automattic/launchpad';
+import { Launchpad } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
@@ -29,6 +29,7 @@ type SidebarProps = {
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
 	flow: string | null;
+	hideNavigation: boolean | null;
 };
 
 function getUrlInfo( url: string ) {
@@ -42,14 +43,22 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: SidebarProps ) => {
+const Sidebar = ( {
+	sidebarDomain,
+	siteSlug,
+	submit,
+	goNext,
+	goToStep,
+	flow,
+	hideNavigation,
+}: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	let showClipboardButton = false;
 	let isDomainSSLProcessing: boolean | null = false;
 	const translate = useTranslate();
 	const site = useSite();
-	const siteIntentOption = site?.options?.site_intent;
+	const siteIntentOption = site?.options?.site_intent ?? null;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
@@ -57,7 +66,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const {
 		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
-		isFetchedAfterMount,
 	} = useLaunchpad( siteSlug, siteIntentOption );
 
 	const selectedDomain = useSelect(
@@ -73,9 +81,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const { getPlanCartItem } = useSelect(
+	const { getPlanCartItem, getDomainCartItem } = useSelect(
 		( select ) => ( {
 			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
+			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
 		} ),
 		[]
 	);
@@ -92,19 +101,34 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			flow,
 			isEmailVerified,
 			checklistStatuses,
-			getPlanCartItem()?.product_slug ?? null
+			getPlanCartItem(),
+			getDomainCartItem()
 		);
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
-	const domainUpgradeBadgeUrl = ! site?.plan?.is_free
-		? `/domains/manage/${ siteSlug }`
-		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
-	const showDomainUpgradeBadge =
-		sidebarDomain?.isWPCOMDomain &&
-		! enhancedTasks?.find( ( task ) => task.id === 'domain_upsell' );
+
+	function getDomainUpgradeBadgeUrl() {
+		if ( isBlogOnboardingFlow( siteIntentOption ) ) {
+			return `/setup/${ siteIntentOption }/domains?siteSlug=${ selectedDomain?.domain_name }&domainAndPlanPackage=true`;
+		}
+		return ! site?.plan?.is_free
+			? `/domains/manage/${ siteSlug }`
+			: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+	}
+
+	function showDomainUpgradeBadge() {
+		if ( isBlogOnboardingFlow( siteIntentOption ) ) {
+			return selectedDomain?.is_free;
+		}
+
+		return (
+			sidebarDomain?.isWPCOMDomain &&
+			! enhancedTasks?.find( ( task ) => task.id === 'domain_upsell' )
+		);
+	}
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
@@ -175,8 +199,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 								</>
 							) }
 						</div>
-						{ showDomainUpgradeBadge && (
-							<a href={ domainUpgradeBadgeUrl }>
+						{ showDomainUpgradeBadge() && (
+							<a href={ getDomainUpgradeBadgeUrl() }>
 								<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
 									{ translate( 'Customize' ) }
 								</Badge>
@@ -197,19 +221,25 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						</p>
 					</div>
 				) }
-				{ isFetchedAfterMount ? <Checklist tasks={ enhancedTasks } /> : <Checklist.Placeholder /> }
-			</div>
-			<div className="launchpad__sidebar-admin-link">
-				<StepNavigationLink
-					direction="forward"
-					handleClick={ () => {
-						recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
-						goNext?.();
-					} }
-					label={ translate( 'Skip to dashboard' ) }
-					borderless={ true }
+				<Launchpad
+					siteSlug={ siteSlug }
+					taskFilter={ () => enhancedTasks || [] }
+					makeLastTaskPrimaryAction={ true }
 				/>
 			</div>
+			{ ! hideNavigation && (
+				<div className="launchpad__sidebar-admin-link">
+					<StepNavigationLink
+						direction="forward"
+						handleClick={ () => {
+							recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
+							goNext?.();
+						} }
+						label={ translate( 'Skip to dashboard' ) }
+						borderless={ true }
+					/>
+				</div>
+			) }
 		</div>
 	);
 };

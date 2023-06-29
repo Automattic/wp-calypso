@@ -5,7 +5,6 @@ import type { InstagramPreviewsProps } from './types';
 
 export const InstagramPreviews: React.FC< InstagramPreviewsProps > = ( {
 	headingLevel,
-	hideLinkPreview,
 	hidePostPreview,
 	...props
 } ) => {

@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { commentAuthorAvatar, video } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -12,6 +12,18 @@ const year = { value: 'year', label: translate( 'Years' ) };
 
 export const intervals = [ day, week, month, year ];
 export const emailIntervals = [ hour, day ];
+
+export const AVAILABLE_PAGE_MODULES = {
+	traffic: [
+		{
+			key: 'authors',
+			label: translate( 'Authors' ),
+			icon: commentAuthorAvatar,
+			defaultValue: true,
+		},
+		{ key: 'videos', label: translate( 'Videos' ), icon: video, defaultValue: true },
+	],
+};
 
 /**
  * Nav items
@@ -67,14 +79,11 @@ const assembleNavItems = () => {
 	const navItems = {
 		traffic,
 		insights,
+		subscribers,
 		store,
 		wordads,
 		googleMyBusiness,
 	} as NavItems;
-
-	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
-		navItems.subscribers = subscribers;
-	}
 
 	return navItems;
 };

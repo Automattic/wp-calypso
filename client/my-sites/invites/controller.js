@@ -33,9 +33,10 @@ export function acceptInvite( context, next ) {
 			context.store.dispatch( setUserEmailVerified( true ) );
 		}
 		store.remove( 'invite_accepted' );
+		const emailVerificationSecret = context.query.email_verification_secret;
 
 		context.store
-			.dispatch( acceptInviteAction( acceptedInvite ) )
+			.dispatch( acceptInviteAction( acceptedInvite, emailVerificationSecret ) )
 			.then( () => {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
 				debug( 'Accepted invite and redirecting to:  ' + redirect );

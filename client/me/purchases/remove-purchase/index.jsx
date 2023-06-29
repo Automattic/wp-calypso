@@ -11,7 +11,7 @@ import {
 	isTitanMail,
 	isAkismetProduct,
 } from '@automattic/calypso-products';
-import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -29,7 +29,6 @@ import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dial
 import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
@@ -233,14 +232,6 @@ class RemovePurchase extends Component {
 			className="remove-domain-dialog__chat-button"
 		/>
 	);
-
-	getContactUsButton = () => {
-		return (
-			<Button className="remove-purchase__support-link-button" href="/help/contact/">
-				{ this.props.translate( 'Contact Us' ) }
-			</Button>
-		);
-	};
 
 	shouldShowNonPrimaryDomainWarning() {
 		const { hasNonPrimaryDomainsFlag, isAtomicSite, hasCustomPrimaryDomain, purchase } = this.props;
@@ -491,7 +482,6 @@ export default connect(
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
-			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
 			isAkismet,
 			purchasesError: getPurchasesError( state ),

@@ -48,6 +48,12 @@
 	}
 }
 
+.layout.has-header-section .search-stream__fixed-area {
+	position: static;
+	padding-top: 0;
+	margin-top: 0;
+}
+
 .search-stream__fixed-area .section-nav-tabs.is-dropdown {
 	margin: 0;
 }
@@ -275,6 +281,11 @@
 	.reader-infinite-stream__row-wrapper {
 		border: 0;
 	}
+}
+
+// Site results and Popular sites
+.search-stream .search-stream__site-results,
+.search-stream .reader-two-column .reader-tag-sidebar-recommended-sites {
 
 	.reader-subscription-list-item .follow-button__label,
 	.reader-subscription-list-item__settings-label {
@@ -286,9 +297,19 @@
 	}
 }
 
-.search-stream__results.is-two-columns .reader-subscription-list-item__byline {
+// For popular sites list on single column view.
+.search-stream .following:not(.reader-two-column) .reader-subscription-list-item {
+	border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.search-stream__results.is-two-columns .reader-subscription-list-item__byline,
+.search-stream .reader-two-column .reader-subscription-list-item__byline {
 	min-width: 185px;
 	max-width: 185px;
+}
+
+.search-stream__single-column-results .reader-infinite-stream__row-wrapper {
+	margin-top: 20px;
 }
 
 .search-stream__single-column-results .reader-subscription-list-item__options {
@@ -302,11 +323,6 @@
 		align-items: flex-start;
 		min-width: 90px;
 	}
-}
-
-// Hide the last updated date for the moment - see https://github.com/Automattic/wp-calypso/issues/15121
-.search-stream__single-column-results .reader-subscription-list-item__timestamp {
-	display: none;
 }
 
 // Custom styling for cards in post results

@@ -16,6 +16,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import SearchFollowButton from 'calypso/reader/search-stream/search-follow-button';
 import { recordAction } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import {
 	SORT_BY_RELEVANCE,
@@ -36,11 +37,11 @@ const updateQueryArg = ( params ) =>
 
 const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-const SpacerDiv = withDimensions( ( { width } ) => (
+const SpacerDiv = withDimensions( ( { width, height } ) => (
 	<div
 		style={ {
 			width: `${ width }px`,
-			height: `60px`,
+			height: `${ height - 73 }px`,
 		} }
 	/>
 ) );
@@ -52,11 +53,21 @@ class SearchStream extends React.Component {
 	};
 
 	state = {
-		feed: null,
+		feeds: [],
 	};
 
-	setSearchFeed = ( feed ) => {
-		this.setState( { feed: feed } );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.query !== this.props.query ) {
+			this.resetSearchFeeds();
+		}
+	}
+
+	resetSearchFeeds = () => {
+		this.setState( { feeds: [] } );
+	};
+
+	setSearchFeeds = ( feeds ) => {
+		this.setState( { feeds: feeds } );
 	};
 
 	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
@@ -107,13 +118,13 @@ class SearchStream extends React.Component {
 	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions } = this.props;
+		const { query, translate, searchType, suggestions, isLoggedIn } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const segmentedControlClass = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
-		const hidePostsAndSites = this.state.feed && this.state.feed.feed_ID?.length === 0;
+		const hidePostsAndSites = this.state.feeds && this.state.feeds?.length === 1;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -164,7 +175,7 @@ class SearchStream extends React.Component {
 						<SearchInput
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
-							onSearchChange={ () => this.setState( { feed: null } ) }
+							onSearchOpen={ this.resetSearchFeeds }
 							autoFocus={ this.props.autoFocusInput }
 							delaySearch={ true }
 							delayTimeout={ 500 }
@@ -173,7 +184,7 @@ class SearchStream extends React.Component {
 							value={ query || '' }
 						/>
 					</CompactCard>
-					<SearchFollowButton query={ query } feed={ this.state.feed ?? null } />
+					<SearchFollowButton query={ query } feeds={ this.state.feeds } />
 					{ query && (
 						<SegmentedControl compact className={ segmentedControlClass }>
 							<SegmentedControl.Item
@@ -201,7 +212,7 @@ class SearchStream extends React.Component {
 						/>
 					) }
 				</div>
-				<SpacerDiv domTarget={ this.fixedAreaRef } />
+				{ isLoggedIn && <SpacerDiv domTarget={ this.fixedAreaRef } /> }
 				{ ! hidePostsAndSites && wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
@@ -212,8 +223,7 @@ class SearchStream extends React.Component {
 								<SiteResults
 									query={ query }
 									sort={ pickSort( sortOrder ) }
-									showLastUpdatedDate={ false }
-									onReceiveSearchResults={ this.setSearchFeed }
+									onReceiveSearchResults={ this.setSearchFeeds }
 								/>
 							</div>
 						) }
@@ -227,8 +237,7 @@ class SearchStream extends React.Component {
 							<SiteResults
 								query={ query }
 								sort={ pickSort( sortOrder ) }
-								showLastUpdatedDate={ true }
-								onReceiveSearchResults={ this.setSearchFeed }
+								onReceiveSearchResults={ this.setSearchFeeds }
 							/>
 						) }
 					</div>
@@ -253,6 +262,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		readerAliasedFollowFeedUrl:
 			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		recordReaderTracksEvent,

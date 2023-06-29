@@ -69,7 +69,7 @@ const GoogleSaleBanner = ( { domains }: GoogleSaleBannerProps ) => {
 	// Verify that we have a percentage discount
 	if (
 		! hasDiscount( googleWorkspaceProduct ) ||
-		( ! googleWorkspaceProduct?.sale_coupon?.discount ?? null )
+		! googleWorkspaceProduct?.sale_coupon?.discount
 	) {
 		return null;
 	}

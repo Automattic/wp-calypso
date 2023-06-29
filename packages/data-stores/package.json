@@ -32,12 +32,11 @@
 	},
 	"dependencies": {
 		"@automattic/format-currency": "workspace:^",
-		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
-		"@wordpress/api-fetch": "^6.19.0",
-		"@wordpress/data-controls": "^2.22.0",
-		"@wordpress/deprecated": "^3.22.0",
+		"@wordpress/api-fetch": "^6.20.0",
+		"@wordpress/data-controls": "^2.23.0",
+		"@wordpress/deprecated": "^3.23.0",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.9.1",
@@ -48,9 +47,9 @@
 		"validator": "^13.5.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^7.6.0",
-		"react": "^17.0.2",
-		"react-dom": "^17.0.2"
+		"@wordpress/data": "^8.0.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

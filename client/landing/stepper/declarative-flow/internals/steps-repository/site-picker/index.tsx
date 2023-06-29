@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { IMPORT_HOSTED_SITE_FLOW, StepContainer } from '@automattic/onboarding';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	GroupableSiteLaunchStatuses,
@@ -19,7 +19,7 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 import './styles.scss';
 
-const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
+const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
 	const page = Number( urlQueryParams.get( 'page' ) ) || 1;
@@ -77,7 +77,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 					),
 					{
 						sourceSite: sourceSiteSlug,
-						targetSite: destinationSite?.slug,
+						targetSite: destinationSite?.slug.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' ),
 					}
 				) }
 			</p>
@@ -89,7 +89,8 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 			<DocumentHead title={ __( 'Pick your destination' ) } />
 			<StepContainer
 				stepName="site-picker"
-				hideBack={ true }
+				hideBack={ IMPORT_HOSTED_SITE_FLOW !== flow }
+				goBack={ navigation.goBack }
 				hideSkip={ false }
 				skipLabelText={ __( 'Skip and create a new site' ) }
 				goNext={ createNewSite }

@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import Badge from 'calypso/components/badge';
 import FoldableCard from 'calypso/components/foldable-card';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/types';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
@@ -46,7 +46,6 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 		type,
 		content_config,
 		moderation_reason,
-		spent_budget_cents,
 		start_date,
 		end_date,
 		budget_cents,
@@ -54,11 +53,14 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 		display_delivery_estimate,
 		display_name,
 		creative_html,
-		impressions_total = 0,
-		clicks_total = 0,
 		target_url = '',
 		campaign_stats_loading,
+		campaign_stats,
 	} = campaign;
+
+	const clicks_total = campaign_stats?.clicks_total ?? 0;
+	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
+	const impressions_total = campaign_stats?.impressions_total ?? 0;
 
 	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign ] );
 
@@ -134,7 +136,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
-				cancelCampaign( siteId, campaign.campaign_id );
+				cancelCampaign( siteId ?? 0, campaign.campaign_id );
 			},
 		},
 	];

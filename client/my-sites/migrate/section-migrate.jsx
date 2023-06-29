@@ -84,7 +84,7 @@ export class SectionMigrate extends Component {
 			this.updateFromAPI();
 		}
 
-		if ( 'done' === this.state.migrationStatus ) {
+		if ( 'done' === this.state.migrationStatus && prevState.migrationStatus !== 'done' ) {
 			this.finishMigration();
 		}
 	}

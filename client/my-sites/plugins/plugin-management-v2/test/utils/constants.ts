@@ -2,6 +2,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 const siteId = 12345678;
 const pluginId = 'test';
+const paidPluginId = 'test-paid';
 
 const site: SiteDetails = {
 	ID: siteId,
@@ -9,6 +10,7 @@ const site: SiteDetails = {
 	description: 'test site',
 	URL: 'https://test.wordpress.com',
 	launch_status: '',
+	title: '',
 	jetpack: true,
 	logo: { id: 'logoId', sizes: [ 'small' ], url: 'logoURL' },
 	options: {
@@ -57,4 +59,11 @@ const plugin = {
 	update: { new_version: '11.5', canUpdateFiles: true },
 };
 
-export { site, plugin };
+const paidPlugin = {
+	...plugin,
+	id: paidPluginId,
+	slug: paidPluginId,
+	isMarketplaceProduct: true,
+};
+
+export { site, plugin, paidPlugin };

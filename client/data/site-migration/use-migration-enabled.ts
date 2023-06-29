@@ -26,25 +26,23 @@ export const useMigrationEnabledInfoQuery = (
 		},
 	];
 
-	return useQuery(
+	return useQuery( {
 		queryKey,
-		(): Promise< MigrationEnabledResponse > =>
+		queryFn: (): Promise< MigrationEnabledResponse > =>
 			wpcom.req.get( {
 				apiNamespace: 'wpcom/v2/',
 				path: `sites/${ targetSiteId }/migration-enabled/${ encodeURIComponent( sourcSite ) }`,
 			} ),
-		{
-			meta: {
-				persist: false,
-			},
-			enabled: !! ( enabled && targetSiteId && sourcSite ),
-			retry: false,
-			onSuccess: onSuccessCallback,
-			onError: () => {
-				// Clear data on error
-				queryClient.setQueryData( queryKey, null );
-				onErrorCallback && onErrorCallback();
-			},
-		}
-	);
+		meta: {
+			persist: false,
+		},
+		enabled: !! ( enabled && targetSiteId && sourcSite ),
+		retry: false,
+		onSuccess: onSuccessCallback,
+		onError: () => {
+			// Clear data on error
+			queryClient.setQueryData( queryKey, null );
+			onErrorCallback && onErrorCallback();
+		},
+	} );
 };

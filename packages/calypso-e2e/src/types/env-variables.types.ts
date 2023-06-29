@@ -12,6 +12,7 @@ export type JetpackTarget = 'remote-site' | 'wpcom-production' | 'wpcom-staging'
 export interface SupportedEnvVariables extends EnvVariables {
 	VIEWPORT_NAME: ViewportName;
 	GUTENBERG_EDGE: boolean;
+	GUTENBERG_NIGHTLY: boolean;
 	COBLOCKS_EDGE: boolean;
 	TEST_LOCALES: TestLocales;
 	COOKIES_PATH: string;

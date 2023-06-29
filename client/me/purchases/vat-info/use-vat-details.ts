@@ -58,7 +58,10 @@ const emptyVatDetails = {};
 
 export default function useVatDetails(): VatDetailsManager {
 	const queryClient = useQueryClient();
-	const query = useQuery< VatDetails, FetchError >( [ 'vat-details' ], fetchVatDetails );
+	const query = useQuery< VatDetails, FetchError >( {
+		queryKey: [ 'vat-details' ],
+		queryFn: fetchVatDetails,
+	} );
 	const mutation = useMutation< VatDetails, UpdateError, VatDetails >( {
 		mutationFn: setVatDetails,
 		onSuccess: ( data ) => {

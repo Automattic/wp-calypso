@@ -27,7 +27,7 @@ export default function MobilePushNotification( {
 				/>
 			</div>
 			<div className="notification-settings__toggle-content">
-				<div className="notification-settings__content-heading">{ translate( 'Mobile' ) }</div>
+				<div className="notification-settings__content-heading">{ translate( 'Push' ) }</div>
 				<div className="notification-settings__content-sub-heading">
 					{ translate( 'Receive notifications via the {{a}}Jetpack App{{/a}}.', {
 						components: {

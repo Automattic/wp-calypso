@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { StepContainer, IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
+import {
+	StepContainer,
+	IMPORT_FOCUSED_FLOW,
+	IMPORT_HOSTED_SITE_FLOW,
+} from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { ReactElement, useEffect } from 'react';
 import CaptureStep from 'calypso/blocks/import/capture';
@@ -59,12 +63,13 @@ export const ImportWrapper: Step = function ( props ) {
 };
 
 const ImportStep: Step = function ImportStep( props ) {
-	const { navigation } = props;
+	const { navigation, flow } = props;
 
 	return (
 		<ImportWrapper { ...props }>
 			{ isEnabledImportLight ? (
 				<CaptureStep
+					disableImportListStep={ IMPORT_HOSTED_SITE_FLOW === flow }
 					goToStep={ ( step, section ) =>
 						navigation.goToStep?.( generateStepPath( step, section ) )
 					}

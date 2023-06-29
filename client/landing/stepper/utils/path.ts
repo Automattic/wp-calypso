@@ -1,5 +1,7 @@
 import { Plans } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import { addQueryArgs } from '@wordpress/url';
 import { useMatch } from 'react-router-dom';
 
 const plansPaths = Plans.plansSlugs;
@@ -41,3 +43,31 @@ export function useLangRouteParam() {
 	const match = useMatch( path );
 	return match?.params.lang;
 }
+
+export const useLoginUrl = ( params: {
+	flowName?: string;
+	redirectTo?: string;
+	pageTitle?: string;
+} ): string => {
+	const locale = useLocale();
+
+	const loginPath =
+		locale && locale !== 'en' ? `/start/account/user/${ locale }` : `/start/account/user`;
+
+	const nonEmptyQueryParameters = Object.entries( params )
+		.filter( ( [ , value ] ) => value )
+		.map( ( [ key, value ] ) => {
+			switch ( key ) {
+				case 'redirectTo':
+					return [ 'redirect_to', value ];
+				case 'flowName':
+					return [ 'variationName', value ];
+				default:
+					return [ key, value ];
+			}
+		} );
+
+	nonEmptyQueryParameters.push( [ 'toStepper', 'true' ] );
+
+	return addQueryArgs( loginPath, Object.fromEntries( nonEmptyQueryParameters ) );
+};

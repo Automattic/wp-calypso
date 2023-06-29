@@ -3,7 +3,6 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDomainMapping,
-	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
@@ -28,6 +27,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	recordSignupStart,
@@ -135,6 +135,7 @@ class Signup extends Component {
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
 		stepSectionName: PropTypes.string,
+		hostingFlow: PropTypes.bool.isRequired,
 	};
 
 	state = {
@@ -312,7 +313,7 @@ class Signup extends Component {
 	};
 
 	getRecordProps() {
-		const { signupDependencies } = this.props;
+		const { signupDependencies, hostingFlow } = this.props;
 		let theme = get( signupDependencies, 'selectedDesign.theme' );
 
 		if ( ! theme && signupDependencies.themeParameter ) {
@@ -326,6 +327,7 @@ class Signup extends Component {
 			theme,
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
+			is_in_hosting_flow: hostingFlow,
 		};
 	}
 
@@ -494,27 +496,33 @@ class Signup extends Component {
 			intent,
 			startingPoint,
 		};
-		debug( 'Tracking signup completion.', debugProps );
 
-		recordSignupComplete( {
-			flow: this.props.flowName,
-			siteId,
-			isNewUser,
-			hasCartItems,
-			planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
-			domainProductSlug:
-				undefined !== domainItem && domainItem.is_domain_registration
-					? domainItem.product_slug
-					: undefined,
-			isNew7DUserSite,
-			// Record the following values so that we can know the user completed which branch under the hero flow
-			theme: selectedDesign?.theme,
-			intent,
-			startingPoint,
-			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
-			isMapping: domainItem && isDomainMapping( domainItem ),
-			isTransfer: domainItem && isDomainTransfer( domainItem ),
-		} );
+		// In case of the flow just serves as a bridge to a Stepper flow, do not fire
+		// the signup completion event. Theoretically speaking this can be applied to other scenarios,
+		// but it's not recommended outside of this, hence the name toStepper. See Automattic/growth-foundations#72 for more context.
+		if ( ! dependencies.toStepper ) {
+			debug( 'Tracking signup completion.', debugProps );
+
+			recordSignupComplete( {
+				flow: this.props.flowName,
+				siteId,
+				isNewUser,
+				hasCartItems,
+				planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
+				domainProductSlug:
+					undefined !== domainItem && domainItem.is_domain_registration
+						? domainItem.product_slug
+						: undefined,
+				isNew7DUserSite,
+				// Record the following values so that we can know the user completed which branch under the hero flow
+				theme: selectedDesign?.theme,
+				intent,
+				startingPoint,
+				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
+				isMapping: domainItem && isDomainMapping( domainItem ),
+				isTransfer: domainItem && isDomainTransfer( domainItem ),
+			} );
+		}
 	};
 
 	handleDestination( dependencies, destination ) {
@@ -752,7 +760,6 @@ class Signup extends Component {
 	}
 
 	renderCurrentStep( isReskinned ) {
-		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
 		const CurrentComponent = this.props.stepComponent;
 		const propsFromConfig = {
@@ -761,23 +768,7 @@ class Signup extends Component {
 		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const planWithDomain =
-			this.props.domainsWithPlansOnly &&
-			domainItem &&
-			( isDomainRegistration( domainItem ) ||
-				isDomainTransfer( domainItem ) ||
-				isDomainMapping( domainItem ) );
 
-		// Hide the free option in the signup flow
-		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
-
-		// For the onboarding/2023-pricing-grid hiding the free plan is not yet supported and breaks the plans comparison grid
-		// If there is any condition upon which the free plan should be hidden these issues need to be resolved.
-		// For now we always show the free plan for the 2023-pricing-grid
-		// More Context : Automattic/martech#1464
-		const hideFreePlan = is2023PricingGridActivePage( window )
-			? false
-			: planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		let propsForCurrentStep = propsFromConfig;
@@ -818,7 +809,7 @@ class Signup extends Component {
 							signupDependencies={ this.props.signupDependencies }
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }
-							hideFreePlan={ hideFreePlan }
+							hideFreePlan={ false }
 							isReskinned={ isReskinned }
 							queryParams={ this.getCurrentFlowSupportedQueryParams() }
 							{ ...propsForCurrentStep }
@@ -921,6 +912,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const oauth2Client = getCurrentOAuth2Client( state );
+		const hostingFlow = isInHostingFlow( state );
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
@@ -941,6 +933,7 @@ export default connect(
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
+			hostingFlow,
 		};
 	},
 	{

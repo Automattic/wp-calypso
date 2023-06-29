@@ -48,13 +48,13 @@ export const getWPCOMPluginsQueryParams = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string
-): [ QueryKey, QueryFunction< any[] > ] => {
-	const cacheKey = getCacheKey( type + searchTerm + tag + '-normalized' );
-	const fetchFn = () =>
+): { queryKey: QueryKey; queryFn: QueryFunction< any[] > } => {
+	const queryKey = getCacheKey( type + searchTerm + tag + '-normalized' );
+	const queryFn = () =>
 		fetchWPCOMPlugins( type, searchTerm, tag ).then( ( data: { results: any[] } ) =>
 			normalizePluginsList( data.results )
 		);
-	return [ cacheKey, fetchFn ];
+	return { queryKey, queryFn };
 };
 
 /**
@@ -76,7 +76,8 @@ export const useWPCOMPluginsList = (
 		refetchOnMount = true,
 	}: UseQueryOptions< any > = {}
 ): UseQueryResult => {
-	return useQuery( ...getWPCOMPluginsQueryParams( type, searchTerm, tag ), {
+	return useQuery( {
+		...getWPCOMPluginsQueryParams( type, searchTerm, tag ),
 		enabled: enabled,
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,
@@ -89,14 +90,16 @@ const fetchWPCOMPlugin = ( slug: string ) =>
 		apiNamespace: pluginsApiNamespace,
 	} );
 
-export const getWPCOMPluginQueryParams = ( slug: string ): [ QueryKey, QueryFunction ] => {
-	const cacheKey = getCacheKey( slug + '-normalized' );
-	const fetchFn = () =>
+export const getWPCOMPluginQueryParams = (
+	slug: string
+): { queryKey: QueryKey; queryFn: QueryFunction } => {
+	const queryKey = getCacheKey( slug + '-normalized' );
+	const queryFn = () =>
 		fetchWPCOMPlugin( slug ).then( ( data: any ) =>
 			normalizePluginData( { detailsFetched: Date.now() }, data )
 		);
 
-	return [ cacheKey, fetchFn ];
+	return { queryKey, queryFn };
 };
 
 /**
@@ -110,7 +113,8 @@ export const useWPCOMPlugin = (
 	slug: string,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult< any > => {
-	return useQuery( ...getWPCOMPluginQueryParams( slug ), {
+	return useQuery( {
+		...getWPCOMPluginQueryParams( slug ),
 		enabled: enabled,
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,
@@ -120,26 +124,24 @@ export const useWPCOMPlugin = (
 export const useWPCOMPlugins = ( slugs: Array< string > ): Array< UseQueryResult< any > > => {
 	return useQueries( {
 		queries: slugs.map( ( slug ) => {
-			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slug );
-
-			return {
-				queryKey: cacheKey,
-				queryFn: fetchFn,
-			};
+			return getWPCOMPluginQueryParams( slug );
 		} ),
 	} );
 };
 
-export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction ] => {
-	const cacheKey = [ 'plugins-featured-list-normalized' ];
-	const fetchFn = () =>
+export const getWPCOMFeaturedPluginsQueryParams = (): {
+	queryKey: QueryKey;
+	queryFn: QueryFunction;
+} => {
+	const queryKey = [ 'plugins-featured-list-normalized' ];
+	const queryFn = () =>
 		wpcom.req
 			.get( {
 				path: featuredPluginsApiBase,
 				apiNamespace: pluginsApiNamespace,
 			} )
 			.then( normalizePluginsList );
-	return [ cacheKey, fetchFn ];
+	return { queryKey, queryFn };
 };
 
 /**
@@ -153,7 +155,8 @@ export const useWPCOMFeaturedPlugins = ( {
 	staleTime = BASE_STALE_TIME,
 	refetchOnMount = true,
 }: UseQueryOptions = {} ): UseQueryResult => {
-	return useQuery( ...getWPCOMFeaturedPluginsQueryParams(), {
+	return useQuery( {
+		...getWPCOMFeaturedPluginsQueryParams(),
 		enabled,
 		staleTime,
 		refetchOnMount,

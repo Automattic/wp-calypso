@@ -4,6 +4,7 @@ import type { DashboardDataContextInterface } from './types';
 const DashboardDataContext = createContext< DashboardDataContextInterface >( {
 	verifiedContacts: {
 		emails: [],
+		phoneNumbers: [],
 		refetchIfFailed: () => {
 			return undefined;
 		},

@@ -1,21 +1,21 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import ActionPanel from 'calypso/components/action-panel';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
-import FormattedHeader from 'calypso/components/formatted-header';
-import HeaderCake from 'calypso/components/header-cake';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { ConfirmationTransfer } from './confirmation-transfer';
 import PendingDomainTransfer from './pending-domain-transfer';
 import SiteOwnerTransferEligibility from './site-owner-user-search';
+import { SiteTransferCard } from './site-transfer-card';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
+import { User } from './use-administrators';
+import { useConfirmationTransferHash } from './use-confirmation-transfer-hash';
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,
@@ -42,24 +42,18 @@ const SiteTransferComplete = () => {
 	);
 };
 
-const ActionPanelStyled = styled( ActionPanel )`
-	font-size: 14px;
-	font-weight: 400;
-	.action-panel__body {
-		color: var( --studio-gray-70 );
-	}
-`;
-
 const SiteOwnerTransfer = () => {
 	useQueryUserPurchases();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-	const [ newSiteOwner, setNewSiteOwner ] = useState( '' );
+	const [ newSiteOwner, setNewSiteOwner ] = useState< User | null >( null );
 	const [ transferSiteSuccess, setSiteTransferSuccess ] = useState( false );
 
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const nonWpcomDomains = useSelector( ( state ) =>
 		getDomainsBySiteId( state, selectedSite?.ID )
 	)?.filter( ( domain ) => ! domain.isWPCOMDomain );
+	const confirmationHash = useConfirmationTransferHash();
 
 	const pendingDomain = nonWpcomDomains?.find(
 		( wpcomDomain: ResponseDomain ) => wpcomDomain.pendingTransfer
@@ -68,53 +62,48 @@ const SiteOwnerTransfer = () => {
 	if ( ! selectedSite?.ID || ! selectedSite?.slug ) {
 		return null;
 	}
+
+	const onBackClick = () => {
+		if ( ! pendingDomain && newSiteOwner && ! transferSiteSuccess ) {
+			setNewSiteOwner( null );
+		} else {
+			page( '/settings/general/' + selectedSite.slug );
+		}
+	};
+
+	if ( confirmationHash ) {
+		return (
+			<SiteTransferCard onClick={ onBackClick }>
+				<ConfirmationTransfer siteId={ selectedSite.ID } confirmationHash={ confirmationHash } />
+			</SiteTransferCard>
+		);
+	}
+
 	return (
-		<Main>
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Site Transfer' ) }
-				subHeaderText={ translate(
-					'Transfer your site to another WordPress.com user. {{a}}Learn more.{{/a}}',
-					{
-						components: {
-							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
-						},
-					}
-				) }
-				align="left"
-			/>
-			<PageViewTracker
-				path="/settings/start-site-transfer/:site"
-				title="Settings > Start Site Transfer"
-			/>
-			<HeaderCake backHref={ '/settings/general/' + selectedSite.slug } isCompact={ true }>
-				<h1>{ translate( 'Site Transfer' ) }</h1>
-			</HeaderCake>
-			<ActionPanelStyled>
-				{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
-				{ ! pendingDomain && ! newSiteOwner && (
-					<SiteOwnerTransferEligibility
-						siteId={ selectedSite.ID }
-						siteSlug={ selectedSite.slug }
-						siteOwner={ newSiteOwner }
-						onNewUserOwnerSubmit={ ( newOwner ) => setNewSiteOwner( newOwner ) }
-					/>
-				) }
-				{ ! pendingDomain && newSiteOwner && ! transferSiteSuccess && (
-					<StartSiteOwnerTransfer
-						onSiteTransferSuccess={ () => {
-							setSiteTransferSuccess( true );
-						} }
-						onSiteTransferError={ () => {
-							setSiteTransferSuccess( false );
-						} }
-						customDomains={ nonWpcomDomains }
-						siteOwner={ newSiteOwner }
-					/>
-				) }
-				{ ! pendingDomain && newSiteOwner && transferSiteSuccess && <SiteTransferComplete /> }
-			</ActionPanelStyled>
-		</Main>
+		<SiteTransferCard onClick={ onBackClick }>
+			{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
+			{ ! pendingDomain && ! newSiteOwner && (
+				<SiteOwnerTransferEligibility
+					siteId={ selectedSite.ID }
+					siteSlug={ selectedSite.slug }
+					onNewUserOwnerSubmit={ ( newOwner ) => setNewSiteOwner( newOwner ) }
+				/>
+			) }
+			{ ! pendingDomain && newSiteOwner && ! transferSiteSuccess && (
+				<StartSiteOwnerTransfer
+					onSiteTransferSuccess={ () => {
+						setSiteTransferSuccess( true );
+						dispatch( successNotice( translate( 'Email sent successfully' ), { duration: 8000 } ) );
+					} }
+					onSiteTransferError={ () => {
+						setSiteTransferSuccess( false );
+					} }
+					customDomains={ nonWpcomDomains }
+					siteOwner={ newSiteOwner }
+				/>
+			) }
+			{ ! pendingDomain && newSiteOwner && transferSiteSuccess && <SiteTransferComplete /> }
+		</SiteTransferCard>
 	);
 };
 

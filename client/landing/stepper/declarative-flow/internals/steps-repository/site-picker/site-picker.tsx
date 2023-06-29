@@ -40,7 +40,10 @@ const SitePicker = function SitePicker( props: Props ) {
 		onQueryParamChange,
 	} = props;
 	const { sitesSorting, onSitesSortingChange } = useSitesSorting();
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+		SITE_PICKER_FILTER_CONFIG,
+		( site ) => ! site.is_wpcom_staging_site
+	);
 
 	return (
 		<div className="site-picker--container">

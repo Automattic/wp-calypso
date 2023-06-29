@@ -1,8 +1,10 @@
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useIncludedProductDescriptionMap } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-included-product-description-map';
+import { useIncludedProductDescriptionMap } from 'calypso/components/jetpack/jetpack-product-info/hooks/use-included-product-description-map';
+import { PricingBreakdown } from 'calypso/my-sites/plans/jetpack-plans/product-store/pricing-breakdown';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import JetpackProductInfoComingSoonList from './coming-soon-list';
 import JetpackProductInfoFAQList from './faq-list';
 import JetpackProductInfoProductList from './product-list';
 import JetpackProductInfoRecommendationTags from './recommendation-tags';
@@ -12,18 +14,31 @@ import JetpackProductInfoSection from './section';
 import './style.scss';
 
 type JetpackProductInfoProps = {
-	title: string;
-	product: SelectorProduct;
 	full?: boolean;
+	product: SelectorProduct;
+	showPricingBreakdown?: boolean;
+	siteId?: number;
+	title: TranslateResult;
 };
 
 const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
-	title,
-	product,
 	full,
+	product,
+	showPricingBreakdown,
+	siteId = null,
+	title,
 } ) => {
-	const { description, recommendedFor, whatIsIncluded, alsoIncluded, benefits, faqs, productSlug } =
-		product;
+	const {
+		alsoIncluded,
+		benefits,
+		benefitsComingSoon,
+		lightboxDescription,
+		faqs,
+		productSlug,
+		recommendedFor,
+		whatIsIncluded,
+		whatIsIncludedComingSoon,
+	} = product;
 
 	const translate = useTranslate();
 	const icon = getProductIcon( { productSlug } );
@@ -38,7 +53,16 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 				</div>
 				<h2>{ title }</h2>
 			</div>
-			<div className="jetpack-product-info__description">{ description }</div>
+			<div className="jetpack-product-info__description">{ lightboxDescription }</div>
+
+			{ showPricingBreakdown && product.productsIncluded && (
+				<PricingBreakdown
+					includedProductSlugs={ product.productsIncluded }
+					product={ product }
+					showBreakdownHeading
+					siteId={ siteId }
+				/>
+			) }
 
 			{ full && recommendedFor && <JetpackProductInfoRecommendationTags tags={ recommendedFor } /> }
 
@@ -59,12 +83,18 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 				<>
 					{ whatIsIncluded?.length && (
 						<JetpackProductInfoSection title={ translate( 'Includes' ) }>
+							{ !! whatIsIncludedComingSoon?.length && (
+								<JetpackProductInfoComingSoonList items={ whatIsIncludedComingSoon } />
+							) }
 							<JetpackProductInfoRegularList items={ whatIsIncluded } />
 						</JetpackProductInfoSection>
 					) }
 
 					{ benefits?.length && (
 						<JetpackProductInfoSection title={ translate( 'Benefits' ) }>
+							{ !! benefitsComingSoon?.length && (
+								<JetpackProductInfoComingSoonList items={ benefitsComingSoon } />
+							) }
 							<JetpackProductInfoRegularList items={ benefits } />
 						</JetpackProductInfoSection>
 					) }

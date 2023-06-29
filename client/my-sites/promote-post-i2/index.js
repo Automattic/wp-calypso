@@ -3,7 +3,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import { promoteWidget, promotedPosts } from './controller';
+import { promoteWidget, promotedPosts, campaignDetails } from './controller';
 import { getAdvertisingDashboardPath } from './utils';
 
 export const redirectToPrimarySite = ( context, next ) => {
@@ -48,6 +48,15 @@ export default () => {
 		siteSelection,
 		navigation,
 		promotedPosts,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		getAdvertisingDashboardPath( '/:site?/campaigns/:campaignId' ),
+		redirectToPrimarySite,
+		campaignDetails,
+		navigation,
 		makeLayout,
 		clientRender
 	);

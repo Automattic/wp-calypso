@@ -13,6 +13,7 @@ export default function OptionContent( {
 	illustration,
 	learnMoreLink,
 	onSelect,
+	onSelectText,
 	isPlaceholder,
 	pricing,
 	primary,
@@ -53,14 +54,16 @@ export default function OptionContent( {
 					{ recommended && <Badge type="info-green">{ __( 'Recommended' ) }</Badge> }
 				</div>
 				<div className="option-content__top-text">{ topText }</div>
-				<a
-					className="option-content__learn-more"
-					target="_blank"
-					href={ localizeUrl( learnMoreLink ) }
-					rel="noopener noreferrer"
-				>
-					{ __( 'Learn more' ) }
-				</a>
+				{ learnMoreLink && (
+					<a
+						className="option-content__learn-more"
+						target="_blank"
+						href={ localizeUrl( learnMoreLink ) }
+						rel="noopener noreferrer"
+					>
+						{ __( 'Learn more' ) }
+					</a>
+				) }
 				{ benefits && (
 					<div className="option-content__benefits">
 						{ benefits.map( ( benefit, index ) => {
@@ -90,7 +93,7 @@ export default function OptionContent( {
 			<div className="option-content__action">
 				{ onSelect && (
 					<Button primary={ primary } disabled={ disabled } onClick={ onSelect } busy={ disabled }>
-						{ __( 'Select' ) }
+						{ onSelectText ?? __( 'Select' ) }
 					</Button>
 				) }
 			</div>
@@ -102,8 +105,9 @@ OptionContent.propTypes = {
 	benefits: PropTypes.array,
 	disabled: PropTypes.bool,
 	illustration: PropTypes.string.isRequired,
-	learnMoreLink: PropTypes.string.isRequired,
+	learnMoreLink: PropTypes.string,
 	onSelect: PropTypes.func,
+	onSelectText: PropTypes.string,
 	pricing: PropTypes.object,
 	primary: PropTypes.bool,
 	recommended: PropTypes.bool,

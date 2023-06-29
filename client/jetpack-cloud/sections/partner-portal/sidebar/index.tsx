@@ -33,6 +33,16 @@ class PartnerPortalSidebar extends Component< Props > {
 				<SidebarRegion>
 					<SidebarMenu>
 						<SidebarItem
+							customIcon={ <JetpackIcons icon="licenses" /> }
+							label={ translate( 'Licenses', {
+								comment: 'Jetpack sidebar navigation item',
+							} ) }
+							link="/partner-portal/licenses"
+							onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Licenses' ) }
+							selected={ itemLinkMatches( '/partner-portal/licenses', path ) }
+						/>
+
+						<SidebarItem
 							customIcon={
 								<JetpackIcons
 									icon={
@@ -46,16 +56,6 @@ class PartnerPortalSidebar extends Component< Props > {
 							link="/partner-portal/billing"
 							onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal' ) }
 							selected={ path === '/partner-portal/billing' }
-						/>
-
-						<SidebarItem
-							customIcon={ <JetpackIcons icon="licenses" /> }
-							label={ translate( 'Licenses', {
-								comment: 'Jetpack sidebar navigation item',
-							} ) }
-							link="/partner-portal/licenses"
-							onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Licenses' ) }
-							selected={ itemLinkMatches( '/partner-portal/licenses', path ) }
 						/>
 
 						{ config.isEnabled( 'jetpack/partner-portal-payment' ) && (

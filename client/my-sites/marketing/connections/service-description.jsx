@@ -40,8 +40,8 @@ class SharingServiceDescription extends Component {
 			instagram_business: function () {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate(
-						'Sharing photos and video reels to your Instagram account.',
-						'Sharing photos and video reels to your Instagram accounts.',
+						'Sharing photos to your Instagram account.',
+						'Sharing photos to your Instagram accounts.',
 						{
 							count: this.props.numberOfConnections,
 							comment:
@@ -53,7 +53,7 @@ class SharingServiceDescription extends Component {
 				return (
 					<>
 						{ this.props.translate(
-							'Share photos and video reels from your site to your Instagram Business account.',
+							'Share photos from your site to your Instagram Business account.',
 							{
 								comment: 'Description for Instagram Publicize when no accounts are connected',
 							}

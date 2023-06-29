@@ -37,6 +37,7 @@ function ReaderSubscriptionListItem( {
 	followSource,
 	showNotificationSettings,
 	showLastUpdatedDate,
+	showFollowedOnDate,
 	isFollowing,
 	railcar,
 } ) {
@@ -150,19 +151,22 @@ function ReaderSubscriptionListItem( {
 									</span>
 								</li>
 							) }
-							{ feed && feed.date_subscribed && ! isNaN( feed.date_subscribed ) && (
-								<li>
-									<span
-										className="reader-subscription-list-item__date-subscribed"
-										title={ moment( feed.date_subscribed ).format( 'll' ) }
-									>
-										{ translate( 'followed %s', {
-											args: moment( feed.date_subscribed ).format( 'MMM YYYY' ),
-											context: 'date feed was followed',
-										} ) }
-									</span>
-								</li>
-							) }
+							{ showFollowedOnDate &&
+								feed &&
+								feed.date_subscribed &&
+								! isNaN( feed.date_subscribed ) && (
+									<li>
+										<span
+											className="reader-subscription-list-item__date-subscribed"
+											title={ moment( feed.date_subscribed ).format( 'll' ) }
+										>
+											{ translate( 'followed %s', {
+												args: moment( feed.date_subscribed ).format( 'MMM YYYY' ),
+												context: 'date feed was followed',
+											} ) }
+										</span>
+									</li>
+								) }
 						</ul>
 					</div>
 				) }

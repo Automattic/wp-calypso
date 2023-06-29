@@ -1,14 +1,11 @@
-.dashboard__site-survey-banner {
-	&.banner.card {
-		border-left-color: var(--color-jetpack);
+.site-survey-banner {
+	background-image: url(calypso/assets/images/jetpack/jetpack-jitm-background.png);
+	background-position: top right;
+	background-repeat: no-repeat;
+	box-shadow: 0 1px 4px var(--studio-gray-5);
 
-		.banner__icon-circle {
-			background-color: var(--color-jetpack);
-		}
-
-		.banner__icon-circle > img {
-			width: 19px;
-			height: 19px;
-		}
+	.banner__close-icon {
+		width: 20px;
+		height: 20px;
 	}
 }

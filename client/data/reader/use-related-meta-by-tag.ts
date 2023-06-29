@@ -108,7 +108,7 @@ export const useRelatedMetaByTag = ( tag: string ): UseQueryResult< RelatedMetaB
 	const tag_recs_per_card = 10;
 	const site_recs_per_card = 5;
 	return useQuery( {
-		queryKey: [ 'related-meta-by-tag-' + tag_recs_per_card + '-' + site_recs_per_card, tag ],
+		queryKey: [ 'related-meta-by-tag', tag_recs_per_card, site_recs_per_card, tag ],
 		queryFn: () =>
 			wp.req.get( {
 				path: `/read/tags/${ encodeURIComponent(
