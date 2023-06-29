@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
+import {
+	useLocalizeUrl,
+	removeLocaleFromPathLocaleInFront,
+	localeRegexString,
+} from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -77,7 +81,9 @@ const LayoutLoggedOut = ( {
 
 	const isReaderTagPage = sectionName === 'reader' && currentRoute.startsWith( '/tag/' );
 
-	const isReaderSearchPage = sectionName === 'reader' && currentRoute.startsWith( '/read/search' );
+	const isReaderSearchPage =
+		sectionName === 'reader' &&
+		currentRoute.match( new RegExp( `^(/${ localeRegexString })?/read/search` ) );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
