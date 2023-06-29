@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button as OriginalButton } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
@@ -7,13 +7,6 @@ import { addQueryArgs } from '@wordpress/url';
 import { get } from 'lodash';
 
 import './style.scss';
-
-const Button = ( {
-	children,
-	...rest
-}: OriginalButton.Props & { icon?: unknown; iconSize?: number } ) => (
-	<OriginalButton { ...rest }>{ children }</OriginalButton>
-);
 
 interface Props {
 	postType: { slug: string };
