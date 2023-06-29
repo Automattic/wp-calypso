@@ -178,7 +178,6 @@ const SharingModal: React.FC = () => {
 	return (
 		<Modal
 			className="wpcom-block-editor-post-published-sharing-modal"
-			open={ isOpen }
 			title=""
 			onRequestClose={ closeModal }
 		>
