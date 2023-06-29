@@ -17,6 +17,7 @@ import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-tr
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
+import jetpackAIIcon from '../icons/jetpack-ai';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
@@ -44,7 +45,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 		{
 			productSlug: PRODUCT_JETPACK_AI_MONTHLY,
 			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_AI_MONTHLY ),
-			icon: unlimitedThemesIcon,
+			icon: jetpackAIIcon,
 			overrides: null,
 			displayCost: useAddOnDisplayCost( PRODUCT_JETPACK_AI_MONTHLY ),
 			featured: true,
