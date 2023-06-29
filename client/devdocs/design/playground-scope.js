@@ -1,6 +1,7 @@
 export {
 	Badge,
 	Button,
+	Badge,
 	Card,
 	CompactCard,
 	FormInputValidation,
