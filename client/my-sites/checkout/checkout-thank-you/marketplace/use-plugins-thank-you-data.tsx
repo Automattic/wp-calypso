@@ -180,9 +180,10 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		( name: string ) => {
 			recordTracksEvent( name, {
 				site_id: siteId,
+				plugins: pluginSlugs.join(),
 			} );
 		},
-		[ siteId ]
+		[ siteId, pluginSlugs ]
 	);
 
 	const ThankYouHeaderAction = styled.div`
