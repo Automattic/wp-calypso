@@ -7,9 +7,10 @@ interface PlansGridContext {
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
 
-const PlansGridContextProvider: React.FunctionComponent<
-	PlansGridContext & { children: React.ReactNode }
-> = ( { intent, children } ) => {
+const PlansGridContextProvider: React.FunctionComponent< PlansGridContext > = ( {
+	intent,
+	children,
+} ) => {
 	return <PlansGridContext.Provider value={ { intent } }>{ children }</PlansGridContext.Provider>;
 };
 
