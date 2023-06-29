@@ -108,7 +108,7 @@ module.exports = {
 				use: {
 					loader: './filter-json-config-loader',
 					options: {
-						keys: [ 'features', 'dsp_stripe_pub_key', 'dsp_widget_js_src' ],
+						keys: [ 'features', 'dsp_stripe_pub_key', 'dsp_widget_js_src', 'client_slug' ],
 					},
 				},
 			},
