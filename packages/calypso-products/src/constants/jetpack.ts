@@ -295,7 +295,6 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 		relatedProduct: PRODUCT_JETPACK_SEARCH_MONTHLY,
 		ratio: 12,
 	},
-	// STATS?
 	[ PRODUCT_JETPACK_SCAN ]: {
 		relatedProduct: PRODUCT_JETPACK_SCAN_MONTHLY,
 		ratio: 12,
