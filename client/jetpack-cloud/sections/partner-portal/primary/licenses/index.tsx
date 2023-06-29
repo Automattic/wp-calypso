@@ -75,30 +75,33 @@ export default function Licenses( {
 				</>
 			) }
 			<SiteAddLicenseNotification />
-			<div className="licenses__header">
-				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
-				<SelectPartnerKeyDropdown />
+			<div className="licenses__container">
+				<div className="licenses__header">
+					<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
-				<Button
-					href="/partner-portal/issue-license"
-					onClick={ onIssueNewLicenseClick }
-					primary
-					style={ { marginLeft: 'auto' } }
-				>
-					{ translate( 'Issue New License' ) }
-				</Button>
+					<SelectPartnerKeyDropdown />
+
+					<Button
+						href="/partner-portal/issue-license"
+						onClick={ onIssueNewLicenseClick }
+						primary
+						style={ { marginLeft: 'auto' } }
+					>
+						{ translate( 'Issue New License' ) }
+					</Button>
+				</div>
+
+				{ showEmptyStateContent ? (
+					<OnboardingWidget isLicensesPage />
+				) : (
+					<LicenseListContext.Provider value={ context }>
+						<LicenseStateFilter />
+
+						<LicenseList />
+					</LicenseListContext.Provider>
+				) }
 			</div>
-
-			{ showEmptyStateContent ? (
-				<OnboardingWidget isLicensesPage />
-			) : (
-				<LicenseListContext.Provider value={ context }>
-					<LicenseStateFilter />
-
-					<LicenseList />
-				</LicenseListContext.Provider>
-			) }
 		</div>
 	);
 }

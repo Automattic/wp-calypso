@@ -1,6 +1,10 @@
 .licenses {
+	&__container {
 	max-width: 1500px;
 	margin: auto;
+
+		padding: 0 16px;
+	}
 
 	&__header {
 		display: flex;
