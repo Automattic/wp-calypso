@@ -85,12 +85,12 @@ const usePlanTypesWithIntent = ( {
 			return {
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
 			};
-		case 'plans-plugins': // is this used?
+		case 'plans-plugins':
 			return {
 				planTypes: [
 					...( currentSitePlanType ? [ currentSitePlanType ] : [] ),
-					TYPE_BUSINESS, // this can match the currentSitePlanType. needs investigation.
-					TYPE_ECOMMERCE, // this can match the currentSitePlanType. needs investigation.
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
 				],
 			};
 		// The Jetpack mobile app only wants to display two plans -- personal and premium
