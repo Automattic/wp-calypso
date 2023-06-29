@@ -54,6 +54,7 @@ export function RenderMailPoetUpgrade( { dismissPreference } ) {
 					) }
 				</p>
 				<div className="mailpoet-upgrade-actions">
+					{ /* TODO: Add the right action for this CTA */ }
 					<Button primary>{ translate( 'Get it now' ) }</Button>
 					<Button onClick={ getDismissClickHandler }>{ translate( "No, I'm Ok" ) }</Button>
 				</div>
