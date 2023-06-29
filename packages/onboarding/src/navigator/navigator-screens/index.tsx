@@ -7,6 +7,7 @@ import {
 import { NavigationButtonAsItem } from '../navigator-buttons';
 import NavigatorHeader from '../navigator-header';
 import NavigatorItemGroup from '../navigator-item-group';
+import NavigatorListener from '../navigator-listener';
 import type { NavigatorScreenObject } from '../types';
 import type { ComponentType } from 'react';
 import './style.scss';
@@ -15,9 +16,15 @@ interface Props {
 	screens: NavigatorScreenObject[];
 	InitialScreen: ComponentType< { children: JSX.Element } >;
 	initialPath?: string;
+	onNavigatorPathChange?: ( path: string ) => void;
 }
 
-const NavigatorScreens = ( { screens, InitialScreen, initialPath = '/' }: Props ) => {
+const NavigatorScreens = ( {
+	screens,
+	InitialScreen,
+	initialPath = '/',
+	onNavigatorPathChange,
+}: Props ) => {
 	if ( screens.length === 0 ) {
 		return null;
 	}
@@ -75,6 +82,9 @@ const NavigatorScreens = ( { screens, InitialScreen, initialPath = '/' }: Props 
 						</>
 					</NavigatorScreen>
 				)
+			) }
+			{ onNavigatorPathChange && (
+				<NavigatorListener onNavigatorPathChange={ onNavigatorPathChange } />
 			) }
 		</NavigatorProvider>
 	);

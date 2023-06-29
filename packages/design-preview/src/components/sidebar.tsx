@@ -54,6 +54,7 @@ interface SidebarProps {
 	selectedFontVariation: GlobalStylesObject | null;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 	limitGlobalStyles: boolean;
+	onNavigatorPathChange?: ( path: string ) => void;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -76,6 +77,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	selectedFontVariation,
 	onSelectFontVariation,
 	limitGlobalStyles,
+	onNavigatorPathChange,
 } ) => {
 	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
@@ -210,7 +212,11 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	return (
 		<div className="design-preview__sidebar">
 			<div className="design-preview__sidebar-content">
-				<NavigatorScreens screens={ screens } InitialScreen={ InitialScreen } />
+				<NavigatorScreens
+					screens={ screens }
+					InitialScreen={ InitialScreen }
+					onNavigatorPathChange={ onNavigatorPathChange }
+				/>
 			</div>
 		</div>
 	);

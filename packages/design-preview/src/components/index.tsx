@@ -34,6 +34,7 @@ interface DesignPreviewProps {
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 	onGlobalStylesChange: ( globalStyles: GlobalStylesObject | null ) => void;
 	limitGlobalStyles: boolean;
+	onNavigatorPathChange?: ( path: string ) => void;
 }
 
 const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; }`;
@@ -65,6 +66,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	onSelectFontVariation,
 	onGlobalStylesChange,
 	limitGlobalStyles,
+	onNavigatorPathChange,
 } ) => {
 	const selectedVariations = useMemo(
 		() =>
@@ -118,6 +120,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				selectedFontVariation={ selectedFontVariation }
 				onSelectFontVariation={ onSelectFontVariation }
 				limitGlobalStyles={ limitGlobalStyles }
+				onNavigatorPathChange={ onNavigatorPathChange }
 			/>
 			<SitePreview
 				url={ previewUrl }
