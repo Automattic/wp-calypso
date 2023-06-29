@@ -15,7 +15,7 @@ import { find, map, pickBy, includes } from 'lodash';
  */
 export const localeRegexString = '[a-zA-Z]{2,3}(-[a-zA-Z]{2,3})?(_[a-zA-Z]{2,6})?';
 
-const localeOnlyRegex = new RegExp( /^/ + localeRegexString + /$/ );
+const localeOnlyRegex = new RegExp( '^' + localeRegexString + '$' );
 
 export function getPathParts( path: string ) {
 	// Remove trailing slash then split. If there is a trailing slash,
