@@ -174,15 +174,20 @@ export const canCancelCampaign = ( status: string ) => {
 
 export const getPagedBlazeSearchData = (
 	mode: 'campaigns' | 'posts',
-	campaignsData?: PagedBlazeSearchResponse
+	pagedData?: PagedBlazeSearchResponse
 ): PagedBlazeContentData => {
-	const lastPage = campaignsData?.pages?.[ campaignsData?.pages?.length - 1 ];
+	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
 	if ( lastPage ) {
 		const { has_more_pages, total_items } = lastPage;
 
-		const foundContent = campaignsData?.pages
-			?.map( ( page: any ) => page[ mode ] )
-			?.flat() as Campaign[];
+		let foundContent = pagedData?.pages
+			?.map( ( item: any ) => item[ mode ] )
+			?.flat()
+			?.filter( ( item: any ) => 'undefined' !== typeof item );
+
+		if ( foundContent?.length && 'campaigns' === mode ) {
+			foundContent = foundContent as Campaign[];
+		}
 
 		return {
 			has_more_pages,

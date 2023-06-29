@@ -28,11 +28,9 @@ export default function PostsTable( props: Props ) {
 					</>
 				) : (
 					<>
-						{ posts
-							.filter( ( post: any ) => 'undefined' !== typeof post )
-							.map( ( post: BlazablePost ) => {
-								return <PostItem key={ `post-id${ post.ID }` } post={ post } />;
-							} ) }
+						{ posts.map( ( post: BlazablePost ) => {
+							return <PostItem key={ `post-id${ post.ID }` } post={ post } />;
+						} ) }
 						{ isFetchingPageResults && <CampaignItemLoading /> }
 					</>
 				) }
