@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import TimeSince from 'calypso/components/time-since';
 import useSubscriptionPlans from '../../hooks/use-subscription-plans';
@@ -6,7 +5,7 @@ import { Subscriber } from '../../types';
 import { SubscriberPopover } from '../subscriber-popover';
 import { SubscriberProfile } from '../subscriber-profile';
 
-type SubscriberRowProps = {
+export type SubscriberRowProps = {
 	onUnsubscribe: ( subscriber: Subscriber ) => void;
 	onView: ( subscriber: Subscriber ) => void;
 	subscriber: Subscriber;
@@ -27,7 +26,7 @@ export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: Subscriber
 			<span className="subscriber-list__subscription-type-column" role="cell">
 				{ subscriptionPlans &&
 					subscriptionPlans.map( ( subscriptionPlan, index ) => (
-						<div key={ index }>{ subscriptionPlan }</div>
+						<div key={ index }>{ subscriptionPlan.plan }</div>
 					) ) }
 			</span>
 			<span className="subscriber-list__rate-column hidden" role="cell">
@@ -40,7 +39,7 @@ export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: Subscriber
 				<SubscriberPopover
 					onView={ () => onView( subscriber ) }
 					onUnsubscribe={ () => onUnsubscribe( subscriber ) }
-					isViewButtonVisible={ isEnabled( 'subscribers/view-subscriber-details' ) }
+					isViewButtonVisible
 				/>
 			</span>
 		</li>
