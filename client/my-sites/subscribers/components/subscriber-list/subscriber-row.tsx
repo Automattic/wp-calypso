@@ -6,7 +6,7 @@ import { Subscriber } from '../../types';
 import { SubscriberPopover } from '../subscriber-popover';
 import { SubscriberProfile } from '../subscriber-profile';
 
-type SubscriberRowProps = {
+export type SubscriberRowProps = {
 	onUnsubscribe: ( subscriber: Subscriber ) => void;
 	onView: ( subscriber: Subscriber ) => void;
 	subscriber: Subscriber;
