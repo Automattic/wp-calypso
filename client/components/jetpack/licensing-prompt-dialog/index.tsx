@@ -69,7 +69,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 	const instructions = (
 		<>
 			<b>
-				{ hasOneDetachedLicense
+				{ hasOneDetachedLicense && detachedUserLicense?.product
 					? translate(
 							'You have a %(productName)s license available. You can activate it now if you want.',
 							{

@@ -87,11 +87,18 @@ class JetpackSiteStats extends Component {
 			onChange = handleAutosavingToggle( name );
 		}
 
+		// Admin users should always be able to access stats, so we don't want to enable the toggle for them.
+		const isAdminToggleForStatsVisibilitySection = name === 'roles_administrator';
+
 		return (
 			<ToggleControl
-				checked={ checked }
+				checked={ checked || isAdminToggleForStatsVisibilitySection }
 				disabled={
-					isRequestingSettings || isSavingSettings || moduleUnavailable || ! statsModuleActive
+					isRequestingSettings ||
+					isSavingSettings ||
+					moduleUnavailable ||
+					! statsModuleActive ||
+					isAdminToggleForStatsVisibilitySection
 				}
 				onChange={ onChange }
 				key={ name }

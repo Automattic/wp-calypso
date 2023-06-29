@@ -15,7 +15,6 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import HappychatButton from 'calypso/components/happychat/button';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { disconnect } from 'calypso/state/jetpack/connection/actions';
 import {
@@ -206,10 +205,6 @@ class DisconnectJetpack extends PureComponent {
 		page( `/activity-log/${ this.props.siteSlug }` );
 	};
 
-	trackTryRewindHelp = () => {
-		this.props.recordTracksEvent( 'calypso_disconnect_jetpack_try_rewind_help' );
-	};
-
 	render() {
 		const {
 			disconnectHref,
@@ -285,10 +280,6 @@ class DisconnectJetpack extends PureComponent {
 					</p>
 					<div className="disconnect-jetpack__try-rewind-button-wrap">
 						<Button onClick={ this.handleTryRewind }>{ translate( 'Restore site' ) }</Button>
-						<HappychatButton borderless={ false } onClick={ this.trackTryRewindHelp } primary>
-							<Gridicon icon="chat" size={ 18 } />
-							{ translate( 'Get help' ) }
-						</HappychatButton>
 					</div>
 				</Card>
 			),

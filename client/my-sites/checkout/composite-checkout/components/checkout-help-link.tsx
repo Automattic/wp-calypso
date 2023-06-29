@@ -1,23 +1,16 @@
-import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { SUPPORT_FORUM } from '@automattic/help-center';
 import { ResponseCartMessage, useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
-import HappychatButtonUnstyled from 'calypso/components/happychat/button';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level';
-import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
-import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import type { Theme } from '@automattic/composite-checkout';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -29,65 +22,14 @@ type StyledProps = {
 	theme?: Theme;
 };
 
-type HappychatButtonProps = {
-	onClick: () => void;
-	theme?: Theme;
-	openHelpCenter: boolean;
-};
-
-const HappychatButton: React.FC< HappychatButtonProps > = styled( HappychatButtonUnstyled )`
-	margin: 0;
-	padding: 0;
-
-	svg {
-		margin-right: 6px;
-		width: 20px;
-
-		.rtl & {
-			margin-right: 0;
-			margin-left: 6px;
-		}
-	}
-`;
-
-export function PaymentChatButton( {
-	plan,
-	openHelpCenter,
-}: {
-	plan: string | undefined;
-	openHelpCenter: boolean;
-} ) {
-	const reduxDispatch = useDispatch();
-	const translate = useTranslate();
-	const supportLevel = useSelector( getSupportLevel );
-	const section = useSelector( getSectionName );
-
-	const chatButtonClicked = () => {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_presales_chat_click', {
-				plan,
-				support_level: supportLevel,
-				location: openHelpCenter ? 'help-center' : 'inline-help-popover',
-				section,
-			} )
-		);
-	};
-
-	return (
-		<HappychatButton onClick={ chatButtonClicked } openHelpCenter={ openHelpCenter }>
-			<>
-				<Gridicon icon="chat" />
-				{ translate( 'Need help? Chat with us.' ) }
-			</>
-		</HappychatButton>
-	);
-}
-
 const CheckoutHelpLinkWrapper = styled.div< StyledProps >`
-	background: ${ ( props ) => props.theme.colors.surface };
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	margin: 0;
 	padding: 20px;
+
+	&:empty {
+		display: none;
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		background: transparent;
@@ -163,11 +105,9 @@ export default function CheckoutHelpLink() {
 		( error: ResponseCartMessage ) => error.code === 'blocked'
 	);
 
-	const { section, supportVariationDetermined, supportVariation } = useSelector( ( state ) => {
+	const { section } = useSelector( ( state ) => {
 		return {
 			section: getSectionName( state ),
-			supportVariationDetermined: isSupportVariationDetermined( state ),
-			supportVariation: getSupportVariation( state ),
 		};
 	} );
 
@@ -181,10 +121,11 @@ export default function CheckoutHelpLink() {
 		);
 	};
 
-	const { isChatActive, isLoading: isLoadingChat } = usePresalesChat(
-		getKeyTypeForPresalesChat(),
-		! purchasesAreBlocked
-	);
+	const {
+		isChatActive,
+		isLoading: isLoadingChat,
+		isPresalesChatAvailable,
+	} = usePresalesChat( getKeyTypeForPresalesChat(), ! purchasesAreBlocked );
 
 	const { isMessagingWidgetShown } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -204,30 +145,24 @@ export default function CheckoutHelpLink() {
 		};
 	}, [ isChatActive, setShowMessagingLauncher, isMessagingWidgetShown ] );
 
-	const shouldShowLoadingButton = ! supportVariationDetermined || isLoadingChat;
-
-	const hasDirectSupport = supportVariation !== SUPPORT_FORUM;
+	const shouldShowHelpLink = ! isChatActive && ! isPresalesChatAvailable;
+	if ( ! shouldShowHelpLink ) {
+		return null;
+	}
 
 	return (
 		<CheckoutHelpLinkWrapper>
-			<QuerySupportTypes />
-			{ shouldShowLoadingButton && <LoadingButton /> }
-			{ ! shouldShowLoadingButton && ! isChatActive && (
+			{ isLoadingChat && <LoadingButton /> }
+			{ ! isLoadingChat && (
 				<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
-					{ hasDirectSupport
-						? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
-								components: {
-									underline: <span />,
-								},
-						  } )
-						: translate(
-								'Questions? {{underline}}Read more about plans and purchases{{/underline}}',
-								{
-									components: {
-										underline: <span />,
-									},
-								}
-						  ) }
+					{ translate(
+						'Questions? {{underline}}Read more about plans and purchases{{/underline}}',
+						{
+							components: {
+								underline: <span />,
+							},
+						}
+					) }
 				</CheckoutSummaryHelpButton>
 			) }
 		</CheckoutHelpLinkWrapper>

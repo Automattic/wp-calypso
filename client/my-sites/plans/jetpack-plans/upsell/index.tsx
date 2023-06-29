@@ -122,7 +122,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		[ rootUrl, siteSlug ]
 	);
 	const onCtaClick = useCallback(
-		( productSlug, isUpsell = false ) => {
+		( productSlug: string, isUpsell = false ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_upsell_page_product_click', {
 					site_id: siteId || undefined,
@@ -175,7 +175,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 						<h1 className="jetpack-upsell__heading">
 							{ translate( 'Nice choice, we added %(productName)s to your cart.', {
 								args: {
-									productName,
+									productName: productName as string,
 								},
 							} ) }
 							<br />
@@ -251,7 +251,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 								>
 									{ translate( 'Upgrade to %(productName)s', {
 										args: {
-											productName: upsellName,
+											productName: upsellName as string,
 										},
 									} ) }
 								</Button>
@@ -262,7 +262,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 								>
 									{ translate( 'No thanks, proceed with %(productName)s', {
 										args: {
-											productName,
+											productName: productName as string,
 										},
 									} ) }
 								</a>

@@ -35,7 +35,7 @@
 	}
 }
 
-.has-no-sidebar .layout__content {
+.is-section-reader.has-no-sidebar .layout__content {
 	padding-left: 24px;
 	padding-right: 24px;
 	max-width: 1140px;
@@ -52,7 +52,7 @@
 }
 
 // to match other reader pages.
-.layout:not(.has-no-sidebar) .tags__main {
+.is-section-reader .layout:not(.has-no-sidebar) .tags__main {
 	padding: 30px 20px;
 	max-width: 600px;
 	margin: 0 auto;

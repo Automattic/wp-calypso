@@ -17,14 +17,13 @@
 	color: var(--studio-gray-50);
 }
 
-.notification-settings__sub-title {
-	@extend .notification-settings-title-light;
-	position: absolute;
-	inset-block-start: 50px;
-}
-
 .notification-settings__content {
 	margin-block-start: -16px;
+	padding-block-end: 120px;
+
+	@include break-mobile {
+		padding-block-end: 0;
+	}
 }
 
 .notification-settings__content-heading-with-beta {
@@ -63,52 +62,6 @@
 
 .notification-settings__link {
 	text-decoration: underline;
-}
-
-.notification-settings__footer {
-	margin-block-end: 32px;
-	width: calc(100% - 64px); // reducing the left and right padding
-	display: flex;
-	justify-content: flex-start;
-	flex-direction: column;
-	position: absolute;
-	bottom: 0;
-
-	.notification-settings__footer-buttons {
-		display: flex;
-		flex-direction: column;
-	}
-
-	button {
-		height: 36px;
-		line-height: 18px;
-
-		&:nth-child(2) {
-			margin-block-start: 16px;
-		}
-	}
-
-	@include break-mobile {
-		position: static;
-		justify-content: right;
-		flex-direction: initial;
-		margin-block-start: 32px;
-		margin-block-end: 0;
-		width: auto;
-
-		.notification-settings__footer-buttons {
-			justify-content: end;
-			width: 100%;
-			flex-direction: initial;
-		}
-
-		button {
-			&:nth-child(2) {
-				margin-inline-start: 12px;
-				margin-block-start: 0;
-			}
-		}
-	}
 }
 
 .select-dropdown .select-dropdown__container {
@@ -185,12 +138,6 @@
 
 .notification-settings__small-screen {
 	display: inherit;
-}
-
-.notification-settings__footer-validation-error {
-	@extend .notification-settings-title-light;
-	color: var(--color-scary-40);
-	margin-block-end: 16px;
 }
 
 .notification-settings__warning {

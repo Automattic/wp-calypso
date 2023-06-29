@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import Badge from 'calypso/components/badge';
 import FoldableCard from 'calypso/components/foldable-card';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/types';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
@@ -136,7 +136,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
-				cancelCampaign( siteId, campaign.campaign_id );
+				cancelCampaign( siteId ?? 0, campaign.campaign_id );
 			},
 		},
 	];

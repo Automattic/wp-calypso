@@ -33,7 +33,7 @@ export function useThankYouFoooter(
 	 * If only themes are present
 	 */
 	if ( ! hasPlugins && hasThemes ) {
-		footerSteps = [ themeSupportStep, WordPressForumStep, pluginExploreStep ];
+		footerSteps = [ themeSupportStep, WordPressForumStep ];
 	}
 
 	const steps = useNextSteps( footerSteps, pluginSlugs, themeSlugs );
@@ -77,20 +77,24 @@ function useThemeSteps(): FooterStep[] {
 
 	return [
 		{
-			key: 'thank_you_footer_support_guides_themes',
-			title: translate( 'Learn About Themes' ),
-			description: translate( 'Discover everything you need to know about Themes.' ),
-			link: 'https://wordpress.com/support/themes/',
-			linkText: translate( 'Theme Support' ),
-			eventKey: 'calypso_plugin_thank_you_theme_support_click',
+			key: 'thank_you_footer_setup_guides_themes',
+			title: translate( 'Need help setting up your theme?' ),
+			description: translate(
+				'Check out our support documentation for step-by-step instructions and expert guidance on your theme set up.'
+			),
+			link: 'https://wordpress.com/support/themes/set-up-your-theme/',
+			linkText: translate( 'Get set up support' ),
+			eventKey: 'calypso_plugin_thank_you_theme_setup_guide_click',
 		},
 		{
-			key: 'thank_you_footer_forum',
-			title: translate( 'WordPress community' ),
-			description: translate( 'Have a question about this theme? Get help from the community.' ),
-			link: 'https://wordpress.com/forums/',
-			linkText: translate( 'Visit Forum' ),
-			eventKey: 'calypso_plugin_thank_you_forum_click',
+			key: 'thank_you_footer_support_guides_themes',
+			title: translate( 'Your go-to theme resource' ),
+			description: translate(
+				'Take a look at our comprehensive support documentation and learn more about themes.'
+			),
+			link: 'https://wordpress.com/support/themes/',
+			linkText: translate( 'Learn more about themes' ),
+			eventKey: 'calypso_plugin_thank_you_theme_support_click',
 		},
 	];
 }

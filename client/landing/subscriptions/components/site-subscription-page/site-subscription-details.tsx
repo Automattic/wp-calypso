@@ -8,6 +8,8 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
+import { getQueryArgs } from 'calypso/lib/query-args';
+import { CancelPaidSubscriptionModal } from '../cancel-paid-subscription-modal';
 import {
 	PaymentPlan,
 	SiteSubscriptionDetailsProps,
@@ -31,6 +33,7 @@ const SiteSubscriptionDetails = ( {
 	const translate = useTranslate();
 	const localeSlug = useLocale();
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
+	const [ showUnsubscribeModal, setShowUnsubscribeModal ] = useState( false );
 
 	const {
 		mutate: subscribe,
@@ -44,16 +47,6 @@ const SiteSubscriptionDetails = ( {
 		isSuccess: unsubscribed,
 		error: unsubscribeError,
 	} = SubscriptionManager.useSiteUnsubscribeMutation( blogId );
-
-	const confirmUnsubscribe = ( { blogId, url }: { blogId: string; url: string } ) => {
-		if (
-			confirm(
-				'You currently have paid subscriptions with this site. Paid subscriptions must be cancelled separately by clicking the Manage Subscriptions button or going to https://wordpress.com/me/purchases.\n\nPress OK to proceed with unsubscribing from the site.\nPress Cancel to go back.'
-			)
-		) {
-			unsubscribe( { blog_id: blogId, url } );
-		}
-	};
 
 	const [ paymentPlans, setPaymentPlans ] = useState< PaymentPlan[] >( [] );
 
@@ -90,6 +83,20 @@ const SiteSubscriptionDetails = ( {
 			setPaymentPlans( newPaymentPlans );
 		}
 	}, [ paymentDetails ] );
+
+	const onClickCancelSubscriptionButton = () => {
+		if ( paymentPlans && !! paymentPlans.length ) {
+			setShowUnsubscribeModal( true );
+		} else {
+			const emailId = getQueryArgs()?.email_id as string;
+			unsubscribe( { blog_id: blogId, url, emailId } );
+		}
+	};
+
+	const onConfirmCancelSubscription = () => {
+		window.open( '/me/purchases', '_blank' );
+		setShowUnsubscribeModal( false );
+	};
 
 	const subscriberCountText = subscriberCount
 		? translate( '%s subscriber', '%s subscribers', {
@@ -246,17 +253,19 @@ const SiteSubscriptionDetails = ( {
 					</div>
 
 					<div className="site-subscription-page__button-container">
-						<Button
-							className="site-subscription-page__manage-button"
-							isPrimary
-							href="/me/purchases"
-							disabled={ unsubscribing }
-						>
-							{ translate( 'Manage purchases' ) }
-						</Button>
+						{ paymentPlans && !! paymentPlans.length && (
+							<Button
+								className="site-subscription-page__manage-button"
+								isPrimary
+								href="/me/purchases"
+								disabled={ unsubscribing }
+							>
+								{ translate( 'Manage purchases' ) }
+							</Button>
+						) }
 						<Button
 							className="site-subscription-page__unsubscribe-button"
-							onClick={ () => confirmUnsubscribe( { blogId, url } ) }
+							onClick={ onClickCancelSubscriptionButton }
 							disabled={ unsubscribing }
 						>
 							{ translate( 'Cancel subscription' ) }
@@ -264,6 +273,12 @@ const SiteSubscriptionDetails = ( {
 					</div>
 				</>
 			) }
+
+			<CancelPaidSubscriptionModal
+				isVisible={ showUnsubscribeModal }
+				onCancel={ () => setShowUnsubscribeModal( false ) }
+				onConfirm={ onConfirmCancelSubscription }
+			/>
 		</>
 	);
 };

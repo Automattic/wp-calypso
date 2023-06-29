@@ -2,6 +2,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.domains-table-see-all-domains-link {
+	font-size: $font-body-small;
+}
+
 .breadcrumbs {
 	svg.options-domain-button__add.gridicon {
 		margin-left: 2px;

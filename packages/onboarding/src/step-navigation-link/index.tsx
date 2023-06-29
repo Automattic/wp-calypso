@@ -1,13 +1,12 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
-import { ReactChild } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import './style.scss';
 
 interface Props {
 	direction: 'back' | 'forward';
 	handleClick?: () => void;
-	label?: string | ReactChild;
+	label?: TranslateResult;
 	hasBackIcon?: boolean;
 	hasForwardIcon?: boolean;
 	primary?: boolean;

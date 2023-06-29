@@ -25,6 +25,10 @@ interface Props {
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
 	hasSections: boolean;
+	hasHeader: boolean;
+	hasFooter: boolean;
+	hasColor: boolean;
+	hasFont: boolean;
 }
 
 const ScreenMain = ( {
@@ -34,6 +38,10 @@ const ScreenMain = ( {
 	surveyDismissed,
 	setSurveyDismissed,
 	hasSections,
+	hasHeader,
+	hasFooter,
+	hasColor,
+	hasFont,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
@@ -93,54 +101,56 @@ const ScreenMain = ( {
 				description={ headerDescription }
 				hideBack
 			/>
-			<div
-				className="screen-container__body screen-container__body--align-sides"
-				ref={ wrapperRef }
-			>
-				<HStack direction="column" alignment="top" spacing="4">
-					<NavigatorItemGroup title={ translate( 'Layout' ) }>
+			<div className="screen-container__body" ref={ wrapperRef }>
+				<HStack direction="column" alignment="top" spacing="4" expanded={ false }>
+					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
 						<NavigationButtonAsItem
+							checked={ hasHeader }
 							path={ NAVIGATOR_PATHS.HEADER }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
 							onClick={ () => onSelect( 'header' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
+							{ translate( 'Header' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
+							checked={ hasSections }
 							path={ hasSections ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
 							aria-label={ translate( 'Homepage' ) }
 							onClick={ () => onSelect( 'section' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Homepage' ) }</span>
+							{ translate( 'Homepage' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
+							checked={ hasFooter }
 							path={ NAVIGATOR_PATHS.FOOTER }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
 							onClick={ () => onSelect( 'footer' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
+							{ translate( 'Footer' ) }
 						</NavigationButtonAsItem>
 					</NavigatorItemGroup>
 					<NavigatorItemGroup title={ translate( 'Style' ) }>
 						<>
 							<NavigationButtonAsItem
+								checked={ hasColor }
 								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
 								icon={ color }
 								aria-label={ translate( 'Colors' ) }
 								onClick={ () => onSelect( 'color-palettes' ) }
 							>
-								<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
+								{ translate( 'Colors' ) }
 							</NavigationButtonAsItem>
 							<NavigationButtonAsItem
+								checked={ hasFont }
 								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
 								icon={ typography }
 								aria-label={ translate( 'Fonts' ) }
 								onClick={ () => onSelect( 'font-pairings' ) }
 							>
-								<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
+								{ translate( 'Fonts' ) }
 							</NavigationButtonAsItem>
 						</>
 					</NavigatorItemGroup>

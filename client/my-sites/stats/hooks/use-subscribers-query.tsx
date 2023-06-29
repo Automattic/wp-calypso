@@ -1,3 +1,4 @@
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useQuery, useQueries, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
@@ -12,7 +13,7 @@ export interface SubscribersData {
 	date?: string;
 	unit?: string;
 	data?: {
-		[ key: string ]: string | number;
+		[ key: string ]: number | null;
 	}[];
 }
 
@@ -28,14 +29,11 @@ function querySubscribers(
 	const query = {
 		unit: period,
 		quantity,
-		http_envelope: 1,
 		date: formattedDate,
 	};
 
 	return wpcom.req.get(
 		{
-			method: 'GET',
-			apiNamespace: 'rest/v1.1',
 			path: `/sites/${ siteId }/stats/subscribers`,
 		},
 		query
@@ -99,7 +97,7 @@ export function useSubscribersQueries(
 
 	const isLoading = results.some( ( result ) => result.isLoading );
 	const isError = results.some( ( result ) => result.isError );
-	const subscribersData = results.map( ( result ) => result.data );
+	const subscribersData = results.map( ( result ) => result.data ).filter( isValueTruthy );
 
 	return { isLoading, isError, subscribersData };
 }

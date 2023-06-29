@@ -1,12 +1,10 @@
-import type { ReactChild } from 'react';
-
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
 	key: AllowedTypes;
-	title: ReactChild;
+	title: string;
 	className?: string;
 	isExpandable?: boolean;
 	isSortable?: boolean;
@@ -27,8 +25,17 @@ interface MonitorContactEmail {
 	email_address: string;
 	verified: boolean;
 }
+interface MonitorContactSMS {
+	name: string;
+	sms_number: string;
+	number: string;
+	country_code: string;
+	country_numeric_code: string;
+	verified: boolean;
+}
 interface MonitorContacts {
-	emails: Array< MonitorContactEmail >;
+	emails?: Array< MonitorContactEmail >;
+	sms_numbers?: Array< MonitorContactSMS >;
 }
 
 export interface MonitorSettings {
@@ -38,8 +45,10 @@ export interface MonitorSettings {
 	monitor_deferment_time: number;
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
+	monitor_user_sms_notifications: boolean;
 	monitor_user_wp_note_notifications: boolean;
 	monitor_notify_additional_user_emails: Array< MonitorContactEmail >;
+	monitor_notify_additional_user_sms: Array< MonitorContactSMS >;
 }
 
 interface StatsObject {
@@ -102,26 +111,26 @@ export interface BoostNode {
 export interface BackupNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 }
 
 export interface ScanNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 	threats: number;
 }
 
 interface PluginNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 	updates: number;
 }
 export interface MonitorNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
-	value: ReactChild;
+	value: string;
 	error?: boolean;
 	settings?: MonitorSettings;
 }
@@ -140,12 +149,12 @@ export interface SiteData {
 
 export interface RowMetaData {
 	row: {
-		value: Site | SiteStats | BoostData | ReactChild;
+		value: Site | SiteStats | BoostData | string;
 		status: AllowedStatusTypes;
 	};
 	link: string;
 	isExternalLink: boolean;
-	tooltip: ReactChild | undefined;
+	tooltip?: string;
 	tooltipId: string;
 	siteDown?: boolean;
 	eventName: string | undefined;
@@ -163,7 +172,7 @@ export type StatusEventNames = {
 };
 
 export type StatusTooltip = {
-	[ key in AllowedStatusTypes ]?: ReactChild;
+	[ key in AllowedStatusTypes ]?: string;
 };
 
 export type AllowedActionTypes =
@@ -194,6 +203,9 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	setIsBulkManagementActive: ( value: boolean ) => void;
 	selectedSites: Array< Site >;
 	setSelectedSites: ( value: Array< Site > ) => void;
+	currentLicenseInfo: string | null;
+	showLicenseInfo: ( license: string ) => void;
+	hideLicenseInfo: () => void;
 }
 
 export interface DashboardDataContextInterface {
@@ -239,6 +251,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 	success: boolean;
 	settings: {
 		email_notifications: boolean;
+		sms_notifications: boolean;
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
 		contacts?: MonitorContacts;
@@ -248,6 +261,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 export interface UpdateMonitorSettingsParams {
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
+	sms_notifications?: boolean;
 	jetmon_defer_status_down_minutes?: number;
 	contacts?: MonitorContacts;
 }
@@ -288,22 +302,48 @@ export interface MonitorSettingsEmail {
 	verified: boolean;
 }
 
+export interface StateMonitorSettingsSMS {
+	name: string;
+	countryCode: string;
+	countryNumericCode: string;
+	phoneNumber: string;
+	phoneNumberFull: string;
+	verified: boolean;
+}
+
 export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
 	isDefault?: boolean;
 }
 
+export interface StateMonitorSettingsSMS {
+	name: string;
+	countryCode: string;
+	phoneNumber: string;
+	phoneNumberFull: string;
+	verified: boolean;
+}
+
+export type MonitorSettingsContact = Partial< MonitorSettingsEmail > &
+	Partial< StateMonitorSettingsSMS >;
+
 export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
 
+export type AllowedMonitorContactTypes = 'email' | 'sms';
+
+export type StateMonitoringSettingsContact = StateMonitorSettingsEmail | StateMonitorSettingsSMS;
+
 export interface RequestVerificationCodeParams {
-	type: 'email' | 'sms';
-	value: string | number;
+	type: AllowedMonitorContactTypes;
+	value: string;
 	site_ids: Array< number >;
+	// For SMS contacts
+	number?: string;
 	country_code?: string;
 	country_numeric_code?: string;
 }
 
 export interface ValidateVerificationCodeParams {
-	type: 'email';
+	type: AllowedMonitorContactTypes;
 	value: string;
 	verification_code: number;
 }
@@ -316,20 +356,14 @@ export interface MonitorContactsResponse {
 export type MonitorDuration = { label: string; time: number };
 
 export interface InitialMonitorSettings {
+	enableSMSNotification: boolean;
 	enableEmailNotification: boolean;
 	enableMobileNotification: boolean;
 	selectedDuration: MonitorDuration | undefined;
 	emailContacts?: MonitorSettingsEmail[] | [];
+	phoneContacts?: StateMonitorSettingsSMS[] | [];
 }
 export interface ResendVerificationCodeParams {
-	type: 'email';
+	type: 'email' | 'sms';
 	value: string;
-}
-
-export interface StateMonitorSettingsSMS {
-	name: string;
-	countryCode: string;
-	phoneNumber: string;
-	phoneNumberFull: string;
-	verified: boolean;
 }

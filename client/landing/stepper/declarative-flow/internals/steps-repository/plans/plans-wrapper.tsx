@@ -167,7 +167,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ onSelectPlan }
-					showFAQ={ false }
 					domainName={ getDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
@@ -218,6 +217,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			isDomainUpsellFlow( flowName )
 		) {
 			return;
+		}
+
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate( 'Welcome to the best place for your WordPress website.' );
 		}
 
 		if ( ! hideFreePlan ) {

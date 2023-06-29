@@ -482,6 +482,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 export const getProductSlugFromProductType = ( type: string ): string | undefined => {
 	const slugs: Record< string, string > = {
 		backup: 'jetpack-backup-t1',
+		boost: 'jetpack-boost',
 		scan: 'jetpack-scan',
 	};
 
@@ -614,7 +615,7 @@ export const DASHBOARD_LICENSE_TYPES: { [ key: string ]: AllowedTypes } = {
 	BACKUP: 'backup',
 };
 
-export const getMonitorDowntimeText = ( downtime: number | undefined ) => {
+export const getMonitorDowntimeText = ( downtime: number | undefined ): string => {
 	if ( ! downtime ) {
 		return translate( 'Downtime' );
 	}
@@ -636,7 +637,7 @@ export const getMonitorDowntimeText = ( downtime: number | undefined ) => {
 			time: time.trim(),
 		},
 		comment: '%(time) is the downtime, e.g. "2d 5h 30m", "5h 30m", "55m"',
-	} );
+	} ) as string;
 };
 
 export const DASHBOARD_PREFERENCE_NAMES = {

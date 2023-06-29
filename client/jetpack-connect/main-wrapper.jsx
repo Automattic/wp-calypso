@@ -12,7 +12,8 @@ import { retrieveMobileRedirect } from './persistence-utils';
 export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
 		isWide: PropTypes.bool,
-		isWoo: PropTypes.bool,
+		isWooOnboarding: PropTypes.bool,
+		isWooCoreProfiler: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		partnerSlug: PropTypes.string,
@@ -22,14 +23,16 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 	static defaultProps = {
 		isWide: false,
-		isWoo: false,
+		isWooOnboarding: false,
+		isWooCoreProfiler: false,
 		wooDnaConfig: null,
 	};
 
 	render() {
 		const {
 			isWide,
-			isWoo,
+			isWooOnboarding,
+			isWooCoreProfiler,
 			isWpcomMigration,
 			className,
 			children,
@@ -43,12 +46,13 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 		const wrapperClassName = classNames( 'jetpack-connect__main', {
 			'is-wide': isWide,
-			'is-woocommerce': isWoo || isWooDna,
+			'is-woocommerce': isWooOnboarding || isWooDna || isWooCoreProfiler,
+			'is-woocommerce-core-profiler-flow': isWooCoreProfiler,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-wpcom-migration': isWpcomMigration,
 		} );
 
-		const width = isWoo || isWooDna ? 200 : undefined;
+		const width = isWooOnboarding || isWooDna ? 200 : undefined;
 		const darkColorScheme = false;
 
 		return (
@@ -61,7 +65,8 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					{ ! isWpcomMigration && (
 						<JetpackHeader
 							partnerSlug={ partnerSlug }
-							isWoo={ isWoo }
+							isWooOnboarding={ isWooOnboarding }
+							isWooCoreProfiler={ isWooCoreProfiler }
 							isWooDna={ isWooDna }
 							width={ width }
 							darkColorScheme={ darkColorScheme }

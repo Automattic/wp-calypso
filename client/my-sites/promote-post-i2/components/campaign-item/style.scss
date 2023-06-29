@@ -6,6 +6,11 @@
 	.campaign-item__ {
 		@include blazepress-data-row;
 	}
+
+	.campaign-item__impressions,
+	.campaign-item__item__clicks {
+		text-align: center;
+	}
 }
 
 @mixin blazepress-campaign-item-mobile {
@@ -17,8 +22,8 @@
 			justify-content: space-between;
 
 			// View link
-			a.campaign-item__view-link,
-			a.campaign-item__view-link:visited {
+			.campaign-item__view-link,
+			.campaign-item__view-link:visited {
 				@include blazepress-data-row-font-mobile;
 
 				color: var(--studio-gray-100);

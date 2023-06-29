@@ -11,6 +11,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AnyAction } from 'redux';
 import { setupLocale } from 'calypso/boot/locale';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import GlobalNotices from 'calypso/components/global-notices';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { WindowLocaleEffectManager } from 'calypso/landing/stepper/utils/window-locale-effect-manager';
 import { SiteSubscriptionPage } from 'calypso/landing/subscriptions/components/site-subscription-page';
@@ -22,6 +23,7 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import RecordPageView from './tracks/record-page-view';
 import './styles/styles.scss';
 
 const setupReduxStore = ( user: CurrentUser ) => {
@@ -54,10 +56,12 @@ window.AppBoot = async () => {
 	ReactDom.render(
 		<CalypsoI18nProvider>
 			<Provider store={ reduxStore }>
+				<GlobalNotices />
 				<QueryClientProvider client={ queryClient }>
 					<MomentProvider>
 						<WindowLocaleEffectManager />
 						<BrowserRouter>
+							<RecordPageView />
 							<Routes>
 								<Route path="/subscriptions/site/:blogId/*" element={ <SiteSubscriptionPage /> } />
 								<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />

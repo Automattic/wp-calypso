@@ -208,7 +208,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	);
 
 	const onSetBackupPeriod = useCallback(
-		( period ) => {
+		( period: string ) => {
 			// Grab the selected backup period / rewindId and set it
 			setBackupPeriod( period );
 			setUserHasSetBackupPeriod( true );
@@ -315,7 +315,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			<div className="clone-flow__confirmation-popover-heading">{ translate( 'Important!' ) }</div>
 			<div className="clone-flow__confirmation-popover-info">
 				{ translate(
-					'Before continue, be aware that any current content on {{strong}}%(destinationUrl)s{{/strong}} will be overriden based on what you configured to copy.',
+					'Before continuing, be aware that any current content on {{strong}}%(destinationUrl)s{{/strong}} will be overriden based on what you configured to copy.',
 					{
 						args: {
 							destinationUrl: getDestinationUrl(),

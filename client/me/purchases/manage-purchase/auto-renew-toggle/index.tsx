@@ -57,6 +57,7 @@ export interface AutoRenewToggleProps {
 	showLink?: boolean;
 	productSlug?: string;
 	siteSlug?: string | null;
+	children?: React.ReactNode;
 }
 
 export interface AutoRenewToggleConnectedProps {

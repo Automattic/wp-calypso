@@ -28,7 +28,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         type="text"
         value="Osso"
       />
-      
     </div>
     <div
       class="contact-details-form-fields__field last-name contact-details-form-fields__label"
@@ -50,7 +49,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         type="text"
         value="Buco"
       />
-      
     </div>
   </div>
   <div
@@ -79,7 +77,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
           type="text"
           value="Il pagliaccio del comune"
         />
-        
       </div>
     </div>
     <div
@@ -108,7 +105,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
             type="text"
             value="osso@buco.com"
           />
-          
         </div>
         <label
           class="email-text-input-with-checkbox__checkbox-label form-label"
@@ -176,7 +172,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
             </option>
           </select>
         </div>
-        
       </div>
     </div>
     <div

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isAkismetProduct } from '@automattic/calypso-products';
 import { useStripe, useStripeSetupIntentId } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { Card, Gridicon } from '@automattic/components';
@@ -90,6 +91,8 @@ export default function PaymentMethodSelector( {
 	} = useStripeSetupIntentId();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
+	const isAkismetPurchase = purchase ? isAkismetProduct( purchase ) : false;
+
 	const showRedirectMessage = useCallback( () => {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
@@ -109,7 +112,7 @@ export default function PaymentMethodSelector( {
 	);
 
 	const showSuccessMessage = useCallback(
-		( message ) => {
+		( message: TranslateResult ) => {
 			reduxDispatch( successNotice( message, { displayOnNextPage: true, duration: 5000 } ) );
 		},
 		[ reduxDispatch ]
@@ -209,7 +212,7 @@ export default function PaymentMethodSelector( {
 				<div className="payment-method-selector__terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
-						<TosText />
+						<TosText isAkismetPurchase={ isAkismetPurchase } />
 					</p>
 				</div>
 

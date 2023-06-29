@@ -12,7 +12,7 @@ type Props = {
 };
 
 function getResponses( siteName?: string ) {
-	const responses: Record< AnalysisReport[ 'result' ], React.ReactChild > = {
+	const responses: Record< AnalysisReport[ 'result' ], React.ReactElement | string > = {
 		NOT_OWNED_BY_USER: (
 			<p>
 				{ sprintf(

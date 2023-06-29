@@ -244,7 +244,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 				}
 			}
 
-			await user.click( screen.getByText( 'Continue' ) );
+			await user.click( screen.getByText( 'Continue to payment' ) );
 			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 			expect( setCart ).toHaveBeenCalledWith(
 				mainCartKey,
@@ -309,7 +309,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 			}
 			await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
 
-			await user.click( screen.getByText( 'Continue' ) );
+			await user.click( screen.getByText( 'Continue to payment' ) );
 			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 			expect( setCart ).toHaveBeenCalledWith(
 				mainCartKey,
@@ -378,7 +378,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 				await user.type( await screen.findByLabelText( 'Address for GST' ), vatAddress );
 			}
 
-			await user.click( screen.getByText( 'Continue' ) );
+			await user.click( screen.getByText( 'Continue to payment' ) );
 			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 			expect( setCart ).toHaveBeenCalledWith(
 				mainCartKey,

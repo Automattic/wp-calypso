@@ -13,6 +13,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
@@ -30,9 +31,9 @@ import {
 } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
-
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -57,6 +58,7 @@ const LayoutLoggedOut = ( {
 	showGdprBanner,
 	isPartnerSignup,
 	isPartnerSignupStart,
+	isWooCoreProfilerFlow,
 	locale,
 } ) => {
 	const localizeUrl = useLocalizeUrl();
@@ -93,6 +95,7 @@ const LayoutLoggedOut = ( {
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
+		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 	};
 
 	let masterbar = null;
@@ -134,6 +137,10 @@ const LayoutLoggedOut = ( {
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 			/>
 		);
+	} else if ( isWooCoreProfilerFlow ) {
+		classes.woo = true;
+		classes[ 'has-no-masterbar' ] = false;
+		masterbar = <WooCoreProfilerMasterbar />;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
@@ -161,7 +168,6 @@ const LayoutLoggedOut = ( {
 			) }
 			<div id="content" className="layout__content">
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
-				{ isCheckout && <AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } /> }
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
@@ -246,6 +252,7 @@ export default withCurrentRoute(
 			! isWooOAuth2Client( oauth2Client ) &&
 			[ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
+		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;
@@ -267,6 +274,7 @@ export default withCurrentRoute(
 			useOAuth2Layout: showOAuth2Layout( state ),
 			isPartnerSignup,
 			isPartnerSignupStart,
+			isWooCoreProfilerFlow,
 		};
 	} )( localize( LayoutLoggedOut ) )
 );

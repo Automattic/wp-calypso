@@ -182,7 +182,11 @@ const GlobalStylesVariations = ( {
 				{ splitPremiumVariations && (
 					<div className="global-styles-variations__type">
 						<div className="global-styles-variations__header">
-							<h2> { translate( 'Premium styles' ) } </h2>
+							<h2>
+								{ translate( 'Premium style', 'Premium styles', {
+									count: premiumStyles.length,
+								} ) }
+							</h2>
 							<p>{ premiumStylesDescription }</p>
 						</div>
 						<div className="global-styles-variations">{ premiumStyles }</div>

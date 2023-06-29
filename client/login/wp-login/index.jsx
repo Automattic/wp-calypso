@@ -26,6 +26,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginLinks from './login-links';
 import PrivateSite from './private-site';
@@ -239,6 +240,8 @@ export class Login extends Component {
 			path,
 			signupUrl,
 			action,
+			isWooCoreProfilerFlow,
+			isPartnerSignup,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -252,7 +255,8 @@ export class Login extends Component {
 			! socialConnect &&
 			! isJetpackMagicLinkSignUpFlow &&
 			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
-			! ( isWooOAuth2Client( this.props.oauth2Client ) && ! this.props.isPartnerSignup );
+			! ( isWooOAuth2Client( oauth2Client ) && ! isPartnerSignup ) &&
+			! isWooCoreProfilerFlow;
 
 		const footer = (
 			<>
@@ -340,6 +344,7 @@ export default connect(
 			get( getCurrentQueryArguments( state ), 'from' ),
 			'wpcom-migration'
 		),
+		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),

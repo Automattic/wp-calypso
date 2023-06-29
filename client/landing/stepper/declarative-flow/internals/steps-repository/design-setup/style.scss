@@ -56,6 +56,12 @@ $design-button-primary-color: rgb(17, 122, 201);
 			flex-grow: 1;
 			text-align: start;
 
+			&.anchor-fm-design-picker__header {
+				flex-basis: 100%;
+				margin-top: 80px;
+				margin-bottom: 64px;
+			}
+
 			.formatted-header__title {
 				@include onboarding-font-recoleta;
 				color: $gray-100;
@@ -630,9 +636,9 @@ $design-button-primary-color: rgb(17, 122, 201);
 		.step-container__content {
 			// 156px = .design-preview__sidebar + step-container__navigation.action-buttons
 			height: calc(100vh - 156px);
-			margin: 36px -8px 0;
+			margin: 36px 0 0;
 			overflow: hidden;
-			padding: 0 8px;
+			padding: 0;
 			position: relative;
 			z-index: 1;
 		}
@@ -647,14 +653,15 @@ $design-button-primary-color: rgb(17, 122, 201);
 
 				box-sizing: border-box;
 				height: calc(100vh - $preview-padding-top);
+				padding: 0 8px;
 				// 60px = .site-setup
-				margin-top: - ( 60px - $preview-padding-top );
+				margin: - ( 60px - $preview-padding-top ) -8px 0;
 				max-height: none;
 			}
 
 			.design-preview__sidebar {
 				margin: 72px -16px 0 -8px;
-				padding: 0 16px 32px 8px;
+				padding: 0 16px 0 8px;
 			}
 		}
 	}

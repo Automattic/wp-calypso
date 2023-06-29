@@ -47,7 +47,6 @@ export const HelpCenterContactPage: FC = () => {
 		isEligibleForChat,
 		isLoading: isLoadingChatStatus,
 		supportActivity,
-		supportLevel,
 	} = useChatStatus();
 	useZendeskMessaging(
 		'zendesk_support_chat_key',
@@ -123,8 +122,6 @@ export const HelpCenterContactPage: FC = () => {
 		);
 	}
 
-	const hasAccessToLivechat = ! [ 'free', 'personal', 'starter' ].includes( supportLevel || '' );
-
 	return (
 		<div className="help-center-contact-page">
 			<BackButton />
@@ -136,7 +133,7 @@ export const HelpCenterContactPage: FC = () => {
 					displayAt="2023-04-03 00:00Z"
 					closesAt="2023-04-09 00:00Z"
 					reopensAt="2023-04-10 07:00Z"
-					enabled={ hasAccessToLivechat }
+					enabled={ renderChat.render }
 				/>
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>

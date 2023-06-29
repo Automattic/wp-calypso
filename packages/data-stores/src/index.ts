@@ -12,7 +12,6 @@ import * as Subscriber from './subscriber';
 import * as User from './user';
 import * as WpcomPlansUI from './wpcom-plans-ui';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
-export { useHas3PC } from './queries/use-has-3rd-party-cookies';
 export { useJetpackSearchAIQuery } from './queries/use-jetpack-search-ai';
 export { useSiteAnalysis } from './queries/use-site-analysis';
 export { useUserSites } from './queries/use-user-sites';
@@ -32,6 +31,7 @@ export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './user/types';
 export * from './queries/use-launchpad';
+export * from './queries/use-is-domain-code-valid';
 
 const { SubscriptionManager } = Reader;
 
@@ -62,5 +62,6 @@ export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
 export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
-export type { OnboardSelect } from './onboard';
+export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
+export type { SiteActions } from './site';

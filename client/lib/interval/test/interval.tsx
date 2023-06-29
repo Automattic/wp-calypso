@@ -2,69 +2,49 @@
  * @jest-environment jsdom
  */
 
-import { render, unmountComponentAtNode } from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import { render } from '@testing-library/react';
 import { Interval, EVERY_SECOND, EVERY_MINUTE } from '../index';
 
 jest.useFakeTimers();
 
 describe( 'Interval', () => {
-	let container;
-
-	beforeEach( () => {
-		container = document.createElement( 'div' );
-		document.body.appendChild( container );
-	} );
-
-	afterEach( () => {
-		unmountComponentAtNode( container );
-		container.remove();
-		container = null;
-	} );
-
 	test( 'Does not run onTick() on mount', () => {
 		const spy = jest.fn();
-		act( () => {
-			render( <Interval onTick={ spy } period={ EVERY_SECOND } />, container );
-		} );
+
+		render( <Interval onTick={ spy } period={ EVERY_SECOND } /> );
+
 		expect( spy ).not.toHaveBeenCalled();
 	} );
 
 	test( 'Runs onTick() on the intervals', () => {
 		const spy = jest.fn();
-		act( () => {
-			render( <Interval onTick={ spy } period={ EVERY_SECOND } />, container );
-		} );
-		act( () => {
-			jest.advanceTimersByTime( 1000 );
-		} );
+
+		render( <Interval onTick={ spy } period={ EVERY_SECOND } /> );
+		jest.advanceTimersByTime( 1000 );
+
 		expect( spy ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'Respects the period passed', () => {
 		const spy = jest.fn();
-		act( () => {
-			render( <Interval onTick={ spy } period={ EVERY_MINUTE } />, container );
-		} );
-		act( () => {
-			jest.advanceTimersByTime( 1000 * 60 );
-		} );
+
+		render( <Interval onTick={ spy } period={ EVERY_MINUTE } /> );
+		jest.advanceTimersByTime( 1000 * 60 );
+
 		expect( spy ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'Stops running the interval on unmount', () => {
 		const spy = jest.fn();
-		act( () => {
-			render( <Interval onTick={ spy } period={ EVERY_SECOND } />, container );
-			jest.advanceTimersByTime( 1000 );
-		} );
+
+		const { unmount } = render( <Interval onTick={ spy } period={ EVERY_SECOND } /> );
+		jest.advanceTimersByTime( 1000 );
 
 		expect( spy ).toHaveBeenCalledTimes( 1 );
 
-		act( () => {
-			unmountComponentAtNode( container );
-			jest.advanceTimersByTime( 2000 );
-		} );
+		unmount();
+
+		jest.advanceTimersByTime( 2000 );
 
 		expect( spy ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -72,27 +52,18 @@ describe( 'Interval', () => {
 	test( 'Changes the interval when the period changes', () => {
 		const spy = jest.fn();
 
-		act( () => {
-			render( <Interval onTick={ spy } period={ EVERY_SECOND } />, container );
-			jest.advanceTimersByTime( 1000 );
-		} );
+		const { rerender } = render( <Interval onTick={ spy } period={ EVERY_SECOND } /> );
+		jest.advanceTimersByTime( 1000 );
 
 		expect( spy ).toHaveBeenCalledTimes( 1 );
 
-		act( () => {
-			render( <Interval onTick={ spy } period={ EVERY_MINUTE } />, container );
-		} );
+		rerender( <Interval onTick={ spy } period={ EVERY_MINUTE } /> );
 
-		// Separate `act` to ensure props are updated before advancing timers
-		act( () => {
-			jest.advanceTimersByTime( 1000 );
-		} );
+		jest.advanceTimersByTime( 1000 );
 
 		expect( spy ).toHaveBeenCalledTimes( 1 );
 
-		act( () => {
-			jest.advanceTimersByTime( 60 * 1000 );
-		} );
+		jest.advanceTimersByTime( 60 * 1000 );
 
 		expect( spy ).toHaveBeenCalledTimes( 2 );
 	} );
@@ -101,23 +72,17 @@ describe( 'Interval', () => {
 		const spy = jest.fn();
 		const otherSpy = jest.fn();
 
-		act( () => {
-			render( <Interval onTick={ spy } period={ EVERY_SECOND } />, container );
-			jest.advanceTimersByTime( 1000 );
-		} );
+		const { rerender } = render( <Interval onTick={ spy } period={ EVERY_SECOND } /> );
+		jest.advanceTimersByTime( 1000 );
 
 		expect( spy ).toHaveBeenCalledTimes( 1 );
 
-		act( () => {
-			render( <Interval onTick={ otherSpy } period={ EVERY_SECOND } />, container );
-		} );
+		rerender( <Interval onTick={ otherSpy } period={ EVERY_SECOND } /> );
 
 		expect( spy ).toHaveBeenCalledTimes( 1 );
 		expect( otherSpy ).not.toHaveBeenCalled();
 
-		act( () => {
-			jest.advanceTimersByTime( 1000 );
-		} );
+		jest.advanceTimersByTime( 1000 );
 
 		expect( spy ).toHaveBeenCalledTimes( 1 );
 		expect( otherSpy ).toHaveBeenCalledTimes( 1 );

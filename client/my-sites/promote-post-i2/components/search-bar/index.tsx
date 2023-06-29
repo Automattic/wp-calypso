@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
@@ -31,9 +32,9 @@ const SORT_OPTIONS_LAST_PUBLISHED = 'date';
 const SORT_OPTIONS_RECENTLY_UPDATED = 'modified';
 const SORT_OPTIONS_MOST_LIKED = 'like_count';
 const SORT_OPTIONS_MOST_COMMENTED = 'comment_count';
-const SORT_OPTIONS_MOST_VIEWED = 'view_count';
+const SORT_OPTIONS_MOST_VIEWED = 'monthly_view_count';
 
-const SORT_OPTIONS_DEFAULT = {
+export const SORT_OPTIONS_DEFAULT = {
 	orderBy: SORT_OPTIONS_RECENTLY_UPDATED,
 	order: 'desc',
 };
@@ -115,7 +116,12 @@ export default function SearchBar( props: Props ) {
 	};
 
 	return (
-		<div className="promote-post-i2__search-bar-wrapper">
+		<div
+			className={ classNames(
+				'promote-post-i2__search-bar-wrapper',
+				`${ mode === 'posts' ? 'wide' : '' }`
+			) }
+		>
 			<Search
 				className="promote-post-i2__search-bar-search"
 				initialValue={ searchInput }

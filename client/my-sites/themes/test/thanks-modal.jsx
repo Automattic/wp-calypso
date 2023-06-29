@@ -8,6 +8,7 @@ import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setStore } from 'calypso/state/redux-store';
 import { receiveSite } from 'calypso/state/sites/actions';
+import { THEME_ACTIVATE } from 'calypso/state/themes/action-types';
 import { receiveTheme, themeActivated } from 'calypso/state/themes/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ThanksModal from '../thanks-modal';
@@ -48,15 +49,22 @@ const defaultTheme = {
 	demo_uri: 'https://twentysixteendemo.wordpress.com/',
 };
 
-const setupStore = ( { site = defaultSite, theme = defaultTheme } = {} ) => {
+const setupStore = ( { site = defaultSite, theme = defaultTheme, asWpComTheme = false } = {} ) => {
 	const store = createReduxStore();
 	setStore( store );
 
 	store.dispatch( receiveSite( site ) );
-	store.dispatch( receiveTheme( theme, 'wpcom' ) );
+	if ( asWpComTheme ) {
+		store.dispatch( receiveTheme( theme, 'wpcom' ) );
+	}
 	store.dispatch( receiveTheme( theme, siteId ) );
 	store.dispatch( setSelectedSiteId( siteId ) );
 	store.dispatch( setCurrentUser( { ID: userId } ) );
+	store.dispatch( {
+		type: THEME_ACTIVATE,
+		themeId,
+		siteId,
+	} );
 	store.dispatch( themeActivated( theme.stylesheet, siteId, source, purchased ) );
 
 	return store;
@@ -94,8 +102,29 @@ describe( 'thanks-modal', () => {
 		} );
 	} );
 
+	describe( 'when activating an FSE AND Dotcom theme', () => {
+		test( 'does not display the modal since it will redirect to `/marketplace/thank-you`', async () => {
+			const store = setupStore( {
+				theme: {
+					...defaultTheme,
+					taxonomies: {
+						theme_feature: [ fseThemeFeature ],
+					},
+				},
+				asWpComTheme: true,
+			} );
+
+			render( <TestComponent store={ store } /> );
+
+			await waitFor( () => {
+				const editSiteCallToAction = screen.queryByText( 'Customize site' );
+				expect( editSiteCallToAction ).not.toBeInTheDocument();
+			} );
+		} );
+	} );
+
 	describe( 'when activating a non-FSE theme that has a front page', () => {
-		test( 'displays the "Edit homepage" call to action and links it to the page editor', async () => {
+		test( 'does not display the modal since it will redirect to `/marketplace/thank-you`', async () => {
 			const store = setupStore( {
 				site: {
 					...defaultSite,
@@ -114,15 +143,14 @@ describe( 'thanks-modal', () => {
 						],
 					},
 				},
+				asWpComTheme: true,
 			} );
 
 			render( <TestComponent store={ store } /> );
 
 			await waitFor( () => {
-				const editHomepage = screen.getByText( 'Edit homepage' );
-
-				expect( editHomepage ).toBeInTheDocument();
-				expect( editHomepage.closest( 'a' ) ).toHaveAttribute( 'href', '/page/example.com' );
+				const editSiteCallToAction = screen.queryByText( 'Customize site' );
+				expect( editSiteCallToAction ).not.toBeInTheDocument();
 			} );
 		} );
 	} );

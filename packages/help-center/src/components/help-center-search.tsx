@@ -10,6 +10,7 @@ import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { HELP_CENTER_STORE, SITE_STORE } from '../stores';
+import { SearchResult } from '../types';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
@@ -29,7 +30,7 @@ export const HelpCenterSearch = () => {
 	// when the user sets the search query, let's also populate the email subject and body
 	// for later in case they subject the same query via email
 	const setSearchQueryAndEmailSubject = useCallback(
-		( query ) => {
+		( query: string ) => {
 			const subject =
 				query.length > 100 ? query.replace( /\n/g, ' ' ).trim().slice( 0, 100 ) + '...' : query;
 			setSearchQuery( query );
@@ -59,7 +60,7 @@ export const HelpCenterSearch = () => {
 	}, [ searchQuery, query, navigate ] );
 
 	const redirectToArticle = useCallback(
-		( event, result ) => {
+		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
 			event.preventDefault();
 
 			// if result.post_id isn't set then open in a new window
@@ -69,31 +70,26 @@ export const HelpCenterSearch = () => {
 					force_site_id: true,
 					location: 'help-center',
 					result_url: result.link,
-					post_id: result.postId,
-					blog_id: result.blogId,
+					post_id: result.post_id,
+					blog_id: result.blog_id,
 				};
 				recordTracksEvent( `calypso_inlinehelp_article_no_postid_redirect`, tracksData );
 				window.open( result.link, '_blank' );
 				return;
 			}
 
-			const searchResult = {
-				...result,
-				title: preventWidows( decodeEntities( result.title ) ),
-				query: searchQuery,
-			};
 			const params = new URLSearchParams( {
 				link: result.link,
-				postId: result.post_id,
+				postId: String( result.post_id ),
 				query: searchQuery,
 				title: preventWidows( decodeEntities( result.title ) ),
 			} );
 
 			if ( result.blog_id ) {
-				params.set( 'blogId', result.blog_id );
+				params.set( 'blogId', String( result.blog_id ) );
 			}
 
-			navigate( `/post/?${ params }`, searchResult );
+			navigate( `/post/?${ params }` );
 		},
 		[ navigate, searchQuery ]
 	);

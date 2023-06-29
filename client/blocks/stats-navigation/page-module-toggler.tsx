@@ -29,10 +29,12 @@ export default function PageModuleToggler( {
 	const translate = useTranslate();
 
 	// Use state to update the ref of the setting action button to avoid null element.
-	const [ settingsActionRef, setSettingsActionRef ] = useState( useRef( null ) );
+	const [ settingsActionRef, setSettingsActionRef ] = useState(
+		useRef< HTMLButtonElement >( null )
+	);
 	const [ isSettingsMenuVisible, setIsSettingsMenuVisible ] = useState( false );
 
-	const buttonRefCallback = useCallback( ( node ) => {
+	const buttonRefCallback = useCallback( ( node: HTMLButtonElement ) => {
 		if ( settingsActionRef.current === null ) {
 			setSettingsActionRef( { current: node } );
 		}
@@ -71,6 +73,9 @@ export default function PageModuleToggler( {
 				position="bottom left"
 				context={ settingsActionRef.current }
 				focusOnShow={ false }
+				onClose={ () => {
+					setIsSettingsMenuVisible( false );
+				} }
 			>
 				<div>{ translate( 'Modules visibility' ) }</div>
 				<div className="page-modules-settings-toggle-wrapper">
@@ -82,7 +87,7 @@ export default function PageModuleToggler( {
 								<FormToggle
 									className="page-modules-settings-toggle-control"
 									checked={ pageModules[ toggleItem.key ] !== false }
-									onChange={ ( event: React.FormEvent< HTMLInputElement > ) => {
+									onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) => {
 										onToggleModule( toggleItem.key, event.target.checked );
 									} }
 								/>

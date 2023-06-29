@@ -1,3 +1,4 @@
+import { useChatWidget } from '@automattic/help-center/src/hooks';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -9,7 +10,6 @@ import imgLoadingTime from 'calypso/assets/images/cancellation/loading-time.png'
 import imgSEO from 'calypso/assets/images/cancellation/seo.png';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MaterialIcon from 'calypso/components/material-icon';
-import useHappyChat from '../use-happychat';
 import type { UpsellType } from '../get-upsell-type';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
@@ -72,8 +72,8 @@ type StepProps = {
 
 export default function EducationalCotnentStep( { type, site, ...props }: StepProps ) {
 	const translate = useTranslate();
-	const happyChat = useHappyChat();
 	const localizeUrl = useLocalizeUrl();
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
 
 	switch ( type ) {
 		case 'education:loading-time':
@@ -250,14 +250,15 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 										),
 										chat: (
 											<Button
+												isBusy={ isOpeningChatWidget }
+												disabled={ isOpeningChatWidget }
 												onClick={ () => {
 													page( `/domains/manage/${ site.slug }` );
-													const userInfo = happyChat.getUserInfo( { site } );
-													happyChat.open();
-													happyChat.sendUserInfo( {
-														...userInfo,
-														cancellationReason: props.cancellationReason,
-													} );
+													openChatWidget(
+														"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+															props.cancellationReason,
+														site.URL
+													);
 												} }
 												isLink
 											/>

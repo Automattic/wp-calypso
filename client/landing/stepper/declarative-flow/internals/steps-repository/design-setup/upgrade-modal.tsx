@@ -62,7 +62,6 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
 
 	const getStandardPurchaseModalData = (): UpgradeModalContent => {
-		const planName = premiumPlanProduct?.product_name;
 		const planPrice = premiumPlanProduct?.combined_cost_display;
 
 		return {
@@ -71,28 +70,15 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 			),
 			text: (
 				<p>
-					{ isEnglishLocale ||
-					i18n.hasTranslation(
-						"Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It's {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee."
-					)
-						? translate(
-								"Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It's {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.",
-								{
-									components: {
-										strong: <strong />,
-									},
-									args: planPrice,
-								}
-						  )
-						: translate(
-								"This theme requires %(planName)s to unlock. It's %(planPrice)s a year, risk-free with a 14-day money-back guarantee.",
-								{
-									args: {
-										planName,
-										planPrice,
-									},
-								}
-						  ) }
+					{ translate(
+						"Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It's {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.",
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: planPrice,
+						}
+					) }
 				</p>
 			),
 			price: null,
@@ -218,7 +204,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 							<ul>
 								{ featureList.map( ( feature, i ) => (
 									<li key={ i } className="upgrade-modal__included-item">
-										<Tooltip text={ feature.getDescription() } delay={ 300 } position="top">
+										<Tooltip text={ feature.getDescription?.() } position="top left">
 											<div>
 												<Gridicon icon="checkmark" size={ 16 } />
 												{ feature.getTitle() }

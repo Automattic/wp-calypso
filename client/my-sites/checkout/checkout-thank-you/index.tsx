@@ -56,7 +56,6 @@ import {
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
-import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import {
 	getPlugins as getInstalledPlugins,
@@ -124,7 +123,6 @@ export interface CheckoutThankYouProps {
 
 export interface CheckoutThankYouConnectedProps {
 	isProductsListFetching: boolean;
-	isHappychatEligible: boolean | null;
 	receipt: ReceiptState;
 	gsuiteReceipt: ReceiptState | null;
 	sitePlans: SitesPlansResult;
@@ -463,8 +461,7 @@ export class CheckoutThankYou extends Component<
 	};
 
 	render() {
-		const { translate, isHappychatEligible, email, domainOnlySiteFlow, selectedFeature } =
-			this.props;
+		const { translate, email, domainOnlySiteFlow, selectedFeature } = this.props;
 		let purchases: ReceiptPurchase[] = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
@@ -628,8 +625,7 @@ export class CheckoutThankYou extends Component<
 					<Card className="checkout-thank-you__footer">
 						<HappinessSupport
 							isJetpack={ wasJetpackPlanPurchased }
-							liveChatButtonEventName="calypso_plans_autoconfig_chat_initiated"
-							showLiveChatButton={ isHappychatEligible }
+							contactButtonEventName="calypso_plans_autoconfig_chat_initiated"
 						/>
 					</Card>
 				) }
@@ -835,7 +831,6 @@ export default connect(
 
 		return {
 			isProductsListFetching: isProductsListFetching( state ),
-			isHappychatEligible: isHappychatUserEligible( state ),
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),

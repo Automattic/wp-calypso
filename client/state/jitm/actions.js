@@ -75,13 +75,16 @@ export const setupDevTool = ( siteId, dispatch ) => {
  *
  * @param {number} siteId The site id
  * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
+ * @param {?string} searchQuery Optional search term, added to the request as the `s` query parameter
  * @param {?string} locale Current user locale
  * @returns {Object} The action to fetch the jitms
  */
-export const fetchJITM = ( siteId, messagePath, locale ) => ( {
+export const fetchJITM = ( siteId, messagePath, searchQuery, locale ) => ( {
 	type: JITM_FETCH,
+	keyedPath: messagePath + siteId,
 	siteId,
 	messagePath,
+	searchQuery,
 	locale,
 } );
 
@@ -98,7 +101,6 @@ export const openHelpCenterFromJITM =
 		const HELP_CENTER_STORE = HelpCenter.register();
 		dataStoreDispatch( HELP_CENTER_STORE ).setInitialRoute( route );
 		dataStoreDispatch( HELP_CENTER_STORE ).setShowHelpCenter( true );
-		dataStoreDispatch( HELP_CENTER_STORE ).setChatTag( 'churn_chat_prompt' );
 		dispatch( {
 			type: JITM_OPEN_HELP_CENTER,
 		} );

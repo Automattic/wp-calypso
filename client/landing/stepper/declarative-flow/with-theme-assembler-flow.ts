@@ -21,6 +21,10 @@ const SiteIntent = Onboard.SiteIntent;
 const withThemeAssemblerFlow: Flow = {
 	name: WITH_THEME_ASSEMBLER_FLOW,
 	useSideEffect() {
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
 		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = useQuery().get( 'theme' );
 
@@ -30,7 +34,14 @@ const withThemeAssemblerFlow: Flow = {
 		useEffect( () => {
 			if ( selectedTheme === BLANK_CANVAS_DESIGN.slug ) {
 				// User has selected blank-canvas-3 theme from theme showcase and enter assembler flow
-				setSelectedDesign( BLANK_CANVAS_DESIGN as Design );
+				setSelectedDesign( {
+					...selectedDesign,
+					...BLANK_CANVAS_DESIGN,
+					recipe: {
+						...selectedDesign?.recipe,
+						...BLANK_CANVAS_DESIGN.recipe,
+					},
+				} as Design );
 			}
 
 			setIntent( SiteIntent.WithThemeAssembler );
@@ -89,7 +100,15 @@ const withThemeAssemblerFlow: Flow = {
 			}
 		};
 
-		return { submit };
+		const goBack = () => {
+			switch ( _currentStep ) {
+				case 'patternAssembler': {
+					return window.location.assign( `/themes/${ siteSlug }` );
+				}
+			}
+		};
+
+		return { submit, goBack };
 	},
 };
 

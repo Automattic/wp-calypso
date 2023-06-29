@@ -1,10 +1,14 @@
 import { Card } from '@automattic/components';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import Spotlight from 'calypso/components/spotlight';
+import { getMessagePathForJITM } from 'calypso/lib/route';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { PluginsBrowserListVariant } from './types';
 import './style.scss';
 
@@ -91,6 +95,21 @@ const PluginsBrowserList = ( {
 		}
 	};
 
+	const SpotlightPlaceholder = (
+		<Spotlight
+			isPlaceholder={ true }
+			taglineText="Calypso placeholder"
+			illustrationSrc="https://wordpress.com/wp-content/lib/marketplace-images/sensei-pro.svg"
+			onClick={ () => {} }
+			titleText="This is the default placeholder rendered in Calypso"
+			ctaText="Click me"
+		/>
+	);
+
+	// Get the message path for the current route. This is needed to be able to display JITMs
+	const currentRoute = useSelector( getCurrentRoute );
+	const sectionJitmPath = getMessagePathForJITM( currentRoute );
+
 	return (
 		<div className="plugins-browser-list">
 			{ ! noHeader && ( title || subtitle || resultCount || browseAllLink ) && (
@@ -108,6 +127,23 @@ const PluginsBrowserList = ( {
 					template="spotlight"
 					placeholder={ null }
 					messagePath="calypso:plugins:spotlight"
+				/>
+			) }
+			{ listType === 'search' && (
+				<AsyncLoad
+					require="calypso/blocks/jitm"
+					template="spotlight"
+					jitmPlaceholder={ SpotlightPlaceholder }
+					messagePath="calypso:plugins:search"
+					searchQuery={ search }
+				/>
+			) }
+			{ listType === 'browse' && (
+				<AsyncLoad
+					require="calypso/blocks/jitm"
+					template="spotlight"
+					jitmPlaceholder={ SpotlightPlaceholder }
+					messagePath={ `calypso:${ sectionJitmPath }:spotlight` }
 				/>
 			) }
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>

@@ -4,10 +4,24 @@
 	grid-template-columns: repeat(3, 1fr);
 	width: 100%;
 	box-sizing: border-box;
+	margin: 14px -2px 26px;
 
 	.global-styles-variation-container__iframe {
 		max-height: 47px;
 	}
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.global-styles-variation__title {
+	display: flex;
+	color: var(--color-neutral-100);
+	font-size: $font-body-small;
+	font-weight: 500;
+	letter-spacing: -0.15px;
+	line-height: 1.7;
 }
 
 .global-styles-variation__item {
@@ -48,4 +62,8 @@
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
+}
+
+.global-styles-variation__item-preview {
+	padding: 1px;
 }

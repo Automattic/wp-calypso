@@ -65,7 +65,7 @@ const Option = styled.li< OptionProps >`
 const Dropdown = styled.div`
 	position: relative;
 	width: 100%;
-	margin: 20px 0 0;
+	margin: 16px 0;
 	> ${ Option } {
 		border-radius: 3px;
 	}

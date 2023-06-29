@@ -8,12 +8,14 @@ import {
 } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import SocialLogo from 'social-logos';
 import { AutomatticBrand, getAutomatticBrandingNoun } from '../utils';
 import type { FooterProps, PureFooterProps, LanguageOptions } from '../types';
 
 import './style.scss';
+
+const useIsomorphicEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 const defaultOnLanguageChange: React.ChangeEventHandler< HTMLSelectElement > = ( event ) => {
 	const newURL = `${ event.target.value }${ removeLocaleFromPathLocaleInFront(
@@ -468,7 +470,13 @@ const UniversalNavbarFooter = ( {
 		<AutomatticBrand />
 	);
 
-	useLayoutEffect( () => {
+	// Since this component renders in SSR, effects don't run there. As a result,
+	// the markup needs to look ok _before_ any effects run. Using the isomorphic
+	// effect allows us to do nothing on the server, but run the layout effect
+	// on the client to provide the random branding strings as a bonus. This only
+	// works because the default (no random branding) also looks fine (it just
+	// shows the Automattic logo.)
+	useIsomorphicEffect( () => {
 		setAutomatticBranding( getAutomatticBrandingNoun( translate ) );
 	}, [ translate ] );
 

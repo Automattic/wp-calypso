@@ -1,24 +1,30 @@
+import config from '@automattic/calypso-config';
 import './style.scss';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import useCampaignsQueryPaged, {
-	Campaign,
-} from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
+import { Campaign } from 'calypso/data/promote-post/types';
+import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
+import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-stats-query';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
-import usePostsQueryPaged from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
+import usePostsQueryPaged, {
+	getSearchOptionsQueryParams,
+} from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
-import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
-import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils';
+import {
+	SORT_OPTIONS_DEFAULT,
+	SearchOptions,
+} from 'calypso/my-sites/promote-post-i2/components/search-bar';
+import { getPagedBlazeSearchData, unifyCampaigns } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CreditBalance from './components/credit-balance';
@@ -56,7 +62,12 @@ export type PagedBlazeSearchResponse = {
 	pages: PagedBlazeContentData[];
 };
 
+const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
+	order: SORT_OPTIONS_DEFAULT,
+};
+
 export default function PromotedPosts( { tab }: Props ) {
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 	const selectedTab = tab && [ 'campaigns', 'posts', 'credits' ].includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID || 0;
@@ -66,7 +77,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		entrypoint: 'promoted_posts-header',
 	} );
 
-	const { data: creditBalance = 0 } = useCreditBalanceQuery();
+	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
@@ -89,9 +100,15 @@ export default function PromotedPosts( { tab }: Props ) {
 		'',
 	] );
 
-	const { has_more_pages: campaignsHasMorePages, items: campaigns } = getPagedBlazeSearchData(
+	const { has_more_pages: campaignsHasMorePages, items: pagedCampaigns } = getPagedBlazeSearchData(
 		'campaigns',
 		campaignsData
+	);
+
+	const { data: campaignsStatsData } = useCampaignsStatsQuery( selectedSiteId ?? 0 );
+	const campaigns = useMemo(
+		() => unifyCampaigns( pagedCampaigns as Campaign[], campaignsStatsData ),
+		[ pagedCampaigns, campaignsStatsData ]
 	);
 
 	const { total_items: totalCampaignsUnfiltered } = getPagedBlazeSearchData(
@@ -100,7 +117,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	/* query for posts */
-	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >( {} );
+	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >(
+		POST_DEFAULT_SEARCH_OPTIONS
+	);
 	const postsQuery = usePostsQueryPaged( selectedSiteId ?? 0, postsSearchOptions );
 
 	const {
@@ -117,7 +136,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	const initialPostQueryState = queryClient.getQueryState( [
 		'promote-post-posts',
 		selectedSiteId,
-		'',
+		getSearchOptionsQueryParams( POST_DEFAULT_SEARCH_OPTIONS ),
 	] );
 
 	const { has_more_pages: postsHasMorePages, items: posts } = getPagedBlazeSearchData(
@@ -144,9 +163,9 @@ export default function PromotedPosts( { tab }: Props ) {
 			id: 'credits',
 			name: translate( 'Credits' ),
 			className: 'pull-right',
-			itemCount: creditBalance,
+			itemCount: parseFloat( creditBalance ),
 			isCountAmount: true,
-			enabled: creditBalance > 0,
+			enabled: parseFloat( creditBalance ) > 0,
 		},
 	];
 
@@ -220,6 +239,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
+						showSupportModal={ ! isRunningInJetpack }
 					/>
 					<Button isPrimary onClick={ onClickPromote }>
 						{ translate( 'Promote' ) }

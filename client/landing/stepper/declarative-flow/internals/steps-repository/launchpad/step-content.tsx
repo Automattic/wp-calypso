@@ -64,6 +64,7 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 					goNext={ goNext }
 					goToStep={ goToStep }
 					flow={ flow }
+					hideNavigation={ flow !== 'newsletter' }
 				/>
 				<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
 			</div>

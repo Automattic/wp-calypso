@@ -80,9 +80,9 @@ const useGetSharedCardData = () => {
 	const translate = useTranslate();
 
 	return useCallback(
-		( slug ) => ( {
+		( slug: string ) => ( {
 			subheader: translate( 'of backup storage' ),
-			buttonLabel: JETPACK_BACKUP_ADDON_PRODUCTS.includes( slug )
+			buttonLabel: ( JETPACK_BACKUP_ADDON_PRODUCTS as ReadonlyArray< string > ).includes( slug )
 				? translate( 'Get add-on' )
 				: translate( 'Upgrade storage' ),
 			// description: <the default description of the product being upgraded>,
@@ -114,7 +114,9 @@ export const useGetMonthlyBackupsCardData = (): StorageUpgradeGetter => {
 			const features = {
 				items: [
 					{
-						text: translate( '%(storageAmount)s backup storage', { args: { storageAmount } } ),
+						text: translate( '%(storageAmount)s backup storage', {
+							args: { storageAmount: storageAmount as string },
+						} ),
 						slug: 'jetpack-backup-storage',
 					},
 					{
@@ -166,7 +168,9 @@ export const useGetYearlyBackupsCardData = (): StorageUpgradeGetter => {
 			const features = {
 				items: [
 					{
-						text: translate( '%(storageAmount)s backup storage', { args: { storageAmount } } ),
+						text: translate( '%(storageAmount)s backup storage', {
+							args: { storageAmount: storageAmount as string },
+						} ),
 						slug: 'jetpack-backup-storage',
 						isHighlighted: true,
 					},
@@ -202,7 +206,7 @@ export const useGetYearlyBackupsCardData = (): StorageUpgradeGetter => {
 				buttonLabel,
 				description: translate(
 					'Go back in time and recover all your information for up to a year, with %(storageAmount)s storage space.',
-					{ args: { storageAmount } }
+					{ args: { storageAmount: storageAmount as string } }
 				),
 				features,
 				disclaimer: getDisclaimer( product?.productSlug as string, features.items ),
@@ -217,7 +221,7 @@ const useGetProductCardData = () => {
 	const getYearlyBackupsCardData = useGetYearlyBackupsCardData();
 
 	return useCallback(
-		( slug: string, isPurchased ): SelectorProduct | null => {
+		( slug: string, isPurchased: boolean ): SelectorProduct | null => {
 			if ( MONTHLY_FEATURES_PRODUCTS.includes( slug ) ) {
 				return getMonthlyBackupsCardData( slug, isPurchased );
 			}

@@ -5,7 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { useSelector } from 'react-redux';
@@ -30,7 +30,7 @@ function HelpCenterContent() {
 
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 
-	const handleToggleHelpCenter = () => {
+	const handleToggleHelpCenter = useCallback( () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'help-center',
@@ -38,12 +38,14 @@ function HelpCenterContent() {
 		} );
 
 		setShowHelpCenter( ! show );
-	};
+	}, [ setShowHelpCenter, show ] );
 
 	useEffect( () => {
 		const timeout = setTimeout( () => setShowHelpIcon( true ), 0 );
 		return () => clearTimeout( timeout );
 	}, [] );
+
+	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
 
 	const content = (
 		<>
@@ -75,7 +77,7 @@ function HelpCenterContent() {
 					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
 				</>
 			) }
-			<HelpCenter handleClose={ () => setShowHelpCenter( false ) } />
+			<HelpCenter handleClose={ closeCallback } />
 		</>
 	);
 }

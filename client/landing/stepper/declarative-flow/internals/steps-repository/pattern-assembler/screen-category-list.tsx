@@ -28,6 +28,7 @@ interface Props {
 	) => void;
 	replacePatternMode: boolean;
 	selectedPattern: Pattern | null;
+	selectedPatterns: Pattern[];
 	recordTracksEvent: ( name: string, eventProperties: any ) => void;
 	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
 }
@@ -39,11 +40,11 @@ const ScreenCategoryList = ( {
 	replacePatternMode,
 	onSelect,
 	selectedPattern,
+	selectedPatterns,
 	recordTracksEvent,
 	onTogglePatternPanelList,
 }: Props ) => {
 	const translate = useTranslate();
-	const firstCategory = categories[ 0 ];
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
@@ -55,11 +56,6 @@ const ScreenCategoryList = ( {
 	};
 
 	useEffect( () => {
-		// Open first category with a delay to avoid the top position flickering
-		setTimeout( () => setSelectedCategory( firstCategory?.name ?? null ), 200 );
-
-		// Notify the pattern panel list is open and closed
-		onTogglePatternPanelList?.( true );
 		return () => {
 			onTogglePatternPanelList?.( false );
 		};
@@ -82,7 +78,7 @@ const ScreenCategoryList = ( {
 			<Composite
 				{ ...composite }
 				role="listbox"
-				className="screen-container__body screen-container__body--align-sides screen-category-list__body"
+				className="screen-container__body screen-category-list__body"
 				aria-label={ translate( 'Block pattern categories' ) }
 			>
 				{ categoriesInOrder.map( ( { name, label, description } ) => {
@@ -145,6 +141,7 @@ const ScreenCategoryList = ( {
 					onSelect( 'section', selectedPattern, selectedCategory )
 				}
 				selectedPattern={ selectedPattern }
+				selectedPatterns={ selectedPatterns }
 				selectedCategory={ selectedCategory }
 				categories={ categories }
 				patternsMapByCategory={ patternsMapByCategory }

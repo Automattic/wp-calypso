@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
-import { ReactChild } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 import './style.scss';
 
 interface SectionProps {
-	header: ReactChild;
-	subheader?: ReactChild;
-	children: ReactChild | ReactChild[];
+	header: string | ReactElement;
+	subheader?: string | ReactElement;
+	children: ReactNode;
 	dark?: boolean;
 }
 

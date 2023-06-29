@@ -11,7 +11,7 @@ interface Props {
 
 const ScanBadge: FunctionComponent< Props > = ( { numberOfThreatsFound, progress } ) => {
 	const translate = useTranslate();
-	const hasProgressPercentage = Number.isFinite( progress );
+	const hasProgressPercentage = progress != null && Number.isFinite( progress );
 
 	if ( ! numberOfThreatsFound && ! hasProgressPercentage ) {
 		return null;

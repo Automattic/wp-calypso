@@ -34,7 +34,8 @@ const WhatsNewPage: React.FC< Props > = ( {
 			<div className="whats-new-page__text">
 				{ heading && <h1 className="whats-new-page__heading">{ heading }</h1> }
 				<div className="whats-new-page__description">
-					{ description && <p>{ description }</p> }
+					{ /* eslint-disable-next-line react/no-danger */ }
+					{ description && <p dangerouslySetInnerHTML={ { __html: description } } /> }
 					{ link && (
 						<Button
 							className="whats-new-page__link"

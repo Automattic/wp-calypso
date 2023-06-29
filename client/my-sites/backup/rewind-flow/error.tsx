@@ -8,6 +8,7 @@ interface Props {
 	imgAlt?: string;
 	errorText?: TranslateResult;
 	siteUrl: string;
+	children?: React.ReactNode;
 }
 
 const RewindFlowError: FunctionComponent< Props > = ( {

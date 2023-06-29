@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	BLANK_CANVAS_DESIGN,
 	PREMIUM_THEME,
@@ -199,7 +198,7 @@ function getHostingFlowDestination( { siteId } ) {
 	return addQueryArgs(
 		{
 			'new-site': siteId,
-			'hosting-flow': isEnabled( 'hosting-onboarding-i2' ) ? true : null,
+			'hosting-flow': true,
 		},
 		'/sites'
 	);

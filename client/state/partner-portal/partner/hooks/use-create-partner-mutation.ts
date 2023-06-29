@@ -24,8 +24,8 @@ function createPartner( details: PartnerDetailsPayload ): Promise< APIPartner > 
 export default function useCreatePartnerMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIPartner, APIError, PartnerDetailsPayload, TContext >
 ): UseMutationResult< APIPartner, APIError, PartnerDetailsPayload, TContext > {
-	return useMutation< APIPartner, APIError, PartnerDetailsPayload, TContext >(
-		createPartner,
-		options
-	);
+	return useMutation< APIPartner, APIError, PartnerDetailsPayload, TContext >( {
+		...options,
+		mutationFn: createPartner,
+	} );
 }

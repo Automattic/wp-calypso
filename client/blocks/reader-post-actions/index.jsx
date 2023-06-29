@@ -33,6 +33,7 @@ const ReaderPostActions = ( props ) => {
 		visitUrl,
 		fullPost,
 		translate,
+		showFollow,
 	} = props;
 
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
@@ -97,7 +98,7 @@ const ReaderPostActions = ( props ) => {
 					isVisible={ isSuggestedFollowsModalOpen }
 				/>
 			) }
-			{ shouldShowLikes( post ) && (
+			{ showFollow && shouldShowLikes( post ) && (
 				<li className="reader-post-actions__item">
 					<ReaderFollowButton
 						siteUrl={ post.feed_URL || post.site_URL }
@@ -149,6 +150,7 @@ ReaderPostActions.propTypes = {
 	site: PropTypes.object,
 	onCommentClick: PropTypes.func,
 	showEdit: PropTypes.bool,
+	showFollow: PropTypes.bool,
 	showViews: PropTypes.bool,
 	showSuggestedFollows: PropTypes.bool,
 	iconSize: PropTypes.number,
@@ -158,6 +160,7 @@ ReaderPostActions.propTypes = {
 
 ReaderPostActions.defaultProps = {
 	showEdit: true,
+	showFollow: true,
 	showViews: false,
 	showVisit: false,
 	showSuggestedFollows: false,

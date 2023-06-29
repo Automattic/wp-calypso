@@ -33,6 +33,7 @@ class MySitesNavigation extends Component {
 
 			sitePickerProps = {
 				showManageSitesButton: true,
+				showManageDomainsButton: true,
 				showHiddenSites: true,
 				maxResults: 50,
 			};

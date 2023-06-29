@@ -21,8 +21,8 @@ function mutationAssignLicense( {
 export default function useAssignLicenseMutation< TContext = unknown >(
 	options?: UseMutationOptions< APILicense, Error, MutationAssignLicenseVariables, TContext >
 ): UseMutationResult< APILicense, Error, MutationAssignLicenseVariables, TContext > {
-	return useMutation< APILicense, Error, MutationAssignLicenseVariables, TContext >(
-		mutationAssignLicense,
-		options
-	);
+	return useMutation< APILicense, Error, MutationAssignLicenseVariables, TContext >( {
+		...options,
+		mutationFn: mutationAssignLicense,
+	} );
 }

@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useIssueMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
@@ -23,7 +24,7 @@ import {
 	getDisabledProductSlugs,
 	getSelectedProductSlugs,
 } from 'calypso/state/partner-portal/products/selectors';
-import { PartnerPortalStore } from 'calypso/state/partner-portal/types';
+import { APIProductFamilyProduct, PartnerPortalStore } from 'calypso/state/partner-portal/types';
 import { AssignLicenceProps } from '../types';
 
 import './style.scss';
@@ -34,7 +35,7 @@ export default function IssueMultipleLicensesForm( {
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ selectedBundle, setSelectedBundle ] = useState( null );
+	const [ selectedBundle, setSelectedBundle ] = useState< string | null >( null );
 
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 
@@ -104,7 +105,7 @@ export default function IssueMultipleLicensesForm( {
 	);
 
 	const onSelectProduct = useCallback(
-		( product ) => {
+		( product: APIProductFamilyProduct ) => {
 			// A bundle cannot be combined with other products.
 			if ( isJetpackBundle( product.slug ) ) {
 				dispatch( clearSelectedProductSlugs() );
@@ -154,6 +155,7 @@ export default function IssueMultipleLicensesForm( {
 
 			{ ! isLoadingProducts && (
 				<>
+					<QueryProductsList type="jetpack" currency="USD" />
 					<div className="issue-multiple-licenses-form__top">
 						<p className="issue-multiple-licenses-form__description">
 							{ selectedSiteDomain
