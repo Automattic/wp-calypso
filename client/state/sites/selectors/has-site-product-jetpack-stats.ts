@@ -1,3 +1,4 @@
+import { camelOrSnakeSlug } from '@automattic/calypso-products';
 import { productHasStats } from 'calypso/blocks/jetpack-benefits/feature-checks';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
@@ -10,7 +11,7 @@ const hasSiteProductJetpackStats = (
 	siteId = getSelectedSiteId( state )
 ): boolean => {
 	const siteHasStatsProduct = getSiteProducts( state, siteId )?.some(
-		( product ) => ! product?.expired && productHasStats( product?.productSlug, onlyPaid )
+		( product ) => productHasStats( camelOrSnakeSlug( product ), onlyPaid ) && ! product.expired
 	);
 	const sitePlan = getSitePlan( state, siteId );
 	const siteHasStatsPlan = productHasStats( sitePlan?.product_slug as string, onlyPaid );
