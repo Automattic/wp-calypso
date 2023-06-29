@@ -59,9 +59,6 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
-	PRODUCT_JETPACK_STATS_FREE_YEARLY,
-	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-	PRODUCT_JETPACK_STATS_MONTHLY,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -138,9 +135,6 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 			context: 'Jetpack product name',
 		} ),
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI' ),
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: translate( 'Stats' ),
-		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: translate( 'Stats' ),
-		[ PRODUCT_JETPACK_STATS_FREE_YEARLY ]: translate( 'Stats' ),
 	};
 };
 
