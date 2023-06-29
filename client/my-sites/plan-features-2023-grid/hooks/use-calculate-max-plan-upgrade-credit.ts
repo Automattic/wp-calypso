@@ -23,6 +23,7 @@ export function useCalculateMaxPlanUpgradeCredit(
 			sitePlanRawPrice: getSitePlanRawPrice( state, siteId ?? 0, planName ),
 		} ) )
 	);
+
 	if ( ! siteId ) {
 		return 0;
 	}
