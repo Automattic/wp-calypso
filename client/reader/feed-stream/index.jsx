@@ -89,6 +89,7 @@ export default function FeedStream( props ) {
 			showFollowButton={ false }
 			showPostHeader={ false }
 			showSiteNameOnCards={ false }
+			sidebarTabTitle={ translate( 'Related' ) }
 			streamSidebar={ streamSidebar }
 			useCompactCards={ true }
 		>
