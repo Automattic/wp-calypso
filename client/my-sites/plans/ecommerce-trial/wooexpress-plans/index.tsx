@@ -120,6 +120,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		siteId,
 		onUpgradeClick,
 		intervalType: interval,
+		hidePlanTypeSelector: true,
 	};
 
 	return (
