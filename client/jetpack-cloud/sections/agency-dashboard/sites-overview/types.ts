@@ -214,6 +214,9 @@ export interface DashboardDataContextInterface {
 		phoneNumbers: Array< string >;
 		refetchIfFailed: () => void;
 	};
+	geoData: {
+		countryCode: string;
+	};
 }
 
 export type AgencyDashboardFilterOption =

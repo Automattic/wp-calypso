@@ -9,6 +9,9 @@ const DashboardDataContext = createContext< DashboardDataContextInterface >( {
 			return undefined;
 		},
 	},
+	geoData: {
+		countryCode: '',
+	},
 } );
 
 export default DashboardDataContext;

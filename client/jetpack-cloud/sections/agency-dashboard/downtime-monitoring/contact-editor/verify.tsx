@@ -57,7 +57,19 @@ export default function VerifyContactForm( {
 	sites,
 }: Props ) {
 	const translate = useTranslate();
-	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ?? [] );
+
+	const { verifiedContacts, geoData } = useContext( DashboardDataContext );
+
+	const countriesList = useSelector( ( state ) => {
+		const countries = getCountries( state, 'sms' ) ?? [];
+		// Move the user's country to the top of the list
+		const index = countries.findIndex( ( country ) => country.code === geoData.countryCode );
+		if ( index > 0 ) {
+			const country = countries.splice( index, 1 );
+			countries.unshift( country[ 0 ] );
+		}
+		return countries;
+	} );
 
 	const { time, showTimer, startTimer, limitReached } = useCountdownTimer();
 
@@ -102,8 +114,6 @@ export default function VerifyContactForm( {
 		isError: isResendingVerificationCodeFailed,
 		mutate: resendVerificationCode,
 	} = useResendVerificationCode();
-
-	const { verifiedContacts } = useContext( DashboardDataContext );
 
 	const isVerifyAction = action === 'verify';
 
