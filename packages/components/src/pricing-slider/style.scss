@@ -1,3 +1,5 @@
+@import "@automattic/components/src/styles/typography";
+
 $thumb-height: 40px;
 $track-height: 8px;
 $thumb-vertical-padding: 8px;
@@ -55,8 +57,7 @@ $thumb-horizontal-padding: 16px;
 	color: var(--jp-black);
 	cursor: pointer;
 	display: flex;
-	// TODO: Use standardized font here.
-	font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-family: $font-sf-pro-text;
 	font-size: var(--font-body);
 	font-style: normal;
 	font-weight: 600;
