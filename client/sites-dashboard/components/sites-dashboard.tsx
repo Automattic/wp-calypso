@@ -142,7 +142,7 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 `;
 
 const ManageAllDomainsButton = styled( Button )`
-	margin-right: 10px;
+	margin-inline-end: 1rem;
 `;
 
 const SitesDashboardSitesList = createSitesListComponent();
