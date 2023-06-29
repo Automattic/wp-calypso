@@ -284,8 +284,10 @@ const PlansFeaturesMain = ( {
 	};
 
 	const handleUpgradeClick = ( cartItemForPlan?: { product_slug: string } | null ) => {
-		// The `cartItemForPlan` var is null if the free plan is selected
-		if ( cartItemForPlan == null && 'onboarding' === flowName && domainName ) {
+		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
+		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
+		// - only applicable to main onboarding flow (default `/start`)
+		if ( 'onboarding' === flowName && domainName && ! cartItemForPlan ) {
 			toggleIsFreePlanPaidDomainDialogOpen();
 			return;
 		}
@@ -386,11 +388,11 @@ const PlansFeaturesMain = ( {
 					onClose={ toggleIsFreePlanPaidDomainDialogOpen }
 					onFreePlanSelected={ ( freeDomainSuggestion ) => {
 						replacePaidDomainWithFreeDomain?.( freeDomainSuggestion );
-						handleUpgradeClick( null );
+						onUpgradeClick?.( null );
 					} }
 					onPlanSelected={ () => {
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						handleUpgradeClick( cartItemForPlan );
+						onUpgradeClick?.( cartItemForPlan );
 					} }
 				/>
 			) }
