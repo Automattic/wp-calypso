@@ -1,7 +1,15 @@
 .licenses {
+	header.current-section {
+		padding: 0 16px;
+
+		button {
+			padding: 20px 8px;
+		}
+	}
+
 	&__container {
-	max-width: 1500px;
-	margin: auto;
+		max-width: 1500px;
+		margin: auto;
 
 		padding: 0 16px;
 	}
