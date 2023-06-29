@@ -575,7 +575,16 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 	}
 
 	// Limited Global Styles on Personal A/B test.
-	$owner = get_userdata( wpcom_get_blog_owner( $blog_id ) );
+	$owner_id = wpcom_get_blog_owner( $blog_id );
+	if ( ! $owner_id ) {
+		return false;
+	}
+
+	$owner = get_userdata( $owner_id );
+	if ( ! $owner ) {
+		return false;
+	}
+
 	if ( 'treatment' === \ExPlat\get_user_assignment( 'calypso_global_styles_personal', $owner ) ) {
 		/*
 		 * Flag site so users of the treatment group can always have access to Global Styles, even
