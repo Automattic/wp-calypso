@@ -38,8 +38,6 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		};
 	}
 
-	const availabilityNotice = getAvailabilityNotice( domainDebounced, validationResult?.status );
-
 	if ( ! hasGoodDomain ) {
 		return {
 			valid: false,
@@ -57,7 +55,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 	}
 
 	// local validation passed, but we're still loading
-	if ( isValidating || ! validationResult ) {
+	if ( isValidating ) {
 		return {
 			valid: false,
 			loading: true,
@@ -65,55 +63,20 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		};
 	}
 
-	if ( availabilityNotice?.message ) {
-		return {
-			valid: false,
-			loading: false,
-			message: availabilityNotice?.message,
-			refetch,
-		};
-	}
-
-	if ( validationResult?.error ) {
-		return {
-			valid: false,
-			loading: false,
-			message: __(
-				'An unknown error occurred while checking the domain transferability. Please try again or contact support'
-			),
-			refetch,
-		};
-	}
+	const availabilityNotice = getAvailabilityNotice( domain, validationResult?.status );
 
 	// final success
-	if ( validationResult.auth_code_valid ) {
+	if ( validationResult?.auth_code_valid ) {
 		return {
 			valid: true,
 			loading: false,
 			message: __( 'This domain is unlocked and ready to be transferred.' ),
 		};
-	}
-
-	// partial success
-	if ( validationResult?.unlocked ) {
+	} else if ( availabilityNotice?.message ) {
 		return {
 			valid: false,
 			loading: false,
-			message: __( 'This domain is unlocked but the authentication code seems incorrect.' ),
-			refetch,
-		};
-	} else if ( validationResult?.registered === false ) {
-		return {
-			valid: false,
-			loading: false,
-			message: __( 'This domain does not seem to be registered.' ),
-		};
-	} else if ( validationResult?.unlocked === false ) {
-		return {
-			valid: false,
-			loading: false,
-			message: __( 'This domain does not seem to be unlocked.' ),
-			refetch,
+			message: availabilityNotice?.message,
 		};
 	}
 
