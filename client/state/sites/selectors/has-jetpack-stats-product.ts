@@ -9,10 +9,10 @@ const hasJetpackStatsProduct = (
 	onlyPaid = false,
 	siteId = getSelectedSiteId( state )
 ): boolean => {
-	const siteHasPaidStatsPurchase = getSitePurchases( state, siteId as number ).some(
-		( purchase ) => purchase.active && productHasStats( purchase?.productSlug, onlyPaid )
+	const siteHasPaidStatsPurchase = getSitePurchases( state, siteId )?.some(
+		( purchase ) => purchase?.active && productHasStats( purchase?.productSlug, onlyPaid )
 	);
-	return hasJetpackStatsPurchase( state, siteId as number, onlyPaid ) || siteHasPaidStatsPurchase;
+	return hasJetpackStatsPurchase( state, onlyPaid, siteId ) || !! siteHasPaidStatsPurchase;
 };
 
 export default hasJetpackStatsProduct;

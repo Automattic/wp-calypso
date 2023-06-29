@@ -1,12 +1,13 @@
-import { isJetpackStats, isJetpackStatsFree } from '@automattic/calypso-products';
+import { productHasStats } from 'calypso/blocks/jetpack-benefits/feature-checks';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSitePurchases } from './get-site-purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { AppState } from 'calypso/types';
 
 export const hasJetpackStatsPurchase = (
 	state: AppState,
-	siteId: number | null,
-	paid = false
+	onlyPaid = false,
+	siteId = getSelectedSiteId( state )
 ): boolean => {
 	const sitePurchases = getSitePurchases( state, siteId );
 	if ( ! sitePurchases ) {
@@ -14,6 +15,6 @@ export const hasJetpackStatsPurchase = (
 	}
 
 	const checkForStatsProductInPurchases = ( purchase: Purchase ) =>
-		purchase.active && isJetpackStats( purchase ) && ! ( paid && isJetpackStatsFree( purchase ) );
+		purchase?.active && productHasStats( purchase?.productSlug, onlyPaid );
 	return !! sitePurchases.find( checkForStatsProductInPurchases );
 };
