@@ -118,7 +118,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 	const tos = createInterpolateElement(
 		__( 'By creating an account you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
 		{
-			link_to_tos: <ExternalLink href={ localizedTosLink } />,
+			link_to_tos: <ExternalLink href={ localizedTosLink } children={ null } />,
 		}
 	);
 
@@ -127,8 +127,8 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 		'This site is protected by reCAPTCHA and the Google <link_to_policy>Privacy Policy</link_to_policy> and <link_to_tos>Terms of Service</link_to_tos> apply.'
 	);
 	const recaptcha_tos = createInterpolateElement( recaptcha_text, {
-		link_to_policy: <ExternalLink href="https://policies.google.com/privacy" />,
-		link_to_tos: <ExternalLink href="https://policies.google.com/terms" />,
+		link_to_policy: <ExternalLink href="https://policies.google.com/privacy" children={ null } />,
+		link_to_tos: <ExternalLink href="https://policies.google.com/terms" children={ null } />,
 	} );
 
 	let errorMessage: string | undefined;

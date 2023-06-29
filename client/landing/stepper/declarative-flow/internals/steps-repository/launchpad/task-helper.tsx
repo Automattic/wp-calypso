@@ -177,6 +177,7 @@ export function getEnhancedTasks(
 							components: {
 								a: (
 									<ExternalLink
+										children={ null }
 										href={ localizeUrl(
 											'https://wordpress.com/support/using-styles/#reset-all-styles'
 										) }
