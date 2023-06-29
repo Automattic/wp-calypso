@@ -1,3 +1,5 @@
+import { useTranslate } from 'i18n-calypso';
+
 interface StatsPurchaseSVG {
 	isFree: boolean;
 	hasHighlight: boolean;
@@ -9,6 +11,9 @@ const StatsPurchaseSVG = ( {
 	hasHighlight = false,
 	extraMessage = false,
 }: StatsPurchaseSVG ) => {
+	const translate = useTranslate();
+	const message = translate( 'Thanks for being one of our biggest supporters!' );
+
 	return (
 		<>
 			<svg xmlns="http://www.w3.org/2000/svg" width="456" height="383" fill="none">
@@ -183,9 +188,7 @@ const StatsPurchaseSVG = ( {
 				<>
 					<div className="celebrate">
 						{ /* transition:fade */ }
-						{ extraMessage && (
-							<p className="biggest-supporters">Thanks for being one of our biggest supporters!</p>
-						) }
+						{ extraMessage && <p className="biggest-supporters">{ message }</p> }
 						<svg xmlns="http://www.w3.org/2000/svg" width="456" height="596" fill="none">
 							<path
 								fill="#31CC9F"

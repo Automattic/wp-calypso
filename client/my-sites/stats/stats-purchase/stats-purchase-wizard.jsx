@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Button, CheckboxControl, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import PersonalPurchase from './stats-purchase-personal';
@@ -42,6 +43,21 @@ const CommercialPurchase = () => {
 	);
 };
 
+const TitleNode = ( { label, indicatorNumber, active } ) => {
+	return (
+		<>
+			<div
+				className={ classNames( `${ COMPONENT_CLASS_NAME }__card-title-indicator`, {
+					active: active,
+				} ) }
+			>
+				{ indicatorNumber }{ ' ' }
+			</div>
+			{ label }
+		</>
+	);
+};
+
 const ProductCard = ( { siteSlug } ) => {
 	const [ subscriptionValue, setSubscriptionValue ] = useState( 6 );
 	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
@@ -75,22 +91,38 @@ const ProductCard = ( { siteSlug } ) => {
 		setWizardStep( SCREEN_PURCHASE );
 	};
 
+	const firstStepTitleNode = (
+		<TitleNode
+			indicatorNumber="1"
+			label={
+				! siteType
+					? translate( 'What site type is %(site)s?', {
+							args: {
+								site: siteSlug,
+							},
+					  } )
+					: selectedTypeLabel
+			}
+			active={ wizardStep === SCREEN_TYPE_SELECTION || wizardStep === SCREEN_PERSONAL_CHECKLIST }
+		/>
+	);
+
+	const secondStepTitleNode = (
+		<TitleNode
+			indicatorNumber="2"
+			label={ translate( 'What is Jetpack Stats worth to you?' ) }
+			active={ wizardStep === SCREEN_PURCHASE }
+		/>
+	);
+
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
-			<Card className="jetpack-upsell-card">
+			<Card>
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
-					<div className="left">
+					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>
 						<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` } header="Jetpack Stats">
 							<PanelBody
-								title={
-									! siteType
-										? translate( 'What site type is %(site)s?', {
-												args: {
-													site: siteSlug,
-												},
-										  } )
-										: selectedTypeLabel
-								}
+								title={ firstStepTitleNode }
 								initialOpen
 								onToggle={ ( shouldOpen ) => toggleFirstStep( shouldOpen ) }
 								opened={ wizardStep === SCREEN_TYPE_SELECTION }
@@ -143,7 +175,7 @@ const ProductCard = ( { siteSlug } ) => {
 												<li>
 													<CheckboxControl
 														checked={ isAdsChecked }
-														label={ translate( `I don’t have ads on my site` ) }
+														label={ translate( `I don't have ads on my site` ) }
 														onChange={ ( value ) => {
 															setAdsChecked( value );
 														} }
@@ -152,7 +184,7 @@ const ProductCard = ( { siteSlug } ) => {
 												<li>
 													<CheckboxControl
 														checked={ isSellingChecked }
-														label={ translate( `I don’t sell products/services on my site` ) }
+														label={ translate( `I don't sell products/services on my site` ) }
 														onChange={ ( value ) => {
 															setSellingChecked( value );
 														} }
@@ -161,7 +193,7 @@ const ProductCard = ( { siteSlug } ) => {
 												<li>
 													<CheckboxControl
 														checked={ isBusinessChecked }
-														label={ translate( `I don’t promote a business on my site` ) }
+														label={ translate( `I don't promote a business on my site` ) }
 														onChange={ ( value ) => {
 															setBusinessChecked( value );
 														} }
@@ -170,7 +202,7 @@ const ProductCard = ( { siteSlug } ) => {
 											</ul>
 										</p>
 										<p>
-											{ translate( `If your site doesn’t meet these criteria,` ) }
+											{ translate( `If your site doesn't meet these criteria,` ) }
 											<a href="#" onClick={ () => handlePlanSwap() }>
 												{ translate( `you will need to use the commercial plan` ) }
 											</a>
@@ -188,10 +220,7 @@ const ProductCard = ( { siteSlug } ) => {
 									</div>
 								</PanelRow>
 							</PanelBody>
-							<PanelBody
-								title="What is Jetpack Stats worth to you?"
-								opened={ wizardStep === SCREEN_PURCHASE }
-							>
+							<PanelBody title={ secondStepTitleNode } opened={ wizardStep === SCREEN_PURCHASE }>
 								<PanelRow>
 									{ siteType === TYPE_PERSONAL ? (
 										<PersonalPurchase
@@ -205,7 +234,7 @@ const ProductCard = ( { siteSlug } ) => {
 							</PanelBody>
 						</Panel>
 					</div>
-					<div className="right">
+					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						<StatsPurchaseSVG
 							isFree={ subscriptionValue === 0 }
 							hasHighlight={ subscriptionValue >= 40 }
