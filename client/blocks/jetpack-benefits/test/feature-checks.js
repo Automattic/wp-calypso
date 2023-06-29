@@ -3,6 +3,7 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_STATS_PRODUCTS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
@@ -25,6 +26,7 @@ import {
 	productHasBackups,
 	productHasSearch,
 	productHasScan,
+	productHasStats,
 } from '../feature-checks';
 
 describe( 'JetpackBenefits Feature Checks', () => {
@@ -201,6 +203,38 @@ describe( 'JetpackBenefits Feature Checks', () => {
 
 		plansWithoutSearch.forEach( ( plan ) => {
 			expect( productHasSearch( plan ) ).toBe( false );
+		} );
+	} );
+
+	//productHasStats
+	test( 'Plans and products with stats return true for productHasSearch', () => {
+		const plansWithSearch = [ ...JETPACK_STATS_PRODUCTS ];
+
+		plansWithSearch.forEach( ( plan ) => {
+			expect( productHasStats( plan ) ).toBe( true );
+		} );
+	} );
+
+	test( 'Plans and products without stats return false for productHasSearch', () => {
+		const plansWithSearch = [
+			...JETPACK_SEARCH_PRODUCTS,
+			...JETPACK_ANTI_SPAM_PRODUCTS,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PERSONAL_MONTHLY,
+			PLAN_JETPACK_PREMIUM,
+			PLAN_JETPACK_PREMIUM_MONTHLY,
+			PLAN_JETPACK_SECURITY_DAILY,
+			PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+			PLAN_JETPACK_SECURITY_REALTIME,
+			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+			PLAN_JETPACK_SECURITY_T1_MONTHLY,
+			PLAN_JETPACK_SECURITY_T1_YEARLY,
+			PLAN_JETPACK_SECURITY_T2_MONTHLY,
+			PLAN_JETPACK_SECURITY_T2_YEARLY,
+		];
+
+		plansWithSearch.forEach( ( plan ) => {
+			expect( productHasStats( plan ) ).toBe( true );
 		} );
 	} );
 } );

@@ -59,6 +59,9 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE_YEARLY,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_MONTHLY,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -114,6 +117,9 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: translate( 'Stats' ),
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: translate( 'Stats' ),
+		[ PRODUCT_JETPACK_STATS_FREE_YEARLY ]: translate( 'Stats' ),
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 			components: {
 				s: <span style={ { whiteSpace: 'nowrap' } } />,
@@ -155,6 +161,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	);
 	const backup = translate( 'VaultPress Backup' );
 	const search = translate( 'Site Search' );
+	const stats = translate( 'Stats' );
 	const scan = translate( 'Scan' );
 	const scanRealtime = (
 		<>
@@ -244,6 +251,9 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_WPCOM_SEARCH ]: search,
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: stats,
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: stats,
+		[ PRODUCT_JETPACK_STATS_FREE_YEARLY ]: stats,
 		[ PRODUCT_JETPACK_SCAN ]: scan,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
@@ -609,6 +619,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 		'Speed up your site and improve SEO - no developer required.'
 	);
 	const searchShortDescription = translate( 'Help your site visitors find answers instantly.' );
+	const statsShortDescription = translate( 'Simple, yet powerful analytics.' );
 	const scanShortDescription = translate( '24/7 protection: WAF and automatic malware scanning.' );
 	const videoPressShortDescription = translate(
 		'High-quality, ad-free video built specifically for WordPress.'
@@ -636,6 +647,9 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostShortDescription,
 		[ PRODUCT_JETPACK_SEARCH ]: searchShortDescription,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchShortDescription,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsShortDescription,
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: statsShortDescription,
+		[ PRODUCT_JETPACK_STATS_FREE_YEARLY ]: statsShortDescription,
 		[ PRODUCT_JETPACK_SCAN ]: scanShortDescription,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanShortDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanShortDescription,
@@ -669,6 +683,9 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 	);
 	const searchFeaturedText = translate(
 		'Instant search helps your visitors actually find what they need and improves conversion.'
+	);
+	const statsFeaturedText = translate(
+		'With Jetpack Stats, you don’t need to be a data scientist to see how your site is performing.'
 	);
 	// TODO: may need alternate copy here
 	const aiAssistantFeaturedText = translate(
@@ -707,6 +724,9 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanFeaturedText,
 		[ PRODUCT_JETPACK_SEARCH ]: searchFeaturedText,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchFeaturedText,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsFeaturedText,
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: statsFeaturedText,
+		[ PRODUCT_JETPACK_STATS_FREE_YEARLY ]: statsFeaturedText,
 		[ PRODUCT_JETPACK_BOOST ]: boostFeaturedText,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialFeaturedText,
@@ -733,6 +753,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	);
 	const searchLightboxDescription = translate(
 		'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content - right when they need it.'
+	);
+	const statsLightboxDescription = translate(
+		'With Jetpack Stats, you don’t need to be a data scientist to see how your site is performing.'
 	);
 	const aiAssistantLightboxDescription = translate(
 		'Utilizing the potential of artificial intelligence, Jetpack AI brings a supportive layer to your content creation process.'
@@ -769,6 +792,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanLightboxDescription,
 		[ PRODUCT_JETPACK_SEARCH ]: searchLightboxDescription,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchLightboxDescription,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsLightboxDescription,
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: statsLightboxDescription,
+		[ PRODUCT_JETPACK_STATS_FREE_YEARLY ]: statsLightboxDescription,
 		[ PRODUCT_JETPACK_BOOST ]: boostLightboxDescription,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialLightboxDescription,
