@@ -9,8 +9,8 @@ const hasSiteProductJetpackStats = (
 	onlyPaid = false,
 	siteId = getSelectedSiteId( state )
 ): boolean => {
-	const siteHasStatsProduct = getSiteProducts( state, siteId )?.some( ( purchase ) =>
-		productHasStats( purchase?.productSlug, onlyPaid )
+	const siteHasStatsProduct = getSiteProducts( state, siteId )?.some(
+		( product ) => ! product.expired && productHasStats( product?.productSlug, onlyPaid )
 	);
 	const sitePlan = getSitePlan( state, siteId );
 	const siteHasStatsPlan = productHasStats( sitePlan?.product_slug as string, onlyPaid );
