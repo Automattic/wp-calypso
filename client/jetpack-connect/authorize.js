@@ -25,6 +25,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
+import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -41,6 +42,7 @@ import {
 	isRemoteSiteOnSitesList,
 	isSiteBlockedError as isSiteBlockedSelector,
 } from 'calypso/state/jetpack-connect/selectors';
+import { logoutUser } from 'calypso/state/logout/actions';
 import {
 	isFetchingSitePurchases,
 	siteHasJetpackProductPurchase,
@@ -438,13 +440,26 @@ export class JetpackAuthorize extends Component {
 		return partnerID && 'pressable' !== partnerSlug;
 	}
 
-	handleSignIn = () => {
+	handleSignIn = async ( e, loginURL ) => {
+		e.preventDefault();
+
 		const { recordTracksEvent } = this.props;
 		const { from } = this.props.authQuery;
 		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
 		} else if ( from === 'woocommerce-core-profiler' ) {
 			recordTracksEvent( 'calypso_jpc_different_user_click' );
+		}
+
+		try {
+			const { redirect_to: redirectTo } = await this.props.logoutUser( loginURL );
+			disablePersistence();
+			await clearStore();
+			window.location.href = redirectTo || '/';
+		} catch ( error ) {
+			// The logout endpoint might fail if the nonce has expired.
+			// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+			this.props.redirectToLogout( loginURL );
 		}
 	};
 
@@ -909,12 +924,14 @@ export class JetpackAuthorize extends Component {
 			return wooDnaFooterLinks;
 		}
 
+		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+
 		return (
 			<LoggedOutFormLinks>
 				{ ! isJetpackMagicLinkSignUpFlow && this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
-					href={ login( { isJetpack: true, redirectTo: window.location.href, from } ) }
-					onClick={ this.handleSignIn }
+					href={ loginURL }
+					onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
@@ -1102,6 +1119,7 @@ const connectComponent = connect(
 		recordTracksEvent: recordTracksEventAction,
 		redirectToLogout,
 		retryAuth: retryAuthAction,
+		logoutUser,
 	}
 );
 
