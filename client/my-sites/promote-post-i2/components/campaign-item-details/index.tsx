@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import './style.scss';
 import {
+	Badge,
 	Button,
 	Dialog,
 	Gridicon,
@@ -12,7 +13,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
-import Badge from 'calypso/components/badge';
 import Breadcrumb, { Item } from 'calypso/components/breadcrumb';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
