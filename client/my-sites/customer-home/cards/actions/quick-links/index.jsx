@@ -366,7 +366,7 @@ const trackExplorePluginsAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
-const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
+export const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_add_domain_click', {
@@ -377,7 +377,7 @@ const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
-const trackManageAllDomainsAction = ( isStaticHomePage ) => ( dispatch ) => {
+export const trackManageAllDomainsAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_manage_all_domains_click', {

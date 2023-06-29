@@ -1,18 +1,21 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import FoldableCard from 'calypso/components/foldable-card';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getSelectedEditor from 'calypso/state/selectors/get-selected-editor';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { trackAddDomainAction, trackManageAllDomainsAction } from '../quick-links';
 import ActionBox from '../quick-links/action-box';
 import '../quick-links/style.scss';
 
-const QuickLinks = () => {
+const QuickLinksForDevs = ( props ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
@@ -71,6 +74,25 @@ const QuickLinks = () => {
 				label={ translate( 'Explore themes' ) }
 				materialIcon="view_quilt"
 			/>
+			{ canManageSite && (
+				<>
+					<ActionBox
+						href={ `/domains/add/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ props.trackAddDomainAction }
+						label={ translate( 'Add a domain' ) }
+						gridicon="add-outline"
+					/>
+
+					<ActionBox
+						href="/domains/manage"
+						hideLinkIndicator
+						onClick={ props.trackManageAllDomainsAction }
+						label={ translate( 'Manage all domains' ) }
+						gridicon="domains"
+					/>
+				</>
+			) }
 			{ siteAdminUrl && (
 				<ActionBox
 					href={ siteAdminUrl }
@@ -102,4 +124,32 @@ const QuickLinks = () => {
 	);
 };
 
-export default QuickLinks;
+const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
+	const isStaticHomePage =
+		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
+
+	return {
+		isStaticHomePage,
+	};
+};
+
+const mapDispatchToProps = {
+	trackAddDomainAction,
+	trackManageAllDomainsAction,
+};
+
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const { isStaticHomePage } = stateProps;
+	return {
+		...stateProps,
+		...dispatchProps,
+		trackAddDomainAction: () => dispatchProps.trackAddDomainAction( isStaticHomePage ),
+		trackManageAllDomainsAction: () =>
+			dispatchProps.trackManageAllDomainsAction( isStaticHomePage ),
+		...ownProps,
+	};
+};
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( QuickLinksForDevs );
