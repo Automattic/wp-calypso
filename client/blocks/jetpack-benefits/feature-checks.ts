@@ -88,7 +88,7 @@ export const productHasStats = ( productSlug: string, onlyPaid = false ): boolea
 	return (
 		// standalone stats product
 		( isJetpackStats( { productSlug } ) &&
-			( ! onlyPaid || isJetpackStatsFree( { productSlug } ) ) ) ||
+			( ! onlyPaid || ! isJetpackStatsFree( { productSlug } ) ) ) ||
 		// check plans for stats features
 		( isJetpackPlanSlug( productSlug ) &&
 			( ( onlyPaid && planHasAtLeastOneFeature( productSlug, STATS_PAID_FEATURES ) ) ||
