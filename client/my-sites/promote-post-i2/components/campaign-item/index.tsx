@@ -1,10 +1,10 @@
 import { safeImageUrl } from '@automattic/calypso-url';
+import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import page from 'page';
 import { Fragment, useMemo } from 'react';
-import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';

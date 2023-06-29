@@ -1,4 +1,4 @@
-import { Gridicon, CircularProgressBar } from '@automattic/components';
+import { Badge, Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
@@ -7,7 +7,6 @@ import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
-import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
