@@ -15,7 +15,7 @@ const LocalizedLink = ( { href, children }: LinkProps ) => {
 const Link = ( props: LinkProps ) => {
 	// useLocalizeUrl() does not support SSR yet, so we cannot use it on the server.
 	if ( isServer ) {
-		return <ExternalLink { ...props } />;
+		return <ExternalLink children={ null } { ...props } />;
 	}
 	return <LocalizedLink { ...props } />;
 };
