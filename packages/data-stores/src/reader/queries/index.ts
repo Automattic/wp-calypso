@@ -5,3 +5,4 @@ export { default as usePostSubscriptionsQuery } from './use-post-subscriptions-q
 export { default as usePendingSiteSubscriptionsQuery } from './use-pending-site-subscriptions-query';
 export { default as usePendingPostSubscriptionsQuery } from './use-pending-post-subscriptions-query';
 export { default as useSiteSubscriptionDetailsQuery } from './use-site-subscription-details-query';
+export { default as useReadFeedSearch } from './use-read-feed-search-query';

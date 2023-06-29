@@ -1,4 +1,5 @@
 import {
+	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -15,7 +16,7 @@ import {
 	SiteSubscriptionsManagerProvider,
 } from 'calypso/landing/subscriptions/components/site-subscriptions-manager';
 import {
-	ReaderPortal,
+	SiteSubscriptionsPortal,
 	SubscriptionManagerContextProvider,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { SubscriptionsEllipsisMenu } from 'calypso/landing/subscriptions/components/subscriptions-ellipsis-menu';
@@ -39,7 +40,7 @@ const useMarkFollowsAsStaleOnUnmount = () => {
 const SiteSubscriptionsManager = () => {
 	const translate = useTranslate();
 	const context: SubscriptionManagerContext = {
-		portal: ReaderPortal,
+		portal: SiteSubscriptionsPortal.Reader,
 	};
 
 	// Mark follows as stale on unmount to ensure that the reader
@@ -78,6 +79,7 @@ const SiteSubscriptionsManager = () => {
 				<SiteSubscriptionsManagerProvider>
 					<ExternalSiteSubscriptionsManager>
 						<ExternalSiteSubscriptionsManager.ListActionsBar />
+						<Button onClick={ () => feed.fetchNextPage() }>Fetch next</Button>
 						<RecommendedSites />
 						<ExternalSiteSubscriptionsManager.List />
 					</ExternalSiteSubscriptionsManager>
