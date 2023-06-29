@@ -99,6 +99,7 @@ function getTourSteps(
 										<ExternalLink
 											href={ siteEditorCourseUrl }
 											onClick={ onSiteEditorCourseLinkClick }
+											children={ null }
 										/>
 									),
 								}
@@ -359,6 +360,7 @@ function getTourSteps(
 													'https://wordpress.com/support/full-site-editing/',
 													localeSlug
 												) }
+												children={ null }
 											/>
 										),
 									}
@@ -396,6 +398,7 @@ function getTourSteps(
 										'https://wordpress.com/support/settings/privacy-settings/#launch-your-site',
 										localeSlug
 									) }
+									children={ null }
 								/>
 							),
 							link_to_editor_docs: (
@@ -404,6 +407,7 @@ function getTourSteps(
 										'https://wordpress.com/support/wordpress-editor/',
 										localeSlug
 									) }
+									children={ null }
 								/>
 							),
 						}
