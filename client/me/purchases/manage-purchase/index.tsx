@@ -35,7 +35,15 @@ import {
 	isJetpackBackupT1Slug,
 	AKISMET_UPGRADES_PRODUCTS_MAP,
 } from '@automattic/calypso-products';
-import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
+import {
+	Badge,
+	Spinner,
+	Button,
+	Card,
+	CompactCard,
+	ProductIcon,
+	Gridicon,
+} from '@automattic/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import page from 'page';
@@ -44,7 +52,6 @@ import { connect } from 'react-redux';
 import { SupportedSlugs } from 'calypso/../packages/components/src/product-icon/config';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
-import Badge from 'calypso/components/badge';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';

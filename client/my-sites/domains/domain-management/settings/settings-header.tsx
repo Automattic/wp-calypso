@@ -1,9 +1,9 @@
+import { Badge } from '@automattic/components';
 import { Circle, SVG } from '@wordpress/components';
 import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
