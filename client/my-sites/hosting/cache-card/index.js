@@ -11,8 +11,10 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
 import { useClearEdgeCacheMutation } from './use-clear-edge-cache';
 import { useEdgeCacheQuery } from './use-edge-cache';
@@ -60,7 +62,10 @@ export const CacheCard = ( {
 	shouldRateLimitCacheClear,
 	clearAtomicWordPressCache,
 	isClearingWordpressCache,
+	isPrivate,
+	isComingSoon,
 	siteId,
+	siteSlug,
 	translate,
 } ) => {
 	const dispatch = useDispatch();
@@ -72,6 +77,8 @@ export const CacheCard = ( {
 	} = useEdgeCacheQuery( siteId, {
 		enabled: showEdgeCache,
 	} );
+
+	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
 	const { toggleEdgeCache, isLoading: toggleEdgeCacheLoading } = useToggleEdgeCacheMutation(
 		siteId,
@@ -139,6 +146,18 @@ export const CacheCard = ( {
 			</div>
 		);
 	};
+
+	const edgeCacheToggleDescription = isEdgeCacheEligible
+		? translate( 'Enable edge caching for faster content delivery.' )
+		: translate(
+				'Edge cache can only be enabled for public sites. {{a}}Confirm privacy settings{{/a}}.',
+				{
+					components: {
+						a: <a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />,
+					},
+				}
+		  );
+
 	//autorenew
 	return (
 		<Card className="cache-card">
@@ -163,10 +182,12 @@ export const CacheCard = ( {
 								<>
 									<ToggleLabel>{ translate( 'Edge cache' ) }</ToggleLabel>
 									<ToggleControl
-										disabled={ clearEdgeCacheLoading || getEdgeCacheLoading }
+										disabled={
+											clearEdgeCacheLoading || getEdgeCacheLoading || ! isEdgeCacheEligible
+										}
 										checked={ isEdgeCacheActive }
 										onChange={ toggleEdgeCache }
-										label={ translate( 'Enable edge caching for faster content delivery' ) }
+										label={ edgeCacheToggleDescription }
 									/>
 									<Hr />
 								</>
@@ -183,12 +204,18 @@ export const CacheCard = ( {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
+		const isPrivate = isPrivateSite( state, siteId );
+		const isComingSoon = isSiteComingSoon( state, siteId );
 
 		return {
 			shouldRateLimitCacheClear: shouldRateLimitAtomicCacheClear( state, siteId ),
 			isClearingWordpressCache:
 				getRequest( state, clearWordPressCache( siteId ) )?.isLoading ?? false,
+			isPrivate,
+			isComingSoon,
 			siteId,
+			siteSlug,
 		};
 	},
 	{
