@@ -1,7 +1,14 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/fonts";
 
 .navigator-header {
+	display: none;
 	margin-bottom: 30px;
+
+	@include break-xlarge {
+		display: block;
+	}
 }
 
 .navigator-header__heading {

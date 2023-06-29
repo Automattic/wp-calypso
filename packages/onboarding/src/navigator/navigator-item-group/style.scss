@@ -3,7 +3,17 @@
 .navigator-item-group {
 	flex-shrink: 0;
 
-	&:only-child {
+	.navigator-button__wrapper {
+		display: flex;
+
+		.navigator-button {
+			flex: 1;
+			// Expand sides out of wrapper in main screen
+			margin: 0 -11px;
+		}
+	}
+
+	&:nth-child(1 of &):nth-last-child(1 of &) {
 		.navigator-item-group__title {
 			display: none;
 		}
@@ -17,14 +27,4 @@
 	letter-spacing: -0.15px;
 	line-height: 1.4;
 	margin-bottom: 8px;
-}
-
-.navigator-item-group__item-wrapper {
-	display: flex;
-
-	.navigator-button {
-		flex: 1;
-		// Expand sides out of wrapper in main screen
-		margin: 0 -11px;
-	}
 }

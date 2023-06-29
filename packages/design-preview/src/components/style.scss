@@ -79,10 +79,10 @@
 		}
 	}
 
-	h2 {
-		color: var(--studio-gray-100);
-		font-size: $font-body-small;
-		font-weight: 500;
+	.design-preview__sidebar-header {
+		@include break-xlarge {
+			margin-bottom: 2rem;
+		}
 	}
 
 	.design-preview__sidebar-title {
@@ -187,14 +187,28 @@
 	}
 
 	@include break-xlarge {
-		padding: 0 16px 4px;
-		margin: 0 -16px;
-		overflow: auto;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
+	/**
+	 * Gutenberg Components
+	 */
+	.components-navigator-provider,
+	.components-navigator-screen {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow-x: visible;
 	}
 }
 
 .design-preview__sidebar-variations {
 	display: block;
+	padding: 2px 16px;
+	margin: 0 -16px;
+	overflow-y: auto;
 
 	> p {
 		color: var(--studio-gray-100);
@@ -204,7 +218,6 @@
 	}
 
 	.global-styles-variations__header {
-
 		h2 {
 			font-size: $font-body-small;
 			font-weight: 500;
@@ -223,18 +236,25 @@
 		}
 	}
 
-	.font-pairing-variations {
+	.color-palette-variations {
 		display: flex;
-		margin: 6px 6px 12px 12px;
+		margin: 6px 0;
 
 		.global-styles-variation__item {
-			width: 200px;
+			width: 83px;
+		}
+	}
+
+	.font-pairing-variations {
+		display: flex;
+		margin: 6px 0;
+
+		.global-styles-variation__item {
+			width: 120px;
 		}
 	}
 
 	@include break-xlarge {
-		margin: 2rem 0 0;
-
 		> p {
 			display: block;
 		}
@@ -252,8 +272,10 @@
 			}
 		}
 
+		.color-palette-variations,
 		.font-pairing-variations {
 			display: grid;
+			gap: 12px;
 			margin: 14px -2px 26px;
 			padding-inline-end: 6px;
 

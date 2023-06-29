@@ -1,14 +1,15 @@
 import { Button } from '@automattic/components';
 import {
-	__experimentalHStack as HStack,
 	__experimentalNavigatorBackButton as NavigatorBackButton,
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from '@wordpress/components';
 import { NavigationButtonAsItem } from '../navigator-buttons';
 import NavigatorHeader from '../navigator-header';
+import NavigatorItemGroup from '../navigator-item-group';
 import type { NavigatorScreenObject } from '../types';
 import type { ComponentType } from 'react';
+import './style.scss';
 
 interface Props {
 	screens: NavigatorScreenObject[];
@@ -29,7 +30,7 @@ const NavigatorScreens = ( { screens, InitialScreen, initialPath = '/' }: Props 
 		<NavigatorProvider initialPath={ initialPath }>
 			<NavigatorScreen path={ initialPath }>
 				<InitialScreen>
-					<HStack direction="column" alignment="top" spacing="4">
+					<NavigatorItemGroup title="">
 						{ screens.map( ( { checked, icon, label, path, onSelect } ) => (
 							<NavigationButtonAsItem
 								key={ path }
@@ -42,7 +43,7 @@ const NavigatorScreens = ( { screens, InitialScreen, initialPath = '/' }: Props 
 								{ label }
 							</NavigationButtonAsItem>
 						) ) }
-					</HStack>
+					</NavigatorItemGroup>
 				</InitialScreen>
 			</NavigatorScreen>
 			{ screens.map(

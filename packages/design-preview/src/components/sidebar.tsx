@@ -81,47 +81,49 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
 	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
 
-	const InitialScreen = ( { children }: { children: JSX.Element} ) => (
+	const InitialScreen = ( { children }: { children: JSX.Element } ) => (
 		<>
-			<div className="design-preview__sidebar-title">
-				<h1>{ title }</h1>
+			<div className="design-preview__sidebar-header">
+				<div className="design-preview__sidebar-title">
+					<h1>{ title }</h1>
+				</div>
+				{ author && (
+					<div className="design-preview__sidebar-author">
+						{ translate( 'By %(author)s', { args: { author } } ) }
+					</div>
+				) }
+				{ ( pricingBadge || categories.length > 0 ) && (
+					<div className="design-preview__sidebar-badges">
+						{ pricingBadge }
+						{ categories.map( ( category ) => (
+							<CategoryBadge
+								key={ category.slug }
+								category={ category }
+								onClick={ onClickCategory }
+							/>
+						) ) }
+					</div>
+				) }
+				{ ( description || shortDescription ) && (
+					<div className="design-preview__sidebar-description">
+						<p>
+							{ isShowDescriptionToggle ? (
+								<>
+									{ isShowFullDescription ? description : shortDescription }
+									<Button
+										borderless
+										onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
+									>
+										{ isShowFullDescription ? translate( 'Read less' ) : translate( 'Read more' ) }
+									</Button>
+								</>
+							) : (
+								description ?? shortDescription
+							) }
+						</p>
+					</div>
+				) }
 			</div>
-			{ author && (
-				<div className="design-preview__sidebar-author">
-					{ translate( 'By %(author)s', { args: { author } } ) }
-				</div>
-			) }
-			{ ( pricingBadge || categories.length > 0 ) && (
-				<div className="design-preview__sidebar-badges">
-					{ pricingBadge }
-					{ categories.map( ( category ) => (
-						<CategoryBadge
-							key={ category.slug }
-							category={ category }
-							onClick={ onClickCategory }
-						/>
-					) ) }
-				</div>
-			) }
-			{ ( description || shortDescription ) && (
-				<div className="design-preview__sidebar-description">
-					<p>
-						{ isShowDescriptionToggle ? (
-							<>
-								{ isShowFullDescription ? description : shortDescription }
-								<Button
-									borderless
-									onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
-								>
-									{ isShowFullDescription ? translate( 'Read less' ) : translate( 'Read more' ) }
-								</Button>
-							</>
-						) : (
-							description ?? shortDescription
-						) }
-					</p>
-				</div>
-			) }
 			{ children }
 			{ actionButtons && (
 				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
