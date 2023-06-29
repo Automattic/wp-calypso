@@ -65,7 +65,7 @@ const MasterbarStyled = ( {
 	<MasterbarStyledBlock>
 		<Global
 			styles={ css`
-				body.is-section-marketplace {
+				body.is-section-checkout-thank-you {
 					--masterbar-height: 72px;
 				}
 			` }
