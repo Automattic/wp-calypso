@@ -562,21 +562,12 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
  * @return bool Whether the site has access to Global Styles with a Personal plan.
  */
 function wpcom_site_has_global_styles_in_personal_plan( $blog_id = 0 ) {
-	/*
-	 * Users who were assigned to the treatment group of the Global Styles on Personal experiment
-	 * while having a Personal plan should always have access to Global Styles, as long as they still
-	 * have a Personal plan.
-	 */
-	$has_global_styles_in_personal_plan = wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id );
-	if ( $has_global_styles_in_personal_plan ) {
-		$personal_plans = array_filter(
-			wpcom_get_site_purchases( $blog_id ),
-			function ( $purchase ) {
-				return strpos( $purchase->product_slug, 'personal-bundle' ) === 0;
-			}
-		);
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return false;
+	}
 
-		return ! empty( $personal_plans );
+	if ( ! $blog_id ) {
+		$blog_id = get_current_blog_id();
 	}
 
 	$owner_id = wpcom_get_blog_owner( $blog_id );
@@ -594,10 +585,16 @@ function wpcom_site_has_global_styles_in_personal_plan( $blog_id = 0 ) {
 	if ( ! isset( $experiment_assignment ) ) {
 		$experiment_assignment = \ExPlat\get_user_assignment( 'calypso_global_styles_personal', $owner );
 	}
-	if ( 'treatment' !== $experiment_assignment ) {
-		return false;
-	}
+	return 'treatment' === $experiment_assignment;
+}
 
+/**
+ * Checks whether the site has a Personal plan.
+ *
+ * @param  int $blog_id Blog ID.
+ * @return bool Whether the site has a Personal plan.
+ */
+function wpcom_site_has_personal_plan( $blog_id ) {
 	$personal_plans = array_filter(
 		wpcom_get_site_purchases( $blog_id ),
 		function ( $purchase ) {
@@ -605,17 +602,7 @@ function wpcom_site_has_global_styles_in_personal_plan( $blog_id = 0 ) {
 		}
 	);
 
-	if ( empty( $personal_plans ) ) {
-		return false;
-	}
-
-	/*
-	 * Flag site so users of the treatment group with a Personal plan can always have access
-	 * to Global Styles, even if the experiment has finished without including Global Styles
-	 * in the Personal plan.
-	 */
-	add_blog_sticker( 'wpcom-global-styles-personal-plan', null, null, $blog_id );
-	return true;
+	return ! empty( $personal_plans );
 }
 
 /**
@@ -637,8 +624,26 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 		return true;
 	}
 
+	/*
+	 * Users who were assigned to the treatment group of the Global Styles on Personal experiment
+	 * while having a Personal plan should always have access to Global Styles, as long as they still
+	 * have a Personal plan.
+	 */
+	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
+		return wpcom_site_has_personal_plan( $blog_id );
+	}
+
 	if ( wpcom_site_has_global_styles_in_personal_plan( $blog_id ) ) {
-		return true;
+		$has_personal_plan = wpcom_site_has_personal_plan( $blog_id );
+		if ( $has_personal_plan ) {
+			/*
+			 * Flag site so users of the treatment group with a Personal plan can always have access
+			 * to Global Styles, even if the experiment has finished without including Global Styles
+			 * in the Personal plan.
+			 */
+			add_blog_sticker( 'wpcom-global-styles-personal-plan', null, null, $blog_id );
+		}
+		return $has_personal_plan;
 	}
 
 	return false;
