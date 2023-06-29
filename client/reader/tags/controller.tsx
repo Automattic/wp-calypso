@@ -28,7 +28,7 @@ export interface AlphabeticTagsResult {
 
 export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 	if ( ! isUserLoggedIn( context.store.getState() ) ) {
-		context.headerSection = renderHeaderSection();
+		context.renderHeaderSection = renderHeaderSection;
 	}
 	context.primary = (
 		<TagsPage

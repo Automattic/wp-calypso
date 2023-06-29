@@ -30,7 +30,7 @@ export const tagListing = ( context, next ) => {
 	} );
 
 	if ( ! isUserLoggedIn( context.store.getState() ) ) {
-		context.headerSection = renderHeaderSection();
+		context.renderHeaderSection = renderHeaderSection;
 	}
 	context.primary = (
 		<AsyncLoad

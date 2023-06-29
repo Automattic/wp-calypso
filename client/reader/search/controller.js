@@ -1,5 +1,4 @@
 import page from 'page';
-import { getLocaleSlug } from 'i18n-calypso';
 import { stringify } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
 import {
@@ -57,9 +56,7 @@ const exported = {
 		function reportSortChange( newSort ) {
 			replaceSearchUrl( searchSlug, newSort !== 'relevance' ? newSort : undefined );
 		}
-		context.headerSection = renderHeaderSection();
-
-		console.log( 'context', getLocaleSlug(), context.headerSection );
+		context.renderHeaderSection = renderHeaderSection;
 
 		context.primary = (
 			<AsyncLoad
