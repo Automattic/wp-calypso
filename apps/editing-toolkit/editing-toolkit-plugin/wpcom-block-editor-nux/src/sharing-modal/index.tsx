@@ -194,9 +194,9 @@ const SharingModal: React.FC = () => {
 							{
 								a: (
 									<ExternalLink
+										children={ null }
 										href={ subscribersUrl }
 										onClick={ trackSubscribersClick }
-										target="_blank"
 									/>
 								),
 							}
