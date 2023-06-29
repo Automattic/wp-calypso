@@ -85,12 +85,8 @@ import type { ProductSlug, JetpackProductSlug, WPComProductSlug, Product } from 
 
 const PRODUCT_SHORT_NAMES = getJetpackProductsShortNames();
 
-// TODO: add stats products to this list when adding to the store
 export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
-	Exclude<
-		Exclude< JetpackProductSlug, WPComProductSlug >,
-		'jetpack_stats_monthly' | 'jetpack_stats_pwyw_yearly' | 'jetpack_stats_free_yearly'
-	>,
+	Exclude< JetpackProductSlug, WPComProductSlug >,
 	Product
 > = {
 	[ PRODUCT_JETPACK_AI_MONTHLY ]: {
