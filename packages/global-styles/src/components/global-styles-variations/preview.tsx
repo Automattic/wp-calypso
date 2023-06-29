@@ -133,7 +133,7 @@ const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut
 										style={ {
 											height: normalizedColorSwatchSize * ratio,
 											width: normalizedColorSwatchSize * ratio,
-											background: color,
+											background: color.color,
 											borderRadius: ( normalizedColorSwatchSize * ratio ) / 2,
 										} }
 										animate={ { scale: 1, opacity: 1 } }
