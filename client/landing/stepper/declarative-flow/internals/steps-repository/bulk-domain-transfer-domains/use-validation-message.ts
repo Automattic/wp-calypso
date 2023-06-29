@@ -41,6 +41,8 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		};
 	}
 
+	const availabilityNotice = getAvailabilityNotice( domainDebounced, validationResult?.status );
+
 	if ( passed ) {
 		setPassed( true );
 
@@ -73,6 +75,15 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			valid: false,
 			loading: true,
 			message: __( 'Checking domain lock status.' ),
+		};
+	}
+
+	if ( availabilityNotice?.message ) {
+		return {
+			valid: false,
+			loading: false,
+			message: availabilityNotice?.message,
+			refetch,
 		};
 	}
 
@@ -119,16 +130,12 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		};
 	}
 
-	const availabilityNotice = getAvailabilityNotice( domainDebounced, validationResult?.status );
-
 	return {
 		valid: false,
 		loading: false,
-		message:
-			availabilityNotice?.message ||
-			__(
-				'An unknown error occurred while checking the domain transferability. Please try again or contact support'
-			),
+		message: __(
+			'An unknown error occurred while checking the domain transferability. Please try again or contact support'
+		),
 		refetch,
 	};
 }
