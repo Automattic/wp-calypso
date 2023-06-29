@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wp from 'calypso/lib/wp';
 import { FileBrowserItem } from './types';
@@ -11,6 +11,50 @@ interface FileInfoCardProps {
 	siteId: number;
 	item: FileBrowserItem;
 }
+
+const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, fileUrl } ) => {
+	const [ fileContent, setFileContent ] = useState( '' );
+
+	useEffect( () => {
+		if ( item.type === 'text' || item.type === 'code' ) {
+			fetch( fileUrl )
+				.then( ( response ) => response.text() )
+				.then( ( data ) => setFileContent( data ) );
+		}
+	}, [ item.type, fileUrl ] );
+
+	let content;
+
+	switch ( item.type ) {
+		case 'text':
+		case 'code':
+			content = <pre>{ fileContent }</pre>;
+			break;
+		case 'image':
+			content = <img src={ fileUrl } alt="file-preview" />;
+			break;
+		case 'audio':
+			content = (
+				// We don't have captions for backed up audio files
+				// eslint-disable-next-line jsx-a11y/media-has-caption
+				<audio controls>
+					<source src={ fileUrl } type="audio/mpeg" />
+				</audio>
+			);
+			break;
+		case 'video':
+			content = (
+				// We don't have captions for backed up video files
+				// eslint-disable-next-line jsx-a11y/media-has-caption
+				<video controls>
+					<source src={ fileUrl } type="video/mp4" />
+				</video>
+			);
+			break;
+	}
+
+	return <div className="file-card__preview">{ content }</div>;
+};
 
 const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } ) => {
 	const translate = useTranslate();
@@ -30,7 +74,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
 	const size = fileInfo?.size ? convertBytes( fileInfo.size ) : null;
 
-	const [ fileContent, setFileContent ] = useState( '' );
+	const [ fileUrl, setFileUrl ] = useState( '' );
 
 	const downloadFile = useCallback( () => {
 		const manifestPath = window.btoa( item.manifestPath ?? '' );
@@ -57,17 +101,8 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( ( response: { url: string } ) => {
-				const downloadUrl = response.url.replace( 'https://public-api.wordpress.com/wpcom/v2', '' );
-
-				// Get the file content
-				wp.req
-					.get( {
-						path: downloadUrl,
-						apiNamespace: 'wpcom/v2',
-					} )
-					.then( ( response: any ) => {
-						setFileContent( response );
-					} );
+				const downloadUrl = response.url;
+				setFileUrl( downloadUrl );
 			} );
 	};
 
@@ -145,9 +180,14 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 					text="Preview file"
 				/>
 			</div>
-			<div className="file-card__preview">{ fileContent }</div>
+			{ fileUrl && <FilePreview item={ item } fileUrl={ fileUrl } /> }
 		</div>
 	);
 };
+
+interface FilePreviewProps {
+	item: FileBrowserItem;
+	fileUrl: string;
+}
 
 export default FileInfoCard;

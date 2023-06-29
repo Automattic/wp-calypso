@@ -82,6 +82,17 @@
 			&__label {
 				font-weight: bold;
 			}
+
+			&__preview {
+				max-width: 350px;
+
+				audio,
+				video,
+				pre,
+				img {
+					max-width: 100%;
+				}
+			}
 		}
 	}
 }
