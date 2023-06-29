@@ -27,6 +27,9 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	FEATURE_CLOUD_CRITICAL_CSS,
+	FEATURE_JETPACK_STATS_MONTHLY,
+	FEATURE_JETPACK_STATS_PWYW_YEARLY,
+	FEATURE_JETPACK_STATS_FREE_YEARLY,
 } from '@automattic/calypso-products';
 
 export const productHasBackups = ( productSlug: string ): boolean => {
@@ -78,9 +81,20 @@ export const productHasSearch = ( productSlug: string ): boolean => {
 	);
 };
 
-export const productHasStats = ( productSlug: string ): boolean => {
-	// TODO: add plan feature check once we have a plan with stats.
-	return isJetpackStatsSlug( productSlug );
+export const productHasStats = ( productSlug: string, onlyPaid = false ): boolean => {
+	const STATS_PAID_FEATURES = [ FEATURE_JETPACK_STATS_MONTHLY, FEATURE_JETPACK_STATS_PWYW_YEARLY ];
+	const STATS_FREE_FEATURES = [ FEATURE_JETPACK_STATS_FREE_YEARLY ];
+	return (
+		isJetpackStatsSlug( productSlug ) ||
+		// check plans for stats features
+		( isJetpackPlanSlug( productSlug ) &&
+			( ( onlyPaid && planHasAtLeastOneFeature( productSlug, STATS_PAID_FEATURES ) ) ||
+				( ! onlyPaid &&
+					planHasAtLeastOneFeature( productSlug, [
+						...STATS_PAID_FEATURES,
+						...STATS_FREE_FEATURES,
+					] ) ) ) )
+	);
 };
 
 export const productHasAntiSpam = ( productSlug: string ): boolean => {
