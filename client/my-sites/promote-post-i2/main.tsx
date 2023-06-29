@@ -16,6 +16,7 @@ import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-cr
 import usePostsQueryPaged, {
 	getSearchOptionsQueryParams,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
@@ -197,6 +198,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	}
 
 	const showBanner = ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
+
+	// Add Hotjar script to the page.
+	addHotJarScript();
 
 	const headerSubtitle = ( isMobile: boolean ) => {
 		if ( ! isMobile && showBanner ) {
