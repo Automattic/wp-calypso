@@ -79,17 +79,18 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
-	PRODUCT_JETPACK_STATS_MONTHLY,
-	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-	PRODUCT_JETPACK_STATS_FREE_YEARLY,
 } from './constants';
 import { getJetpackProductsShortNames } from './translations';
 import type { ProductSlug, JetpackProductSlug, WPComProductSlug, Product } from './types';
 
 const PRODUCT_SHORT_NAMES = getJetpackProductsShortNames();
 
+// TODO: add stats products to this list when adding to the store
 export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
-	Exclude< JetpackProductSlug, WPComProductSlug >,
+	Exclude<
+		Exclude< JetpackProductSlug, WPComProductSlug >,
+		'jetpack_stats_monthly' | 'jetpack_stats_pwyw_yearly' | 'jetpack_stats_free_yearly'
+	>,
 	Product
 > = {
 	[ PRODUCT_JETPACK_AI_MONTHLY ]: {
@@ -253,39 +254,6 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		],
 		getProductId: () => 2105,
 		getStoreSlug: () => PRODUCT_JETPACK_SEARCH_MONTHLY,
-	},
-	[ PRODUCT_JETPACK_STATS_MONTHLY ]: {
-		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_JETPACK_STATS_MONTHLY ],
-		product_slug: PRODUCT_JETPACK_STATS_MONTHLY,
-		type: PRODUCT_JETPACK_STATS_MONTHLY,
-		term: TERM_MONTHLY,
-		bill_period: PLAN_MONTHLY_PERIOD,
-		categories: [],
-		getFeatures: () => [],
-		getProductId: () => 2220,
-		getStoreSlug: () => PRODUCT_JETPACK_STATS_MONTHLY,
-	},
-	[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: {
-		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ],
-		product_slug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-		type: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-		term: TERM_ANNUALLY,
-		bill_period: PLAN_ANNUAL_PERIOD,
-		categories: [],
-		getFeatures: () => [],
-		getProductId: () => 2222,
-		getStoreSlug: () => PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-	},
-	[ PRODUCT_JETPACK_STATS_FREE_YEARLY ]: {
-		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_JETPACK_STATS_FREE_YEARLY ],
-		product_slug: PRODUCT_JETPACK_STATS_FREE_YEARLY,
-		type: PRODUCT_JETPACK_STATS_FREE_YEARLY,
-		term: TERM_ANNUALLY,
-		bill_period: PLAN_ANNUAL_PERIOD,
-		categories: [],
-		getFeatures: () => [],
-		getProductId: () => 2221,
-		getStoreSlug: () => PRODUCT_JETPACK_STATS_FREE_YEARLY,
 	},
 	[ PRODUCT_JETPACK_ANTI_SPAM ]: {
 		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_JETPACK_ANTI_SPAM ],
