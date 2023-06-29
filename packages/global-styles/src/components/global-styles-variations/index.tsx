@@ -1,11 +1,14 @@
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import { useState } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
+import {
+	GlobalStylesContext,
+	mergeBaseAndUserConfigs,
+	withExperimentalBlockEditorProvider,
+} from '../../gutenberg-bridge';
 import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
 import './style.scss';
@@ -51,14 +54,12 @@ const GlobalStylesVariation = ( {
 			inline_css: baseInlineCss + globalStylesVariationInlineCss,
 		};
 	}, [ globalStylesVariation, base ] );
-
 	const selectOnEnter = ( event: React.KeyboardEvent ) => {
 		if ( event.keyCode === ENTER ) {
 			event.preventDefault();
 			onSelect();
 		}
 	};
-
 	return (
 		<div
 			className={ classnames( 'global-styles-variations__item', {
@@ -122,7 +123,6 @@ const GlobalStylesVariations = ( {
 			) ?? ( {} as GlobalStylesObject ),
 		[ globalStylesVariations ]
 	);
-
 	const globalStylesVariationsWithoutDefault = useMemo(
 		() =>
 			globalStylesVariations.filter(
@@ -202,4 +202,4 @@ const GlobalStylesVariations = ( {
 	);
 };
 
-export default GlobalStylesVariations;
+export default withExperimentalBlockEditorProvider( GlobalStylesVariations );
