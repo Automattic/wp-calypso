@@ -236,7 +236,7 @@ export default function VerifyContactForm( {
 	};
 
 	const handleInputChange = useCallback(
-		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		( key: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setContactInfo( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
 		},
 		[]
