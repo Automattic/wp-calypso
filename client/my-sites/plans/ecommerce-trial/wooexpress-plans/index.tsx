@@ -2,8 +2,6 @@ import {
 	PLAN_FREE,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-	PLAN_WOOEXPRESS_SMALL,
-	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	getPlanPath,
 	getPlans,
 	isWooExpressPlan,
@@ -14,12 +12,13 @@ import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo } from 'react';
-import AsyncLoad from 'calypso/components/async-load';
 import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/components/plan-interval-selector';
 import { useSelector } from 'calypso/state';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { PlansFeaturesMainProps } from 'calypso/my-sites/plans-features-main';
 
 import './style.scss';
 
@@ -28,7 +27,7 @@ type SegmentedOptionProps = {
 	onClick?: () => void;
 };
 interface WooExpressPlansProps {
-	siteId: number | string;
+	siteId: number | null;
 	siteSlug: string;
 	interval?: 'monthly' | 'yearly';
 	monthlyControlProps: SegmentedOptionProps;
@@ -97,12 +96,8 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		isEnglishLocale,
 	] );
 
-	const smallPlan = interval === 'yearly' ? PLAN_WOOEXPRESS_SMALL : PLAN_WOOEXPRESS_SMALL_MONTHLY;
-	const mediumPlan =
-		interval === 'yearly' ? PLAN_WOOEXPRESS_MEDIUM : PLAN_WOOEXPRESS_MEDIUM_MONTHLY;
-
 	const onUpgradeClick = useCallback(
-		( cartItem: MinimalRequestCartProduct | null ) => {
+		( cartItem?: MinimalRequestCartProduct | null ) => {
 			const upgradePlanSlug = cartItem?.product_slug ?? PLAN_FREE;
 
 			triggerTracksEvent?.( upgradePlanSlug );
@@ -118,12 +113,13 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		[ siteSlug, triggerTracksEvent ]
 	);
 
-	const plansTableProps = {
-		plans: [ smallPlan, mediumPlan ],
+	const plansTableProps: PlansFeaturesMainProps = {
+		intent: 'plans-woocommerce',
 		hidePlansFeatureComparison: false,
-		hideUnavailableFeatures: true,
+		// hideUnavailableFeatures: true,
 		siteId,
 		onUpgradeClick,
+		intervalType: interval,
 	};
 
 	return (
@@ -139,7 +135,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 				</div>
 			) }
 			<div className="wooexpress-plans__grid is-2023-pricing-grid">
-				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...plansTableProps } />
+				<PlansFeaturesMain { ...plansTableProps } />
 			</div>
 
 			<div className="enterprise-ecommerce__banner">

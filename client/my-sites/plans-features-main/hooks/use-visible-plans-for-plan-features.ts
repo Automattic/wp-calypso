@@ -73,16 +73,16 @@ const useVisiblePlansForPlanFeatures = ( {
 	}
 
 	// TODO clk - should probably remove this (why the retriction to these plans?)
-	plans = plans.filter( ( plan ) =>
-		isPlanOneOfType( plan, [
-			TYPE_FREE,
-			TYPE_PERSONAL,
-			TYPE_PREMIUM,
-			TYPE_BUSINESS,
-			TYPE_ECOMMERCE,
-			TYPE_ENTERPRISE_GRID_WPCOM,
-		] )
-	);
+	// plans = plans.filter( ( plan ) =>
+	// 	isPlanOneOfType( plan, [
+	// 		TYPE_FREE,
+	// 		TYPE_PERSONAL,
+	// 		TYPE_PREMIUM,
+	// 		TYPE_BUSINESS,
+	// 		TYPE_ECOMMERCE,
+	// 		TYPE_ENTERPRISE_GRID_WPCOM,
+	// 	] )
+	// );
 
 	return plans;
 };

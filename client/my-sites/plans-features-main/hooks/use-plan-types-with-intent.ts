@@ -6,6 +6,9 @@ import {
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	TYPE_WOOEXPRESS_MEDIUM,
+	TYPE_WOOEXPRESS_SMALL,
+	TYPE_WOO_EXPRESS_PLUS,
 	getPlan,
 	isBloggerPlan,
 } from '@automattic/calypso-products';
@@ -19,6 +22,7 @@ export type PlansIntent =
 	| 'plans-plugins'
 	| 'plans-jetpack-app'
 	| 'plans-import'
+	| 'plans-woocommerce'
 	| 'default';
 
 interface Props {
@@ -64,6 +68,10 @@ const usePlanTypesWithIntent = ( {
 	];
 
 	switch ( intent ) {
+		case 'plans-woocommerce':
+			return {
+				planTypes: [ TYPE_WOOEXPRESS_SMALL, TYPE_WOOEXPRESS_MEDIUM, TYPE_WOO_EXPRESS_PLUS ],
+			};
 		case 'plans-blog-onboarding':
 			return {
 				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],

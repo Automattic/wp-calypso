@@ -48,7 +48,7 @@ import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
-interface PlansFeaturesMainProps {
+export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
 	isInSignup?: boolean;
@@ -172,6 +172,8 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		planActionOverrides,
 		intent,
 	};
+
+	console.log( intervalType );
 
 	const asyncPlanFeatures2023Grid = (
 		<AsyncLoad
@@ -301,7 +303,7 @@ const PlansFeaturesMain = ( {
 		: intentFromProps || intentFromSiteMeta.intent || 'default';
 
 	const defaultPlanTypes = usePlanTypesWithIntent( {
-		intent: 'default',
+		intent: 'plans-woocommerce' === intent ? 'plans-woocommerce' : 'default',
 		selectedPlan,
 		sitePlanSlug,
 		hideEnterprisePlan,
