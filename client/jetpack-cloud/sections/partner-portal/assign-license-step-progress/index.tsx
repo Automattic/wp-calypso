@@ -33,7 +33,7 @@ function CheckMarkOrNumber( { currentStep, step }: { currentStep: number; step: 
 	);
 }
 
-type StepKey = 'issueLicense' | 'addPaymentMethod' | 'assignLicense';
+type StepKey = 'issueLicense' | 'addPaymentMethod' | 'assignLicense' | 'downloadProducts';
 
 interface Step {
 	key: StepKey;
@@ -43,9 +43,14 @@ interface Step {
 interface Props {
 	currentStep: StepKey;
 	selectedSite?: SiteDetails | null;
+	showDownloadStep?: boolean | null;
 }
 
-export default function AssignLicenseStepProgress( { currentStep, selectedSite }: Props ) {
+export default function AssignLicenseStepProgress( {
+	currentStep,
+	selectedSite,
+	showDownloadStep,
+}: Props ) {
 	const translate = useTranslate();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const sites = useSelector( getSites ).length;
@@ -58,6 +63,10 @@ export default function AssignLicenseStepProgress( { currentStep, selectedSite }
 
 	if ( sites > 0 && ! selectedSite ) {
 		steps.push( { key: 'assignLicense', label: translate( 'Assign license' ) } );
+	}
+
+	if ( showDownloadStep ) {
+		steps.push( { key: 'downloadProducts', label: translate( 'Download product' ) } );
 	}
 
 	// Don't show the breadcrumbs if we have less than 2 as they are not very informative in this case.
