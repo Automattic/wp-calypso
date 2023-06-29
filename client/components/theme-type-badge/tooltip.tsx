@@ -53,7 +53,7 @@ const ThemeTypeBadgeTooltipUpgradeLink = ( {
 	};
 
 	return (
-		<LinkButton isLink onClick={ () => goToCheckout() }>
+		<LinkButton variant="link" onClick={ () => goToCheckout() }>
 			{ children }
 		</LinkButton>
 	);

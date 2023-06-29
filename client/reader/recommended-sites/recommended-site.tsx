@@ -245,7 +245,7 @@ const RecommendedSite = ( {
 			</HStack>
 			<p className="recommended-site__site-description">{ siteDescription }</p>
 			<Button
-				isPrimary
+				variant="primary"
 				isBusy={ isSubscribeLoading }
 				disabled={ isSubscribeLoading }
 				className="recommended-site__subscribe-button"

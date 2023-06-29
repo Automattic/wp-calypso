@@ -138,7 +138,7 @@ function useNextSteps(
 			stepDescription: step.description,
 			stepCta: (
 				<Button
-					isLink
+					variant="link"
 					href={ step.link }
 					target={ step.blankTarget !== false ? '_blank' : undefined } // the default is to open in a new tab
 					onClick={ () => sendTrackEvent( step.eventKey ) }
