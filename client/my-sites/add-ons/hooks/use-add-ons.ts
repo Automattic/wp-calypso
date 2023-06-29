@@ -1,4 +1,5 @@
 import {
+	PRODUCT_JETPACK_AI_MONTHLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
@@ -40,6 +41,17 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 	const translate = useTranslate();
 
 	const addOnsActive = [
+		{
+			productSlug: PRODUCT_JETPACK_AI_MONTHLY,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_AI_MONTHLY ),
+			icon: unlimitedThemesIcon,
+			overrides: null,
+			displayCost: useAddOnDisplayCost( PRODUCT_JETPACK_AI_MONTHLY ),
+			featured: true,
+			description: translate(
+				'Bring the power of AI right into your WordPress editor, let your content creation soar to new heights.'
+			),
+		},
 		{
 			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
 			featureSlugs: useAddOnFeatureSlugs( PRODUCT_WPCOM_UNLIMITED_THEMES ),
