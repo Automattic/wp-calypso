@@ -18,7 +18,7 @@ export default function allSitesMenu( { showManagePlugins = false } = {} ) {
 		},
 		{
 			icon: 'dashicons-admin-site-alt3',
-			slug: 'upgrades',
+			slug: 'domains',
 			title: translate( 'Domains' ),
 			navigationLabel: translate( 'Manage all domains' ),
 			type: 'menu-item',
