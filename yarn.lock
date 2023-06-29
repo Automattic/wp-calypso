@@ -801,6 +801,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@tanstack/react-query": ^4.29.1
+    "@types/wordpress__block-library": ^2.6.1
     "@wordpress/block-editor": ^12.3.0
     "@wordpress/block-library": ^8.12.0
     "@wordpress/components": ^25.1.0
@@ -8311,6 +8312,13 @@ __metadata:
     anymatch: ^3.0.0
     source-map: ^0.6.0
   checksum: 15d7a1778b9ee0dbd08ff30231d010feefe95d9821ca71d7c2afb309a253b69a73bc5a8157709984fc065c3885d2908179bcd79624f9d442a293570e55b3a381
+  languageName: node
+  linkType: hard
+
+"@types/wordpress__block-library@npm:^2.6.1":
+  version: 2.6.1
+  resolution: "@types/wordpress__block-library@npm:2.6.1"
+  checksum: bd007e3e36990e45111a0cbbf79eec9120cef69525773247d0c72db81a3870362fadb5224372410766a14902f1453119a0d8702e09aa3b5f6028d210d949dc90
   languageName: node
   linkType: hard
 
