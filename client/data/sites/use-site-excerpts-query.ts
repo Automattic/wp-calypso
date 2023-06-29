@@ -34,7 +34,12 @@ export const useSiteExcerptsQuery = (
 	const store = useStore();
 
 	return useQuery( {
-		queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ],
+		queryKey: [
+			USE_SITE_EXCERPTS_QUERY_KEY,
+			SITE_EXCERPT_REQUEST_FIELDS,
+			SITE_EXCERPT_REQUEST_OPTIONS,
+			fetchFilter,
+		],
 		queryFn: () => fetchSites( fetchFilter ),
 		select: ( data ) => {
 			const sites = data?.sites.map( computeFields( data?.sites ) ) || [];
