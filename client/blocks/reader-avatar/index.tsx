@@ -106,6 +106,8 @@ const ReaderAvatar = ( {
 		'has-gravatar': hasAvatar || showPlaceholder,
 	} );
 
+	//console.log( 'ReaderAvatar', { author, siteIcon, feedIcon, siteUrl, isCompact, preferGravatar, preferBlavatar, showPlaceholder, onClick, iconSize } );
+
 	const defaultIconElement = ! hasSiteIcon && ! hasAvatar && ! showPlaceholder && (
 		<Gridicon key="globe-icon" icon="globe" size={ siteIconSize } />
 	);

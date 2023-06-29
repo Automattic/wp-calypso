@@ -1,17 +1,22 @@
-import { useDispatch } from 'react-redux';
+import { get } from 'lodash';
+import { connect, useDispatch } from 'react-redux';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import Count from 'calypso/components/count';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import Favicon from 'calypso/reader/components/favicon';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import ReaderSidebarHelper from '../../sidebar/helper';
 import '../style.scss';
 
 const ReaderListFollowingItem = ( props ) => {
-	const { site, path, isUnseen } = props;
+	const { site, path, isUnseen, feed } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
+	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+	const siteIcon = site ? site.site_icon ?? get( site, 'icon.img' ) : null;
 
 	const handleSidebarClick = ( selectedSite ) => {
 		recordAction( 'clicked_reader_sidebar_following_item' );
@@ -51,7 +56,13 @@ const ReaderListFollowingItem = ( props ) => {
 				onClick={ () => handleSidebarClick( site ) }
 			>
 				<span className="reader-sidebar-site_siteicon">
-					<Favicon site={ site } size={ 32 } />
+					<ReaderAvatar
+						siteIcon={ siteIcon }
+						feedIcon={ feedIcon }
+						preferGravatar={ true }
+						isCompact={ true }
+						iconSize={ 24 }
+					/>
 				</span>
 				<span className="reader-sidebar-site_sitename">
 					<span className="reader-sidebar-site_nameurl">{ site.name || urlForDisplay }</span>
@@ -74,4 +85,18 @@ const ReaderListFollowingItem = ( props ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default ReaderListFollowingItem;
+export default connect( ( state, ownProps ) => {
+	const site = ownProps.site;
+	const feedId = get( site, 'feed_ID' );
+	const feed = getFeed( state, feedId );
+
+	// Add site icon to feed object so have icon for external feeds
+	if ( feed ) {
+		const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
+		feed.site_icon = follow?.site_icon;
+	}
+
+	return {
+		feed: feed,
+	};
+} )( ReaderListFollowingItem );
