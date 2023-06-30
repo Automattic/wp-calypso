@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import { Campaign, CampaignStats } from 'calypso/data/promote-post/types';
+import { BlazablePost, Campaign, CampaignStats } from 'calypso/data/promote-post/types';
 import {
 	PagedBlazeContentData,
 	PagedBlazeSearchResponse,
@@ -183,10 +183,15 @@ export const getPagedBlazeSearchData = (
 		let foundContent = pagedData?.pages
 			?.map( ( item: any ) => item[ mode ] )
 			?.flat()
-			?.filter( ( item: any ) => 'undefined' !== typeof item );
+			?.filter( ( item: BlazablePost | Campaign ) => 'undefined' !== typeof item );
 
-		if ( foundContent?.length && 'campaigns' === mode ) {
-			foundContent = foundContent as Campaign[];
+		if ( foundContent?.length ) {
+			switch ( mode ) {
+				case 'campaigns':
+					foundContent = foundContent as Campaign[];
+				case 'posts':
+					foundContent = foundContent as BlazablePost[];
+			}
 		}
 
 		return {
