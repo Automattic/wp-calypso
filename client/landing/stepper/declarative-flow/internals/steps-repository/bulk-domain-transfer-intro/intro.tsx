@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
@@ -26,7 +27,9 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 									) }
 								</p>
 								<a
-									href="wordpress.com"
+									href={ localizeUrl(
+										'https://wordpress.com/support/domains/incoming-domain-transfer/'
+									) }
 									target="_blank"
 									rel="noopener noreferrer"
 									className="select-items__item-learn-more"
@@ -46,7 +49,9 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 							<>
 								<p>{ __( 'Add all domain names with authorization codes to start transfer.' ) }</p>
 								<a
-									href="wordpress.com"
+									href={ localizeUrl(
+										'https://wordpress.com/support/domains/incoming-domain-transfer/'
+									) }
 									target="_blank"
 									rel="noopener noreferrer"
 									className="select-items__item-learn-more"
