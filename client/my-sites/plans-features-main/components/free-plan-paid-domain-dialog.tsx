@@ -120,17 +120,19 @@ const StyledButton = styled( Button )`
 	}
 `;
 
+type DomainPlanDialogProps = {
+	domainName: string;
+	suggestedPlanSlug: PlanSlug;
+	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
+	onPlanSelected: () => void;
+};
+
 function DialogPaidPlanIsRequired( {
 	domainName,
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: {
-	domainName: string;
-	suggestedPlanSlug: PlanSlug;
-	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
-	onPlanSelected: () => void;
-} ) {
+}: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const [ isBusy, setIsBusy ] = useState( false );
@@ -209,12 +211,7 @@ function DialogBlogDomainAndFreePlan( {
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: {
-	domainName: string;
-	suggestedPlanSlug: PlanSlug;
-	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
-	onPlanSelected: () => void;
-} ) {
+}: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const [ isBusy, setIsBusy ] = useState( false );
@@ -301,6 +298,12 @@ export function FreePlanPaidDomainDialog( {
 	// It means that this condition relies on the parent component to handle the implied "free plan is picked" condition, which is not a good practice.
 	// However, it's also not an immediate concern before we are sure about making this the default behavior.
 	const isBlogDomainAndFreePlan = getTld( domainName ) === 'blog';
+	const dialogCommonProps: DomainPlanDialogProps = {
+		domainName,
+		suggestedPlanSlug,
+		onFreePlanSelected,
+		onPlanSelected,
+	};
 
 	return (
 		<Dialog
@@ -321,19 +324,9 @@ export function FreePlanPaidDomainDialog( {
 				` }
 			/>
 			{ isBlogDomainAndFreePlan ? (
-				<DialogBlogDomainAndFreePlan
-					domainName={ domainName }
-					suggestedPlanSlug={ suggestedPlanSlug }
-					onFreePlanSelected={ onFreePlanSelected }
-					onPlanSelected={ onPlanSelected }
-				/>
+				<DialogBlogDomainAndFreePlan { ...dialogCommonProps } />
 			) : (
-				<DialogPaidPlanIsRequired
-					domainName={ domainName }
-					suggestedPlanSlug={ suggestedPlanSlug }
-					onFreePlanSelected={ onFreePlanSelected }
-					onPlanSelected={ onPlanSelected }
-				/>
+				<DialogPaidPlanIsRequired { ...dialogCommonProps } />
 			) }
 		</Dialog>
 	);
