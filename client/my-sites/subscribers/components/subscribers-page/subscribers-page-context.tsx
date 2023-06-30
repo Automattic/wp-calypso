@@ -101,9 +101,7 @@ export const SubscribersPageProvider = ( {
 export const useSubscribersPage = () => {
 	const context = useContext( SubscribersPageContext );
 	if ( ! context ) {
-		throw new Error(
-			'useSubscribersPage must be used within a SubscribersPageProvider'
-		);
+		throw new Error( 'useSubscribersPage must be used within a SubscribersPageProvider' );
 	}
 	return context;
 };
