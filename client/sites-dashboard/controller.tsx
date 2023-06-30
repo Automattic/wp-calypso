@@ -8,6 +8,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
+import { hideMasterbar } from 'calypso/state/ui/actions';
 import { EmptySitesDashboard } from './components/empty-sites-dashboard';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
@@ -49,6 +50,7 @@ export function maybeSitesDashboard( context: PageJSContext, next: () => void ) 
 	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
 
 	if ( context.query[ 'hosting-flow' ] || siteCount === 0 ) {
+		context.store.dispatch( hideMasterbar() );
 		return emptySites( context, siteCount, next );
 	}
 
