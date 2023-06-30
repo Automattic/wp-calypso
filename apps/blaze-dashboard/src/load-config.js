@@ -13,9 +13,12 @@ productionConfig.features[ 'use-translation-chunks' ] = false;
 productionConfig.features[ 'promote-post/redesign-i2' ] = true;
 productionConfig.features[ 'promote-post/widget-i2' ] = true;
 
+// Sets the advertising path prefix for this app
+productionConfig.advertising_dashboard_path_prefix = '/advertising';
+
 // Note: configData is hydrated in Jetpack: projects/packages/blaze/src/class-dashboard-config-data.php - method `get_data`
 // TODO: link to Github when code in Jetpack is merged
-window.configData.features = productionConfig.features;
-window.configData.advertising_dashboard_path_prefix = '/advertising';
-window.configData.dsp_stripe_pub_key = productionConfig.dsp_stripe_pub_key;
-window.configData.dsp_widget_js_src = productionConfig.dsp_widget_js_src;
+window.configData = {
+	...window.configData,
+	...productionConfig,
+};
