@@ -630,15 +630,6 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 		return true;
 	}
 
-	/*
-	 * Users who were assigned to the treatment group of the Global Styles on Personal experiment
-	 * while having a Personal plan should always have access to Global Styles, as long as they still
-	 * have a Personal plan.
-	 */
-	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
-		return wpcom_site_has_personal_plan( $blog_id );
-	}
-
 	if ( wpcom_site_has_global_styles_in_personal_plan( $blog_id ) ) {
 		/*
 		 * Flag site so users of the treatment group with a Personal plan can always have access
