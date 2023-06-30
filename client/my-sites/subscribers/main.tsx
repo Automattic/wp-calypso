@@ -80,23 +80,24 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	return (
 		<Main wideLayout className="subscribers">
 			<DocumentHead title={ translate( 'Subscribers' ) } />
-			<FixedNavigationHeader navigationItems={ navigationItems }>
-				<Button
-					className="add-subscribers-button"
-					primary
-					onClick={ () => setShowAddSubscribersModal( true ) }
-				>
-					<Gridicon icon="plus" size={ 24 } />
-					{ translate( 'Add subscribers' ) }
-				</Button>
-				<SubscribersHeaderPopover siteId={ selectedSiteId } />
-			</FixedNavigationHeader>
 
 			<SubscribersListManagerProvider
 				siteId={ selectedSiteId }
 				page={ pageNumber }
 				pageChanged={ pageChanged }
 			>
+				<FixedNavigationHeader navigationItems={ navigationItems }>
+					<Button
+						className="add-subscribers-button"
+						primary
+						onClick={ () => setShowAddSubscribersModal( true ) }
+					>
+						<Gridicon icon="plus" size={ 24 } />
+						{ translate( 'Add subscribers' ) }
+					</Button>
+					<SubscribersHeaderPopover siteId={ selectedSiteId } />
+				</FixedNavigationHeader>
+
 				<SubscriberListContainer
 					onClickView={ onClickView }
 					onClickUnsubscribe={ onClickUnsubscribe }
