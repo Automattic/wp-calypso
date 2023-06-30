@@ -57,13 +57,9 @@ export const useLoginUrl = ( {
 } ): string => {
 	const locale = useLocale();
 	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
-
-	const nonEmptyQueryParameters = {
-		...( flowName && { variationName: flowName } ),
-		...( redirectTo && { redirect_to: redirectTo } ),
-		...( pageTitle && { pageTitle } ),
-		toStepper: 'true',
-	};
-
-	return addQueryArgs( localizedLoginPath, nonEmptyQueryParameters );
+	return addQueryArgs( localizedLoginPath, {
+		variationName: flowName,
+		redirect_to: redirectTo,
+		pageTitle,
+	} );
 };
