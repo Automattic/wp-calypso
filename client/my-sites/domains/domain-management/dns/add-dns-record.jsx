@@ -51,7 +51,7 @@ class AddDnsRecord extends Component {
 					: translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
-					selectedDomainName,
+					currentRoute,
 					selectedSite?.options?.is_domain_only
 				),
 			},
@@ -82,8 +82,8 @@ class AddDnsRecord extends Component {
 	}
 
 	goBack = () => {
-		const { selectedSite, selectedDomainName } = this.props;
-		page( domainManagementDns( selectedSite?.slug, selectedDomainName ) );
+		const { selectedSite, selectedDomainName, currentRoute } = this.props;
+		page( domainManagementDns( selectedSite?.slug, selectedDomainName, currentRoute ) );
 	};
 
 	renderMain() {

@@ -231,18 +231,18 @@ function ConnectDomainStep( {
 			items = [
 				{
 					label: __( 'Domains' ),
-					href: domainManagementList( selectedSite.slug, domain ),
+					href: domainManagementList( selectedSite.slug, currentRoute ),
 				},
 				{
 					label: domain,
-					href: domainManagementEdit( selectedSite.slug, domain ),
+					href: domainManagementEdit( selectedSite.slug, domain, currentRoute ),
 				},
 				{ label: __( 'Connect' ) },
 			];
 
 			mobileItem = {
 				label: __( 'Back' ),
-				href: domainManagementEdit( selectedSite.slug, domain ),
+				href: domainManagementEdit( selectedSite.slug, domain, currentRoute ),
 				showBackArrow: true,
 			};
 		}
@@ -254,7 +254,7 @@ function ConnectDomainStep( {
 		if ( prevPageSlug ) {
 			setPageSlug( prevPageSlug );
 		} else {
-			page( domainManagementList( selectedSite.slug ) );
+			page( domainManagementList( selectedSite.slug, currentRoute ) );
 		}
 	};
 

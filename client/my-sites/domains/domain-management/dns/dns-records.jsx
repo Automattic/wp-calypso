@@ -49,7 +49,7 @@ class DnsRecords extends Component {
 					: translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
-					selectedDomainName,
+					currentRoute,
 					selectedSite?.options?.is_domain_only
 				),
 			},

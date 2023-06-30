@@ -408,7 +408,9 @@ const Settings = ( {
 		}
 
 		const contactInformationUpdateLink =
-			selectedSite && domain && domainManagementEditContactInfo( selectedSite?.slug, domain.name );
+			selectedSite &&
+			domain &&
+			domainManagementEditContactInfo( selectedSite?.slug, domain.name, currentRoute );
 
 		return (
 			<Accordion

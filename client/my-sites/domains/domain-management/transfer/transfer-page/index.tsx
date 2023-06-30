@@ -84,7 +84,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 				label: isUnderDomainManagementAll( currentRoute ) ? __( 'All Domains' ) : __( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
-					selectedDomainName,
+					currentRoute,
 					selectedSite?.options?.is_domain_only
 				),
 			},
