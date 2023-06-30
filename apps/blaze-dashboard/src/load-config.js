@@ -22,7 +22,7 @@ window.configData = {
 	...productionConfig,
 };
 
-// Fixes a type in Jetpack config response
+// Fixes a typo in Jetpack config response
 if ( window.configData.intial_state ) {
 	window.configData.initial_state = window.configData.intial_state;
 	delete window.configData.intial_state;
