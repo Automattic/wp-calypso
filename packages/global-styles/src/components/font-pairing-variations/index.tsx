@@ -15,7 +15,7 @@ import type { GlobalStylesObject } from '../../types';
 import './style.scss';
 
 interface FontPairingVariationProps {
-	fontPairingVariation: GlobalStylesObject;
+	fontPairingVariation?: GlobalStylesObject;
 	isActive: boolean;
 	composite?: Record< string, unknown >;
 	onSelect: () => void;
@@ -56,13 +56,14 @@ const FontPairingVariation = ( {
 			aria-label={
 				translate( 'Font: %s', {
 					comment: 'Aria label for font preview buttons',
-					args: fontPairingVariation.title ?? translate( 'Free font' ),
+					// The default font pairing has no title
+					args: fontPairingVariation?.title ?? translate( 'Free font' ),
 				} ) as string
 			}
 		>
 			<div className="global-styles-variation__item-preview">
 				<GlobalStylesContext.Provider value={ context }>
-					<FontPairingVariationPreview title={ fontPairingVariation.title } />
+					<FontPairingVariationPreview />
 				</GlobalStylesContext.Provider>
 			</div>
 		</CompositeItem>
@@ -75,7 +76,7 @@ const FontPairingVariations = ( {
 	selectedFontPairingVariation,
 	onSelect,
 }: FontPairingVariationsProps ) => {
-	const { base } = useContext( GlobalStylesContext );
+	// The theme font pairings don't include the default font pairing
 	const fontPairingVariations = useFontPairingVariations( siteId, stylesheet ) ?? [];
 	const composite = useCompositeState();
 
@@ -89,7 +90,7 @@ const FontPairingVariations = ( {
 			<div className="font-pairing-variations">
 				<FontPairingVariation
 					key="base"
-					fontPairingVariation={ { ...base, title: translate( 'Free font' ) } }
+					// The base is the theme.json, which has the default font pairing
 					isActive={ ! selectedFontPairingVariation }
 					composite={ composite }
 					onSelect={ () => onSelect( null ) }
