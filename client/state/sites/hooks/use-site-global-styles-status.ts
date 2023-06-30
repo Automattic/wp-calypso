@@ -1,10 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
+import { useExperiment } from 'calypso/lib/explat';
 import wpcom from 'calypso/lib/wp';
 
 export type GlobalStylesStatus = {
 	shouldLimitGlobalStyles: boolean;
 	globalStylesInUse: boolean;
+	globalStylesInPersonalPlan: boolean;
 };
 
 // While we are loading the Global Styles Info we can't assume that we should limit global styles, or we would be
@@ -12,15 +14,20 @@ export type GlobalStylesStatus = {
 export const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
 	shouldLimitGlobalStyles: false,
 	globalStylesInUse: false,
+	globalStylesInPersonalPlan: false,
 };
 
-export const getGlobalStylesInfoForSite = ( siteId: number | null ): GlobalStylesStatus => {
+export const getGlobalStylesInfoForSite = (
+	siteId: number | null,
+	currentUserHasGlobalStylesInPersonal: boolean
+): GlobalStylesStatus => {
 	if ( siteId == null ) {
 		return {
 			// The next line should be replaced with true once the Gating global styles feature is live.
 			// That will make all non-created sites to limit global styles.
 			shouldLimitGlobalStyles: isEnabled( 'limit-global-styles' ),
 			globalStylesInUse: false,
+			globalStylesInPersonalPlan: currentUserHasGlobalStylesInPersonal,
 		};
 	}
 
@@ -37,9 +44,16 @@ export const getGlobalStylesInfoForSite = ( siteId: number | null ): GlobalStyle
 };
 
 export function useSiteGlobalStylesStatus( siteId: number ): GlobalStylesStatus {
+	const [ , currentUserHasGlobalStylesInPersonal ] = useExperiment(
+		'calypso_global_styles_personal'
+	);
 	const { data } = useQuery( {
-		queryKey: [ 'globalStylesInfo', siteId ],
-		queryFn: () => getGlobalStylesInfoForSite( siteId ),
+		queryKey: [ 'globalStylesInfo', siteId, currentUserHasGlobalStylesInPersonal?.variationName ],
+		queryFn: () =>
+			getGlobalStylesInfoForSite(
+				siteId,
+				currentUserHasGlobalStylesInPersonal?.variationName === 'treatment'
+			),
 		placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
 		refetchOnWindowFocus: false,
 	} );
