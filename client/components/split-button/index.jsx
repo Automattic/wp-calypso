@@ -86,6 +86,7 @@ class SplitButton extends PureComponent {
 			className,
 			popoverClassName,
 			whiteSeparator,
+			toggleIcon = 'chevron-down',
 		} = this.props;
 		const { isMenuVisible } = this.state;
 		const toggleClasses = classNames( 'split-button__toggle', {
@@ -103,18 +104,20 @@ class SplitButton extends PureComponent {
 
 		return (
 			<span className={ classes }>
-				<Button
-					compact={ compact }
-					primary={ primary }
-					scary={ scary }
-					disabled={ disabled || disableMain }
-					className="split-button__main"
-					onClick={ onClick }
-					href={ this.props.href }
-				>
-					{ icon && <Gridicon icon={ icon } /> }
-					{ label }
-				</Button>
+				{ ( icon || label ) && (
+					<Button
+						compact={ compact }
+						primary={ primary }
+						scary={ scary }
+						disabled={ disabled || disableMain }
+						className="split-button__main"
+						onClick={ onClick }
+						href={ this.props.href }
+					>
+						{ icon && <Gridicon icon={ icon } /> }
+						{ label }
+					</Button>
+				) }
 				<Button
 					compact={ compact }
 					primary={ primary }
@@ -125,7 +128,7 @@ class SplitButton extends PureComponent {
 					disabled={ disabled || disableMenu }
 					className={ toggleClasses }
 				>
-					<Gridicon icon="chevron-down" className="split-button__toggle-icon" />
+					<Gridicon icon={ toggleIcon } className="split-button__toggle-icon" />
 				</Button>
 				<PopoverMenu
 					isVisible={ isMenuVisible }

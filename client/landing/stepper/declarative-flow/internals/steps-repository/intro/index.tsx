@@ -86,11 +86,11 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return {
-				title: __( 'The newsletter. Elevated.' ),
+				title: __( 'Write. Grow. Earn. This is Newsletter.' ),
 				text: __(
-					'Everything you need to reach and grow an audience, with the power and permanence of WordPress.com.'
+					'Unlimited subscribers. Everything you need to grow your audience. And the permanence of WordPress.com.'
 				),
-				buttonText: __( 'Launch your newsletter' ),
+				buttonText: __( 'Launch my newsletter' ),
 			};
 		}
 
@@ -158,7 +158,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep introContent={ introContent } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
-			showHeaderJetpackPowered={ flow === NEWSLETTER_FLOW }
+			showJetpackPowered={ flow === NEWSLETTER_FLOW }
 			showHeaderWooCommercePowered={ flow === ECOMMERCE_FLOW }
 			showSenseiPowered={ flow === SENSEI_FLOW }
 			showVideoPressPowered={ isVideoPressFlow }

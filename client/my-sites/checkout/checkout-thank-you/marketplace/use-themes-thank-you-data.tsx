@@ -98,5 +98,6 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 		subtitle,
 		thankyouSteps,
 		isAtomicNeeded,
+		null,
 	];
 }
