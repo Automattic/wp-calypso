@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import { plus } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
@@ -290,7 +289,6 @@ class AllDomains extends Component {
 						'Here you will be able to manage all the domains you own on WordPress.com. Start by adding some:'
 					) }
 					action={ translate( 'Add a domain' ) }
-					actionIcon={ plus }
 					actionURL="/start/domain"
 					secondaryAction={ translate( 'Transfer a domain' ) }
 					secondaryActionURL="/domains/add"

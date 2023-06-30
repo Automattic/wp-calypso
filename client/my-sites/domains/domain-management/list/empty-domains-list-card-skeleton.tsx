@@ -1,7 +1,5 @@
 import { Card, Button } from '@automattic/components';
-import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
-import { ReactElement } from 'react';
 import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/domains/free-domain.svg';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
@@ -14,7 +12,6 @@ interface EmptyDomainsListCardSkeletonProps {
 	line?: string;
 	actionURL: string;
 	contentType: string;
-	actionIcon?: ReactElement;
 	action: string;
 	secondaryActionURL: string;
 	secondaryAction: string;
@@ -28,7 +25,6 @@ export const EmptyDomainsListCardSkeleton = ( {
 	actionURL,
 	contentType,
 	action,
-	actionIcon,
 	secondaryActionURL,
 	secondaryAction,
 }: EmptyDomainsListCardSkeletonProps ) => {
@@ -69,14 +65,6 @@ export const EmptyDomainsListCardSkeleton = ( {
 							onClick={ getActionClickHandler( 'primary', actionURL, contentType ) }
 							href={ actionURL }
 						>
-							{ actionIcon ? (
-								<Icon
-									icon={ actionIcon }
-									className="gridicon"
-									css={ { marginLeft: '2px', marginRight: '6px' } }
-									viewBox="2 2 20 20"
-								/>
-							) : null }
 							{ action }
 						</Button>
 						<Button
