@@ -219,7 +219,7 @@ class RemovePurchase extends Component {
 		} catch ( error ) {
 			this.setState( { isRemoving: false } );
 			this.closeDialog();
-			this.props.errorNotice( error.message );
+			this.props.errorNotice( error.message, { displayOnNextPage: true } );
 		}
 	};
 
