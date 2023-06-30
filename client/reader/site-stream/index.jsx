@@ -72,7 +72,6 @@ const SiteStream = ( props ) => {
 			emptyContent={ emptyContent }
 			listName={ title }
 			showFollowButton={ false }
-			showPostHeader={ false }
 			showSiteNameOnCards={ false }
 			sidebarTabTitle={ translate( 'Related' ) }
 			streamSidebar={ streamSidebar }
