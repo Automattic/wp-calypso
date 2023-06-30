@@ -1,23 +1,10 @@
-import { Gridicon } from '@automattic/components';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import ReaderFeedHeaderFollow from 'calypso/blocks/reader-feed-header/follow';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
-import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
-import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
-import ReaderFollowButton from 'calypso/reader/follow-button';
-import { isEligibleForUnseen, getSiteUrl } from 'calypso/reader/get-helpers';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { useSelector } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
-import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import '../style.scss';
 
 const FeedStreamSidebar = ( {
@@ -31,55 +18,6 @@ const FeedStreamSidebar = ( {
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
-	const siteUrl = getSiteUrl( { feed, site } );
-
-	const { following, hasOrganization, isEmailBlocked, isWPForTeamsItem, siteId } = useSelector(
-		( state ) => {
-			let _siteId = site?.ID;
-			let _feedId = feed?.feed_ID;
-			let _feed = _feedId ? getFeed( state, _feedId ) : undefined;
-			let _site = _siteId ? getSite( state, _siteId ) : undefined;
-
-			if ( feed && ! _siteId ) {
-				_siteId = _feed.blog_ID || undefined;
-				_site = _siteId ? getSite( state, _feed.blog_ID ) : undefined;
-			}
-
-			if ( _site && ! _feedId ) {
-				_feedId = _site.feed_ID;
-				_feed = _feedId ? getFeed( state, _site.feed_ID ) : undefined;
-			}
-
-			return {
-				isWPForTeamsItem: isSiteWPForTeams( state, _siteId ) || isFeedWPForTeams( state, _feedId ),
-				hasOrganization: hasReaderFollowOrganization( state, _feedId, _siteId ),
-				following: _feed && isFollowing( state, { feedUrl: _feed.feed_URL } ),
-				isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
-				siteId: _siteId,
-			};
-		}
-	);
-
-	const markAllAsSeen = () => {
-		dispatch( recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked' ) );
-
-		dispatch(
-			requestMarkAllAsSeen( {
-				identifier: streamKey,
-				feedIds: [ feed.feed_ID ],
-				feedUrls: [ feed.URL ],
-			} )
-		);
-	};
-
-	const openSuggestedFollowsModal = ( followClicked ) => {
-		setIsSuggestedFollowsModalOpen( followClicked );
-	};
-
-	const onCloseSuggestedFollowModal = () => {
-		setIsSuggestedFollowsModalOpen( false );
-	};
 
 	const handleTagSidebarClick = ( tag ) => {
 		recordAction( 'clicked_reader_sidebar_tag' );
@@ -100,54 +38,9 @@ const FeedStreamSidebar = ( {
 		<>
 			<div className="reader-feed-header__follow">
 				{ showFollow && (
-					<>
-						<div className="reader-feed-header__follow-and-settings">
-							{ siteUrl && (
-								<div className="reader-feed-header__follow-button">
-									<ReaderFollowButton
-										siteUrl={ siteUrl }
-										hasButtonStyle={ true }
-										iconSize={ 24 }
-										onFollowToggle={ openSuggestedFollowsModal }
-									/>
-								</div>
-							) }
-
-							{ site && following && ! isEmailBlocked && (
-								<div className="reader-feed-header__email-settings">
-									<ReaderSiteNotificationSettings
-										iconSize={ 24 }
-										showLabel={ false }
-										siteId={ siteId }
-									/>
-								</div>
-							) }
-						</div>
-						{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && feed && (
-							<button
-								onClick={ markAllAsSeen }
-								className="reader-feed-header__seen-button"
-								disabled={ feed.unseen_count === 0 }
-							>
-								<Gridicon icon="visible" size={ 24 } />
-								<span
-									className="reader-feed-header__visibility"
-									title={ translate( 'Mark all as seen' ) }
-								>
-									{ translate( 'Mark all as seen' ) }
-								</span>
-							</button>
-						) }
-					</>
+					<ReaderFeedHeaderFollow feed={ feed } site={ site } streamKey={ streamKey } />
 				) }
 			</div>
-			{ siteId && (
-				<ReaderSuggestedFollowsDialog
-					onClose={ onCloseSuggestedFollowModal }
-					siteId={ +siteId }
-					isVisible={ isSuggestedFollowsModalOpen }
-				/>
-			) }
 			{ ( postCount || followerCount ) && (
 				<div className="reader-tag-sidebar-stats">
 					{ postCount && (
