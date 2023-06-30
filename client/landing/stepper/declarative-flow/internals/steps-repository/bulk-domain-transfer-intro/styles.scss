@@ -29,6 +29,11 @@ $heading-font-family: "SF Pro Display", $sans;
 			justify-content: flex-start;
 			margin-top: 24px;
 		}
+
+		@media (max-width: $break-mobile ) {
+			padding-left: 22px;
+			padding-right: 22px;
+		}
 	}
 
 	.signup-header {
@@ -85,11 +90,19 @@ $heading-font-family: "SF Pro Display", $sans;
 			.formatted-header {
 				.formatted-header__title {
 					font-size: 2.75rem;
+
+					@media (max-width: $break-medium ) {
+						text-align: left;
+					}
 				}
 
 				.formatted-header__subtitle {
 					color: #000;
 					text-align: center;
+
+					@media (max-width: $break-medium ) {
+						text-align: left;
+					}
 				}
 			}
 		}
@@ -127,6 +140,10 @@ $heading-font-family: "SF Pro Display", $sans;
 				padding-bottom: 26px;
 				padding-top: 26px;
 				width: 187px;
+
+				@media (max-width: $break-mobile ) {
+					width: 100%;
+				}
 			}
 		}
 	}
