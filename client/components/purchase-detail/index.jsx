@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
+import { ThankYouSection } from 'calypso/my-sites/checkout/checkout-thank-you/thank-you';
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
 
@@ -82,28 +83,23 @@ export default class PurchaseDetail extends PureComponent {
 	}
 
 	render() {
-		const { id, requiredText, title, description, icon } = this.props;
-		const classes = classNames( 'purchase-detail', {
-			'custom-icon': icon && typeof icon !== 'string',
-			'is-placeholder': this.props.isPlaceholder,
-		} );
+		const { title, description } = this.props;
+		const sections = [
+			{
+				sectionKey: 'whats_next',
+				nextSteps: [
+					{
+						stepKey: 'visit_site',
+						stepTitle: title,
+						stepDescription: description,
+						stepCta: this.renderBody(),
+					},
+				],
+			},
+		];
 
-		return (
-			<div className={ classes } id={ id }>
-				{ requiredText && (
-					<div className="purchase-detail__required-notice">
-						<em>{ requiredText }</em>
-					</div>
-				) }
-				<div className="purchase-detail__content">
-					<div className="purchase-detail__image">{ this.renderIcon() }</div>
-					<div className="purchase-detail__text">
-						<h3 className="purchase-detail__title">{ title }</h3>
-						<div className="purchase-detail__description">{ preventWidows( description ) }</div>
-						{ this.renderBody() }
-					</div>
-				</div>
-			</div>
-		);
+		return sections.map( ( sectionProps, index ) => (
+			<ThankYouSection key={ index } { ...sectionProps } />
+		) );
 	}
 }

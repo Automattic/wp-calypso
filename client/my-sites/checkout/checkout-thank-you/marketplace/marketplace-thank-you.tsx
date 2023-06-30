@@ -1,8 +1,8 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useEffect } from 'react';
-import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { ThankYou } from 'calypso/my-sites/checkout/checkout-thank-you/thank-you';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { useSelector, useDispatch } from 'calypso/state';

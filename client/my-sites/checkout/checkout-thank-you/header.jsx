@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getTitanEmailUrl, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getTitanAppsUrlPrefix } from 'calypso/lib/titan/get-titan-urls';
+import { ThankYou } from 'calypso/my-sites/checkout/checkout-thank-you/thank-you';
 import {
 	domainManagementEdit,
 	domainManagementTransferInPrecheck,
@@ -541,80 +542,37 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	render() {
-		const { isDataLoaded, isSimplified, hasFailedPurchases, primaryPurchase } = this.props;
+		const { isDataLoaded, isSimplified, primaryPurchase } = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
 
-		let svg = 'thank-you.svg';
-		if ( hasFailedPurchases ) {
-			svg = 'items-failed.svg';
-		} else if (
-			primaryPurchase &&
-			( ( isDomainMapping( primaryPurchase ) && ! primaryPurchase.isRootDomainWithUs ) ||
-				isDelayedDomainTransfer( primaryPurchase ) )
-		) {
-			svg = 'publish-button.svg';
-		} else if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
-			svg = 'check-emails-desktop.svg';
-		}
-
 		return (
-			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
-				<div className="checkout-thank-you__header-icon">
-					<img src={ `/calypso/images/upgrades/${ svg }` } alt="" />
-				</div>
-				<div className="checkout-thank-you__header-content">
-					<div className="checkout-thank-you__header-copy">
-						<h1 className="checkout-thank-you__header-heading">{ this.getHeading() }</h1>
-
-						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
-							this.renderSimplifiedContent()
-						) : (
-							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
-						) }
-
-						{ this.props.children }
-
-						{ this.getButtons() }
-					</div>
-				</div>
-			</div>
+			<ThankYou
+				containerClassName={ classNames( 'checkout-thank-you-thank-you', classes ) }
+				showSupportSection={ false }
+				thankYouTitle={ this.getHeading() }
+				thankYouSubtitle={
+					primaryPurchase && isPlan( primaryPurchase ) && isSimplified
+						? this.renderSimplifiedContent()
+						: this.getText()
+				}
+				headerBackgroundColor="#fff"
+				headerTextColor="#000"
+			>
+				{ this.props.children }
+				{ this.getButtons() }
+			</ThankYou>
 		);
 	}
 
 	renderSimplifiedContent() {
 		const { translate, primaryPurchase } = this.props;
-		const messages = [
-			translate(
-				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-					'Enjoy your powerful new features!',
-				{
-					args: { productName: primaryPurchase.productName },
-					components: { strong: <strong /> },
-				}
-			),
-		];
-		if ( this.props.siteUnlaunchedBeforeUpgrade ) {
-			messages.push(
-				translate(
-					"Your site has been launched. You can share it with the world whenever you're ready."
-				)
-			);
-		}
-
-		if ( messages.length === 1 ) {
-			return <h2 className="checkout-thank-you__header-text">{ messages[ 0 ] }</h2>;
-		}
-
-		const CHECKMARK_SIZE = 24;
-		return (
-			<ul className="checkout-thank-you__success-messages">
-				{ messages.map( ( message, i ) => (
-					<li key={ i } className="checkout-thank-you__success-message-item">
-						<Gridicon icon="checkmark-circle" size={ CHECKMARK_SIZE } />
-						<div>{ preventWidows( message ) }</div>
-					</li>
-				) ) }
-			</ul>
+		return translate(
+			'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
+				'Enjoy your powerful new features!',
+			{
+				args: { productName: primaryPurchase.productName },
+				components: { strong: <strong /> },
+			}
 		);
 	}
 }

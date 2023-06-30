@@ -30,7 +30,6 @@ import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PurchaseDetail from 'calypso/components/purchase-detail';
@@ -41,13 +40,13 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isExternal } from 'calypso/lib/url';
 import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
+import { ThankYou } from 'calypso/my-sites/checkout/checkout-thank-you/thank-you';
 import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
-import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import {
@@ -83,7 +82,6 @@ import DomainRegistrationDetails from './domain-registration-details';
 import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
-import CheckoutThankYouFeaturesHeader from './features-header';
 import GoogleAppsDetails from './google-apps-details';
 import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
@@ -92,6 +90,7 @@ import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
+import PurchaseActions from './thank-you/purchase-actions';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import type { SitesPlansResult } from '../composite-checkout/hooks/product-variants';
@@ -464,9 +463,7 @@ export class CheckoutThankYou extends Component<
 		const { translate, email, domainOnlySiteFlow, selectedFeature } = this.props;
 		let purchases: ReceiptPurchase[] = [];
 		let failedPurchases = [];
-		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let showHappinessSupport = ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
 		let wasDomainProduct = false;
@@ -481,9 +478,7 @@ export class CheckoutThankYou extends Component<
 			wasGSuiteOrGoogleWorkspace = purchases.some( isGSuiteOrGoogleWorkspace );
 			wasTitanEmailProduct = purchases.some( isTitanMail );
 			failedPurchases = getFailedPurchases( this.props );
-			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
-			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
@@ -498,9 +493,6 @@ export class CheckoutThankYou extends Component<
 				purchases.every(
 					( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
 				);
-		} else if ( isStarterPlanEnabled() ) {
-			// Don't show the Happiness support until we figure out the user doesn't have a starter plan
-			showHappinessSupport = false;
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -619,16 +611,7 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-
-				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
-				{ showHappinessSupport && (
-					<Card className="checkout-thank-you__footer">
-						<HappinessSupport
-							isJetpack={ wasJetpackPlanPurchased }
-							contactButtonEventName="calypso_plans_autoconfig_chat_initiated"
-						/>
-					</Card>
-				) }
+				{ this.productRelatedMessages() }
 			</Main>
 		);
 	}
@@ -757,64 +740,68 @@ export class CheckoutThankYou extends Component<
 
 		if ( ! this.isDataLoaded() ) {
 			return (
-				<div>
-					<CheckoutThankYouHeader
-						isDataLoaded={ false }
-						isSimplified={ isSimplified }
-						selectedSite={ selectedSite }
-						upgradeIntent={ upgradeIntent }
-						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
-						displayMode={ displayMode }
-					/>
+				<Card className="checkout-thank-you__content">
+					<div>
+						<CheckoutThankYouHeader
+							isDataLoaded={ false }
+							isSimplified={ isSimplified }
+							selectedSite={ selectedSite }
+							upgradeIntent={ upgradeIntent }
+							siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
+							displayMode={ displayMode }
+						/>
 
-					{ ! isSimplified && (
-						<>
-							<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
+						{ ! isSimplified && (
+							<>
+								<PurchaseActions isDataLoaded={ false } />
 
-							<div className="checkout-thank-you__purchase-details-list">
-								<PurchaseDetail isPlaceholder />
-								<PurchaseDetail isPlaceholder />
-								<PurchaseDetail isPlaceholder />
-							</div>
-						</>
-					) }
-				</div>
+								<div className="checkout-thank-you__purchase-details-list">
+									<PurchaseDetail isPlaceholder />
+									<PurchaseDetail isPlaceholder />
+									<PurchaseDetail isPlaceholder />
+								</div>
+							</>
+						) }
+					</div>
+				</Card>
 			);
 		}
 
 		return (
-			<div>
-				<CheckoutThankYouHeader
-					isDataLoaded={ this.isDataLoaded() }
-					isSimplified={ isSimplified }
-					primaryPurchase={ primaryPurchase }
-					selectedSite={ selectedSite }
-					hasFailedPurchases={ hasFailedPurchases }
-					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
-					upgradeIntent={ upgradeIntent }
-					primaryCta={ this.primaryCta }
-					displayMode={ displayMode }
-					purchases={ purchases }
-				>
-					{ ! isSimplified && primaryPurchase && (
-						<CheckoutThankYouFeaturesHeader
-							isDataLoaded={ this.isDataLoaded() }
-							isGenericReceipt={ this.isGenericReceipt() }
-							purchases={ purchases }
-							hasFailedPurchases={ hasFailedPurchases }
-						/>
-					) }
-
-					{ ! isSimplified && component && (
-						<div className="checkout-thank-you__purchase-details-list">
-							<PurchaseDetailsWrapper
-								{ ...this.props }
-								componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
+			<Card className="checkout-thank-you__content">
+				<div>
+					<CheckoutThankYouHeader
+						isDataLoaded={ this.isDataLoaded() }
+						isSimplified={ isSimplified }
+						primaryPurchase={ primaryPurchase }
+						selectedSite={ selectedSite }
+						hasFailedPurchases={ hasFailedPurchases }
+						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
+						upgradeIntent={ upgradeIntent }
+						primaryCta={ this.primaryCta }
+						displayMode={ displayMode }
+						purchases={ purchases }
+					>
+						{ ! isSimplified && primaryPurchase && (
+							<PurchaseActions
+								isDataLoaded={ this.isDataLoaded() }
+								isGenericReceipt={ this.isGenericReceipt() }
+								purchases={ purchases }
+								hasFailedPurchases={ hasFailedPurchases }
 							/>
-						</div>
-					) }
-				</CheckoutThankYouHeader>
-			</div>
+						) }
+
+						{ ! isSimplified && component && (
+							<div className="checkout-thank-you__purchase-details-list">
+								<PurchaseDetailsWrapper
+									{ ...this.props }
+									componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
+								/>
+							</div>
+						) }
+					</CheckoutThankYouHeader>
+				</div>
+			</Card>
 		);
 	};
 }
