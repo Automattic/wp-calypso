@@ -1,6 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
+$font-family: "SF Pro Text", $sans;
+$heading-font-family: "SF Pro Display", $sans;
+
 .step-container .intro {
 	padding: 52px 0 0;
 }
@@ -15,14 +18,20 @@
 
 	&.intro {
 		padding: 0;
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium ) {
 			header {
 				text-align: center;
 			}
+
 			flex-direction: column;
 			gap: 0;
 			justify-content: flex-start;
 			margin-top: 24px;
+		}
+
+		@media (max-width: $break-mobile ) {
+			padding-left: 20px;
+			padding-right: 20px;
 		}
 	}
 
@@ -67,6 +76,7 @@
 	}
 
 	.step-container {
+		font-family: $font-family;
 
 		.step-container__header {
 			margin-bottom: 48px;
@@ -75,10 +85,24 @@
 			.formatted-header {
 				.formatted-header__title {
 					font-size: 2.75rem;
+					line-height: 52px;
+
+					@media (max-width: $break-medium ) {
+						text-align: left;
+						font-size: 2rem;
+						line-height: 40px;
+					}
 				}
+
 				.formatted-header__subtitle {
 					color: #000;
+					margin-top: 16px;
 					text-align: center;
+
+					@media (max-width: $break-medium ) {
+						text-align: left;
+						line-height: 20px;
+					}
 				}
 			}
 		}
@@ -86,18 +110,60 @@
 		.step-container__content {
 			.select-items {
 				margin-bottom: 32px;
+				padding-left: 0;
+				padding-right: 0;
+
+				.select-items__item {
+					padding: 24px;
+
+					@media (max-width: $break-mobile ) {
+						padding: 16px;
+					}
+
+					@media (min-width: $break-mobile ) {
+						width: 390px;
+					}
+
+					@media (min-width: $break-medium ) {
+						width: 504px;
+					}
+				}
 
 				.select-items__item-icon {
-					left: -32px;
+					margin-right: 8px;
+
+					position: unset;
+					flex-shrink: 0;
 				}
 
 				.select-items__item-title {
-					font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+					font-family: $heading-font-family;
+					font-size: rem(18px);
 					font-weight: 500;
+					line-height: 26px;
 				}
 
 				.select-items__item-description {
-					color: #50575e;
+					color: var(--studio-gray-60);
+				}
+
+				.select-items__item-learn-more {
+					text-decoration: underline;
+					color: var(--studio-gray-60);
+				}
+			}
+
+			.components-button {
+				border-radius: 4px;
+				font-size: $font-body-small;
+				font-weight: 500;
+				justify-content: center;
+				padding-bottom: 26px;
+				padding-top: 26px;
+				width: 187px;
+
+				@media (max-width: $break-mobile ) {
+					width: 100%;
 				}
 			}
 		}
