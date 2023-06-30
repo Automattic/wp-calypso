@@ -16,12 +16,13 @@ interface Props {
 	tabIndex: number;
 	product: APIProductFamilyProduct;
 	onSelectProduct: ( value: APIProductFamilyProduct ) => void | null;
+	showLicenseInfoModal: boolean;
 }
 
 export default function LicenseBundleCard( props: Props ) {
 	const { tabIndex, product, onSelectProduct } = props;
 	const productTitle = getProductTitle( product.name );
-	const [ showLightbox, setShowLightbox ] = useState( false );
+	const [ showLightbox, setShowLightbox ] = useState( props.showLicenseInfoModal );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

@@ -71,6 +71,8 @@ export default function IssueMultipleLicensesForm( {
 		[]
 	);
 
+	const licenseModalToBeShown = getQueryArg( window.location.href, 'show_license_modal' );
+
 	useEffect( () => {
 		// Select the slugs included in the URL
 		defaultProductSlugs &&
@@ -202,6 +204,7 @@ export default function IssueMultipleLicensesForm( {
 									isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
 									tabIndex={ 100 + i }
 									suggestedProduct={ suggestedProduct }
+									showLicenseInfoModal={ licenseModalToBeShown === productOption.slug }
 								/>
 							) ) }
 					</div>
@@ -219,6 +222,7 @@ export default function IssueMultipleLicensesForm( {
 									product={ productOption }
 									onSelectProduct={ onSelectProduct }
 									tabIndex={ 100 + ( products?.length || 0 ) + i }
+									showLicenseInfoModal={ licenseModalToBeShown === productOption.slug }
 								/>
 							) ) }
 					</div>

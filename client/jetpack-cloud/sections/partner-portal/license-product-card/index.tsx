@@ -21,6 +21,7 @@ interface Props {
 	onSelectProduct: ( value: APIProductFamilyProduct ) => void | null;
 	suggestedProduct?: string | null;
 	isMultiSelect?: boolean;
+	showLicenseInfoModal: boolean;
 }
 
 export default function LicenseProductCard( props: Props ) {
@@ -32,9 +33,10 @@ export default function LicenseProductCard( props: Props ) {
 		onSelectProduct,
 		suggestedProduct,
 		isMultiSelect,
+		showLicenseInfoModal,
 	} = props;
 	const productTitle = getProductTitle( product.name );
-	const [ showLightbox, setShowLightbox ] = useState( false );
+	const [ showLightbox, setShowLightbox ] = useState( showLicenseInfoModal );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
