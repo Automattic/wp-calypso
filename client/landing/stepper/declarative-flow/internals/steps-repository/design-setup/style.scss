@@ -607,20 +607,12 @@ $design-button-primary-color: rgb(17, 122, 201);
 				position: fixed;
 				top: auto;
 
-				.navigation-link {
-					margin-top: -2px;
-				}
-
 				@include break-xlarge {
 					inset-inline-start: 72px;
 					inset-inline-end: 24px;
 					padding: 1px 0 0;
 					position: absolute;
 					top: 8px;
-
-					.navigation-link {
-						margin-top: 0;
-					}
 
 					button.is-primary {
 						display: none;
@@ -640,7 +632,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 			overflow: hidden;
 			padding: 0;
 			position: relative;
-			z-index: 1;
+			// z-index: 1;
 		}
 
 		@include break-xlarge {
