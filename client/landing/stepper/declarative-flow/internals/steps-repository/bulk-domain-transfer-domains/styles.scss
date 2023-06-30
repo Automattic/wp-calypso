@@ -19,6 +19,17 @@
 			margin-top: 96px;
 		}
 
+		.step-container__navigation.action-buttons {
+			position: absolute;
+			top: 8px;
+			inset-inline-start: 72px;
+			inset-inline-end: 24px;
+			padding: 1px 0 0;
+			background-color: transparent;
+			border: none;
+			box-shadow: none;
+		}
+
 		@media ( max-width: $break-medium ) {
 
 			.step-container__header {
