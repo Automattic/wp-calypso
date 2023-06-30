@@ -44,6 +44,7 @@ export type ResolveDomainStatusOptionsBag = {
 	isSiteAutomatedTransfer?: boolean | null;
 	isDomainOnlySite?: boolean | null;
 	siteSlug?: string | null;
+	currentRoute?: string | null;
 	getMappingErrors?: boolean | null;
 };
 
@@ -58,6 +59,7 @@ export function resolveDomainStatus(
 		isDomainOnlySite = null,
 		siteSlug = null,
 		getMappingErrors = false,
+		currentRoute = null,
 	}: ResolveDomainStatusOptionsBag = {}
 ): ResolveDomainStatusReturn {
 	const transferOptions = {
