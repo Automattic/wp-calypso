@@ -25,7 +25,8 @@ const DomainDeleteInfoCard = ( {
 		isLoadingPurchase ||
 		! purchase ||
 		! domain.currentUserIsOwner ||
-		domain.pendingRegistration
+		domain.pendingRegistration ||
+		domain.hasPendingTransfer
 	) {
 		return null;
 	}
