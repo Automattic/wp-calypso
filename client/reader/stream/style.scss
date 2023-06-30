@@ -661,6 +661,19 @@
 			overflow: hidden;
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
+			white-space: nowrap;
+			width: 225px;
+			position: relative;
+
+			&::after {
+				content: "";
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				width: 25px;
+				height: 25px;
+				background: linear-gradient(42deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+			}
 		}
 	}
 
