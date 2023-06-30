@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { getTld } from 'calypso/lib/domains';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import usePlanPrices from '../../plans/hooks/use-plan-prices';
@@ -203,6 +204,86 @@ function DialogPaidPlanIsRequired( {
 	);
 }
 
+function DialogBlogDomainAndFreePlan( {
+	domainName,
+	suggestedPlanSlug,
+	onFreePlanSelected,
+	onPlanSelected,
+}: {
+	domainName: string;
+	suggestedPlanSlug: PlanSlug;
+	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
+	onPlanSelected: () => void;
+} ) {
+	const translate = useTranslate();
+	const queryClient = useQueryClient();
+	const [ isBusy, setIsBusy ] = useState( false );
+	const planPrices = usePlanPrices( { planSlug: suggestedPlanSlug, returnMonthly: true } );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const {
+		data: wordPressSubdomainSuggestions,
+		isInitialLoading,
+		isError,
+	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
+	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
+
+	function handlePaidPlanClick() {
+		setIsBusy( true );
+		onPlanSelected();
+	}
+
+	function handleFreeDomainClick() {
+		setIsBusy( true );
+		// Since this domain will not be available after it is selected, invalidate the cache.
+		queryClient.invalidateQueries( DomainSuggestions.getDomainSuggestionsQueryKey( domainName ) );
+		if ( wordPressSubdomainSuggestions && wordPressSubdomainSuggestions.length ) {
+			onFreePlanSelected( wordPressSubdomainSuggestions[ 0 ] );
+		}
+	}
+
+	return (
+		<DialogContainer>
+			<Heading>{ translate( 'A paid plan is required for a custom primary domain.' ) }</Heading>
+			<SubHeading>
+				{ translate(
+					'Without a paid plan, your custom domain will automatically redirect to your free WordPress.com domain, xxx.wordpress.com.Custom. Please read {{a}}our support document{{/a}} for more details.'
+				) }
+			</SubHeading>
+			<ButtonContainer>
+				<RowWithBorder>
+					<StyledButton busy={ isBusy } primary onClick={ handlePaidPlanClick }>
+						{ currencyCode &&
+							translate( 'Get %(planTitle)s - %(planPrice)s/month', {
+								comment: 'Eg: Get Personal - $4/month',
+								args: {
+									planTitle: planTitle as string,
+									planPrice: formatCurrency(
+										planPrices.discountedRawPrice || planPrices.rawPrice,
+										currencyCode,
+										{ stripZeros: true }
+									),
+								},
+							} ) }
+					</StyledButton>
+				</RowWithBorder>
+				<Row>
+					<DomainName>
+						{ isInitialLoading && <LoadingPlaceHolder /> }
+						{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
+					</DomainName>
+					<StyledButton
+						disabled={ isInitialLoading || ! wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }
+						busy={ isBusy }
+						onClick={ handleFreeDomainClick }
+					>
+						{ translate( 'Continue with Free plan' ) }
+					</StyledButton>
+				</Row>
+			</ButtonContainer>
+		</DialogContainer>
+	);
+}
+
 export function FreePlanPaidDomainDialog( {
 	domainName,
 	suggestedPlanSlug,
@@ -216,6 +297,11 @@ export function FreePlanPaidDomainDialog( {
 	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
 	onPlanSelected: () => void;
 } ) {
+	// The complete condition here is actually a .blog domain + Free plan.
+	// It means that this condition relies on the parent component to handle the implied "free plan is picked" condition, which is not a good practice.
+	// However, it's also not an immediate concern before we are sure about making this the default behavior.
+	const isBlogDomainAndFreePlan = getTld( domainName ) === 'blog';
+
 	return (
 		<Dialog
 			isBackdropVisible={ true }
@@ -234,12 +320,21 @@ export function FreePlanPaidDomainDialog( {
 					}
 				` }
 			/>
-			<DialogPaidPlanIsRequired
-				domainName={ domainName }
-				suggestedPlanSlug={ suggestedPlanSlug }
-				onFreePlanSelected={ onFreePlanSelected }
-				onPlanSelected={ onPlanSelected }
-			/>
+			{ isBlogDomainAndFreePlan ? (
+				<DialogBlogDomainAndFreePlan
+					domainName={ domainName }
+					suggestedPlanSlug={ suggestedPlanSlug }
+					onFreePlanSelected={ onFreePlanSelected }
+					onPlanSelected={ onPlanSelected }
+				/>
+			) : (
+				<DialogPaidPlanIsRequired
+					domainName={ domainName }
+					suggestedPlanSlug={ suggestedPlanSlug }
+					onFreePlanSelected={ onFreePlanSelected }
+					onPlanSelected={ onPlanSelected }
+				/>
+			) }
 		</Dialog>
 	);
 }
