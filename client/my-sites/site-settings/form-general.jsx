@@ -794,7 +794,7 @@ export class SiteSettingsFormGeneral extends Component {
 					'Leave the heavy lifting to us and let our professional builders craft your compelling website.'
 				) }
 				callToAction={ translate( 'Get started' ) }
-				href="https://wordpress.com/website-building-service/?ref=unlaunched-settings"
+				href="https://wordpress.com/website-design-service/?ref=unlaunched-settings"
 				iconPath={ builtByLogo }
 				disableCircle={ true }
 				event="settings_bb_upsell"
