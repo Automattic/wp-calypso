@@ -1,6 +1,6 @@
 import { IntentScreen } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { Icon, lock, cog, payment } from '@wordpress/icons';
+import { Icon, lock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { preventWidows } from 'calypso/lib/formatting';
 
@@ -17,24 +17,36 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				intents={ [
 					{
 						key: 'unlock',
-						title: __( 'Unlock your domains at your current registrar' ),
-						description: <p>{ __( 'This allows us to transfer them' ) }</p>,
+						title: __( 'Unlock at current registrar' ),
+						description: (
+							<p>
+								{ __(
+									'Your domain management interface should have an option for you to remove this lock. Learn more'
+								) }
+							</p>
+						),
 						icon: <Icon icon={ lock } />,
 						value: 'firstPost',
 						actionText: null,
 					},
 					{
 						key: 'setup',
-						title: __( 'Setup your domains at WordPress.com' ),
-						description: <p>{ __( 'To keep your sites up and running!' ) }</p>,
-						icon: <Icon icon={ cog } />,
+						title: __( 'Add domains' ),
+						description: (
+							<p>
+								{ __(
+									'Add all domain names with authorization codes to start transfer. Learn more'
+								) }
+							</p>
+						),
+						icon: <Icon icon={ plus } />,
 						value: 'setup',
 						actionText: null,
 					},
 					{
 						key: 'finalize',
-						title: __( 'Finalize the transfer' ),
-						description: <p>{ __( 'Finalize the details and submit your transfer' ) }</p>,
+						title: __( 'Checkout' ),
+						description: <p>{ __( 'Add your payment details to finalize.' ) }</p>,
 						icon: <Icon icon={ payment } />,
 						value: 'finalize',
 						actionText: null,
@@ -44,13 +56,13 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				preventWidows={ preventWidows }
 				onSelect={ onSubmit }
 			/>
-			<div>
+			<div style={ { display: 'flex', justifyContent: 'center' } }>
 				<Button
 					isPrimary
-					style={ { width: '100%', justifyContent: 'center' } }
+					style={ { width: '157px', justifyContent: 'center' } }
 					onClick={ onSubmit }
 				>
-					{ __( 'Continue' ) }
+					{ __( "I'm ready!" ) }
 				</Button>
 			</div>
 		</>

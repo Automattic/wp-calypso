@@ -1,7 +1,8 @@
 import { FormInputValidation } from '@automattic/components';
-import { Button } from '@wordpress/components';
-import { trash, update } from '@wordpress/icons';
+import { Button, Icon } from '@wordpress/components';
+import { check, trash, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import { useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -19,6 +20,23 @@ type Props = {
 	hasDuplicates: boolean;
 };
 
+const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolean ) => {
+	return (
+		shouldReportError && (
+			<span className="domains__domain-input-icon-container">
+				<Icon
+					size={ 24 }
+					icon={ isValidDomain ? check : closeSmall }
+					className={ classnames( 'domains__domain-input-icon', {
+						'is-valid': isValidDomain,
+						'is-not-valid': ! isValidDomain,
+					} ) }
+				/>
+			</span>
+		)
+	);
+};
+
 export function DomainCodePair( {
 	id,
 	domain,
@@ -32,13 +50,13 @@ export function DomainCodePair( {
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
 
-	const { valid, loading, message, refetch } = validation;
+	const { valid, loading, message } = validation;
 
 	useEffect( () => {
 		onChange( id, { domain, auth, valid } );
 	}, [ domain, id, onChange, auth, valid, loading ] );
 
-	const shouldReportError = hasDuplicates || ( ! loading && domain && auth );
+	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
 
 	return (
 		<div className="domains__domain-info-and-validation">
@@ -53,8 +71,8 @@ export function DomainCodePair( {
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, { domain: event.target.value.trim().toLowerCase(), auth, valid } )
 							}
-							placeholder={ __( 'example.com' ) }
 						/>
+						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
 				</div>
 				<div className="domains__domain-key">
@@ -69,22 +87,17 @@ export function DomainCodePair( {
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, { domain, auth: event.target.value.trim(), valid } )
 							}
-							placeholder={ __( 'Authentication code' ) }
 						/>
+						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
 				</div>
-				<div className="domains__domain-delete">
-					<FormFieldset>
-						{ showLabels && <FormLabel htmlFor={ id }>{ __( 'Refresh' ) }</FormLabel> }
-						<Button disabled={ ! refetch } icon={ update } onClick={ () => refetch?.() } />
-					</FormFieldset>
-				</div>
-				<div className="domains__domain-delete">
+				{ /* Need to conditionally display remove icon after adding more than 1 domain */ }
+				{ /* <div className="domains__domain-delete">
 					<FormFieldset>
 						{ showLabels && <FormLabel htmlFor={ id }>{ __( 'Delete' ) }</FormLabel> }
 						<Button icon={ trash } onClick={ () => onRemove( id ) } />
 					</FormFieldset>
-				</div>
+				</div> */ }
 			</div>
 			{ shouldReportError && (
 				<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>

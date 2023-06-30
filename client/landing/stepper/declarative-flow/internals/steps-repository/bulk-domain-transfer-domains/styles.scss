@@ -7,10 +7,12 @@
 	margin: 0 auto;
 	max-width: 1024px;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	gap: 30px;
 
 	&.domains {
+		padding: 0;
 		@media ( max-width: $break-medium ) {
 			.step-container__header {
 				width: 100%;
@@ -18,7 +20,6 @@
 			header {
 				text-align: center;
 			}
-			flex-direction: column;
 			gap: 0;
 			justify-content: flex-start;
 			margin-top: 24px;
@@ -51,21 +52,78 @@
 		}
 	}
 
-	.domains__domain-domain {
-		flex: 1;
-	}
-
+	.domains__domain-domain,
 	.domains__domain-key {
 		flex: 1;
+
+		.form-fieldset {
+			position: relative;
+
+			input {
+				padding-right: 30px;
+				text-overflow: ellipsis;
+			}
+
+			.domains__domain-input-icon-container {
+				position: absolute;
+				right: 5px;
+				width: 24px;
+				height: 24px;
+				bottom: 8px;
+
+				.domains__domain-input-icon {
+					&.is-valid {
+						fill: #008a20;
+					}
+					&.is-not-valid {
+						fill: #d63638;
+					}
+				}
+			}
+		}
+
+		label {
+			color: var(--gray-gray-60, #50575e);
+			font-size: 1rem;
+			font-weight: 500;
+		}
 	}
 
 	.domains__domain-delete {
 		width: 50px;
 	}
 
-	.bulk-domain-transfer__cta {
-		width: 100%;
-		justify-content: center;
+	.bulk-domain-transfer__container {
+
+		.bulk-domain-transfer__add-domain {
+			font-size: 0.875rem;
+			font-weight: 500;
+			color: #0675c4;
+			margin-bottom: 34px;
+			margin-top: 2px;
+		}
+
+		.bulk-domain-transfer__cta-container {
+			display: flex;
+			justify-content: center;
+
+			.bulk-domain-transfer__cta {
+				justify-content: center;
+				color: var(--black-white-white, #fff);
+				width: 157px;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				border-radius: 0.25rem;
+				background: var(--blue-blue-50, #0675c4);
+
+				&:disabled {
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+					border-radius: 0.25rem;
+					background: var(--gray-gray-5, #dcdcde);
+					opacity: 1;
+				}
+			}
+		}
+
 	}
 
 	.domains__domain-info-and-validation {
