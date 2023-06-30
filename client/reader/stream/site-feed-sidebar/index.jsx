@@ -20,7 +20,15 @@ import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import '../style.scss';
 
-const FeedStreamSidebar = ( { feed, followerCount, postCount, site, streamKey, tags } ) => {
+const FeedStreamSidebar = ( {
+	feed,
+	followerCount,
+	postCount,
+	showFollow,
+	site,
+	streamKey,
+	tags,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
@@ -91,42 +99,46 @@ const FeedStreamSidebar = ( { feed, followerCount, postCount, site, streamKey, t
 	return (
 		<>
 			<div className="reader-feed-header__follow">
-				<div className="reader-feed-header__follow-and-settings">
-					{ siteUrl && (
-						<div className="reader-feed-header__follow-button">
-							<ReaderFollowButton
-								siteUrl={ siteUrl }
-								hasButtonStyle={ true }
-								iconSize={ 24 }
-								onFollowToggle={ openSuggestedFollowsModal }
-							/>
-						</div>
-					) }
+				{ showFollow && (
+					<>
+						<div className="reader-feed-header__follow-and-settings">
+							{ siteUrl && (
+								<div className="reader-feed-header__follow-button">
+									<ReaderFollowButton
+										siteUrl={ siteUrl }
+										hasButtonStyle={ true }
+										iconSize={ 24 }
+										onFollowToggle={ openSuggestedFollowsModal }
+									/>
+								</div>
+							) }
 
-					{ site && following && ! isEmailBlocked && (
-						<div className="reader-feed-header__email-settings">
-							<ReaderSiteNotificationSettings
-								iconSize={ 24 }
-								showLabel={ false }
-								siteId={ siteId }
-							/>
+							{ site && following && ! isEmailBlocked && (
+								<div className="reader-feed-header__email-settings">
+									<ReaderSiteNotificationSettings
+										iconSize={ 24 }
+										showLabel={ false }
+										siteId={ siteId }
+									/>
+								</div>
+							) }
 						</div>
-					) }
-				</div>
-				{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && feed && (
-					<button
-						onClick={ markAllAsSeen }
-						className="reader-feed-header__seen-button"
-						disabled={ feed.unseen_count === 0 }
-					>
-						<Gridicon icon="visible" size={ 24 } />
-						<span
-							className="reader-feed-header__visibility"
-							title={ translate( 'Mark all as seen' ) }
-						>
-							{ translate( 'Mark all as seen' ) }
-						</span>
-					</button>
+						{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && feed && (
+							<button
+								onClick={ markAllAsSeen }
+								className="reader-feed-header__seen-button"
+								disabled={ feed.unseen_count === 0 }
+							>
+								<Gridicon icon="visible" size={ 24 } />
+								<span
+									className="reader-feed-header__visibility"
+									title={ translate( 'Mark all as seen' ) }
+								>
+									{ translate( 'Mark all as seen' ) }
+								</span>
+							</button>
+						) }
+					</>
 				) }
 			</div>
 			{ siteId && (
