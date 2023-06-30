@@ -26,10 +26,6 @@
 		margin: 0;
 	}
 
-	@media (max-width: $break-mobile ) {
-		padding: 16px;
-	}
-
 	@include break-small {
 		width: 342px;
 	}

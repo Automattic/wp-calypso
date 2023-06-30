@@ -120,6 +120,10 @@ $heading-font-family: "SF Pro Display", $sans;
 				.select-items__item {
 					padding: 24px;
 
+					@media (max-width: $break-mobile ) {
+						padding: 16px;
+					}
+
 					@media (min-width: $break-mobile ) {
 						width: 390px;
 					}
