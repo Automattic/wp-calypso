@@ -177,6 +177,9 @@
 					background: var(--gray-gray-5, #dcdcde);
 					opacity: 1;
 				}
+				@media ( max-width: $break-medium ) {
+					width: 100%;
+				}
 			}
 		}
 
