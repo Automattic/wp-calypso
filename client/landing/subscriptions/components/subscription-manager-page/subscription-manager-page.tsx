@@ -8,19 +8,15 @@ import { TabsSwitcher } from 'calypso/landing/subscriptions/components/tabs-swit
 import { useSubheaderText } from 'calypso/landing/subscriptions/hooks';
 import {
 	SubscriptionManagerContextProvider,
-	SubscriptionsPortal,
+	SiteSubscriptionsPortal,
 } from '../subscription-manager-context';
-import type { SubscriptionManagerContext } from '../subscription-manager-context';
 import './styles.scss';
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
-	const context: SubscriptionManagerContext = {
-		portal: SubscriptionsPortal,
-	};
 	return (
-		<SubscriptionManagerContextProvider { ...context }>
+		<SubscriptionManagerContextProvider portal={ SiteSubscriptionsPortal.Subscriptions }>
 			<UniversalNavbarHeader
 				className={ classNames( 'subscription-manager-header', {
 					'is-logged-in': isLoggedIn,
