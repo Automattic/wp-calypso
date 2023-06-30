@@ -106,7 +106,6 @@ export const createSiteDomainObject = ( domain ) => {
 				: null,
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPendingRenewal: Boolean( domain.pending_renewal ),
-		hasPendingTransfer: Boolean( domain.has_pending_transfer ),
 		isPremium: Boolean( domain.is_premium ),
 		isPrimary: Boolean( domain.primary_domain ),
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),

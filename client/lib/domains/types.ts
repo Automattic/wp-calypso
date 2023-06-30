@@ -90,7 +90,6 @@ export type ResponseDomain = {
 	isLocked: boolean;
 	isPendingIcannVerification: boolean;
 	isPendingRenewal: boolean;
-	hasPendingTransfer: boolean;
 	isPendingWhoisUpdate: boolean;
 	isPremium: boolean;
 	isPrimary: boolean;

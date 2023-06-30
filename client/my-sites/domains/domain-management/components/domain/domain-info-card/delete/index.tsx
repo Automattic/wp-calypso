@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { type as domainType } from 'calypso/lib/domains/constants';
+import { transferStatus, type as domainType } from 'calypso/lib/domains/constants';
 import { isCancelable, isRemovable } from 'calypso/lib/purchases';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import { getCancelPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -26,7 +26,7 @@ const DomainDeleteInfoCard = ( {
 		! purchase ||
 		! domain.currentUserIsOwner ||
 		domain.pendingRegistration ||
-		domain.hasPendingTransfer
+		domain.transferStatus === transferStatus.PENDING_ASYNC
 	) {
 		return null;
 	}
