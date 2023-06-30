@@ -96,8 +96,12 @@ const ColorPaletteVariations = ( {
 				/>
 			</div>
 			<h3 className="global-styles-variation__title">
-				{ translate( 'Premium styles' ) }
-				<PremiumBadge shouldHideTooltip shouldCompactWithAnimation />
+				{ translate( 'Custom styles' ) }
+				<PremiumBadge
+					shouldHideTooltip
+					shouldCompactWithAnimation
+					labelText={ translate( 'Paid' ) }
+				/>
 			</h3>
 			<div className="color-palette-variations">
 				{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (

@@ -97,8 +97,12 @@ const FontPairingVariations = ( {
 				/>
 			</div>
 			<h3 className="global-styles-variation__title">
-				{ translate( 'Premium fonts' ) }
-				<PremiumBadge shouldHideTooltip shouldCompactWithAnimation />
+				{ translate( 'Custom fonts' ) }
+				<PremiumBadge
+					shouldHideTooltip
+					shouldCompactWithAnimation
+					labelText={ translate( 'Paid' ) }
+				/>
 			</h3>
 			<div className="font-pairing-variations">
 				{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
