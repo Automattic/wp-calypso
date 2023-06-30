@@ -586,7 +586,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					require="@automattic/design-preview"
 					placeholder={ null }
 					previewUrl={ previewUrl }
-					splitPremiumVariations={
+					splitDefaultVariation={
 						! selectedDesign.is_premium &&
 						! isBundledWithWooCommerce &&
 						! isPremiumThemeAvailable &&

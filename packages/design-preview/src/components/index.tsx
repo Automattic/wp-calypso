@@ -22,7 +22,7 @@ interface DesignPreviewProps {
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
@@ -52,7 +52,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	variations,
 	selectedVariation,
 	onSelectVariation,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
@@ -106,7 +106,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				variations={ variations }
 				selectedVariation={ selectedVariation }
 				onSelectVariation={ onSelectVariation }
-				splitPremiumVariations={ splitPremiumVariations }
+				splitDefaultVariation={ splitDefaultVariation }
 				onClickCategory={ onClickCategory }
 				actionButtons={ actionButtons }
 				siteId={ siteId }

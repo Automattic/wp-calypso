@@ -40,7 +40,7 @@ interface SidebarProps {
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	siteId: number;
@@ -61,7 +61,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	variations,
 	selectedVariation,
 	onSelectVariation,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	onClickCategory,
 	actionButtons,
 	siteId,
@@ -123,8 +123,8 @@ const Sidebar: React.FC< SidebarProps > = ( {
 							<GlobalStylesVariations
 								globalStylesVariations={ variations as GlobalStylesObject[] }
 								selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
-								splitPremiumVariations={ splitPremiumVariations }
-								displayFreeLabel={ splitPremiumVariations }
+								splitDefaultVariation={ splitDefaultVariation }
+								displayFreeLabel={ splitDefaultVariation }
 								showOnlyHoverViewDefaultVariation={ false }
 								onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
 									onSelectVariation( globalStyleVariation as StyleVariation )
