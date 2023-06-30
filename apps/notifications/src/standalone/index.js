@@ -1,6 +1,6 @@
 import '@automattic/calypso-polyfills';
 import { createElement } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
 import { receiveMessage, sendMessage } from './messaging';
@@ -73,8 +73,9 @@ const customMiddleware = {
 
 const render = ( wpcom ) => {
 	document.body.classList.add( 'font-smoothing-antialiased' );
+	const root = createRoot( document.getElementsByClassName( 'wpnc__main' )[ 0 ] );
 
-	ReactDOM.render(
+	root.render(
 		createElement( Notifications, {
 			customEnhancer,
 			customMiddleware,
@@ -84,8 +85,7 @@ const render = ( wpcom ) => {
 			receiveMessage: sendMessage,
 			redirectPath: '/',
 			wpcom,
-		} ),
-		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
+		} )
 	);
 };
 

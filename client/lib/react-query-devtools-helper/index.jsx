@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useEffect, useState } from 'react';
-import ReactDom from 'react-dom';
 import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 
 import './style.scss';
@@ -59,4 +58,4 @@ function ReactQueryDevtoolsHelper() {
 	);
 }
 
-export default ( element ) => ReactDom.render( <ReactQueryDevtoolsHelper />, element );
+export default ( root ) => root.render( <ReactQueryDevtoolsHelper /> );

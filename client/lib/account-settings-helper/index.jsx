@@ -1,5 +1,4 @@
 import languages from '@automattic/languages';
-import ReactDom from 'react-dom';
 import { useInView } from 'react-intersection-observer';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
@@ -65,10 +64,9 @@ export function AccountSettingsHelper() {
 		</>
 	);
 }
-export default ( element, store ) =>
-	ReactDom.render(
+export default ( root, store ) =>
+	root.render(
 		<Provider store={ store }>
 			<AccountSettingsHelper />
-		</Provider>,
-		element
+		</Provider>
 	);

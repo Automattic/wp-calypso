@@ -8,7 +8,7 @@ import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding'
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
@@ -100,6 +100,8 @@ window.AppBoot = async () => {
 
 	// Add accessible-focus listener.
 	accessibleFocus();
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	const root = createRoot( document.getElementById( 'wpcom' )! );
 
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
@@ -120,7 +122,7 @@ window.AppBoot = async () => {
 	const flowLoader = determineFlow();
 	const { default: flow } = await flowLoader();
 
-	ReactDom.render(
+	root.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
 			<Provider store={ reduxStore }>
 				<QueryClientProvider client={ queryClient }>
@@ -141,7 +143,6 @@ window.AppBoot = async () => {
 					) }
 				</QueryClientProvider>
 			</Provider>
-		</CalypsoI18nProvider>,
-		document.getElementById( 'wpcom' )
+		</CalypsoI18nProvider>
 	);
 };

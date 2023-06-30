@@ -4,6 +4,7 @@
 import 'calypso/boot/polyfills';
 
 import page from 'page';
+import { createRoot } from 'react-dom/client';
 import { setupLocale } from 'calypso/boot/locale';
 import { render } from 'calypso/controller/web-util';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
@@ -17,7 +18,7 @@ import 'calypso/assets/stylesheets/style.scss';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
-const boot = ( currentUser ) => {
+const boot = ( root, currentUser ) => {
 	const store = createStore();
 	setStore( store, getStateFromCache( currentUser?.ID ) );
 	configureReduxStore( currentUser, store );
@@ -26,11 +27,13 @@ const boot = ( currentUser ) => {
 
 	page( '*', ( context, next ) => {
 		context.store = store;
+		context.root = root;
 		next();
 	} );
 
 	page.exit( '*', ( context, next ) => {
 		context.store = store;
+		context.root = root;
 		next();
 	} );
 
@@ -40,5 +43,6 @@ const boot = ( currentUser ) => {
 
 window.AppBoot = async () => {
 	const user = await initializeCurrentUser();
-	boot( user );
+	const root = createRoot( document.getElementById( 'wpcom' ) );
+	boot( root, user );
 };

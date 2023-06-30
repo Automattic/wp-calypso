@@ -1,11 +1,10 @@
-import ReactDom from 'react-dom';
 import FeatureList from './feature-list';
 
 import './style.scss';
 
 /**
- * @param element HTML Element
+ * @param root
  */
-export default function injectFeatureHelper( element ) {
-	ReactDom.render( <FeatureList />, element );
+export default function injectFeatureHelper( root ) {
+	root.render( <FeatureList /> );
 }

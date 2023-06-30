@@ -5,7 +5,7 @@ import config from '@automattic/calypso-config';
 import { CurrentUser, User } from '@automattic/data-stores';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AnyAction } from 'redux';
@@ -52,8 +52,10 @@ window.AppBoot = async () => {
 	const queryClient = await createQueryClient( user.ID );
 	const reduxStore = setupReduxStore( user );
 	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	const root = createRoot( document.getElementById( 'wpcom' )! );
 
-	ReactDom.render(
+	root.render(
 		<CalypsoI18nProvider>
 			<Provider store={ reduxStore }>
 				<GlobalNotices />
@@ -70,7 +72,6 @@ window.AppBoot = async () => {
 					</MomentProvider>
 				</QueryClientProvider>
 			</Provider>
-		</CalypsoI18nProvider>,
-		document.getElementById( 'wpcom' )
+		</CalypsoI18nProvider>
 	);
 };

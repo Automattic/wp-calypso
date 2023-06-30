@@ -5,7 +5,7 @@ import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import page from 'page';
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
@@ -51,7 +51,7 @@ import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
 
-const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
+const setupContextMiddleware = ( root, reduxStore, reactQueryClient ) => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = getUrlParts( context.canonicalPath );
@@ -76,6 +76,7 @@ const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 
 		context.store = reduxStore;
 		context.queryClient = reactQueryClient;
+		context.root = root;
 
 		// client version of the isomorphic method for redirecting to another page
 		context.redirect = ( httpCode, newUrl = null ) => {
@@ -104,6 +105,7 @@ const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 
 	page.exit( '*', ( context, next ) => {
 		context.store = reduxStore;
+		context.root = root;
 		context.queryClient = reactQueryClient;
 
 		next();
@@ -312,10 +314,10 @@ export function setupErrorLogger( reduxStore ) {
 	} );
 }
 
-const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
+const setupMiddlewares = ( root, currentUser, reduxStore, reactQueryClient ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
-	setupContextMiddleware( reduxStore, reactQueryClient );
+	setupContextMiddleware( root, reduxStore, reactQueryClient );
 	oauthTokenMiddleware();
 	setupRoutes();
 	setRouteMiddleware();
@@ -397,14 +399,11 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	}
 };
 
-function renderLayout( reduxStore, reactQueryClient ) {
-	ReactDom.render(
-		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />,
-		document.getElementById( 'wpcom' )
-	);
+function renderLayout( root, reduxStore, reactQueryClient ) {
+	root.render( <ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } /> );
 }
 
-const boot = async ( currentUser, registerRoutes ) => {
+const boot = async ( root, currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
 
@@ -419,7 +418,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	setupLocale( currentUser, reduxStore );
 	geolocateCurrencySymbol();
 	configureReduxStore( currentUser, reduxStore );
-	setupMiddlewares( currentUser, reduxStore, queryClient );
+	setupMiddlewares( root, currentUser, reduxStore, queryClient );
 	detectHistoryNavigation.start();
 	if ( registerRoutes ) {
 		registerRoutes();
@@ -428,7 +427,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	// Render initial `<Layout>` for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their `<Layout>` themselves.
 	if ( ! document.getElementById( 'primary' ) ) {
-		renderLayout( reduxStore, queryClient );
+		renderLayout( root, reduxStore, queryClient );
 	}
 
 	page.start( { decodeURLComponents: false } );
@@ -437,5 +436,6 @@ const boot = async ( currentUser, registerRoutes ) => {
 export const bootApp = async ( appName, registerRoutes ) => {
 	const user = await initializeCurrentUser();
 	debug( `Starting ${ appName }. Let's do this.` );
-	await boot( user, registerRoutes );
+	const root = createRoot( document.getElementById( 'wpcom' ) );
+	await boot( root, user, registerRoutes );
 };

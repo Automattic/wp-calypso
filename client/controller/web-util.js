@@ -1,9 +1,9 @@
-import ReactDom from 'react-dom';
+import { hydrateRoot } from 'react-dom/client';
 
 export function render( context ) {
-	ReactDom.render( context.layout, document.getElementById( 'wpcom' ) );
+	context.root.render( context.layout );
 }
 
 export function hydrate( context ) {
-	ReactDom.hydrate( context.layout, document.getElementById( 'wpcom' ) );
+	hydrateRoot( document.getElementById( 'wpcom' ), context.layout );
 }

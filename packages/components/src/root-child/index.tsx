@@ -1,5 +1,5 @@
 import { useLayoutEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import type { FunctionComponent, ReactNode } from 'react';
 
 const RootChild: FunctionComponent< { children: ReactNode } > = ( { children } ) => {
@@ -37,7 +37,7 @@ const RootChild: FunctionComponent< { children: ReactNode } > = ( { children } )
 		return null;
 	}
 
-	return ReactDOM.createPortal( children, containerEl );
+	return createPortal( children, containerEl );
 };
 
 export default RootChild;

@@ -3,7 +3,7 @@ import HelpCenter from '@automattic/help-center';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback } from '@wordpress/element';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
 
@@ -38,12 +38,12 @@ function AdminHelpCenterContent() {
 }
 
 if ( window?.helpCenterAdminBar?.isLoaded ) {
-	ReactDOM.render(
+	const root = createRoot( document.getElementById( 'help-center-masterbar' ) );
+	root.render(
 		<QueryClientProvider client={ whatsNewQueryClient }>
 			<CalypsoStateProvider>
 				<AdminHelpCenterContent />
 			</CalypsoStateProvider>
-		</QueryClientProvider>,
-		document.getElementById( 'help-center-masterbar' )
+		</QueryClientProvider>
 	);
 }
