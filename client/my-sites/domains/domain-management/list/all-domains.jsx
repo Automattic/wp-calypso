@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { plus } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
@@ -45,6 +46,7 @@ import BulkEditContactInfo from './bulk-edit-contact-info';
 import DomainOnlyUpsellCarousel from './domain-only-upsell-carousel';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
+import { EmptyDomainsListCardSkeleton } from './empty-domains-list-card-skeleton';
 import { filterDomainsByOwner, filterDomainOnlyDomains } from './helpers';
 import ListItemPlaceholder from './item-placeholder';
 import {
@@ -263,6 +265,22 @@ class AllDomains extends Component {
 			translate,
 			dispatch,
 		} = this.props;
+
+		if ( this.filteredDomains().length === 0 ) {
+			return (
+				<EmptyDomainsListCardSkeleton
+					title={ translate( 'All Domains' ) }
+					line={ translate(
+						'Here you will be able to manage all the domains you own on WordPress.com. Start by adding some:'
+					) }
+					action={ translate( 'Add a domain' ) }
+					actionIcon={ plus }
+					actionURL="/start/domain"
+					secondaryAction={ translate( 'Transfer a domain' ) }
+					secondaryActionURL="/domains/add"
+				/>
+			);
+		}
 
 		const { isSavingContactInfo } = this.state;
 
@@ -668,17 +686,23 @@ class AllDomains extends Component {
 			),
 		};
 
-		const buttons = [
-			this.maybeRenderSeeAllDomainsLink(),
-			this.renderDomainTableFilterButton(),
-			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
-		];
+		const buttons =
+			this.filteredDomains().length === 0
+				? []
+				: [
+						this.maybeRenderSeeAllDomainsLink(),
+						this.renderDomainTableFilterButton(),
+						<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
+						<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
+				  ];
 
-		const mobileButtons = [
-			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
-		];
+		const mobileButtons =
+			this.filteredDomains().length === 0
+				? []
+				: [
+						<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
+						<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
+				  ];
 
 		return <DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ mobileButtons } />;
 	}
