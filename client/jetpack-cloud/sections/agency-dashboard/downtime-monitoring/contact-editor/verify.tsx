@@ -59,7 +59,7 @@ export default function VerifyContactForm( {
 	const translate = useTranslate();
 	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ?? [] );
 
-	const { time, showTimer, startTimer } = useCountdownTimer( 30 );
+	const { time, showTimer, startTimer, resendLimitReached } = useCountdownTimer();
 
 	const [ showCodeVerification, setShowCodeVerification ] = useState< boolean >( false );
 
@@ -357,6 +357,11 @@ export default function VerifyContactForm( {
 
 	const getHelpText = () => {
 		if ( resendCodeClicked && isResendingVerificationCodeSuccess ) {
+			if ( resendLimitReached ) {
+				return translate(
+					'You have reached the maximum number of resend attempts. Please contact our support team if you still experience issues.'
+				);
+			}
 			return (
 				<>
 					<div>{ translate( 'We just sent you a new code. Please wait for a minute.' ) }</div>

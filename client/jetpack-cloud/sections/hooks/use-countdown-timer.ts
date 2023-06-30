@@ -4,11 +4,13 @@ interface CountdownTimer {
 	time: string;
 	showTimer: boolean;
 	startTimer: () => void;
+	resendLimitReached: boolean;
 }
 
 const useCountdownTimer = ( initialSeconds = 30 ): CountdownTimer => {
 	const [ seconds, setSeconds ] = useState( initialSeconds );
 	const [ isActive, setIsActive ] = useState( false );
+	const [ timesClicked, setTimeClicked ] = useState( 0 );
 
 	useEffect( () => {
 		let interval: NodeJS.Timeout;
@@ -38,6 +40,7 @@ const useCountdownTimer = ( initialSeconds = 30 ): CountdownTimer => {
 	};
 
 	const startTimer = (): void => {
+		setTimeClicked( timesClicked + 1 );
 		setIsActive( true );
 	};
 
@@ -45,6 +48,7 @@ const useCountdownTimer = ( initialSeconds = 30 ): CountdownTimer => {
 		time: formatTime( seconds ),
 		showTimer: isActive,
 		startTimer,
+		resendLimitReached: timesClicked > 3,
 	};
 };
 
