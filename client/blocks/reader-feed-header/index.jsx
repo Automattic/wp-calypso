@@ -93,6 +93,8 @@ class FeedHeader extends Component {
 		const siteUrl = getSiteUrl( { feed, site } );
 		const siteId = site && site.ID;
 		const siteIcon = site ? get( site, 'icon.img' ) : null;
+		const narrowDisplay = width < 900;
+		const smallDisplay = width < 480;
 
 		const classes = classnames( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
@@ -124,18 +126,27 @@ class FeedHeader extends Component {
 			};
 		}
 
-		const siteIconElement = <SiteIcon key="site-icon" size={ 116 } site={ fakeSite } />;
+		const siteIconElement = (
+			<SiteIcon key="site-icon" size={ smallDisplay ? 64 : 116 } site={ fakeSite } />
+		);
 
 		return (
 			<div className={ classes }>
 				<QueryUserSettings />
 				{ showBack && <HeaderBack /> }
 				<Card className="reader-feed-header__site">
-					<a href={ siteUrl } className="reader-feed-header__site-icon">
-						{ siteIconElement }
-					</a>
+					{ ! smallDisplay && (
+						<a href={ siteUrl } className="reader-feed-header__site-icon">
+							{ siteIconElement }
+						</a>
+					) }
 					<div className="reader-feed-header__details">
 						<div className="reader-feed-header__site-title">
+							{ smallDisplay && (
+								<a href={ siteUrl } className="reader-feed-header__site-icon">
+									{ siteIconElement }
+								</a>
+							) }
 							<a className="reader-feed-header__site-title-link" href={ siteUrl }>
 								{ siteTitle }
 							</a>
@@ -146,22 +157,22 @@ class FeedHeader extends Component {
 								</span>
 							) }
 						</div>
-						<span className="reader-feed-header__description">{ description }</span>
+						<div className="reader-feed-header__description">{ description }</div>
+						{ narrowDisplay && followerCount && (
+							<div className="reader-feed-header__follow-count">
+								{ ' ' }
+								{ translate( '%s follower', '%s followers', {
+									count: followerCount,
+									args: [ this.props.numberFormat( followerCount ) ],
+									comment: '%s is the number of followers. For example: "12,000,000"',
+								} ) }
+							</div>
+						) }
 					</div>
 				</Card>
-				{ width < 900 && (
+				{ narrowDisplay && (
 					<div className="reader-feed-header__back-and-follow">
 						<div className="reader-feed-header__follow">
-							{ followerCount && (
-								<span className="reader-feed-header__follow-count">
-									{ ' ' }
-									{ translate( '%s follower', '%s followers', {
-										count: followerCount,
-										args: [ this.props.numberFormat( followerCount ) ],
-										comment: '%s is the number of followers. For example: "12,000,000"',
-									} ) }
-								</span>
-							) }
 							<div className="reader-feed-header__follow-and-settings">
 								{ siteUrl && (
 									<div className="reader-feed-header__follow-button">
@@ -169,13 +180,18 @@ class FeedHeader extends Component {
 											siteUrl={ siteUrl }
 											iconSize={ 24 }
 											onFollowToggle={ this.openSuggestedFollowsModal }
+											hasButtonStyle={ true }
 										/>
 									</div>
 								) }
 
 								{ site && following && ! isEmailBlocked && (
 									<div className="reader-feed-header__email-settings">
-										<ReaderSiteNotificationSettings siteId={ siteId } />
+										<ReaderSiteNotificationSettings
+											iconSize={ 24 }
+											showLabel={ false }
+											siteId={ siteId }
+										/>
 									</div>
 								) }
 

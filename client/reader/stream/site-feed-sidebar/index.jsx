@@ -90,42 +90,44 @@ const FeedStreamSidebar = ( { feed, followerCount, postCount, site, streamKey, t
 
 	return (
 		<>
-			<div className="reader-feed-header__back-and-follow">
-				<div className="reader-feed-header__follow">
-					<div className="reader-feed-header__follow-and-settings">
-						{ siteUrl && (
-							<div className="reader-feed-header__follow-button">
-								<ReaderFollowButton
-									siteUrl={ siteUrl }
-									iconSize={ 24 }
-									onFollowToggle={ openSuggestedFollowsModal }
-								/>
-							</div>
-						) }
+			<div className="reader-feed-header__follow">
+				<div className="reader-feed-header__follow-and-settings">
+					{ siteUrl && (
+						<div className="reader-feed-header__follow-button">
+							<ReaderFollowButton
+								siteUrl={ siteUrl }
+								hasButtonStyle={ true }
+								iconSize={ 24 }
+								onFollowToggle={ openSuggestedFollowsModal }
+							/>
+						</div>
+					) }
 
-						{ site && following && ! isEmailBlocked && (
-							<div className="reader-feed-header__email-settings">
-								<ReaderSiteNotificationSettings siteId={ siteId } />
-							</div>
-						) }
-
-						{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && feed && (
-							<button
-								onClick={ markAllAsSeen }
-								className="reader-feed-header__seen-button"
-								disabled={ feed.unseen_count === 0 }
-							>
-								<Gridicon icon="visible" size={ 24 } />
-								<span
-									className="reader-feed-header__visibility"
-									title={ translate( 'Mark all as seen' ) }
-								>
-									{ translate( 'Mark all as seen' ) }
-								</span>
-							</button>
-						) }
-					</div>
+					{ site && following && ! isEmailBlocked && (
+						<div className="reader-feed-header__email-settings">
+							<ReaderSiteNotificationSettings
+								iconSize={ 24 }
+								showLabel={ false }
+								siteId={ siteId }
+							/>
+						</div>
+					) }
 				</div>
+				{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && feed && (
+					<button
+						onClick={ markAllAsSeen }
+						className="reader-feed-header__seen-button"
+						disabled={ feed.unseen_count === 0 }
+					>
+						<Gridicon icon="visible" size={ 24 } />
+						<span
+							className="reader-feed-header__visibility"
+							title={ translate( 'Mark all as seen' ) }
+						>
+							{ translate( 'Mark all as seen' ) }
+						</span>
+					</button>
+				) }
 			</div>
 			{ siteId && (
 				<ReaderSuggestedFollowsDialog

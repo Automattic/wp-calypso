@@ -784,6 +784,10 @@
 	.reader-tag-sidebar-related-tags {
 		margin-bottom: 32px;
 	}
+
+	.reader-feed-header__seen-button {
+		margin-bottom: 24px;
+	}
 }
 
 // Posts and Sites tabbed headers
@@ -891,4 +895,8 @@
 	.blogging-prompt__prompt-answers a {
 		border-radius: 6px; /* stylelint-disable-line scales/radii */
 	}
+}
+
+.is-site-stream .stream__right-column {
+	margin-top: 0;
 }
