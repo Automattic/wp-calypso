@@ -8,9 +8,11 @@
 	justify-content: center;
 	margin-top: -12px;
 	margin-bottom: 16px;
+	padding-left: 40px;
 
 	@include break-small {
 		margin-bottom: 40px;
+		padding-left: 60px;
 	}
 }
 
@@ -29,16 +31,20 @@
 	}
 
 	@include break-small {
-		width: 390px;
+		width: 342px;
 	}
 
 	@include break-medium {
-		width: 504px;
+		width: 456px;
 	}
 
 	&-icon {
-		flex-shrink: 0;
-		margin-right: 26px;
+		position: absolute;
+		top: 24px;
+		left: -40px;
+		@include break-small {
+			left: -48px;
+		}
 	}
 
 	&-info-wrapper {

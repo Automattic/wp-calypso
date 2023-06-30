@@ -18,7 +18,6 @@ $heading-font-family: "SF Pro Display", $sans;
 
 	&.intro {
 		padding: 0;
-
 		@media (max-width: $break-medium ) {
 			header {
 				text-align: center;
@@ -115,13 +114,26 @@ $heading-font-family: "SF Pro Display", $sans;
 		.step-container__content {
 			.select-items {
 				margin-bottom: 32px;
+				padding-left: 0;
+				padding-right: 0;
 
 				.select-items__item {
 					padding: 24px;
+
+					@media (min-width: $break-mobile ) {
+						width: 390px;
+					}
+
+					@media (min-width: $break-medium ) {
+						width: 504px;
+					}
 				}
 
 				.select-items__item-icon {
 					margin-right: 8px;
+
+					position: unset;
+					flex-shrink: 0;
 				}
 
 				.select-items__item-title {
