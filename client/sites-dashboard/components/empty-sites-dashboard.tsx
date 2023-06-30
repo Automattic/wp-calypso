@@ -48,7 +48,7 @@ export const EmptySitesDashboard = ( { siteCount }: EmptySitesDashboardProps ) =
 					},
 				} }
 			>
-				<CreateSiteCTA siteCount={ siteCount } />
+				<CreateSiteCTA />
 				<div
 					css={ {
 						margin: '32px 0',
@@ -65,7 +65,7 @@ export const EmptySitesDashboard = ( { siteCount }: EmptySitesDashboardProps ) =
 						},
 					} }
 				/>
-				<MigrateSiteCTA siteCount={ siteCount } />
+				<MigrateSiteCTA />
 			</div>
 		</EmptyContent>
 	);

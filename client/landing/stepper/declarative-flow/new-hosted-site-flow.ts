@@ -10,7 +10,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE } from '../stores';
-import { isInHostingFlow } from '../utils/is-in-hosting-flow';
+import { startedInHostingFlow } from '../utils/hosting-flow';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -54,7 +54,7 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const hostingFlow = useSelector( isInHostingFlow );
+		const hostingFlow = useSelector( startedInHostingFlow );
 		const { setSiteTitle, setPlanCartItem, setSiteGeoAffinity } = useDispatch( ONBOARD_STORE );
 		const { siteGeoAffinity, planCartItem } = useSelect(
 			( select ) => ( {
