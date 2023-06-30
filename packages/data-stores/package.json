@@ -31,6 +31,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
@@ -52,7 +53,6 @@
 		"react-dom": "^18.2.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@remix-run/router": "^1.5.0",
 		"@types/validator": "^13.7.1",
