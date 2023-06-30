@@ -20,7 +20,7 @@ import FontFamiliesLoader from './font-families-loader';
 import type { FontFamily } from '../../types';
 
 const DEFAULT_LARGE_FONT_STYLES: React.CSSProperties = {
-	fontSize: '13.5vw', // 18px for min-width wide breakpoint and 15px for max-width wide
+	fontSize: '13vw', // 18px for min-width wide breakpoint and 15px for max-width wide
 	lineHeight: '20px',
 	color: '#000000',
 };
