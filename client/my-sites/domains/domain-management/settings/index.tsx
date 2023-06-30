@@ -270,7 +270,7 @@ const Settings = ( {
 	};
 
 	const renderDnsRecords = () => {
-		if ( ! domain || domain.type === domainTypes.SITE_REDIRECT ) {
+		if ( ! domain || domain.type === domainTypes.SITE_REDIRECT || domain.hasPendingTransfer ) {
 			return null;
 		}
 
