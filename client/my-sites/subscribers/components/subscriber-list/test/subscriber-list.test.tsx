@@ -17,7 +17,7 @@ jest.mock( '../subscriber-row', () => ( {
 
 // We mock the useSubscriberListManager hook
 jest.mock( '../../subscribers-page/subscribers-page-context', () => ( {
-	useSubscriberListManager: jest.fn(),
+	useSubscribersPage: jest.fn(),
 } ) );
 
 describe( 'SubscriberList', () => {
