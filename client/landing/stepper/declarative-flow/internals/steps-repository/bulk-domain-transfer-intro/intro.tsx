@@ -73,11 +73,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				onSelect={ onSubmit }
 			/>
 			<div style={ { display: 'flex', justifyContent: 'center' } }>
-				<Button
-					isPrimary
-					style={ { width: '157px', justifyContent: 'center' } }
-					onClick={ onSubmit }
-				>
+				<Button isPrimary onClick={ onSubmit }>
 					{ __( "I'm ready!" ) }
 				</Button>
 			</div>

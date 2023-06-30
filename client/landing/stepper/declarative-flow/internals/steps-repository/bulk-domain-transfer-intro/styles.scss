@@ -1,6 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
+$font-family: "SF Pro Text", $sans;
+$heading-font-family: "SF Pro Display", $sans;
+
 .step-container .intro {
 	padding: 52px 0 0;
 }
@@ -73,6 +76,7 @@
 	}
 
 	.step-container {
+		font-family: $font-family;
 
 		.step-container__header {
 			margin-bottom: 48px;
@@ -99,6 +103,7 @@
 				}
 
 				.select-items__item-title {
+					font-family: $heading-font-family;
 					font-size: rem(18px);
 					font-weight: 500;
 					line-height: 26px;
@@ -115,9 +120,13 @@
 			}
 
 			.components-button {
+				border-radius: 4px;
 				font-size: $font-body-small;
 				font-weight: 500;
-
+				justify-content: center;
+				padding-bottom: 26px;
+				padding-top: 26px;
+				width: 187px;
 			}
 		}
 	}
