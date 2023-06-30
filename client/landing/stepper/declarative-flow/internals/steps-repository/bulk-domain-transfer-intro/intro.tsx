@@ -1,6 +1,6 @@
 import { IntentScreen } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { Icon, lock, plus, payment } from '@wordpress/icons';
+import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { preventWidows } from 'calypso/lib/formatting';
 
@@ -25,7 +25,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 								) }
 							</p>
 						),
-						icon: <Icon icon={ lock } />,
+						icon: <Icon icon={ unlock } />,
 						value: 'firstPost',
 						actionText: null,
 					},
