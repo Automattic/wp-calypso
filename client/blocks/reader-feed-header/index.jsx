@@ -41,12 +41,13 @@ class FeedHeader extends Component {
 		const siteTitle = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
 		const siteIcon = site ? get( site, 'icon.img' ) : null;
-		const narrowDisplay = width < 900;
-		const smallDisplay = width < 480;
+		const wideDisplay = width > 900;
+		const narrowDisplay = width < 480;
 
 		const classes = classnames( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
 			'has-back-button': showBack,
+			'is-wide-display': wideDisplay,
 		} );
 
 		let feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
@@ -75,7 +76,9 @@ class FeedHeader extends Component {
 		}
 
 		const siteIconElement = (
-			<SiteIcon key="site-icon" size={ smallDisplay ? 64 : 116 } site={ fakeSite } />
+			<a href={ siteUrl } className="reader-feed-header__site-icon">
+				<SiteIcon key="site-icon" size={ narrowDisplay ? 72 : 116 } site={ fakeSite } />
+			</a>
 		);
 
 		return (
@@ -83,18 +86,10 @@ class FeedHeader extends Component {
 				<QueryUserSettings />
 				{ showBack && <HeaderBack /> }
 				<Card className="reader-feed-header__site">
-					{ ! smallDisplay && (
-						<a href={ siteUrl } className="reader-feed-header__site-icon">
-							{ siteIconElement }
-						</a>
-					) }
+					{ ! narrowDisplay && siteIconElement }
 					<div className="reader-feed-header__details">
 						<div className="reader-feed-header__site-title">
-							{ smallDisplay && (
-								<a href={ siteUrl } className="reader-feed-header__site-icon">
-									{ siteIconElement }
-								</a>
-							) }
+							{ narrowDisplay && siteIconElement }
 							<a className="reader-feed-header__site-title-link" href={ siteUrl }>
 								{ siteTitle }
 							</a>
@@ -106,7 +101,7 @@ class FeedHeader extends Component {
 							) }
 						</div>
 						<div className="reader-feed-header__description">{ description }</div>
-						{ narrowDisplay && followerCount && (
+						{ ! wideDisplay && followerCount && (
 							<div className="reader-feed-header__follow-count">
 								{ ' ' }
 								{ translate( '%s follower', '%s followers', {
@@ -118,7 +113,7 @@ class FeedHeader extends Component {
 						) }
 					</div>
 				</Card>
-				{ narrowDisplay && (
+				{ ! wideDisplay && (
 					<ReaderFeedHeaderFollow feed={ feed } site={ site } streamKey={ streamKey } />
 				) }
 			</div>
