@@ -8,6 +8,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedEditor from 'calypso/state/selectors/get-selected-editor';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -27,6 +28,7 @@ const QuickLinksForDevs = ( props ) => {
 	const isExpanded = useSelector(
 		( state ) => getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed'
 	);
+	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const dispatch = useDispatch();
 	const updateToggleStatus = ( status ) => {
@@ -74,24 +76,23 @@ const QuickLinksForDevs = ( props ) => {
 				label={ translate( 'Explore themes' ) }
 				materialIcon="view_quilt"
 			/>
+			{ canManageSite && ! isWpcomStagingSite && (
+				<ActionBox
+					href={ `/domains/add/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ props.trackAddDomainAction }
+					label={ translate( 'Add a domain' ) }
+					gridicon="add-outline"
+				/>
+			) }
 			{ canManageSite && (
-				<>
-					<ActionBox
-						href={ `/domains/add/${ siteSlug }` }
-						hideLinkIndicator
-						onClick={ props.trackAddDomainAction }
-						label={ translate( 'Add a domain' ) }
-						gridicon="add-outline"
-					/>
-
-					<ActionBox
-						href="/domains/manage"
-						hideLinkIndicator
-						onClick={ props.trackManageAllDomainsAction }
-						label={ translate( 'Manage all domains' ) }
-						gridicon="domains"
-					/>
-				</>
+				<ActionBox
+					href="/domains/manage"
+					hideLinkIndicator
+					onClick={ props.trackManageAllDomainsAction }
+					label={ translate( 'Manage all domains' ) }
+					gridicon="domains"
+				/>
 			) }
 			{ siteAdminUrl && (
 				<ActionBox
