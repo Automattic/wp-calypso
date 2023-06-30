@@ -57,6 +57,7 @@ export const QuickLinks = ( {
 	trackDesignLogoAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
+	trackManageAllDomainsAction,
 	trackExplorePluginsAction,
 	isExpanded,
 	updateHomeQuickLinksToggleStatus,
@@ -175,10 +176,19 @@ export const QuickLinks = ( {
 							hideLinkIndicator
 							onClick={ trackAddDomainAction }
 							label={ translate( 'Add a domain' ) }
-							gridicon="domains"
+							gridicon="add-outline"
 						/>
 					) }
 				</>
+			) }
+			{ canManageSite && (
+				<ActionBox
+					href="/domains/manage"
+					hideLinkIndicator
+					onClick={ trackManageAllDomainsAction }
+					label={ translate( 'Manage all domains' ) }
+					gridicon="domains"
+				/>
 			) }
 			{ siteAdminUrl && (
 				<ActionBox
@@ -356,13 +366,24 @@ const trackExplorePluginsAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
-const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
+export const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_add_domain_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
 			bumpStat( 'calypso_customer_home', 'my_site_add_domain' )
+		)
+	);
+};
+
+export const trackManageAllDomainsAction = ( isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_customer_home_my_site_manage_all_domains_click', {
+				is_static_home_page: isStaticHomePage,
+			} ),
+			bumpStat( 'calypso_customer_home', 'my_site_manage_all_domains' )
 		)
 	);
 };
@@ -426,6 +447,7 @@ const mapDispatchToProps = {
 	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
+	trackManageAllDomainsAction,
 	trackExplorePluginsAction,
 	updateHomeQuickLinksToggleStatus: ( status ) =>
 		savePreference( 'homeQuickLinksToggleStatus', status ),
@@ -448,6 +470,8 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
 		trackAddEmailAction: () => dispatchProps.trackAddEmailAction( isStaticHomePage ),
 		trackAddDomainAction: () => dispatchProps.trackAddDomainAction( isStaticHomePage ),
+		trackManageAllDomainsAction: () =>
+			dispatchProps.trackManageAllDomainsAction( isStaticHomePage ),
 		trackExplorePluginsAction: () => dispatchProps.trackExplorePluginsAction( isStaticHomePage ),
 		...ownProps,
 	};
