@@ -4,6 +4,10 @@
 	gap: 5px;
 	margin: 4px 0;
 
+	svg * {
+		stroke: var(--color-text-subtle);
+	}
+
 	&:focus {
 		box-shadow: none;
 		outline: none;

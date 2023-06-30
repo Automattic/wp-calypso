@@ -127,6 +127,14 @@ button.follow-button {
 		font-weight: 500;
 		padding: 12px 24px 12px 20px;
 
+		svg.reader-follow-feed * {
+			stroke: var(--color-text-inverted);
+		}
+
+		svg.reader-following-feed * {
+			stroke: var(--color-text);
+		}
+
 		.follow-button__label {
 			color: var(--color-text-inverted);
 			margin-left: 8px;
