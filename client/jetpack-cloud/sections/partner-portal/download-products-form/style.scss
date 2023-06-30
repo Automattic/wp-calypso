@@ -32,9 +32,27 @@
 		margin: 64px 0;
 	}
 
-	&__action-items,
-	&__no-action-items {
+	&__action-items {
 		display: block;
+	}
+
+	&__action-items h4 {
+		font-size: 1.25rem;
+	}
+
+	&__action-items h5 {
+		font-size: 1rem;
+	}
+
+	&__action-items pre {
+		font-size: 0.875rem;
+		padding: 0;
+		margin-bottom: 0.6rem;
+	}
+
+	&__action-items ul {
+		list-style-type: none;
+		margin: 1rem 0;
 	}
 }
 

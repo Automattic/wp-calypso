@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import WooProductDownload from 'calypso/jetpack-cloud/sections/partner-portal/download-products-form/woo-product-download';
 import {
 	getProductSlugFromKey,
 	isWooCommerceProduct,
@@ -31,28 +32,19 @@ export default function DownloadProductsForm() {
 
 	const jetpackProducts = jetpackKeys.map( ( licenseKey ) => {
 		const productSlug = getProductSlugFromKey( licenseKey );
-		const product = allProducts.find( ( product ) => product.slug === productSlug );
+		const product = allProducts && allProducts.find( ( product ) => product.slug === productSlug );
 
 		return (
 			<li key={ licenseKey }>
-				<h4>{ product.name }</h4>
-				<h6>{ licenseKey }</h6>
+				<h5>{ product && product.name }</h5>
+				<pre>{ licenseKey }</pre>
 			</li>
 		);
 	} );
 
-	const wooProducts = wooKeys.map( ( licenseKey ) => {
-		const productSlug = licenseKey.split( '_' )[ 0 ];
-		const product = allProducts.find( ( product ) => product.slug === productSlug );
-
-		return (
-			<li key={ licenseKey }>
-				<h4>{ product.name }</h4>
-				<h6>{ licenseKey }</h6>
-				<Button compact>{ translate( 'Download' ) }</Button>
-			</li>
-		);
-	} );
+	const wooProducts = wooKeys.map( ( licenseKey ) => (
+		<WooProductDownload key={ licenseKey } licenseKey={ licenseKey } allProducts={ allProducts } />
+	) );
 
 	const onNavigate = () => {
 		return page.redirect(
@@ -84,13 +76,13 @@ export default function DownloadProductsForm() {
 			</div>
 			<div className="download-products-form__bottom">
 				{ !! jetpackProducts.length && (
-					<div className="download-products-form__no-action-items">
-						<div>{ translate( 'No more action is required for these products:' ) }</div>
+					<div className="download-products-form__action-items">
+						<h4>{ translate( 'No more action is required for these products:' ) }</h4>
 						<ul>{ jetpackProducts }</ul>
 					</div>
 				) }
 				<div className="download-products-form__action-items">
-					<div>{ translate( 'These extensions need to be downloaded and installed:' ) }</div>
+					<h4>{ translate( 'These extensions need to be downloaded and installed:' ) }</h4>
 					<ul>{ wooProducts }</ul>
 				</div>
 			</div>
