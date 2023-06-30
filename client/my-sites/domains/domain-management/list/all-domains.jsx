@@ -289,9 +289,9 @@ class AllDomains extends Component {
 						'Here you will be able to manage all the domains you own on WordPress.com. Start by adding some:'
 					) }
 					action={ translate( 'Add a domain' ) }
-					actionURL="/start/domain"
+					actionURL="/domains/add"
 					secondaryAction={ translate( 'Transfer a domain' ) }
-					secondaryActionURL="/domains/add"
+					secondaryActionURL="/start/domain-transfer/domains"
 				/>
 			);
 		}
