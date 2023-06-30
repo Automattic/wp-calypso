@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
-import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { useRecordExport } from '../../tracks';
 import '../shared/popover-style.scss';
@@ -16,7 +15,6 @@ type SubscribersHeaderPopoverProps = {
 };
 
 const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) => {
-	const { grandTotal } = useSubscriberListManager();
 	const [ isVisible, setIsVisible ] = useState( false );
 	const dispatch = useDispatch();
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
@@ -37,7 +35,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 		recordExport();
 	};
 
-	return grandTotal ? (
+	return (
 		<div className="subscriber-popover__container">
 			<button
 				className={ classNames( 'subscriber-popover__toggle', {
@@ -62,7 +60,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 				</PopoverMenuItem>
 			</PopoverMenu>
 		</div>
-	) : null;
+	);
 };
 
 export default SubscribersHeaderPopover;
