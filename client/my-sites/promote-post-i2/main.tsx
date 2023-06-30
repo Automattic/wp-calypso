@@ -9,13 +9,14 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { Campaign } from 'calypso/data/promote-post/types';
+import { BlazablePost, Campaign } from 'calypso/data/promote-post/types';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-stats-query';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import usePostsQueryPaged, {
 	getSearchOptionsQueryParams,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
@@ -29,7 +30,6 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
-import { BlazablePost } from './components/post-item';
 import PostsListBanner from './components/posts-list-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
@@ -197,6 +197,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	}
 
 	const showBanner = ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
+
+	// Add Hotjar script to the page.
+	addHotJarScript();
 
 	const headerSubtitle = ( isMobile: boolean ) => {
 		if ( ! isMobile && showBanner ) {

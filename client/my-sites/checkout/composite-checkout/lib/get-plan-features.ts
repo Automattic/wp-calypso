@@ -41,6 +41,7 @@ export default function getPlanFeatures(
 			emailSupport,
 			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
+			String( translate( 'Ad-free experience' ) ),
 		].filter( isValueTruthy );
 	}
 

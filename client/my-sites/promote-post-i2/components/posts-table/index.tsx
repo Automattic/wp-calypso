@@ -1,12 +1,12 @@
 import '../campaigns-table/style.scss';
 
-import React from 'react';
+import { BlazablePost } from 'calypso/data/promote-post/types';
 import PostItem from 'calypso/my-sites/promote-post-i2/components/post-item';
 import { CampaignItemLoading } from '../campaigns-table';
 import PostsListHeader from '../posts-list/header';
 
 interface Props {
-	posts: any;
+	posts: BlazablePost[];
 	isLoading: boolean;
 	isFetchingPageResults: boolean;
 }
@@ -29,7 +29,7 @@ export default function PostsTable( props: Props ) {
 					</>
 				) : (
 					<>
-						{ posts.map( ( post: any ) => {
+						{ posts.map( ( post: BlazablePost ) => {
 							return <PostItem key={ `post-id${ post.ID }` } post={ post } />;
 						} ) }
 						{ isFetchingPageResults && <CampaignItemLoading /> }

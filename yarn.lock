@@ -552,6 +552,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/data-stores@workspace:packages/data-stores"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
@@ -561,6 +562,7 @@ __metadata:
     "@wordpress/api-fetch": ^6.20.0
     "@wordpress/data-controls": ^2.23.0
     "@wordpress/deprecated": ^3.23.0
+    "@wordpress/url": ^3.24.0
     fast-json-stable-stringify: ^2.1.0
     i18n-calypso: "workspace:^"
     jest-fetch-mock: ^3.0.3
