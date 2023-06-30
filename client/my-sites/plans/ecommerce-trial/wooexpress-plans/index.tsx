@@ -18,7 +18,6 @@ import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/component
 import { useSelector } from 'calypso/state';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { PlansFeaturesMainProps } from 'calypso/my-sites/plans-features-main';
 
 import './style.scss';
 
@@ -113,16 +112,6 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		[ siteSlug, triggerTracksEvent ]
 	);
 
-	const plansTableProps: PlansFeaturesMainProps = {
-		intent: 'plans-woocommerce',
-		hidePlansFeatureComparison: false,
-		// hideUnavailableFeatures: true,
-		siteId,
-		onUpgradeClick,
-		intervalType: interval,
-		hidePlanTypeSelector: true,
-	};
-
 	return (
 		<>
 			{ showIntervalToggle && (
@@ -136,7 +125,13 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 				</div>
 			) }
 			<div className="wooexpress-plans__grid is-2023-pricing-grid">
-				<PlansFeaturesMain { ...plansTableProps } />
+				<PlansFeaturesMain
+					siteId={ siteId }
+					onUpgradeClick={ onUpgradeClick }
+					intervalType={ interval }
+					hidePlanTypeSelector={ true }
+					intent="plans-woocommerce"
+				/>
 			</div>
 
 			<div className="enterprise-ecommerce__banner">

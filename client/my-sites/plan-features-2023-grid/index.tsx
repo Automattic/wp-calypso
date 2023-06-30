@@ -798,7 +798,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { domainName, translate, hideUnavailableFeatures, selectedFeature } = this.props;
+		const { domainName, translate, selectedFeature } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
 				! isWpcomEnterpriseGridPlan( properties.planName ) &&
@@ -819,7 +819,6 @@ export class PlanFeatures2023Grid extends Component<
 							features={ features }
 							planName={ planName }
 							domainName={ domainName }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
 						/>
 						{ jpFeatures.length !== 0 && (
@@ -837,7 +836,6 @@ export class PlanFeatures2023Grid extends Component<
 							features={ jpFeatures }
 							planName={ planName }
 							domainName={ domainName }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
 						/>
 					</Container>
 				);

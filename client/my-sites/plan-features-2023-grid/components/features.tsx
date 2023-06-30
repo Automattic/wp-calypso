@@ -41,16 +41,12 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planName: string;
 	domainName?: string;
-	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
-} > = ( { features, planName, domainName, hideUnavailableFeatures, selectedFeature } ) => {
+} > = ( { features, planName, domainName, selectedFeature } ) => {
 	const translate = useTranslate();
 	return (
 		<>
 			{ features.map( ( currentFeature, featureIndex ) => {
-				if ( hideUnavailableFeatures && ! currentFeature.availableForCurrentPlan ) {
-					return null;
-				}
 				const key = `${ currentFeature.getSlug() }-${ featureIndex }`;
 
 				const isFreePlanAndCustomDomainFeature =
