@@ -18,6 +18,7 @@ type Props = {
 	onRemove: ( id: string ) => void;
 	showLabels: boolean;
 	hasDuplicates: boolean;
+	showDelete: boolean;
 };
 
 const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolean ) => {
@@ -45,6 +46,7 @@ export function DomainCodePair( {
 	onRemove,
 	showLabels,
 	hasDuplicates,
+	showDelete,
 }: Props ) {
 	const { __ } = useI18n();
 
@@ -59,7 +61,11 @@ export function DomainCodePair( {
 	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
 
 	return (
-		<div className="domains__domain-info-and-validation">
+		<div
+			className={ classnames( 'domains__domain-info-and-validation', {
+				'has-delete': showDelete,
+			} ) }
+		>
 			<div className="domains__domain-info">
 				<div className="domains__domain-domain">
 					<FormFieldset>
@@ -91,13 +97,13 @@ export function DomainCodePair( {
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
 				</div>
-				{ /* Need to conditionally display remove icon after adding more than 1 domain */ }
-				{ /* <div className="domains__domain-delete">
+
+				<div className="domains__domain-delete">
 					<FormFieldset>
 						{ showLabels && <FormLabel htmlFor={ id }>{ __( 'Delete' ) }</FormLabel> }
 						<Button icon={ trash } onClick={ () => onRemove( id ) } />
 					</FormFieldset>
-				</div> */ }
+				</div>
 			</div>
 			{ shouldReportError && (
 				<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>

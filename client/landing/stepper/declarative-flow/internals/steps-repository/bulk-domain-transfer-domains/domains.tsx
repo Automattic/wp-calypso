@@ -192,6 +192,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						( { domain: otherDomain }, otherIndex ) =>
 							otherDomain && otherDomain === domain.domain && otherIndex < index
 					) }
+					showDelete={ Object.values( domainsState ).length > 1 }
 				/>
 			) ) }
 			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
