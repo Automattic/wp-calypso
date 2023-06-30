@@ -75,6 +75,10 @@
 			.formatted-header {
 				.formatted-header__title {
 					font-size: 2.75rem;
+					@media ( max-width: $break-medium ) {
+						font-size: 1.75rem;
+						text-align: left;
+					}
 				}
 				.formatted-header__subtitle {
 					color: #000;

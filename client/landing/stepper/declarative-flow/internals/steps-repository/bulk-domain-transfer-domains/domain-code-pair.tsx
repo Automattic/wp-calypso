@@ -61,11 +61,7 @@ export function DomainCodePair( {
 	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
 
 	return (
-		<div
-			className={ classnames( 'domains__domain-info-and-validation', {
-				'has-delete': showDelete,
-			} ) }
-		>
+		<div className="domains__domain-info-and-validation">
 			<div className="domains__domain-info">
 				<div className="domains__domain-domain">
 					<FormFieldset>
@@ -84,7 +80,7 @@ export function DomainCodePair( {
 				<div className="domains__domain-key">
 					<FormFieldset>
 						{ showLabels && (
-							<FormLabel htmlFor={ id + '-auth' }>{ __( 'Authentication code' ) }</FormLabel>
+							<FormLabel htmlFor={ id + '-auth' }>{ __( 'Authorization code' ) }</FormLabel>
 						) }
 						<FormInput
 							id={ id + '-auth' }
@@ -97,18 +93,25 @@ export function DomainCodePair( {
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
 				</div>
-
-				<div className="domains__domain-delete">
-					<FormFieldset>
-						{ showLabels && <FormLabel htmlFor={ id }>{ __( 'Delete' ) }</FormLabel> }
-						<Button icon={ trash } onClick={ () => onRemove( id ) } />
-					</FormFieldset>
-				</div>
+				{ showDelete && (
+					<div className="domains__domain-delete">
+						<FormFieldset>
+							<Button icon={ trash } onClick={ () => onRemove( id ) } />
+							<FormLabel className="delete-label" htmlFor={ id }>
+								{ __( 'Delete' ) }
+							</FormLabel>
+						</FormFieldset>
+					</div>
+				) }
+				{ shouldReportError && (
+					<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
+				) }
+				{ message && loading && (
+					<div>
+						<FormExplanation>{ message }</FormExplanation>
+					</div>
+				) }
 			</div>
-			{ shouldReportError && (
-				<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
-			) }
-			{ message && loading && <FormExplanation>{ message }</FormExplanation> }
 		</div>
 	);
 }

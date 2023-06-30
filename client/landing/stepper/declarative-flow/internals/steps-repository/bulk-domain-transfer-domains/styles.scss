@@ -12,16 +12,33 @@
 	gap: 30px;
 
 	&.domains {
+		padding: 0;
+		width: 704px;
+
+		.step-container__header {
+			margin-top: 96px;
+		}
+
 		@media ( max-width: $break-medium ) {
+
 			.step-container__header {
 				width: 100%;
+				margin-top: 74px;
 			}
 			header {
 				text-align: center;
 			}
+
 			gap: 0;
 			justify-content: flex-start;
 			margin-top: 24px;
+			width: 100%;
+		}
+	}
+
+	&.step-container {
+		@media ( max-width: $break-medium ) {
+			padding: 0 20px;
 		}
 	}
 
@@ -40,16 +57,30 @@
 
 	.domains__domain-info {
 		display: flex;
-		gap: 20px;
+		gap: 16px;
+		align-items: flex-end;
+		flex-wrap: wrap;
+		@media ( max-width: $break-medium ) {
+			align-items: normal;
+			flex-direction: column;
+		}
 
 		.form-fieldset {
 			margin-bottom: 0;
 		}
 	}
 
+	.domains__domain-domain {
+		flex: 1 0 60%;
+	}
+
+	.domains__domain-key {
+		flex: 1 0 15%;
+	}
+
 	.domains__domain-domain,
 	.domains__domain-key {
-		flex: 1;
+
 
 		.form-fieldset {
 			position: relative;
@@ -85,8 +116,21 @@
 	}
 
 	.domains__domain-delete {
-		width: 50px;
-		visibility: hidden;
+		.delete-label {
+			display: none;
+		}
+		@media ( max-width: $break-medium ) {
+			order: 1;
+			.form-fieldset {
+				display: flex;
+				align-items: center;
+
+				.delete-label {
+					margin: 0;
+					display: block;
+				}
+			}
+		}
 	}
 
 	.bulk-domain-transfer__container {
@@ -107,10 +151,11 @@
 				justify-content: center;
 				color: var(--black-white-white, #fff);
 				width: 157px;
+				height: 48px;
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				border-radius: 0.25rem;
 				background: var(--blue-blue-50, #0675c4);
-
+				font-size: 0.875rem;
 				&:disabled {
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					border-radius: 0.25rem;
@@ -123,12 +168,17 @@
 	}
 
 	.domains__domain-info-and-validation {
-		margin-bottom: 20px;
+		margin-bottom: 16px;
 
-		&.has-delete {
-			.domains__domain-delete {
-				visibility: visible;
-			}
+		@media ( max-width: $break-medium ) {
+			border-bottom: solid 1px #dcdcde;
+			padding-bottom: 32px;
+			margin-bottom: 32px;
+		}
+
+		.form-input-validation {
+			// padding-top: 16px;
+			padding-bottom: 0;
 		}
 	}
 }
