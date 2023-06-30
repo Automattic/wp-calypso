@@ -91,6 +91,7 @@
 
 	.domains__domain-delete {
 		width: 50px;
+		visibility: hidden;
 	}
 
 	.bulk-domain-transfer__container {
@@ -128,5 +129,11 @@
 
 	.domains__domain-info-and-validation {
 		margin-bottom: 20px;
+
+		&.has-delete {
+			.domains__domain-delete {
+				visibility: visible;
+			}
+		}
 	}
 }
