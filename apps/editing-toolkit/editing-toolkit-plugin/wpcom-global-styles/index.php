@@ -570,6 +570,12 @@ function wpcom_site_has_global_styles_in_personal_plan( $blog_id = 0 ) {
 		$blog_id = get_current_blog_id();
 	}
 
+	$cache_key             = "global-styles-on-personal-assignment-$blog_id";
+	$experiment_assignment = wp_cache_get( $cache_key, 'a8c_experiments', false, $found_in_cache );
+	if ( $found_in_cache ) {
+		return 'treatment' === $experiment_assignment;
+	}
+
 	$owner_id = wpcom_get_blog_owner( $blog_id );
 	if ( ! $owner_id ) {
 		return false;
@@ -580,11 +586,9 @@ function wpcom_site_has_global_styles_in_personal_plan( $blog_id = 0 ) {
 		return false;
 	}
 
-	// Cache in memory the experiment assignment during the current request to prevent duplicate DB queries.
-	static $experiment_assignment;
-	if ( ! isset( $experiment_assignment ) ) {
-		$experiment_assignment = \ExPlat\get_user_assignment( 'calypso_global_styles_personal', $owner );
-	}
+	$experiment_assignment = \ExPlat\get_user_assignment( 'calypso_global_styles_personal', $owner );
+	// Cache the experiment assignment to prevent duplicate DB queries in the frontend.
+	wp_cache_set( $cache_key, $experiment_assignment, 'a8c_experiments', MONTH_IN_SECONDS );
 	return 'treatment' === $experiment_assignment;
 }
 
@@ -634,14 +638,17 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 	}
 
 	if ( wpcom_site_has_global_styles_in_personal_plan( $blog_id ) ) {
+		/*
+		 * Flag site so users of the treatment group with a Personal plan can always have access
+		 * to Global Styles, even if the experiment has finished without including Global Styles
+		 * in the Personal plan.
+		 */
 		$has_personal_plan = wpcom_site_has_personal_plan( $blog_id );
+		$note              = 'See https://wp.me/paYJgx-3tS';
 		if ( $has_personal_plan ) {
-			/*
-			 * Flag site so users of the treatment group with a Personal plan can always have access
-			 * to Global Styles, even if the experiment has finished without including Global Styles
-			 * in the Personal plan.
-			 */
-			add_blog_sticker( 'wpcom-global-styles-personal-plan', null, null, $blog_id );
+			add_blog_sticker( 'wpcom-global-styles-personal-plan', $note, null, $blog_id );
+		} else {
+			remove_blog_sticker( 'wpcom-global-styles-personal-plan', $note, null, $blog_id );
 		}
 		return $has_personal_plan;
 	}
