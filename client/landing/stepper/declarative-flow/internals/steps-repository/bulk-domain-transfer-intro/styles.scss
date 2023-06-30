@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
+.step-container .intro {
+	padding: 52px 0 0;
+}
+
 .bulk-domain-transfer {
 	height: 100%;
 	padding: 60px 0 0;
@@ -10,6 +14,7 @@
 	align-items: center;
 
 	&.intro {
+		padding: 0;
 		@media ( max-width: $break-medium ) {
 			header {
 				text-align: center;
@@ -64,7 +69,41 @@
 		display: flex;
 		align-items: center;
 	}
-	.step-container__header {
-		text-align: center;
+
+	.step-container {
+
+		.step-container__header {
+			margin-bottom: 48px;
+			text-align: center;
+
+			.formatted-header {
+				.formatted-header__title {
+					font-size: 2.75rem;
+				}
+				.formatted-header__subtitle {
+					color: #000;
+					text-align: center;
+				}
+			}
+		}
+
+		.step-container__content {
+			.select-items {
+				margin-bottom: 32px;
+
+				.select-items__item-icon {
+					left: -32px;
+				}
+
+				.select-items__item-title {
+					font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+					font-weight: 500;
+				}
+
+				.select-items__item-description {
+					color: #50575e;
+				}
+			}
+		}
 	}
 }

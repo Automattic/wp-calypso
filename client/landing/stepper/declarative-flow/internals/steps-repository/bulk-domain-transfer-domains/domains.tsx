@@ -37,6 +37,10 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	);
 	const domainsState = storedDomainsState || defaultState;
 
+	const numberOfValidDomains = Object.values( domainsState ).filter(
+		( { valid } ) => valid
+	).length;
+
 	const { responseCart } = useShoppingCart( 'no-site' );
 
 	const domainTransfersInCart = responseCart?.products.filter( ( { product_slug } ) => {
@@ -110,7 +114,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		setBulkDomainsData( newDomainsState );
 	}
 
-	return (
+	// Delete later - using as reference
+	const backupComponent = () => {
 		<Card>
 			<CardHeader>
 				<h2>{ __( 'Domains' ) }</h2>
@@ -169,7 +174,39 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					</Button>
 				) }
 			</CardFooter>
-		</Card>
+		</Card>;
+	};
+
+	return (
+		<div className="bulk-domain-transfer__container">
+			{ Object.entries( domainsState ).map( ( [ key, domain ], index ) => (
+				<DomainCodePair
+					key={ key }
+					id={ key }
+					onChange={ handleChange }
+					onRemove={ removeDomain }
+					domain={ domain.domain }
+					auth={ domain.auth }
+					showLabels={ index === 0 }
+					hasDuplicates={ Object.values( domainsState ).some(
+						( { domain: otherDomain }, otherIndex ) =>
+							otherDomain && otherDomain === domain.domain && otherIndex < index
+					) }
+				/>
+			) ) }
+			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
+				{ __( 'Add another domain' ) }
+			</Button>
+			<div className="bulk-domain-transfer__cta-container">
+				<Button
+					disabled={ numberOfValidDomains === 0 }
+					className="bulk-domain-transfer__cta"
+					onClick={ handleAddTransfer }
+				>
+					{ __( 'Transfer' ) }
+				</Button>
+			</div>
+		</div>
 	);
 };
 
