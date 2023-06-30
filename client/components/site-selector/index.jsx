@@ -240,10 +240,6 @@ export class SiteSelector extends Component {
 		this.props.recordTracksEvent( 'calypso_manage_sites_click' );
 	};
 
-	onManageDomainsClick = () => {
-		this.props.recordTracksEvent( 'calypso_manage_domains_click' );
-	};
-
 	onSiteHover = ( event, siteId ) => {
 		if ( this.lastMouseHover !== siteId ) {
 			debug( `${ siteId } hovered` );
