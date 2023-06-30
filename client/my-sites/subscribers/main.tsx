@@ -76,14 +76,14 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	];
 
 	return (
-		<Main wideLayout className="subscribers">
-			<DocumentHead title={ translate( 'Subscribers' ) } />
+		<SubscribersListManagerProvider
+			siteId={ selectedSiteId }
+			page={ pageNumber }
+			pageChanged={ pageChanged }
+		>
+			<Main wideLayout className="subscribers">
+				<DocumentHead title={ translate( 'Subscribers' ) } />
 
-			<SubscribersListManagerProvider
-				siteId={ selectedSiteId }
-				page={ pageNumber }
-				pageChanged={ pageChanged }
-			>
 				<SubscribersHeader
 					navigationItems={ navigationItems }
 					selectedSiteId={ selectedSiteId }
@@ -94,22 +94,22 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 					onClickView={ onClickView }
 					onClickUnsubscribe={ onClickUnsubscribe }
 				/>
-			</SubscribersListManagerProvider>
 
-			<UnsubscribeModal
-				subscriber={ currentSubscriber }
-				onCancel={ resetSubscriber }
-				onConfirm={ onConfirmModal }
-			/>
-			{ selectedSiteId && (
-				<AddSubscribersModal
-					siteId={ selectedSiteId }
-					showModal={ showAddSubscribersModal }
-					onClose={ () => setShowAddSubscribersModal( false ) }
-					onAddFinished={ () => addSubscribersCallback() }
+				<UnsubscribeModal
+					subscriber={ currentSubscriber }
+					onCancel={ resetSubscriber }
+					onConfirm={ onConfirmModal }
 				/>
-			) }
-		</Main>
+				{ selectedSiteId && (
+					<AddSubscribersModal
+						siteId={ selectedSiteId }
+						showModal={ showAddSubscribersModal }
+						onClose={ () => setShowAddSubscribersModal( false ) }
+						onAddFinished={ () => addSubscribersCallback() }
+					/>
+				) }
+			</Main>
+		</SubscribersListManagerProvider>
 	);
 };
 
