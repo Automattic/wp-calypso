@@ -1,4 +1,3 @@
-import { Button, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import page from 'page';
@@ -6,14 +5,13 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
 import DocumentHead from 'calypso/components/data/document-head';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import { SubscribersListManagerProvider } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
-import { SubscribersHeaderPopover } from './components/subscribers-header-popover';
+import { SubscribersHeader } from './components/subscribers-header';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
 import { getSubscriberDetailsUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
@@ -86,17 +84,11 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 				page={ pageNumber }
 				pageChanged={ pageChanged }
 			>
-				<FixedNavigationHeader navigationItems={ navigationItems }>
-					<Button
-						className="add-subscribers-button"
-						primary
-						onClick={ () => setShowAddSubscribersModal( true ) }
-					>
-						<Gridicon icon="plus" size={ 24 } />
-						{ translate( 'Add subscribers' ) }
-					</Button>
-					<SubscribersHeaderPopover siteId={ selectedSiteId } />
-				</FixedNavigationHeader>
+				<SubscribersHeader
+					navigationItems={ navigationItems }
+					selectedSiteId={ selectedSiteId }
+					setShowAddSubscribersModal={ setShowAddSubscribersModal }
+				/>
 
 				<SubscriberListContainer
 					onClickView={ onClickView }
