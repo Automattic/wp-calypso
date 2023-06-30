@@ -28,6 +28,7 @@ import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-s
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
@@ -351,6 +352,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for Premium Global Styles
 	const [ showPremiumGlobalStylesModal, setShowPremiumGlobalStylesModal ] = useState( false );
+	const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
+	const globalStylesOnPersonalExperiment = experiment?.variationName === 'treatment';
 
 	function unlockPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
@@ -388,7 +391,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
-				plan: 'premium',
+				plan: globalStylesOnPersonalExperiment ? 'personal' : 'premium',
 			} );
 
 			setShowPremiumGlobalStylesModal( false );

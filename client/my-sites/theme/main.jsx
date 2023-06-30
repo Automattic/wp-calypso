@@ -44,6 +44,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useExperiment } from 'calypso/lib/explat';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
@@ -1129,11 +1130,14 @@ class ThemeSheet extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
+		const { globalStylesOnPersonalExperiment } = this.props;
+		const plan = globalStylesOnPersonalExperiment ? 'personal' : 'premium';
+
 		const params = new URLSearchParams();
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		page( `/checkout/${ this.props.siteSlug || '' }/premium?${ params.toString() }` );
+		page( `/checkout/${ this.props.siteSlug || '' }/${ plan }?${ params.toString() }` );
 	};
 
 	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
@@ -1453,7 +1457,14 @@ const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
 		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId || -1 );
-		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+		const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
+		return (
+			<Wrapped
+				{ ...props }
+				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+				globalStylesOnPersonalExperiment={ experiment?.variationName === 'treatment' }
+			/>
+		);
 	},
 	'withSiteGlobalStylesStatus'
 );

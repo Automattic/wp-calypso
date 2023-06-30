@@ -9,6 +9,7 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import WebPreview from 'calypso/components/web-preview';
+import { useExperiment } from 'calypso/lib/explat';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
@@ -150,11 +151,14 @@ class ThemePreview extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
+		const { globalStylesOnPersonalExperiment } = this.props;
+		const plan = globalStylesOnPersonalExperiment ? 'personal' : 'premium';
+
 		const params = new URLSearchParams();
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		page( `/checkout/${ this.props.siteSlug || '' }/premium?${ params.toString() }` );
+		page( `/checkout/${ this.props.siteSlug || '' }/${ plan }?${ params.toString() }` );
 	};
 
 	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
@@ -268,7 +272,14 @@ const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
 		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId || -1 );
-		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+		const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
+		return (
+			<Wrapped
+				{ ...props }
+				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+				globalStylesOnPersonalExperiment={ experiment?.variationName === 'treatment' }
+			/>
+		);
 	},
 	'withSiteGlobalStylesStatus'
 );
