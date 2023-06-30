@@ -100,9 +100,11 @@ export function DomainCodePair( {
 							icon={ trash }
 							onClick={ () => onRemove( id ) }
 						/>
-						<FormLabel className="delete-label" htmlFor={ id }>
-							{ __( 'Delete' ) }
-						</FormLabel>
+						{ showDelete && (
+							<FormLabel className="delete-label" htmlFor={ id }>
+								{ __( 'Delete' ) }
+							</FormLabel>
+						) }
 					</FormFieldset>
 				</div>
 				{ shouldReportError && (
