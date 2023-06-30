@@ -84,6 +84,10 @@
 .reader-feed-header {
 	z-index: z-index("root", ".reader-feed-header");
 
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 20px 13px;
+	}
+
 	// Follow count and Follow(ing) button
 	.reader-feed-header__follow {
 		z-index: z-index(".reader-feed-header__back-and-follow", ".reader-feed-header__follow");
