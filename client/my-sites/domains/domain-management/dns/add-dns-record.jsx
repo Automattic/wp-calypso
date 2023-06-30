@@ -14,6 +14,7 @@ import {
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementList,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
@@ -45,7 +46,9 @@ class AddDnsRecord extends Component {
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
 					selectedDomainName,
