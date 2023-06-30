@@ -3,6 +3,7 @@ import {
 	isDefaultLocale,
 	isTranslatedIncompletely,
 	getLanguageSlugs,
+	getLanguage,
 } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import { initLanguageEmpathyMode } from 'calypso/lib/i18n-utils/empathy-mode';
@@ -18,6 +19,14 @@ function getLocaleFromPathname() {
 		! isDefaultLocale( lastPathSegment ) &&
 		lastPathSegment;
 	return pathLocaleSlug;
+}
+
+function getLocaleFromNavigator() {
+	const langs = ( navigator.languages || [ navigator.language ] ).filter( Boolean );
+	const lang = langs.find( ( l ) => getLanguageSlugs().includes( l ) );
+	if ( lang ) {
+		return getLanguage( lang )?.localeSlug;
+	}
 }
 
 function getLocaleFromQueryParam() {
@@ -58,7 +67,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 			// Use user locale fallback slug
 			reduxStore.dispatch( setLocale( userLocaleSlug ) );
 		} else {
-			// Use the current user's and load traslation data with a fetch request
+			// Use the current user's and load translation data with a fetch request
 			reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 		}
 	} else if ( bootstrappedLocaleSlug ) {
@@ -68,10 +77,13 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		// For logged out Calypso pages, set the locale from query param
 		const pathLocaleSlug = getLocaleFromQueryParam();
 		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
-	} else {
+	} else if ( getLocaleFromPathname() ) {
 		// For logged out Calypso pages, set the locale from slug
 		const pathLocaleSlug = getLocaleFromPathname();
 		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
+	} else {
+		const locale = getLocaleFromNavigator();
+		locale && reduxStore.dispatch( setLocale( locale, locale ) );
 	}
 
 	// If user is logged out and translations are not bootstrapped, we assume default locale
