@@ -29,6 +29,7 @@ type DomainLockResponse = {
 	privacy?: boolean;
 	unlocked: boolean | null | undefined;
 	in_redemption?: boolean;
+	status: string;
 };
 
 type DomainCodePair = { domain: string; auth: string };
@@ -38,41 +39,34 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 		queryKey: [ 'domain-code-valid', VERSION, pair.domain, hashAuthCode( pair.auth ) ],
 		queryFn: async () => {
 			try {
-				const { unlocked } = await wpcomRequest< DomainLockResponse >( {
-					apiVersion: '1.1',
-					path: `/domains/${ encodeURIComponent( pair.domain ) }/inbound-transfer-status`,
+				const availability = await wpcomRequest< DomainLockResponse >( {
+					apiVersion: '1.3',
+					path: `/domains/${ encodeURIComponent( pair.domain ) }/is-available`,
 				} );
 
-				if ( unlocked === null ) {
+				const isUnlocked = availability.status === 'transferrable';
+
+				if ( ! isUnlocked ) {
 					return {
 						domain: pair.domain,
-						registered: false,
+						status: availability.status,
 						unlocked: false,
 						auth_code_valid: false,
 					};
 				}
 
-				if ( unlocked ) {
-					const response = await wpcomRequest< DomainCodeResponse >( {
-						apiVersion: '1.1',
-						path: `/domains/${ encodeURIComponent(
-							pair.domain
-						) }/inbound-transfer-check-auth-code`,
-						query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
-					} ).catch( () => ( { success: false } ) );
+				const response = await wpcomRequest< DomainCodeResponse >( {
+					apiVersion: '1.1',
+					path: `/domains/${ encodeURIComponent( pair.domain ) }/inbound-transfer-check-auth-code`,
+					query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
+				} ).catch( () => ( { success: false } ) );
 
-					return {
-						domain: pair.domain,
-						registered: true,
-						unlocked: true,
-						auth_code_valid: response.success,
-					};
-				}
 				return {
 					domain: pair.domain,
 					registered: true,
-					unlocked: false,
-					auth_code_valid: false,
+					unlocked: true,
+					auth_code_valid: response.success,
+					status: availability.status,
 				};
 			} catch ( error ) {
 				return {

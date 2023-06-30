@@ -142,7 +142,7 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 `;
 
 const ManageAllDomainsButton = styled( Button )`
-	margin-right: 10px;
+	margin-inline-end: 1rem;
 `;
 
 const SitesDashboardSitesList = createSitesListComponent();
@@ -190,7 +190,7 @@ export function SitesDashboard( {
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
-					<ManageAllDomainsButton transparent href="/domains/manage">
+					<ManageAllDomainsButton href="/domains/manage">
 						{ __( 'Manage all domains' ) }
 					</ManageAllDomainsButton>
 					<SplitButton

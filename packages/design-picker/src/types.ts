@@ -139,7 +139,6 @@ export interface DesignPreviewOptions {
 	vertical_id?: string;
 	site_title?: string;
 	site_tagline?: string;
-	viewport_width?: number;
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;
 	disable_viewport_height?: boolean;
