@@ -31,7 +31,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
-import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -483,7 +482,6 @@ export default connect(
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isJetpack,
 			isAkismet,
-			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 			primaryDomain: getPrimaryDomainBySiteId( state, purchase.siteId ),
 		};
