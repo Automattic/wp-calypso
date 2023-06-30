@@ -93,16 +93,18 @@ export function DomainCodePair( {
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
 				</div>
-				{ showDelete && (
-					<div className="domains__domain-delete">
-						<FormFieldset>
-							<Button icon={ trash } onClick={ () => onRemove( id ) } />
-							<FormLabel className="delete-label" htmlFor={ id }>
-								{ __( 'Delete' ) }
-							</FormLabel>
-						</FormFieldset>
-					</div>
-				) }
+				<div className="domains__domain-delete">
+					<FormFieldset>
+						<Button
+							className={ classnames( { 'has-delete-button': showDelete } ) }
+							icon={ trash }
+							onClick={ () => onRemove( id ) }
+						/>
+						<FormLabel className="delete-label" htmlFor={ id }>
+							{ __( 'Delete' ) }
+						</FormLabel>
+					</FormFieldset>
+				</div>
 				{ shouldReportError && (
 					<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
 				) }

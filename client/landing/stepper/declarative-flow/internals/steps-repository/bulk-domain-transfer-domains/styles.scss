@@ -45,6 +45,9 @@
 
 	.domains .step-container__content {
 		width: 100%;
+		@media ( max-width: $break-medium ) {
+			min-height: auto;
+		}
 	}
 
 	.signup-header {
@@ -116,9 +119,18 @@
 	}
 
 	.domains__domain-delete {
+		button {
+			visibility: hidden;
+
+			&.has-delete-button {
+				visibility: visible;
+			}
+		}
+
 		.delete-label {
 			display: none;
 		}
+
 		@media ( max-width: $break-medium ) {
 			order: 1;
 			.form-fieldset {
@@ -139,13 +151,16 @@
 			font-size: 0.875rem;
 			font-weight: 500;
 			color: #0675c4;
-			margin-bottom: 34px;
+			margin-bottom: 32px;
 			margin-top: 2px;
 		}
 
 		.bulk-domain-transfer__cta-container {
 			display: flex;
 			justify-content: center;
+			@media ( max-width: $break-medium ) {
+				margin-bottom: 50px;
+			}
 
 			.bulk-domain-transfer__cta {
 				justify-content: center;
@@ -177,7 +192,7 @@
 		}
 
 		.form-input-validation {
-			// padding-top: 16px;
+			padding-top: 0;
 			padding-bottom: 0;
 		}
 	}
