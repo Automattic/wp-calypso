@@ -297,7 +297,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'web_server_settings',
 			},
 			{
-				label: __( 'Clear cache' ),
+				label: __( 'Cache' ),
 				href: `/hosting-config/${ siteSlug }#cache`,
 				sectionName: 'cache',
 			},

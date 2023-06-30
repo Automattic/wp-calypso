@@ -6,7 +6,6 @@ import { connect, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
 import Tooltip from 'calypso/components/tooltip';
-import { successNotice } from 'calypso/state/notices/actions';
 import {
 	useRecordSiteUnsubscribed,
 	useRecordSiteResubscribed,
@@ -19,15 +18,12 @@ import {
 	useRecordPostEmailsSetFrequency,
 	SOURCE_SUBSCRIPTIONS_SITE_LIST,
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
-} from '../../tracks';
+} from 'calypso/landing/subscriptions/tracks';
+import { successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
-import {
-	useSubscriptionManagerContext,
-	ReaderPortal,
-	SubscriptionsPortal,
-} from '../subscription-manager-context';
+import { useSubscriptionManagerContext } from '../subscription-manager-context';
 
 interface NotificationStatusProps {
 	tooltipRef: React.RefObject< SVGSVGElement >;
@@ -173,17 +169,17 @@ const SiteRow = ( {
 		);
 	};
 
-	const { portal } = useSubscriptionManagerContext();
+	const { isReaderPortal, isSubscriptionsPortal } = useSubscriptionManagerContext();
 
 	const siteTitleUrl = useMemo( () => {
-		if ( portal === ReaderPortal ) {
+		if ( isReaderPortal ) {
 			return `/read/feeds/${ feed_id }`;
 		}
 
-		if ( portal === SubscriptionsPortal ) {
+		if ( isSubscriptionsPortal ) {
 			return `/subscriptions/site/${ blog_id }`;
 		}
-	}, [ blog_id, feed_id, portal ] );
+	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal ] );
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings

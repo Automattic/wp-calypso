@@ -17,10 +17,10 @@ export default function allSitesMenu( { showManagePlugins = false } = {} ) {
 			url: '/stats/day',
 		},
 		{
-			icon: 'dashicons-cart',
-			slug: 'upgrades',
+			icon: 'dashicons-admin-site-alt3',
+			slug: 'domains',
 			title: translate( 'Domains' ),
-			navigationLabel: translate( 'View domains for all sites' ),
+			navigationLabel: translate( 'Manage all domains' ),
 			type: 'menu-item',
 			url: '/domains/manage',
 		},

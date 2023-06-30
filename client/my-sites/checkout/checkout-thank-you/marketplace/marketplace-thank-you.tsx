@@ -16,7 +16,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
 import { useAtomicTransfer } from './use-atomic-transfer';
 import { usePageTexts } from './use-page-texts';
-import { usePluginsThankYouData } from './use-plugins-thank-you-data';
+import usePluginsThankYouData from './use-plugins-thank-you-data';
 import { useThankYouFoooter } from './use-thank-you-footer';
 import { useThankYouSteps } from './use-thank-you-steps';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
@@ -46,6 +46,7 @@ const MarketplaceThankYou = ( {
 		pluginSubtitle,
 		pluginsProgressbarSteps,
 		isAtomicNeededForPlugins,
+		thankYouHeaderAction,
 	] = usePluginsThankYouData( pluginSlugs );
 	const [
 		themesSection,
@@ -155,6 +156,7 @@ const MarketplaceThankYou = ( {
 						showSupportSection={ false }
 						thankYouTitle={ title }
 						thankYouSubtitle={ subtitle }
+						thankYouHeaderBody={ thankYouHeaderAction }
 						headerBackgroundColor="#fff"
 						headerTextColor="#000"
 					/>
