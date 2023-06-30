@@ -1,5 +1,4 @@
 import {
-	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -79,7 +78,6 @@ const SiteSubscriptionsManager = () => {
 				<SiteSubscriptionsManagerProvider>
 					<ExternalSiteSubscriptionsManager>
 						<ExternalSiteSubscriptionsManager.ListActionsBar />
-						<Button onClick={ () => feed.fetchNextPage() }>Fetch next</Button>
 						<RecommendedSites />
 						<ExternalSiteSubscriptionsManager.List />
 					</ExternalSiteSubscriptionsManager>

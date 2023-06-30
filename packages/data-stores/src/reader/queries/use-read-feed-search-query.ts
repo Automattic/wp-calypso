@@ -2,10 +2,15 @@ import { Railcar } from '@automattic/calypso-analytics';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
+export enum FeedSort {
+	LastUpdated = 'last_updated',
+	Relevance = 'relevance',
+}
+
 type FetchReadFeedSearchType = {
-	query: string;
-	excludeFollowed: boolean;
-	sort: string;
+	query?: string;
+	excludeFollowed?: boolean;
+	sort?: FeedSort;
 };
 
 type FeedItem = {
@@ -31,10 +36,18 @@ type FeedResponse = {
 	total: number;
 };
 
-const useReadFeedSearch = ( { query, excludeFollowed, sort }: FetchReadFeedSearchType ) => {
+const useReadFeedSearch = ( {
+	query,
+	excludeFollowed = false,
+	sort = FeedSort.Relevance,
+}: FetchReadFeedSearchType ) => {
 	return useInfiniteQuery(
 		[ 'readFeedSearch', query, excludeFollowed, sort ],
 		async ( { pageParam } ) => {
+			if ( query === undefined ) {
+				return;
+			}
+
 			// The below uses concat only because I believe it makes it easier to comprehend the structure of the query
 			const urlQuery = `q=${ encodeURIComponent( query ) }`
 				.concat( `&exclude_followed=${ excludeFollowed }` )
@@ -49,7 +62,8 @@ const useReadFeedSearch = ( { query, excludeFollowed, sort }: FetchReadFeedSearc
 			return response;
 		},
 		{
-			getNextPageParam: ( lastPage ) => lastPage.next_page,
+			enabled: Boolean( query ),
+			getNextPageParam: ( lastPage ) => lastPage?.next_page,
 		}
 	);
 };

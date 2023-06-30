@@ -17,6 +17,7 @@ const SubscriptionManagerContext = createContext< SubscriptionManagerContext | u
 
 export const SubscriptionManagerContextProvider: React.FC< {
 	portal: SiteSubscriptionsPortal;
+	children?: React.ReactNode;
 } > = ( { portal, ...props } ) => {
 	return (
 		<SubscriptionManagerContext.Provider
