@@ -4,7 +4,7 @@ import {
 	WPCOM_FEATURES_BACKUPS,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
-import { Spinner as WPSpinner } from '@wordpress/components';
+import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes, startsWith } from 'lodash';
@@ -84,6 +84,8 @@ import {
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
+import { WooLoader } from './woo-loader';
+import { ConnectingYourAccountStage, OpeningTheDoorsStage } from './woo-loader-stages';
 
 /**
  * Constants
@@ -861,20 +863,20 @@ export class JetpackAuthorize extends Component {
 				<Fragment>
 					<div className="jetpack-connect__logged-in-content">
 						<Card className="jetpack-connect__logged-in-card">
-							<Gravatar user={ user } size={ 40 } />
-							<div>
+							<div className="jetpack-connect__logged-in-form-user">
+								<Gravatar user={ user } size={ 40 } />
 								<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
-								<LoggedOutFormLinkItem
-									href={ login( {
-										isJetpack: true,
-										redirectTo: window.location.href,
-										from: authQuery.from,
-									} ) }
-									onClick={ this.handleSignIn }
-								>
-									{ translate( 'Sign in as a different user' ) }
-								</LoggedOutFormLinkItem>
 							</div>
+							<LoggedOutFormLinkItem
+								href={ login( {
+									isJetpack: true,
+									redirectTo: window.location.href,
+									from: authQuery.from,
+								} ) }
+								onClick={ this.handleSignIn }
+							>
+								{ translate( 'Sign in as a different user' ) }
+							</LoggedOutFormLinkItem>
 						</Card>
 						<div className="jetpack-connect__logged-in-bottom">
 							{ this.renderStateAction() }
@@ -1044,6 +1046,24 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
 		const authSiteId = this.props.authQuery.clientId;
+		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+
+		if ( this.isWooCoreProfiler && ( isAuthorizing || authorizeSuccess ) ) {
+			return (
+				// Wrap the loader in a modal to show it in full screen
+				<Modal
+					open
+					title=""
+					overlayClassName="jetpack-connect-woocommerce-loader__modal-overlay"
+					className="jetpack-connect-woocommerce-loader__modal"
+					shouldCloseOnClickOutside={ false }
+					shouldCloseOnEsc={ false }
+					isDismissible={ false }
+				>
+					<WooLoader stages={ [ ConnectingYourAccountStage, OpeningTheDoorsStage ] } />
+				</Modal>
+			);
+		}
 
 		return (
 			<MainWrapper
