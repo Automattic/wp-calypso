@@ -159,6 +159,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/comment-polling": false,
+		"reader/editor": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
