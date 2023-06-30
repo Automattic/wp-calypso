@@ -58,7 +58,6 @@ export class SiteSelector extends Component {
 		navigateToSite: PropTypes.func.isRequired,
 		isReskinned: PropTypes.bool,
 		showManageSitesButton: PropTypes.bool,
-		showManageDomainsButton: PropTypes.bool,
 		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
 		hasSiteWithPlugins: PropTypes.bool,
@@ -67,7 +66,6 @@ export class SiteSelector extends Component {
 	static defaultProps = {
 		sites: {},
 		showManageSitesButton: false,
-		showManageDomainsButton: false,
 		showAddNewSite: false,
 		showAllSites: false,
 		showHiddenSites: false,
@@ -470,15 +468,8 @@ export class SiteSelector extends Component {
 						</span>
 					) }
 				</div>
-				{ ( this.props.showManageSitesButton ||
-					this.props.showAddNewSite ||
-					this.props.showManageDomainsButton ) && (
+				{ ( this.props.showManageSitesButton || this.props.showAddNewSite ) && (
 					<div className="site-selector__actions">
-						{ this.props.showManageDomainsButton && (
-							<Button transparent onClick={ this.onManageDomainsClick } href="/domains/manage">
-								{ this.props.translate( 'Manage domains' ) }
-							</Button>
-						) }
 						{ this.props.showManageSitesButton && (
 							<Button
 								transparent
