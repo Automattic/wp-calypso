@@ -7,7 +7,7 @@ import { Item } from 'calypso/components/breadcrumb';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
-import { SubscribersListManagerProvider } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
+import { SubscribersPageProvider } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
@@ -76,7 +76,7 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	];
 
 	return (
-		<SubscribersListManagerProvider
+		<SubscribersPageProvider
 			siteId={ selectedSiteId }
 			page={ pageNumber }
 			pageChanged={ pageChanged }
@@ -109,7 +109,7 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 					/>
 				) }
 			</Main>
-		</SubscribersListManagerProvider>
+		</SubscribersPageProvider>
 	);
 };
 

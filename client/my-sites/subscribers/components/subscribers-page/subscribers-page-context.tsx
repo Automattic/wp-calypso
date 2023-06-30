@@ -5,14 +5,14 @@ import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { SubscribersSortBy } from '../../constants';
 import { useSubscribersQuery } from '../../queries';
 
-type SubscriberListManagerProviderProps = {
+type SubscribersPageProviderProps = {
 	siteId: number | null;
 	page: number;
 	pageChanged: ( page: number ) => void;
 	children: React.ReactNode;
 };
 
-type SubscriberListManagerContextProps = {
+type SubscribersPageContextProps = {
 	searchTerm: string;
 	handleSearch: ( term: string ) => void;
 	page: number;
@@ -26,18 +26,18 @@ type SubscriberListManagerContextProps = {
 	setSortTerm: ( term: SubscribersSortBy ) => void;
 };
 
-const SubscriberListManagerContext = createContext< SubscriberListManagerContextProps | undefined >(
+const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
 	undefined
 );
 
 const DEFAULT_PER_PAGE = 10;
 
-export const SubscribersListManagerProvider = ( {
+export const SubscribersPageProvider = ( {
 	children,
 	siteId,
 	page,
 	pageChanged,
-}: SubscriberListManagerProviderProps ) => {
+}: SubscribersPageProviderProps ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
 	const [ sortTerm, setSortTerm ] = useState( SubscribersSortBy.DateSubscribed );
@@ -78,7 +78,7 @@ export const SubscribersListManagerProvider = ( {
 	);
 
 	return (
-		<SubscriberListManagerContext.Provider
+		<SubscribersPageContext.Provider
 			value={ {
 				searchTerm,
 				handleSearch,
@@ -94,15 +94,15 @@ export const SubscribersListManagerProvider = ( {
 			} }
 		>
 			{ children }
-		</SubscriberListManagerContext.Provider>
+		</SubscribersPageContext.Provider>
 	);
 };
 
-export const useSubscriberListManager = () => {
-	const context = useContext( SubscriberListManagerContext );
+export const useSubscribersPage = () => {
+	const context = useContext( SubscribersPageContext );
 	if ( ! context ) {
 		throw new Error(
-			'useSubscriberListManager must be used within a SubscribersListManagerProvider'
+			'useSubscribersPage must be used within a SubscribersPageProvider'
 		);
 	}
 	return context;

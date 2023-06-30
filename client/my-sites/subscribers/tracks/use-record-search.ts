@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { useSubscriberListManager } from '../components/subscriber-list-manager/subscriber-list-manager-context';
+import { useSubscribersPage } from '../components/subscribers-page/subscribers-page-context';
 import useRecordSubscriberTrackEvent from './use-record-subscriber-tracks-event';
 
 const useRecordSearch = () => {
 	const recordSubscribersTracksEvent = useRecordSubscriberTrackEvent();
-	const { searchTerm } = useSubscriberListManager();
+	const { searchTerm } = useSubscribersPage();
 
 	const [ debouncedRecord ] = useDebouncedCallback( () => {
 		recordSubscribersTracksEvent( 'calypso_subscribers_searched' );
