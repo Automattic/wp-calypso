@@ -17,8 +17,13 @@ const ReaderListFollowingItem = ( props ) => {
 	const { site, path, isUnseen, feed, follow, siteId } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
-	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 	const siteIcon = site ? site.site_icon ?? get( site, 'icon.img' ) : null;
+	let feedIcon = get( follow, 'site_icon' );
+
+	// If feed available, check feed for feed icon
+	if ( feed && feed.image ) {
+		feedIcon = get( feed, 'image' );
+	}
 
 	const handleSidebarClick = ( selectedSite ) => {
 		recordAction( 'clicked_reader_sidebar_following_item' );
@@ -58,8 +63,10 @@ const ReaderListFollowingItem = ( props ) => {
 				onClick={ () => handleSidebarClick( follow ) }
 			>
 				<span className="reader-sidebar-site_siteicon">
-					{ ! site && <QueryReaderSite siteId={ siteId } /> }
-					{ ! feed && follow.feed_ID && <QueryReaderFeed feedId={ follow.feed_ID } /> }
+					{ ! siteIcon && ! feedIcon && ! site && <QueryReaderSite siteId={ siteId } /> }
+					{ ! siteIcon && ! feedIcon && ! feed && follow.feed_ID && (
+						<QueryReaderFeed feedId={ follow.feed_ID } />
+					) }
 					<ReaderAvatar
 						siteIcon={ siteIcon }
 						feedIcon={ feedIcon }
