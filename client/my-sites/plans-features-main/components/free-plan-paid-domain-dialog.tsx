@@ -120,6 +120,46 @@ const StyledButton = styled( Button )`
 	}
 `;
 
+function GetSuggestedPlanSection( {
+	domainName,
+	suggestedPlanSlug,
+	onButtonClick,
+	isBusy,
+}: {
+	domainName: string;
+	suggestedPlanSlug: PlanSlug;
+	onButtonClick: () => void;
+	isBusy: boolean;
+} ) {
+	const translate = useTranslate();
+	const planPrices = usePlanPrices( { planSlug: suggestedPlanSlug, returnMonthly: true } );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
+
+	return (
+		<>
+			<DomainName>
+				<div>{ domainName }</div>
+				<FreeDomainText>{ translate( 'Free for one year ' ) }</FreeDomainText>
+			</DomainName>
+			<StyledButton busy={ isBusy } primary onClick={ onButtonClick }>
+				{ currencyCode &&
+					translate( 'Get %(planTitle)s - %(planPrice)s/month', {
+						comment: 'Eg: Get Personal - $4/month',
+						args: {
+							planTitle: planTitle as string,
+							planPrice: formatCurrency(
+								planPrices.discountedRawPrice || planPrices.rawPrice,
+								currencyCode,
+								{ stripZeros: true }
+							),
+						},
+					} ) }
+			</StyledButton>
+		</>
+	);
+}
+
 type DomainPlanDialogProps = {
 	domainName: string;
 	suggestedPlanSlug: PlanSlug;
@@ -136,14 +176,11 @@ function DialogPaidPlanIsRequired( {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const [ isBusy, setIsBusy ] = useState( false );
-	const planPrices = usePlanPrices( { planSlug: suggestedPlanSlug, returnMonthly: true } );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const {
 		data: wordPressSubdomainSuggestions,
 		isInitialLoading,
 		isError,
 	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
-	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
@@ -169,24 +206,12 @@ function DialogPaidPlanIsRequired( {
 			</SubHeading>
 			<ButtonContainer>
 				<RowWithBorder>
-					<DomainName>
-						<div>{ domainName }</div>
-						<FreeDomainText>{ translate( 'Free for one year ' ) }</FreeDomainText>
-					</DomainName>
-					<StyledButton busy={ isBusy } primary onClick={ handlePaidPlanClick }>
-						{ currencyCode &&
-							translate( 'Get %(planTitle)s - %(planPrice)s/month', {
-								comment: 'Eg: Get Personal - $4/month',
-								args: {
-									planTitle: planTitle as string,
-									planPrice: formatCurrency(
-										planPrices.discountedRawPrice || planPrices.rawPrice,
-										currencyCode,
-										{ stripZeros: true }
-									),
-								},
-							} ) }
-					</StyledButton>
+					<GetSuggestedPlanSection
+						domainName={ domainName }
+						suggestedPlanSlug={ suggestedPlanSlug }
+						isBusy={ isBusy }
+						onButtonClick={ handlePaidPlanClick }
+					/>
 				</RowWithBorder>
 				<Row>
 					<DomainName>
@@ -215,14 +240,11 @@ function DialogBlogDomainAndFreePlan( {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const [ isBusy, setIsBusy ] = useState( false );
-	const planPrices = usePlanPrices( { planSlug: suggestedPlanSlug, returnMonthly: true } );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const {
 		data: wordPressSubdomainSuggestions,
 		isInitialLoading,
 		isError,
 	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
-	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
@@ -243,25 +265,17 @@ function DialogBlogDomainAndFreePlan( {
 			<Heading>{ translate( 'A paid plan is required for a custom primary domain.' ) }</Heading>
 			<SubHeading>
 				{ translate(
-					'Without a paid plan, your custom domain will automatically redirect to your free WordPress.com domain, xxx.wordpress.com.Custom. Please read {{a}}our support document{{/a}} for more details.'
+					'Without a paid plan, your custom domain will automatically redirect to your free WordPress.com domain, and they are free with an anuual paid plan. Please read {{a}}our support document{{/a}} for more details.'
 				) }
 			</SubHeading>
 			<ButtonContainer>
 				<RowWithBorder>
-					<StyledButton busy={ isBusy } primary onClick={ handlePaidPlanClick }>
-						{ currencyCode &&
-							translate( 'Get %(planTitle)s - %(planPrice)s/month', {
-								comment: 'Eg: Get Personal - $4/month',
-								args: {
-									planTitle: planTitle as string,
-									planPrice: formatCurrency(
-										planPrices.discountedRawPrice || planPrices.rawPrice,
-										currencyCode,
-										{ stripZeros: true }
-									),
-								},
-							} ) }
-					</StyledButton>
+					<GetSuggestedPlanSection
+						domainName={ domainName }
+						suggestedPlanSlug={ suggestedPlanSlug }
+						isBusy={ isBusy }
+						onButtonClick={ handlePaidPlanClick }
+					/>
 				</RowWithBorder>
 				<Row>
 					<DomainName>
