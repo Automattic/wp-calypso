@@ -55,11 +55,17 @@
 			input.search-component__input[type="search"] {
 				@include promote-post-i2-font;
 
+				border-radius: 4px;
 				color: var(--studio-gray-100); // Change text color
-				height: 42px;
 				width: 100%;
 			}
+
+			&.promote-post-i2__search-bar-search {
+				height: 42px;
+			}
 		}
+
+
 	}
 }
 
