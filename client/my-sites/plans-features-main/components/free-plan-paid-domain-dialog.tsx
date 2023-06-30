@@ -2,6 +2,7 @@ import { PlanSlug, getPlan } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
@@ -265,7 +266,20 @@ function DialogBlogDomainAndFreePlan( {
 			<Heading>{ translate( 'A paid plan is required for a custom primary domain.' ) }</Heading>
 			<SubHeading>
 				{ translate(
-					'Without a paid plan, your custom domain will automatically redirect to your free WordPress.com domain, and they are free with an anuual paid plan. Please read {{a}}our support document{{/a}} for more details.'
+					'Your custom domain can only be used as the primary domain with a paid plan and is free for the first year with an annual paid plan. For more details, please read {{a}}our support document{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/domains/set-a-primary-address/'
+									) }
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
 				) }
 			</SubHeading>
 			<ButtonContainer>
