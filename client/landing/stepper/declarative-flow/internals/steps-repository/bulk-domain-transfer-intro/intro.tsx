@@ -1,6 +1,7 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { Icon, lock, plus, payment } from '@wordpress/icons';
+import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { preventWidows } from 'calypso/lib/formatting';
 
@@ -19,13 +20,25 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						key: 'unlock',
 						title: __( 'Unlock at current registrar' ),
 						description: (
-							<p>
-								{ __(
-									'Your domain management interface should have an option for you to remove this lock. Learn more'
-								) }
-							</p>
+							<>
+								<p>
+									{ __(
+										'Your domain management interface should have an option for you to remove this lock.'
+									) }
+								</p>
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/domains/incoming-domain-transfer/'
+									) }
+									target="_blank"
+									rel="noopener noreferrer"
+									className="select-items__item-learn-more"
+								>
+									{ __( 'Learn more' ) }
+								</a>
+							</>
 						),
-						icon: <Icon icon={ lock } />,
+						icon: <Icon icon={ unlock } />,
 						value: 'firstPost',
 						actionText: null,
 					},
@@ -33,11 +46,19 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						key: 'setup',
 						title: __( 'Add domains' ),
 						description: (
-							<p>
-								{ __(
-									'Add all domain names with authorization codes to start transfer. Learn more'
-								) }
-							</p>
+							<>
+								<p>{ __( 'Add all domain names with authorization codes to start transfer.' ) }</p>
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/domains/incoming-domain-transfer/'
+									) }
+									target="_blank"
+									rel="noopener noreferrer"
+									className="select-items__item-learn-more"
+								>
+									{ __( 'Learn more' ) }
+								</a>
+							</>
 						),
 						icon: <Icon icon={ plus } />,
 						value: 'setup',
@@ -57,11 +78,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				onSelect={ onSubmit }
 			/>
 			<div style={ { display: 'flex', justifyContent: 'center' } }>
-				<Button
-					isPrimary
-					style={ { width: '157px', justifyContent: 'center' } }
-					onClick={ onSubmit }
-				>
+				<Button isPrimary onClick={ onSubmit }>
 					{ __( "I'm ready!" ) }
 				</Button>
 			</div>

@@ -24,6 +24,10 @@
 			.step-container__header {
 				width: 100%;
 				margin-top: 42px;
+				.formatted-header__title {
+					font-size: 1.75rem;
+					text-align: left;
+				}
 			}
 			header {
 				text-align: center;
