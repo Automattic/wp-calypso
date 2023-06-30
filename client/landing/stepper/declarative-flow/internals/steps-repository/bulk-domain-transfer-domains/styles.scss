@@ -12,22 +12,46 @@
 	gap: 30px;
 
 	&.domains {
+		padding: 0;
+		width: 754px;
+
+		.step-container__header {
+			margin-top: 96px;
+		}
+
 		@media ( max-width: $break-medium ) {
+
 			.step-container__header {
 				width: 100%;
+				margin-top: 42px;
+				.formatted-header__title {
+					font-size: 1.75rem;
+					text-align: left;
+				}
 			}
 			header {
 				text-align: center;
 			}
+
 			gap: 0;
 			justify-content: flex-start;
 			margin-top: 24px;
+			width: 100%;
+		}
+	}
+
+	&.step-container {
+		@media ( max-width: $break-medium ) {
+			padding: 0 20px;
 		}
 	}
 
 
 	.domains .step-container__content {
 		width: 100%;
+		@media ( max-width: $break-medium ) {
+			min-height: auto;
+		}
 	}
 
 	.signup-header {
@@ -40,16 +64,34 @@
 
 	.domains__domain-info {
 		display: flex;
-		gap: 20px;
+		gap: 16px;
+		align-items: flex-end;
+		flex-wrap: wrap;
+		@media ( max-width: $break-medium ) {
+			align-items: normal;
+			flex-direction: column;
+		}
 
 		.form-fieldset {
 			margin-bottom: 0;
 		}
+
+		.form-setting-explanation {
+			margin-top: 0;
+		}
+	}
+
+	.domains__domain-domain {
+		flex: 1 0 60%;
+	}
+
+	.domains__domain-key {
+		flex: 1 0 15%;
 	}
 
 	.domains__domain-domain,
 	.domains__domain-key {
-		flex: 1;
+
 
 		.form-fieldset {
 			position: relative;
@@ -84,9 +126,53 @@
 		}
 	}
 
-	.domains__domain-delete {
-		width: 50px;
-		visibility: hidden;
+
+	.domains__domain-controls {
+		display: flex;
+		gap: 16px;
+
+		.domains__domain-refresh {
+			.form-fieldset {
+				display: flex;
+				align-items: center;
+			}
+			label {
+				display: none;
+			}
+			@media ( max-width: $break-medium ) {
+				label {
+					display: block;
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		.domains__domain-delete {
+			button {
+				visibility: hidden;
+
+				&.has-delete-button {
+					visibility: visible;
+				}
+			}
+
+			.delete-label {
+				display: none;
+			}
+
+			@media ( max-width: $break-medium ) {
+				order: 1;
+				.form-fieldset {
+					display: flex;
+					align-items: center;
+
+					.delete-label {
+						margin: 0;
+						display: block;
+					}
+				}
+			}
+		}
 	}
 
 	.bulk-domain-transfer__container {
@@ -95,27 +181,34 @@
 			font-size: 0.875rem;
 			font-weight: 500;
 			color: #0675c4;
-			margin-bottom: 34px;
+			margin-bottom: 32px;
 			margin-top: 2px;
 		}
 
 		.bulk-domain-transfer__cta-container {
 			display: flex;
 			justify-content: center;
+			@media ( max-width: $break-medium ) {
+				margin-bottom: 50px;
+			}
 
 			.bulk-domain-transfer__cta {
 				justify-content: center;
 				color: var(--black-white-white, #fff);
 				width: 157px;
+				height: 48px;
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				border-radius: 0.25rem;
 				background: var(--blue-blue-50, #0675c4);
-
+				font-size: 0.875rem;
 				&:disabled {
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					border-radius: 0.25rem;
 					background: var(--gray-gray-5, #dcdcde);
 					opacity: 1;
+				}
+				@media ( max-width: $break-medium ) {
+					width: 100%;
 				}
 			}
 		}
@@ -123,11 +216,19 @@
 	}
 
 	.domains__domain-info-and-validation {
-		margin-bottom: 20px;
+		margin-bottom: 16px;
 
-		&.has-delete {
-			.domains__domain-delete {
-				visibility: visible;
+		@media ( max-width: $break-medium ) {
+			border-bottom: solid 1px #dcdcde;
+			padding-bottom: 32px;
+			margin-bottom: 32px;
+		}
+
+		.form-input-validation {
+			padding-top: 0;
+			padding-bottom: 0;
+			a {
+				text-decoration: underline;
 			}
 		}
 	}

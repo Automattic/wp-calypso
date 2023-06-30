@@ -1,6 +1,6 @@
 import { FormInputValidation } from '@automattic/components';
 import { Button, Icon } from '@wordpress/components';
-import { check, trash, closeSmall } from '@wordpress/icons';
+import { check, trash, closeSmall, update } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect } from 'react';
@@ -52,7 +52,7 @@ export function DomainCodePair( {
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
 
-	const { valid, loading, message } = validation;
+	const { valid, loading, message, refetch } = validation;
 
 	useEffect( () => {
 		onChange( id, { domain, auth, valid } );
@@ -61,11 +61,7 @@ export function DomainCodePair( {
 	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
 
 	return (
-		<div
-			className={ classnames( 'domains__domain-info-and-validation', {
-				'has-delete': showDelete,
-			} ) }
-		>
+		<div className="domains__domain-info-and-validation">
 			<div className="domains__domain-info">
 				<div className="domains__domain-domain">
 					<FormFieldset>
@@ -84,7 +80,7 @@ export function DomainCodePair( {
 				<div className="domains__domain-key">
 					<FormFieldset>
 						{ showLabels && (
-							<FormLabel htmlFor={ id + '-auth' }>{ __( 'Authentication code' ) }</FormLabel>
+							<FormLabel htmlFor={ id + '-auth' }>{ __( 'Authorization code' ) }</FormLabel>
 						) }
 						<FormInput
 							id={ id + '-auth' }
@@ -97,18 +93,42 @@ export function DomainCodePair( {
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
 				</div>
-
-				<div className="domains__domain-delete">
-					<FormFieldset>
-						{ showLabels && <FormLabel htmlFor={ id }>{ __( 'Delete' ) }</FormLabel> }
-						<Button icon={ trash } onClick={ () => onRemove( id ) } />
-					</FormFieldset>
+				<div className="domains__domain-controls">
+					<div className="domains__domain-refresh">
+						<FormFieldset>
+							<Button
+								title={ __( 'Refresh' ) }
+								disabled={ ! refetch }
+								icon={ update }
+								onClick={ () => refetch?.() }
+							/>
+							<FormLabel htmlFor={ id }>{ __( 'Refresh' ) }</FormLabel>
+						</FormFieldset>
+					</div>
+					<div className="domains__domain-delete">
+						<FormFieldset>
+							<Button
+								className={ classnames( { 'has-delete-button': showDelete } ) }
+								icon={ trash }
+								onClick={ () => onRemove( id ) }
+							/>
+							{ showDelete && (
+								<FormLabel className="delete-label" htmlFor={ id }>
+									{ __( 'Delete' ) }
+								</FormLabel>
+							) }
+						</FormFieldset>
+					</div>
 				</div>
+				{ shouldReportError && (
+					<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
+				) }
+				{ message && loading && (
+					<div>
+						<FormExplanation>{ message }</FormExplanation>
+					</div>
+				) }
 			</div>
-			{ shouldReportError && (
-				<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
-			) }
-			{ message && loading && <FormExplanation>{ message }</FormExplanation> }
 		</div>
 	);
 }
