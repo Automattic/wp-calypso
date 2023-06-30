@@ -204,7 +204,13 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					className="bulk-domain-transfer__cta"
 					onClick={ handleAddTransfer }
 				>
-					{ __( 'Transfer' ) }
+					{ numberOfValidDomains === 0
+						? __( 'Transfer' )
+						: sprintf(
+								/* translators: %s: number valid domains */
+								_n( 'Transfer %s domain', 'Transfer %s domains', numberOfValidDomains ),
+								numberOfValidDomains
+						  ) }
 				</Button>
 			</div>
 		</div>
