@@ -637,7 +637,7 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 		 * in the Personal plan.
 		 */
 		$has_personal_plan = wpcom_site_has_personal_plan( $blog_id );
-		$note              = 'See https://wp.me/paYJgx-3tS';
+		$note              = 'See https://wp.me/paYJgx-3yE';
 		if ( $has_personal_plan ) {
 			add_blog_sticker( 'wpcom-global-styles-personal-plan', $note, null, $blog_id );
 		} else {
