@@ -1,7 +1,9 @@
 import { useIsDomainCodeValid } from '@automattic/data-stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { doesStringResembleDomain } from '@automattic/onboarding';
+import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
+import { createElement, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
 export function useValidationMessage( domain: string, auth: string, hasDuplicates: boolean ) {
@@ -113,7 +115,17 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: false,
-			message: __( 'This domain does not seem to be unlocked.' ),
+			message: createInterpolateElement(
+				__(
+					'Your need to unlock this domain at your current registrar. <learn_more>Learn More </learn_more>'
+				),
+				{
+					learn_more: createElement( 'a', {
+						href: localizeUrl( 'https://wordpress.com/support/domains/incoming-domain-transfer/' ),
+						target: '_blank',
+					} ),
+				}
+			),
 			refetch,
 		};
 	}
