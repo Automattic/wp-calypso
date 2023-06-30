@@ -116,6 +116,10 @@ $heading-font-family: "SF Pro Display", $sans;
 			.select-items {
 				margin-bottom: 32px;
 
+				.select-items__item-icon {
+					margin-right: 8px;
+				}
+
 				.select-items__item-title {
 					font-family: $heading-font-family;
 					font-size: rem(18px);

@@ -39,7 +39,8 @@
 	}
 
 	&-icon {
-		margin-right: 8px;
+		flex-shrink: 0;
+		margin-right: 26px;
 	}
 
 	&-info-wrapper {
