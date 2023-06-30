@@ -15,10 +15,12 @@
 
 	&.intro {
 		padding: 0;
-		@media ( max-width: $break-medium ) {
+
+		@media (max-width: $break-medium ) {
 			header {
 				text-align: center;
 			}
+
 			flex-direction: column;
 			gap: 0;
 			justify-content: flex-start;
@@ -80,6 +82,7 @@
 				.formatted-header__title {
 					font-size: 2.75rem;
 				}
+
 				.formatted-header__subtitle {
 					color: #000;
 					text-align: center;
@@ -96,13 +99,25 @@
 				}
 
 				.select-items__item-title {
-					font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+					font-size: rem(18px);
 					font-weight: 500;
+					line-height: 26px;
 				}
 
 				.select-items__item-description {
-					color: #50575e;
+					color: var(--studio-gray-60);
 				}
+
+				.select-items__item-learn-more {
+					text-decoration: underline;
+					color: var(--studio-gray-60);
+				}
+			}
+
+			.components-button {
+				font-size: $font-body-small;
+				font-weight: 500;
+
 			}
 		}
 	}

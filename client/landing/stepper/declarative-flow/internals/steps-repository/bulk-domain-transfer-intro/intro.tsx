@@ -19,11 +19,21 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						key: 'unlock',
 						title: __( 'Unlock at current registrar' ),
 						description: (
-							<p>
-								{ __(
-									'Your domain management interface should have an option for you to remove this lock. Learn more'
-								) }
-							</p>
+							<>
+								<p>
+									{ __(
+										'Your domain management interface should have an option for you to remove this lock.'
+									) }
+								</p>
+								<a
+									href="wordpress.com"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="select-items__item-learn-more"
+								>
+									{ __( 'Learn more' ) }
+								</a>
+							</>
 						),
 						icon: <Icon icon={ unlock } />,
 						value: 'firstPost',
@@ -33,11 +43,17 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						key: 'setup',
 						title: __( 'Add domains' ),
 						description: (
-							<p>
-								{ __(
-									'Add all domain names with authorization codes to start transfer. Learn more'
-								) }
-							</p>
+							<>
+								<p>{ __( 'Add all domain names with authorization codes to start transfer.' ) }</p>
+								<a
+									href="wordpress.com"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="select-items__item-learn-more"
+								>
+									{ __( 'Learn more' ) }
+								</a>
+							</>
 						),
 						icon: <Icon icon={ plus } />,
 						value: 'setup',
