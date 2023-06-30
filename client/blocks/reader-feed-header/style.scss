@@ -45,9 +45,6 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		font-size: $font-title-medium;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
 		align-items: center;
 		display: flex;
 		margin-bottom: 16px;
