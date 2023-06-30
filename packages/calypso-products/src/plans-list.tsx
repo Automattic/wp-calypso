@@ -828,7 +828,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 		FEATURE_PAID_SUBSCRIBERS_JP,
-		FEATURE_SUPPORT_EMAIL,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
 	getBlogOnboardingSignupFeatures: () => [
