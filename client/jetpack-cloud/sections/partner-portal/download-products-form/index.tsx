@@ -30,21 +30,30 @@ export default function DownloadProductsForm() {
 	const jetpackKeys =
 		licenseKeys && licenseKeys.split( ',' ).filter( ( key ) => ! isWooCommerceProduct( key ) );
 
-	const jetpackProducts = jetpackKeys.map( ( licenseKey ) => {
-		const productSlug = getProductSlugFromKey( licenseKey );
-		const product = allProducts && allProducts.find( ( product ) => product.slug === productSlug );
+	const jetpackProducts =
+		jetpackKeys &&
+		jetpackKeys.map( ( licenseKey ) => {
+			const productSlug = getProductSlugFromKey( licenseKey );
+			const product =
+				allProducts && allProducts.find( ( product ) => product.slug === productSlug );
 
-		return (
-			<li key={ licenseKey }>
-				<h5>{ product && product.name }</h5>
-				<pre>{ licenseKey }</pre>
-			</li>
-		);
-	} );
+			return (
+				<li key={ licenseKey }>
+					<h5>{ product && product.name }</h5>
+					<pre>{ licenseKey }</pre>
+				</li>
+			);
+		} );
 
-	const wooProducts = wooKeys.map( ( licenseKey ) => (
-		<WooProductDownload key={ licenseKey } licenseKey={ licenseKey } allProducts={ allProducts } />
-	) );
+	const wooProducts =
+		wooKeys &&
+		wooKeys.map( ( licenseKey ) => (
+			<WooProductDownload
+				key={ licenseKey }
+				licenseKey={ licenseKey }
+				allProducts={ allProducts }
+			/>
+		) );
 
 	const onNavigate = () => {
 		return page.redirect(

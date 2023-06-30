@@ -32,10 +32,6 @@
 		margin: 64px 0;
 	}
 
-	&__action-items {
-		display: block;
-	}
-
 	&__action-items h4 {
 		font-size: 1.25rem;
 	}
@@ -98,11 +94,6 @@
 		flex-direction: row;
 		flex-grow: 0;
 	}
-}
-
-.download-products-form__bottom {
-	display: flex;
-	flex-wrap: wrap;
 }
 
 p.download-products-form__description {

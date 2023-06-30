@@ -7,6 +7,7 @@ import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import AssignLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
+import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import Layout from '../../layout';
 import LayoutHeader from '../../layout/header';
 
@@ -25,7 +26,9 @@ export default function AssignLicense( {
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 	const products = getQueryArg( window.location.href, 'products' ) as string;
 	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
-	const showDownloadStep = licenseKeysArray.some( ( key ) => key.startsWith( 'woocommerce-' ) );
+	const showDownloadStep = licenseKeysArray.some( ( licenseKey ) =>
+		isWooCommerceProduct( licenseKey )
+	);
 
 	const scrollToTop = () => {
 		window.scrollTo( 0, 0 );
