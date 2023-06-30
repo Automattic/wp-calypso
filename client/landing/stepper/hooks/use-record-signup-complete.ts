@@ -1,8 +1,4 @@
-import {
-	isDomainRegistration,
-	isDomainTransfer,
-	isDomainMapping,
-} from '@automattic/calypso-products';
+import { isDomainTransfer, isDomainMapping } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from 'react';
 import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -14,11 +10,12 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
 	const siteId = site?.ID || null;
 	const theme = site?.options?.theme_slug || '';
-	const { domainCartItem, planCartItem, siteCount } = useSelect( ( select ) => {
+	const { domainCartItem, planCartItem, siteCount, selectedDomain } = useSelect( ( select ) => {
 		return {
 			siteCount: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count,
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 		};
 	}, [] );
 
@@ -32,22 +29,20 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 		// the length of registration, so I use isNewUser here as an approximation
 		const isNew7DUserSite = isNewUser;
 
-		// FIXME:
-		// the domain store considers a free domain a domain registration and will populate a domainCartItem object.
-		// Thus the only way to check whether it's a free domain for now is whether domainCarItem is undefined or the product_slug is an empty string.
-		// This behavior worths a revisit. It's also why we can't check hasCartItems as simply as domainCartItem || planCartItem
-		const domainProductSlug =
-			domainCartItem &&
-			// FIXME:
-			// the current shopping cart types don't include one for a domain product. We should add one and remove the `any` here
-			isDomainRegistration( domainCartItem as any ) &&
-			( domainCartItem.product_slug === '' ? undefined : domainCartItem.product_slug );
-		const hasCartItems = Boolean( domainProductSlug || planCartItem ); // see the function `dependenciesContainCartItem()
+		// Domain cart items can sometimes be included when free. So the selected domain is explicitly checked to see if it's free.
+		// For mappings and transfers this attribute should be empty but it needs to be checked.
+		const isPaidDomainItem = domainCartItem && selectedDomain?.is_free !== true;
+		const hasCartItems = ! isPaidDomainItem || planCartItem; // see the function `dependenciesContainCartItem()
 
-		// TBD:
+		// Domain product slugs can be a domain purchases like dotcom_domain or dotblog_domain or a mapping like domain_mapping
+		// When purchasing free subdomains the product_slugs is empty (since there is no actual produce being purchased)
+		// so we avoid capturing the product slug in these instances.
+		const domainProductSlug =
+			domainCartItem?.product_slug !== '' ? domainCartItem?.product_slug : undefined;
+
 		// When there is no plan put in the cart, `planCartItem` is `null` instead of `undefined` like domainCartItem.
-		// It worths a investigation of whether the both should behave the same so this code can be simplified.
-		const planProductSlug = planCartItem !== null ? planCartItem.product_slug : undefined;
+		// It worths a investigation of whether the both should behave the same.
+		const planProductSlug = planCartItem?.product_slug ? planCartItem.product_slug : undefined;
 
 		recordSignupComplete( {
 			flow,
@@ -61,8 +56,8 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			isBlankCanvas: theme?.includes( 'blank-canvas' ),
 			planProductSlug,
 			domainProductSlug,
-			isMapping: domainCartItem && isDomainMapping( domainCartItem ),
-			isTransfer: domainCartItem && isDomainTransfer( domainCartItem ),
+			isMapping: isPaidDomainItem && isDomainMapping( domainCartItem ),
+			isTransfer: isPaidDomainItem && isDomainTransfer( domainCartItem ),
 		} );
-	}, [ flow, siteId, siteCount, theme, domainCartItem, planCartItem ] );
+	}, [ domainCartItem, flow, planCartItem, selectedDomain?.is_free, siteCount, siteId, theme ] );
 };

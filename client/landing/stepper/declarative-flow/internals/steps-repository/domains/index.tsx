@@ -37,7 +37,7 @@ import type { DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
-	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
@@ -88,6 +88,9 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		shouldHideFreePlan = false
 	) => {
 		if ( suggestion ) {
+			setDomain( suggestion );
+
+			/** FIXME: a domain cart item should probably not be set if the domain is free */
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
