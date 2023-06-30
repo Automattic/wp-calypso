@@ -1048,7 +1048,7 @@ export class JetpackAuthorize extends Component {
 		const authSiteId = this.props.authQuery.clientId;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 
-		if ( this.isWooCoreProfiler && ( isAuthorizing || authorizeSuccess ) ) {
+		if ( this.isWooCoreProfiler() && ( isAuthorizing || authorizeSuccess ) ) {
 			return (
 				// Wrap the loader in a modal to show it in full screen
 				<Modal
