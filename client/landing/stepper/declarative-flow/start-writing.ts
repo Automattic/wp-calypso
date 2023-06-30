@@ -70,6 +70,14 @@ const startWriting: Flow = {
 		).getState();
 		const site = useSite();
 
+		// This flow clear the site_intent when flow is completed.
+		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
+		// See https://github.com/Automattic/dotcom-forge/issues/2886
+		const isSiteLaunched = site?.launch_status === 'launched' || false;
+		if ( isSiteLaunched ) {
+			setIntentOnSite( siteSlug, '' );
+		}
+
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 
