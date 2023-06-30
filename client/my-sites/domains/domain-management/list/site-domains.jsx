@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -21,7 +22,7 @@ import DomainHeader from 'calypso/my-sites/domains/domain-management/components/
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import GoogleSaleBanner from 'calypso/my-sites/email/google-sale-banner';
 import {
 	composeAnalytics,
@@ -228,6 +229,8 @@ export class SiteDomains extends Component {
 						onMakePrimary={ this.handleUpdatePrimaryDomainWpcom }
 					/>
 				) }
+
+				{ this.renderManageDomainsSection() }
 			</>
 		);
 	}
@@ -307,6 +310,37 @@ export class SiteDomains extends Component {
 				buttons={ buttons }
 				mobileButtons={ mobileButtons }
 			/>
+		);
+	}
+
+	renderManageDomainsSection() {
+		const { dispatch, translate } = this.props;
+
+		const handleClick = () => {
+			dispatch( recordTracksEvent( 'calypso_domain_management_see_all_domains_link_click' ) );
+		};
+
+		return (
+			<div
+				css={ {
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					padding: '32px 16px',
+				} }
+			>
+				<p css={ { marginBottom: '1rem' } }>
+					{ translate( 'Manage all the domains you own on WordPress.com' ) }
+				</p>
+				<Button
+					className="domains-table-see-all-domains-link"
+					href={ domainManagementRoot() }
+					key="breadcrumb_see_all_domains_link"
+					onClick={ handleClick }
+				>
+					{ translate( 'Manage all domains' ) }
+				</Button>
+			</div>
 		);
 	}
 
