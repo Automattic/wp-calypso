@@ -112,6 +112,10 @@ const hosting: Flow = {
 
 		if ( hostingFlow ) {
 			const goBack = () => {
+				if ( _currentStepSlug === 'options' ) {
+					return window.location.assign( '/sites?hosting-flow=true' );
+				}
+
 				if ( _currentStepSlug === 'plans' ) {
 					navigate( 'options' );
 				}
@@ -157,6 +161,10 @@ const hosting: Flow = {
 		}
 
 		const goBack = () => {
+			if ( _currentStepSlug === 'plans' ) {
+				return window.location.assign( '/sites' );
+			}
+
 			if ( _currentStepSlug === 'options' ) {
 				navigate( 'plans' );
 			}
