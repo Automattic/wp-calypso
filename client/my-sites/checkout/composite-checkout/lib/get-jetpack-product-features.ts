@@ -8,6 +8,7 @@ import {
 	isJetpackSecurityT1Slug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
+	isJetpackStatsSlug,
 	isJetpackStarterSlug,
 	isJetpackVideoPressSlug,
 	isJetpackAISlug,
@@ -24,6 +25,7 @@ type featureString =
 	| 'search'
 	| 'social-basic'
 	| 'social-advanced'
+	| 'stats'
 	| 'support'
 	| 'videopress'
 	| 'complete'
@@ -102,6 +104,13 @@ function getFeatureStrings(
 				translate( 'Scheduled posts' ),
 				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
 				translate( 'Content recycling' ),
+			];
+		case 'stats':
+			return [
+				translate( 'Real-time data on visitors, likes, and comments' ),
+				translate( 'View weekly and yearly trends' ),
+				translate( 'Instant access to upcoming features' ),
+				translate( 'Ad-free experience' ),
 			];
 		case 'support':
 			return [ translate( 'Priority support' ) ];
@@ -187,6 +196,13 @@ export default function getJetpackProductFeatures(
 		return [
 			...getFeatureStrings( 'social-basic', translate ),
 			...getFeatureStrings( 'social-advanced', translate ),
+		];
+	}
+
+	if ( isJetpackStatsSlug( product.product_slug ) ) {
+		return [
+			...getFeatureStrings( 'stats', translate ),
+			...getFeatureStrings( 'support', translate ),
 		];
 	}
 
