@@ -5,6 +5,7 @@ import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
+import withDimensions from 'calypso/lib/with-dimensions';
 import FeedError from 'calypso/reader/feed-error';
 import { getFollowerCount, getSiteName } from 'calypso/reader/get-helpers';
 import SiteBlocked from 'calypso/reader/site-blocked';
@@ -21,7 +22,7 @@ import EmptyContent from './empty';
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
 const getReaderSiteId = ( feed ) => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID );
 
-export default function FeedStream( props ) {
+const FeedStream = ( props ) => {
 	const { className = 'is-site-stream', feedId, showBack = true } = props;
 	const translate = useTranslate();
 
@@ -58,8 +59,12 @@ export default function FeedStream( props ) {
 
 	const streamSidebar = (
 		<FeedStreamSidebar
+			feed={ feed }
 			followerCount={ followerCount }
 			postCount={ postCount }
+			showFollow={ props.width > 900 }
+			site={ site }
+			streamKey={ props.streamKey }
 			tags={ siteTags.data }
 		/>
 	);
@@ -94,4 +99,6 @@ export default function FeedStream( props ) {
 			{ siteId && <QueryReaderSite siteId={ siteId } /> }
 		</Stream>
 	);
-}
+};
+
+export default withDimensions( FeedStream );

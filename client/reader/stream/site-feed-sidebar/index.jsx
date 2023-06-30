@@ -1,12 +1,21 @@
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
+import ReaderFeedHeaderFollow from 'calypso/blocks/reader-feed-header/follow';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import '../style.scss';
 
-const FeedStreamSidebar = ( { followerCount, postCount, tags } ) => {
+const FeedStreamSidebar = ( {
+	feed,
+	followerCount,
+	postCount,
+	showFollow,
+	site,
+	streamKey,
+	tags,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -27,6 +36,11 @@ const FeedStreamSidebar = ( { followerCount, postCount, tags } ) => {
 
 	return (
 		<>
+			<div className="reader-feed-header__follow">
+				{ showFollow && (
+					<ReaderFeedHeaderFollow feed={ feed } site={ site } streamKey={ streamKey } />
+				) }
+			</div>
 			{ ( postCount || followerCount ) && (
 				<div className="reader-tag-sidebar-stats">
 					{ postCount && (
