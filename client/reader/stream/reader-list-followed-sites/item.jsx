@@ -2,17 +2,19 @@ import { get } from 'lodash';
 import { connect, useDispatch } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import Count from 'calypso/components/count';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 import ReaderSidebarHelper from '../../sidebar/helper';
 import '../style.scss';
 
 const ReaderListFollowingItem = ( props ) => {
-	const { site, path, isUnseen, feed } = props;
+	const { site, path, isUnseen, feed, follow, siteId } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
@@ -30,17 +32,17 @@ const ReaderListFollowingItem = ( props ) => {
 
 	let streamLink;
 
-	if ( site.feed_ID ) {
-		streamLink = `/read/feeds/${ site.feed_ID }`;
-	} else if ( site.blog_ID ) {
+	if ( follow.feed_ID ) {
+		streamLink = `/read/feeds/${ follow.feed_ID }`;
+	} else if ( follow.blog_ID ) {
 		// If subscription is missing a feed ID, fallback to blog stream
-		streamLink = `/read/blogs/${ site.blog_ID }`;
+		streamLink = `/read/blogs/${ follow.blog_ID }`;
 	} else {
 		// Skip it
 		return null;
 	}
 
-	const urlForDisplay = formatUrlForDisplay( site.URL );
+	const urlForDisplay = formatUrlForDisplay( follow.URL );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -53,9 +55,11 @@ const ReaderListFollowingItem = ( props ) => {
 			<a
 				className="reader-sidebar-site_link"
 				href={ streamLink }
-				onClick={ () => handleSidebarClick( site ) }
+				onClick={ () => handleSidebarClick( follow ) }
 			>
 				<span className="reader-sidebar-site_siteicon">
+					{ ! site && <QueryReaderSite siteId={ siteId } /> }
+					{ ! feed && follow.feed_ID && <QueryReaderFeed feedId={ follow.feed_ID } /> }
 					<ReaderAvatar
 						siteIcon={ siteIcon }
 						feedIcon={ feedIcon }
@@ -65,20 +69,20 @@ const ReaderListFollowingItem = ( props ) => {
 					/>
 				</span>
 				<span className="reader-sidebar-site_sitename">
-					<span className="reader-sidebar-site_nameurl">{ site.name || urlForDisplay }</span>
-					{ site.last_updated > 0 && (
+					<span className="reader-sidebar-site_nameurl">{ follow.name || urlForDisplay }</span>
+					{ follow.last_updated > 0 && (
 						<span className="reader-sidebar-site_updated">
-							{ moment( new Date( site.last_updated ) ).fromNow() }
+							{ moment( new Date( follow.last_updated ) ).fromNow() }
 						</span>
 					) }
-					{ site.description?.length > 0 && (
-						<span className="reader-sidebar-site_description">{ site.description }</span>
+					{ follow.description?.length > 0 && (
+						<span className="reader-sidebar-site_description">{ follow.description }</span>
 					) }
 					{ urlForDisplay.length > 0 && (
 						<span className="reader-sidebar-site_url">{ urlForDisplay }</span>
 					) }
 				</span>
-				{ isUnseen && site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+				{ isUnseen && follow.unseen_count > 0 && <Count count={ follow.unseen_count } compact /> }
 			</a>
 		</li>
 	);
@@ -86,17 +90,12 @@ const ReaderListFollowingItem = ( props ) => {
 };
 
 export default connect( ( state, ownProps ) => {
-	const site = ownProps.site;
-	const feedId = get( site, 'feed_ID' );
-	const feed = getFeed( state, feedId );
-
-	// Add site icon to feed object so have icon for external feeds
-	if ( feed ) {
-		const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-		feed.site_icon = follow?.site_icon;
-	}
+	const feedId = get( ownProps.follow, 'feed_ID' );
+	const siteId = get( ownProps.follow, 'blog_ID' );
 
 	return {
-		feed: feed,
+		feed: getFeed( state, feedId ),
+		site: getSite( state, siteId ),
+		siteId: siteId,
 	};
 } )( ReaderListFollowingItem );
