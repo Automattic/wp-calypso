@@ -8,11 +8,9 @@
 	justify-content: center;
 	margin-top: -12px;
 	margin-bottom: 16px;
-	// padding-left: 40px;
 
 	@include break-small {
 		margin-bottom: 40px;
-		// padding-left: 60px;
 	}
 }
 
@@ -20,7 +18,7 @@
 	display: flex;
 	align-items: flex-start;
 	position: relative;
-	padding: 24px;
+	padding: 24px 0;
 
 	p {
 		margin: 0;
@@ -31,11 +29,11 @@
 	}
 
 	@include break-small {
-		width: 342px;
+		width: 390px;
 	}
 
 	@include break-medium {
-		width: 456px;
+		width: 504px;
 	}
 
 	&-icon {
