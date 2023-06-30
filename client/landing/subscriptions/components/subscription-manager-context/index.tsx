@@ -1,12 +1,12 @@
 import { createContext, useContext } from 'react';
 
-export enum SiteSubscriptionsPortal {
+export enum SubscriptionsPortal {
 	Subscriptions = 'subscriptions',
 	Reader = 'reader',
 }
 
 export interface SubscriptionManagerContext {
-	portal: SiteSubscriptionsPortal;
+	portal: SubscriptionsPortal;
 	isSubscriptionsPortal?: boolean;
 	isReaderPortal?: boolean;
 }
@@ -16,15 +16,15 @@ const SubscriptionManagerContext = createContext< SubscriptionManagerContext | u
 );
 
 export const SubscriptionManagerContextProvider: React.FC< {
-	portal: SiteSubscriptionsPortal;
+	portal: SubscriptionsPortal;
 	children?: React.ReactNode;
 } > = ( { portal, ...props } ) => {
 	return (
 		<SubscriptionManagerContext.Provider
 			value={ {
 				portal,
-				isSubscriptionsPortal: portal === SiteSubscriptionsPortal.Subscriptions,
-				isReaderPortal: portal === SiteSubscriptionsPortal.Reader,
+				isSubscriptionsPortal: portal === SubscriptionsPortal.Subscriptions,
+				isReaderPortal: portal === SubscriptionsPortal.Reader,
 			} }
 			{ ...props }
 		/>

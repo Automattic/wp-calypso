@@ -15,7 +15,7 @@ import {
 	SiteSubscriptionsManagerProvider,
 } from 'calypso/landing/subscriptions/components/site-subscriptions-manager';
 import {
-	SiteSubscriptionsPortal,
+	SubscriptionsPortal,
 	SubscriptionManagerContextProvider,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { SubscriptionsEllipsisMenu } from 'calypso/landing/subscriptions/components/subscriptions-ellipsis-menu';
@@ -44,7 +44,7 @@ const SiteSubscriptionsManager = () => {
 	useMarkFollowsAsStaleOnUnmount();
 
 	return (
-		<SubscriptionManagerContextProvider portal={ SiteSubscriptionsPortal.Reader }>
+		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 			<Main className="site-subscriptions-manager">
 				<DocumentHead title={ translate( 'Manage subscriptions' ) } />
 
