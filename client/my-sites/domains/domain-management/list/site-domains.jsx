@@ -21,7 +21,7 @@ import DomainHeader from 'calypso/my-sites/domains/domain-management/components/
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
-import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import GoogleSaleBanner from 'calypso/my-sites/email/google-sale-banner';
 import {
 	composeAnalytics,
@@ -260,13 +260,6 @@ export class SiteDomains extends Component {
 					'?' +
 					stringify( { filter: 'owned-by-others' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-others' )?.length,
-			},
-			null,
-			{
-				label: translate( 'All my domains' ),
-				value: 'all-my-domains',
-				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
-				count: null,
 			},
 		];
 
