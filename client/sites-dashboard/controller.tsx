@@ -46,16 +46,16 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 }
 
 export function maybeSitesDashboard( context: PageJSContext, next: () => void ) {
-	const siteCount = getCurrentUser( context.store.getState() )?.site_count;
+	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
 
-	if ( ! context.query[ 'new-site' ] && siteCount === 0 ) {
-		return emptySites( context, next );
+	if ( context.query[ 'hosting-flow' ] || siteCount === 0 ) {
+		return emptySites( context, siteCount, next );
 	}
 
 	return sitesDashboard( context, next );
 }
 
-function emptySites( context: PageJSContext, next: () => void ) {
+function emptySites( context: PageJSContext, siteCount: number, next: () => void ) {
 	const emptySitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #fff;
@@ -85,7 +85,7 @@ function emptySites( context: PageJSContext, next: () => void ) {
 		<>
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<Global styles={ emptySitesDashboardGlobalStyles } />
-			<EmptySitesDashboard />
+			<EmptySitesDashboard siteCount={ siteCount } />
 		</>
 	);
 
