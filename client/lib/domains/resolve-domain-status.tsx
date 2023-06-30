@@ -254,7 +254,11 @@ export function resolveDomainStatus(
 								components: {
 									a: (
 										<a
-											href={ domainManagementEditContactInfo( siteSlug as string, domain.name ) }
+											href={ domainManagementEditContactInfo(
+												siteSlug as string,
+												domain.name,
+												currentRoute
+											) }
 										></a>
 									),
 								},
@@ -485,7 +489,11 @@ export function resolveDomainStatus(
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ domainManagementEdit( siteSlug as string, domain.domain ) } />,
+								a: (
+									<a
+										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
+									/>
+								),
 							},
 						}
 					),

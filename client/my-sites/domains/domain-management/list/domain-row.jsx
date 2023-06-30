@@ -124,10 +124,11 @@ class DomainRow extends PureComponent {
 	}
 
 	renderDomainStatus() {
-		const { domain, site, isLoadingDomainDetails, translate, dispatch } = this.props;
+		const { currentRoute, domain, site, isLoadingDomainDetails, translate, dispatch } = this.props;
 		const { status, statusClass } = resolveDomainStatus( domain, null, translate, dispatch, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
+			currentRoute,
 		} );
 
 		const domainStatusClass = classnames( 'domain-row__status-cell', {
@@ -473,8 +474,16 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, isManagingAllSites, site, showCheckbox, purchase, translate, dispatch } =
-			this.props;
+		const {
+			currentRoute,
+			domain,
+			isManagingAllSites,
+			site,
+			showCheckbox,
+			purchase,
+			translate,
+			dispatch,
+		} = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
 		const { noticeText, statusClass } = resolveDomainStatus(
@@ -485,6 +494,7 @@ class DomainRow extends PureComponent {
 			{
 				siteSlug: site?.slug,
 				getMappingErrors: true,
+				currentRoute,
 			}
 		);
 
