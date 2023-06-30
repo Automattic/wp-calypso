@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 
 export enum SiteSubscriptionsPortal {
-	External = 'external',
+	Subscriptions = 'subscriptions',
 	Reader = 'reader',
 }
 
@@ -23,7 +23,7 @@ export const SubscriptionManagerContextProvider: React.FC< {
 		<SubscriptionManagerContext.Provider
 			value={ {
 				portal,
-				isSubscriptionsPortal: portal === SiteSubscriptionsPortal.External,
+				isSubscriptionsPortal: portal === SiteSubscriptionsPortal.Subscriptions,
 				isReaderPortal: portal === SiteSubscriptionsPortal.Reader,
 			} }
 			{ ...props }
