@@ -119,16 +119,14 @@ const StyledButton = styled( Button )`
 	}
 `;
 
-export function FreePlanPaidDomainDialog( {
+function DialogPaidPlanIsRequired( {
 	domainName,
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-	onClose,
 }: {
 	domainName: string;
 	suggestedPlanSlug: PlanSlug;
-	onClose: () => void;
 	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
 	onPlanSelected: () => void;
 } ) {
@@ -159,6 +157,66 @@ export function FreePlanPaidDomainDialog( {
 	}
 
 	return (
+		<DialogContainer>
+			<Heading>{ translate( 'A paid plan is required for your domain.' ) }</Heading>
+			<SubHeading>
+				{ translate(
+					'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
+				) }
+			</SubHeading>
+			<ButtonContainer>
+				<RowWithBorder>
+					<DomainName>
+						<div>{ domainName }</div>
+						<FreeDomainText>{ translate( 'Free for one year ' ) }</FreeDomainText>
+					</DomainName>
+					<StyledButton busy={ isBusy } primary onClick={ handlePaidPlanClick }>
+						{ currencyCode &&
+							translate( 'Get %(planTitle)s - %(planPrice)s/month', {
+								comment: 'Eg: Get Personal - $4/month',
+								args: {
+									planTitle: planTitle as string,
+									planPrice: formatCurrency(
+										planPrices.discountedRawPrice || planPrices.rawPrice,
+										currencyCode,
+										{ stripZeros: true }
+									),
+								},
+							} ) }
+					</StyledButton>
+				</RowWithBorder>
+				<Row>
+					<DomainName>
+						{ isInitialLoading && <LoadingPlaceHolder /> }
+						{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
+					</DomainName>
+					<StyledButton
+						disabled={ isInitialLoading || ! wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }
+						busy={ isBusy }
+						onClick={ handleFreeDomainClick }
+					>
+						{ translate( 'Continue with Free plan' ) }
+					</StyledButton>
+				</Row>
+			</ButtonContainer>
+		</DialogContainer>
+	);
+}
+
+export function FreePlanPaidDomainDialog( {
+	domainName,
+	suggestedPlanSlug,
+	onFreePlanSelected,
+	onPlanSelected,
+	onClose,
+}: {
+	domainName: string;
+	suggestedPlanSlug: PlanSlug;
+	onClose: () => void;
+	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
+	onPlanSelected: () => void;
+} ) {
+	return (
 		<Dialog
 			isBackdropVisible={ true }
 			isVisible={ true }
@@ -176,49 +234,12 @@ export function FreePlanPaidDomainDialog( {
 					}
 				` }
 			/>
-			<DialogContainer>
-				<Heading>{ translate( 'A paid plan is required for your domain.' ) }</Heading>
-				<SubHeading>
-					{ translate(
-						'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
-					) }
-				</SubHeading>
-				<ButtonContainer>
-					<RowWithBorder>
-						<DomainName>
-							<div>{ domainName }</div>
-							<FreeDomainText>{ translate( 'Free for one year ' ) }</FreeDomainText>
-						</DomainName>
-						<StyledButton busy={ isBusy } primary onClick={ handlePaidPlanClick }>
-							{ currencyCode &&
-								translate( 'Get %(planTitle)s - %(planPrice)s/month', {
-									comment: 'Eg: Get Personal - $4/month',
-									args: {
-										planTitle: planTitle as string,
-										planPrice: formatCurrency(
-											planPrices.discountedRawPrice || planPrices.rawPrice,
-											currencyCode,
-											{ stripZeros: true }
-										),
-									},
-								} ) }
-						</StyledButton>
-					</RowWithBorder>
-					<Row>
-						<DomainName>
-							{ isInitialLoading && <LoadingPlaceHolder /> }
-							{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
-						</DomainName>
-						<StyledButton
-							disabled={ isInitialLoading || ! wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }
-							busy={ isBusy }
-							onClick={ handleFreeDomainClick }
-						>
-							{ translate( 'Continue with Free plan' ) }
-						</StyledButton>
-					</Row>
-				</ButtonContainer>
-			</DialogContainer>
+			<DialogPaidPlanIsRequired
+				domainName={ domainName }
+				suggestedPlanSlug={ suggestedPlanSlug }
+				onFreePlanSelected={ onFreePlanSelected }
+				onPlanSelected={ onPlanSelected }
+			/>
 		</Dialog>
 	);
 }
