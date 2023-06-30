@@ -101,7 +101,6 @@
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/offer-complete-after-activation": false,
 		"jetpack/zendesk-chat-for-logged-in-users": true,
-		"jetpack-social/multiple-connections": true,
 		"jitms": true,
 		"lasagna": true,
 		"launchpad-updates": true,
