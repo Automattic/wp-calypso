@@ -706,7 +706,7 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 
 .site-settings__built-by-upsell {
 	&.banner.card {
-		padding-right: 24px;
+		padding-inline-end: 24px;
 	}
 	.banner__icon-no-circle {
 		img {
@@ -715,6 +715,6 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		}
 	}
 	.banner__action {
-		margin-right: 0;
+		margin-inline-end: 0;
 	}
 }
