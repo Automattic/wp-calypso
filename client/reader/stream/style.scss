@@ -661,6 +661,15 @@
 			overflow: hidden;
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
+			white-space: nowrap;
+			position: relative;
+
+			.stream__two-column & {
+				width: 225px;
+			}
+			.stream__two-column &::after {
+				@include long-content-fade( $size: 5% );
+			}
 		}
 	}
 
