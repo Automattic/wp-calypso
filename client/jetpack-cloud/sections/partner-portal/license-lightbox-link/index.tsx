@@ -16,17 +16,7 @@ const LicenseLightboxLink: FunctionComponent< Props > = ( { productName, onClick
 	return (
 		<Button className="license-lightbox-link" plain onClick={ onClick }>
 			{ translate( 'More about {{productName/}}', {
-				components: {
-					productName:
-						productName.indexOf( 'WooCommerce' ) !== -1 ? (
-							<>
-								<br />
-								{ productName }
-							</>
-						) : (
-							<>{ productName }</>
-						),
-				},
+				components: { productName: <>{ productName }</> },
 			} ) }
 
 			<img className="license-lightbox-link-icon" src={ ModalLinkIcon } alt="" />
