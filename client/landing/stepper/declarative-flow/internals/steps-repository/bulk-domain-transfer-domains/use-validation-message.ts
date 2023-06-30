@@ -75,8 +75,8 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			message: __( 'This domain is unlocked and ready to be transferred.' ),
 		};
 	} else if ( validationResult?.auth_code_valid === false ) {
-		// the auth check API returns error 400 for incorrect cods,
-		// in which case we return `false`.
+		// the auth check API has a bug and returns error 400 for incorrect auth codes,
+		// in which case, the `useIsDomainCodeValid` hook returns `false`.
 		return {
 			valid: false,
 			loading: false,
