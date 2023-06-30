@@ -28,7 +28,7 @@ const ThankYouSectionTitle = styled.h1`
 
 const ThankYouSectionContainer = styled.div`
 	margin-bottom: 35px;
-	&:not( :first-child ) {
+	&:not( :first-of-type ) {
 		border-top: 1px solid var( --studio-gray-5 );
 	}
 	&:last-child {

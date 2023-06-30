@@ -1,8 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 
 function SocialLoginTos( props ) {
 	if ( props.isWooCoreProfilerFlow ) {
@@ -56,6 +55,5 @@ function SocialLoginTos( props ) {
 }
 
 export default connect( ( state ) => ( {
-	isWooCoreProfilerFlow:
-		'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
+	isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 } ) )( localize( SocialLoginTos ) );

@@ -67,8 +67,7 @@
 		"realtime-site-count": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
-		"jetpack/pricing-page-cart": true,
-		"jetpack-social/multiple-connections": true
+		"jetpack/pricing-page-cart": true
 	},
 	"enable_all_sections": false,
 	"sections": {

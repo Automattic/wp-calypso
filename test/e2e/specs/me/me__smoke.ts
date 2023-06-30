@@ -41,15 +41,23 @@ describe( 'Me: Smoke Test', function () {
 		{ target: 'Privacy', endpoint: 'privacy' },
 		{ target: 'Notification Settings', endpoint: 'notifications' },
 		{ target: 'Blocked Sites', endpoint: 'site-blocks' },
-		{ target: 'Apps', endpoint: 'get-apps' },
 	] )( 'Navigate to Me > $target', async function ( { target, endpoint } ) {
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			await page.getByRole( 'link', { name: target } ).click();
+			await page
+				.getByRole( 'navigation' )
+				.getByRole( 'link', { name: target, exact: true } )
+				.click();
 		} else {
+			// In mobile, the Me Sidebar requires odd interactions (clicking twice)
+			// to interact and dismiss.
+			// We do not want to codify wrong behavior.
 			// See: https://github.com/Automattic/wp-calypso/issues/78356
 			await page.goto( DataHelper.getCalypsoURL( `me/${ endpoint }` ) );
 		}
+
+		// Ensure the URL changes depending on the endpoint.
 		await page.waitForURL( new RegExp( endpoint ) );
-		await page.getByRole( 'heading', { name: target } );
+		// Ensure the heading title loads.
+		await page.getByRole( 'main' ).getByRole( 'heading', { name: target } ).waitFor();
 	} );
 } );

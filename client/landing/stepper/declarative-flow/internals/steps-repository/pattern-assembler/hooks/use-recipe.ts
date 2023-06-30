@@ -30,9 +30,13 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		font_variation_title = '',
 	} = selectedDesign?.recipe || {};
 
-	const colorVariations = useColorPaletteVariations( siteId, stylesheet );
+	const colorVariations = useColorPaletteVariations( siteId, stylesheet, {
+		enabled: !! color_variation_title,
+	} );
 
-	const fontVariations = useFontPairingVariations( siteId, stylesheet );
+	const fontVariations = useFontPairingVariations( siteId, stylesheet, {
+		enabled: !! font_variation_title,
+	} );
 
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 

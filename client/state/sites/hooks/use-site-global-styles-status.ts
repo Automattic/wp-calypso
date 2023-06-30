@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { useExperiment } from 'calypso/lib/explat';
 import wpcom from 'calypso/lib/wp';
@@ -23,9 +22,7 @@ export const getGlobalStylesInfoForSite = (
 ): GlobalStylesStatus => {
 	if ( siteId == null ) {
 		return {
-			// The next line should be replaced with true once the Gating global styles feature is live.
-			// That will make all non-created sites to limit global styles.
-			shouldLimitGlobalStyles: isEnabled( 'limit-global-styles' ),
+			shouldLimitGlobalStyles: true,
 			globalStylesInUse: false,
 			globalStylesInPersonalPlan: currentUserHasGlobalStylesInPersonal,
 		};

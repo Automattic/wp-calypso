@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	isMonthly,
+	isWooExpressPlan,
 	isWpComProPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
@@ -40,6 +41,7 @@ export default function getPlanFeatures(
 			emailSupport,
 			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
+			String( translate( 'Ad-free experience' ) ),
 		].filter( isValueTruthy );
 	}
 
@@ -80,7 +82,7 @@ export default function getPlanFeatures(
 		].filter( isValueTruthy );
 	}
 
-	if ( isWpComEcommercePlan( productSlug ) ) {
+	if ( isWpComEcommercePlan( productSlug ) || isWooExpressPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
 			isMonthlyPlan && emailSupport,

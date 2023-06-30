@@ -2,3 +2,8 @@
 .blazepress-widget {
 	z-index: 99999;
 }
+
+// Fixes double scrolls on widget creation overlay
+html.has-blank-canvas body {
+	overflow: hidden;
+}

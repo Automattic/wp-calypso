@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -14,6 +15,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { SubscribersHeaderPopover } from './components/subscribers-header-popover';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
+import { getSubscriberDetailsUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
 import { Subscriber } from './types';
 import './style.scss';
@@ -26,18 +28,14 @@ type SubscribersProps = {
 const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
 		useUnsubscribeModal( selectedSiteId, pageNumber );
-	const onClickView = ( subscriber: Subscriber ) => {
-		if ( subscriber.user_id ) {
-			page.show( `/subscribers/${ selectedSiteSlug }/${ subscriber.user_id }` );
-		} else {
-			page.show( `/subscribers/external/${ selectedSiteSlug }/${ subscriber.subscription_id }` );
-		}
+	const onClickView = ( { subscription_id, user_id }: Subscriber ) => {
+		page.show( getSubscriberDetailsUrl( selectedSiteSlug, subscription_id, user_id, pageNumber ) );
 	};
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const dispatch = useDispatch();
+	const localizeUrl = useLocalizeUrl();
 
 	const addSubscribersCallback = () => {
 		setShowAddSubscribersModal( false );
@@ -65,7 +63,9 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 							components: {
 								link: (
 									<a
-										href="https://wordpress.com/support/launch-a-newsletter/#about-your-subscribers"
+										href={ localizeUrl(
+											'https://wordpress.com/support/launch-a-newsletter/#about-your-subscribers'
+										) }
 										target="blank"
 									/>
 								),

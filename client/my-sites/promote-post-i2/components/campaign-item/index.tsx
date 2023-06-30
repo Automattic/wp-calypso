@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import page from 'page';
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Campaign } from 'calypso/data/promote-post/types';
@@ -44,7 +44,7 @@ export default function CampaignItem( props: Props ) {
 		name,
 		content_config,
 		display_name,
-		status,
+		ui_status,
 		end_date,
 		budget_cents,
 		start_date,
@@ -71,13 +71,15 @@ export default function CampaignItem( props: Props ) {
 	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
 
 	const statusBadge = (
-		<Badge type={ getCampaignStatusBadgeColor( status ) }>{ getCampaignStatus( status ) }</Badge>
+		<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
+			{ getCampaignStatus( ui_status ) }
+		</Badge>
 	);
 	const openCampaignURL = getAdvertisingDashboardPath(
 		`/${ selectedSiteSlug }/campaigns/${ campaign.campaign_id }`
 	);
 
-	const navigateToDetailsPage = ( event: React.MouseEvent< HTMLTableRowElement > ) => {
+	const navigateToDetailsPage = ( event: React.MouseEvent< HTMLElement > ) => {
 		event.stopPropagation();
 		page.show( openCampaignURL );
 	};
@@ -107,12 +109,10 @@ export default function CampaignItem( props: Props ) {
 		return statElements.map( ( value, index ) => {
 			if ( index < statElements.length - 1 ) {
 				return (
-					<>
-						<span key={ index }>{ value }</span>
-						<span key={ `${ index }-dot` } className="blazepress-mobile-stats-mid-dot">
-							&#183;
-						</span>
-					</>
+					<Fragment key={ index }>
+						<span>{ value }</span>
+						<span className="blazepress-mobile-stats-mid-dot">&#183;</span>
+					</Fragment>
 				);
 			}
 
@@ -139,9 +139,9 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row campaign-item__data-row-mobile">
 					<div className="campaign-item__stats-mobile">{ getMobileStats() }</div>
 					<div className="campaign-item__actions-mobile">
-						<a href={ openCampaignURL } className="campaign-item__view-link">
+						<Button onClick={ navigateToDetailsPage } isLink className="campaign-item__view-link">
 							{ __( 'Open details' ) }
-						</a>
+						</Button>
 					</div>
 				</div>
 			</td>
@@ -164,7 +164,7 @@ export default function CampaignItem( props: Props ) {
 				<div>{ formatNumber( clicks_total ) }</div>
 			</td>
 			<td className="campaign-item__action">
-				<Button isLink icon={ chevronRight } />
+				<Button onClick={ navigateToDetailsPage } isLink icon={ chevronRight } />
 			</td>
 		</tr>
 	);

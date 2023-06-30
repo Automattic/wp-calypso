@@ -61,6 +61,8 @@ class SiteStream extends Component {
 				showPostHeader={ false }
 				showSiteNameOnCards={ false }
 				isDiscoverStream={ this.props.isDiscoverStream }
+				useCompactCards={ true }
+				showFollowButton={ false }
 			>
 				<DocumentHead
 					title={ this.props.translate( '%s ‹ Reader', {

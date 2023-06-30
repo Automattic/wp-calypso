@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import './style.scss';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
@@ -15,6 +16,7 @@ import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-cr
 import usePostsQueryPaged, {
 	getSearchOptionsQueryParams,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
@@ -66,6 +68,7 @@ const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 };
 
 export default function PromotedPosts( { tab }: Props ) {
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 	const selectedTab = tab && [ 'campaigns', 'posts', 'credits' ].includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID || 0;
@@ -75,7 +78,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		entrypoint: 'promoted_posts-header',
 	} );
 
-	const { data: creditBalance = 0 } = useCreditBalanceQuery();
+	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
@@ -161,9 +164,9 @@ export default function PromotedPosts( { tab }: Props ) {
 			id: 'credits',
 			name: translate( 'Credits' ),
 			className: 'pull-right',
-			itemCount: creditBalance,
+			itemCount: parseFloat( creditBalance ),
 			isCountAmount: true,
-			enabled: creditBalance > 0,
+			enabled: parseFloat( creditBalance ) > 0,
 		},
 	];
 
@@ -195,6 +198,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	}
 
 	const showBanner = ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
+
+	// Add Hotjar script to the page.
+	addHotJarScript();
 
 	const headerSubtitle = ( isMobile: boolean ) => {
 		if ( ! isMobile && showBanner ) {
@@ -237,6 +243,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
+						showSupportModal={ ! isRunningInJetpack }
 					/>
 					<Button isPrimary onClick={ onClickPromote }>
 						{ translate( 'Promote' ) }

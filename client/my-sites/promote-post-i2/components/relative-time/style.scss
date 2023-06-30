@@ -1,9 +1,10 @@
 .relative-time-tooltip__container {
 	align-items: center;
-	display: flex;
+	display: inline-flex;
 
 	button.relative-time-tooltip {
 		margin-left: 4px;
+		margin-top: -1px;
 
 		&,
 		svg.gridicons-info-outline {

@@ -78,7 +78,7 @@ const ScreenCategoryList = ( {
 			<Composite
 				{ ...composite }
 				role="listbox"
-				className="screen-container__body screen-container__body--align-sides screen-category-list__body"
+				className="screen-container__body screen-category-list__body"
 				aria-label={ translate( 'Block pattern categories' ) }
 			>
 				{ categoriesInOrder.map( ( { name, label, description } ) => {

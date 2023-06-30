@@ -6,9 +6,11 @@
 	color: $studio-gray-100;
 	font-family: "SF Pro Text", $sans !important;
 	padding: 64px 0 !important;
+	margin-top: 64px;
 
 	&::before {
-		background-color: $studio-gray-0 !important;
+		background-color: #fbfbfb !important;
+		border-top: 1px solid $studio-gray-0;
 		margin-top: -64px !important;
 		z-index: 0 !important;
 	}

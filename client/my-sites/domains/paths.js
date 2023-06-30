@@ -76,9 +76,14 @@ export function domainManagementRoot() {
 /**
  * @param {string|undefined} siteName
  * @param {string|undefined} relativeTo
+ * @param {boolean|undefined} isDomainOnlySite
  */
-export function domainManagementList( siteName, relativeTo = null ) {
-	if ( isUnderDomainManagementAll( relativeTo ) || isUnderEmailManagementAll( relativeTo ) ) {
+export function domainManagementList( siteName, relativeTo = null, isDomainOnlySite = false ) {
+	if (
+		isDomainOnlySite ||
+		isUnderDomainManagementAll( relativeTo ) ||
+		isUnderEmailManagementAll( relativeTo )
+	) {
 		return domainManagementRoot();
 	}
 	return domainManagementRoot() + '/' + siteName ?? '';

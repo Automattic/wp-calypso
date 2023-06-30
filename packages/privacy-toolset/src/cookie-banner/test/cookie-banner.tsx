@@ -65,7 +65,7 @@ describe( 'CookieBanner', () => {
 			advertising: true,
 		} );
 	} );
-	test( 'fires onAccept with default selection (all true) (when no change is done in customized consent)', () => {
+	test( 'fires onAccept with default selection (all true except advertising) (when no change is done in customized consent)', () => {
 		const onAccept = jest.fn();
 		const { container } = render(
 			<CookieBanner content={ genericContent } onAccept={ onAccept } />
@@ -76,7 +76,7 @@ describe( 'CookieBanner', () => {
 		expect( onAccept ).toHaveBeenCalledWith( {
 			essential: true,
 			analytics: true,
-			advertising: true,
+			advertising: false,
 		} );
 	} );
 	test( 'fires onAccept with correct selection (when change is done in customized consent)', () => {
@@ -86,12 +86,12 @@ describe( 'CookieBanner', () => {
 		);
 		fireEvent.click( getByText( container, 'customizeButton' ) );
 		fireEvent.click( getByTestId( container, 'essential-bucket-toggle' ) );
-		fireEvent.click( getByTestId( container, 'analytics-bucket-toggle' ) );
+		fireEvent.click( getByTestId( container, 'advertising-bucket-toggle' ) );
 
 		fireEvent.click( getByText( container, 'acceptSelectionButton' ) );
 		expect( onAccept ).toHaveBeenCalledWith( {
 			essential: false,
-			analytics: false,
+			analytics: true,
 			advertising: true,
 		} );
 	} );

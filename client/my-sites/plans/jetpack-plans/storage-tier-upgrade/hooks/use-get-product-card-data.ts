@@ -80,9 +80,9 @@ const useGetSharedCardData = () => {
 	const translate = useTranslate();
 
 	return useCallback(
-		( slug ) => ( {
+		( slug: string ) => ( {
 			subheader: translate( 'of backup storage' ),
-			buttonLabel: JETPACK_BACKUP_ADDON_PRODUCTS.includes( slug )
+			buttonLabel: ( JETPACK_BACKUP_ADDON_PRODUCTS as ReadonlyArray< string > ).includes( slug )
 				? translate( 'Get add-on' )
 				: translate( 'Upgrade storage' ),
 			// description: <the default description of the product being upgraded>,
@@ -221,7 +221,7 @@ const useGetProductCardData = () => {
 	const getYearlyBackupsCardData = useGetYearlyBackupsCardData();
 
 	return useCallback(
-		( slug: string, isPurchased ): SelectorProduct | null => {
+		( slug: string, isPurchased: boolean ): SelectorProduct | null => {
 			if ( MONTHLY_FEATURES_PRODUCTS.includes( slug ) ) {
 				return getMonthlyBackupsCardData( slug, isPurchased );
 			}

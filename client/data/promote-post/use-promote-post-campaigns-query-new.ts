@@ -6,7 +6,7 @@ export type CampaignResponse = {
 		devices: string;
 		countries: string;
 		topics: string;
-		OSs: string;
+		languages: string;
 	};
 	content_config: {
 		clickUrl: string;
@@ -15,12 +15,14 @@ export type CampaignResponse = {
 	display_delivery_estimate: string;
 	campaign_id: number;
 	start_date: string;
+	created_at: string;
 	end_date: string;
 	display_name: string;
 	creative_html: string;
 	width: number;
 	height: number;
 	status: string;
+	ui_status: string;
 	target_urn: string;
 	delivery_percent: number;
 	campaign_stats: {
@@ -33,6 +35,7 @@ export type CampaignResponse = {
 		total_budget_used: number;
 		display_delivery_estimate: string;
 		views_total: number;
+		stats_enabled: boolean;
 		views_organic: number;
 		views_organic_rate: number;
 		views_ad_rate: number;

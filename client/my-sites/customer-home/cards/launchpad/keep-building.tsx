@@ -12,15 +12,6 @@ import './style.scss';
 
 const checklistSlug = 'keep-building';
 
-function recordTaskClickTracksEvent( task: Task ) {
-	recordTracksEvent( 'calypso_launchpad_task_clicked', {
-		checklist_slug: checklistSlug,
-		task_id: task.id,
-		is_completed: task.completed,
-		context: 'customer-home',
-	} );
-}
-
 interface LaunchpadKeepBuildingProps {
 	siteSlug: string | null;
 }
@@ -33,6 +24,26 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
+	const tasklistCompleted = completedSteps === numberOfSteps;
+
+	const recordTaskClickTracksEvent = ( task: Task ) => {
+		recordTracksEvent( 'calypso_launchpad_task_clicked', {
+			checklist_slug: checklistSlug,
+			checklist_completed: tasklistCompleted,
+			task_id: task.id,
+			is_completed: task.completed,
+			context: 'customer-home',
+		} );
+	};
+
+	recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
+		checklist_slug: checklistSlug,
+		tasks: `,${ checklist?.map( ( task: Task ) => task.id ).join( ',' ) },`,
+		is_completed: tasklistCompleted,
+		number_of_steps: numberOfSteps,
+		number_of_completed_steps: completedSteps,
+		context: 'customer-home',
+	} );
 
 	recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
 		checklist_slug: checklistSlug,
@@ -76,6 +87,7 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 
 				case 'domain_claim':
 				case 'domain_upsell':
+				case 'domain_customize':
 					actionDispatch = () => {
 						recordTaskClickTracksEvent( task );
 						window.location.assign( `/domains/add/${ siteSlug }` );

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import './style.scss';
 import {
 	Button,
@@ -58,6 +59,8 @@ const getPostIdFromURN = ( targetUrn: string ) => {
 };
 
 export default function CampaignItemDetails( props: Props ) {
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const translate = useTranslate();
@@ -78,11 +81,13 @@ export default function CampaignItemDetails( props: Props ) {
 		width,
 		height,
 		status,
+		ui_status,
 		campaign_stats,
 		billing_data,
 		display_delivery_estimate = '',
 		target_urn,
 		delivery_percent,
+		created_at,
 	} = campaign || {};
 
 	const {
@@ -94,10 +99,14 @@ export default function CampaignItemDetails( props: Props ) {
 		total_budget,
 		total_budget_used,
 		views_organic,
+		stats_enabled,
 	} = campaign_stats || {};
 
 	const { card_name, payment_method, subtotal, credits, total } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
+	const canDisplayPaymentSection =
+		( status === 'finished' || status === 'canceled' ) &&
+		( payment_method || ! isNaN( total || 0 ) );
 
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }`, // + campaignId,
@@ -108,7 +117,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const devicesList = audience_list ? audience_list[ 'devices' ] : '';
 	const countriesList = audience_list ? audience_list[ 'countries' ] : '';
 	const topicsList = audience_list ? audience_list[ 'topics' ] : '';
-	const OSsList = audience_list ? audience_list[ 'OSs' ] : '';
+	const languagesList = audience_list ? audience_list[ 'languages' ] : '';
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
@@ -118,10 +127,12 @@ export default function CampaignItemDetails( props: Props ) {
 	const overallSpendingFormatted = `$${ formatCents( total_budget_used || 0 ) }`;
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
-	const campaignCreatedFormatted = moment.utc( start_date ).format( 'MMMM DD, YYYY' );
+	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const countriesListFormatted = countriesList ? `${ countriesList }` : __( 'Everywhere' );
-	const osListFormatted = OSsList ? `${ OSsList }` : translate( 'All' );
+	const languagesListFormatted = languagesList
+		? `${ languagesList }`
+		: translate( 'All languages' );
 	const topicsListFormatted = topicsList ? `${ topicsList }` : __( 'All' );
 	const impressionsTotal = formatNumber( impressions_total );
 	const subtotalFormatted = `$${ formatCents( subtotal || 0 ) }`;
@@ -198,7 +209,7 @@ export default function CampaignItemDetails( props: Props ) {
 			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
-				cancelCampaign( siteId, campaignId );
+				cancelCampaign( siteId ?? 0, campaignId ?? 0 );
 			},
 		},
 	];
@@ -255,8 +266,8 @@ export default function CampaignItemDetails( props: Props ) {
 
 					<div className="campaign-item__header-status">
 						{ ! isLoading && status ? (
-							<Badge type={ getCampaignStatusBadgeColor( status ) }>
-								{ getCampaignStatus( status ) }
+							<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
+								{ getCampaignStatus( ui_status ) }
 							</Badge>
 						) : (
 							<div
@@ -420,9 +431,10 @@ export default function CampaignItemDetails( props: Props ) {
 											<span className="campaign-item-details__label">
 												{ translate( 'Traffic breakdown' ) }
 											</span>
+
 											{ databarTotal > 0 && (
 												<span className="campaign-item-details__label">
-													{ translate( 'Visits' ) }
+													{ translate( 'Views' ) }
 												</span>
 											) }
 										</div>
@@ -431,7 +443,9 @@ export default function CampaignItemDetails( props: Props ) {
 
 											{ ! isLoading && databarTotal === 0 && (
 												<div className="campaign-item-details__traffic-no-data">
-													{ translate( 'No data' ) }
+													{ stats_enabled
+														? translate( 'No data' )
+														: translate( 'Stats are disabled for this site' ) }
 												</div>
 											) }
 
@@ -484,10 +498,10 @@ export default function CampaignItemDetails( props: Props ) {
 											{ ! isLoading ? countriesListFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__label">
-											{ translate( 'Operating systems' ) }
+											{ translate( 'Languages' ) }
 										</span>
 										<span className="campaign-item-details__details">
-											{ ! isLoading ? osListFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
 									<div className="campaign-item-details__interests">
@@ -522,7 +536,7 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 							</div>
 						</div>
-						{ ( status === 'finished' || status === 'canceled' ) && (
+						{ canDisplayPaymentSection ? (
 							<div className="campaign-item-details__payment-container">
 								<div className="campaign-item-details__payment">
 									<div className="campaign-item-details__payment-row">
@@ -539,7 +553,7 @@ export default function CampaignItemDetails( props: Props ) {
 												) }
 											</div>
 											<div>
-												{ subtotal ? (
+												{ ! isNaN( subtotal || 0 ) ? (
 													<span className="campaign-item-details__label">
 														<div>{ translate( 'Subtotal' ) }</div>
 														<div className="amount">{ subtotalFormatted }</div>
@@ -555,7 +569,7 @@ export default function CampaignItemDetails( props: Props ) {
 												) : (
 													[]
 												) }
-												{ total ? (
+												{ ! isNaN( total || 0 ) ? (
 													<>
 														<span className="campaign-item-details__label">
 															<div>{ translate( 'Total paid' ) }</div>
@@ -573,6 +587,8 @@ export default function CampaignItemDetails( props: Props ) {
 									</div>
 								</div>
 							</div>
+						) : (
+							[]
 						) }
 					</div>
 					<div className="campaign-item-details__preview">
@@ -635,6 +651,7 @@ export default function CampaignItemDetails( props: Props ) {
 									className="is-link components-button campaign-item-details__support-link"
 									supportContext="advertising"
 									showIcon={ false }
+									showSupportModal={ ! isRunningInJetpack }
 								>
 									{ translate( 'View documentation' ) }
 									<Gridicon icon="external" size={ 16 } />

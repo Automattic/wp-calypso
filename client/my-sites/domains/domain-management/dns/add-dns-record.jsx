@@ -46,15 +46,19 @@ class AddDnsRecord extends Component {
 		const items = [
 			{
 				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+				href: domainManagementList(
+					selectedSite?.slug,
+					selectedDomainName,
+					selectedSite?.options?.is_domain_only
+				),
 			},
 			{
 				label: selectedDomainName,
-				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
 				label: translate( 'DNS records' ),
-				href: domainManagementDns( selectedSite.slug, selectedDomainName ),
+				href: domainManagementDns( selectedSite?.slug, selectedDomainName ),
 			},
 			{
 				label: recordBeingEdited
@@ -67,7 +71,7 @@ class AddDnsRecord extends Component {
 			label: translate( 'Back to DNS records', {
 				comment: 'Link to return to the DNs records management page of a domain ',
 			} ),
-			href: domainManagementDns( selectedSite.slug, selectedDomainName ),
+			href: domainManagementDns( selectedSite?.slug, selectedDomainName ),
 			showBackArrow: true,
 		};
 
@@ -76,7 +80,7 @@ class AddDnsRecord extends Component {
 
 	goBack = () => {
 		const { selectedSite, selectedDomainName } = this.props;
-		page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
+		page( domainManagementDns( selectedSite?.slug, selectedDomainName ) );
 	};
 
 	renderMain() {
@@ -121,7 +125,7 @@ class AddDnsRecord extends Component {
 					<DnsAddNew
 						isSubmittingForm={ dns.isSubmittingForm }
 						selectedDomainName={ selectedDomainName }
-						selectedSiteSlug={ selectedSite.slug }
+						selectedSiteSlug={ selectedSite?.slug }
 						goBack={ this.goBack }
 						recordToEdit={ recordBeingEdited }
 					/>

@@ -5,6 +5,11 @@ declare module '@wordpress/block-editor' {
 
 	export const __unstableIframe: React.ComponentType< Props >;
 	export const __unstableEditorStyles: React.ComponentType< Props >;
+	export const transformStyles: ( styles: unknown[], wrapperClassName: string ) => string;
+}
+
+declare module '@wordpress/block-library' {
+	export const registerCoreBlocks: () => void;
 }
 
 declare module '@wordpress/components' {

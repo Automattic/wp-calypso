@@ -53,6 +53,8 @@ export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
 export { default as JetpackUpsellCard } from './jetpack-upsell-card';
 export { UpsellMenuGroup } from './upsell-menu-group';
+export { default as PricingSlider } from './pricing-slider';
+export type { RenderThumbFunction } from './pricing-slider/types';
 
 // Logos
 export { default as JetpackLogo } from './logos/jetpack-logo';

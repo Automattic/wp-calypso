@@ -12,6 +12,7 @@ import './style.scss';
 
 interface FeatureListItemContentWrapperProps {
 	className: string;
+	children: React.ReactNode;
 }
 
 interface FeatureListIconProps {

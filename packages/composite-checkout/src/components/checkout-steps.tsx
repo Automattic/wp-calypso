@@ -581,7 +581,7 @@ export function CheckoutFormSubmit( {
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const { onPageLoadError } = useContext( CheckoutContext );
 	const onSubmitButtonLoadError = useCallback(
-		( error ) => onPageLoadError?.( 'submit_button_load', error ),
+		( error: Error ) => onPageLoadError?.( 'submit_button_load', error ),
 		[ onPageLoadError ]
 	);
 

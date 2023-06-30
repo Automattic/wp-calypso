@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,8 +12,8 @@ import { login } from 'calypso/lib/paths';
 import { isWpccFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import SocialSignupToS from './social-signup-tos';
 
 class SocialSignupForm extends Component {
@@ -191,7 +190,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isWoo:
 			isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
-			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
+			isWooCommerceCoreProfilerFlow( state ),
 	} ),
 	{ recordTracksEvent }
 )( localize( SocialSignupForm ) );

@@ -29,7 +29,6 @@ exports[`<SitesGridItem> Custom render 1`] = `
           T
         </div>
       </div>
-      
     </div>
   </a>
   <div>
@@ -58,9 +57,7 @@ exports[`<SitesGridItem> Custom render 1`] = `
       >
         <span
           className="css-1i2o39r-Truncated ejzgyku0"
-        >
-          
-        </span>
+        />
         <span
           className="components-visually-hidden css-1mm2cvy-View e19lxcc00"
           data-wp-c16t={true}
@@ -127,7 +124,6 @@ exports[`<SitesGridItem> Custom render 2 1`] = `
           T
         </div>
       </div>
-      
     </div>
   </div>
   <div>
@@ -154,9 +150,7 @@ exports[`<SitesGridItem> Custom render 2 1`] = `
       >
         <span
           className="css-1i2o39r-Truncated ejzgyku0"
-        >
-          
-        </span>
+        />
         <span
           className="components-visually-hidden css-1mm2cvy-View e19lxcc00"
           data-wp-c16t={true}
@@ -227,7 +221,6 @@ exports[`<SitesGridItem> Default render 1`] = `
           T
         </div>
       </div>
-      
     </div>
   </a>
   <div>
@@ -263,9 +256,7 @@ exports[`<SitesGridItem> Default render 1`] = `
       >
         <span
           className="css-1i2o39r-Truncated ejzgyku0"
-        >
-          
-        </span>
+        />
         <span
           className="components-visually-hidden css-1mm2cvy-View e19lxcc00"
           data-wp-c16t={true}
