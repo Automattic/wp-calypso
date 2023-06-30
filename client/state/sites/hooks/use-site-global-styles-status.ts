@@ -41,15 +41,13 @@ export const getGlobalStylesInfoForSite = (
 };
 
 export function useSiteGlobalStylesStatus( siteId: number ): GlobalStylesStatus {
-	const [ , currentUserHasGlobalStylesInPersonal ] = useExperiment(
-		'calypso_global_styles_personal'
-	);
+	const [ , globalStylesInPersonalExperiment ] = useExperiment( 'calypso_global_styles_personal' );
 	const { data } = useQuery( {
-		queryKey: [ 'globalStylesInfo', siteId, currentUserHasGlobalStylesInPersonal?.variationName ],
+		queryKey: [ 'globalStylesInfo', siteId, globalStylesInPersonalExperiment?.variationName ],
 		queryFn: () =>
 			getGlobalStylesInfoForSite(
 				siteId,
-				currentUserHasGlobalStylesInPersonal?.variationName === 'treatment'
+				globalStylesInPersonalExperiment?.variationName === 'treatment'
 			),
 		placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
 		refetchOnWindowFocus: false,
