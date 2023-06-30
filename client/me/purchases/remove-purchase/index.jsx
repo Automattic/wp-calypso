@@ -183,46 +183,45 @@ class RemovePurchase extends Component {
 	};
 
 	handlePurchaseRemoval = async ( purchase ) => {
-		const { userId, isDomainOnlySite, translate, purchasesError } = this.props;
+		const { userId, isDomainOnlySite, translate } = this.props;
 
-		await this.props.removePurchase( purchase.id, userId );
+		try {
+			await this.props.removePurchase( purchase.id, userId );
 
-		const productName = getName( purchase );
-		let successMessage;
+			const productName = getName( purchase );
+			let successMessage;
 
-		if ( purchasesError ) {
-			this.setState( { isRemoving: false } );
-			this.closeDialog();
-			this.props.errorNotice( purchasesError );
-			return;
-		}
-
-		successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
-			args: { productName },
-			components: { siteName: <em>{ purchase.domain }</em> },
-		} );
-
-		if (
-			isAkismetTemporarySitePurchase( purchase ) ||
-			isJetpackTemporarySitePurchase( purchase )
-		) {
-			successMessage = translate( '%(productName)s was removed from your account.', {
+			successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
 				args: { productName },
+				components: { siteName: <em>{ purchase.domain }</em> },
 			} );
-		}
 
-		if ( isDomainRegistration( purchase ) ) {
-			if ( isDomainOnlySite ) {
-				this.props.receiveDeletedSite( purchase.siteId );
-				this.props.setAllSitesSelected();
+			if (
+				isAkismetTemporarySitePurchase( purchase ) ||
+				isJetpackTemporarySitePurchase( purchase )
+			) {
+				successMessage = translate( '%(productName)s was removed from your account.', {
+					args: { productName },
+				} );
 			}
 
-			successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
-				components: { domain: <em>{ productName }</em> },
-			} );
-		}
+			if ( isDomainRegistration( purchase ) ) {
+				if ( isDomainOnlySite ) {
+					this.props.receiveDeletedSite( purchase.siteId );
+					this.props.setAllSitesSelected();
+				}
 
-		this.props.successNotice( successMessage, { isPersistent: true } );
+				successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
+					components: { domain: <em>{ productName }</em> },
+				} );
+			}
+
+			this.props.successNotice( successMessage, { isPersistent: true } );
+		} catch ( error ) {
+			this.setState( { isRemoving: false } );
+			this.closeDialog();
+			this.props.errorNotice( error.message );
+		}
 	};
 
 	getChatButton = () => (
