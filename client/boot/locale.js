@@ -25,7 +25,7 @@ function getLocaleFromNavigator() {
 	const langs = ( navigator.languages || [ navigator.language ] ).filter( Boolean );
 	const lang = langs.find( ( l ) => getLanguageSlugs().includes( l ) );
 	if ( lang ) {
-		return getLanguage( lang )?.localeSlug;
+		return getLanguage( lang )?.langSlug;
 	}
 }
 
@@ -83,7 +83,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
 	} else {
 		const locale = getLocaleFromNavigator();
-		locale && reduxStore.dispatch( setLocale( locale, locale ) );
+		locale && reduxStore.dispatch( setLocale( locale, '' ) );
 	}
 
 	// If user is logged out and translations are not bootstrapped, we assume default locale
