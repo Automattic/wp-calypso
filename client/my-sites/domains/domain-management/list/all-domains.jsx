@@ -247,6 +247,19 @@ class AllDomains extends Component {
 		} );
 	};
 
+	getSelectedFilter = () => {
+		const { context } = this.props;
+		return context?.query?.filter || 'all-domains';
+	};
+
+	getDomainsList = ( selectedFilter = this.getSelectedFilter() ) => {
+		const { sites } = this.props;
+
+		return selectedFilter === 'domain-only'
+			? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails(), sites )
+			: filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter );
+	};
+
 	renderDomainsList() {
 		if ( this.isLoading() ) {
 			return Array.from( { length: 3 } ).map( ( _, n ) => (
@@ -258,7 +271,6 @@ class AllDomains extends Component {
 			purchases,
 			sites,
 			currentRoute,
-			context,
 			requestingSiteDomains,
 			hasLoadedUserPurchases,
 			isContactEmailEditContext,
@@ -266,7 +278,11 @@ class AllDomains extends Component {
 			dispatch,
 		} = this.props;
 
-		if ( this.filteredDomains().length === 0 ) {
+		const { isSavingContactInfo } = this.state;
+
+		const domains = this.getDomainsList();
+
+		if ( domains.length === 0 && this.getSelectedFilter() === 'all-domains' ) {
 			return (
 				<EmptyDomainsListCardSkeleton
 					title={ translate( 'All Domains' ) }
@@ -281,15 +297,6 @@ class AllDomains extends Component {
 				/>
 			);
 		}
-
-		const { isSavingContactInfo } = this.state;
-
-		const selectedFilter = context?.query?.filter || 'all-domains';
-
-		const domains =
-			selectedFilter === 'domain-only'
-				? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails(), sites )
-				: filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter );
 
 		const domainsTableColumns = [
 			{
@@ -686,23 +693,23 @@ class AllDomains extends Component {
 			),
 		};
 
-		const buttons =
-			this.filteredDomains().length === 0
-				? []
-				: [
-						this.maybeRenderSeeAllDomainsLink(),
-						this.renderDomainTableFilterButton(),
-						<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-						<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
-				  ];
+		const hasNoDomains = this.getDomainsList( 'all-domains' ).length === 0;
 
-		const mobileButtons =
-			this.filteredDomains().length === 0
-				? []
-				: [
-						<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-						<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
-				  ];
+		const buttons = hasNoDomains
+			? []
+			: [
+					this.maybeRenderSeeAllDomainsLink(),
+					this.renderDomainTableFilterButton(),
+					<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
+					<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
+			  ];
+
+		const mobileButtons = hasNoDomains
+			? []
+			: [
+					<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
+					<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
+			  ];
 
 		return <DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ mobileButtons } />;
 	}
