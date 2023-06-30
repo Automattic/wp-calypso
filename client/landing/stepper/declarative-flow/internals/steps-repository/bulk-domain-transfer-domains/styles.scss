@@ -13,7 +13,7 @@
 
 	&.domains {
 		padding: 0;
-		width: 704px;
+		width: 754px;
 
 		.step-container__header {
 			margin-top: 96px;
@@ -118,28 +118,50 @@
 		}
 	}
 
-	.domains__domain-delete {
-		button {
-			visibility: hidden;
 
-			&.has-delete-button {
-				visibility: visible;
-			}
-		}
+	.domains__domain-controls {
+		display: flex;
+		gap: 16px;
 
-		.delete-label {
-			display: none;
-		}
-
-		@media ( max-width: $break-medium ) {
-			order: 1;
+		.domains__domain-refresh {
 			.form-fieldset {
 				display: flex;
 				align-items: center;
-
-				.delete-label {
-					margin: 0;
+			}
+			label {
+				display: none;
+			}
+			@media ( max-width: $break-medium ) {
+				label {
 					display: block;
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		.domains__domain-delete {
+			button {
+				visibility: hidden;
+
+				&.has-delete-button {
+					visibility: visible;
+				}
+			}
+
+			.delete-label {
+				display: none;
+			}
+
+			@media ( max-width: $break-medium ) {
+				order: 1;
+				.form-fieldset {
+					display: flex;
+					align-items: center;
+
+					.delete-label {
+						margin: 0;
+						display: block;
+					}
 				}
 			}
 		}

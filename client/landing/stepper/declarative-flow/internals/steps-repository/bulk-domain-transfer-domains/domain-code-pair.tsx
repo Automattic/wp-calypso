@@ -1,6 +1,6 @@
 import { FormInputValidation } from '@automattic/components';
 import { Button, Icon } from '@wordpress/components';
-import { check, trash, closeSmall } from '@wordpress/icons';
+import { check, trash, closeSmall, update } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect } from 'react';
@@ -52,7 +52,7 @@ export function DomainCodePair( {
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
 
-	const { valid, loading, message } = validation;
+	const { valid, loading, message, refetch } = validation;
 
 	useEffect( () => {
 		onChange( id, { domain, auth, valid } );
@@ -93,19 +93,32 @@ export function DomainCodePair( {
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
 				</div>
-				<div className="domains__domain-delete">
-					<FormFieldset>
-						<Button
-							className={ classnames( { 'has-delete-button': showDelete } ) }
-							icon={ trash }
-							onClick={ () => onRemove( id ) }
-						/>
-						{ showDelete && (
-							<FormLabel className="delete-label" htmlFor={ id }>
-								{ __( 'Delete' ) }
-							</FormLabel>
-						) }
-					</FormFieldset>
+				<div className="domains__domain-controls">
+					<div className="domains__domain-refresh">
+						<FormFieldset>
+							<Button
+								title={ __( 'Refresh' ) }
+								disabled={ ! refetch }
+								icon={ update }
+								onClick={ () => refetch?.() }
+							/>
+							<FormLabel htmlFor={ id }>{ __( 'Refresh' ) }</FormLabel>
+						</FormFieldset>
+					</div>
+					<div className="domains__domain-delete">
+						<FormFieldset>
+							<Button
+								className={ classnames( { 'has-delete-button': showDelete } ) }
+								icon={ trash }
+								onClick={ () => onRemove( id ) }
+							/>
+							{ showDelete && (
+								<FormLabel className="delete-label" htmlFor={ id }>
+									{ __( 'Delete' ) }
+								</FormLabel>
+							) }
+						</FormFieldset>
+					</div>
 				</div>
 				{ shouldReportError && (
 					<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
