@@ -43,7 +43,7 @@ const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
-const DEFAULT_START_WRITING_THEME = 'pub/poema';
+const DEFAULT_START_WRITING_THEME = 'pub/hey';
 
 function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	if ( data && ( data as { sourceSlug: string } ).sourceSlug ) {
