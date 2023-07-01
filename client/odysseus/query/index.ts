@@ -1,6 +1,6 @@
 import { useQuery, useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { Nudge } from '../context';
+import { Nudge, useOdysseusAssistantContext } from '../context';
 
 function queryValidate( siteId: number | null ) {
 	const path = `/sites/${ siteId }/odysseus`;
@@ -25,10 +25,15 @@ function postOddyseus(
 	siteId: number | null,
 	prompt: string,
 	context: Nudge,
-	messages: Message[] = []
+	messages: Message[] = [],
+	sectionName: string
 ) {
 	const path = `/sites/${ siteId }/odysseus`;
-	return wpcom.req.post( { path, apiNamespace: 'wpcom/v2', body: { prompt, context, messages } } );
+	return wpcom.req.post( {
+		path,
+		apiNamespace: 'wpcom/v2',
+		body: { prompt, context, messages, sectionName },
+	} );
 }
 
 export const useOddyseusEndpointPost = (
@@ -38,8 +43,17 @@ export const useOddyseusEndpointPost = (
 	unknown,
 	{ prompt: string; context: Nudge; messages: Message[] }
 > => {
-	return useMutation(
-		( { prompt, context, messages }: { prompt: string; context: Nudge; messages: Message[] } ) =>
-			postOddyseus( siteId, prompt, context, messages )
-	);
+	const { sectionName } = useOdysseusAssistantContext();
+
+	return useMutation( {
+		mutationFn: ( {
+			prompt,
+			context,
+			messages,
+		}: {
+			prompt: string;
+			context: Nudge;
+			messages: Message[];
+		} ) => postOddyseus( siteId, prompt, context, messages, sectionName ),
+	} );
 };

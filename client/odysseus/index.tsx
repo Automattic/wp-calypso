@@ -79,15 +79,12 @@ const OdysseusAssistant = () => {
 
 	const handleSendMessage = async () => {
 		try {
-			if ( lastNudge === null ) {
-				return;
-			}
 			setIsLoading( true );
 			addMessage( input, 'user' );
 			setInput( '' );
 			const response = await mutateAsync( {
 				prompt: input,
-				context: lastNudge,
+				context: lastNudge ?? { nudge: 'none', context: {} },
 				messages,
 			} );
 
@@ -105,6 +102,20 @@ const OdysseusAssistant = () => {
 	const handleToggleVisibility = () => {
 		setIsVisible( ! isVisible );
 	};
+
+	function handleKeyDown( event: React.KeyboardEvent< HTMLInputElement > ) {
+		if ( event.key === 'Enter' || event.keyCode === 13 ) {
+			// Prevent a newline from being entered into the textbox
+			event.preventDefault();
+
+			handleSendMessage();
+		}
+	}
+
+	function handleFormSubmit( event: React.FormEvent ) {
+		event.preventDefault();
+		handleSendMessage();
+	}
 
 	return (
 		<div className={ `chatbox ${ isVisible ? 'chatbox-show' : 'chatbox-hide' }` }>
@@ -126,17 +137,20 @@ const OdysseusAssistant = () => {
 					) ) }
 					<div ref={ messagesEndRef } />
 				</div>
-				<div className="chatbox-input-area">
-					<TextControl
-						type="text"
-						value={ input }
-						onChange={ handleMessageChange }
-						className="chatbox-input"
-					/>
-					<Button onClick={ handleSendMessage } className="chatbox-send-btn">
-						Send
-					</Button>
-				</div>
+				<form onSubmit={ handleFormSubmit }>
+					<div className="chatbox-input-area">
+						<TextControl
+							className="chatbox-input"
+							type="text"
+							value={ input }
+							onChange={ handleMessageChange }
+							onKeyDown={ handleKeyDown }
+						/>
+						<Button onClick={ handleSendMessage } className="chatbox-send-btn" type="button">
+							Send
+						</Button>
+					</div>
+				</form>
 			</div>
 		</div>
 	);

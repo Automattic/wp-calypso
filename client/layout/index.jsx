@@ -201,10 +201,13 @@ class Layout extends Component {
 	}
 
 	shouldShowOdysseusAssistant() {
+		// We will only show the Odysseus Assistant under the "Upgrades" menu.
 		return (
 			[ 'plans', 'add-ons', 'domains', 'email', 'site-purchases', 'checkout' ].includes(
 				this.props.sectionName
-			) && ! this.props.isOffline
+			) &&
+			! this.props.isOffline &&
+			config.isEnabled( 'odysseus' )
 		);
 	}
 
@@ -316,7 +319,7 @@ class Layout extends Component {
 					</div>
 					<div id="primary" className="layout__primary">
 						{ this.shouldShowOdysseusAssistant() ? (
-							<OdysseusAssistantProvider value={ { sectionName: this.props.sectionName } }>
+							<OdysseusAssistantProvider sectionName={ this.props.sectionName }>
 								{ this.props.primary }
 								<OdysseusAssistant />
 							</OdysseusAssistantProvider>
