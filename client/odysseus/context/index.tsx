@@ -42,11 +42,11 @@ const OdysseusAssistantProvider = ( {
 	children: ReactNode;
 } ) => {
 	const [ currentView, setCurrentView ] = useState( '' );
-	const [ lastNudge, sendNudge ] = useState< Nudge | null >( null );
+	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 
 	return (
 		<OdysseusAssistantContext.Provider
-			value={ { currentView, setCurrentView, sectionName, sendNudge, lastNudge } }
+			value={ { currentView, setCurrentView, sectionName, sendNudge: setLastNudge, lastNudge } }
 		>
 			{ children }
 		</OdysseusAssistantContext.Provider>
