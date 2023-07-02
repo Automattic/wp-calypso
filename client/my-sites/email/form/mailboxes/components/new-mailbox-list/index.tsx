@@ -141,6 +141,8 @@ const NewMailBoxList = (
 	const addMailbox = () => {
 		sendNudge( {
 			nudge: 'add-mailbox',
+			initialMessage:
+				'I see you want to add a mailbox. I can give you a few tips on how to do that.',
 			context: { mailbox_count: mailboxes.length, domain: selectedDomainName },
 		} );
 		const newMailboxes = [ ...mailboxes, createNewMailbox() ];

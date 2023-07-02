@@ -337,7 +337,11 @@ class DomainRow extends PureComponent {
 
 	goToDNSManagement = () => {
 		const { currentRoute, domain, site, sendNudge } = this.props;
-		sendNudge( { nudge: 'dns-settings', context: { domain: domain.domain } } );
+		sendNudge( {
+			nudge: 'dns-settings',
+			initialMessage: `I see you want to change your DNS settings for your domain ${ domain.name }. That's a complex thing, but I can guide you and help you at any moment.`,
+			context: { domain: domain.domain },
+		} );
 		page( domainManagementDns( site.slug, domain.domain, currentRoute ) );
 	};
 

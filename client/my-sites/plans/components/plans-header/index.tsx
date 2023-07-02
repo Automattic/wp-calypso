@@ -4,10 +4,8 @@ import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
 import './style.scss';
 
 const DomainUpsellHeader: React.FunctionComponent = () => {
@@ -60,16 +58,10 @@ const PlansHeader: React.FunctionComponent< {
 	domainFromHomeUpsellFlow?: string;
 	subHeaderText?: string;
 } > = ( { domainFromHomeUpsellFlow, subHeaderText } ) => {
-	const { sendNudge } = useOdysseusAssistantContext();
 	const translate = useTranslate();
 	const plansDescription =
 		subHeaderText ??
 		translate( 'See and compare the features available on each WordPress.com plan.' );
-
-	//send nudge just once, just for POC purposes
-	useEffect( () => {
-		sendNudge( { nudge: 'monthly-plan', context: { plan: 'monthly' } } );
-	}, [ sendNudge ] );
 
 	if ( domainFromHomeUpsellFlow ) {
 		return <DomainUpsellHeader />;

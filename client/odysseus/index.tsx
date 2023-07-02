@@ -11,7 +11,7 @@ import './style.scss';
 
 const OdysseusAssistant = () => {
 	const siteId = useSelector( getSelectedSiteId );
-	const { lastNudge } = useOdysseusAssistantContext();
+	const { lastNudge, sectionName } = useOdysseusAssistantContext();
 	const [ input, setInput ] = useState( '' );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -20,6 +20,11 @@ const OdysseusAssistant = () => {
 	const [ messages, setMessages ] = useState< Message[] >( [
 		{ text: 'Hello, I am Wapuu! Your personal assistant.', sender: 'wapuu' },
 	] );
+
+	// Clear messages when switching sections
+	useEffect( () => {
+		setMessages( [] );
+	}, [ sectionName ] );
 
 	const addMessage = ( message: string, sender: 'user' | 'wapuu' ) => {
 		setMessages( ( prevMessages ) => [ ...prevMessages, { text: message, sender } ] );
@@ -32,35 +37,12 @@ const OdysseusAssistant = () => {
 	}, [ messages ] );
 	useEffect( () => {
 		if ( lastNudge ) {
-			if ( lastNudge.nudge === 'add-mailbox' ) {
-				setMessages( [
-					{
-						text: 'I see you want to add a mailbox. I can give you a few tips on how to do that.',
-						sender: 'wapuu',
-					},
-				] );
-			} else if ( lastNudge.nudge === 'add-domain' ) {
-				setMessages( [
-					{
-						text: 'I see you want to add a domain. I can give you a few tips on how to do that.',
-						sender: 'wapuu',
-					},
-				] );
-			} else if ( lastNudge.nudge === 'dns-settings' ) {
-				setMessages( [
-					{
-						text: "I see you want to change your DNS settings. That's a complex thing, but I can guide you and help you at any moment.",
-						sender: 'wapuu',
-					},
-				] );
-			} else if ( lastNudge.nudge === 'monthly-plan' ) {
-				setMessages( [
-					{
-						text: 'I see you are sitting on a monthly plan. I can recommend you to switch to an annual plan, so you can save some money.',
-						sender: 'wapuu',
-					},
-				] );
-			}
+			setMessages( [
+				{
+					text: lastNudge.initialMessage,
+					sender: 'wapuu',
+				},
+			] );
 
 			setIsNudging( true );
 			const timeoutId = setTimeout( () => {
@@ -71,6 +53,8 @@ const OdysseusAssistant = () => {
 				clearTimeout( timeoutId );
 			};
 		}
+
+		setMessages( [ { text: 'Hello, I am Wapuu! Your personal assistant.', sender: 'wapuu' } ] );
 	}, [ lastNudge ] );
 
 	const handleMessageChange = ( text: string ) => {
@@ -84,7 +68,11 @@ const OdysseusAssistant = () => {
 			setInput( '' );
 			const response = await mutateAsync( {
 				prompt: input,
-				context: lastNudge ?? { nudge: 'none', context: {} },
+				context: lastNudge ?? {
+					nudge: 'none',
+					context: {},
+					initialMessage: 'Hello, I am Wapuu, your personal WordPress assistant',
+				},
 				messages,
 			} );
 

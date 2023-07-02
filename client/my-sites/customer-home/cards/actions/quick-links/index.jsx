@@ -78,7 +78,11 @@ export const QuickLinks = ( {
 	const isPromotePostActive = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	const addNewDomain = () => {
-		sendNudge( { nudge: 'domains-add' } );
+		sendNudge( {
+			nudge: 'add-domain',
+			initialMessage:
+				'I see you want to add a domain. I can give you a few tips on how to do that.',
+		} );
 		trackAddDomainAction();
 	};
 

@@ -5,6 +5,7 @@ const noop = () => {};
 
 export type Nudge = {
 	nudge: string;
+	initialMessage: string;
 	context?: Record< string, unknown >;
 };
 interface OdysseusAsistantContextInterface {
@@ -28,7 +29,7 @@ const OdysseusAssistantContext = createContext< OdysseusAsistantContextInterface
 	defaultCurrentViewContextInterface
 );
 
-// Custom hook to access the CurrentViewContext
+// Custom hook to access the OdysseusAssistantContext
 const useOdysseusAssistantContext = () => useContext( OdysseusAssistantContext );
 
 // Create a provider component for the context
