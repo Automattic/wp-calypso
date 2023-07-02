@@ -18,6 +18,7 @@ class FollowButton extends Component {
 		followingLabel: PropTypes.string,
 		followIcon: PropTypes.object,
 		followingIcon: PropTypes.object,
+		hasButtonStyle: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -56,6 +57,10 @@ class FollowButton extends Component {
 
 		if ( this.props.disabled ) {
 			menuClasses.push( 'is-disabled' );
+		}
+
+		if ( this.props.hasButtonStyle ) {
+			menuClasses.push( 'has-button-style' );
 		}
 
 		const followingIcon = this.props.followingIcon || (

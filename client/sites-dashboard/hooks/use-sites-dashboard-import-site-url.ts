@@ -1,3 +1,4 @@
+import { Primitive } from 'utility-types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -6,7 +7,7 @@ import { AppState } from 'calypso/types';
 import { TRACK_SOURCE_NAME } from '../utils';
 
 export const useSitesDashboardImportSiteUrl = (
-	additionalParameters: Record< string, string >
+	additionalParameters: Record< string, Primitive >
 ) => {
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
@@ -20,6 +21,6 @@ export const useSitesDashboardImportSiteUrl = (
 			...additionalParameters,
 			'hosting-flow': isHostingFlow ? true : null,
 		},
-		isDevAccount ? '/setup/import-hosted-site' : '/start/import'
+		isDevAccount || isHostingFlow ? '/setup/import-hosted-site' : '/start/import'
 	);
 };
