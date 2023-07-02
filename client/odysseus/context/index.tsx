@@ -1,4 +1,4 @@
-import { ReactChildren, createContext, useContext, useState } from 'react';
+import { ReactNode, createContext, useContext, useState } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
@@ -38,7 +38,7 @@ const OdysseusAssistantProvider = ( {
 	children,
 }: {
 	sectionName: string;
-	children: ReactChildren;
+	children: ReactNode;
 } ) => {
 	const [ currentView, setCurrentView ] = useState( '' );
 	const [ lastNudge, sendNudge ] = useState< Nudge | null >( null );

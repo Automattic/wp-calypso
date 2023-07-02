@@ -167,6 +167,8 @@ const NewMailBoxList = (
 			recordTracksEvent( eventName, { mailbox_count: newMailboxes.length } );
 			sendNudge( {
 				nudge: 'remove-mailbox',
+				initialMessage:
+					'I see you want to remove a mailbox. I can give you a few tips on how to do that.',
 				context: { mailbox_count: newMailboxes.length, domain: selectedDomainName },
 			} );
 		},
