@@ -1,4 +1,5 @@
-import { ReactNode, createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
+import type { ReactNode } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
