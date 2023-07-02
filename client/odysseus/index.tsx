@@ -18,7 +18,7 @@ const OdysseusAssistant = () => {
 	const [ isNudging, setIsNudging ] = useState( false );
 	const { mutateAsync } = useOddyseusEndpointPost( siteId );
 	const [ messages, setMessages ] = useState< Message[] >( [
-		{ text: 'Hello, I am Wapuu! Your personal assistant.', sender: 'wapuu' },
+		{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'assistant' },
 	] );
 
 	// Clear messages when switching sections
@@ -26,8 +26,8 @@ const OdysseusAssistant = () => {
 		setMessages( [] );
 	}, [ sectionName ] );
 
-	const addMessage = ( message: string, sender: 'user' | 'wapuu' ) => {
-		setMessages( ( prevMessages ) => [ ...prevMessages, { text: message, sender } ] );
+	const addMessage = ( content: string, role: 'user' | 'assistant' ) => {
+		setMessages( ( prevMessages ) => [ ...prevMessages, { content, role } ] );
 	};
 
 	const messagesEndRef = useRef< HTMLDivElement | null >( null );
@@ -39,8 +39,8 @@ const OdysseusAssistant = () => {
 		if ( lastNudge ) {
 			setMessages( [
 				{
-					text: lastNudge.initialMessage,
-					sender: 'wapuu',
+					content: lastNudge.initialMessage,
+					role: 'assistant',
 				},
 			] );
 
@@ -54,7 +54,9 @@ const OdysseusAssistant = () => {
 			};
 		}
 
-		setMessages( [ { text: 'Hello, I am Wapuu! Your personal assistant.', sender: 'wapuu' } ] );
+		setMessages( [
+			{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'assistant' },
+		] );
 	}, [ lastNudge ] );
 
 	const handleMessageChange = ( text: string ) => {
@@ -76,11 +78,11 @@ const OdysseusAssistant = () => {
 				messages,
 			} );
 
-			addMessage( response, 'wapuu' );
+			addMessage( response, 'assistant' );
 		} catch ( _ ) {
 			addMessage(
 				"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!",
-				'wapuu'
+				'assistant'
 			);
 		} finally {
 			setIsLoading( false );
@@ -112,15 +114,15 @@ const OdysseusAssistant = () => {
 				isNudging={ isNudging }
 				isLoading={ isLoading }
 			/>
-			<div className="chatbox-header">Wapuu</div> { /* This is the new header */ }
+			<div className="chatbox-header">Wapuu</div>
 			<div className="chat-box-message-container">
 				<div className="chatbox-messages">
 					{ messages.map( ( message, index ) => (
 						<div
-							className={ `chatbox-message ${ message.sender === 'user' ? 'user' : 'wapuu' }` }
+							className={ `chatbox-message ${ message.role === 'user' ? 'user' : 'wapuu' }` }
 							key={ index }
 						>
-							{ message.text }
+							{ message.content }
 						</div>
 					) ) }
 					<div ref={ messagesEndRef } />

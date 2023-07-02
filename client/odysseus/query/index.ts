@@ -8,13 +8,14 @@ function queryValidate( siteId: number | null ) {
 }
 
 export type Message = {
-	text: string;
-	sender: 'user' | 'wapuu';
+	content: string;
+	role: 'user' | 'assistant';
 };
 
-export const useOddyseusEndpointValidation = ( siteId: number | null ) => {
+// It just checks that the endpoint is working
+export const useOddyseusEndpointSanityCheck = ( siteId: number | null ) => {
 	return useQuery( {
-		queryKey: [ 'oddyseus-assistante-validation', siteId ],
+		queryKey: [ 'oddyseus-assistant-validation', siteId ],
 		queryFn: () => queryValidate( siteId ),
 		staleTime: 5 * 60 * 1000,
 		enabled: siteId !== null,
