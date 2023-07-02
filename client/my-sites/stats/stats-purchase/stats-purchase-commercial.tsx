@@ -2,10 +2,11 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
+interface CommercialPurchaseProps {
+	planValue: number;
+}
 
-const FLAT_COMMERCIAL_PRICE = 10;
-
-const CommercialPurchase = () => {
+const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
 
 	return (
@@ -22,9 +23,7 @@ const CommercialPurchase = () => {
 			<div className={ `${ COMPONENT_CLASS_NAME }__pricing` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-value` }>
 					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>$</div>
-					<div
-						className={ `${ COMPONENT_CLASS_NAME }__pricing-amount` }
-					>{ `${ FLAT_COMMERCIAL_PRICE }` }</div>
+					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-amount` }>{ `${ planValue }` }</div>
 				</div>
 				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-cadency` }>
 					/{ translate( 'month' ) }
@@ -52,7 +51,7 @@ const CommercialPurchase = () => {
 				with WordPress.com.
 			</p>
 
-			<Button variant="primary">Get Jetpack Stats for ${ FLAT_COMMERCIAL_PRICE } per month</Button>
+			<Button variant="primary">Get Jetpack Stats for ${ planValue } per month</Button>
 		</div>
 	);
 };

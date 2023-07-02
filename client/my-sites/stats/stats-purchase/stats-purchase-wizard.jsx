@@ -14,6 +14,8 @@ const SCREEN_PERSONAL_CHECKLIST = 1;
 const SCREEN_PURCHASE = 2;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
+const DEFAULT_STARTING_PRICE = 6;
+const FLAT_COMMERCIAL_PRICE = 10;
 
 const TitleNode = ( { label, indicatorNumber, active } ) => {
 	return (
@@ -31,7 +33,7 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 };
 
 const ProductCard = ( { siteSlug } ) => {
-	const [ subscriptionValue, setSubscriptionValue ] = useState( 6 );
+	const [ subscriptionValue, setSubscriptionValue ] = useState( DEFAULT_STARTING_PRICE );
 	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
 	const [ siteType, setSiteType ] = useState( null );
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -60,6 +62,7 @@ const ProductCard = ( { siteSlug } ) => {
 	// change the plan to commercial on the personal plan confirmation
 	const handlePlanSwap = () => {
 		setSiteType( TYPE_COMMERCIAL );
+		setSubscriptionValue( FLAT_COMMERCIAL_PRICE );
 		setWizardStep( SCREEN_PURCHASE );
 	};
 
@@ -174,7 +177,7 @@ const ProductCard = ( { siteSlug } ) => {
 											</ul>
 										</p>
 										<p>
-											{ translate( `If your site doesn't meet these criteria,` ) }
+											{ translate( `If your site doesn't meet these criteria, ` ) }
 											<a href="#" onClick={ () => handlePlanSwap() }>
 												{ translate( `you will need to use the commercial plan` ) }
 											</a>
@@ -200,7 +203,7 @@ const ProductCard = ( { siteSlug } ) => {
 											setSubscriptionValue={ setSubscriptionValue }
 										/>
 									) : (
-										<CommercialPurchase />
+										<CommercialPurchase planValue={ FLAT_COMMERCIAL_PRICE } />
 									) }
 								</PanelRow>
 							</PanelBody>
