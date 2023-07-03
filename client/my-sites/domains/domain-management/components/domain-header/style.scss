@@ -61,7 +61,7 @@
 }
 
 .domain-header__spacer {
-	height: 58px;
+	height: 16px;
 
 	@include breakpoint-deprecated( "<960px" ) {
 		height: 66px;
