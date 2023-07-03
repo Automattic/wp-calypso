@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
@@ -205,7 +206,9 @@ export default compose( [
 				sourceSlug: siteSlug,
 			} );
 
-			const showStartSiteTransfer = canCurrentUserStartSiteOwnerTransfer( state, siteId );
+			const showStartSiteTransfer =
+				isEnabled( 'yolo/site-transfers-i1' ) &&
+				canCurrentUserStartSiteOwnerTransfer( state, siteId );
 
 			return {
 				site,
