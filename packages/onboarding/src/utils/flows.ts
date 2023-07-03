@@ -31,7 +31,7 @@ export const BULK_DOMAIN_TRANSFER = 'bulk-domain-transfer';
 export const ONBOARDING_PM_FLOW = 'onboarding-media';
 
 export const isOnboardingPMFlow = ( flowName: string | null | undefined ) => {
-	return Boolean( flowName && [ ONBOARDING_PM_FLOW ].includes( flowName ) );
+	return Boolean( flowName && flowName === ONBOARDING_PM_FLOW );
 };
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
