@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
+import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -267,6 +267,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 export default connect( ( state ) => {
 	return {
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		hostingFlow: isInHostingFlow( state ),
+		hostingFlow: startedInHostingFlow( state ),
 	};
 } )( localize( PlansWrapper ) );
