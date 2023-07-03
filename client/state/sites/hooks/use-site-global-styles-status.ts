@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -72,6 +73,7 @@ export function useSiteGlobalStylesStatus(
 	siteIdOrSlug: number | string | null = null
 ): GlobalStylesStatus {
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	// When site id is null it means that the site hasn't been created yet.
 	const siteId = useSelector( ( state ) => {
@@ -89,7 +91,7 @@ export function useSiteGlobalStylesStatus(
 		queryFn: () => getExperimentAssignment( 'calypso_global_styles_personal' ),
 		placeholderData: null,
 		refetchOnWindowFocus: false,
-		enabled: typeof window !== undefined && siteId === null,
+		enabled: typeof window !== undefined && siteId === null && isLoggedIn,
 	} );
 	const currentUserHasGlobalStylesInPersonalPlan =
 		globalStylesOnPersonalExperimentAssignment === 'treatment';
