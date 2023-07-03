@@ -6,10 +6,10 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
-import { hideMasterbar } from 'calypso/state/ui/actions';
-import { EmptySitesDashboard } from './components/empty-sites-dashboard';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from 'page';
@@ -47,51 +47,19 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 }
 
 export function maybeSitesDashboard( context: PageJSContext, next: () => void ) {
-	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
+	const state = context.store.getState();
+	const siteCount = getCurrentUser( state )?.site_count ?? 0;
 
 	if ( context.query[ 'hosting-flow' ] || siteCount === 0 ) {
-		context.store.dispatch( hideMasterbar() );
-		return emptySites( context, siteCount, next );
+		const newSiteUrl = getAddNewSiteUrl( {
+			isHostingFlow: context.query[ 'hosting-flow' ] === 'true',
+			isDevAccount: getUserSetting( state, 'is_dev_account' ) === true,
+		} );
+
+		return window.location.assign( newSiteUrl );
 	}
 
 	return sitesDashboard( context, next );
-}
-
-function emptySites( context: PageJSContext, siteCount: number, next: () => void ) {
-	const emptySitesDashboardGlobalStyles = css`
-		body.is-group-sites-dashboard {
-			background: #fff;
-
-			.layout__primary {
-				margin: 100px 24px;
-			}
-
-			.layout__content {
-				padding: 0 !important; /* this is overriden by other styles being injected on the page */
-				min-height: auto; /* browsing a different page might inject this style on the page */
-			}
-
-			${ MEDIA_QUERIES.mediumOrLarger } {
-				height: 100vh;
-
-				.wpcom-site {
-					display: flex;
-					align-items: center;
-					justify-content: center;
-				}
-			}
-		}
-	`;
-
-	context.primary = (
-		<>
-			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
-			<Global styles={ emptySitesDashboardGlobalStyles } />
-			<EmptySitesDashboard siteCount={ siteCount } />
-		</>
-	);
-
-	return next();
 }
 
 function sitesDashboard( context: PageJSContext, next: () => void ) {
