@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { resetBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { useTermsSuggestions } from './useTermsSuggestions';
 import './style.scss';
 
@@ -24,7 +25,9 @@ const SearchBox = ( {
 
 	const pageToSearch = useCallback(
 		( s ) => {
-			page.show( page.current ); // Ensures location.href is up to date before setQueryArgs uses it to construct the redirect.
+			dispatch( resetBreadcrumbs() );
+
+			page.show( '/plugins' ); // Ensures location.href is on the main Plugins page before setQueryArgs uses it to construct the redirect.
 			setQueryArgs( '' !== s ? { s } : {} );
 			searchBoxRef.current.blur();
 			scrollTo( {
@@ -35,7 +38,7 @@ const SearchBox = ( {
 				duration: 300,
 			} );
 		},
-		[ searchBoxRef, categoriesRef ]
+		[ searchBoxRef, categoriesRef, dispatch ]
 	);
 
 	const recordSearchEvent = ( eventName ) =>
