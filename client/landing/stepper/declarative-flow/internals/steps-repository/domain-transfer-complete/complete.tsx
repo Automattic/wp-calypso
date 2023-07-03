@@ -1,41 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import QueryAllDomains from 'calypso/components/data/query-all-domains';
-import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
-import type { ResponseDomain } from 'calypso/lib/domains/types';
+import { ResponseDomain } from 'calypso/lib/domains/types';
 
 type Props = {
-	manageAllDomains: () => void;
+	newlyTransferredDomains: ResponseDomain[];
 };
 
-export const Complete = ( { manageAllDomains }: Props ) => {
+export const Complete = ( { newlyTransferredDomains }: Props ) => {
 	const { __ } = useI18n();
-
-	const domainsList: ResponseDomain[] = useSelector( getFlatDomainsList );
-
-	const [ newlyTransferredDomains, setNewlyTransferredDomains ] = useState< ResponseDomain[] >(
-		[]
-	);
-
-	useEffect( () => {
-		const currentDate = new Date();
-
-		const domainsFromToday = domainsList?.filter( ( domain ) => {
-			const domainRegistrationDate = new Date( domain.registrationDate );
-
-			const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
-
-			const differenceInDays = Math.abs(
-				Math.floor( ( currentDate.getTime() - domainRegistrationDate.getTime() ) / oneDay )
-			);
-
-			return differenceInDays <= 1;
-		} ) as ResponseDomain[];
-
-		setNewlyTransferredDomains( domainsFromToday );
-	}, [ domainsList ] );
 
 	const formatDate = ( date: string | null ): string => {
 		if ( date === null ) {
@@ -46,7 +18,6 @@ export const Complete = ( { manageAllDomains }: Props ) => {
 	};
 	return (
 		<>
-			<QueryAllDomains />
 			<div className="domain-complete-summary">
 				{ newlyTransferredDomains && (
 					<ul className="domain-complete-list">
@@ -59,9 +30,12 @@ export const Complete = ( { manageAllDomains }: Props ) => {
 											{ __( 'Auto renews on ' ) } { formatDate( domain.expiry ) }
 										</p>
 									</div>
-									<button onClick={ manageAllDomains } className="components-button is-secondary">
+									<a
+										href={ `https://wordpress.com/domains/manage/${ domain.domain }` }
+										className="components-button is-secondary"
+									>
 										{ __( 'Manage domain' ) }
-									</button>
+									</a>
 								</li>
 							);
 						} ) }
