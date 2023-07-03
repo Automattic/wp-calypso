@@ -133,7 +133,6 @@ const DesignPreview = ( props: DesignPreviewProps ) => (
 		siteId={ props.siteId }
 		stylesheet={ props.stylesheet }
 		placeholder={ null }
-		limitGlobalStyles={ props.limitGlobalStyles }
 	>
 		<Preview { ...props } />
 	</GlobalStylesProvider>
