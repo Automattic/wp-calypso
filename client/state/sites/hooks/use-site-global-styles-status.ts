@@ -1,11 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { useExperiment } from 'calypso/lib/explat';
 import wpcom from 'calypso/lib/wp';
 
 export type GlobalStylesStatus = {
 	shouldLimitGlobalStyles: boolean;
 	globalStylesInUse: boolean;
-	globalStylesInPersonalPlan: boolean;
 };
 
 // While we are loading the Global Styles Info we can't assume that we should limit global styles, or we would be
@@ -13,18 +11,13 @@ export type GlobalStylesStatus = {
 export const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
 	shouldLimitGlobalStyles: false,
 	globalStylesInUse: false,
-	globalStylesInPersonalPlan: false,
 };
 
-export const getGlobalStylesInfoForSite = (
-	siteId: number | null,
-	currentUserHasGlobalStylesInPersonal: boolean
-): GlobalStylesStatus => {
+export const getGlobalStylesInfoForSite = ( siteId: number | null ): GlobalStylesStatus => {
 	if ( siteId == null ) {
 		return {
 			shouldLimitGlobalStyles: true,
 			globalStylesInUse: false,
-			globalStylesInPersonalPlan: currentUserHasGlobalStylesInPersonal,
 		};
 	}
 
@@ -41,14 +34,9 @@ export const getGlobalStylesInfoForSite = (
 };
 
 export function useSiteGlobalStylesStatus( siteId: number ): GlobalStylesStatus {
-	const [ , globalStylesInPersonalExperiment ] = useExperiment( 'calypso_global_styles_personal' );
 	const { data } = useQuery( {
-		queryKey: [ 'globalStylesInfo', siteId, globalStylesInPersonalExperiment?.variationName ],
-		queryFn: () =>
-			getGlobalStylesInfoForSite(
-				siteId,
-				globalStylesInPersonalExperiment?.variationName === 'treatment'
-			),
+		queryKey: [ 'globalStylesInfo', siteId ],
+		queryFn: () => getGlobalStylesInfoForSite( siteId ),
 		placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
 		refetchOnWindowFocus: false,
 	} );

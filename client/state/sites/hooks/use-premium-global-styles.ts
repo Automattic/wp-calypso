@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -13,7 +12,6 @@ export function usePremiumGlobalStyles(
 	siteIdOrSlug: number | string | null = 0
 ): GlobalStylesStatus {
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const [ , globalStylesInPersonalExperiment ] = useExperiment( 'calypso_global_styles_personal' );
 
 	// When site id is null it means that the site hasn't been created yet.
 	const siteId = useSelector( ( state ) => {
@@ -27,12 +25,8 @@ export function usePremiumGlobalStyles(
 	} );
 
 	const { data } = useQuery( {
-		queryKey: [ 'globalStylesInfo', siteId, globalStylesInPersonalExperiment?.variationName ],
-		queryFn: () =>
-			getGlobalStylesInfoForSite(
-				siteId,
-				globalStylesInPersonalExperiment?.variationName === 'treatment'
-			),
+		queryKey: [ 'globalStylesInfo', siteId ],
+		queryFn: () => getGlobalStylesInfoForSite( siteId ),
 		placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
 		refetchOnWindowFocus: false,
 	} );
