@@ -22,7 +22,7 @@ import {
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-	PRODUCT_JETPACK_STATS_FREE_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
 import {
 	productHasAntiSpam,
@@ -240,7 +240,7 @@ describe( 'JetpackBenefits Feature Checks', () => {
 	} );
 
 	test( 'Plans and products with free stats return false for productHasStats onlyPaid', () => {
-		const plansWithoutPaidStats = [ PRODUCT_JETPACK_STATS_FREE_YEARLY ];
+		const plansWithoutPaidStats = [ PRODUCT_JETPACK_STATS_FREE ];
 
 		plansWithoutPaidStats.forEach( ( plan ) => {
 			expect( productHasStats( plan, true ) ).toBe( false );
