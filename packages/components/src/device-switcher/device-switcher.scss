@@ -35,12 +35,14 @@
 	transition: max-width 0.2s ease-out, max-height 0.2s ease-out;
 	max-width: 100%;
 	max-height: 100%;
+	box-sizing: border-box;
 	// Create a new stacking context to fix border-radius with overflow hidden issue on safari
 	// See https://github.com/Automattic/wp-calypso/issues/71440
 	isolation: isolate;
 
 	.device-switcher__container--frame-bordered & {
 		--device-switcher-border-width: 10px;
+		border: var(--device-switcher-border-width) solid var(--color-print);
 		border-radius: var(--device-switcher-border-radius);
 
 		@include break-small {
@@ -76,7 +78,7 @@
 	.device-switcher__container--is-phone & {
 		--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
 		max-width: 480px;
-		max-height: 680px;
+		max-height: 844px;
 
 		.device-switcher__container--frame-shadow & {
 			box-shadow:

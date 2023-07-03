@@ -2,10 +2,35 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/fonts";
 
+$design-preview-sidebar-width: 311px;
+
 .design-preview {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+
+	&.design-preview--has-multiple-screens {
+		padding: 0 20px;
+
+		.design-preview__sidebar {
+			position: relative;
+			width: 100%;
+			padding: 0 0 34px;
+			border: none;
+			box-shadow: none;
+			overflow: visible;
+		}
+
+		.design-preview__sidebar-header {
+			display: block;
+		}
+
+		@include break-xlarge {
+			.design-preview__sidebar {
+				width: $design-preview-sidebar-width;
+			}
+		}
+	}
 
 	@include break-xlarge {
 		flex-direction: row;
@@ -29,30 +54,6 @@
 	top: 0;
 	z-index: z-index(".is-section-stepper", ".design-preview__sticky-variations");
 
-	.design-preview__sidebar-action-buttons {
-		display: none;
-		position: sticky;
-		bottom: 0;
-		width: 100%;
-		background-color: var(--studio-white);
-		z-index: z-index("root", ".design-preview__sidebar-action-buttons");
-
-		a,
-		button {
-			width: 100%;
-			border-radius: 4px;
-			box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-		}
-
-		@include break-xlarge {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-			padding: 32px 16px;
-			margin: 0 -16px;
-		}
-	}
-
 	@include break-small {
 		align-items: center;
 		justify-content: center;
@@ -65,7 +66,31 @@
 		height: auto;
 		padding: 0;
 		position: relative;
-		width: 311px;
+		width: $design-preview-sidebar-width;
+	}
+}
+
+.design-preview__sidebar-action-buttons {
+	display: none;
+	position: sticky;
+	bottom: 0;
+	width: 100%;
+	background-color: var(--studio-white);
+	z-index: z-index("root", ".design-preview__sidebar-action-buttons");
+
+	a,
+	button {
+		width: 100%;
+		border-radius: 4px;
+		box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+	}
+
+	@include break-xlarge {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 32px 16px;
+		margin: 0 -16px;
 	}
 }
 
@@ -80,13 +105,19 @@
 	}
 
 	.design-preview__sidebar-header {
+		display: none;
+		margin-bottom: 32px;
+
+		.design-preview__sidebar--has-multiple-screens & {
+			display: block;
+		}
+
 		@include break-xlarge {
-			margin-bottom: 2rem;
+			display: block;
 		}
 	}
 
 	.design-preview__sidebar-title {
-		display: none;
 		margin: 0;
 
 		h1 {
@@ -118,7 +149,6 @@
 	}
 
 	.design-preview__sidebar-author {
-		display: none;
 		font-size: $font-body-small;
 
 		@include break-xlarge {
@@ -128,8 +158,6 @@
 	}
 
 	.design-preview__sidebar-badges {
-		display: none;
-
 		.premium-badge,
 		.woocommerce-bundled-badge {
 			letter-spacing: 0.2px;
@@ -159,7 +187,7 @@
 	}
 
 	.design-preview__sidebar-description {
-		display: none;
+		margin-top: 16px;
 
 		> p {
 			color: var(--studio-gray-80);
@@ -182,7 +210,7 @@
 
 		@include break-xlarge {
 			display: block;
-			margin-top: 2rem;
+			margin-top: 32px;
 		}
 	}
 

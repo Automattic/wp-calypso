@@ -1,4 +1,5 @@
 import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import classnames from 'classnames';
 import { useMemo } from 'react';
 import { useInlineCss, useScreens } from '../hooks';
 import Sidebar from './sidebar';
@@ -84,7 +85,11 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	useSyncGlobalStylesUserConfig( selectedVariations, onGlobalStylesChange );
 
 	return (
-		<div className="design-preview">
+		<div
+			className={ classnames( 'design-preview', {
+				'design-preview--has-multiple-screens': screens.length > 1,
+			} ) }
+		>
 			<Sidebar
 				title={ title }
 				author={ author }

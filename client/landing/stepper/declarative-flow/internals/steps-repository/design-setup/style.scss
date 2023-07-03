@@ -237,6 +237,11 @@ $design-button-primary-color: rgb(17, 122, 201);
 				height: calc(100vh - 148px);
 			}
 
+			.design-preview__site-preview {
+				height: calc(100vh - 120px);
+				margin-bottom: 90px;
+			}
+
 			.web-preview__inner {
 				transform: translateY(-48px);
 			}
@@ -268,6 +273,15 @@ $design-button-primary-color: rgb(17, 122, 201);
 		@include break-small {
 			.design-setup__preview-content {
 				max-height: 1080px;
+			}
+		}
+
+		@include break-xlarge {
+			.step-container__content {
+				.design-preview__site-preview {
+					height: auto;
+					margin-bottom: 32px;
+				}
 			}
 		}
 	}
@@ -626,9 +640,8 @@ $design-button-primary-color: rgb(17, 122, 201);
 		}
 
 		.step-container__content {
-			// 156px = .design-preview__sidebar + step-container__navigation.action-buttons
-			height: calc(100vh - 156px);
-			margin: 36px 0 0;
+			height: auto;
+			margin: 50px 0 0;
 			overflow: hidden;
 			padding: 0;
 			position: relative;

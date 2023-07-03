@@ -1,6 +1,6 @@
-import { DeviceSwitcher } from '@automattic/components';
+import { DeviceSwitcher, DEVICE_TYPES } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
-import { useResizeObserver } from '@wordpress/compose';
+import { useResizeObserver, useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
@@ -43,6 +43,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	const [ isFullyLoaded, setIsFullyLoaded ] = useState( ! isUrlWpcomApi( url ) );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
+	const isDesktop = useViewportMatch( 'large' );
 	const calypso_token = useMemo( () => uuid(), [] );
 	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : 1;
 
@@ -102,6 +103,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			className={ classnames( 'theme-preview__container', {
 				'theme-preview__container--loading': ! isLoaded && ! isFullyLoaded,
 			} ) }
+			defaultDevice={ isDesktop ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE }
 			isShowDeviceSwitcherToolbar={ isShowDeviceSwitcher }
 			isShowFrameBorder={ isShowFrameBorder }
 			onDeviceChange={ recordDeviceClick }
