@@ -61,7 +61,7 @@ class AddDnsRecord extends Component {
 			},
 			{
 				label: translate( 'DNS records' ),
-				href: domainManagementDns( selectedSite?.slug, selectedDomainName ),
+				href: domainManagementDns( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
 				label: recordBeingEdited
@@ -74,7 +74,7 @@ class AddDnsRecord extends Component {
 			label: translate( 'Back to DNS records', {
 				comment: 'Link to return to the DNs records management page of a domain ',
 			} ),
-			href: domainManagementDns( selectedSite?.slug, selectedDomainName ),
+			href: domainManagementDns( selectedSite?.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
