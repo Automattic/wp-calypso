@@ -1,4 +1,4 @@
-import { getLanguageRouteParam } from '@automattic/i18n-utils';
+import { getLanguageRouteParam, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
@@ -14,6 +14,15 @@ const fetchTrendingTagsIfLoggedOut = ( context, next ) => {
 	next();
 };
 
+const redirectLoggedInUrl = ( context, next ) => {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( context.path );
+		if ( pathWithoutLocale !== context.path ) {
+			return page.redirect( pathWithoutLocale );
+		}
+	}
+	next();
+};
 export default function () {
 	const langParam = getLanguageRouteParam();
 	// Old recommendations page
@@ -21,6 +30,7 @@ export default function () {
 
 	page(
 		[ '/read/search', `/${ langParam }/read/search` ],
+		redirectLoggedInUrl,
 		setLocaleMiddleware(),
 		fetchTrendingTagsIfLoggedOut,
 		updateLastRoute,

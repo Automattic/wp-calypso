@@ -145,7 +145,7 @@ class ReaderPostCard extends Component {
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const isConversations = currentRoute.startsWith( '/read/conversations' );
 
-		const isReaderSearchPage = !! new RegExp( `^(/${ localeRegexString })?/read/search` ).test(
+		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/read/search` ).test(
 			currentRoute
 		);
 
