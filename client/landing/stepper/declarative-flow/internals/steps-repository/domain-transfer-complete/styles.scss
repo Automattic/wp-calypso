@@ -127,5 +127,10 @@
 				}
 			}
 		}
+
+		// Hide back button
+		.step-container__navigation {
+			display: none;
+		}
 	}
 }
