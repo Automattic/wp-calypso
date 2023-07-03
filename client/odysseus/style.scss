@@ -1,6 +1,6 @@
 .chatbox {
 	position: fixed;
-	bottom: 20px;
+	bottom: 64px;
 	right: 20px;
 	width: 300px;
 	height: 400px;
@@ -152,10 +152,6 @@
 	75% {
 		transform: rotate(1.2deg);
 	}
-}
-
-.environment-badge {
-	display: none !important;
 }
 
 .wapuu-tail-image {
