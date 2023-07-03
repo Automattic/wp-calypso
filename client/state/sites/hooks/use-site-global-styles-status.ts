@@ -28,7 +28,7 @@ const getExperimentAssignment = ( experimentName: string ): string | null => {
 		.get(
 			{
 				path: '/experiments/0.1.0/assignments/calypso',
-				apiNamespace: 'wpcom/v2/',
+				apiNamespace: 'wpcom/v2',
 			},
 			{
 				experiment_name: experimentName,
