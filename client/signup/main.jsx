@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
+import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	recordSignupStart,
@@ -912,7 +912,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const oauth2Client = getCurrentOAuth2Client( state );
-		const hostingFlow = isInHostingFlow( state );
+		const hostingFlow = startedInHostingFlow( state );
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )

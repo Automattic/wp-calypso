@@ -9,8 +9,6 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-	TYPE_PERSONAL,
-	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -19,7 +17,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -38,6 +36,7 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -254,12 +253,12 @@ class Plans extends Component {
 
 		const hideFreePlan = this.props.isDomainAndPlanPackageFlow;
 		// The Jetpack mobile app only wants to display two plans -- personal and premium
-		const planTypes = this.props.jetpackAppPlans ? [ TYPE_PERSONAL, TYPE_PREMIUM ] : null;
-
+		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
 		const hidePlanTypeSelector =
 			this.props.domainAndPlanPackage &&
 			( ! this.props.isDomainUpsell ||
 				( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) );
+
 		return (
 			<PlansFeaturesMain
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
@@ -272,10 +271,10 @@ class Plans extends Component {
 				redirectTo={ this.props.redirectTo }
 				withDiscount={ this.props.withDiscount }
 				discountEndDate={ this.props.discountEndDate }
-				site={ selectedSite }
+				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
-				planTypes={ planTypes }
+				intent={ plansIntent }
 			/>
 		);
 	}
@@ -475,6 +474,19 @@ const ConnectedPlans = connect( ( state ) => {
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
 export default function PlansWrapper( props ) {
+	const { sendNudge } = useOdysseusAssistantContext();
+
+	useEffect( () => {
+		if ( props.intervalType === 'monthly' ) {
+			sendNudge( {
+				nudge: 'monthly-plan',
+				initialMessage:
+					'I see you are sitting on a monthly plan. I can recommend you to switch to an annual plan, so you can save some money.',
+				context: { plan: 'monthly' },
+			} );
+		}
+	}, [ props.intervalType ] );
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<ConnectedPlans { ...props } />

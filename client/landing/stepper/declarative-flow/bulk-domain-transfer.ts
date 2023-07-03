@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { BULK_DOMAIN_TRANSFER } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useFlowProgress, BULK_DOMAIN_TRANSFER } from '@automattic/onboarding';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import {
 	clearSignupDestinationCookie,
@@ -8,7 +8,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { USER_STORE } from '../stores';
+import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
@@ -37,11 +37,14 @@ const bulkDomainTransfer: Flow = {
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
 		const locale = useLocale();
+		setStepProgress( flowProgress );
 
 		const logInUrl =
 			locale && locale !== 'en'
