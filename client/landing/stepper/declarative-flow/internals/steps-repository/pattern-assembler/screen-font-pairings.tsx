@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { FontPairingVariations } from '@automattic/global-styles';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import NavigatorHeader from './navigator-header';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
@@ -24,7 +24,7 @@ const ScreenFontPairings = ( {
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( siteId );
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
 	return (
 		<>
