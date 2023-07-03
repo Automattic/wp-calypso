@@ -157,6 +157,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 								stylesheet={ stylesheet }
 								selectedFontPairingVariation={ selectedFontVariation }
 								onSelect={ onSelectFontVariation }
+								limitGlobalStyles={ limitGlobalStyles }
 							/>
 						</div>
 					) }
