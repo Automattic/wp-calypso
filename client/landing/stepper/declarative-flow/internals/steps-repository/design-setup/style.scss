@@ -221,25 +221,8 @@ $design-button-primary-color: rgb(17, 122, 201);
 		}
 
 		.step-container__content {
-			height: calc(100vh - 245px);
-			margin-top: 74px;
-
-			@include break-small {
-				height: calc(100vh - 225px);
-				margin-top: 32px;
-			}
-
 			@include break-small {
 				max-height: 1080px;
-			}
-
-			@include break-medium {
-				height: calc(100vh - 148px);
-			}
-
-			.design-preview__site-preview {
-				height: calc(100vh - 120px);
-				margin-bottom: 90px;
 			}
 
 			.web-preview__inner {
@@ -273,15 +256,6 @@ $design-button-primary-color: rgb(17, 122, 201);
 		@include break-small {
 			.design-setup__preview-content {
 				max-height: 1080px;
-			}
-		}
-
-		@include break-xlarge {
-			.step-container__content {
-				.design-preview__site-preview {
-					height: auto;
-					margin-bottom: 32px;
-				}
 			}
 		}
 	}
@@ -637,15 +611,6 @@ $design-button-primary-color: rgb(17, 122, 201);
 
 		.step-container__header {
 			display: none;
-		}
-
-		.step-container__content {
-			height: auto;
-			margin: 50px 0 0;
-			overflow: hidden;
-			padding: 0;
-			position: relative;
-			// z-index: 1;
 		}
 
 		@include break-xlarge {

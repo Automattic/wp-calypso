@@ -91,6 +91,11 @@
 		}
 	}
 
+	.device-switcher__container--is-fullscreen & {
+		max-height: 100vh;
+		max-width: 100vw;
+	}
+
 	.device-switcher__container--frame-fixed-viewport & {
 		--viewport-width-px: calc(var(--viewport-width) * 1px);
 		--viewport-height: calc(100% / var(--viewport-scale));

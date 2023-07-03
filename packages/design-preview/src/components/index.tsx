@@ -1,6 +1,7 @@
 import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useInlineCss, useScreens } from '../hooks';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
@@ -60,6 +61,8 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	limitGlobalStyles,
 	onNavigatorPathChange,
 } ) => {
+	const isDesktop = useViewportMatch( 'large' );
+	const [ isInitialScreen, setIsInitialScreen ] = useState( true );
 	const selectedVariations = useMemo(
 		() =>
 			[ selectedColorVariation, selectedFontVariation ].filter( Boolean ) as GlobalStylesObject[],
@@ -82,12 +85,21 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		onSelectFontVariation,
 	} );
 
+	const isFullscreen = ! isDesktop && ( screens.length === 1 || ! isInitialScreen );
+
+	const handleNavigatorPathChange = ( path: string ) => {
+		setIsInitialScreen( path === '/' );
+		onNavigatorPathChange?.( path );
+	};
+
 	useSyncGlobalStylesUserConfig( selectedVariations, onGlobalStylesChange );
 
 	return (
 		<div
 			className={ classnames( 'design-preview', {
+				'design-preview--is-initial-screen': isInitialScreen,
 				'design-preview--has-multiple-screens': screens.length > 1,
+				'design-preview--is-fullscreen': isFullscreen,
 			} ) }
 		>
 			<Sidebar
@@ -100,11 +112,12 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				screens={ screens }
 				actionButtons={ actionButtons }
 				onClickCategory={ onClickCategory }
-				onNavigatorPathChange={ onNavigatorPathChange }
+				onNavigatorPathChange={ handleNavigatorPathChange }
 			/>
 			<SitePreview
 				url={ previewUrl }
 				inlineCss={ inlineCss }
+				isFullscreen={ isFullscreen }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>
