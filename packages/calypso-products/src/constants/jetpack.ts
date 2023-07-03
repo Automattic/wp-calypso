@@ -23,9 +23,6 @@ export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
 export const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
 export const PRODUCT_JETPACK_SEARCH_FREE = 'jetpack_search_free';
 export const PRODUCT_JETPACK_SEARCH_MONTHLY = 'jetpack_search_monthly';
-export const PRODUCT_JETPACK_STATS_MONTHLY = 'jetpack_stats_monthly';
-export const PRODUCT_JETPACK_STATS_PWYW_YEARLY = 'jetpack_stats_pwyw_yearly';
-export const PRODUCT_JETPACK_STATS_FREE_YEARLY = 'jetpack_stats_free_yearly';
 export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
 export const PRODUCT_JETPACK_CRM_FREE = 'jetpack_crm_free';
@@ -171,13 +168,6 @@ export const JETPACK_SEARCH_PRODUCTS = <const>[
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
-];
-
-// Stats
-export const JETPACK_STATS_PRODUCTS = <const>[
-	PRODUCT_JETPACK_STATS_MONTHLY,
-	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-	PRODUCT_JETPACK_STATS_FREE_YEARLY,
 ];
 
 // CRM

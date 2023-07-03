@@ -83,7 +83,7 @@ export const productHasSearch = ( productSlug: string ): boolean => {
 
 export const productHasStats = ( productSlug: string, onlyPaid = false ): boolean => {
 	// Check for standalone stats product
-	if ( isJetpackStatsSlug( productSlug ) && onlyPaid ) {
+	if ( isJetpackStatsSlug( productSlug ) ) {
 		return ! onlyPaid || isJetpackStatsPaidProductSlug( productSlug );
 	}
 	// Check for stats features in plans
