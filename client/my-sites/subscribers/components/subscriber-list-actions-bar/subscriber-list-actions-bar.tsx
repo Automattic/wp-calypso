@@ -38,7 +38,7 @@ const ListActionsBar = () => {
 				onSelect={ ( selectedOption: Option< SubscribersFilterBy > ) =>
 					setFilterOption( selectedOption.value )
 				}
-				selectedText={ translate( 'Subscription Type: %s', {
+				selectedText={ translate( 'Subscriber type: %s', {
 					args: getOptionLabel( filterOptions, filterOption ) || '',
 				} ) }
 			/>
