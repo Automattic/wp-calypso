@@ -5,7 +5,7 @@ import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData } from './types';
-import type { BulkDomainTransferData, State } from '.';
+import type { DomainTransferData, State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
@@ -451,7 +451,7 @@ export const setDomainCartItem = ( domainCartItem: MinimalRequestCartProduct | u
 	domainCartItem,
 } );
 
-export const setBulkDomainsData = ( bulkDomainsData: BulkDomainTransferData | undefined ) => ( {
+export const setBulkDomainsData = ( bulkDomainsData: DomainTransferData | undefined ) => ( {
 	type: 'SET_BULK_DOMAINS_DATA' as const,
 	bulkDomainsData,
 } );
