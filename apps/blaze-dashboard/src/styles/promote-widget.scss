@@ -1,6 +1,8 @@
 // Overrides styles for the Create campaign widget
 div.MuiPopover-root,
-div.MuiPickersPopper-root {
+div.MuiPickersPopper-root,
+div.MuiDialog-root,
+div.MuiModal-root {
 	z-index: 99999;
 }
 
