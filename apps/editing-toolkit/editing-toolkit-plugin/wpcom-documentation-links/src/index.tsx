@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { addFilter } from '@wordpress/hooks';
 import './style.css';
 
@@ -12,20 +13,22 @@ function overrideCoreDocumentationLinksToWpcom( translation: string, text: strin
 	switch ( text ) {
 		case 'https://wordpress.org/support/article/excerpt/':
 		case 'https://wordpress.org/support/article/settings-sidebar/#excerpt':
-			return 'https://wordpress.com/support/excerpts/';
+		case 'https://wordpress.org/documentation/article/page-post-settings-sidebar/#excerpt':
+			return localizeUrl( 'https://wordpress.com/support/excerpts/' );
 		case 'https://wordpress.org/support/article/writing-posts/#post-field-descriptions':
 		case 'https://wordpress.org/support/article/settings-sidebar/#permalink':
-			return 'https://wordpress.com/support/permalinks-and-slugs/';
+		case 'https://wordpress.org/documentation/article/page-post-settings-sidebar/#permalink':
+			return localizeUrl( 'https://wordpress.com/support/permalinks-and-slugs/' );
 		case 'https://wordpress.org/support/article/wordpress-editor/':
-			return 'https://wordpress.com/support/wordpress-editor/';
+			return localizeUrl( 'https://wordpress.com/support/wordpress-editor/' );
 		case 'https://wordpress.org/support/article/site-editor/':
-			return 'https://wordpress.com/support/site-editor/';
+			return localizeUrl( 'https://wordpress.com/support/site-editor/' );
 		case 'https://wordpress.org/support/article/block-based-widgets-editor/':
-			return 'https://wordpress.com/support/widgets/';
+			return localizeUrl( 'https://wordpress.com/support/widgets/' );
 		case 'https://wordpress.org/plugins/classic-widgets/':
-			return 'https://wordpress.com/plugins/classic-widgets';
+			return localizeUrl( 'https://wordpress.com/plugins/classic-widgets' );
 		case 'https://wordpress.org/support/article/styles-overview/':
-			return 'https://wordpress.com/support/using-styles/';
+			return localizeUrl( 'https://wordpress.com/support/using-styles/' );
 	}
 
 	return translation;
