@@ -17,8 +17,8 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Sidebar from '../sidebar';
 import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
 
-jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
-	usePremiumGlobalStyles: () => ( {
+jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+	useSiteGlobalStylesStatus: () => ( {
 		shouldLimitGlobalStyles: false,
 		globalStylesInUse: false,
 	} ),
