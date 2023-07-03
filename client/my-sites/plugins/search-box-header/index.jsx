@@ -25,7 +25,10 @@ const SearchBox = ( {
 
 	const pageToSearch = useCallback(
 		( s ) => {
-			dispatch( resetBreadcrumbs() );
+			const isCategoryPage = window.location.href.includes( '/plugins/browse/' );
+			if ( isCategoryPage ) {
+				dispatch( resetBreadcrumbs() );
+			}
 
 			page.show( '/plugins' ); // Ensures location.href is on the main Plugins page before setQueryArgs uses it to construct the redirect.
 			setQueryArgs( '' !== s ? { s } : {} );
