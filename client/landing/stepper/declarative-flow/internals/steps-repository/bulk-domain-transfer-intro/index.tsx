@@ -1,6 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
-import headerImage from 'calypso/assets/images/onboarding/import-1.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep from './intro';
@@ -19,15 +18,12 @@ const Intro: Step = function Intro( { navigation } ) {
 		<StepContainer
 			hideBack
 			stepName="intro"
-			isHorizontalLayout
-			headerImageUrl={ headerImage }
 			isLargeSkipLayout={ false }
 			formattedHeader={
 				<FormattedHeader
 					id="bulk-domains-header"
-					headerText={ __( 'Transfer your domains to WordPress.com' ) }
-					align="left"
-					subHeaderText={ __( 'Give your domains a home that you can trust to stay live.' ) }
+					headerText={ __( 'Transfer domains' ) }
+					subHeaderText={ __( 'Follow along these 3 steps to transfer domains to WordPress.com' ) }
 				/>
 			}
 			stepContent={ <IntroStep onSubmit={ handleSubmit } /> }
@@ -35,6 +31,7 @@ const Intro: Step = function Intro( { navigation } ) {
 			showHeaderJetpackPowered={ false }
 			showHeaderWooCommercePowered={ false }
 			showVideoPressPowered={ false }
+			showJetpackPowered={ true }
 		/>
 	);
 };
