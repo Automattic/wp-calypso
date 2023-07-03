@@ -45,8 +45,8 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 				} );
 
 				// The "mapped_*" statuses here are a quick and dirty fix to allow bulk transfer of already connected domains for now.
-				// The "transferrable" status should be the only one that indicates a domain can be transferred. There are some domains that
-				// can be mapped but can't be transferred
+				// The "transferrable" status should be the only one that indicates a domain can be transferred because there are some
+				// domains that can be mapped but can't be transferred
 				const isUnlocked = [
 					'transferrable',
 					'mapped_to_other_site_same_user',
