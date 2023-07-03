@@ -23,7 +23,8 @@
 		"./__mocks__/lib/json-schema-draft-04.json",
 		"./package.json",
 		"./state/data-layer/wpcom/sites/jitm/schema.json",
-		"./declarations.d.ts"
+		"./declarations.d.ts",
+		"../packages/data-stores/src/reader/contexts/site-subscriptions-query-props.tsx"
 	],
 	"exclude": [
 		"./**/node_modules/**/*",

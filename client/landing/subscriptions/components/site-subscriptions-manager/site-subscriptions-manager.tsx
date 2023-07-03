@@ -1,21 +1,17 @@
+import { SubscriptionManager } from '@automattic/data-stores';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import SiteSubscriptionsList from './site-subscriptions-list';
 import ListActionsBar from './site-subscriptions-list-actions-bar';
-import {
-	SiteSubscriptionsManagerProvider,
-	useSiteSubscriptionsManager,
-} from './site-subscriptions-manager-context';
 import './styles.scss';
 
 type SiteSubscriptionsManagerProps = { children: React.ReactNode };
 
 export const SiteSubscriptionsManager = ( { children }: SiteSubscriptionsManagerProps ) => {
 	const translate = useTranslate();
-	const { siteSubscriptionsQueryResult } = useSiteSubscriptionsManager();
-	const { data, isLoading, error } = siteSubscriptionsQueryResult;
+	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
 	const { totalCount } = data ?? {};
 
 	if ( error ) {
@@ -52,11 +48,11 @@ SiteSubscriptionsManager.List = SiteSubscriptionsList;
 
 export default () => {
 	return (
-		<SiteSubscriptionsManagerProvider>
+		<SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
 			<SiteSubscriptionsManager>
 				<SiteSubscriptionsManager.ListActionsBar />
 				<SiteSubscriptionsManager.List />
 			</SiteSubscriptionsManager>
-		</SiteSubscriptionsManagerProvider>
+		</SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
 	);
 };
