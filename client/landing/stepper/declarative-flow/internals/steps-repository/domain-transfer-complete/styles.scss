@@ -48,6 +48,7 @@
 			gap: 50px;
 			@media ( max-width: $break-medium ) {
 				width: 100%;
+				gap: 40px;
 			}
 
 			.domain-complete-summary {
