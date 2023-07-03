@@ -26,11 +26,10 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	FEATURE_CLOUD_CRITICAL_CSS,
-	FEATURE_JETPACK_STATS_MONTHLY,
-	FEATURE_JETPACK_STATS_PWYW_YEARLY,
-	FEATURE_JETPACK_STATS_FREE_YEARLY,
-	isJetpackStatsFree,
-	isJetpackStats,
+	FEATURE_JETPACK_STATS_PAID,
+	FEATURE_JETPACK_STATS_FREE,
+	isJetpackStatsSlug,
+	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 
 export const productHasBackups = ( productSlug: string ): boolean => {
@@ -83,21 +82,21 @@ export const productHasSearch = ( productSlug: string ): boolean => {
 };
 
 export const productHasStats = ( productSlug: string, onlyPaid = false ): boolean => {
-	const STATS_PAID_FEATURES = [ FEATURE_JETPACK_STATS_MONTHLY, FEATURE_JETPACK_STATS_PWYW_YEARLY ];
-	const STATS_FREE_FEATURES = [ FEATURE_JETPACK_STATS_FREE_YEARLY ];
-	return (
-		// standalone stats product
-		( isJetpackStats( { productSlug } ) &&
-			( ! onlyPaid || ! isJetpackStatsFree( { productSlug } ) ) ) ||
-		// check plans for stats features
-		( isJetpackPlanSlug( productSlug ) &&
-			( ( onlyPaid && planHasAtLeastOneFeature( productSlug, STATS_PAID_FEATURES ) ) ||
-				( ! onlyPaid &&
-					planHasAtLeastOneFeature( productSlug, [
-						...STATS_PAID_FEATURES,
-						...STATS_FREE_FEATURES,
-					] ) ) ) )
-	);
+	// Check for standalone stats product
+	if ( isJetpackStatsSlug( productSlug ) && onlyPaid ) {
+		return ! onlyPaid || isJetpackStatsPaidProductSlug( productSlug );
+	}
+	// Check for stats features in plans
+	if ( isJetpackPlanSlug( productSlug ) && onlyPaid ) {
+		return planHasAtLeastOneFeature( productSlug, [ FEATURE_JETPACK_STATS_PAID ] );
+	}
+	if ( isJetpackPlanSlug( productSlug ) && ! onlyPaid ) {
+		return planHasAtLeastOneFeature( productSlug, [
+			FEATURE_JETPACK_STATS_PAID,
+			FEATURE_JETPACK_STATS_FREE,
+		] );
+	}
+	return false;
 };
 
 export const productHasAntiSpam = ( productSlug: string ): boolean => {
