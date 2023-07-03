@@ -382,13 +382,11 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		planProperties;
 	const highlightLabel = useHighlightLabel( {
 		planName,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: visiblePlansProperties,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
@@ -412,7 +410,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				isInSignup={ isInSignup }
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
-				flowName={ flowName }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				selectedPlan={ selectedPlan }
 			/>
@@ -565,20 +562,17 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	restructuredFeatures,
 	planName,
 	isStorageFeature,
-	flowName,
 	currentSitePlanSlug,
 	selectedPlan,
 } ) => {
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: visiblePlansProperties,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
 	const highlightLabel = useHighlightLabel( {
 		planName,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );

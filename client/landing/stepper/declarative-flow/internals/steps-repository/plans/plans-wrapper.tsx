@@ -1,13 +1,5 @@
 // import { subscribeIsDesktop } from '@automattic/viewport';
-import {
-	getPlan,
-	PLAN_FREE,
-	TYPE_FREE,
-	TYPE_PERSONAL,
-	TYPE_PREMIUM,
-	TYPE_BUSINESS,
-	TYPE_ECOMMERCE,
-} from '@automattic/calypso-products';
+import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import {
@@ -42,6 +34,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
 import './style.scss';
 
 type IntervalType = 'yearly' | 'monthly';
@@ -52,23 +45,19 @@ interface Props {
 	hostingFlow: boolean;
 }
 
-function getPlanTypes( flowName: string | null, hideFreePlan: boolean, hostingFlow: boolean ) {
+function getPlansIntent( flowName: string | null, hostingFlow: boolean ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 		case DESIGN_FIRST_FLOW:
-			return hideFreePlan
-				? [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ]
-				: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
-			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
+			return 'plans-newsletter';
 		case LINK_IN_BIO_FLOW:
-			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
+			return 'plans-link-in-bio';
 		case NEW_HOSTED_SITE_FLOW:
-			return hostingFlow
-				? [ TYPE_BUSINESS, TYPE_ECOMMERCE ]
-				: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			return hostingFlow ? 'plans-new-hosted-site-hosting-flow' : 'plans-new-hosted-site';
 		default:
-			return undefined;
+			return null;
 	}
 }
 
@@ -91,19 +80,18 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const site = useSite();
 	const { __ } = useI18n();
-
+	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 	const stepName = 'plans';
 	const isReskinned = true;
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
-	const planTypes = getPlanTypes( props?.flowName, reduxHideFreePlan, props.hostingFlow );
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
-
-	const hideFreePlan = planTypes ? ! planTypes.includes( TYPE_FREE ) : reduxHideFreePlan;
-
-	const translate = useTranslate();
+	const plansIntent = getPlansIntent( props?.flowName, props.hostingFlow );
+	const hideFreePlan = plansIntent
+		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
+		: reduxHideFreePlan;
 
 	const onSelectPlan = ( selectedPlan: any ) => {
 		if ( selectedPlan ) {
@@ -162,7 +150,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<div>
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
-					site={ site || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					siteId={ site?.ID }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
@@ -171,13 +159,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					domainName={ getDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
-					planTypes={ planTypes }
 					flowName={ flowName }
-					isAllPaidPlansShown={ true }
-					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
+					intent={ plansIntent }
 				/>
 			</div>
 		);

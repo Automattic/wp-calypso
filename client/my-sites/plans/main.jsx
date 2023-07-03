@@ -9,8 +9,6 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-	TYPE_PERSONAL,
-	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -254,12 +252,12 @@ class Plans extends Component {
 
 		const hideFreePlan = this.props.isDomainAndPlanPackageFlow;
 		// The Jetpack mobile app only wants to display two plans -- personal and premium
-		const planTypes = this.props.jetpackAppPlans ? [ TYPE_PERSONAL, TYPE_PREMIUM ] : null;
-
+		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
 		const hidePlanTypeSelector =
 			this.props.domainAndPlanPackage &&
 			( ! this.props.isDomainUpsell ||
 				( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) );
+
 		return (
 			<PlansFeaturesMain
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
@@ -272,10 +270,10 @@ class Plans extends Component {
 				redirectTo={ this.props.redirectTo }
 				withDiscount={ this.props.withDiscount }
 				discountEndDate={ this.props.discountEndDate }
-				site={ selectedSite }
+				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
-				planTypes={ planTypes }
+				intent={ plansIntent }
 			/>
 		);
 	}
