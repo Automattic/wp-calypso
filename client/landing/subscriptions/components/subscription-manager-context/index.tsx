@@ -1,26 +1,42 @@
-import { createContext, useContext } from '@wordpress/element';
+import { createContext, useContext } from 'react';
 
-export const SubscriptionsPortal = 'subscriptions';
-export const ReaderPortal = 'reader';
-export type Portal = typeof SubscriptionsPortal | typeof ReaderPortal;
-
-export interface SubscriptionManagerContext {
-	portal: Portal;
+export enum SubscriptionsPortal {
+	Subscriptions = 'subscriptions',
+	Reader = 'reader',
 }
 
-const SubscriptionManagerContext = createContext< SubscriptionManagerContext >(
-	{} as SubscriptionManagerContext
+export interface SubscriptionManagerContext {
+	portal: SubscriptionsPortal;
+	isSubscriptionsPortal?: boolean;
+	isReaderPortal?: boolean;
+}
+
+const SubscriptionManagerContext = createContext< SubscriptionManagerContext | undefined >(
+	undefined
 );
 
-export const SubscriptionManagerContextProvider: React.FunctionComponent<
-	SubscriptionManagerContext
-> = ( { children, ...context } ) => {
+export const SubscriptionManagerContextProvider: React.FC< {
+	portal: SubscriptionsPortal;
+	children?: React.ReactNode;
+} > = ( { portal, ...props } ) => {
 	return (
-		<SubscriptionManagerContext.Provider value={ context }>
-			{ children }
-		</SubscriptionManagerContext.Provider>
+		<SubscriptionManagerContext.Provider
+			value={ {
+				portal,
+				isSubscriptionsPortal: portal === SubscriptionsPortal.Subscriptions,
+				isReaderPortal: portal === SubscriptionsPortal.Reader,
+			} }
+			{ ...props }
+		/>
 	);
 };
 
-export const useSubscriptionManagerContext = (): SubscriptionManagerContext =>
-	useContext( SubscriptionManagerContext );
+export const useSubscriptionManagerContext = (): SubscriptionManagerContext => {
+	const context = useContext( SubscriptionManagerContext );
+	if ( ! context ) {
+		throw new Error(
+			'useSubscriptionManagerContext must be used within a SubscriptionManagerContextProvider'
+		);
+	}
+	return context;
+};

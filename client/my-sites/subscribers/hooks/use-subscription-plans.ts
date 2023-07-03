@@ -1,11 +1,17 @@
 import { getCurrencyObject } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { Subscriber, SubscriptionPlan } from '../types';
 
 const freePlan = 'Free';
 
-const useSubscriptionPlans = ( subscriber: Subscriber ): string[] => {
+type SubscriptionPlanData = {
+	plan: ReactNode;
+	startDate?: string;
+	title?: string;
+};
+
+const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] => {
 	const translate = useTranslate();
 
 	const getPaymentInterval = ( renew_interval: string ) => {
@@ -28,15 +34,22 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): string[] => {
 	}
 
 	const transformSubscriptionPlans = ( subscriptions?: SubscriptionPlan[] ) => {
-		const defaultSubscription = [ { renewalPrice: translate( 'Free' ), when: '' } ];
+		const defaultSubscription = [
+			{
+				renewalPrice: translate( 'Free' ),
+				when: '',
+				title: undefined,
+				start_date: undefined,
+			},
+		];
 
 		if ( subscriptions ) {
 			const result = subscriptions.map( ( subscription: SubscriptionPlan ) => {
-				const { currency, renewal_price, renew_interval } = subscription;
+				const { currency, renewal_price, renew_interval, start_date, title } = subscription;
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
 				const when = getPaymentInterval( renew_interval );
 
-				return { renewalPrice, when };
+				return { renewalPrice, when, start_date, title };
 			} );
 
 			return result || defaultSubscription;
@@ -48,13 +61,17 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): string[] => {
 	const subscriptionPlans = useMemo( () => {
 		if ( subscriber ) {
 			const plans = transformSubscriptionPlans( subscriber.plans );
-			return plans.map( ( plan ) =>
-				plan.renewalPrice === freePlan
-					? plan.renewalPrice
-					: `${ plan.when } (${ plan.renewalPrice })`
-			);
+			return plans.map( ( plan ) => ( {
+				plan:
+					plan.renewalPrice === freePlan
+						? plan.renewalPrice
+						: `${ plan.when } (${ plan.renewalPrice })`,
+				startDate: plan.start_date,
+				title: plan.title,
+			} ) );
 		}
 		return [];
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ subscriber ] );
 
 	return subscriptionPlans;

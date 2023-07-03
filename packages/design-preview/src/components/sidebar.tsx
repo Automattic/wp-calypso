@@ -1,8 +1,14 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { GlobalStylesVariations, GlobalStylesObject } from '@automattic/global-styles';
+import {
+	GlobalStylesVariations,
+	ColorPaletteVariations,
+	FontPairingVariations,
+} from '@automattic/global-styles';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 
 interface CategoryBadgeProps {
 	category: Category;
@@ -31,12 +37,18 @@ interface SidebarProps {
 	description?: string;
 	shortDescription?: string;
 	pricingBadge?: React.ReactNode;
-	variations: StyleVariation[];
+	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	splitPremiumVariations: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
+	siteId: number;
+	stylesheet: string;
+	selectedColorVariation: GlobalStylesObject | null;
+	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
+	selectedFontVariation: GlobalStylesObject | null;
+	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -46,12 +58,18 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	pricingBadge,
 	description,
 	shortDescription,
-	variations = [],
+	variations,
 	selectedVariation,
 	onSelectVariation,
 	splitPremiumVariations,
 	onClickCategory,
 	actionButtons,
+	siteId,
+	stylesheet,
+	selectedColorVariation,
+	onSelectColorVariation,
+	selectedFontVariation,
+	onSelectFontVariation,
 } ) => {
 	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
@@ -99,7 +117,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 						</p>
 					</div>
 				) }
-				{ variations.length > 0 && (
+				{ variations && variations.length > 0 && (
 					<div className="design-preview__sidebar-variations">
 						<div className="design-preview__sidebar-variations-grid">
 							<GlobalStylesVariations
@@ -115,6 +133,30 @@ const Sidebar: React.FC< SidebarProps > = ( {
 						</div>
 					</div>
 				) }
+				{ variations &&
+					variations.length === 0 &&
+					isEnabled( 'signup/design-picker-preview-colors' ) && (
+						<div className="design-preview__sidebar-variations">
+							<ColorPaletteVariations
+								siteId={ siteId }
+								stylesheet={ stylesheet }
+								selectedColorPaletteVariation={ selectedColorVariation }
+								onSelect={ onSelectColorVariation }
+							/>
+						</div>
+					) }
+				{ variations &&
+					variations.length === 0 &&
+					isEnabled( 'signup/design-picker-preview-fonts' ) && (
+						<div className="design-preview__sidebar-variations">
+							<FontPairingVariations
+								siteId={ siteId }
+								stylesheet={ stylesheet }
+								selectedFontPairingVariation={ selectedFontVariation }
+								onSelect={ onSelectFontVariation }
+							/>
+						</div>
+					) }
 			</div>
 			{ actionButtons && (
 				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>

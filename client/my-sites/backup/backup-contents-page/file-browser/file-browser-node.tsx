@@ -1,7 +1,8 @@
 import { Button, Icon } from '@wordpress/components';
 import { chevronDown, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
-import { FunctionComponent, useCallback, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import FileInfoCard from './file-info-card';
 import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
 import { FileBrowserItem } from './types';
@@ -13,6 +14,8 @@ interface FileBrowserNodeProps {
 	siteId: number;
 	rewindId: number;
 	isAlternate: boolean; // This decides if the node will have a background color or not
+	setActiveNodePath: ( path: string ) => void;
+	activeNodePath: string;
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -21,9 +24,11 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	siteId,
 	rewindId,
 	isAlternate,
+	setActiveNodePath,
+	activeNodePath,
 } ) => {
 	const isRoot = path === '/';
-	const hasChildren = item.hasChildren;
+	const isCurrentNodeClicked = activeNodePath === path;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 
@@ -33,18 +38,28 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		data: backupFiles,
 	} = useBackupContentsQuery( siteId, rewindId, path, fetchContentsOnMount );
 
-	const handleClick = useCallback( () => {
-		if ( ! hasChildren ) {
-			return;
+	useEffect( () => {
+		// When it is no longer the current node clicked, close the node
+		if ( ! isCurrentNodeClicked && ! isRoot ) {
+			setIsOpen( false );
 		}
+	}, [ isCurrentNodeClicked, isRoot ] );
 
+	const handleClick = useCallback( () => {
 		if ( ! isOpen ) {
 			setFetchContentsOnMount( true );
-			setIsOpen( true );
+		}
+
+		if ( ! item.hasChildren && item.type !== 'wordpress' ) {
+			if ( ! isOpen ) {
+				setActiveNodePath( path );
+			} else {
+				setActiveNodePath( '' );
+			}
 		}
 
 		setIsOpen( ! isOpen );
-	}, [ hasChildren, isOpen ] );
+	}, [ isOpen, item, path, setActiveNodePath ] );
 
 	const renderChildren = () => {
 		if ( isInitialLoading ) {
@@ -71,6 +86,8 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						siteId={ siteId }
 						rewindId={ rewindId }
 						isAlternate={ childIsAlternate }
+						activeNodePath={ activeNodePath }
+						setActiveNodePath={ setActiveNodePath }
 					/>
 				);
 			} );
@@ -80,31 +97,41 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const renderExpandIcon = () => {
-		if ( ! hasChildren ) {
+		if ( ! item.hasChildren ) {
 			return null;
 		}
 
 		return <Icon icon={ isOpen ? chevronDown : chevronRight } />;
 	};
 
-	const nodeClassName = classNames( 'file-browser-node', { 'is-alternate': isAlternate } );
+	const nodeItemClassName = classNames( 'file-browser-node__item', {
+		'is-alternate': isAlternate,
+	} );
 	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
 
 	return (
-		<div className={ nodeClassName }>
-			{ isRoot ? null : (
-				<Button
-					icon={ renderExpandIcon }
-					className="file-browser-node__title has-icon"
-					onClick={ handleClick }
-					showTooltip={ isLabelTruncated }
-					label={ item.name }
-				>
-					<FileTypeIcon type={ item.type } /> { label }
-				</Button>
+		<div className="file-browser-node">
+			<div className={ nodeItemClassName }>
+				{ ! isRoot && (
+					<Button
+						icon={ renderExpandIcon }
+						className="file-browser-node__title has-icon"
+						onClick={ handleClick }
+						showTooltip={ isLabelTruncated }
+						label={ item.name }
+					>
+						<FileTypeIcon type={ item.type } /> { label }
+					</Button>
+				) }
+			</div>
+			{ isCurrentNodeClicked && <FileInfoCard siteId={ siteId } item={ item } /> }
+			{ isOpen && (
+				<>
+					{ item.hasChildren && (
+						<div className="file-browser-node__contents">{ renderChildren() }</div>
+					) }
+				</>
 			) }
-
-			{ isOpen ? <div className="file-browser-node__contents">{ renderChildren() }</div> : null }
 		</div>
 	);
 };

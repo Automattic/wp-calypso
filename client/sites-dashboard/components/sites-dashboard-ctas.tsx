@@ -4,12 +4,16 @@ import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-imp
 import { TRACK_SOURCE_NAME } from '../utils';
 import { EmptyStateCTA } from './empty-state-cta';
 
-export const CreateSiteCTA = () => {
+interface SitesDashboardCTAProps {
+	siteCount: number;
+}
+
+export const CreateSiteCTA = ( { siteCount }: SitesDashboardCTAProps ) => {
 	const { __ } = useI18n();
 
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: TRACK_SOURCE_NAME,
-		ref: 'calypso-nosites',
+		ref: siteCount === 0 ? 'calypso-nosites' : null,
 	} );
 
 	return (
@@ -21,10 +25,10 @@ export const CreateSiteCTA = () => {
 	);
 };
 
-export const MigrateSiteCTA = () => {
+export const MigrateSiteCTA = ( { siteCount }: SitesDashboardCTAProps ) => {
 	const { __ } = useI18n();
 	const importSiteUrl = useSitesDashboardImportSiteUrl( {
-		ref: 'calypso-nosites',
+		ref: siteCount === 0 ? 'calypso-nosites' : null,
 	} );
 
 	return (

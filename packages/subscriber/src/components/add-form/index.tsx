@@ -284,7 +284,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			error && (
 				<FormInputValidation icon="tip" isError={ false } isWarning={ true } text="">
 					<Icon icon={ tip } />
-					{ ( () => {
+					{ ( (): React.ReactNode => {
 						switch ( error.code ) {
 							case HANDLED_ERROR.IMPORT_LIMIT:
 								return createInterpolateElement(
@@ -300,7 +300,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 								);
 
 							default:
-								return error.message;
+								return typeof error.message === 'string' ? error.message : '';
 						}
 					} )() }
 				</FormInputValidation>

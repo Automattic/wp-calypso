@@ -13,6 +13,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import HeaderBack from 'calypso/reader/header-back';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
+import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
@@ -144,6 +145,7 @@ class TagStream extends Component {
 		return (
 			<Stream
 				{ ...this.props }
+				className="tag-stream__main"
 				listName={ title }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
@@ -151,6 +153,8 @@ class TagStream extends Component {
 				streamHeader={ tagHeader }
 				showSiteNameOnCards={ false }
 				useCompactCards={ true }
+				streamSidebar={ <ReaderTagSidebar tag={ this.props.decodedTagSlug } /> }
+				sidebarTabTitle={ this.props.translate( 'Related' ) }
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />

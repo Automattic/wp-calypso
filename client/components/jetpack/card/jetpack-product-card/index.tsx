@@ -52,6 +52,7 @@ type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
 type HeaderProps = {
 	className?: string;
 	level: HeaderLevel;
+	children?: React.ReactNode;
 };
 const Header: React.FC< HeaderProps > = ( { level, children, ...headerProps } ) =>
 	createElement( `h${ level }`, headerProps, children );

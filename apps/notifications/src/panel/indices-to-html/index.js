@@ -1,5 +1,5 @@
 import { createElement } from 'react';
-import ReactDOMServer from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server.browser';
 import Gridicon from '../templates/gridicons';
 import noticon2gridicon from '../utils/noticon2gridicon';
 
@@ -108,7 +108,7 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		case 'gridicon':
 			// Gridicons have special text, and are thus not recursed into
 			new_container = document.createElement( 'span' );
-			new_container.innerHTML = ReactDOMServer.renderToStaticMarkup(
+			new_container.innerHTML = renderToStaticMarkup(
 				createElement( Gridicon, {
 					icon: noticon2gridicon( range_info.value ),
 					size: 18,

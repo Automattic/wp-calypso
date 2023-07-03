@@ -180,9 +180,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 			<DocumentHead title={ headerText } />
 			<StepContainer
 				stepName="site-options"
-				shouldHideNavButtons
 				backLabelText={ __( 'Back' ) }
-				hideBack={ hostingFlow }
 				goBack={ goBack }
 				hideSkip={ true }
 				isHorizontalLayout

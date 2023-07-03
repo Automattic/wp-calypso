@@ -48,6 +48,7 @@ export interface ManagedContactDetailsFormFieldsProps {
 	needsAlternateEmailForGSuite?: boolean;
 	emailOnly?: boolean;
 	isLoggedOutCart?: boolean;
+	children?: React.ReactNode;
 }
 
 export interface ManagedContactDetailsFormFieldsConnectedProps {

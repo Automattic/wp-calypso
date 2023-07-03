@@ -122,7 +122,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		[ rootUrl, siteSlug ]
 	);
 	const onCtaClick = useCallback(
-		( productSlug, isUpsell = false ) => {
+		( productSlug: string, isUpsell = false ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_upsell_page_product_click', {
 					site_id: siteId || undefined,

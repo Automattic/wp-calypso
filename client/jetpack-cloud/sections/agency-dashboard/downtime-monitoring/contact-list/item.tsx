@@ -8,20 +8,17 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import { getContactActionEventName, getContactItemValue } from './utils';
 import type {
-	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
-	StateMonitorSettingsSMS,
 	AllowedMonitorContactTypes,
+	StateMonitorSettingsEmail,
+	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
 
 import './style.scss';
 
 type Props = {
-	item: StateMonitorSettingsEmail | StateMonitorSettingsSMS;
-	onAction?: (
-		item: StateMonitorSettingsEmail | StateMonitorSettingsSMS,
-		action: AllowedMonitorContactActions
-	) => void;
+	item: StateMonitoringSettingsContact;
+	onAction?: ( item: StateMonitoringSettingsContact, action: AllowedMonitorContactActions ) => void;
 	recordEvent?: ( action: string, params?: object ) => void;
 	showVerifiedBadge?: boolean;
 	type: AllowedMonitorContactTypes;

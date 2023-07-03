@@ -59,6 +59,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
@@ -1288,8 +1289,7 @@ function TrackRender( { children, eventName } ) {
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
-		const isWooCoreProfilerFlow =
-			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' );
+		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 
 		return {
 			currentUser: getCurrentUser( state ),

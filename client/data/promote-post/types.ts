@@ -58,3 +58,22 @@ export type CampaignStats = {
 	spent_budget_cents: number;
 	deliver_margin_multiplier: number;
 };
+
+export type BlazablePost = {
+	ID: number;
+	author: string;
+	date: string;
+	date_gtm?: string;
+	modified: string;
+	modified_gmt?: string;
+	status?: string;
+	guid?: string;
+	title: string;
+	type: string;
+	comment_count: number;
+	like_count: number;
+	monthly_view_count: number;
+	post_url: string;
+	featured_image: string | false;
+	post_thumbnail?: string;
+};

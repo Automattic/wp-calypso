@@ -2,11 +2,17 @@ import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso/types';
+import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	getSiteOption,
+	isJetpackSite,
+	isJetpackModuleActive,
+	isJetpackMinimumVersion,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 declare global {
@@ -41,6 +47,7 @@ declare global {
 					headerNonce: string;
 				};
 				isV2?: boolean;
+				hotjarSiteSettings?: object;
 			} ) => void;
 			strings: any;
 		};
@@ -113,6 +120,7 @@ export async function showDSP(
 					  }
 					: undefined,
 				isV2,
+				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
 			} );
 		} else {
 			reject( false );
@@ -126,8 +134,16 @@ export async function showDSP(
  * @param {string} entryPoint - A slug describing the entry point.
  */
 export function recordDSPEntryPoint( entryPoint: string ) {
+	let origin = 'wpcom';
+	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+		origin = 'jetpack';
+	} else if ( isWpMobileApp() ) {
+		origin = 'wp-mobile-app';
+	}
+
 	const eventProps = {
 		entry_point: entryPoint,
+		origin,
 	};
 
 	return composeAnalytics(
@@ -179,10 +195,35 @@ export enum PromoteWidgetStatus {
  */
 export const usePromoteWidget = (): PromoteWidgetStatus => {
 	const selectedSite = useSelector( getSelectedSite );
+	const siteId = selectedSite?.ID ?? 0;
 
-	const value = useSelector( ( state ) => getSiteOption( state, selectedSite?.ID, 'can_blaze' ) );
+	// On Jetpack sites, starting with v. 12.3-a.9,
+	// folks can also use the Blaze module to enable/disable the Blaze feature.
+	const isBlazeModuleActive = ( state: object, siteId: number ) => {
+		// On WordPress.com sites, the Blaze module is always active.
+		if ( ! isJetpackSite( state, siteId ) ) {
+			return true;
+		}
 
-	switch ( value ) {
+		// On old versions of Jetpack, there is no module.
+		if ( ! isJetpackMinimumVersion( state, siteId, '12.3-a.9' ) ) {
+			return true;
+		}
+
+		return isJetpackModuleActive( state, siteId, 'blaze' );
+	};
+
+	const isSiteEligible = useSelector( ( state ) => {
+		// First, check status form the API.
+		const isEligible = getSiteOption( state, siteId, 'can_blaze' );
+
+		// Then check if the Blaze module is active.
+		const isModuleActive = isBlazeModuleActive( state, siteId );
+
+		return isEligible && isModuleActive;
+	} );
+
+	switch ( isSiteEligible ) {
 		case false:
 			return PromoteWidgetStatus.DISABLED;
 		case true:

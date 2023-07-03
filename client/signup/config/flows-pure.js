@@ -33,11 +33,13 @@ export function generateFlows( {
 			steps: [ 'user' ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
-			lastModified: '2020-08-12',
+			lastModified: '2023-06-16',
 			get pageTitle() {
 				return translate( 'Create an account' );
 			},
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'business',
@@ -145,6 +147,17 @@ export function generateFlows( {
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
 			lastModified: '2023-01-10',
 			showRecaptcha: true,
+		},
+		{
+			name: 'onboarding-media',
+			steps: [ 'user' ],
+			destination: getRedirectDestination,
+			description:
+				'The intermittent user step for the GF foundation version of the paid media flow.',
+			lastModified: '2023-06/17',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'import',

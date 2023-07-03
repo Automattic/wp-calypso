@@ -31,6 +31,7 @@ export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './user/types';
 export * from './queries/use-launchpad';
+export * from './queries/use-is-domain-code-valid';
 
 const { SubscriptionManager } = Reader;
 
@@ -61,5 +62,6 @@ export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
 export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
-export type { OnboardSelect } from './onboard';
+export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
+export type { SiteActions } from './site';

@@ -3,7 +3,11 @@ import EmptyContent from 'calypso/components/empty-content';
 import { MEDIA_QUERIES } from '../utils';
 import { CreateSiteCTA, MigrateSiteCTA } from './sites-dashboard-ctas';
 
-export const EmptySitesDashboard = () => {
+interface EmptySitesDashboardProps {
+	siteCount: number;
+}
+
+export const EmptySitesDashboard = ( { siteCount }: EmptySitesDashboardProps ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -30,14 +34,13 @@ export const EmptySitesDashboard = () => {
 						fontFamily: 'Recoleta, sans-serif',
 					} }
 				>
-					{ __( 'Let’s add your first site' ) }
+					{ siteCount === 0 ? __( 'Let’s add your first site' ) : __( 'Let’s add a site' ) }
 				</span>
 			}
 			illustration=""
 		>
 			<div
 				css={ {
-					width: '85%',
 					display: 'flex',
 					flexDirection: 'column',
 					[ MEDIA_QUERIES.small ]: {
@@ -45,7 +48,7 @@ export const EmptySitesDashboard = () => {
 					},
 				} }
 			>
-				<CreateSiteCTA />
+				<CreateSiteCTA siteCount={ siteCount } />
 				<div
 					css={ {
 						margin: '32px 0',
@@ -62,7 +65,7 @@ export const EmptySitesDashboard = () => {
 						},
 					} }
 				/>
-				<MigrateSiteCTA />
+				<MigrateSiteCTA siteCount={ siteCount } />
 			</div>
 		</EmptyContent>
 	);

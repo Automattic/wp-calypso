@@ -7,9 +7,15 @@ import { throttle } from 'lodash';
 import { useState, useRef, useEffect } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import wpcom from 'calypso/lib/wp';
+import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
+import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
+import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { useSelector } from 'calypso/state';
+import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { getDiscoverStreamTags } from './helper';
 
 import './discover-stream.scss';
 
@@ -23,7 +29,10 @@ const DiscoverStream = ( props ) => {
 	const scrollRef = useRef();
 	const scrollPosition = useRef( 0 );
 	const locale = useLocale();
-	const followedTags = useSelector( getReaderFollowedTags ) || [];
+	const followedTags = useSelector( getReaderFollowedTags );
+	const recommendedSites = useSelector(
+		( state ) => getReaderRecommendedSites( state, 'discover-recommendations' ) || []
+	);
 	const [ selectedTab, setSelectedTab ] = useState( DEFAULT_TAB );
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
@@ -41,6 +50,16 @@ const DiscoverStream = ( props ) => {
 			return data.interests;
 		},
 	} );
+
+	const recordTabClick = () => {
+		recordAction( 'click_discover_tab' );
+		recordGaEvent( 'Clicked Discover Tab' );
+	};
+
+	const menuTabClick = ( tab ) => {
+		setSelectedTab( tab );
+		recordTabClick();
+	};
 
 	const shouldHideLeftScrollButton = () => scrollPosition.current < SHOW_SCROLL_THRESHOLD;
 	const shouldHideRightScrollButton = () =>
@@ -98,8 +117,13 @@ const DiscoverStream = ( props ) => {
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
 	// Filter followed tags out of interestTags to get recommendedTags.
-	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
+	const followedTagSlugs = followedTags ? followedTags.map( ( tag ) => tag.slug ) : [];
 	const recommendedTags = interestTags.filter( ( tag ) => ! followedTagSlugs.includes( tag.slug ) );
+
+	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags.
+	const recommendedStreamTags = getDiscoverStreamTags(
+		followedTags && followedTags.map( ( tag ) => tag.slug )
+	);
 
 	const DiscoverNavigation = () => (
 		<div className={ DEFAULT_CLASS }>
@@ -138,7 +162,7 @@ const DiscoverStream = ( props ) => {
 					<SegmentedControl.Item
 						key={ DEFAULT_TAB }
 						selected={ isDefaultTab }
-						onClick={ () => setSelectedTab( DEFAULT_TAB ) }
+						onClick={ () => menuTabClick( DEFAULT_TAB ) }
 					>
 						{ translate( 'Recommended' ) }
 					</SegmentedControl.Item>
@@ -147,7 +171,7 @@ const DiscoverStream = ( props ) => {
 							<SegmentedControl.Item
 								key={ tag.slug }
 								selected={ tag.slug === selectedTab }
-								onClick={ () => setSelectedTab( tag.slug ) }
+								onClick={ () => menuTabClick( tag.slug ) }
 							>
 								{ tag.title }
 							</SegmentedControl.Item>
@@ -161,21 +185,30 @@ const DiscoverStream = ( props ) => {
 	let streamKey = `discover:${ selectedTab }`;
 	// We want a different stream key for recommended depending on the followed tags that are available.
 	if ( isDefaultTab ) {
-		if ( ! followedTags.length ) {
-			streamKey += '-no-tags';
-		} else {
-			// Ensures a different key depending on the users followed tags list. So the stream can
-			// update when the user follows/unfollows other tags.
-			streamKey += followedTagSlugs.reduce( ( acc, val ) => acc + `-${ val }`, '' );
-		}
+		// Ensures a different key depending on the users stream tags list. So the stream can update
+		// when the user follows/unfollows other tags. Sort the list first so the key is the same
+		// per same tags followed. This is necessary since we load a default tag list when none are
+		// followed.
+		recommendedStreamTags.sort();
+		streamKey += recommendedStreamTags.reduce( ( acc, val ) => acc + `-${ val }`, '' );
 	}
+
+	const streamSidebar = isDefaultTab ? (
+		<ReaderPopularSitesSidebar
+			items={ recommendedSites }
+			followSource={ READER_DISCOVER_POPULAR_SITES }
+		/>
+	) : (
+		<ReaderTagSidebar tag={ selectedTab } />
+	);
 
 	const streamProps = {
 		...props,
-		isDiscoverTags: ! isDefaultTab,
 		streamKey,
-		streamHeader: <DiscoverNavigation />,
+		streamHeader: recommendedTags.length ? <DiscoverNavigation /> : null,
 		useCompactCards: true,
+		streamSidebar,
+		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
 	};
 
 	return <Stream { ...streamProps } />;

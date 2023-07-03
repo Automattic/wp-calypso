@@ -14,7 +14,7 @@ interface Props {
 	progressBar?: ProgressBarData;
 	shouldShowLoadingScreen?: boolean;
 	isReskinned?: boolean;
-	rightComponent?: Node;
+	rightComponent?: React.ReactNode;
 	pageTitle?: string;
 	showWooLogo?: boolean;
 }
