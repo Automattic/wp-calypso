@@ -4417,7 +4417,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@malept/cross-spawn-promise@npm:^1.1.0, @malept/cross-spawn-promise@npm:^1.1.1":
+"@malept/cross-spawn-promise@npm:^1.1.0":
   version: 1.1.1
   resolution: "@malept/cross-spawn-promise@npm:1.1.1"
   dependencies:
@@ -8729,7 +8729,6 @@ __metadata:
     electron-builder: 23.0.3
     electron-fetch: ^1.7.4
     electron-notarize: ^0.1.1
-    electron-rebuild: ^2.3.5
     electron-updater: ^4.2.5
     jest: ^29.6.1
     js-yaml: ^4.0.0
@@ -11575,7 +11574,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colors@npm:^1.1.2, colors@npm:^1.2.1, colors@npm:^1.3.3":
+"colors@npm:^1.1.2, colors@npm:^1.2.1":
   version: 1.4.0
   resolution: "colors@npm:1.4.0"
   checksum: 9af357c019da3c5a098a301cf64e3799d27549d8f185d86f79af23069e4f4303110d115da98483519331f6fb71c8568d5688fa1c6523600044fd4a54e97c4efb
@@ -16581,7 +16580,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"got@npm:^11.7.0, got@npm:^11.8.5":
+"got@npm:^11.8.5":
   version: 11.8.6
   resolution: "got@npm:11.8.6"
   dependencies:
@@ -16619,7 +16618,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.4, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.3, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
+"graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.4, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
   version: 4.2.9
   resolution: "graceful-fs@npm:4.2.9"
   checksum: 2a66760ce6677ca18a24a1ef15d440cfd970086446af1e78c9e9de083c48122d8bd9c3fdc37f8f80f34aae833fa0d9dd52725e75a1c3f433ddd34eece39e7376
@@ -20393,20 +20392,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lzma-native@npm:^8.0.5":
-  version: 8.0.6
-  resolution: "lzma-native@npm:8.0.6"
-  dependencies:
-    node-addon-api: ^3.1.0
-    node-gyp: latest
-    node-gyp-build: ^4.2.1
-    readable-stream: ^3.6.0
-  bin:
-    lzmajs: bin/lzmajs
-  checksum: ff469a29de753445097dabf88ca1a332e47ead39204480b6323472d716657d97c7e3adf68437e54142277c55d4f19d96b49d14553cbf07977cb84833f73e9b6a
-  languageName: node
-  linkType: hard
-
 "mailosaur@npm:^8.4.0":
   version: 8.4.0
   resolution: "mailosaur@npm:8.4.0"
@@ -21760,15 +21745,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-addon-api@npm:^3.1.0":
-  version: 3.2.1
-  resolution: "node-addon-api@npm:3.2.1"
-  dependencies:
-    node-gyp: latest
-  checksum: 41f21c9d12318875a2c429befd06070ce367065a3ef02952cfd4ea17ef69fa14012732f510b82b226e99c254da8d671847ea018cad785f839a5366e02dd56302
-  languageName: node
-  linkType: hard
-
 "node-dir@npm:^0.1.10, node-dir@npm:^0.1.17":
   version: 0.1.17
   resolution: "node-dir@npm:0.1.17"
@@ -21803,37 +21779,6 @@ __metadata:
   version: 1.3.1
   resolution: "node-forge@npm:1.3.1"
   checksum: e882819b251a4321f9fc1d67c85d1501d3004b4ee889af822fd07f64de3d1a8e272ff00b689570af0465d65d6bf5074df9c76e900e0aff23e60b847f2a46fbe8
-  languageName: node
-  linkType: hard
-
-"node-gyp-build@npm:^4.2.1":
-  version: 4.5.0
-  resolution: "node-gyp-build@npm:4.5.0"
-  bin:
-    node-gyp-build: bin.js
-    node-gyp-build-optional: optional.js
-    node-gyp-build-test: build-test.js
-  checksum: 4ca30ae1f7ba570cd33ae6b71c7e3eb249c3901c0b8a02014cfe2ce18f7f23df621c8d087868973e4f32c90b1c4ad753b4dff1d8bf54666a3f848f414828c14f
-  languageName: node
-  linkType: hard
-
-"node-gyp@npm:^7.1.0":
-  version: 7.1.2
-  resolution: "node-gyp@npm:7.1.2"
-  dependencies:
-    env-paths: ^2.2.0
-    glob: ^7.1.4
-    graceful-fs: ^4.2.3
-    nopt: ^5.0.0
-    npmlog: ^4.1.2
-    request: ^2.88.2
-    rimraf: ^3.0.2
-    semver: ^7.3.2
-    tar: ^6.0.2
-    which: ^2.0.2
-  bin:
-    node-gyp: bin/node-gyp.js
-  checksum: 2fe78d02fb152c8f5a59c9b0a558cbc5beb7f574c25646d4cfdbb62eaa36f3b43ebc585d7b53df84ef4eff5c5b4ad0a2b5a37c09816ac11f61a3bdcedd82df04
   languageName: node
   linkType: hard
 
@@ -22475,7 +22420,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ora@npm:^5.1.0, ora@npm:^5.4.1":
+"ora@npm:^5.4.1":
   version: 5.4.1
   resolution: "ora@npm:5.4.1"
   dependencies:
@@ -28277,7 +28222,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^6.0.2, tar@npm:^6.0.5, tar@npm:^6.1.11, tar@npm:^6.1.13, tar@npm:^6.1.2":
+"tar@npm:^6.0.2, tar@npm:^6.1.11, tar@npm:^6.1.13, tar@npm:^6.1.2":
   version: 6.1.15
   resolution: "tar@npm:6.1.15"
   dependencies:
@@ -31122,7 +31067,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^16.0.0, yargs@npm:^16.2.0":
+"yargs@npm:^16.2.0":
   version: 16.2.0
   resolution: "yargs@npm:16.2.0"
   dependencies:
