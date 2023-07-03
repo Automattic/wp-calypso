@@ -283,6 +283,12 @@ describe( 'StepContent', () => {
 
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
 		} );
+
+		it( 'renders correct launch CTA text when plan not free', () => {
+			renderStepContent( false, START_WRITING_FLOW );
+
+			expect( screen.getByText( 'Checkout and launch' ) ).toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'when flow is Design first', () => {
@@ -323,6 +329,12 @@ describe( 'StepContent', () => {
 			renderStepContent( false, DESIGN_FIRST_FLOW );
 
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
+		} );
+
+		it( 'renders correct launch CTA text when plan not free', () => {
+			renderStepContent( false, DESIGN_FIRST_FLOW );
+
+			expect( screen.getByText( 'Checkout and launch' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
