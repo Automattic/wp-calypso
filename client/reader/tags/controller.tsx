@@ -29,7 +29,7 @@ export interface AlphabeticTagsResult {
 
 export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 	if ( ! isUserLoggedIn( context.store.getState() ) ) {
-		context.headerSection = renderHeaderSection();
+		context.renderHeaderSection = renderHeaderSection;
 	}
 	context.primary = (
 		<>
@@ -64,16 +64,16 @@ export const fetchTrendingTags = ( context: PageJSContext, next: ( e?: Error ) =
 	}
 	performanceMark( context as PartialContext, 'fetchTrendingTags' );
 
-	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
+	const localeSlug = getCurrentUserLocale( context.store.getState() ) || context.lang;
 
 	context.queryClient
 		.fetchQuery(
-			[ 'trending-tags', currentUserLocale ?? '' ],
+			[ 'trending-tags', localeSlug ?? '' ],
 			() => {
 				return wpcom.req.get( '/read/trending/tags', {
 					apiVersion: '1.2',
 					count: '6',
-					lang: currentUserLocale, // Note: undefined will be omitted by the query string builder.
+					lang: localeSlug, // Note: undefined will be omitted by the query string builder.
 				} );
 			},
 			{ staleTime: 86400000 } // 24 hours
