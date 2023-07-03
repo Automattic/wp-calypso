@@ -1,17 +1,10 @@
 import {
 	PlanSlug,
-	TYPE_BUSINESS,
-	TYPE_ECOMMERCE,
-	TYPE_ENTERPRISE_GRID_WPCOM,
-	TYPE_FREE,
-	TYPE_PERSONAL,
-	TYPE_PREMIUM,
 	isBusinessPlan,
 	isEcommercePlan,
 	isFreePlan,
 	isPersonalPlan,
 	isPremiumPlan,
-	planMatches,
 } from '@automattic/calypso-products';
 
 interface Props {
@@ -35,9 +28,6 @@ const useVisiblePlansForPlanFeatures = ( {
 	hideBusinessPlan,
 	hideEcommercePlan,
 }: Props ) => {
-	const isPlanOneOfType = ( plan: string, types: string[] ) =>
-		types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
-
 	let plans = isDisplayingPlansNeededForFeature
 		? availablePlans.filter( ( plan ) => {
 				if ( selectedPlan && isEcommercePlan( selectedPlan ) ) {
@@ -71,18 +61,6 @@ const useVisiblePlansForPlanFeatures = ( {
 	if ( hideEcommercePlan ) {
 		plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 	}
-
-	// TODO clk - should probably remove this (why the retriction to these plans?)
-	// plans = plans.filter( ( plan ) =>
-	// 	isPlanOneOfType( plan, [
-	// 		TYPE_FREE,
-	// 		TYPE_PERSONAL,
-	// 		TYPE_PREMIUM,
-	// 		TYPE_BUSINESS,
-	// 		TYPE_ECOMMERCE,
-	// 		TYPE_ENTERPRISE_GRID_WPCOM,
-	// 	] )
-	// );
 
 	return plans;
 };

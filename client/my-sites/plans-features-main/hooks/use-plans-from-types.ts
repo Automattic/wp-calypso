@@ -9,19 +9,18 @@ import warn from '@wordpress/warning';
 
 interface Props {
 	planTypes: string[];
-	group: string;
 	term: string;
 }
 
-const usePlansFromTypes = ( { planTypes, group, term }: Props ): PlanSlug[] => {
+const usePlansFromTypes = ( { planTypes, term }: Props ): PlanSlug[] => {
 	const plans = planTypes.reduce( ( accum: PlanSlug[], type ) => {
 		// the Free, Enterprise and WooExpressPlus plans don't have a term.
 		// We may consider to move this logic into the underlying `planMatches` function, but that would have wider implication so it's TBD
 		const planQuery = [ TYPE_FREE, TYPE_ENTERPRISE_GRID_WPCOM, TYPE_WOO_EXPRESS_PLUS ].includes(
 			type
 		)
-			? { group, type }
-			: { group, type, term };
+			? { type }
+			: { type, term };
 		const plan = findPlansKeys( planQuery )[ 0 ] as PlanSlug;
 
 		if ( ! plan ) {

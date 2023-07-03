@@ -4,7 +4,6 @@ import {
 	isFreePlan,
 	isPersonalPlan,
 	getPlanPath,
-	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	PlanSlug,
 } from '@automattic/calypso-products';
@@ -173,8 +172,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		intent,
 	};
 
-	console.log( intervalType );
-
 	const asyncPlanFeatures2023Grid = (
 		<AsyncLoad
 			require="calypso/my-sites/plan-features-2023-grid"
@@ -315,13 +312,11 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	} );
 	const defaultPlans = usePlansFromTypes( {
-		planTypes: defaultPlanTypes?.planTypes || [],
-		group: GROUP_WPCOM,
+		planTypes: defaultPlanTypes?.planTypes,
 		term,
 	} );
 	const plansWithIntent = usePlansFromTypes( {
-		planTypes: planTypesWithIntent?.planTypes || [],
-		group: GROUP_WPCOM,
+		planTypes: planTypesWithIntent?.planTypes,
 		term,
 	} );
 	const visiblePlans =
