@@ -7,8 +7,6 @@ import {
 	isEcommercePlan,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
-	WPCOM_FEATURES_NO_ADVERTS,
-	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import classnames from 'classnames';
 import debugFactory from 'debug';
@@ -37,7 +35,6 @@ const debug = debugFactory( 'calypso:upsell-nudge' );
  */
 export const UpsellNudge = ( {
 	callToAction,
-	canManageSite,
 	canUserUpgrade,
 	className,
 	compact,
@@ -46,18 +43,14 @@ export const UpsellNudge = ( {
 	description,
 	disableHref,
 	dismissPreferenceName,
-	dismissTemporary,
 	event,
 	feature,
-	forceDisplay,
 	forceHref,
 	horizontal,
 	href,
 	isJetpackDevDocs,
 	isJetpack,
 	isAtomic,
-	isVip,
-	siteIsWPForTeams,
 	list,
 	renderListItem,
 	onClick,
@@ -65,10 +58,8 @@ export const UpsellNudge = ( {
 	plan,
 	price,
 	primaryButton,
-	selectedSiteHasFeature,
 	showIcon = false,
 	icon = 'star',
-	site,
 	siteSlug,
 	target,
 	title,
@@ -81,27 +72,6 @@ export const UpsellNudge = ( {
 	displayAsLink,
 	isSiteWooExpressOrEcomFreeTrial,
 } ) => {
-	const shouldNotDisplay =
-		isVip ||
-		! canManageSite ||
-		! site ||
-		typeof site !== 'object' ||
-		typeof site.jetpack !== 'boolean' ||
-		( feature && selectedSiteHasFeature ) ||
-		( ! feature && ! isFreePlanProduct( site.plan ) ) ||
-		( feature === WPCOM_FEATURES_NO_ADVERTS && site.options.wordads ) ||
-		( ! isJetpack && site.jetpack ) ||
-		( isJetpack && ! site.jetpack );
-
-	if ( shouldNotDisplay && ! forceDisplay ) {
-		return null;
-	}
-
-	// No upsells for WP for Teams sites
-	if ( siteIsWPForTeams ) {
-		return null;
-	}
-
 	if ( ! href && siteSlug && canUserUpgrade ) {
 		href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
 		if ( customerType ) {
@@ -136,8 +106,8 @@ export const UpsellNudge = ( {
 			compactButton={ compactButton }
 			description={ description }
 			disableHref={ disableHref }
-			dismissPreferenceName={ dismissPreferenceName }
-			dismissTemporary={ dismissTemporary }
+			// dismissPreferenceName={ dismissPreferenceName }
+			// dismissTemporary={ dismissTemporary }
 			event={ event }
 			feature={ feature }
 			forceHref={ forceHref }
