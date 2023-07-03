@@ -19,7 +19,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { useSite } from '../../../../../hooks/use-site';
 import './style.scss';
 import ColorSwatch from './color-swatch';
@@ -60,7 +60,7 @@ const AccentColorControl = ( {
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
 	const site = useSite();
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
 	const getColorOptions = useCallback(
 		(): ColorOption[] => [

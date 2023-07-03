@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import { Campaign, CampaignStats } from 'calypso/data/promote-post/types';
+import { BlazablePost, Campaign, CampaignStats } from 'calypso/data/promote-post/types';
 import {
 	PagedBlazeContentData,
 	PagedBlazeSearchResponse,
@@ -174,15 +174,25 @@ export const canCancelCampaign = ( status: string ) => {
 
 export const getPagedBlazeSearchData = (
 	mode: 'campaigns' | 'posts',
-	campaignsData?: PagedBlazeSearchResponse
+	pagedData?: PagedBlazeSearchResponse
 ): PagedBlazeContentData => {
-	const lastPage = campaignsData?.pages?.[ campaignsData?.pages?.length - 1 ];
+	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
 	if ( lastPage ) {
 		const { has_more_pages, total_items } = lastPage;
 
-		const foundContent = campaignsData?.pages
-			?.map( ( page: any ) => page[ mode ] )
-			?.flat() as Campaign[];
+		let foundContent = pagedData?.pages
+			?.map( ( item: any ) => item[ mode ] )
+			?.flat()
+			?.filter( ( item: BlazablePost | Campaign ) => 'undefined' !== typeof item );
+
+		if ( foundContent?.length ) {
+			switch ( mode ) {
+				case 'campaigns':
+					foundContent = foundContent as Campaign[];
+				case 'posts':
+					foundContent = foundContent as BlazablePost[];
+			}
+		}
 
 		return {
 			has_more_pages,

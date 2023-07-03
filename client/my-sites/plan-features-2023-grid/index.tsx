@@ -34,12 +34,7 @@ import {
 	VIPLogo,
 	WooLogo,
 } from '@automattic/components';
-import {
-	isAnyHostingFlow,
-	isLinkInBioFlow,
-	isNewsletterFlow,
-	isBlogOnboardingFlow,
-} from '@automattic/onboarding';
+import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -76,11 +71,13 @@ import { PlanFeaturesItem } from './components/item';
 import { PlanComparisonGrid } from './components/plan-comparison-grid';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
+import PlansGridContextProvider from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from './hooks/use-highlight-label';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
+import type { PlansIntent } from './grid-context';
 import type { PlanActionOverrides } from './types';
 import type { IAppState } from 'calypso/state/types';
 
@@ -105,7 +102,7 @@ const Container = (
 	);
 };
 
-type PlanFeatures2023GridProps = {
+export type PlanFeatures2023GridProps = {
 	isInSignup: boolean;
 	siteId: number;
 	isLaunchPage: boolean;
@@ -117,7 +114,6 @@ type PlanFeatures2023GridProps = {
 	flowName: string;
 	domainName: string;
 	placeholder?: string;
-	isLandingPage?: boolean;
 	intervalType: string;
 	currentSitePlanSlug?: string;
 	hidePlansFeatureComparison: boolean;
@@ -127,6 +123,7 @@ type PlanFeatures2023GridProps = {
 	selectedPlan?: string;
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
+	intent: PlansIntent;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -154,7 +151,6 @@ const PlanLogo: React.FunctionComponent< {
 	planPropertiesObj: PlanProperties[];
 	planIndex: number;
 	planProperties: PlanProperties;
-	flowName: string;
 	isMobile?: boolean;
 	isInSignup: boolean;
 	currentSitePlanSlug?: string;
@@ -165,7 +161,6 @@ const PlanLogo: React.FunctionComponent< {
 	planIndex,
 	isMobile,
 	isInSignup,
-	flowName,
 	currentSitePlanSlug,
 	selectedPlan,
 } ) => {
@@ -173,13 +168,11 @@ const PlanLogo: React.FunctionComponent< {
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: planPropertiesObj,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
 	const highlightLabel = useHighlightLabel( {
 		planName,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
@@ -213,7 +206,6 @@ const PlanLogo: React.FunctionComponent< {
 				isInSignup={ isInSignup }
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
-				flowName={ flowName }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				selectedPlan={ selectedPlan }
 			/>
@@ -300,63 +292,66 @@ export class PlanFeatures2023Grid extends Component<
 			siteId,
 			selectedPlan,
 			selectedFeature,
+			intent,
 		} = this.props;
 		return (
-			<div className="plans-wrapper">
-				<QueryActivePromotions />
-				<div className="plan-features">
-					<div className="plan-features-2023-grid__content">
-						<div>
-							<div className="plan-features-2023-grid__desktop-view">
-								{ this.renderTable( planProperties ) }
-							</div>
-							<div className="plan-features-2023-grid__tablet-view">
-								{ this.renderTabletView() }
-							</div>
-							<div className="plan-features-2023-grid__mobile-view">
-								{ this.renderMobileView() }
+			<PlansGridContextProvider intent={ intent }>
+				<div className="plans-wrapper">
+					<QueryActivePromotions />
+					<div className="plan-features">
+						<div className="plan-features-2023-grid__content">
+							<div>
+								<div className="plan-features-2023-grid__desktop-view">
+									{ this.renderTable( planProperties ) }
+								</div>
+								<div className="plan-features-2023-grid__tablet-view">
+									{ this.renderTabletView() }
+								</div>
+								<div className="plan-features-2023-grid__mobile-view">
+									{ this.renderMobileView() }
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				{ ! hidePlansFeatureComparison && (
-					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-						<Button onClick={ this.toggleShowPlansComparisonGrid }>
-							{ this.state.showPlansComparisonGrid
-								? translate( 'Hide comparison' )
-								: translate( 'Compare plans' ) }
-						</Button>
-					</div>
-				) }
-				{ ! hidePlansFeatureComparison && this.state.showPlansComparisonGrid ? (
-					<div
-						ref={ this.plansComparisonGridContainerRef }
-						className="plan-features-2023-grid__plan-comparison-grid-container"
-					>
-						<PlanComparisonGrid
-							planTypeSelectorProps={ planTypeSelectorProps }
-							planProperties={ planProperties }
-							intervalType={ intervalType }
-							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
-							flowName={ flowName }
-							currentSitePlanSlug={ currentSitePlanSlug }
-							manageHref={ manageHref }
-							canUserPurchasePlan={ canUserPurchasePlan }
-							selectedSiteSlug={ selectedSiteSlug }
-							onUpgradeClick={ this.handleUpgradeClick }
-							siteId={ siteId }
-							selectedPlan={ selectedPlan }
-							selectedFeature={ selectedFeature }
-						/>
+					{ ! hidePlansFeatureComparison && (
 						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 							<Button onClick={ this.toggleShowPlansComparisonGrid }>
-								{ translate( 'Hide comparison' ) }
+								{ this.state.showPlansComparisonGrid
+									? translate( 'Hide comparison' )
+									: translate( 'Compare plans' ) }
 							</Button>
 						</div>
-					</div>
-				) : null }
-			</div>
+					) }
+					{ ! hidePlansFeatureComparison && this.state.showPlansComparisonGrid ? (
+						<div
+							ref={ this.plansComparisonGridContainerRef }
+							className="plan-features-2023-grid__plan-comparison-grid-container"
+						>
+							<PlanComparisonGrid
+								planTypeSelectorProps={ planTypeSelectorProps }
+								planProperties={ planProperties }
+								intervalType={ intervalType }
+								isInSignup={ isInSignup }
+								isLaunchPage={ isLaunchPage }
+								flowName={ flowName }
+								currentSitePlanSlug={ currentSitePlanSlug }
+								manageHref={ manageHref }
+								canUserPurchasePlan={ canUserPurchasePlan }
+								selectedSiteSlug={ selectedSiteSlug }
+								onUpgradeClick={ this.handleUpgradeClick }
+								siteId={ siteId }
+								selectedPlan={ selectedPlan }
+								selectedFeature={ selectedFeature }
+							/>
+							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
+								<Button onClick={ this.toggleShowPlansComparisonGrid }>
+									{ translate( 'Hide comparison' ) }
+								</Button>
+							</div>
+						</div>
+					) : null }
+				</div>
+			</PlansGridContextProvider>
 		);
 	}
 
@@ -575,7 +570,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isInSignup, flowName, currentSitePlanSlug, selectedPlan } = this.props;
+		const { isInSignup, currentSitePlanSlug, selectedPlan } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -588,7 +583,6 @@ export class PlanFeatures2023Grid extends Component<
 						planProperties={ properties }
 						isMobile={ options?.isMobile }
 						isInSignup={ isInSignup }
-						flowName={ flowName }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						selectedPlan={ selectedPlan }
 					/>
@@ -913,13 +907,12 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const {
 			placeholder,
 			plans,
-			isLandingPage,
 			visiblePlans,
 			isInSignup,
 			siteId,
-			flowName,
 			currentSitePlanSlug,
 			selectedFeature,
+			intent,
 		} = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
@@ -948,17 +941,17 @@ const ConnectedPlanFeatures2023Grid = connect(
 			let jetpackFeatures: FeatureObject[] = [];
 			let tagline = '';
 
-			if ( isNewsletterFlow( flowName ) ) {
+			if ( 'plans-newsletter' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
-			} else if ( isLinkInBioFlow( flowName ) ) {
+			} else if ( 'plans-link-in-bio' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
-			} else if ( isBlogOnboardingFlow( flowName ) ) {
+			} else if ( 'plans-blog-onboarding' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getBlogOnboardingSignupFeatures?.() ?? []
 				);
@@ -1058,7 +1051,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				current: isCurrentPlan,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
-				isLandingPage,
 				isPlaceholder,
 				isVisible,
 				planConstantObj,

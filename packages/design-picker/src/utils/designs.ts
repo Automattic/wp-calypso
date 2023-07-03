@@ -28,7 +28,6 @@ export const getDesignPreviewUrl = (
 			: undefined,
 		vertical_id: options.vertical_id,
 		language: options.language,
-		...( options.viewport_width && { viewport_width: options.viewport_width } ),
 		viewport_height: ! options.disable_viewport_height
 			? options.viewport_height || DEFAULT_VIEWPORT_HEIGHT
 			: undefined,

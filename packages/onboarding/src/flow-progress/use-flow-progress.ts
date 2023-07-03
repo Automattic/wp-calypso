@@ -5,6 +5,8 @@ import {
 	LINK_IN_BIO_TLD_FLOW,
 	FREE_FLOW,
 	COPY_SITE_FLOW,
+	ONBOARDING_PM_FLOW,
+	BULK_DOMAIN_TRANSFER,
 } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
@@ -88,6 +90,17 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		processing: 2,
 		'automated-copy': 3,
 		'processing-copy': 3,
+	},
+	[ ONBOARDING_PM_FLOW ]: {
+		user: 0,
+		domains: 1,
+		plans: 2,
+	},
+	[ BULK_DOMAIN_TRANSFER ]: {
+		user: 0,
+		intro: 1,
+		domains: 2,
+		processing: 3,
 	},
 };
 

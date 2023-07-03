@@ -1,4 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
+import { useIsCurrentlyHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { TRACK_SOURCE_NAME } from '../utils';
@@ -9,7 +10,7 @@ export const CreateSiteCTA = () => {
 
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: TRACK_SOURCE_NAME,
-		ref: 'calypso-nosites',
+		ref: useIsCurrentlyHostingFlow() ? 'hosting-flow' : 'calypso-nosites',
 	} );
 
 	return (
@@ -24,7 +25,7 @@ export const CreateSiteCTA = () => {
 export const MigrateSiteCTA = () => {
 	const { __ } = useI18n();
 	const importSiteUrl = useSitesDashboardImportSiteUrl( {
-		ref: 'calypso-nosites',
+		ref: useIsCurrentlyHostingFlow() ? 'hosting-flow' : 'calypso-nosites',
 	} );
 
 	return (

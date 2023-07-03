@@ -429,7 +429,7 @@ jobs:
   # GitHub release and generate the release notes using the Git commits history
   wp-desktop-publish:
     docker:
-      - image: circleci/golang:1.12-node
+      - image: cimg/go:1.20-node
     working_directory: /home/circleci/wp-calypso
     environment:
       VERSION: << pipeline.git.tag >>
@@ -439,7 +439,7 @@ jobs:
           at: /home/circleci/wp-calypso
       - run:
           name: Install Dependencies
-          command: go get github.com/tcnksm/ghr
+          command: go install github.com/tcnksm/ghr@v0.16.0
       - run:
           name: Update wp-desktop repo README
           command: |

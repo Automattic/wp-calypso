@@ -8,6 +8,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
+import { hideMasterbar } from 'calypso/state/ui/actions';
 import { EmptySitesDashboard } from './components/empty-sites-dashboard';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
@@ -46,16 +47,17 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 }
 
 export function maybeSitesDashboard( context: PageJSContext, next: () => void ) {
-	const siteCount = getCurrentUser( context.store.getState() )?.site_count;
+	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
 
-	if ( ! context.query[ 'new-site' ] && siteCount === 0 ) {
-		return emptySites( context, next );
+	if ( context.query[ 'hosting-flow' ] || siteCount === 0 ) {
+		context.store.dispatch( hideMasterbar() );
+		return emptySites( context, siteCount, next );
 	}
 
 	return sitesDashboard( context, next );
 }
 
-function emptySites( context: PageJSContext, next: () => void ) {
+function emptySites( context: PageJSContext, siteCount: number, next: () => void ) {
 	const emptySitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #fff;
@@ -85,7 +87,7 @@ function emptySites( context: PageJSContext, next: () => void ) {
 		<>
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<Global styles={ emptySitesDashboardGlobalStyles } />
-			<EmptySitesDashboard />
+			<EmptySitesDashboard siteCount={ siteCount } />
 		</>
 	);
 

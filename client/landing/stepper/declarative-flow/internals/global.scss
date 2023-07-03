@@ -89,6 +89,7 @@ button {
 .setup-blog,
 .celebration-step,
 .use-my-domain,
+.bulk-domain-transfer,
 .update-design {
 	padding: 60px 0 0;
 	box-sizing: border-box;
@@ -182,7 +183,7 @@ button {
 }
 
 .intro {
-	.signup-header {
+	&:not(.newsletter).signup-header {
 		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
 	}
 }

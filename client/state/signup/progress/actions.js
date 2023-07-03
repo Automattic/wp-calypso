@@ -97,6 +97,7 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 	);
 
 	const device = resolveDeviceTypeByViewPort();
+
 	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
 		device,
 		flow,

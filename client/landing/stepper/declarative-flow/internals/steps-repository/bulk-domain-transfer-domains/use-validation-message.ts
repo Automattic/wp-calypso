@@ -1,12 +1,10 @@
 import { useIsDomainCodeValid } from '@automattic/data-stores';
 import { doesStringResembleDomain } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 
 export function useValidationMessage( domain: string, auth: string, hasDuplicates: boolean ) {
-	// record passed domains to avoid revalidation
-	const [ passed, setPassed ] = useState( false );
 	const { __ } = useI18n();
 
 	const [ domainDebounced ] = useDebounce( domain, 500 );
@@ -16,6 +14,8 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 	const hasGoodAuthCode = hasGoodDomain && auth.trim().length > 0;
 
 	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode && ! hasDuplicates;
+
+	const isDebouncing = domainDebounced !== domain || authDebounced !== auth;
 
 	const {
 		data: validationResult,
@@ -27,7 +27,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			auth: authDebounced,
 		},
 		{
-			enabled: Boolean( ! passed && passedLocalValidation ),
+			enabled: Boolean( passedLocalValidation ),
 			retry: false,
 		}
 	);
@@ -36,17 +36,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: false,
-			message: __( 'This domain is a duplicated.' ),
-		};
-	}
-
-	if ( passed ) {
-		setPassed( true );
-
-		return {
-			valid: true,
-			loading: false,
-			message: __( 'This domain is unlocked and ready to be transferred.' ),
+			message: __( 'This domain has already been entered.' ),
 		};
 	}
 
@@ -67,7 +57,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 	}
 
 	// local validation passed, but we're still loading
-	if ( isValidating || ! validationResult ) {
+	if ( isValidating || isDebouncing ) {
 		return {
 			valid: false,
 			loading: true,
@@ -75,48 +65,31 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		};
 	}
 
-	if ( validationResult?.error ) {
-		return {
-			valid: false,
-			loading: false,
-			message: __(
-				'An unknown error occurred while checking the domain transferability. Please try again or contact support'
-			),
-			refetch,
-		};
-	}
+	const availabilityNotice = getAvailabilityNotice( domain, validationResult?.status, null, true );
 
 	// final success
-	if ( validationResult.auth_code_valid ) {
+	if ( validationResult?.auth_code_valid ) {
 		return {
 			valid: true,
 			loading: false,
 			message: __( 'This domain is unlocked and ready to be transferred.' ),
 		};
-	}
-
-	// partial success
-	if ( validationResult?.unlocked ) {
+	} else if ( validationResult?.auth_code_valid === false ) {
+		// the auth check API has a bug and returns error 400 for incorrect auth codes,
+		// in which case, the `useIsDomainCodeValid` hook returns `false`.
 		return {
 			valid: false,
 			loading: false,
 			message: __( 'This domain is unlocked but the authentication code seems incorrect.' ),
-			refetch,
 		};
-	} else if ( validationResult?.registered === false ) {
+	} else if ( availabilityNotice?.message ) {
 		return {
 			valid: false,
 			loading: false,
-			message: __( 'This domain does not seem to be registered.' ),
-		};
-	} else if ( validationResult?.unlocked === false ) {
-		return {
-			valid: false,
-			loading: false,
-			message: __( 'This domain does not seem to be unlocked.' ),
-			refetch,
+			message: availabilityNotice?.message,
 		};
 	}
+
 	return {
 		valid: false,
 		loading: false,
