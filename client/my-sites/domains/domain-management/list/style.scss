@@ -87,7 +87,7 @@
 
 .domain-management-list__items + .empty-domains-list-card {
 	margin-top: 16px;
-	margin-bottom: 32px;
+	margin-bottom: 0;
 
 	@include break-small {
 		margin-top: 0;
