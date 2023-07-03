@@ -17,7 +17,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useGetSiteSuggestionsQuery } from 'calypso/landing/stepper/hooks/use-get-site-suggestions-query';
-import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
+import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -36,7 +36,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		} ),
 		[]
 	);
-	const hostingFlow = useSelector( isInHostingFlow );
+	const hostingFlow = useSelector( startedInHostingFlow );
 	const { goBack, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
 	const [ siteGeoAffinity, setSiteGeoAffinity ] = React.useState( currentSiteGeoAffinity ?? '' );
@@ -180,9 +180,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 			<DocumentHead title={ headerText } />
 			<StepContainer
 				stepName="site-options"
-				shouldHideNavButtons
 				backLabelText={ __( 'Back' ) }
-				hideBack={ hostingFlow }
 				goBack={ goBack }
 				hideSkip={ true }
 				isHorizontalLayout

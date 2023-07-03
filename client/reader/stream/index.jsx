@@ -73,7 +73,6 @@ class ReaderStream extends Component {
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
-		showPostHeader: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
 		streamHeader: PropTypes.element,
 		streamSidebar: PropTypes.element,
@@ -93,7 +92,6 @@ class ReaderStream extends Component {
 		showDefaultEmptyContentIfMissing: true,
 		showFollowButton: true,
 		showFollowInHeader: false,
-		showPostHeader: true,
 		suppressSiteNameLink: false,
 		useCompactCards: false,
 	};
@@ -434,7 +432,6 @@ class ReaderStream extends Component {
 					handleClick={ showPost }
 					postKey={ postKey }
 					suppressSiteNameLink={ this.props.suppressSiteNameLink }
-					showPostHeader={ this.props.showPostHeader }
 					showFollowInHeader={ this.props.showFollowInHeader }
 					isDiscoverStream={ this.props.isDiscoverStream }
 					showSiteName={ this.props.showSiteNameOnCards }

@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso/types';
+import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
@@ -46,6 +47,7 @@ declare global {
 					headerNonce: string;
 				};
 				isV2?: boolean;
+				hotjarSiteSettings?: object;
 			} ) => void;
 			strings: any;
 		};
@@ -118,6 +120,7 @@ export async function showDSP(
 					  }
 					: undefined,
 				isV2,
+				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
 			} );
 		} else {
 			reject( false );

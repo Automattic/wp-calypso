@@ -1,3 +1,5 @@
+@import "@automattic/components/src/styles/typography";
+
 $thumb-height: 40px;
 $track-height: 8px;
 $thumb-vertical-padding: 8px;
@@ -16,11 +18,19 @@ $thumb-horizontal-padding: 16px;
 	--jp-white: #fff;
 	--jp-gray: #dcdcde;
 	--jp-green-40: #069e08;
+	--jp-green-50: #008710;
+}
+
+// On holding thumb styling
+.jp-components-pricing-slider--is-holding {
+	.jp-components-pricing-slider__thumb {
+		box-shadow: 0 6px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04), 0 0 0 3px rgba(6, 158, 8, 0.25);
+	}
 }
 
 .jp-components-pricing-slider__control {
 	width: 100%;
-	height: $thumb-height + $thumb-vertical-padding * 2;
+	height: $thumb-height;
 }
 
 .jp-components-pricing-slider__track {
@@ -38,16 +48,16 @@ $thumb-horizontal-padding: 16px;
 }
 
 .jp-components-pricing-slider__thumb {
+	box-sizing: border-box;
 	align-items: center;
 	background-color: var(--jp-white);
 	border-radius: 4px;
-	border: 1px solid var(--jp-gray);
+	border: 1.5px solid var(--jp-green-50);
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 8px rgba(0, 0, 0, 0.08);
 	color: var(--jp-black);
 	cursor: pointer;
 	display: flex;
-	// TODO: Use standardized font here.
-	font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-family: $font-sf-pro-text;
 	font-size: var(--font-body);
 	font-style: normal;
 	font-weight: 600;
@@ -56,11 +66,14 @@ $thumb-horizontal-padding: 16px;
 	letter-spacing: -0.02em;
 	line-height: 24px;
 	padding: $thumb-vertical-padding $thumb-horizontal-padding;
-	transform: translate(0, -20%); // TODO: Check if this -20% translation is correct.
 	white-space: nowrap;
 
 	&.jp-components-pricing-slider__thumb--is-active {
 		// On focus styling
 		outline: none;
+	}
+
+	&[aria-valuenow="0"] {
+		border-color: var(--jp-gray);
 	}
 }

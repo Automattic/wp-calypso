@@ -99,9 +99,8 @@ export class PlansStep extends Component {
 			hideFreePlan,
 			isLaunchPage,
 			selectedSite,
-			planTypes,
+			intent,
 			flowName,
-			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 			eligibleForProPlan,
 		} = this.props;
@@ -151,25 +150,22 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					hideFreePlan={ hideFreePlan }
-					hideEcommercePlan={ this.shouldHideEcommercePlan() }
+					siteId={ selectedSite?.ID }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
 					domainName={ domainName }
 					customerType={ this.getCustomerType() }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					plansWithScroll={ this.state.isDesktop }
-					planTypes={ planTypes }
+					intent={ intent }
 					flowName={ flowName }
-					isAllPaidPlansShown={ true }
-					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hideFreePlan={ hideFreePlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
+					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
 					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
 				/>
@@ -333,8 +329,18 @@ PlansStep.propTypes = {
 	stepSectionName: PropTypes.string,
 	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
-	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
+	intent: PropTypes.oneOf( [
+		'plans-blog-onboarding',
+		'plans-newsletter',
+		'plans-link-in-bio',
+		'plans-new-hosted-site',
+		'plans-new-hosted-site-hosting-flow',
+		'plans-plugins',
+		'plans-jetpack-app',
+		'plans-import',
+		'default',
+	] ),
 };
 
 /**

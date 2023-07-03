@@ -23,7 +23,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 	}, [] );
 
 	return useCallback( () => {
-		// FIXME: once moving to the Stepper verion of User step,
+		// FIXME: once moving to the Stepper version of User step,
 		// wire the value of `isNewUser()` from the user store.
 		const isNewUser = ! siteCount;
 

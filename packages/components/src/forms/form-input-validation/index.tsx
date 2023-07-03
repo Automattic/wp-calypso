@@ -39,12 +39,13 @@ const FormInputValidation: React.FC< Props > = ( {
 	const defaultIcon = isError || isWarning ? info : check;
 
 	return (
+		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		<div aria-label={ ariaLabel } className={ classes } role="alert">
 			<span id={ id }>
 				{ icon ? (
-					<Gridicon size={ 24 } icon={ icon } />
+					<Gridicon size={ 20 } icon={ icon } />
 				) : (
-					<Icon size={ 24 } icon={ defaultIcon } />
+					<Icon size={ 20 } icon={ defaultIcon } />
 				) }
 				{ text }
 				{ children }

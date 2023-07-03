@@ -1,4 +1,8 @@
-import { DOMAIN_UPSELL_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import {
+	DOMAIN_UPSELL_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	ONBOARDING_PM_FLOW,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
@@ -196,7 +200,7 @@ export function DomainFormControl( {
 			return false;
 		}
 
-		return [ DOMAIN_UPSELL_FLOW ].includes( flow );
+		return [ DOMAIN_UPSELL_FLOW, ONBOARDING_PM_FLOW ].includes( flow );
 	};
 
 	const renderDomainForm = () => {

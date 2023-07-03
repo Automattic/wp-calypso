@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 // On-boarding flow
 .step-container.subscribers {
 	padding: 0 1.5rem;
@@ -44,6 +46,16 @@
 
 	.add-subscriber__form-submit-btn {
 		margin-top: 0.5rem;
+	}
+}
+
+.is-section-subscribers {
+	.add-subscriber__form--container {
+		width: 420px;
+
+		@media ( max-width: $break-small ) {
+			width: auto;
+		}
 	}
 }
 

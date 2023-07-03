@@ -48,11 +48,12 @@ export const useLoginUrl = ( params: {
 	flowName?: string;
 	redirectTo?: string;
 	pageTitle?: string;
+	loginPath?: string;
 } ): string => {
 	const locale = useLocale();
 
-	const loginPath =
-		locale && locale !== 'en' ? `/start/account/user/${ locale }` : `/start/account/user`;
+	const loginPath = params.loginPath ?? `/start/account/user/`;
+	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
 
 	const nonEmptyQueryParameters = Object.entries( params )
 		.filter( ( [ , value ] ) => value )
@@ -69,5 +70,5 @@ export const useLoginUrl = ( params: {
 
 	nonEmptyQueryParameters.push( [ 'toStepper', 'true' ] );
 
-	return addQueryArgs( loginPath, Object.fromEntries( nonEmptyQueryParameters ) );
+	return addQueryArgs( localizedLoginPath, Object.fromEntries( nonEmptyQueryParameters ) );
 };
