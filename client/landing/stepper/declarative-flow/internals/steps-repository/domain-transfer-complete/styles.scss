@@ -9,8 +9,11 @@
 		}
 
 		.step-container__header {
-			margin-top: 30px;
 			margin-bottom: 0;
+			margin-top: 0;
+			@media ( max-width: $break-medium ) {
+				margin-top: 30px;
+			}
 		}
 		.formatted-header {
 			.formatted-header__title {
