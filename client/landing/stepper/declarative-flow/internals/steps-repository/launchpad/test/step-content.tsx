@@ -12,7 +12,7 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import StepContent from '../step-content';
-import { defaultSiteDetails } from './lib/fixtures';
+import { defaultSiteDetails, buildDomainResponse } from './lib/fixtures';
 
 const mockSite = {
 	...defaultSiteDetails,
@@ -38,7 +38,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 } ) );
 
 jest.mock( 'react-router-dom', () => ( {
-	...jest.requireActual( 'react-router-dom' ),
+	...( jest.requireActual( 'react-router-dom' ) as object ),
 	useLocation: jest.fn().mockImplementation( () => ( {
 		pathname: '/setup/launchpad',
 		search: `?flow=newsletter&siteSlug=testlinkinbio.wordpress.com`,
@@ -48,7 +48,7 @@ jest.mock( 'react-router-dom', () => ( {
 } ) );
 
 jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+	...( jest.requireActual( '@automattic/data-stores' ) as object ),
 	useLaunchpad: ( siteSlug, siteIntentOption ) => {
 		let checklist = [];
 
@@ -182,6 +182,15 @@ describe( 'StepContent', () => {
 				launchpad_screen: 'full',
 				site_intent: '',
 			} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/rest/v1.2/sites/211078228/domains` )
+			.reply(
+				200,
+				buildDomainResponse( {
+					sslStatus: null,
+					isWPCOMDomain: true,
+				} )
+			);
 	} );
 
 	afterEach( () => {
