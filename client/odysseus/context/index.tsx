@@ -9,7 +9,7 @@ export type Nudge = {
 	initialMessage: string;
 	context?: Record< string, unknown >;
 };
-interface OdysseusAsistantContextInterface {
+interface OdysseusAssistantContextInterface {
 	currentView: string;
 	setCurrentView: ( currentView: string ) => void;
 	sectionName: string;
@@ -26,7 +26,7 @@ const defaultCurrentViewContextInterface = {
 };
 
 // Create a new context
-const OdysseusAssistantContext = createContext< OdysseusAsistantContextInterface >(
+const OdysseusAssistantContext = createContext< OdysseusAssistantContextInterface >(
 	defaultCurrentViewContextInterface
 );
 
