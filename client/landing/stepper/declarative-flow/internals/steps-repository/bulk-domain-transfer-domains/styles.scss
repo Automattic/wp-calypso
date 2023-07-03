@@ -17,6 +17,10 @@
 
 		.step-container__header {
 			margin-top: 96px;
+
+			.formatted-header__title {
+				font-size: 2.75rem;
+			}
 		}
 
 		.step-container__navigation.action-buttons {
@@ -34,9 +38,9 @@
 
 			.step-container__header {
 				width: 100%;
-				margin-top: 42px;
+				margin-top: 48px;
 				.formatted-header__title {
-					font-size: 1.75rem;
+					font-size: 2rem;
 					text-align: left;
 				}
 			}
@@ -147,6 +151,9 @@
 				display: flex;
 				align-items: center;
 			}
+			button {
+				cursor: pointer;
+			}
 			label {
 				display: none;
 			}
@@ -164,6 +171,10 @@
 
 				&.has-delete-button {
 					visibility: visible;
+				}
+
+				&:hover {
+					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
 				}
 			}
 
