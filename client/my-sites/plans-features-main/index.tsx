@@ -299,6 +299,8 @@ const PlansFeaturesMain = ( {
 		? 'default'
 		: intentFromProps || intentFromSiteMeta.intent || 'default';
 
+	// TODO clk: "defaultPlans" to be removed once plan properties are computed outside of the grid component
+	// i.e. there will be no need to pass the full set of plans through
 	const defaultPlanTypes = usePlanTypesWithIntent( {
 		intent: 'plans-woocommerce' === intent ? 'plans-woocommerce' : 'default',
 		selectedPlan,

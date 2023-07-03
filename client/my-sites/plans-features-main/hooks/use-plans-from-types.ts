@@ -21,7 +21,7 @@ const usePlansFromTypes = ( { planTypes, term }: Props ): PlanSlug[] => {
 		)
 			? { type }
 			: { type, term };
-		const plan = findPlansKeys( planQuery )[ 0 ] as PlanSlug;
+		const plan = findPlansKeys( planQuery )[ 0 ];
 
 		if ( ! plan ) {
 			warn(
@@ -29,7 +29,7 @@ const usePlansFromTypes = ( { planTypes, term }: Props ): PlanSlug[] => {
 			);
 		}
 
-		return plan ? [ ...accum, plan ] : accum;
+		return plan ? [ ...accum, plan as PlanSlug ] : accum;
 	}, [] );
 
 	return plans;
