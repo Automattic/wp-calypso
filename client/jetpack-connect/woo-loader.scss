@@ -1,0 +1,89 @@
+@import "@automattic/typography/styles/woo-commerce";
+
+
+.jetpack-connect-woocommerce-loader__modal {
+	height: 100%;
+	width: 100%;
+	max-width: 100%;
+	max-height: 100%;
+
+	.components-modal__header {
+		display: none;
+	}
+}
+
+.jetpack-connect-woocommerce-loader {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	@include breakpoint-deprecated( "<800px" ) {
+		width: calc(100% - 40px);
+		padding: 0 20px;
+	}
+
+	.loader-hearticon {
+		position: relative;
+		top: 2px;
+		left: 2px;
+	}
+
+	h1 {
+		padding: 0;
+		margin: 58px 0 0 0;
+		font-size: rem(28px);
+		font-weight: 500;
+		@include breakpoint-deprecated( "<800px" ) {
+			font-size: $woo-font-title-small;
+		}
+	}
+
+	.jetpack-connect-loader-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		max-width: 520px;
+	}
+
+	.jetpack-connect-progress-bar {
+		width: 520px;
+		height: 0.25rem;
+		margin: 16px 0 16px 0;
+
+		@include breakpoint-deprecated( "<800px" ) {
+			width: 100%;
+		}
+	}
+
+	.jetpack-connect-progress-bar__container {
+		height: 4px;
+	}
+
+	.jetpack-connect-progress-bar__filler {
+		height: 100%;
+	}
+
+	.jetpack-connect-loader__paragraph {
+		font-size: $woo-font-body;
+		line-height: 24px;
+		color: #2f2f2f;
+		opacity: 0.8;
+		text-align: center;
+
+		@include breakpoint-deprecated( "<800px" ) {
+			font-size: $woo-font-body-small;
+			line-height: 20px;
+		}
+
+		img {
+			width: 1rem;
+		}
+	}
+}

@@ -70,7 +70,7 @@
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack-social/advanced-plan": false,
 		"jetpack/offer-complete-after-activation": false,
-		"jetpack-social/multiple-connections": false,
+		"jetpack/zendesk-chat-for-logged-in-users": true,
 		"jitms": true,
 		"lasagna": true,
 		"launchpad-updates": false,
@@ -172,7 +172,8 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": true,
+		"yolo/site-transfers-i1": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

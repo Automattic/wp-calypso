@@ -2,13 +2,12 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { Notice, NoticeType } from '../notice';
 import SiteRow from './site-row';
-import { useSiteSubscriptionsManager } from './site-subscriptions-manager-context';
 
 const SiteSubscriptionsList = () => {
 	const translate = useTranslate();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
-	const { filterOption, siteSubscriptionsQueryResult, searchTerm } = useSiteSubscriptionsManager();
-	const { data } = siteSubscriptionsQueryResult;
+	const { filterOption, searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
+	const { data } = SubscriptionManager.useSiteSubscriptionsQuery();
 
 	if ( ! data ) {
 		throw new Error(

@@ -56,7 +56,6 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack-social/advanced-plan": false,
 		"jetpack/offer-complete-after-activation": false,
-		"jetpack-social/multiple-connections": false,
 		"jitms": true,
 		"lasagna": false,
 		"launchpad-updates": false,
@@ -109,6 +108,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"yolo/site-transfers-i1": true
 	}
 }

@@ -37,7 +37,6 @@ export type PlanTypeSelectorProps = {
 	intervalType: string;
 	customerType: string;
 	withDiscount?: string;
-	hidePersonalPlan: boolean;
 	siteSlug?: string | null;
 	selectedPlan?: string;
 	selectedFeature?: string;
@@ -46,7 +45,7 @@ export type PlanTypeSelectorProps = {
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
 	isPlansInsideStepper: boolean;
-	hideDiscountLabel: boolean;
+	hideDiscountLabel?: boolean;
 	redirectTo?: string | null;
 	isStepperUpgradeFlow: boolean;
 };

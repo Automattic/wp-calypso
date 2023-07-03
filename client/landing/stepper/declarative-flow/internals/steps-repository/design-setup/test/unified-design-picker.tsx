@@ -35,8 +35,8 @@ jest.mock( '../../../../../hooks/use-site', () => ( {
 	useSite: () => MOCKED_SITE,
 } ) );
 
-jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
-	usePremiumGlobalStyles: () => ( { shouldLimitGlobalStyles: false } ),
+jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+	useSiteGlobalStylesStatus: () => ( { shouldLimitGlobalStyles: false } ),
 } ) );
 
 jest.mock( 'calypso/lib/explat', () => ( {

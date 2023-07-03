@@ -9,7 +9,7 @@ import {
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
-import { guessTimezone } from '@automattic/i18n-utils';
+import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
@@ -44,7 +44,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { isSiteOnECommerceTrial as getIsSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
@@ -278,7 +278,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const errors = {
 			error_cap: {
 				text: translate( 'The Site Language setting is disabled due to insufficient permissions.' ),
-				link: 'https://wordpress.com/support/user-roles/',
+				link: localizeUrl( 'https://wordpress.com/support/user-roles/' ),
 				linkText: translate( 'More info' ),
 			},
 			error_const: {
@@ -963,7 +963,9 @@ const getFormSettings = ( settings ) => {
 };
 
 const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
-	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( props.site?.ID );
+	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus(
+		props.site?.ID
+	);
 
 	return (
 		<SiteSettingsFormGeneral
