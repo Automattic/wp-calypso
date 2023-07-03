@@ -4,7 +4,9 @@ import { useState } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
 import { translate, TranslateResult } from 'i18n-calypso';
-import { useMemo, useContext } from 'react';
+import { useMemo, useContext, useEffect } from 'react';
+// eslint-disable-next-line no-restricted-imports
+import { useExperiment } from 'calypso/lib/explat';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
 import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -105,6 +107,26 @@ const GlobalStylesVariations = ( {
 	splitPremiumVariations = true,
 	displayFreeLabel = true,
 }: GlobalStylesVariationsProps ) => {
+	const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
+	const globalStylesOnPersonalExperiment = experiment?.variationName === 'treatment';
+	const [ premiumStylesDescription, setPremiumStylesDescription ] = useState( '' );
+	useEffect( () => {
+		if ( globalStylesOnPersonalExperiment ) {
+			setPremiumStylesDescription(
+				translate(
+					'Unlock custom styles and tons of other features with the Personal plan, or try them out now for free.'
+				)
+			);
+			return;
+		}
+
+		setPremiumStylesDescription(
+			translate(
+				'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
+			)
+		);
+	}, [ globalStylesOnPersonalExperiment ] );
+
 	const baseGlobalStyles = useMemo(
 		() =>
 			globalStylesVariations.find( ( globalStylesVariation ) =>
@@ -121,13 +143,7 @@ const GlobalStylesVariations = ( {
 		[ globalStylesVariations ]
 	);
 
-	const premiumStylesDescription =
-		description ??
-		translate(
-			'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
-		);
-
-	const premiumStyles = globalStylesVariationsWithoutDefault.map(
+	const customStyles = globalStylesVariationsWithoutDefault.map(
 		( globalStylesVariation, index ) => (
 			<GlobalStylesVariation
 				key={ index }
@@ -176,20 +192,20 @@ const GlobalStylesVariations = ( {
 							showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
 							onSelect={ () => onSelect( baseGlobalStyles ) }
 						/>
-						{ ! splitPremiumVariations && premiumStyles }
+						{ ! splitPremiumVariations && customStyles }
 					</div>
 				</div>
 				{ splitPremiumVariations && (
 					<div className="global-styles-variations__type">
 						<div className="global-styles-variations__header">
 							<h2>
-								{ translate( 'Premium style', 'Premium styles', {
-									count: premiumStyles.length,
+								{ translate( 'Custom style', 'Custom styles', {
+									count: customStyles.length,
 								} ) }
 							</h2>
-							<p>{ premiumStylesDescription }</p>
+							<p>{ description ?? premiumStylesDescription }</p>
 						</div>
-						<div className="global-styles-variations">{ premiumStyles }</div>
+						<div className="global-styles-variations">{ customStyles }</div>
 					</div>
 				) }
 			</div>
