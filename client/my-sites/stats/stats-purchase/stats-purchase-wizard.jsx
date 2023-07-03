@@ -201,15 +201,13 @@ const ProductCard = ( { siteSlug } ) => {
 												}
 											) }
 										</p>
-										<p>
-											<Button
-												variant="primary"
-												onClick={ () => setWizardStep( SCREEN_PURCHASE ) }
-												disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
-											>
-												{ translate( 'Confirm personal site' ) }
-											</Button>
-										</p>
+										<Button
+											variant="primary"
+											onClick={ () => setWizardStep( SCREEN_PURCHASE ) }
+											disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
+										>
+											{ translate( 'Confirm personal site' ) }
+										</Button>
 									</div>
 								</PanelRow>
 							</PanelBody>
