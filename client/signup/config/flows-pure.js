@@ -149,7 +149,7 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'onboarding-pm-dev',
+			name: 'onboarding-media',
 			steps: [ 'user' ],
 			destination: getRedirectDestination,
 			description:
