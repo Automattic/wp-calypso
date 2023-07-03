@@ -45,9 +45,15 @@ const ProductCard = ( { siteSlug } ) => {
 	const commercialLabel = translate( 'Commercial site' );
 	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
 
-	const handleTypeClick = ( type ) => {
-		setSiteType( type );
-		setWizardStep( type === TYPE_PERSONAL ? SCREEN_PERSONAL_CHECKLIST : SCREEN_PURCHASE );
+	const setPersonalSite = () => {
+		setSiteType( TYPE_PERSONAL );
+		setWizardStep( SCREEN_PERSONAL_CHECKLIST );
+	};
+
+	const setCommercialSite = () => {
+		setSubscriptionValue( FLAT_COMMERCIAL_PRICE );
+		setSiteType( TYPE_COMMERCIAL );
+		setWizardStep( SCREEN_PURCHASE );
 	};
 
 	const toggleFirstStep = ( toggleState ) => {
@@ -62,9 +68,7 @@ const ProductCard = ( { siteSlug } ) => {
 	// change the plan to commercial on the personal plan confirmation
 	const handlePlanSwap = ( e ) => {
 		e.preventDefault();
-		setSiteType( TYPE_COMMERCIAL );
-		setSubscriptionValue( FLAT_COMMERCIAL_PRICE );
-		setWizardStep( SCREEN_PURCHASE );
+		setCommercialSite();
 	};
 
 	const firstStepTitleNode = (
@@ -126,15 +130,12 @@ const ProductCard = ( { siteSlug } ) => {
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--left` }>
-											<Button variant="primary" onClick={ () => handleTypeClick( TYPE_PERSONAL ) }>
+											<Button variant="primary" onClick={ setPersonalSite }>
 												{ translate( 'Personal site' ) }
 											</Button>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--right` }>
-											<Button
-												variant="primary"
-												onClick={ () => handleTypeClick( TYPE_COMMERCIAL ) }
-											>
+											<Button variant="primary" onClick={ setCommercialSite }>
 												{ translate( 'Commercial site' ) }
 											</Button>
 										</div>
