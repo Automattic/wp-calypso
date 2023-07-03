@@ -1161,7 +1161,7 @@ __metadata:
     debug: ^4.3.4
     gettext-parser: ^6.0.0
     html-webpack-plugin: ^5.0.0-beta.4
-    jest: ^29.5.0
+    jest: ^27.2.4
     jest-teamcity: ^1.9.0
     lodash: ^4.17.21
     mkdirp: ^1.0.4
@@ -20634,7 +20634,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^27.3.1, jest@npm:^27.4.5":
+"jest@npm:^27.2.4, jest@npm:^27.3.1, jest@npm:^27.4.5":
   version: 27.5.1
   resolution: "jest@npm:27.5.1"
   dependencies:
