@@ -63,4 +63,16 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 			await pluginsPage.validateExpectedSearchResultFound( 'Jetpack Protect' );
 		}
 	} );
+
+	it( 'Navigate back to the default plugins page when searching from categories pages', async function () {
+		await pluginsPage.validateCategoryButton(
+			'Search Engine Optimization',
+			envVariables.VIEWPORT_NAME !== 'mobile'
+		);
+		await pluginsPage.search( 'jetpack' );
+
+		// change the URL alway from the category page
+		expect( page.url().includes( '/plugins/browse/' ) ).toBeFalsy();
+		expect( page.url().includes( '/plugins?s=' ) ).toBeTruthy();
+	} );
 } );
