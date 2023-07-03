@@ -59,13 +59,19 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 * @param {Config.ProjectConfig} config Jest configuration.
 	 * @param {EnvironmentContext} context Jest execution context.
 	 */
-	constructor( config: Config.ProjectConfig, context: EnvironmentContext ) {
-		super( config );
+	constructor(
+		{
+			globalConfig,
+			projectConfig,
+		}: { globalConfig: Config.GlobalConfig; projectConfig: Config.ProjectConfig },
+		context: EnvironmentContext
+	) {
+		super( { globalConfig, projectConfig }, context );
 
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
 		this.testArtifactsPath = '';
-		this.allure = this.initializeAllureReporter( config );
+		this.allure = this.initializeAllureReporter( projectConfig );
 	}
 
 	/**
