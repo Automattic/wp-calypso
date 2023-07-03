@@ -2,6 +2,7 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
 	PLAN_PREMIUM,
+	PLAN_FREE,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -381,6 +382,12 @@ export function getEnhancedTasks(
 								submit?.();
 							}
 						},
+						title:
+							( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) &&
+							planCompleted &&
+							productSlug !== PLAN_FREE
+								? translate( 'Checkout and launch' )
+								: task.title,
 					};
 					break;
 				case 'videopress_upload':
