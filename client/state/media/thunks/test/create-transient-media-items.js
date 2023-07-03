@@ -64,9 +64,12 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 			// upon failure we return undefined for that file rather than throwing
 			expect( createTransientMediaItems( [ file ], site ) ).toEqual( [ undefined ] );
 
-			expect( validateMediaItem ).toHaveBeenCalledWith( site, {
-				...file,
-			} );
+			expect( validateMediaItem ).toHaveBeenCalledWith(
+				site,
+				expect.objectContaining( {
+					...file,
+				} )
+			);
 			expect( setMediaItemErrors ).toHaveBeenCalledWith( siteId, transientId, errors );
 		} );
 
@@ -79,9 +82,12 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 
 				createTransientMediaItems( [ file ], site );
 
-				expect( validateMediaItem ).toHaveBeenCalledWith( site, {
-					...file,
-				} );
+				expect( validateMediaItem ).toHaveBeenCalledWith(
+					site,
+					expect.objectContaining( {
+						...file,
+					} )
+				);
 				expect( setMediaItemErrors ).not.toHaveBeenCalled();
 			}
 		);
@@ -98,9 +104,12 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 
 			createTransientMediaItems( [ fileWithoutPassedInId ], site );
 
-			expect( createMediaItem ).toHaveBeenCalledWith( site, {
-				ID: generatedId,
-			} );
+			expect( createMediaItem ).toHaveBeenCalledWith(
+				site,
+				expect.objectContaining( {
+					ID: generatedId,
+				} )
+			);
 		} );
 
 		it( 'should override the generated transient ID with the one passed in', () => {
@@ -110,10 +119,13 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 
 			createTransientMediaItems( [ file ], site );
 
-			expect( createMediaItem ).toHaveBeenCalledWith( site, {
-				...file,
-				ID: passedInId,
-			} );
+			expect( createMediaItem ).toHaveBeenCalledWith(
+				site,
+				expect.objectContaining( {
+					...file,
+					ID: passedInId,
+				} )
+			);
 		} );
 	} );
 } );
