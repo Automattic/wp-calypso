@@ -823,8 +823,17 @@ object PreReleaseE2ETests : BuildType({
 				cd test/e2e
 				mkdir temp
 
+				# Disable exit on error to support retries.
+				set +o errexit
+
 				# Run suite.
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release
+
+				# Restore exit on error.
+				set -o errexit
+
+				# Retry failed tests only.
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -918,6 +927,9 @@ object PreReleaseE2ETests : BuildType({
 		executionTimeoutMin = 20
 		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
 		nonZeroExitCode = false
+
+		// Support retries using the --onlyFailures flag in Jest.
+		supportTestRetry = true
 
 		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
 		failOnMetricChange {

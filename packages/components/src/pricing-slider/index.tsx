@@ -22,7 +22,27 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 	onAfterChange,
 	renderThumb,
 } ) => {
-	const componentClassName = classNames( 'jp-components-pricing-slider', className );
+	const [ isThumbHolding, setIsThumbHolding ] = React.useState( false );
+
+	const componentClassName = classNames( 'jp-components-pricing-slider', className, {
+		'jp-components-pricing-slider--is-holding': isThumbHolding,
+	} );
+
+	const onBeforeChangeCallback = ( beforeValue: number ) => {
+		setIsThumbHolding( true );
+
+		if ( typeof onBeforeChange === 'function' ) {
+			onBeforeChange( beforeValue );
+		}
+	};
+
+	const onAfterChangeCallback = ( afterValue: number ) => {
+		setIsThumbHolding( false );
+
+		if ( typeof onAfterChange === 'function' ) {
+			onAfterChange( afterValue );
+		}
+	};
 
 	const renderThumbCallback = renderThumb
 		? renderThumb
@@ -43,8 +63,8 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 				step={ step }
 				renderThumb={ renderThumbCallback } // eslint-disable-line react/jsx-no-bind
 				onChange={ onChange } // eslint-disable-line react/jsx-no-bind
-				onBeforeChange={ onBeforeChange } // eslint-disable-line react/jsx-no-bind
-				onAfterChange={ onAfterChange } // eslint-disable-line react/jsx-no-bind
+				onBeforeChange={ onBeforeChangeCallback } // eslint-disable-line react/jsx-no-bind
+				onAfterChange={ onAfterChangeCallback } // eslint-disable-line react/jsx-no-bind
 			/>
 		</div>
 	);

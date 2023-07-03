@@ -25,34 +25,34 @@ describe( 'chooseDefaultCustomerType', () => {
 
 	test( 'chooses "personal" either if site is on a free plan or on the Personal plan', () => {
 		const currentPlan = {
-			product_slug: PLAN_FREE,
+			productSlug: PLAN_FREE,
 		};
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'personal' );
 
-		currentPlan.product_slug = PLAN_PERSONAL;
+		currentPlan.productSlug = PLAN_PERSONAL;
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'personal' );
 	} );
 
 	test( 'chooses "business" either if site on the Premium plan or Business plan', () => {
 		const currentPlan = {
-			product_slug: PLAN_PREMIUM,
+			productSlug: PLAN_PREMIUM,
 		};
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'business' );
 
-		currentPlan.product_slug = PLAN_ECOMMERCE_2_YEARS;
+		currentPlan.productSlug = PLAN_ECOMMERCE_2_YEARS;
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'business' );
 	} );
 
 	test( 'chooses "business" if the site is on the Pro plan', () => {
 		const currentPlan = {
-			product_slug: PLAN_WPCOM_PRO,
+			productSlug: PLAN_WPCOM_PRO,
 		};
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'business' );
 	} );
 
 	test( 'chooses "personal" if the site is on the Flexible plan', () => {
 		const currentPlan = {
-			product_slug: PLAN_WPCOM_FLEXIBLE,
+			productSlug: PLAN_WPCOM_FLEXIBLE,
 		};
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'personal' );
 	} );

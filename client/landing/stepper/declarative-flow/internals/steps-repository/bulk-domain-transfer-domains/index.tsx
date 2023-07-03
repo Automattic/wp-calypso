@@ -1,6 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
-import headerImage from 'calypso/assets/images/domains/transfer.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -21,13 +20,12 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			flowName={ flow }
 			stepName="domains"
 			goBack={ goBack }
-			isHorizontalLayout
-			headerImageUrl={ headerImage }
+			isHorizontalLayout={ false }
 			isLargeSkipLayout={ false }
 			formattedHeader={
 				<FormattedHeader
 					id="bulk-domains-header"
-					headerText={ __( 'Give us the deets' ) }
+					headerText={ __( 'Add unlocked domains' ) }
 					align="left"
 				/>
 			}
@@ -40,6 +38,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			showHeaderJetpackPowered={ false }
 			showHeaderWooCommercePowered={ false }
 			showVideoPressPowered={ false }
+			showJetpackPowered={ true }
 		/>
 	);
 };

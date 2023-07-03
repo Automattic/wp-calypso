@@ -3,7 +3,7 @@ import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberList } from 'calypso/my-sites/subscribers/components/subscriber-list';
 import { SubscriberListActionsBar } from 'calypso/my-sites/subscribers/components/subscriber-list-actions-bar';
-import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
+import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useRecordSearch } from '../../tracks';
 import { GrowYourAudience } from '../grow-your-audience';
@@ -18,7 +18,7 @@ const SubscriberListContainer = ( {
 	onClickView,
 	onClickUnsubscribe,
 }: SubscriberListContainerProps ) => {
-	const { grandTotal, total, perPage, page, pageClickCallback } = useSubscriberListManager();
+	const { grandTotal, total, perPage, page, pageClickCallback } = useSubscribersPage();
 	useRecordSearch();
 
 	return (

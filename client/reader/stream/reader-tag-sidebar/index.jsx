@@ -37,7 +37,7 @@ const ReaderTagSidebar = ( { tag } ) => {
 		<TagLink tag={ relatedTag } key={ relatedTag.slug } onClick={ handleTagSidebarClick } />
 	) );
 	const relatedSitesLinks = relatedMetaByTag.data?.related_sites?.map( ( relatedSite ) => (
-		<ReaderListFollowingItem key={ relatedSite.feed_ID } site={ relatedSite } path="/" />
+		<ReaderListFollowingItem key={ relatedSite.feed_ID } follow={ relatedSite } path="/" />
 	) );
 
 	return (

@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
@@ -352,6 +352,6 @@ const ConnectedTheme = connect(
 )( localize( Theme ) );
 
 export default ( props ) => {
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( props.siteId );
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( props.siteId );
 	return <ConnectedTheme { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
 };
