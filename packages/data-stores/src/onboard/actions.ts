@@ -451,8 +451,8 @@ export const setDomainCartItem = ( domainCartItem: MinimalRequestCartProduct | u
 	domainCartItem,
 } );
 
-export const setBulkDomainsData = ( bulkDomainsData: DomainTransferData | undefined ) => ( {
-	type: 'SET_BULK_DOMAINS_DATA' as const,
+export const setDomainsTransferData = ( bulkDomainsData: DomainTransferData | undefined ) => ( {
+	type: 'SET_DOMAINS_TRANSFER_DATA' as const,
 	bulkDomainsData,
 } );
 
@@ -493,7 +493,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetOnboardStore
 	| typeof resetOnboardStoreWithSkipFlags
 	| typeof setStoreType
-	| typeof setBulkDomainsData
+	| typeof setDomainsTransferData
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch

@@ -12,9 +12,9 @@ export interface ProfilerData {
 	[ key: string ]: string | number | boolean | string[] | number[];
 }
 
-export type BulkDomainTransferNames = Record< string, string >;
+export type DomainTransferNames = Record< string, string >;
 
-export type BulkDomainTransferAuthCodes = Record<
+export type DomainTransferAuthCodes = Record<
 	string,
 	{
 		auth: string;

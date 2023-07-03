@@ -38,7 +38,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		( { valid } ) => valid
 	).length;
 
-	const { setPendingAction, setBulkDomainsData } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setDomainsTransferData } = useDispatch( ONBOARD_STORE );
 
 	const { __, _n } = useI18n();
 
@@ -81,7 +81,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		( id: string, value: { domain: string; auth: string; valid: boolean } ) => {
 			const newDomainsState = { ...domainsState };
 			newDomainsState[ id ] = value;
-			setBulkDomainsData( newDomainsState );
+			setDomainsTransferData( newDomainsState );
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ changeKey ]
@@ -94,13 +94,13 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			auth: '',
 			valid: false,
 		};
-		setBulkDomainsData( newDomainsState );
+		setDomainsTransferData( newDomainsState );
 	}
 
 	function removeDomain( key: string ) {
 		const newDomainsState = { ...domainsState };
 		delete newDomainsState[ key ];
-		setBulkDomainsData( newDomainsState );
+		setDomainsTransferData( newDomainsState );
 	}
 
 	return (

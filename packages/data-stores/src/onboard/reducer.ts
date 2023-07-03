@@ -4,8 +4,8 @@ import type { OnboardAction } from './actions';
 import type {
 	DomainForm,
 	ProfilerData,
-	BulkDomainTransferNames,
-	BulkDomainTransferAuthCodes,
+	DomainTransferNames,
+	DomainTransferAuthCodes,
 } from './types';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
@@ -524,20 +524,20 @@ export const profilerData: Reducer< ProfilerData | undefined, OnboardAction > = 
 	return state;
 };
 
-export const bulkDomainNames: Reducer< BulkDomainTransferNames | undefined, OnboardAction > = (
+export const domainTransferNames: Reducer< DomainTransferNames | undefined, OnboardAction > = (
 	state,
 	action
 ) => {
-	if ( action.type === 'SET_BULK_DOMAINS_DATA' ) {
+	if ( action.type === 'SET_DOMAINS_TRANSFER_DATA' ) {
 		// we don't want to store empty objects
 		if ( action.bulkDomainsData && Object.keys( action.bulkDomainsData ).length > 0 ) {
 			// remove auth codes for safety
 			return Object.entries( action.bulkDomainsData ).reduce(
-				( bulkDomainNames, [ key, value ] ) => {
-					bulkDomainNames[ key ] = value.domain;
-					return bulkDomainNames;
+				( domainTransferNames, [ key, value ] ) => {
+					domainTransferNames[ key ] = value.domain;
+					return domainTransferNames;
 				},
-				{} as BulkDomainTransferNames
+				{} as DomainTransferNames
 			);
 		}
 		return undefined;
@@ -551,17 +551,17 @@ export const bulkDomainNames: Reducer< BulkDomainTransferNames | undefined, Onbo
 /**
  * A separate reducer for auth codes to avoid persisting sensitive data.
  */
-export const bulkDomainAuthCodes: Reducer<
-	BulkDomainTransferAuthCodes | undefined,
+export const domainTransferAuthCodes: Reducer<
+	DomainTransferAuthCodes | undefined,
 	OnboardAction
 > = ( state, action ) => {
-	if ( action.type === 'SET_BULK_DOMAINS_DATA' ) {
+	if ( action.type === 'SET_DOMAINS_TRANSFER_DATA' ) {
 		// we don't want to store empty objects
 		if ( action.bulkDomainsData && Object.keys( action.bulkDomainsData ).length > 0 ) {
 			return Object.entries( action.bulkDomainsData ).reduce( ( authCodes, [ key, value ] ) => {
 				authCodes[ key ] = { auth: value.auth, valid: value.valid };
 				return authCodes;
-			}, {} as BulkDomainTransferAuthCodes );
+			}, {} as DomainTransferAuthCodes );
 		}
 		return undefined;
 	}
@@ -594,8 +594,8 @@ const reducer = combineReducers( {
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
 	selectedFeatures,
-	bulkDomainNames,
-	bulkDomainAuthCodes,
+	domainTransferNames,
+	domainTransferAuthCodes,
 	storeType,
 	selectedFonts,
 	selectedDesign,
