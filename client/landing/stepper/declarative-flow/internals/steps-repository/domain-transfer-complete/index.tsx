@@ -12,9 +12,16 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 	const { goBack } = navigation;
 	const { __ } = useI18n();
 
+	const redirectToDomains = () => {
+		window.location.href = 'https://wordpress.com/domains/manage';
+	};
+
 	const ManageAllButton = () => {
 		return (
-			<button className="components-button is-primary manage-all-domains">
+			<button
+				onClick={ redirectToDomains }
+				className="components-button is-primary manage-all-domains"
+			>
 				{ __( 'Manage all domains' ) }
 			</button>
 		);
@@ -40,7 +47,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			}
 			stepContent={
 				<CalypsoShoppingCartProvider>
-					<Complete />
+					<Complete manageAllDomains={ redirectToDomains } />
 				</CalypsoShoppingCartProvider>
 			}
 			recordTracksEvent={ recordTracksEvent }

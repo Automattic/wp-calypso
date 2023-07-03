@@ -1,10 +1,16 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
-.bulk-domain-transfer {
+.step-container.bulk-domain-transfer {
 	&.complete {
+		@media ( max-width: $break-medium ) {
+			align-items: flex-start;
+			justify-content: center;
+		}
+
 		.step-container__header {
-			margin-bottom: 30px;
+			margin-top: 30px;
+			margin-bottom: 0;
 		}
 		.formatted-header {
 			.formatted-header__title {
@@ -12,6 +18,15 @@
 			}
 			.formatted-header__subtitle {
 				text-align: center;
+			}
+			@media ( max-width: $break-medium ) {
+				text-align: left;
+				.formatted-header__title {
+					font-size: 2rem;
+				}
+				.formatted-header__subtitle {
+					text-align: left;
+				}
 			}
 		}
 		.manage-all-domains {
@@ -24,28 +39,39 @@
 			border-radius: 4px;
 		}
 		.step-container__content {
-			width: 754px;
+			width: 70%;
 			display: flex;
 			flex-direction: column;
 			gap: 50px;
+			@media ( max-width: $break-medium ) {
+				width: 100%;
+			}
 
 			.domain-complete-summary {
 				display: flex;
-				flex-direction: row;
+				flex-direction: column;
 				justify-content: center;
+
 			}
 			.domain-complete-list {
 				margin: 0;
 
 				.domain-complete-list-item {
 					display: flex;
-					width: 650px;
 					padding: 20px 25px;
 					justify-content: space-between;
 					align-items: center;
 					gap: 16px;
 					border-radius: 2px;
 					border: 1px solid var(--studio-gray-5);
+					&:not(:first-child) {
+						margin-top: 16px;
+					}
+
+					@media ( max-width: $break-medium ) {
+						align-items: flex-start;
+						flex-direction: column;
+					}
 
 					h2 {
 						font-weight: 500;
@@ -73,6 +99,13 @@
 				flex-direction: row;
 				justify-content: center;
 				.domain-complete-tips-items {
+					padding: 0 20px;
+					@media ( max-width: $break-medium ) {
+						flex-direction: column;
+						padding: 0;
+						margin-bottom: 120px; //Compensates the back button	height
+					}
+
 					h2 {
 						font-weight: 500;
 					}
@@ -81,9 +114,6 @@
 						margin-top: 5px;
 						margin-bottom: 16px;
 					}
-					div {
-						width: 305px;
-					}
 					a {
 						text-decoration: underline;
 						font-size: 0.875rem;
@@ -91,7 +121,6 @@
 					}
 					display: flex;
 					gap: 40px;
-					width: 650px;
 				}
 			}
 		}
