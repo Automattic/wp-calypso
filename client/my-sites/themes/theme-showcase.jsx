@@ -90,6 +90,9 @@ class ThemeShowcase extends Component {
 		loggedOutComponent: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
+		isSiteECommerceFreeTrial: PropTypes.bool,
+		isSiteWooExpress: PropTypes.bool,
+		isSiteWooExpressOrEcomFreeTrial: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -180,17 +183,24 @@ class ThemeShowcase extends Component {
 	};
 
 	getTiers = () => {
-		return [
+		const { isSiteWooExpressOrEcomFreeTrial } = this.props;
+		const tiers = [
 			{ value: 'all', label: this.props.translate( 'All' ) },
 			{ value: 'free', label: this.props.translate( 'Free' ) },
-			{ value: 'premium', label: this.props.translate( 'Premium' ) },
-			{
-				value: 'marketplace',
-				label: this.props.translate( 'Paid', {
-					context: 'Refers to paid service, such as paid theme',
-				} ),
-			},
 		];
+
+		if ( ! isSiteWooExpressOrEcomFreeTrial ) {
+			tiers.push( { value: 'premium', label: this.props.translate( 'Premium' ) } );
+		}
+
+		tiers.push( {
+			value: 'marketplace',
+			label: this.props.translate( 'Paid', {
+				context: 'Refers to paid service, such as paid theme',
+			} ),
+		} );
+
+		return tiers;
 	};
 
 	findTabFilter = ( tabFilters, filterKey ) =>
@@ -447,11 +457,9 @@ class ThemeShowcase extends Component {
 			isMultisite,
 			locale,
 			premiumThemesEnabled,
-			isSiteECommerceFreeTrial,
-			isSiteWooExpress,
+			isSiteWooExpressOrEcomFreeTrial,
 		} = this.props;
 		const tier = this.props.tier || '';
-		const isSiteWooExpressOrEcomFreeTrial = isSiteECommerceFreeTrial || isSiteWooExpress;
 
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
@@ -621,6 +629,8 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		isUpsellCardDisplayed: isUpsellCardDisplayedSelector( state ),
 		isSiteECommerceFreeTrial: isSiteOnECommerceTrial( state, siteId ),
 		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
+		isSiteWooExpressOrEcomFreeTrial:
+			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 	};
 };
 
