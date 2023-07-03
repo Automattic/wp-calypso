@@ -109,23 +109,13 @@ const GlobalStylesVariations = ( {
 }: GlobalStylesVariationsProps ) => {
 	const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
 	const globalStylesOnPersonalExperiment = experiment?.variationName === 'treatment';
-	const [ premiumStylesDescription, setPremiumStylesDescription ] = useState( '' );
-	useEffect( () => {
-		if ( globalStylesOnPersonalExperiment ) {
-			setPremiumStylesDescription(
-				translate(
+	const premiumStylesDescription = globalStylesOnPersonalExperiment
+		? translate(
 					'Unlock custom styles and tons of other features with the Personal plan, or try them out now for free.'
 				)
-			);
-			return;
-		}
-
-		setPremiumStylesDescription(
-			translate(
+		: translate(
 				'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
-			)
-		);
-	}, [ globalStylesOnPersonalExperiment ] );
+			);
 
 	const baseGlobalStyles = useMemo(
 		() =>
