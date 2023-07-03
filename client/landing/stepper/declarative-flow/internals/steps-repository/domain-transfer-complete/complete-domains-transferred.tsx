@@ -6,7 +6,7 @@ type Props = {
 	newlyTransferredDomains: ResponseDomain[];
 };
 
-export const Complete = ( { newlyTransferredDomains }: Props ) => {
+export const CompleteDomainsTransferred = ( { newlyTransferredDomains }: Props ) => {
 	const { __ } = useI18n();
 
 	const formatDate = ( date: string | null ): string => {

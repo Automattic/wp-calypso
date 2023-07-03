@@ -9,11 +9,11 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
-import { Complete } from './complete';
+import { CompleteDomainsTransferred } from './complete-domains-transferred';
 import type { Step } from '../../types';
 import './styles.scss';
 
-const Intro: Step = function Intro( { navigation, flow } ) {
+const Complete: Step = function Complete( { navigation, flow } ) {
 	const { goBack } = navigation;
 	const { __ } = useI18n();
 
@@ -46,7 +46,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 				Math.floor( ( currentDate.getTime() - domainRegistrationDate.getTime() ) / oneDay )
 			);
 
-			return differenceInDays <= 150;
+			return differenceInDays <= 1;
 		} ) as ResponseDomain[];
 
 		setNewlyTransferredDomains( domainsFromToday );
@@ -82,7 +82,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 				}
 				stepContent={
 					<CalypsoShoppingCartProvider>
-						<Complete newlyTransferredDomains={ newlyTransferredDomains } />
+						<CompleteDomainsTransferred newlyTransferredDomains={ newlyTransferredDomains } />
 					</CalypsoShoppingCartProvider>
 				}
 				recordTracksEvent={ recordTracksEvent }
@@ -95,4 +95,4 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 	);
 };
 
-export default Intro;
+export default Complete;
