@@ -1,7 +1,8 @@
+import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo } from '@automattic/components';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
@@ -28,6 +29,8 @@ import {
 	getCustomizerUrl,
 	getSiteOption,
 	isNewSite,
+	getSitePlanSlug,
+	getSite,
 } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -75,6 +78,11 @@ export const QuickLinks = ( {
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
 	const isPromotePostActive = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+	const siteId = useSelector( getSelectedSiteId );
+	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
+	const hasBoost = site.options.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 
 	const customizerLinks =
 		isStaticHomePage && canEditPages ? (
@@ -215,7 +223,7 @@ export const QuickLinks = ( {
 					/>
 				</>
 			) }
-			{ isAtomic && (
+			{ isAtomic && hasBoost && (
 				<ActionBox
 					href={ `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-boost` }
 					hideLinkIndicator
@@ -223,7 +231,7 @@ export const QuickLinks = ( {
 					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
 				/>
 			) }
-			{ isAtomic && (
+			{ isAtomic && hasBackups && (
 				<ActionBox
 					href={ `/backup/${ siteSlug }` }
 					hideLinkIndicator
