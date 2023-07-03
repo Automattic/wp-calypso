@@ -113,7 +113,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 
 			{ showActions && (
 				<div className="file-card__actions">
-					<Button className="file-card__action" onClick={ downloadFile }>
+					<Button className="file-card__action" onClick={ downloadFile } disabled={ isDownloading }>
 						{ isDownloading ? <Spinner /> : translate( 'Download' ) }
 					</Button>
 				</div>
