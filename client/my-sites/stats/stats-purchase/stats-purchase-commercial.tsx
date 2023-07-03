@@ -39,19 +39,24 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 			</div>
 
 			<p>
-				{ /* TODO: Translate the copy below */ }
-				By clicking the button below, you agree to our{ ' ' }
-				<Button variant="link" href="#">
-					Terms of Service
-				</Button>{ ' ' }
-				and to{ ' ' }
-				<Button variant="link" href="#">
-					share details
-				</Button>{ ' ' }
-				with WordPress.com.
+				{ translate(
+					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
+					{
+						components: {
+							a: <Button variant="link" href="#" />,
+							b: <Button variant="link" href="#" />,
+						},
+					}
+				) }
 			</p>
 
-			<Button variant="primary">Get Jetpack Stats for ${ planValue } per month</Button>
+			<Button variant="primary">
+				{ translate( 'Get Jetpack Stats for %(value)s per month', {
+					args: {
+						value: planValue,
+					},
+				} ) }
+			</Button>
 		</div>
 	);
 };

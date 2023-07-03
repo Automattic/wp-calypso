@@ -60,7 +60,8 @@ const ProductCard = ( { siteSlug } ) => {
 	};
 
 	// change the plan to commercial on the personal plan confirmation
-	const handlePlanSwap = () => {
+	const handlePlanSwap = ( e ) => {
+		e.preventDefault();
 		setSiteType( TYPE_COMMERCIAL );
 		setSubscriptionValue( FLAT_COMMERCIAL_PRICE );
 		setWizardStep( SCREEN_PURCHASE );
@@ -125,12 +126,15 @@ const ProductCard = ( { siteSlug } ) => {
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--left` }>
-											<Button isPrimary onClick={ () => handleTypeClick( TYPE_PERSONAL ) }>
+											<Button variant="primary" onClick={ () => handleTypeClick( TYPE_PERSONAL ) }>
 												{ translate( 'Personal site' ) }
 											</Button>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--right` }>
-											<Button isPrimary onClick={ () => handleTypeClick( TYPE_COMMERCIAL ) }>
+											<Button
+												variant="primary"
+												onClick={ () => handleTypeClick( TYPE_COMMERCIAL ) }
+											>
 												{ translate( 'Commercial site' ) }
 											</Button>
 										</div>
@@ -149,6 +153,7 @@ const ProductCard = ( { siteSlug } ) => {
 											<ul>
 												<li>
 													<CheckboxControl
+														className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
 														checked={ isAdsChecked }
 														label={ translate( `I don't have ads on my site` ) }
 														onChange={ ( value ) => {
@@ -158,6 +163,7 @@ const ProductCard = ( { siteSlug } ) => {
 												</li>
 												<li>
 													<CheckboxControl
+														className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
 														checked={ isSellingChecked }
 														label={ translate( `I don't sell products/services on my site` ) }
 														onChange={ ( value ) => {
@@ -167,6 +173,7 @@ const ProductCard = ( { siteSlug } ) => {
 												</li>
 												<li>
 													<CheckboxControl
+														className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
 														checked={ isBusinessChecked }
 														label={ translate( `I don't promote a business on my site` ) }
 														onChange={ ( value ) => {
@@ -177,15 +184,25 @@ const ProductCard = ( { siteSlug } ) => {
 											</ul>
 										</p>
 										<p>
-											{ translate( `If your site doesn't meet these criteria, ` ) }
-											<a href="#" onClick={ () => handlePlanSwap() }>
-												{ translate( `you will need to use the commercial plan` ) }
-											</a>
-											.
+											{ translate(
+												`If your site doesn't meet these criteria, {{a}}you will need to use the commercial plan{{/a}}.`,
+												{
+													components: {
+														// a: <a href="#" onClick={ () => handlePlanSwap() } />,
+														a: (
+															<Button
+																variant="link"
+																href="#"
+																onClick={ ( e ) => handlePlanSwap( e ) }
+															/>
+														),
+													},
+												}
+											) }
 										</p>
 										<p>
 											<Button
-												isPrimary
+												variant="primary"
 												onClick={ () => setWizardStep( SCREEN_PURCHASE ) }
 												disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
 											>
