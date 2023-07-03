@@ -178,6 +178,19 @@ export class SiteDomains extends Component {
 
 				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
+				{ wpcomDomain && (
+					<FreeDomainItem
+						key="wpcom-domain-item"
+						isAtomicSite={ isAtomicSite }
+						currentRoute={ currentRoute }
+						domain={ wpcomDomain }
+						disabled={ disabled }
+						isBusy={ settingPrimaryDomain }
+						site={ selectedSite }
+						onMakePrimary={ this.handleUpdatePrimaryDomainWpcom }
+					/>
+				) }
+
 				<div className="domain-management-list__items">
 					<div className="domain-management-list__filter">
 						{ this.renderDomainTableFilterButton() }
@@ -215,22 +228,9 @@ export class SiteDomains extends Component {
 					/>
 				) }
 
+				{ ! this.isLoading() && this.renderManageDomainsSection() }
+
 				<DomainToPlanNudge />
-
-				{ wpcomDomain && (
-					<FreeDomainItem
-						key="wpcom-domain-item"
-						isAtomicSite={ isAtomicSite }
-						currentRoute={ currentRoute }
-						domain={ wpcomDomain }
-						disabled={ disabled }
-						isBusy={ settingPrimaryDomain }
-						site={ selectedSite }
-						onMakePrimary={ this.handleUpdatePrimaryDomainWpcom }
-					/>
-				) }
-
-				{ this.renderManageDomainsSection() }
 			</>
 		);
 	}
@@ -329,9 +329,12 @@ export class SiteDomains extends Component {
 					flexDirection: 'column',
 					alignItems: 'center',
 					padding: '32px 16px',
+					borderTop: '1px solid',
+					width: 'fit-content',
+					margin: '0 auto',
 				} }
 			>
-				<p css={ { marginBottom: '1rem' } }>
+				<p css={ { marginBottom: '1rem', textAlign: 'center' } }>
 					{ translate( 'Manage all the domains you own on WordPress.com' ) }
 				</p>
 				<Button
