@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { urlToSlug } from 'calypso/lib/url';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import useCheckout from '../../../../../hooks/use-checkout';
 import { useSite } from '../../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../../hooks/use-site-slug-param';
@@ -31,7 +31,7 @@ const useGlobalStylesUpgradeModal = ( {
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const translate = useTranslate();
 	const { goToCheckout } = useCheckout();
 
