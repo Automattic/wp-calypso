@@ -29,20 +29,21 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 		// the length of registration, so I use isNewUser here as an approximation
 		const isNew7DUserSite = isNewUser;
 
-		// Domain cart items can sometimes be included when free. So the selected domain is explicitly checked to see if it's free.
-		// For mappings and transfers this attribute should be empty but it needs to be checked.
-		const isPaidDomainItem = domainCartItem && selectedDomain?.is_free !== true;
-		const hasCartItems = ! isPaidDomainItem || planCartItem; // see the function `dependenciesContainCartItem()
-
 		// Domain product slugs can be a domain purchases like dotcom_domain or dotblog_domain or a mapping like domain_mapping
 		// When purchasing free subdomains the product_slugs is empty (since there is no actual produce being purchased)
 		// so we avoid capturing the product slug in these instances.
-		const domainProductSlug =
-			domainCartItem?.product_slug !== '' ? domainCartItem?.product_slug : undefined;
+		const domainProductSlug = domainCartItem?.product_slug ?? undefined;
+
+		// Domain cart items can sometimes be included when free. So the selected domain is explicitly checked to see if it's free.
+		// For mappings and transfers this attribute should be empty but it needs to be checked.
+		const hasCartItems = !! ( domainProductSlug || planCartItem ); // see the function `dependenciesContainCartItem()
 
 		// When there is no plan put in the cart, `planCartItem` is `null` instead of `undefined` like domainCartItem.
 		// It worths a investigation of whether the both should behave the same.
-		const planProductSlug = planCartItem?.product_slug ? planCartItem.product_slug : undefined;
+		const planProductSlug = planCartItem?.product_slug ?? undefined;
+		// To have a paid domain item it has to either be a paid domain or a different domain product like mapping or transfer.
+		const hasPaidDomainItem =
+			( selectedDomain && ! selectedDomain.is_free ) || !! domainProductSlug;
 
 		recordSignupComplete( {
 			flow,
@@ -56,8 +57,8 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			isBlankCanvas: theme?.includes( 'blank-canvas' ),
 			planProductSlug,
 			domainProductSlug,
-			isMapping: isPaidDomainItem && isDomainMapping( domainCartItem ),
-			isTransfer: isPaidDomainItem && isDomainTransfer( domainCartItem ),
+			isMapping: hasPaidDomainItem && isDomainMapping( domainCartItem ),
+			isTransfer: hasPaidDomainItem && isDomainTransfer( domainCartItem ),
 		} );
-	}, [ domainCartItem, flow, planCartItem, selectedDomain?.is_free, siteCount, siteId, theme ] );
+	}, [ domainCartItem, flow, planCartItem, selectedDomain, siteCount, siteId, theme ] );
 };
