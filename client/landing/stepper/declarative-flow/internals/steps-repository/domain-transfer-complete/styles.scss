@@ -103,10 +103,10 @@
 				justify-content: center;
 				.domain-complete-tips-items {
 					padding: 0 20px;
+					margin-bottom: 50px;
 					@media ( max-width: $break-medium ) {
 						flex-direction: column;
 						padding: 0;
-						margin-bottom: 120px; //Compensates the back button	height
 					}
 
 					h2 {
@@ -126,6 +126,11 @@
 					gap: 40px;
 				}
 			}
+		}
+
+		// Hide back button
+		.step-container__navigation {
+			display: none;
 		}
 	}
 }
