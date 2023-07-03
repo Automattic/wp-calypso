@@ -314,8 +314,9 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
-    "@jest/globals": ^27.3.1
-    "@types/jest": ^27.4.0
+    "@jest/globals": ^29.5.0
+    "@jest/types": ^29.5.0
+    "@types/jest": ^29.5.2
     "@types/node": ^18.11.18
     "@types/node-fetch": ^2.6.1
     "@types/totp-generator": ^0.0.3
@@ -350,7 +351,7 @@ __metadata:
     babel-jest: ^27.3.1
     enhanced-resolve: ^5.8.3
     jest: ^29.5.0
-    jest-config: ^27.3.1
+    jest-config: ^29.5.0
   peerDependencies:
     react: ^18
     react-dom: ^18
@@ -902,7 +903,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/allure-js-commons": ^0.0.1
-    "@types/jest": ^27.4.0
+    "@types/jest": ^29.5.2
     "@types/node": ^18.11.18
     allure-js-commons: 2.0.0-beta.9
     typescript: ^4.7.4
@@ -4314,7 +4315,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/globals@npm:^27.3.1, @jest/globals@npm:^27.5.1":
+"@jest/globals@npm:^27.5.1":
   version: 27.5.1
   resolution: "@jest/globals@npm:27.5.1"
   dependencies:
@@ -6802,6 +6803,16 @@ __metadata:
     jest-matcher-utils: ^27.0.0
     pretty-format: ^27.0.0
   checksum: 29ef3da9b94a15736a67fc13956f385ac2ba2c6297f50d550446842c278f2e0d9f343dcd8e31c321ada5d8a1bd67bc1d79c7b6ff1802d55508c692123b3d9794
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^29.5.2":
+  version: 29.5.2
+  resolution: "@types/jest@npm:29.5.2"
+  dependencies:
+    expect: ^29.0.0
+    pretty-format: ^29.0.0
+  checksum: e85525fe83a0792632a31ca32968b33a0014d617442e9a515357d2aa8890052ef622b1f6fd25d48f4f1a3ab806bed94e6d9b056dea23a897464e0e35957ff654
   languageName: node
   linkType: hard
 
@@ -10911,7 +10922,7 @@ __metadata:
     "@testing-library/react": ^14.0.0
     "@testing-library/react-hooks": 7.0.2
     "@testing-library/user-event": ^14.4.3
-    "@types/jest": ^27.4.0
+    "@types/jest": ^29.5.2
     "@types/redux-mock-store": 1.0.3
     "@wordpress/a11y": ^3.23.0
     "@wordpress/api-fetch": ^6.20.0
@@ -15304,6 +15315,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expect@npm:^29.0.0, expect@npm:^29.5.0":
+  version: 29.5.0
+  resolution: "expect@npm:29.5.0"
+  dependencies:
+    "@jest/expect-utils": ^29.6.1
+    "@types/node": "*"
+    jest-get-type: ^29.4.3
+    jest-matcher-utils: ^29.6.1
+    jest-message-util: ^29.6.1
+    jest-util: ^29.6.1
+  checksum: 8ffdd2c8c09d6d632ae85a1172a7e785e75f187ac0009330fa5bcb00e07a06d781b8016579952a1f0ef43e1604068fcdaade3029c8b5ffb99931f79bff57e778
+  languageName: node
+  linkType: hard
+
 "expect@npm:^29.6.1":
   version: 29.6.1
   resolution: "expect@npm:29.6.1"
@@ -19012,6 +19037,43 @@ __metadata:
   linkType: hard
 
 "jest-config@npm:^27.3.1":
+  version: 27.5.1
+  resolution: "jest-config@npm:27.5.1"
+  dependencies:
+    "@babel/core": ^7.8.0
+    "@jest/test-sequencer": ^27.5.1
+    "@jest/types": ^27.5.1
+    babel-jest: ^27.5.1
+    chalk: ^4.0.0
+    ci-info: ^3.2.0
+    deepmerge: ^4.2.2
+    glob: ^7.1.1
+    graceful-fs: ^4.2.9
+    jest-circus: ^27.5.1
+    jest-environment-jsdom: ^27.5.1
+    jest-environment-node: ^27.5.1
+    jest-get-type: ^27.5.1
+    jest-jasmine2: ^27.5.1
+    jest-regex-util: ^27.5.1
+    jest-resolve: ^27.5.1
+    jest-runner: ^27.5.1
+    jest-util: ^27.5.1
+    jest-validate: ^27.5.1
+    micromatch: ^4.0.4
+    parse-json: ^5.2.0
+    pretty-format: ^27.5.1
+    slash: ^3.0.0
+    strip-json-comments: ^3.1.1
+  peerDependencies:
+    ts-node: ">=9.0.0"
+  peerDependenciesMeta:
+    ts-node:
+      optional: true
+  checksum: 28867b165f0e25b711a2ade5f261a1b1606b476704ff68a50688eaf3b9c853f69542645cc7e0dab38079ed74e3acc99e38628faf736c1739e44fc869c62c6051
+  languageName: node
+  linkType: hard
+
+"jest-config@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest-config@npm:27.5.1"
   dependencies:
@@ -24231,6 +24293,17 @@ __metadata:
     ansi-styles: ^5.0.0
     react-is: ^17.0.1
   checksum: 0cbda1031aa30c659e10921fa94e0dd3f903ecbbbe7184a729ad66f2b6e7f17891e8c7d7654c458fa4ccb1a411ffb695b4f17bbcd3fe075fabe181027c4040ed
+  languageName: node
+  linkType: hard
+
+"pretty-format@npm:^29.0.0, pretty-format@npm:^29.5.0":
+  version: 29.5.0
+  resolution: "pretty-format@npm:29.5.0"
+  dependencies:
+    "@jest/schemas": ^29.6.0
+    ansi-styles: ^5.0.0
+    react-is: ^18.0.0
+  checksum: decb4ca86b34e53a08e525d2b50be19ef4bffa4bb4122787740b012c11490311879de53dee8b669a82376b6fec06040ec546831f2c3ce0df963c00d743cce664
   languageName: node
   linkType: hard
 
@@ -30923,7 +30996,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@babel/core": ^7.16.0
     "@types/archiver": ^5.3.1
-    "@types/jest": ^27.0.2
+    "@types/jest": ^29.5.2
     archiver: ^5.3.0
     asana-phrase: ^0.0.8
     babel-jest: ^27.2.4
