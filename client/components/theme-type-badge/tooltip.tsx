@@ -9,6 +9,7 @@ import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import {
 	canUseTheme,
@@ -71,6 +72,8 @@ const ThemeTypeBadgeTooltip = ( {
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
+	const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
+	const globalStylesOnPersonalExperiment = experiment?.variationName === 'treatment';
 	const isPurchased = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return false;
@@ -121,9 +124,15 @@ const ThemeTypeBadgeTooltip = ( {
 
 	let message;
 	if ( isLockedStyleVariation ) {
-		message = translate(
-			'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-		);
+		if ( globalStylesOnPersonalExperiment ) {
+			message = translate(
+				'Unlock this style, and tons of other features, by upgrading to a Personal plan.'
+			);
+		} else {
+			message = translate(
+				'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
+			);
+		}
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );
