@@ -30,8 +30,8 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 				</div>
 			</div>
 
-			<div className="benefits">
-				<ul className="included">
+			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
+				<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 					<li>{ translate( 'Instant access to upcoming features' ) }</li>
 					<li>{ translate( 'Priority support' ) }</li>
 					<li>{ translate( 'Ad-free experience' ) }</li>

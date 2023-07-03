@@ -1,5 +1,9 @@
 .stats-purchase-wizard {
-	max-width: 90%;
+	max-width: 90%; //TODO: fix positioning
+
+	.stats-purchase-wizard__card-parent {
+		border-radius: 4px;
+	}
 
 	.stats-purchase-wizard__card {
 		display: flex;
@@ -22,57 +26,53 @@
 		border-bottom-right-radius: 4px;
 	}
 
-	.range-container {
-		margin: 2rem 0;
-	}
-
-	.average-price {
+	.stats-purchase-wizard__average-price {
 		margin-bottom: 3em;
 		// font-size: 14px;
 		color: #2c3338;
 		text-align: center;
 	}
 
-	.benefits ul {
-		list-style: none;
-		margin: 0 0 40px;
-		padding: 0;
+	.stats-purchase-wizard__benefits {
+		ul {
+			margin: 0 0 40px;
+		}
+
+		li {
+			margin-bottom: 8px;
+			padding-left: 28px;
+			background: no-repeat 0 50%;
+		}
 	}
 
-	.benefits li {
-		margin-bottom: 8px;
-		padding-left: 28px;
-		background: no-repeat 0 50%;
-	}
-
-	.included li {
+	.stats-purchase-wizard__benefits--included li {
 		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNCIgeD0iMyIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Im04Ljc1NyAxNS45LTQuMTgtNC4yLTEuMzkzIDEuNCA1LjU3MyA1LjYgMTEuOTQxLTEyLTEuMzkzLTEuNEw4Ljc1NyAxNS45WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjMDY5RTA4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
 	}
 
-	.not-included li {
+	.stats-purchase-wizard__benefits--not-included li {
 		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNCIgeD0iNCIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xOC45MDcgNi40MSAxNy41MDQgNWwtNS41NjMgNS41OUw2LjM4IDUgNC45NzUgNi40MSAxMC41MzggMTJsLTUuNTYzIDUuNTlMNi4zOCAxOWw1LjU2Mi01LjU5TDE3LjUwNCAxOWwxLjQwMy0xLjQxTDEzLjM0NCAxMmw1LjU2My01LjU5WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjRDYzNjM4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
 	}
 
-	.qualifications {
-		margin-bottom: 2rem;
-	}
-
-	.qualifications ul {
+	ul {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 	}
 
-	.qualifications li {
-		margin-bottom: 8px;
+	.stats-purchase-wizard__qualifications {
+		margin-bottom: 2rem;
+
+		li {
+			margin-bottom: 8px;
+		}
 	}
 
-	.celebrate {
+	.stats-purchase-wizard__celebrate {
 		position: absolute;
 		z-index: 0;
 	}
 
-	.biggest-supporters {
+	.stats-purchase-wizard__biggest-supporters {
 		position: absolute;
 		width: 100%;
 		top: 32px;
@@ -84,24 +84,6 @@
 
 	h3 {
 		margin: 0;
-	}
-
-	.site-type {
-		display: flex;
-		gap: 32px;
-	}
-
-	.site-type div {
-		width: 50%;
-	}
-
-	.type {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.type button {
-		margin-top: auto;
 	}
 
 	.stats-purchase-wizard__pricing {

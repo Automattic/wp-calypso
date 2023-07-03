@@ -97,7 +97,7 @@ const ProductCard = ( { siteSlug } ) => {
 
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
-			<Card>
+			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>
 						<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` } header="Jetpack Stats">
@@ -144,7 +144,7 @@ const ProductCard = ( { siteSlug } ) => {
 							</PanelBody>
 							<PanelBody opened={ wizardStep === SCREEN_PERSONAL_CHECKLIST }>
 								<PanelRow>
-									<div className="qualifications">
+									<div className={ `${ COMPONENT_CLASS_NAME }__qualifications` }>
 										<p>
 											<strong>
 												{ translate( 'Please confirm non-commercial usage by checking each box:' ) }

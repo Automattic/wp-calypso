@@ -2,11 +2,14 @@
 import { PricingSlider, RenderThumbFunction } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
 	setSubscriptionValue: ( value: number ) => number;
 }
+
+const AVERAGE_PRICE_INFO = '$6';
 
 const PersonalPurchase = ( { subscriptionValue, setSubscriptionValue }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
@@ -27,17 +30,23 @@ const PersonalPurchase = ( { subscriptionValue, setSubscriptionValue }: Personal
 				onChange={ setSubscriptionValue }
 			/>
 
-			<p className="average-price">{ translate( 'The average person pays $6 per month' ) }</p>
+			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
+				{ translate( 'The average person pays %(value)s per month', {
+					args: {
+						value: AVERAGE_PRICE_INFO,
+					},
+				} ) }
+			</p>
 
-			<div className="benefits">
+			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
 				{ subscriptionValue === 0 ? (
-					<ul className="not-included">
+					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
 						<li>{ translate( 'No access to upcoming features' ) }</li>
 						<li>{ translate( 'No priority support' ) }</li>
 						<li>{ translate( "You'll see upsells and ads in the Stats page" ) }</li>
 					</ul>
 				) : (
-					<ul className="included">
+					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 						<li>{ translate( 'Instant access to upcoming features' ) }</li>
 						<li>{ translate( 'Priority support' ) }</li>
 						<li>{ translate( 'Ad-free experience' ) }</li>
