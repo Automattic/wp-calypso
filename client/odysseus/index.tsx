@@ -114,7 +114,7 @@ const OdysseusAssistant = () => {
 				isNudging={ isNudging }
 				isLoading={ isLoading }
 			/>
-			<div className="chatbox-header">Wapuu</div>
+			<div className="chatbox-header">Wapuu Assistant</div>
 			<div className="chat-box-message-container">
 				<div className="chatbox-messages">
 					{ messages.map( ( message, index ) => (
