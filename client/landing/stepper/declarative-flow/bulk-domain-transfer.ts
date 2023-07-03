@@ -32,6 +32,10 @@ const bulkDomainTransfer: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
+			{
+				slug: 'complete',
+				asyncComponent: () => import( './internals/steps-repository/domain-transfer-complete' ),
+			},
 		];
 	},
 
