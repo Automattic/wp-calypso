@@ -1,6 +1,7 @@
 import { translate } from 'i18n-calypso';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
+import { NoSearchResults } from 'calypso/my-sites/subscribers/components/no-search-results';
 import { SubscriberList } from 'calypso/my-sites/subscribers/components/subscriber-list';
 import { SubscriberListActionsBar } from 'calypso/my-sites/subscribers/components/subscriber-list-actions-bar';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
@@ -14,19 +15,11 @@ type SubscriberListContainerProps = {
 	onClickUnsubscribe: ( subscriber: Subscriber ) => void;
 };
 
-const NoSearchResults = () => {
-	return (
-		<div className="subscriber-list-container__no-results">
-			{ translate( 'No subscribers found.' ) }
-		</div>
-	);
-};
-
 const SubscriberListContainer = ( {
 	onClickView,
 	onClickUnsubscribe,
 }: SubscriberListContainerProps ) => {
-	const { grandTotal, total, perPage, page, pageClickCallback } = useSubscribersPage();
+	const { grandTotal, total, perPage, page, pageClickCallback, searchTerm } = useSubscribersPage();
 	useRecordSearch();
 
 	return (
@@ -42,7 +35,7 @@ const SubscriberListContainer = ( {
 					{ total ? (
 						<SubscriberList onView={ onClickView } onUnsubscribe={ onClickUnsubscribe } />
 					) : (
-						<NoSearchResults />
+						<NoSearchResults searchTerm={ searchTerm } />
 					) }
 
 					<Pagination
