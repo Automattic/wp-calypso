@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, BULK_DOMAIN_TRANSFER } from '@automattic/onboarding';
+import { useFlowProgress, DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import {
@@ -14,7 +14,7 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
 const domainTransfer: Flow = {
-	name: BULK_DOMAIN_TRANSFER,
+	name: DOMAIN_TRANSFER,
 	get title() {
 		return translate( 'Bulk domain transfer' );
 	},
