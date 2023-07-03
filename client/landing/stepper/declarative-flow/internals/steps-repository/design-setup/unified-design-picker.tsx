@@ -609,6 +609,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					selectedFontVariation={ selectedFontVariation }
 					onSelectFontVariation={ setSelectedFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }
+					limitGlobalStyles={ shouldLimitGlobalStyles }
 				/>
 			</>
 		);

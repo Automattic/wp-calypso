@@ -26,6 +26,7 @@ interface ColorPaletteVariationsProps {
 	stylesheet: string;
 	selectedColorPaletteVariation: GlobalStylesObject | null;
 	onSelect: ( colorPaletteVariation: GlobalStylesObject | null ) => void;
+	limitGlobalStyles: boolean;
 }
 
 const ColorPaletteVariation = ( {
@@ -74,6 +75,7 @@ const ColorPaletteVariations = ( {
 	stylesheet,
 	selectedColorPaletteVariation,
 	onSelect,
+	limitGlobalStyles,
 }: ColorPaletteVariationsProps ) => {
 	const { base } = useContext( GlobalStylesContext );
 	const colorPaletteVariations = useColorPaletteVariations( siteId, stylesheet ) ?? [];
@@ -97,11 +99,13 @@ const ColorPaletteVariations = ( {
 			</div>
 			<h3 className="global-styles-variation__title">
 				{ translate( 'Custom styles' ) }
-				<PremiumBadge
-					shouldHideTooltip
-					shouldCompactWithAnimation
-					labelText={ translate( 'Paid' ) }
-				/>
+				{ limitGlobalStyles && (
+					<PremiumBadge
+						shouldHideTooltip
+						shouldCompactWithAnimation
+						labelText={ translate( 'Upgrade' ) }
+					/>
+				) }
 			</h3>
 			<div className="color-palette-variations">
 				{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (

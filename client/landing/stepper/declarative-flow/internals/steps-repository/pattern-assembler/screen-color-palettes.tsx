@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { ColorPaletteVariations } from '@automattic/global-styles';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import NavigatorHeader from './navigator-header';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
@@ -23,6 +24,7 @@ const ScreenColorPalettes = ( {
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( siteId );
 
 	return (
 		<>
@@ -39,6 +41,7 @@ const ScreenColorPalettes = ( {
 					stylesheet={ stylesheet }
 					selectedColorPaletteVariation={ selectedColorPaletteVariation }
 					onSelect={ onSelect }
+					limitGlobalStyles={ shouldLimitGlobalStyles }
 				/>
 			</div>
 			<div className="screen-container__footer">
