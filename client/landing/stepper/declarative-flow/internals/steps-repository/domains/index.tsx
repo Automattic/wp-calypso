@@ -242,14 +242,14 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( [ DOMAIN_UPSELL_FLOW, ONBOARDING_FLOW ].includes( flow ) ) {
+		if ( [ DOMAIN_UPSELL_FLOW ].includes( flow ) ) {
 			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( [ DOMAIN_UPSELL_FLOW, ONBOARDING_FLOW ].includes( flow ) ) {
+		if ( [ DOMAIN_UPSELL_FLOW ].includes( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );

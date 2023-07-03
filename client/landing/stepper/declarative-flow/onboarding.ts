@@ -2,6 +2,7 @@ import { UserSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { ONBOARDING_FLOW, useFlowProgress } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -10,7 +11,6 @@ import {
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { useDomainParams } from '../hooks/use-domain-params';
-import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { AssertConditionState, ProvidedDependencies } from './internals/types';
@@ -18,6 +18,9 @@ import type { Flow } from './internals/types';
 
 const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
+	get title() {
+		return translate( 'Onboarding' );
+	},
 	useSteps() {
 		return [
 			{
@@ -40,7 +43,6 @@ const onboarding: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = ONBOARDING_FLOW;
-		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: currentStep, flowName } );
 		const { domain, provider } = useDomainParams();
@@ -59,12 +61,13 @@ const onboarding: Flow = {
 			}
 		);
 
+		// DomainsStep apparently has a default behavior for the back button to exit the flow `to` "/sites" page
+		// It can also be overriden via the `goBack` prop below
+		function exitFlow( to: string ) {
+			window.location.assign( to );
+		}
+
 		function goBack() {
-			if ( 'domains' === currentStep ) {
-				return window.location.assign(
-					encodeURIComponent( `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }` )
-				);
-			}
 			if ( 'plans' === currentStep ) {
 				navigate( 'domains' );
 			}
@@ -107,6 +110,7 @@ const onboarding: Flow = {
 		return {
 			submit,
 			goBack,
+			exitFlow,
 		};
 	},
 	useAssertConditions() {
