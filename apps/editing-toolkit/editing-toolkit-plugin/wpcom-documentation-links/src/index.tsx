@@ -6,6 +6,7 @@ declare global {
 	interface Window {
 		_currentSiteId: number;
 		_currentSiteType: string;
+		wpcomDocumentationLinksLocale: string;
 	}
 }
 
@@ -14,21 +15,42 @@ function overrideCoreDocumentationLinksToWpcom( translation: string, text: strin
 		case 'https://wordpress.org/support/article/excerpt/':
 		case 'https://wordpress.org/support/article/settings-sidebar/#excerpt':
 		case 'https://wordpress.org/documentation/article/page-post-settings-sidebar/#excerpt':
-			return localizeUrl( 'https://wordpress.com/support/excerpts/' );
+			return localizeUrl(
+				'https://wordpress.com/support/excerpts/',
+				window.wpcomDocumentationLinksLocale
+			);
 		case 'https://wordpress.org/support/article/writing-posts/#post-field-descriptions':
 		case 'https://wordpress.org/support/article/settings-sidebar/#permalink':
 		case 'https://wordpress.org/documentation/article/page-post-settings-sidebar/#permalink':
-			return localizeUrl( 'https://wordpress.com/support/permalinks-and-slugs/' );
+			return localizeUrl(
+				'https://wordpress.com/support/permalinks-and-slugs/',
+				window.wpcomDocumentationLinksLocale
+			);
 		case 'https://wordpress.org/support/article/wordpress-editor/':
-			return localizeUrl( 'https://wordpress.com/support/wordpress-editor/' );
+			return localizeUrl(
+				'https://wordpress.com/support/wordpress-editor/',
+				window.wpcomDocumentationLinksLocale
+			);
 		case 'https://wordpress.org/support/article/site-editor/':
-			return localizeUrl( 'https://wordpress.com/support/site-editor/' );
+			return localizeUrl(
+				'https://wordpress.com/support/site-editor/',
+				window.wpcomDocumentationLinksLocale
+			);
 		case 'https://wordpress.org/support/article/block-based-widgets-editor/':
-			return localizeUrl( 'https://wordpress.com/support/widgets/' );
+			return localizeUrl(
+				'https://wordpress.com/support/widgets/',
+				window.wpcomDocumentationLinksLocale
+			);
 		case 'https://wordpress.org/plugins/classic-widgets/':
-			return localizeUrl( 'https://wordpress.com/plugins/classic-widgets' );
+			return localizeUrl(
+				'https://wordpress.com/plugins/classic-widgets',
+				window.wpcomDocumentationLinksLocale
+			);
 		case 'https://wordpress.org/support/article/styles-overview/':
-			return localizeUrl( 'https://wordpress.com/support/using-styles/' );
+			return localizeUrl(
+				'https://wordpress.com/support/using-styles/',
+				window.wpcomDocumentationLinksLocale
+			);
 	}
 
 	return translation;
