@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
+import DocumentHead from 'calypso/components/data/document-head';
 import wpcom from 'calypso/lib/wp';
 import performanceMark, { PartialContext } from 'calypso/server/lib/performance-mark';
 import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -31,10 +32,13 @@ export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 		context.headerSection = renderHeaderSection();
 	}
 	context.primary = (
-		<TagsPage
-			trendingTags={ context.params.trendingTags }
-			alphabeticTags={ context.params.alphabeticTags }
-		/>
+		<>
+			<DocumentHead title={ translate( 'Popular Tags and Posts ‹ Reader' ) } />
+			<TagsPage
+				trendingTags={ context.params.trendingTags }
+				alphabeticTags={ context.params.alphabeticTags }
+			/>
+		</>
 	);
 	next();
 };
