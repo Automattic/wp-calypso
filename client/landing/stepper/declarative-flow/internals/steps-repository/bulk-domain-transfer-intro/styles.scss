@@ -36,11 +36,12 @@ $heading-font-family: "SF Pro Display", $sans;
 			}
 
 			.step-container__header {
-				margin-bottom: 48px;
+				margin-bottom: 60px;
 				text-align: center;
 
 				@media (max-width: $break-medium ) {
 					margin-top: 48px;
+					margin-bottom: 44px;
 				}
 
 				.formatted-header {
