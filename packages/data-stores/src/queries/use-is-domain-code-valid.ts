@@ -44,9 +44,9 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					path: `/domains/${ encodeURIComponent( pair.domain ) }/is-available`,
 				} );
 
-				// The "mapped_*" statuses here are a quick and dirty fix to allow bulk domain transfer for now - the "transferrable"
-				// status should be the only one that indicates a domain can be transferred. There are some domains that can be mapped
-				// but can't be transferred
+				// The "mapped_*" statuses here are a quick and dirty fix to allow bulk transfer of already connected domains for now.
+				// The "transferrable" status should be the only one that indicates a domain can be transferred. There are some domains that
+				// can be mapped but can't be transferred
 				const isUnlocked = [
 					'transferrable',
 					'mapped_to_other_site_same_user',
