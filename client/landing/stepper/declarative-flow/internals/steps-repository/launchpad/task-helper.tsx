@@ -2,7 +2,6 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
 	PLAN_PREMIUM,
-	PLAN_FREE,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -339,8 +338,19 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
-				case 'blog_launched':
+				case 'blog_launched': {
+					const onboardingCartItems = [ planCartItem, domainCartItem ].filter( Boolean );
+					let title = task.title;
+					if (
+						( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) &&
+						planCompleted &&
+						onboardingCartItems.length
+					) {
+						title = translate( 'Checkout and launch' );
+					}
+
 					taskData = {
+						title,
 						disabled:
 							( isStartWritingFlow( flow ) &&
 								( ! firstPostPublished ||
@@ -382,14 +392,9 @@ export function getEnhancedTasks(
 								submit?.();
 							}
 						},
-						title:
-							( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) &&
-							planCompleted &&
-							productSlug !== PLAN_FREE
-								? translate( 'Checkout and launch' )
-								: task.title,
 					};
 					break;
+				}
 				case 'videopress_upload':
 					taskData = {
 						actionUrl: launchpadUploadVideoLink,
