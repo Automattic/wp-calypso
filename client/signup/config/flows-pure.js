@@ -149,6 +149,17 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'onboarding-media',
+			steps: [ 'user' ],
+			destination: getRedirectDestination,
+			description:
+				'The intermittent user step for the GF foundation version of the paid media flow.',
+			lastModified: '2023-06/17',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
+		},
+		{
 			name: 'import',
 			steps: [ 'user', 'domains', 'plans-import' ],
 			destination: ( dependencies ) =>
