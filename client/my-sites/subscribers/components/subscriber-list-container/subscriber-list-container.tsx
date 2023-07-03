@@ -14,6 +14,14 @@ type SubscriberListContainerProps = {
 	onClickUnsubscribe: ( subscriber: Subscriber ) => void;
 };
 
+const NoSearchResults = () => {
+	return (
+		<div className="subscriber-list-container__no-results">
+			{ translate( 'No subscribers found.' ) }
+		</div>
+	);
+};
+
 const SubscriberListContainer = ( {
 	onClickView,
 	onClickUnsubscribe,
@@ -31,7 +39,11 @@ const SubscriberListContainer = ( {
 					</div>
 					<SubscriberListActionsBar />
 
-					<SubscriberList onView={ onClickView } onUnsubscribe={ onClickUnsubscribe } />
+					{ total ? (
+						<SubscriberList onView={ onClickView } onUnsubscribe={ onClickUnsubscribe } />
+					) : (
+						<NoSearchResults />
+					) }
 
 					<Pagination
 						className="subscriber-list-container__pagination"
