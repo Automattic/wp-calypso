@@ -1,8 +1,6 @@
-import { domainProductSlugs } from '@automattic/calypso-products';
 import { BulkDomainTransferData } from '@automattic/data-stores';
 import { useDataLossWarning } from '@automattic/onboarding';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import { ButtonGroup, Button, Card, CardHeader, CardBody, CardFooter } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
@@ -29,7 +27,6 @@ const defaultState: BulkDomainTransferData = {
 
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
-	const [ ignoreCart, setIgnoreCart ] = useState( false );
 
 	const storedDomainsState = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getBulkDomainsData(),
@@ -40,14 +37,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const numberOfValidDomains = Object.values( domainsState ).filter(
 		( { valid } ) => valid
 	).length;
-
-	const { responseCart } = useShoppingCart( 'no-site' );
-
-	const domainTransfersInCart = responseCart?.products.filter( ( { product_slug } ) => {
-		return product_slug === domainProductSlugs.TRANSFER_IN;
-	} );
-
-	const hasDomainsInCart = domainTransfersInCart?.length > 0;
 
 	const { setPendingAction, setBulkDomainsData } = useDispatch( ONBOARD_STORE );
 
@@ -113,69 +102,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		delete newDomainsState[ key ];
 		setBulkDomainsData( newDomainsState );
 	}
-
-	// Delete later - using as reference
-	const backupComponent = () => {
-		<Card>
-			<CardHeader>
-				<h2>{ __( 'Domains' ) }</h2>
-			</CardHeader>
-			{ hasDomainsInCart && ! ignoreCart ? (
-				<CardBody>
-					{ sprintf(
-						/* translators: %s: number of domains in cart */
-						_n(
-							'You already have %s domain in cart. Would you like to proceed to checkout or start over?',
-							'You already have %s domains in cart. Would you like to proceed to checkout or start over?',
-							domainTransfersInCart.length
-						),
-						domainTransfersInCart.length
-					) }
-				</CardBody>
-			) : (
-				<CardBody>
-					{ Object.entries( domainsState ).map( ( [ key, domain ], index ) => (
-						<DomainCodePair
-							key={ key }
-							id={ key }
-							onChange={ handleChange }
-							onRemove={ removeDomain }
-							domain={ domain.domain }
-							auth={ domain.auth }
-							showLabels={ index === 0 }
-							hasDuplicates={ Object.values( domainsState ).some(
-								( { domain: otherDomain }, otherIndex ) =>
-									otherDomain && otherDomain === domain.domain && otherIndex < index
-							) }
-						/>
-					) ) }
-					<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-						{ __( 'Add domain' ) }
-					</Button>
-				</CardBody>
-			) }
-			<CardFooter>
-				{ hasDomainsInCart && ! ignoreCart ? (
-					<ButtonGroup style={ { width: '100%' } }>
-						<Button onClick={ () => setIgnoreCart( true ) }>{ __( 'Start over' ) }</Button>
-						<Button isPrimary onClick={ () => onSubmit() }>
-							{ __( 'Continue to checkout' ) }
-						</Button>
-					</ButtonGroup>
-				) : (
-					<Button
-						disabled={ ! allGood }
-						className="bulk-domain-transfer__cta"
-						isPrimary
-						style={ { width: '100%' } }
-						onClick={ handleAddTransfer }
-					>
-						{ __( 'Continue' ) }
-					</Button>
-				) }
-			</CardFooter>
-		</Card>;
-	};
 
 	return (
 		<div className="bulk-domain-transfer__container">
