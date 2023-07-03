@@ -1,4 +1,4 @@
-import { BulkDomainTransferData } from '@automattic/data-stores';
+import { DomainTransferData } from '@automattic/data-stores';
 import { useDataLossWarning } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -17,7 +17,7 @@ export interface Props {
 	onSubmit: () => void;
 }
 
-const defaultState: BulkDomainTransferData = {
+const defaultState: DomainTransferData = {
 	[ uuid() ]: {
 		domain: '',
 		auth: '',

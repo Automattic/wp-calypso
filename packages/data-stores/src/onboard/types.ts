@@ -22,7 +22,7 @@ export type BulkDomainTransferAuthCodes = Record<
 	}
 >;
 
-export type BulkDomainTransferData = Record<
+export type DomainTransferData = Record<
 	string,
 	{
 		domain: string;
