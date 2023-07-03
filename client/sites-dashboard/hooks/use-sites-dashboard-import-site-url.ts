@@ -7,7 +7,7 @@ import { AppState } from 'calypso/types';
 import { TRACK_SOURCE_NAME } from '../utils';
 
 export const useSitesDashboardImportSiteUrl = (
-	additionalParameters: Record< string, Primitive >
+	additionalParameters?: Record< string, Primitive >
 ) => {
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 

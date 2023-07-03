@@ -7,7 +7,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { AppState } from 'calypso/types';
 
-export const useAddNewSiteUrl = ( queryParameters: Record< string, Primitive > ) => {
+export const useAddNewSiteUrl = ( queryParameters?: Record< string, Primitive > ) => {
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
 	const isHostingFlow = useSelector(

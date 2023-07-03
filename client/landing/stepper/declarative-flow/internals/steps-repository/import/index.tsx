@@ -12,6 +12,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
 import type { Step } from '../../types';
@@ -25,14 +26,34 @@ export const ImportWrapper: Step = function ( props ) {
 	const currentRoute = useCurrentRoute();
 	const [ , setMigrationConfirmed ] = useMigrationConfirmation();
 	const shouldHideBackBtn = currentRoute === `${ IMPORT_FOCUSED_FLOW }/${ BASE_ROUTE }`;
-	const skipLabelText =
-		flow === IMPORT_FOCUSED_FLOW ? __( 'Skip to dashboard' ) : __( "I don't have a site address" );
+	const getSkipLabelText = () => {
+		if ( flow === IMPORT_HOSTED_SITE_FLOW ) {
+			return __( 'Create a site' );
+		}
+
+		return flow === IMPORT_FOCUSED_FLOW
+			? __( 'Skip to dashboard' )
+			: __( "I don't have a site address" );
+	};
+
+	const createSiteURL = useAddNewSiteUrl();
+
+	const getGoNext = () => {
+		if ( flow === IMPORT_HOSTED_SITE_FLOW ) {
+			return () => window.location.assign( createSiteURL );
+		}
+
+		return navigation.goNext;
+	};
 
 	useEffect( () => setMigrationConfirmed( false ), [] );
 
 	const shouldHideSkipBtn = () => {
 		switch ( flow ) {
 			case IMPORT_FOCUSED_FLOW:
+				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
+
+			case IMPORT_HOSTED_SITE_FLOW:
 				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
 
 			default:
@@ -52,8 +73,8 @@ export const ImportWrapper: Step = function ( props ) {
 				hideBack={ shouldHideBackBtn }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }
-				goNext={ navigation.goNext }
-				skipLabelText={ skipLabelText }
+				goNext={ getGoNext() }
+				skipLabelText={ getSkipLabelText() }
 				isFullLayout={ true }
 				stepContent={ children as ReactElement }
 				recordTracksEvent={ recordTracksEvent }

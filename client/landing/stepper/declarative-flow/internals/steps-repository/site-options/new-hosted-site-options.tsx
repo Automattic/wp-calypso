@@ -20,6 +20,7 @@ import { useGetSiteSuggestionsQuery } from 'calypso/landing/stepper/hooks/use-ge
 import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
+import { useSitesDashboardImportSiteUrl } from 'calypso/sites-dashboard/hooks/use-sites-dashboard-import-site-url';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -175,6 +176,8 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 
 	const headerText = translate( "Let's create your site" );
 
+	const importSiteUrl = useSitesDashboardImportSiteUrl();
+
 	return (
 		<>
 			<DocumentHead title={ headerText } />
@@ -182,7 +185,8 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 				stepName="site-options"
 				backLabelText={ __( 'Back' ) }
 				goBack={ goBack }
-				hideSkip={ true }
+				skipLabelText={ __( 'Import a site' ) }
+				goNext={ () => window.location.assign( importSiteUrl ) }
 				isHorizontalLayout
 				formattedHeader={
 					<FormattedHeader id="site-options-header" headerText={ headerText } align="left" />
