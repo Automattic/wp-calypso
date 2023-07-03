@@ -20,6 +20,10 @@ const ReaderListFollowingItem = ( props ) => {
 	const siteIcon = site ? site.site_icon ?? get( site, 'icon.img' ) : null;
 	let feedIcon = get( follow, 'site_icon' );
 
+	if ( ! follow ) {
+		return null;
+	}
+
 	// If feed available, check feed for feed icon
 	if ( feed && feed.image ) {
 		feedIcon = get( feed, 'image' );
