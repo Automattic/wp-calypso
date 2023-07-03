@@ -464,11 +464,26 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 				</div>
 				<div class="launch-bar-global-styles-message">
 					<?php
-					$message = sprintf(
+					// @TODO Remove after global styles on personal plans A/B test is complete.
+					if ( wpcom_site_has_global_styles_in_personal_plan() ) {
+						$message = sprintf(
 						/* translators: %s - documentation URL. */
-						__( 'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.', 'full-site-editing' ),
-						'https://wordpress.com/support/using-styles/'
-					);
+							__(
+								'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Personal plan or higher.',
+								'full-site-editing'
+							),
+							'https://wordpress.com/support/using-styles/'
+						);
+					} else {
+						$message = sprintf(
+						/* translators: %s - documentation URL. */
+							__(
+								'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.',
+								'full-site-editing'
+							),
+							'https://wordpress.com/support/using-styles/'
+						);
+					}
 					echo sprintf(
 						wp_kses(
 							$message,
