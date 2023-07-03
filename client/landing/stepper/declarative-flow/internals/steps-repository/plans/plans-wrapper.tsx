@@ -22,7 +22,7 @@ import {
 	isDomainUpsellFlow,
 	DESIGN_FIRST_FLOW,
 	isBlogOnboardingFlow,
-	isOnboardingFlow,
+	isOnboardingPMFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -188,7 +188,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		if (
 			flowName === DOMAIN_UPSELL_FLOW ||
 			isNewHostedSiteCreationFlow( flowName ) ||
-			isOnboardingFlow( flowName )
+			isOnboardingPMFlow( flowName )
 		) {
 			return __( 'Choose your flavor of WordPress' );
 		}
@@ -220,7 +220,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			isNewsletterFlow( flowName ) ||
 			isLinkInBioFlow( flowName ) ||
 			isDomainUpsellFlow( flowName ) ||
-			isOnboardingFlow( flowName )
+			isOnboardingPMFlow( flowName )
 		) {
 			return;
 		}

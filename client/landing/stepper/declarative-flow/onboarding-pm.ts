@@ -1,6 +1,6 @@
 import { UserSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { ONBOARDING_FLOW, useFlowProgress } from '@automattic/onboarding';
+import { ONBOARDING_PM_LOW, useFlowProgress } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
@@ -17,7 +17,7 @@ import { AssertConditionState, ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
 const onboarding: Flow = {
-	name: ONBOARDING_FLOW,
+	name: ONBOARDING_PM_LOW,
 	get title() {
 		return translate( 'Onboarding' );
 	},
@@ -42,7 +42,7 @@ const onboarding: Flow = {
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = ONBOARDING_FLOW;
+		const flowName = ONBOARDING_PM_LOW;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: currentStep, flowName } );
 		const { domain, provider } = useDomainParams();
@@ -122,7 +122,7 @@ const onboarding: Flow = {
 		};
 	},
 	useAssertConditions() {
-		const flowName = ONBOARDING_FLOW;
+		const flowName = ONBOARDING_PM_LOW;
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]

@@ -2,7 +2,7 @@ import {
 	isBlogOnboardingFlow,
 	isDomainUpsellFlow,
 	isNewHostedSiteCreationFlow,
-	isOnboardingFlow,
+	isOnboardingPMFlow,
 	StepContainer,
 } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -18,14 +18,19 @@ const plans: Step = function Plans( { navigation, flow } ) {
 			plan,
 		};
 
-		if ( isDomainUpsellFlow( flow ) || isBlogOnboardingFlow( flow ) || isOnboardingFlow( flow ) ) {
+		if (
+			isDomainUpsellFlow( flow ) ||
+			isBlogOnboardingFlow( flow ) ||
+			isOnboardingPMFlow( flow )
+		) {
 			providedDependencies.goToCheckout = true;
 		}
 
 		submit?.( providedDependencies );
 	};
 
-	const isAllowedToGoBack = isDomainUpsellFlow( flow ) || isNewHostedSiteCreationFlow( flow );
+	const isAllowedToGoBack =
+		isOnboardingPMFlow( flow ) || isDomainUpsellFlow( flow ) || isNewHostedSiteCreationFlow( flow );
 
 	return (
 		<StepContainer
