@@ -13,7 +13,7 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
-const bulkDomainTransfer: Flow = {
+const domainTransfer: Flow = {
 	name: BULK_DOMAIN_TRANSFER,
 	get title() {
 		return translate( 'Bulk domain transfer' );
@@ -22,11 +22,11 @@ const bulkDomainTransfer: Flow = {
 		return [
 			{
 				slug: 'intro',
-				asyncComponent: () => import( './internals/steps-repository/bulk-domain-transfer-intro' ),
+				asyncComponent: () => import( './internals/steps-repository/domain-transfer-intro' ),
 			},
 			{
 				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/bulk-domain-transfer-domains' ),
+				asyncComponent: () => import( './internals/steps-repository/domain-transfer-domains' ),
 			},
 			{
 				slug: 'processing',
@@ -101,4 +101,4 @@ const bulkDomainTransfer: Flow = {
 	},
 };
 
-export default bulkDomainTransfer;
+export default domainTransfer;
