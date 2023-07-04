@@ -7,6 +7,7 @@ import {
 import { useMemo, useEffect } from 'react';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
+import useScreens from './use-screens';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
@@ -94,6 +95,20 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		return inlineCss;
 	}, [ variations, selectedVariation, globalStyles ] );
 
+	const screens = useScreens( {
+		siteId,
+		stylesheet,
+		limitGlobalStyles,
+		variations,
+		splitPremiumVariations,
+		selectedVariation,
+		selectedColorVariation,
+		selectedFontVariation,
+		onSelectVariation,
+		onSelectColorVariation,
+		onSelectFontVariation,
+	} );
+
 	useEffect( () => {
 		onGlobalStylesChange( syncedGlobalStylesUserConfig );
 	}, [ syncedGlobalStylesUserConfig ] );
@@ -107,19 +122,9 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				description={ description }
 				shortDescription={ shortDescription }
 				pricingBadge={ pricingBadge }
-				variations={ variations }
-				selectedVariation={ selectedVariation }
-				onSelectVariation={ onSelectVariation }
-				splitPremiumVariations={ splitPremiumVariations }
-				onClickCategory={ onClickCategory }
+				screens={ screens }
 				actionButtons={ actionButtons }
-				siteId={ siteId }
-				stylesheet={ stylesheet }
-				selectedColorVariation={ selectedColorVariation }
-				onSelectColorVariation={ onSelectColorVariation }
-				selectedFontVariation={ selectedFontVariation }
-				onSelectFontVariation={ onSelectFontVariation }
-				limitGlobalStyles={ limitGlobalStyles }
+				onClickCategory={ onClickCategory }
 				onNavigatorPathChange={ onNavigatorPathChange }
 			/>
 			<SitePreview
