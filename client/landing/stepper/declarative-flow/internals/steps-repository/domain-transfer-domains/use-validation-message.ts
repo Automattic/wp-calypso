@@ -74,12 +74,6 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			loading: false,
 			message: __( 'This domain is unlocked and ready to be transferred.' ),
 		};
-	} else if ( availabilityNotice?.message ) {
-		return {
-			valid: false,
-			loading: false,
-			message: availabilityNotice?.message,
-		};
 	} else if ( validationResult?.auth_code_valid === false ) {
 		// the auth check API has a bug and returns error 400 for incorrect auth codes,
 		// in which case, the `useIsDomainCodeValid` hook returns `false`.
@@ -87,6 +81,12 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			valid: false,
 			loading: false,
 			message: __( 'This domain is unlocked but the authentication code seems incorrect.' ),
+		};
+	} else if ( availabilityNotice?.message ) {
+		return {
+			valid: false,
+			loading: false,
+			message: availabilityNotice?.message,
 		};
 	}
 

@@ -58,7 +58,6 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 						domain: pair.domain,
 						status: availability.status,
 						unlocked: false,
-						auth_code_valid: false,
 					};
 				}
 
