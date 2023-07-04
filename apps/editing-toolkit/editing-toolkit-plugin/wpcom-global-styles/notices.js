@@ -1,9 +1,11 @@
 /* global wpcomGlobalStyles */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement, render, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { useCanvas } from './use-canvas';
 import { useGlobalStylesConfig } from './use-global-styles-config';
 import { usePreview } from './use-preview';
@@ -17,6 +19,7 @@ const trackEvent = ( eventName, isSiteEditor = true ) =>
 
 function GlobalStylesWarningNotice() {
 	const { globalStylesInUse } = useGlobalStylesConfig();
+	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus();
 
 	useEffect( () => {
 		if ( globalStylesInUse ) {
@@ -28,25 +31,32 @@ function GlobalStylesWarningNotice() {
 		return null;
 	}
 
+	let upgradeTranslation;
+	if ( globalStylesInPersonalPlan ) {
+		upgradeTranslation = __(
+			'Your site includes customized styles that are only visible to visitors after <a>upgrading to the Personal plan or higher</a>.',
+			'full-site-editing'
+		);
+	} else {
+		upgradeTranslation = __(
+			'Your site includes customized styles that are only visible to visitors after <a>upgrading to the Premium plan or higher</a>.',
+			'full-site-editing'
+		);
+	}
+
 	return (
 		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
-			{ createInterpolateElement(
-				__(
-					'Your site includes customized styles that are only visible to visitors after <a>upgrading to the Premium plan or higher</a>.',
-					'full-site-editing'
+			{ createInterpolateElement( upgradeTranslation, {
+				a: (
+					<ExternalLink
+						href={ wpcomGlobalStyles.upgradeUrl }
+						target="_blank"
+						onClick={ () =>
+							trackEvent( 'calypso_global_styles_gating_notice_view_canvas_upgrade_click' )
+						}
+					/>
 				),
-				{
-					a: (
-						<ExternalLink
-							href={ wpcomGlobalStyles.upgradeUrl }
-							target="_blank"
-							onClick={ () =>
-								trackEvent( 'calypso_global_styles_gating_notice_view_canvas_upgrade_click' )
-							}
-						/>
-					),
-				}
-			) }
+			} ) }
 		</Notice>
 	);
 }
@@ -117,7 +127,12 @@ function GlobalStylesEditNotice() {
 	}, [ editEntityRecord, globalStylesId, isSiteEditor ] );
 
 	const openResetGlobalStylesSupport = useCallback( () => {
-		window.open( 'https://wordpress.com/support/using-styles/#reset-all-styles', '_blank' ).focus();
+		window
+			.open(
+				localizeUrl( 'https://wordpress.com/support/using-styles/#reset-all-styles' ),
+				'_blank'
+			)
+			.focus();
 		trackEvent( 'calypso_global_styles_gating_notice_reset_support_click', isSiteEditor );
 	}, [ isSiteEditor ] );
 
