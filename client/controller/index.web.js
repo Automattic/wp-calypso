@@ -35,7 +35,7 @@ export const ProviderWrappedLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
-	headerSection,
+	renderHeaderSection,
 	redirectUri,
 } ) => {
 	const state = store.getState();
@@ -47,7 +47,7 @@ export const ProviderWrappedLayout = ( {
 			primary={ primary }
 			secondary={ secondary }
 			redirectUri={ redirectUri }
-			headerSection={ headerSection }
+			renderHeaderSection={ renderHeaderSection }
 		/>
 	);
 
