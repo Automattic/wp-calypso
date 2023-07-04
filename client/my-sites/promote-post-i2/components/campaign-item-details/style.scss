@@ -1,5 +1,6 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "../../style.scss";
 
 body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	margin: 0 64px;
@@ -523,24 +524,15 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details__flexible-skeleton {
-		animation: skeleton-loading 1s linear infinite alternate;
 		border-radius: 4px;
 		display: inline-block;
-		height: 100%;
 		overflow: hidden;
 		position: relative;
 		max-width: 250px;
-		min-height: 16px;
+		height: 16px;
 		width: 100%;
 
-		@keyframes skeleton-loading {
-			0% {
-				background-color: hsl(200, 20%, 80%);
-			}
-			100% {
-				background-color: hsl(200, 20%, 95%);
-			}
-		}
+		@include blazepress-animated-skeleton;
 	}
 }
 

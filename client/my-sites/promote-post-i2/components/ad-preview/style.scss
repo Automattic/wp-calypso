@@ -1,7 +1,7 @@
+@import "../../style.scss";
+
 
 .promote-post-ad-preview__loading {
-	animation: skeleton-loading 1s linear infinite alternate;
-	background-color: hsl(200, 20%, 90%);
 	border-radius: 4px;
 	display: inline-block;
 	height: 250px;
@@ -10,13 +10,5 @@
 	min-height: 16px;
 	width: 300px;
 
-	@keyframes skeleton-loading {
-		0% {
-			background-color: hsl(200, 20%, 80%);
-		}
-		100% {
-			background-color: hsl(200, 20%, 95%);
-		}
-	}
-
+	@include blazepress-animated-skeleton;
 }
