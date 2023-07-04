@@ -9,8 +9,8 @@ const useSubscribersFilterOptions = () => {
 	return useMemo(
 		() => [
 			{ value: FilterBy.All, label: translate( 'All' ) },
-			{ value: FilterBy.Email, label: translate( 'Email' ) },
-			{ value: FilterBy.WPCOM, label: translate( 'WPCOM' ) },
+			{ value: FilterBy.Email, label: translate( 'Email subscriber' ) },
+			{ value: FilterBy.WPCOM, label: translate( 'Follower' ) },
 		],
 		[ translate ]
 	);

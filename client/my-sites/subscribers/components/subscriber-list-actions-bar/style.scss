@@ -14,6 +14,15 @@
 		&.select-dropdown,
 		.select-dropdown__header {
 			height: 48px;
+			justify-content: normal;
+
+			.gridicon {
+				margin-left: 10px;
+			}
+
+			.select-dropdown__header-text {
+				font-weight: 400;
+			}
 		}
 
 		.select-dropdown__item.is-selected {
