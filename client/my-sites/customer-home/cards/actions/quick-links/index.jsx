@@ -83,7 +83,7 @@ export const QuickLinks = ( {
 	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
-	const hasBoost = site.options.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
+	const hasBoost = site?.options.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 
 	const customizerLinks =
 		isStaticHomePage && canEditPages ? (
