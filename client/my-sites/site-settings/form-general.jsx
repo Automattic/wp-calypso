@@ -871,20 +871,15 @@ export class SiteSettingsFormGeneral extends Component {
 				<div className="site-settings__advanced-customization-notice">
 					<div className="site-settings__advanced-customization-notice-cta">
 						<Gridicon icon="info-outline" />
-						{ globalStylesOnPersonalExperiment ? (
-							<span>
-								{ translate(
-									'Your site contains customized styles that will only be visible once you upgrade to a Personal plan.'
-								) }
-							</span>
-						) : (
-							<span>
-								{ ' ' }
-								{ translate(
-									'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.'
-								) }{ ' ' }
-							</span>
-						) }
+						<span>
+							{ globalStylesOnPersonalExperiment
+								? translate(
+										'Your site contains customized styles that will only be visible once you upgrade to a Personal plan.'
+								  )
+								: translate(
+										'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.'
+								  ) }
+						</span>
 					</div>
 					<div className="site-settings__advanced-customization-notice-buttons">
 						<Button href={ selectedSite.URL } target="_blank">
