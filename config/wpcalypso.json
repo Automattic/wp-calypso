@@ -159,6 +159,7 @@
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
+		"subscribers-page-new": false,
 		"subscription-gifting": true,
 		"subscription-management-comments-view": true,
 		"subscription-management-pending-view": true,
