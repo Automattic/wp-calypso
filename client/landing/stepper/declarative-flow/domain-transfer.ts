@@ -72,7 +72,7 @@ const domainTransfer: Flow = {
 					return navigate( 'processing', undefined );
 				}
 				case 'processing': {
-					const destination = '/setup/bulk-domain-transfer/complete';
+					const destination = '/setup/domain-transfer/complete';
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( flowName );

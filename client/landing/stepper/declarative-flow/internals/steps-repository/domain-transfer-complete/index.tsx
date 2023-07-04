@@ -1,62 +1,75 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
-import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ResponseDomain } from 'calypso/lib/domains/types';
-import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
+import { useSelector, useDispatch } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { fetchUserPurchases } from 'calypso/state/purchases/actions';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { CompleteDomainsTransferred } from './complete-domains-transferred';
 import type { Step } from '../../types';
 import './styles.scss';
 
 const Complete: Step = function Complete( { flow } ) {
 	const { __, _n } = useI18n();
+	const dispatch = useDispatch();
 
-	const domainsList: ResponseDomain[] = useSelector( getFlatDomainsList );
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userPurchases = useSelector( ( state ) => getUserPurchases( state ) );
 	const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
 
-	const newlyTransferredDomains = domainsList.filter(
-		( domain ) => Date.now() - new Date( domain.registrationDate ).getTime() < oneDay
+	const newlyTransferredDomains = userPurchases?.filter(
+		( purchase ) =>
+			purchase.productSlug === 'domain_transfer' &&
+			Date.now() - new Date( purchase.subscribedDate ).getTime() < oneDay
 	);
+
+	useEffect( () => {
+		dispatch( fetchUserPurchases( userId ) );
+	}, [] );
 
 	return (
 		<>
-			<QueryAllDomains />
-			<StepContainer
-				flowName={ flow }
-				stepName="complete"
-				isHorizontalLayout={ false }
-				isLargeSkipLayout={ false }
-				formattedHeader={
-					<FormattedHeader
-						id="domains-header"
-						headerText={ _n(
-							'Congrats on your domain transfer',
-							'Congrats on your domain transfers',
-							newlyTransferredDomains.length
-						) }
-						subHeaderText={ __(
-							'Hold tight as we complete the set up of your newly transferred domain.'
-						) }
-						align="center"
-						children={
-							<a href="/domains/manage" className="components-button is-primary manage-all-domains">
-								{ __( 'Manage all domains' ) }
-							</a>
-						}
-					/>
-				}
-				stepContent={
-					<CompleteDomainsTransferred newlyTransferredDomains={ newlyTransferredDomains } />
-				}
-				recordTracksEvent={ recordTracksEvent }
-				showHeaderJetpackPowered={ false }
-				showHeaderWooCommercePowered={ false }
-				showVideoPressPowered={ false }
-				showJetpackPowered={ false }
-				hideBack={ true }
-			/>
+			{ newlyTransferredDomains && (
+				<StepContainer
+					flowName={ flow }
+					stepName="complete"
+					isHorizontalLayout={ false }
+					isLargeSkipLayout={ false }
+					formattedHeader={
+						<FormattedHeader
+							id="domains-header"
+							headerText={ _n(
+								'Congrats on your domain transfer',
+								'Congrats on your domain transfers',
+								newlyTransferredDomains.length
+							) }
+							subHeaderText={ __(
+								'Hold tight as we complete the set up of your newly transferred domain.'
+							) }
+							align="center"
+							children={
+								<a
+									href="/domains/manage"
+									className="components-button is-primary manage-all-domains"
+								>
+									{ __( 'Manage all domains' ) }
+								</a>
+							}
+						/>
+					}
+					stepContent={
+						<CompleteDomainsTransferred newlyTransferredDomains={ newlyTransferredDomains } />
+					}
+					recordTracksEvent={ recordTracksEvent }
+					showHeaderJetpackPowered={ false }
+					showHeaderWooCommercePowered={ false }
+					showVideoPressPowered={ false }
+					showJetpackPowered={ false }
+					hideBack={ true }
+				/>
+			) }
 		</>
 	);
 };
