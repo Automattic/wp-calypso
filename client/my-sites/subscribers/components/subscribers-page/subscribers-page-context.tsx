@@ -6,7 +6,7 @@ import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import { useSubscribersQuery } from '../../queries';
 
 type SubscribersPageProviderProps = {
-	siteId: number | null;
+	siteId: number | undefined;
 	page: number;
 	pageChanged: ( page: number ) => void;
 	children: React.ReactNode;

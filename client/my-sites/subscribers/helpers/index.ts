@@ -33,7 +33,7 @@ const getSubscribersCacheKey = (
 };
 
 const getSubscriberDetailsUrl = (
-	siteSlug: string | null,
+	siteSlug: string | undefined,
 	subscriptionId: number | undefined,
 	userId: number | undefined,
 	pageNumber = 1
