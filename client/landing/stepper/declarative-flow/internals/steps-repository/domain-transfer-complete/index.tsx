@@ -1,4 +1,4 @@
-import { sprintf } from '@wordpress/i18n';
+import { _n } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -50,10 +50,11 @@ const Complete: Step = function Complete( { navigation, flow } ) {
 	}, [ domainsList ] );
 
 	const getPluralizedText = () => {
-		// translators: %s is the amount of domains transferred for pluralization.
-		return sprintf( __( 'Congrats on your domain %(amountOfDomains)s' ), {
-			amountOfDomains: newlyTransferredDomains.length > 1 ? 'transfers' : 'transfer',
-		} );
+		return _n(
+			'Congrats on your domain transfer',
+			'Congrats on your domain transfers',
+			newlyTransferredDomains.length
+		);
 	};
 
 	return (
