@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 
 import './style.scss';
 
@@ -27,8 +27,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 }: PremiumGlobalStylesUpgradeModalProps ) {
 	const translate = useTranslate();
 	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
-	const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
-	const globalStylesOnPersonalExperiment = experiment?.variationName === 'treatment';
+	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus();
 	const isLoading = ! premiumPlanProduct;
 	const features = [
 		<strong>{ translate( 'Free domain for one year' ) }</strong>,
@@ -40,11 +39,11 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	];
 	const personalFeatures = [
 		<strong>{ translate( 'Free domain for one year' ) }</strong>,
-		translate( 'Style customization' ),
-		translate( 'Live chat support' ),
+		<strong>{ translate( 'Style customization' ) }</strong>,
+		translate( 'Support via email' ),
 		translate( 'Ad-free experience' ),
 	];
-	const displayFeatures = globalStylesOnPersonalExperiment ? personalFeatures : features;
+	const displayFeatures = globalStylesInPersonalPlan ? personalFeatures : features;
 
 	return (
 		<>
@@ -63,7 +62,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 							{ description ?? (
 								<>
 									<p>
-										{ globalStylesOnPersonalExperiment
+										{ globalStylesInPersonalPlan
 											? translate(
 													"You've selected a custom style that will only be visible to visitors after upgrading to the Personal plan or higher."
 											  )
@@ -94,7 +93,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 						<div className="upgrade-modal__col">
 							<div className="upgrade-modal__included">
 								<h2>
-									{ globalStylesOnPersonalExperiment
+									{ globalStylesInPersonalPlan
 										? translate( 'Included with your Personal plan' )
 										: translate( 'Included with your Premium plan' ) }
 								</h2>

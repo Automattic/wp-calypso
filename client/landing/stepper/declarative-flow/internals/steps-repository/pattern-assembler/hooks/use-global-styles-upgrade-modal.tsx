@@ -40,17 +40,35 @@ const useGlobalStylesUpgradeModal = ( {
 	let description;
 
 	if ( hasSelectedColorVariation && hasSelectedFontVariation ) {
-		description = translate(
-			'Your font and color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-		);
+		if ( globalStylesInPersonalPlan ) {
+			description = translate(
+				'Your font and color choices will be only visible to visitors after upgrading to the Personal plan or higher.'
+			);
+		} else {
+			description = translate(
+				'Your font and color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
+			);
+		}
 	} else if ( hasSelectedColorVariation ) {
-		description = translate(
-			'Your color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-		);
+		if ( globalStylesInPersonalPlan ) {
+			description = translate(
+				'Your color choices will be only visible to visitors after upgrading to the Personal plan or higher.'
+			);
+		} else {
+			description = translate(
+				'Your color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
+			);
+		}
 	} else if ( hasSelectedFontVariation ) {
-		description = translate(
-			'Your font choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-		);
+		if ( globalStylesInPersonalPlan ) {
+			description = translate(
+				'Your font choices will be only visible to visitors after upgrading to the Personal plan or higher.'
+			);
+		} else {
+			description = translate(
+				'Your font choices will be only visible to visitors after upgrading to the Premium plan or higher.'
+			);
+		}
 	}
 
 	description = (
