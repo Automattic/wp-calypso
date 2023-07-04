@@ -163,7 +163,7 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 };
 
 const ConnectedLaunchpadKeepBuilding = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
+	const siteId = getSelectedSiteId( state ) || undefined;
 	// The type definition for getSite is incorrect, it returns a SiteDetails object
 	const site = getSite( state as object, siteId ) as any as SiteDetails;
 
