@@ -53,7 +53,7 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 				? recordTracksEvent( 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_viewed' )
 				: recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_viewed' );
 		}
-	}, [ noticeDismissed, showNotice ] );
+	}, [ noticeDismissed, showNotice, isOdysseyStats ] );
 
 	if ( noticeDismissed || ! showNotice ) {
 		return null;
