@@ -26,7 +26,7 @@ interface ColorPaletteVariationsProps {
 	stylesheet: string;
 	selectedColorPaletteVariation: GlobalStylesObject | null;
 	onSelect: ( colorPaletteVariation: GlobalStylesObject | null ) => void;
-	limitGlobalStyles: boolean;
+	limitGlobalStyles?: boolean;
 }
 
 const ColorPaletteVariation = ( {

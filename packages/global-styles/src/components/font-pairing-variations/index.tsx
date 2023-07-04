@@ -26,7 +26,7 @@ interface FontPairingVariationsProps {
 	stylesheet: string;
 	selectedFontPairingVariation: GlobalStylesObject | null;
 	onSelect: ( fontPairingVariation: GlobalStylesObject | null ) => void;
-	limitGlobalStyles: boolean;
+	limitGlobalStyles?: boolean;
 }
 
 const FontPairingVariation = ( {
