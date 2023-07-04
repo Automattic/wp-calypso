@@ -26,8 +26,6 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	FEATURE_CLOUD_CRITICAL_CSS,
-	FEATURE_JETPACK_STATS_PAID,
-	FEATURE_JETPACK_STATS_FREE,
 	isJetpackStatsSlug,
 	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
@@ -88,12 +86,13 @@ export const productHasStats = ( productSlug: string, onlyPaid = false ): boolea
 	}
 	// Check for stats features in plans
 	if ( isJetpackPlanSlug( productSlug ) && onlyPaid ) {
-		return planHasAtLeastOneFeature( productSlug, [ FEATURE_JETPACK_STATS_PAID ] );
+		return planHasAtLeastOneFeature( productSlug, [
+			/** TODO: STATS PAID FEATURE NAME */
+		] );
 	}
 	if ( isJetpackPlanSlug( productSlug ) && ! onlyPaid ) {
 		return planHasAtLeastOneFeature( productSlug, [
-			FEATURE_JETPACK_STATS_PAID,
-			FEATURE_JETPACK_STATS_FREE,
+			/** TODO: STATS FEATURE NAME */
 		] );
 	}
 	return false;
