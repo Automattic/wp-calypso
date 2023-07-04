@@ -27,6 +27,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -57,6 +58,7 @@ import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import { OnChangeItemVariant } from './item-variation-picker';
+import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -128,6 +130,10 @@ export default function CheckoutMain( {
 	customizedPreviousPath?: string;
 } ) {
 	const translate = useTranslate();
+
+	// Show a banner to redirect agency users to the partner portal dashboard
+	const showProDashboardRedirectBanner = useSelector( isAgencyUser );
+
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
@@ -722,26 +728,34 @@ export default function CheckoutMain( {
 				theme={ theme }
 				selectFirstAvailablePaymentMethod
 			>
-				<WPCheckout
-					loadingContent={
-						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
-					}
-					customizedPreviousPath={ customizedPreviousPath }
-					isRemovingProductFromCart={ isRemovingProductFromCart }
-					areThereErrors={ areThereErrors }
-					isInitialCartLoading={ isInitialCartLoading }
-					addItemToCart={ addItemAndLog }
-					changePlanLength={ changePlanLength }
-					countriesList={ countriesList }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					infoMessage={ infoMessage }
-					isLoggedOutCart={ !! isLoggedOutCart }
-					onPageLoadError={ onPageLoadError }
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
-				/>
+				<>
+					<WPCheckout
+						loadingContent={
+							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
+						}
+						customizedPreviousPath={ customizedPreviousPath }
+						isRemovingProductFromCart={ isRemovingProductFromCart }
+						areThereErrors={ areThereErrors }
+						isInitialCartLoading={ isInitialCartLoading }
+						addItemToCart={ addItemAndLog }
+						changePlanLength={ changePlanLength }
+						countriesList={ countriesList }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						infoMessage={ infoMessage }
+						isLoggedOutCart={ !! isLoggedOutCart }
+						onPageLoadError={ onPageLoadError }
+						removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+						showErrorMessageBriefly={ showErrorMessageBriefly }
+						siteId={ updatedSiteId }
+						siteUrl={ updatedSiteSlug }
+					/>
+					{ showProDashboardRedirectBanner && (
+						<JetpackProRedirectModal
+							redirectTo={ redirectTo }
+							productSourceFromUrl={ productSourceFromUrl }
+						/>
+					) }
+				</>
 			</CheckoutProvider>
 		</Fragment>
 	);
