@@ -19,10 +19,7 @@ const Complete: Step = function Complete( { navigation, flow } ) {
 
 	const ManageAllButton = () => {
 		return (
-			<a
-				href="https://wordpress.com/domains/manage"
-				className="components-button is-primary manage-all-domains"
-			>
+			<a href="/domains/manage" className="components-button is-primary manage-all-domains">
 				{ __( 'Manage all domains' ) }
 			</a>
 		);

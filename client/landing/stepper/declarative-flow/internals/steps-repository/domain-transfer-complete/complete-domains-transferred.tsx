@@ -37,7 +37,7 @@ export const CompleteDomainsTransferred = ( { newlyTransferredDomains }: Props )
 									</p>
 								</div>
 								<a
-									href={ `https://wordpress.com/domains/manage/${ domain.domain }` }
+									href={ `/domains/manage/${ domain.domain }` }
 									className="components-button is-secondary"
 								>
 									{ __( 'Manage domain' ) }
