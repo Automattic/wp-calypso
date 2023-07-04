@@ -23,16 +23,11 @@ const Complete: Step = function Complete( { flow } ) {
 	};
 
 	const domainsList: ResponseDomain[] = useSelector( getFlatDomainsList );
-	const currentDate = new Date();
 	const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
-	const today = currentDate.getTime();
 
 	const newlyTransferredDomains = domainsList.filter(
-		( domain ) =>
-			Math.abs(
-				Math.floor( ( today - new Date( domain.registrationDate ).getTime() ) / oneDay )
-			) <= 1000
-	) as ResponseDomain[];
+		( domain ) => Date.now() - new Date( domain.registrationDate ).getTime() < oneDay
+	);
 
 	const getPluralizedText = () => {
 		return _n(
