@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import sha256 from 'hash.js/lib/hash/sha/256';
 import wpcomRequest from 'wpcom-proxy-request';
 
-const VERSION = 1;
+const VERSION = 2;
 
 /**
  * Irreversibly hash the auth code to avoid storing it as query key.
