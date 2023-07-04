@@ -114,6 +114,7 @@ export type PlanFeatures2023GridProps = {
 	intent?: PlansIntent;
 	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
+	stickyRowOffset: number;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -338,7 +339,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTable( planPropertiesObj: PlanProperties[] ) {
-		const { translate } = this.props;
+		const { translate, stickyRowOffset } = this.props;
 		const tableClasses = classNames(
 			'plan-features-2023-grid__table',
 			`has-${ planPropertiesObj.filter( ( { isVisible } ) => isVisible ).length }-cols`
@@ -355,7 +356,11 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanTagline( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
-					<StickyContainer stickyClass="is-sticky-top-buttons-row" element="tr">
+					<StickyContainer
+						stickyClass="is-sticky-top-buttons-row"
+						element="tr"
+						blockOffset={ stickyRowOffset }
+					>
 						{ ( isStuck: boolean ) => this.renderTopButtons( planPropertiesObj, { isStuck } ) }
 					</StickyContainer>
 					<tr>{ this.maybeRenderRefundNotice( planPropertiesObj ) }</tr>
@@ -649,7 +654,7 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
-				const { planName, isPlaceholder, planConstantObj, current, showMonthlyPrice } = properties;
+				const { planName, isPlaceholder, planConstantObj, current } = properties;
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
 					'is-top-buttons',
@@ -692,7 +697,7 @@ export class PlanFeatures2023Grid extends Component<
 							selectedSiteSlug={ selectedSiteSlug }
 							buttonText={ buttonText }
 							planActionOverrides={ planActionOverrides }
-							showMonthlyPrice={ showMonthlyPrice }
+							showMonthlyPrice={ true }
 							siteId={ siteId }
 							isStuck={ options?.isStuck || false }
 						/>
