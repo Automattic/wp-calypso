@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { buildQueryString } from '@wordpress/url';
-import React from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import type { ReactNode } from 'react';
 
 export interface SearchResult {
 	link: string;
-	title: string | React.ReactNode;
+	title: ReactNode;
 	content?: string;
 	icon?: string;
 	post_id?: number;
