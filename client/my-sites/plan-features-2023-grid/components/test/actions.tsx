@@ -78,6 +78,8 @@ describe( 'PlanFeatures2023GridActions', () => {
 			flowName: 'foo-flow',
 			isWpcomEnterpriseGridPlan: false,
 			selectedSiteSlug: 'foo.wordpress.com',
+			isStuck: false,
+			showMonthlyPrice: true,
 		};
 
 		test( `should render ${ contactSupport } when current plan is on a lower tier but longer term than the grid plan`, () => {
@@ -90,7 +92,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					{ ...defaultProps }
 					currentSitePlanSlug={ PLAN_PREMIUM_2_YEARS }
 					planName={ PLAN_BUSINESS }
-					planType={ PLAN_BUSINESS }
+					planSlug={ PLAN_BUSINESS }
 				/>
 			);
 
@@ -106,7 +108,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					{ ...defaultProps }
 					currentSitePlanSlug={ PLAN_PREMIUM }
 					planName={ PLAN_BUSINESS }
-					planType={ PLAN_BUSINESS }
+					planSlug={ PLAN_BUSINESS }
 				/>
 			);
 
@@ -122,7 +124,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planName={ PLAN_BUSINESS }
-						planType={ PLAN_BUSINESS }
+						planSlug={ PLAN_BUSINESS }
 					/>
 				);
 
@@ -137,7 +139,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planName={ PLAN_BUSINESS_2_YEARS }
-						planType={ PLAN_BUSINESS_2_YEARS }
+						planSlug={ PLAN_BUSINESS_2_YEARS }
 					/>
 				);
 
@@ -152,7 +154,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planName={ PLAN_BUSINESS_3_YEARS }
-						planType={ PLAN_BUSINESS_3_YEARS }
+						planSlug={ PLAN_BUSINESS_3_YEARS }
 					/>
 				);
 
