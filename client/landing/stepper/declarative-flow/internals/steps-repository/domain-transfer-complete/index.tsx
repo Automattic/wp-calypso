@@ -71,7 +71,7 @@ const Complete: Step = function Complete( { navigation, flow } ) {
 				isLargeSkipLayout={ false }
 				formattedHeader={
 					<FormattedHeader
-						id="bulk-domains-header"
+						id="domains-header"
 						headerText={ getPluralizedText() }
 						subHeaderText={ __(
 							'Hold tight as we complete the set up of your newly transferred domain.'
@@ -90,6 +90,7 @@ const Complete: Step = function Complete( { navigation, flow } ) {
 				showHeaderWooCommercePowered={ false }
 				showVideoPressPowered={ false }
 				showJetpackPowered={ false }
+				hideBack={ true }
 			/>
 		</>
 	);

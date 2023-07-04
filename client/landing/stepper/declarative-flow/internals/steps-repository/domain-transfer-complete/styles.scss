@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
-.step-container.bulk-domain-transfer {
+.step-container.domain-transfer {
 	&.complete {
 		@media ( max-width: $break-medium ) {
 			align-items: flex-start;
@@ -127,11 +127,6 @@
 					gap: 40px;
 				}
 			}
-		}
-
-		// Hide back button
-		.step-container__navigation {
-			display: none;
 		}
 	}
 }
