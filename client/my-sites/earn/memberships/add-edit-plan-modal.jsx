@@ -4,6 +4,7 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
+import FoldableCard from 'calypso/components/foldable-card';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -341,49 +342,51 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						label={ translate( 'Email newly published posts to your customers.' ) }
 					/>
 				</FormFieldset>
-				<FormFieldset>
-					<h6 className="memberships__dialog-form-header">
-						{ translate( 'Custom confirmation message' ) }
-					</h6>
-					<p>
-						{ translate(
-							'Add a custom message to the confirmation email that is sent after purchase. For example, you can thank your customers.'
-						) }
-					</p>
-					<CountedTextArea
-						value={ editedCustomConfirmationMessage }
-						onChange={ ( event ) => setEditedCustomConfirmationMessage( event.target.value ) }
-						acceptableLength={ MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE }
-						showRemainingCharacters={ true }
-						placeholder={ translate( 'Thank you for subscribing!' ) }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<ToggleControl
-						onChange={ handlePayWhatYouWant }
-						checked={ editedPayWhatYouWant }
-						label={ translate(
-							'Enable customers to pick their own amount ("Pay what you want").'
-						) }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<ToggleControl
-						onChange={ handleMultiplePerUser }
-						checked={ editedMultiplePerUser }
-						label={ translate(
-							'Allow the same customer to purchase or sign up to this plan multiple times.'
-						) }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<ToggleControl
-						onChange={ handleMarkAsDonation }
-						checked={ 'donation' === editedMarkAsDonation }
-						label={ translate( 'Mark this plan as a donation.' ) }
-						disabled={ !! product && product.ID }
-					/>
-				</FormFieldset>
+				<FoldableCard header={ translate( 'Advanced Options' ) } hideSummary>
+					<FormFieldset>
+						<h6 className="memberships__dialog-form-header">
+							{ translate( 'Custom confirmation message' ) }
+						</h6>
+						<p>
+							{ translate(
+								'Add a custom message to the confirmation email that is sent after purchase. For example, you can thank your customers.'
+							) }
+						</p>
+						<CountedTextArea
+							value={ editedCustomConfirmationMessage }
+							onChange={ ( event ) => setEditedCustomConfirmationMessage( event.target.value ) }
+							acceptableLength={ MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE }
+							showRemainingCharacters={ true }
+							placeholder={ translate( 'Thank you for subscribing!' ) }
+						/>
+					</FormFieldset>
+					<FormFieldset>
+						<ToggleControl
+							onChange={ handlePayWhatYouWant }
+							checked={ editedPayWhatYouWant }
+							label={ translate(
+								'Enable customers to pick their own amount ("Pay what you want").'
+							) }
+						/>
+					</FormFieldset>
+					<FormFieldset>
+						<ToggleControl
+							onChange={ handleMultiplePerUser }
+							checked={ editedMultiplePerUser }
+							label={ translate(
+								'Allow the same customer to purchase or sign up to this plan multiple times.'
+							) }
+						/>
+					</FormFieldset>
+					<FormFieldset>
+						<ToggleControl
+							onChange={ handleMarkAsDonation }
+							checked={ 'donation' === editedMarkAsDonation }
+							label={ translate( 'Mark this plan as a donation.' ) }
+							disabled={ !! product && product.ID }
+						/>
+					</FormFieldset>
+				</FoldableCard>
 			</div>
 		</Dialog>
 	);
