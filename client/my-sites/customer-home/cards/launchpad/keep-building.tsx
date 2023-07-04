@@ -6,6 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
+import { IAppState } from 'state/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -162,7 +163,7 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 	);
 };
 
-const ConnectedLaunchpadKeepBuilding = connect( ( state ) => {
+const ConnectedLaunchpadKeepBuilding = connect( ( state: IAppState ) => {
 	const siteId = getSelectedSiteId( state );
 	// The type definition for getSite is incorrect, it returns a SiteDetails object
 	const site = getSite( state, siteId ) as any as SiteDetails;
