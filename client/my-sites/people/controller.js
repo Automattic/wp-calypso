@@ -64,12 +64,14 @@ export default {
 	},
 
 	subscribers( context, next ) {
-		const state = context.store.getState();
-		const siteSlug = getSelectedSiteSlug( state );
-		const redirectURL = '/subscribers/' + ( siteSlug ? siteSlug : '' );
-		page.redirect( redirectURL );
-
-		renderSubscribers( context, next );
+		if ( isEnabled( 'subscribers-page-new' ) ) {
+			const state = context.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			const redirectURL = '/subscribers/' + ( siteSlug ? siteSlug : '' );
+			page.redirect( redirectURL );
+		} else {
+			renderSubscribers( context, next );
+		}
 	},
 
 	subscriberDetails( context, next ) {
