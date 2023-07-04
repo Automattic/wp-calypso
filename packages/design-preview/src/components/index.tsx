@@ -1,13 +1,8 @@
-import {
-	GlobalStylesProvider,
-	useGlobalStylesOutput,
-	useSyncGlobalStylesUserConfig,
-	transformStyles,
-} from '@automattic/global-styles';
-import { useMemo, useEffect } from 'react';
+import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import { useMemo } from 'react';
+import { useInlineCss, useScreens } from '../hooks';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
-import useScreens from './use-screens';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
@@ -37,11 +32,6 @@ interface DesignPreviewProps {
 	limitGlobalStyles: boolean;
 	onNavigatorPathChange?: ( path: string ) => void;
 }
-
-const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; }`;
-
-const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
-	variations.find( ( variation ) => variation.slug === slug );
 
 // @todo Get the style variations of theme, and then combine the selected one with colors & fonts for consistency
 const Preview: React.FC< DesignPreviewProps > = ( {
@@ -75,25 +65,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		[ selectedColorVariation, selectedFontVariation ]
 	);
 
-	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
-
-	const [ globalStyles ] = useGlobalStylesOutput();
-
-	const sitePreviewInlineCss = useMemo( () => {
-		let inlineCss = INJECTED_CSS;
-
-		if ( globalStyles ) {
-			inlineCss += transformStyles( globalStyles ).filter( Boolean ).join( '' );
-		}
-
-		if ( variations && selectedVariation ) {
-			inlineCss +=
-				selectedVariation.inline_css ??
-				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' );
-		}
-
-		return inlineCss;
-	}, [ variations, selectedVariation, globalStyles ] );
+	const inlineCss = useInlineCss( variations, selectedVariation );
 
 	const screens = useScreens( {
 		siteId,
@@ -109,9 +81,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		onSelectFontVariation,
 	} );
 
-	useEffect( () => {
-		onGlobalStylesChange( syncedGlobalStylesUserConfig );
-	}, [ syncedGlobalStylesUserConfig ] );
+	useSyncGlobalStylesUserConfig( selectedVariations, onGlobalStylesChange );
 
 	return (
 		<div className="design-preview">
@@ -129,7 +99,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 			/>
 			<SitePreview
 				url={ previewUrl }
-				inlineCss={ sitePreviewInlineCss }
+				inlineCss={ inlineCss }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>

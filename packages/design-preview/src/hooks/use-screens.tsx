@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import {
 	GlobalStylesVariations,
 	ColorPaletteVariations,
@@ -45,6 +46,7 @@ const useScreens = ( {
 			[
 				variations &&
 					variations.length > 0 && {
+						checked: ! isDefaultGlobalStylesVariationSlug( selectedVariation?.slug ),
 						icon: styles,
 						label: translate( 'Styles' ),
 						path: '/style-variations',
@@ -70,6 +72,7 @@ const useScreens = ( {
 				variations &&
 					variations.length === 0 &&
 					isEnabled( 'signup/design-picker-preview-colors' ) && {
+						checked: !! selectedColorVariation,
 						icon: color,
 						label: translate( 'Colors' ),
 						path: '/color-palettes',
@@ -94,6 +97,7 @@ const useScreens = ( {
 				variations &&
 					variations.length === 0 &&
 					isEnabled( 'signup/design-picker-preview-fonts' ) && {
+						checked: !! selectedFontVariation,
 						icon: typography,
 						label: translate( 'Fonts' ),
 						path: '/font-pairings',
