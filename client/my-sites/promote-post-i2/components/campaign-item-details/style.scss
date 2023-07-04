@@ -523,15 +523,15 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details__flexible-skeleton {
-		display: inline-block;
-		position: relative;
-		overflow: hidden;
-		min-height: 16px;
-		width: 100%;
-		height: 100%;
-		max-width: 250px;
 		animation: skeleton-loading 1s linear infinite alternate;
 		border-radius: 4px;
+		display: inline-block;
+		height: 100%;
+		overflow: hidden;
+		position: relative;
+		max-width: 250px;
+		min-height: 16px;
+		width: 100%;
 
 		@keyframes skeleton-loading {
 			0% {
