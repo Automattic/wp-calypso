@@ -795,6 +795,7 @@ export class SiteSettingsFormGeneral extends Component {
 				) }
 				callToAction={ translate( 'Get started' ) }
 				href="https://wordpress.com/website-design-service/?ref=unlaunched-settings"
+				target="_blank"
 				iconPath={ builtByLogo }
 				disableCircle={ true }
 				event="settings_bb_upsell"
