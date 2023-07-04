@@ -87,3 +87,11 @@ export type WebsiteContentServerState = {
 	genericFeedback: string;
 	searchTerms: string;
 };
+
+export enum DomainOrigins {
+	USE_YOUR_DOMAIN = 'use-your-domain',
+	CHOOSE_LATER = 'choose-later',
+	FREE = 'free',
+	CUSTOM = 'custom',
+	NOT_SET = 'not-set',
+}
