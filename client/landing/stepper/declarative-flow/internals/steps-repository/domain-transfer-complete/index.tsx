@@ -43,7 +43,7 @@ const Complete: Step = function Complete( { navigation, flow } ) {
 				Math.floor( ( currentDate.getTime() - domainRegistrationDate.getTime() ) / oneDay )
 			);
 
-			return differenceInDays <= 1;
+			return differenceInDays <= 1000;
 		} ) as ResponseDomain[];
 
 		setNewlyTransferredDomains( domainsFromToday );
