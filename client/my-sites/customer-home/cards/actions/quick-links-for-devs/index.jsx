@@ -1,3 +1,5 @@
+import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
+import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector, connect } from 'react-redux';
@@ -9,7 +11,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedEditor from 'calypso/state/selectors/get-selected-editor';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSitePlanSlug, getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { trackAddDomainAction, trackManageAllDomainsAction } from '../quick-links';
@@ -28,6 +30,10 @@ const QuickLinksForDevs = ( props ) => {
 	const isExpanded = useSelector(
 		( state ) => getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed'
 	);
+	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
+	const hasBoost = site?.options.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const dispatch = useDispatch();
@@ -100,6 +106,22 @@ const QuickLinksForDevs = ( props ) => {
 					hideLinkIndicator
 					gridicon="my-sites"
 					label={ translate( 'WP Admin Dashboard' ) }
+				/>
+			) }
+			{ isAtomic && hasBoost && (
+				<ActionBox
+					href={ `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-boost` }
+					hideLinkIndicator
+					label={ translate( 'Speed up your site' ) }
+					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
+				/>
+			) }
+			{ isAtomic && hasBackups && (
+				<ActionBox
+					href={ `/backup/${ siteSlug }` }
+					hideLinkIndicator
+					label={ translate( 'Restore a backup' ) }
+					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
 				/>
 			) }
 		</div>
