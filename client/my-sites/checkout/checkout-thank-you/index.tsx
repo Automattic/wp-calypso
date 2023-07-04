@@ -25,6 +25,7 @@ import {
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { Component } from 'react';
@@ -90,6 +91,7 @@ import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
+import MasterbarStyled from './redesign-v2/masterbar-styled';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
@@ -274,6 +276,17 @@ export class CheckoutThankYou extends Component<
 			page( `/checkout/thank-you/${ selectedSiteSlug }${ receiptPath }` );
 		}
 	}
+
+	/**
+	 * Determines whether the current checkout flow is for a redesign V2 purchase.
+	 * Used for gradually rolling out the redesign.
+	 *
+	 * @returns {boolean} True if the checkout flow is for a redesign V2 purchase, false otherwise.
+	 */
+	isRedesignV2 = () => {
+		// ThankYou page for plans.
+		return getPurchases( this.props ).some( ( purchase ) => isPlan( purchase ) );
+	};
 
 	hasPlanOrDomainProduct = () => {
 		return getPurchases( this.props ).some(
@@ -617,9 +630,20 @@ export class CheckoutThankYou extends Component<
 
 		// standard thanks page
 		return (
-			<Main className="checkout-thank-you">
+			<Main
+				className={ classNames( 'checkout-thank-you', {
+					'is-redesign-v2': this.isRedesignV2(),
+				} ) }
+			>
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-
+				{ this.isRedesignV2() && (
+					<MasterbarStyled
+						onClick={ () => page( `/home/${ this.props.selectedSiteSlug ?? '' }` ) }
+						backText={ translate( 'Back to dashboard' ) }
+						canGoBack={ true }
+						showContact={ true }
+					/>
+				) }
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
 				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
