@@ -71,8 +71,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		);
 		await pluginsPage.search( 'jetpack' );
 
-		// change the URL alway from the category page
-		expect( page.url().includes( '/plugins/browse/' ) ).toBeFalsy();
-		expect( page.url().includes( '/plugins?s=' ) ).toBeTruthy();
+		// Check if its redirecting to the default plugins page
+		await page.waitForURL( /\/plugins\?s=/ );
 	} );
 } );
