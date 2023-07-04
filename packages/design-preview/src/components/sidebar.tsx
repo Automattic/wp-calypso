@@ -49,6 +49,7 @@ interface SidebarProps {
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
+	limitGlobalStyles: boolean;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -70,6 +71,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	onSelectColorVariation,
 	selectedFontVariation,
 	onSelectFontVariation,
+	limitGlobalStyles,
 } ) => {
 	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
@@ -142,6 +144,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 								stylesheet={ stylesheet }
 								selectedColorPaletteVariation={ selectedColorVariation }
 								onSelect={ onSelectColorVariation }
+								limitGlobalStyles={ limitGlobalStyles }
 							/>
 						</div>
 					) }
@@ -154,6 +157,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 								stylesheet={ stylesheet }
 								selectedFontPairingVariation={ selectedFontVariation }
 								onSelect={ onSelectFontVariation }
+								limitGlobalStyles={ limitGlobalStyles }
 							/>
 						</div>
 					) }

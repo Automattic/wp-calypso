@@ -26,6 +26,7 @@ interface FontPairingVariationsProps {
 	stylesheet: string;
 	selectedFontPairingVariation: GlobalStylesObject | null;
 	onSelect: ( fontPairingVariation: GlobalStylesObject | null ) => void;
+	limitGlobalStyles: boolean;
 }
 
 const FontPairingVariation = ( {
@@ -75,6 +76,7 @@ const FontPairingVariations = ( {
 	stylesheet,
 	selectedFontPairingVariation,
 	onSelect,
+	limitGlobalStyles,
 }: FontPairingVariationsProps ) => {
 	// The theme font pairings don't include the default font pairing
 	const fontPairingVariations = useFontPairingVariations( siteId, stylesheet ) ?? [];
@@ -97,8 +99,14 @@ const FontPairingVariations = ( {
 				/>
 			</div>
 			<h3 className="global-styles-variation__title">
-				{ translate( 'Premium fonts' ) }
-				<PremiumBadge shouldHideTooltip shouldCompactWithAnimation />
+				{ translate( 'Custom fonts' ) }
+				{ limitGlobalStyles && (
+					<PremiumBadge
+						shouldHideTooltip
+						shouldCompactWithAnimation
+						labelText={ translate( 'Upgrade' ) }
+					/>
+				) }
 			</h3>
 			<div className="font-pairing-variations">
 				{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
