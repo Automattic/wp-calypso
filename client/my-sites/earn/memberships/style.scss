@@ -332,6 +332,19 @@
 	margin-bottom: 1.5em;
 }
 
+.memberships__dialog-sections-price {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.memberships__dialog-sections-price-field-container {
+	display: flex;
+	flex-direction: column;
+	&:first-child {
+		margin-right: 30px;
+	}
+}
+
 /**
  * Delete Site Options
  */

@@ -1,7 +1,6 @@
 import { Dialog, FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -14,9 +13,6 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
-import SectionNav from 'calypso/components/section-nav';
-import SectionNavTabItem from 'calypso/components/section-nav/item';
-import SectionNavTabs from 'calypso/components/section-nav/tabs';
 import {
 	requestAddProduct,
 	requestUpdateProduct,
@@ -80,27 +76,6 @@ function minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurr
  */
 const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
 
-/**
- * Identifier for the General tab.
- *
- * @type {string}
- */
-const TAB_GENERAL = 'general';
-
-/**
- * Identifier for the Email tab.
- *
- * @type {string}
- */
-const TAB_EMAIL = 'email';
-
-/**
- * List of tab identifiers.
- *
- * @type {string[]}
- */
-const TABS = [ TAB_GENERAL, TAB_EMAIL ];
-
 const RecurringPaymentsPlanAddEditModal = ( {
 	addProduct,
 	closeDialog,
@@ -110,7 +85,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	connectedAccountDefaultCurrency,
 } ) => {
 	const translate = useTranslate();
-	const [ currentDialogTab, setCurrentDialogTab ] = useState( TAB_GENERAL );
 	const [ editedCustomConfirmationMessage, setEditedCustomConfirmationMessage ] = useState(
 		product?.welcome_email_content ?? ''
 	);
@@ -148,15 +122,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	);
 	const [ editedSchedule, setEditedSchedule ] = useState( product?.renewal_schedule ?? '1 month' );
 	const [ focusedName, setFocusedName ] = useState( false );
-
-	const getTabName = ( tab ) => {
-		switch ( tab ) {
-			case TAB_GENERAL:
-				return translate( 'General' );
-			case TAB_EMAIL:
-				return translate( 'Email' );
-		}
-	};
 
 	const isValidCurrencyAmount = ( currency, price ) =>
 		price >= minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency );
@@ -261,34 +226,54 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		closeDialog();
 	};
 
-	const renderGeneralTab = () => {
-		const editProduct = translate( 'Edit your existing payment plan.' );
-		const noProduct = translate(
-			'Each amount you add will create a separate payment plan. You can create many of them.'
-		);
-		return (
-			<>
-				<p>{ product && product.ID ? editProduct : noProduct }</p>
+	const addPlan = editedPostsEmail
+		? translate( 'Add a newsletter payment plan' )
+		: translate( 'Add a payment plan' );
+
+	const editPlan = editedPostsEmail
+		? translate( 'Edit newsletter payment plan' )
+		: translate( 'Edit a payment plan' );
+
+	const editProduct = translate( 'Edit your existing payment plan.' );
+	const noProduct = translate(
+		'Each amount you add will create a separate payment plan. You can create many of them.'
+	);
+	const editing = product && product.ID;
+	return (
+		<Dialog
+			isVisible={ true }
+			onClose={ onClose }
+			buttons={ [
+				{
+					label: translate( 'Cancel' ),
+					action: 'cancel',
+				},
+				{
+					label: translate( 'Save' ),
+					action: 'submit',
+					disabled: ! isFormValid(),
+					isPrimary: true,
+				},
+			] }
+		>
+			<FormSectionHeading>{ product && product.ID ? editPlan : addPlan }</FormSectionHeading>
+			<div className="memberships__dialog-sections">
+				<p>{ editing ? editProduct : noProduct }</p>
 				<FormFieldset>
-					<FormLabel htmlFor="currency">{ translate( 'Select price' ) }</FormLabel>
-					{ product && (
-						<Notice
-							text={ translate(
-								'Updating the price will not affect existing subscribers, who will pay what they were originally charged on renewal.'
-							) }
-							showDismiss={ false }
-						/>
-					) }
-					<FormCurrencyInput
-						name="currency"
-						id="currency"
-						value={ currentPrice }
-						onChange={ handlePriceChange }
-						currencySymbolPrefix={ currentCurrency }
-						onCurrencyChange={ handleCurrencyChange }
-						currencyList={ currencyList }
-						placeholder="0.00"
+					<FormLabel htmlFor="title">
+						{ translate( 'Please describe your payment plan' ) }
+					</FormLabel>
+					<FormTextInput
+						id="title"
+						value={ editedProductName }
+						onChange={ onNameChange }
+						onBlur={ () => setFocusedName( true ) }
 					/>
+					{ ! isFormValid( 'name' ) && focusedName && (
+						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
+					) }
+				</FormFieldset>
+				<FormFieldset className="memberships__dialog-sections-price">
 					{ ! isFormValid( 'price' ) && (
 						<FormInputValidation
 							isError
@@ -305,66 +290,43 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							} ) }
 						/>
 					) }
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="renewal_schedule">
-						{ translate( 'Select renewal frequency' ) }
-					</FormLabel>
-					<FormSelect id="renewal_schedule" value={ editedSchedule } onChange={ onSelectSchedule }>
-						<option value="1 month">{ translate( 'Renew monthly' ) }</option>
-						<option value="1 year">{ translate( 'Renew yearly' ) }</option>
-						<option value="one-time">{ translate( 'One time sale' ) }</option>
-					</FormSelect>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="title">
-						{ translate( 'Please describe your payment plan' ) }
-					</FormLabel>
-					<FormTextInput
-						id="title"
-						value={ editedProductName }
-						onChange={ onNameChange }
-						onBlur={ () => setFocusedName( true ) }
-					/>
-					{ ! isFormValid( 'name' ) && focusedName && (
-						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
-					) }
-				</FormFieldset>
-				<FormFieldset>
-					<ToggleControl
-						onChange={ handlePayWhatYouWant }
-						checked={ editedPayWhatYouWant }
-						label={ translate(
-							'Enable customers to pick their own amount ("Pay what you want").'
+					<div className="memberships__dialog-sections-price-field-container">
+						<FormLabel htmlFor="currency">{ translate( 'Select price' ) }</FormLabel>
+						{ editing && (
+							<Notice
+								text={ translate(
+									'Updating the price will not affect existing subscribers, who will pay what they were originally charged on renewal.'
+								) }
+								showDismiss={ false }
+							/>
 						) }
-					/>
+						<FormCurrencyInput
+							name="currency"
+							id="currency"
+							value={ currentPrice }
+							onChange={ handlePriceChange }
+							currencySymbolPrefix={ currentCurrency }
+							onCurrencyChange={ handleCurrencyChange }
+							currencyList={ currencyList }
+							placeholder="0.00"
+						/>
+					</div>
+					<div className="memberships__dialog-sections-price-field-container">
+						<FormLabel htmlFor="renewal_schedule">
+							{ translate( 'Select renewal frequency' ) }
+						</FormLabel>
+						<FormSelect
+							id="renewal_schedule"
+							value={ editedSchedule }
+							onChange={ onSelectSchedule }
+						>
+							<option value="1 month">{ translate( 'Renew monthly' ) }</option>
+							<option value="1 year">{ translate( 'Renew yearly' ) }</option>
+							<option value="one-time">{ translate( 'One time sale' ) }</option>
+						</FormSelect>
+					</div>
 				</FormFieldset>
 				<FormFieldset>
-					<ToggleControl
-						onChange={ handleMultiplePerUser }
-						checked={ editedMultiplePerUser }
-						label={ translate(
-							'Allow the same customer to purchase or sign up to this plan multiple times.'
-						) }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<ToggleControl
-						onChange={ handleMarkAsDonation }
-						checked={ 'donation' === editedMarkAsDonation }
-						label={ translate( 'Mark this plan as a donation.' ) }
-						disabled={ !! product && product.ID }
-					/>
-				</FormFieldset>
-			</>
-		);
-	};
-
-	const renderEmailTab = () => {
-		return (
-			<>
-				<FormFieldset>
-					<h6 className="memberships__dialog-form-header">{ translate( 'Posts via email' ) }</h6>
 					<p>
 						{ translate(
 							'Allow members of this payment plan to opt into receiving new posts via email.'
@@ -396,67 +358,32 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						placeholder={ translate( 'Thank you for subscribing!' ) }
 					/>
 				</FormFieldset>
-			</>
-		);
-	};
-
-	const addPlan = editedPostsEmail
-		? translate( 'Add a newsletter payment plan' )
-		: translate( 'Add a payment plan' );
-
-	const editPlan = editedPostsEmail
-		? translate( 'Edit newsletter payment plan' )
-		: translate( 'Edit a payment plan' );
-
-	return (
-		<Dialog
-			isVisible={ true }
-			onClose={ onClose }
-			buttons={ [
-				{
-					label: translate( 'Cancel' ),
-					action: 'cancel',
-				},
-				{
-					label: translate( 'Save' ),
-					action: 'submit',
-					disabled: ! isFormValid(),
-					isPrimary: true,
-				},
-			] }
-		>
-			<FormSectionHeading>{ product && product.ID ? editPlan : addPlan }</FormSectionHeading>
-			<SectionNav
-				className="memberships__dialog-nav"
-				selectedText={ getTabName( currentDialogTab ) }
-			>
-				<SectionNavTabs>
-					{ TABS.map( ( tab ) => (
-						<SectionNavTabItem
-							key={ tab }
-							selected={ currentDialogTab === tab }
-							onClick={ () => setCurrentDialogTab( tab ) }
-						>
-							{ getTabName( tab ) }
-						</SectionNavTabItem>
-					) ) }
-				</SectionNavTabs>
-			</SectionNav>
-			<div className="memberships__dialog-sections">
-				<div
-					className={ classnames( 'memberships__dialog-section', {
-						'is-visible': currentDialogTab === TAB_GENERAL,
-					} ) }
-				>
-					{ renderGeneralTab() }
-				</div>
-				<div
-					className={ classnames( 'memberships__dialog-section', {
-						'is-visible': currentDialogTab === TAB_EMAIL,
-					} ) }
-				>
-					{ renderEmailTab() }
-				</div>
+				<FormFieldset>
+					<ToggleControl
+						onChange={ handlePayWhatYouWant }
+						checked={ editedPayWhatYouWant }
+						label={ translate(
+							'Enable customers to pick their own amount ("Pay what you want").'
+						) }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<ToggleControl
+						onChange={ handleMultiplePerUser }
+						checked={ editedMultiplePerUser }
+						label={ translate(
+							'Allow the same customer to purchase or sign up to this plan multiple times.'
+						) }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<ToggleControl
+						onChange={ handleMarkAsDonation }
+						checked={ 'donation' === editedMarkAsDonation }
+						label={ translate( 'Mark this plan as a donation.' ) }
+						disabled={ !! product && product.ID }
+					/>
+				</FormFieldset>
 			</div>
 		</Dialog>
 	);
