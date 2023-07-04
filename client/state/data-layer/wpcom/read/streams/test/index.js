@@ -24,6 +24,7 @@ describe( 'streams', () => {
 			meta: QUERY_META,
 			number: INITIAL_FETCH,
 			content_width: 675,
+			lang: 'en',
 		};
 
 		it( 'should return an http request', () => {
@@ -143,6 +144,7 @@ describe( 'streams', () => {
 						query: {
 							sort: 'date',
 							q: 'foo',
+							lang: 'en',
 							number: INITIAL_FETCH,
 							content_width: 675,
 						},
@@ -157,6 +159,7 @@ describe( 'streams', () => {
 						query: {
 							sort: 'relevance',
 							q: 'foo:bar',
+							lang: 'en',
 							number: INITIAL_FETCH,
 							content_width: 675,
 						},
