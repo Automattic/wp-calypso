@@ -31,7 +31,6 @@ export const paths = {
 	'jetpack-search': jetpackSearch,
 	'jetpack-security': jetpackBundles,
 	'jetpack-social': jetpackSocial,
-	'jetpack-starter': jetpackBundles,
 	'jetpack-videopress': jetpackVideoPress,
 	'wpcom-blogger': wpcomBlogger,
 	'wpcom-business': wpcomBusiness,
@@ -61,7 +60,6 @@ export type SupportedSlugs =
 	| 'business-bundle-2y'
 	| 'business-bundle-monthly'
 	| 'pro-plan'
-	| 'starter-plan'
 	| 'jetpack_free'
 	| 'jetpack_personal'
 	| 'jetpack_personal_monthly'
@@ -125,8 +123,6 @@ export type SupportedSlugs =
 	| 'jetpack_security_t1_monthly'
 	| 'jetpack_security_t2_yearly'
 	| 'jetpack_security_t2_monthly'
-	| 'jetpack_starter_yearly'
-	| 'jetpack_starter_monthly'
 	| 'jetpack_videopress'
 	| 'jetpack_videopress_monthly'
 	| 'jetpack_backup_addon_storage_10gb_monthly'
@@ -150,7 +146,6 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'value_bundle-monthly',
 		'value_bundle_monthly',
 		'pro-plan',
-		'starter-plan',
 	],
 	'wpcom-ecommerce': [ 'ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly' ],
 	'wpcom-business': [ 'business-bundle', 'business-bundle-2y', 'business-bundle-monthly' ],
@@ -235,6 +230,5 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 	],
 	'jetpack-social': [ 'jetpack_social', 'jetpack_social_monthly' ],
 	'jetpack-videopress': [ 'jetpack_videopress', 'jetpack_videopress_monthly' ],
-	'jetpack-starter': [ 'jetpack_starter_yearly', 'jetpack_starter_monthly' ],
 	'jetpack-golden-token-lifetime': [ 'jetpack_golden_token_lifetime' ],
 } as const;
