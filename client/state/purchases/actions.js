@@ -76,7 +76,7 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 export const removePurchase = ( purchaseId, userId ) => ( dispatch, getState ) => {
 	const siteId = getSelectedSiteId( getState() );
 
-	return new Promise( ( resolve ) =>
+	return new Promise( ( resolve, reject ) =>
 		wpcom.req
 			.post( {
 				path: `/purchases/${ purchaseId }/delete`,
@@ -101,7 +101,7 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch, getState ) =
 					error: error.message || PURCHASE_REMOVE_ERROR_MESSAGE,
 				} );
 
-				resolve( error );
+				reject( error );
 			} )
 	);
 };
