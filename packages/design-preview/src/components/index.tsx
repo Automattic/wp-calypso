@@ -97,7 +97,6 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	return (
 		<div
 			className={ classnames( 'design-preview', {
-				'design-preview--is-initial-screen': isInitialScreen,
 				'design-preview--has-multiple-screens': screens.length > 1,
 				'design-preview--is-fullscreen': isFullscreen,
 			} ) }

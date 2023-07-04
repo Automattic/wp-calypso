@@ -8,36 +8,30 @@ $design-preview-sidebar-width: 311px;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	padding: 0 20px;
 
 	&.design-preview--has-multiple-screens {
-		&.design-preview--is-initial-screen {
-			padding: 0 20px;
-
-			.design-preview__sidebar {
-				position: relative;
-				width: 100%;
-				padding: 0 0 34px;
-				border: none;
-				box-shadow: none;
-				overflow: visible;
-
-				@include break-xlarge {
-					width: $design-preview-sidebar-width;
-				}
-			}
-
-			.design-preview__site-preview {
-				height: calc(100vh - 120px);
-				margin-bottom: 90px;
-
-				@include break-xlarge {
-					height: auto;
-					margin-bottom: 32px;
-				}
-			}
+		.design-preview__sidebar {
+			position: relative;
+			width: 100%;
+			padding-bottom: 34px;
+			border: none;
+			box-shadow: none;
+			overflow: visible;
 
 			@include break-xlarge {
-				padding: 0;
+				width: $design-preview-sidebar-width;
+				padding-bottom: 0;
+			}
+		}
+
+		.design-preview__site-preview {
+			height: calc(100vh - 120px);
+			margin-bottom: 90px;
+
+			@include break-xlarge {
+				height: auto;
+				margin-bottom: 32px;
 			}
 		}
 
@@ -51,24 +45,36 @@ $design-preview-sidebar-width: 311px;
 		top: 0;
 		left: 0;
 		right: 0;
-		padding-bottom: 60px;
+		padding: 0 0 60px;
 		box-sizing: border-box;
 		z-index: 1;
 
+		.design-preview__sidebar {
+			padding: 8px 8px 0;
+			overflow: auto;
+		}
+
+		.design-preview__site-preview {
+			height: 100%;
+			margin-bottom: 0;
+		}
+
 		@include break-xlarge {
 			position: relative;
-			padding-bottom: 0;
+			padding: 0;
 		}
 	}
 
 	@include break-xlarge {
 		flex-direction: row;
+		padding: 0;
 		margin: 0;
 		gap: 32px;
 	}
 }
 
 .design-preview__sidebar {
+	flex-shrink: 0;
 	align-items: center;
 	background-color: var(--color-body-background);
 	border-bottom: 1px solid rgb(0 0 0 / 5%);
@@ -78,7 +84,6 @@ $design-preview-sidebar-width: 311px;
 	inset-inline-start: 0;
 	inset-inline-end: 0;
 	overflow: auto;
-	padding: 8px 8px 0;
 	z-index: z-index(".is-section-stepper", ".design-preview__sticky-variations");
 
 	@include break-small {
