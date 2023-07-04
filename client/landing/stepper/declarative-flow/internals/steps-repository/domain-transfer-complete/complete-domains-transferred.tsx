@@ -2,19 +2,22 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import type { FC } from 'react';
 
 type Props = {
 	newlyTransferredDomains: ResponseDomain[];
 };
 
-function FormatDate( date: string | null ): string {
+const FormatDate: FC< { date: string | null } > = ( { date } ) => {
 	const { __ } = useI18n();
 	if ( date === null ) {
-		return __( 'Unknown date' );
+		return __( '' );
 	}
 	const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-	return new Date( date ).toLocaleString( undefined, options );
-}
+	const formattedDate = new Date( date ).toLocaleString( undefined, options );
+	// translators: %s date that will be dynamic.
+	return <p>{ sprintf( __( 'Expires on %s' ), formattedDate ) }</p>;
+};
 
 export const CompleteDomainsTransferred = ( { newlyTransferredDomains }: Props ) => {
 	const { __ } = useI18n();
@@ -28,13 +31,7 @@ export const CompleteDomainsTransferred = ( { newlyTransferredDomains }: Props )
 							<li className="domain-complete-list-item" key={ key }>
 								<div>
 									<h2>{ domain.domain }</h2>
-
-									<p>
-										{
-											//  translators: %s date that will be dynamic .
-											sprintf( __( 'Auto renews on %s' ), FormatDate( domain.expiry ) )
-										}
-									</p>
+									<FormatDate date={ domain.expiry } />
 								</div>
 								<a
 									href={ `/domains/manage/${ domain.domain }` }

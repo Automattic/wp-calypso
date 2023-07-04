@@ -1,4 +1,3 @@
-import { _n } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
@@ -11,21 +10,8 @@ import { CompleteDomainsTransferred } from './complete-domains-transferred';
 import type { Step } from '../../types';
 import './styles.scss';
 
-const getPluralizedText = ( num: number ) => {
-	return _n( 'Congrats on your domain transfer', 'Congrats on your domain transfers', num );
-};
-
-const ManageAllButton = () => {
-	const { __ } = useI18n();
-	return (
-		<a href="/domains/manage" className="components-button is-primary manage-all-domains">
-			{ __( 'Manage all domains' ) }
-		</a>
-	);
-};
-
 const Complete: Step = function Complete( { flow } ) {
-	const { __ } = useI18n();
+	const { __, _n } = useI18n();
 
 	const domainsList: ResponseDomain[] = useSelector( getFlatDomainsList );
 	const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
@@ -45,12 +31,20 @@ const Complete: Step = function Complete( { flow } ) {
 				formattedHeader={
 					<FormattedHeader
 						id="domains-header"
-						headerText={ getPluralizedText( newlyTransferredDomains.length ) }
+						headerText={ _n(
+							'Congrats on your domain transfer',
+							'Congrats on your domain transfers',
+							newlyTransferredDomains.length
+						) }
 						subHeaderText={ __(
 							'Hold tight as we complete the set up of your newly transferred domain.'
 						) }
 						align="center"
-						children={ <ManageAllButton /> }
+						children={
+							<a href="/domains/manage" className="components-button is-primary manage-all-domains">
+								{ __( 'Manage all domains' ) }
+							</a>
+						}
 					/>
 				}
 				stepContent={
@@ -63,7 +57,6 @@ const Complete: Step = function Complete( { flow } ) {
 				showJetpackPowered={ false }
 				hideBack={ true }
 			/>
-			)
 		</>
 	);
 };
