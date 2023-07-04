@@ -1,4 +1,3 @@
-import { SubscriptionManager } from '@automattic/data-stores';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -12,18 +11,14 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import {
-	SiteSubscriptionsList,
-	SiteSubscriptionsListActionsBar,
-} from 'calypso/landing/subscriptions/components/site-subscriptions-list';
-import {
 	SubscriptionsPortal,
 	SubscriptionManagerContextProvider,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { SubscriptionsEllipsisMenu } from 'calypso/landing/subscriptions/components/subscriptions-ellipsis-menu';
 import { downloadCloud, uploadCloud } from 'calypso/reader/icons';
-import { RecommendedSites } from 'calypso/reader/recommended-sites';
 import { useDispatch } from 'calypso/state';
 import { markFollowsAsStale } from 'calypso/state/reader/follows/actions';
+import SiteSubscriptions from './site-subscriptions';
 import './style.scss';
 
 const useMarkFollowsAsStaleOnUnmount = () => {
@@ -71,11 +66,7 @@ const SiteSubscriptionsManager = () => {
 					</SubscriptionsEllipsisMenu>
 				</HStack>
 
-				<SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
-					<SiteSubscriptionsListActionsBar />
-					<RecommendedSites />
-					<SiteSubscriptionsList />
-				</SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
+				<SiteSubscriptions />
 			</Main>
 		</SubscriptionManagerContextProvider>
 	);
