@@ -22,7 +22,7 @@ interface LaunchpadKeepBuildingProps {
 
 const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Element => {
 	const translate = useTranslate();
-	const siteSlug = site?.slug;
+	const siteSlug = site?.slug || null;
 
 	const {
 		data: { checklist },
