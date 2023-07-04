@@ -84,7 +84,7 @@ function SubscribersTeam( props: Props ) {
 
 		const useNewSubHeaderText =
 			isEnabled( 'subscribers-page-new' ) &&
-			( locale === 'en' ||
+			( locale.startsWith( 'en' ) ||
 				hasTranslation(
 					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.'
 				) );
