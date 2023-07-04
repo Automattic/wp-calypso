@@ -186,11 +186,10 @@ const ProductCard = ( { siteSlug } ) => {
 										</p>
 										<p>
 											{ translate(
-												`If your site doesn't meet these criteria, {{a}}you will need to use the commercial plan{{/a}}.`,
+												`If your site doesn't meet these criteria, {{Button}}you will need to use the commercial plan{{/Button}}.`,
 												{
 													components: {
-														// a: <a href="#" onClick={ () => handlePlanSwap() } />,
-														a: (
+														Button: (
 															<Button
 																variant="link"
 																href="#"
@@ -217,6 +216,7 @@ const ProductCard = ( { siteSlug } ) => {
 										<PersonalPurchase
 											subscriptionValue={ subscriptionValue }
 											setSubscriptionValue={ setSubscriptionValue }
+											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
 										/>
 									) : (
 										<CommercialPurchase planValue={ FLAT_COMMERCIAL_PRICE } />

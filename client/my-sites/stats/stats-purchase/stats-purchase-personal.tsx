@@ -7,11 +7,16 @@ import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
 	setSubscriptionValue: ( value: number ) => number;
+	handlePlanSwap: ( e: MouseEvent | KeyboardEvent ) => void;
 }
 
 const AVERAGE_PRICE_INFO = '$6';
 
-const PersonalPurchase = ( { subscriptionValue, setSubscriptionValue }: PersonalPurchaseProps ) => {
+const PersonalPurchase = ( {
+	subscriptionValue,
+	setSubscriptionValue,
+	handlePlanSwap,
+}: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 
 	const sliderLabel = ( ( props, state ) => {
@@ -24,6 +29,18 @@ const PersonalPurchase = ( { subscriptionValue, setSubscriptionValue }: Personal
 
 	return (
 		<div>
+			{ subscriptionValue < 10 && (
+				<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
+					{ translate(
+						'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial paln{{/Button}}.',
+						{
+							components: {
+								Button: <Button variant="link" href="#" onClick={ ( e ) => handlePlanSwap( e ) } />,
+							},
+						}
+					) }
+				</div>
+			) }
 			<PricingSlider
 				value={ subscriptionValue }
 				renderThumb={ sliderLabel }
@@ -50,9 +67,6 @@ const PersonalPurchase = ( { subscriptionValue, setSubscriptionValue }: Personal
 						<li>{ translate( 'Instant access to upcoming features' ) }</li>
 						<li>{ translate( 'Priority support' ) }</li>
 						<li>{ translate( 'Ad-free experience' ) }</li>
-						{ subscriptionValue >= 90 && (
-							<li>{ translate( "You're one of the top supporters — thank you!" ) }</li>
-						) }
 					</ul>
 				) }
 			</div>

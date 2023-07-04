@@ -181,9 +181,15 @@
 			background-color: #1a1a1a;
 			border-color: #1a1a1a;
 			transition: all 0.25s ease-out;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 16px;
+			line-height: 24px;
+			padding: 8px 32px;
+			height: auto;
 
 			&:hover,
-			&:active {
+			&:active,
+			&:focus {
 				background: #2c3338;
 				border-color: #2c3338;
 			}
@@ -198,6 +204,7 @@
 		&.is-link {
 			color: #008710;
 			font-size: inherit;
+			display: inline;
 		}
 	}
 
@@ -234,6 +241,10 @@
 		.is-link {
 			color: #000;
 		}
+	}
+
+	.stats-purchase-wizard__notice--green {
+		background-color: #d0e6b8;
 	}
 
 	.stats-purchase-wizard__control--checkbox {

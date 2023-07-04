@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Button } from '@wordpress/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 interface CommercialPurchaseProps {
@@ -11,7 +12,12 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 
 	return (
 		<div>
-			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
+			<div
+				className={ classNames(
+					`${ COMPONENT_CLASS_NAME }__notice`,
+					`${ COMPONENT_CLASS_NAME }__notice--green`
+				) }
+			>
 				{ translate(
 					'Upgrade now to take advantage of the introductory flat rate. Starting in 2024, we will introduce metered billing. '
 				) }
