@@ -20,6 +20,7 @@ const domainRegistrationThankYouProps = ( {
 	selectedSiteSlug,
 	siteIntent,
 	launchpadScreen,
+	redirectTo,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildDomainStepForProfessionalEmail(
 		{
@@ -38,6 +39,7 @@ const domainRegistrationThankYouProps = ( {
 		launchpadScreen as string,
 		selectedSiteSlug,
 		'REGISTRATION',
+		redirectTo,
 		true
 	);
 
