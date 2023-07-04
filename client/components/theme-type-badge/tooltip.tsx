@@ -9,8 +9,8 @@ import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import {
 	canUseTheme,
 	getThemeType,
@@ -72,8 +72,7 @@ const ThemeTypeBadgeTooltip = ( {
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
-	const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
-	const globalStylesOnPersonalExperiment = experiment?.variationName === 'treatment';
+	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
 	const isPurchased = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return false;
@@ -124,7 +123,7 @@ const ThemeTypeBadgeTooltip = ( {
 
 	let message;
 	if ( isLockedStyleVariation ) {
-		if ( globalStylesOnPersonalExperiment ) {
+		if ( globalStylesInPersonalPlan ) {
 			message = translate(
 				'Unlock this style, and tons of other features, by upgrading to a Personal plan.'
 			);
