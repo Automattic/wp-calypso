@@ -59,7 +59,7 @@
 
 			.section-nav-tab {
 				&.is-selected {
-					height: 36px;
+					height: 36px !important;
 				}
 
 				.section-nav-tab__link {
