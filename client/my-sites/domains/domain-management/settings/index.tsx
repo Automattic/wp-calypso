@@ -9,7 +9,7 @@ import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layo
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
@@ -270,7 +270,11 @@ const Settings = ( {
 	};
 
 	const renderDnsRecords = () => {
-		if ( ! domain || domain.type === domainTypes.SITE_REDIRECT ) {
+		if (
+			! domain ||
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC
+		) {
 			return null;
 		}
 
