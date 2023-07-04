@@ -1,20 +1,17 @@
 import { _n } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
 import { CompleteDomainsTransferred } from './complete-domains-transferred';
 import type { Step } from '../../types';
 import './styles.scss';
 
-const Complete: Step = function Complete( { navigation, flow } ) {
-	const { goBack } = navigation;
+const Complete: Step = function Complete( { flow } ) {
 	const { __ } = useI18n();
 
 	const ManageAllButton = () => {
@@ -26,28 +23,16 @@ const Complete: Step = function Complete( { navigation, flow } ) {
 	};
 
 	const domainsList: ResponseDomain[] = useSelector( getFlatDomainsList );
+	const currentDate = new Date();
+	const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+	const today = currentDate.getTime();
 
-	const [ newlyTransferredDomains, setNewlyTransferredDomains ] = useState< ResponseDomain[] >(
-		[]
-	);
-
-	useEffect( () => {
-		const currentDate = new Date();
-
-		const domainsFromToday = domainsList?.filter( ( domain ) => {
-			const domainRegistrationDate = new Date( domain.registrationDate );
-
-			const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
-
-			const differenceInDays = Math.abs(
-				Math.floor( ( currentDate.getTime() - domainRegistrationDate.getTime() ) / oneDay )
-			);
-
-			return differenceInDays <= 1000;
-		} ) as ResponseDomain[];
-
-		setNewlyTransferredDomains( domainsFromToday );
-	}, [ domainsList ] );
+	const newlyTransferredDomains = domainsList.filter(
+		( domain ) =>
+			Math.abs(
+				Math.floor( ( today - new Date( domain.registrationDate ).getTime() ) / oneDay )
+			) <= 1000
+	) as ResponseDomain[];
 
 	const getPluralizedText = () => {
 		return _n(
@@ -63,7 +48,6 @@ const Complete: Step = function Complete( { navigation, flow } ) {
 			<StepContainer
 				flowName={ flow }
 				stepName="complete"
-				goBack={ goBack }
 				isHorizontalLayout={ false }
 				isLargeSkipLayout={ false }
 				formattedHeader={
@@ -78,9 +62,7 @@ const Complete: Step = function Complete( { navigation, flow } ) {
 					/>
 				}
 				stepContent={
-					<CalypsoShoppingCartProvider>
-						<CompleteDomainsTransferred newlyTransferredDomains={ newlyTransferredDomains } />
-					</CalypsoShoppingCartProvider>
+					<CompleteDomainsTransferred newlyTransferredDomains={ newlyTransferredDomains } />
 				}
 				recordTracksEvent={ recordTracksEvent }
 				showHeaderJetpackPowered={ false }
