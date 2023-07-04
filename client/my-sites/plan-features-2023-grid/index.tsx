@@ -51,7 +51,6 @@ import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-p
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-// TODO clk: remove - use ShoppingCartProvider from shopping-cart package
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
