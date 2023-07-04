@@ -18,7 +18,6 @@ $theme-sheet-content-max-width: 1462px;
 
 		.theme__sheet-web-preview {
 			@include breakpoint-deprecated( ">960px" ) {
-				height: calc(100vh - 96px);
 				top: calc(var(--masterbar-height) + 16px);
 			}
 		}
@@ -383,10 +382,11 @@ $theme-sheet-content-max-width: 1462px;
 }
 
 .theme__sheet-web-preview {
+	// The iframe viewport height is set at 1040px, scaled at 0.5.
+	min-height: 520px;
 	pointer-events: none;
 
 	@include breakpoint-deprecated( ">960px" ) {
-		height: calc(100vh - 64px);
 		pointer-events: all;
 		position: sticky;
 		top: 16px;
@@ -394,9 +394,12 @@ $theme-sheet-content-max-width: 1462px;
 		.theme-preview__frame-wrapper .theme-preview__frame {
 			height: 200%;
 			max-width: 200%;
-			transform: scale(0.5) !important;
 			width: 200%;
 		}
+	}
+
+	.theme-preview__container {
+		position: relative;
 	}
 }
 
