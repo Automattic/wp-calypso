@@ -1,8 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useExperiment } from 'calypso/lib/explat';
 import { urlToSlug } from 'calypso/lib/url';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import useCheckout from '../../../../../hooks/use-checkout';
 import { useSite } from '../../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../../hooks/use-site-slug-param';
@@ -32,9 +31,9 @@ const useGlobalStylesUpgradeModal = ( {
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
-	const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
-	const globalStylesOnPersonalExperiment = experiment?.variationName === 'treatment';
+	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
+		site?.ID
+	);
 	const translate = useTranslate();
 	const { goToCheckout } = useCheckout();
 
@@ -87,7 +86,7 @@ const useGlobalStylesUpgradeModal = ( {
 			stepName,
 			siteSlug: siteUrl,
 			destination: redirectUrl,
-			plan: globalStylesOnPersonalExperiment ? 'personal' : 'premium',
+			plan: globalStylesInPersonalPlan ? 'personal' : 'premium',
 		} );
 
 		setIsOpen( false );

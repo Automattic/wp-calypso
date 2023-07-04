@@ -7,27 +7,66 @@
 	margin: 0 auto;
 	max-width: 1024px;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	gap: 30px;
 
 	&.domains {
+		padding: 0;
+		width: 754px;
+
+		.step-container__header {
+			margin-top: 96px;
+
+			.formatted-header__title {
+				font-size: 2.75rem;
+			}
+		}
+
+		.step-container__navigation.action-buttons {
+			position: absolute;
+			top: 8px;
+			inset-inline-start: 72px;
+			inset-inline-end: 24px;
+			padding: 1px 0 0;
+			background-color: transparent;
+			border: none;
+			box-shadow: none;
+		}
+
 		@media ( max-width: $break-medium ) {
+
 			.step-container__header {
 				width: 100%;
+				margin-top: 48px;
+				.formatted-header__title {
+					font-size: 2rem;
+					text-align: left;
+				}
 			}
 			header {
 				text-align: center;
 			}
-			flex-direction: column;
+
 			gap: 0;
 			justify-content: flex-start;
 			margin-top: 24px;
+			width: 100%;
+		}
+	}
+
+	&.step-container {
+		@media ( max-width: $break-medium ) {
+			padding: 0 20px;
 		}
 	}
 
 
 	.domains .step-container__content {
 		width: 100%;
+		@media ( max-width: $break-medium ) {
+			min-height: auto;
+		}
 	}
 
 	.signup-header {
@@ -38,37 +77,181 @@
 		}
 	}
 
-	.progress-bar {
-		display: none;
-	}
-
 	.domains__domain-info {
 		display: flex;
-		gap: 20px;
+		gap: 16px;
+		align-items: flex-end;
+		flex-wrap: wrap;
+		@media ( max-width: $break-medium ) {
+			align-items: normal;
+			flex-direction: column;
+		}
 
 		.form-fieldset {
 			margin-bottom: 0;
 		}
+
+		.form-setting-explanation {
+			margin-top: 0;
+		}
 	}
 
 	.domains__domain-domain {
-		flex: 1;
+		flex: 1 0 60%;
 	}
 
 	.domains__domain-key {
-		flex: 1;
+		flex: 1 0 15%;
 	}
 
-	.domains__domain-delete {
-		width: 50px;
+	.domains__domain-domain,
+	.domains__domain-key {
+
+
+		.form-fieldset {
+			position: relative;
+
+			input {
+				padding-right: 30px;
+				text-overflow: ellipsis;
+			}
+
+			.domains__domain-input-icon-container {
+				position: absolute;
+				right: 5px;
+				width: 24px;
+				height: 24px;
+				bottom: 8px;
+
+				.domains__domain-input-icon {
+					&.is-valid {
+						fill: #008a20;
+					}
+					&.is-not-valid {
+						fill: #d63638;
+					}
+				}
+			}
+		}
+
+		label {
+			color: var(--gray-gray-60, #50575e);
+			font-size: 1rem;
+			font-weight: 500;
+		}
 	}
 
-	.bulk-domain-transfer__cta {
-		width: 100%;
-		justify-content: center;
+
+	.domains__domain-controls {
+		display: flex;
+		gap: 16px;
+
+		.domains__domain-refresh {
+			.form-fieldset {
+				display: flex;
+				align-items: center;
+			}
+			button {
+				cursor: pointer;
+			}
+			label {
+				display: none;
+			}
+			@media ( max-width: $break-medium ) {
+				label {
+					display: block;
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		.domains__domain-delete {
+			button {
+				visibility: hidden;
+
+				&.has-delete-button {
+					visibility: visible;
+				}
+
+				&:hover {
+					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+				}
+			}
+
+			.delete-label {
+				display: none;
+			}
+
+			@media ( max-width: $break-medium ) {
+				order: 1;
+				.form-fieldset {
+					display: flex;
+					align-items: center;
+
+					.delete-label {
+						margin: 0;
+						display: block;
+					}
+				}
+			}
+		}
+	}
+
+	.bulk-domain-transfer__container {
+
+		.bulk-domain-transfer__add-domain {
+			font-size: 0.875rem;
+			font-weight: 500;
+			color: #0675c4;
+			margin-bottom: 32px;
+			margin-top: 2px;
+		}
+
+		.bulk-domain-transfer__cta-container {
+			display: flex;
+			justify-content: center;
+			@media ( max-width: $break-medium ) {
+				margin-bottom: 50px;
+			}
+
+			.bulk-domain-transfer__cta {
+				justify-content: center;
+				color: var(--black-white-white, #fff);
+				width: 157px;
+				height: 48px;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				border-radius: 0.25rem;
+				background: var(--blue-blue-50, #0675c4);
+				font-size: 0.875rem;
+				&:disabled {
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+					border-radius: 0.25rem;
+					background: var(--gray-gray-5, #dcdcde);
+					opacity: 1;
+				}
+				@media ( max-width: $break-medium ) {
+					width: 100%;
+				}
+			}
+		}
+
 	}
 
 	.domains__domain-info-and-validation {
-		margin-bottom: 20px;
+		margin-bottom: 16px;
+
+		@media ( max-width: $break-medium ) {
+			border-bottom: solid 1px #dcdcde;
+			padding-bottom: 32px;
+			margin-bottom: 32px;
+		}
+
+		.form-input-validation {
+			padding-top: 0;
+			padding-bottom: 0;
+			a {
+				text-decoration: underline;
+			}
+		}
 	}
 }

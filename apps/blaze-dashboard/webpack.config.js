@@ -108,7 +108,13 @@ module.exports = {
 				use: {
 					loader: './filter-json-config-loader',
 					options: {
-						keys: [ 'features', 'dsp_stripe_pub_key', 'dsp_widget_js_src' ],
+						keys: [
+							'features',
+							'dsp_stripe_pub_key',
+							'dsp_widget_js_src',
+							'client_slug',
+							'hotjar_enabled',
+						],
 					},
 				},
 			},
@@ -130,6 +136,9 @@ module.exports = {
 			filename: '[name].min.css',
 			chunkFilename: '[contenthash].css',
 			minify: ! isDevelopment,
+		} ),
+		new webpack.DefinePlugin( {
+			__i18n_text_domain__: JSON.stringify( 'blaze-dashboard' ),
 		} ),
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,

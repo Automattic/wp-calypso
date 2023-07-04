@@ -44,7 +44,6 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useExperiment } from 'calypso/lib/explat';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
@@ -1456,13 +1455,14 @@ class ThemeSheet extends Component {
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
-		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId || -1 );
-		const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
+		const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
+			useSiteGlobalStylesStatus( siteId );
+
 		return (
 			<Wrapped
 				{ ...props }
 				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-				globalStylesOnPersonalExperiment={ experiment?.variationName === 'treatment' }
+				globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 			/>
 		);
 	},

@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { SortControls } from 'calypso/landing/subscriptions/components/sort-controls';
-import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
+import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { SubscribersSortBy } from '../../constants';
 import './style.scss';
 import { useRecordSort } from '../../tracks';
@@ -15,7 +15,7 @@ const getSortOptions = ( translate: ReturnType< typeof useTranslate > ) => [
 
 const ListActionsBar = () => {
 	const translate = useTranslate();
-	const { handleSearch, sortTerm, setSortTerm } = useSubscriberListManager();
+	const { handleSearch, sortTerm, setSortTerm } = useSubscribersPage();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 	const recordSort = useRecordSort();
 

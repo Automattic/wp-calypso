@@ -271,13 +271,14 @@ class ThemePreview extends Component {
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
-		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId || -1 );
-		const [ , experiment ] = useExperiment( 'calypso_global_styles_personal' );
+		const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
+			useSiteGlobalStylesStatus( siteId );
+
 		return (
 			<Wrapped
 				{ ...props }
 				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-				globalStylesOnPersonalExperiment={ experiment?.variationName === 'treatment' }
+				globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 			/>
 		);
 	},
