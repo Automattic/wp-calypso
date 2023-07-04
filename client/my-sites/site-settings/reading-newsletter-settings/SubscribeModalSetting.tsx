@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -56,14 +55,7 @@ export const SubscribeModalSetting = ( {
 					'Grow your subscriber list by enabling a popup modal with a subscribe form. This will show as readers scroll. {{link}}Edit the modal{{/link}}.',
 					{
 						components: {
-							link: (
-								<a
-									// TODO: add url to modal template
-									href={ localizeUrl( subscribeModalEditorUrl ) }
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
+							link: <a href={ subscribeModalEditorUrl } target="_blank" rel="noreferrer" />,
 						},
 					}
 				) }
