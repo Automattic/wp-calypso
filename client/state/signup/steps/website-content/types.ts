@@ -88,7 +88,7 @@ export type WebsiteContentServerState = {
 	searchTerms: string;
 };
 
-export enum DomainOrigins {
+export enum SignupDomainOrigin {
 	USE_YOUR_DOMAIN = 'use-your-domain',
 	CHOOSE_LATER = 'choose-later',
 	FREE = 'free',

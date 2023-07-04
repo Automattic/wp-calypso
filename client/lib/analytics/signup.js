@@ -36,7 +36,7 @@ export function recordSignupComplete(
 		startingPoint,
 		isTransfer,
 		isMapping,
-		domainOrigin,
+		signupDomainOrigin,
 	},
 	now
 ) {
@@ -61,7 +61,7 @@ export function recordSignupComplete(
 				startingPoint,
 				isTransfer,
 				isMapping,
-				domainOrigin,
+				signupDomainOrigin,
 			},
 			true
 		);
@@ -85,7 +85,7 @@ export function recordSignupComplete(
 		starting_point: startingPoint,
 		is_transfer: isTransfer,
 		is_mapping: isMapping,
-		domain_origin: domainOrigin,
+		signup_domain_origin: signupDomainOrigin,
 	} );
 
 	// Google Analytics

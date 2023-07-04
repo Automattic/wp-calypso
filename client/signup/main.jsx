@@ -61,7 +61,7 @@ import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-r
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { DomainOrigins } from 'calypso/state/signup/steps/website-content/types';
+import { SignupDomainOrigin } from 'calypso/state/signup/steps/website-content/types';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteId,
@@ -484,7 +484,7 @@ class Signup extends Component {
 		const selectedDesign = get( dependencies, 'selectedDesign' );
 		const intent = get( dependencies, 'intent' );
 		const startingPoint = get( dependencies, 'startingPoint' );
-		const domainOrigin = get( dependencies, 'domainOrigin' );
+		const signupDomainOrigin = get( dependencies, 'signupDomainOrigin' );
 
 		const debugProps = {
 			isNewishUser,
@@ -523,7 +523,7 @@ class Signup extends Component {
 				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 				isMapping: domainItem && isDomainMapping( domainItem ),
 				isTransfer: domainItem && isDomainTransfer( domainItem ),
-				domainOrigin: domainOrigin ?? DomainOrigins.NOT_SET,
+				signupDomainOrigin: signupDomainOrigin ?? SignupDomainOrigin.NOT_SET,
 			} );
 		}
 	};
