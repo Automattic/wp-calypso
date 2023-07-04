@@ -10,7 +10,7 @@ import './share-site-modal.scss';
 
 interface ShareSiteModalProps {
 	setModalIsOpen: ( isOpen: boolean ) => void;
-	site: SiteDetails;
+	site: SiteDetails | null;
 }
 
 const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
@@ -20,8 +20,8 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 	const clipboardTextEl = useRef( null );
 
 	const copyHandler = () => {
-		navigator.clipboard.writeText( `https://${ site.slug }` );
-		updateLaunchpadSettings( site.slug, {
+		navigator.clipboard.writeText( `https://${ site?.slug }` );
+		updateLaunchpadSettings( site?.slug, {
 			checklist_statuses: { share_site: true },
 		} );
 		setClipboardCopied( true );
@@ -42,7 +42,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 						<div className="share-site-modal__modal-site">
 							<div className="share-site-modal__modal-domain">
 								<p className="share-site-modal__modal-domain-text" ref={ clipboardTextEl }>
-									{ site.slug }
+									{ site?.slug }
 								</p>
 
 								<Tooltip
