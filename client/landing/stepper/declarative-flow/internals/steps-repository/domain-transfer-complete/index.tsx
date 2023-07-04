@@ -56,7 +56,6 @@ const Complete: Step = function Complete( { navigation, flow } ) {
 		} );
 	};
 
-	getPluralizedText();
 	return (
 		<>
 			<QueryAllDomains />
