@@ -1,4 +1,5 @@
 import { TextControl, Button } from '@wordpress/components';
+import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -20,6 +21,8 @@ const OdysseusAssistant = () => {
 	const [ messages, setMessages ] = useState< Message[] >( [
 		{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'assistant' },
 	] );
+
+	const environmentBadge = document.querySelector( 'body > .environment-badge' );
 
 	// Clear messages when switching sections
 	useEffect( () => {
@@ -108,7 +111,13 @@ const OdysseusAssistant = () => {
 	}
 
 	return (
-		<div className={ `chatbox ${ isVisible ? 'chatbox-show' : 'chatbox-hide' }` }>
+		<div
+			className={ classnames( 'chatbox', {
+				'chatbox-show': isVisible,
+				'chatbox-hide': ! isVisible,
+				'using-environment-badge': environmentBadge,
+			} ) }
+		>
 			<WapuuRibbon
 				onToggleVisibility={ handleToggleVisibility }
 				isNudging={ isNudging }
@@ -119,13 +128,13 @@ const OdysseusAssistant = () => {
 				<div className="chatbox-messages">
 					{ messages.map( ( message, index ) => (
 						<div
+							ref={ index === messages.length - 1 ? messagesEndRef : null }
 							className={ `chatbox-message ${ message.role === 'user' ? 'user' : 'wapuu' }` }
 							key={ index }
 						>
 							{ message.content }
 						</div>
 					) ) }
-					<div ref={ messagesEndRef } />
 				</div>
 				<form onSubmit={ handleFormSubmit }>
 					<div className="chatbox-input-area">
