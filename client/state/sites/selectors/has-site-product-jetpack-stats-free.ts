@@ -8,7 +8,8 @@ const hasSiteProductJetpackStatsFree = (
 	siteId = getSelectedSiteId( state )
 ): boolean => {
 	return (
-		hasSiteProductJetpackStats( state, false, siteId ) && ! hasSiteProductJetpackStatsPaid( state )
+		hasSiteProductJetpackStats( state, false, siteId ) &&
+		! hasSiteProductJetpackStatsPaid( state, siteId )
 	);
 };
 
