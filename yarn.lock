@@ -3680,13 +3680,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/css-prettifier@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@emotion/css-prettifier@npm:1.0.0"
+"@emotion/css-prettifier@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@emotion/css-prettifier@npm:1.1.3"
   dependencies:
-    "@emotion/memoize": ^0.7.4
-    stylis: ^4.0.3
-  checksum: 0df03de86cabeaa945f9f1816150e2e6cefcbbfbdb0c0bf6ef7a81e97cde6caba7c3feeab6e40af3a975088b2b388c9015084d0162001c655b885a1a6e4e3e55
+    "@emotion/memoize": ^0.8.1
+    stylis: 4.2.0
+  checksum: 9ce3d7e5851054a24ca68cca4f6973de47d64567d03b6be730aa83f1cf9ae15e4da8c4611e68620e7b972f7a9fb7c36099fdf7e26b78589eb64f094fce46ce1b
   languageName: node
   linkType: hard
 
@@ -3733,24 +3733,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/jest@npm:^11.5.0":
-  version: 11.5.0
-  resolution: "@emotion/jest@npm:11.5.0"
+"@emotion/jest@npm:^11.11.0":
+  version: 11.11.0
+  resolution: "@emotion/jest@npm:11.11.0"
   dependencies:
-    "@babel/runtime": ^7.13.10
-    "@emotion/css-prettifier": ^1.0.0
+    "@babel/runtime": ^7.18.3
+    "@emotion/css-prettifier": ^1.1.3
     chalk: ^4.1.0
     specificity: ^0.4.1
-    stylis: ^4.0.10
+    stylis: 4.2.0
   peerDependencies:
-    "@types/jest": ^26.0.14 || ^27.0.0
+    "@types/jest": ^26.0.14 || ^27.0.0 || ^28.0.0 || ^29.0.0
     enzyme-to-json: ^3.2.1
   peerDependenciesMeta:
     "@types/jest":
       optional: true
     enzyme-to-json:
       optional: true
-  checksum: 0e759cc00253b949f0ab375edac3c99c25a1ac25c19bdce420b78c176682c064cec2ca139fd943965b2d5615cc2edccb1767658d1e238d7d082500fec32191d7
+  checksum: 919def636000234c4af8447a6cdf7f9675146bb020074fd06cf3c6eb42c365e727354ae79b2a7cdccb472d38da8ed8d6fd57f4235cab2e1b7605a2c6672a0fc5
   languageName: node
   linkType: hard
 
@@ -3772,6 +3772,13 @@ __metadata:
   version: 0.8.0
   resolution: "@emotion/memoize@npm:0.8.0"
   checksum: 246087ec09b32b295af67a094253831f398aabd953d03d14f186acb8607ed2a755e944f5e20b5ccebb461f15c2e5ccbf8fe977bcf3be951cf10961c504e1e65b
+  languageName: node
+  linkType: hard
+
+"@emotion/memoize@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "@emotion/memoize@npm:0.8.1"
+  checksum: dffed372fc3b9fa2ba411e76af22b6bb686fb0cb07694fdfaa6dd2baeb0d5e4968c1a7caa472bfcf06a5997d5e7c7d16b90e993f9a6ffae79a2c3dbdc76dfe78
   languageName: node
   linkType: hard
 
@@ -10904,7 +10911,7 @@ __metadata:
     "@automattic/wpcom-template-parts": "workspace:^"
     "@babel/core": ^7.17.5
     "@emotion/css": ^11.9.0
-    "@emotion/jest": ^11.5.0
+    "@emotion/jest": ^11.11.0
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
@@ -28347,10 +28354,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylis@npm:4.0.13, stylis@npm:^4.0.10, stylis@npm:^4.0.3":
+"stylis@npm:4.0.13":
   version: 4.0.13
   resolution: "stylis@npm:4.0.13"
   checksum: bd567c440b4f1acf8962b1b3aa7985c4e04d7badfe1e0f1c7ee2a60912de2718973850c524001a3d52f5fc9a0e3dcd204b8bd7e2d47d4934462e9f749fd9c7bc
+  languageName: node
+  linkType: hard
+
+"stylis@npm:4.2.0":
+  version: 4.2.0
+  resolution: "stylis@npm:4.2.0"
+  checksum: a7128ad5a8ed72652c6eba46bed4f416521bc9745a460ef5741edc725252cebf36ee45e33a8615a7057403c93df0866ab9ee955960792db210bb80abd5ac6543
   languageName: node
   linkType: hard
 
