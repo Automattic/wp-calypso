@@ -26,6 +26,8 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	FEATURE_CLOUD_CRITICAL_CSS,
+	isJetpackStatsSlug,
+	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 
 export const productHasBackups = ( productSlug: string ): boolean => {
@@ -75,6 +77,25 @@ export const productHasSearch = ( productSlug: string ): boolean => {
 		// check plans for Jetpack search features
 		( isJetpackPlanSlug( productSlug ) && planHasAtLeastOneFeature( productSlug, SEARCH_FEATURES ) )
 	);
+};
+
+export const productHasStats = ( productSlug: string, onlyPaid = false ): boolean => {
+	// Check for standalone stats product
+	if ( isJetpackStatsSlug( productSlug ) ) {
+		return ! onlyPaid || isJetpackStatsPaidProductSlug( productSlug );
+	}
+	// Check for stats features in plans
+	if ( isJetpackPlanSlug( productSlug ) && onlyPaid ) {
+		return planHasAtLeastOneFeature( productSlug, [
+			/** TODO: STATS PAID FEATURE NAME */
+		] );
+	}
+	if ( isJetpackPlanSlug( productSlug ) && ! onlyPaid ) {
+		return planHasAtLeastOneFeature( productSlug, [
+			/** TODO: STATS FEATURE NAME */
+		] );
+	}
+	return false;
 };
 
 export const productHasAntiSpam = ( productSlug: string ): boolean => {
