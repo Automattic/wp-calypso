@@ -25,7 +25,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	return (
 		<>
 			{ config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic && ! hasPaidStats && (
-				<DoYouLoveJetpackStatsNotice siteId={ siteId } hasPaidStats={ hasPaidStats } />
+				<DoYouLoveJetpackStatsNotice siteId={ siteId } />
 			) }
 			{ isOdysseyStats && <OptOutNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <FeedbackNotice siteId={ siteId } /> }
