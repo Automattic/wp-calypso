@@ -72,7 +72,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 				text-align: start;
 				margin: 0;
 
-				@include break-xlarge {
+				@include break-large {
 					font-size: 2.75rem;
 				}
 			}
@@ -570,7 +570,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 			font-weight: 500;
 			line-height: 20px;
 
-			@include break-xlarge {
+			@include break-large {
 				display: none;
 			}
 
@@ -594,13 +594,17 @@ $design-button-primary-color: rgb(17, 122, 201);
 				padding: 0 20px;
 				position: fixed;
 				top: auto;
+				box-shadow: inset 0 1px 0 #e2e4e7;
+				background-color: $white;
 
-				@include break-xlarge {
+				@include break-large {
 					inset-inline-start: 72px;
 					inset-inline-end: 24px;
 					padding: 1px 0 0;
 					position: absolute;
 					top: 8px;
+					box-shadow: none;
+					background-color: transparent;
 
 					button.is-primary {
 						display: none;
@@ -613,7 +617,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 			display: none;
 		}
 
-		@include break-xlarge {
+		@include break-large {
 			max-width: none;
 			padding-inline-start: 32px;
 			padding-inline-end: 32px;
@@ -630,8 +634,8 @@ $design-button-primary-color: rgb(17, 122, 201);
 			}
 
 			.design-preview__sidebar {
-				margin: 72px -16px 0 -8px;
-				padding: 0 16px 0 8px;
+				margin: 0 -16px 0 -8px;
+				padding: 72px 16px 0 8px;
 			}
 		}
 	}
@@ -652,5 +656,4 @@ $design-button-primary-color: rgb(17, 122, 201);
 			}
 		}
 	}
-
 }

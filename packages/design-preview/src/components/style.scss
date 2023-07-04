@@ -15,11 +15,9 @@ $design-preview-sidebar-width: 311px;
 			position: relative;
 			width: 100%;
 			padding-bottom: 34px;
-			border: none;
-			box-shadow: none;
 			overflow: visible;
 
-			@include break-xlarge {
+			@include break-large {
 				width: $design-preview-sidebar-width;
 				padding-bottom: 0;
 			}
@@ -29,7 +27,7 @@ $design-preview-sidebar-width: 311px;
 			height: calc(100vh - 120px);
 			margin-bottom: 90px;
 
-			@include break-xlarge {
+			@include break-large {
 				height: auto;
 				margin-bottom: 32px;
 			}
@@ -50,7 +48,9 @@ $design-preview-sidebar-width: 311px;
 		z-index: 1;
 
 		.design-preview__sidebar {
-			padding: 8px 8px 0;
+			padding: 0;
+			border-bottom: 1px solid rgb(0 0 0 / 5%);
+			box-shadow: -4px 0 8px rgb(0 0 0 / 7%);
 			overflow: auto;
 		}
 
@@ -59,13 +59,13 @@ $design-preview-sidebar-width: 311px;
 			margin-bottom: 0;
 		}
 
-		@include break-xlarge {
+		@include break-large {
 			position: relative;
 			padding: 0;
 		}
 	}
 
-	@include break-xlarge {
+	@include break-large {
 		flex-direction: row;
 		padding: 0;
 		margin: 0;
@@ -77,28 +77,47 @@ $design-preview-sidebar-width: 311px;
 	flex-shrink: 0;
 	align-items: center;
 	background-color: var(--color-body-background);
-	border-bottom: 1px solid rgb(0 0 0 / 5%);
-	box-shadow: -4px 0 8px rgb(0 0 0 / 7%);
 	box-sizing: border-box;
 	display: flex;
 	inset-inline-start: 0;
 	inset-inline-end: 0;
 	overflow: auto;
-	z-index: z-index(".is-section-stepper", ".design-preview__sticky-variations");
 
-	@include break-small {
-		align-items: center;
-		justify-content: center;
+	/**
+	 * Global Styles Variations
+	 */
+	.global-styles-variations__type.combined-variations {
+		.global-styles-variations__header {
+			display: none;
+			@include break-large {
+				display: flex;
+			}
+		}
 	}
 
-	@include break-xlarge {
-		border: 0;
-		box-shadow: none;
-		display: block;
-		height: auto;
-		padding: 0;
+	/**
+	 * Gutenberg Components
+	 */
+	.components-navigator-provider,
+	.components-navigator-screen {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow-x: visible;
+		// Disable the animation of the transform on the mobile
+		transform: none !important;
+
+		@include break-large {
+			transform: initial;
+		}
+	}
+
+	@include break-large {
 		position: relative;
 		width: $design-preview-sidebar-width;
+		height: 100%;
+		flex-direction: column;
+		justify-content: flex-start;
 	}
 }
 
@@ -117,7 +136,7 @@ $design-preview-sidebar-width: 311px;
 		box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
 	}
 
-	@include break-xlarge {
+	@include break-large {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
@@ -126,155 +145,120 @@ $design-preview-sidebar-width: 311px;
 	}
 }
 
-.design-preview__sidebar-content {
-	.global-styles-variations__type.combined-variations {
-		.global-styles-variations__header {
-			display: none;
-			@include break-xlarge {
-				display: flex;
-			}
-		}
+.design-preview__sidebar-header {
+	display: none;
+	margin-bottom: 32px;
+
+	.design-preview__sidebar--has-multiple-screens & {
+		display: block;
 	}
 
-	.design-preview__sidebar-header {
-		display: none;
-		margin-bottom: 32px;
+	@include break-large {
+		display: block;
+	}
+}
 
-		.design-preview__sidebar--has-multiple-screens & {
-			display: block;
-		}
+.design-preview__sidebar-title {
+	margin: 0;
 
-		@include break-xlarge {
-			display: block;
-		}
+	h1 {
+		color: var(--studio-gray-100);
+		font-family: $brand-serif;
+		font-size: 2rem;
+		font-weight: 400;
+		letter-spacing: -0.4px;
+		line-height: 32px;
 	}
 
-	.design-preview__sidebar-title {
-		margin: 0;
+	.design-picker-design-title__container {
+		align-items: flex-start;
+		display: flex;
+		flex-direction: column-reverse;
+		gap: 16px;
+		justify-content: center;
 
-		h1 {
-			color: var(--studio-gray-100);
-			font-family: $brand-serif;
-			font-size: 2rem;
-			font-weight: 400;
-			letter-spacing: -0.4px;
-			line-height: 32px;
-		}
-
-		.design-picker-design-title__container {
-			align-items: flex-start;
-			display: flex;
-			flex-direction: column-reverse;
-			gap: 16px;
-			justify-content: center;
-
-			.premium-badge,
-			.woocommerce-bundled-badge {
-				letter-spacing: 0.2px;
-				margin: 0;
-			}
-		}
-
-		@include break-xlarge {
-			display: block;
-		}
-	}
-
-	.design-preview__sidebar-author {
-		font-size: $font-body-small;
-
-		@include break-xlarge {
-			display: block;
-			margin-top: 0.25rem;
-		}
-	}
-
-	.design-preview__sidebar-badges {
 		.premium-badge,
 		.woocommerce-bundled-badge {
 			letter-spacing: 0.2px;
 			margin: 0;
 		}
+	}
 
-		.design-preview__sidebar-badge-category {
-			background-color: rgba(0, 0, 0, 0.05);
-			color: var(--studio-gray-100);
-			border-radius: 4px;
-			font-size: $font-body-extra-small;
-			height: 20px;
-			line-height: 20px;
-			padding: 0 10px;
+	@include break-large {
+		display: block;
+	}
+}
 
-			&:is(button) {
-				cursor: pointer;
-			}
-		}
+.design-preview__sidebar-author {
+	font-size: $font-body-small;
 
-		@include break-xlarge {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 8px 4px;
-			margin-top: 0.75rem;
+	@include break-large {
+		display: block;
+		margin-top: 0.25rem;
+	}
+}
+
+.design-preview__sidebar-badges {
+	.premium-badge,
+	.woocommerce-bundled-badge {
+		letter-spacing: 0.2px;
+		margin: 0;
+	}
+
+	.design-preview__sidebar-badge-category {
+		background-color: rgba(0, 0, 0, 0.05);
+		color: var(--studio-gray-100);
+		border-radius: 4px;
+		font-size: $font-body-extra-small;
+		height: 20px;
+		line-height: 20px;
+		padding: 0 10px;
+
+		&:is(button) {
+			cursor: pointer;
 		}
 	}
 
-	.design-preview__sidebar-description {
-		margin-top: 16px;
+	@include break-large {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 4px;
+		margin-top: 0.75rem;
+	}
+}
 
-		> p {
-			color: var(--studio-gray-80);
+.design-preview__sidebar-description {
+	margin-top: 16px;
+
+	> p {
+		color: var(--studio-gray-80);
+		font-size: 1rem;
+		line-height: 24px;
+
+		button {
+			color: var(--color-link);
+			display: block;
 			font-size: 1rem;
 			line-height: 24px;
+			padding: 0;
 
-			button {
+			&:active,
+			&:focus {
 				color: var(--color-link);
-				display: block;
-				font-size: 1rem;
-				line-height: 24px;
-				padding: 0;
-
-				&:active,
-				&:focus {
-					color: var(--color-link);
-				}
 			}
 		}
-
-		@include break-xlarge {
-			display: block;
-			margin-top: 32px;
-		}
 	}
 
-	@include break-xlarge {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-	}
-
-	/**
-	 * Gutenberg Components
-	 */
-	.components-navigator-provider,
-	.components-navigator-screen {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		overflow-x: visible;
-		// Disable the animation of the transform on the mobile
-		transform: none !important;
-
-		@include break-xlarge {
-			transform: initial;
-		}
+	@include break-large {
+		display: block;
+		margin-top: 32px;
 	}
 }
 
 .design-preview__sidebar-variations {
 	display: block;
-	padding: 2px 16px;
+	padding: 16px 24px 8px 32px;
 	margin: 0 -16px;
-	overflow-y: auto;
 
 	> p {
 		color: var(--studio-gray-100);
@@ -302,25 +286,24 @@ $design-preview-sidebar-width: 311px;
 		}
 	}
 
-	.color-palette-variations {
-		display: flex;
-		margin: 6px 0;
-
-		.global-styles-variation__item {
-			width: 83px;
-		}
-	}
-
+	.color-palette-variations,
 	.font-pairing-variations {
 		display: flex;
-		margin: 6px 0;
-
-		.global-styles-variation__item {
-			width: 120px;
-		}
+		margin: 12px -2px 6px;
 	}
 
-	@include break-xlarge {
+	.color-palette-variations .global-styles-variation__item {
+		width: 83px;
+	}
+
+	.font-pairing-variations .global-styles-variation__item {
+		width: 120px;
+	}
+
+	@include break-large {
+		padding: 8px 16px 0;
+		overflow-y: auto;
+
 		> p {
 			display: block;
 		}
@@ -356,13 +339,13 @@ $design-preview-sidebar-width: 311px;
 	flex-grow: 1;
 	position: relative;
 
-	@include break-xlarge {
+	@include break-large {
 		margin-bottom: 32px;
 	}
 
 	.theme-preview__frame-wrapper {
 		.theme-preview__frame {
-			@media ( max-width: $break-xlarge ) {
+			@media ( max-width: $break-large ) {
 				border: 0;
 				border-radius: 0;
 				box-shadow: none;
@@ -377,7 +360,7 @@ $design-preview-sidebar-width: 311px;
 		display: none;
 		margin-top: -11px;
 
-		@include break-xlarge {
+		@include break-large {
 			display: block;
 		}
 	}
