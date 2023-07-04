@@ -1,4 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -6,16 +7,18 @@ type Props = {
 	newlyTransferredDomains: ResponseDomain[];
 };
 
+function FormatDate( date: string | null ): string {
+	const { __ } = useI18n();
+	if ( date === null ) {
+		return __( 'Unknown date' );
+	}
+	const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+	return new Date( date ).toLocaleString( undefined, options );
+}
+
 export const CompleteDomainsTransferred = ( { newlyTransferredDomains }: Props ) => {
 	const { __ } = useI18n();
 
-	const formatDate = ( date: string | null ): string => {
-		if ( date === null ) {
-			return '';
-		}
-		const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-		return new Date( date ).toLocaleString( 'en-US', options );
-	};
 	return (
 		<>
 			<div className="domain-complete-summary">
@@ -25,8 +28,12 @@ export const CompleteDomainsTransferred = ( { newlyTransferredDomains }: Props )
 							<li className="domain-complete-list-item" key={ key }>
 								<div>
 									<h2>{ domain.domain }</h2>
+
 									<p>
-										{ __( 'Auto renews on ' ) } { formatDate( domain.expiry ) }
+										{
+											//  translators: %s date that will be dynamic .
+											sprintf( __( 'Auto renews on %s' ), FormatDate( domain.expiry ) )
+										}
 									</p>
 								</div>
 								<a
