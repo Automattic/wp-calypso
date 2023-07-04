@@ -56,7 +56,7 @@ import {
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { DomainOrigins } from 'calypso/state/signup/steps/website-content/types';
+import { SignupDomainOrigin } from 'calypso/state/signup/steps/website-content/types';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getExternalBackUrl } from './utils';
 import './style.scss';
@@ -156,7 +156,9 @@ class DomainsStep extends Component {
 	};
 
 	handleAddDomain = ( suggestion, position ) => {
-		const domainOrigin = suggestion?.is_free ? DomainOrigins.FREE : DomainOrigins.CUSTOM;
+		const signupDomainOrigin = suggestion?.is_free
+			? SignupDomainOrigin.FREE
+			: SignupDomainOrigin.CUSTOM;
 
 		const stepData = {
 			stepName: this.props.stepName,
@@ -172,7 +174,7 @@ class DomainsStep extends Component {
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain( { domainOrigin } );
+			this.submitWithDomain( { signupDomainOrigin } );
 		} );
 	};
 
@@ -218,7 +220,7 @@ class DomainsStep extends Component {
 		);
 	};
 
-	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false, domainOrigin ) => {
+	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin ) => {
 		const tracksProperties = Object.assign(
 			{
 				section: this.getAnalyticsSection(),
@@ -240,13 +242,13 @@ class DomainsStep extends Component {
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain( { googleAppsCartItem, shouldHideFreePlan, domainOrigin } );
+			this.submitWithDomain( { googleAppsCartItem, shouldHideFreePlan, signupDomainOrigin } );
 		} );
 	};
 
 	handleDomainExplainerClick = () => {
 		const hideFreePlan = true;
-		this.handleSkip( undefined, hideFreePlan, DomainOrigins.CHOOSE_LATER );
+		this.handleSkip( undefined, hideFreePlan, SignupDomainOrigin.CHOOSE_LATER );
 	};
 
 	handleUseYourDomainClick = () => {
@@ -254,7 +256,7 @@ class DomainsStep extends Component {
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
 	};
 
-	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, domainOrigin } ) => {
+	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -303,7 +305,7 @@ class DomainsStep extends Component {
 				{ domainItem },
 				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem,
-				domainOrigin ? { domainOrigin } : {}
+				signupDomainOrigin ? { signupDomainOrigin } : {}
 			)
 		);
 
