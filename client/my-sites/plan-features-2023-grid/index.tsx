@@ -58,7 +58,6 @@ import {
 	getPlanSlug,
 } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
@@ -1095,14 +1094,12 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible( props.siteId, props.plans );
-	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( props.siteId );
 
 	if ( props.isInSignup ) {
 		return (
 			<ConnectedPlanFeatures2023Grid
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-				isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
 			/>
 		);
 	}
@@ -1112,7 +1109,6 @@ const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 			<ConnectedPlanFeatures2023Grid
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-				isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
