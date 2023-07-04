@@ -9,7 +9,6 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import WebPreview from 'calypso/components/web-preview';
-import { useExperiment } from 'calypso/lib/explat';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
