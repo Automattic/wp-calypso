@@ -34,6 +34,9 @@ function PeopleSectionNavCompact( props: Props ) {
 		<>
 			<NavTabs>
 				{ filters.map( function ( filterItem ) {
+					if ( filterItem.id === 'subscribers' ) {
+						return null;
+					}
 					return (
 						<NavItem
 							key={ filterItem.id }
