@@ -13,11 +13,13 @@ import './style.scss';
 type SubscriberListContainerProps = {
 	onClickView: ( subscriber: Subscriber ) => void;
 	onClickUnsubscribe: ( subscriber: Subscriber ) => void;
+	setShowAddSubscribersModal: React.Dispatch< React.SetStateAction< boolean > >;
 };
 
 const SubscriberListContainer = ( {
 	onClickView,
 	onClickUnsubscribe,
+	setShowAddSubscribersModal,
 }: SubscriberListContainerProps ) => {
 	const { grandTotal, total, perPage, page, pageClickCallback, searchTerm } = useSubscribersPage();
 	useRecordSearch();
@@ -35,7 +37,10 @@ const SubscriberListContainer = ( {
 					{ total ? (
 						<SubscriberList onView={ onClickView } onUnsubscribe={ onClickUnsubscribe } />
 					) : (
-						<NoSearchResults searchTerm={ searchTerm } />
+						<NoSearchResults
+							searchTerm={ searchTerm }
+							setShowAddSubscribersModal={ setShowAddSubscribersModal }
+						/>
 					) }
 
 					<Pagination

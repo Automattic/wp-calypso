@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
@@ -6,9 +7,10 @@ import './style.scss';
 
 type NoSearchResultsProps = {
 	searchTerm: string;
+	setShowAddSubscribersModal: React.Dispatch< React.SetStateAction< boolean > >;
 };
 
-const NoSearchResults = ( { searchTerm }: NoSearchResultsProps ) => {
+const NoSearchResults = ( { searchTerm, setShowAddSubscribersModal }: NoSearchResultsProps ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, selectedSiteId ) );
 
@@ -29,9 +31,15 @@ const NoSearchResults = ( { searchTerm }: NoSearchResultsProps ) => {
 			) }
 
 			<p>
-				{ translate( 'You can easily {{a}}import existing subscribers{{/a}}.', {
+				{ translate( 'You can easily {{button}}import existing subscribers{{/button}}.', {
 					components: {
-						a: <a href="https://wordpress.com" target="_blank" rel="noopener noreferrer" />,
+						button: (
+							<Button
+								plain
+								className="no-search-results__cta"
+								onClick={ () => setShowAddSubscribersModal( true ) }
+							/>
+						),
 					},
 				} ) }
 			</p>

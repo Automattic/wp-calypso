@@ -17,11 +17,6 @@
 		margin-bottom: 0;
 	}
 
-	a {
-		color: $studio-gray-100;
-		text-decoration: underline;
-	}
-
 	.no-search-results__heading {
 		font-size: $font-title-small;
 		font-weight: 500;
@@ -32,6 +27,10 @@
 
 	.no-search-results__query {
 		margin-bottom: 24px;
+	}
+
+	.no-search-results__cta {
+		border-bottom: 1px solid $studio-gray-100;
 	}
 }
 
