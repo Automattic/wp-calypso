@@ -13,9 +13,9 @@ const NoSearchResults = ( { searchTerm }: NoSearchResultsProps ) => {
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, selectedSiteId ) );
 
 	return (
-		<div className="subscriber-list-container__no-results">
-			{ translate( '0 subscribers found' ) }
-			<p>
+		<div className="no-search-results">
+			<p className="no-search-results__heading">{ translate( '0 subscribers found' ) }</p>
+			<p className="no-search-results__query">
 				{ translate( '“%(searchTerm)s” did not match any current subscribers.', {
 					args: { searchTerm },
 				} ) }
