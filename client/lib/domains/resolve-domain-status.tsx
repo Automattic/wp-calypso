@@ -44,6 +44,7 @@ export type ResolveDomainStatusOptionsBag = {
 	isSiteAutomatedTransfer?: boolean | null;
 	isDomainOnlySite?: boolean | null;
 	siteSlug?: string | null;
+	currentRoute?: string | null;
 	getMappingErrors?: boolean | null;
 };
 
@@ -58,6 +59,7 @@ export function resolveDomainStatus(
 		isDomainOnlySite = null,
 		siteSlug = null,
 		getMappingErrors = false,
+		currentRoute = null,
 	}: ResolveDomainStatusOptionsBag = {}
 ): ResolveDomainStatusReturn {
 	const transferOptions = {
@@ -252,7 +254,11 @@ export function resolveDomainStatus(
 								components: {
 									a: (
 										<a
-											href={ domainManagementEditContactInfo( siteSlug as string, domain.name ) }
+											href={ domainManagementEditContactInfo(
+												siteSlug as string,
+												domain.name,
+												currentRoute
+											) }
 										></a>
 									),
 								},
@@ -483,7 +489,11 @@ export function resolveDomainStatus(
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ domainManagementEdit( siteSlug as string, domain.domain ) } />,
+								a: (
+									<a
+										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
+									/>
+								),
 							},
 						}
 					),

@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useCurrentRoute } from 'calypso/components/route';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
@@ -26,6 +27,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { currentRoute } = useCurrentRoute();
 
 	const renderCircle = () => (
 		<SVG viewBox="0 0 24 24" height={ 8 } width={ 8 }>
@@ -77,7 +79,9 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	};
 
 	const renderStatusBadge = ( domain: ResponseDomain ) => {
-		const { status, statusClass } = resolveDomainStatus( domain, null, translate, dispatch );
+		const { status, statusClass } = resolveDomainStatus( domain, null, translate, dispatch, {
+			currentRoute,
+		} );
 
 		if ( status ) {
 			return statusClass === 'status-success'
@@ -114,6 +118,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 			{
 				siteSlug: site.slug,
 				getMappingErrors: true,
+				currentRoute,
 			}
 		);
 

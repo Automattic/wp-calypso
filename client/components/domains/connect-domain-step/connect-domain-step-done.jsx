@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import domainConnectedIllustration from 'calypso/assets/images/domains/connect.svg';
 import CardHeading from 'calypso/components/card-heading';
+import { useCurrentRoute } from 'calypso/components/route';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -22,7 +23,8 @@ const ConnectDomainStepDone = ( {
 	queryErrorDescription,
 } ) => {
 	const { __ } = useI18n();
-	const siteDomainsUrl = domainManagementList( selectedSiteSlug );
+	const { currentRoute } = useCurrentRoute();
+	const siteDomainsUrl = domainManagementList( selectedSiteSlug, currentRoute );
 
 	const illustration = domainConnectedIllustration && (
 		<img src={ domainConnectedIllustration } alt="" width={ 150 } />
