@@ -10,9 +10,8 @@ import SiteCreationStep from 'calypso/landing/stepper/declarative-flow/internals
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
-import { useSelector } from 'calypso/state';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
-import { isInHostingFlow } from '../utils/is-in-hosting-flow';
+import { useIsCurrentlyHostingFlow } from '../utils/hosting-flow';
 import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
@@ -49,7 +48,7 @@ const importHostedSiteFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const hostingFlow = useSelector( isInHostingFlow );
+		const hostingFlow = useIsCurrentlyHostingFlow();
 		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );

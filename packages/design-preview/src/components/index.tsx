@@ -78,7 +78,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		let inlineCss = INJECTED_CSS;
 
 		if ( globalStyles ) {
-			inlineCss += transformStyles( globalStyles );
+			inlineCss += transformStyles( globalStyles ).filter( Boolean ).join( '' );
 		}
 
 		if ( variations && selectedVariation ) {

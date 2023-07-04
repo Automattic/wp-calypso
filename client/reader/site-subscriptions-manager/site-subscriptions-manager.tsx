@@ -1,3 +1,4 @@
+import { SubscriptionManager } from '@automattic/data-stores';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -11,9 +12,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import {
-	SiteSubscriptionsManager as ExternalSiteSubscriptionsManager,
-	SiteSubscriptionsManagerProvider,
-} from 'calypso/landing/subscriptions/components/site-subscriptions-manager';
+	SiteSubscriptionsList,
+	SiteSubscriptionsListActionsBar,
+} from 'calypso/landing/subscriptions/components/site-subscriptions-list';
 import {
 	SubscriptionsPortal,
 	SubscriptionManagerContextProvider,
@@ -70,13 +71,11 @@ const SiteSubscriptionsManager = () => {
 					</SubscriptionsEllipsisMenu>
 				</HStack>
 
-				<SiteSubscriptionsManagerProvider>
-					<ExternalSiteSubscriptionsManager>
-						<ExternalSiteSubscriptionsManager.ListActionsBar />
-						<RecommendedSites />
-						<ExternalSiteSubscriptionsManager.List />
-					</ExternalSiteSubscriptionsManager>
-				</SiteSubscriptionsManagerProvider>
+				<SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
+					<SiteSubscriptionsListActionsBar />
+					<RecommendedSites />
+					<SiteSubscriptionsList />
+				</SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
 			</Main>
 		</SubscriptionManagerContextProvider>
 	);

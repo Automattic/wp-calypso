@@ -1,4 +1,4 @@
-import { Reader } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -7,7 +7,7 @@ import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import { useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks/';
-import { useSiteSubscriptionsManager } from './site-subscriptions-manager-context';
+import './styles/site-subscriptions-list-actions-bar.scss';
 
 const { SiteSubscriptionsSortBy: SortBy } = Reader;
 
@@ -19,22 +19,22 @@ const getSortOptions = ( translate: ReturnType< typeof useTranslate > ) => [
 
 const ListActionsBar = () => {
 	const translate = useTranslate();
-	const { handleSearch, sortTerm, setSortTerm, filterOption, setFilterOption } =
-		useSiteSubscriptionsManager();
+	const { setSearchTerm, sortTerm, setSortTerm, filterOption, setFilterOption } =
+		SubscriptionManager.useSiteSubscriptionsQueryProps();
 
 	const filterOptions = useSiteSubscriptionsFilterOptions();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 
 	return (
-		<div className="list-actions-bar">
+		<div className="site-subscriptions-list-actions-bar">
 			<SearchInput
 				placeholder={ translate( 'Search by site name or address…' ) }
 				searchIcon={ <SearchIcon size={ 18 } /> }
-				onSearch={ handleSearch }
+				onSearch={ setSearchTerm }
 			/>
 
 			<SelectDropdown
-				className="subscriptions-manager__filter-control list-actions-bar-spacer"
+				className="list-actions-bar__filter-control list-actions-bar__spacer"
 				options={ filterOptions }
 				onSelect={ ( selectedOption: Option< Reader.SiteSubscriptionsFilterBy > ) =>
 					setFilterOption( selectedOption.value )

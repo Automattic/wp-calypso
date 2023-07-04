@@ -42,7 +42,6 @@ export function register(): typeof STORE_KEY {
 			'goals',
 			'hasUsedDomainsStep',
 			'hasUsedPlansStep',
-			'hideFreePlan',
 			'intent',
 			'paidSubscribers',
 			'lastLocation',

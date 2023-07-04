@@ -4,7 +4,9 @@
 @import "client/assets/stylesheets/p2-vars";
 @import "client/landing/subscriptions/styles/row-title-label";
 
-.subscription-manager__site-list {
+
+.site-subscriptions-list {
+	margin: 0;
 
 	.row {
 		border-block-end: 1px solid rgb(238, 238, 238);
@@ -27,83 +29,73 @@
 			}
 		}
 
-		.title-box {
+		&.deleted {
+			opacity: 0.5;
+		}
+
+		.title-cell {
 			display: flex;
 			align-items: center;
 			flex: 1.83;
 			min-width: 0;
+		}
 
-			> a {
-				flex: 0;
+		.title-icon {
+			display: flex;
+			flex: 0;
+			min-width: 40px;
+		}
+
+		.title-column {
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+			padding-left: 12px;
+		}
+
+		.title-name {
+			font-weight: 600;
+			font-size: $font-code;
+			line-height: 22px;
+			color: $studio-gray-100;
+			letter-spacing: -0.24px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			padding-right: 10px;
+
+			&:hover {
+				text-decoration: underline;
 			}
 
-			.icon {
-				fill: var(--color-text-subtle);
-				width: 40px;
-				height: 40px;
-				flex: none;
-				border-radius: 50%;
-
-				@media (max-width: $break-small) {
-					display: none;
-				}
+			.p2-label {
+				@extend %p2-label;
 			}
 
-			.title-column {
-				display: flex;
-				flex-direction: column;
-				min-width: 0;
-				padding-left: 12px;
-
-				@media (max-width: $break-small) {
-					padding-left: 0;
-				}
-
-				.name {
-					font-weight: 600;
-					font-size: $font-code;
-					line-height: 22px;
-					color: $studio-gray-100;
-					letter-spacing: -0.24px;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					overflow: hidden;
-					padding-right: 10px;
-
-					&:hover {
-						text-decoration: underline;
-					}
-
-					.p2-label {
-						@extend %p2-label;
-					}
-
-					.paid-label {
-						@extend %paid-label;
-					}
-				}
-
-				.url {
-					font-weight: 400;
-					font-size: $font-body-extra-small;
-					line-height: 18px;
-					color: $studio-gray-40;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					overflow: hidden;
-
-					&:hover {
-						text-decoration: underline;
-					}
-				}
+			.paid-label {
+				@extend %paid-label;
 			}
 		}
 
-		.title-box,
-		.email-frequency,
-		.date,
-		.new-posts,
-		.new-comments {
+		.title-url {
+			font-weight: 400;
+			font-size: $font-body-extra-small;
+			line-height: 18px;
+			color: $studio-gray-40;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
+		.title-cell,
+		.email-frequency-cell,
+		.date-cell,
+		.new-posts-cell,
+		.new-comments-cell {
 			font-weight: 400;
 			font-size: $font-body-small;
 			line-height: 20px;
@@ -111,8 +103,8 @@
 			color: $studio-gray-60;
 		}
 
-		.new-posts,
-		.new-comments {
+		.new-posts-cell,
+		.new-comments-cell {
 			.green {
 				fill: var(--color-success);
 				vertical-align: text-bottom;
@@ -124,7 +116,7 @@
 			}
 		}
 
-		.actions {
+		.actions-cell {
 			flex-basis: 36px;
 			flex-grow: initial;
 
@@ -139,26 +131,30 @@
 	}
 
 	@media (max-width: $break-xlarge) {
-		.new-comments {
+		.new-comments-cell {
 			display: none;
 		}
 	}
 
 	@media (max-width: $break-large) {
-		.new-posts {
+		.new-posts-cell {
 			display: none;
 		}
 	}
 
 	@media (max-width: $break-medium) {
-		.email-frequency {
+		.email-frequency-cell {
 			display: none;
 		}
 	}
 
 	@media (max-width: $break-small) {
-		.date {
+		.date-cell {
 			display: none;
 		}
 	}
+}
+
+.new-comments-tooltip__content {
+	width: 200px;
 }
