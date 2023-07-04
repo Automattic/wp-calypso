@@ -63,4 +63,12 @@
 			}
 		}
 	}
+
+	.not-found-site-subscriptions {
+		color: $studio-gray-60;
+		font-size: $font-body-small;
+		font-weight: 500;
+		font-family: "SF Pro Text", $sans;
+		line-height: $font-title-small;
+	}
 }
