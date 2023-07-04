@@ -68,13 +68,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 	const availabilityNotice = getAvailabilityNotice( domain, validationResult?.status, null, true );
 
 	// final success
-	if ( validationResult?.unlocked === false ) {
-		return {
-			valid: false,
-			loading: false,
-			message: __( 'This domain is locked and can not be transferred.' ),
-		};
-	} else if ( validationResult?.auth_code_valid ) {
+	if ( validationResult?.auth_code_valid ) {
 		return {
 			valid: true,
 			loading: false,
