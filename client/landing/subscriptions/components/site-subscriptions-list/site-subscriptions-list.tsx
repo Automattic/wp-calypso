@@ -1,23 +1,58 @@
 import { SubscriptionManager } from '@automattic/data-stores';
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { Notice, NoticeType } from '../notice';
 import SiteRow from './site-row';
+import './styles/site-subscriptions-list.scss';
 
-const SiteSubscriptionsList = () => {
+type SiteSubscriptionsListProps = {
+	emptyComponent?: React.ComponentType;
+	notFoundComponent?: React.ComponentType;
+};
+
+const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
+	emptyComponent: EmptyComponent,
+	notFoundComponent: NotFoundComponent,
+} ) => {
 	const translate = useTranslate();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const { filterOption, searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
-	const { data } = SubscriptionManager.useSiteSubscriptionsQuery();
+	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
+	const { subscriptions, totalCount } = data;
 
-	if ( ! data ) {
-		throw new Error(
-			'SiteSubscriptionsList depends on the response from the site subscriptions query '
+	if ( error ) {
+		return (
+			<Notice type={ NoticeType.Error }>
+				{ translate(
+					'We had a small hiccup loading your subscriptions. Please try refreshing the page.'
+				) }
+			</Notice>
 		);
 	}
 
-	const { subscriptions, totalCount } = data;
+	if ( isLoading ) {
+		return (
+			<div className="loading-container">
+				<Spinner />
+			</div>
+		);
+	}
+
+	if ( ! isLoading && ! totalCount ) {
+		if ( EmptyComponent ) {
+			return <EmptyComponent />;
+		}
+		return (
+			<Notice type={ NoticeType.Warning }>
+				{ translate( 'You are not subscribed to any sites.' ) }
+			</Notice>
+		);
+	}
 
 	if ( totalCount > 0 && subscriptions.length === 0 ) {
+		if ( NotFoundComponent ) {
+			return <NotFoundComponent />;
+		}
 		return (
 			<Notice type={ NoticeType.Warning }>
 				{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {

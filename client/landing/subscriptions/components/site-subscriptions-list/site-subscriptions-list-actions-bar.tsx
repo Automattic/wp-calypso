@@ -7,6 +7,7 @@ import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import { useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks/';
+import './styles/site-subscriptions-list-actions-bar.scss';
 
 const { SiteSubscriptionsSortBy: SortBy } = Reader;
 
@@ -25,7 +26,7 @@ const ListActionsBar = () => {
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 
 	return (
-		<div className="list-actions-bar">
+		<div className="site-subscriptions-list-actions-bar">
 			<SearchInput
 				placeholder={ translate( 'Search by site name or address…' ) }
 				searchIcon={ <SearchIcon size={ 18 } /> }
@@ -33,7 +34,7 @@ const ListActionsBar = () => {
 			/>
 
 			<SelectDropdown
-				className="subscriptions-manager__filter-control list-actions-bar-spacer"
+				className="list-actions-bar__filter-control list-actions-bar__spacer"
 				options={ filterOptions }
 				onSelect={ ( selectedOption: Option< Reader.SiteSubscriptionsFilterBy > ) =>
 					setFilterOption( selectedOption.value )

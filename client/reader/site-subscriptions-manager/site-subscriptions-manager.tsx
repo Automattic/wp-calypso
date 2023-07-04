@@ -11,7 +11,10 @@ import ReaderImportButton from 'calypso/blocks/reader-import-button';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import { SiteSubscriptionsManager as ExternalSiteSubscriptionsManager } from 'calypso/landing/subscriptions/components/site-subscriptions-manager';
+import {
+	SiteSubscriptionsList,
+	SiteSubscriptionsListActionsBar,
+} from 'calypso/landing/subscriptions/components/site-subscriptions-list';
 import {
 	SubscriptionsPortal,
 	SubscriptionManagerContextProvider,
@@ -69,11 +72,9 @@ const SiteSubscriptionsManager = () => {
 				</HStack>
 
 				<SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
-					<ExternalSiteSubscriptionsManager>
-						<ExternalSiteSubscriptionsManager.ListActionsBar />
-						<RecommendedSites />
-						<ExternalSiteSubscriptionsManager.List />
-					</ExternalSiteSubscriptionsManager>
+					<SiteSubscriptionsListActionsBar />
+					<RecommendedSites />
+					<SiteSubscriptionsList />
 				</SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
 			</Main>
 		</SubscriptionManagerContextProvider>
