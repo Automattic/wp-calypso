@@ -17,14 +17,15 @@ import './style.scss';
  * New notices are based on async API call and hence is faster than the old notices.
  */
 const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
-	const hasValidPurchase = useSelector( hasSiteProductJetpackStatsPaid );
+	const hasValidPurchase = useSelector( ( state ) =>
+		hasSiteProductJetpackStatsPaid( state, siteId )
+	);
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
 	return (
 		<>
-			{ /** TODO: test whether site has valid purchase. */ }
 			{ config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic && ! hasValidPurchase && (
 				<DoYouLoveJetpackStatsNotice siteId={ siteId } />
 			) }
