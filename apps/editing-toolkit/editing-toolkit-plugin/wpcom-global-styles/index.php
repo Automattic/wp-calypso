@@ -161,16 +161,19 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		true
 	);
 	wp_set_script_translations( 'wpcom-global-styles-editor', 'full-site-editing' );
-	$plan = wpcom_site_has_global_styles_in_personal_plan() ? 'personal-bundle' : 'value_bundle';
-	wp_localize_script(
-		'wpcom-global-styles-editor',
-		'wpcomGlobalStyles',
-		array(
-			'assetsUrl'   => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=$plan&feature=style-customization",
-			'wpcomBlogId' => wpcom_global_styles_get_wpcom_current_blog_id(),
-		)
+	$is_global_styles_in_personal_plan = wpcom_site_has_global_styles_in_personal_plan();
+	$plan                              = $is_global_styles_in_personal_plan ? 'personal-bundle' : 'value_bundle';
+	$data                              = array(
+		'assetsUrl'   => plugins_url( 'dist/', __FILE__ ),
+		'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=$plan&feature=style-customization",
+		'wpcomBlogId' => wpcom_global_styles_get_wpcom_current_blog_id(),
 	);
+
+	if ( $is_global_styles_in_personal_plan ) {
+		$data['globalStylesInPersonalPlan'] = $is_global_styles_in_personal_plan;
+	}
+
+	wp_localize_script( 'wpcom-global-styles-editor', 'wpcomGlobalStyles', $data );
 	wp_enqueue_style(
 		'wpcom-global-styles-editor',
 		plugins_url( 'dist/wpcom-global-styles.css', __FILE__ ),
