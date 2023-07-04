@@ -1,5 +1,5 @@
+export { ReadFeedSearchProvider, useReadFeedSearch } from './read-feed-search';
 export {
-	SiteSubscriptionsQueryProps,
 	SiteSubscriptionsQueryPropsProvider,
 	useSiteSubscriptionsQueryProps,
 } from './site-subscriptions-query-props';
