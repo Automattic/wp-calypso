@@ -19,28 +19,26 @@ export const CompleteDomainsTransferred = ( { newlyTransferredDomains }: Props )
 	return (
 		<>
 			<div className="domain-complete-summary">
-				{ newlyTransferredDomains && (
-					<ul className="domain-complete-list">
-						{ newlyTransferredDomains.map( ( domain, key ) => {
-							return (
-								<li className="domain-complete-list-item" key={ key }>
-									<div>
-										<h2>{ domain.domain }</h2>
-										<p>
-											{ __( 'Auto renews on ' ) } { formatDate( domain.expiry ) }
-										</p>
-									</div>
-									<a
-										href={ `https://wordpress.com/domains/manage/${ domain.domain }` }
-										className="components-button is-secondary"
-									>
-										{ __( 'Manage domain' ) }
-									</a>
-								</li>
-							);
-						} ) }
-					</ul>
-				) }
+				<ul className="domain-complete-list">
+					{ newlyTransferredDomains.map( ( domain, key ) => {
+						return (
+							<li className="domain-complete-list-item" key={ key }>
+								<div>
+									<h2>{ domain.domain }</h2>
+									<p>
+										{ __( 'Auto renews on ' ) } { formatDate( domain.expiry ) }
+									</p>
+								</div>
+								<a
+									href={ `https://wordpress.com/domains/manage/${ domain.domain }` }
+									className="components-button is-secondary"
+								>
+									{ __( 'Manage domain' ) }
+								</a>
+							</li>
+						);
+					} ) }
+				</ul>
 			</div>
 			<div className="domain-complete-tips">
 				<div className="domain-complete-tips-items">
