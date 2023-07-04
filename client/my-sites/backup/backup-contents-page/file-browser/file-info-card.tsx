@@ -48,7 +48,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 			} );
 	}, [ siteId, item ] );
 
-	const showActions = item.type !== 'table' && item.extensionType !== 'changed';
+	const showActions = item.type !== 'table' && item.type !== 'archive';
 
 	// Do not display file info if the item hasChildren (it could be a directory, plugins, themes, etc.)
 	if ( item.hasChildren ) {
