@@ -1,60 +1,47 @@
-import { useQuery, useMutation, UseMutationResult } from '@tanstack/react-query';
+import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { Nudge, useOdysseusAssistantContext } from '../context';
+import type { Message } from '../context';
 
-function queryValidate( siteId: number | null ) {
-	const path = `/sites/${ siteId }/odysseus`;
-	return wpcom.req.get( { path, apiNamespace: 'wpcom/v2' } );
-}
-
-export type Message = {
-	content: string;
-	role: 'user' | 'assistant';
-};
-
-// It just checks that the endpoint is working
-export const useOddyseusEndpointSanityCheck = ( siteId: number | null ) => {
-	return useQuery( {
-		queryKey: [ 'oddyseus-assistant-validation', siteId ],
-		queryFn: () => queryValidate( siteId ),
-		staleTime: 5 * 60 * 1000,
-		enabled: siteId !== null,
-	} );
-};
-
-function postOddyseus(
+function odysseusSendMessage(
 	siteId: number | null,
-	prompt: string,
+	messages: Message[],
 	context: Nudge,
-	messages: Message[] = [],
-	sectionName: string
+	sectionName: string,
+	chatId?: string | null
 ) {
-	const path = `/sites/${ siteId }/odysseus`;
+	const path = `/odysseus/send_message`;
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { prompt, context, messages, sectionName },
+		body: { messages, context, sectionName, siteId, chatId },
 	} );
 }
 
-export const useOddyseusEndpointPost = (
+// It will post a new message using the current chatId
+export const useOddyseusSendMessage = (
 	siteId: number | null
 ): UseMutationResult<
-	string,
+	{ chatId: string; message: Message },
 	unknown,
-	{ prompt: string; context: Nudge; messages: Message[] }
+	{ message: Message; context: Nudge }
 > => {
-	const { sectionName } = useOdysseusAssistantContext();
+	const { sectionName, chat, messages, setChat } = useOdysseusAssistantContext();
 
 	return useMutation( {
-		mutationFn: ( {
-			prompt,
-			context,
-			messages,
-		}: {
-			prompt: string;
-			context: Nudge;
-			messages: Message[];
-		} ) => postOddyseus( siteId, prompt, context, messages, sectionName ),
+		mutationFn: ( { message, context }: { message: Message; context: Nudge } ) => {
+			// If chatId is defined, we only send the message to the current chat
+			// Otherwise we send previous messages and the new one appended to the end to the server
+			const messagesToSend = chat?.chatId ? [ message ] : [ ...messages, message ];
+
+			return odysseusSendMessage( siteId, messagesToSend, context, sectionName, chat.chatId );
+		},
+		onSuccess: ( data ) => {
+			// After a successful mutation, update the chat state with the new chatId
+			//It should be immediate (eg using the useState parameter of the hook) (only update chatId)
+			setChat( { ...chat, chatId: data.chatId } );
+		},
 	} );
 };
+
+// TODO: We will add lately a clear chat to forget the session

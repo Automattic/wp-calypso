@@ -9,25 +9,46 @@ export type Nudge = {
 	initialMessage: string;
 	context?: Record< string, unknown >;
 };
-interface OdysseusAssistantContextInterface {
-	currentView: string;
-	setCurrentView: ( currentView: string ) => void;
-	sectionName: string;
-	sendNudge: ( nudge: Nudge ) => void;
-	lastNudge: Nudge | null;
-}
 
-const defaultCurrentViewContextInterface = {
-	currentView: '',
-	setCurrentView: noop,
-	sectionName: '',
-	sendNudge: noop,
-	lastNudge: null,
+export type Message = {
+	content: string;
+	role: 'user' | 'assistant';
 };
 
-// Create a new context
+export type Chat = {
+	chatId?: string | null;
+	messages: Message[];
+};
+
+interface OdysseusAssistantContextInterface {
+	addMessage: ( content: string, role: 'user' | 'assistant', chatId?: string | null ) => void;
+	chat: Chat;
+	isLoadingChat: boolean;
+	lastNudge: Nudge | null;
+	messages: Message[];
+	sectionName: string;
+	sendNudge: ( nudge: Nudge ) => void;
+	setChat: ( chat: Chat ) => void;
+	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
+	setMessages: ( messages: Message[] ) => void;
+}
+
+const defaultContextInterfaceValues = {
+	addMessage: noop,
+	chat: { messages: [] },
+	isLoadingChat: false,
+	lastNudge: null,
+	messages: [],
+	sectionName: '',
+	sendNudge: noop,
+	setChat: noop,
+	setIsLoadingChat: noop,
+	setMessages: noop,
+};
+
+// Create a default new context
 const OdysseusAssistantContext = createContext< OdysseusAssistantContextInterface >(
-	defaultCurrentViewContextInterface
+	defaultContextInterfaceValues
 );
 
 // Custom hook to access the OdysseusAssistantContext
@@ -41,12 +62,35 @@ const OdysseusAssistantProvider = ( {
 	sectionName: string;
 	children: ReactNode;
 } ) => {
-	const [ currentView, setCurrentView ] = useState( '' );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
+	const [ messages, setMessages ] = useState< Message[] >( [] );
+	const [ chat, setChat ] = useState< Chat >( { messages: [] } );
+
+	const addMessage = ( content: string, role: 'user' | 'assistant', chatId?: string | null ) => {
+		setMessages( ( prevMessages ) => {
+			const newMessages = [ ...prevMessages, { content, role } as Message ];
+			setChat( ( prevChat ) => ( {
+				chatId: chatId ?? prevChat.chatId,
+				messages: newMessages,
+			} ) );
+			return newMessages;
+		} );
+	};
 
 	return (
 		<OdysseusAssistantContext.Provider
-			value={ { currentView, setCurrentView, sectionName, sendNudge: setLastNudge, lastNudge } }
+			value={ {
+				addMessage,
+				chat,
+				isLoadingChat: false,
+				lastNudge,
+				messages,
+				sectionName,
+				sendNudge: setLastNudge,
+				setChat,
+				setIsLoadingChat: noop,
+				setMessages,
+			} }
 		>
 			{ children }
 		</OdysseusAssistantContext.Provider>
