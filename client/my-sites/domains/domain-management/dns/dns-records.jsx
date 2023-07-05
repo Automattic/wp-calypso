@@ -12,7 +12,11 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
 import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
-import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	isUnderDomainManagementAll,
+} from 'calypso/my-sites/domains/paths';
 import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -40,10 +44,12 @@ class DnsRecords extends Component {
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
-					selectedDomainName,
+					currentRoute,
 					selectedSite?.options?.is_domain_only
 				),
 			},

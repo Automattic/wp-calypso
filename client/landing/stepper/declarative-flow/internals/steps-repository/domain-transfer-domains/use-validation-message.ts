@@ -1,7 +1,7 @@
-import { useIsDomainCodeValid } from '@automattic/data-stores';
 import { doesStringResembleDomain } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDebounce } from 'use-debounce';
+import { useIsDomainCodeValid } from 'calypso/landing/stepper/hooks/use-is-domain-code-valid';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 
 export function useValidationMessage( domain: string, auth: string, hasDuplicates: boolean ) {

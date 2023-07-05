@@ -48,6 +48,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import TransferDomainPrecheck from './transfer-domain-precheck';
@@ -296,12 +297,12 @@ class TransferDomainStep extends Component {
 	}
 
 	startPendingInboundTransfer = ( domain, authCode ) => {
-		const { selectedSite, translate } = this.props;
+		const { currentRoute, selectedSite, translate } = this.props;
 
 		startInboundTransfer( selectedSite.ID, domain, authCode )
 			.then( () => {
 				this.props.fetchSiteDomains( selectedSite.ID );
-				page( domainManagementTransferIn( selectedSite.slug, domain ) );
+				page( domainManagementTransferIn( selectedSite.slug, domain, currentRoute ) );
 			} )
 			.catch( () => {
 				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
@@ -712,6 +713,7 @@ const recordMapDomainButtonClick = ( section ) =>
 
 export default connect(
 	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSite: getSelectedSite( state ),
