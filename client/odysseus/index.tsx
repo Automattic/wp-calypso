@@ -73,7 +73,11 @@ const OdysseusAssistant = () => {
 	const handleSendMessage = async () => {
 		try {
 			setIsLoading( true );
-			addMessage( input, 'user', 'message' );
+			addMessage( {
+				content: input,
+				role: 'user',
+				type: 'message',
+			} );
 
 			setInput( '' );
 			const response = await sendOdysseusMessage( {
@@ -85,13 +89,19 @@ const OdysseusAssistant = () => {
 				},
 			} );
 
-			addMessage( response.message.content, 'bot', 'message', response.chatId );
+			addMessage( {
+				content: response.message.content,
+				role: 'bot',
+				type: 'message',
+				chatId: response.chatId,
+			} );
 		} catch ( e ) {
-			addMessage(
-				"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!",
-				'bot',
-				'message'
-			);
+			addMessage( {
+				content:
+					"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!",
+				role: 'bot',
+				type: 'message',
+			} );
 		} finally {
 			setIsLoading( false );
 		}
