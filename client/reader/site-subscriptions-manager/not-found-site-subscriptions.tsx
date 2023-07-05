@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 const NotFoundSiteSubscriptions = () => {
 	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
-	const readFeedSearch = Reader.useReadFeedSearch();
+	const readFeedSearch = Reader.useUnsubscribedFeedsSearch();
 
 	return (
 		<div className="not-found-site-subscriptions">

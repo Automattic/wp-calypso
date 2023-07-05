@@ -1,4 +1,7 @@
-export { ReadFeedSearchProvider, useReadFeedSearch } from './read-feed-search';
+export {
+	UnsubscribedFeedsSearchProvider,
+	useUnsubscribedFeedsSearch,
+} from './unsubscribed-feeds-search';
 export {
 	SiteSubscriptionsQueryPropsProvider,
 	useSiteSubscriptionsQueryProps,

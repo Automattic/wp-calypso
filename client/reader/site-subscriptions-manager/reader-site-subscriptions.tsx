@@ -1,6 +1,5 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { useEffect } from 'react';
-import { ReaderFeedSitesSearchList } from 'calypso/blocks/reader-feed-sites-search-list';
+import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
 import {
 	SiteSubscriptionsList,
 	SiteSubscriptionsListActionsBar,
@@ -11,14 +10,10 @@ import NotFoundSiteSubscriptions from './not-found-site-subscriptions';
 const ReaderSiteSubscriptions = () => {
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
 	const siteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery();
-	const readFeedSearch = Reader.useReadFeedSearch();
-
-	useEffect( () => {
-		readFeedSearch?.setSearchQuery( searchTerm );
-	}, [ readFeedSearch, searchTerm ] );
+	const unsubscribedFeedsSearch = Reader.useUnsubscribedFeedsSearch();
 
 	const hasSomeSubscriptions = siteSubscriptionsQuery.data.subscriptions.length > 0;
-	const hasSomeFeedSearchResults = ( readFeedSearch?.feedItems.length ?? 0 ) > 0;
+	const hasSomeUnsubscribedSearchResults = ( unsubscribedFeedsSearch?.feedItems.length ?? 0 ) > 0;
 
 	return (
 		<>
@@ -26,14 +21,14 @@ const ReaderSiteSubscriptions = () => {
 			{ ! searchTerm && <RecommendedSites /> }
 			<SiteSubscriptionsList notFoundComponent={ NotFoundSiteSubscriptions } />
 
-			{ hasSomeSubscriptions && hasSomeFeedSearchResults ? (
+			{ hasSomeSubscriptions && hasSomeUnsubscribedSearchResults ? (
 				<div className="site-subscriptions__search-recommendations-label">
 					{
-						'Other recommendations for you' // TODO: translate once we have the final string
+						'Here are some other sites that match your search.' // TODO: translate once we have the final string
 					}
 				</div>
 			) : null }
-			<ReaderFeedSitesSearchList />
+			<UnsubscribedFeedsSearchList />
 		</>
 	);
 };
@@ -41,9 +36,9 @@ const ReaderSiteSubscriptions = () => {
 export default () => {
 	return (
 		<SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
-			<Reader.ReadFeedSearchProvider>
+			<Reader.UnsubscribedFeedsSearchProvider>
 				<ReaderSiteSubscriptions />
-			</Reader.ReadFeedSearchProvider>
+			</Reader.UnsubscribedFeedsSearchProvider>
 		</SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
 	);
 };

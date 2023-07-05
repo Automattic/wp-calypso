@@ -12,11 +12,11 @@ import { getFeedUrl, getSiteName, getSiteUrl } from 'calypso/reader/get-helpers'
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
-type ReaderFeedSiteItemProps = {
+type ReaderUnsubscribedFeedItemProps = {
 	feed: Reader.FeedItem;
 };
 
-const ReaderFeedSiteItem = ( { feed }: ReaderFeedSiteItemProps ) => {
+const ReaderUnsubscribedFeedItem = ( { feed }: ReaderUnsubscribedFeedItemProps ) => {
 	if ( Number.isNaN( Number( feed.blog_ID ) ) ) {
 		throw new Error( 'Feed item blog_ID is NaN' );
 	}
@@ -38,19 +38,19 @@ const ReaderFeedSiteItem = ( { feed }: ReaderFeedSiteItemProps ) => {
 	const siteUrl = getSiteUrl( { feed, site } );
 
 	return (
-		<HStack as="li" className="reader-feed-site-item" alignItems="center" spacing={ 8 }>
-			<HStack className="reader-feed-site-item__site-preview-h-stack" spacing={ 3 }>
+		<HStack as="li" className="reader-unsubscribed-feed-item" alignItems="center" spacing={ 8 }>
+			<HStack className="reader-unsubscribed-feed-item__site-preview-h-stack" spacing={ 3 }>
 				<SiteIcon iconUrl={ site?.icon?.img ?? site?.icon?.ico } size={ 40 } />
-				<VStack className="reader-feed-site-item__title-with-url-v-stack" spacing={ 0 }>
+				<VStack className="reader-unsubscribed-feed-item__title-with-url-v-stack" spacing={ 0 }>
 					<a
-						className="reader-feed-site-item__title"
+						className="reader-unsubscribed-feed-item__title"
 						href={ getFeedUrl( { feed, site } ) }
 						onClick={ () => undefined } // TODO: track click
 					>
 						{ siteName }
 					</a>
 					<ExternalLink
-						className="reader-feed-site-item__url"
+						className="reader-unsubscribed-feed-item__url"
 						href={ siteUrl }
 						rel="noreferrer noopener"
 						target="_blank"
@@ -61,7 +61,7 @@ const ReaderFeedSiteItem = ( { feed }: ReaderFeedSiteItemProps ) => {
 				</VStack>
 			</HStack>
 
-			<div className="reader-feed-site-item__description">{ site?.description }</div>
+			<div className="reader-unsubscribed-feed-item__description">{ site?.description }</div>
 			<div>
 				<Button
 					primary
@@ -106,4 +106,4 @@ const ReaderFeedSiteItem = ( { feed }: ReaderFeedSiteItemProps ) => {
 	);
 };
 
-export default ReaderFeedSiteItem;
+export default ReaderUnsubscribedFeedItem;

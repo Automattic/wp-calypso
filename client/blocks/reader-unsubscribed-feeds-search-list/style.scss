@@ -1,9 +1,9 @@
 @import "client/landing/subscriptions/components/site-subscriptions-list/styles/placeholders";
 
-.reader-feed-sites-search-list {
+.reader-unsubscribed-feeds-search-list {
 	margin: 0;
 
-	.reader-feed-site-item {
+	.reader-unsubscribed-feed-item {
 		@extend %site-subscriptions-list-site-row;
 
 		&__site-preview-h-stack {
