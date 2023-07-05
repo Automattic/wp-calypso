@@ -316,7 +316,7 @@ class DomainsStep extends Component {
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
 
-	handleAddMapping = ( sectionName, domain, state ) => {
+	handleAddMapping = ( { sectionName, domain, state, signupDomainOrigin } ) => {
 		const domainItem = domainMapping( { domain } );
 		const isPurchasingItem = true;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -338,7 +338,11 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem )
+			Object.assign(
+				{ domainItem },
+				useThemeHeadstartItem,
+				signupDomainOrigin ? { signupDomainOrigin } : {}
+			)
 		);
 
 		this.props.goToNextStep();
@@ -528,7 +532,7 @@ class DomainsStep extends Component {
 					otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
-					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
+					onAddMapping={ this.handleAddMapping.bind( this, { sectionName: 'domainForm' } ) }
 					onSave={ this.handleSave.bind( this, 'domainForm' ) }
 					offerUnavailableOption={ ! this.props.isDomainOnly }
 					isDomainOnly={ this.props.isDomainOnly }
@@ -567,8 +571,8 @@ class DomainsStep extends Component {
 		);
 	};
 
-	onUseMyDomainConnect = ( { domain } ) => {
-		this.handleAddMapping( 'useYourDomainForm', domain );
+	onUseMyDomainConnect = ( { domain, signupDomainOrigin } ) => {
+		this.handleAddMapping( { sectionName: 'useYourDomainForm', domain, signupDomainOrigin } );
 	};
 
 	insertUrlParams( params ) {
