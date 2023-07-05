@@ -18,6 +18,9 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
+jest.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSiteId: jest.fn(),
+} ) );
 
 import {
 	GROUP_WPCOM,
