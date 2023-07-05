@@ -19,7 +19,9 @@ export function useIsPlanUpgradeCreditVisible(
 	const isSiteOnPaidPlan = !! useSelector(
 		( state ) => siteId && isCurrentPlanPaid( state, siteId )
 	);
-	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const currentSitePlanSlug = useSelector( ( state ) =>
+		siteId ? getSitePlanSlug( state, siteId ) : undefined
+	);
 	const creditsValue = useCalculateMaxPlanUpgradeCredit( { siteId, plans: visiblePlans } );
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
