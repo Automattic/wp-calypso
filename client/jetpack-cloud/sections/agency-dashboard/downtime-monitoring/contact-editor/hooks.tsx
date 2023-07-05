@@ -1,9 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
+import { useSelector } from 'calypso/state';
+import getCountries from 'calypso/state/selectors/get-countries';
 import {
 	AllowedMonitorContactActions,
 	AllowedMonitorContactTypes,
 } from '../../sites-overview/types';
+import type { AppState } from 'calypso/types';
 
 export function useContactModalTitleAndSubtitle(
 	type: AllowedMonitorContactTypes,
@@ -80,4 +84,25 @@ export function useContactFormInputHelpText( type: AllowedMonitorContactTypes ) 
 			},
 		}[ type ];
 	}, [ translate, type ] );
+}
+
+export function useGetSupportedSMSCountries() {
+	// Fetch only once
+	const { data: geoData } = useGeoLocationQuery( {
+		refetchOnWindowFocus: false,
+		staleTime: Infinity,
+	} );
+
+	const countriesList = useSelector( ( state: AppState ) => {
+		const countries = getCountries( state, 'sms' ) ?? [];
+		// Move the user's country to the top of the list
+		const index = countries.findIndex( ( country ) => country.code === geoData?.country_short );
+		if ( index > 0 ) {
+			const country = countries.splice( index, 1 );
+			countries.unshift( country[ 0 ] );
+		}
+		return countries;
+	} );
+
+	return useMemo( () => countriesList, [ countriesList ] );
 }

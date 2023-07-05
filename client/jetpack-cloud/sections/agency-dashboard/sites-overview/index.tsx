@@ -15,7 +15,6 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
-import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -80,12 +79,6 @@ export default function SitesOverview() {
 		refetch: refetchContacts,
 		isError: fetchContactFailed,
 	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
-
-	// Fetch only once on mount
-	const { data: geoData } = useGeoLocationQuery( {
-		refetchOnWindowFocus: false,
-		staleTime: Infinity,
-	} );
 
 	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
 
@@ -300,7 +293,6 @@ export default function SitesOverview() {
 											return;
 										},
 									},
-									geoData: { countryCode: geoData?.country_short ?? '' },
 								} }
 							>
 								<>

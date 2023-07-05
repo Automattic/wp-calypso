@@ -8,8 +8,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useCountdownTimer from 'calypso/jetpack-cloud/sections/hooks/use-countdown-timer';
-import { useSelector } from 'calypso/state';
-import getCountries from 'calypso/state/selectors/get-countries';
 import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
@@ -23,7 +21,7 @@ import {
 	useResendVerificationCode,
 	useValidateVerificationCode,
 } from '../hooks';
-import { useContactFormInputHelpText } from './hooks';
+import { useContactFormInputHelpText, useGetSupportedSMSCountries } from './hooks';
 import { ContactInfo } from './types';
 import {
 	getContactInfoPayload,
@@ -58,18 +56,9 @@ export default function VerifyContactForm( {
 }: Props ) {
 	const translate = useTranslate();
 
-	const { verifiedContacts, geoData } = useContext( DashboardDataContext );
+	const { verifiedContacts } = useContext( DashboardDataContext );
 
-	const countriesList = useSelector( ( state ) => {
-		const countries = getCountries( state, 'sms' ) ?? [];
-		// Move the user's country to the top of the list
-		const index = countries.findIndex( ( country ) => country.code === geoData.countryCode );
-		if ( index > 0 ) {
-			const country = countries.splice( index, 1 );
-			countries.unshift( country[ 0 ] );
-		}
-		return countries;
-	} );
+	const countriesList = useGetSupportedSMSCountries();
 
 	const { time, showTimer, startTimer, limitReached } = useCountdownTimer();
 
