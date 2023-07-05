@@ -95,8 +95,10 @@ export class SupportComponent {
 		await locator.waitFor();
 		await locator.click();
 
-		// Somteimes, the network call for the help doc can be slow.
-		await this.page.waitForResponse( /\/help\/article/, { timeout: 15 * 1000 } );
+		if ( category === 'Docs' ) {
+			// Sometimes, the network call for the help doc can be slow.
+			await this.page.waitForResponse( /\/help\/article/, { timeout: 15 * 1000 } );
+		}
 	}
 
 	/**
