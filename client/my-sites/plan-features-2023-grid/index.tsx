@@ -146,7 +146,7 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
-	selectedStorage: { [ key: string ]: string | null };
+	selectedStorage: { [ key: string ]: string };
 };
 
 const PlanLogo: React.FunctionComponent< {
@@ -254,7 +254,7 @@ export class PlanFeatures2023Grid extends Component<
 
 		this.props.planProperties.forEach( ( planProperties ) => {
 			const { planName } = planProperties;
-			this.state.selectedStorage[ planName ] = null;
+			this.state.selectedStorage[ planName ] = '';
 		} );
 	}
 
@@ -896,7 +896,7 @@ export class PlanFeatures2023Grid extends Component<
 								}
 							} }
 							selectedText={
-								selectedStorage[ planName ]
+								planName in selectedStorage
 									? getStorageStringFromFeature( selectedStorage[ planName ] )
 									: getStorageStringFromFeature( storageOptions[ 0 ] )
 							}
@@ -905,15 +905,17 @@ export class PlanFeatures2023Grid extends Component<
 								<SelectDropdown.Item
 									key={ `${ planName } ${ storageFeature }` }
 									selected={ storageFeature === selectedStorage[ planName ] }
-									onClick={ () =>
+									onClick={ () => {
+										const updatedSelectedStorage = {
+											...selectedStorage,
+											[ planName ]: storageFeature,
+										};
+
 										this.setState( {
 											...this.state,
-											selectedStorage: {
-												...selectedStorage,
-												[ planName ]: storageFeature,
-											},
-										} )
-									}
+											selectedStorage: updatedSelectedStorage,
+										} );
+									} }
 								>
 									{ getStorageStringFromFeature( storageFeature ) }
 								</SelectDropdown.Item>
