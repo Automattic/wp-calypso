@@ -37,8 +37,6 @@ export const useOddyseusSendMessage = (
 			return odysseusSendMessage( siteId, messagesToSend, context, sectionName, chat.chatId );
 		},
 		onSuccess: ( data ) => {
-			// After a successful mutation, update the chat state with the new chatId
-			//It should be immediate (eg using the useState parameter of the hook) (only update chatId)
 			setChat( { ...chat, chatId: data.chatId } );
 		},
 	} );
