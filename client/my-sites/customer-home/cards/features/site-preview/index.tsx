@@ -6,7 +6,6 @@ import './style.scss';
 const SitePreview = (): JSX.Element => {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID;
-	// const domains = [ selectedSiteId ];
 	const domains = useSelector( ( state ) => getWpComDomainBySiteId( state, selectedSiteId ) );
 	const wpComDomain = domains?.domain;
 
