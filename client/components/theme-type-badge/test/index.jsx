@@ -9,7 +9,6 @@ import ThemeTypeBadge from '../';
 
 jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
 	useSiteGlobalStylesStatus: () => ( {
-		shouldLimitGlobalStyles: false,
 		globalStylesInPersonalPlan: false,
 	} ),
 } ) );
