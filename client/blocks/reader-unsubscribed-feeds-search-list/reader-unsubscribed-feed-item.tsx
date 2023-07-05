@@ -60,7 +60,6 @@ const ReaderUnsubscribedFeedItem = ( { feed }: ReaderUnsubscribedFeedItemProps )
 					</ExternalLink>
 				</VStack>
 			</HStack>
-
 			<div className="reader-unsubscribed-feed-item__description">{ site?.description }</div>
 			<div>
 				<Button
