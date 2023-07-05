@@ -1,5 +1,6 @@
 import { applyTestFiltersToPlansList, PlanSlug } from '@automattic/calypso-products';
 import { FeatureObject } from 'calypso/lib/plans/features-list';
+import type { TranslateResult } from 'i18n-calypso';
 
 export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
@@ -31,6 +32,6 @@ export type PlanProperties = {
 export interface PlanActionOverrides {
 	loggedInFreePlan?: {
 		callback: () => void;
-		text: string;
+		text: TranslateResult;
 	};
 }
