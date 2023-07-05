@@ -143,13 +143,13 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 			loggedInFreePlan: domainFromHomeUpsellFlow
 				? {
 						callback: showDomainUpsellDialog,
-						text: translate( 'Keep my plan', { context: 'verb' } ) as string,
+						text: translate( 'Keep my plan', { context: 'verb' } ),
 				  }
 				: {
 						callback: () => {
 							page.redirect( `/add-ons/${ siteSlug }` );
 						},
-						text: translate( 'Manage add-ons', { context: 'verb' } ) as string,
+						text: translate( 'Manage add-ons', { context: 'verb' } ),
 				  },
 		};
 	}
