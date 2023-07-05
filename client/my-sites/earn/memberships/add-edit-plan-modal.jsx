@@ -325,7 +325,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }
 						checked={ editedPostsEmail }
-						label={ translate( 'Email newly published posts to your customers.' ) }
+						label={ translate( 'Email newly published posts to your subscribers' ) }
 					/>
 				</FormFieldset>
 				<FormFieldset>
