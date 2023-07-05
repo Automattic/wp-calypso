@@ -21,11 +21,9 @@ const OdysseusAssistant = () => {
 
 	useEffect( () => {
 		if ( isLoadingChat ) {
-			setMessages( [ { content: 'Remembering any previous conversation...', role: 'assistant' } ] );
+			setMessages( [ { content: 'Remembering any previous conversation...', role: 'bot' } ] );
 		} else if ( ! chat ) {
-			setMessages( [
-				{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'assistant' },
-			] );
+			setMessages( [ { content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot' } ] );
 		} else if ( chat ) {
 			setMessages( chat.messages );
 		}
@@ -44,7 +42,7 @@ const OdysseusAssistant = () => {
 			setMessages( [
 				{
 					content: lastNudge.initialMessage,
-					role: 'assistant',
+					role: 'bot',
 				},
 			] );
 
@@ -58,9 +56,7 @@ const OdysseusAssistant = () => {
 			};
 		}
 
-		setMessages( [
-			{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'assistant' },
-		] );
+		setMessages( [ { content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot' } ] );
 	}, [ lastNudge, setMessages ] );
 
 	const handleMessageChange = ( text: string ) => {
@@ -82,11 +78,11 @@ const OdysseusAssistant = () => {
 				},
 			} );
 
-			addMessage( response.message.content, 'assistant', response.chatId );
+			addMessage( response.message.content, 'bot', response.chatId );
 		} catch ( e ) {
 			addMessage(
 				"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!",
-				'assistant'
+				'bot'
 			);
 		} finally {
 			setIsLoading( false );

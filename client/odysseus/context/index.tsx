@@ -10,9 +10,11 @@ export type Nudge = {
 	context?: Record< string, unknown >;
 };
 
+export type MessageRole = 'user' | 'bot';
+
 export type Message = {
 	content: string;
-	role: 'user' | 'assistant';
+	role: MessageRole;
 };
 
 export type Chat = {
@@ -21,7 +23,7 @@ export type Chat = {
 };
 
 interface OdysseusAssistantContextInterface {
-	addMessage: ( content: string, role: 'user' | 'assistant', chatId?: string | null ) => void;
+	addMessage: ( content: string, role: MessageRole, chatId?: string | null ) => void;
 	chat: Chat;
 	isLoadingChat: boolean;
 	lastNudge: Nudge | null;
@@ -66,7 +68,7 @@ const OdysseusAssistantProvider = ( {
 	const [ messages, setMessages ] = useState< Message[] >( [] );
 	const [ chat, setChat ] = useState< Chat >( { messages: [] } );
 
-	const addMessage = ( content: string, role: 'user' | 'assistant', chatId?: string | null ) => {
+	const addMessage = ( content: string, role: MessageRole, chatId?: string | null ) => {
 		setMessages( ( prevMessages ) => {
 			const newMessages = [ ...prevMessages, { content, role } as Message ];
 			setChat( ( prevChat ) => ( {
