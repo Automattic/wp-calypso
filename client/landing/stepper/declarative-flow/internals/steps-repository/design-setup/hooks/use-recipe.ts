@@ -38,10 +38,11 @@ const useRecipe = (
 		null
 	);
 
-	const hasSelectedGlobalStyles =
-		! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) ||
-		!! selectedColorVariation ||
-		!! selectedFontVariation;
+	const numOfSelectedGlobalStyles = [
+		! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ),
+		!! selectedColorVariation,
+		!! selectedFontVariation,
+	].filter( Boolean ).length;
 
 	const [ globalStyles, setGlobalStyles ] = useState< GlobalStylesObject | null >( null );
 
@@ -230,7 +231,7 @@ const useRecipe = (
 		selectedStyleVariation,
 		selectedColorVariation,
 		selectedFontVariation,
-		hasSelectedGlobalStyles,
+		numOfSelectedGlobalStyles,
 		globalStyles,
 		previewDesign,
 		previewDesignVariation,
