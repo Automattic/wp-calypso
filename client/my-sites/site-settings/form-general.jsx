@@ -7,7 +7,10 @@ import {
 	FEATURE_STYLE_CUSTOMIZATION,
 	PLAN_ECOMMERCE_MONTHLY,
 } from '@automattic/calypso-products';
-import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
+import {
+	PLAN_PERSONAL,
+	WPCOM_FEATURES_SUBSCRIPTION_GIFTING,
+} from '@automattic/calypso-products/src';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -17,7 +20,9 @@ import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
+import builtByLogo from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Banner from 'calypso/components/banner';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -764,6 +769,45 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 	}
 
+	builtByUpsell() {
+		const { translate, site, isUnlaunchedSite: propsisUnlaunchedSite } = this.props;
+
+		// Do not show for launched sites
+		if ( ! propsisUnlaunchedSite ) {
+			return;
+		}
+
+		// Do not show if we don't know when the site was created
+		if ( ! site?.options?.created_at ) {
+			return;
+		}
+
+		// Do not show if the site is less than 4 days old
+		const siteCreatedAt = Date.parse( site?.options?.created_at );
+		const FOUR_DAYS_IN_MILLISECONDS = 4 * 24 * 60 * 60 * 1000;
+		if ( Date.now() - siteCreatedAt < FOUR_DAYS_IN_MILLISECONDS ) {
+			return;
+		}
+
+		return (
+			<Banner
+				className="site-settings__built-by-upsell"
+				title={ translate( 'We’ll build your site for you' ) }
+				description={ translate(
+					'Leave the heavy lifting to us and let our professional builders craft your compelling website.'
+				) }
+				callToAction={ translate( 'Get started' ) }
+				href="https://wordpress.com/website-design-service/?ref=unlaunched-settings"
+				target="_blank"
+				iconPath={ builtByLogo }
+				disableCircle={ true }
+				event="settings_bb_upsell"
+				tracksImpressionName="calypso_settings_bb_upsell_impression"
+				tracksClickName="calypso_settings_bb_upsell_cta_click"
+			/>
+		);
+	}
+
 	render() {
 		const {
 			customizerUrl,
@@ -811,7 +855,7 @@ export class SiteSettingsFormGeneral extends Component {
 				! isWpcomStagingSite
 					? this.renderLaunchSite()
 					: this.privacySettings() }
-
+				{ this.builtByUpsell() }
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
@@ -858,8 +902,10 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	advancedCustomizationNotice() {
-		const { translate, selectedSite, siteSlug } = this.props;
-		const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
+		const { translate, selectedSite, siteSlug, globalStylesOnPersonalExperiment } = this.props;
+		const upgradeUrl = `/plans/${ siteSlug }?plan=${
+			globalStylesOnPersonalExperiment ? PLAN_PERSONAL : PLAN_PREMIUM
+		}&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
 
 		return (
 			<>
@@ -867,9 +913,13 @@ export class SiteSettingsFormGeneral extends Component {
 					<div className="site-settings__advanced-customization-notice-cta">
 						<Gridicon icon="info-outline" />
 						<span>
-							{ translate(
-								'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.'
-							) }
+							{ globalStylesOnPersonalExperiment
+								? translate(
+										'Your site contains customized styles that will only be visible once you upgrade to a Personal plan.'
+								  )
+								: translate(
+										'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.'
+								  ) }
 						</span>
 					</div>
 					<div className="site-settings__advanced-customization-notice-buttons">
@@ -963,14 +1013,14 @@ const getFormSettings = ( settings ) => {
 };
 
 const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
-	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus(
-		props.site?.ID
-	);
+	const { globalStylesInUse, shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
+		useSiteGlobalStylesStatus( props.site?.ID );
 
 	return (
 		<SiteSettingsFormGeneral
 			{ ...props }
 			shouldShowPremiumStylesNotice={ globalStylesInUse && shouldLimitGlobalStyles }
+			globalStylesOnPersonalExperiment={ globalStylesInPersonalPlan }
 		/>
 	);
 };

@@ -1,10 +1,13 @@
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
-import { SortControls } from 'calypso/landing/subscriptions/components/sort-controls';
+import { Option, SortControls } from 'calypso/landing/subscriptions/components/sort-controls';
+import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
+import { useSubscribersFilterOptions } from 'calypso/landing/subscriptions/hooks';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
-import { SubscribersSortBy } from '../../constants';
+import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import './style.scss';
 import { useRecordSort } from '../../tracks';
 
@@ -15,9 +18,11 @@ const getSortOptions = ( translate: ReturnType< typeof useTranslate > ) => [
 
 const ListActionsBar = () => {
 	const translate = useTranslate();
-	const { handleSearch, sortTerm, setSortTerm } = useSubscribersPage();
+	const { handleSearch, sortTerm, setSortTerm, filterOption, setFilterOption } =
+		useSubscribersPage();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 	const recordSort = useRecordSort();
+	const filterOptions = useSubscribersFilterOptions();
 
 	return (
 		<div className="list-actions-bar">
@@ -25,6 +30,17 @@ const ListActionsBar = () => {
 				placeholder={ translate( 'Search by name, username or email…' ) }
 				searchIcon={ <SearchIcon size={ 18 } /> }
 				onSearch={ handleSearch }
+			/>
+
+			<SelectDropdown
+				className="subscribers__filter-control"
+				options={ filterOptions }
+				onSelect={ ( selectedOption: Option< SubscribersFilterBy > ) =>
+					setFilterOption( selectedOption.value )
+				}
+				selectedText={ translate( 'Subscriber type: %s', {
+					args: getOptionLabel( filterOptions, filterOption ) || '',
+				} ) }
 			/>
 
 			<SortControls

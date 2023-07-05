@@ -10,10 +10,6 @@
 		max-height: 52px;
 	}
 
-	&:last-child {
-		margin-bottom: 0;
-	}
-
 	.global-styles-variation__item {
 		position: relative;
 		margin: 2px;
@@ -59,7 +55,7 @@
 	}
 }
 
-.global-styles-variation__title {
+.global-styles-variations__group-title {
 	display: flex;
 	color: var(--color-neutral-100);
 	font-size: $font-body-small;

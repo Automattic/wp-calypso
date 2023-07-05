@@ -234,9 +234,21 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 			break;
 
 		case domainAvailability.MAPPABLE:
+			if ( isForTransferOnly ) {
+				message = translate(
+					'This domain cannot be transferred to WordPress.com but it can be connected instead. {{a}}Learn More.{{/a}}',
+					{
+						components: {
+							a: <a rel="noopener noreferrer" href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
+						},
+					}
+				);
+			}
+			break;
+
 		case domainAvailability.AVAILABLE:
 			if ( isForTransferOnly ) {
-				message = "This domain isn't registered. Please try again.";
+				message = translate( "This domain isn't registered. Please try again." );
 			}
 			break;
 

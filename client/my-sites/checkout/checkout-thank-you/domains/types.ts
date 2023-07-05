@@ -16,6 +16,7 @@ export type DomainThankYouParams = {
 	launchpadScreen: ReturnType< typeof useSiteOption >;
 	selectedSiteSlug: string;
 	siteIntent: ReturnType< typeof useSiteOption >;
+	redirectTo: 'home' | 'setup';
 };
 
 export type DomainThankYouPropsGetter = ( params: DomainThankYouParams ) => DomainThankYouProps;

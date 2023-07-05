@@ -74,11 +74,6 @@ async function AppBoot() {
 		// To do this, we are showing the correct version of the path (after fixing it)
 		page.show( fixPath( window.location.hash ) );
 	} );
-
-	// Disable conflicting Jetpack stylesheets
-	document.querySelectorAll( 'link#forms-css' ).forEach( ( item ) => {
-		item.disabled = true;
-	} );
 }
 
 AppBoot();

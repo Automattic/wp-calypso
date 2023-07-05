@@ -14,6 +14,7 @@ import {
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementList,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
@@ -45,10 +46,12 @@ class AddDnsRecord extends Component {
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
-					selectedDomainName,
+					currentRoute,
 					selectedSite?.options?.is_domain_only
 				),
 			},
@@ -58,7 +61,7 @@ class AddDnsRecord extends Component {
 			},
 			{
 				label: translate( 'DNS records' ),
-				href: domainManagementDns( selectedSite?.slug, selectedDomainName ),
+				href: domainManagementDns( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
 				label: recordBeingEdited
@@ -71,7 +74,7 @@ class AddDnsRecord extends Component {
 			label: translate( 'Back to DNS records', {
 				comment: 'Link to return to the DNs records management page of a domain ',
 			} ),
-			href: domainManagementDns( selectedSite?.slug, selectedDomainName ),
+			href: domainManagementDns( selectedSite?.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
@@ -79,8 +82,8 @@ class AddDnsRecord extends Component {
 	}
 
 	goBack = () => {
-		const { selectedSite, selectedDomainName } = this.props;
-		page( domainManagementDns( selectedSite?.slug, selectedDomainName ) );
+		const { selectedSite, selectedDomainName, currentRoute } = this.props;
+		page( domainManagementDns( selectedSite?.slug, selectedDomainName, currentRoute ) );
 	};
 
 	renderMain() {

@@ -4,9 +4,9 @@
 $font-family: "SF Pro Text", $sans;
 $heading-font-family: "SF Pro Display", $sans;
 
-
-.bulk-domain-transfer {
-	height: auto;
+.domain-transfer {
+	height: 100%;
+	padding: 60px 0 0;
 	margin: 0 auto;
 	max-width: 1024px;
 	display: flex;
@@ -29,6 +29,9 @@ $heading-font-family: "SF Pro Display", $sans;
 
 		.step-container.intro {
 			font-family: $font-family;
+			display: flex;
+			flex-direction: column;
+			height: 100%;
 
 			@media (max-width: $break-medium ) {
 				padding: 0;
@@ -125,7 +128,8 @@ $heading-font-family: "SF Pro Display", $sans;
 			}
 
 			.step-container__jetpack-powered {
-				margin-top: 22px;
+				margin-top: auto;
+				margin-bottom: 56px;
 			}
 		}
 	}
@@ -169,7 +173,4 @@ $heading-font-family: "SF Pro Display", $sans;
 		display: flex;
 		align-items: center;
 	}
-
-
 }
-

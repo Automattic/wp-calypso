@@ -2,6 +2,7 @@ import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores'
 import { useLocale } from '@automattic/i18n-utils';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
@@ -71,6 +72,16 @@ const designFirst: Flow = {
 			[]
 		).getState();
 		const site = useSite();
+
+		// This flow clear the site_intent when flow is completed.
+		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
+		// See https://github.com/Automattic/dotcom-forge/issues/2886
+		const isSiteLaunched = site?.launch_status === 'launched' || false;
+		useEffect( () => {
+			if ( isSiteLaunched ) {
+				setIntentOnSite( siteSlug, '' );
+			}
+		}, [ siteSlug, setIntentOnSite, isSiteLaunched ] );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
