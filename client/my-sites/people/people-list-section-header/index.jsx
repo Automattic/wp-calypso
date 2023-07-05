@@ -43,6 +43,10 @@ class PeopleListSectionHeader extends Component {
 			return '/people/email-followers/' + siteSlug;
 		}
 
+		if ( this.isViewersTab() ) {
+			return `/people/new/${ siteSlug }?role=follower`;
+		}
+
 		return '/people/new/' + siteSlug;
 	}
 
@@ -64,6 +68,12 @@ class PeopleListSectionHeader extends Component {
 		}
 
 		return null;
+	}
+
+	isViewersTab() {
+		const { currentRoute } = this.props;
+
+		return startsWith( currentRoute, '/people/viewers' );
 	}
 
 	isSubscribersTab() {
