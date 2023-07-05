@@ -127,7 +127,6 @@ $design-preview-sidebar-width: 311px;
 	bottom: 0;
 	width: 100%;
 	background-color: var(--studio-white);
-	z-index: z-index("root", ".design-preview__sidebar-action-buttons");
 
 	a,
 	button {
