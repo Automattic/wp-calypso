@@ -316,6 +316,38 @@
 	display: grid;
 	grid-template: "item" 1fr / 1fr;
 	width: 580px;
+	& * {
+		font-size: $font-body;
+		font-weight: normal;
+	}
+	.form-label {
+		font-size: $font-body;
+		font-weight: normal;
+	}
+	.form-setting-explanation {
+		font-style: normal;
+		font-size: $font-body-small;
+	}
+	.memberships__dialog-advanced-options {
+		width: 100%;
+		box-shadow: none;
+		.foldable-card__header {
+			padding: 0;
+		}
+		&.foldable-card.is-expanded {
+			margin: 0;
+			.foldable-card__content {
+				border-top: none;
+				padding: 0;
+			}
+		}
+		.foldable-card__main {
+			display: block;
+			.foldable-card__action {
+				right: unset;
+			}
+		}
+	}
 }
 
 .memberships__dialog-section {
@@ -343,28 +375,6 @@
 	flex-direction: column;
 	&:first-child {
 		margin-right: 35px;
-	}
-}
-
-.memberships__dialog-advanced-options {
-	width: 100%;
-	box-shadow: none;
-	.foldable-card__header {
-		padding: 0;
-	}
-	.foldable-card__content {
-		padding: 0;
-	}
-	&.foldable-card.is-expanded {
-		.foldable-card__content {
-			border-top: none;
-		}
-	}
-	.foldable-card__main {
-		display: block;
-		.foldable-card__action {
-			right: unset;
-		}
 	}
 }
 
