@@ -391,9 +391,16 @@ class DomainRow extends PureComponent {
 							? translate( 'View transfer' )
 							: translate( 'View settings' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
-						{ translate( 'Manage DNS' ) }
-					</PopoverMenuItem>
+					{ ! (
+						domain.type === domainTypes.SITE_REDIRECT ||
+						domain.transferStatus === transferStatus.PENDING_ASYNC
+					) &&
+						domain.canManageDnsRecords &&
+						domain.transferStatus !== transferStatus.PENDING_ASYNC && (
+							<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
+								{ translate( 'Manage DNS' ) }
+							</PopoverMenuItem>
+						) }
 
 					{ domain.type === domainTypes.REGISTERED &&
 						( isDomainUpdateable( domain ) || isDomainInGracePeriod( domain ) ) && (
