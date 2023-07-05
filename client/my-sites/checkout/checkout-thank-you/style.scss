@@ -996,6 +996,7 @@ main.akismet-checkout-thank-you {
 
 	.checkout-thank-you__purchase-details-list {
 		text-align: initial;
+		margin-top: 40px;
 		margin-bottom: 80px;
 		display: flex;
 		justify-content: center;
@@ -1004,19 +1005,17 @@ main.akismet-checkout-thank-you {
 		// all purchase details in a single unclassed div, so we need to target it for the
 		// flexbox styles instead of .checkout-thank-you__purchase-details-list directly.
 		> div {
-			display: grid;
-			grid-template-columns: 280px 280px;
-			grid-template-rows: auto;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
 
-			row-gap: 30px;
-			column-gap: 30px;
 			@include break-mobile {
 				column-gap: 40px;
 			}
 		}
 
 		@include breakpoint-deprecated( ">660px" ) {
-			margin: 0;
+			margin-top: 50px;
 			padding-bottom: 0;
 		}
 
@@ -1024,10 +1023,10 @@ main.akismet-checkout-thank-you {
 			margin: 0;
 			box-shadow: none;
 			height: auto;
-			width: 600px;
+			min-width: auto;
+			max-width: 280px;
 			@include break-mobile {
-				min-width: auto;
-				max-width: 280px;
+				width: 600px;
 			}
 		}
 
@@ -1093,9 +1092,10 @@ main.akismet-checkout-thank-you {
 
 	.checkout-thank-you__header-details {
 		margin-top: 50px;
+		margin-left: 16px;
+		margin-right: 16px;
 		display: flex;
 		flex-direction: row;
-		width: 100%;
 		box-sizing: border-box;
 		align-items: center;
 		gap: 16px;
@@ -1140,18 +1140,19 @@ main.akismet-checkout-thank-you {
 
 	.checkout-thank-you__header-details-buttons {
 		display: flex;
-		flex-shrink: 0;
+		flex-wrap: wrap;
 		gap: 16px;
 		min-width: auto;
 	}
 
 	.checkout-thank-you__header-button {
 		border-radius: 4px;
+		margin: initial;
 	}
 
 	.checkout-thank-you__header-heading {
 		@extend .wp-brand-font;
-		font-size: $font-headline-small;
+		font-size: $font-headline-medium;
 		color: var(--color-text);
 		margin: 30px 0 8px 0;
 		@include break-mobile {
@@ -1161,6 +1162,8 @@ main.akismet-checkout-thank-you {
 
 	.checkout-thank-you__header-text {
 		color: var(--color-text-subtle);
+		font-size: initial;
+		margin: initial;
 	}
 
 	.checkout-thank-you__header.is-placeholder {
