@@ -483,7 +483,7 @@ const InnerSearch = (
 
 	return (
 		<div dir={ dir } className={ searchClass } role="search">
-			<Spinner />
+			{ openIconSide === 'left' && <Spinner /> }
 			{ openIconSide === 'left' && renderOpenIcon() }
 			<form className={ fadeClass } action="." onSubmit={ handleSubmit }>
 				<input
@@ -514,6 +514,7 @@ const InnerSearch = (
 				{ renderStylingDiv() }
 			</form>
 			{ childrenBeforeCloseButton }
+			{ openIconSide === 'right' && <Spinner /> }
 			{ renderRightIcons() }
 			{ children }
 		</div>
