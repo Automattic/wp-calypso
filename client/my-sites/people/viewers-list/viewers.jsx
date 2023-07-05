@@ -59,7 +59,8 @@ class Viewers extends Component {
 	};
 
 	renderViewer = ( viewer ) => {
-		const removeThisViewer = () => {
+		const removeThisViewer = ( event ) => {
+			event.preventDefault();
 			this.removeViewer( viewer );
 		};
 
