@@ -229,7 +229,7 @@ const ProductCard = ( { siteSlug } ) => {
 						<StatsPurchaseSVG
 							isFree={ subscriptionValue === 0 }
 							hasHighlight={ subscriptionValue >= 40 }
-							extraMessage={ subscriptionValue >= 90 }
+							extraMessage={ subscriptionValue >= 40 }
 						/>
 					</div>
 				</div>

@@ -24,9 +24,9 @@ const PersonalPurchase = ( {
 
 		if ( subscriptionValue < 10 ) {
 			emoji = String.fromCodePoint( 0x1f60a ); /* Smiling face emoji */
-		} else if ( subscriptionValue < 20 ) {
+		} else if ( subscriptionValue < 40 ) {
 			emoji = String.fromCodePoint( 0x2764, 0xfe0f ); /* Heart emoji */
-		} else if ( subscriptionValue >= 20 ) {
+		} else if ( subscriptionValue >= 40 ) {
 			emoji = String.fromCodePoint( 0x1f525 ); /* Fire emoji */
 		}
 
