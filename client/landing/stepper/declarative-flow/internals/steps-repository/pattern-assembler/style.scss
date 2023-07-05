@@ -17,11 +17,6 @@ $font-family: "SF Pro Text", $sans;
 	height: calc(100vh - 60px);
 	width: 100%;
 
-	.navigator-header {
-		// Force display because by default it shows only for min-width break-xlarge
-		display: block;
-	}
-
 	.pattern-assembler__button {
 		width: 100%;
 		height: 40px;
@@ -348,6 +343,23 @@ $font-family: "SF Pro Text", $sans;
 	 */
 	.components-button:focus:not(:disabled) {
 		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
+
+	/**
+	 * Navigator Component
+	 */
+	.navigator-header {
+		// Force display because by default it shows only for min-width break-xlarge
+		display: block;
+	}
+
+	.navigator-button--is-active {
+		background-color: var(--studio-blue-0);
+		color: var(--studio-blue-50);
+
+		&.navigator-button__checklist-item--checked .navigator-button__icon {
+			fill: var(--studio-blue-50);
+		}
 	}
 }
 

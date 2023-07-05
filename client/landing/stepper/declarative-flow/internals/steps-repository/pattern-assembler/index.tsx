@@ -43,8 +43,6 @@ import ScreenActivation from './screen-activation';
 import ScreenCategoryList from './screen-category-list';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenFontPairings from './screen-font-pairings';
-import ScreenFooter from './screen-footer';
-import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
 import ScreenSection from './screen-section';
 import { encodePatternId } from './utils';
@@ -73,7 +71,8 @@ const PatternAssembler = ( {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
-	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
+	const [ selectedMainItem, setSelectedMainItem ] = useState< string | null >( null );
+	const [ isPanelOpen, setIsPanelOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { applyThemeWithPatterns, assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -453,12 +452,6 @@ const PatternAssembler = ( {
 		recordTracksEvent,
 	} );
 
-	const onPatternSelectorBack = ( type: string ) => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_BACK_CLICK, {
-			pattern_type: type,
-		} );
-	};
-
 	const onDoneClick = ( type: string ) => {
 		const patterns = getPatterns( type );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_DONE_CLICK, {
@@ -485,8 +478,24 @@ const PatternAssembler = ( {
 		onSubmit();
 	};
 
-	const onMainItemSelect = ( name: string ) => {
+	const onMainItemSelect = ( { name, isPanel = false }: { name: string; isPanel?: boolean } ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
+
+		if ( ! isPanel ) {
+			setIsPanelOpen( false );
+			setSelectedMainItem( null );
+			return;
+		}
+
+		if ( name === selectedMainItem ) {
+			// Toggle panel
+			setIsPanelOpen( false );
+			setSelectedMainItem( null );
+			return;
+		}
+
+		setIsPanelOpen( true );
+		setSelectedMainItem( name );
 	};
 
 	const onAddSection = () => {
@@ -554,7 +563,7 @@ const PatternAssembler = ( {
 	const stepContent = (
 		<div
 			className={ classnames( 'pattern-assembler__wrapper', {
-				'pattern-assembler__pattern-panel-list--is-open': isPatternPanelListOpen,
+				'pattern-assembler__panel--is-open': isPanelOpen,
 			} ) }
 			ref={ wrapperRef }
 			tabIndex={ -1 }
@@ -563,7 +572,8 @@ const PatternAssembler = ( {
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
-						onSelect={ onMainItemSelect }
+						onMainItemSelect={ onMainItemSelect }
+						onSelect={ onSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
@@ -573,28 +583,19 @@ const PatternAssembler = ( {
 						hasFooter={ Boolean( footer ) }
 						hasColor={ Boolean( colorVariation ) }
 						hasFont={ Boolean( fontVariation ) }
-					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.HEADER }>
-					<ScreenHeader
-						selectedPattern={ header }
-						onSelect={ onSelect }
-						onBack={ () => onPatternSelectorBack( 'header' ) }
-						onDoneClick={ () => onDoneClick( 'header' ) }
-						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
-						patterns={ patternsMapByCategory[ 'header' ] || [] }
-					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.FOOTER }>
-					<ScreenFooter
-						selectedPattern={ footer }
-						onSelect={ onSelect }
-						onBack={ () => onPatternSelectorBack( 'footer' ) }
-						onDoneClick={ () => onDoneClick( 'footer' ) }
-						updateActivePatternPosition={ () => activateFooterPosition( !! footer ) }
-						patterns={ patternsMapByCategory[ 'footer' ] || [] }
+						selectedMainItem={ selectedMainItem }
+						selectedHeader={ header }
+						selectedFooter={ footer }
+						categories={ categories }
+						patternsMapByCategory={ patternsMapByCategory }
+						updateActivePatternPosition={ () => {
+							if ( 'header' === selectedMainItem ) {
+								return updateActivePatternPosition( -1 );
+							}
+							if ( 'footer' === selectedMainItem ) {
+								return activateFooterPosition( !! footer );
+							}
+						} }
 					/>
 				</NavigatorScreen>
 
@@ -617,7 +618,7 @@ const PatternAssembler = ( {
 						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
-						onTogglePatternPanelList={ setIsPatternPanelListOpen }
+						onTogglePatternPanelList={ setIsPanelOpen }
 						selectedPatterns={ sections }
 					/>
 				</NavigatorScreen>

@@ -17,12 +17,19 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
+import PatternListPanel from './pattern-list-panel';
 import Survey from './survey';
+import { Pattern, Category } from './types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
 interface Props {
-	onSelect: ( name: string ) => void;
+	onSelect: (
+		type: string,
+		selectedPattern: Pattern | null,
+		selectedCategory: string | null
+	) => void;
+	onMainItemSelect: ( { name, isPanel }: { name: string; isPanel?: boolean } ) => void;
 	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	surveyDismissed: boolean;
@@ -32,10 +39,17 @@ interface Props {
 	hasFooter: boolean;
 	hasColor: boolean;
 	hasFont: boolean;
+	selectedMainItem: string | null;
+	selectedHeader: Pattern | null;
+	selectedFooter: Pattern | null;
+	updateActivePatternPosition: () => void;
+	categories: Category[];
+	patternsMapByCategory: { [ key: string ]: Pattern[] };
 }
 
 const ScreenMain = ( {
 	onSelect,
+	onMainItemSelect,
 	onContinueClick,
 	recordTracksEvent,
 	surveyDismissed,
@@ -45,6 +59,12 @@ const ScreenMain = ( {
 	hasFooter,
 	hasColor,
 	hasFont,
+	selectedMainItem,
+	selectedHeader,
+	selectedFooter,
+	updateActivePatternPosition,
+	categories,
+	patternsMapByCategory,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
@@ -74,6 +94,42 @@ const ScreenMain = ( {
 		}
 	};
 
+	const getSelectedPattern = () => {
+		if ( 'header' === selectedMainItem ) {
+			return selectedHeader;
+		}
+		if ( 'footer' === selectedMainItem ) {
+			return selectedFooter;
+		}
+		return null;
+	};
+
+	const getLabel = () => {
+		if ( 'header' === selectedMainItem ) {
+			return translate( 'Header' );
+		}
+		if ( 'footer' === selectedMainItem ) {
+			return translate( 'Footer' );
+		}
+	};
+
+	const getDescription = () => {
+		if ( 'header' === selectedMainItem ) {
+			return translate(
+				'The header appears at the top of every page, with a site name and navigation.'
+			);
+		}
+		if ( 'footer' === selectedMainItem ) {
+			return translate(
+				'The footer appears at the bottom of a site and shows useful links and contact information.'
+			);
+		}
+	};
+
+	const getIsActiveButton = ( name: string ) => {
+		return name === selectedMainItem;
+	};
+
 	// Set a delay to enable the Continue button since the user might mis-click easily when they go back from another screen
 	useEffect( () => {
 		const timeoutId = window.setTimeout( () => setDisabled( false ), 300 );
@@ -97,6 +153,10 @@ const ScreenMain = ( {
 		elementToFocus.focus();
 	}, [ isInitialLocation ] );
 
+	useEffect( () => {
+		updateActivePatternPosition();
+	}, [ updateActivePatternPosition ] );
+
 	return (
 		<>
 			<NavigatorHeader
@@ -109,10 +169,11 @@ const ScreenMain = ( {
 					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
 						<NavigationButtonAsItem
 							checked={ hasHeader }
-							path={ NAVIGATOR_PATHS.HEADER }
+							path={ NAVIGATOR_PATHS.MAIN }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
-							onClick={ () => onSelect( 'header' ) }
+							onClick={ () => onMainItemSelect( { name: 'header', isPanel: true } ) }
+							active={ getIsActiveButton( 'header' ) }
 						>
 							{ translate( 'Header' ) }
 						</NavigationButtonAsItem>
@@ -121,16 +182,17 @@ const ScreenMain = ( {
 							path={ hasSections ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
 							aria-label={ translate( 'Homepage' ) }
-							onClick={ () => onSelect( 'section' ) }
+							onClick={ () => onMainItemSelect( { name: 'section' } ) }
 						>
 							{ translate( 'Homepage' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
 							checked={ hasFooter }
-							path={ NAVIGATOR_PATHS.FOOTER }
+							path={ NAVIGATOR_PATHS.MAIN }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
-							onClick={ () => onSelect( 'footer' ) }
+							onClick={ () => onMainItemSelect( { name: 'footer', isPanel: true } ) }
+							active={ getIsActiveButton( 'footer' ) }
 						>
 							{ translate( 'Footer' ) }
 						</NavigationButtonAsItem>
@@ -142,7 +204,7 @@ const ScreenMain = ( {
 								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
 								icon={ color }
 								aria-label={ translate( 'Colors' ) }
-								onClick={ () => onSelect( 'color-palettes' ) }
+								onClick={ () => onMainItemSelect( { name: 'color-palettes' } ) }
 							>
 								{ translate( 'Colors' ) }
 							</NavigationButtonAsItem>
@@ -151,7 +213,7 @@ const ScreenMain = ( {
 								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
 								icon={ typography }
 								aria-label={ translate( 'Fonts' ) }
-								onClick={ () => onSelect( 'font-pairings' ) }
+								onClick={ () => onMainItemSelect( { name: 'font-pairings' } ) }
 							>
 								{ translate( 'Fonts' ) }
 							</NavigationButtonAsItem>
@@ -174,6 +236,19 @@ const ScreenMain = ( {
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
+			{ selectedMainItem && (
+				<PatternListPanel
+					onSelect={ ( selectedPattern: Pattern | null ) =>
+						onSelect( selectedMainItem, selectedPattern, selectedMainItem )
+					}
+					selectedPattern={ getSelectedPattern() }
+					label={ getLabel() }
+					description={ getDescription() }
+					selectedCategory={ selectedMainItem }
+					categories={ categories }
+					patternsMapByCategory={ patternsMapByCategory }
+				/>
+			) }
 		</>
 	);
 };
