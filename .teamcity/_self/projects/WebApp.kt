@@ -784,7 +784,7 @@ object PreReleaseE2ETests : BuildType({
 	}
 
 	params {
-		param("env.NODE_CONFIG_ENV", "test")
+		param("env.NODE_CONFIG_ENV", "pre-release")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.TEAMCITY_VERSION", "2021")
 		param("env.HEADLESS", "true")

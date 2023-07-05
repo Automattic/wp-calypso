@@ -7,6 +7,12 @@ import pwConfig from './playwright-config';
 export default async (): Promise< void > => {
 	const { AUTHENTICATE_ACCOUNTS } = envVariables;
 
+	// If running in the Pre-Release Tests environment in CI,
+	// don't execute the cookie refresh.
+	if ( process.env.NODE_CONFIG_ENV === 'pre-release' ) {
+		return;
+	}
+
 	// If PWDEBUG mode is enabled (stepping through each step)
 	// don't execute the cookie refresh.
 	if ( process.env.PWDEBUG ) {
