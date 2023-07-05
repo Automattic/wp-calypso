@@ -819,8 +819,9 @@ export class CheckoutThankYou extends Component<
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
 					purchases={ purchases }
+					isRedesignV2={ this.isRedesignV2() }
 				>
-					{ ! isSimplified && primaryPurchase && (
+					{ ! this.isRedesignV2() && ! isSimplified && primaryPurchase && (
 						<CheckoutThankYouFeaturesHeader
 							isDataLoaded={ this.isDataLoaded() }
 							isGenericReceipt={ this.isGenericReceipt() }

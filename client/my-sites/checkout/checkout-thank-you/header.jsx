@@ -36,8 +36,8 @@ import {
 	getJetpackSearchDashboardUrl,
 } from 'calypso/state/sites/selectors';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
-
 import './style.scss';
+import getHeading from './redesign-v2/sections/get-heading';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -56,45 +56,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 		titanAppsUrlPrefix: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		upgradeIntent: PropTypes.string,
+		isRedesignV2: PropTypes.bool,
 	};
 
 	isSearch() {
 		const { purchases } = this.props;
 		return purchases?.length > 0 && purchases[ 0 ].productType === 'search';
-	}
-
-	getHeading() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
-
-		if ( ! isDataLoaded ) {
-			return this.props.translate( 'Loading…' );
-		}
-
-		if ( hasFailedPurchases ) {
-			return translate( 'Some items failed.' );
-		}
-
-		if ( this.isSearch() ) {
-			return translate( 'Welcome to Jetpack Search!' );
-		}
-
-		if (
-			primaryPurchase &&
-			isDomainMapping( primaryPurchase ) &&
-			! primaryPurchase.isRootDomainWithUs
-		) {
-			return preventWidows( translate( 'Almost done!' ) );
-		}
-
-		if ( primaryPurchase && isChargeback( primaryPurchase ) ) {
-			return translate( 'Thank you!' );
-		}
-
-		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
-			return preventWidows( translate( 'Almost done!' ) );
-		}
-
-		return translate( 'Congratulations on your purchase!' );
 	}
 
 	getText() {
@@ -134,8 +101,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( isPlan( primaryPurchase ) ) {
 			return preventWidows(
 				translate(
-					'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-						"It's doing somersaults in excitement!",
+					'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
 					{
 						args: { productName: primaryPurchase.productName },
 						components: { strong: <strong /> },
@@ -385,7 +351,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isPlan( primaryPurchase ) ) {
-			return translate( 'View my new features' );
+			return translate( 'Let’s work on the site' );
 		}
 
 		if (
@@ -456,6 +422,26 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const targetUrl = selectedSite.jetpack ? jetpackSearchDashboardUrl : jetpackSearchCustomizeUrl;
 
 		return { title: buttonTitle, url: targetUrl };
+	}
+
+	getPlanDetails() {
+		const { selectedSite, translate } = this.props;
+		return (
+			<div className="checkout-thank-you__header-details">
+				<div className="checkout-thank-you__header-details-content">
+					<div className="checkout-thank-you__header-details-content-name">PlanName</div>
+					<div className="checkout-thank-you__header-details-content-expiry">
+						Available until June 20, 2022
+					</div>
+				</div>
+				<div className="checkout-thank-you__header-details-buttons">
+					{ this.getButtons() }
+					<Button href={ `/plans/my-plan/${ selectedSite.slug }` }>
+						{ translate( 'Manage plan' ) }
+					</Button>
+				</div>
+			</div>
+		);
 	}
 
 	getButtons() {
@@ -541,7 +527,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	render() {
-		const { isDataLoaded, isSimplified, hasFailedPurchases, primaryPurchase } = this.props;
+		const { isDataLoaded, isSimplified, hasFailedPurchases, primaryPurchase, isRedesignV2 } =
+			this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
 
 		let svg = 'thank-you.svg';
@@ -559,12 +546,16 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		return (
 			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
-				<div className="checkout-thank-you__header-icon">
-					<img src={ `/calypso/images/upgrades/${ svg }` } alt="" />
-				</div>
+				{ ! isRedesignV2 && (
+					<div className="checkout-thank-you__header-icon">
+						<img src={ `/calypso/images/upgrades/${ svg }` } alt="" />
+					</div>
+				) }
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
-						<h1 className="checkout-thank-you__header-heading">{ this.getHeading() }</h1>
+						<h1 className="checkout-thank-you__header-heading">
+							{ getHeading( { ...this.props, isSearch: this.isSearch() } ) }
+						</h1>
 
 						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
 							this.renderSimplifiedContent()
@@ -572,9 +563,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
 						) }
 
+						{ isRedesignV2 && this.getPlanDetails() }
 						{ this.props.children }
-
-						{ this.getButtons() }
+						{ ! isRedesignV2 && this.getButtons() }
 					</div>
 				</div>
 			</div>
@@ -585,8 +576,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const { translate, primaryPurchase } = this.props;
 		const messages = [
 			translate(
-				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-					'Enjoy your powerful new features!',
+				'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
 				{
 					args: { productName: primaryPurchase.productName },
 					components: { strong: <strong /> },
