@@ -93,7 +93,7 @@ export function useGetSupportedSMSCountries() {
 		staleTime: Infinity,
 	} );
 
-	const countriesList = useSelector( ( state: AppState ) => {
+	return useSelector( ( state: AppState ) => {
 		const countries = getCountries( state, 'sms' ) ?? [];
 		// Move the user's country to the top of the list
 		const index = countries.findIndex( ( country ) => country.code === geoData?.country_short );
@@ -103,6 +103,4 @@ export function useGetSupportedSMSCountries() {
 		}
 		return countries;
 	} );
-
-	return useMemo( () => countriesList, [ countriesList ] );
 }
