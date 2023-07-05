@@ -142,9 +142,9 @@ export const CacheCard = ( {
 	};
 
 	const edgeCacheToggleDescription = isEdgeCacheEligible
-		? translate( 'Enable edge caching for faster content delivery.' )
+		? translate( 'Enable global edge caching for faster content delivery.' )
 		: translate(
-				'Edge cache can only be enabled for public sites. {{a}}Review privacy settings.{{/a}}',
+				'Global edge cache can only be enabled for public sites. {{a}}Review privacy settings.{{/a}}',
 				{
 					components: {
 						a: <a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />,
@@ -174,7 +174,7 @@ export const CacheCard = ( {
 								<EdgeCacheLoadingPlaceholder />
 							) : (
 								<>
-									<ToggleLabel>{ translate( 'Edge cache' ) }</ToggleLabel>
+									<ToggleLabel>{ translate( 'Global edge cache' ) }</ToggleLabel>
 									<ToggleControl
 										disabled={
 											clearEdgeCacheLoading || getEdgeCacheLoading || ! isEdgeCacheEligible
