@@ -92,6 +92,7 @@ import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
+import Footer from './redesign-v2/sections/Footer';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
@@ -284,8 +285,18 @@ export class CheckoutThankYou extends Component<
 	 * @returns {boolean} True if the checkout flow is for a redesign V2 purchase, false otherwise.
 	 */
 	isRedesignV2 = () => {
-		// ThankYou page for plans.
-		return getPurchases( this.props ).some( ( purchase ) => isPlan( purchase ) );
+		// Fallback to old design when there is a failed purchase.
+		const failedPurchases = getFailedPurchases( this.props );
+		if ( failedPurchases.length > 0 ) {
+			return false;
+		}
+
+		// ThankYou page for only purchasing a plan.
+		const purchases = getPurchases( this.props );
+		if ( purchases.length > 1 ) {
+			return false;
+		}
+		return purchases.some( ( purchase ) => isPlan( purchase ) );
 	};
 
 	hasPlanOrDomainProduct = () => {
@@ -479,7 +490,7 @@ export class CheckoutThankYou extends Component<
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let showHappinessSupport = ! this.props.isSimplified;
+		let showHappinessSupport = ! this.isRedesignV2() && ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
 		let wasDomainProduct = false;
@@ -832,10 +843,14 @@ export class CheckoutThankYou extends Component<
 
 					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
-							<PurchaseDetailsWrapper
-								{ ...this.props }
-								componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
-							/>
+							{ this.isRedesignV2() ? (
+								<Footer />
+							) : (
+								<PurchaseDetailsWrapper
+									{ ...this.props }
+									componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
+								/>
+							) }
 						</div>
 					) }
 				</CheckoutThankYouHeader>
@@ -911,6 +926,7 @@ function PurchaseDetailsWrapper(
 	if ( hasFailedPurchases ) {
 		return <FailedPurchaseDetails purchases={ purchases } failedPurchases={ failedPurchases } />;
 	}
+
 	if ( purchases.some( isJetpackPlan ) ) {
 		return (
 			<JetpackPlanDetails
