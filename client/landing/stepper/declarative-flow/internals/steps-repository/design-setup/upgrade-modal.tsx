@@ -182,6 +182,24 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 				: translate( 'Included with your purchase' );
 	}
 
+	const features = (
+		<div className="upgrade-modal__included">
+			<h2>{ featureListHeader }</h2>
+			<ul>
+				{ featureList.map( ( feature, i ) => (
+					<li key={ i } className="upgrade-modal__included-item">
+						<Tooltip text={ feature.getDescription?.() } position="top left">
+							<div>
+								<Gridicon icon="checkmark" size={ 16 } />
+								{ feature.getTitle() }
+							</div>
+						</Tooltip>
+					</li>
+				) ) }
+			</ul>
+		</div>
+	);
+
 	return (
 		<Dialog
 			className={ classNames( 'upgrade-modal', { loading: isLoading } ) }
@@ -196,26 +214,10 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 						{ modalData.header }
 						{ modalData.text }
 						{ modalData.price }
+						{ features }
 						{ modalData.action }
 					</div>
-					<div className="upgrade-modal__col">
-						<div className="upgrade-modal__included">
-							<h2>{ featureListHeader }</h2>
-							<ul>
-								{ featureList.map( ( feature, i ) => (
-									<li key={ i } className="upgrade-modal__included-item">
-										<Tooltip text={ feature.getDescription?.() } position="top left">
-											<div>
-												<Gridicon icon="checkmark" size={ 16 } />
-												{ feature.getTitle() }
-											</div>
-										</Tooltip>
-									</li>
-								) ) }
-							</ul>
-						</div>
-					</div>
-
+					<div className="upgrade-modal__col">{ features }</div>
 					<Button className="upgrade-modal__close" borderless onClick={ () => closeModal() }>
 						<Gridicon icon="cross" size={ 12 } />
 						<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
