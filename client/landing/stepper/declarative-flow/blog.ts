@@ -1,4 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
+import { getWpI18nLocaleSlug } from '@automattic/i18n-utils/src/locale-context';
 import { getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
@@ -42,7 +43,9 @@ const Blog: Flow = {
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		if ( ! isLoggedIn ) {
-			redirect( logInUrl );
+			if ( getWpI18nLocaleSlug() ) {
+				redirect( logInUrl );
+			}
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,

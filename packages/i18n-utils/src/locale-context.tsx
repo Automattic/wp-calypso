@@ -39,7 +39,7 @@ function mapWpI18nLangToLocaleSlug( locale: Locale = '' ): Locale {
 /**
  * Get the current locale slug from the @wordpress/i18n locale data
  */
-function getWpI18nLocaleSlug(): string | undefined {
+export function getWpI18nLocaleSlug(): string | undefined {
 	const language = i18n.getLocaleData ? i18n.getLocaleData()?.[ '' ]?.language : '';
 
 	return mapWpI18nLangToLocaleSlug( language );
