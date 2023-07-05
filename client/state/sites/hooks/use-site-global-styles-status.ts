@@ -4,6 +4,20 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { ExperimentAssignment } from '@automattic/explat-client';
+import type { ExperimentOptions } from '@automattic/explat-client-react-helpers';
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+let useExperiment = (
+	experimentName: string,
+	options?: ExperimentOptions
+): [ boolean, ExperimentAssignment | null ] => [ false, null ];
+/* eslint-enable @typescript-eslint/no-unused-vars */
+try {
+	if ( typeof window !== undefined ) {
+		( { useExperiment } = await import( 'calypso/lib/explat' ) );
+	}
+} catch ( e ) {}
 
 export type GlobalStylesStatus = {
 	shouldLimitGlobalStyles: boolean;
@@ -17,32 +31,6 @@ const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
 	shouldLimitGlobalStyles: false,
 	globalStylesInUse: false,
 	globalStylesInPersonalPlan: false,
-};
-
-function isObject( x: unknown ): x is Record< string, unknown > {
-	return typeof x === 'object' && x !== null;
-}
-
-const getExperimentAssignment = ( experimentName: string ): string | null => {
-	return wpcom.req
-		.get(
-			{
-				path: '/experiments/0.1.0/assignments/calypso',
-				apiNamespace: 'wpcom/v2',
-			},
-			{
-				experiment_name: experimentName,
-			}
-		)
-		.then( ( response: unknown ) =>
-			isObject( response ) &&
-			isObject( response.variations ) &&
-			typeof response.ttl === 'number' &&
-			0 < response.ttl
-				? response.variations[ experimentName ]
-				: null
-		)
-		.catch( () => null );
 };
 
 const getGlobalStylesInfoForSite = (
@@ -86,15 +74,11 @@ export function useSiteGlobalStylesStatus(
 		return site?.ID ?? null;
 	} );
 
-	const { data: globalStylesOnPersonalExperimentAssignment } = useQuery( {
-		queryKey: [ 'globalStylesOnPersonalExperimentAssignment', siteId ],
-		queryFn: () => getExperimentAssignment( 'calypso_global_styles_personal' ),
-		placeholderData: null,
-		refetchOnWindowFocus: false,
-		enabled: typeof window !== undefined && siteId === null && isLoggedIn,
+	const [ , experimentAssignment ] = useExperiment( 'calypso_global_styles_personal', {
+		isEligible: siteId === null && isLoggedIn,
 	} );
 	const currentUserHasGlobalStylesInPersonalPlan =
-		globalStylesOnPersonalExperimentAssignment === 'treatment';
+		experimentAssignment?.variationName === 'treatment';
 
 	const { data: globalStylesInfo } = useQuery( {
 		queryKey: [ 'globalStylesInfo', siteId, currentUserHasGlobalStylesInPersonalPlan ],
