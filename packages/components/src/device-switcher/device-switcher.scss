@@ -74,6 +74,7 @@
 	}
 
 	.device-switcher__container--is-phone & {
+		--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
 		max-width: 480px;
 		max-height: 844px;
 
