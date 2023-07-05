@@ -276,10 +276,10 @@ class VideoPressStatsModule extends Component {
 										Hours Watched
 									</div>
 									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-										Views
+										Retention Rate
 									</div>
 									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-										Retention Rate
+										Views
 									</div>
 								</div>
 								{ completeVideoStats.map( ( row, index ) => (
