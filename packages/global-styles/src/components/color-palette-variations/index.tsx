@@ -26,7 +26,7 @@ interface ColorPaletteVariationsProps {
 	stylesheet: string;
 	selectedColorPaletteVariation: GlobalStylesObject | null;
 	onSelect: ( colorPaletteVariation: GlobalStylesObject | null ) => void;
-	limitGlobalStyles: boolean;
+	limitGlobalStyles?: boolean;
 }
 
 const ColorPaletteVariation = ( {
@@ -86,37 +86,42 @@ const ColorPaletteVariations = ( {
 			{ ...composite }
 			role="listbox"
 			aria-label={ translate( 'Color palette variations' ) }
+			className="global-styles-variations__container"
 		>
-			<h3 className="global-styles-variation__title">{ translate( 'Free style' ) }</h3>
-			<div className="color-palette-variations">
-				<ColorPaletteVariation
-					key="base"
-					colorPaletteVariation={ { ...base, title: translate( 'Free style' ) } }
-					isActive={ ! selectedColorPaletteVariation }
-					composite={ composite }
-					onSelect={ () => onSelect( null ) }
-				/>
-			</div>
-			<h3 className="global-styles-variation__title">
-				{ translate( 'Custom styles' ) }
-				{ limitGlobalStyles && (
-					<PremiumBadge
-						shouldHideTooltip
-						shouldCompactWithAnimation
-						labelText={ translate( 'Upgrade' ) }
-					/>
-				) }
-			</h3>
-			<div className="color-palette-variations">
-				{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
+			<div className="global-styles-variations__group">
+				<h3 className="global-styles-variations__group-title">{ translate( 'Free style' ) }</h3>
+				<div className="color-palette-variations">
 					<ColorPaletteVariation
-						key={ index }
-						colorPaletteVariation={ colorPaletteVariation }
-						isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
+						key="base"
+						colorPaletteVariation={ { ...base, title: translate( 'Free style' ) } }
+						isActive={ ! selectedColorPaletteVariation }
 						composite={ composite }
-						onSelect={ () => onSelect( colorPaletteVariation ) }
+						onSelect={ () => onSelect( null ) }
 					/>
-				) ) }
+				</div>
+			</div>
+			<div className="global-styles-variations__group">
+				<h3 className="global-styles-variations__group-title">
+					{ translate( 'Custom styles' ) }
+					{ limitGlobalStyles && (
+						<PremiumBadge
+							shouldHideTooltip
+							shouldCompactWithAnimation
+							labelText={ translate( 'Upgrade' ) }
+						/>
+					) }
+				</h3>
+				<div className="color-palette-variations">
+					{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
+						<ColorPaletteVariation
+							key={ index }
+							colorPaletteVariation={ colorPaletteVariation }
+							isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
+							composite={ composite }
+							onSelect={ () => onSelect( colorPaletteVariation ) }
+						/>
+					) ) }
+				</div>
 			</div>
 		</Composite>
 	);

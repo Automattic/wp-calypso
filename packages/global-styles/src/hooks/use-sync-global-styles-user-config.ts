@@ -3,7 +3,10 @@ import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/compo
 import { useContext, useEffect } from 'react';
 import type { GlobalStylesObject } from '../types';
 
-const useSyncGlobalStylesUserConfig = ( globalStyles: GlobalStylesObject[] ) => {
+const useSyncGlobalStylesUserConfig = (
+	globalStyles: GlobalStylesObject[],
+	onChange?: ( globalStyle: GlobalStylesObject ) => void
+) => {
 	const { user, setUserConfig } = useContext( GlobalStylesContext );
 
 	useEffect( () => {
@@ -13,6 +16,10 @@ const useSyncGlobalStylesUserConfig = ( globalStyles: GlobalStylesObject[] ) => 
 				.reduce( ( prev, current ) => mergeBaseAndUserConfigs( prev, current ), {} )
 		);
 	}, [ globalStyles ] );
+
+	useEffect( () => {
+		onChange?.( user );
+	}, [ user ] );
 
 	return user;
 };
