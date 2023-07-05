@@ -19,7 +19,11 @@ import {
 	isDomainUpdateable,
 	resolveDomainStatus,
 } from 'calypso/lib/domains';
-import { type as domainTypes, domainInfoContext } from 'calypso/lib/domains/constants';
+import {
+	type as domainTypes,
+	domainInfoContext,
+	transferStatus,
+} from 'calypso/lib/domains/constants';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
 import { isRecentlyRegisteredAndDoesNotPointToWpcom } from 'calypso/lib/domains/utils/is-recently-registered-and-does-not-point-to-wpcom';
@@ -416,7 +420,7 @@ class DomainRow extends PureComponent {
 							{ translate( 'Transfer to WordPress.com' ) }
 						</PopoverMenuItem>
 					) }
-					{ site.options?.is_domain_only && (
+					{ site.options?.is_domain_only && domain.type !== domainTypes.TRANSFER && (
 						<PopoverMenuItem href={ createSiteFromDomainOnly( site.slug, site.siteId ) }>
 							<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ translate( 'Create site' ) }

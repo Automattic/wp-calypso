@@ -128,7 +128,10 @@ const Settings = ( {
 	};
 
 	const renderStatusSection = () => {
-		if ( ! ( domain && selectedSite?.options?.is_domain_only ) ) {
+		if (
+			! ( domain && selectedSite?.options?.is_domain_only ) ||
+			domain.type === domainTypes.TRANSFER
+		) {
 			return null;
 		}
 
