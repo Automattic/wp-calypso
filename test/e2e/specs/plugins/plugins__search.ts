@@ -72,6 +72,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		await pluginsPage.search( 'jetpack' );
 
 		// Check if its redirecting to the default plugins page
-		await page.waitForURL( /\/plugins\?s=/ );
+		await page.waitForURL( /\/plugins\/\?s=/ );
 	} );
 } );
