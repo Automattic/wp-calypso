@@ -5,17 +5,17 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SectionNav from 'calypso/components/section-nav';
-import useFollowersQuery from 'calypso/data/followers/use-followers-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
+import useRemoveViewer from 'calypso/data/viewers/use-remove-viewer-mutation';
+import useViewersQuery from 'calypso/data/viewers/use-viewers-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
 import { getPendingInvitesForSite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSectionNavCompact from '../people-section-nav-compact';
-import Subscribers from '../subscribers';
 import TeamInvites from '../team-invites';
 import TeamMembers from '../team-members';
-import type { FollowersQuery } from '../subscribers/types';
+import Viewers from '../viewers-list/viewers';
 import type { UsersQuery } from '../team-members/types';
 
 interface Props {
@@ -25,28 +25,28 @@ interface Props {
 function SubscribersTeam( props: Props ) {
 	const translate = useTranslate();
 	const { filter, search } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( ( state ) => {
+		const selectedSite = getSelectedSite( state );
+
+		return selectedSite as NonNullable< typeof selectedSite >;
+	} );
+	const isPrivateSite = site.is_private ?? false;
 	const pendingInvites = useSelector( ( state ) =>
 		getPendingInvitesForSite( state, site?.ID as number )
 	);
+	const { removeViewer } = useRemoveViewer();
 
-	// fetching data config
-	const followersFetchOptions = { search };
-	const defaultTeamFetchOptions = { include_viewers: true };
 	const teamFetchOptions = search
 		? {
 				search: `*${ search }*`,
 				search_columns: [ 'display_name', 'user_login', 'user_email' ],
-				...defaultTeamFetchOptions,
 		  }
-		: defaultTeamFetchOptions;
+		: {};
 
-	const followersQuery = useFollowersQuery(
-		site?.ID,
-		'all',
-		followersFetchOptions
-	) as unknown as FollowersQuery;
-	const usersQuery = useUsersQuery( site?.ID, teamFetchOptions ) as unknown as UsersQuery;
+	const viewersQuery = useViewersQuery( site.ID, undefined, { enabled: isPrivateSite } );
+	const usersQuery = useUsersQuery( site.ID, teamFetchOptions ) as UsersQuery;
+
+	const totalViewers = viewersQuery.data?.total ?? 0;
 
 	return (
 		<Main>
@@ -56,7 +56,7 @@ function SubscribersTeam( props: Props ) {
 				className="people__page-heading"
 				headerText={ translate( 'Users' ) }
 				subHeaderText={ translate(
-					'Invite subscribers and team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
+					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
 					{
 						components: {
 							learnMore: (
@@ -74,26 +74,39 @@ function SubscribersTeam( props: Props ) {
 			<div>
 				<SectionNav>
 					<PeopleSectionNavCompact
+						shouldDisplayViewersTab={ isPrivateSite }
 						selectedFilter={ filter }
 						searchTerm={ search }
 						filterCount={ {
 							team: usersQuery.data?.total,
-							subscribers: followersQuery.data?.total,
+							viewers: totalViewers,
 						} }
 					/>
 				</SectionNav>
 
 				{ ( () => {
 					switch ( filter ) {
-						case 'subscribers':
+						case 'viewers':
 							return (
 								<>
-									<PageViewTracker path="/people/subscribers/:site" title="People > Subscribers" />
+									<PageViewTracker path="/people/viewers/:site" title="People > Viewers" />
 
-									<Subscribers
-										filter={ filter }
-										search={ search }
-										followersQuery={ followersQuery }
+									<Viewers
+										label={ translate(
+											'You have %(number)d viewer',
+											'You have %(number)d viewers',
+											{
+												args: { number: totalViewers },
+												count: totalViewers,
+											}
+										) }
+										site={ site }
+										viewers={ viewersQuery.data?.viewers ?? [] }
+										isFetching={ viewersQuery.isFetching }
+										fetchNextPage={ viewersQuery.fetchNextPage }
+										hasNextPage={ viewersQuery.hasNextPage }
+										isFetchingNextPage={ viewersQuery.isFetchingNextPage }
+										removeViewer={ removeViewer }
 									/>
 								</>
 							);

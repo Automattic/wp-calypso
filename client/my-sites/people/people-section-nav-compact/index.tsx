@@ -7,15 +7,16 @@ import PeopleSearch from '../people-section-nav/people-search';
 
 interface Props {
 	selectedFilter: string;
+	shouldDisplayViewersTab: boolean;
 	searchTerm?: string;
 	filterCount?: { [ key: string ]: undefined | number };
 }
 function PeopleSectionNavCompact( props: Props ) {
 	const translate = useTranslate();
-	const { selectedFilter, searchTerm, filterCount } = props;
+	const { selectedFilter, searchTerm, filterCount, shouldDisplayViewersTab } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const searchPlaceholder =
-		selectedFilter === 'subscribers' ? translate( 'Search by email…' ) : undefined;
+		selectedFilter === 'viewers' ? translate( 'Search by email…' ) : undefined;
 
 	const filters = [
 		{
@@ -23,12 +24,15 @@ function PeopleSectionNavCompact( props: Props ) {
 			title: translate( 'Team' ),
 			path: '/people/team/' + site?.slug,
 		},
-		{
-			id: 'subscribers',
-			title: translate( 'Subscribers' ),
-			path: '/people/subscribers/' + site?.slug,
-		},
 	];
+
+	if ( shouldDisplayViewersTab ) {
+		filters.push( {
+			id: 'viewers',
+			title: translate( 'Viewers' ),
+			path: '/people/viewers/' + site?.slug,
+		} );
+	}
 
 	return (
 		<>
