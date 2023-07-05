@@ -7,7 +7,7 @@ import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
 	setSubscriptionValue: ( value: number ) => number;
-	handlePlanSwap: ( e: MouseEvent | KeyboardEvent ) => void;
+	handlePlanSwap: ( e: MouseEvent ) => void;
 }
 
 const AVERAGE_PRICE_INFO = '$6';
