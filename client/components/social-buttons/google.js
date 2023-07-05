@@ -69,6 +69,16 @@ class GoogleSocialButton extends Component {
 	async initializeGoogleSignIn() {
 		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
 
+		if ( ! googleSignIn ) {
+			this.props.showErrorNotice(
+				this.props.translate(
+					'Something went wrong when trying to load Google sign-in. Please refresh the page.'
+				)
+			);
+
+			return;
+		}
+
 		this.client = googleSignIn.initCodeClient( {
 			client_id: this.props.clientId,
 			scope: this.props.scope,
@@ -94,7 +104,11 @@ class GoogleSocialButton extends Component {
 
 	async loadGoogleIdentityServicesAPI() {
 		if ( ! window.google?.accounts?.oauth2 ) {
-			await loadScript( 'https://accounts.google.com/gsi/client' );
+			try {
+				await loadScript( 'https://accounts.google.com/gsi/client' );
+			} catch {
+				return null;
+			}
 		}
 
 		return window.google.accounts.oauth2;
