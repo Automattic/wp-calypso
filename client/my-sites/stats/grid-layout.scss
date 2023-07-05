@@ -128,6 +128,16 @@ $grid-vertical-gutters: 32px;
 	}
 }
 
+/* custom video stats style to allow for scrolling */
+.is-section-stats .list-videoplays {
+	overflow-x: scroll;
+
+	.stats-card--header-and-body {
+		width: fit-content;
+		min-width: 100%;
+	}
+}
+
 .is-section-stats .stats__module-list--traffic {
 	// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,
 	// which would make different gaps for sites.
@@ -325,6 +335,7 @@ $grid-vertical-gutters: 32px;
 	.stats__module-wrapper--videoplays,
 	.list-videoplays {
 		grid-area: videos;
+		overflow-x: scroll;
 
 		// Downloads module is disabled for Jetpack sites.
 		// Expand the Videos module to take up the entire row.
