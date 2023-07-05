@@ -1,12 +1,18 @@
 /**
  * @jest-environment jsdom
  */
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import ThemeTypeBadge from '../';
+
+jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+	useSiteGlobalStylesStatus: () => ( {
+		shouldLimitGlobalStyles: false,
+		globalStylesInPersonalPlan: false,
+	} ),
+} ) );
 
 describe( 'ThemeTypeBadge', () => {
 	function renderWithState( content, { hasPremiumPlan = false, hasPurchasedTheme = false } = {} ) {
@@ -44,12 +50,8 @@ describe( 'ThemeTypeBadge', () => {
 
 	describe( 'Premium theme popover', () => {
 		test( 'Free site', async () => {
-			const queryClient = new QueryClient();
-
 			const { container } = renderWithState(
-				<QueryClientProvider client={ queryClient }>
-					<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />
-				</QueryClientProvider>
+				<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />
 			);
 			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
@@ -62,12 +64,8 @@ describe( 'ThemeTypeBadge', () => {
 		} );
 
 		test( 'Premium site', async () => {
-			const queryClient = new QueryClient();
-
 			const { container } = renderWithState(
-				<QueryClientProvider client={ queryClient }>
-					<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />
-				</QueryClientProvider>,
+				<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />,
 				{
 					hasPremiumPlan: true,
 				}
@@ -83,12 +81,8 @@ describe( 'ThemeTypeBadge', () => {
 		} );
 
 		test( 'Purchased a premium theme', async () => {
-			const queryClient = new QueryClient();
-
 			const { container } = renderWithState(
-				<QueryClientProvider client={ queryClient }>
-					<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />
-				</QueryClientProvider>,
+				<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />,
 				{
 					hasPurchasedTheme: true,
 				}
