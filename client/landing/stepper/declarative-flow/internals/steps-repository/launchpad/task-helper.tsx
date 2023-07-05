@@ -43,6 +43,7 @@ export function getEnhancedTasks(
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
+	globalStylesMinimumPlan: string | null,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
@@ -160,7 +161,7 @@ export function getEnhancedTasks(
 						}
 						const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 							...( shouldDisplayWarning && {
-								plan: PLAN_PREMIUM,
+								plan: globalStylesMinimumPlan ?? PLAN_PREMIUM,
 								feature: isVideoPressFlowWithUnsupportedPlan
 									? FEATURE_VIDEO_UPLOADS
 									: FEATURE_STYLE_CUSTOMIZATION,
