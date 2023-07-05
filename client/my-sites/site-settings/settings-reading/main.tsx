@@ -39,6 +39,7 @@ type Fields = {
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_reader_views_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
+	sm_enabled?: boolean;
 };
 
 const getFormSettings = ( settings: unknown & Fields ) => {
@@ -62,6 +63,7 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_featured_image_in_email,
 		wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt,
+		sm_enabled,
 	} = settings;
 
 	return {
@@ -80,6 +82,7 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_featured_image_in_email: !! wpcom_featured_image_in_email,
 		wpcom_reader_views_enabled: !! wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
+		sm_enabled: !! sm_enabled,
 	};
 };
 

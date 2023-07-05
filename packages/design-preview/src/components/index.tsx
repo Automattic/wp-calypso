@@ -1,10 +1,6 @@
-import {
-	GlobalStylesProvider,
-	useGlobalStylesOutput,
-	useSyncGlobalStylesUserConfig,
-	transformStyles,
-} from '@automattic/global-styles';
-import { useMemo, useEffect } from 'react';
+import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import { useMemo } from 'react';
+import { useInlineCss, useScreens } from '../hooks';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
@@ -33,12 +29,9 @@ interface DesignPreviewProps {
 	selectedFontVariation: GlobalStylesObject | null;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 	onGlobalStylesChange: ( globalStyles: GlobalStylesObject | null ) => void;
+	limitGlobalStyles: boolean;
+	onNavigatorPathChange?: ( path: string ) => void;
 }
-
-const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; }`;
-
-const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
-	variations.find( ( variation ) => variation.slug === slug );
 
 // @todo Get the style variations of theme, and then combine the selected one with colors & fonts for consistency
 const Preview: React.FC< DesignPreviewProps > = ( {
@@ -63,6 +56,8 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	selectedFontVariation,
 	onSelectFontVariation,
 	onGlobalStylesChange,
+	limitGlobalStyles,
+	onNavigatorPathChange,
 } ) => {
 	const selectedVariations = useMemo(
 		() =>
@@ -70,29 +65,23 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		[ selectedColorVariation, selectedFontVariation ]
 	);
 
-	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
+	const inlineCss = useInlineCss( variations, selectedVariation );
 
-	const [ globalStyles ] = useGlobalStylesOutput();
+	const screens = useScreens( {
+		siteId,
+		stylesheet,
+		limitGlobalStyles,
+		variations,
+		splitPremiumVariations,
+		selectedVariation,
+		selectedColorVariation,
+		selectedFontVariation,
+		onSelectVariation,
+		onSelectColorVariation,
+		onSelectFontVariation,
+	} );
 
-	const sitePreviewInlineCss = useMemo( () => {
-		let inlineCss = INJECTED_CSS;
-
-		if ( globalStyles ) {
-			inlineCss += transformStyles( globalStyles );
-		}
-
-		if ( variations && selectedVariation ) {
-			inlineCss +=
-				selectedVariation.inline_css ??
-				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' );
-		}
-
-		return inlineCss;
-	}, [ variations, selectedVariation, globalStyles ] );
-
-	useEffect( () => {
-		onGlobalStylesChange( syncedGlobalStylesUserConfig );
-	}, [ syncedGlobalStylesUserConfig ] );
+	useSyncGlobalStylesUserConfig( selectedVariations, onGlobalStylesChange );
 
 	return (
 		<div className="design-preview">
@@ -103,22 +92,14 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				description={ description }
 				shortDescription={ shortDescription }
 				pricingBadge={ pricingBadge }
-				variations={ variations }
-				selectedVariation={ selectedVariation }
-				onSelectVariation={ onSelectVariation }
-				splitPremiumVariations={ splitPremiumVariations }
-				onClickCategory={ onClickCategory }
+				screens={ screens }
 				actionButtons={ actionButtons }
-				siteId={ siteId }
-				stylesheet={ stylesheet }
-				selectedColorVariation={ selectedColorVariation }
-				onSelectColorVariation={ onSelectColorVariation }
-				selectedFontVariation={ selectedFontVariation }
-				onSelectFontVariation={ onSelectFontVariation }
+				onClickCategory={ onClickCategory }
+				onNavigatorPathChange={ onNavigatorPathChange }
 			/>
 			<SitePreview
 				url={ previewUrl }
-				inlineCss={ sitePreviewInlineCss }
+				inlineCss={ inlineCss }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>

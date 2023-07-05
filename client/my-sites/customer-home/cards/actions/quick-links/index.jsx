@@ -1,6 +1,8 @@
+import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
+import { JetpackLogo } from '@automattic/components';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
@@ -13,6 +15,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
+import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -27,6 +30,8 @@ import {
 	getCustomizerUrl,
 	getSiteOption,
 	isNewSite,
+	getSitePlanSlug,
+	getSite,
 } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -66,14 +71,30 @@ export const QuickLinks = ( {
 	siteSlug,
 	isFSEActive,
 	siteEditorUrl,
+	isAtomic,
 } ) => {
 	const translate = useTranslate();
+	const { sendNudge } = useOdysseusAssistantContext();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
 		,
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
 	const isPromotePostActive = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+	const siteId = useSelector( getSelectedSiteId );
+	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
+	const hasBoost = site?.options.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
+
+	const addNewDomain = () => {
+		sendNudge( {
+			nudge: 'add-domain',
+			initialMessage:
+				'I see you want to add a domain. I can give you a few tips on how to do that.',
+		} );
+		trackAddDomainAction();
+	};
 
 	const customizerLinks =
 		isStaticHomePage && canEditPages ? (
@@ -174,7 +195,7 @@ export const QuickLinks = ( {
 						<ActionBox
 							href={ `/domains/add/${ siteSlug }` }
 							hideLinkIndicator
-							onClick={ trackAddDomainAction }
+							onClick={ addNewDomain }
 							label={ translate( 'Add a domain' ) }
 							gridicon="add-outline"
 						/>
@@ -222,6 +243,22 @@ export const QuickLinks = ( {
 						iconSrc={ fiverrIcon }
 					/>
 				</>
+			) }
+			{ isAtomic && hasBoost && (
+				<ActionBox
+					href={ `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-boost` }
+					hideLinkIndicator
+					label={ translate( 'Speed up your site' ) }
+					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
+				/>
+			) }
+			{ isAtomic && hasBackups && (
+				<ActionBox
+					href={ `/backup/${ siteSlug }` }
+					hideLinkIndicator
+					label={ translate( 'Restore a backup' ) }
+					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
+				/>
 			) }
 		</div>
 	);

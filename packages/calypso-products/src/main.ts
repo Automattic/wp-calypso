@@ -718,7 +718,7 @@ export const getPopularPlanSpec = ( {
 	isJetpack,
 	availablePlans,
 }: {
-	flowName: string;
+	flowName?: string | null;
 	customerType: string;
 	isJetpack: boolean;
 	availablePlans: string[];
@@ -786,8 +786,8 @@ export const chooseDefaultCustomerType = ( {
 	currentPlan,
 }: {
 	currentCustomerType: string;
-	selectedPlan: string;
-	currentPlan: { product_slug: string };
+	selectedPlan?: string;
+	currentPlan: { productSlug: PlanSlug };
 } ): string => {
 	if ( currentCustomerType ) {
 		return currentCustomerType;
@@ -815,7 +815,7 @@ export const chooseDefaultCustomerType = ( {
 		return businessPlanSlugs.includes( selectedPlan as PlanSlug ) ? 'business' : 'personal';
 	} else if ( currentPlan ) {
 		const isPlanInBusinessGroup =
-			businessPlanSlugs.indexOf( currentPlan.product_slug as PlanSlug ) !== -1;
+			businessPlanSlugs.indexOf( currentPlan.productSlug as PlanSlug ) !== -1;
 		return isPlanInBusinessGroup ? 'business' : 'personal';
 	}
 

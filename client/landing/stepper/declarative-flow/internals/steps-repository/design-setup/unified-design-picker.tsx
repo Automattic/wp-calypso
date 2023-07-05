@@ -30,7 +30,7 @@ import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import useCheckout from '../../../../hooks/use-checkout';
@@ -83,9 +83,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
-	const hideBackFromQueryString = queryParams.get( 'hideBack' );
+	const [ shouldHideBack, setShouldHideBack ] = useState( false );
 
 	const { goToCheckout } = useCheckout();
 
@@ -602,6 +602,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					onSelectVariation={ previewDesignVariation }
 					actionButtons={ actionButtons }
 					recordDeviceClick={ recordDeviceClick }
+					limitGlobalStyles={ shouldLimitGlobalStyles }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
 					selectedColorVariation={ selectedColorVariation }
@@ -609,6 +610,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					selectedFontVariation={ selectedFontVariation }
 					onSelectFontVariation={ setSelectedFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }
+					onNavigatorPathChange={ ( path: string ) => setShouldHideBack( path !== '/' ) }
 				/>
 			</>
 		);
@@ -618,7 +620,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				hideBack={ !! hideBackFromQueryString }
+				hideBack={ shouldHideBack }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
 				customizedActionButtons={ actionButtons }

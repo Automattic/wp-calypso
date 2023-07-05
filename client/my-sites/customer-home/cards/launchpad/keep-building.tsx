@@ -2,6 +2,7 @@ import { CircularProgressBar } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { isMobile } from '@automattic/viewport';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -81,7 +82,11 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 				case 'design_edited':
 					actionDispatch = () => {
 						recordTaskClickTracksEvent( task );
-						window.location.assign( `/site-editor/${ siteSlug }` );
+						window.location.assign(
+							addQueryArgs( `/site-editor/${ siteSlug }`, {
+								canvas: 'edit',
+							} )
+						);
 					};
 					break;
 
@@ -100,6 +105,12 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 							? `/marketing/connections/${ siteSlug }`
 							: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
 						window.location.assign( url );
+					};
+					break;
+				case 'add_new_page':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task );
+						window.location.assign( `/page/${ siteSlug }` );
 					};
 					break;
 			}

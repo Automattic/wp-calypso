@@ -8,6 +8,8 @@ import {
 	isJetpackSecurityT1Slug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
+	isJetpackStatsFreeProductSlug,
+	isJetpackStatsPaidProductSlug,
 	isJetpackStarterSlug,
 	isJetpackVideoPressSlug,
 	isJetpackAISlug,
@@ -24,6 +26,8 @@ type featureString =
 	| 'search'
 	| 'social-basic'
 	| 'social-advanced'
+	| 'stats-free'
+	| 'stats'
 	| 'support'
 	| 'videopress'
 	| 'complete'
@@ -102,6 +106,16 @@ function getFeatureStrings(
 				translate( 'Scheduled posts' ),
 				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
 				translate( 'Content recycling' ),
+			];
+		case 'stats-free':
+			return [
+				translate( 'Real-time data on visitors, likes, and comments' ),
+				translate( 'View weekly and yearly trends' ),
+			];
+		case 'stats':
+			return [
+				translate( 'Instant access to upcoming features' ),
+				translate( 'Ad-free experience' ),
 			];
 		case 'support':
 			return [ translate( 'Priority support' ) ];
@@ -187,6 +201,18 @@ export default function getJetpackProductFeatures(
 		return [
 			...getFeatureStrings( 'social-basic', translate ),
 			...getFeatureStrings( 'social-advanced', translate ),
+		];
+	}
+
+	if ( isJetpackStatsFreeProductSlug( product.product_slug ) ) {
+		return [ ...getFeatureStrings( 'stats-free', translate ) ];
+	}
+
+	if ( isJetpackStatsPaidProductSlug( product.product_slug ) ) {
+		return [
+			...getFeatureStrings( 'stats-free', translate ),
+			...getFeatureStrings( 'stats', translate ),
+			...getFeatureStrings( 'support', translate ),
 		];
 	}
 

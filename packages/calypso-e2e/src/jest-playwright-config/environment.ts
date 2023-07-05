@@ -110,20 +110,10 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		this.testArtifactsPath = await fs.mkdtemp(
 			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ date }-` )
 		);
-		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
 
 		// Start the browser.
 		const browser = await browserType.launch( {
 			...config.launchOptions,
-			logger: {
-				log: async ( name: string, severity: string, message: string ) => {
-					await fs.appendFile(
-						logFilePath,
-						`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
-					);
-				},
-				isEnabled: ( name ) => name === 'api',
-			},
 		} );
 
 		// Set up the proxy trap.
@@ -151,20 +141,31 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			if ( this.failure ) {
 				let contextIndex = 1;
 
-				const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
+				// Timestamp (actually date and time) of the failure.
+				const timestamp = new Date()
+					.toISOString()
+					.replace( /T/, '_' )
+					.replace( /\..+/, '' )
+					.replace( /:/g, '-' );
+
+				// Spec file name and step that filed.
+				const artifactPrefix = `${ this.testFilename }__${ sanitizeString(
+					this.failure.name
+				) }__${ timestamp }`;
 
 				for await ( const context of contexts ) {
 					let pageIndex = 1;
+					// Save trace file per page.
 					const traceFilePath = path.join(
 						this.testArtifactsPath,
-						`${ artifactFilename }__${ contextIndex }.zip`
+						`${ artifactPrefix }__${ contextIndex }.zip`
 					);
 
 					// Traces are saved per context.
 					await context.tracing.stop( { path: traceFilePath } );
 
 					for await ( const page of context.pages() ) {
-						const pageName = `${ artifactFilename }__${ contextIndex }-${ pageIndex }`;
+						const pageName = `${ artifactPrefix }__${ contextIndex }-${ pageIndex }`;
 						// Define artifact filename.
 						const mediaFilePath = path.join( this.testArtifactsPath, pageName );
 

@@ -59,16 +59,16 @@ export class ReaderListFollowedSites extends Component {
 		} );
 	};
 
-	renderSites = ( sites ) => {
+	renderSites = ( follows ) => {
 		const { path } = this.props;
 		return map(
-			sites,
-			( site ) =>
-				site && (
+			follows,
+			( follow ) =>
+				follow && (
 					<ReaderListFollowingItem
-						key={ site.ID }
+						key={ follow.ID }
 						path={ path }
-						site={ site }
+						follow={ follow }
 						isUnseen={ this.isUnseen() }
 					/>
 				)
