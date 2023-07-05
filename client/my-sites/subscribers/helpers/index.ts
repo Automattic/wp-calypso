@@ -1,3 +1,5 @@
+import { SubscriberListArgs } from '../types';
+
 const URL_PREFIX = 'https://wordpress.com';
 
 const getEarnPageUrl = ( siteSlug: string | null ) => `${ URL_PREFIX }/earn/${ siteSlug ?? '' }`;
@@ -32,17 +34,45 @@ const getSubscribersCacheKey = (
 	return cacheKey;
 };
 
+const getSubscribersQueryString = (
+	pageNumber: number,
+	search?: string,
+	sortTerm?: string,
+	filterOption?: string
+): string => {
+	const queryParams = [
+		search ? `s=${ search }` : '',
+		sortTerm ? `sort=${ sortTerm }` : '',
+		filterOption ? `f=${ filterOption }` : '',
+	];
+
+	let queryString = queryParams.filter( ( param ) => !! param ).join( '&' );
+	queryString = queryString ? `&${ queryString }` : '';
+
+	return `page=${ pageNumber }${ queryString }`;
+};
+
+const getSubscribersUrl = ( siteSlug: string | undefined | null, args: SubscriberListArgs ): string => {
+	const { currentPage, searchTerm, sortTerm, filterOption } = args;
+	const queryString = getSubscribersQueryString( currentPage, searchTerm, sortTerm, filterOption );
+
+	return `/subscribers/${ siteSlug }?${ queryString }`;
+};
+
 const getSubscriberDetailsUrl = (
 	siteSlug: string | undefined | null,
 	subscriptionId: number | undefined,
 	userId: number | undefined,
-	pageNumber = 1
-) => {
+	args: SubscriberListArgs
+): string => {
+	const { currentPage, searchTerm, sortTerm, filterOption } = args;
+	const queryString = getSubscribersQueryString( currentPage, searchTerm, sortTerm, filterOption );
+
 	if ( userId ) {
-		return `/subscribers/${ siteSlug }/${ userId }?page=${ pageNumber }`;
+		return `/subscribers/${ siteSlug }/${ userId }?${ queryString }`;
 	}
 
-	return `/subscribers/external/${ siteSlug }/${ subscriptionId }?page=${ pageNumber }`;
+	return `/subscribers/external/${ siteSlug }/${ subscriptionId }?${ queryString }`;
 };
 
 const getSubscriberDetailsCacheKey = (
@@ -66,5 +96,6 @@ export {
 	getSubscriberDetailsUrl,
 	getSubscriberDetailsType,
 	getSubscribersCacheKey,
+	getSubscribersUrl,
 	sanitizeInt,
 };

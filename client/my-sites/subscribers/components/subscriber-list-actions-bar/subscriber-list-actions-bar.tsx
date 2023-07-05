@@ -18,7 +18,7 @@ const getSortOptions = ( translate: ReturnType< typeof useTranslate > ) => [
 
 const ListActionsBar = () => {
 	const translate = useTranslate();
-	const { handleSearch, sortTerm, setSortTerm, filterOption, setFilterOption } =
+	const { handleSearch, searchTerm, sortTerm, setSortTerm, filterOption, setFilterOption } =
 		useSubscribersPage();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 	const recordSort = useRecordSort();
@@ -30,6 +30,8 @@ const ListActionsBar = () => {
 				placeholder={ translate( 'Search by name, username or email…' ) }
 				searchIcon={ <SearchIcon size={ 18 } /> }
 				onSearch={ handleSearch }
+				onSearchClose={ () => handleSearch( '' ) }
+				defaultValue={ searchTerm }
 			/>
 
 			<SelectDropdown
@@ -41,6 +43,7 @@ const ListActionsBar = () => {
 				selectedText={ translate( 'Subscriber type: %s', {
 					args: getOptionLabel( filterOptions, filterOption ) || '',
 				} ) }
+				initialSelected={ filterOption }
 			/>
 
 			<SortControls
