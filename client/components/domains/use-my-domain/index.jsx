@@ -23,10 +23,10 @@ import {
 } from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
+import { SignupDomainOrigin } from 'calypso/state/signup/steps/website-content/types';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
 import DomainTransferOrConnect from './transfer-or-connect';
-
 import './style.scss';
 
 function UseMyDomain( props ) {
@@ -271,7 +271,10 @@ function UseMyDomain( props ) {
 				onConnect={
 					'auth_code' === domainAvailabilityData?.ownership_verification_type
 						? showOwnershipVerificationFlow
-						: onConnect
+						: () =>
+								onConnect( {
+									signupDomainOrigin: isSignupStep ? SignupDomainOrigin.USE_YOUR_DOMAIN : null,
+								} )
 				}
 				onSkip={ onSkip }
 				onTransfer={ onTransfer ?? showTransferDomainFlow }
