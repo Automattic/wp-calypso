@@ -10,6 +10,7 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { getSite } from 'calypso/state/sites/selectors';
+import { getCurrentPlan } from '.';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -21,6 +22,7 @@ import type { AppState } from 'calypso/types';
  * @returns {boolean} Returns true if the site matches the criteria
  */
 export default function isSiteOnWooExpressEcommerceTrial( state: AppState, siteId: number ) {
+	const currentPlan = getCurrentPlan( state, siteId );
 	const site = getSite( state, siteId );
 	const plans = [
 		// Woo Express plans
@@ -39,6 +41,7 @@ export default function isSiteOnWooExpressEcommerceTrial( state: AppState, siteI
 		PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	];
 
-	const productSlug = site?.plan?.product_slug;
+	const productSlug = currentPlan?.productSlug || site?.plan?.product_slug;
+
 	return productSlug && plans.includes( productSlug );
 }
