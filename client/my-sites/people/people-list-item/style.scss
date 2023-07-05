@@ -19,6 +19,12 @@
 	}
 }
 
+.people-list-item.is-card-link {
+	.people-list-item__actions {
+		margin-inline-end: 32px;
+	}
+}
+
 .people-list-item__profile-container {
 	display: block;
 	flex-grow: 1;
