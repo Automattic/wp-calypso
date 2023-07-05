@@ -1,7 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -42,7 +41,8 @@ const Blog: Flow = {
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		if ( ! isLoggedIn ) {
-			redirect( logInUrl );
+			// eslint-disable-next-line no-console
+			console.log( locale, logInUrl );
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
