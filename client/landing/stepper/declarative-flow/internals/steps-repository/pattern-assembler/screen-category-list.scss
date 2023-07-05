@@ -9,11 +9,6 @@
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 3px;
 		cursor: pointer;
-
-		&.screen-category-list__category-button--is-open {
-			background-color: var(--studio-blue-0);
-			color: var(--studio-blue-50);
-		}
 	}
 }
 

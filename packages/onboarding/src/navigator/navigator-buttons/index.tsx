@@ -16,6 +16,7 @@ interface Props {
 	children: React.ReactNode;
 	onClick?: () => void;
 	checked?: boolean;
+	active?: boolean;
 }
 
 const GenericButton = ( { icon, children, className, checked, ...props }: Props ) => {
@@ -50,11 +51,13 @@ const GenericButton = ( { icon, children, className, checked, ...props }: Props 
 	);
 };
 
-export const NavigationButtonAsItem = ( { className, ...props }: Props ) => {
+export const NavigationButtonAsItem = ( { className, active, ...props }: Props ) => {
 	return (
 		<NavigatorButton
 			as={ GenericButton }
-			className={ classnames( 'navigator-button', className ) }
+			className={ classnames( 'navigator-button', className, {
+				'navigator-button--is-active': active,
+			} ) }
 			{ ...props }
 		/>
 	);

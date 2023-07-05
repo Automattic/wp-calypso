@@ -112,7 +112,7 @@ const ScreenCategoryList = ( {
 								'navigator-button',
 								'screen-category-list__category-button',
 								{
-									'screen-category-list__category-button--is-open': isOpen,
+									'navigator-button--is-active': isOpen,
 								}
 							) }
 							aria-label={ label }
