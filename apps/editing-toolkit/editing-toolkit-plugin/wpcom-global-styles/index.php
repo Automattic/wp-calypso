@@ -163,14 +163,20 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 	wp_set_script_translations( 'wpcom-global-styles-editor', 'full-site-editing' );
 	$is_global_styles_in_personal_plan = wpcom_site_has_global_styles_in_personal_plan();
 	$plan                              = $is_global_styles_in_personal_plan ? 'personal-bundle' : 'value_bundle';
+
+	$reset_global_styles_support_url = 'https://wordpress.com/support/using-styles/#reset-all-styles';
+	if ( class_exists( 'WPCom_Languages' ) ) {
+		$reset_global_styles_support_url = WPCom_Languages::localize_url( $reset_global_styles_support_url );
+	}
 	wp_localize_script(
 		'wpcom-global-styles-editor',
 		'wpcomGlobalStyles',
 		array(
-			'assetsUrl'                  => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl'                 => "$calypso_domain/plans/$site_slug?plan=$plan&feature=style-customization",
-			'wpcomBlogId'                => wpcom_global_styles_get_wpcom_current_blog_id(),
-			'globalStylesInPersonalPlan' => $is_global_styles_in_personal_plan,
+			'assetsUrl'                   => plugins_url( 'dist/', __FILE__ ),
+			'upgradeUrl'                  => "$calypso_domain/plans/$site_slug?plan=$plan&feature=style-customization",
+			'wpcomBlogId'                 => wpcom_global_styles_get_wpcom_current_blog_id(),
+			'globalStylesInPersonalPlan'  => $is_global_styles_in_personal_plan,
+			'resetGlobalStylesSupportUrl' => $reset_global_styles_support_url,
 		)
 	);
 	wp_enqueue_style(

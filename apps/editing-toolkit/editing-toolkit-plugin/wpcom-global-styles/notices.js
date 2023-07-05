@@ -1,6 +1,5 @@
 /* global wpcomGlobalStyles */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement, render, useCallback, useEffect } from '@wordpress/element';
@@ -127,12 +126,7 @@ function GlobalStylesEditNotice() {
 	}, [ editEntityRecord, globalStylesId, isSiteEditor ] );
 
 	const openResetGlobalStylesSupport = useCallback( () => {
-		window
-			.open(
-				localizeUrl( 'https://wordpress.com/support/using-styles/#reset-all-styles' ),
-				'_blank'
-			)
-			.focus();
+		window.open( wpcomGlobalStyles.resetGlobalStylesSupportUrl, '_blank' ).focus();
 		trackEvent( 'calypso_global_styles_gating_notice_reset_support_click', isSiteEditor );
 	}, [ isSiteEditor ] );
 
