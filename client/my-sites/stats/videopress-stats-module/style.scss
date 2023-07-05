@@ -6,6 +6,8 @@
 	font-size: 0.875rem;
 
 	color: var(--color-text);
+	min-width: 100%;
+	width: fit-content;
 }
 
 @media screen and ( max-width: 450px ) {
