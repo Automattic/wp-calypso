@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
-.bulk-domain-transfer {
+.domain-transfer {
 	height: 100%;
 	padding: 60px 0 0;
 	margin: 0 auto;
@@ -58,6 +58,11 @@
 	&.step-container {
 		@media ( max-width: $break-medium ) {
 			padding: 0 20px;
+		}
+
+		.step-container__jetpack-powered {
+			margin-top: auto;
+			margin-bottom: 56px;
 		}
 	}
 

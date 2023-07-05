@@ -715,16 +715,16 @@ const JetpackCheckoutSeals = () => {
 	);
 	const moneybackGuaranteeHeader =
 		show7DayGuarantee || show14DayGuarantee ? (
-			translate( '%(dayCount)s day money back guarantee', {
+			translate( '%(dayCount)s-day money back guarantee', {
 				args: {
 					dayCount: show7DayGuarantee ? 7 : 14,
 				},
 			} )
 		) : (
 			<>
-				{ translate( '14 day money back guarantee on yearly subscriptions' ) }
+				{ translate( '14-day money back guarantee on yearly subscriptions' ) }
 				<br />
-				{ translate( '7 day money back guarantee on monthly subscriptions' ) }
+				{ translate( '7-day money back guarantee on monthly subscriptions' ) }
 			</>
 		);
 	let moneybackGuaranteeIcon = badgeGenericSrc;
@@ -773,7 +773,7 @@ const JetpackCheckoutSealsWrapper = styled.div< React.HTMLAttributes< HTMLDivEle
 
 const JetpackCheckoutSealsSection = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 
 	color: ${ ( props ) => props.theme.colors.textColor };
 `;

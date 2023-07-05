@@ -2,13 +2,14 @@ import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import IntroStep from './intro';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import TransferDomains from './domains';
 import type { Step } from '../../types';
 
 import './styles.scss';
 
-const Intro: Step = function Intro( { navigation } ) {
-	const { submit } = navigation;
+const Intro: Step = function Intro( { navigation, flow } ) {
+	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
 
 	const handleSubmit = () => {
@@ -16,17 +17,23 @@ const Intro: Step = function Intro( { navigation } ) {
 	};
 	return (
 		<StepContainer
-			hideBack
-			stepName="intro"
+			flowName={ flow }
+			stepName="domains"
+			goBack={ goBack }
+			isHorizontalLayout={ false }
 			isLargeSkipLayout={ false }
 			formattedHeader={
 				<FormattedHeader
-					id="bulk-domains-header"
-					headerText={ __( 'Transfer domains' ) }
-					subHeaderText={ __( 'Follow along these 3 steps to transfer domains to WordPress.com' ) }
+					id="domain-transfer-header"
+					headerText={ __( 'Add unlocked domains' ) }
+					align="left"
 				/>
 			}
-			stepContent={ <IntroStep onSubmit={ handleSubmit } /> }
+			stepContent={
+				<CalypsoShoppingCartProvider>
+					<TransferDomains onSubmit={ handleSubmit } />
+				</CalypsoShoppingCartProvider>
+			}
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ false }
 			showHeaderWooCommercePowered={ false }

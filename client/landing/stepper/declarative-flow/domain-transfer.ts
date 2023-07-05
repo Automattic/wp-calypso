@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, BULK_DOMAIN_TRANSFER } from '@automattic/onboarding';
+import { useFlowProgress, DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import {
@@ -13,8 +13,8 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
-const bulkDomainTransfer: Flow = {
-	name: BULK_DOMAIN_TRANSFER,
+const domainTransfer: Flow = {
+	name: DOMAIN_TRANSFER,
 	get title() {
 		return translate( 'Bulk domain transfer' );
 	},
@@ -22,11 +22,11 @@ const bulkDomainTransfer: Flow = {
 		return [
 			{
 				slug: 'intro',
-				asyncComponent: () => import( './internals/steps-repository/bulk-domain-transfer-intro' ),
+				asyncComponent: () => import( './internals/steps-repository/domain-transfer-intro' ),
 			},
 			{
 				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/bulk-domain-transfer-domains' ),
+				asyncComponent: () => import( './internals/steps-repository/domain-transfer-domains' ),
 			},
 			{
 				slug: 'processing',
@@ -74,10 +74,7 @@ const bulkDomainTransfer: Flow = {
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
 
-					const checkoutBackURL = new URL(
-						'/setup/bulk-domain-transfer/domains',
-						window.location.href
-					);
+					const checkoutBackURL = new URL( '/setup/domain-transfer/domains', window.location.href );
 
 					// use replace instead of assign to remove the processing URL from history
 					return window.location.replace(
@@ -104,4 +101,4 @@ const bulkDomainTransfer: Flow = {
 	},
 };
 
-export default bulkDomainTransfer;
+export default domainTransfer;

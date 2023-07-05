@@ -15,6 +15,7 @@ import {
 	domainManagementEdit,
 	domainManagementList,
 	domainManagementContactsPrivacy,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
@@ -58,7 +59,9 @@ const EditContactInfoPage = ( {
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
 					currentRoute,

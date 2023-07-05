@@ -2,20 +2,26 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useResizeObserver } from '@wordpress/compose';
+import { useResizeObserver, useViewportMatch } from '@wordpress/compose';
 import {
 	useSetting,
 	useStyle,
 } from '@wordpress/edit-site/build-module/components/global-styles/hooks';
 import { useMemo, useState } from 'react';
-import { FONT_PREVIEW_WIDTH, FONT_PREVIEW_HEIGHT, SYSTEM_FONT_SLUG } from '../../constants';
+import {
+	FONT_PREVIEW_LARGE_WIDTH,
+	FONT_PREVIEW_LARGE_HEIGHT,
+	FONT_PREVIEW_WIDTH,
+	FONT_PREVIEW_HEIGHT,
+	SYSTEM_FONT_SLUG,
+} from '../../constants';
 import GlobalStylesVariationContainer from '../global-styles-variation-container';
 import FontFamiliesLoader from './font-families-loader';
 import type { FontFamily } from '../../types';
 
-const DEFAULT_FONT_STYLES: React.CSSProperties = {
-	fontSize: '13.5vw', // 18px for min-width wide breakpoint and 15px for max-width wide
-	textAlign: 'center',
+const DEFAULT_LARGE_FONT_STYLES: React.CSSProperties = {
+	fontSize: '13vw', // 18px for min-width wide breakpoint and 15px for max-width wide
+	lineHeight: '20px',
 	color: '#000000',
 };
 
@@ -39,8 +45,11 @@ const FontPairingVariationPreview = () => {
 	);
 
 	const [ containerResizeListener, { width } ] = useResizeObserver();
-	const ratio = width ? width / FONT_PREVIEW_WIDTH : 1;
-	const normalizedHeight = Math.ceil( FONT_PREVIEW_HEIGHT * ratio );
+	const isDesktop = useViewportMatch( 'large' );
+	const defaultWidth = isDesktop ? FONT_PREVIEW_LARGE_WIDTH : FONT_PREVIEW_WIDTH;
+	const defaultHeight = isDesktop ? FONT_PREVIEW_LARGE_HEIGHT : FONT_PREVIEW_HEIGHT;
+	const ratio = width ? width / defaultWidth : 1;
+	const normalizedHeight = Math.ceil( defaultHeight * ratio );
 	const externalFontFamilies = fontFamilies.filter( ( { slug } ) => slug !== SYSTEM_FONT_SLUG );
 	const [ isLoaded, setIsLoaded ] = useState( ! externalFontFamilies.length );
 
@@ -92,12 +101,18 @@ const FontPairingVariationPreview = () => {
 								overflow: 'hidden',
 							} }
 						>
-							<VStack spacing={ 1 } style={ { margin: '10px', width: '100%' } }>
+							<VStack
+								spacing={ 1 }
+								style={ {
+									margin: '10px',
+									width: '100%',
+									textAlign: isDesktop ? 'center' : 'left',
+								} }
+							>
 								<div
 									aria-label={ headingFontFamilyName }
 									style={ {
-										...DEFAULT_FONT_STYLES,
-										lineHeight: '22px',
+										...DEFAULT_LARGE_FONT_STYLES,
 										letterSpacing: headingLetterSpacing,
 										fontWeight: headingFontWeight,
 										fontFamily: headingFontFamily,
@@ -109,9 +124,8 @@ const FontPairingVariationPreview = () => {
 								<div
 									aria-label={ textFontFamilyName }
 									style={ {
-										...DEFAULT_FONT_STYLES,
+										...DEFAULT_LARGE_FONT_STYLES,
 										fontSize: '13px',
-										lineHeight: '23px',
 										letterSpacing: textLetterSpacing,
 										fontWeight: textFontWeight,
 										fontFamily: textFontFamily,

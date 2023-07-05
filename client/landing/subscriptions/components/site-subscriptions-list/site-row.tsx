@@ -1,11 +1,11 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
+import InfoPopover from 'calypso/components/info-popover';
 import TimeSince from 'calypso/components/time-since';
-import Tooltip from 'calypso/components/tooltip';
 import {
 	useRecordSiteUnsubscribed,
 	useRecordSiteResubscribed,
@@ -24,27 +24,6 @@ import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
 import { useSubscriptionManagerContext } from '../subscription-manager-context';
-
-interface NotificationStatusProps {
-	tooltipRef: React.RefObject< SVGSVGElement >;
-	setTooltipVisible: React.Dispatch< React.SetStateAction< boolean > >;
-	notificationDisabled: boolean;
-}
-
-const NotificationStatus: React.FC< NotificationStatusProps > = ( {
-	tooltipRef,
-	setTooltipVisible,
-	notificationDisabled,
-} ) => (
-	<Gridicon
-		ref={ tooltipRef }
-		icon={ notificationDisabled ? 'cross' : 'checkmark' }
-		size={ 16 }
-		className={ notificationDisabled ? 'red' : 'green' }
-		onMouseEnter={ () => setTooltipVisible( true ) }
-		onMouseLeave={ () => setTooltipVisible( false ) }
-	/>
-);
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
@@ -104,8 +83,6 @@ const SiteRow = ( {
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ isTooltipVisible, setTooltipVisible ] = useState< boolean >( false );
-	const tooltip = useRef< SVGSVGElement >( null );
 
 	const unsubscribeInProgress = useRef( false );
 	const resubscribePending = useRef( false );
@@ -276,28 +253,19 @@ const SiteRow = ( {
 			) }
 			{ isLoggedIn && (
 				<span className="new-comments-cell" role="cell">
-					<NotificationStatus
-						tooltipRef={ tooltip }
-						setTooltipVisible={ setTooltipVisible }
-						notificationDisabled={ ! delivery_methods.email?.send_comments }
-					/>
-					<Tooltip
-						className="new-comments-tooltip"
-						isVisible={ isTooltipVisible }
+					<InfoPopover
 						position="top"
-						context={ tooltip.current }
-						showOnMobile
+						icon={ ! delivery_methods.email?.send_comments ? 'cross' : 'checkmark' }
+						iconSize={ 16 }
+						className={ ! delivery_methods.email?.send_comments ? 'red' : 'green' }
+						showOnHover={ true }
 					>
-						<div className="new-comments-tooltip__content">
-							{ delivery_methods.email?.send_comments
-								? translate(
-										'You will receive emails notifications for new comments on this site.'
-								  )
-								: translate(
-										"You won't receive email notifications for new comments on this site."
-								  ) }
-						</div>
-					</Tooltip>
+						{ delivery_methods.email?.send_comments
+							? translate( 'You will receive emails notifications for new comments on this site.' )
+							: translate(
+									"You won't receive email notifications for new comments on this site."
+							  ) }
+					</InfoPopover>
 				</span>
 			) }
 			<span className="email-frequency-cell" role="cell">

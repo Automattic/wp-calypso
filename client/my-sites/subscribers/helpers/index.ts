@@ -10,7 +10,8 @@ const getSubscribersCacheKey = (
 	currentPage?: number,
 	perPage?: number,
 	search?: string,
-	sortTerm?: string
+	sortTerm?: string,
+	filterOption?: string
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
 	if ( currentPage ) {
@@ -24,6 +25,9 @@ const getSubscribersCacheKey = (
 	}
 	if ( sortTerm ) {
 		cacheKey.push( 'sort-term', sortTerm );
+	}
+	if ( filterOption ) {
+		cacheKey.push( 'filter-option', filterOption );
 	}
 	return cacheKey;
 };
