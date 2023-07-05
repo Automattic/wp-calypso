@@ -1,0 +1,21 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.home-site-preview {
+	.home-site-preview__iframe-wrapper {
+		flex-grow: 1;
+		overflow: hidden;
+		display: block;
+		height: 235px;
+		max-height: 235px;
+		pointer-events: none;
+
+		iframe {
+			height: 357%;
+			width: 357%;
+			max-width: 357%;
+			transform: scale(0.28);
+			transform-origin: top left;
+		}
+	}
+}

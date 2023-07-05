@@ -11,16 +11,19 @@ import {
 	FEATURE_GO_MOBILE,
 	FEATURE_QUICK_START,
 	FEATURE_SUPPORT,
+	FEATURE_SITE_PREVIEW,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import GoMobile from 'calypso/my-sites/customer-home/cards/features/go-mobile';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import QuickStart from 'calypso/my-sites/customer-home/cards/features/quick-start';
+import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const cardComponents = {
 	[ FEATURE_GO_MOBILE ]: GoMobile,
 	[ FEATURE_SUPPORT ]: HelpSearch,
+	[ FEATURE_SITE_PREVIEW ]: SitePreview,
 	[ ACTION_QUICK_LINKS ]: QuickLinks,
 	[ FEATURE_QUICK_START ]: QuickStart,
 	[ ACTION_WP_FOR_TEAMS_QUICK_LINKS ]: WpForTeamsQuickLinks,
