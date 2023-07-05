@@ -11,8 +11,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import {
 	requestAddProduct,
@@ -228,17 +228,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 
 	const addPlan = editedPostsEmail
-		? translate( 'Add a newsletter payment plan' )
-		: translate( 'Add a payment plan' );
+		? translate( 'Create a paid newsletter subscription plan' )
+		: translate( 'Create a payment plan' );
 
 	const editPlan = editedPostsEmail
-		? translate( 'Edit newsletter payment plan' )
+		? translate( 'Edit a paid newsletter subscription plan' )
 		: translate( 'Edit a payment plan' );
 
-	const editProduct = translate( 'Edit your existing payment plan.' );
-	const noProduct = translate(
-		'Each amount you add will create a separate payment plan. You can create many of them.'
-	);
 	const editing = product && product.ID;
 	return (
 		<Dialog
@@ -259,48 +255,48 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		>
 			<FormSectionHeading>{ product && product.ID ? editPlan : addPlan }</FormSectionHeading>
 			<div className="memberships__dialog-sections">
-				<p>{ editing ? editProduct : noProduct }</p>
 				<FormFieldset>
-					<FormLabel htmlFor="title">
-						{ translate( 'Please describe your payment plan' ) }
-					</FormLabel>
+					<FormLabel htmlFor="title">{ translate( 'Describe the payment plan' ) }</FormLabel>
 					<FormTextInput
 						id="title"
 						value={ editedProductName }
 						onChange={ onNameChange }
 						onBlur={ () => setFocusedName( true ) }
 					/>
+					<FormSettingExplanation>
+						{ translate( 'Use this to tell your users what they’ll get.' ) }
+					</FormSettingExplanation>
 					{ ! isFormValid( 'name' ) && focusedName && (
 						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
 					) }
 				</FormFieldset>
-				<FormFieldset className="memberships__dialog-sections-price">
-					{ ! isFormValid( 'price' ) && (
-						<FormInputValidation
-							isError
-							text={ translate( 'Please enter a price higher than %s', {
-								args: [
-									formatCurrency(
-										minimumCurrencyTransactionAmount(
-											currentCurrency,
-											connectedAccountDefaultCurrency
-										),
-										currentCurrency
+				{ editing && (
+					<Notice
+						text={ translate(
+							'Updating the price will not affect existing subscribers, who will pay what they were originally charged on renewal.'
+						) }
+						showDismiss={ false }
+					/>
+				) }
+				{ ! isFormValid( 'price' ) && (
+					<FormInputValidation
+						isError
+						text={ translate( 'Please enter a price higher than %s', {
+							args: [
+								formatCurrency(
+									minimumCurrencyTransactionAmount(
+										currentCurrency,
+										connectedAccountDefaultCurrency
 									),
-								],
-							} ) }
-						/>
-					) }
+									currentCurrency
+								),
+							],
+						} ) }
+					/>
+				) }
+				<FormFieldset className="memberships__dialog-sections-price">
 					<div className="memberships__dialog-sections-price-field-container">
 						<FormLabel htmlFor="currency">{ translate( 'Select price' ) }</FormLabel>
-						{ editing && (
-							<Notice
-								text={ translate(
-									'Updating the price will not affect existing subscribers, who will pay what they were originally charged on renewal.'
-								) }
-								showDismiss={ false }
-							/>
-						) }
 						<FormCurrencyInput
 							name="currency"
 							id="currency"
@@ -328,38 +324,32 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					</div>
 				</FormFieldset>
 				<FormFieldset>
-					<p>
-						{ translate(
-							'Allow members of this payment plan to opt into receiving new posts via email.'
-						) }{ ' ' }
-						<InlineSupportLink supportContext="paid-newsletters" showIcon={ false }>
-							{ translate( 'Learn more.' ) }
-						</InlineSupportLink>
-					</p>
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }
 						checked={ editedPostsEmail }
 						label={ translate( 'Email newly published posts to your customers.' ) }
 					/>
 				</FormFieldset>
-				<FoldableCard header={ translate( 'Advanced Options' ) } hideSummary>
-					<FormFieldset>
-						<h6 className="memberships__dialog-form-header">
-							{ translate( 'Custom confirmation message' ) }
-						</h6>
-						<p>
-							{ translate(
-								'Add a custom message to the confirmation email that is sent after purchase. For example, you can thank your customers.'
-							) }
-						</p>
-						<CountedTextArea
-							value={ editedCustomConfirmationMessage }
-							onChange={ ( event ) => setEditedCustomConfirmationMessage( event.target.value ) }
-							acceptableLength={ MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE }
-							showRemainingCharacters={ true }
-							placeholder={ translate( 'Thank you for subscribing!' ) }
-						/>
-					</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="renewal_schedule">
+						{ translate( 'Personalized confirmation message' ) }
+					</FormLabel>
+					<CountedTextArea
+						value={ editedCustomConfirmationMessage }
+						onChange={ ( event ) => setEditedCustomConfirmationMessage( event.target.value ) }
+						acceptableLength={ MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE }
+						showRemainingCharacters={ true }
+						placeholder={ translate( 'Thank you for subscribing!' ) }
+					/>
+					<FormSettingExplanation>
+						{ translate( 'Your new customers will receive this message' ) }
+					</FormSettingExplanation>
+				</FormFieldset>
+				<FoldableCard
+					header={ translate( 'Advanced Options' ) }
+					hideSummary
+					className="memberships__dialog-advanced-options"
+				>
 					<FormFieldset>
 						<ToggleControl
 							onChange={ handlePayWhatYouWant }

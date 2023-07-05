@@ -315,6 +315,7 @@
 .memberships__dialog-sections {
 	display: grid;
 	grid-template: "item" 1fr / 1fr;
+	width: 580px;
 }
 
 .memberships__dialog-section {
@@ -341,8 +342,12 @@
 	display: flex;
 	flex-direction: column;
 	&:first-child {
-		margin-right: 30px;
+		margin-right: 35px;
 	}
+}
+
+.memberships__dialog-advanced-options {
+	width: 100%;
 }
 
 /**
