@@ -31,6 +31,7 @@ describe( 'Task Helpers', () => {
 						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						() => {},
 						false,
+						null,
 						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						() => {},
 						'newsletter',
@@ -51,6 +52,7 @@ describe( 'Task Helpers', () => {
 						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						() => {},
 						false,
+						null,
 						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						() => {},
 						'start-writing'

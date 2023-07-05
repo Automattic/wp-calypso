@@ -43,7 +43,7 @@ export function getEnhancedTasks(
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
-	globalStylesMinimumPlan: string | null,
+	globalStylesMinimumPlan?: string | null,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
