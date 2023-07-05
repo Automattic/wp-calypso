@@ -30,6 +30,7 @@ type DomainLockResponse = {
 	unlocked: boolean | null | undefined;
 	in_redemption?: boolean;
 	status: string;
+	transferrability?: string;
 };
 
 type DomainCodePair = { domain: string; auth: string };
@@ -44,22 +45,19 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					path: `/domains/${ encodeURIComponent( pair.domain ) }/is-available`,
 				} );
 
-				// The "mapped_*" statuses here are a quick and dirty fix to allow bulk transfer of already connected domains for now.
-				// The "transferrable" status should be the only one that indicates a domain can be transferred because there are some
-				// domains that can be mapped but can't be transferred
-				const isUnlocked = [
-					'transferrable',
-					'mapped_to_other_site_same_user',
-					'mapped_to_same_site_transferrable',
-					'mapped_domain',
-				].includes( availability.status );
+				// A `transferrability` property was added in D115244-code to check whether a mapped domain can be transferred
+				const isUnlocked =
+					[ 'transferrable', 'mapped_to_same_site_transferrable' ].includes(
+						availability.status
+					) ||
+					( [ 'mapped_domain', 'mapped_to_other_site_same_user' ].includes( availability.status ) &&
+						'transferrable' === availability?.transferrability );
 
 				if ( ! isUnlocked ) {
 					return {
 						domain: pair.domain,
 						status: availability.status,
 						unlocked: false,
-						auth_code_valid: false,
 					};
 				}
 

@@ -32,6 +32,7 @@
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
 		"external-media": true,
+		"yolo/edge-cache-i1": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
@@ -144,8 +145,7 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true,
-		"yolo/site-transfers-i1": true
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

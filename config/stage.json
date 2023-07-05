@@ -38,7 +38,7 @@
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
-		"yolo/edge-cache-i1": false,
+		"yolo/edge-cache-i1": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
@@ -167,8 +167,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"newsletter/stats": false,
-		"yolo/site-transfers-i1": true
+		"newsletter/stats": false
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

@@ -1,9 +1,15 @@
+import { Button, Spinner } from '@automattic/components';
+import { useCallback, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import wp from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { convertBytes } from './util';
+
 interface FileInfoCardProps {
 	siteId: number;
 	item: FileBrowserItem;
@@ -12,6 +18,7 @@ interface FileInfoCardProps {
 const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const dispatch = useDispatch();
 
 	const {
 		isSuccess,
@@ -26,6 +33,32 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
 	const size = fileInfo?.size ? convertBytes( fileInfo.size ) : null;
+
+	const [ isDownloading, setIsDownloading ] = useState< boolean >( false );
+	const downloadFile = useCallback( () => {
+		setIsDownloading( true );
+		const manifestPath = window.btoa( item.manifestPath ?? '' );
+
+		wp.req
+			.get( {
+				path: `/sites/${ siteId }/rewind/backup/${ item.period }/file/${ manifestPath }/url`,
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( ( response: { url: string } ) => {
+				const downloadUrl = new URL( response.url );
+				downloadUrl.searchParams.append( 'disposition', 'attachment' );
+				window.open( downloadUrl, '_blank' );
+				setIsDownloading( false );
+
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
+						fileType: item.type,
+					} )
+				);
+			} );
+	}, [ siteId, item, dispatch ] );
+
+	const showActions = item.type !== 'table' && item.type !== 'archive';
 
 	// Do not display file info if the item hasChildren (it could be a directory, plugins, themes, etc.)
 	if ( item.hasChildren ) {
@@ -87,7 +120,14 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 					</div>
 				) }
 			</div>
-			<div className="file-card__actions"></div>
+
+			{ showActions && (
+				<div className="file-card__actions">
+					<Button className="file-card__action" onClick={ downloadFile } disabled={ isDownloading }>
+						{ isDownloading ? <Spinner /> : translate( 'Download file' ) }
+					</Button>
+				</div>
+			) }
 		</div>
 	);
 };

@@ -20,7 +20,9 @@ import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
+import builtByLogo from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Banner from 'calypso/components/banner';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -767,6 +769,45 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 	}
 
+	builtByUpsell() {
+		const { translate, site, isUnlaunchedSite: propsisUnlaunchedSite } = this.props;
+
+		// Do not show for launched sites
+		if ( ! propsisUnlaunchedSite ) {
+			return;
+		}
+
+		// Do not show if we don't know when the site was created
+		if ( ! site?.options?.created_at ) {
+			return;
+		}
+
+		// Do not show if the site is less than 4 days old
+		const siteCreatedAt = Date.parse( site?.options?.created_at );
+		const FOUR_DAYS_IN_MILLISECONDS = 4 * 24 * 60 * 60 * 1000;
+		if ( Date.now() - siteCreatedAt < FOUR_DAYS_IN_MILLISECONDS ) {
+			return;
+		}
+
+		return (
+			<Banner
+				className="site-settings__built-by-upsell"
+				title={ translate( 'We’ll build your site for you' ) }
+				description={ translate(
+					'Leave the heavy lifting to us and let our professional builders craft your compelling website.'
+				) }
+				callToAction={ translate( 'Get started' ) }
+				href="https://wordpress.com/website-design-service/?ref=unlaunched-settings"
+				target="_blank"
+				iconPath={ builtByLogo }
+				disableCircle={ true }
+				event="settings_bb_upsell"
+				tracksImpressionName="calypso_settings_bb_upsell_impression"
+				tracksClickName="calypso_settings_bb_upsell_cta_click"
+			/>
+		);
+	}
+
 	render() {
 		const {
 			customizerUrl,
@@ -814,7 +855,7 @@ export class SiteSettingsFormGeneral extends Component {
 				! isWpcomStagingSite
 					? this.renderLaunchSite()
 					: this.privacySettings() }
-
+				{ this.builtByUpsell() }
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">

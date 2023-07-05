@@ -210,7 +210,6 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false,
-		"yolo/site-transfers-i1": true
+		"wpcom-user-bootstrap": false
 	}
 }

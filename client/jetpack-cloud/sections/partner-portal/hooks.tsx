@@ -561,3 +561,52 @@ export function useProductDescription( productSlug: string ): {
 		};
 	}, [ productSlug, translate ] );
 }
+
+type Params = Array< { key: string; value: string } >;
+
+export const useURLQueryParams = (): {
+	getParamValue: ( paramKey: string ) => any;
+	setParams: ( params: Params ) => void;
+	resetParams: ( params: string[] ) => void;
+} => {
+	const pushState = useCallback( ( queryParams: { toString: () => string } ) => {
+		const queryParamString = queryParams.toString();
+		const newURL =
+			window.location.origin +
+			window.location.pathname +
+			( queryParamString ? `?${ queryParamString }` : '' );
+		window.history.pushState( {}, '', newURL );
+	}, [] );
+
+	const setParams = useCallback(
+		( params: Params ) => {
+			const queryParams = new URLSearchParams( window.location.search );
+			params.forEach( ( param ) => {
+				queryParams.set( param.key, param.value );
+			} );
+			pushState( queryParams );
+		},
+		[ pushState ]
+	);
+
+	const resetParams = useCallback(
+		( params: string[] ) => {
+			const queryParams = new URLSearchParams( window.location.search );
+			params.forEach( ( param ) => {
+				queryParams.delete( param );
+			} );
+			pushState( queryParams );
+		},
+		[ pushState ]
+	);
+
+	const getParamValue = useCallback( ( paramKey: string ) => {
+		return getQueryArg( window.location.href, paramKey );
+	}, [] );
+
+	return {
+		getParamValue,
+		setParams,
+		resetParams,
+	};
+};

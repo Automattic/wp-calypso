@@ -107,6 +107,12 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 						window.location.assign( url );
 					};
 					break;
+				case 'add_new_page':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task );
+						window.location.assign( `/page/${ siteSlug }` );
+					};
+					break;
 			}
 
 			return { ...task, actionDispatch };

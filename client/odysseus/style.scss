@@ -1,6 +1,6 @@
 .chatbox {
 	position: fixed;
-	bottom: 64px;
+	bottom: 20px;
 	right: 20px;
 	width: 300px;
 	height: 400px;
@@ -51,7 +51,7 @@
 }
 
 .chatbox-messages {
-	overflow-y: scroll;
+	overflow-y: auto;
 	word-wrap: break-word;
 	padding: 12px;
 	border-radius: 4px;
@@ -61,7 +61,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	max-height: 294px;
+	max-height: 284px;
 	padding-bottom: 4px;
 }
 
@@ -178,6 +178,11 @@
 		transform: rotate(15deg);
 	}
 }
+
 .chat-box-message-container {
 	width: 100%;
+}
+
+.using-environment-badge {
+	bottom: 64px;
 }
