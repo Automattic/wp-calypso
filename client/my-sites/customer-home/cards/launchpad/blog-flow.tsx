@@ -1,12 +1,14 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
+import { isMobile } from '@automattic/viewport';
+import { addQueryArgs } from '@wordpress/url';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CustomerHomeLaunchpad from '.';
 
-const checklistSlug = 'TBD';
+const checklistSlug = 'blog-flow';
 
 interface LaunchpadKeepBuildingProps {
 	siteSlug: string | null;
@@ -48,15 +50,44 @@ const LaunchpadBlogFlow = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.Elem
 
 			let actionDispatch;
 
-			// Ex:
-			// switch ( task.id ) {
-			// 	case 'my_task_id':
-			// 		actionDispatch = () => {
-			// 			recordTaskClickTracksEvent( task );
-			// 			do_something();
-			// 		};
-			// 		break;
-			// }
+			switch ( task.id ) {
+				case 'my_task_id':
+				case 'site_title':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task );
+						window.location.assign( `/settings/general/${ siteSlug }` );
+					};
+					break;
+
+				case 'design_edited':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task );
+						window.location.assign(
+							addQueryArgs( `/site-editor/${ siteSlug }`, {
+								canvas: 'edit',
+							} )
+						);
+					};
+					break;
+
+				case 'domain_claim':
+				case 'domain_upsell':
+				case 'domain_customize':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task );
+						window.location.assign( `/domains/add/${ siteSlug }` );
+					};
+					break;
+				case 'drive_traffic':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task );
+						const url = isMobile()
+							? `/marketing/connections/${ siteSlug }`
+							: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
+						window.location.assign( url );
+					};
+					break;
+			}
 
 			return { ...task, actionDispatch };
 		} );
