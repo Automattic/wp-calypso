@@ -130,7 +130,7 @@ $grid-vertical-gutters: 32px;
 
 /* custom video stats style to allow for scrolling */
 .is-section-stats .list-videoplays {
-	overflow-x: scroll;
+	overflow-x: auto;
 
 	.stats-card--header-and-body {
 		width: fit-content;
@@ -335,7 +335,6 @@ $grid-vertical-gutters: 32px;
 	.stats__module-wrapper--videoplays,
 	.list-videoplays {
 		grid-area: videos;
-		overflow-x: scroll;
 
 		// Downloads module is disabled for Jetpack sites.
 		// Expand the Videos module to take up the entire row.
