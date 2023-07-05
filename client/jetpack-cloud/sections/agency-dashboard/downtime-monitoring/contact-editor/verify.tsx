@@ -8,8 +8,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useCountdownTimer from 'calypso/jetpack-cloud/sections/hooks/use-countdown-timer';
-import { useSelector } from 'calypso/state';
-import getCountries from 'calypso/state/selectors/get-countries';
 import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
@@ -23,7 +21,7 @@ import {
 	useResendVerificationCode,
 	useValidateVerificationCode,
 } from '../hooks';
-import { useContactFormInputHelpText } from './hooks';
+import { useContactFormInputHelpText, useGetSupportedSMSCountries } from './hooks';
 import { ContactInfo } from './types';
 import {
 	getContactInfoPayload,
@@ -57,7 +55,10 @@ export default function VerifyContactForm( {
 	sites,
 }: Props ) {
 	const translate = useTranslate();
-	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ?? [] );
+
+	const { verifiedContacts } = useContext( DashboardDataContext );
+
+	const countriesList = useGetSupportedSMSCountries();
 
 	const { time, showTimer, startTimer, limitReached } = useCountdownTimer();
 
@@ -102,8 +103,6 @@ export default function VerifyContactForm( {
 		isError: isResendingVerificationCodeFailed,
 		mutate: resendVerificationCode,
 	} = useResendVerificationCode();
-
-	const { verifiedContacts } = useContext( DashboardDataContext );
 
 	const isVerifyAction = action === 'verify';
 
