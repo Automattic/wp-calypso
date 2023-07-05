@@ -107,6 +107,7 @@ class GoogleSocialButton extends Component {
 			try {
 				await loadScript( 'https://accounts.google.com/gsi/client' );
 			} catch {
+				// It's safe to ignore loading errors because if Google is blocked in some way the the button will be disabled.
 				return null;
 			}
 		}
