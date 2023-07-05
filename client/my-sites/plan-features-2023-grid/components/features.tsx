@@ -82,14 +82,17 @@ const PlanFeatures2023GridFeatures: React.FC< {
 						<PlanFeaturesItem>
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
-									{ isFreePlanAndCustomDomainFeature && domainName ? (
+									{ isFreePlanAndCustomDomainFeature ? (
 										<Plans2023Tooltip
 											text={ translate( '%s is not included', {
-												args: [ domainName ],
+												args: [ domainName as string ],
 												comment: '%s is a domain name.',
 											} ) }
 										>
-											<FreePlanCustomDomainFeature key={ key } domainName={ domainName } />
+											<FreePlanCustomDomainFeature
+												key={ key }
+												domainName={ domainName as string }
+											/>
 										</Plans2023Tooltip>
 									) : (
 										<Plans2023Tooltip text={ currentFeature.getDescription?.() }>
