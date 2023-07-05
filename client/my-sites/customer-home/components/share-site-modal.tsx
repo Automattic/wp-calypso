@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
@@ -15,15 +16,17 @@ interface ShareSiteModalProps {
 
 const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 	const translate = useTranslate();
+	const queryClient = useQueryClient();
 
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardTextEl = useRef( null );
 
-	const copyHandler = () => {
+	const copyHandler = async () => {
 		navigator.clipboard.writeText( `https://${ site?.slug }` );
-		updateLaunchpadSettings( site?.slug || null, {
+		await updateLaunchpadSettings( site?.slug || null, {
 			checklist_statuses: { share_site: true },
 		} );
+		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
 		setClipboardCopied( true );
 		setTimeout( () => setClipboardCopied( false ), 3000 );
 	};
@@ -33,7 +36,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 			<Modal
 				onRequestClose={ () => setModalIsOpen( false ) }
 				className="share-site-modal__modal"
-				title="Share site"
+				title=""
 			>
 				<div className="share-site-modal__modal-content">
 					<div className="share-site-modal__modal-text">
