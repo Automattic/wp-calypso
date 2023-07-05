@@ -25,15 +25,22 @@ const ScreenColorPalettes = ( {
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
+	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
+		useSiteGlobalStylesStatus( siteId );
 
 	return (
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Colors' ) } /> }
-				description={ translate(
-					'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
-				) }
+				description={
+					globalStylesInPersonalPlan
+						? translate(
+								'Choose from our curated color palettes when you upgrade to the Personal plan or above.'
+						  )
+						: translate(
+								'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+						  )
+				}
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">

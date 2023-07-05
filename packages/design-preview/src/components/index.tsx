@@ -30,6 +30,7 @@ interface DesignPreviewProps {
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 	onGlobalStylesChange: ( globalStyles: GlobalStylesObject | null ) => void;
 	limitGlobalStyles: boolean;
+	globalStylesInPersonalPlan: boolean;
 	onNavigatorPathChange?: ( path: string ) => void;
 }
 
@@ -57,6 +58,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	onSelectFontVariation,
 	onGlobalStylesChange,
 	limitGlobalStyles,
+	globalStylesInPersonalPlan,
 	onNavigatorPathChange,
 } ) => {
 	const selectedVariations = useMemo(
@@ -71,6 +73,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		siteId,
 		stylesheet,
 		limitGlobalStyles,
+		globalStylesInPersonalPlan,
 		variations,
 		splitPremiumVariations,
 		selectedVariation,

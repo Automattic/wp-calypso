@@ -83,7 +83,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
+	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
+		site?.ID
+	);
 	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
 	const [ shouldHideBack, setShouldHideBack ] = useState( false );
 
@@ -603,6 +605,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					actionButtons={ actionButtons }
 					recordDeviceClick={ recordDeviceClick }
 					limitGlobalStyles={ shouldLimitGlobalStyles }
+					globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
 					selectedColorVariation={ selectedColorVariation }
@@ -656,6 +659,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+			globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 			getBadge={ getBadge }
 		/>
 	);

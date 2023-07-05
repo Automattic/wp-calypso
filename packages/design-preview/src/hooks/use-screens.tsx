@@ -16,6 +16,7 @@ interface Props {
 	siteId: number;
 	stylesheet: string;
 	limitGlobalStyles?: boolean;
+	globalStylesInPersonalPlan?: boolean;
 	variations?: StyleVariation[];
 	splitPremiumVariations: boolean;
 	selectedVariation?: StyleVariation;
@@ -30,6 +31,7 @@ const useScreens = ( {
 	siteId,
 	stylesheet,
 	limitGlobalStyles,
+	globalStylesInPersonalPlan,
 	variations,
 	splitPremiumVariations,
 	selectedVariation,
@@ -77,9 +79,13 @@ const useScreens = ( {
 						label: translate( 'Colors' ),
 						path: '/color-palettes',
 						title: translate( 'Colors' ),
-						description: translate(
-							'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
-						),
+						description: globalStylesInPersonalPlan
+							? translate(
+									'Choose from our curated color palettes when you upgrade to the Personal plan or above.'
+							  )
+							: translate(
+									'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+							  ),
 						content: (
 							<div className="design-preview__sidebar-variations">
 								<ColorPaletteVariations
@@ -102,9 +108,13 @@ const useScreens = ( {
 						label: translate( 'Fonts' ),
 						path: '/font-pairings',
 						title: translate( 'Fonts' ),
-						description: translate(
-							'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-						),
+						description: globalStylesInPersonalPlan
+							? translate(
+									'Choose from our curated font pairings when you upgrade to the Personal plan or above.'
+							  )
+							: translate(
+									'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
+							  ),
 						content: (
 							<div key="font-variations" className="design-preview__sidebar-variations">
 								<FontPairingVariations
