@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
@@ -43,8 +44,12 @@ describe( 'ThemeTypeBadge', () => {
 
 	describe( 'Premium theme popover', () => {
 		test( 'Free site', async () => {
+			const queryClient = new QueryClient();
+
 			const { container } = renderWithState(
-				<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />
+				<QueryClientProvider client={ queryClient }>
+					<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />
+				</QueryClientProvider>
 			);
 			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
@@ -57,8 +62,12 @@ describe( 'ThemeTypeBadge', () => {
 		} );
 
 		test( 'Premium site', async () => {
+			const queryClient = new QueryClient();
+
 			const { container } = renderWithState(
-				<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />,
+				<QueryClientProvider client={ queryClient }>
+					<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />
+				</QueryClientProvider>,
 				{
 					hasPremiumPlan: true,
 				}
@@ -74,8 +83,12 @@ describe( 'ThemeTypeBadge', () => {
 		} );
 
 		test( 'Purchased a premium theme', async () => {
+			const queryClient = new QueryClient();
+
 			const { container } = renderWithState(
-				<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />,
+				<QueryClientProvider client={ queryClient }>
+					<ThemeTypeBadge siteId={ 123 } siteSlug="example.com" themeId="premium/test" />
+				</QueryClientProvider>,
 				{
 					hasPurchasedTheme: true,
 				}
