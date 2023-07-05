@@ -1,20 +1,18 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
-import { isMobile } from '@automattic/viewport';
-import { addQueryArgs } from '@wordpress/url';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CustomerHomeLaunchpad from '.';
 
-const checklistSlug = 'keep-building';
+const checklistSlug = 'TBD';
 
 interface LaunchpadKeepBuildingProps {
 	siteSlug: string | null;
 }
 
-const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.Element => {
+const LaunchpadBlogFlow = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.Element => {
 	const {
 		data: { checklist },
 	} = useLaunchpad( siteSlug, checklistSlug );
@@ -23,6 +21,7 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const tasklistCompleted = completedSteps === numberOfSteps;
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const recordTaskClickTracksEvent = ( task: Task ) => {
 		recordTracksEvent( 'calypso_launchpad_task_clicked', {
 			checklist_slug: checklistSlug,
@@ -49,49 +48,15 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 
 			let actionDispatch;
 
-			switch ( task.id ) {
-				case 'site_title':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign( `/settings/general/${ siteSlug }` );
-					};
-					break;
-
-				case 'design_edited':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign(
-							addQueryArgs( `/site-editor/${ siteSlug }`, {
-								canvas: 'edit',
-							} )
-						);
-					};
-					break;
-
-				case 'domain_claim':
-				case 'domain_upsell':
-				case 'domain_customize':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign( `/domains/add/${ siteSlug }` );
-					};
-					break;
-				case 'drive_traffic':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						const url = isMobile()
-							? `/marketing/connections/${ siteSlug }`
-							: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
-						window.location.assign( url );
-					};
-					break;
-				case 'add_new_page':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign( `/page/${ siteSlug }` );
-					};
-					break;
-			}
+			// Ex:
+			// switch ( task.id ) {
+			// 	case 'my_task_id':
+			// 		actionDispatch = () => {
+			// 			recordTaskClickTracksEvent( task );
+			// 			do_something();
+			// 		};
+			// 		break;
+			// }
 
 			return { ...task, actionDispatch };
 		} );
@@ -105,12 +70,12 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 	);
 };
 
-const ConnectedLaunchpadKeepBuilding = connect( ( state ) => {
+const ConnectedLaunchpadBlogFlow = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
 		siteSlug: getSiteSlug( state, siteId ),
 	};
-} )( LaunchpadKeepBuilding );
+} )( LaunchpadBlogFlow );
 
-export default ConnectedLaunchpadKeepBuilding;
+export default ConnectedLaunchpadBlogFlow;
