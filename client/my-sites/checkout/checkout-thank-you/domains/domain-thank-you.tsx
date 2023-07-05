@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button, Gridicon } from '@automattic/components';
+import { useLaunchpad } from '@automattic/data-stores';
 import { translate } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
 import * as React from 'react';
@@ -34,7 +35,11 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	hideProfessionalEmailStep,
 	type,
 } ) => {
+	const {
+		data: { is_enabled: isLaunchpadKeepBuildingEnabled },
+	} = useLaunchpad( selectedSiteSlug, 'keep-building' );
 	const launchpadScreen = useSiteOption( 'launchpad_screen' );
+	const redirectTo = isLaunchpadKeepBuildingEnabled ? 'home' : 'setup';
 	const siteIntent = useSiteOption( 'site_intent' );
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];
@@ -46,6 +51,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			hideProfessionalEmailStep,
 			siteIntent,
 			launchpadScreen,
+			redirectTo,
 		} );
 	}, [
 		type,
@@ -56,6 +62,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		hideProfessionalEmailStep,
 		siteIntent,
 		launchpadScreen,
+		redirectTo,
 	] );
 	const dispatch = useDispatch();
 	const isLaunchpadEnabled = launchpadScreen === 'full';
@@ -67,13 +74,20 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		};
 	}, [ dispatch ] );
 
-	const renderHeader = ( isLaunchpadEnabled: boolean, siteIntent: string ) => {
+	const renderHeader = (
+		isLaunchpadEnabled: boolean,
+		siteIntent: string,
+		redirectTo: 'home' | 'setup'
+	) => {
 		const buttonProps = isLaunchpadEnabled
 			? {
-					onClick: () =>
-						window.location.replace(
-							`/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`
-						),
+					onClick: () => {
+						const redirectUrl =
+							redirectTo === 'home'
+								? `/home/${ selectedSiteSlug }`
+								: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`;
+						window.location.replace( redirectUrl );
+					},
 			  }
 			: { href: domainManagementRoot() };
 		return (
@@ -91,7 +105,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 
 	return (
 		<>
-			{ renderHeader( isLaunchpadEnabled, siteIntent as string ) }
+			{ renderHeader( isLaunchpadEnabled, siteIntent as string, redirectTo ) }
 			<ThankYou
 				headerBackgroundColor="var( --studio-white )"
 				containerClassName="checkout-thank-you__domains"

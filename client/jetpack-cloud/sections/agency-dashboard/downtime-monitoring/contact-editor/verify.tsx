@@ -1,14 +1,13 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { useSelector } from 'calypso/state';
-import getCountries from 'calypso/state/selectors/get-countries';
+import useCountdownTimer from 'calypso/jetpack-cloud/sections/hooks/use-countdown-timer';
 import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
@@ -22,7 +21,7 @@ import {
 	useResendVerificationCode,
 	useValidateVerificationCode,
 } from '../hooks';
-import { useContactFormInputHelpText } from './hooks';
+import { useContactFormInputHelpText, useGetSupportedSMSCountries } from './hooks';
 import { ContactInfo } from './types';
 import {
 	getContactInfoPayload,
@@ -56,9 +55,12 @@ export default function VerifyContactForm( {
 	sites,
 }: Props ) {
 	const translate = useTranslate();
-	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ?? [] );
 
-	const [ helpText, setHelpText ] = useState< TranslateResult | undefined >( undefined );
+	const { verifiedContacts } = useContext( DashboardDataContext );
+
+	const countriesList = useGetSupportedSMSCountries();
+
+	const { time, showTimer, startTimer, limitReached } = useCountdownTimer();
 
 	const [ showCodeVerification, setShowCodeVerification ] = useState< boolean >( false );
 
@@ -102,8 +104,6 @@ export default function VerifyContactForm( {
 		mutate: resendVerificationCode,
 	} = useResendVerificationCode();
 
-	const { verifiedContacts } = useContext( DashboardDataContext );
-
 	const isVerifyAction = action === 'verify';
 
 	const noCountryList = countriesList.length === 0;
@@ -119,8 +119,6 @@ export default function VerifyContactForm( {
 
 	// Verify contact when user clicks on Verify button
 	const handleSubmitVerificationCode = () => {
-		setHelpText( undefined );
-
 		if ( type === 'email' ) {
 			recordEvent( 'downtime_monitoring_verify_email' );
 		}
@@ -167,12 +165,12 @@ export default function VerifyContactForm( {
 
 	// Function to handle resend code button click
 	const handleResendCodeClick = useCallback( () => {
-		setHelpText( undefined );
 		setResendCodeClicked( true );
 		recordEvent( `downtime_monitoring_resend_${ type }_verification_code` );
 		handleResendCode();
 		setContactInfo( { ...contactInfo, verificationCode: undefined } );
-	}, [ contactInfo, handleResendCode, recordEvent, type ] );
+		startTimer();
+	}, [ contactInfo, handleResendCode, recordEvent, startTimer, type ] );
 
 	const onSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
@@ -279,23 +277,20 @@ export default function VerifyContactForm( {
 		}
 	};
 
-	const translationArgs = useMemo(
-		() => ( {
-			components: {
-				button: (
-					<Button
-						className={ classNames( 'configure-contact__resend-code-button', {
-							'is-loading': isResendingVerificationCode,
-						} ) }
-						borderless
-						onClick={ handleResendCodeClick }
-						disabled={ isResendingVerificationCode }
-					/>
-				),
-			},
-		} ),
-		[ handleResendCodeClick, isResendingVerificationCode ]
-	);
+	const translationArgs = {
+		components: {
+			button: (
+				<Button
+					className={ classNames( 'configure-contact__resend-code-button', {
+						'is-loading': isResendingVerificationCode,
+					} ) }
+					borderless
+					onClick={ handleResendCodeClick }
+					disabled={ isResendingVerificationCode || showTimer }
+				/>
+			),
+		},
+	};
 
 	// Trigger resend code when user chooses to verify contact action
 	useEffect( () => {
@@ -343,35 +338,6 @@ export default function VerifyContactForm( {
 		}
 	}, [ translate, submitVerificationCodeErrorMessage ] );
 
-	// Set help text when contact verification fails
-	useEffect( () => {
-		if ( isSubmittingVerificationCodeFailed ) {
-			setHelpText(
-				translate(
-					'Please try again or we can {{button}}resend a new code{{/button}}.',
-					translationArgs
-				)
-			);
-		}
-	}, [ translate, translationArgs, isSubmittingVerificationCodeFailed ] );
-
-	// Set help text when resend code is successful and resend button is clicked
-	useEffect( () => {
-		if ( resendCodeClicked && isResendingVerificationCodeSuccess ) {
-			setHelpText(
-				<>
-					<div>{ translate( 'We just sent you a new code. Please wait for a minute.' ) }</div>
-					<div>
-						{ translate(
-							'Click to {{button}}resend{{/button}} if you didn’t receive it. If you still experience issues, please reach out to our support.',
-							translationArgs
-						) }
-					</div>
-				</>
-			);
-		}
-	}, [ resendCodeClicked, isResendingVerificationCodeSuccess, translate, translationArgs ] );
-
 	// Show error message when resend code fails
 	useEffect( () => {
 		if ( isResendingVerificationCodeFailed ) {
@@ -387,6 +353,50 @@ export default function VerifyContactForm( {
 		email: emailHelpText,
 		phoneNumber: phoneNumberHelpText,
 	} = useContactFormInputHelpText( type );
+
+	const getHelpText = () => {
+		if ( resendCodeClicked && isResendingVerificationCodeSuccess ) {
+			if ( limitReached ) {
+				return translate(
+					'You have reached the maximum number of resend attempts. Please contact our support team if you still experience issues.'
+				);
+			}
+			return (
+				<>
+					<div>{ translate( 'We just sent you a new code. Please wait for a minute.' ) }</div>
+					{ showTimer ? (
+						translate(
+							' Resend in %(time)s if you didn’t receive it. If you still experience issues, please reach out to our support.',
+							{
+								args: { time },
+								comment: '%(time) is remaining timer to resend, e.g. "0:15"',
+							}
+						)
+					) : (
+						<div>
+							{ translate(
+								'Click to {{button}}resend{{/button}} if you didn’t receive it. If you still experience issues, please reach out to our support.',
+								translationArgs
+							) }
+						</div>
+					) }
+				</>
+			);
+		}
+		if ( isSubmittingVerificationCodeFailed ) {
+			return translate(
+				'Please try again or we can {{button}}resend a new code{{/button}}.',
+				translationArgs
+			);
+		}
+		if ( resendCodeClicked && isResendingVerificationCode ) {
+			return translate( 'Sending code' );
+		}
+		return translate(
+			'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
+			translationArgs
+		);
+	};
 
 	return (
 		<form onSubmit={ onSubmit }>
@@ -473,13 +483,7 @@ export default function VerifyContactForm( {
 						</div>
 					) }
 					<div className="configure-contact__help-text" id="code-help-text">
-						{ helpText ??
-							( resendCodeClicked && isResendingVerificationCode
-								? translate( 'Sending code' )
-								: translate(
-										'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
-										translationArgs
-								  ) ) }
+						{ getHelpText() }
 					</div>
 				</FormFieldset>
 			) }

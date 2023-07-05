@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localeRegexString } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import closest from 'component-closest';
 import { truncate, get } from 'lodash';
@@ -143,7 +144,11 @@ class ReaderPostCard extends Component {
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const isConversations = currentRoute.startsWith( '/read/conversations' );
-		const isReaderSearchPage = currentRoute.startsWith( '/read/search' );
+
+		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/read/search` ).test(
+			currentRoute
+		);
+
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,

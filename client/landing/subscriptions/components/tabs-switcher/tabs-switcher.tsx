@@ -7,8 +7,12 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Nav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import SiteSubscriptionsManager from 'calypso/landing/subscriptions/components/site-subscriptions-manager';
-import { Comments, Settings, Pending } from 'calypso/landing/subscriptions/components/tab-views';
+import {
+	Comments,
+	Pending,
+	Settings,
+	Sites,
+} from 'calypso/landing/subscriptions/components/tab-views';
 import './styles.scss';
 
 type SubscriptionManagerTab = {
@@ -104,7 +108,7 @@ const TabsSwitcher = () => {
 
 			<Routes>
 				<Route index element={ <Navigate to="sites" /> } />
-				<Route path="sites/*" element={ <SiteSubscriptionsManager /> } />
+				<Route path="sites/*" element={ <Sites /> } />
 				<Route path="comments/*" element={ <Comments /> } />
 				<Route path="pending/*" element={ <Pending /> } />
 				<Route path="settings/*" element={ <Settings /> } />

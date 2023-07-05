@@ -18,6 +18,7 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import {
@@ -50,7 +51,7 @@ export class MapDomain extends Component {
 	};
 
 	goBack = () => {
-		const { selectedSite, selectedSiteSlug } = this.props;
+		const { currentRoute, selectedSite, selectedSiteSlug } = this.props;
 
 		if ( ! selectedSite ) {
 			page( '/domains/add' );
@@ -58,7 +59,7 @@ export class MapDomain extends Component {
 		}
 
 		if ( selectedSite.is_vip ) {
-			page( domainManagementList( selectedSiteSlug ) );
+			page( domainManagementList( selectedSiteSlug, currentRoute ) );
 			return;
 		}
 
@@ -96,7 +97,7 @@ export class MapDomain extends Component {
 	};
 
 	handleMapDomain = ( domain ) => {
-		const { selectedSite, selectedSiteSlug, translate } = this.props;
+		const { currentRoute, selectedSite, selectedSiteSlug, translate } = this.props;
 
 		this.setState( {
 			errorMessage: null,
@@ -111,7 +112,7 @@ export class MapDomain extends Component {
 				.post( `/sites/${ selectedSite.ID }/vip-domain-mapping`, { domain } )
 				.then(
 					() => {
-						page( domainManagementList( selectedSiteSlug ) );
+						page( domainManagementList( selectedSiteSlug, currentRoute ) );
 					},
 					( error ) => {
 						this.setState( { errorMessage: error.message } );
@@ -230,6 +231,7 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		return {
+			currentRoute: getCurrentRoute( state ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
