@@ -348,6 +348,24 @@
 
 .memberships__dialog-advanced-options {
 	width: 100%;
+	box-shadow: none;
+	.foldable-card__header {
+		padding: 0;
+	}
+	.foldable-card__content {
+		padding: 0;
+	}
+	&.foldable-card.is-expanded {
+		.foldable-card__content {
+			border-top: none;
+		}
+	}
+	.foldable-card__main {
+		display: block;
+		.foldable-card__action {
+			right: unset;
+		}
+	}
 }
 
 /**
