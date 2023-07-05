@@ -2,11 +2,13 @@ import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
+import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { resetBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useTermsSuggestions } from './useTermsSuggestions';
 import './style.scss';
 
@@ -20,6 +22,8 @@ const SearchBox = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
+	const { localizePath } = useLocalizedPlugins();
 
 	const searchTermSuggestion = useTermsSuggestions( searchTerms ) || 'ecommerce';
 
@@ -30,7 +34,7 @@ const SearchBox = ( {
 				dispatch( resetBreadcrumbs() );
 			}
 
-			page.show( '/plugins' ); // Ensures location.href is on the main Plugins page before setQueryArgs uses it to construct the redirect.
+			page.show( localizePath( `/plugins/${ selectedSite?.slug || '' }` ) ); // Ensures location.href is on the main Plugins page before setQueryArgs uses it to construct the redirect.
 			setQueryArgs( '' !== s ? { s } : {} );
 			searchBoxRef.current.blur();
 			scrollTo( {
@@ -41,7 +45,7 @@ const SearchBox = ( {
 				duration: 300,
 			} );
 		},
-		[ searchBoxRef, categoriesRef, dispatch ]
+		[ searchBoxRef, categoriesRef, dispatch, selectedSite, localizePath ]
 	);
 
 	const recordSearchEvent = ( eventName ) =>
