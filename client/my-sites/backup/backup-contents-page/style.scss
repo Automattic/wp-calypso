@@ -75,11 +75,8 @@
 				font-size: $font-body-small;
 			}
 
-			@include break-mobile {
-				&__detail-group {
-					display: flex;
-					justify-content: space-between;
-				}
+			&__actions {
+				padding-top: 16px;
 			}
 
 			&__label {

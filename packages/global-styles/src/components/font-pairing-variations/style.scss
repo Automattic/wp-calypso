@@ -6,10 +6,6 @@
 	box-sizing: border-box;
 	margin: 14px -2px 26px;
 
-	&:last-child {
-		margin-bottom: 0;
-	}
-
 	.global-styles-variation-container__iframe {
 		max-height: 106px;
 	}
@@ -59,7 +55,7 @@
 	}
 }
 
-.global-styles-variation__title {
+.global-styles-variations__group-title {
 	display: flex;
 	color: var(--color-neutral-100);
 	font-size: $font-body-small;

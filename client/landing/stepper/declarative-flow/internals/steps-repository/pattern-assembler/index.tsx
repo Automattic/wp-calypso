@@ -385,7 +385,7 @@ const PatternAssembler = ( {
 
 	const onSubmit = () => {
 		const design = getDesign();
-		const stylesheet = design?.recipe?.stylesheet ?? '';
+		const stylesheet = design.recipe?.stylesheet ?? '';
 		const themeId = getThemeIdFromStylesheet( stylesheet );
 
 		if ( ! siteSlugOrId || ! site?.ID || ! themeId ) {
@@ -414,8 +414,8 @@ const PatternAssembler = ( {
 							globalStyles: syncedGlobalStylesUserConfig,
 							// Newly created sites should reset the starter content created from the default Headstart annotation
 							shouldResetContent: isNewSite,
-							// Also, new sites except for virtual themes set the option wpcom_site_setup=assembler
-							siteSetupOption: isNewSite && ! design.is_virtual ? 'assembler' : '',
+							// All sites using the assembler set the option wpcom_site_setup
+							siteSetupOption: design.is_virtual ? 'assembler-virtual-theme' : 'assembler',
 						} )
 					)
 			);

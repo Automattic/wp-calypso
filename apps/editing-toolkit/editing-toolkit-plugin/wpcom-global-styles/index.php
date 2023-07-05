@@ -161,12 +161,13 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		true
 	);
 	wp_set_script_translations( 'wpcom-global-styles-editor', 'full-site-editing' );
+	$plan = wpcom_site_has_global_styles_in_personal_plan() ? 'personal-bundle' : 'value_bundle';
 	wp_localize_script(
 		'wpcom-global-styles-editor',
 		'wpcomGlobalStyles',
 		array(
 			'assetsUrl'   => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=style-customization",
+			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=$plan&feature=style-customization",
 			'wpcomBlogId' => wpcom_global_styles_get_wpcom_current_blog_id(),
 		)
 	);
@@ -427,7 +428,8 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
 	}
 
-	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle&feature=style-customization';
+	$plan        = wpcom_site_has_global_styles_in_personal_plan() ? 'personal-bundle' : 'value_bundle';
+	$upgrade_url = "https://wordpress.com/plans/$site_slug?plan=$plan&feature=style-customization";
 
 	if ( wpcom_is_previewing_global_styles() ) {
 		$preview_location = add_query_arg( 'hide-global-styles', '' );
@@ -464,11 +466,26 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 				</div>
 				<div class="launch-bar-global-styles-message">
 					<?php
-					$message = sprintf(
+					// @TODO Remove after global styles on personal plans A/B test is complete.
+					if ( wpcom_site_has_global_styles_in_personal_plan() ) {
+						$message = sprintf(
 						/* translators: %s - documentation URL. */
-						__( 'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.', 'full-site-editing' ),
-						'https://wordpress.com/support/using-styles/'
-					);
+							__(
+								'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Personal plan or higher.',
+								'full-site-editing'
+							),
+							'https://wordpress.com/support/using-styles/'
+						);
+					} else {
+						$message = sprintf(
+						/* translators: %s - documentation URL. */
+							__(
+								'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.',
+								'full-site-editing'
+							),
+							'https://wordpress.com/support/using-styles/'
+						);
+					}
 					echo sprintf(
 						wp_kses(
 							$message,

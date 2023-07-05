@@ -233,7 +233,7 @@ export class SiteDomains extends Component {
 	}
 
 	renderDomainTableFilterButton() {
-		const { selectedSite, domains, context, translate } = this.props;
+		const { selectedSite, domains, context, translate, currentRoute } = this.props;
 
 		const selectedFilter = context?.query?.filter;
 		const nonWpcomDomains = filterOutWpcomDomains( domains );
@@ -242,21 +242,23 @@ export class SiteDomains extends Component {
 			{
 				label: translate( 'Site domains' ),
 				value: '',
-				path: domainManagementList( selectedSite?.slug ),
+				path: domainManagementList( selectedSite?.slug, currentRoute ),
 				count: nonWpcomDomains?.length,
 			},
 			{
 				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
 				path:
-					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
+					domainManagementList( selectedSite?.slug, currentRoute ) +
+					'?' +
+					stringify( { filter: 'owned-by-me' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
 				label: translate( 'Owned by others' ),
 				value: 'owned-by-others',
 				path:
-					domainManagementList( selectedSite?.slug ) +
+					domainManagementList( selectedSite?.slug, currentRoute ) +
 					'?' +
 					stringify( { filter: 'owned-by-others' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-others' )?.length,
@@ -389,7 +391,7 @@ export class SiteDomains extends Component {
 
 	async setPrimaryDomain( domainName ) {
 		await this.props.dispatch( setPrimaryDomain( this.props.selectedSite.ID, domainName ) );
-		page.redirect( domainManagementList( this.props.selectedSite.slug ) );
+		page.redirect( domainManagementList( this.props.selectedSite.slug, this.props.currentRoute ) );
 	}
 
 	handleUpdatePrimaryDomainWpcom = ( domainName ) => {

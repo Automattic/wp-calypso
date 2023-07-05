@@ -166,6 +166,13 @@ const DiscoverStream = ( props ) => {
 					>
 						{ translate( 'Recommended' ) }
 					</SegmentedControl.Item>
+					<SegmentedControl.Item
+						key="latest"
+						selected={ 'latest' === selectedTab }
+						onClick={ () => menuTabClick( 'latest' ) }
+					>
+						{ translate( 'Latest' ) }
+					</SegmentedControl.Item>
 					{ recommendedTags.map( ( tag ) => {
 						return (
 							<SegmentedControl.Item
@@ -193,14 +200,15 @@ const DiscoverStream = ( props ) => {
 		streamKey += recommendedStreamTags.reduce( ( acc, val ) => acc + `-${ val }`, '' );
 	}
 
-	const streamSidebar = isDefaultTab ? (
-		<ReaderPopularSitesSidebar
-			items={ recommendedSites }
-			followSource={ READER_DISCOVER_POPULAR_SITES }
-		/>
-	) : (
-		<ReaderTagSidebar tag={ selectedTab } />
-	);
+	const streamSidebar =
+		isDefaultTab || selectedTab === 'latest' ? (
+			<ReaderPopularSitesSidebar
+				items={ recommendedSites }
+				followSource={ READER_DISCOVER_POPULAR_SITES }
+			/>
+		) : (
+			<ReaderTagSidebar tag={ selectedTab } />
+		);
 
 	const streamProps = {
 		...props,
