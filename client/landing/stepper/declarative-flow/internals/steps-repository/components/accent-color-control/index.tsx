@@ -212,7 +212,7 @@ const AccentColorControl = ( {
 
 		const dropdownOptions = [
 			...freeColors.map( ( freeColor ) => getDropdownOption( freeColor ) ),
-			<SelectDropdown.Label key="dropdown-label"> { planText } </SelectDropdown.Label>,
+			<SelectDropdown.Label key="dropdown-label">{ planText }</SelectDropdown.Label>,
 			...premiumColors.map( ( premiumColor ) => getDropdownOption( premiumColor ) ),
 		];
 
