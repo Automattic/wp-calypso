@@ -10,7 +10,6 @@ import {
 	isJetpackSocialAdvancedSlug,
 	isJetpackStatsFreeProductSlug,
 	isJetpackStatsPaidProductSlug,
-	isJetpackStarterSlug,
 	isJetpackVideoPressSlug,
 	isJetpackAISlug,
 } from '@automattic/calypso-products';
@@ -30,8 +29,7 @@ type featureString =
 	| 'stats'
 	| 'support'
 	| 'videopress'
-	| 'complete'
-	| 'jetpack-starter';
+	| 'complete';
 
 function getFeatureStrings(
 	feature: featureString,
@@ -81,8 +79,6 @@ function getFeatureStrings(
 				translate( 'Boost' ),
 				translate( 'CRM Entrepreneur' ),
 			];
-		case 'jetpack-starter':
-			return [ translate( '1K API calls per month' ), translate( '1GB of backup storage' ) ];
 		case 'scan':
 			return [
 				translate( 'Website firewall (WAF beta)' ),
@@ -214,23 +210,6 @@ export default function getJetpackProductFeatures(
 			...getFeatureStrings( 'stats', translate ),
 			...getFeatureStrings( 'support', translate ),
 		];
-	}
-
-	if ( isJetpackStarterSlug( product.product_slug ) ) {
-		// Filter out these strings for Starter to avoid clutter
-		const starterExcludes = [
-			translate( '10GB of backup storage' ),
-			translate( '10K API calls per month' ),
-		];
-
-		return [
-			...getFeatureStrings( 'jetpack-starter', translate ),
-			...getFeatureStrings( 'anti-spam', translate ),
-			...getFeatureStrings( 'backup-t1', translate ),
-			...getFeatureStrings( 'support', translate ),
-		].filter( ( productFeature ) => {
-			return ! starterExcludes.includes( productFeature );
-		} );
 	}
 
 	if ( isJetpackVideoPressSlug( product.product_slug ) ) {
