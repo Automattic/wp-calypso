@@ -16,11 +16,17 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 	let page: Page;
 	let pluginsPage: PluginsPage;
+	let siteUrl: string;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		const testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page );
+
+		siteUrl = testAccount
+			.getSiteURL( { protocol: false } )
+			.replace( 'https://', '' )
+			.replace( '/wp-admin', '' );
 
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			// Ensure the page is wide enough to show the breadcrumb details.
@@ -72,6 +78,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		await pluginsPage.search( 'jetpack' );
 
 		// Check if its redirecting to the default plugins page
-		await page.waitForURL( /\/plugins\/\?s=/ );
+		await page.waitForURL( new RegExp( `/plugins/${ siteUrl }\\?s=jetpack`, 'g' ) );
 	} );
 } );
