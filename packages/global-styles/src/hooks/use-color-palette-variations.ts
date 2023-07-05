@@ -11,6 +11,7 @@ const useColorPaletteVariations = (
 	stylesheet: string,
 	{ enabled = true }: Options = {}
 ) => {
+	const searchParams = new URLSearchParams( window.location.search );
 	const { data } = useQuery< any, unknown, GlobalStylesObject[] >( {
 		queryKey: [ 'global-styles-color-palette', siteId, stylesheet ],
 		queryFn: async () =>
@@ -18,7 +19,9 @@ const useColorPaletteVariations = (
 				path: `/sites/${ encodeURIComponent( siteId ) }/global-styles-variation/color-palettes`,
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
-				query: new URLSearchParams( { stylesheet } ).toString(),
+				query: new URLSearchParams( {
+					stylesheet: searchParams.get( 'stylesheet' ) ?? stylesheet,
+				} ).toString(),
 			} ),
 		refetchOnMount: 'always',
 		staleTime: Infinity,
