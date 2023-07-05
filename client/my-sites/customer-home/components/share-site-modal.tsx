@@ -21,7 +21,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 
 	const copyHandler = () => {
 		navigator.clipboard.writeText( `https://${ site?.slug }` );
-		updateLaunchpadSettings( site?.slug, {
+		updateLaunchpadSettings( site?.slug || null, {
 			checklist_statuses: { share_site: true },
 		} );
 		setClipboardCopied( true );
@@ -30,7 +30,11 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 
 	return (
 		<>
-			<Modal onRequestClose={ () => setModalIsOpen( false ) } className="share-site-modal__modal">
+			<Modal
+				onRequestClose={ () => setModalIsOpen( false ) }
+				className="share-site-modal__modal"
+				title="Share site"
+			>
 				<div className="share-site-modal__modal-content">
 					<div className="share-site-modal__modal-text">
 						<h1 className="share-site-modal__modal-heading">{ translate( 'Share your site' ) }</h1>
