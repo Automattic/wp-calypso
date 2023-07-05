@@ -1,5 +1,9 @@
 .stats-purchase-wizard {
 	max-width: 90%; //TODO: fix positioning
+	--font-body: 16px;
+	--jp-black: #000;
+	--jp-white: #fff;
+	--jp-green-50: #008710;
 
 	.stats-purchase-wizard__card-parent {
 		border-radius: 4px;
@@ -142,8 +146,7 @@
 	.stats-purchase-wizard__card-grid-header--left,
 	.stats-purchase-wizard__card-grid-header--right {
 		font-weight: 600;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 16px;
+		font-size: var(--font-body);
 	}
 
 	.stats-purchase-wizard__card-grid-action--left,
@@ -164,25 +167,24 @@
 		margin-right: 8px;
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 14px;
-		border: 1.5px solid #000;
+		border: 1.5px solid var(--jp-black);
 		border-radius: 50%;
 
 		&.active {
-			color: #fff;
-			background: #008710;
-			border-color: #008710;
+			color: var(--jp-white);
+			background: var(--jp-green-50);
+			border-color: var(--jp-green-50);
 		}
 	}
 
 	.components-button {
 		&.is-primary {
 			border-radius: 4px;
-			color: #fff;
+			color: var(--jp-white);
 			background-color: #1a1a1a;
 			border-color: #1a1a1a;
 			transition: all 0.25s ease-out;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 16px;
+			font-size: var(--font-body);
 			line-height: 24px;
 			padding: 8px 32px;
 			height: auto;
@@ -202,7 +204,7 @@
 		}
 
 		&.is-link {
-			color: #008710;
+			color: var(--jp-green-50);
 			font-size: inherit;
 			display: inline;
 		}
@@ -239,8 +241,12 @@
 		border-radius: 4px;
 
 		.is-link {
-			color: #000;
+			color: var(--jp-black);
 		}
+	}
+
+	.stats-purchase-wizard__slider {
+		padding: 32px 0 16px;
 	}
 
 	.stats-purchase-wizard__notice--green {
@@ -248,7 +254,6 @@
 	}
 
 	.stats-purchase-wizard__control--checkbox {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 16px;
+		font-size: var(--font-body);
 	}
 }

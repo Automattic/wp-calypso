@@ -20,9 +20,20 @@ const PersonalPurchase = ( {
 	const translate = useTranslate();
 
 	const sliderLabel = ( ( props, state ) => {
+		let emoji;
+
+		if ( subscriptionValue < 10 ) {
+			emoji = String.fromCodePoint( 0x1f60a ); /* Smiling face emoji */
+		} else if ( subscriptionValue < 20 ) {
+			emoji = String.fromCodePoint( 0x2764, 0xfe0f ); /* Heart emoji */
+		} else if ( subscriptionValue >= 20 ) {
+			emoji = String.fromCodePoint( 0x1f525 ); /* Fire emoji */
+		}
+
 		return (
 			<div { ...props }>
-				${ state?.valueNow || subscriptionValue }/{ translate( 'month' ) }
+				${ state?.valueNow || subscriptionValue }/{ translate( 'month' ) }{ ' ' }
+				{ subscriptionValue > 0 && emoji }
 			</div>
 		);
 	} ) as RenderThumbFunction;
@@ -42,9 +53,11 @@ const PersonalPurchase = ( {
 				</div>
 			) }
 			<PricingSlider
+				className={ `${ COMPONENT_CLASS_NAME }__slider` }
 				value={ subscriptionValue }
 				renderThumb={ sliderLabel }
 				onChange={ setSubscriptionValue }
+				maxValue={ 50 }
 			/>
 
 			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
