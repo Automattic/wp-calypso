@@ -45,7 +45,7 @@ describe( 'User Can log in', () => {
 		electronApp = await electron.launch( {
 			executablePath: APP_PATH,
 			args: [ '--disable-http-cache', '--start-maximized' ],
-			timeout: 0,
+			timeout: 30000,
 			recordHar: {
 				path: HAR_PATH,
 			},
