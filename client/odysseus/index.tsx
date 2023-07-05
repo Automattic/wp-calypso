@@ -21,9 +21,13 @@ const OdysseusAssistant = () => {
 
 	useEffect( () => {
 		if ( isLoadingChat ) {
-			setMessages( [ { content: 'Remembering any previous conversation...', role: 'bot' } ] );
+			setMessages( [
+				{ content: 'Remembering any previous conversation...', role: 'bot', type: 'message' },
+			] );
 		} else if ( ! chat ) {
-			setMessages( [ { content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot' } ] );
+			setMessages( [
+				{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot', type: 'message' },
+			] );
 		} else if ( chat ) {
 			setMessages( chat.messages );
 		}
@@ -43,6 +47,7 @@ const OdysseusAssistant = () => {
 				{
 					content: lastNudge.initialMessage,
 					role: 'bot',
+					type: 'message',
 				},
 			] );
 
@@ -56,7 +61,9 @@ const OdysseusAssistant = () => {
 			};
 		}
 
-		setMessages( [ { content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot' } ] );
+		setMessages( [
+			{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot', type: 'message' },
+		] );
 	}, [ lastNudge, setMessages ] );
 
 	const handleMessageChange = ( text: string ) => {
@@ -66,11 +73,11 @@ const OdysseusAssistant = () => {
 	const handleSendMessage = async () => {
 		try {
 			setIsLoading( true );
-			addMessage( input, 'user' );
+			addMessage( input, 'user', 'message' );
 
 			setInput( '' );
 			const response = await sendOdysseusMessage( {
-				message: { content: input, role: 'user' },
+				message: { content: input, role: 'user', type: 'message' },
 				context: lastNudge ?? {
 					nudge: 'none',
 					context: {},
@@ -78,11 +85,12 @@ const OdysseusAssistant = () => {
 				},
 			} );
 
-			addMessage( response.message.content, 'bot', response.chatId );
+			addMessage( response.message.content, 'bot', 'message', response.chatId );
 		} catch ( e ) {
 			addMessage(
 				"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!",
-				'bot'
+				'bot',
+				'message'
 			);
 		} finally {
 			setIsLoading( false );
