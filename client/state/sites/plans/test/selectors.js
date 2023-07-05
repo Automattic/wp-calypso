@@ -844,7 +844,7 @@ describe( 'selectors', () => {
 			).toBeTruthy();
 		} );
 
-		test( 'Should return true state is using siteId instead of plan', () => {
+		test( 'Should return true state is using site data instead of plans data', () => {
 			const state = deepFreeze( {
 				...userState,
 				sites: {
