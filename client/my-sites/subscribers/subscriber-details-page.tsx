@@ -89,7 +89,11 @@ const SubscriberDetailsPage = ( {
 				onCancel={ resetSubscriber }
 				onConfirm={ onConfirmModal }
 			/>
-			{ isLoading && <Spinner /> }
+			{ isLoading && (
+				<div className="subscriber-details-page__loading">
+					<Spinner />
+				</div>
+			) }
 		</Main>
 	);
 };
