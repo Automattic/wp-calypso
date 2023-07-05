@@ -1,4 +1,4 @@
-import { isEcommerce, isFreePlanProduct } from '@automattic/calypso-products/src';
+import { isFreePlanProduct } from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -32,6 +32,7 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
+import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
@@ -51,6 +52,7 @@ const Home = ( {
 	trackViewSiteAction,
 	sitePlan,
 	isNew7DUser,
+	isSiteWooExpressEcommerceTrial,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 
@@ -101,7 +103,7 @@ const Home = ( {
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
 	// while doing the redirection.
-	if ( isEcommerce( sitePlan ) && ( isRequestingSitePlugins || hasWooCommerceInstalled ) ) {
+	if ( isSiteWooExpressEcommerceTrial && ( isRequestingSitePlugins || hasWooCommerceInstalled ) ) {
 		return <WooCommerceHomePlaceholder />;
 	}
 
@@ -179,6 +181,7 @@ Home.propTypes = {
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
+	isSiteWooExpressEcommerceTrial: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state ) => {
@@ -196,6 +199,7 @@ const mapStateToProps = ( state ) => {
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
+		isSiteWooExpressEcommerceTrial: isSiteOnWooExpressEcommerceTrial( state, siteId ),
 	};
 };
 

@@ -1,15 +1,11 @@
-import { isEcommerce } from '@automattic/calypso-products/src';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import page from 'page';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
-import {
-	canCurrentUserUseCustomerHome,
-	getSiteUrl,
-	getSitePlan,
-} from 'calypso/state/sites/selectors';
+import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
+import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteSlug,
 	getSelectedSiteId,
@@ -67,9 +63,8 @@ export async function maybeRedirect( context, next ) {
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home.
 	// Temporary redirection until we create a dedicated Home for Ecommerce.
-	if ( isEcommerce( getSitePlan( state, siteId ) ) ) {
+	if ( isSiteOnWooExpressEcommerceTrial( state, siteId ) ) {
 		const siteUrl = getSiteUrl( state, siteId );
-
 		if ( siteUrl !== null ) {
 			// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
 			// So we need to trigger a fetch of site plugins
