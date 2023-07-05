@@ -3,6 +3,7 @@ import {
 	FEATURE_6GB_STORAGE,
 	FEATURE_13GB_STORAGE,
 	FEATURE_50GB_STORAGE,
+	PRODUCT_100GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
@@ -18,6 +19,8 @@ export const getStorageStringFromFeature = ( storageFeature: string ) => {
 			return translate( '13 GB' );
 		case FEATURE_50GB_STORAGE:
 			return translate( '50 GB' );
+		case PRODUCT_100GB_STORAGE:
+			return translate( '100 GB' );
 		case FEATURE_200GB_STORAGE:
 			return translate( '200 GB' );
 		default:

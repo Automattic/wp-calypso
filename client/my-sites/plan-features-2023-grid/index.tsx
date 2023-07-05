@@ -38,6 +38,7 @@ import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
@@ -137,6 +138,7 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
+	selectedStorage: { [ key: string ]: string | null };
 };
 
 const PlanLogo: React.FunctionComponent< {
@@ -214,9 +216,19 @@ export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
 	PlanFeatures2023GridState
 > {
-	state = {
-		showPlansComparisonGrid: false,
-	};
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			showPlansComparisonGrid: false,
+			selectedStorage: {},
+		};
+
+		this.props.planProperties.forEach( ( planProperties ) => {
+			const { planName } = planProperties;
+			this.state.selectedStorage[ planName ] = null;
+		} );
+	}
 
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
 
@@ -901,16 +913,52 @@ export class PlanFeatures2023Grid extends Component<
 				}
 
 				const { planName, storageOptions } = properties;
-				const storageJSX = storageOptions.map( ( storageFeature: string ) => {
-					if ( storageFeature.length <= 0 ) {
-						return;
-					}
-					return (
-						<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-							{ getStorageStringFromFeature( storageFeature ) }
-						</div>
+				const { selectedStorage } = this.state;
+
+				const storageJSX =
+					storageOptions.length <= 1 ? (
+						storageOptions.map( ( storageFeature: string ) => {
+							if ( storageFeature.length <= 0 ) {
+								return;
+							}
+							return (
+								<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
+									{ getStorageStringFromFeature( storageFeature ) }
+								</div>
+							);
+						} )
+					) : (
+						<SelectDropdown
+							onToggle={ ( { open: isOpen }: { open: boolean } ) => {
+								if ( isOpen ) {
+									// record interaction event here
+								}
+							} }
+							selectedText={
+								selectedStorage[ planName ]
+									? getStorageStringFromFeature( selectedStorage[ planName ] )
+									: getStorageStringFromFeature( storageOptions[ 0 ] )
+							}
+						>
+							{ storageOptions.map( ( storageFeature ) => (
+								<SelectDropdown.Item
+									key={ `${ planName } ${ storageFeature }` }
+									selected={ storageFeature === selectedStorage[ planName ] }
+									onClick={ () =>
+										this.setState( {
+											...this.state,
+											selectedStorage: {
+												...selectedStorage,
+												[ planName ]: storageFeature,
+											},
+										} )
+									}
+								>
+									{ getStorageStringFromFeature( storageFeature ) }
+								</SelectDropdown.Item>
+							) ) }
+						</SelectDropdown>
 					);
-				} );
 
 				return (
 					<Container

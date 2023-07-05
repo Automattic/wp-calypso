@@ -1,6 +1,7 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
+	PRODUCT_100GB_STORAGE,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
@@ -880,6 +881,14 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
 
+	[ PRODUCT_100GB_STORAGE ]: {
+		getSlug: () => PRODUCT_100GB_STORAGE,
+		getTitle: () => i18n.translate( '100 GB storage space' ),
+		getDescription: () =>
+			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+	},
+
+	// TODO: Rename this to PRODUCT_200GB_STORAGE because it is no longer standard on any plans
 	[ FEATURE_200GB_STORAGE ]: {
 		getSlug: () => FEATURE_200GB_STORAGE,
 		getTitle: () =>
