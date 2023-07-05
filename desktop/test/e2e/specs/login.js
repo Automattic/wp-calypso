@@ -1,5 +1,5 @@
 /* eslint-disable no-console, import/no-nodejs-modules */
-const { createWriteStream, readdirSync } = require( 'fs' );
+const { createWriteStream } = require( 'fs' );
 const { mkdir } = require( 'fs/promises' );
 const path = require( 'path' );
 const { _electron: electron } = require( 'playwright' );
@@ -33,10 +33,6 @@ describe( 'User Can log in', () => {
 	let mainWindow;
 	let electronApp;
 	let consoleStream;
-
-	readdirSync( path.join( __dirname, '../../../release/' ) ).forEach( ( file ) => {
-		console.log( file );
-	} );
 
 	beforeAll( async () => {
 		await mkdir( path.dirname( CONSOLE_PATH ), { recursive: true } );
