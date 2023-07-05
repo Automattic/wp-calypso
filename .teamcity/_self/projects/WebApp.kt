@@ -24,7 +24,6 @@ object WebApp : Project({
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
-	buildType(HelpCentreE2ETests)
 	buildType(QuarantinedE2ETests)
 })
 
