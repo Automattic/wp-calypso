@@ -9020,7 +9020,7 @@ __metadata:
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.34
+    playwright: ^1.25.1
     postcss: ^8.4.5
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -23405,6 +23405,26 @@ __metadata:
   bin:
     playwright-core: cli.js
   checksum: 2e3ec8394b69bcd55db3a01a0a2cf63ee4b924bd79852c237d3eb045273f056b5784ab2147f60a7bb2db7998b8f7c5ec34d8554dd7648cc77d5affc9d91a85c8
+  languageName: node
+  linkType: hard
+
+"playwright-core@npm:1.35.1":
+  version: 1.35.1
+  resolution: "playwright-core@npm:1.35.1"
+  bin:
+    playwright-core: cli.js
+  checksum: 378caaf452546554b01993006abf556fb2f35369355ff6cf462148ed154a177ff1cdcf7f90035c3e7cef3522435602fd4517f2f1a0a75eef92c4db4efdc24b02
+  languageName: node
+  linkType: hard
+
+"playwright@npm:^1.25.1":
+  version: 1.35.1
+  resolution: "playwright@npm:1.35.1"
+  dependencies:
+    playwright-core: 1.35.1
+  bin:
+    playwright: cli.js
+  checksum: db479aab7da6506ccab572d5cf3ffa7ba0ffcb874fc5eda27bc9231fef0db17cd150b412bb7f831004c3ff9e1a3743c83b02652964c84d809a5d22b9a40ba50a
   languageName: node
   linkType: hard
 
