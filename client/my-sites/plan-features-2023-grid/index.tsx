@@ -711,7 +711,7 @@ export class PlanFeatures2023Grid extends Component<
 	maybeRenderRefundNotice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { translate, flowName } = this.props;
 
-		if ( ! isAnyHostingFlow( flowName ?? null ) ) {
+		if ( ! isAnyHostingFlow( flowName ) ) {
 			return false;
 		}
 
