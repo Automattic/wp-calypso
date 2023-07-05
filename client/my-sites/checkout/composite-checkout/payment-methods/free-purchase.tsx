@@ -1,4 +1,9 @@
-import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
+import {
+	Button,
+	useFormStatus,
+	FormStatus,
+	useAvailablePaymentMethodIds,
+} from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
@@ -91,6 +96,7 @@ function WordPressFreePurchaseLabel() {
 	const { __ } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
 
 	if ( doesPurchaseHaveFullCredits( responseCart ) ) {
 		return (
@@ -113,7 +119,11 @@ function WordPressFreePurchaseLabel() {
 
 	return (
 		<Fragment>
-			<div>{ __( 'Free Purchase' ) }</div>
+			<div>
+				{ availablePaymentMethodIds.length > 1
+					? __( 'Assign Payment Method Later' )
+					: __( 'Free Purchase' ) }
+			</div>
 			<WordPressLogo />
 		</Fragment>
 	);
