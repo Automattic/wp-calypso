@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import i18n, { getLocaleSlug, translate } from 'i18n-calypso';
 import {
+	PRODUCT_100GB_STORAGE,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
