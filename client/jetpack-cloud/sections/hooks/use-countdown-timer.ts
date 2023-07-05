@@ -4,10 +4,10 @@ interface CountdownTimer {
 	time: string;
 	showTimer: boolean;
 	startTimer: () => void;
-	resendLimitReached: boolean;
+	limitReached: boolean;
 }
 
-const useCountdownTimer = ( initialSeconds = 30 ): CountdownTimer => {
+const useCountdownTimer = ( initialSeconds = 30, maxLimit = 3 ): CountdownTimer => {
 	const [ seconds, setSeconds ] = useState( initialSeconds );
 	const [ isActive, setIsActive ] = useState( false );
 	const [ timesClicked, setTimeClicked ] = useState( 0 );
@@ -48,7 +48,7 @@ const useCountdownTimer = ( initialSeconds = 30 ): CountdownTimer => {
 		time: formatTime( seconds ),
 		showTimer: isActive,
 		startTimer,
-		resendLimitReached: timesClicked > 3,
+		limitReached: timesClicked > maxLimit,
 	};
 };
 
