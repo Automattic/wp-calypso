@@ -55,6 +55,7 @@ type Props = {
 	dir?: 'ltr' | 'rtl';
 	disableAutocorrect?: boolean;
 	disabled?: boolean;
+	displayOpenAndCloseIcons?: boolean;
 	fitsContainer?: boolean;
 	hideClose?: boolean;
 	isReskinned?: boolean;
@@ -127,6 +128,7 @@ const InnerSearch = (
 		delayTimeout = SEARCH_DEBOUNCE_MS,
 		defaultValue = '',
 		defaultIsOpen = false,
+		displayOpenAndCloseIcons: displayOpenAndClose = false,
 		autoFocus = false,
 		onSearchOpen,
 		recordEvent,
@@ -455,6 +457,30 @@ const InnerSearch = (
 		return null;
 	};
 
+	const renderRightIcons = () => {
+		const closeButton = renderCloseButton();
+
+		if ( displayOpenAndClose ) {
+			return (
+				<>
+					{ renderOpenIcon() }
+					{ closeButton && (
+						<>
+							<div className="search-component__icon-navigation-separator">|</div>
+							{ closeButton }
+						</>
+					) }
+				</>
+			);
+		}
+
+		if ( shouldRenderRightOpenIcon ) {
+			return renderOpenIcon();
+		}
+
+		return closeButton;
+	};
+
 	return (
 		<div dir={ dir } className={ searchClass } role="search">
 			<Spinner />
@@ -488,7 +514,7 @@ const InnerSearch = (
 				{ renderStylingDiv() }
 			</form>
 			{ childrenBeforeCloseButton }
-			{ shouldRenderRightOpenIcon ? renderOpenIcon() : renderCloseButton() }
+			{ renderRightIcons() }
 			{ children }
 		</div>
 	);
