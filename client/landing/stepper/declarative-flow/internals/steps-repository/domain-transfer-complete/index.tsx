@@ -18,6 +18,8 @@ const Complete: Step = function Complete( { flow } ) {
 	const { __, _n } = useI18n();
 	const dispatch = useDispatch();
 
+	// Use the stored domains as a clue for the number of domains that were transferred to render placeholders.
+	// This number is used as a rough guess, and shouldn't be used to render anything.
 	const storedDomainsState = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getBulkDomainsData(),
 		[]
