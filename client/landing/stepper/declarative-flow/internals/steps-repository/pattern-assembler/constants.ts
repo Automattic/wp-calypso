@@ -17,3 +17,11 @@ export const NAVIGATOR_PATHS = {
 };
 
 export const STYLES_PATHS = [ NAVIGATOR_PATHS.COLOR_PALETTES, NAVIGATOR_PATHS.FONT_PAIRINGS ];
+
+export const MAIN_ITEMS = {
+	HEADER: 'header',
+	SECTION: 'section',
+	FOOTER: 'footer',
+	COLOR_PALETTES: 'color-palettes',
+	FONT_PAIRINGS: 'font-pairings',
+};

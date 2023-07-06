@@ -27,7 +27,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
-import { SITE_TAGLINE, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
+import { SITE_TAGLINE, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG, MAIN_ITEMS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoryAll from './hooks/use-category-all';
 import useDotcomPatterns from './hooks/use-dotcom-patterns';
@@ -41,8 +41,6 @@ import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
 import ScreenActivation from './screen-activation';
 import ScreenCategoryList from './screen-category-list';
-import ScreenColorPalettes from './screen-color-palettes';
-import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
 import ScreenSection from './screen-section';
 import { encodePatternId } from './utils';
@@ -318,7 +316,7 @@ const PatternAssembler = ( {
 		updateActivePatternPosition( position - 1 );
 	};
 
-	const onSelect = (
+	const onPatternSelect = (
 		type: string,
 		selectedPattern: Pattern | null,
 		selectedCategory?: string | null
@@ -484,10 +482,11 @@ const PatternAssembler = ( {
 		onSubmit();
 	};
 
-	const onMainItemSelect = ( { name, isPanel = false }: { name: string; isPanel?: boolean } ) => {
+	const onMainItemSelect = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
 
-		if ( ! isPanel ) {
+		// The screen section is not using the panel
+		if ( name === MAIN_ITEMS.SECTION ) {
 			setIsPanelOpen( false );
 			setSelectedMainItem( null );
 			return;
@@ -526,9 +525,9 @@ const PatternAssembler = ( {
 		moveDownSection( position );
 	};
 
-	const onDeleteHeader = () => onSelect( 'header', null );
+	const onDeleteHeader = () => onPatternSelect( 'header', null );
 
-	const onDeleteFooter = () => onSelect( 'footer', null );
+	const onDeleteFooter = () => onPatternSelect( 'footer', null );
 
 	const onScreenColorsSelect = ( variation: GlobalStylesObject | null ) => {
 		setColorVariation( variation );
@@ -538,28 +537,12 @@ const PatternAssembler = ( {
 		} );
 	};
 
-	const onScreenColorsBack = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_BACK_CLICK );
-	};
-
-	const onScreenColorsDone = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_DONE_CLICK );
-	};
-
 	const onScreenFontsSelect = ( variation: GlobalStylesObject | null ) => {
 		setFontVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_PREVIEW_CLICK, {
 			font_variation_title: getVariationTitle( variation ),
 			font_variation_type: getVariationType( variation ),
 		} );
-	};
-
-	const onScreenFontsBack = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_BACK_CLICK );
-	};
-
-	const onScreenFontsDone = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_DONE_CLICK );
 	};
 
 	if ( ! site?.ID || ! selectedDesign ) {
@@ -579,7 +562,8 @@ const PatternAssembler = ( {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
-						onSelect={ onSelect }
+						onPatternSelect={ onPatternSelect }
+						onScreenColorsSelect={ onScreenColorsSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
@@ -602,9 +586,13 @@ const PatternAssembler = ( {
 								return activateFooterPosition( !! footer );
 							}
 						} }
+						siteId={ site?.ID }
+						stylesheet={ stylesheet }
+						selectedColorPaletteVariation={ colorVariation }
+						selectedFontPairingVariation={ fontVariation }
+						onScreenFontsSelect={ onScreenFontsSelect }
 					/>
 				</NavigatorScreen>
-
 				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION }>
 					<ScreenSection
 						patterns={ sections }
@@ -623,36 +611,13 @@ const PatternAssembler = ( {
 						onDoneClick={ () => onDoneClick( 'section' ) }
 						replacePatternMode={ sectionPosition !== null }
 						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
-						onSelect={ onSelect }
+						onSelect={ onPatternSelect }
 						recordTracksEvent={ recordTracksEvent }
 						onTogglePatternPanelList={ setIsPanelOpen }
 						selectedPatterns={ sections }
 						onBack={ onPatternSelectorBack }
 					/>
 				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
-					<ScreenColorPalettes
-						siteId={ site?.ID }
-						stylesheet={ stylesheet }
-						selectedColorPaletteVariation={ colorVariation }
-						onSelect={ onScreenColorsSelect }
-						onBack={ onScreenColorsBack }
-						onDoneClick={ onScreenColorsDone }
-					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
-					<ScreenFontPairings
-						siteId={ site?.ID }
-						stylesheet={ stylesheet }
-						selectedFontPairingVariation={ fontVariation }
-						onSelect={ onScreenFontsSelect }
-						onBack={ onScreenFontsBack }
-						onDoneClick={ onScreenFontsDone }
-					/>
-				</NavigatorScreen>
-
 				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
 					<ScreenActivation onActivate={ onActivate } />
 				</NavigatorScreen>

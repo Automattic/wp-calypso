@@ -353,7 +353,7 @@ $font-family: "SF Pro Text", $sans;
 		display: block;
 	}
 
-	.navigator-button--is-active {
+	.navigator-button.navigator-button--is-active {
 		background-color: var(--studio-blue-0);
 		color: var(--studio-blue-50);
 
