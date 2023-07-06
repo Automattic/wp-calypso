@@ -71,7 +71,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 			text: (
 				<p>
 					{ translate(
-						"Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It's {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.",
+						'Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It’s {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
 						{
 							components: {
 								strong: <strong />,
@@ -109,7 +109,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 			text: (
 				<p>
 					{ translate(
-						"This theme comes bundled with {{link}}WooCommerce{{/link}} plugin. Upgrade to a Business plan to select this theme and unlock all its features. It's %s per year with a 14-day money-back guarantee.",
+						'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin. Upgrade to a Business plan to select this theme and unlock all its features. It’s %s per year with a 14-day money-back guarantee.',
 						{
 							components: {
 								link: <ExternalLink target="_blank" href="https://woocommerce.com/" />,

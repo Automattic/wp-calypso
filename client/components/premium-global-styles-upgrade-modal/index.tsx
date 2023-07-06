@@ -87,13 +87,13 @@ export default function PremiumGlobalStylesUpgradeModal( {
 									<p>
 										{ globalStylesInPersonalPlan
 											? translate(
-													"You've selected a custom style that will only be visible to visitors after upgrading to the Personal plan or higher.",
-													"You've selected custom styles that will only be visible to visitors after upgrading to the Personal plan or higher.",
+													'You’ve selected a custom style that will only be visible to visitors after upgrading to the Personal plan or higher.',
+													'You’ve selected custom styles that will only be visible to visitors after upgrading to the Personal plan or higher.',
 													{ count: numOfSelectedGlobalStyles }
 											  )
 											: translate(
-													"You've selected a custom style that will only be visible to visitors after upgrading to the Premium plan or higher.",
-													"You've selected custom styles that will only be visible to visitors after upgrading to the Premium plan or higher.",
+													'You’ve selected a custom style that will only be visible to visitors after upgrading to the Premium plan or higher.',
+													'You’ve selected custom styles that will only be visible to visitors after upgrading to the Premium plan or higher.',
 													{ count: numOfSelectedGlobalStyles }
 											  ) }
 									</p>
