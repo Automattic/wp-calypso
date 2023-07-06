@@ -278,34 +278,46 @@ export class PluginsList extends Component {
 	};
 
 	updateSelected = ( accepted ) => {
-		if ( accepted ) {
-			this.doActionOverSelected( 'updating', this.props.updatePlugin );
-			this.recordEvent( 'Clicked Update Plugin(s)', true );
+		if ( ! accepted ) {
+			return;
 		}
+
+		this.recordEvent( 'Clicked Update Plugin(s)', true );
+		this.doActionOverSelected( 'updating', this.props.updatePlugin );
 	};
 
 	updatePlugin = ( selectedPlugin ) => {
+		this.recordEvent( 'Clicked Update Plugin(s)', true );
+
 		handleUpdatePlugins( [ selectedPlugin ], this.props.updatePlugin, this.props.pluginsOnSites );
 		this.removePluginStatuses();
-		this.recordEvent( 'Clicked Update Plugin(s)', true );
 	};
 
 	activateSelected = ( accepted ) => {
-		if ( accepted ) {
-			this.doActionOverSelected( 'activating', this.props.activatePlugin );
-			this.recordEvent( 'Clicked Activate Plugin(s)', true );
+		if ( ! accepted ) {
+			return;
 		}
+
+		this.recordEvent( 'Clicked Activate Plugin(s)', true );
+		this.doActionOverSelected( 'activating', this.props.activatePlugin );
 	};
 
 	deactivateSelected = ( accepted ) => {
-		if ( accepted ) {
-			this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin );
-			this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
+		if ( ! accepted ) {
+			return;
 		}
+
+		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
+		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin );
 	};
 
 	deactiveAndDisconnectSelected = ( accepted ) => {
-		if ( accepted ) {
+		if ( ! accepted ) {
+			return;
+		}
+
+		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
+
 			let waitForDeactivate = false;
 
 			this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
@@ -316,23 +328,24 @@ export class PluginsList extends Component {
 			if ( waitForDeactivate && this.props.selectedSite ) {
 				this.setState( { disconnectJetpackNotice: true } );
 			}
-
-			this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
-		}
 	};
 
 	setAutoupdateSelected = ( accepted ) => {
-		if ( accepted ) {
-			this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin );
-			this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
+		if ( ! accepted ) {
+			return;
 		}
+
+		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
+		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin );
 	};
 
 	unsetAutoupdateSelected = ( accepted ) => {
-		if ( accepted ) {
-			this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin );
-			this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
+		if ( ! accepted ) {
+			return;
 		}
+
+		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
+		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin );
 	};
 
 	bulkActionDialog = ( actionName, selectedPlugin ) => {
@@ -469,18 +482,26 @@ export class PluginsList extends Component {
 	};
 
 	removeSelected = ( accepted, selectedPlugins ) => {
-		if ( accepted ) {
-			this.doActionOverSelected( 'removing', this.props.removePlugin, selectedPlugins );
-			this.recordEvent( 'Clicked Remove Plugin(s)', true );
+		if ( ! accepted ) {
+			return;
 		}
+
+		this.recordEvent( 'Clicked Remove Plugin(s)', true );
+		this.doActionOverSelected( 'removing', this.props.removePlugin, selectedPlugins );
 	};
 
 	removeSelectedWithJetpack = ( accepted, selectedPlugins ) => {
-		if ( accepted ) {
+		if ( ! accepted ) {
+			return;
+		}
+
+		this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
+
 			if ( selectedPlugins.length === 1 ) {
 				this.setState( { removeJetpackNotice: true } );
-				this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
-			} else {
+			return;
+		}
+
 				let waitForRemove = false;
 				this.doActionOverSelected( 'removing', ( site, plugin ) => {
 					waitForRemove = true;
@@ -489,20 +510,23 @@ export class PluginsList extends Component {
 
 				if ( waitForRemove && this.props.selectedSite ) {
 					this.setState( { removeJetpackNotice: true } );
-					this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
-				}
-			}
 		}
 	};
 
 	maybeShowDisconnectNotice() {
-		const { translate } = this.props;
+		if ( ! this.state.disconnectJetpackNotice ) {
+			return;
+		}
 
-		if ( this.state.disconnectJetpackNotice && ! this.props.inProgressStatuses.length ) {
+		if ( this.props.inProgressStatuses.length > 0 ) {
+			return;
+		}
+
 			this.setState( {
 				disconnectJetpackNotice: false,
 			} );
 
+		const { translate } = this.props;
 			this.props.warningNotice(
 				translate(
 					'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
@@ -514,19 +538,23 @@ export class PluginsList extends Component {
 				)
 			);
 		}
-	}
 
 	maybeShowRemoveNotice() {
-		const { translate } = this.props;
+		if ( ! this.state.removeJetpackNotice ) {
+			return;
+		}
 
-		if ( this.state.removeJetpackNotice && ! this.props.inProgressStatuses.length ) {
+		if ( this.props.inProgressStatuses.length > 0 ) {
+			return;
+		}
+
 			this.setState( {
 				removeJetpackNotice: false,
 			} );
 
+		const { translate } = this.props;
 			this.props.warningNotice( translate( 'Jetpack must be removed via wp-admin.' ) );
 		}
-	}
 
 	getPluginsSites() {
 		const { plugins } = this.props;
