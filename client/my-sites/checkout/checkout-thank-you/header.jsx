@@ -38,6 +38,7 @@ import {
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 import './style.scss';
 import getHeading from './redesign-v2/sections/get-heading';
+import ProductPlan from './redesign-v2/sections/product/ProductPlan';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -424,26 +425,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		return { title: buttonTitle, url: targetUrl };
 	}
 
-	getPlanDetails() {
-		const { selectedSite, translate } = this.props;
-		return (
-			<div className="checkout-thank-you__header-details">
-				<div className="checkout-thank-you__header-details-content">
-					<div className="checkout-thank-you__header-details-content-name">PlanName</div>
-					<div className="checkout-thank-you__header-details-content-expiry">
-						Available until June 20, 2022
-					</div>
-				</div>
-				<div className="checkout-thank-you__header-details-buttons">
-					{ this.getButtons() }
-					<Button href={ `/plans/my-plan/${ selectedSite.slug }` }>
-						{ translate( 'Manage plan' ) }
-					</Button>
-				</div>
-			</div>
-		);
-	}
-
 	getButtons() {
 		const {
 			hasFailedPurchases,
@@ -527,8 +508,14 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	render() {
-		const { isDataLoaded, isSimplified, hasFailedPurchases, primaryPurchase, isRedesignV2 } =
-			this.props;
+		const {
+			isDataLoaded,
+			isSimplified,
+			hasFailedPurchases,
+			primaryPurchase,
+			isRedesignV2,
+			selectedSite,
+		} = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
 
 		let svg = 'thank-you.svg';
@@ -563,7 +550,13 @@ export class CheckoutThankYouHeader extends PureComponent {
 							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
 						) }
 
-						{ isRedesignV2 && this.getPlanDetails() }
+						{ isRedesignV2 && (
+							<ProductPlan
+								siteSlug={ selectedSite.slug }
+								primaryPurchase={ primaryPurchase }
+								purchases={ this.props.purchases }
+							/>
+						) }
 						{ this.props.children }
 						{ ! isRedesignV2 && this.getButtons() }
 					</div>
