@@ -435,7 +435,7 @@ export default function useCreatePaymentMethods( {
 		storedCards,
 	} );
 
-	// The order mirrors the order of Payment Methods in Checkout.
+	// The order is the order of Payment Methods in Checkout.
 	return [
 		...existingCardMethods,
 		freePaymentMethod,
