@@ -16,6 +16,7 @@ const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
 const DEFAULT_STARTING_PRICE = 6;
 const FLAT_COMMERCIAL_PRICE = 10;
+const IMAGE_CELEBRATION_PRICE = 8;
 
 const TitleNode = ( { label, indicatorNumber, active } ) => {
 	return (
@@ -228,7 +229,7 @@ const ProductCard = ( { siteSlug } ) => {
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						<StatsPurchaseSVG
 							isFree={ subscriptionValue === 0 }
-							hasHighlight={ subscriptionValue >= 40 }
+							hasHighlight={ subscriptionValue >= 40 } // TODO: replace with IMAGE_CELEBRATION_PRICE if this makes sense.
 							extraMessage={ subscriptionValue >= 40 }
 						/>
 					</div>
@@ -242,4 +243,4 @@ const StatsPurchaseWizard = ( { siteSlug } ) => {
 	return <ProductCard siteSlug={ siteSlug } />;
 };
 
-export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME };
+export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, IMAGE_CELEBRATION_PRICE };
