@@ -1008,11 +1008,10 @@ main.akismet-checkout-thank-you {
 		> div {
 			display: flex;
 			flex-wrap: wrap;
-			justify-content: center;
 			gap: 30px;
 		}
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include break-mobile {
 			margin-top: 50px;
 			padding-bottom: 0;
 		}
@@ -1041,7 +1040,7 @@ main.akismet-checkout-thank-you {
 			font-size: $font-body-small;
 			line-height: 20px;
 			font-weight: 500;
-			color: var(--color-text);
+			color: var(--studio-gray-100);
 		}
 
 		.purchase-detail__description {
