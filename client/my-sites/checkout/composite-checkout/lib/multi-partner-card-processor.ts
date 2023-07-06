@@ -6,6 +6,7 @@ import {
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
+import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/payment-method-selector/assignment-processor-functions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
@@ -16,9 +17,10 @@ import {
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { StripeSetupIntentId, StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
+import type { LocalizeProps } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:composite-checkout:multi-partner-card-processor' );
 
@@ -232,13 +234,41 @@ async function ebanxCardProcessor(
 		} );
 }
 
-export default async function multiPartnerCardProcessor(
-	submitData: unknown,
-	dataForProcessor: PaymentProcessorOptions
-): Promise< PaymentProcessorResponse > {
+export default async function multiPartnerCardProcessor( {
+	submitData,
+	dataForProcessor,
+	stripeSetupIntentId,
+	translate,
+}: {
+	submitData: unknown;
+	dataForProcessor: PaymentProcessorOptions;
+	stripeSetupIntentId: StripeSetupIntentId | undefined;
+	translate: LocalizeProps[ 'translate' ];
+} ): Promise< PaymentProcessorResponse > {
 	if ( ! isValidMultiPartnerTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
+
+	const isPurchaseFree = dataForProcessor.responseCart.total_cost_integer === 0;
+	if ( isPurchaseFree ) {
+		if ( ! isValidStripeCardTransactionData( submitData ) ) {
+			throw new Error( 'Required purchase data is missing' );
+		}
+		return assignNewCardProcessor(
+			{
+				purchase: undefined,
+				translate,
+				stripe: dataForProcessor.stripe,
+				stripeConfiguration: dataForProcessor.stripeConfiguration,
+				stripeSetupIntentId,
+				cardNumberElement: submitData.cardNumberElement,
+				reduxDispatch: dataForProcessor.reduxDispatch,
+				eventSource: '/checkout',
+			},
+			submitData
+		);
+	}
+
 	const paymentPartner = submitData.paymentPartner;
 	if ( paymentPartner === 'stripe' ) {
 		return stripeCardProcessor( submitData, dataForProcessor );
