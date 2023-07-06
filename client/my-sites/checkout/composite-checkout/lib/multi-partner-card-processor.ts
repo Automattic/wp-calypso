@@ -9,6 +9,7 @@ import { createEbanxToken } from 'calypso/lib/store-transactions';
 import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/payment-method-selector/assignment-processor-functions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import existingCardProcessor from './existing-card-processor';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -254,7 +255,9 @@ export default async function multiPartnerCardProcessor( {
 		if ( ! isValidStripeCardTransactionData( submitData ) ) {
 			throw new Error( 'Required purchase data is missing' );
 		}
-		return assignNewCardProcessor(
+		// Because purchase is undefined, all this does is add the new card. We
+		// still need to submit the transaction.
+		const newCardResponse = await assignNewCardProcessor(
 			{
 				purchase: undefined,
 				translate,
@@ -265,7 +268,25 @@ export default async function multiPartnerCardProcessor( {
 				reduxDispatch: dataForProcessor.reduxDispatch,
 				eventSource: '/checkout',
 			},
-			submitData
+			{
+				...submitData,
+				countryCode: dataForProcessor.contactDetails?.countryCode?.value,
+				postalCode: getPostalCode( dataForProcessor.contactDetails ),
+				// TODO: we probably need more contact data here for other countries
+			}
+		);
+		const storedCard = newCardResponse.payload;
+		if ( ! isValidNewCardResponseData( storedCard ) ) {
+			throw new Error( 'New card was not saved' );
+		}
+		return existingCardProcessor(
+			{
+				...submitData,
+				storedDetailsId: storedCard.stored_details_id,
+				paymentMethodToken: storedCard.mp_ref,
+				paymentPartnerProcessorId: storedCard.payment_partner,
+			},
+			dataForProcessor
 		);
 	}
 
@@ -311,6 +332,20 @@ function isValidEbanxCardTransactionData(
 	const data = submitData as EbanxCardTransactionRequest;
 	if ( ! data ) {
 		throw new Error( 'Transaction requires data and none was provided' );
+	}
+	return true;
+}
+
+interface NewCardResponseData {
+	stored_details_id: string;
+	mp_ref: string;
+	payment_partner: string;
+}
+
+function isValidNewCardResponseData( submitData: unknown ): submitData is NewCardResponseData {
+	const data = submitData as NewCardResponseData;
+	if ( ! data || ! data.stored_details_id || ! data.mp_ref || ! data.payment_partner ) {
+		throw new Error( 'New card was not saved' );
 	}
 	return true;
 }
