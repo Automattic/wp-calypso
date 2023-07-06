@@ -11,8 +11,7 @@ switch ( process.platform ) {
 		APP_PATH = path.join( __dirname, '../../../release/linux-unpacked/wpcom' );
 		break;
 	case 'darwin':
-		console.log( process.arch );
-
+		// On Apple Silicon, the output file is under a separate directory.
 		if ( process.arch.includes( 'arm' ) ) {
 			APP_PATH = path.join(
 				__dirname,
@@ -20,11 +19,11 @@ switch ( process.platform ) {
 			);
 			break;
 		}
+		// Codepath for Intel architecture.
 		APP_PATH = path.join(
 			__dirname,
 			'../../../release/mac/WordPress.com.app/Contents/MacOS/WordPress.com'
 		);
-		console.log( APP_PATH );
 		break;
 	default:
 		throw new Error( 'unsupported platform' );
