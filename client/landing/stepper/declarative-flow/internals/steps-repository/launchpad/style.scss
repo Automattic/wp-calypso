@@ -29,6 +29,8 @@
 	}
 
 	.step-container__content {
+		margin-bottom: 50px;
+
 		@include break-large {
 			height: 100vh;
 		}

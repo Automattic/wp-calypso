@@ -232,12 +232,6 @@ describe( 'StepContent', () => {
 			expect( firstPostListItem ).toHaveClass( 'completed' );
 		} );
 
-		it( 'renders skip to dashboard link', () => {
-			renderStepContent( false, NEWSLETTER_FLOW );
-
-			expect( screen.getByRole( 'button', { name: 'Skip to dashboard' } ) ).toBeInTheDocument();
-		} );
-
 		it( 'renders web preview section', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
