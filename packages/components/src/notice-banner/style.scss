@@ -132,11 +132,18 @@
 		color: var(--jp-black);
 		font-weight: 600;
 		margin-left: 24px;
-		// Underline styling
-		border-bottom: 1.5px solid var(--jp-black);
 
-		&:not(:last-child) {
-			margin-right: 4px;
+		&:focus {
+			outline: none;
+			box-shadow: none;
+		}
+
+		& > span {
+			border-bottom: 1.5px solid var(--jp-black);
+		}
+
+		& > svg {
+			margin-left: 4px;
 		}
 	}
 
