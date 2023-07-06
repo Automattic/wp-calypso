@@ -728,34 +728,32 @@ export default function CheckoutMain( {
 				theme={ theme }
 				selectFirstAvailablePaymentMethod
 			>
-				<>
-					<WPCheckout
-						loadingContent={
-							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
-						}
-						customizedPreviousPath={ customizedPreviousPath }
-						isRemovingProductFromCart={ isRemovingProductFromCart }
-						areThereErrors={ areThereErrors }
-						isInitialCartLoading={ isInitialCartLoading }
-						addItemToCart={ addItemAndLog }
-						changePlanLength={ changePlanLength }
-						countriesList={ countriesList }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						infoMessage={ infoMessage }
-						isLoggedOutCart={ !! isLoggedOutCart }
-						onPageLoadError={ onPageLoadError }
-						removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-						showErrorMessageBriefly={ showErrorMessageBriefly }
-						siteId={ updatedSiteId }
-						siteUrl={ updatedSiteSlug }
+				<WPCheckout
+					loadingContent={
+						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
+					}
+					customizedPreviousPath={ customizedPreviousPath }
+					isRemovingProductFromCart={ isRemovingProductFromCart }
+					areThereErrors={ areThereErrors }
+					isInitialCartLoading={ isInitialCartLoading }
+					addItemToCart={ addItemAndLog }
+					changePlanLength={ changePlanLength }
+					countriesList={ countriesList }
+					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					infoMessage={ infoMessage }
+					isLoggedOutCart={ !! isLoggedOutCart }
+					onPageLoadError={ onPageLoadError }
+					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+					siteId={ updatedSiteId }
+					siteUrl={ updatedSiteSlug }
+				/>
+				{ showProDashboardRedirectBanner && (
+					<JetpackProRedirectModal
+						redirectTo={ redirectTo }
+						productSourceFromUrl={ productSourceFromUrl }
 					/>
-					{ showProDashboardRedirectBanner && (
-						<JetpackProRedirectModal
-							redirectTo={ redirectTo }
-							productSourceFromUrl={ productSourceFromUrl }
-						/>
-					) }
-				</>
+				) }
 			</CheckoutProvider>
 		</Fragment>
 	);

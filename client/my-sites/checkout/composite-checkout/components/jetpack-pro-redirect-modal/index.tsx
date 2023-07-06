@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
+import { CheckoutCheckIcon } from '@automattic/composite-checkout';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { CheckIcon } from 'calypso/../packages/composite-checkout/src/components/shared-icons';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -81,12 +81,15 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 							) }
 						</p>
 						<ul className="jetpack-pro-redirect-modal__list">
-							{ features.map( ( feature, index ) => (
-								<li key={ index }>
-									<CheckIcon id={ index.toString() } />
-									{ feature }
-								</li>
-							) ) }
+							{ features.map( ( feature ) => {
+								const id = feature.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
+								return (
+									<li key={ id }>
+										<CheckoutCheckIcon id={ id } />
+										{ feature }
+									</li>
+								);
+							} ) }
 						</ul>
 					</div>
 					<div className="jetpack-pro-redirect-modal__footer">
