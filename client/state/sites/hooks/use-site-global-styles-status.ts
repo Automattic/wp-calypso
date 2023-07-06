@@ -13,11 +13,14 @@ let useExperiment = (
 	options?: ExperimentOptions
 ): [ boolean, ExperimentAssignment | null ] => [ false, null ];
 /* eslint-enable @typescript-eslint/no-unused-vars */
-try {
-	if ( typeof window !== undefined ) {
-		( { useExperiment } = await import( 'calypso/lib/explat' ) );
+( async () => {
+	if ( typeof window === 'undefined' ) {
+		return;
 	}
-} catch ( e ) {}
+	try {
+		( { useExperiment } = await import( 'calypso/lib/explat' ) );
+	} catch ( e ) {}
+} )();
 
 export type GlobalStylesStatus = {
 	shouldLimitGlobalStyles: boolean;
