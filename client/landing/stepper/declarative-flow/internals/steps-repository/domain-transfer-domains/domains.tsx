@@ -36,7 +36,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	);
 	const domainsState = storedDomainsState || defaultState;
 
-	const domainCount = Object.keys( domainsState || [] ).length;
+	const domainCount = Object.keys( domainsState || {} ).length;
 
 	const numberOfValidDomains = Object.values( domainsState ).filter(
 		( { valid } ) => valid
