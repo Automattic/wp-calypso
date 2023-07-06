@@ -494,7 +494,7 @@ export interface ResponseCartProduct {
 	 * A subscription will auto-renew if it both can auto-renew (it's a recurring subscription,
 	 * has a payment method, isn't blocked, etc.) and the user has auto-renew enabled.
 	 */
-	is_renewal_and_will_auto_renew: boolean;
+	is_renewal_and_will_auto_renew?: boolean;
 
 	subscription_id?: string;
 	introductory_offer_terms?: IntroductoryOfferTerms;
