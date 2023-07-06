@@ -659,7 +659,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-			globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 			getBadge={ getBadge }
 		/>
 	);
