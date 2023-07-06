@@ -121,6 +121,11 @@ class StatsNavigation extends Component {
 
 				return config.isEnabled( 'google-my-business' ) && isGoogleMyBusinessLocationConnected;
 
+			case 'subscribers':
+				if ( 'undefined' === typeof siteId ) {
+					return false;
+				}
+
 			default:
 				return true;
 		}
@@ -182,15 +187,17 @@ class StatsNavigation extends Component {
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 
-				{ isModuleSettingsSupported && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
-					<PageModuleToggler
-						availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
-						pageModules={ pageModules }
-						onToggleModule={ this.onToggleModule }
-						isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-						onTooltipDismiss={ this.onTooltipDismiss }
-					/>
-				) }
+				{ ! isLegacy &&
+					isModuleSettingsSupported &&
+					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
+						<PageModuleToggler
+							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
+							pageModules={ pageModules }
+							onToggleModule={ this.onToggleModule }
+							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+							onTooltipDismiss={ this.onTooltipDismiss }
+						/>
+					) }
 			</div>
 		);
 	}
