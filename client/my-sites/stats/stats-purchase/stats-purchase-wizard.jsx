@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Button, CheckboxControl, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
+import { Button, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -10,7 +10,7 @@ import './styles.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-wizard';
 const SCREEN_TYPE_SELECTION = 0;
-const SCREEN_PERSONAL_CHECKLIST = 1;
+// const SCREEN_PERSONAL_CHECKLIST = 1;
 const SCREEN_PURCHASE = 2;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
@@ -37,9 +37,6 @@ const ProductCard = ( { siteSlug } ) => {
 	const [ subscriptionValue, setSubscriptionValue ] = useState( DEFAULT_STARTING_PRICE );
 	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
 	const [ siteType, setSiteType ] = useState( null );
-	const [ isAdsChecked, setAdsChecked ] = useState( false );
-	const [ isSellingChecked, setSellingChecked ] = useState( false );
-	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const translate = useTranslate();
 
 	const personalLabel = translate( 'Personal site' );
@@ -48,7 +45,7 @@ const ProductCard = ( { siteSlug } ) => {
 
 	const setPersonalSite = () => {
 		setSiteType( TYPE_PERSONAL );
-		setWizardStep( SCREEN_PERSONAL_CHECKLIST );
+		setWizardStep( SCREEN_PURCHASE );
 	};
 
 	const setCommercialSite = () => {
@@ -84,7 +81,7 @@ const ProductCard = ( { siteSlug } ) => {
 					  } )
 					: selectedTypeLabel
 			}
-			active={ wizardStep === SCREEN_TYPE_SELECTION || wizardStep === SCREEN_PERSONAL_CHECKLIST }
+			active={ wizardStep === SCREEN_TYPE_SELECTION }
 		/>
 	);
 
@@ -140,74 +137,6 @@ const ProductCard = ( { siteSlug } ) => {
 												{ translate( 'Commercial site' ) }
 											</Button>
 										</div>
-									</div>
-								</PanelRow>
-							</PanelBody>
-							<PanelBody opened={ wizardStep === SCREEN_PERSONAL_CHECKLIST }>
-								<PanelRow>
-									<div className={ `${ COMPONENT_CLASS_NAME }__qualifications` }>
-										<p>
-											<strong>
-												{ translate( 'Please confirm non-commercial usage by checking each box:' ) }
-											</strong>
-										</p>
-										<p>
-											<ul>
-												<li>
-													<CheckboxControl
-														className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-														checked={ isAdsChecked }
-														label={ translate( `I don't have ads on my site` ) }
-														onChange={ ( value ) => {
-															setAdsChecked( value );
-														} }
-													/>
-												</li>
-												<li>
-													<CheckboxControl
-														className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-														checked={ isSellingChecked }
-														label={ translate( `I don't sell products/services on my site` ) }
-														onChange={ ( value ) => {
-															setSellingChecked( value );
-														} }
-													/>
-												</li>
-												<li>
-													<CheckboxControl
-														className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-														checked={ isBusinessChecked }
-														label={ translate( `I don't promote a business on my site` ) }
-														onChange={ ( value ) => {
-															setBusinessChecked( value );
-														} }
-													/>
-												</li>
-											</ul>
-										</p>
-										<p>
-											{ translate(
-												`If your site doesn't meet these criteria, {{Button}}you will need to use the commercial plan{{/Button}}.`,
-												{
-													components: {
-														Button: (
-															<Button
-																variant="link"
-																href="#"
-																onClick={ ( e ) => handlePlanSwap( e ) }
-															/>
-														),
-													},
-												}
-											) }
-										</p>
-										<Button
-											variant="primary"
-											onClick={ () => setWizardStep( SCREEN_PURCHASE ) }
-											disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
-										>
-											{ translate( 'Confirm personal site' ) }
-										</Button>
 									</div>
 								</PanelRow>
 							</PanelBody>

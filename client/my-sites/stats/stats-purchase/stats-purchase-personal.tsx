@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { PricingSlider, RenderThumbFunction } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import React, { useState } from 'react';
 import { COMPONENT_CLASS_NAME, IMAGE_CELEBRATION_PRICE } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
@@ -20,6 +21,9 @@ const PersonalPurchase = ( {
 	handlePlanSwap,
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
+	const [ isAdsChecked, setAdsChecked ] = useState( false );
+	const [ isSellingChecked, setSellingChecked ] = useState( false );
+	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
@@ -87,6 +91,43 @@ const PersonalPurchase = ( {
 				) }
 			</div>
 
+			{ subscriptionValue === 0 && (
+				<p>
+					<ul>
+						<li>
+							<CheckboxControl
+								className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+								checked={ isAdsChecked }
+								label={ translate( `I don't have ads on my site` ) }
+								onChange={ ( value ) => {
+									setAdsChecked( value );
+								} }
+							/>
+						</li>
+						<li>
+							<CheckboxControl
+								className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+								checked={ isSellingChecked }
+								label={ translate( `I don't sell products/services on my site` ) }
+								onChange={ ( value ) => {
+									setSellingChecked( value );
+								} }
+							/>
+						</li>
+						<li>
+							<CheckboxControl
+								className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+								checked={ isBusinessChecked }
+								label={ translate( `I don't promote a business on my site` ) }
+								onChange={ ( value ) => {
+									setBusinessChecked( value );
+								} }
+							/>
+						</li>
+					</ul>
+				</p>
+			) }
+
 			<p>
 				{ translate(
 					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
@@ -100,7 +141,12 @@ const PersonalPurchase = ( {
 			</p>
 
 			{ subscriptionValue === 0 ? (
-				<Button variant="primary">{ translate( 'Continue with Jetpack Stats for free' ) }</Button>
+				<Button
+					variant="primary"
+					disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
+				>
+					{ translate( 'Continue with Jetpack Stats for free' ) }
+				</Button>
 			) : (
 				<Button variant="primary">
 					{ translate( 'Get Jetpack Stats for $%(value)s per month', {
