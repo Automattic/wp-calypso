@@ -130,6 +130,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					onUpgradeClick={ onUpgradeClick }
 					intervalType={ interval }
 					hidePlanTypeSelector={ true }
+					hideUnavailableFeatures={ true }
 					intent="plans-woocommerce"
 				/>
 			</div>

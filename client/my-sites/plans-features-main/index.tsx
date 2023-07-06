@@ -78,6 +78,7 @@ export interface PlansFeaturesMainProps {
 	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
 	showBiennialToggle?: boolean;
+	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
@@ -125,6 +126,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		intervalType,
 		planTypeSelectorProps,
 		hidePlansFeatureComparison,
+		hideUnavailableFeatures,
 		sitePlanSlug,
 		siteSlug,
 		intent,
@@ -167,6 +169,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isReskinned,
 		intervalType,
 		hidePlansFeatureComparison,
+		hideUnavailableFeatures,
 		currentSitePlanSlug: sitePlanSlug,
 		planActionOverrides,
 		intent,
@@ -219,6 +222,7 @@ const PlansFeaturesMain = ( {
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
 	hidePlansFeatureComparison = false,
+	hideUnavailableFeatures = false,
 	isInSignup = false,
 	isPlansInsideStepper = false,
 	isStepperUpgradeFlow = false,
@@ -415,6 +419,7 @@ const PlansFeaturesMain = ( {
 						intervalType={ intervalType }
 						planTypeSelectorProps={ planTypeSelectorProps }
 						hidePlansFeatureComparison={ hidePlansFeatureComparison }
+						hideUnavailableFeatures={ hideUnavailableFeatures }
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
 						intent={ intent }
