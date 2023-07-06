@@ -6,7 +6,7 @@ const getEarnPaymentsPageUrl = ( siteSlug: string | null ) =>
 	`${ URL_PREFIX }/earn/payments/${ siteSlug ?? '' }`;
 
 const getSubscribersCacheKey = (
-	siteId: number | null,
+	siteId: number | undefined | null,
 	currentPage?: number,
 	perPage?: number,
 	search?: string,

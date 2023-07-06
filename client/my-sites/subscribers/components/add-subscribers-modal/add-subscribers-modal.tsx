@@ -40,7 +40,11 @@ const AddSubscribersModal = ( {
 	}
 
 	return (
-		<Modal title={ modalTitle } onRequestClose={ onClose } overlayClassName="add-subscribers-modal">
+		<Modal
+			title={ modalTitle as string }
+			onRequestClose={ onClose }
+			overlayClassName="add-subscribers-modal"
+		>
 			{ isUploading && (
 				<>
 					<LoadingBar progress={ 0.5 } />
