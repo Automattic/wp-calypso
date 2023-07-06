@@ -394,7 +394,7 @@ $theme-sheet-content-max-width: 1462px;
 		top: 16px;
 
 		.theme-preview__frame-wrapper {
-			max-height: 100vh;
+			max-height: calc(100vh - 32px - var(--masterbar-height));
 
 			.theme-preview__frame {
 				height: 200%;
