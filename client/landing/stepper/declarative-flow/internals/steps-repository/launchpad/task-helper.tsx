@@ -341,11 +341,7 @@ export function getEnhancedTasks(
 				case 'blog_launched': {
 					const onboardingCartItems = [ planCartItem, domainCartItem ].filter( Boolean );
 					let title = task.title;
-					if (
-						( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) &&
-						planCompleted &&
-						onboardingCartItems.length
-					) {
+					if ( isBlogOnboardingFlow( flow ) && planCompleted && onboardingCartItems.length ) {
 						title = translate( 'Checkout and launch' );
 					}
 
