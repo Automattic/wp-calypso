@@ -33,6 +33,58 @@ const stepContentProps = {
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
+// completionStatuses is defined here so we can change it dynamically in tests
+// feel free to add more attributes as needed
+const completionStatuses = {
+	'design-first': {
+		plan_completed: false,
+	},
+	'start-writing': {
+		plan_completed: false,
+	},
+};
+
+jest.mock( '@automattic/data-stores/src/plugins', () => ( {
+	registerPlugins: jest.fn(),
+} ) );
+
+jest.mock( '@wordpress/data', () => {
+	return {
+		createRegistrySelector: jest.fn(),
+		registerStore: jest.fn(),
+		combineReducers: jest.fn(),
+		createReduxStore: jest.fn(),
+		register: jest.fn(),
+		useSelect: jest.fn().mockImplementation( ( selectFunc ) => {
+			const select = ( storeName ) => {
+				if ( storeName === 'automattic/onboard' ) {
+					return {
+						getPlanCartItem: () => [ { product_slug: 'value_bundle' } ],
+						getDomainCartItem: () => [
+							{
+								is_free: false,
+								product_slug: 'mydomain.com',
+							},
+						],
+						getSelectedDomain: () => ( {
+							is_free: false,
+							product_slug: 'mydomain.com',
+						} ),
+					};
+				}
+
+				if ( storeName === 'automattic/site' ) {
+					return {
+						getSiteOption: () => 'https://example.wordpress.com/wp-admin',
+					};
+				}
+			};
+
+			return selectFunc( select );
+		} ),
+	};
+} );
+
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => mockSite,
 } ) );
@@ -90,7 +142,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 					{ id: 'domain_upsell', completed: false, disabled: false, title: 'Choose a domain' },
 					{
 						id: 'plan_completed',
-						completed: false,
+						completed: completionStatuses[ 'start-writing' ][ 'plan_completed' ],
 						disabled: false,
 						title: 'Choose a plan',
 					},
@@ -110,7 +162,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 					{ id: 'domain_upsell', completed: false, disabled: false, title: 'Choose a domain' },
 					{
 						id: 'plan_completed',
-						completed: false,
+						completed: completionStatuses[ 'design-first' ][ 'plan_completed' ],
 						disabled: false,
 						title: 'Choose a plan',
 					},
@@ -294,9 +346,11 @@ describe( 'StepContent', () => {
 		} );
 
 		it( 'renders correct launch CTA text when plan not free', () => {
+			completionStatuses[ 'start-writing' ][ 'plan_completed' ] = true;
 			renderStepContent( false, START_WRITING_FLOW );
 
 			expect( screen.getByText( 'Checkout and launch' ) ).toBeInTheDocument();
+			completionStatuses[ 'start-writing' ][ 'plan_completed' ] = false;
 		} );
 	} );
 
@@ -341,9 +395,11 @@ describe( 'StepContent', () => {
 		} );
 
 		it( 'renders correct launch CTA text when plan not free', () => {
+			completionStatuses[ 'design-first' ][ 'plan_completed' ] = true;
 			renderStepContent( false, DESIGN_FIRST_FLOW );
 
 			expect( screen.getByText( 'Checkout and launch' ) ).toBeInTheDocument();
+			completionStatuses[ 'design-first' ][ 'plan_completed' ] = false;
 		} );
 	} );
 } );
