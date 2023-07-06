@@ -32,6 +32,10 @@ const domainTransfer: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
+			{
+				slug: 'complete',
+				asyncComponent: () => import( './internals/steps-repository/domain-transfer-complete' ),
+			},
 		];
 	},
 
@@ -68,7 +72,7 @@ const domainTransfer: Flow = {
 					return navigate( 'processing', undefined );
 				}
 				case 'processing': {
-					const destination = '/domains/manage?filter=owned-by-me';
+					const destination = '/setup/domain-transfer/complete';
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( flowName );

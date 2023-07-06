@@ -18,7 +18,7 @@ import { trackAddDomainAction, trackManageAllDomainsAction } from '../quick-link
 import ActionBox from '../quick-links/action-box';
 import '../quick-links/style.scss';
 
-const QuickLinksForDevs = ( props ) => {
+const QuickLinksForHostedSites = ( props ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
@@ -47,7 +47,7 @@ const QuickLinksForDevs = ( props ) => {
 	] = useDebouncedCallback( updateToggleStatus, 1000 );
 
 	const quickLinks = (
-		<div className="quick-links-for-devs__boxes quick-links__boxes">
+		<div className="quick-links-for-hosted-sites__boxes quick-links__boxes">
 			<ActionBox
 				href={ `/hosting-config/${ siteSlug }#sftp-credentials` }
 				hideLinkIndicator
@@ -135,7 +135,7 @@ const QuickLinksForDevs = ( props ) => {
 
 	return (
 		<FoldableCard
-			className="quick-links-for-devs quick-links"
+			className="quick-links-for-hosted-sites quick-links"
 			header={ translate( 'Quick Links' ) }
 			clickableHeader
 			expanded={ isExpanded }
@@ -175,4 +175,8 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( QuickLinksForDevs );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( QuickLinksForHostedSites );

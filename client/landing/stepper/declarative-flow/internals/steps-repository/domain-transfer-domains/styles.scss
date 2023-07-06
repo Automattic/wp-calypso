@@ -112,6 +112,16 @@
 	.domains__domain-domain,
 	.domains__domain-key {
 
+		// Show the titles on mobile and hide on desktop (except for the first one)
+		.form-label {
+			display: none;
+			@media ( max-width: $break-medium ) {
+				display: block;
+			}
+			&.is-first-label-title {
+				display: block;
+			}
+		}
 
 		.form-fieldset {
 			position: relative;

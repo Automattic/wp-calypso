@@ -3,6 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { getQueryArg } from '@wordpress/url';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
@@ -186,7 +187,8 @@ const startWriting: Flow = {
 		const flowName = this.name;
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
-		const locale = useLocale();
+		const defaultLocale = useLocale();
+		const locale = getQueryArg( window.location.search, 'locale' ) ?? defaultLocale;
 		const currentPath = window.location.pathname;
 		const isSiteCreationStep =
 			currentPath.endsWith( 'setup/start-writing/' ) ||
