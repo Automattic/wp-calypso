@@ -102,14 +102,12 @@ $design-preview-sidebar-width: 311px;
 	.components-navigator-screen {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 		height: 100%;
 		overflow-x: visible;
+
 		// Disable the animation of the transform on the mobile
 		transform: none !important;
-
-		@include break-large {
-			transform: initial;
-		}
 	}
 
 	@include break-large {
