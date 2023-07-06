@@ -70,11 +70,9 @@ class GoogleSocialButton extends Component {
 		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
 
 		if ( ! googleSignIn ) {
-			this.props.showErrorNotice(
-				this.props.translate(
-					'Something went wrong when trying to load Google sign-in. Please refresh the page.'
-				)
-			);
+			this.setState( {
+				error: this.props.translate( 'Something went wrong while trying to load Google sign-in.' ),
+			} );
 
 			return;
 		}
