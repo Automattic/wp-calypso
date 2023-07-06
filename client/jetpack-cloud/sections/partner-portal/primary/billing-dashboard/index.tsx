@@ -21,7 +21,7 @@ export default function BillingDashboard() {
 	};
 
 	return (
-		<Main wideLayout className="billing-dashboard">
+		<Main fullWidthLayout className="billing-dashboard">
 			<DocumentHead title={ translate( 'Billing' ) } />
 			<SidebarNavigation />
 

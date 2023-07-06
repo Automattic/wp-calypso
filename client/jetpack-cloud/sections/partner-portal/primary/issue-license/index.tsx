@@ -27,7 +27,7 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 	}, [] );
 
 	return (
-		<Main wideLayout className="issue-license">
+		<Main fullWidthLayout className="issue-license">
 			<DocumentHead title={ translate( 'Issue a new License' ) } />
 			<SidebarNavigation />
 			<div className="issue-license__step-progress">

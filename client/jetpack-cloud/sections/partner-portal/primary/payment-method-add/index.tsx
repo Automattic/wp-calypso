@@ -182,7 +182,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	};
 
 	return (
-		<Main wideLayout className="payment-method-add">
+		<Main fullWidthLayout className="payment-method-add">
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
 

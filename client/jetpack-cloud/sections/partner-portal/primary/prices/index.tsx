@@ -113,7 +113,7 @@ export default function Prices() {
 	} );
 
 	return (
-		<Main wideLayout className="prices">
+		<Main fullWidthLayout className="prices">
 			<QueryProductsList type="jetpack" currency="USD" />
 
 			<DocumentHead title={ translate( 'Prices' ) } />

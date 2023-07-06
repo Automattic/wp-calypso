@@ -11,7 +11,7 @@ export default function CompanyDetailsDashboard() {
 	const translate = useTranslate();
 
 	return (
-		<Main wideLayout className="company-details-dashboard">
+		<Main fullWidthLayout className="company-details-dashboard">
 			<DocumentHead title={ translate( 'Company Details' ) } />
 			<SidebarNavigation />
 

@@ -44,7 +44,7 @@ export default function AssignLicense( {
 	}, [] );
 
 	return (
-		<Main wideLayout className="assign-license">
+		<Main fullWidthLayout className="assign-license">
 			<DocumentHead
 				title={ translate( 'Assign your license', 'Assign your licenses', {
 					count: licenseKeysArray.length,

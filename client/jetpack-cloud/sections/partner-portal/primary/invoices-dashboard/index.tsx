@@ -11,7 +11,7 @@ export default function InvoicesDashboard() {
 	const translate = useTranslate();
 
 	return (
-		<Main wideLayout className="invoices-dashboard">
+		<Main fullWidthLayout className="invoices-dashboard">
 			<DocumentHead title={ translate( 'Invoices' ) } />
 			<SidebarNavigation />
 
