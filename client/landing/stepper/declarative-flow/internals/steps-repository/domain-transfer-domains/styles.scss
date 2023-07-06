@@ -269,4 +269,13 @@
 			}
 		}
 	}
+
+	p.loading-placeholder {
+		width: 300px;
+		@include placeholder();
+	}
+	button.loading-placeholder {
+		width: 150px;
+		@include placeholder();
+	}
 }
