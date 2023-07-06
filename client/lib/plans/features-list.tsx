@@ -322,6 +322,7 @@ export type FeatureObject = {
 	getCompareSubtitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
+	isAddOn?: boolean;
 	getFeatureGroup?: () => string;
 	getQuantity?: () => number; // storage add-ons are a quantity based product. this determines checkout price
 	getUnitProductSlug?: () => string; // used for storage add-ons to determine the checkout item
@@ -1768,6 +1769,7 @@ export const FEATURES_LIST: FeatureList = {
 		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+		isAddOn: true,
 	},
 	[ FEATURE_100GB_STORAGE_ADD_ON ]: {
 		getSlug: () => FEATURE_100GB_STORAGE_ADD_ON,
@@ -1777,6 +1779,7 @@ export const FEATURES_LIST: FeatureList = {
 		getCompareTitle: () => i18n.translate( '100 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+		isAddOn: true,
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,

@@ -8,6 +8,12 @@ export type TransformedFeatureObject = FeatureObject & {
 	availableOnlyForAnnualPlans: boolean;
 };
 
+export type StorageOption = {
+	slug: string;
+	isAddOn: boolean;
+	featureObject: FeatureObject;
+};
+
 export type PlanProperties = {
 	billingPeriod?: number;
 	cartItemForPlan: {
