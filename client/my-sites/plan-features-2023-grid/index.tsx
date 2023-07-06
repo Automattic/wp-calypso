@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	getMonthlyPlanByYearly,
@@ -919,7 +920,10 @@ export class PlanFeatures2023Grid extends Component<
 
 				const { planName, storageOptions, storageAddOns } = properties;
 				const canUpgradeStorageForPlan =
-					storageAddOns.length > 0 && storageOptions.length === 1 && intervalType === 'yearly';
+					storageAddOns.length > 0 &&
+					storageOptions.length === 1 &&
+					intervalType === 'yearly' &&
+					isEnabled( 'plans/upgradeable-storage' );
 
 				const storageJSX = canUpgradeStorageForPlan
 					? this.renderStorageAddOnDropdown( properties )
