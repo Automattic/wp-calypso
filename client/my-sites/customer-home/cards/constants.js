@@ -48,3 +48,4 @@ export const TASK_STAGING = 'home-task-staging';
 export const TASK_FIVERR = 'home-task-fiverr';
 export const TASK_DOMAIN_UPSELL = 'home-task-domain-upsell';
 export const LAUNCHPAD_KEEP_BUILDING = 'home-launchpad-keep-building';
+export const LAUNCHPAD_BLOG_FLOW = 'home-launchpad-blog-flow';
