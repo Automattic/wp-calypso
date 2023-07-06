@@ -54,6 +54,15 @@ export const SubscribersPageProvider = ( {
 }: SubscribersPageProviderProps ) => {
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
 
+<<<<<<< HEAD
+=======
+	const handleSearch = useCallback( ( term: string ) => {
+		searchTermChanged( term );
+		pageChanged( 1 );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+>>>>>>> 54f64001c4 (Reset page when searching)
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
 
 	const grandTotalQueryResult = useSubscribersQuery( { siteId } );
