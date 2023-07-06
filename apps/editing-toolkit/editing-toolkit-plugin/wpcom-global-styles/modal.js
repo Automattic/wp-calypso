@@ -66,12 +66,12 @@ const GlobalStylesModal = () => {
 	let description;
 	if ( wpcomGlobalStyles?.globalStylesInPersonalPlan === GLOBAL_STYLES_TREATMENT_GROUP ) {
 		description = __(
-			"Change all of your site's fonts, colors and more. Available on the Premium plan.",
+			"Change all of your site's fonts, colors and more. Available on the Personal plan.",
 			'full-site-editing'
 		);
 	} else {
 		description = __(
-			"Change all of your site's fonts, colors and more. Available on the Personal plan.",
+			"Change all of your site's fonts, colors and more. Available on the Premium plan.",
 			'full-site-editing'
 		);
 	}
