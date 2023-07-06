@@ -117,12 +117,14 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		test( 'should dispatch fetch/remove actions', () => {
-			return removePurchase( purchaseId, userId )( dispatch, getState ).then( () => {
-				expect( dispatch ).toHaveBeenCalledWith( {
-					type: PURCHASE_REMOVE_FAILED,
-					error: errorMessage,
-				} );
+		test( 'should dispatch fetch/remove actions', async () => {
+			await expect(
+				removePurchase( purchaseId, userId )( dispatch, getState )
+			).rejects.toThrowError();
+
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: PURCHASE_REMOVE_FAILED,
+				error: errorMessage,
 			} );
 		} );
 	} );

@@ -21,5 +21,9 @@ export function getTransferStatus( domainFromApi ) {
 		return transferStatus.PENDING_START;
 	}
 
+	if ( domainFromApi.transfer_status === 'pending_async' ) {
+		return transferStatus.PENDING_ASYNC;
+	}
+
 	return null;
 }

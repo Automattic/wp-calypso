@@ -14,6 +14,8 @@
 }
 
 .popover.info-popover__tooltip {
+	outline: none;
+
 	.popover__inner {
 		color: var(--color-neutral-50);
 		font-size: $font-body-small;

@@ -85,7 +85,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
-	const hideBackFromQueryString = queryParams.get( 'hideBack' );
+	const [ shouldHideBack, setShouldHideBack ] = useState( false );
 
 	const { goToCheckout } = useCheckout();
 
@@ -602,6 +602,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					onSelectVariation={ previewDesignVariation }
 					actionButtons={ actionButtons }
 					recordDeviceClick={ recordDeviceClick }
+					limitGlobalStyles={ shouldLimitGlobalStyles }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
 					selectedColorVariation={ selectedColorVariation }
@@ -609,6 +610,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					selectedFontVariation={ selectedFontVariation }
 					onSelectFontVariation={ setSelectedFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }
+					onNavigatorPathChange={ ( path: string ) => setShouldHideBack( path !== '/' ) }
 				/>
 			</>
 		);
@@ -618,7 +620,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				hideBack={ !! hideBackFromQueryString }
+				hideBack={ shouldHideBack }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
 				customizedActionButtons={ actionButtons }

@@ -6,7 +6,7 @@ import {
 	FREE_FLOW,
 	COPY_SITE_FLOW,
 	ONBOARDING_PM_FLOW,
-	BULK_DOMAIN_TRANSFER,
+	DOMAIN_TRANSFER,
 } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
@@ -96,7 +96,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		domains: 1,
 		plans: 2,
 	},
-	[ BULK_DOMAIN_TRANSFER ]: {
+	[ DOMAIN_TRANSFER ]: {
 		user: 0,
 		intro: 1,
 		domains: 2,

@@ -20,8 +20,10 @@ import {
 	domainManagementList,
 	domainUseMyDomain,
 	domainMappingSetup,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
@@ -43,6 +45,7 @@ function ConnectDomainStep( {
 	isFirstVisit,
 	queryError,
 	queryErrorDescription,
+	currentRoute,
 } ) {
 	const { __ } = useI18n();
 	const stepsDefinition = isSubdomain( domain )
@@ -204,7 +207,7 @@ function ConnectDomainStep( {
 	const renderBreadcrumbs = () => {
 		let items = [
 			{
-				label: __( 'Domains' ),
+				label: isUnderDomainManagementAll( currentRoute ) ? __( 'All Domains' ) : __( 'Domains' ),
 				href: domainManagementList( selectedSite.slug, domain ),
 			},
 			{
@@ -228,18 +231,18 @@ function ConnectDomainStep( {
 			items = [
 				{
 					label: __( 'Domains' ),
-					href: domainManagementList( selectedSite.slug, domain ),
+					href: domainManagementList( selectedSite.slug, currentRoute ),
 				},
 				{
 					label: domain,
-					href: domainManagementEdit( selectedSite.slug, domain ),
+					href: domainManagementEdit( selectedSite.slug, domain, currentRoute ),
 				},
 				{ label: __( 'Connect' ) },
 			];
 
 			mobileItem = {
 				label: __( 'Back' ),
-				href: domainManagementEdit( selectedSite.slug, domain ),
+				href: domainManagementEdit( selectedSite.slug, domain, currentRoute ),
 				showBackArrow: true,
 			};
 		}
@@ -251,7 +254,7 @@ function ConnectDomainStep( {
 		if ( prevPageSlug ) {
 			setPageSlug( prevPageSlug );
 		} else {
-			page( domainManagementList( selectedSite.slug ) );
+			page( domainManagementList( selectedSite.slug, currentRoute ) );
 		}
 	};
 
@@ -376,5 +379,6 @@ export default connect( ( state ) => {
 		domains: getDomainsBySiteId( state, siteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
 		selectedSite,
+		currentRoute: getCurrentRoute( state ),
 	};
 } )( ConnectDomainStep );

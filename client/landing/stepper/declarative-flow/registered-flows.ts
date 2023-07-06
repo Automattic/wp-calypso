@@ -7,7 +7,7 @@ import {
 	DESIGN_FIRST_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
-	BULK_DOMAIN_TRANSFER,
+	DOMAIN_TRANSFER,
 	ONBOARDING_PM_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
@@ -111,10 +111,8 @@ availableFlows[ 'plugin-bundle' ] = () =>
 	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
 
 if ( config.isEnabled( 'bulk-domain-transfer-flow' ) ) {
-	availableFlows[ BULK_DOMAIN_TRANSFER ] = () =>
-		import(
-			/* webpackChunkName: "bulk-domain-transfer" */ '../declarative-flow/bulk-domain-transfer'
-		);
+	availableFlows[ DOMAIN_TRANSFER ] = () =>
+		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' );
 }
 
 export default availableFlows;

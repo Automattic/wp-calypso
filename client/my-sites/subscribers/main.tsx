@@ -93,6 +93,7 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 				<SubscriberListContainer
 					onClickView={ onClickView }
 					onClickUnsubscribe={ onClickUnsubscribe }
+					setShowAddSubscribersModal={ setShowAddSubscribersModal }
 				/>
 
 				<UnsubscribeModal

@@ -3,7 +3,6 @@ import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -68,7 +67,6 @@ export const CacheCard = ( {
 	siteSlug,
 	translate,
 } ) => {
-	const dispatch = useDispatch();
 	const showEdgeCache = config.isEnabled( 'yolo/edge-cache-i1' );
 	const {
 		isLoading: getEdgeCacheLoading,
@@ -85,26 +83,22 @@ export const CacheCard = ( {
 		{
 			onSettled: ( ...args ) => {
 				const active = args[ 2 ];
-				dispatch(
-					recordTracksEvent(
-						active
-							? 'calypso_hosting_configuration_edge_cache_enable'
-							: 'calypso_hosting_configuration_edge_cache_disable',
-						{
-							site_id: siteId,
-						}
-					)
+				recordTracksEvent(
+					active
+						? 'calypso_hosting_configuration_edge_cache_enable'
+						: 'calypso_hosting_configuration_edge_cache_disable',
+					{
+						site_id: siteId,
+					}
 				);
 			},
 		}
 	);
 	const { clearEdgeCache, isLoading: clearEdgeCacheLoading } = useClearEdgeCacheMutation( siteId, {
 		onSuccess: () => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
-					site_id: siteId,
-				} )
-			);
+			recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
+				site_id: siteId,
+			} );
 		},
 	} );
 
@@ -148,9 +142,9 @@ export const CacheCard = ( {
 	};
 
 	const edgeCacheToggleDescription = isEdgeCacheEligible
-		? translate( 'Enable edge caching for faster content delivery.' )
+		? translate( 'Enable global edge caching for faster content delivery.' )
 		: translate(
-				'Edge cache can only be enabled for public sites. {{a}}Review privacy settings.{{/a}}',
+				'Global edge cache can only be enabled for public sites. {{a}}Review privacy settings.{{/a}}',
 				{
 					components: {
 						a: <a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />,
@@ -180,7 +174,7 @@ export const CacheCard = ( {
 								<EdgeCacheLoadingPlaceholder />
 							) : (
 								<>
-									<ToggleLabel>{ translate( 'Edge cache' ) }</ToggleLabel>
+									<ToggleLabel>{ translate( 'Global edge cache' ) }</ToggleLabel>
 									<ToggleControl
 										disabled={
 											clearEdgeCacheLoading || getEdgeCacheLoading || ! isEdgeCacheEligible

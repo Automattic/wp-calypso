@@ -33,7 +33,9 @@
 		"@automattic/design-picker": "workspace:^",
 		"@automattic/global-styles": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/onboarding": "workspace:^",
 		"@wordpress/components": "^23.0.0",
+		"@wordpress/icons": "^9.14.0",
 		"@wordpress/react-i18n": "^3.21.0",
 		"classnames": "^2.3.1",
 		"tslib": "^2.3.0"

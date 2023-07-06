@@ -31,7 +31,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
-import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -183,46 +182,45 @@ class RemovePurchase extends Component {
 	};
 
 	handlePurchaseRemoval = async ( purchase ) => {
-		const { userId, isDomainOnlySite, translate, purchasesError } = this.props;
+		const { userId, isDomainOnlySite, translate } = this.props;
 
-		await this.props.removePurchase( purchase.id, userId );
+		try {
+			await this.props.removePurchase( purchase.id, userId );
 
-		const productName = getName( purchase );
-		let successMessage;
+			const productName = getName( purchase );
+			let successMessage;
 
-		if ( purchasesError ) {
-			this.setState( { isRemoving: false } );
-			this.closeDialog();
-			this.props.errorNotice( purchasesError );
-			return;
-		}
-
-		successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
-			args: { productName },
-			components: { siteName: <em>{ purchase.domain }</em> },
-		} );
-
-		if (
-			isAkismetTemporarySitePurchase( purchase ) ||
-			isJetpackTemporarySitePurchase( purchase )
-		) {
-			successMessage = translate( '%(productName)s was removed from your account.', {
+			successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
 				args: { productName },
+				components: { siteName: <em>{ purchase.domain }</em> },
 			} );
-		}
 
-		if ( isDomainRegistration( purchase ) ) {
-			if ( isDomainOnlySite ) {
-				this.props.receiveDeletedSite( purchase.siteId );
-				this.props.setAllSitesSelected();
+			if (
+				isAkismetTemporarySitePurchase( purchase ) ||
+				isJetpackTemporarySitePurchase( purchase )
+			) {
+				successMessage = translate( '%(productName)s was removed from your account.', {
+					args: { productName },
+				} );
 			}
 
-			successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
-				components: { domain: <em>{ productName }</em> },
-			} );
-		}
+			if ( isDomainRegistration( purchase ) ) {
+				if ( isDomainOnlySite ) {
+					this.props.receiveDeletedSite( purchase.siteId );
+					this.props.setAllSitesSelected();
+				}
 
-		this.props.successNotice( successMessage, { isPersistent: true } );
+				successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
+					components: { domain: <em>{ productName }</em> },
+				} );
+			}
+
+			this.props.successNotice( successMessage, { isPersistent: true } );
+		} catch ( error ) {
+			this.setState( { isRemoving: false } );
+			this.closeDialog();
+			this.props.errorNotice( error.message, { displayOnNextPage: true } );
+		}
 	};
 
 	getChatButton = () => (
@@ -484,7 +482,6 @@ export default connect(
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isJetpack,
 			isAkismet,
-			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 			primaryDomain: getPrimaryDomainBySiteId( state, purchase.siteId ),
 		};

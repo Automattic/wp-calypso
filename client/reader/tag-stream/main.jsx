@@ -4,7 +4,6 @@ import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import DocumentHead from 'calypso/components/data/document-head';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
 import { navigate } from 'calypso/lib/navigate';
@@ -102,6 +101,7 @@ class TagStream extends Component {
 		const emptyContent = <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
 		const title = this.props.decodedTagSlug;
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
+		const titleText = title.replace( /-/g, ' ' );
 
 		let imageSearchString = this.props.encodedTagSlug;
 
@@ -132,7 +132,7 @@ class TagStream extends Component {
 		// Put the tag stream header at the top of the body, so it can be even with the sidebar in the two column layout.
 		const tagHeader = (
 			<TagStreamHeader
-				title={ title }
+				title={ titleText }
 				description={ this.props.description }
 				imageSearchString={ imageSearchString }
 				showFollow={ !! ( tag && tag.id ) }
@@ -158,12 +158,6 @@ class TagStream extends Component {
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
-				<DocumentHead
-					title={ this.props.translate( '%s ‹ Reader', {
-						args: title,
-						comment: '%s is the section name. For example: "My Likes"',
-					} ) }
-				/>
 				{ this.props.showBack && <HeaderBack /> }
 			</Stream>
 		);

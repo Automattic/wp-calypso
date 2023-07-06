@@ -1,0 +1,25 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.navigator-screen__footer {
+	display: none;
+	position: sticky;
+	bottom: 0;
+	width: 100%;
+	background-color: var(--studio-white);
+
+	a,
+	button {
+		width: 100%;
+		border-radius: 4px;
+		box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+	}
+
+	@include break-xlarge {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 32px 16px;
+		margin: 0 -16px;
+	}
+}
