@@ -1,7 +1,7 @@
 import {
 	PRODUCT_1GB_SPACE,
-	PRODUCT_100GB_STORAGE,
-	PRODUCT_200GB_STORAGE,
+	PRODUCT_50GB_STORAGE_ADD_ON,
+	PRODUCT_100GB_STORAGE_ADD_ON,
 } from '@automattic/calypso-products';
 import i18n, { TranslateResult } from 'i18n-calypso';
 
@@ -16,17 +16,17 @@ export type AddOnsList = {
 };
 
 export const ADD_ONS_LIST: AddOnsList = {
-	[ PRODUCT_100GB_STORAGE ]: {
+	[ PRODUCT_50GB_STORAGE_ADD_ON ]: {
 		getSlug: () => PRODUCT_1GB_SPACE,
-		getQuantity: () => 100,
-		getTitle: () => i18n.translate( '100 GB storage space' ),
+		getQuantity: () => 50,
+		getTitle: () => i18n.translate( '50 GB storage add on' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
-	[ PRODUCT_200GB_STORAGE ]: {
+	[ PRODUCT_100GB_STORAGE_ADD_ON ]: {
 		getSlug: () => PRODUCT_1GB_SPACE,
-		getQuantity: () => 200,
-		getTitle: () => i18n.translate( '200 GB storage space' ),
+		getQuantity: () => 100,
+		getTitle: () => i18n.translate( '100 GB storage add on' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
