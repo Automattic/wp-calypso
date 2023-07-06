@@ -38,12 +38,18 @@ export function MockCheckout( {
 		getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
 		setCart: setCart || mockSetCartEndpoint,
 	} );
+
+	const isPurchaseFree = { ...initialCart, ...cartChanges }.total_cost_integer === 0;
+
 	return (
 		<ReduxProvider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
 				<ShoppingCartProvider managerClient={ managerClient }>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-						<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ fetchStripeConfiguration }>
+						<StripeSetupIntentIdProvider
+							fetchStipeSetupIntentId={ fetchStripeConfiguration }
+							isDisabled={ ! isPurchaseFree }
+						>
 							<CheckoutMain
 								siteId={ useUndefinedSiteId ? undefined : siteId }
 								siteSlug="foo.com"
