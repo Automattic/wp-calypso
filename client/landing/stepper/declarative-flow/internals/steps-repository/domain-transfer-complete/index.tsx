@@ -11,6 +11,16 @@ import { CompleteDomainsTransferred } from './complete-domains-transferred';
 import type { Step } from '../../types';
 import './styles.scss';
 
+const PlaceHolderHeader = () => {
+	return (
+		<div className="placeholder-main-title">
+			<p className="loading-placeholder"></p>
+			<p className="loading-placeholder"></p>
+			<button className="loading-placeholder"></button>
+		</div>
+	);
+};
+
 const Complete: Step = function Complete( { flow } ) {
 	const { __, _n } = useI18n();
 	const dispatch = useDispatch();
@@ -31,13 +41,13 @@ const Complete: Step = function Complete( { flow } ) {
 
 	return (
 		<>
-			{ newlyTransferredDomains && (
-				<StepContainer
-					flowName={ flow }
-					stepName="complete"
-					isHorizontalLayout={ false }
-					isLargeSkipLayout={ false }
-					formattedHeader={
+			<StepContainer
+				flowName={ flow }
+				stepName="complete"
+				isHorizontalLayout={ false }
+				isLargeSkipLayout={ false }
+				formattedHeader={
+					newlyTransferredDomains ? (
 						<FormattedHeader
 							id="domains-header"
 							headerText={ _n(
@@ -58,18 +68,20 @@ const Complete: Step = function Complete( { flow } ) {
 								</a>
 							}
 						/>
-					}
-					stepContent={
-						<CompleteDomainsTransferred newlyTransferredDomains={ newlyTransferredDomains } />
-					}
-					recordTracksEvent={ recordTracksEvent }
-					showHeaderJetpackPowered={ false }
-					showHeaderWooCommercePowered={ false }
-					showVideoPressPowered={ false }
-					showJetpackPowered={ false }
-					hideBack={ true }
-				/>
-			) }
+					) : (
+						<PlaceHolderHeader />
+					)
+				}
+				stepContent={
+					<CompleteDomainsTransferred newlyTransferredDomains={ newlyTransferredDomains } />
+				}
+				recordTracksEvent={ recordTracksEvent }
+				showHeaderJetpackPowered={ false }
+				showHeaderWooCommercePowered={ false }
+				showVideoPressPowered={ false }
+				showJetpackPowered={ false }
+				hideBack={ true }
+			/>
 		</>
 	);
 };
