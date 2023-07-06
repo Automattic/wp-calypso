@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { StripeHookProvider, StripeSetupIntentIdProvider } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { styled } from '@automattic/wpcom-checkout';
@@ -111,26 +111,28 @@ export default function CheckoutMainWrapper( {
 			>
 				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-						<CheckoutMain
-							siteSlug={ siteSlug }
-							siteId={ selectedSiteId }
-							productAliasFromUrl={ productAliasFromUrl }
-							productSourceFromUrl={ productSourceFromUrl }
-							purchaseId={ purchaseId }
-							couponCode={ couponCode }
-							redirectTo={ redirectTo }
-							feature={ selectedFeature }
-							plan={ plan }
-							isComingFromUpsell={ isComingFromUpsell }
-							infoMessage={ prepurchaseNotices }
-							sitelessCheckoutType={ sitelessCheckoutType }
-							isLoggedOutCart={ isLoggedOutCart }
-							isNoSiteCart={ isNoSiteCart }
-							isGiftPurchase={ isGiftPurchase }
-							jetpackSiteSlug={ jetpackSiteSlug }
-							jetpackPurchaseToken={ jetpackPurchaseToken }
-							isUserComingFromLoginForm={ isUserComingFromLoginForm }
-						/>
+						<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
+							<CheckoutMain
+								siteSlug={ siteSlug }
+								siteId={ selectedSiteId }
+								productAliasFromUrl={ productAliasFromUrl }
+								productSourceFromUrl={ productSourceFromUrl }
+								purchaseId={ purchaseId }
+								couponCode={ couponCode }
+								redirectTo={ redirectTo }
+								feature={ selectedFeature }
+								plan={ plan }
+								isComingFromUpsell={ isComingFromUpsell }
+								infoMessage={ prepurchaseNotices }
+								sitelessCheckoutType={ sitelessCheckoutType }
+								isLoggedOutCart={ isLoggedOutCart }
+								isNoSiteCart={ isNoSiteCart }
+								isGiftPurchase={ isGiftPurchase }
+								jetpackSiteSlug={ jetpackSiteSlug }
+								jetpackPurchaseToken={ jetpackPurchaseToken }
+								isUserComingFromLoginForm={ isUserComingFromLoginForm }
+							/>
+						</StripeSetupIntentIdProvider>
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>
 			</CheckoutErrorBoundary>
