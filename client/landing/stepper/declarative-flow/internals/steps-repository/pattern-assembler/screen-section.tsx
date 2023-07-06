@@ -17,6 +17,7 @@ interface Props {
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
 	onMoveDownSection: ( position: number ) => void;
+	onBack: () => void;
 }
 
 const ScreenSection = ( {
@@ -26,6 +27,7 @@ const ScreenSection = ( {
 	onDeleteSection,
 	onMoveUpSection,
 	onMoveDownSection,
+	onBack,
 }: Props ) => {
 	const translate = useTranslate();
 	const navigator = useNavigator();
@@ -38,6 +40,7 @@ const ScreenSection = ( {
 				description={ translate(
 					'Add and arrange patterns to make your homepage unique and help people understand instantly what the site’s about. '
 				) }
+				onBack={ onBack }
 			/>
 			<div className="screen-container__body">
 				<PatternLayout

@@ -452,6 +452,12 @@ const PatternAssembler = ( {
 		recordTracksEvent,
 	} );
 
+	const onPatternSelectorBack = () => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_BACK_CLICK, {
+			pattern_type: 'section',
+		} );
+	};
+
 	const onDoneClick = ( type: string ) => {
 		const patterns = getPatterns( type );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_DONE_CLICK, {
@@ -607,6 +613,7 @@ const PatternAssembler = ( {
 						onDeleteSection={ onDeleteSection }
 						onMoveUpSection={ onMoveUpSection }
 						onMoveDownSection={ onMoveDownSection }
+						onBack={ onPatternSelectorBack }
 					/>
 				</NavigatorScreen>
 				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION_PATTERNS }>
@@ -620,6 +627,7 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 						onTogglePatternPanelList={ setIsPanelOpen }
 						selectedPatterns={ sections }
+						onBack={ onPatternSelectorBack }
 					/>
 				</NavigatorScreen>
 
