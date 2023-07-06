@@ -1,5 +1,5 @@
 import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
-import { useStripe } from '@automattic/calypso-stripe';
+import { useStripe, useStripeSetupIntentId } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -7,7 +7,7 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useMemo } from 'react';
+import { Fragment, useCallback, useEffect, useMemo } from 'react';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -445,6 +445,18 @@ export default function CheckoutMain( {
 		]
 	);
 
+	const {
+		reload: reloadSetupIntentId,
+		setupIntentId: stripeSetupIntentId,
+		error: setupIntentError,
+	} = useStripeSetupIntentId();
+
+	useEffect( () => {
+		if ( setupIntentError ) {
+			reduxDispatch( errorNotice( setupIntentError.message ) );
+		}
+	}, [ setupIntentError, reduxDispatch ] );
+
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
@@ -453,7 +465,12 @@ export default function CheckoutMain( {
 				webPayProcessor( 'google-pay', transactionData, dataForProcessor ),
 			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
-				multiPartnerCardProcessor( transactionData, dataForProcessor ),
+				multiPartnerCardProcessor( {
+					submitData: transactionData,
+					dataForProcessor,
+					translate,
+					stripeSetupIntentId,
+				} ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
@@ -477,7 +494,7 @@ export default function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[ dataForProcessor ]
+		[ dataForProcessor, translate, stripeSetupIntentId ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
@@ -670,8 +687,11 @@ export default function CheckoutMain( {
 					error_message: String( transactionError ),
 				} )
 			);
+
+			// We need to regenerate the setup intent if the form was submitted.
+			reloadSetupIntentId();
 		},
-		[ reduxDispatch, translate ]
+		[ reduxDispatch, translate, reloadSetupIntentId ]
 	);
 
 	const handlePaymentRedirect = useCallback( () => {
