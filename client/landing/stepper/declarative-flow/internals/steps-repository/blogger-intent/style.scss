@@ -48,7 +48,10 @@
 		align-items: flex-start;
 		justify-content: center;
 		margin: 32px 0 0 0;
-		min-width: 456px;
+
+		@include break-small {
+			min-width: 456px;
+		}
 
 		hr {
 			background-color: var(--studio-gray-5);
