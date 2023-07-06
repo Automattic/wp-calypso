@@ -6,7 +6,6 @@ import QuickLinksForHostedSites from 'calypso/my-sites/customer-home/cards/actio
 import WpForTeamsQuickLinks from 'calypso/my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
 import {
 	ACTION_QUICK_LINKS,
-	ACTION_QUICK_LINKS_FOR_DEVS,
 	ACTION_QUICK_LINKS_FOR_HOSTED_SITES,
 	ACTION_WP_FOR_TEAMS_QUICK_LINKS,
 	FEATURE_GO_MOBILE,
@@ -25,7 +24,6 @@ const cardComponents = {
 	[ ACTION_QUICK_LINKS ]: QuickLinks,
 	[ FEATURE_QUICK_START ]: QuickStart,
 	[ ACTION_WP_FOR_TEAMS_QUICK_LINKS ]: WpForTeamsQuickLinks,
-	[ ACTION_QUICK_LINKS_FOR_DEVS ]: QuickLinksForHostedSites,
 	[ ACTION_QUICK_LINKS_FOR_HOSTED_SITES ]: QuickLinksForHostedSites,
 };
 
