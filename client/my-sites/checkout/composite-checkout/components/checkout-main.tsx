@@ -465,9 +465,7 @@ export default function CheckoutMain( {
 				webPayProcessor( 'google-pay', transactionData, dataForProcessor ),
 			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
-				multiPartnerCardProcessor( {
-					submitData: transactionData,
-					dataForProcessor,
+				multiPartnerCardProcessor( transactionData, dataForProcessor, {
 					translate,
 					stripeSetupIntentId,
 				} ),

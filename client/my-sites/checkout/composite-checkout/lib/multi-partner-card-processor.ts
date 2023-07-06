@@ -235,17 +235,16 @@ async function ebanxCardProcessor(
 		} );
 }
 
-export default async function multiPartnerCardProcessor( {
-	submitData,
-	dataForProcessor,
-	stripeSetupIntentId,
-	translate,
-}: {
-	submitData: unknown;
-	dataForProcessor: PaymentProcessorOptions;
+export interface FreePurchaseData {
 	stripeSetupIntentId: StripeSetupIntentId | undefined;
 	translate: LocalizeProps[ 'translate' ];
-} ): Promise< PaymentProcessorResponse > {
+}
+
+export default async function multiPartnerCardProcessor(
+	submitData: unknown,
+	dataForProcessor: PaymentProcessorOptions,
+	freePurchaseData?: FreePurchaseData
+): Promise< PaymentProcessorResponse > {
 	if ( ! isValidMultiPartnerTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
@@ -259,15 +258,18 @@ export default async function multiPartnerCardProcessor( {
 			throw new Error( 'Required purchase data is missing' );
 		}
 		if ( submitData.paymentPartner === 'ebanx' ) {
-			throw new Error( 'Cannot use Ebanx for free purchases.' );
+			throw new Error( 'Cannot use Ebanx for free purchases' );
+		}
+		if ( ! freePurchaseData?.translate ) {
+			throw new Error( 'Required free purchase data is missing' );
 		}
 		const newCardResponse = await assignNewCardProcessor(
 			{
 				purchase: undefined,
-				translate,
+				translate: freePurchaseData.translate,
 				stripe: dataForProcessor.stripe,
 				stripeConfiguration: dataForProcessor.stripeConfiguration,
-				stripeSetupIntentId,
+				stripeSetupIntentId: freePurchaseData?.stripeSetupIntentId,
 				cardNumberElement: submitData.cardNumberElement,
 				reduxDispatch: dataForProcessor.reduxDispatch,
 				eventSource: '/checkout',
