@@ -1029,6 +1029,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			? [ FEATURE_50GB_STORAGE ]
 			: [ FEATURE_200GB_STORAGE ];
 	},
+	get2023PricingGridSignupStorageAddOns: () => [ PRODUCT_100GB_STORAGE, PRODUCT_200GB_STORAGE ],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getHostingSignupFeatures: ( term ) => () =>
 		compact( [
@@ -1611,6 +1612,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			? [ FEATURE_50GB_STORAGE ]
 			: [ FEATURE_200GB_STORAGE ];
 	},
+	get2023PricingGridSignupStorageAddOns: () => [ PRODUCT_100GB_STORAGE, PRODUCT_200GB_STORAGE ],
 	getHostingSignupFeatures: ( term ) => () =>
 		compact( [
 			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,

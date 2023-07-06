@@ -236,6 +236,7 @@ export type Plan = BillingTerm & {
 		showLegacyStorageFeature?: boolean,
 		isCurrentPlan?: boolean
 	) => Feature[];
+	get2023PricingGridSignupStorageAddOns?: () => Feature[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;

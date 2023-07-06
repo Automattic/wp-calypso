@@ -23,6 +23,7 @@ export type PlanProperties = {
 	isMonthlyPlan: boolean;
 	tagline: string;
 	storageOptions: string[];
+	storageAddOns: string[];
 	availableForPurchase: boolean;
 	current?: boolean;
 	planActionOverrides?: PlanActionOverrides;
