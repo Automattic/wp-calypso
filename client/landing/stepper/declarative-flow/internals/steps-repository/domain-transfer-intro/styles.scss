@@ -14,6 +14,7 @@ $heading-font-family: "SF Pro Display", $sans;
 
 	&.intro {
 		padding: 0;
+
 		@media (max-width: $break-medium ) {
 			header {
 				text-align: center;
@@ -73,6 +74,10 @@ $heading-font-family: "SF Pro Display", $sans;
 			}
 
 			.step-container__content {
+
+
+				flex-shrink: 0;
+
 				.select-items {
 					margin-bottom: 32px;
 					padding-left: 0;
@@ -128,8 +133,16 @@ $heading-font-family: "SF Pro Display", $sans;
 			}
 
 			.step-container__jetpack-powered {
-				margin-top: auto;
-				margin-bottom: 56px;
+				@media (min-width: $break-large ) {
+					margin-top: auto;
+					margin-bottom: 56px;
+				}
+
+				@media (max-width: $break-large ) {
+					padding-top: 65px;
+					padding-bottom: 32px;
+					margin-top: 0;
+				}
 			}
 		}
 	}
