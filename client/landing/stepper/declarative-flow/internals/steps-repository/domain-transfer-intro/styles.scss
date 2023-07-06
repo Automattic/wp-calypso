@@ -133,15 +133,16 @@ $heading-font-family: "SF Pro Display", $sans;
 			}
 
 			.step-container__jetpack-powered {
+				padding-top: 65px;
+				padding-bottom: 56px;
+				margin: 0;
+
 				@media (min-width: $break-large ) {
 					margin-top: auto;
-					margin-bottom: 56px;
 				}
 
 				@media (max-width: $break-large ) {
-					padding-top: 65px;
 					padding-bottom: 32px;
-					margin-top: 0;
 				}
 			}
 		}
