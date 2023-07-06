@@ -18,12 +18,12 @@ export const CompleteDomainsTransferred = ( {
 			<div className="domain-complete-summary">
 				<ul className="domain-complete-list">
 					{ newlyTransferredDomains
-						? newlyTransferredDomains.map( ( { meta }, key ) => {
+						? newlyTransferredDomains.map( ( { meta, domain }, key ) => {
 								return (
 									<li className="domain-complete-list-item" key={ key }>
 										<h2>{ meta }</h2>
 										<a
-											href={ `/domains/manage/${ meta }` }
+											href={ `/domains/manage/all/${ meta }/transfer/in/${ domain }` }
 											className="components-button is-secondary"
 										>
 											{ __( 'Manage domain' ) }
