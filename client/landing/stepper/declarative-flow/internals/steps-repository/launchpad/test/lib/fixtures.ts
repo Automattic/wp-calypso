@@ -5,6 +5,7 @@ import { Task } from '../../types';
 export const defaultSiteDetails: SiteDetails = {
 	ID: 211078228,
 	name: 'testLinkInBio',
+	title: 'Site Title',
 	description: 'test link in bio',
 	URL: 'https://testlinkinbio.wordpress.com',
 	domain: '',
