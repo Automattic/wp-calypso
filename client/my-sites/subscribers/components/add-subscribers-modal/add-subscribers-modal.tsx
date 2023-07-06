@@ -55,7 +55,7 @@ const AddSubscribersModal = ( {
 			) }
 
 			{ ! isUploading && (
-				<label className="add-subscribers-modal__label">{ translate( 'Email or username' ) }</label>
+				<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
 			) }
 
 			<AddSubscriberForm
