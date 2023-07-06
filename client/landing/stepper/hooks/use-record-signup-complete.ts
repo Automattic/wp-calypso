@@ -1,4 +1,5 @@
 import { isDomainTransfer, isDomainMapping } from '@automattic/calypso-products';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from 'react';
 import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -57,8 +58,10 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			isBlankCanvas: theme?.includes( 'blank-canvas' ),
 			planProductSlug,
 			domainProductSlug,
-			isMapping: hasPaidDomainItem && isDomainMapping( domainCartItem ),
-			isTransfer: hasPaidDomainItem && isDomainTransfer( domainCartItem ),
+			isMapping:
+				hasPaidDomainItem && isDomainMapping( domainCartItem as MinimalRequestCartProduct ),
+			isTransfer:
+				hasPaidDomainItem && isDomainTransfer( domainCartItem as MinimalRequestCartProduct ),
 		} );
 	}, [ domainCartItem, flow, planCartItem, selectedDomain, siteCount, siteId, theme ] );
 };
