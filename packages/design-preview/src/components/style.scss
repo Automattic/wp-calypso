@@ -257,6 +257,7 @@ $design-preview-sidebar-width: 311px;
 	display: block;
 	padding: 16px 24px 8px 32px;
 	margin: 0 -16px;
+	animation: fadeIn 0.3s ease-out;
 
 	> p {
 		color: var(--studio-gray-100);
@@ -301,6 +302,7 @@ $design-preview-sidebar-width: 311px;
 	@include break-large {
 		padding: 8px 16px 0;
 		overflow-y: auto;
+		animation: none;
 
 		> p {
 			display: block;
@@ -413,5 +415,14 @@ $design-preview-sidebar-width: 311px;
 		color: var(--color-neutral-0);
 		padding: 8px;
 		-webkit-font-smoothing: antialiased;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		transform: translateY(-100%);
+	}
+	to {
+		transform: translateY(0%);
 	}
 }
