@@ -22,6 +22,7 @@ import {
 	isStarter,
 	isThemePurchase,
 	isTitanMail,
+	isWpComPlan,
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
@@ -294,10 +295,10 @@ export class CheckoutThankYou extends Component<
 
 		// ThankYou page for only purchasing a plan.
 		const purchases = getPurchases( this.props );
-		if ( purchases.length > 1 ) {
-			return false;
+		if ( purchases.length === 1 ) {
+			return isWpComPlan( purchases[ 0 ].productSlug );
 		}
-		return purchases.some( ( purchase ) => isPlan( purchase ) );
+		return false;
 	};
 
 	hasPlanOrDomainProduct = () => {
