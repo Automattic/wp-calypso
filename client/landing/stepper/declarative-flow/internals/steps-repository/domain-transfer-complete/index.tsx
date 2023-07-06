@@ -56,8 +56,10 @@ const Complete: Step = function Complete( { flow } ) {
 							'Congrats on your domain transfers',
 							newlyTransferredDomains?.length || storedDomainsAmount
 						) }
-						subHeaderText={ __(
-							'Hold tight as we complete the set up of your newly transferred domain.'
+						subHeaderText={ _n(
+							'Hold tight as we complete the set up of your newly transferred domain.',
+							'Hold tight as we complete the set up of your newly transferred domains.',
+							newlyTransferredDomains?.length || storedDomainsAmount
 						) }
 						align="center"
 						children={
