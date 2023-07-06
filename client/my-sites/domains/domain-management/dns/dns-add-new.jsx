@@ -119,9 +119,10 @@ class DnsAddNew extends React.Component {
 	}
 
 	getFieldsForType( type ) {
-		const dnsRecord = find( this.dnsRecords, ( record ) => {
-			return includes( record.types, type );
-		} );
+		const dnsRecord =
+			find( this.dnsRecords, ( record ) => {
+				return includes( record.types, type );
+			} ) ?? this.dnsRecords[ 0 ];
 
 		return {
 			...dnsRecord.initialFields,
