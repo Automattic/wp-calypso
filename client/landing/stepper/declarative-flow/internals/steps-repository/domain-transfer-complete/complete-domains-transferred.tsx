@@ -2,8 +2,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { Purchase } from 'calypso/lib/purchases/types';
 
-import './styles.scss';
-
 type Props = {
 	newlyTransferredDomains: Purchase[] | undefined;
 	placeHolderCount: number;
