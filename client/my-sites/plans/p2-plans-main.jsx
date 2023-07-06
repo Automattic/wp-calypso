@@ -1,30 +1,45 @@
-import { PLAN_P2_FREE, PLAN_P2_PLUS } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
-import PlanFeatures from 'calypso/my-sites/plan-features';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 
 export class P2PlansMain extends Component {
 	render() {
-		const { selectedFeature, selectedPlan, redirectTo, siteId } = this.props;
+		const {
+			selectedFeature,
+			selectedPlan,
+			redirectTo,
+			siteId,
+			site,
+			withDiscount,
+			discountEndDate,
+		} = this.props;
 
 		return (
 			<>
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
-				<PlanFeatures
-					plans={ [ PLAN_P2_FREE, PLAN_P2_PLUS ] }
-					redirectTo={ redirectTo }
-					visiblePlans={ [ PLAN_P2_FREE, PLAN_P2_PLUS ] }
+				<PlansFeaturesMain
+					// redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
+					hidePlanTypeSelector={ true }
+					hidePremiumPlan={ true }
+					hideEcommercePlan={ true }
+					// customerType={ this.props.customerType }
+					intervalType="monthly"
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
-					siteId={ siteId }
-					isInSignup={ false }
-					nonDotBlogDomains={ [] }
+					redirectTo={ redirectTo }
+					withDiscount={ withDiscount }
+					discountEndDate={ discountEndDate }
+					site={ site }
+					// intent="plans-p2"
+					// plansWithScroll={ false }
+					hidePlansFeatureComparison={ true }
+					// planTypes={ planTypes }
 				/>
 			</>
 		);
