@@ -148,7 +148,7 @@ private object EditingToolkit : WPComPluginBuild(
 			name = "Run JS tests"
 			scriptContent = """
 				cd apps/editing-toolkit
-				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_E2E_WORKERS
+				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=%JEST_E2E_WORKERS%
 			"""
 		}
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
@@ -229,7 +229,7 @@ private object OdysseyStats : WPComPluginBuild(
 				cd apps/odyssey-stats
 
 				# run unit tests
-				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_E2E_WORKERS
+				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=%JEST_E2E_WORKERS%
 			"""
 		}
 		bashNodeScript {
