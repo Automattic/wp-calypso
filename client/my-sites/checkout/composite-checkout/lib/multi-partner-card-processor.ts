@@ -252,7 +252,9 @@ export default async function multiPartnerCardProcessor(
 	// For free purchases we cannot use the regular processor because it requires
 	// making a charge. Instead, we will create a new card, then use the
 	// existingCardProcessor because it works for free purchases.
-	const isPurchaseFree = dataForProcessor.responseCart.total_cost_integer === 0;
+	const isPurchaseFree =
+		dataForProcessor.responseCart.total_cost_integer === 0 &&
+		dataForProcessor.responseCart.products.length > 0;
 	if ( isPurchaseFree ) {
 		if ( ! isValidStripeCardTransactionData( submitData ) ) {
 			throw new Error( 'Required purchase data is missing' );
