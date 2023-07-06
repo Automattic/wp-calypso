@@ -138,7 +138,6 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 						transform: `scale(${ scale })`,
 					} }
 					src={ addQueryArgs( url, { calypso_token } ) }
-					scrolling={ isFitHeight ? 'no' : 'yes' }
 					tabIndex={ -1 }
 				/>
 			</div>

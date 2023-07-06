@@ -393,11 +393,16 @@ $theme-sheet-content-max-width: 1462px;
 		position: sticky;
 		top: 16px;
 
-		.theme-preview__frame-wrapper .theme-preview__frame {
-			height: 200%;
-			max-width: 200%;
-			min-height: $iframe-viewport-height-scaled;
-			width: 200%;
+		.theme-preview__frame-wrapper {
+			max-height: 100vh;
+
+			.theme-preview__frame {
+				height: 200%;
+				max-height: 200vh;
+				max-width: 200%;
+				min-height: $iframe-viewport-height-scaled;
+				width: 200%;
+			}
 		}
 	}
 
