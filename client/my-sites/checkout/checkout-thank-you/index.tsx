@@ -25,7 +25,7 @@ import {
 	isWpComPlan,
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
-import { Card } from '@automattic/components';
+import { Card, ConfettiAnimation } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -650,15 +650,16 @@ export class CheckoutThankYou extends Component<
 			>
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 				{ this.isRedesignV2() && this.props.selectedSite?.ID && (
-					<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
-				) }
-				{ this.isRedesignV2() && (
-					<MasterbarStyled
-						onClick={ () => page( `/home/${ this.props.selectedSiteSlug ?? '' }` ) }
-						backText={ translate( 'Back to dashboard' ) }
-						canGoBack={ true }
-						showContact={ true }
-					/>
+					<>
+						<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
+						<ConfettiAnimation delay={ 1000 } />
+						<MasterbarStyled
+							onClick={ () => page( `/home/${ this.props.selectedSiteSlug ?? '' }` ) }
+							backText={ translate( 'Back to dashboard' ) }
+							canGoBack={ true }
+							showContact={ true }
+						/>
+					</>
 				) }
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
 				{ showHappinessSupport && (
