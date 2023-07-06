@@ -109,10 +109,10 @@ const GlobalStylesVariations = ( {
 }: GlobalStylesVariationsProps ) => {
 	const premiumStylesDescription = globalStylesInPersonalPlan
 		? translate(
-				'Unlock premium styles and tons of other features with the Personal plan, or try them out now for free.'
+				'Unlock custom styles and tons of other features with the Personal plan, or try them out now for free.'
 		  )
 		: translate(
-				'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
+				'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
 		  );
 
 	const baseGlobalStyles = useMemo(
