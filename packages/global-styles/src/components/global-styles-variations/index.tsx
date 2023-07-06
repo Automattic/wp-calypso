@@ -5,8 +5,6 @@ import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
-// eslint-disable-next-line no-restricted-imports
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
 import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -28,6 +26,7 @@ interface GlobalStylesVariationsProps {
 	splitPremiumVariations?: boolean;
 	displayFreeLabel?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
+	globalStylesInPersonalPlan: boolean;
 }
 
 const isDefaultGlobalStyleVariationSlug = ( globalStylesVariation: GlobalStylesObject ) =>
@@ -106,14 +105,14 @@ const GlobalStylesVariations = ( {
 	onSelect,
 	splitPremiumVariations = true,
 	displayFreeLabel = true,
+	globalStylesInPersonalPlan,
 }: GlobalStylesVariationsProps ) => {
-	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus();
 	const premiumStylesDescription = globalStylesInPersonalPlan
 		? translate(
-				'Unlock custom styles and tons of other features with the Personal plan, or try them out now for free.'
+				'Unlock premium styles and tons of other features with the Personal plan, or try them out now for free.'
 		  )
 		: translate(
-				'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
+				'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
 		  );
 
 	const baseGlobalStyles = useMemo(

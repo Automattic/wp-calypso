@@ -16,6 +16,7 @@ interface Props {
 	siteId: number;
 	stylesheet: string;
 	limitGlobalStyles?: boolean;
+	globalStylesInPersonalPlan: boolean;
 	variations?: StyleVariation[];
 	splitPremiumVariations: boolean;
 	selectedVariation?: StyleVariation;
@@ -30,6 +31,7 @@ const useScreens = ( {
 	siteId,
 	stylesheet,
 	limitGlobalStyles,
+	globalStylesInPersonalPlan,
 	variations,
 	splitPremiumVariations,
 	selectedVariation,
@@ -63,6 +65,7 @@ const useScreens = ( {
 										onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
 											onSelectVariation( globalStyleVariation as StyleVariation )
 										}
+										globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 									/>
 								</div>
 							</div>
