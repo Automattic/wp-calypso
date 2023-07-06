@@ -864,8 +864,52 @@ export class PlanFeatures2023Grid extends Component<
 			} );
 	}
 
+	renderStorageAddOnDropdown( properties: PlanProperties ) {
+		const { planName, storageOptions, storageAddOns } = properties;
+		const { selectedStorage } = this.state;
+		const allStorageOptions = [ ...storageOptions, ...storageAddOns ];
+
+		return (
+			<SelectDropdown
+				onToggle={ ( { open: isOpen }: { open: boolean } ) => {
+					if ( isOpen ) {
+						// record interaction event here
+					}
+				} }
+				selectedText={
+					selectedStorage[ planName ]
+						? getStorageStringFromFeature( selectedStorage[ planName ] )
+						: getStorageStringFromFeature( storageOptions[ 0 ] )
+				}
+			>
+				{ allStorageOptions.map( ( storageFeature ) => {
+					return (
+						<SelectDropdown.Item
+							key={ `${ planName } ${ storageFeature }` }
+							selected={ storageFeature === selectedStorage[ planName ] }
+							onClick={ () => {
+								const updatedSelectedStorage = {
+									...selectedStorage,
+									[ planName ]: storageFeature,
+								};
+
+								this.setState( {
+									...this.state,
+									selectedStorage: updatedSelectedStorage,
+								} );
+							} }
+						>
+							{ getStorageStringFromFeature( storageFeature ) }
+						</SelectDropdown.Item>
+					);
+				} ) }
+			</SelectDropdown>
+		);
+	}
+
 	renderPlanStorageOptions( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { translate } = this.props;
+		const { translate, intervalType } = this.props;
+
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
@@ -873,12 +917,13 @@ export class PlanFeatures2023Grid extends Component<
 					return null;
 				}
 
-				const { planName, storageOptions } = properties;
-				const { selectedStorage } = this.state;
+				const { planName, storageOptions, storageAddOns } = properties;
+				const canUpgradeStorageForPlan =
+					storageAddOns.length > 0 && storageOptions.length === 1 && intervalType === 'yearly';
 
-				const storageJSX =
-					storageOptions.length <= 1 ? (
-						storageOptions.map( ( storageFeature: string ) => {
+				const storageJSX = canUpgradeStorageForPlan
+					? this.renderStorageAddOnDropdown( properties )
+					: storageOptions.map( ( storageFeature: string ) => {
 							if ( storageFeature.length <= 0 ) {
 								return;
 							}
@@ -887,41 +932,7 @@ export class PlanFeatures2023Grid extends Component<
 									{ getStorageStringFromFeature( storageFeature ) }
 								</div>
 							);
-						} )
-					) : (
-						<SelectDropdown
-							onToggle={ ( { open: isOpen }: { open: boolean } ) => {
-								if ( isOpen ) {
-									// record interaction event here
-								}
-							} }
-							selectedText={
-								planName in selectedStorage
-									? getStorageStringFromFeature( selectedStorage[ planName ] )
-									: getStorageStringFromFeature( storageOptions[ 0 ] )
-							}
-						>
-							{ storageOptions.map( ( storageFeature ) => (
-								<SelectDropdown.Item
-									key={ `${ planName } ${ storageFeature }` }
-									selected={ storageFeature === selectedStorage[ planName ] }
-									onClick={ () => {
-										const updatedSelectedStorage = {
-											...selectedStorage,
-											[ planName ]: storageFeature,
-										};
-
-										this.setState( {
-											...this.state,
-											selectedStorage: updatedSelectedStorage,
-										} );
-									} }
-								>
-									{ getStorageStringFromFeature( storageFeature ) }
-								</SelectDropdown.Item>
-							) ) }
-						</SelectDropdown>
-					);
+					  } );
 
 				return (
 					<Container
@@ -1090,6 +1101,10 @@ const ConnectedPlanFeatures2023Grid = connect(
 				( planConstantObj.get2023PricingGridSignupStorageOptions &&
 					planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
 				[];
+			const storageAddOns =
+				( planConstantObj.get2023PricingGridSignupStorageAddOns &&
+					planConstantObj.get2023PricingGridSignupStorageAddOns() ) ||
+				[];
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 			const isCurrentPlan = currentSitePlanSlug === plan;
 			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
@@ -1114,6 +1129,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				isMonthlyPlan,
 				tagline,
 				storageOptions,
+				storageAddOns,
 				billingPeriod,
 				showMonthlyPrice,
 			};
