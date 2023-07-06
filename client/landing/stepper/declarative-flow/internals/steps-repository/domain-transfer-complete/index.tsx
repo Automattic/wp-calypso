@@ -23,6 +23,8 @@ const Complete: Step = function Complete( { flow } ) {
 		[]
 	);
 
+	const storedDomainsAmount = Object.keys( { ...storedDomainsState } ).length;
+
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const userPurchases = useSelector( ( state ) => getUserPurchases( state ) );
 	const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
@@ -50,7 +52,7 @@ const Complete: Step = function Complete( { flow } ) {
 						headerText={ _n(
 							'Congrats on your domain transfer',
 							'Congrats on your domain transfers',
-							newlyTransferredDomains?.length || Object.keys( { ...storedDomainsState } ).length
+							newlyTransferredDomains?.length || storedDomainsAmount
 						) }
 						subHeaderText={ __(
 							'Hold tight as we complete the set up of your newly transferred domain.'
@@ -65,7 +67,7 @@ const Complete: Step = function Complete( { flow } ) {
 				}
 				stepContent={
 					<CompleteDomainsTransferred
-						placeHolderCount={ Object.keys( { ...storedDomainsState } ).length }
+						placeHolderCount={ storedDomainsAmount }
 						newlyTransferredDomains={ newlyTransferredDomains }
 					/>
 				}
