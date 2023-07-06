@@ -7,7 +7,6 @@ import {
 	WRITE_FLOW,
 	START_WRITING_FLOW,
 	DESIGN_FIRST_FLOW,
-	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -30,9 +29,11 @@ const LaunchpadSitePreview = ( {
 	const isInVideoPressFlow = isVideoPressFlow( flow );
 
 	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
-	const devicesToShow: Device[] = isBlogOnboardingFlow( flow )
-		? [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.TABLET, DEVICE_TYPES.PHONE ]
-		: [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
+	const devicesToShow: Device[] = [
+		DEVICE_TYPES.COMPUTER,
+		DEVICE_TYPES.TABLET,
+		DEVICE_TYPES.PHONE,
+	];
 	let defaultDevice = getSitePreviewDefaultDevice( flow );
 	let loadingMessage = translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 		components: { strong: <strong /> },
