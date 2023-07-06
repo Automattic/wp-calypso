@@ -87,6 +87,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		suggestion: DomainSuggestion | undefined,
 		shouldHideFreePlan = false
 	) => {
+		if ( ! suggestion ) {
+			return submit?.();
+		}
+
 		setDomain( suggestion );
 
 		if ( suggestion?.is_free ) {
