@@ -5,14 +5,14 @@ import {
 } from '@automattic/calypso-products';
 import i18n, { TranslateResult } from 'i18n-calypso';
 
-export type FeatureObject = {
+export type AddOnsObject = {
 	getSlug: () => string;
 	getTitle: ( domainName?: string ) => TranslateResult;
 	getDescription?: ( domainName?: string ) => TranslateResult;
 	getQuantity?: () => number;
 };
 export type AddOnsList = {
-	[ key: string ]: FeatureObject;
+	[ key: string ]: AddOnsObject;
 };
 
 export const ADD_ONS_LIST: AddOnsList = {
@@ -36,13 +36,9 @@ export const getPlanAddOnsObject = ( planAddonsList?: Array< string > ) => {
 	if ( ! planAddonsList ) {
 		return [];
 	}
-	return planAddonsList.map( ( featuresConst ) => ADD_ONS_LIST[ featuresConst ] );
+	return planAddonsList.map( ( addOnConst ) => ADD_ONS_LIST[ addOnConst ] );
 };
 
-export function isValidAddOnKey( feature: string ) {
-	return !! ADD_ONS_LIST[ feature ];
-}
-
-export function getAddOnByKey( feature: string ) {
-	return ADD_ONS_LIST[ feature ];
+export function getAddOnByKey( addOn: string ) {
+	return ADD_ONS_LIST[ addOn ];
 }
