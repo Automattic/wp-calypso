@@ -880,7 +880,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
 
-	// TODO: Rename this to PRODUCT_200GB_STORAGE because it is no longer standard on any plans
+	// TODO: Consider removing this because it is no longer standard on any plans
 	[ FEATURE_200GB_STORAGE ]: {
 		getSlug: () => FEATURE_200GB_STORAGE,
 		getTitle: () =>
