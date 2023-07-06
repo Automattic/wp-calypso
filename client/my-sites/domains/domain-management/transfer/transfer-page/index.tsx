@@ -30,6 +30,7 @@ import {
 	domainManagementList,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { useDispatch } from 'calypso/state';
 import {
@@ -80,12 +81,16 @@ const TransferPage = ( props: TransferPageProps ) => {
 		const items = [
 			{
 				// translators: Internet domains, e.g. mygroovydomain.com
-				label: __( 'Domains' ),
-				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+				label: isUnderDomainManagementAll( currentRoute ) ? __( 'All Domains' ) : __( 'Domains' ),
+				href: domainManagementList(
+					selectedSite?.slug,
+					currentRoute,
+					selectedSite?.options?.is_domain_only
+				),
 			},
 			{
 				label: selectedDomainName,
-				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
 				// translators: Verb - Transfer a domain somewhere else
@@ -99,7 +104,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 				__( 'Back to %s' ),
 				selectedDomainName
 			),
-			href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+			href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
@@ -118,7 +123,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 				<ActionCard
 					key="transfer-to-another-user"
 					buttonHref={ domainManagementTransferToAnotherUser(
-						selectedSite.slug,
+						selectedSite?.slug,
 						selectedDomainName,
 						currentRoute
 					) }
@@ -152,7 +157,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 			<ActionCard
 				key="transfer-to-another-site"
 				buttonHref={ domainManagementTransferToOtherSite(
-					selectedSite.slug,
+					selectedSite?.slug,
 					selectedDomainName,
 					currentRoute
 				) }

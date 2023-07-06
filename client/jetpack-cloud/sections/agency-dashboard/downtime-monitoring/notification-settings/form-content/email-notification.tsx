@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import ConfigureEmailNotification from '../../configure-email-notification';
+import ContactList from '../../contact-list';
 import type { StateMonitorSettingsEmail } from '../../../sites-overview/types';
 
 interface Props {
@@ -65,11 +65,12 @@ export default function EmailNotification( {
 			</div>
 
 			{ enableEmailNotification && isMultipleEmailEnabled && (
-				<ConfigureEmailNotification
-					toggleModal={ toggleAddEmailModal }
-					allEmailItems={ allEmailItems }
+				<ContactList
+					type="email"
+					onAction={ toggleAddEmailModal }
+					items={ allEmailItems }
 					recordEvent={ recordEvent }
-					verifiedEmail={ verifiedItem?.email }
+					verifiedItemKey={ verifiedItem?.email }
 				/>
 			) }
 		</>

@@ -635,11 +635,16 @@ class ThemeSheet extends Component {
 			showTryAndCustomize,
 			isExternallyManagedTheme,
 			isWporg,
+			isLoggedIn,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
-		const shouldRenderButton = ! retired && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
+		const shouldRenderButton =
+			! retired &&
+			! isWPForTeamsSite &&
+			! this.shouldRenderForStaging() &&
+			( ! this.hasWpOrgThemeUpsellBanner() || ! isLoggedIn );
 
 		return (
 			<div className="theme__sheet-header">
@@ -1447,7 +1452,7 @@ class ThemeSheet extends Component {
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
-		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId || -1 );
+		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
 	},
 	'withSiteGlobalStylesStatus'

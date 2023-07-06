@@ -26,6 +26,7 @@ import {
 	domainManagementEdit,
 	domainManagementList,
 	domainManagementTransfer,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -76,7 +77,7 @@ class TransferDomainToOtherUser extends Component {
 
 	handleTransferCancel = () => {
 		const { selectedSite, selectedDomainName, currentRoute } = this.props;
-		page( domainManagementTransfer( selectedSite.slug, selectedDomainName, currentRoute ) );
+		page( domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ) );
 	};
 
 	handleConfirmTransferDomain( closeDialog ) {
@@ -95,7 +96,7 @@ class TransferDomainToOtherUser extends Component {
 		this.setState( { disableDialogButtons: true } );
 		wpcom.req
 			.post(
-				`/sites/${ selectedSite.ID }/domains/${ selectedDomainName }/transfer-to-user/${ selectedUserId }`
+				`/sites/${ selectedSite?.ID }/domains/${ selectedDomainName }/transfer-to-user/${ selectedUserId }`
 			)
 			.then(
 				() => {
@@ -104,7 +105,7 @@ class TransferDomainToOtherUser extends Component {
 					closeDialog();
 					page(
 						domainManagementEdit(
-							this.props.selectedSite.slug,
+							this.props.selectedSite?.slug,
 							this.props.selectedDomainName,
 							this.props.currentRoute
 						)
@@ -145,23 +146,29 @@ class TransferDomainToOtherUser extends Component {
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
+				href: domainManagementList(
+					selectedSite?.slug,
+					selectedDomainName,
+					selectedSite?.options?.is_domain_only
+				),
 			},
 			{
 				label: selectedDomainName,
-				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
 				label: translate( 'Transfer' ),
-				href: domainManagementTransfer( selectedSite.slug, selectedDomainName, currentRoute ),
+				href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{ label: translate( 'Transfer to another user' ) },
 		];
 
 		const mobileItem = {
 			label: translate( 'Back to Transfer' ),
-			href: domainManagementTransfer( selectedSite.slug, selectedDomainName, currentRoute ),
+			href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
@@ -362,7 +369,7 @@ class TransferDomainToOtherUser extends Component {
 						{ translate(
 							'You can transfer this domain connection to any administrator on this site. If the user you want to ' +
 								'transfer is not currently an administrator, please {{a}}add them to the site first{{/a}}.',
-							{ components: { a: <a href={ `/people/new/${ selectedSite.slug }` } /> } }
+							{ components: { a: <a href={ `/people/new/${ selectedSite?.slug }` } /> } }
 						) }
 					</p>
 				</>
@@ -382,7 +389,7 @@ class TransferDomainToOtherUser extends Component {
 					{ translate(
 						'You can transfer this domain to any administrator on this site. If the user you want to ' +
 							'transfer is not currently an administrator, please {{a}}add them to the site first{{/a}}.',
-						{ components: { a: <a href={ `/people/new/${ selectedSite.slug }` } /> } }
+						{ components: { a: <a href={ `/people/new/${ selectedSite?.slug }` } /> } }
 					) }
 				</p>
 			</>
@@ -419,7 +426,7 @@ export default connect(
 		return {
 			currentUserId: getCurrentUserId( state ),
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
-			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite.ID ),
+			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite?.ID ),
 			currentRoute: getCurrentRoute( state ),
 		};
 	},

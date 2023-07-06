@@ -2,6 +2,7 @@ import { CircularProgressBar } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { isMobile } from '@automattic/viewport';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -11,15 +12,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const checklistSlug = 'keep-building';
-
-function recordTaskClickTracksEvent( task: Task ) {
-	recordTracksEvent( 'calypso_launchpad_task_clicked', {
-		checklist_slug: checklistSlug,
-		task_id: task.id,
-		is_completed: task.completed,
-		context: 'customer-home',
-	} );
-}
 
 interface LaunchpadKeepBuildingProps {
 	siteSlug: string | null;
@@ -33,6 +25,26 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
+	const tasklistCompleted = completedSteps === numberOfSteps;
+
+	const recordTaskClickTracksEvent = ( task: Task ) => {
+		recordTracksEvent( 'calypso_launchpad_task_clicked', {
+			checklist_slug: checklistSlug,
+			checklist_completed: tasklistCompleted,
+			task_id: task.id,
+			is_completed: task.completed,
+			context: 'customer-home',
+		} );
+	};
+
+	recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
+		checklist_slug: checklistSlug,
+		tasks: `,${ checklist?.map( ( task: Task ) => task.id ).join( ',' ) },`,
+		is_completed: tasklistCompleted,
+		number_of_steps: numberOfSteps,
+		number_of_completed_steps: completedSteps,
+		context: 'customer-home',
+	} );
 
 	recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
 		checklist_slug: checklistSlug,
@@ -70,12 +82,17 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 				case 'design_edited':
 					actionDispatch = () => {
 						recordTaskClickTracksEvent( task );
-						window.location.assign( `/site-editor/${ siteSlug }` );
+						window.location.assign(
+							addQueryArgs( `/site-editor/${ siteSlug }`, {
+								canvas: 'edit',
+							} )
+						);
 					};
 					break;
 
 				case 'domain_claim':
 				case 'domain_upsell':
+				case 'domain_customize':
 					actionDispatch = () => {
 						recordTaskClickTracksEvent( task );
 						window.location.assign( `/domains/add/${ siteSlug }` );
@@ -88,6 +105,12 @@ const LaunchpadKeepBuilding = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.
 							? `/marketing/connections/${ siteSlug }`
 							: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
 						window.location.assign( url );
+					};
+					break;
+				case 'add_new_page':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task );
+						window.location.assign( `/page/${ siteSlug }` );
 					};
 					break;
 			}

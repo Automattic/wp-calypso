@@ -34,6 +34,7 @@
 		position: sticky;
 		bottom: 0;
 		width: 100%;
+		background-color: var(--studio-white);
 		z-index: z-index("root", ".design-preview__sidebar-action-buttons");
 
 		a,
@@ -44,11 +45,11 @@
 		}
 
 		@include break-xlarge {
-			bottom: 8px;
 			display: flex;
 			flex-direction: column;
 			gap: 8px;
-			margin: 2rem 0 0;
+			padding: 32px 16px;
+			margin: 0 -16px;
 		}
 	}
 
@@ -69,7 +70,6 @@
 }
 
 .design-preview__sidebar-content {
-
 	.global-styles-variations__type.combined-variations {
 		.global-styles-variations__header {
 			display: none;
@@ -79,10 +79,10 @@
 		}
 	}
 
-	h2 {
-		color: var(--studio-gray-100);
-		font-size: $font-body-small;
-		font-weight: 500;
+	.design-preview__sidebar-header {
+		@include break-xlarge {
+			margin-bottom: 2rem;
+		}
 	}
 
 	.design-preview__sidebar-title {
@@ -185,10 +185,30 @@
 			margin-top: 2rem;
 		}
 	}
+
+	@include break-xlarge {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
+	/**
+	 * Gutenberg Components
+	 */
+	.components-navigator-provider,
+	.components-navigator-screen {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow-x: visible;
+	}
 }
 
 .design-preview__sidebar-variations {
 	display: block;
+	padding: 2px 16px;
+	margin: 0 -16px;
+	overflow-y: auto;
 
 	> p {
 		color: var(--studio-gray-100);
@@ -198,7 +218,6 @@
 	}
 
 	.global-styles-variations__header {
-
 		h2 {
 			font-size: $font-body-small;
 			font-weight: 500;
@@ -217,9 +236,25 @@
 		}
 	}
 
-	@include break-xlarge {
-		margin: 2rem 0 0;
+	.color-palette-variations {
+		display: flex;
+		margin: 6px 0;
 
+		.global-styles-variation__item {
+			width: 83px;
+		}
+	}
+
+	.font-pairing-variations {
+		display: flex;
+		margin: 6px 0;
+
+		.global-styles-variation__item {
+			width: 120px;
+		}
+	}
+
+	@include break-xlarge {
 		> p {
 			display: block;
 		}
@@ -233,6 +268,18 @@
 
 			.global-styles-variations__item {
 				box-sizing: border-box;
+				width: 100%;
+			}
+		}
+
+		.color-palette-variations,
+		.font-pairing-variations {
+			display: grid;
+			gap: 12px;
+			margin: 14px -2px 26px;
+			padding-inline-end: 6px;
+
+			.global-styles-variation__item {
 				width: 100%;
 			}
 		}

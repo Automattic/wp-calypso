@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import { Campaign, CampaignStats } from 'calypso/data/promote-post/types';
+import { BlazablePost, Campaign, CampaignStats } from 'calypso/data/promote-post/types';
 import {
 	PagedBlazeContentData,
 	PagedBlazeSearchResponse,
@@ -34,7 +34,7 @@ export const getPostType = ( type: string ) => {
 	}
 };
 
-export const getCampaignStatusBadgeColor = ( status: string ) => {
+export const getCampaignStatusBadgeColor = ( status?: string ) => {
 	switch ( status ) {
 		case campaignStatus.SCHEDULED: {
 			return 'info-blue';
@@ -62,7 +62,7 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 	}
 };
 
-export const getCampaignStatus = ( status: string ) => {
+export const getCampaignStatus = ( status?: string ) => {
 	switch ( status ) {
 		case campaignStatus.SCHEDULED: {
 			return __( 'Scheduled' );
@@ -174,15 +174,25 @@ export const canCancelCampaign = ( status: string ) => {
 
 export const getPagedBlazeSearchData = (
 	mode: 'campaigns' | 'posts',
-	campaignsData?: PagedBlazeSearchResponse
+	pagedData?: PagedBlazeSearchResponse
 ): PagedBlazeContentData => {
-	const lastPage = campaignsData?.pages?.[ campaignsData?.pages?.length - 1 ];
+	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
 	if ( lastPage ) {
 		const { has_more_pages, total_items } = lastPage;
 
-		const foundContent = campaignsData?.pages
-			?.map( ( page: any ) => page[ mode ] )
-			?.flat() as Campaign[];
+		let foundContent = pagedData?.pages
+			?.map( ( item: any ) => item[ mode ] )
+			?.flat()
+			?.filter( ( item: BlazablePost | Campaign ) => 'undefined' !== typeof item );
+
+		if ( foundContent?.length ) {
+			switch ( mode ) {
+				case 'campaigns':
+					foundContent = foundContent as Campaign[];
+				case 'posts':
+					foundContent = foundContent as BlazablePost[];
+			}
+		}
 
 		return {
 			has_more_pages,
@@ -226,4 +236,28 @@ export const unifyCampaigns = (
 			...( stats ? stats : {} ),
 		};
 	} );
+};
+
+export const getShortDateString = ( date: string ) => {
+	const timestamp = moment( Date.parse( date ) );
+	const now = moment();
+
+	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
+	switch ( dateDiff ) {
+		case 0:
+			return __( 'hours ago' );
+		case 1:
+			return __( '1 day ago' );
+		default:
+			return timestamp.isSame( now, 'year' )
+				? moment( date ).format( 'MMM DD' )
+				: moment( date ).format( 'MMM DD, YYYY' );
+	}
+};
+
+export const getLongDateString = ( date: string ) => {
+	const timestamp = moment( Date.parse( date ) );
+	// translators: "ll" refers to date (eg. 21 Apr) & "LT" refers to time (eg. 18:00) - "at" is translated
+	const sameElse: string = __( 'll [at] LT' );
+	return timestamp.calendar( null, { sameElse } );
 };

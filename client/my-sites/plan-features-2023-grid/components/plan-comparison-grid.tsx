@@ -12,6 +12,7 @@ import {
 	getWooExpressFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PlanSlug,
+	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -325,7 +326,7 @@ type PlanComparisonGridHeaderProps = {
 	isLaunchPage?: boolean;
 	isFooter?: boolean;
 	flowName: string;
-	onPlanChange: ( currentPlan: string, event: ChangeEvent ) => void;
+	onPlanChange: ( currentPlan: string, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
@@ -381,13 +382,11 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		planProperties;
 	const highlightLabel = useHighlightLabel( {
 		planName,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: visiblePlansProperties,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
@@ -411,14 +410,15 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				isInSignup={ isInSignup }
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
-				flowName={ flowName }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				selectedPlan={ selectedPlan }
 			/>
 			<PlanSelector>
 				{ showPlanSelect && (
 					<select
-						onChange={ ( event: ChangeEvent ) => onPlanChange( planName, event ) }
+						onChange={ ( event: ChangeEvent< HTMLSelectElement > ) =>
+							onPlanChange( planName, event )
+						}
 						className="plan-comparison-grid__title-select"
 						value={ planName }
 					>
@@ -562,20 +562,17 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	restructuredFeatures,
 	planName,
 	isStorageFeature,
-	flowName,
 	currentSitePlanSlug,
 	selectedPlan,
 } ) => {
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: visiblePlansProperties,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
 	const highlightLabel = useHighlightLabel( {
 		planName,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
@@ -603,6 +600,12 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
 		}
 	);
+	const planPropertiesObj = visiblePlansProperties.find(
+		( planProperties ) => planProperties.planName === planName
+	);
+	const planPaymentTransactionFees = planPropertiesObj?.features?.find(
+		( feature ) => feature?.getFeatureGroup?.() === FEATURE_GROUP_PAYMENT_TRANSACTION_FEES
+	);
 
 	return (
 		<Cell className={ cellClasses } textAlign="center">
@@ -615,30 +618,49 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 				</>
 			) : (
 				<>
-					{ feature?.getIcon && (
-						<span className="plan-comparison-grid__plan-image">{ feature.getIcon() }</span>
-					) }
-					<span className="plan-comparison-grid__plan-title">
-						{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
-					</span>
-					{ feature?.getCompareTitle && (
-						<span className="plan-comparison-grid__plan-subtitle">
-							{ feature.getCompareTitle() }
-						</span>
-					) }
-					{ hasConditionalFeature && feature?.getConditionalTitle && (
-						<span className="plan-comparison-grid__plan-conditional-title">
-							{ feature?.getConditionalTitle( planName ) }
-						</span>
-					) }
-					{ hasFeature && feature?.getCompareSubtitle && (
-						<span className="plan-comparison-grid__plan-subtitle">
-							{ feature.getCompareSubtitle() }
-						</span>
-					) }
-					{ hasFeature && ! hasConditionalFeature && <Gridicon icon="checkmark" color="#0675C4" /> }
-					{ ! hasFeature && ! hasConditionalFeature && (
-						<Gridicon icon="minus-small" color="#C3C4C7" />
+					{ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES === featureSlug ? (
+						<>
+							{ planPaymentTransactionFees ? (
+								<span className="plan-comparison-grid__plan-conditional-title">
+									{ planPaymentTransactionFees?.getAlternativeTitle?.() }
+								</span>
+							) : (
+								<Gridicon icon="minus-small" color="#C3C4C7" />
+							) }
+						</>
+					) : (
+						<>
+							{ feature?.getIcon && (
+								<span className="plan-comparison-grid__plan-image">
+									{ /** Note: this approach may not work if the icon is not a string or ReactElement. */ }
+									{ feature.getIcon() as React.ReactNode }
+								</span>
+							) }
+							<span className="plan-comparison-grid__plan-title">
+								{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
+							</span>
+							{ feature?.getCompareTitle && (
+								<span className="plan-comparison-grid__plan-subtitle">
+									{ feature.getCompareTitle() }
+								</span>
+							) }
+							{ hasConditionalFeature && feature?.getConditionalTitle && (
+								<span className="plan-comparison-grid__plan-conditional-title">
+									{ feature?.getConditionalTitle( planName ) }
+								</span>
+							) }
+							{ hasFeature && feature?.getCompareSubtitle && (
+								<span className="plan-comparison-grid__plan-subtitle">
+									{ feature.getCompareSubtitle() }
+								</span>
+							) }
+							{ hasFeature && ! hasConditionalFeature && (
+								<Gridicon icon="checkmark" color="#0675C4" />
+							) }
+							{ ! hasFeature && ! hasConditionalFeature && (
+								<Gridicon icon="minus-small" color="#C3C4C7" />
+							) }
+						</>
 					) }
 				</>
 			) }
@@ -923,7 +945,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	}, [ planProperties ] );
 
 	const onPlanChange = useCallback(
-		( currentPlan, event ) => {
+		( currentPlan: string, event: ChangeEvent< HTMLSelectElement > ) => {
 			const newPlan = event.currentTarget.value;
 
 			const newVisiblePlans = visiblePlans.map( ( plan ) =>

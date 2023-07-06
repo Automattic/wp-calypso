@@ -15,7 +15,7 @@ import type { GlobalStylesObject } from '../../types';
 import './style.scss';
 
 interface FontPairingVariationProps {
-	fontPairingVariation: GlobalStylesObject;
+	fontPairingVariation?: GlobalStylesObject;
 	isActive: boolean;
 	composite?: Record< string, unknown >;
 	onSelect: () => void;
@@ -26,6 +26,7 @@ interface FontPairingVariationsProps {
 	stylesheet: string;
 	selectedFontPairingVariation: GlobalStylesObject | null;
 	onSelect: ( fontPairingVariation: GlobalStylesObject | null ) => void;
+	limitGlobalStyles?: boolean;
 }
 
 const FontPairingVariation = ( {
@@ -56,13 +57,14 @@ const FontPairingVariation = ( {
 			aria-label={
 				translate( 'Font: %s', {
 					comment: 'Aria label for font preview buttons',
-					args: fontPairingVariation.title ?? translate( 'Free font' ),
+					// The default font pairing has no title
+					args: fontPairingVariation?.title ?? translate( 'Free font' ),
 				} ) as string
 			}
 		>
 			<div className="global-styles-variation__item-preview">
 				<GlobalStylesContext.Provider value={ context }>
-					<FontPairingVariationPreview title={ fontPairingVariation.title } />
+					<FontPairingVariationPreview />
 				</GlobalStylesContext.Provider>
 			</div>
 		</CompositeItem>
@@ -74,8 +76,9 @@ const FontPairingVariations = ( {
 	stylesheet,
 	selectedFontPairingVariation,
 	onSelect,
+	limitGlobalStyles,
 }: FontPairingVariationsProps ) => {
-	const { base } = useContext( GlobalStylesContext );
+	// The theme font pairings don't include the default font pairing
 	const fontPairingVariations = useFontPairingVariations( siteId, stylesheet ) ?? [];
 	const composite = useCompositeState();
 
@@ -84,31 +87,42 @@ const FontPairingVariations = ( {
 			{ ...composite }
 			role="listbox"
 			aria-label={ translate( 'Font pairing variations' ) }
+			className="global-styles-variations__container"
 		>
-			<h3 className="global-styles-variation__title">{ translate( 'Free font' ) }</h3>
-			<div className="font-pairing-variations">
-				<FontPairingVariation
-					key="base"
-					fontPairingVariation={ { ...base, title: translate( 'Free font' ) } }
-					isActive={ ! selectedFontPairingVariation }
-					composite={ composite }
-					onSelect={ () => onSelect( null ) }
-				/>
-			</div>
-			<h3 className="global-styles-variation__title">
-				{ translate( 'Premium fonts' ) }
-				<PremiumBadge shouldHideTooltip shouldCompactWithAnimation />
-			</h3>
-			<div className="font-pairing-variations">
-				{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
+			<div className="global-styles-variations__group">
+				<h3 className="global-styles-variations__group-title">{ translate( 'Free font' ) }</h3>
+				<div className="font-pairing-variations">
 					<FontPairingVariation
-						key={ index }
-						fontPairingVariation={ fontPairingVariation }
-						isActive={ fontPairingVariation.title === selectedFontPairingVariation?.title }
+						key="base"
+						// The base is the theme.json, which has the default font pairing
+						isActive={ ! selectedFontPairingVariation }
 						composite={ composite }
-						onSelect={ () => onSelect( fontPairingVariation ) }
+						onSelect={ () => onSelect( null ) }
 					/>
-				) ) }
+				</div>
+			</div>
+			<div className="global-styles-variations__group">
+				<h3 className="global-styles-variations__group-title">
+					{ translate( 'Custom fonts' ) }
+					{ limitGlobalStyles && (
+						<PremiumBadge
+							shouldHideTooltip
+							shouldCompactWithAnimation
+							labelText={ translate( 'Upgrade' ) }
+						/>
+					) }
+				</h3>
+				<div className="font-pairing-variations">
+					{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
+						<FontPairingVariation
+							key={ index }
+							fontPairingVariation={ fontPairingVariation }
+							isActive={ fontPairingVariation.title === selectedFontPairingVariation?.title }
+							composite={ composite }
+							onSelect={ () => onSelect( fontPairingVariation ) }
+						/>
+					) ) }
+				</div>
 			</div>
 		</Composite>
 	);

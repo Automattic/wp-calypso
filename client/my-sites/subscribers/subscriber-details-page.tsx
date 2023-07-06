@@ -1,19 +1,71 @@
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import { useDispatch } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscriberDetails } from './components/subscriber-details';
 import { SubscriberPopover } from './components/subscriber-popover';
+import { UnsubscribeModal } from './components/unsubscribe-modal';
+import { getSubscriberDetailsUrl } from './helpers';
+import { useUnsubscribeModal } from './hooks';
+import useSubscriberDetailsQuery from './queries/use-subscriber-details-query';
+import './subscriber-details-style.scss';
 
 type SubscriberDetailsPageProps = {
-	subscriberId: number;
+	subscriptionId?: number;
+	userId?: number;
+	pageNumber?: number;
 };
 
-const SubscriberDetailsPage = ( { subscriberId }: SubscriberDetailsPageProps ) => {
+const SubscriberDetailsPage = ( {
+	subscriptionId,
+	userId,
+	pageNumber = 1,
+}: SubscriberDetailsPageProps ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+
+	const { data: subscriber, isLoading } = useSubscriberDetailsQuery(
+		selectedSiteId,
+		subscriptionId,
+		userId
+	);
+
+	const removeSubscriberSuccess = () => {
+		page.show( `/subscribers/${ selectedSiteSlug }?page=${ pageNumber }` );
+
+		dispatch(
+			successNotice(
+				translate( 'You have successfully removed %s from your list.', {
+					args: [ subscriber?.display_name as string ],
+					comment: "%s is the subscriber's public display name",
+				} ),
+				{
+					duration: 5000,
+				}
+			)
+		);
+	};
+
+	const {
+		currentSubscriber: modalSubscriber,
+		onClickUnsubscribe,
+		onConfirmModal,
+		resetSubscriber,
+	} = useUnsubscribeModal( selectedSiteId, pageNumber, true, removeSubscriberSuccess );
+
+	const unsubscribeClickHandler = () => {
+		if ( subscriber ) {
+			onClickUnsubscribe( subscriber );
+		}
+	};
 
 	const navigationItems: Item[] = [
 		{
@@ -22,26 +74,22 @@ const SubscriberDetailsPage = ( { subscriberId }: SubscriberDetailsPageProps ) =
 		},
 		{
 			label: translate( 'Details' ),
-			href: `/subscribers/${ selectedSiteSlug }/${ subscriberId }`,
+			href: getSubscriberDetailsUrl( selectedSiteSlug, subscriptionId, userId, pageNumber ),
 		},
 	];
 
-	const mockSubscriber = {
-		avatar: `https://secure.gravatar.com/avatar/${ subscriberId }`,
-		subscription_id: subscriberId,
-		email_address: 'mock.subscriber@email.com',
-		display_name: 'Mock Subscriber',
-		date_subscribed: '2021-01-01T00:00:00.000Z',
-		open_rate: 0,
-		user_id: 0,
-	};
-
 	return (
-		<Main wideLayout>
+		<Main wideLayout className="subscriber-details-page">
 			<FixedNavigationHeader navigationItems={ navigationItems }>
-				<SubscriberPopover onUnsubscribe={ () => undefined } />
+				<SubscriberPopover onUnsubscribe={ unsubscribeClickHandler } />
 			</FixedNavigationHeader>
-			<SubscriberDetails subscriber={ mockSubscriber } />
+			{ subscriber && ! isLoading && <SubscriberDetails subscriber={ subscriber } /> }
+			<UnsubscribeModal
+				subscriber={ modalSubscriber }
+				onCancel={ resetSubscriber }
+				onConfirm={ onConfirmModal }
+			/>
+			{ isLoading && <Spinner /> }
 		</Main>
 	);
 };

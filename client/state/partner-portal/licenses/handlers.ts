@@ -32,6 +32,7 @@ interface APILicense {
 	username: string | null;
 	blog_id: number | null;
 	siteurl: string | null;
+	has_downloads: boolean;
 	issued_at: string;
 	attached_at: string | null;
 	revoked_at: string | null;
@@ -105,6 +106,7 @@ function formatLicenses( items: APILicense[] ): License[] {
 		username: item.username,
 		blogId: item.blog_id,
 		siteUrl: item.siteurl,
+		hasDownloads: item.has_downloads,
 		issuedAt: item.issued_at,
 		attachedAt: item.attached_at,
 		revokedAt: item.revoked_at,

@@ -25,8 +25,17 @@ interface MonitorContactEmail {
 	email_address: string;
 	verified: boolean;
 }
+interface MonitorContactSMS {
+	name: string;
+	sms_number: string;
+	number: string;
+	country_code: string;
+	country_numeric_code: string;
+	verified: boolean;
+}
 interface MonitorContacts {
-	emails: Array< MonitorContactEmail >;
+	emails?: Array< MonitorContactEmail >;
+	sms_numbers?: Array< MonitorContactSMS >;
 }
 
 export interface MonitorSettings {
@@ -36,8 +45,10 @@ export interface MonitorSettings {
 	monitor_deferment_time: number;
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
+	monitor_user_sms_notifications: boolean;
 	monitor_user_wp_note_notifications: boolean;
 	monitor_notify_additional_user_emails: Array< MonitorContactEmail >;
+	monitor_notify_additional_user_sms: Array< MonitorContactSMS >;
 }
 
 interface StatsObject {
@@ -240,6 +251,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 	success: boolean;
 	settings: {
 		email_notifications: boolean;
+		sms_notifications: boolean;
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
 		contacts?: MonitorContacts;
@@ -249,6 +261,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 export interface UpdateMonitorSettingsParams {
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
+	sms_notifications?: boolean;
 	jetmon_defer_status_down_minutes?: number;
 	contacts?: MonitorContacts;
 }
@@ -315,8 +328,12 @@ export type MonitorSettingsContact = Partial< MonitorSettingsEmail > &
 
 export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
 
+export type AllowedMonitorContactTypes = 'email' | 'sms';
+
+export type StateMonitoringSettingsContact = StateMonitorSettingsEmail | StateMonitorSettingsSMS;
+
 export interface RequestVerificationCodeParams {
-	type: 'email' | 'sms';
+	type: AllowedMonitorContactTypes;
 	value: string;
 	site_ids: Array< number >;
 	// For SMS contacts
@@ -326,7 +343,7 @@ export interface RequestVerificationCodeParams {
 }
 
 export interface ValidateVerificationCodeParams {
-	type: 'email' | 'sms';
+	type: AllowedMonitorContactTypes;
 	value: string;
 	verification_code: number;
 }
@@ -347,6 +364,6 @@ export interface InitialMonitorSettings {
 	phoneContacts?: StateMonitorSettingsSMS[] | [];
 }
 export interface ResendVerificationCodeParams {
-	type: 'email';
+	type: 'email' | 'sms';
 	value: string;
 }

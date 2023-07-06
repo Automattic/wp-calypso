@@ -29,11 +29,14 @@ import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import OdysseusAssistant from 'calypso/odysseus';
+import { OdysseusAssistantProvider } from 'calypso/odysseus/context';
 import { isOffline } from 'calypso/state/application/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -197,6 +200,17 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
+	shouldShowOdysseusAssistant() {
+		// We will only show the Odysseus Assistant under the "Upgrades" menu.
+		return (
+			[ 'plans', 'add-ons', 'domains', 'email', 'site-purchases', 'checkout' ].includes(
+				this.props.sectionName
+			) &&
+			! this.props.isOffline &&
+			config.isEnabled( 'odysseus' )
+		);
+	}
+
 	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
@@ -304,7 +318,14 @@ class Layout extends Component {
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
-						{ this.props.primary }
+						{ this.shouldShowOdysseusAssistant() ? (
+							<OdysseusAssistantProvider sectionName={ this.props.sectionName }>
+								{ this.props.primary }
+								<OdysseusAssistant />
+							</OdysseusAssistantProvider>
+						) : (
+							this.props.primary
+						) }
 					</div>
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
@@ -344,7 +365,7 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			'woocommerce-core-profiler' === currentQuery?.from;
+			isWooCommerceCoreProfilerFlow( state );
 		const noMasterbarForRoute =
 			isJetpackLogin || currentRoute === '/me/account/closed' || isDomainAndPlanPackageFlow;
 		const noMasterbarForSection =

@@ -1,11 +1,12 @@
 import { Button } from '@automattic/components';
+import { NavigatorHeader } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorBackButton as NavigatorBackButton,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from './constants';
-import NavigatorHeader from './navigator-header';
+import NavigatorTitle from './navigator-title';
 import PatternLayout from './pattern-layout';
 import type { Pattern } from './types';
 
@@ -33,7 +34,7 @@ const ScreenSection = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Homepage' ) }
+				title={ <NavigatorTitle title={ translate( 'Homepage' ) } /> }
 				description={ translate(
 					'Add and arrange patterns to make your homepage unique and help people understand instantly what the site’s about. '
 				) }

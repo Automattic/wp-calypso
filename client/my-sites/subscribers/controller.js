@@ -23,10 +23,23 @@ export function subscribers( context, next ) {
 }
 
 export function subscriberDetails( context, next ) {
-	const { path } = context;
-	const subscriberId = path.split( '/' ).pop();
+	const { path, query } = context;
+	const userId = path.split( '/' ).pop();
+	const pageNumber = sanitizeInt( query.page ) ?? 1;
 
-	context.primary = <SubscriberDetailsPage subscriberId={ subscriberId } />;
+	context.primary = <SubscriberDetailsPage userId={ userId } pageNumber={ pageNumber } />;
+
+	next();
+}
+
+export function externalSubscriberDetails( context, next ) {
+	const { path, query } = context;
+	const subscriberId = path.split( '/' ).pop();
+	const pageNumber = sanitizeInt( query.page ) ?? 1;
+
+	context.primary = (
+		<SubscriberDetailsPage subscriptionId={ subscriberId } pageNumber={ pageNumber } />
+	);
 
 	next();
 }

@@ -11,3 +11,22 @@ export type DomainForm = {
 export interface ProfilerData {
 	[ key: string ]: string | number | boolean | string[] | number[];
 }
+
+export type DomainTransferNames = Record< string, string >;
+
+export type DomainTransferAuthCodes = Record<
+	string,
+	{
+		auth: string;
+		valid: boolean;
+	}
+>;
+
+export type DomainTransferData = Record<
+	string,
+	{
+		domain: string;
+		auth: string;
+		valid: boolean;
+	}
+>;

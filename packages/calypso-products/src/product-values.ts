@@ -67,6 +67,7 @@ export { isGSuiteOrExtraLicenseProductSlug } from './is-gsuite-or-extra-license-
 export { isGSuiteOrGoogleWorkspace } from './is-gsuite-or-google-workspace';
 export { isGSuiteOrGoogleWorkspaceProductSlug } from './is-gsuite-or-google-workspace-product-slug';
 export { isGSuiteProductSlug } from './is-gsuite-product-slug';
+export { isJetpackAISlug } from './is-jetpack-ai-slug';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackBackup } from './is-jetpack-backup';
@@ -87,6 +88,9 @@ export { isJetpackSearchSlug } from './is-jetpack-search-slug';
 export { isJetpackSearchFree } from './is-jetpack-search-free';
 export { isJetpackSocialAdvancedSlug } from './is-jetpack-social-advanced-slug';
 export { isJetpackSocialBasicSlug } from './is-jetpack-social-basic-slug';
+export { isJetpackStatsSlug } from './is-jetpack-stats-slug';
+export { isJetpackStatsPaidProductSlug } from './is-jetpack-stats-paid-product-slug';
+export { isJetpackStatsFreeProductSlug } from './is-jetpack-stats-free-product-slug';
 export { isJetpackVideoPress } from './is-jetpack-videopress';
 export { isJetpackBoostSlug } from './is-jetpack-boost-slug';
 export { isJetpackVideoPressSlug } from './is-jetpack-videopress-slug';

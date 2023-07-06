@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
+import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	recordSignupStart,
@@ -496,27 +496,33 @@ class Signup extends Component {
 			intent,
 			startingPoint,
 		};
-		debug( 'Tracking signup completion.', debugProps );
 
-		recordSignupComplete( {
-			flow: this.props.flowName,
-			siteId,
-			isNewUser,
-			hasCartItems,
-			planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
-			domainProductSlug:
-				undefined !== domainItem && domainItem.is_domain_registration
-					? domainItem.product_slug
-					: undefined,
-			isNew7DUserSite,
-			// Record the following values so that we can know the user completed which branch under the hero flow
-			theme: selectedDesign?.theme,
-			intent,
-			startingPoint,
-			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
-			isMapping: domainItem && isDomainMapping( domainItem ),
-			isTransfer: domainItem && isDomainTransfer( domainItem ),
-		} );
+		// In case of the flow just serves as a bridge to a Stepper flow, do not fire
+		// the signup completion event. Theoretically speaking this can be applied to other scenarios,
+		// but it's not recommended outside of this, hence the name toStepper. See Automattic/growth-foundations#72 for more context.
+		if ( ! dependencies.toStepper ) {
+			debug( 'Tracking signup completion.', debugProps );
+
+			recordSignupComplete( {
+				flow: this.props.flowName,
+				siteId,
+				isNewUser,
+				hasCartItems,
+				planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
+				domainProductSlug:
+					undefined !== domainItem && domainItem.is_domain_registration
+						? domainItem.product_slug
+						: undefined,
+				isNew7DUserSite,
+				// Record the following values so that we can know the user completed which branch under the hero flow
+				theme: selectedDesign?.theme,
+				intent,
+				startingPoint,
+				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
+				isMapping: domainItem && isDomainMapping( domainItem ),
+				isTransfer: domainItem && isDomainTransfer( domainItem ),
+			} );
+		}
 	};
 
 	handleDestination( dependencies, destination ) {
@@ -906,7 +912,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const oauth2Client = getCurrentOAuth2Client( state );
-		const hostingFlow = isInHostingFlow( state );
+		const hostingFlow = startedInHostingFlow( state );
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )

@@ -187,7 +187,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 	const handlePriceChange = ( event ) => {
 		const value = parseFloat( event.currentTarget.value );
-		if ( ! isNaN( value ) ) {
+		// Set the current price if the value is a valid number or an empty string.
+		if ( '' === event.currentTarget.value || ! isNaN( value ) ) {
 			setCurrentPrice( event.currentTarget.value );
 		}
 	};

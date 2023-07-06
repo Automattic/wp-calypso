@@ -46,12 +46,14 @@ export default function MultiCheckbox< T extends string | number >( props: Props
 	const defaultCheckedOnStart = useRef( defaultChecked );
 
 	const handleChange = useCallback(
-		( event ) => {
+		( event: React.ChangeEvent< HTMLInputElement > ) => {
 			const target = event.target;
 			let changeEventValue = checked || defaultCheckedOnStart.current;
-			changeEventValue = changeEventValue.concat( [ target.value ] ).filter( ( currentValue ) => {
-				return currentValue !== target.value || target.checked;
-			} );
+			changeEventValue = changeEventValue
+				.concat( [ target.value as T ] )
+				.filter( ( currentValue ) => {
+					return currentValue !== target.value || target.checked;
+				} );
 
 			if ( onChange ) {
 				onChange( { value: changeEventValue } );

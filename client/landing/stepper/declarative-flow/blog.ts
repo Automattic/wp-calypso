@@ -1,4 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
+import { getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
@@ -30,12 +31,13 @@ const Blog: Flow = {
 	useAssertConditions(): AssertConditionResult {
 		const flowName = this.name;
 		const isLoggedIn = useSelector( isUserLoggedIn );
-		const locale = useLocale();
+		const defaultLocale = useLocale();
+		const locale = getQueryArg( window.location.search, 'locale' ) ?? defaultLocale;
 
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?redirect_to=/setup/blog`
-				: `/start/account/user?redirect_to=/setup/blog`;
+				? `/start/account/user/${ locale }?redirect_to=/setup/blog&variationName=blogger-intent`
+				: `/start/account/user?redirect_to=/setup/blog&variationName=blogger-intent`;
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 

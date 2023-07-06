@@ -4,36 +4,14 @@ import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
+import { BlazablePost } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
-import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
 import useOpenPromoteWidget from '../../hooks/use-open-promote-widget';
 import { formatNumber } from '../../utils';
+import RelativeTime from '../relative-time';
 
-export type BlazablePost = {
-	ID: number;
-	author: string;
-	date: string;
-	date_gtm: string;
-	modified: string;
-	modified_gmt: string;
-	status: string;
-	guid: string;
-	title: string;
-	type: string;
-	comment_count: number;
-	like_count: number;
-	monthly_view_count: number;
-	post_url: string;
-	featured_image: string;
-	post_thumbnail: string;
-};
-
-type Props = {
-	post: BlazablePost;
-};
-
-export default function PostItem( { post }: Props ) {
+export default function PostItem( { post }: { post: BlazablePost } ) {
 	const [ loading ] = useState( false );
 
 	const onClickPromote = useOpenPromoteWidget( {
@@ -41,11 +19,12 @@ export default function PostItem( { post }: Props ) {
 		entrypoint: 'promoted_posts-post_item',
 	} );
 
-	const safeUrl = safeImageUrl( post.featured_image );
+	// API can return "false" as a featured image URL
+	const safeUrl = 'string' === typeof post?.featured_image && safeImageUrl( post.featured_image );
 	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
 
 	const postDate = (
-		<PostRelativeTimeStatus showPublishedStatus={ false } post={ post } showGridIcon={ false } />
+		<RelativeTime date={ post.date } showTooltip={ true } tooltipTitle={ __( 'Published date' ) } />
 	);
 
 	const viewCount = post?.monthly_view_count ?? 0;
@@ -114,18 +93,18 @@ export default function PostItem( { post }: Props ) {
 						{ sprintf(
 							// translators: %s is number of post's views
 							_n( '%s view', '%s views', viewCount ),
-							formatNumber( viewCount )
+							formatNumber( viewCount, true )
 						) }
 						{ mobileStatsSeparator }
 						{
 							// translators: %s is number of post's likes
-							sprintf( _n( '%s like', '%s likes', likeCount ), formatNumber( likeCount ) )
+							sprintf( _n( '%s like', '%s likes', likeCount ), formatNumber( likeCount, true ) )
 						}
 						{ mobileStatsSeparator }
 						{ sprintf(
 							// translators: %s is number of post's comments
 							_n( '%s comment', '%s comments', commentCount ),
-							formatNumber( commentCount )
+							formatNumber( commentCount, true )
 						) }
 					</div>
 					<div className="post-item__actions-mobile">

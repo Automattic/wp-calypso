@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added a new color for Nextdoor.
+
 ## 3.0.0
 
 - Added a new color for Mastodon.

@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
+import {
+	useLocalizeUrl,
+	removeLocaleFromPathLocaleInFront,
+	localeRegexString,
+} from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -31,9 +35,9 @@ import {
 } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
-
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -49,7 +53,7 @@ const LayoutLoggedOut = ( {
 	oauth2Client,
 	primary,
 	secondary,
-	headerSection,
+	renderHeaderSection,
 	sectionGroup,
 	sectionName,
 	sectionTitle,
@@ -77,13 +81,15 @@ const LayoutLoggedOut = ( {
 
 	const isReaderTagPage = sectionName === 'reader' && currentRoute.startsWith( '/tag/' );
 
-	const isReaderSearchPage = sectionName === 'reader' && currentRoute.startsWith( '/read/search' );
+	const isReaderSearchPage =
+		sectionName === 'reader' &&
+		currentRoute.match( new RegExp( `^(/${ localeRegexString })?/read/search` ) );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
 		'focus-content': true,
-		'has-header-section': headerSection,
+		'has-header-section': renderHeaderSection,
 		'has-no-sidebar': ! secondary,
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
@@ -161,7 +167,9 @@ const LayoutLoggedOut = ( {
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			<div className="layout__header-section">
 				{ masterbar }
-				{ headerSection && <div className="layout__header-section-content">{ headerSection }</div> }
+				{ renderHeaderSection && (
+					<div className="layout__header-section-content">{ renderHeaderSection() }</div>
+				) }
 			</div>
 			{ isJetpackCloud() && (
 				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
@@ -252,7 +260,7 @@ export default withCurrentRoute(
 			! isWooOAuth2Client( oauth2Client ) &&
 			[ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
-		const isWooCoreProfilerFlow = 'woocommerce-core-profiler' === currentQuery?.from;
+		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;

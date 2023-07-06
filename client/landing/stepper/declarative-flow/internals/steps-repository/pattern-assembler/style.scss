@@ -17,6 +17,11 @@ $font-family: "SF Pro Text", $sans;
 	height: calc(100vh - 60px);
 	width: 100%;
 
+	.navigator-header {
+		// Force display because by default it shows only for min-width break-xlarge
+		display: block;
+	}
+
 	.pattern-assembler__button {
 		width: 100%;
 		height: 40px;
@@ -213,7 +218,10 @@ $font-family: "SF Pro Text", $sans;
 		.pattern-selector__body {
 			position: relative;
 			margin-bottom: 32px;
-			padding: 2px;
+			padding: 2px 2px 32px;
+			// Rest pattern border to expand sides out of wrapper
+			margin-right: -2px;
+			margin-left: -2px;
 
 			&:last-child {
 				margin-bottom: 0;
@@ -270,19 +278,14 @@ $font-family: "SF Pro Text", $sans;
 		overflow-y: auto;
 		// Reserve space for the scrollbar to prevent unwanted layout change
 		scrollbar-gutter: stable;
-	}
 
-	.screen-container__body--no-padding {
-		padding: 0;
-	}
-
-	.screen-container__body--align-sides {
-		// Reduce the padding bottom of .navigator-header__description
-		margin-top: -8px;
+		&.screen-category-list__body {
+			// Reduces .navigator-header margin
+			margin-top: -10px;
+		}
 	}
 
 	.screen-container__footer {
-		padding: 2px;
 		margin-top: auto;
 	}
 

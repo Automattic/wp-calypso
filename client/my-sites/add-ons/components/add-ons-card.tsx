@@ -1,5 +1,5 @@
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
@@ -105,16 +105,19 @@ const AddOnCard = ( {
 		actionSecondary?.handler( addOnMeta.productSlug );
 	};
 
+	const shouldRenderLoadingState =
+		addOnMeta.productSlug === PRODUCT_1GB_SPACE && addOnMeta.isLoading;
+
 	// if product is space upgrade choose the action based on the purchased status
 	const shouldRenderPrimaryAction =
 		addOnMeta.productSlug === PRODUCT_1GB_SPACE
-			? ! addOnMeta.purchased
-			: availabilityStatus?.available;
+			? ! addOnMeta.purchased && ! shouldRenderLoadingState
+			: availabilityStatus?.available && ! shouldRenderLoadingState;
 
 	const shouldRenderSecondaryAction =
 		addOnMeta.productSlug === PRODUCT_1GB_SPACE
-			? addOnMeta.purchased
-			: ! availabilityStatus?.available;
+			? addOnMeta.purchased && ! shouldRenderLoadingState
+			: ! availabilityStatus?.available && ! shouldRenderLoadingState;
 
 	return (
 		<Container>
@@ -137,6 +140,9 @@ const AddOnCard = ( {
 				</CardHeader>
 				<CardBody className="add-ons-card__body">{ addOnMeta.description }</CardBody>
 				<CardFooter isBorderless={ true } className="add-ons-card__footer">
+					{ shouldRenderLoadingState && (
+						<Spinner size={ 24 } className="spinner-button__spinner" />
+					) }
 					{ shouldRenderSecondaryAction && (
 						<>
 							{ actionSecondary && (

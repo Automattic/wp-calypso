@@ -18,7 +18,7 @@ import {
 	domainTransferIn,
 } from 'calypso/my-sites/domains/paths';
 
-function getAvailabilityNotice( domain, error, errorData ) {
+function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = false ) {
 	const tld = domain ? getTld( domain ) : null;
 	const { site, maintenanceEndTime, availabilityPreCheck } = errorData || {};
 
@@ -234,10 +234,34 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			break;
 
 		case domainAvailability.MAPPABLE:
+			if ( isForTransferOnly ) {
+				message = translate(
+					'This domain cannot be transferred to WordPress.com but it can be connected instead. {{a}}Learn More.{{/a}}',
+					{
+						components: {
+							a: <a rel="noopener noreferrer" href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
+						},
+					}
+				);
+			}
+			break;
+
 		case domainAvailability.AVAILABLE:
+			if ( isForTransferOnly ) {
+				message = translate( "This domain isn't registered. Please try again." );
+			}
+			break;
+
 		case domainAvailability.TLD_NOT_SUPPORTED:
 		case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE:
 		case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
+			if ( isForTransferOnly ) {
+				/* translators: %s: TLD (eg .com, .pl) */
+				message = translate( 'Sorry, WordPress.com does not support the %(tld)s TLD.', {
+					args: { tld },
+				} );
+			}
+			break;
 		case domainAvailability.UNKNOWN:
 			// unavailable domains are displayed in the search results, not as a notice OR
 			// domain registrations are closed, in which case it is handled in parent

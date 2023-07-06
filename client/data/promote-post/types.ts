@@ -24,6 +24,7 @@ export type Campaign = {
 		snippet: string;
 	};
 	content_image: string;
+	created_at: string;
 	start_date: string; // "2022-07-18T01:51:12.000Z"
 	end_date: string;
 	status_smart: CampaignStatus;
@@ -39,6 +40,7 @@ export type Campaign = {
 	display_delivery_estimate: string;
 	delivery_percent: number;
 	status: string;
+	ui_status: string;
 	target_url: string;
 	deliver_margin_multiplier: number;
 	audience_list: AudienceList;
@@ -55,4 +57,23 @@ export type CampaignStats = {
 	clicks_total: number;
 	spent_budget_cents: number;
 	deliver_margin_multiplier: number;
+};
+
+export type BlazablePost = {
+	ID: number;
+	author: string;
+	date: string;
+	date_gtm?: string;
+	modified: string;
+	modified_gmt?: string;
+	status?: string;
+	guid?: string;
+	title: string;
+	type: string;
+	comment_count: number;
+	like_count: number;
+	monthly_view_count: number;
+	post_url: string;
+	featured_image: string | false;
+	post_thumbnail?: string;
 };

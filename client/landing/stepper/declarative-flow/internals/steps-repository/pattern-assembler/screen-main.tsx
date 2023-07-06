@@ -1,5 +1,10 @@
 import { Button } from '@automattic/components';
 import {
+	NavigationButtonAsItem,
+	NavigatorHeader,
+	NavigatorItemGroup,
+} from '@automattic/onboarding';
+import {
 	__experimentalHStack as HStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
@@ -11,9 +16,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
-import { NavigationButtonAsItem } from './navigator-buttons';
-import NavigatorHeader from './navigator-header';
-import { NavigatorItemGroup } from './navigator-item-group';
+import NavigatorTitle from './navigator-title';
 import Survey from './survey';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
@@ -97,16 +100,13 @@ const ScreenMain = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Design your own' ) }
+				title={ <NavigatorTitle title={ translate( 'Design your own' ) } /> }
 				description={ headerDescription }
 				hideBack
 			/>
-			<div
-				className="screen-container__body screen-container__body--align-sides"
-				ref={ wrapperRef }
-			>
-				<HStack direction="column" alignment="top" spacing="4">
-					<NavigatorItemGroup title={ translate( 'Layout' ) }>
+			<div className="screen-container__body" ref={ wrapperRef }>
+				<HStack direction="column" alignment="top" spacing="4" expanded={ false }>
+					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
 						<NavigationButtonAsItem
 							checked={ hasHeader }
 							path={ NAVIGATOR_PATHS.HEADER }

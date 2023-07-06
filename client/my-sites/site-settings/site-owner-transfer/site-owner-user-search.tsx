@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -9,7 +9,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { ChooseUserLoadingPlaceholder } from './choose-user-loading-placeholder';
-import { useAdministrators } from './use-administrators';
+import { User, useAdministrators } from './use-administrators';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
 
 const Strong = styled( 'strong' )( {
@@ -21,7 +21,7 @@ const FormText = styled( 'p' )( {
 } );
 
 const ButtonStyled = styled( Button )( {
-	marginBottom: '1em',
+	marginBottom: '1.5em',
 } );
 
 const Error = styled.div( {
@@ -69,16 +69,14 @@ function NoAdministrators( { href, siteSlug }: { href: string; siteSlug: string 
 const SiteOwnerTransferEligibility = ( {
 	siteId,
 	siteSlug,
-	siteOwner,
 	onNewUserOwnerSubmit,
 }: {
 	siteId: number;
 	siteSlug: string;
-	siteOwner: string;
-	onNewUserOwnerSubmit: ( user: string ) => void;
+	onNewUserOwnerSubmit: ( user: User ) => void;
 } ) => {
 	const translate = useTranslate();
-	const [ tempSiteOwner, setTempSiteOwner ] = useState( siteOwner );
+	const [ tempSiteOwner, setTempSiteOwner ] = useState< User >();
 	const [ siteTransferEligibilityError, setSiteTransferEligibilityError ] = useState( '' );
 
 	const { checkSiteTransferEligibility, isLoading: isCheckingSiteTransferEligibility } =
@@ -90,20 +88,19 @@ const SiteOwnerTransferEligibility = ( {
 				setSiteTransferEligibilityError( e.message );
 			},
 			onSuccess: () => {
-				onNewUserOwnerSubmit?.( tempSiteOwner || '' );
+				if ( ! tempSiteOwner ) {
+					return;
+				}
+				onNewUserOwnerSubmit?.( tempSiteOwner );
 			},
 		} );
-
-	useEffect( () => {
-		setTempSiteOwner( siteOwner );
-	}, [ siteOwner ] );
 
 	const handleFormSubmit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 		if ( ! tempSiteOwner ) {
 			return;
 		}
-		checkSiteTransferEligibility( { newSiteOwner: tempSiteOwner } );
+		checkSiteTransferEligibility( { newSiteOwner: tempSiteOwner.email } );
 	};
 
 	const addUsersHref = '/people/team/' + siteSlug;
@@ -136,10 +133,11 @@ const SiteOwnerTransferEligibility = ( {
 			<FormFieldset>
 				<FormLabel>{ translate( 'Administrator' ) }</FormLabel>
 				<FormSelect
-					onChange={ ( event: React.ChangeEvent< HTMLSelectElement > ) =>
-						setTempSiteOwner( event.target.value )
-					}
-					value={ tempSiteOwner }
+					onChange={ ( event: React.ChangeEvent< HTMLSelectElement > ) => {
+						const user = administrators.find( ( user ) => user.email === event.target.value );
+						setTempSiteOwner( user );
+					} }
+					value={ tempSiteOwner?.email }
 				>
 					<option value="">{ translate( 'Select administrator' ) }</option>
 					{ administrators.map( ( user ) => (

@@ -22,8 +22,8 @@
 			justify-content: space-between;
 
 			// View link
-			a.campaign-item__view-link,
-			a.campaign-item__view-link:visited {
+			.campaign-item__view-link,
+			.campaign-item__view-link:visited {
 				@include blazepress-data-row-font-mobile;
 
 				color: var(--studio-gray-100);
@@ -36,7 +36,7 @@
 		}
 
 		.promote-post-i2__search-bar-wrapper {
-			.search {
+			.search-component {
 				margin-bottom: 16px;
 			}
 

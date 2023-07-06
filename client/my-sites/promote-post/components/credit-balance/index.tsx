@@ -1,7 +1,7 @@
 import './style.scss';
 import { memo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { numberFormat, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
@@ -10,7 +10,7 @@ const CreditBalance = () => {
 	const creditBalance = useCreditBalanceQuery();
 	const { data: balance } = creditBalance;
 
-	if ( ! balance || balance === 0 ) {
+	if ( ! balance || balance === '0.00' ) {
 		return null;
 	}
 
@@ -25,7 +25,7 @@ const CreditBalance = () => {
 
 	return (
 		<div className="credit-balance__nav-item">
-			{ __( `Credits: ` ) + `$${ numberFormat( balance, 2 ) }` }
+			{ __( `Credits: ` ) + `$${ balance }` }
 			<InfoPopover
 				className="credit-balance__help-icon"
 				icon="help-outline"

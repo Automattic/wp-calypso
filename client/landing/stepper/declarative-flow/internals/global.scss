@@ -6,6 +6,7 @@
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/onboarding/styles/variables";
+@import "@automattic/components/src/styles/typography";
 
 /**
  * General onboarding styling
@@ -88,6 +89,7 @@ button {
 .setup-blog,
 .celebration-step,
 .use-my-domain,
+.domain-transfer,
 .update-design {
 	padding: 60px 0 0;
 	box-sizing: border-box;
@@ -181,7 +183,7 @@ button {
 }
 
 .intro {
-	.signup-header {
+	&:not(.newsletter).signup-header {
 		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
 	}
 }
@@ -207,6 +209,30 @@ button {
 			@include break-medium {
 				font-size: $font-headline-medium;
 			}
+		}
+	}
+}
+
+/*
+ * Override font sizes for all newsletter onboarding screens
+ */
+.newsletter,
+.newsletter:not(.domains) {
+	.step-container {
+		.step-container__content h1,
+		.step-container__header h1.formatted-header__title {
+			font-size: rem(32px); //typography-exception
+			line-height: rem(40px); //typography-exception
+
+			@include break-medium {
+				font-size: rem(44px); //typography-exception
+				line-height: rem(52px); //typography-exception
+			}
+		}
+		.step-container__header .formatted-header .formatted-header__subtitle {
+			font-size: rem(16px); //typography-exception
+			line-height: rem(24px); //typography-exception
+			font-family: $font-sf-pro-display;
 		}
 	}
 }

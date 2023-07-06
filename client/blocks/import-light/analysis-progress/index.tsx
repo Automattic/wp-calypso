@@ -7,6 +7,7 @@ import './style.scss';
 
 interface Props {
 	percentage: number;
+	children?: React.ReactNode;
 }
 const AnalysisProgress: React.FunctionComponent< Props > = ( props ) => {
 	const { percentage, children } = props;

@@ -117,6 +117,7 @@ export function buildDomainStepForLaunchpadNextSteps(
 	launchpadScreen: string,
 	selectedSiteSlug: string,
 	domainType: DomainThankYouType,
+	redirectTo: string,
 	primary: boolean
 ): ThankYouNextStepProps | null {
 	if ( launchpadScreen !== 'full' || ! siteIntent || ! selectedSiteSlug ) {
@@ -130,11 +131,13 @@ export function buildDomainStepForLaunchpadNextSteps(
 		),
 		stepCta: (
 			<FullWidthButton
-				onClick={ () =>
-					window.location.replace(
-						`/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`
-					)
-				}
+				onClick={ () => {
+					const redirectUrl =
+						redirectTo === 'home'
+							? `/home/${ selectedSiteSlug }`
+							: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`;
+					window.location.replace( redirectUrl );
+				} }
 				className={ `domain-${ domainType }__thank-you-button domain-thank-you__button` }
 				primary={ primary }
 				busy={ false }

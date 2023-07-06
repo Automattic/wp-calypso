@@ -119,6 +119,7 @@ export type StepProps = {
 	 */
 	variantSlug?: string;
 	data?: Record< string, unknown >;
+	children?: React.ReactNode;
 };
 
 export type Step = React.FC< StepProps >;

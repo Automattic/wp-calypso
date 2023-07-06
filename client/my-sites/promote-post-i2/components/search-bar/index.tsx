@@ -1,9 +1,10 @@
+import Search from '@automattic/search';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
-import Search from 'calypso/components/search';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { SitesSearchIcon } from 'calypso/sites-dashboard/components/sites-search-icon';
 import CampaignsFilter, { CampaignsFilterType } from '../campaigns-filter';
 
 export type SearchOptions = {
@@ -70,7 +71,7 @@ export default function SearchBar( props: Props ) {
 		},
 	];
 
-	const [ searchInput, setSearchInput ] = React.useState< string | null >( '' );
+	const [ searchInput, setSearchInput ] = React.useState< string | undefined >( '' );
 	const [ currentSortOption, setSortOption ] = React.useState( SORT_OPTIONS_DEFAULT );
 	const [ filterOption, setFilterOption ] = React.useState< string >( 'all' );
 
@@ -123,12 +124,15 @@ export default function SearchBar( props: Props ) {
 			) }
 		>
 			<Search
+				searchIcon={ <SitesSearchIcon /> }
 				className="promote-post-i2__search-bar-search"
-				initialValue={ searchInput }
+				defaultValue={ searchInput }
+				disableAutocorrect={ true }
 				value={ searchInput }
 				placeholder={ translate( 'Search…' ) }
 				delaySearch={ true }
 				delayTimeout={ 500 }
+				isReskinned
 				onSearch={ ( inputValue: string ) => {
 					if ( inputValue !== null ) {
 						onChangeSearch( inputValue );

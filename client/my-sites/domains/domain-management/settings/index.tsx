@@ -9,7 +9,7 @@ import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layo
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
@@ -78,7 +78,11 @@ const Settings = ( {
 	}, [ contactInformation, selectedDomainName ] );
 
 	const renderBreadcrumbs = () => {
-		const previousPath = domainManagementList( selectedSite?.slug, currentRoute );
+		const previousPath = domainManagementList(
+			selectedSite?.slug,
+			currentRoute,
+			selectedSite?.options?.is_domain_only
+		);
 
 		const items = [
 			{
@@ -124,7 +128,7 @@ const Settings = ( {
 	};
 
 	const renderStatusSection = () => {
-		if ( ! ( domain && selectedSite.options?.is_domain_only ) ) {
+		if ( ! ( domain && selectedSite?.options?.is_domain_only ) ) {
 			return null;
 		}
 
@@ -149,7 +153,7 @@ const Settings = ( {
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
 					key="main"
-					expanded={ ! selectedSite.options?.is_domain_only }
+					expanded={ ! selectedSite?.options?.is_domain_only }
 				>
 					<RegisteredDomainDetails
 						domain={ domain }
@@ -266,7 +270,11 @@ const Settings = ( {
 	};
 
 	const renderDnsRecords = () => {
-		if ( ! domain || domain.type === domainTypes.SITE_REDIRECT ) {
+		if (
+			! domain ||
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC
+		) {
 			return null;
 		}
 
@@ -381,7 +389,7 @@ const Settings = ( {
 				<Button
 					onClick={ handleTransferDomainClick }
 					href={ domainUseMyDomain(
-						selectedSite.slug,
+						selectedSite?.slug,
 						domain.name,
 						useMyDomainInputMode.transferDomain
 					) }
@@ -404,7 +412,9 @@ const Settings = ( {
 		}
 
 		const contactInformationUpdateLink =
-			selectedSite && domain && domainManagementEditContactInfo( selectedSite.slug, domain.name );
+			selectedSite &&
+			domain &&
+			domainManagementEditContactInfo( selectedSite?.slug, domain.name, currentRoute );
 
 		return (
 			<Accordion
@@ -461,7 +471,7 @@ const Settings = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
-			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
+			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />

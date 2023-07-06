@@ -14,7 +14,7 @@ import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
-	const showAsExternal = isExternalLink && ! props.forceInternalLink;
+	const showAsExternal = ( isExternalLink && ! props.forceInternalLink ) || props.forceExternalLink;
 	const classes = classnames( props.className, props.tipTarget, {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
@@ -98,6 +98,7 @@ SidebarItem.propTypes = {
 	selected: PropTypes.bool,
 	expandSection: PropTypes.func,
 	preloadSectionName: PropTypes.string,
+	forceExternalLink: PropTypes.bool,
 	forceInternalLink: PropTypes.bool,
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
