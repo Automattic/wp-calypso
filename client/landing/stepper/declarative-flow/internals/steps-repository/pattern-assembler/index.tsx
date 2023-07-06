@@ -380,6 +380,11 @@ const PatternAssembler = ( {
 		goBack?.();
 	};
 
+	const closePanel = () => {
+		setIsPanelOpen( false );
+		setSelectedMainItem( null );
+	};
+
 	const onSubmit = () => {
 		const design = getDesign();
 		const stylesheet = design.recipe?.stylesheet ?? '';
@@ -388,6 +393,8 @@ const PatternAssembler = ( {
 		if ( ! siteSlugOrId || ! site?.ID || ! themeId ) {
 			return;
 		}
+
+		closePanel();
 
 		if ( isEnabled( 'pattern-assembler/logged-in-showcase' ) ) {
 			setPendingAction( () =>
@@ -486,16 +493,9 @@ const PatternAssembler = ( {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
 
 		// The screen section is not using the panel
-		if ( name === MAIN_ITEMS.SECTION ) {
-			setIsPanelOpen( false );
-			setSelectedMainItem( null );
-			return;
-		}
-
-		if ( name === selectedMainItem ) {
+		if ( name === MAIN_ITEMS.SECTION || name === selectedMainItem ) {
 			// Toggle panel
-			setIsPanelOpen( false );
-			setSelectedMainItem( null );
+			closePanel();
 			return;
 		}
 
