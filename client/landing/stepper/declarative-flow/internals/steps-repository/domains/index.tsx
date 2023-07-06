@@ -88,6 +88,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		shouldHideFreePlan = false
 	) => {
 		if ( ! suggestion ) {
+			setHideFreePlan( false );
+			setDomainCartItem( undefined );
 			return submit?.();
 		}
 

@@ -58,10 +58,12 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			isBlankCanvas: theme?.includes( 'blank-canvas' ),
 			planProductSlug,
 			domainProductSlug,
-			isMapping:
-				hasPaidDomainItem && isDomainMapping( domainCartItem as MinimalRequestCartProduct ),
-			isTransfer:
-				hasPaidDomainItem && isDomainTransfer( domainCartItem as MinimalRequestCartProduct ),
+			isMapping: hasPaidDomainItem
+				? isDomainMapping( domainCartItem as MinimalRequestCartProduct )
+				: undefined,
+			isTransfer: hasPaidDomainItem
+				? isDomainTransfer( domainCartItem as MinimalRequestCartProduct )
+				: undefined,
 		} );
 	}, [ domainCartItem, flow, planCartItem, selectedDomain, siteCount, siteId, theme ] );
 };
