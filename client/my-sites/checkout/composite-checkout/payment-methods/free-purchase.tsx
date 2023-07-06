@@ -1,3 +1,4 @@
+import { isDomainTransfer } from '@automattic/calypso-products';
 import {
 	Button,
 	useFormStatus,
@@ -9,7 +10,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { Fragment } from 'react';
+import { hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WordPressLogo from '../components/wordpress-logo';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
@@ -98,9 +99,22 @@ function WordPressFreePurchaseLabel() {
 	const { responseCart } = useShoppingCart( cartKey );
 	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
 
+	// Domain transfer is a one-time purchase, but it creates a renewable
+	// subscription behind the scenes so we'll treat it like a renewable purchase.
+	const hasDomainTransfer = responseCart.products.some( ( product ) =>
+		isDomainTransfer( product )
+	);
+	// If the cart has any renewable purchases and there are more
+	// than one payment method options, change the label.
+	const isRenewableCart = hasRenewableSubscription( responseCart ) || hasDomainTransfer;
+	const freePurchaseLabel =
+		isRenewableCart && availablePaymentMethodIds.length > 1
+			? __( 'Assign a Payment Method Later' )
+			: __( 'Free Purchase' );
+
 	if ( doesPurchaseHaveFullCredits( responseCart ) ) {
 		return (
-			<Fragment>
+			<>
 				<div>
 					{
 						/* translators: %(amount)s is the total amount of credits available in localized currency */
@@ -113,19 +127,15 @@ function WordPressFreePurchaseLabel() {
 					}
 				</div>
 				<WordPressLogo />
-			</Fragment>
+			</>
 		);
 	}
 
 	return (
-		<Fragment>
-			<div>
-				{ availablePaymentMethodIds.length > 1
-					? __( 'Assign Payment Method Later' )
-					: __( 'Free Purchase' ) }
-			</div>
+		<>
+			<div>{ freePurchaseLabel }</div>
 			<WordPressLogo />
-		</Fragment>
+		</>
 	);
 }
 
