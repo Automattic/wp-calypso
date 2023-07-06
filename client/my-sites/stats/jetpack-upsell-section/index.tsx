@@ -33,7 +33,7 @@ export default function JetpackUpsellSection() {
 
 	// Exit early if we don't have and can't get the site purchase data.
 	// Also exit early if we're not in the Odyssey Stats environment.
-	if ( ! isOdysseyStats && ! hasPaidStats ) {
+	if ( ! isOdysseyStats && hasPaidStats ) {
 		return null;
 	}
 
