@@ -250,13 +250,17 @@ export default async function multiPartnerCardProcessor( {
 		throw new Error( 'Required purchase data is missing' );
 	}
 
+	// For free purchases we cannot use the regular processor because it requires
+	// making a charge. Instead, we will create a new card, then use the
+	// existingCardProcessor because it works for free purchases.
 	const isPurchaseFree = dataForProcessor.responseCart.total_cost_integer === 0;
 	if ( isPurchaseFree ) {
 		if ( ! isValidStripeCardTransactionData( submitData ) ) {
 			throw new Error( 'Required purchase data is missing' );
 		}
-		// Because purchase is undefined, all this does is add the new card. We
-		// still need to submit the transaction.
+		if ( submitData.paymentPartner === 'ebanx' ) {
+			throw new Error( 'Cannot use Ebanx for free purchases.' );
+		}
 		const newCardResponse = await assignNewCardProcessor(
 			{
 				purchase: undefined,
@@ -272,7 +276,10 @@ export default async function multiPartnerCardProcessor( {
 				...submitData,
 				countryCode: dataForProcessor.contactDetails?.countryCode?.value,
 				postalCode: getPostalCode( dataForProcessor.contactDetails ),
-				// TODO: we probably need more contact data here for other countries
+				state: dataForProcessor.contactDetails?.state?.value,
+				city: dataForProcessor.contactDetails?.city?.value,
+				organization: dataForProcessor.contactDetails?.organization?.value,
+				address: dataForProcessor.contactDetails?.address1?.value,
 			}
 		);
 		const storedCard = newCardResponse.payload;
