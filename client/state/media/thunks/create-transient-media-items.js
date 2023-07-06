@@ -34,7 +34,7 @@ export function createTransientMediaItems( files, site ) {
 			const errors = validateMediaItem( site, transientMedia );
 			if ( errors?.length ) {
 				dispatch( setMediaItemErrors( siteId, transientMedia.ID, errors ) );
-				return;
+				return [ file ];
 			}
 
 			dispatch( createMediaItem( site, transientMedia ) );
