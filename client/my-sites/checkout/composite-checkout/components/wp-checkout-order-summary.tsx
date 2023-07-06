@@ -354,6 +354,10 @@ function CheckoutSummaryFeaturesList( props: {
 
 	const hasNoAdsAddOn = responseCart.products.some( ( product ) => isNoAds( product ) );
 
+	const hasDomainTransferProduct = responseCart.products.some( ( product ) =>
+		isDomainTransfer( product )
+	);
+
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
@@ -384,6 +388,32 @@ function CheckoutSummaryFeaturesList( props: {
 			) }
 
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
+
+			{ hasDomainTransferProduct && (
+				<>
+					<CheckoutSummaryFeaturesListItem>
+						<WPCheckoutCheckIcon id="features-list-support-text" />
+						{ translate( 'Extremely fast DNS with SSL' ) }
+					</CheckoutSummaryFeaturesListItem>
+					<CheckoutSummaryFeaturesListItem>
+						<WPCheckoutCheckIcon id="features-list-support-privacy" />
+						{ translate( 'Private domain registration and SSL certificate included for free' ) }
+					</CheckoutSummaryFeaturesListItem>
+					<CheckoutSummaryFeaturesListItem>
+						<WPCheckoutCheckIcon id="features-list-support-another-year" />
+						{ translate( "We'll renew your domain for another year" ) }
+					</CheckoutSummaryFeaturesListItem>
+					<CheckoutSummaryFeaturesListItem>
+						<WPCheckoutCheckIcon id="features-list-support-manage" />
+						{ translate( 'Manage everything you need in one place' ) }
+					</CheckoutSummaryFeaturesListItem>
+
+					<CheckoutSummaryFeaturesListItem>
+						<WPCheckoutCheckIcon id="annual-live-chat" />
+						{ translate( 'Live chat support' ) }
+					</CheckoutSummaryFeaturesListItem>
+				</>
+			) }
 
 			<CheckoutSummaryRefundWindows cart={ responseCart } />
 		</CheckoutSummaryFeaturesListWrapper>
