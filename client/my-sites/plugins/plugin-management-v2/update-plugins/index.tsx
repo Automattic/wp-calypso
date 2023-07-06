@@ -41,7 +41,11 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 			'updates'
 		)
 	);
-	const allSites = useSelector( getSites );
+
+	// We don't want null or undefined "sites"
+	const allSites = useSelector( ( state ) =>
+		getSites( state ).filter( ( s ): s is SiteDetails => Boolean( s ) )
+	);
 
 	const pluginsOnSites = useSelector( ( state ) => getPluginsOnSites( state, plugins ) );
 	const selectedSite = useSelector( getSelectedSite );
