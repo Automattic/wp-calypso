@@ -27,7 +27,7 @@ const KEY_SLUG_MAP = new Map( [
 	[ 'video', JETPACK_VIDEOPRESS_PRODUCTS as readonly string[] ],
 ] );
 
-function formatResponse( siteProducts?: SiteProduct[] | null ) {
+function getSupportedProductSlugs( siteProducts?: SiteProduct[] | null ) {
 	const products = [] as string[];
 	// Find active purchase product slugs.
 	const purchasedProductSlugs =
@@ -47,6 +47,6 @@ export default function usePurchasedProducts() {
 	);
 
 	return {
-		purchasedProducts: formatResponse( purchasedProducts ),
+		purchasedProducts: getSupportedProductSlugs( purchasedProducts ),
 	};
 }
