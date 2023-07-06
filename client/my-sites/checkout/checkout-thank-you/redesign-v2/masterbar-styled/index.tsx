@@ -25,6 +25,8 @@ const ItemStyled = styled( Item )`
 	font-weight: 500;
 	padding: 0;
 	justify-content: left;
+	flex: 1;
+
 	&:hover {
 		background: var( --studio-white );
 		text-decoration: underline;

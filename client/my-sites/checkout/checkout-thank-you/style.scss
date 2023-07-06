@@ -988,6 +988,7 @@ main.akismet-checkout-thank-you {
 .is-redesign-v2.checkout-thank-you {
 	&.main {
 		max-width: 750px;
+		padding: 0 24px 0;
 
 		> .card {
 			border: none;
@@ -1008,10 +1009,7 @@ main.akismet-checkout-thank-you {
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: center;
-
-			@include break-mobile {
-				column-gap: 40px;
-			}
+			gap: 30px;
 		}
 
 		@include breakpoint-deprecated( ">660px" ) {
@@ -1077,10 +1075,7 @@ main.akismet-checkout-thank-you {
 
 	.checkout-thank-you__header {
 		position: initial;
-		padding: 0 24px;
-		@include break-mobile {
-			padding: 0 0 0 0;
-		}
+		padding: 0;
 		text-align: center;
 
 		&::before {
@@ -1091,9 +1086,7 @@ main.akismet-checkout-thank-you {
 	}
 
 	.checkout-thank-you__header-details {
-		margin-top: 50px;
-		margin-left: 16px;
-		margin-right: 16px;
+		margin: 40px 0 0;
 		display: flex;
 		flex-direction: row;
 		box-sizing: border-box;
@@ -1110,6 +1103,7 @@ main.akismet-checkout-thank-you {
 
 		@media ( min-width: 480px ) {
 			padding: 20px 25px;
+			margin: 50px 0 0;
 		}
 	}
 
@@ -1152,11 +1146,17 @@ main.akismet-checkout-thank-you {
 
 	.checkout-thank-you__header-heading {
 		@extend .wp-brand-font;
-		font-size: $font-headline-medium;
+		font-size: $font-headline-small;
 		color: var(--color-text);
 		margin: 30px 0 8px 0;
+		line-height: 40px;
+		text-align: left;
+
 		@include break-mobile {
+			font-size: $font-headline-medium;
 			margin: 60px 0 8px 0;
+			line-height: 60px;
+			text-align: center;
 		}
 	}
 
@@ -1164,6 +1164,11 @@ main.akismet-checkout-thank-you {
 		color: var(--color-text-subtle);
 		font-size: initial;
 		margin: initial;
+		text-align: left;
+
+		@include break-mobile {
+			text-align: center;
+		}
 	}
 
 	.checkout-thank-you__header.is-placeholder {
