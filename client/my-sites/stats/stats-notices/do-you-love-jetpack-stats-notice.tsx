@@ -84,7 +84,7 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 									href={ JETPACK_STATS_PRODUCT_LANDING_PAGE_URL }
 								/>
 							),
-							externalIcon: <Icon className="stats-icon" icon={ external } size={ 18 } />,
+							externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
 						},
 					}
 				) }
