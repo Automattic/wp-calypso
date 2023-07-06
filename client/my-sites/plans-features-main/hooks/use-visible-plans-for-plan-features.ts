@@ -1,14 +1,14 @@
 import {
-	PlanSlug,
 	isBusinessPlan,
 	isEcommercePlan,
 	isFreePlan,
 	isPersonalPlan,
 	isPremiumPlan,
 } from '@automattic/calypso-products';
+import { GridPlan } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/use-wpcom-plans-with-intent';
 
 interface Props {
-	availablePlans: PlanSlug[];
+	availablePlans: GridPlan[];
 	isDisplayingPlansNeededForFeature: boolean;
 	selectedPlan?: string;
 	hideFreePlan?: boolean;
@@ -31,35 +31,39 @@ const useVisiblePlansForPlanFeatures = ( {
 	let plans = isDisplayingPlansNeededForFeature
 		? availablePlans.filter( ( plan ) => {
 				if ( selectedPlan && isEcommercePlan( selectedPlan ) ) {
-					return isEcommercePlan( plan );
+					return isEcommercePlan( plan.planSlug );
 				}
 				if ( selectedPlan && isBusinessPlan( selectedPlan ) ) {
-					return isBusinessPlan( plan ) || isEcommercePlan( plan );
+					return isBusinessPlan( plan.planSlug ) || isEcommercePlan( plan.planSlug );
 				}
 				if ( selectedPlan && isPremiumPlan( selectedPlan ) ) {
-					return isPremiumPlan( plan ) || isBusinessPlan( plan ) || isEcommercePlan( plan );
+					return (
+						isPremiumPlan( plan.planSlug ) ||
+						isBusinessPlan( plan.planSlug ) ||
+						isEcommercePlan( plan.planSlug )
+					);
 				}
 		  } )
 		: availablePlans;
 
 	if ( hideFreePlan ) {
-		plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
+		plans = plans.filter( ( plan ) => ! isFreePlan( plan.planSlug ) );
 	}
 
 	if ( hidePersonalPlan ) {
-		plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
+		plans = plans.filter( ( plan ) => ! isPersonalPlan( plan.planSlug ) );
 	}
 
 	if ( hidePremiumPlan ) {
-		plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		plans = plans.filter( ( plan ) => ! isPremiumPlan( plan.planSlug ) );
 	}
 
 	if ( hideBusinessPlan ) {
-		plans = plans.filter( ( planSlug ) => ! isBusinessPlan( planSlug ) );
+		plans = plans.filter( ( plan ) => ! isBusinessPlan( plan.planSlug ) );
 	}
 
 	if ( hideEcommercePlan ) {
-		plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
+		plans = plans.filter( ( plan ) => ! isEcommercePlan( plan.planSlug ) );
 	}
 
 	return plans;

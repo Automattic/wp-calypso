@@ -32,15 +32,14 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import usePlansWithIntent from '../plan-features-2023-grid/hooks/npm-ready/use-wpcom-plans-with-intent';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
-import useIntentFromSiteMeta from './hooks/use-intent-from-site-meta';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
-import usePlanTypesWithIntent from './hooks/use-plan-types-with-intent';
-import usePlansFromTypes from './hooks/use-plans-from-types';
+import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import useVisiblePlansForPlanFeatures from './hooks/use-visible-plans-for-plan-features';
-import type { PlansIntent } from './hooks/use-plan-types-with-intent';
 import type { IntervalType } from './types';
+import type { PlansIntent } from '../plan-features-2023-grid/hooks/npm-ready/use-wpcom-plans-with-intent';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
@@ -56,7 +55,7 @@ export interface PlansFeaturesMainProps {
 	plansWithScroll?: boolean;
 	customerType?: string;
 	basePlansPath?: string;
-	selectedPlan?: string;
+	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
 	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
 	redirectToAddDomainFlow?: boolean;
@@ -87,7 +86,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	visiblePlans: PlanSlug[];
 	plans: PlanSlug[];
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	sitePlanSlug?: string | null;
+	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	intent?: PlansIntent;
 };
@@ -303,36 +302,29 @@ const PlansFeaturesMain = ( {
 		intervalType,
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
-
-	const intentFromSiteMeta = useIntentFromSiteMeta();
+	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
 	// plans from upsells takes precedence for setting intent, globally
 	const intent = planFromUpsells
 		? 'default'
 		: intentFromProps || intentFromSiteMeta.intent || 'default';
-
 	// TODO clk: "defaultPlans" to be removed once plan properties are computed outside of the grid component
 	// i.e. there will be no need to pass the full set of plans through
-	const defaultPlanTypes = usePlanTypesWithIntent( {
+	const defaultPlans = usePlansWithIntent( {
 		intent: 'plans-woocommerce' === intent ? 'plans-woocommerce' : 'default',
 		selectedPlan,
 		sitePlanSlug,
 		hideEnterprisePlan,
+		term,
 	} );
-	const planTypesWithIntent = usePlanTypesWithIntent( {
+	const plansWithIntent = usePlansWithIntent( {
 		intent,
 		selectedPlan,
 		sitePlanSlug,
 		hideEnterprisePlan,
-	} );
-	const defaultPlans = usePlansFromTypes( {
-		planTypes: defaultPlanTypes?.planTypes,
 		term,
 	} );
-	const plansWithIntent = usePlansFromTypes( {
-		planTypes: planTypesWithIntent?.planTypes,
-		term,
-	} );
+
 	const visiblePlans =
 		useVisiblePlansForPlanFeatures( {
 			availablePlans: plansWithIntent,
@@ -410,7 +402,7 @@ const PlansFeaturesMain = ( {
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<OnboardingPricingGrid2023
-						plans={ defaultPlans }
+						plans={ defaultPlans.plans }
 						visiblePlans={ visiblePlans }
 						domainName={ domainName }
 						isInSignup={ isInSignup }

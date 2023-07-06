@@ -1,5 +1,5 @@
 import { createContext, useContext } from '@wordpress/element';
-import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
+import type { PlansIntent } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/use-wpcom-plans-with-intent';
 
 interface PlansGridContext {
 	intent?: PlansIntent;
