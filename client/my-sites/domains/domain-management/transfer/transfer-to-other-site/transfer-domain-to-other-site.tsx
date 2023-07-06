@@ -121,7 +121,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const { selectedDomainName: domainName, translate } = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 		return translate(
-			"Map {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
+			"Connect {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
 			translateArgs
 		);
 	}
@@ -150,7 +150,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				<FormattedHeader
 					hasScreenOptions={ false }
 					brandFont
-					headerText={ translate( 'Map to another WordPress.com site' ) }
+					headerText={ translate( 'Connect to another WordPress.com site' ) }
 					align="left"
 				/>
 				<div className={ `${ componentClassName }__container` }>
@@ -179,7 +179,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
-				label: translate( 'Map' ),
+				label: translate( 'Connect' ),
 				href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{ label: translate( 'To another WordPress.com site' ) },
