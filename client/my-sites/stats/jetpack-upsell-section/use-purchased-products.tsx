@@ -17,7 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 // WARNING: This hook will only work within Odyssey Stats!
 // It also requires the existence of ${api_root}/jetpack/v4/site/purchases!
 //
-
+// TODO: check whether the site plan supports these products.
 const KEY_SLUG_MAP = new Map( [
 	[ 'backup', [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SECURITY_PLANS ] as readonly string[] ],
 	[ 'boost', JETPACK_BOOST_PRODUCTS as readonly string[] ],
