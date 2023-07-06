@@ -1,22 +1,18 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { Purchase } from 'calypso/lib/purchases/types';
+
 import './styles.scss';
 
 type Props = {
 	newlyTransferredDomains: Purchase[] | undefined;
+	placeHolderCount: number;
 };
 
-const PlaceHolderLisItem = () => {
-	return (
-		<li className="domain-complete-list-item">
-			<p className="loading-placeholder"></p>
-			<button className="components-button loading-placeholder"></button>
-		</li>
-	);
-};
-
-export const CompleteDomainsTransferred = ( { newlyTransferredDomains }: Props ) => {
+export const CompleteDomainsTransferred = ( {
+	newlyTransferredDomains,
+	placeHolderCount,
+}: Props ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -24,21 +20,32 @@ export const CompleteDomainsTransferred = ( { newlyTransferredDomains }: Props )
 			<div className="domain-complete-summary">
 				<ul className="domain-complete-list">
 					{ newlyTransferredDomains ? (
-						newlyTransferredDomains.map( ( { meta }, key ) => {
-							return (
-								<li className="domain-complete-list-item" key={ key }>
-									<h2>{ meta }</h2>
-									<a
-										href={ `/domains/manage/${ meta }` }
-										className="components-button is-secondary"
-									>
-										{ __( 'Manage domain' ) }
-									</a>
-								</li>
-							);
-						} )
+						<ul className="domain-complete-list">
+							{ newlyTransferredDomains.map( ( { meta }, key ) => {
+								return (
+									<li className="domain-complete-list-item" key={ key }>
+										<h2>{ meta }</h2>
+										<a
+											href={ `/domains/manage/${ meta }` }
+											className="components-button is-secondary"
+										>
+											{ __( 'Manage domain' ) }
+										</a>
+									</li>
+								);
+							} ) }
+						</ul>
 					) : (
-						<PlaceHolderLisItem />
+						<ul className="domain-complete-list">
+							{ [ ...Array( placeHolderCount ) ].map( ( data, key ) => {
+								return (
+									<li className="domain-complete-list-item" key={ key }>
+										<p className="loading-placeholder"></p>
+										<button className="components-button loading-placeholder"></button>
+									</li>
+								);
+							} ) }
+						</ul>
 					) }
 				</ul>
 			</div>
