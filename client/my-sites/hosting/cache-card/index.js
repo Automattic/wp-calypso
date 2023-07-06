@@ -126,7 +126,7 @@ export const CacheCard = ( {
 				</Button>
 				<EdgeCacheNotice>
 					{ translate(
-						'Be careful, clearing the cache may make your site less responsive while it is being rebuilt.'
+						'Clearing the cache may temporarily make your site less responsive while the cache refreshes.'
 					) }
 				</EdgeCacheNotice>
 				{ shouldRateLimitCacheClear && (
