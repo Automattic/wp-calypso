@@ -17,9 +17,8 @@ export const CompleteDomainsTransferred = ( {
 		<>
 			<div className="domain-complete-summary">
 				<ul className="domain-complete-list">
-					{ newlyTransferredDomains ? (
-						<ul className="domain-complete-list">
-							{ newlyTransferredDomains.map( ( { meta }, key ) => {
+					{ newlyTransferredDomains
+						? newlyTransferredDomains.map( ( { meta }, key ) => {
 								return (
 									<li className="domain-complete-list-item" key={ key }>
 										<h2>{ meta }</h2>
@@ -31,20 +30,15 @@ export const CompleteDomainsTransferred = ( {
 										</a>
 									</li>
 								);
-							} ) }
-						</ul>
-					) : (
-						<ul className="domain-complete-list">
-							{ [ ...Array( placeHolderCount ) ].map( ( data, key ) => {
+						  } )
+						: [ ...Array( placeHolderCount ) ].map( ( data, key ) => {
 								return (
 									<li className="domain-complete-list-item" key={ key }>
 										<p className="loading-placeholder"></p>
 										<button className="components-button loading-placeholder"></button>
 									</li>
 								);
-							} ) }
-						</ul>
-					) }
+						  } ) }
 				</ul>
 			</div>
 			<div className="domain-complete-tips">
