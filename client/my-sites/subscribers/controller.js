@@ -11,7 +11,9 @@ const PAGE_KEY = 'page';
 const SEARCH_KEY = 's';
 const SORT_KEY = 'sort';
 
-const queryStringChanged = ( path, key ) => ( value ) => {
+const queryStringChanged = ( key ) => ( value ) => {
+	const path = window.location.pathname + window.location.search;
+
 	scrollToTop();
 
 	if ( ! value ) {
@@ -22,7 +24,7 @@ const queryStringChanged = ( path, key ) => ( value ) => {
 };
 
 export function subscribers( context, next ) {
-	const { path, query } = context;
+	const { query } = context;
 	const filterOption = query[ FILTER_KEY ];
 	const pageNumber = sanitizeInt( query[ PAGE_KEY ] ) ?? 1;
 	const searchTerm = query[ SEARCH_KEY ];
@@ -34,10 +36,10 @@ export function subscribers( context, next ) {
 			pageNumber={ pageNumber }
 			searchTerm={ searchTerm }
 			sortTerm={ sortTerm }
-			filterOptionChanged={ queryStringChanged( path, FILTER_KEY ) }
-			pageChanged={ queryStringChanged( path, PAGE_KEY ) }
-			searchTermChanged={ queryStringChanged( path, SEARCH_KEY ) }
-			sortTermChanged={ queryStringChanged( path, SORT_KEY ) }
+			filterOptionChanged={ queryStringChanged( FILTER_KEY ) }
+			pageChanged={ queryStringChanged( PAGE_KEY ) }
+			searchTermChanged={ queryStringChanged( SEARCH_KEY ) }
+			sortTermChanged={ queryStringChanged( SORT_KEY ) }
 		/>
 	);
 
