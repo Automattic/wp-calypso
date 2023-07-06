@@ -52,6 +52,7 @@ $design-preview-sidebar-width: 311px;
 			border-bottom: 1px solid rgb(0 0 0 / 5%);
 			box-shadow: -4px 0 8px rgb(0 0 0 / 7%);
 			overflow: auto;
+			z-index: 1;
 		}
 
 		.design-preview__site-preview {
@@ -359,6 +360,12 @@ $design-preview-sidebar-width: 311px;
 
 		@include break-large {
 			display: block;
+		}
+	}
+
+	&.design-preview__site-preview--animated {
+		.device-switcher__frame {
+			transition: none;
 		}
 	}
 }
