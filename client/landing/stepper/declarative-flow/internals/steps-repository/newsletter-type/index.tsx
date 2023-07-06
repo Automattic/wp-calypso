@@ -1,22 +1,39 @@
 import { Onboard } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
-import { Card, CardBody, Icon } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Card,
+	CardBody,
+	Icon,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { reusableBlock } from '@wordpress/icons';
+import { chevronRight, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
+import './style.scss';
 
-const NewsletterOption = ( { icon, text, title, onClick } ) => (
-	<Card as="a" size="small" onClick={ onClick }>
+interface NewsletterOptionProps {
+	icon: JSX.Element;
+	onClick: () => void;
+	text: string;
+	title: string;
+}
+
+const NewsletterOption = ( { icon, onClick, text, title }: NewsletterOptionProps ) => (
+	<Card as="button" size="small" onClick={ onClick }>
 		<CardBody>
-			<h3>
+			<HStack>
 				<Icon icon={ icon } size={ 20 } />
-				{ title }
-			</h3>
-			<p>{ text }</p>
+				<div>
+					<h3>{ title }</h3>
+					<p>{ text }</p>
+				</div>
+				<Icon icon={ chevronRight } size={ 20 } />
+			</HStack>
 		</CardBody>
 	</Card>
 );
@@ -47,13 +64,13 @@ const NewsletterType: Step = ( { navigation } ) => {
 			flowName="newsletter"
 			formattedHeader={
 				<FormattedHeader
-					id="newsletter-type-header"
+					id="newsletter-setup-header"
 					headerText={ translate( 'Choose a way to get started.' ) }
 					align="center"
 				/>
 			}
 			stepContent={
-				<>
+				<VStack alignment="center" spacing="2">
 					<NewsletterOption
 						icon={ reusableBlock }
 						title={ translate( 'Free newsletter' ) }
@@ -78,7 +95,7 @@ const NewsletterType: Step = ( { navigation } ) => {
 						) }
 						onClick={ () => handleSubmit( Onboard.SiteGoal.ImportSubscribers ) }
 					/>
-				</>
+				</VStack>
 			}
 			recordTracksEvent={ recordTracksEvent }
 			showJetpackPowered

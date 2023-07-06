@@ -1,0 +1,30 @@
+@import "../style";
+
+.newsletter-type {
+
+	.step-container {
+		padding-top: 20px;
+		@include break-medium {
+			padding-top: 0;
+		}
+	}
+
+	/*
+	.step-container__content {
+		display: flex;
+		justify-content: center;
+	}
+	*/
+
+	.step-container__header {
+		margin-bottom: 40px;
+		@include break-medium {
+			margin-top: 36px;
+			margin-bottom: 58px;
+		}
+
+		.formatted-header p.formatted-header__subtitle {
+			text-align: center;
+		}
+	}
+}
