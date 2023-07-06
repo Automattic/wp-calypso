@@ -79,6 +79,7 @@ type Props = {
 	value?: string;
 	searchMode?: 'when-typing' | 'on-enter';
 	searchIcon?: ReactNode;
+	submitOnOpenIconClick?: boolean;
 };
 
 //This is fix for IE11. Does not work on Edge.
@@ -149,6 +150,7 @@ const InnerSearch = (
 		isReskinned = false,
 		searchMode = 'when-typing',
 		searchIcon,
+		submitOnOpenIconClick = false,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -349,13 +351,13 @@ const InnerSearch = (
 		}
 	};
 
-	const handleSubmit = ( event: FormEvent ) => {
+	const handleSubmit = ( event?: FormEvent ) => {
 		if ( 'on-enter' === searchMode ) {
 			onSearch?.( keyword );
 			onSearchChange?.( keyword );
 		}
-		event.preventDefault();
-		event.stopPropagation();
+		event?.preventDefault();
+		event?.stopPropagation();
 	};
 
 	const searchValue = keyword;
@@ -423,11 +425,23 @@ const InnerSearch = (
 			return renderReskinSearchIcon();
 		}
 
+		const onClick = ( props: React.MouseEvent< HTMLButtonElement > ) => {
+			if ( submitOnOpenIconClick ) {
+				handleSubmit();
+			}
+
+			if ( enableOpenIcon ) {
+				return openSearch( props );
+			}
+
+			return () => searchInput.current?.focus();
+		};
+
 		return (
 			<Button
 				className="search-component__icon-navigation"
 				ref={ openIcon }
-				onClick={ enableOpenIcon ? openSearch : () => searchInput.current?.focus() }
+				onClick={ onClick }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? openListener : undefined }
 				aria-controls={ 'search-component-' + instanceId }
