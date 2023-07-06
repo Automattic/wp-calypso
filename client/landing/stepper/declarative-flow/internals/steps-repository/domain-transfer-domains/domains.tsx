@@ -13,6 +13,8 @@ import { ONBOARD_STORE } from '../../../../stores';
 import { DomainCodePair } from './domain-code-pair';
 import type { OnboardSelect } from '@automattic/data-stores';
 
+const MAX_DOMAINS = 50;
+
 export interface Props {
 	onSubmit: () => void;
 }
@@ -33,6 +35,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		[]
 	);
 	const domainsState = storedDomainsState || defaultState;
+
+	const domainCount = Object.keys( domainsState ).length;
 
 	const numberOfValidDomains = Object.values( domainsState ).filter(
 		( { valid } ) => valid
@@ -121,9 +125,11 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					showDelete={ Object.values( domainsState ).length > 1 }
 				/>
 			) ) }
-			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-				{ __( 'Add another domain' ) }
-			</Button>
+			{ domainCount < MAX_DOMAINS && (
+				<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
+					{ __( 'Add another domain' ) }
+				</Button>
+			) }
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 }
