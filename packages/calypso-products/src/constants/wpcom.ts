@@ -6,8 +6,8 @@ export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
 export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
 export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
-export const PRODUCT_100GB_STORAGE = 'wpcom_100gb_storage';
-export const PRODUCT_200GB_STORAGE = 'wpcom_200gb_storage';
+export const PRODUCT_50GB_STORAGE_ADD_ON = 'wpcom_50gb_storage_addon';
+export const PRODUCT_100GB_STORAGE_ADD_ON = 'wpcom_100gb_storage_addon';
 export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
 
 export const WPCOM_SEARCH_PRODUCTS = <const>[ PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY ];
