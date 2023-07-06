@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import acceptDialog from 'calypso/lib/accept';
 import PluginsListHeader from 'calypso/my-sites/plugins/plugin-list-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { warningNotice } from 'calypso/state/notices/actions';
@@ -28,8 +27,10 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { PluginActions } from '../hooks/types';
+import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 import PluginManagementV2 from '../plugin-management-v2';
-import { getPluginActionDailogMessage, getSitePlugin, handleUpdatePlugins } from '../utils';
+import { getSitePlugin, handleUpdatePlugins } from '../utils';
 
 import './style.scss';
 
@@ -318,16 +319,16 @@ export class PluginsList extends Component {
 
 		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
 
-			let waitForDeactivate = false;
+		let waitForDeactivate = false;
 
-			this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
-				waitForDeactivate = true;
-				this.props.deactivatePlugin( site, plugin );
-			} );
+		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
+			waitForDeactivate = true;
+			this.props.deactivatePlugin( site, plugin );
+		} );
 
-			if ( waitForDeactivate && this.props.selectedSite ) {
-				this.setState( { disconnectJetpackNotice: true } );
-			}
+		if ( waitForDeactivate && this.props.selectedSite ) {
+			this.setState( { disconnectJetpackNotice: true } );
+		}
 	};
 
 	setAutoupdateSelected = ( accepted ) => {
@@ -349,128 +350,60 @@ export class PluginsList extends Component {
 	};
 
 	bulkActionDialog = ( actionName, selectedPlugin ) => {
-		const { plugins, translate, allSites } = this.props;
+		const { plugins, allSites, showPluginActionDialog } = this.props;
 		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
-		const pluginsCount = selectedPlugins.length;
-
 		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
-		const dialogOptions = {
-			additionalClassNames: 'plugins__confirmation-modal',
-			...( actionName === 'remove' && { isScary: true } ),
-		};
-
-		let pluginName;
-		const hasOnePlugin = pluginsCount === 1;
-
-		if ( hasOnePlugin ) {
-			const [ { name, slug } ] = selectedPlugins;
-			pluginName = name || slug;
-		}
-
 		switch ( actionName ) {
-			case 'activate': {
-				const heading = hasOnePlugin
-					? translate( 'Activate %(pluginName)s', { args: { pluginName } } )
-					: translate( 'Activate %(pluginsCount)d plugins', { args: { pluginsCount } } );
-				acceptDialog(
-					getPluginActionDailogMessage( allSites, selectedPlugins, heading, 'activate' ),
-					( accepted ) => this.activateSelected( accepted ),
-					heading,
-					null,
-					dialogOptions
+			case PluginActions.ACTIVATE: {
+				showPluginActionDialog( PluginActions.ACTIVATE, selectedPlugins, allSites, ( accepted ) =>
+					this.activateSelected( accepted )
 				);
 				break;
 			}
-			case 'deactivate': {
-				const heading = hasOnePlugin
-					? translate( 'Deactivate %(pluginName)s', { args: { pluginName } } )
-					: translate( 'Deactivate %(pluginsCount)d plugins', { args: { pluginsCount } } );
-				acceptDialog(
-					getPluginActionDailogMessage( allSites, selectedPlugins, heading, 'deactivate' ),
+			case PluginActions.DEACTIVATE: {
+				showPluginActionDialog(
+					PluginActions.DEACTIVATE,
+					selectedPlugins,
+					allSites,
 					isJetpackIncluded
 						? ( accepted ) => this.deactiveAndDisconnectSelected( accepted )
-						: ( accepted ) => this.deactivateSelected( accepted ),
-					heading,
-					null,
-					dialogOptions
+						: ( accepted ) => this.deactivateSelected( accepted )
 				);
 				break;
 			}
-			case 'enableAutoupdates': {
-				const heading = hasOnePlugin
-					? translate( 'Enable autoupdate for %(pluginName)s', { args: { pluginName } } )
-					: translate( 'Enable autoupdates for %(pluginsCount)d plugins', {
-							args: { pluginsCount },
-					  } );
-				acceptDialog(
-					getPluginActionDailogMessage(
-						allSites,
-						selectedPlugins,
-						heading,
-						'enable autoupdates for'
-					),
-					( accepted ) => this.setAutoupdateSelected( accepted ),
-					heading,
-					null,
-					dialogOptions
+			case PluginActions.ENABLE_AUTOUPDATES: {
+				showPluginActionDialog(
+					PluginActions.ENABLE_AUTOUPDATES,
+					selectedPlugins,
+					allSites,
+					( accepted ) => this.setAutoupdateSelected( accepted )
 				);
 				break;
 			}
-			case 'disableAutoupdates': {
-				const heading = hasOnePlugin
-					? translate( 'Disable autoupdate for %(pluginName)s', { args: { pluginName } } )
-					: translate( 'Disable autoupdates for %(pluginsCount)d plugins', {
-							args: { pluginsCount },
-					  } );
-				acceptDialog(
-					getPluginActionDailogMessage(
-						allSites,
-						selectedPlugins,
-						heading,
-						'disable autoupdates for'
-					),
-					( accepted ) => this.unsetAutoupdateSelected( accepted ),
-					heading,
-					null,
-					dialogOptions
+			case PluginActions.DISABLE_AUTOUPDATES: {
+				showPluginActionDialog(
+					PluginActions.DISABLE_AUTOUPDATES,
+					selectedPlugins,
+					allSites,
+					( accepted ) => this.unsetAutoupdateSelected( accepted )
 				);
 				break;
 			}
-			case 'update': {
-				const heading = hasOnePlugin
-					? translate( 'Update %(pluginName)s', { args: { pluginName } } )
-					: translate( 'Update %(pluginsCount)d plugins', {
-							args: { pluginsCount },
-					  } );
-				acceptDialog(
-					getPluginActionDailogMessage( allSites, selectedPlugins, heading, 'update' ),
-					( accepted ) => this.updateSelected( accepted ),
-					heading,
-					null,
-					dialogOptions
+			case PluginActions.UPDATE: {
+				showPluginActionDialog( PluginActions.UPDATE, selectedPlugins, allSites, ( accepted ) =>
+					this.updateSelected( accepted )
 				);
 				break;
 			}
-			case 'remove': {
-				const heading = hasOnePlugin
-					? translate( 'Remove %(pluginName)s', { args: { pluginName } } )
-					: translate( 'Remove %(pluginsCount)d plugins', {
-							args: { pluginsCount },
-					  } );
-				acceptDialog(
-					getPluginActionDailogMessage(
-						allSites,
-						selectedPlugins,
-						heading,
-						'deactivate and delete'
-					),
+			case PluginActions.REMOVE: {
+				showPluginActionDialog(
+					PluginActions.REMOVE,
+					selectedPlugins,
+					allSites,
 					isJetpackIncluded
 						? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
-						: ( accepted ) => this.removeSelected( accepted, selectedPlugins ),
-					heading,
-					null,
-					dialogOptions
+						: ( accepted ) => this.removeSelected( accepted, selectedPlugins )
 				);
 				break;
 			}
@@ -478,7 +411,7 @@ export class PluginsList extends Component {
 	};
 
 	removePluginDialog = ( selectedPlugin ) => {
-		this.bulkActionDialog( 'remove', selectedPlugin );
+		this.bulkActionDialog( PluginActions.REMOVE, selectedPlugin );
 	};
 
 	removeSelected = ( accepted, selectedPlugins ) => {
@@ -497,19 +430,19 @@ export class PluginsList extends Component {
 
 		this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
 
-			if ( selectedPlugins.length === 1 ) {
-				this.setState( { removeJetpackNotice: true } );
+		if ( selectedPlugins.length === 1 ) {
+			this.setState( { removeJetpackNotice: true } );
 			return;
 		}
 
-				let waitForRemove = false;
-				this.doActionOverSelected( 'removing', ( site, plugin ) => {
-					waitForRemove = true;
-					this.props.removePlugin( site, plugin );
-				} );
+		let waitForRemove = false;
+		this.doActionOverSelected( 'removing', ( site, plugin ) => {
+			waitForRemove = true;
+			this.props.removePlugin( site, plugin );
+		} );
 
-				if ( waitForRemove && this.props.selectedSite ) {
-					this.setState( { removeJetpackNotice: true } );
+		if ( waitForRemove && this.props.selectedSite ) {
+			this.setState( { removeJetpackNotice: true } );
 		}
 	};
 
@@ -522,22 +455,22 @@ export class PluginsList extends Component {
 			return;
 		}
 
-			this.setState( {
-				disconnectJetpackNotice: false,
-			} );
+		this.setState( {
+			disconnectJetpackNotice: false,
+		} );
 
 		const { translate } = this.props;
-			this.props.warningNotice(
-				translate(
-					'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
-					{
-						components: {
-							link: <a href={ '/settings/manage-connection/' + this.props.selectedSiteSlug } />,
-						},
-					}
-				)
-			);
-		}
+		this.props.warningNotice(
+			translate(
+				'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
+				{
+					components: {
+						link: <a href={ '/settings/manage-connection/' + this.props.selectedSiteSlug } />,
+					},
+				}
+			)
+		);
+	}
 
 	maybeShowRemoveNotice() {
 		if ( ! this.state.removeJetpackNotice ) {
@@ -548,13 +481,13 @@ export class PluginsList extends Component {
 			return;
 		}
 
-			this.setState( {
-				removeJetpackNotice: false,
-			} );
+		this.setState( {
+			removeJetpackNotice: false,
+		} );
 
 		const { translate } = this.props;
-			this.props.warningNotice( translate( 'Jetpack must be removed via wp-admin.' ) );
-		}
+		this.props.warningNotice( translate( 'Jetpack must be removed via wp-admin.' ) );
+	}
 
 	getPluginsSites() {
 		const { plugins } = this.props;
@@ -589,11 +522,15 @@ export class PluginsList extends Component {
 					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
 					removePluginNotice={ () => this.removePluginDialog() }
 					setSelectionState={ this.setBulkSelectionState }
-					activatePluginNotice={ () => this.bulkActionDialog( 'activate' ) }
-					deactivatePluginNotice={ () => this.bulkActionDialog( 'deactivate' ) }
-					autoupdateEnablePluginNotice={ () => this.bulkActionDialog( 'enableAutoupdates' ) }
-					autoupdateDisablePluginNotice={ () => this.bulkActionDialog( 'disableAutoupdates' ) }
-					updatePluginNotice={ () => this.bulkActionDialog( 'update' ) }
+					activatePluginNotice={ () => this.bulkActionDialog( PluginActions.ACTIVATE ) }
+					deactivatePluginNotice={ () => this.bulkActionDialog( PluginActions.DEACTIVATE ) }
+					autoupdateEnablePluginNotice={ () =>
+						this.bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES )
+					}
+					autoupdateDisablePluginNotice={ () =>
+						this.bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES )
+					}
+					updatePluginNotice={ () => this.bulkActionDialog( PluginActions.UPDATE ) }
 					isJetpackCloud={ this.props.isJetpackCloud }
 				/>
 				<PluginManagementV2
@@ -676,4 +613,4 @@ export default connect(
 		updatePlugin,
 		warningNotice,
 	}
-)( localize( PluginsList ) );
+)( withShowPluginActionDialog( localize( PluginsList ) ) );
