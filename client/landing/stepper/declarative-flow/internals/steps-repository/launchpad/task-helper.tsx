@@ -1,7 +1,6 @@
 import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
-	PLAN_PREMIUM,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -43,7 +42,7 @@ export function getEnhancedTasks(
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
-	globalStylesMinimumPlan?: string | null,
+	globalStylesMinimumPlan: string,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
@@ -161,7 +160,7 @@ export function getEnhancedTasks(
 						}
 						const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 							...( shouldDisplayWarning && {
-								plan: globalStylesMinimumPlan ?? PLAN_PREMIUM,
+								plan: globalStylesMinimumPlan,
 								feature: isVideoPressFlowWithUnsupportedPlan
 									? FEATURE_VIDEO_UPLOADS
 									: FEATURE_STYLE_CUSTOMIZATION,
