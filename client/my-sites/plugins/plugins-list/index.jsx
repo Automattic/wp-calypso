@@ -286,7 +286,7 @@ export class PluginsList extends Component {
 		const ALL_ACTION_CALLBACKS = {
 			[ PluginActions.ACTIVATE ]: this.activateSelected,
 			[ PluginActions.DEACTIVATE ]: isJetpackIncluded
-				? this.deactiveAndDisconnectSelected
+				? this.deactivateAndDisconnectSelected
 				: this.deactivateSelected,
 			[ PluginActions.REMOVE ]: isJetpackIncluded
 				? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
@@ -311,7 +311,7 @@ export class PluginsList extends Component {
 		this.doActionOverSelected( 'activating', this.props.activatePlugin );
 	};
 
-	deactiveAndDisconnectSelected = ( accepted ) => {
+	deactivateAndDisconnectSelected = ( accepted ) => {
 		if ( ! accepted ) {
 			return;
 		}
@@ -482,7 +482,7 @@ export class PluginsList extends Component {
 					selected={ this.getSelected() }
 					toggleBulkManagement={ this.toggleBulkManagement }
 					updateSelected={ this.updateSelected }
-					deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
+					deactiveAndDisconnectSelected={ this.deactivateAndDisconnectSelected }
 					setAutoupdateSelected={ this.setAutoupdateSelected }
 					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
 					removePluginNotice={ () => this.removePluginDialog() }
