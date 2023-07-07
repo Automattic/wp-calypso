@@ -814,6 +814,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     react: ^18.2.0
     react-dom: ^18.2.0
+    react-intersection-observer: ^9.4.3
     tslib: ^2.3.0
     typescript: ^4.7.4
     wpcom-proxy-request: "workspace:^"

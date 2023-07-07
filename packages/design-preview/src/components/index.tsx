@@ -117,6 +117,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				url={ previewUrl }
 				inlineCss={ inlineCss }
 				isFullscreen={ isFullscreen }
+				animated={ ! isDesktop }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>
