@@ -446,7 +446,7 @@ object RunAllUnitTests : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 10
+		executionTimeoutMin = 8
 	}
 	features {
 		feature {
