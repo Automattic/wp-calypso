@@ -1,4 +1,6 @@
-import { useLayoutEffect, useState, useRef } from 'react';
+import { useResizeObserver } from '@wordpress/compose';
+import { useLayoutEffect, useRef } from 'react';
+import type { CSSProperties } from 'react';
 
 interface Props {
 	className?: string;
@@ -10,26 +12,19 @@ interface Props {
 const AnimatedFullscreen = ( { className, children, isFullscreen, enabled }: Props ) => {
 	const positionerRef = useRef< HTMLDivElement | null >( null );
 	const targetRef = useRef< HTMLDivElement | null >( null );
-	const [ style, setStyle ] = useState( {} );
+	const [ containerResizeListener, { width, height } ] = useResizeObserver();
 
 	useLayoutEffect( () => {
 		if ( ! enabled || ! positionerRef.current || ! targetRef.current ) {
 			return;
 		}
 
-		const { width, height, left, top } = positionerRef.current.getBoundingClientRect();
-
-		setStyle( {
-			position: 'absolute',
-			left: 0,
-			top: 0,
-			width,
-			height,
-			transform: `translate(${ left }px, ${ top }px)`,
-			transformOrigin: 'center center',
-			transition: 'transform 0.15s linear',
-		} );
-	}, [ isFullscreen, enabled ] );
+		const { offsetLeft, offsetTop, offsetHeight } = positionerRef.current;
+		targetRef.current.style.left = `${ offsetLeft }px`;
+		targetRef.current.style.right = `${ offsetLeft }px`;
+		targetRef.current.style.top = `${ offsetTop }px`;
+		targetRef.current.style.bottom = `${ offsetTop + offsetHeight }px`;
+	}, [ isFullscreen, width, height, enabled ] );
 
 	if ( ! enabled ) {
 		return <div className={ className }>{ children }</div>;
@@ -37,8 +32,29 @@ const AnimatedFullscreen = ( { className, children, isFullscreen, enabled }: Pro
 
 	return (
 		<>
-			<div className={ className } ref={ positionerRef } />
-			<div className={ className } ref={ targetRef } style={ style }>
+			<div
+				className={ className }
+				ref={ positionerRef }
+				style={ {
+					opacity: 0,
+					pointerEvents: 'none',
+					zIndex: -1,
+				} }
+				aria-hidden="true"
+			>
+				{ containerResizeListener }
+			</div>
+			<div
+				className={ className }
+				ref={ targetRef }
+				style={
+					{
+						position: 'absolute',
+						transition: 'all 0.3s ease-out',
+						isolation: 'isolate',
+					} as CSSProperties
+				}
+			>
 				{ children }
 			</div>
 		</>

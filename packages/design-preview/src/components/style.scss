@@ -53,6 +53,8 @@ $design-preview-sidebar-width: 311px;
 			box-shadow: -4px 0 8px rgb(0 0 0 / 7%);
 			overflow: auto;
 			z-index: 1;
+			position: relative;
+			animation: sidebarFadeIn 0.3s ease-out;
 		}
 
 		.design-preview__site-preview {
@@ -257,7 +259,6 @@ $design-preview-sidebar-width: 311px;
 	display: block;
 	padding: 16px 24px 8px 32px;
 	margin: 0 -16px;
-	animation: fadeIn 0.3s ease-out;
 
 	> p {
 		color: var(--studio-gray-100);
@@ -364,12 +365,6 @@ $design-preview-sidebar-width: 311px;
 			display: block;
 		}
 	}
-
-	&.design-preview__site-preview--animated {
-		.device-switcher__frame {
-			transition: none;
-		}
-	}
 }
 
 .design-picker__premium-badge {
@@ -418,11 +413,12 @@ $design-preview-sidebar-width: 311px;
 	}
 }
 
-@keyframes fadeIn {
+// We cannot use translate here as the sidebar might container element with fixed position
+@keyframes sidebarFadeIn {
 	from {
-		transform: translateY(-100%);
+		top: -100%;
 	}
 	to {
-		transform: translateY(0%);
+		top: 0;
 	}
 }
