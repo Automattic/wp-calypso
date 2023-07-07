@@ -387,8 +387,6 @@ const PatternAssembler = ( {
 			return;
 		}
 
-		closePanel();
-
 		if ( isEnabled( 'pattern-assembler/logged-in-showcase' ) ) {
 			setPendingAction( () =>
 				Promise.resolve()
@@ -429,6 +427,7 @@ const PatternAssembler = ( {
 	};
 
 	const handleContinue = () => {
+		closePanel();
 		if ( isNewSite ) {
 			onSubmit();
 		} else {
