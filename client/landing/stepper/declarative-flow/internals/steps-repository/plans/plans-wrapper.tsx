@@ -1,6 +1,4 @@
-// import { subscribeIsDesktop } from '@automattic/viewport';
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
-import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import {
 	DOMAIN_UPSELL_FLOW,
@@ -30,6 +28,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -37,7 +36,6 @@ import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
 import './style.scss';
 
-type IntervalType = 'yearly' | 'monthly';
 interface Props {
 	flowName: string | null;
 	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
@@ -125,18 +123,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				<LoadingEllipsis className="active" />
 			</div>
 		);
-	};
-
-	const getIntervalType: () => IntervalType = () => {
-		const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
-		const intervalType = urlParts?.searchParams.get( 'intervalType' );
-		switch ( intervalType ) {
-			case 'monthly':
-			case 'yearly':
-				return intervalType as IntervalType;
-			default:
-				return 'yearly';
-		}
 	};
 
 	const plansFeaturesList = () => {
