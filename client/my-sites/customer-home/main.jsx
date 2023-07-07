@@ -31,6 +31,8 @@ import {
 	isRequesting as isRequestingInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
@@ -53,6 +55,8 @@ const Home = ( {
 	sitePlan,
 	isNew7DUser,
 	isSiteWooExpressEcommerceTrial,
+	ssoModuleActive,
+	fetchingJetpackModules,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 
@@ -103,7 +107,11 @@ const Home = ( {
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
 	// while doing the redirection.
-	if ( isSiteWooExpressEcommerceTrial && ( isRequestingSitePlugins || hasWooCommerceInstalled ) ) {
+	if (
+		isSiteWooExpressEcommerceTrial &&
+		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
+		( fetchingJetpackModules || ssoModuleActive )
+	) {
 		return <WooCommerceHomePlaceholder />;
 	}
 
@@ -182,6 +190,8 @@ Home.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
 	isSiteWooExpressEcommerceTrial: PropTypes.bool.isRequired,
+	ssoModuleActive: PropTypes.bool.isRequired,
+	fetchingJetpackModules: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state ) => {
@@ -200,6 +210,8 @@ const mapStateToProps = ( state ) => {
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
 		isSiteWooExpressEcommerceTrial: isSiteOnWooExpressEcommerceTrial( state, siteId ),
+		ssoModuleActive: !! isJetpackModuleActive( state, siteId, 'sso' ),
+		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 	};
 };
 
