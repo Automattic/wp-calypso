@@ -1,19 +1,9 @@
-import { isDomainTransfer } from '@automattic/calypso-products';
-import {
-	Button,
-	useFormStatus,
-	FormStatus,
-	useAvailablePaymentMethodIds,
-} from '@automattic/composite-checkout';
+import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import {
-	hasRenewableSubscription,
-	hasRenewalItemAndWillAutoRenew,
-} from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WordPressLogo from '../components/wordpress-logo';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
@@ -100,23 +90,24 @@ function WordPressFreePurchaseLabel() {
 	const { __ } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
 
-	// Domain transfer is a one-time purchase, but it creates a renewable
-	// subscription behind the scenes so we'll treat it like a renewable purchase.
-	const hasDomainTransfer = responseCart.products.some( ( product ) =>
-		isDomainTransfer( product )
+	const doesCartHaveRenewalWithPaymentMethod = responseCart.products.some(
+		( product ) => product.is_renewal_and_will_auto_renew
 	);
-	// If the cart has any renewable purchases and there are more
-	// than one payment method options, change the label.
-	const isRenewableCart = hasRenewableSubscription( responseCart ) || hasDomainTransfer;
-	const hasRenewableItemThatWillAutoRenew = hasRenewalItemAndWillAutoRenew( responseCart );
-	const freePurchaseLabel =
-		isRenewableCart && availablePaymentMethodIds.length > 1 && ! hasRenewableItemThatWillAutoRenew
-			? __( 'Assign a Payment Method Later' )
-			: __( 'Free Purchase' );
+	const isCartAllOneTimePurchases = responseCart.products.every(
+		( product ) => product.is_one_time_purchase
+	);
 
-	if ( doesPurchaseHaveFullCredits( responseCart ) ) {
+	if ( ! isCartAllOneTimePurchases && ! doesCartHaveRenewalWithPaymentMethod ) {
+		return (
+			<>
+				<div>{ __( 'Assign a Payment Method Later' ) }</div>
+				<WordPressLogo />
+			</>
+		);
+	}
+
+	if ( isCartAllOneTimePurchases && doesPurchaseHaveFullCredits( responseCart ) ) {
 		return (
 			<>
 				<div>
@@ -135,9 +126,18 @@ function WordPressFreePurchaseLabel() {
 		);
 	}
 
+	if ( doesCartHaveRenewalWithPaymentMethod ) {
+		return (
+			<>
+				<div>{ __( 'Renew Without Changing Saved Payment Method' ) }</div>
+				<WordPressLogo />
+			</>
+		);
+	}
+
 	return (
 		<>
-			<div>{ freePurchaseLabel }</div>
+			<div>{ __( 'Free Purchase' ) }</div>
 			<WordPressLogo />
 		</>
 	);

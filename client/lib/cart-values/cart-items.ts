@@ -161,10 +161,6 @@ export function hasRenewalItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isRenewal );
 }
 
-export function hasRenewalItemAndWillAutoRenew( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( ( product ) => product.is_renewal_and_will_auto_renew );
-}
-
 export function hasTransferProduct( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainTransfer );
 }

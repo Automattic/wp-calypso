@@ -496,6 +496,11 @@ export interface ResponseCartProduct {
 	 */
 	is_renewal_and_will_auto_renew?: boolean;
 
+	/**
+	 * True if the product will not renew.
+	 */
+	is_one_time_purchase?: boolean;
+
 	subscription_id?: string;
 	introductory_offer_terms?: IntroductoryOfferTerms;
 
