@@ -46,14 +46,15 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 			const posterEndpoint = `https://public-api.wordpress.com/rest/v1.1/videos/${ id }/poster`;
 
 			try {
-				return globalThis.fetch( posterEndpoint ).then( async ( response ) => {
-					const json = await response.json();
-
-					const thumbnailUrl = json?.poster ?? '';
-					if ( thumbnailUrl ) {
-						dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
-					}
-				} );
+				return globalThis
+					.fetch( posterEndpoint )
+					.then( ( response ) => response.json() )
+					.then( ( json ) => {
+						const thumbnailUrl = json?.poster ?? '';
+						if ( thumbnailUrl ) {
+							dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
+						}
+					} );
 			} catch ( error ) {}
 		}
 		case 'vimeo': {
@@ -61,14 +62,15 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 
 			const fetchUrl = `https://vimeo.com/api/v2/video/${ id }.json`;
 			try {
-				return globalThis.fetch( fetchUrl ).then( async ( response ) => {
-					const json = await response.json();
-
-					const thumbnailUrl = get( json, [ 0, 'thumbnail_large' ] );
-					if ( thumbnailUrl ) {
-						dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
-					}
-				} );
+				return globalThis
+					.fetch( fetchUrl )
+					.then( ( response ) => response.json() )
+					.then( ( json ) => {
+						const thumbnailUrl = get( json, [ 0, 'thumbnail_large' ] );
+						if ( thumbnailUrl ) {
+							dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
+						}
+					} );
 			} catch ( error ) {}
 		}
 		default:
