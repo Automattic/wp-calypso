@@ -73,6 +73,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
+	const { flowName, hostingFlow } = props;
 
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
@@ -85,8 +86,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
-	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
-	const plansIntent = getPlansIntent( props?.flowName, props.hostingFlow );
+	const isInSignup = flowName === DOMAIN_UPSELL_FLOW ? false : true;
+	const plansIntent = getPlansIntent( flowName, hostingFlow );
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
@@ -126,8 +127,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const plansFeaturesList = () => {
-		const { flowName } = props;
-
 		if ( ! props.plansLoaded ) {
 			return renderLoading();
 		}
@@ -137,6 +136,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
+					showBiennialToggle={ isOnboardingPMFlow( flowName ) }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
@@ -155,7 +155,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
-		const { flowName } = props;
 		if (
 			flowName === DOMAIN_UPSELL_FLOW ||
 			isNewHostedSiteCreationFlow( flowName ) ||
@@ -180,8 +179,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getSubHeaderText = () => {
-		const { flowName } = props;
-
 		const freePlanButton = (
 			<Button onClick={ handleFreePlanButtonClick } className="is-borderless" />
 		);
@@ -211,8 +208,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const plansFeaturesSelection = () => {
-		const { flowName } = props;
-
 		const headerText = getHeaderText();
 		const fallbackHeaderText = headerText;
 		const subHeaderText = getSubHeaderText();

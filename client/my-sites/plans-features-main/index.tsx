@@ -233,6 +233,7 @@ const PlansFeaturesMain = ( {
 	hideEnterprisePlan,
 	intent: intentFromProps, // do not set a default value for this prop here
 	isReskinned,
+	showBiennialToggle,
 	customerType = 'personal',
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
@@ -370,6 +371,7 @@ const PlansFeaturesMain = ( {
 		siteSlug,
 		selectedPlan,
 		selectedFeature,
+		showBiennialToggle,
 		kind: planTypeSelector,
 		plans: visiblePlans,
 	};
