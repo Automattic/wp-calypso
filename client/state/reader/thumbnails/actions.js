@@ -47,10 +47,7 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 
 			try {
 				return globalThis.fetch( posterEndpoint ).then( async ( response ) => {
-					let json;
-					try {
-						json = await response.json();
-					} catch ( error ) {}
+					const json = await response.json();
 
 					const thumbnailUrl = json?.poster ?? '';
 					if ( thumbnailUrl ) {
@@ -65,10 +62,7 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 			const fetchUrl = `https://vimeo.com/api/v2/video/${ id }.json`;
 			try {
 				return globalThis.fetch( fetchUrl ).then( async ( response ) => {
-					let json;
-					try {
-						json = await response.json();
-					} catch ( error ) {}
+					const json = await response.json();
 
 					const thumbnailUrl = get( json, [ 0, 'thumbnail_large' ] );
 					if ( thumbnailUrl ) {
