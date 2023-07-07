@@ -6,7 +6,6 @@ import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SectionNav from 'calypso/components/section-nav';
 import useUsersQuery from 'calypso/data/users/use-users-query';
-import useRemoveViewer from 'calypso/data/viewers/use-remove-viewer-mutation';
 import useViewersQuery from 'calypso/data/viewers/use-viewers-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
@@ -34,7 +33,6 @@ function SubscribersTeam( props: Props ) {
 	const pendingInvites = useSelector( ( state ) =>
 		getPendingInvitesForSite( state, site?.ID as number )
 	);
-	const { removeViewer } = useRemoveViewer();
 
 	const teamFetchOptions = search
 		? {
@@ -106,7 +104,6 @@ function SubscribersTeam( props: Props ) {
 										fetchNextPage={ viewersQuery.fetchNextPage }
 										hasNextPage={ viewersQuery.hasNextPage }
 										isFetchingNextPage={ viewersQuery.isFetchingNextPage }
-										removeViewer={ removeViewer }
 									/>
 								</>
 							);

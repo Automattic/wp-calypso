@@ -70,7 +70,7 @@ class Viewers extends Component {
 				user={ viewer }
 				type="viewer"
 				site={ this.props.site }
-				onRemove={ removeThisViewer }
+				onRemove={ this.props.removeViewer ? removeThisViewer : undefined }
 			/>
 		);
 	};
