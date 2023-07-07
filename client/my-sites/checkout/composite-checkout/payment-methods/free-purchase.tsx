@@ -107,7 +107,7 @@ function WordPressFreePurchaseLabel() {
 		);
 	}
 
-	if ( isCartAllOneTimePurchases && doesPurchaseHaveFullCredits( responseCart ) ) {
+	if ( doesPurchaseHaveFullCredits( responseCart ) ) {
 		return (
 			<>
 				<div>
@@ -121,15 +121,6 @@ function WordPressFreePurchaseLabel() {
 						} )
 					}
 				</div>
-				<WordPressLogo />
-			</>
-		);
-	}
-
-	if ( doesCartHaveRenewalWithPaymentMethod ) {
-		return (
-			<>
-				<div>{ __( 'Renew Without Changing Saved Payment Method' ) }</div>
 				<WordPressLogo />
 			</>
 		);

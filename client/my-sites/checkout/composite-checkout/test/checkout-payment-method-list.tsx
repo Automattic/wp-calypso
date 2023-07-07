@@ -197,9 +197,7 @@ describe( 'Checkout payment methods list', () => {
 			/>
 		);
 		await waitFor( () => {
-			expect(
-				screen.getByText( 'Renew Without Changing Saved Payment Method' )
-			).toBeInTheDocument();
+			expect( screen.getByText( /WordPress.com Credits/ ) ).toBeInTheDocument();
 		} );
 	} );
 
