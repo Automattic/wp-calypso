@@ -137,7 +137,9 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				>
 					{ isPromotePostI2 ? (
 						<BlankCanvas.Header
-							className="blazepress-widget__header-bar"
+							className={ classNames( 'blazepress-widget__header-bar', {
+								'no-back-button': ! showCancelButton,
+							} ) }
 							onBackClick={ () => setShowCancelDialog( true ) }
 						>
 							<h2>{ translate( 'Blaze - Powered by Jetpack' ) }</h2>

@@ -103,6 +103,10 @@ $heading-font-family: "SF Pro Display", $sans;
 				letter-spacing: 0.34px;
 			}
 
+			&.no-back-button .blank-canvas__back {
+				display: none;
+			}
+
 			.blank-canvas__header-title {
 				position: initial;
 				margin-left: auto;
