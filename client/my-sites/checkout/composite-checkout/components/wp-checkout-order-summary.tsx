@@ -407,7 +407,6 @@ function CheckoutSummaryFeaturesList( props: {
 						<WPCheckoutCheckIcon id="features-list-support-manage" />
 						{ translate( 'Manage everything you need in one place' ) }
 					</CheckoutSummaryFeaturesListItem>
-
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="annual-live-chat" />
 						{ translate( 'Live chat support' ) }
