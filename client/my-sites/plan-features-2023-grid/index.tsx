@@ -217,7 +217,7 @@ export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
 	PlanFeatures2023GridState
 > {
-	constructor( props ) {
+	constructor( props: PlanFeatures2023GridType ) {
 		super( props );
 
 		this.state = {
