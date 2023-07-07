@@ -30,7 +30,7 @@ import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors
 import { PluginActions } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 import PluginManagementV2 from '../plugin-management-v2';
-import { getSitePlugin, handleUpdatePlugins } from '../utils';
+import { handleUpdatePlugins } from '../utils';
 
 import './style.scss';
 
@@ -160,46 +160,8 @@ export class PluginsList extends Component {
 		} );
 	};
 
-	filterSelection = {
-		active( plugin ) {
-			if ( this.isSelected( plugin ) ) {
-				return Object.keys( plugin.sites ).some( ( siteId ) => {
-					const sitePlugin = getSitePlugin( plugin, siteId, this.props.pluginsOnSites );
-					return sitePlugin?.active;
-				} );
-			}
-			return false;
-		},
-		inactive( plugin ) {
-			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
-				return Object.keys( plugin.sites ).some( ( siteId ) => {
-					const sitePlugin = getSitePlugin( plugin, siteId, this.props.pluginsOnSites );
-					return ! sitePlugin?.active;
-				} );
-			}
-			return false;
-		},
-		updates( plugin ) {
-			if ( this.isSelected( plugin ) ) {
-				return Object.keys( plugin.sites ).some( ( siteId ) => {
-					const sitePlugin = getSitePlugin( plugin, siteId, this.props.pluginsOnSites );
-					const site = this.props.allSites.find( ( s ) => s.ID === parseInt( siteId ) );
-					return sitePlugin?.update?.new_version && site.canUpdateFiles;
-				} );
-			}
-			return false;
-		},
-		selected( plugin ) {
-			return this.isSelected( plugin );
-		},
-	};
-
 	getSelected() {
-		return this.props.plugins.filter( this.filterSelection.selected.bind( this ) );
-	}
-
-	siteSuffix() {
-		return this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
+		return this.props.plugins.filter( this.isSelected.bind( this ) );
 	}
 
 	recordEvent( eventAction, includeSelectedPlugins ) {
@@ -269,14 +231,6 @@ export class PluginsList extends Component {
 			sites: siteIds,
 		} );
 	}
-
-	pluginHasUpdate = ( plugin ) => {
-		return Object.keys( plugin.sites ).some( ( siteId ) => {
-			const sitePlugin = getSitePlugin( plugin, siteId, this.props.pluginsOnSites );
-			const site = this.props.allSites.find( ( s ) => s.ID === parseInt( siteId ) );
-			return sitePlugin?.update && site?.canUpdateFiles;
-		} );
-	};
 
 	bulkActionDialog = ( actionName, selectedPlugin ) => {
 		const { plugins, allSites, showPluginActionDialog } = this.props;
@@ -452,20 +406,6 @@ export class PluginsList extends Component {
 
 		const { translate } = this.props;
 		this.props.warningNotice( translate( 'Jetpack must be removed via wp-admin.' ) );
-	}
-
-	getPluginsSites() {
-		const { plugins } = this.props;
-		return plugins.reduce( ( sites, plugin ) => {
-			Object.keys( plugin.sites ).map( ( pluginSiteId ) => {
-				if ( ! sites.find( ( site ) => site.ID === pluginSiteId ) ) {
-					const pluginSite = this.props.allSites.find( ( s ) => s.ID === parseInt( pluginSiteId ) );
-					sites.push( pluginSite );
-				}
-			} );
-
-			return sites;
-		}, [] );
 	}
 
 	render() {

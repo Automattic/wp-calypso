@@ -31,7 +31,7 @@ export function useLocalizedPlugins() {
 	return { localizePath };
 }
 
-export function getSitePlugin( plugin, siteId, pluginsOnSites ) {
+function getSitePlugin( plugin, siteId, pluginsOnSites ) {
 	return {
 		...plugin,
 		...pluginsOnSites[ plugin.slug ]?.sites[ siteId ],
