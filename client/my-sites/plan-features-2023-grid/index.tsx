@@ -113,6 +113,7 @@ export type PlanFeatures2023GridProps = {
 	selectedFeature?: string;
 	intent?: PlansIntent;
 	isGlobalStylesOnPersonal?: boolean;
+	isLargeScreen: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -267,6 +268,7 @@ export class PlanFeatures2023Grid extends Component<
 			isGlobalStylesOnPersonal,
 			planRecords,
 			visiblePlans,
+			isLargeScreen,
 		} = this.props;
 		return (
 			<PlansGridContextProvider
@@ -279,15 +281,21 @@ export class PlanFeatures2023Grid extends Component<
 					<div className="plan-features">
 						<div className="plan-features-2023-grid__content">
 							<div>
-								<div className="plan-features-2023-grid__desktop-view">
-									{ this.renderTable( planProperties ) }
-								</div>
-								<div className="plan-features-2023-grid__tablet-view">
-									{ this.renderTabletView() }
-								</div>
-								<div className="plan-features-2023-grid__mobile-view">
-									{ this.renderMobileView() }
-								</div>
+								{ isLargeScreen && (
+									<div className="plan-features-2023-grid__desktop-view">
+										{ this.renderTable( planProperties ) }
+									</div>
+								) }
+								{ isLargeScreen && (
+									<div className="plan-features-2023-grid__tablet-view">
+										{ this.renderTabletView() }
+									</div>
+								) }
+								{ ! isLargeScreen && (
+									<div className="plan-features-2023-grid__mobile-view">
+										{ this.renderMobileView() }
+									</div>
+								) }
 							</div>
 						</div>
 					</div>

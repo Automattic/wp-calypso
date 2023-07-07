@@ -37,6 +37,8 @@ import usePlansWithIntent, {
 } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
+import useIntentFromSiteMeta from './hooks/use-intent-from-site-meta';
+import { useIsLargeScreen } from './hooks/use-is-large-screen';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -92,6 +94,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	intent?: PlansIntent;
+	isLargeScreen: boolean;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -134,6 +137,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		sitePlanSlug,
 		siteSlug,
 		intent,
+		isLargeScreen,
 	} = props;
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -179,6 +183,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		planActionOverrides,
 		intent,
 		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
+		isLargeScreen,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -247,6 +252,8 @@ const PlansFeaturesMain = ( {
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
+
+	const isLargeScreen = useIsLargeScreen( { isInSignup } );
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -435,6 +442,7 @@ const PlansFeaturesMain = ( {
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
 						intent={ intent }
+						isLargeScreen={ isLargeScreen }
 					/>
 				</>
 			) }

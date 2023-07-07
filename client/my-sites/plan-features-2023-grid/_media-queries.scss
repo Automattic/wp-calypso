@@ -98,14 +98,6 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 			display: none;
 		}
 	}
-
-	.plan-features-2023-grid__mobile-view {
-		display: flex;
-
-		@media ( min-width: $plans-2023-small-breakpoint ) {
-			display: none;
-		}
-	}
 }
 
 /**
@@ -128,14 +120,6 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 		}
 
 		@media ( min-width: ( $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) ) {
-			display: none;
-		}
-	}
-
-	.plan-features-2023-grid__mobile-view {
-		display: flex;
-
-		@media ( min-width: ( $plans-2023-small-breakpoint + $plan-features-sidebar-width ) ) {
 			display: none;
 		}
 	}
