@@ -67,6 +67,10 @@ export function setEditorMediaModalView( view ) {
 	return action;
 }
 
+/**
+ * @param {boolean} isIframeLoaded
+ * @param {MessagePort | null} iframePort
+ */
 export const setEditorIframeLoaded = ( isIframeLoaded = true, iframePort = null ) => ( {
 	type: EDITOR_IFRAME_LOADED,
 	isIframeLoaded,

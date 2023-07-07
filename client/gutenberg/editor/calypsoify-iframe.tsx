@@ -271,7 +271,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		if ( WindowActions.ClassicBlockOpenMediaModel === action ) {
 			if ( data.imageId ) {
 				const { siteId } = this.props;
-				this.props.selectMediaItems( siteId, [ { ID: data.imageId } ] );
+				this.props.selectMediaItems( siteId ?? 0, [ { ID: data.imageId } ] );
 			}
 
 			this.setState( {
@@ -309,7 +309,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					? value.map( ( item ) => parseInt( item, 10 ) )
 					: [ parseInt( value, 10 ) ];
 				const selectedItems = ids.map( ( id ) => {
-					const media = this.props.getMediaItem( siteId, id );
+					const media = this.props.getMediaItem( siteId ?? 0, id );
 					if ( ! media ) {
 						this.props.fetchMediaItem( siteId, id );
 					}
@@ -319,9 +319,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					};
 				} );
 
-				this.props.selectMediaItems( siteId, selectedItems );
+				this.props.selectMediaItems( siteId ?? 0, selectedItems );
 			} else {
-				this.props.selectMediaItems( siteId, [] );
+				this.props.selectMediaItems( siteId ?? 0, [] );
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, multiple } );
@@ -353,16 +353,18 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				this.props.setRoute( `${ currentRoute }/${ postId }` );
 
 				//set postId on state.editor.postId, so components like editor revisions can read from it
-				this.props.startEditingPost( siteId, postId );
+				this.props.startEditingPost( siteId ?? 0, postId );
 
 				//set post type on state.posts.[ id ].type, so components like document head can read from it
-				this.props.editPost( siteId, postId, { type: postType } );
+				this.props.editPost( siteId ?? 0, postId, { type: postType } );
 			}
 		}
 
 		if ( EditorActions.TrashPost === action ) {
 			const { siteId, editedPostId, postTypeTrashUrl } = this.props;
-			this.props.trashPost( siteId, editedPostId );
+			if ( typeof siteId === 'number' && typeof editedPostId === 'number' ) {
+				this.props.trashPost( siteId, editedPostId );
+			}
 			navigate( postTypeTrashUrl );
 		}
 
@@ -500,7 +502,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 	setFrontPage = () => {
 		const { editedPostId, siteId } = this.props;
-		this.props.updateSiteFrontPage( siteId, {
+		this.props.updateSiteFrontPage( siteId ?? 0, {
 			show_on_front: 'page',
 			page_on_front: editedPostId,
 		} );
@@ -579,9 +581,13 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		this.setState( { isCheckoutModalVisible: false } );
 	};
 
-	/* eslint-disable @typescript-eslint/ban-types */
+	/* eslint-disable-next-line @typescript-eslint/ban-types */
 	openCustomizer = ( autofocus: object, unsavedChanges: boolean ) => {
 		let { customizerUrl } = this.props;
+		if ( ! customizerUrl ) {
+			return;
+		}
+
 		if ( autofocus ) {
 			const [ key, value ] = Object.entries( autofocus )[ 0 ];
 			customizerUrl = addQueryArgs(
