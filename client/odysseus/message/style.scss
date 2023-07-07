@@ -35,8 +35,8 @@
 	margin: 0;
 	opacity: 1;
 	transform: scale(1);
-	transition: transform 0.3 ease-in-out, opacity 0.3s ease-in-out, visibility 0.3 ease-in-out;
 	visibility: visible;
+	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 .message-action:focus {
