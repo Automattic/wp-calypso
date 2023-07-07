@@ -34,6 +34,7 @@ import {
 	VIPLogo,
 	WooLogo,
 } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
@@ -46,6 +47,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { getAddOnByKey } from 'calypso/lib/plans/add-ons-list';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
@@ -58,6 +60,7 @@ import {
 	getPlanRawPrice,
 	getPlanSlug,
 } from 'calypso/state/plans/selectors';
+import { getProductCurrencyCode, getProductBySlug } from 'calypso/state/products-list/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
@@ -245,7 +248,7 @@ export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
 	PlanFeatures2023GridState
 > {
-	constructor( props: PlanFeatures2023GridType ) {
+	constructor( props ) {
 		super( props );
 
 		this.state = {
@@ -868,6 +871,7 @@ export class PlanFeatures2023Grid extends Component<
 	renderStorageAddOnDropdown( properties: PlanProperties ) {
 		const { planName, storageOptions, storageFeatures } = properties;
 		const { selectedStorage } = this.state;
+		const selectedStorageForPlan = selectedStorage[ planName ];
 
 		return (
 			<SelectDropdown
@@ -877,20 +881,23 @@ export class PlanFeatures2023Grid extends Component<
 					}
 				} }
 				selectedText={
-					selectedStorage[ planName ]
-						? getStorageStringFromFeature( selectedStorage[ planName ] )
+					selectedStorageForPlan
+						? getStorageStringFromFeature( selectedStorageForPlan )
 						: getStorageStringFromFeature( storageFeatures[ 0 ] )
 				}
 			>
 				{ storageOptions.map( ( storageOption ) => {
+					// TODO: Translate this
+					const cost = storageOption?.cost ? ` + ${ storageOption?.cost }/month` : '';
+
 					return (
 						<SelectDropdown.Item
-							key={ `${ planName } ${ storageOption }` }
-							selected={ storageOption === selectedStorage[ planName ] }
+							key={ `${ planName } ${ storageOption.key }` }
+							selected={ storageOption.key === selectedStorageForPlan }
 							onClick={ () => {
 								const updatedSelectedStorage = {
 									...selectedStorage,
-									[ planName ]: storageOption,
+									[ planName ]: storageOption.key,
 								};
 
 								this.setState( {
@@ -899,7 +906,8 @@ export class PlanFeatures2023Grid extends Component<
 								} );
 							} }
 						>
-							{ getStorageStringFromFeature( storageOption ) }
+							{ getStorageStringFromFeature( storageOption.key ) }
+							<span style={ { color: 'green', fontSize: '12px' } }>{ cost }</span>
 						</SelectDropdown.Item>
 					);
 				} ) }
@@ -960,6 +968,32 @@ const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures
 		} );
 		return <Component { ...props } isLargeCurrency={ isLargeCurrency } />;
 	};
+};
+
+const getAddOnDisplayPrice = ( state: IAppState ) => ( productSlug: string, quantity: number ) => {
+	const product = getProductBySlug( state, productSlug );
+	let cost = product?.cost;
+	const currencyCode = getProductCurrencyCode( state, productSlug );
+	if ( ! ( cost && currencyCode ) ) {
+		return null;
+	}
+
+	// Finds the applicable tiered price for the quantity.
+	const priceTier =
+		quantity &&
+		product?.price_tier_list.find( ( tier ) => {
+			if ( quantity >= tier.minimum_units && quantity <= ( tier.maximum_units ?? 0 ) ) {
+				return tier;
+			}
+		} );
+
+	if ( priceTier ) {
+		cost = priceTier?.maximum_price / 100;
+	}
+
+	return formatCurrency( cost / 12, currencyCode, {
+		stripZeros: true,
+	} );
 };
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
@@ -1107,7 +1141,24 @@ const ConnectedPlanFeatures2023Grid = connect(
 				( planConstantObj.get2023PricingGridSignupStorageAddOns &&
 					planConstantObj.get2023PricingGridSignupStorageAddOns() ) ||
 				[];
-			const storageOptions = [ ...storageFeatures, ...storageAddOns ];
+			const storageOptions = [ ...storageFeatures, ...storageAddOns ].map( ( storageKey ) => {
+				if ( getAddOnByKey( storageKey ) ) {
+					const storageAddOn = getAddOnByKey( storageKey );
+					const storageAddOnSlug = storageAddOn?.getSlug();
+					const storageAddOnQuantity = storageAddOn?.getQuantity();
+					const cost = getAddOnDisplayPrice( state )( storageAddOnSlug, storageAddOnQuantity );
+
+					return {
+						key: storageKey,
+						cost,
+					};
+				}
+
+				return {
+					key: storageKey,
+					cost: null,
+				};
+			} );
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 			const isCurrentPlan = currentSitePlanSlug === plan;
 			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
