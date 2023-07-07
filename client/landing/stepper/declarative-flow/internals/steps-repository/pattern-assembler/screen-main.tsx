@@ -8,18 +8,15 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import { focus } from '@wordpress/dom';
 import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
 import SidebarPanel, { SidebarPanelProps } from './sidebar-panel/sidebar-panel';
 import Survey from './survey';
-import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
 type Props = {
@@ -57,14 +54,9 @@ const ScreenMain = ( props: Props ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const { location } = useNavigator();
 	const isInitialLocation = location.isInitial && ! location.isBack;
-	const selectedDesign = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-		[]
+	const headerDescription = translate(
+		'Customize everything by first adding patterns and then choosing styles.'
 	);
-
-	const headerDescription = selectedDesign?.is_virtual
-		? translate( 'Customize your homepage with our library of styles and patterns.' )
-		: translate( 'Use our library of styles and patterns to build a homepage.' );
 
 	// Use the mousedown event to prevent either the button focusing or text selection
 	const handleMouseDown = ( event: MouseEvent< HTMLButtonElement > ) => {
@@ -114,7 +106,7 @@ const ScreenMain = ( props: Props ) => {
 	return (
 		<>
 			<NavigatorHeader
-				title={ <NavigatorTitle title={ translate( 'Design your own' ) } /> }
+				title={ <NavigatorTitle title={ translate( 'Design your own homepage' ) } /> }
 				description={ headerDescription }
 				hideBack
 			/>
@@ -135,10 +127,10 @@ const ScreenMain = ( props: Props ) => {
 							checked={ hasSections }
 							path={ NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
-							aria-label={ translate( 'Homepage' ) }
-							onClick={ () => onMainItemSelect( 'section' ) }
+							aria-label={ translate( 'Sections' ) }
+							onClick={ () => onSelect( 'section' ) }
 						>
-							{ translate( 'Homepage' ) }
+							{ translate( 'Sections' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
 							checked={ hasFooter }
@@ -151,7 +143,7 @@ const ScreenMain = ( props: Props ) => {
 							{ translate( 'Footer' ) }
 						</NavigationButtonAsItem>
 					</NavigatorItemGroup>
-					<NavigatorItemGroup title={ translate( 'Style' ) }>
+					<NavigatorItemGroup title={ translate( 'Styles' ) }>
 						<>
 							<NavigationButtonAsItem
 								checked={ hasColor }
@@ -179,9 +171,6 @@ const ScreenMain = ( props: Props ) => {
 				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
 			</div>
 			<div className="screen-container__footer">
-				<span className="screen-container__description">
-					{ translate( 'Ready? Go to the Site Editor to continue editing.' ) }
-				</span>
 				<Button
 					className="pattern-assembler__button"
 					primary
@@ -189,7 +178,7 @@ const ScreenMain = ( props: Props ) => {
 					onMouseDown={ handleMouseDown }
 					onClick={ handleClick }
 				>
-					{ translate( 'Continue' ) }
+					{ translate( 'Save and continue' ) }
 				</Button>
 			</div>
 			<SidebarPanel { ...props } />

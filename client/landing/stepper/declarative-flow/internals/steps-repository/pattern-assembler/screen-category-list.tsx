@@ -76,7 +76,7 @@ const ScreenCategoryList = ( {
 				title={
 					<NavigatorTitle
 						title={
-							replacePatternMode ? translate( 'Replace pattern' ) : translate( 'Add patterns' )
+							replacePatternMode ? translate( 'Replace section' ) : translate( 'Add sections' )
 						}
 					/>
 				}
@@ -86,7 +86,7 @@ const ScreenCategoryList = ( {
 								'Replace the selected pattern by choosing from the list of categories below.'
 						  )
 						: translate(
-								'Find the right patterns for you by exploring the list of categories below.'
+								'Find the right patterns for your homepage by exploring the pattern categories below.'
 						  )
 				}
 				onBack={ onBack }
