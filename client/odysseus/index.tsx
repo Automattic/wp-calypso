@@ -1,7 +1,10 @@
 import { TextControl, Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useOdysseusAssistantContext } from './context';
+import ChatMessage from './message';
 import { useOdysseusGetChatPollQuery, useOddyseusSendMessage } from './query';
 import WapuuRibbon from './wapuu-ribbon';
 
@@ -15,6 +18,8 @@ const OdysseusAssistant = () => {
 	const [ isNudging, setIsNudging ] = useState( false );
 	const { mutateAsync: sendOdysseusMessage } = useOddyseusSendMessage();
 	const { data: chatData } = useOdysseusGetChatPollQuery( chat.chat_id ?? null );
+
+	const dispatch = useDispatch();
 
 	useEffect( () => {
 		if ( isLoadingChat ) {
@@ -107,7 +112,16 @@ const OdysseusAssistant = () => {
 	};
 
 	const handleToggleVisibility = () => {
-		setIsVisible( ! isVisible );
+		const newVisibility = ! isVisible;
+
+		dispatch(
+			recordTracksEvent( 'calypso_odisseus_chat_toggle_visibility_click', {
+				visible: newVisibility,
+				bot_name: 'Wapuu',
+			} )
+		);
+
+		setIsVisible( newVisibility );
 	};
 
 	function handleKeyDown( event: React.KeyboardEvent< HTMLInputElement > ) {
@@ -146,13 +160,12 @@ const OdysseusAssistant = () => {
 			<div className="chat-box-message-container">
 				<div className="chatbox-messages">
 					{ chat.messages.map( ( message, index ) => (
-						<div
-							ref={ index === chat.messages.length - 1 ? messagesEndRef : null }
-							className={ `chatbox-message ${ message.role === 'user' ? 'user' : 'wapuu' }` }
+						<ChatMessage
+							message={ message }
+							isLast={ index === chat.messages.length - 1 }
+							messageEndRef={ messagesEndRef }
 							key={ index }
-						>
-							{ message.content }
-						</div>
+						/>
 					) ) }
 				</div>
 				<form onSubmit={ handleFormSubmit }>
