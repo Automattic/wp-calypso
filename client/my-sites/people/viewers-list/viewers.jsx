@@ -138,6 +138,8 @@ class Viewers extends Component {
 		return (
 			<div>
 				<PeopleListSectionHeader
+					shouldHideCTAIcon
+					ctaLabel={ this.props.translate( 'Add viewer' ) }
 					label={ this.props.label }
 					site={ this.props.site }
 					isPlaceholder={ this.props.isFetching }

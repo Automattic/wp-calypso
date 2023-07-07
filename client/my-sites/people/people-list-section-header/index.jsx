@@ -79,7 +79,15 @@ class PeopleListSectionHeader extends Component {
 	}
 
 	render() {
-		const { label, count, children, translate, includeSubscriberImporter } = this.props;
+		const {
+			label,
+			count,
+			children,
+			translate,
+			includeSubscriberImporter,
+			ctaLabel,
+			shouldHideCTAIcon,
+		} = this.props;
 		const siteLink = this.getAddLink();
 		const addSubscriberLink = this.getAddSubscriberLink();
 		const classes = classNames( this.props.className, 'people-list-section-header' );
@@ -111,13 +119,22 @@ class PeopleListSectionHeader extends Component {
 			>
 				{ children }
 				{ showInviteUserBtn && (
-					<Button compact href={ siteLink } className="people-list-section-header__add-button">
-						<Gridicon icon="user-add" />
-						<span>
-							{ includeSubscriberImporter
-								? translate( 'Add User', { context: 'Verb. Button to invite more users.' } )
-								: translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
-						</span>
+					<Button
+						primary
+						compact
+						href={ siteLink }
+						className="people-list-section-header__add-button"
+					>
+						{ ! shouldHideCTAIcon && <Gridicon icon="user-add" /> }
+						{ ctaLabel ? (
+							<span>{ ctaLabel }</span>
+						) : (
+							<span>
+								{ includeSubscriberImporter
+									? translate( 'Add User', { context: 'Verb. Button to invite more users.' } )
+									: translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
+							</span>
+						) }
 					</Button>
 				) }
 				{ showAddSubscriberBtn && (
