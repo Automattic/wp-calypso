@@ -276,7 +276,8 @@ const Settings = ( {
 		if (
 			! domain ||
 			domain.type === domainTypes.SITE_REDIRECT ||
-			domain.transferStatus === transferStatus.PENDING_ASYNC
+			domain.transferStatus === transferStatus.PENDING_ASYNC ||
+			! domain.canManageDnsRecords
 		) {
 			return null;
 		}

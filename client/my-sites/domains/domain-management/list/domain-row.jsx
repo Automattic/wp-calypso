@@ -395,8 +395,7 @@ class DomainRow extends PureComponent {
 						domain.type === domainTypes.SITE_REDIRECT ||
 						domain.transferStatus === transferStatus.PENDING_ASYNC
 					) &&
-						domain.canManageDnsRecords &&
-						domain.transferStatus !== transferStatus.PENDING_ASYNC && (
+						domain.canManageDnsRecords && (
 							<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
 								{ translate( 'Manage DNS' ) }
 							</PopoverMenuItem>
