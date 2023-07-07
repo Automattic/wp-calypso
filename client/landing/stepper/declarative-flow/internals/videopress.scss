@@ -1,14 +1,18 @@
 @import "./global";
 @import "./videopress-constants.scss";
 
-body.is-videopress-stepper {
+
+body.is-videopress-stepper,
+body.is-videopress-tv-stepper {
 	background-color: #010101;
 	color: $videopress-theme-base-text-color;
 
 	.search-filters__checkbox-label {
 		color: #000;
 	}
-	.videopress {
+
+	.videopress,
+	.videopress-tv {
 		input[type="text"]:focus,
 		textarea:focus {
 			box-shadow: none;

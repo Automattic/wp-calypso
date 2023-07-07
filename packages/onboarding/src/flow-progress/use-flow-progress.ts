@@ -7,6 +7,7 @@ import {
 	COPY_SITE_FLOW,
 	ONBOARDING_PM_FLOW,
 	DOMAIN_TRANSFER,
+	VIDEOPRESS_TV_FLOW,
 } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
@@ -65,6 +66,10 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		chooseADomain: 4,
 		processing: 5,
 		launchpad: 6,
+	},
+	[ VIDEOPRESS_TV_FLOW ]: {
+		intro: 0,
+		processing: 1,
 	},
 	sensei: {
 		senseiSetup: 1,
