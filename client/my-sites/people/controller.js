@@ -79,7 +79,14 @@ export default {
 	},
 
 	peopleAddSubscribers( context, next ) {
-		renderPeopleAddSubscribers( context, next );
+		if ( isEnabled( 'subscribers-page-new' ) ) {
+			const state = context.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			const redirectURL = '/subscribers/' + ( siteSlug ? siteSlug : '' );
+			page.redirect( redirectURL );
+		} else {
+			renderPeopleAddSubscribers( context, next );
+		}
 	},
 };
 
