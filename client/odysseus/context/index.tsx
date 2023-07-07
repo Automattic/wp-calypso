@@ -1,55 +1,34 @@
 import { createContext, useContext, useState } from 'react';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { Chat, Context, Message, Nudge } from '../types';
 import type { ReactNode } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
-
-export type Nudge = {
-	nudge: string;
-	initialMessage: string;
-	context?: Record< string, unknown >;
-};
-
-export type MessageRole = 'user' | 'bot';
-
-export type MessageType = 'message' | 'action' | 'meta' | 'error';
-
-export type Message = {
-	content: string;
-	role: MessageRole;
-	type: MessageType;
-	chatId?: string | null;
-};
-
-export type Chat = {
-	chatId?: string | null;
-	messages: Message[];
-};
 
 interface OdysseusAssistantContextInterface {
 	addMessage: ( message: Message ) => void;
 	chat: Chat;
 	isLoadingChat: boolean;
 	lastNudge: Nudge | null;
-	messages: Message[];
-	sectionName: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessages: ( messages: Message[] ) => void;
+	setContext: ( context: Context ) => void;
 }
 
 const defaultContextInterfaceValues = {
 	addMessage: noop,
-	chat: { messages: [] },
+	chat: { context: { section_name: '', site_id: null }, messages: [] },
 	isLoadingChat: false,
 	lastNudge: null,
-	messages: [],
-	sectionName: '',
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
 	setMessages: noop,
+	setContext: noop,
 };
 
 // Create a default new context
@@ -68,15 +47,22 @@ const OdysseusAssistantProvider = ( {
 	sectionName: string;
 	children: ReactNode;
 } ) => {
+	const siteId = useSelector( getSelectedSiteId );
+
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
-	const [ messages, setMessages ] = useState< Message[] >( [] );
-	const [ chat, setChat ] = useState< Chat >( { messages: [] } );
+	const [ messages, setMessages ] = useState< Message[] >( [
+		{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot', type: 'message' },
+	] );
+	const [ chat, setChat ] = useState< Chat >( {
+		context: { section_name: sectionName, site_id: siteId },
+		messages,
+	} );
 
 	const addMessage = ( message: Message ) => {
 		setMessages( ( prevMessages ) => {
 			const newMessages = [ ...prevMessages, message ];
 			setChat( ( prevChat ) => ( {
-				chatId: message.chatId ?? prevChat.chatId,
+				...prevChat,
 				messages: newMessages,
 			} ) );
 			return newMessages;
@@ -90,12 +76,11 @@ const OdysseusAssistantProvider = ( {
 				chat,
 				isLoadingChat: false,
 				lastNudge,
-				messages,
-				sectionName,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,
 				setMessages,
+				setContext: noop,
 			} }
 		>
 			{ children }
