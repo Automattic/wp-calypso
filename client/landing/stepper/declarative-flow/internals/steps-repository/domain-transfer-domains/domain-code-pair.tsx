@@ -65,7 +65,15 @@ export function DomainCodePair( {
 			<div className="domains__domain-info">
 				<div className="domains__domain-domain">
 					<FormFieldset>
-						{ showLabels && <FormLabel htmlFor={ id }>{ __( 'Domain name' ) }</FormLabel> }
+						<FormLabel
+							className={ classnames( {
+								'is-first-label-title': showLabels,
+							} ) }
+							htmlFor={ id }
+						>
+							{ __( 'Domain name' ) }
+						</FormLabel>
+
 						<FormInput
 							disabled={ valid }
 							id={ id }
@@ -79,9 +87,15 @@ export function DomainCodePair( {
 				</div>
 				<div className="domains__domain-key">
 					<FormFieldset>
-						{ showLabels && (
-							<FormLabel htmlFor={ id + '-auth' }>{ __( 'Authorization code' ) }</FormLabel>
-						) }
+						<FormLabel
+							className={ classnames( {
+								'is-first-label-title': showLabels,
+							} ) }
+							htmlFor={ id + '-auth' }
+						>
+							{ __( 'Authorization code' ) }
+						</FormLabel>
+
 						<FormInput
 							id={ id + '-auth' }
 							disabled={ valid || hasDuplicates }

@@ -40,7 +40,6 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,
 		"cookie-banner": false,
-		"yolo/edge-cache-i1": true,
 		"google-my-business": false,
 		"help": true,
 		"importers/substack": true,

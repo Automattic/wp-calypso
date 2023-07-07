@@ -338,8 +338,15 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
-				case 'blog_launched':
+				case 'blog_launched': {
+					const onboardingCartItems = [ planCartItem, domainCartItem ].filter( Boolean );
+					let title = task.title;
+					if ( isBlogOnboardingFlow( flow ) && planCompleted && onboardingCartItems.length ) {
+						title = translate( 'Checkout and launch' );
+					}
+
 					taskData = {
+						title,
 						disabled:
 							( isStartWritingFlow( flow ) &&
 								( ! firstPostPublished ||
@@ -383,6 +390,7 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				}
 				case 'videopress_upload':
 					taskData = {
 						actionUrl: launchpadUploadVideoLink,

@@ -35,7 +35,7 @@ const EmailListInactiveItem = ( { domain, source }: EmailListInactiveItemProps )
 				onClick={ () => {
 					sendNudge( {
 						nudge: 'email-comparison',
-						initialMessage: `I see you want to an email provider to your domain ${ domain.name }. I can give you a few tips on how to do that.`,
+						initialMessage: `I see you want to add an email provider to your domain ${ domain.name }. I can give you a few tips on how to do that.`,
 						context: {
 							domain: domain.name,
 						},

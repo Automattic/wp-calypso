@@ -45,6 +45,8 @@ describe( 'Help Center: Interact with Results', function () {
 	} );
 
 	describe( 'Navigate to Calypso Link', function () {
+		let popupPage: Page;
+
 		it( 'Close article and return to search results', async function () {
 			await supportComponent.goBack();
 		} );
@@ -58,11 +60,13 @@ describe( 'Help Center: Interact with Results', function () {
 		} );
 
 		it( 'Click on the first Calypso Link result', async function () {
+			const popupEvent = page.waitForEvent( 'popup' );
 			await supportComponent.clickResultByIndex( 'Calypso Link', 0 );
+			popupPage = await popupEvent;
 		} );
 
 		it( 'Calypso Link opens in a new page', async function () {
-			await page.waitForEvent( 'popup' );
+			expect( popupPage.url() ).not.toBe( page.url() );
 		} );
 	} );
 } );

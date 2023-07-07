@@ -14,7 +14,7 @@ export const useEdgeCacheQuery = (
 				path: `/sites/${ siteId }/hosting/edge-cache/active`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		enabled: !! siteId && ( options?.enabled ?? true ),
+		enabled: !! siteId,
 		select: ( data ) => {
 			return !! data;
 		},

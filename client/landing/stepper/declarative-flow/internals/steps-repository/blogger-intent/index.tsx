@@ -57,7 +57,7 @@ const BlogIntent: Step = function BlogIntent() {
 									primary
 									href="/setup/start-writing"
 								>
-									{ translate( 'Start Writing' ) }
+									{ translate( 'Start writing' ) }
 								</Button>
 							</div>
 							<hr />

@@ -144,6 +144,7 @@ export interface DesignPreviewOptions {
 	disable_viewport_height?: boolean;
 	remove_assets?: boolean;
 	style_variation?: StyleVariation;
+	viewport_unit_to_px?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */
