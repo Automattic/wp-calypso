@@ -39,7 +39,7 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 				isUser ? 'odyssus-chatbox-message-user' : 'odyssus-chatbox-message-wapuu'
 			}` }
 		>
-			<AsyncLoad require="react-markdown" placeholder={ null }>
+			<AsyncLoad require="react-markdown" placeholder={ message.content }>
 				{ message.content }
 			</AsyncLoad>
 			{ ! isUser && message.type !== 'error' && (
