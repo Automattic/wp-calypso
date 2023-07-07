@@ -132,7 +132,7 @@ class ThemeShowcase extends Component {
 	}
 
 	componentWillUnmount() {
-		this.props.setBackPath( this.constructUrl( { searchString: this.props.search } ) );
+		this.props.setBackPath( this.constructUrl() );
 	}
 
 	isStaticFilter = ( tabFilter ) => {
@@ -253,7 +253,7 @@ class ThemeShowcase extends Component {
 		const url = this.constructUrl( {
 			filter: filterString,
 			// Strip filters and excess whitespace
-			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
+			search: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
 
 		this.setState( { tabFilter: this.getTabFilterFromUrl( filterString ) } );
@@ -269,15 +269,14 @@ class ThemeShowcase extends Component {
 	 * @param {string} sections.tier override tier prop
 	 * @param {string} sections.filter override filter prop
 	 * @param {string} sections.siteSlug override siteSlug prop
-	 * @param {string} sections.searchString override searchString prop
+	 * @param {string} sections.search override search prop
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {
-		const { vertical, tier, filter, siteSlug, searchString, locale, isLoggedIn } = {
+		const { vertical, tier, filter, siteSlug, search, locale, isLoggedIn } = {
 			...this.props,
 			...sections,
 		};
-
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
@@ -289,7 +288,7 @@ class ThemeShowcase extends Component {
 			locale,
 			! isLoggedIn
 		);
-		return buildRelativeSearchUrl( url, searchString );
+		return buildRelativeSearchUrl( url, search );
 	};
 
 	onTierSelect = ( { value: tier } ) => {
@@ -330,7 +329,7 @@ class ThemeShowcase extends Component {
 			};
 		}
 
-		const { filter = '', search, filterToTermTable } = this.props;
+		const { filter = '', filterToTermTable } = this.props;
 		const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
 		const subjectFilters = Object.values( this.subjectTermTable );
 		const filterWithoutSubjects = filter
@@ -342,7 +341,7 @@ class ThemeShowcase extends Component {
 			? [ filterWithoutSubjects, subjectTerm ].join( '+' )
 			: filterWithoutSubjects;
 
-		page( this.constructUrl( { filter: newFilter, searchString: search } ) );
+		page( this.constructUrl( { filter: newFilter } ) );
 
 		this.setState( { tabFilter }, callback );
 	};
