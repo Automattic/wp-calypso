@@ -129,7 +129,7 @@ const InnerSearch = (
 		delayTimeout = SEARCH_DEBOUNCE_MS,
 		defaultValue = '',
 		defaultIsOpen = false,
-		displayOpenAndCloseIcons: displayOpenAndClose = false,
+		displayOpenAndCloseIcons = false,
 		autoFocus = false,
 		onSearchOpen,
 		recordEvent,
@@ -474,7 +474,7 @@ const InnerSearch = (
 	const renderRightIcons = () => {
 		const closeButton = renderCloseButton();
 
-		if ( displayOpenAndClose ) {
+		if ( displayOpenAndCloseIcons ) {
 			return (
 				<>
 					{ renderOpenIcon() }
