@@ -18,8 +18,15 @@ const getSortOptions = ( translate: ReturnType< typeof useTranslate > ) => [
 
 const ListActionsBar = () => {
 	const translate = useTranslate();
-	const { handleSearch, searchTerm, sortTerm, setSortTerm, filterOption, setFilterOption } =
-		useSubscribersPage();
+	const {
+		handleSearch,
+		searchTerm,
+		pageChangeCallback,
+		sortTerm,
+		setSortTerm,
+		filterOption,
+		setFilterOption,
+	} = useSubscribersPage();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 	const recordSort = useRecordSort();
 	const filterOptions = useSubscribersFilterOptions();
@@ -37,9 +44,10 @@ const ListActionsBar = () => {
 			<SelectDropdown
 				className="subscribers__filter-control"
 				options={ filterOptions }
-				onSelect={ ( selectedOption: Option< SubscribersFilterBy > ) =>
-					setFilterOption( selectedOption.value )
-				}
+				onSelect={ ( selectedOption: Option< SubscribersFilterBy > ) => {
+					setFilterOption( selectedOption.value );
+					pageChangeCallback( 1 );
+				} }
 				selectedText={ translate( 'Subscriber type: %s', {
 					args: getOptionLabel( filterOptions, filterOption ) || '',
 				} ) }
