@@ -62,7 +62,7 @@ import { PlanComparisonGrid } from './components/plan-comparison-grid';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
-import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
+import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
@@ -143,25 +143,11 @@ const PlanLogo: React.FunctionComponent< {
 	planProperties: PlanProperties;
 	isMobile?: boolean;
 	isInSignup?: boolean;
-	currentSitePlanSlug?: string | null;
-	selectedPlan?: string;
-} > = ( {
-	planPropertiesObj,
-	planProperties,
-	planIndex,
-	isMobile,
-	isInSignup,
-	currentSitePlanSlug,
-	selectedPlan,
-} ) => {
+} > = ( { planPropertiesObj, planProperties, planIndex, isMobile, isInSignup } ) => {
 	const { planRecords } = usePlansGridContext();
 	const { planName, current } = planProperties;
 	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
-		visiblePlans: planPropertiesObj,
-		currentSitePlanSlug,
-		selectedPlan,
-	} );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix();
 	const headerClasses = classNames(
 		'plan-features-2023-grid__header-logo',
 		getPlanClass( planName )
@@ -563,7 +549,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isInSignup, currentSitePlanSlug, selectedPlan } = this.props;
+		const { isInSignup } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -576,8 +562,6 @@ export class PlanFeatures2023Grid extends Component<
 						planProperties={ properties }
 						isMobile={ options?.isMobile }
 						isInSignup={ isInSignup }
-						currentSitePlanSlug={ currentSitePlanSlug }
-						selectedPlan={ selectedPlan }
 					/>
 				);
 			} );
