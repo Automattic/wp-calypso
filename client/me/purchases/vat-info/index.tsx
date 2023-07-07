@@ -114,7 +114,7 @@ export default function VatInfoPage() {
 							'If you:' +
 								'{{ul}}' +
 								'{{li}}Need to update existing %(taxName)s details{{/li}}' +
-								'{{li}}Have been charged VAT as a VAT-Registered Business subject to reverse charges{{/li}}' +
+								'{{li}}Have been charged taxes as a business subject to reverse charges{{/li}}' +
 								'{{li}}Do not see your country listed in this form{{/li}}' +
 								'{{/ul}}' +
 								'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.',
