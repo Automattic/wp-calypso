@@ -354,60 +354,21 @@ export class PluginsList extends Component {
 		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
 		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
-		switch ( actionName ) {
-			case PluginActions.ACTIVATE: {
-				showPluginActionDialog( PluginActions.ACTIVATE, selectedPlugins, allSites, ( accepted ) =>
-					this.activateSelected( accepted )
-				);
-				break;
-			}
-			case PluginActions.DEACTIVATE: {
-				showPluginActionDialog(
-					PluginActions.DEACTIVATE,
-					selectedPlugins,
-					allSites,
-					isJetpackIncluded
-						? ( accepted ) => this.deactiveAndDisconnectSelected( accepted )
-						: ( accepted ) => this.deactivateSelected( accepted )
-				);
-				break;
-			}
-			case PluginActions.ENABLE_AUTOUPDATES: {
-				showPluginActionDialog(
-					PluginActions.ENABLE_AUTOUPDATES,
-					selectedPlugins,
-					allSites,
-					( accepted ) => this.setAutoupdateSelected( accepted )
-				);
-				break;
-			}
-			case PluginActions.DISABLE_AUTOUPDATES: {
-				showPluginActionDialog(
-					PluginActions.DISABLE_AUTOUPDATES,
-					selectedPlugins,
-					allSites,
-					( accepted ) => this.unsetAutoupdateSelected( accepted )
-				);
-				break;
-			}
-			case PluginActions.UPDATE: {
-				showPluginActionDialog( PluginActions.UPDATE, selectedPlugins, allSites, ( accepted ) =>
-					this.updateSelected( accepted )
-				);
-				break;
-			}
-			case PluginActions.REMOVE: {
-				showPluginActionDialog(
-					PluginActions.REMOVE,
-					selectedPlugins,
-					allSites,
-					isJetpackIncluded
-						? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
-						: ( accepted ) => this.removeSelected( accepted, selectedPlugins )
-				);
-				break;
-			}
-		}
+		const ALL_ACTION_CALLBACKS = {
+			[ PluginActions.ACTIVATE ]: this.activateSelected,
+			[ PluginActions.DEACTIVATE ]: isJetpackIncluded
+				? this.deactiveAndDisconnectSelected
+				: this.deactivateSelected,
+			[ PluginActions.REMOVE ]: isJetpackIncluded
+				? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
+				: ( accepted ) => this.removeSelected( accepted, selectedPlugins ),
+			[ PluginActions.UPDATE ]: this.updateSelected,
+			[ PluginActions.ENABLE_AUTOUPDATES ]: this.setAutoupdateSelected,
+			[ PluginActions.DISABLE_AUTOUPDATES ]: this.unsetAutoupdateSelected,
+		};
+
+		const selectedActionCallback = ALL_ACTION_CALLBACKS[ actionName ];
+		showPluginActionDialog( actionName, selectedPlugins, allSites, selectedActionCallback );
 	};
 
 	removePluginDialog = ( selectedPlugin ) => {
