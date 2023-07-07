@@ -407,10 +407,15 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 		if ( EditorActions.GetCloseButtonUrl === action ) {
 			const { closeUrl, closeLabel } = this.props;
-			ports[ 0 ].postMessage( {
-				closeUrl: `${ window.location.origin }${ closeUrl }`,
-				label: closeLabel,
-			} );
+
+			// If the closeLabel isn't a string, it's a React component and we can't serialize it over a message.
+			// Don't send the message and allow the editor to use it's default close URL and label.
+			if ( typeof closeLabel === 'string' ) {
+				ports[ 0 ].postMessage( {
+					closeUrl: `${ window.location.origin }${ closeUrl }`,
+					label: closeLabel,
+				} );
+			}
 		}
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
