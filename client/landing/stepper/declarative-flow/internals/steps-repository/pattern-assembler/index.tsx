@@ -578,28 +578,6 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.HEADER }>
-					<ScreenHeader
-						selectedPattern={ header }
-						onSelect={ onSelect }
-						onBack={ () => onPatternSelectorBack( 'header' ) }
-						onDoneClick={ () => onDoneClick( 'header' ) }
-						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
-						patterns={ patternsMapByCategory[ 'header' ] || [] }
-					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.FOOTER }>
-					<ScreenFooter
-						selectedPattern={ footer }
-						onSelect={ onSelect }
-						onBack={ () => onPatternSelectorBack( 'footer' ) }
-						onDoneClick={ () => onDoneClick( 'footer' ) }
-						updateActivePatternPosition={ () => activateFooterPosition( !! footer ) }
-						patterns={ patternsMapByCategory[ 'footer' ] || [] }
-					/>
-				</NavigatorScreen>
-
 				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION_PATTERNS }>
 					<ScreenCategoryList
 						categories={ categories }
