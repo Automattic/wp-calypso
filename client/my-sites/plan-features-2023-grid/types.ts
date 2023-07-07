@@ -29,7 +29,6 @@ export type PlanProperties = {
 	tagline: string;
 	storageOptions: string[];
 	storageFeatures: string[];
-	storageAddOns: string[];
 	availableForPurchase: boolean;
 	current?: boolean;
 	showMonthlyPrice: boolean;
