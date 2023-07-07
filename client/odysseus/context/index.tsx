@@ -4,6 +4,12 @@ import type { ReactNode } from 'react';
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
+export type Context = {
+	section_name?: string;
+	session_id?: string;
+	// etc
+};
+
 export type Nudge = {
 	nudge: string;
 	initialMessage: string;
@@ -18,12 +24,13 @@ export type Message = {
 	content: string;
 	role: MessageRole;
 	type: MessageType;
-	chatId?: string | null;
+	chat_id?: string | null;
 };
 
 export type Chat = {
-	chatId?: string | null;
+	chat_id?: string | null;
 	messages: Message[];
+	context: Context;
 };
 
 interface OdysseusAssistantContextInterface {
@@ -31,25 +38,23 @@ interface OdysseusAssistantContextInterface {
 	chat: Chat;
 	isLoadingChat: boolean;
 	lastNudge: Nudge | null;
-	messages: Message[];
-	sectionName: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessages: ( messages: Message[] ) => void;
+	setContext: ( context: Context ) => void;
 }
 
 const defaultContextInterfaceValues = {
 	addMessage: noop,
-	chat: { messages: [] },
+	chat: { context: { section_name: '' }, messages: [] },
 	isLoadingChat: false,
 	lastNudge: null,
-	messages: [],
-	sectionName: '',
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
 	setMessages: noop,
+	setContext: noop,
 };
 
 // Create a default new context
@@ -70,14 +75,18 @@ const OdysseusAssistantProvider = ( {
 } ) => {
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ messages, setMessages ] = useState< Message[] >( [] );
-	const [ chat, setChat ] = useState< Chat >( { messages: [] } );
+	const [ chat, setChat ] = useState< Chat >( {
+		context: { section_name: sectionName },
+		messages,
+	} );
 
 	const addMessage = ( message: Message ) => {
 		setMessages( ( prevMessages ) => {
 			const newMessages = [ ...prevMessages, message ];
 			setChat( ( prevChat ) => ( {
-				chatId: message.chatId ?? prevChat.chatId,
+				chat_id: message.chat_id ?? prevChat.chat_id,
 				messages: newMessages,
+				context: prevChat.context,
 			} ) );
 			return newMessages;
 		} );
@@ -90,12 +99,11 @@ const OdysseusAssistantProvider = ( {
 				chat,
 				isLoadingChat: false,
 				lastNudge,
-				messages,
-				sectionName,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,
 				setMessages,
+				setContext: noop,
 			} }
 		>
 			{ children }

@@ -93,7 +93,7 @@ const OdysseusAssistant = () => {
 				content: response.message.content,
 				role: 'bot',
 				type: 'message',
-				chatId: response.chatId,
+				chat_id: response.chat_id,
 			} );
 		} catch ( e ) {
 			addMessage( {

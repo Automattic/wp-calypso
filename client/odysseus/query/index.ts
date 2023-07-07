@@ -1,20 +1,19 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { Nudge, useOdysseusAssistantContext } from '../context';
+import { Context, useOdysseusAssistantContext } from '../context';
 import type { Message } from '../context';
 
 function odysseusSendMessage(
 	siteId: number | null,
 	messages: Message[],
-	context: Nudge,
-	sectionName: string,
-	chatId?: string | null
+	context: Context,
+	chat_id?: string | null
 ) {
 	const path = `/odysseus/send_message`;
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { messages, context, sectionName, siteId, chatId },
+		body: { messages, context, siteId, chat_id: chat_id },
 	} );
 }
 
@@ -22,22 +21,22 @@ function odysseusSendMessage(
 export const useOddyseusSendMessage = (
 	siteId: number | null
 ): UseMutationResult<
-	{ chatId: string; message: Message },
+	{ chat_id: string; message: Message },
 	unknown,
-	{ message: Message; context: Nudge }
+	{ message: Message; context: Context }
 > => {
-	const { sectionName, chat, messages, setChat } = useOdysseusAssistantContext();
+	const { chat, setChat } = useOdysseusAssistantContext();
 
 	return useMutation( {
-		mutationFn: ( { message, context }: { message: Message; context: Nudge } ) => {
+		mutationFn: ( { message, context }: { message: Message; context: Context } ) => {
 			// If chatId is defined, we only send the message to the current chat
 			// Otherwise we send previous messages and the new one appended to the end to the server
-			const messagesToSend = chat?.chatId ? [ message ] : [ ...messages, message ];
+			const messagesToSend = chat?.chat_id ? [ message ] : [ ...chat.messages, message ];
 
-			return odysseusSendMessage( siteId, messagesToSend, context, sectionName, chat.chatId );
+			return odysseusSendMessage( siteId, messagesToSend, context, chat.chat_id );
 		},
 		onSuccess: ( data ) => {
-			setChat( { ...chat, chatId: data.chatId } );
+			setChat( { ...chat, chat_id: data.chat_id } );
 		},
 	} );
 };
