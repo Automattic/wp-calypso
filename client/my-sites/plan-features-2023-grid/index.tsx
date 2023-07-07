@@ -905,9 +905,8 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderStorageAddOnDropdown( properties: PlanProperties ) {
-		const { planName, storageOptions, storageAddOns } = properties;
+		const { planName, storageOptions } = properties;
 		const { selectedStorage } = this.state;
-		const allStorageOptions = [ ...storageOptions, ...storageAddOns ];
 
 		return (
 			<SelectDropdown
@@ -922,7 +921,7 @@ export class PlanFeatures2023Grid extends Component<
 						: getStorageStringFromFeature( storageOptions[ 0 ] )
 				}
 			>
-				{ allStorageOptions.map( ( storageFeature ) => {
+				{ storageOptions.map( ( storageFeature ) => {
 					return (
 						<SelectDropdown.Item
 							key={ `${ planName } ${ storageFeature }` }
@@ -957,16 +956,15 @@ export class PlanFeatures2023Grid extends Component<
 					return null;
 				}
 
-				const { planName, storageOptions, storageAddOns } = properties;
+				const { planName, storageOptions, storageFeatures } = properties;
 				const canUpgradeStorageForPlan =
-					storageAddOns.length > 0 &&
-					storageOptions.length === 1 &&
+					storageOptions.length > 1 &&
 					intervalType === 'yearly' &&
 					isEnabled( 'plans/upgradeable-storage' );
 
 				const storageJSX = canUpgradeStorageForPlan
 					? this.renderStorageAddOnDropdown( properties )
-					: storageOptions.map( ( storageFeature: string ) => {
+					: storageFeatures.map( ( storageFeature: string ) => {
 							if ( storageFeature.length <= 0 ) {
 								return;
 							}
@@ -1124,7 +1122,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
-				const storageOptions =
+				const storageFeatures =
 					( planConstantObj.get2023PricingGridSignupStorageOptions &&
 						planConstantObj.get2023PricingGridSignupStorageOptions(
 							showLegacyStorageFeature,
@@ -1135,6 +1133,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					( planConstantObj.get2023PricingGridSignupStorageAddOns &&
 						planConstantObj.get2023PricingGridSignupStorageAddOns() ) ||
 					[];
+				const storageOptions = [ ...storageFeatures, ...storageAddOns ];
 				const availableForPurchase =
 					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 
@@ -1148,8 +1147,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 					rawPrice,
 					isMonthlyPlan,
 					tagline,
+					storageFeatures,
 					storageOptions,
-					storageAddOns,
 					cartItemForPlan: getCartItemForPlan( plan ),
 					current: isCurrentPlan,
 					isVisible: visiblePlans.indexOf( plan ) !== -1,
