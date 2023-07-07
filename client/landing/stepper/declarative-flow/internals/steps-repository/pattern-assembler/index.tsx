@@ -15,7 +15,7 @@ import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
@@ -527,6 +527,15 @@ const PatternAssembler = ( {
 			font_variation_type: getVariationType( variation ),
 		} );
 	};
+
+	useEffect( () => {
+		setTimeout( () => {
+			setIsPanelOpen( true );
+			setTimeout( () => {
+				setSelectedMainItem( 'header' );
+			}, 400 );
+		}, 200 );
+	}, [] );
 
 	if ( ! site?.ID || ! selectedDesign ) {
 		return null;
