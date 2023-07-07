@@ -128,7 +128,7 @@ const ScreenMain = ( props: Props ) => {
 							path={ NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
-							onClick={ () => onSelect( 'section' ) }
+							onClick={ () => onMainItemSelect( 'section' ) }
 						>
 							{ translate( 'Sections' ) }
 						</NavigationButtonAsItem>

@@ -56,38 +56,36 @@ const SidebarPanel = ( {
 
 	const getLabel = () => {
 		if ( MAIN_ITEMS.HEADER === selectedMainItem ) {
-			return translate( 'Header' );
+			return translate( 'Add header' );
 		}
 		if ( MAIN_ITEMS.FOOTER === selectedMainItem ) {
-			return translate( 'Footer' );
+			return translate( 'Add footer' );
 		}
 		if ( MAIN_ITEMS.COLOR_PALETTES === selectedMainItem ) {
-			return translate( 'Colors' );
+			return translate( 'Add colors' );
 		}
 		if ( MAIN_ITEMS.FONT_PAIRINGS === selectedMainItem ) {
-			return translate( 'Fonts' );
+			return translate( 'Add fonts' );
 		}
 	};
 
 	const getDescription = () => {
 		if ( MAIN_ITEMS.HEADER === selectedMainItem ) {
 			return translate(
-				'The header appears at the top of every page, with a site name and navigation.'
+				'Pick the header that appears at the top of every page and shows your site logo, title and navigation.'
 			);
 		}
 		if ( MAIN_ITEMS.FOOTER === selectedMainItem ) {
 			return translate(
-				'The footer appears at the bottom of a site and shows useful links and contact information.'
+				'Pick the footer that appears at the bottom of every page and shows useful links and contact information.'
 			);
 		}
 		if ( MAIN_ITEMS.COLOR_PALETTES === selectedMainItem ) {
-			return translate(
-				'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
-			);
+			return translate( 'Discover your ideal color blend, from free to premium styles.' );
 		}
 		if ( MAIN_ITEMS.FONT_PAIRINGS === selectedMainItem ) {
 			return translate(
-				'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
+				'Elevate your design with expertly curated font pairings, including free and premium.'
 			);
 		}
 	};
