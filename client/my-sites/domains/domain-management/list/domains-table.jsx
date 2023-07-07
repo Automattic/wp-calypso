@@ -14,6 +14,8 @@ class DomainsTable extends PureComponent {
 	static propTypes = {
 		currentRoute: PropTypes.string,
 		domains: PropTypes.array,
+		defaultSortKey: PropTypes.string,
+		defaultSortOrder: PropTypes.number,
 		domainsTableColumns: PropTypes.array,
 		goToEditDomainRoot: PropTypes.func,
 		handleUpdatePrimaryDomainOptionClick: PropTypes.func,
@@ -29,13 +31,17 @@ class DomainsTable extends PureComponent {
 		translate: PropTypes.func,
 	};
 
-	state = {
-		sortKey: 'status', // initial column to sort by - should match the header columns
-		sortOrder: -1, // initial sort order where 1 = ascending and -1 = descending
-	};
-
 	renderedQuerySiteDomains = {};
 	renderedQuerySitePurchases = {};
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			sortKey: props.defaultSortKey || 'status', // initial column to sort by - should match the header columns
+			sortOrder: props.defaultSortOrder || -1, // initial sort order where 1 = ascending and -1 = descending
+		};
+	}
 
 	changeTableSort = ( selectedColumn, sortOrder = null ) => {
 		const { domainsTableColumns } = this.props;

@@ -409,11 +409,14 @@ class AllDomains extends Component {
 			} );
 		}
 
+		const queryParams = new URLSearchParams( window.location.search );
+
 		return (
 			<>
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
 				<DomainsTable
 					currentRoute={ currentRoute }
+					defaultSortKey={ queryParams.get( 'sortKey' ) }
 					domains={ domains }
 					handleDomainItemToggle={ this.handleDomainItemToggle }
 					domainsTableColumns={ domainsTableColumns }
