@@ -17,6 +17,7 @@ interface ThemePreviewProps {
 	url: string;
 	inlineCss?: string;
 	viewportWidth?: number;
+	iframeScaleRatio?: number;
 	isFitHeight?: boolean;
 	isShowFrameBorder?: boolean;
 	isShowDeviceSwitcher?: boolean;
@@ -32,6 +33,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	url,
 	inlineCss,
 	viewportWidth,
+	iframeScaleRatio = 1,
 	isFitHeight,
 	isShowFrameBorder,
 	isShowDeviceSwitcher,
@@ -44,7 +46,15 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 	const calypso_token = useMemo( () => uuid(), [] );
-	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : 1;
+	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : iframeScaleRatio;
+
+	const wrapperHeight = useMemo( () => {
+		if ( ! viewport || iframeScaleRatio === 1 ) {
+			return 0;
+		}
+
+		return viewport.height * iframeScaleRatio;
+	}, [ viewport?.height, iframeScaleRatio ] );
 
 	useEffect( () => {
 		const handleMessage = ( event: MessageEvent ) => {
@@ -107,7 +117,12 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			onDeviceChange={ recordDeviceClick }
 		>
 			{ containerResizeListener }
-			<div className="theme-preview__frame-wrapper">
+			<div
+				className="theme-preview__frame-wrapper"
+				style={ {
+					...( wrapperHeight > 0 && { height: wrapperHeight } ),
+				} }
+			>
 				{ ! isLoaded && (
 					<div className="theme-preview__frame-message">
 						<Spinner />
@@ -123,7 +138,6 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 						transform: `scale(${ scale })`,
 					} }
 					src={ addQueryArgs( url, { calypso_token } ) }
-					scrolling={ isFitHeight ? 'no' : 'yes' }
 					tabIndex={ -1 }
 				/>
 			</div>
