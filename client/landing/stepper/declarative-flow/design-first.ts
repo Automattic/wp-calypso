@@ -218,9 +218,9 @@ const designFirst: Flow = {
 				: `/start/account/user?variationName=${ flowName }&pageTitle=Pick%20a%20design&redirect_to=/setup/${ flowName }`;
 
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/blog/blogger-intent route which has no locale in the path so we need to
+		// /setup/design-first/site-creation-step route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/blog/<locale> starting points and /setup/blog/blogger-intent/<locale> urls.
+		// This effects both /setup/design-first/<locale> starting points and /setup/design-first/site-creation-step/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
