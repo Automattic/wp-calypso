@@ -24,7 +24,7 @@ const useHighlightIndices = () => {
 const useHighlightAdjacencyMatrix = () => {
 	const { visiblePlans } = usePlansGridContext();
 	const highlightIndices = useHighlightIndices();
-	const adjacencyMatrix: HighlightAdjacencyMatrix = {} as HighlightAdjacencyMatrix;
+	const adjacencyMatrix = {} as HighlightAdjacencyMatrix;
 
 	visiblePlans.forEach( ( planSlug, index ) => {
 		adjacencyMatrix[ planSlug ] = { leftOfHighlight: false, rightOfHighlight: false };
