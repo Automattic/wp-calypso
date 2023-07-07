@@ -3,15 +3,21 @@
 @import "../../sensei-variables";
 
 .intro {
+	&.free,
 	&.newsletter {
+		background-color: rgb(162 218 254);
+
 		.step-container {
-			background-color: var(--studio-gray-0);
-			background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-neutral.webp);
+			background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-mobile.webp);
 			background-repeat: no-repeat;
 			background-attachment: fixed;
 			background-position-x: center;
 			background-position-y: bottom;
 			background-size: contain;
+
+			@include break-medium {
+				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom.webp);
+			}
 
 			@media screen and ( max-height: 512px ) and ( orientation: landscape ) {
 				background-size: cover;
@@ -23,12 +29,24 @@
 				background-position-y: 10vh;
 			}
 		}
-
 		.intro__description {
-			max-width: 510px;
+			max-width: 450px;
 			margin: auto;
 		}
+	}
 
+	&.newsletter {
+		.step-container {
+			background-color: var(--studio-gray-0);
+			background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-neutral.webp);
+
+			@include break-medium {
+				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-neutral.webp);
+			}
+		}
+		.intro__description {
+			max-width: 510px;
+		}
 		.intro__button::before {
 			content: " ";
 			height: 16px;
