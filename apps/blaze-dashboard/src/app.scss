@@ -98,10 +98,12 @@
 			border-radius: 4px;
 			font-weight: 600;
 			font-size: 0.75rem;
+			background-color: var(--color-surface);
 
 			&:hover {
 				text-decoration: underline;
 				color: var(--color-accent);
+				background-color: var(--color-surface);
 			}
 		}
 
