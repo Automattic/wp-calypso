@@ -235,10 +235,10 @@ export class PluginsList extends Component {
 		if ( ! selectedPlugins ) {
 			selectedPlugins = this.props.plugins.filter( this.isSelected );
 		}
+
 		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug } ) =>
 			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
 
-		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginStatuses();
 		const pluginAndSiteObjects = selectedPlugins
 			.filter( ( plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
@@ -251,7 +251,7 @@ export class PluginsList extends Component {
 					};
 				} );
 			} ) // list of plugins -> list of plugin+site objects
-			.reduce( flattenArrays, [] ); // flatten the list into one big list of plugin+site objects
+			.flat(); // flatten the list into one big list of plugin+site objects
 
 		pluginAndSiteObjects.forEach( ( { plugin, site } ) => action( site.ID, plugin ) );
 
