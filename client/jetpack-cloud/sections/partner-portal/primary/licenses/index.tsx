@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import CardHeading from 'calypso/components/card-heading';
-import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPartnerPortalLicenseCounts from 'calypso/components/data/query-jetpack-partner-portal-license-counts';
 import SiteAddLicenseNotification from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-add-license-notification';
 import SiteSurveyBanner from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-survey-banner';
@@ -10,7 +9,6 @@ import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-l
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -23,6 +21,8 @@ import {
 	hasFetchedLicenseCounts,
 } from 'calypso/state/partner-portal/licenses/selectors';
 import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
+import Layout from '../../layout';
+import LayoutHeader from '../../layout/header';
 import OnboardingWidget from '../onboarding-widget';
 
 import './style.scss';
@@ -64,10 +64,9 @@ export default function Licenses( {
 	const showEmptyStateContent = hasFetched && allLicensesCount === 0;
 
 	return (
-		<div className="licenses" role="main">
+		<Layout fullWidth className="licenses" title={ translate( 'Licenses' ) }>
 			<QueryJetpackPartnerPortalLicenseCounts />
-			<DocumentHead title={ translate( 'Licenses' ) } />
-			<SidebarNavigation />
+
 			{ isAgencyUser && (
 				<>
 					<SiteSurveyBanner />
@@ -76,32 +75,30 @@ export default function Licenses( {
 			) }
 			<SiteAddLicenseNotification />
 
-			<div className="licenses__container">
-				<div className="licenses__header">
-					<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
+			<LayoutHeader>
+				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
-					<SelectPartnerKeyDropdown />
+				<SelectPartnerKeyDropdown />
 
-					<Button
-						href="/partner-portal/issue-license"
-						onClick={ onIssueNewLicenseClick }
-						primary
-						style={ { marginLeft: 'auto' } }
-					>
-						{ translate( 'Issue New License' ) }
-					</Button>
-				</div>
+				<Button
+					href="/partner-portal/issue-license"
+					onClick={ onIssueNewLicenseClick }
+					primary
+					style={ { marginLeft: 'auto' } }
+				>
+					{ translate( 'Issue New License' ) }
+				</Button>
+			</LayoutHeader>
 
-				{ showEmptyStateContent ? (
-					<OnboardingWidget isLicensesPage />
-				) : (
-					<LicenseListContext.Provider value={ context }>
-						<LicenseStateFilter />
+			{ showEmptyStateContent ? (
+				<OnboardingWidget isLicensesPage />
+			) : (
+				<LicenseListContext.Provider value={ context }>
+					<LicenseStateFilter />
 
-						<LicenseList />
-					</LicenseListContext.Provider>
-				) }
-			</div>
-		</div>
+					<LicenseList />
+				</LicenseListContext.Provider>
+			) }
+		</Layout>
 	);
 }
