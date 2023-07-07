@@ -110,6 +110,12 @@ const Settings = ( {
 		if ( ! isSecuredWithUs( domain ) ) {
 			return null;
 		}
+		if (
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC
+		) {
+			return null;
+		}
 
 		return (
 			<Accordion
