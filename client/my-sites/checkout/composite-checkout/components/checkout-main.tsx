@@ -27,7 +27,6 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -130,9 +129,6 @@ export default function CheckoutMain( {
 	customizedPreviousPath?: string;
 } ) {
 	const translate = useTranslate();
-
-	// Show a banner to redirect agency users to the partner portal dashboard
-	const showProDashboardRedirectBanner = useSelector( isAgencyUser );
 
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
@@ -748,12 +744,13 @@ export default function CheckoutMain( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 				/>
-				{ showProDashboardRedirectBanner && (
+				{
+					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
 					<JetpackProRedirectModal
 						redirectTo={ redirectTo }
 						productSourceFromUrl={ productSourceFromUrl }
 					/>
-				) }
+				}
 			</CheckoutProvider>
 		</Fragment>
 	);

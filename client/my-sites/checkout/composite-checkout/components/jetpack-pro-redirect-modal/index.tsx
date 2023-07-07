@@ -9,6 +9,7 @@ import {
 	JETPACK_DASHBOARD_CHECKOUT_REDIRECT_MODAL_DISMISSED as preferenceName,
 	getJetpackDashboardPreference as getPreference,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setPreference } from 'calypso/state/preferences/actions';
 import getPageValueFromUrl from './utils/get-page-value-from-url';
 
@@ -46,9 +47,12 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 
 	const redirectURLPage = getPageValueFromUrl( redirectTo ) ?? '';
 
-	// Show the banner only if the user has not dismissed the banner and
+	const isAgencyPartner = useSelector( isAgencyUser );
+
+	// Show the banner only if the user is agency partner, has not dismissed the banner and
 	// is coming from the Jetpack Plans page or Jetpack page in WP.com
 	if (
+		! isAgencyPartner ||
 		isDismissed ||
 		! (
 			productSourceFromUrl === 'jetpack-plans' ||
@@ -59,56 +63,54 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 	}
 
 	return (
-		<>
-			<Modal
-				open={ true }
-				onRequestClose={ dismissAndRecordEvent }
-				title=""
-				className="jetpack-pro-redirect-modal"
-			>
-				<div className="jetpack-pro-redirect-modal__container">
-					<div className="jetpack-pro-redirect-modal__top-header">
-						<JetpackLogo size={ 22 } className="jetpack-pro-redirect-modal__logo" />
-						{ translate( 'For Agencies & Pros' ) }
+		<Modal
+			open={ true }
+			onRequestClose={ dismissAndRecordEvent }
+			title=""
+			className="jetpack-pro-redirect-modal"
+		>
+			<div className="jetpack-pro-redirect-modal__container">
+				<div className="jetpack-pro-redirect-modal__top-header">
+					<JetpackLogo size={ 22 } className="jetpack-pro-redirect-modal__logo" />
+					{ translate( 'For Agencies & Pros' ) }
+				</div>
+				<div className="jetpack-pro-redirect-modal__content">
+					<div className="jetpack-pro-redirect-modal__heading">
+						{ translate( 'Get a recurring discount and more flexible billing' ) }
 					</div>
-					<div className="jetpack-pro-redirect-modal__content">
-						<div className="jetpack-pro-redirect-modal__heading">
-							{ translate( 'Get a recurring discount and more flexible billing' ) }
-						</div>
-						<p>
-							{ translate(
-								'As a Jetpack partner, by purchasing products through our Agency & Pro tools, you get:'
-							) }
-						</p>
-						<ul className="jetpack-pro-redirect-modal__list">
-							{ features.map( ( feature ) => {
-								const id = feature.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
-								return (
-									<li key={ id }>
-										<CheckoutCheckIcon id={ id } />
-										{ feature }
-									</li>
-								);
-							} ) }
-						</ul>
-					</div>
-					<div className="jetpack-pro-redirect-modal__footer">
-						<div className="jetpack-pro-redirect-modal__footer-buttons">
-							<Button
-								type="submit"
-								primary
-								href="https://cloud.jetpack.com/partner-portal/issue-license"
-								onClick={ recordRedirectEvent }
-							>
-								{ translate( 'Unlock savings now' ) }
-							</Button>
-							<Button borderless onClick={ dismissAndRecordEvent }>
-								{ translate( 'Continue with purchase here' ) }
-							</Button>
-						</div>
+					<p>
+						{ translate(
+							'As a Jetpack partner, by purchasing products through our Agency & Pro tools, you get:'
+						) }
+					</p>
+					<ul className="jetpack-pro-redirect-modal__list">
+						{ features.map( ( feature ) => {
+							const id = feature.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
+							return (
+								<li key={ id }>
+									<CheckoutCheckIcon id={ id } />
+									{ feature }
+								</li>
+							);
+						} ) }
+					</ul>
+				</div>
+				<div className="jetpack-pro-redirect-modal__footer">
+					<div className="jetpack-pro-redirect-modal__footer-buttons">
+						<Button
+							type="submit"
+							primary
+							href="https://cloud.jetpack.com/partner-portal/issue-license"
+							onClick={ recordRedirectEvent }
+						>
+							{ translate( 'Unlock savings now' ) }
+						</Button>
+						<Button borderless onClick={ dismissAndRecordEvent }>
+							{ translate( 'Continue with purchase here' ) }
+						</Button>
 					</div>
 				</div>
-			</Modal>
-		</>
+			</div>
+		</Modal>
 	);
 }
