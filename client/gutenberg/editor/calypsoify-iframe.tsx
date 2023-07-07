@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-/* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
 import { getQueryArg } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -16,12 +13,7 @@ import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { navigate } from 'calypso/lib/navigate';
-import {
-	withStopPerformanceTrackingProp,
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore - PerformanceTrackProps is defined calypso/lib/performance-tracking/index.web.js
-	PerformanceTrackProps,
-} from 'calypso/lib/performance-tracking';
+import { withStopPerformanceTrackingProp } from 'calypso/lib/performance-tracking';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
 import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
@@ -59,16 +51,16 @@ import Iframe from './iframe';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { Placeholder } from './placeholder';
 import type { RequestCart } from '@automattic/shopping-cart';
+import type { PerformanceTrackProps } from 'calypso/lib/performance-tracking/index.web';
 import './style.scss';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
 	duplicatePostId: T.PostId;
 	creatingNewHomepage?: boolean;
 	postId: T.PostId;
 	postType: T.PostType;
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
-	pressThisData: any;
+	pressThisData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	anchorFmData: {
 		anchor_podcast: string | undefined;
 		anchor_episode: string | undefined;
@@ -87,17 +79,16 @@ interface CheckoutModalOptions extends RequestCart {
 }
 
 interface State {
-	allowedTypes?: any;
-	classicBlockEditorId?: any;
+	allowedTypes?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	classicBlockEditorId?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	isIframeLoaded: boolean;
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isCheckoutModalVisible: boolean;
-	multiple?: any;
+	multiple?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	postUrl?: T.URL;
 	checkoutModalOptions?: CheckoutModalOptions;
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 enum WindowActions {
 	Loaded = 'loaded',
@@ -301,8 +292,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		// see: https://github.com/Automattic/wp-calypso/pull/45436
 		const ports = data.ports ?? backCompatPorts;
 
-		/* eslint-disable @typescript-eslint/no-explicit-any */
-		const { action, payload }: { action: EditorActions; payload: any } = data;
+		const { action, payload }: { action: EditorActions; payload: any } = data; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 		if ( EditorActions.OpenMediaModal === action && ports && ports[ 0 ] ) {
 			const { siteId } = this.props;
