@@ -21,6 +21,7 @@ interface ThemePreviewProps {
 	isFitHeight?: boolean;
 	isShowFrameBorder?: boolean;
 	isShowDeviceSwitcher?: boolean;
+	isFullscreen?: boolean;
 	recordDeviceClick?: ( device: string ) => void;
 }
 
@@ -37,6 +38,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	isFitHeight,
 	isShowFrameBorder,
 	isShowDeviceSwitcher,
+	isFullscreen,
 	recordDeviceClick,
 } ) => {
 	const { __ } = useI18n();
@@ -114,6 +116,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			} ) }
 			isShowDeviceSwitcherToolbar={ isShowDeviceSwitcher }
 			isShowFrameBorder={ isShowFrameBorder }
+			isFullscreen={ isFullscreen }
 			onDeviceChange={ recordDeviceClick }
 		>
 			{ containerResizeListener }

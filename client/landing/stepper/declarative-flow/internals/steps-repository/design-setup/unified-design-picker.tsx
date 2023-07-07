@@ -85,7 +85,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
-	const [ shouldHideBack, setShouldHideBack ] = useState( false );
+	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
 
 	const { goToCheckout } = useCheckout();
 
@@ -515,7 +515,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function getPrimaryActionButton() {
 		if ( shouldUpgrade ) {
 			return (
-				<Button primary borderless={ false } onClick={ upgradePlan }>
+				<Button className="navigation-link" primary borderless={ false } onClick={ upgradePlan }>
 					{ translate( 'Unlock theme' ) }
 				</Button>
 			);
@@ -530,7 +530,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		};
 
 		return (
-			<Button primary borderless={ false } onClick={ selectStyle }>
+			<Button className="navigation-link" primary borderless={ false } onClick={ selectStyle }>
 				{ translate( 'Continue' ) }
 			</Button>
 		);
@@ -606,7 +606,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					selectedFontVariation={ selectedFontVariation }
 					onSelectFontVariation={ setSelectedFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }
-					onNavigatorPathChange={ ( path: string ) => setShouldHideBack( path !== '/' ) }
+					onNavigatorPathChange={ ( path: string ) => setShouldHideActionButtons( path !== '/' ) }
 				/>
 			</>
 		);
@@ -616,10 +616,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				hideBack={ shouldHideBack }
+				hideBack={ shouldHideActionButtons }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
-				customizedActionButtons={ actionButtons }
+				customizedActionButtons={ ! shouldHideActionButtons ? actionButtons : undefined }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		);
