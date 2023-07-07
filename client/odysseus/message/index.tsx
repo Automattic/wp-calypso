@@ -1,5 +1,7 @@
 import classnames from 'classnames';
 import { RefObject, useState } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import ReactMarkdown from 'react-markdown';
 import type { Message } from '../types';
 
 import './style.scss';
@@ -41,7 +43,7 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 			ref={ isLast ? messageEndRef : null }
 			className={ `chatbox-message ${ isUser ? 'user' : 'wapuu' }` }
 		>
-			{ message.content }
+			<ReactMarkdown children={ message.content } />
 			{ ! isUser && (
 				<div className="message-actions">
 					<button
