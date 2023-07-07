@@ -15,8 +15,6 @@ function PeopleSectionNavCompact( props: Props ) {
 	const translate = useTranslate();
 	const { selectedFilter, searchTerm, filterCount, shouldDisplayViewersTab } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const searchPlaceholder =
-		selectedFilter === 'viewers' ? translate( 'Search by email…' ) : undefined;
 
 	const filters = [
 		{
@@ -53,7 +51,7 @@ function PeopleSectionNavCompact( props: Props ) {
 				} ) }
 			</NavTabs>
 
-			<PeopleSearch search={ searchTerm } placeholder={ searchPlaceholder } />
+			{ selectedFilter === 'team' && <PeopleSearch search={ searchTerm } /> }
 		</>
 	);
 }
