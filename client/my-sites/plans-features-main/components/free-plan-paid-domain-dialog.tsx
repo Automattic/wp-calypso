@@ -164,8 +164,26 @@ function GetSuggestedPlanSection( {
 type DomainPlanDialogProps = {
 	domainName: string;
 	suggestedPlanSlug: PlanSlug;
-	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
+	onFreePlanSelected: ( domainSuggestion?: DomainSuggestion ) => void;
 	onPlanSelected: () => void;
+};
+
+const useWpComFreeDomainSuggestion = (
+	domainName: string
+): {
+	isInitialLoading: boolean;
+	wpcomFreeDomainSuggestion: DomainSuggestions.DomainSuggestion | undefined;
+} => {
+	const {
+		data: wordPressSubdomainSuggestions,
+		isInitialLoading,
+		isError,
+	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
+
+	return {
+		isInitialLoading,
+		wpcomFreeDomainSuggestion: ( ! isError && wordPressSubdomainSuggestions?.[ 0 ] ) || undefined,
+	};
 };
 
 function DialogPaidPlanIsRequired( {
@@ -177,11 +195,8 @@ function DialogPaidPlanIsRequired( {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const [ isBusy, setIsBusy ] = useState( false );
-	const {
-		data: wordPressSubdomainSuggestions,
-		isInitialLoading,
-		isError,
-	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
+	const { isInitialLoading, wpcomFreeDomainSuggestion } =
+		useWpComFreeDomainSuggestion( domainName );
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
@@ -192,8 +207,8 @@ function DialogPaidPlanIsRequired( {
 		setIsBusy( true );
 		// Since this domain will not be available after it is selected, invalidate the cache.
 		queryClient.invalidateQueries( DomainSuggestions.getDomainSuggestionsQueryKey( domainName ) );
-		if ( wordPressSubdomainSuggestions && wordPressSubdomainSuggestions.length ) {
-			onFreePlanSelected( wordPressSubdomainSuggestions[ 0 ] );
+		if ( wpcomFreeDomainSuggestion ) {
+			onFreePlanSelected( wpcomFreeDomainSuggestion );
 		}
 	}
 
@@ -217,10 +232,10 @@ function DialogPaidPlanIsRequired( {
 				<Row>
 					<DomainName>
 						{ isInitialLoading && <LoadingPlaceHolder /> }
-						{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
+						{ wpcomFreeDomainSuggestion && <div>{ wpcomFreeDomainSuggestion.domain_name }</div> }
 					</DomainName>
 					<StyledButton
-						disabled={ isInitialLoading || ! wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }
+						disabled={ isInitialLoading || ! wpcomFreeDomainSuggestion }
 						busy={ isBusy }
 						onClick={ handleFreeDomainClick }
 					>
@@ -239,26 +254,18 @@ function DialogCustomDomainAndFreePlan( {
 	onPlanSelected,
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
-	const queryClient = useQueryClient();
 	const [ isBusy, setIsBusy ] = useState( false );
-	const {
-		data: wordPressSubdomainSuggestions,
-		isInitialLoading,
-		isError,
-	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
+	const { isInitialLoading, wpcomFreeDomainSuggestion } =
+		useWpComFreeDomainSuggestion( domainName );
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
 		onPlanSelected();
 	}
 
-	function handleFreeDomainClick() {
+	function handleFreePlanClick() {
 		setIsBusy( true );
-		// Since this domain will not be available after it is selected, invalidate the cache.
-		queryClient.invalidateQueries( DomainSuggestions.getDomainSuggestionsQueryKey( domainName ) );
-		if ( wordPressSubdomainSuggestions && wordPressSubdomainSuggestions.length ) {
-			onFreePlanSelected( wordPressSubdomainSuggestions[ 0 ] );
-		}
+		onFreePlanSelected();
 	}
 
 	return (
@@ -294,12 +301,19 @@ function DialogCustomDomainAndFreePlan( {
 				<Row>
 					<DomainName>
 						{ isInitialLoading && <LoadingPlaceHolder /> }
-						{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
+						{ wpcomFreeDomainSuggestion &&
+							translate( '%(domainName)s redirects to %(wpcomFreeDomain)s', {
+								args: {
+									domainName,
+									wpcomFreeDomain: wpcomFreeDomainSuggestion.domain_name,
+								},
+								comment: '%(wpcomFreeDomain)s is a WordPress.com subdomain, e.g. foo.wordpress.com',
+							} ) }
 					</DomainName>
 					<StyledButton
-						disabled={ isInitialLoading || ! wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }
+						disabled={ isInitialLoading || ! wpcomFreeDomainSuggestion }
 						busy={ isBusy }
-						onClick={ handleFreeDomainClick }
+						onClick={ handleFreePlanClick }
 					>
 						{ translate( 'Continue with Free plan' ) }
 					</StyledButton>
@@ -315,13 +329,7 @@ export function FreePlanPaidDomainDialog( {
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
-}: {
-	domainName: string;
-	suggestedPlanSlug: PlanSlug;
-	onClose: () => void;
-	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
-	onPlanSelected: () => void;
-} ) {
+}: DomainPlanDialogProps & { onClose: () => void } ) {
 	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( domainName );
 
 	const dialogCommonProps: DomainPlanDialogProps = {
