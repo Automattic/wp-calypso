@@ -278,77 +278,6 @@ export class PluginsList extends Component {
 		} );
 	};
 
-	updateSelected = ( accepted ) => {
-		if ( ! accepted ) {
-			return;
-		}
-
-		this.recordEvent( 'Clicked Update Plugin(s)', true );
-		this.doActionOverSelected( 'updating', this.props.updatePlugin );
-	};
-
-	updatePlugin = ( selectedPlugin ) => {
-		this.recordEvent( 'Clicked Update Plugin(s)', true );
-
-		handleUpdatePlugins( [ selectedPlugin ], this.props.updatePlugin, this.props.pluginsOnSites );
-		this.removePluginStatuses();
-	};
-
-	activateSelected = ( accepted ) => {
-		if ( ! accepted ) {
-			return;
-		}
-
-		this.recordEvent( 'Clicked Activate Plugin(s)', true );
-		this.doActionOverSelected( 'activating', this.props.activatePlugin );
-	};
-
-	deactivateSelected = ( accepted ) => {
-		if ( ! accepted ) {
-			return;
-		}
-
-		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
-		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin );
-	};
-
-	deactiveAndDisconnectSelected = ( accepted ) => {
-		if ( ! accepted ) {
-			return;
-		}
-
-		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
-
-		let waitForDeactivate = false;
-
-		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
-			waitForDeactivate = true;
-			this.props.deactivatePlugin( site, plugin );
-		} );
-
-		if ( waitForDeactivate && this.props.selectedSite ) {
-			this.setState( { disconnectJetpackNotice: true } );
-		}
-	};
-
-	setAutoupdateSelected = ( accepted ) => {
-		if ( ! accepted ) {
-			return;
-		}
-
-		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
-		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin );
-	};
-
-	unsetAutoupdateSelected = ( accepted ) => {
-		if ( ! accepted ) {
-			return;
-		}
-
-		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
-		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin );
-	};
-
 	bulkActionDialog = ( actionName, selectedPlugin ) => {
 		const { plugins, allSites, showPluginActionDialog } = this.props;
 		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
@@ -371,17 +300,43 @@ export class PluginsList extends Component {
 		showPluginActionDialog( actionName, selectedPlugins, allSites, selectedActionCallback );
 	};
 
-	removePluginDialog = ( selectedPlugin ) => {
-		this.bulkActionDialog( PluginActions.REMOVE, selectedPlugin );
-	};
+	/** BEGIN BULK ACTION DIALOG CALLBACKS */
 
-	removeSelected = ( accepted, selectedPlugins ) => {
+	activateSelected = ( accepted ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		this.recordEvent( 'Clicked Remove Plugin(s)', true );
-		this.doActionOverSelected( 'removing', this.props.removePlugin, selectedPlugins );
+		this.recordEvent( 'Clicked Activate Plugin(s)', true );
+		this.doActionOverSelected( 'activating', this.props.activatePlugin );
+	};
+
+	deactiveAndDisconnectSelected = ( accepted ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
+
+		let waitForDeactivate = false;
+
+		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
+			waitForDeactivate = true;
+			this.props.deactivatePlugin( site, plugin );
+		} );
+
+		if ( waitForDeactivate && this.props.selectedSite ) {
+			this.setState( { disconnectJetpackNotice: true } );
+		}
+	};
+
+	deactivateSelected = ( accepted ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
+		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin );
 	};
 
 	removeSelectedWithJetpack = ( accepted, selectedPlugins ) => {
@@ -405,6 +360,55 @@ export class PluginsList extends Component {
 		if ( waitForRemove && this.props.selectedSite ) {
 			this.setState( { removeJetpackNotice: true } );
 		}
+	};
+
+	removeSelected = ( accepted, selectedPlugins ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		this.recordEvent( 'Clicked Remove Plugin(s)', true );
+		this.doActionOverSelected( 'removing', this.props.removePlugin, selectedPlugins );
+	};
+
+	updateSelected = ( accepted ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		this.recordEvent( 'Clicked Update Plugin(s)', true );
+		this.doActionOverSelected( 'updating', this.props.updatePlugin );
+	};
+
+	setAutoupdateSelected = ( accepted ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
+		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin );
+	};
+
+	unsetAutoupdateSelected = ( accepted ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
+		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin );
+	};
+
+	/** END BULK ACTION DIALOG CALLBACKS */
+
+	updatePlugin = ( selectedPlugin ) => {
+		this.recordEvent( 'Clicked Update Plugin(s)', true );
+
+		handleUpdatePlugins( [ selectedPlugin ], this.props.updatePlugin, this.props.pluginsOnSites );
+		this.removePluginStatuses();
+	};
+
+	removePluginDialog = ( selectedPlugin ) => {
+		this.bulkActionDialog( PluginActions.REMOVE, selectedPlugin );
 	};
 
 	maybeShowDisconnectNotice() {
