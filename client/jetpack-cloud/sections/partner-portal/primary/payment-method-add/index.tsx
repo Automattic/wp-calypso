@@ -181,7 +181,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	};
 
 	return (
-		<Layout className="payment-method-add" title={ translate( 'Payment Methods' ) } wide>
+		<Layout className="payment-method-add" title={ translate( 'Payment Methods' ) }>
 			{ ( !! returnQueryArg || products ) && (
 				<AssignLicenseStepProgress currentStep="addPaymentMethod" selectedSite={ selectedSite } />
 			) }

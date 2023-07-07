@@ -9,23 +9,16 @@ import './style.scss';
 type Props = {
 	children: ReactNode;
 	className?: string;
-	fullWidth?: boolean;
 	title: ReactNode;
 	wide?: boolean;
 };
 
-export default function Layout( {
-	children,
-	className,
-	fullWidth = false,
-	title,
-	wide = false,
-}: Props ) {
+export default function Layout( { children, className, title, wide = false }: Props ) {
 	return (
 		<Main
 			className={ classNames( 'partner-portal-layout', className ) }
-			fullWidthLayout={ fullWidth }
-			wideLayout={ wide }
+			fullWidthLayout={ wide } // Our 'wide' here means maximum of 1500px.
+			wideLayout={ ! wide } // When we set to full width, we want to set this to false.
 		>
 			<DocumentHead title={ title } />
 			<SidebarNavigation />

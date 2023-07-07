@@ -60,7 +60,7 @@ export default function PaymentMethodList() {
 	);
 
 	return (
-		<Layout className="payment-method-list" title={ translate( 'Payment Methods' ) } fullWidth>
+		<Layout className="payment-method-list" title={ translate( 'Payment Methods' ) } wide>
 			<QueryJetpackPartnerPortalStoredCards paging={ paging } />
 
 			<LayoutHeader>

@@ -11,7 +11,7 @@ export default function CompanyDetailsDashboard() {
 	const translate = useTranslate();
 
 	return (
-		<Layout className="company-details-dashboard" title={ translate( 'Company Details' ) } wide>
+		<Layout className="company-details-dashboard" title={ translate( 'Company Details' ) }>
 			<LayoutHeader>
 				<CardHeading size={ 36 }>{ translate( 'Company Details' ) }</CardHeading>
 			</LayoutHeader>

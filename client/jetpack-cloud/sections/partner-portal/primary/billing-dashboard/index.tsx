@@ -18,7 +18,7 @@ export default function BillingDashboard() {
 	};
 
 	return (
-		<Layout className="billing-dashboard" title={ translate( 'Billing' ) } fullWidth>
+		<Layout className="billing-dashboard" title={ translate( 'Billing' ) } wide>
 			<LayoutHeader>
 				<CardHeading size={ 36 }>{ translate( 'Billing' ) }</CardHeading>
 

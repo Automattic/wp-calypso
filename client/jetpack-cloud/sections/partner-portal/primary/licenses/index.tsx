@@ -64,7 +64,7 @@ export default function Licenses( {
 	const showEmptyStateContent = hasFetched && allLicensesCount === 0;
 
 	return (
-		<Layout fullWidth className="licenses" title={ translate( 'Licenses' ) }>
+		<Layout className="licenses" title={ translate( 'Licenses' ) } wide>
 			<QueryJetpackPartnerPortalLicenseCounts />
 
 			{ isAgencyUser && (

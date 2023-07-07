@@ -44,11 +44,11 @@ export default function AssignLicense( {
 
 	return (
 		<Layout
-			fullWidth
 			className="assign-license"
 			title={ translate( 'Assign your license', 'Assign your licenses', {
 				count: licenseKeysArray.length,
 			} ) }
+			wide
 		>
 			<AssignLicenseStepProgress currentStep="assignLicense" />
 

@@ -9,7 +9,7 @@ export default function InvoicesDashboard() {
 	const translate = useTranslate();
 
 	return (
-		<Layout className="invoices-dashboard" title={ translate( 'Invoices' ) } fullWidth>
+		<Layout className="invoices-dashboard" title={ translate( 'Invoices' ) } wide>
 			<LayoutHeader>
 				<CardHeading size={ 36 }>{ translate( 'Invoices' ) }</CardHeading>
 
