@@ -42,3 +42,4 @@ export type DataResponse< T > = {
 	isLoading: boolean;
 	result?: T;
 };
+export type GridSize = 'small' | 'medium' | 'large';

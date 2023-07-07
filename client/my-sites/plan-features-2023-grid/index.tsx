@@ -32,6 +32,7 @@ import {
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, LocalizedComponent, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, createRef } from 'react';
@@ -63,11 +64,16 @@ import PopularBadge from './components/popular-badge';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
-import { PlanProperties, TransformedFeatureObject, DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { PlansIntent } from './grid-context';
 import type { GridPlan } from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
-import type { PlanActionOverrides } from './types';
+import type {
+	PlanProperties,
+	TransformedFeatureObject,
+	DataResponse,
+	GridSize,
+	PlanActionOverrides,
+} from './types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
@@ -128,6 +134,7 @@ type PlanFeatures2023GridConnectedProps = {
 	selectedSiteSlug: string | null;
 	isPlanUpgradeCreditEligible: boolean;
 	isGlobalStylesOnPersonal?: boolean;
+	gridSize: GridSize;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -270,6 +277,8 @@ export class PlanFeatures2023Grid extends Component<
 			planRecords,
 			visiblePlans,
 			showLegacyStorageFeature,
+			gridSize,
+			containerResizeListener,
 		} = this.props;
 		return (
 			<PlansGridContextProvider
@@ -279,19 +288,20 @@ export class PlanFeatures2023Grid extends Component<
 			>
 				<div className="plans-wrapper">
 					<QueryActivePromotions />
-					{ this.renderSpotlightPlan() }
+					{ [ 'medium', 'large' ].includes( gridSize ) && this.renderSpotlightPlan() }
 					<div className="plan-features">
 						<div className="plan-features-2023-grid__content">
+							{ containerResizeListener }
 							<div>
-								<div className="plan-features-2023-grid__desktop-view">
-									{ this.renderTable( planProperties ) }
-								</div>
-								<div className="plan-features-2023-grid__tablet-view">
-									{ this.renderTabletView() }
-								</div>
-								<div className="plan-features-2023-grid__mobile-view">
-									{ this.renderMobileView() }
-								</div>
+								{ [ 'medium', 'large' ].includes( gridSize ) ? (
+									<div className="plan-features-2023-grid__table-view">
+										{ this.renderTableView() }
+									</div>
+								) : (
+									<div className="plan-features-2023-grid__column-view">
+										{ this.renderColumnView() }
+									</div>
+								) }
 							</div>
 						</div>
 					</div>
@@ -379,8 +389,8 @@ export class PlanFeatures2023Grid extends Component<
 		);
 	}
 
-	renderTabletView() {
-		const { planProperties, spotlightPlanSlug } = this.props;
+	renderTableView() {
+		const { planProperties, spotlightPlanSlug, gridSize } = this.props;
 		let plansToShow = [];
 
 		plansToShow = planProperties.filter(
@@ -389,7 +399,10 @@ export class PlanFeatures2023Grid extends Component<
 				isVisible && ( ! spotlightPlanSlug || spotlightPlanSlug !== planName )
 		);
 
-		const numberOfPlansToShowOnTop = 4 === plansToShow.length ? 2 : 3;
+		let numberOfPlansToShowOnTop = plansToShow.length;
+		if ( 'medium' === gridSize ) {
+			numberOfPlansToShowOnTop = 4 === plansToShow.length ? 2 : 3;
+		}
 		const planPropertiesForTopRow = plansToShow.slice( 0, numberOfPlansToShowOnTop );
 		const planPropertiesForBottomRow = plansToShow.slice( numberOfPlansToShowOnTop );
 
@@ -407,8 +420,8 @@ export class PlanFeatures2023Grid extends Component<
 		);
 	}
 
-	renderMobileView() {
-		const { translate, selectedFeature, planProperties, spotlightPlanSlug } = this.props;
+	renderColumnView() {
+		const { planProperties, translate, selectedFeature, spotlightPlanSlug } = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planName: string }
 		) => {
@@ -1114,11 +1127,29 @@ const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 		props.visiblePlans
 	);
 
+	const [ containerResizeListener, { width } ] = useResizeObserver();
+
+	const largeColumnMinWidth = 200;
+	const mediumColumnMinWidth = 200;
+	const largeFit = props.visiblePlans.length * largeColumnMinWidth;
+	const mediumFit = 3 * mediumColumnMinWidth;
+	let gridSize: GridSize = 'small';
+
+	if ( width ) {
+		if ( width >= largeFit ) {
+			gridSize = 'large';
+		} else if ( width >= mediumFit ) {
+			gridSize = 'medium';
+		}
+	}
+
 	if ( props.isInSignup ) {
 		return (
 			<ConnectedPlanFeatures2023Grid
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				gridSize={ gridSize }
+				containerResizeListener={ containerResizeListener }
 			/>
 		);
 	}
@@ -1128,6 +1159,8 @@ const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 			<ConnectedPlanFeatures2023Grid
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				gridSize={ gridSize }
+				containerResizeListener={ containerResizeListener }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

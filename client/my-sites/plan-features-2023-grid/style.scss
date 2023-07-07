@@ -206,20 +206,8 @@ $mobile-card-max-width: 440px;
 		width: auto;
 	}
 
-	.is-section-stepper &,
-	.is-section-signup & {
-		@include plan-features-layout-switcher;
-	}
-
-	.is-section-plans:not(.is-sidebar-collapsed) & {
-		@include plan-features-layout-switcher-with-sidebar;
-	}
-
-	.is-section-plans.is-sidebar-collapsed & {
-		@include plan-features-layout-switcher;
-	}
-
-	.plan-features-2023-grid__mobile-view {
+	.plan-features-2023-grid__column-view {
+		display: flex;
 		flex-direction: column;
 		align-items: stretch;
 		gap: 20px;
@@ -405,8 +393,7 @@ $mobile-card-max-width: 440px;
 		}
 	}
 
-	.plan-features-2023-grid__desktop-view,
-	.plan-features-2023-grid__tablet-view {
+	.plan-features-2023-grid__table-view {
 		.plan-features-2023-grid__table-item {
 			max-width: $table-cell-max-width;
 		}
