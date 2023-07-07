@@ -61,16 +61,15 @@ import { PlanFeaturesItem } from './components/item';
 import { PlanComparisonGrid } from './components/plan-comparison-grid';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
-import PlansGridContextProvider from './grid-context';
+import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
-import useHighlightLabel from './hooks/use-highlight-label';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { PlansIntent } from './grid-context';
+import type { GridPlan } from './hooks/npm-ready/use-wpcom-plans-with-intent';
 import type { PlanActionOverrides } from './types';
 import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
 type PlanRowOptions = {
@@ -93,7 +92,7 @@ const Container = (
 };
 
 export type PlanFeatures2023GridProps = {
-	plans: PlanSlug[];
+	planRecords: Record< PlanSlug, GridPlan >;
 	visiblePlans: PlanSlug[];
 	isInSignup?: boolean;
 	siteId?: number | null;
@@ -155,15 +154,11 @@ const PlanLogo: React.FunctionComponent< {
 	currentSitePlanSlug,
 	selectedPlan,
 } ) => {
+	const { planRecords } = usePlansGridContext();
 	const { planName, current } = planProperties;
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: planPropertiesObj,
-		currentSitePlanSlug,
-		selectedPlan,
-	} );
-	const highlightLabel = useHighlightLabel( {
-		planName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
@@ -172,7 +167,7 @@ const PlanLogo: React.FunctionComponent< {
 		getPlanClass( planName )
 	);
 	const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-		'popular-plan-parent-class': highlightLabel,
+		'popular-plan-parent-class': planRecords[ planName ]?.highlightLabel,
 		'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
 		'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
 		'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
@@ -197,8 +192,6 @@ const PlanLogo: React.FunctionComponent< {
 				isInSignup={ isInSignup }
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
-				currentSitePlanSlug={ currentSitePlanSlug }
-				selectedPlan={ selectedPlan }
 			/>
 			<header className={ headerClasses }>
 				{ isBusinessPlan( planName ) && (
@@ -286,9 +279,15 @@ export class PlanFeatures2023Grid extends Component<
 			selectedFeature,
 			intent,
 			isGlobalStylesOnPersonal,
+			planRecords,
+			visiblePlans,
 		} = this.props;
 		return (
-			<PlansGridContextProvider intent={ intent }>
+			<PlansGridContextProvider
+				intent={ intent }
+				planRecords={ planRecords }
+				visiblePlans={ visiblePlans }
+			>
 				<div className="plans-wrapper">
 					<QueryActivePromotions />
 					<div className="plan-features">
@@ -890,7 +889,7 @@ export class PlanFeatures2023Grid extends Component<
 const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures2023Grid > ) => {
 	return function ( props: PlanFeatures2023GridType ) {
 		const isLargeCurrency = useIsLargeCurrency( {
-			planSlugs: props.plans,
+			planSlugs: Object.keys( props.planRecords ) as PlanSlug[],
 			siteId: props.siteId,
 		} );
 		return <Component { ...props } isLargeCurrency={ isLargeCurrency } />;
@@ -902,7 +901,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 	( state: IAppState, ownProps: PlanFeatures2023GridType ) => {
 		const {
 			placeholder,
-			plans,
+			planRecords,
 			visiblePlans,
 			isInSignup,
 			siteId,
@@ -920,136 +919,141 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const selectedSiteSlug = getSiteSlug( state, siteId );
 
 		// TODO clk: plan properties should be passed through props instead of being calculated here
-		const planProperties: PlanProperties[] = plans.map( ( plan: PlanSlug ) => {
-			let isPlaceholder = false;
-			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
-			const planProductId = planConstantObj.getProductId();
-			const planObject = getPlan( state, planProductId );
-			const isMonthlyPlan = isMonthly( plan );
+		const planProperties: PlanProperties[] = ( Object.keys( planRecords ) as PlanSlug[] ).map(
+			( plan: PlanSlug ) => {
+				let isPlaceholder = false;
+				const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
+				const planProductId = planConstantObj.getProductId();
+				const planObject = getPlan( state, planProductId );
+				const isMonthlyPlan = isMonthly( plan );
 
-			if ( placeholder || ( ! planObject && plan !== PLAN_ENTERPRISE_GRID_WPCOM ) ) {
-				isPlaceholder = true;
-			}
+				if ( placeholder || ( ! planObject && plan !== PLAN_ENTERPRISE_GRID_WPCOM ) ) {
+					isPlaceholder = true;
+				}
 
-			let planFeatures = [];
-			let jetpackFeatures: FeatureObject[] = [];
-			let tagline = '';
+				let planFeatures = [];
+				let jetpackFeatures: FeatureObject[] = [];
+				let tagline = '';
 
-			if ( 'plans-newsletter' === intent ) {
-				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.getNewsletterSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
-				);
-				tagline = planConstantObj.getNewsletterTagLine?.( isGlobalStylesOnPersonal ) ?? '';
-			} else if ( 'plans-link-in-bio' === intent ) {
-				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.getLinkInBioSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
-				);
-				tagline = planConstantObj.getLinkInBioTagLine?.( isGlobalStylesOnPersonal ) ?? '';
-			} else if ( 'plans-blog-onboarding' === intent ) {
-				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.getBlogOnboardingSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
-				);
+				if ( 'plans-newsletter' === intent ) {
+					planFeatures = getPlanFeaturesObject(
+						planConstantObj?.getNewsletterSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
+					);
+					tagline = planConstantObj.getNewsletterTagLine?.( isGlobalStylesOnPersonal ) ?? '';
+				} else if ( 'plans-link-in-bio' === intent ) {
+					planFeatures = getPlanFeaturesObject(
+						planConstantObj?.getLinkInBioSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
+					);
+					tagline = planConstantObj.getLinkInBioTagLine?.( isGlobalStylesOnPersonal ) ?? '';
+				} else if ( 'plans-blog-onboarding' === intent ) {
+					planFeatures = getPlanFeaturesObject(
+						planConstantObj?.getBlogOnboardingSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
+					);
 
-				jetpackFeatures = getPlanFeaturesObject(
-					planConstantObj.getBlogOnboardingSignupJetpackFeatures?.() ?? []
-				);
-				tagline = planConstantObj.getBlogOnboardingTagLine?.( isGlobalStylesOnPersonal ) ?? '';
-			} else {
-				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( isGlobalStylesOnPersonal ) ?? []
-				);
+					jetpackFeatures = getPlanFeaturesObject(
+						planConstantObj.getBlogOnboardingSignupJetpackFeatures?.() ?? []
+					);
+					tagline = planConstantObj.getBlogOnboardingTagLine?.( isGlobalStylesOnPersonal ) ?? '';
+				} else {
+					planFeatures = getPlanFeaturesObject(
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( isGlobalStylesOnPersonal ) ??
+							[]
+					);
 
-				jetpackFeatures = getPlanFeaturesObject(
-					planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
-				);
-				tagline = planConstantObj.getPlanTagline?.( isGlobalStylesOnPersonal ) ?? '';
-			}
+					jetpackFeatures = getPlanFeaturesObject(
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
+					);
+					tagline = planConstantObj.getPlanTagline?.( isGlobalStylesOnPersonal ) ?? '';
+				}
 
-			const rawPrice = getPlanRawPrice( state, planProductId, true );
+				const rawPrice = getPlanRawPrice( state, planProductId, true );
 
-			// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
-			const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
-			let planFeaturesTransformed: Array< TransformedFeatureObject > = [];
-			let jetpackFeaturesTransformed: Array< TransformedFeatureObject > = [];
-			const topFeature = selectedFeature
-				? planFeatures.find( ( feature ) => feature.getSlug() === selectedFeature )
-				: undefined;
+				// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
+				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
+				let planFeaturesTransformed: Array< TransformedFeatureObject > = [];
+				let jetpackFeaturesTransformed: Array< TransformedFeatureObject > = [];
+				const topFeature = selectedFeature
+					? planFeatures.find( ( feature ) => feature.getSlug() === selectedFeature )
+					: undefined;
 
-			if ( topFeature ) {
-				const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
-					topFeature.getSlug()
-				);
-				planFeaturesTransformed.unshift( {
-					...topFeature,
-					availableOnlyForAnnualPlans,
-					availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-				} );
-			}
-
-			if ( annualPlansOnlyFeatures.length > 0 ) {
-				planFeatures.forEach( ( feature ) => {
-					if ( feature === topFeature ) {
-						return;
-					}
-
-					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
-
-					planFeaturesTransformed.push( {
-						...feature,
+				if ( topFeature ) {
+					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
+						topFeature.getSlug()
+					);
+					planFeaturesTransformed.unshift( {
+						...topFeature,
 						availableOnlyForAnnualPlans,
 						availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 					} );
-				} );
-			}
+				}
 
-			jetpackFeaturesTransformed = jetpackFeatures.map( ( feature ) => {
-				const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
+				if ( annualPlansOnlyFeatures.length > 0 ) {
+					planFeatures.forEach( ( feature ) => {
+						if ( feature === topFeature ) {
+							return;
+						}
+
+						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
+							feature.getSlug()
+						);
+
+						planFeaturesTransformed.push( {
+							...feature,
+							availableOnlyForAnnualPlans,
+							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+						} );
+					} );
+				}
+
+				jetpackFeaturesTransformed = jetpackFeatures.map( ( feature ) => {
+					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
+
+					return {
+						...feature,
+						availableOnlyForAnnualPlans,
+						availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+					};
+				} );
+
+				// Strip annual-only features out for the site's /plans page
+				if ( isPlaceholder ) {
+					planFeaturesTransformed = planFeaturesTransformed.filter(
+						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
+					);
+				}
+
+				const product_name_short =
+					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
+						? planConstantObj.getPathSlug()
+						: planObject?.product_name_short ?? '';
+				const storageOptions =
+					( planConstantObj.get2023PricingGridSignupStorageOptions &&
+						planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
+					[];
+				const availableForPurchase =
+					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 
 				return {
-					...feature,
-					availableOnlyForAnnualPlans,
-					availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+					availableForPurchase,
+					features: planFeaturesTransformed,
+					jpFeatures: jetpackFeaturesTransformed,
+					isPlaceholder,
+					planConstantObj,
+					planName: plan,
+					// TODO clk: snake_case?
+					product_name_short,
+					rawPrice,
+					isMonthlyPlan,
+					tagline,
+					storageOptions,
+					cartItemForPlan: getCartItemForPlan( plan ),
+					current: currentSitePlanSlug === plan,
+					isVisible: visiblePlans.indexOf( plan ) !== -1,
+					billingPeriod: planObject?.bill_period,
+					currencyCode: planObject?.currency_code,
 				};
-			} );
-
-			// Strip annual-only features out for the site's /plans page
-			if ( isPlaceholder ) {
-				planFeaturesTransformed = planFeaturesTransformed.filter(
-					( { availableForCurrentPlan = true } ) => availableForCurrentPlan
-				);
 			}
-
-			const product_name_short =
-				isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
-					? planConstantObj.getPathSlug()
-					: planObject?.product_name_short ?? '';
-			const storageOptions =
-				( planConstantObj.get2023PricingGridSignupStorageOptions &&
-					planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
-				[];
-			const availableForPurchase =
-				isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
-
-			return {
-				availableForPurchase,
-				features: planFeaturesTransformed,
-				jpFeatures: jetpackFeaturesTransformed,
-				isPlaceholder,
-				planConstantObj,
-				planName: plan,
-				// TODO clk: snake_case?
-				product_name_short,
-				rawPrice,
-				isMonthlyPlan,
-				tagline,
-				storageOptions,
-				cartItemForPlan: getCartItemForPlan( plan ),
-				current: currentSitePlanSlug === plan,
-				isVisible: visiblePlans?.indexOf( plan ) !== -1,
-				billingPeriod: planObject?.bill_period,
-				currencyCode: planObject?.currency_code,
-			};
-		} );
+		);
 
 		const manageHref =
 			purchaseId && selectedSiteSlug
@@ -1071,7 +1075,10 @@ const ConnectedPlanFeatures2023Grid = connect(
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
 
 const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
-	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible( props.siteId, props.plans );
+	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
+		props.siteId,
+		Object.keys( props.planRecords ) as PlanSlug[]
+	);
 
 	if ( props.isInSignup ) {
 		return (

@@ -28,6 +28,7 @@ export type PlansIntent =
 	| 'plans-jetpack-app'
 	| 'plans-import'
 	| 'plans-woocommerce'
+	| 'plans-default-wpcom'
 	| 'default';
 
 // TODO clk: move to types. will consume plan properties
@@ -44,15 +45,6 @@ interface Props {
 	hideEnterprisePlan?: boolean;
 	useIsPlanAvailableForUpgradeCheck?: ( { planSlug }: { planSlug: PlanSlug } ) => boolean;
 }
-
-// const useIsPlanAvailableForUpgradeCheck = ( { planSlug }: { planSlug: PlanSlug } ) => {
-// 	const selectedSiteId = useSelector( getSelectedSiteId );
-// 	const isAvailableForPurchase = useSelector(
-// 		( state ) => !! selectedSiteId && isPlanAvailableForPurchase( state, selectedSiteId, planSlug )
-// 	);
-
-// 	return isAvailableForPurchase;
-// };
 
 // TODO clk: move to plans data store
 const useWpcomPlansWithIntent = ( {
@@ -77,6 +69,19 @@ const useWpcomPlansWithIntent = ( {
 	if ( sitePlanSlug ) {
 		currentSitePlanType = getPlan( sitePlanSlug )?.type;
 	}
+
+	const availablePlanTypes = [
+		TYPE_FREE,
+		...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
+		TYPE_PERSONAL,
+		TYPE_PREMIUM,
+		TYPE_BUSINESS,
+		TYPE_ECOMMERCE,
+		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
+		TYPE_WOOEXPRESS_SMALL,
+		TYPE_WOOEXPRESS_MEDIUM,
+		TYPE_WOO_EXPRESS_PLUS,
+	];
 
 	let planTypes;
 	switch ( intent ) {
@@ -109,7 +114,7 @@ const useWpcomPlansWithIntent = ( {
 		case 'plans-jetpack-app':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM ];
 			break;
-		default:
+		case 'plans-default-wpcom':
 			planTypes = [
 				TYPE_FREE,
 				...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
@@ -120,6 +125,8 @@ const useWpcomPlansWithIntent = ( {
 				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 			];
 			break;
+		default:
+			planTypes = availablePlanTypes;
 	}
 
 	const planSlugs = usePlansFromTypes( { planTypes, term } );
@@ -129,14 +136,12 @@ const useWpcomPlansWithIntent = ( {
 			...acc,
 			[ planSlug ]: {
 				planSlug,
-				highlightLabel: (
-					<HighlightLabel
-						planSlug={ planSlug }
-						currentSitePlanSlug={ sitePlanSlug }
-						selectedPlan={ selectedPlan }
-						useIsPlanAvailableForUpgradeCheck={ useIsPlanAvailableForUpgradeCheck }
-					/>
-				),
+				highlightLabel: HighlightLabel( {
+					planSlug,
+					currentSitePlanSlug: sitePlanSlug,
+					selectedPlan,
+					useIsPlanAvailableForUpgradeCheck,
+				} ),
 			},
 		};
 	}, {} as Record< PlanSlug, GridPlan > );

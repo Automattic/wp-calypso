@@ -26,8 +26,8 @@ import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-20
 import PlanTypeSelector, {
 	PlanTypeSelectorProps,
 } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import { usePlansGridContext } from '../grid-context';
 import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
-import useHighlightLabel from '../hooks/use-highlight-label';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { sortPlans } from '../lib/sort-plan-properties';
 import { plansBreakSmall } from '../media-queries';
@@ -379,20 +379,16 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	selectedPlan,
 	siteId,
 } ) => {
+	const { planRecords } = usePlansGridContext();
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
-	const highlightLabel = useHighlightLabel( {
-		planName,
-		currentSitePlanSlug,
-		selectedPlan,
-	} );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: visiblePlansProperties,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
-		'popular-plan-parent-class': highlightLabel,
+		'popular-plan-parent-class': planRecords[ planName ]?.highlightLabel,
 		'is-last-in-row': isLastInRow,
 		'plan-is-footer': isFooter,
 		'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
@@ -411,8 +407,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				isInSignup={ isInSignup }
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
-				currentSitePlanSlug={ currentSitePlanSlug }
-				selectedPlan={ selectedPlan }
 			/>
 			<PlanSelector>
 				{ showPlanSelect && (
@@ -552,7 +546,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	allJetpackFeatures: Set< string >;
 	visiblePlansProperties: PlanProperties[];
 	restructuredFeatures: RestructuredFeatures;
-	planName: string;
+	planName: PlanSlug;
 	isStorageFeature: boolean;
 	flowName?: string | null;
 	currentSitePlanSlug?: string | null;
@@ -566,14 +560,10 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	currentSitePlanSlug,
 	selectedPlan,
 } ) => {
+	const { planRecords } = usePlansGridContext();
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: visiblePlansProperties,
-		currentSitePlanSlug,
-		selectedPlan,
-	} );
-	const highlightLabel = useHighlightLabel( {
-		planName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
@@ -592,7 +582,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		'plan-comparison-grid__plan',
 		getPlanClass( planName ),
 		{
-			'popular-plan-parent-class': highlightLabel,
+			'popular-plan-parent-class': planRecords[ planName ]?.highlightLabel,
 			'has-feature': hasFeature,
 			'has-conditional-feature': hasConditionalFeature,
 			'title-is-subtitle': 'live-chat-support' === featureSlug,

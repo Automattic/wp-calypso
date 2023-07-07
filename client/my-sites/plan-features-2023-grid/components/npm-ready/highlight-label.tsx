@@ -53,7 +53,7 @@ const HighlightLabel = ( {
 		label = translate( 'Popular' );
 	}
 
-	// TODO clk: This should evolve to the full `PlanPill` element once that part gets refactored.
+	// TODO clk: This can evolve to return `PlanPill` once that part gets refactored.
 	return label ? <>{ label }</> : null;
 };
 
