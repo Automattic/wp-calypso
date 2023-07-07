@@ -1,37 +1,11 @@
 import { createContext, useContext, useState } from 'react';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { Chat, Context, Message, Nudge } from '../types';
 import type { ReactNode } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
-
-export type Context = {
-	section_name?: string;
-	session_id?: string;
-	// etc
-};
-
-export type Nudge = {
-	nudge: string;
-	initialMessage: string;
-	context?: Record< string, unknown >;
-};
-
-export type MessageRole = 'user' | 'bot';
-
-export type MessageType = 'message' | 'action' | 'meta' | 'error';
-
-export type Message = {
-	content: string;
-	role: MessageRole;
-	type: MessageType;
-	chat_id?: string | null;
-};
-
-export type Chat = {
-	chat_id?: string | null;
-	messages: Message[];
-	context: Context;
-};
 
 interface OdysseusAssistantContextInterface {
 	addMessage: ( message: Message ) => void;
@@ -47,7 +21,7 @@ interface OdysseusAssistantContextInterface {
 
 const defaultContextInterfaceValues = {
 	addMessage: noop,
-	chat: { context: { section_name: '' }, messages: [] },
+	chat: { context: { section_name: '', site_id: null }, messages: [] },
 	isLoadingChat: false,
 	lastNudge: null,
 	sendNudge: noop,
@@ -73,10 +47,14 @@ const OdysseusAssistantProvider = ( {
 	sectionName: string;
 	children: ReactNode;
 } ) => {
+	const siteId = useSelector( getSelectedSiteId );
+
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
-	const [ messages, setMessages ] = useState< Message[] >( [] );
+	const [ messages, setMessages ] = useState< Message[] >( [
+		{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot', type: 'message' },
+	] );
 	const [ chat, setChat ] = useState< Chat >( {
-		context: { section_name: sectionName },
+		context: { section_name: sectionName, site_id: siteId },
 		messages,
 	} );
 
@@ -84,9 +62,8 @@ const OdysseusAssistantProvider = ( {
 		setMessages( ( prevMessages ) => {
 			const newMessages = [ ...prevMessages, message ];
 			setChat( ( prevChat ) => ( {
-				chat_id: message.chat_id ?? prevChat.chat_id,
+				...prevChat,
 				messages: newMessages,
-				context: prevChat.context,
 			} ) );
 			return newMessages;
 		} );

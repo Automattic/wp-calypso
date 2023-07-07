@@ -1,39 +1,32 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { Context, useOdysseusAssistantContext } from '../context';
-import type { Message } from '../context';
+import { useOdysseusAssistantContext } from '../context';
+import type { Message, Context } from '../types';
 
-function odysseusSendMessage(
-	siteId: number | null,
-	messages: Message[],
-	context: Context,
-	chat_id?: string | null
-) {
+function odysseusSendMessage( messages: Message[], context: Context, chat_id?: string | null ) {
 	const path = `/odysseus/send_message`;
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { messages, context, siteId, chat_id: chat_id },
+		body: { messages, context, chat_id: chat_id },
 	} );
 }
 
-// It will post a new message using the current chatId
-export const useOddyseusSendMessage = (
-	siteId: number | null
-): UseMutationResult<
+// It will post a new message using the current chat_id
+export const useOddyseusSendMessage = (): UseMutationResult<
 	{ chat_id: string; message: Message },
 	unknown,
-	{ message: Message; context: Context }
+	{ message: Message }
 > => {
 	const { chat, setChat } = useOdysseusAssistantContext();
 
 	return useMutation( {
-		mutationFn: ( { message, context }: { message: Message; context: Context } ) => {
-			// If chatId is defined, we only send the message to the current chat
+		mutationFn: ( { message }: { message: Message } ) => {
+			// If chat_id is defined, we only send the message to the current chat
 			// Otherwise we send previous messages and the new one appended to the end to the server
 			const messagesToSend = chat?.chat_id ? [ message ] : [ ...chat.messages, message ];
 
-			return odysseusSendMessage( siteId, messagesToSend, context, chat.chat_id );
+			return odysseusSendMessage( messagesToSend, chat.context, chat.chat_id );
 		},
 		onSuccess: ( data ) => {
 			setChat( { ...chat, chat_id: data.chat_id } );
