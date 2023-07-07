@@ -65,6 +65,10 @@ import {
 	isRequesting as isRequestingSitePlugins,
 } from 'calypso/state/plugins/installed/selectors';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
+import {
+	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
+} from 'calypso/state/purchases/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
@@ -127,6 +131,7 @@ export interface CheckoutThankYouProps {
 }
 
 export interface CheckoutThankYouConnectedProps {
+	isLoadingPurchases: boolean;
 	isProductsListFetching: boolean;
 	receipt: ReceiptState;
 	gsuiteReceipt: ReceiptState | null;
@@ -487,7 +492,8 @@ export class CheckoutThankYou extends Component<
 	};
 
 	render() {
-		const { translate, email, domainOnlySiteFlow, selectedFeature } = this.props;
+		const { translate, email, domainOnlySiteFlow, selectedFeature, isLoadingPurchases } =
+			this.props;
 		let purchases: ReceiptPurchase[] = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
@@ -652,7 +658,8 @@ export class CheckoutThankYou extends Component<
 				{ this.isRedesignV2() && this.props.selectedSite?.ID && (
 					<>
 						<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
-						<ConfettiAnimation delay={ 1000 } />
+						{ /* Make sure that the confetti shows after we can load the purchase */ }
+						{ isLoadingPurchases && <ConfettiAnimation delay={ 1000 } /> }
 						<MasterbarStyled
 							onClick={ () => page( `/home/${ this.props.selectedSiteSlug ?? '' }` ) }
 							backText={ translate( 'Back to dashboard' ) }
@@ -897,6 +904,8 @@ export default connect(
 					? getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId )
 					: undefined,
 			site: siteId ? getSite( state, siteId ) : null,
+			isLoadingPurchases:
+				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		};
 	},
 	{
