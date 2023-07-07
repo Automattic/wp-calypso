@@ -77,6 +77,7 @@ interface PlansFeaturesMainProps {
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
+	showBiennialToggle?: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
