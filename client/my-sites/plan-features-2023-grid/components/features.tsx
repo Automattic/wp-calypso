@@ -31,10 +31,7 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 
 	const translate = useTranslate();
 	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( domainName );
-
-	const getFreeDomainSuggestion = ( suggestions?: DomainSuggestions.DomainSuggestion[] ) => {
-		return suggestions?.[ 0 ]?.domain_name;
-	};
+	const wpcomFreeDomain = ! isError && wordPressSubdomainSuggestions?.[ 0 ]?.domain_name;
 
 	return (
 		<Plans2023Tooltip
@@ -44,14 +41,19 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 			} ) }
 		>
 			<SubdomainSuggestion>
-				<div className="is-domain-name">{ domainName }</div>
 				{ isInitialLoading && <LoadingPlaceHolder /> }
 				{ ! isError && isCustomDomainAllowedOnFreePlan ? (
-					<div>{ `${ domainName } redirects to ${ getFreeDomainSuggestion(
-						wordPressSubdomainSuggestions
-					) }` }</div>
+					<div>
+						{ translate( '%s will be a redirect', {
+							args: [ domainName ],
+							comment: '%s is a domain name.',
+						} ) }
+					</div>
 				) : (
-					<div>{ getFreeDomainSuggestion( wordPressSubdomainSuggestions ) }</div>
+					<>
+						<div className="is-domain-name">{ domainName }</div>
+						<div>{ wpcomFreeDomain }</div>
+					</>
 				) }
 			</SubdomainSuggestion>
 		</Plans2023Tooltip>
