@@ -15,7 +15,6 @@ import {
 	isDefaultGlobalStylesVariationSlug,
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -524,13 +523,7 @@ class ThemeSheet extends Component {
 	}
 
 	renderWebPreview = () => {
-		const {
-			isBreakpointActive: isDesktop,
-			locale,
-			stylesheet,
-			styleVariations,
-			themeId,
-		} = this.props;
+		const { locale, stylesheet, styleVariations, themeId } = this.props;
 		const baseStyleVariation = styleVariations.find( ( style ) =>
 			isDefaultGlobalStylesVariationSlug( style.slug )
 		);
@@ -546,7 +539,7 @@ class ThemeSheet extends Component {
 				<ThemeWebPreview
 					url={ url }
 					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
-					iframeScaleRatio={ isDesktop ? 0.5 : 1 }
+					iframeScaleRatio={ 0.5 }
 					isShowFrameBorder={ false }
 					isShowDeviceSwitcher={ false }
 					isFitHeight
@@ -1609,4 +1602,4 @@ export default connect(
 		errorNotice,
 		setProductToBeInstalled: productToBeInstalled,
 	}
-)( withDesktopBreakpoint( withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) ) ) );
+)( withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) ) );

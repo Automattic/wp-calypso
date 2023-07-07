@@ -20,6 +20,12 @@ $theme-sheet-content-max-width: 1462px;
 			@include breakpoint-deprecated( ">960px" ) {
 				top: calc(var(--masterbar-height) + 16px);
 			}
+
+			.theme-preview__frame-wrapper {
+				@include breakpoint-deprecated( ">960px" ) {
+					max-height: calc(100vh - 32px - var(--masterbar-height));
+				}
+			}
 		}
 	}
 
@@ -394,13 +400,14 @@ $theme-sheet-content-max-width: 1462px;
 		top: 16px;
 
 		.theme-preview__frame-wrapper {
-			max-height: calc(100vh - 32px - var(--masterbar-height));
+			max-height: calc(100vh - var(--masterbar-height));
 
 			.theme-preview__frame {
 				height: 200%;
 				max-height: 200vh;
 				max-width: 200%;
 				min-height: $iframe-viewport-height-scaled;
+				transform: scale(0.5) !important;
 				width: 200%;
 			}
 		}
@@ -408,6 +415,10 @@ $theme-sheet-content-max-width: 1462px;
 
 	.theme-preview__container {
 		position: relative;
+	}
+
+	.theme-preview__frame {
+		transform: none !important;
 	}
 }
 
