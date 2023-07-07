@@ -381,7 +381,7 @@ const PlansFeaturesMain = ( {
 					domainName={ domainName }
 					suggestedPlanSlug={ PLAN_PERSONAL }
 					onClose={ toggleIsFreePlanPaidDomainDialogOpen }
-					onFreePlanSelected={ ( freeDomainSuggestion?: DomainSuggestion | null ) => {
+					onFreePlanSelected={ ( freeDomainSuggestion ) => {
 						freeDomainSuggestion && replacePaidDomainWithFreeDomain?.( freeDomainSuggestion );
 						onUpgradeClick?.( null );
 					} }
