@@ -19,7 +19,7 @@ interface Props {
 	hideEcommercePlan?: boolean;
 }
 
-const usFilterPlansForPlanFeatures = ( {
+const useFilterPlansForPlanFeatures = ( {
 	plans,
 	isDisplayingPlansNeededForFeature,
 	selectedPlan,
@@ -68,4 +68,4 @@ const usFilterPlansForPlanFeatures = ( {
 	}, {} as Record< PlanSlug, GridPlan > );
 };
 
-export default usFilterPlansForPlanFeatures;
+export default useFilterPlansForPlanFeatures;
