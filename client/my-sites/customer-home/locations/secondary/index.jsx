@@ -12,7 +12,7 @@ import {
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
-import LaunchpadBlogFlow from 'calypso/my-sites/customer-home/cards/launchpad/blog-flow';
+import LaunchpadIntentWrite from 'calypso/my-sites/customer-home/cards/launchpad/intent-write';
 import LaunchpadKeepBuilding from 'calypso/my-sites/customer-home/cards/launchpad/keep-building';
 import LearnGrow from './learn-grow';
 
@@ -23,7 +23,7 @@ const cardComponents = {
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ FEATURE_SUPPORT ]: HelpSearch,
 	[ LAUNCHPAD_KEEP_BUILDING ]: LaunchpadKeepBuilding,
-	[ LAUNCHPAD_INTENT_WRITE ]: LaunchpadBlogFlow,
+	[ LAUNCHPAD_INTENT_WRITE ]: LaunchpadIntentWrite,
 };
 
 const Secondary = ( { cards, siteId } ) => {

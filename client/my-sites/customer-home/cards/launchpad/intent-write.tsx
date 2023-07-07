@@ -2,26 +2,26 @@ import { useLaunchpad } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CustomerHomeLaunchpad from '.';
+import type { AppState } from 'calypso/types';
 
-const checklistSlug = 'blog-flow';
+const checklistSlug = 'intent-write';
 
-interface LaunchpadKeepBuildingProps {
-	siteSlug: string | null;
-}
+const LaunchpadIntentWrite = (): JSX.Element => {
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
 
-const LaunchpadBlogFlow = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.Element => {
 	const {
 		data: { checklist },
 	} = useLaunchpad( siteSlug, checklistSlug );
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
-	const tasklistCompleted = completedSteps === numberOfSteps;
+	const tasklistCompleted = numberOfSteps > 0 && completedSteps === numberOfSteps;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -51,7 +51,6 @@ const LaunchpadBlogFlow = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.Elem
 			let actionDispatch;
 
 			switch ( task.id ) {
-				case 'my_task_id':
 				case 'site_title':
 					actionDispatch = () => {
 						recordTaskClickTracksEvent( task );
@@ -101,12 +100,4 @@ const LaunchpadBlogFlow = ( { siteSlug }: LaunchpadKeepBuildingProps ): JSX.Elem
 	);
 };
 
-const ConnectedLaunchpadBlogFlow = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		siteSlug: getSiteSlug( state, siteId ),
-	};
-} )( LaunchpadBlogFlow );
-
-export default ConnectedLaunchpadBlogFlow;
+export default LaunchpadIntentWrite;
