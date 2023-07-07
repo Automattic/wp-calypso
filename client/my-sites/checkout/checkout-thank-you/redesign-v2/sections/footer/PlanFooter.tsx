@@ -18,7 +18,7 @@ const PlanFooter = () => {
 				) }
 				buttonText={ translate( 'Find your new theme' ) }
 				href={ `/themes/${ siteSlug }` }
-				onClick={ recordTracksEvent( 'calypso_plan_thank_you_theme_click' ) }
+				onClick={ () => recordTracksEvent( 'calypso_plan_thank_you_theme_click' ) }
 			/>
 
 			<PurchaseDetail
@@ -28,7 +28,7 @@ const PlanFooter = () => {
 				) }
 				buttonText={ translate( 'Explore support resources' ) }
 				href="/support"
-				onClick={ recordTracksEvent( 'calypso_plan_thank_you_support_click' ) }
+				onClick={ () => recordTracksEvent( 'calypso_plan_thank_you_support_click' ) }
 			/>
 		</div>
 	);
