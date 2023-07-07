@@ -109,10 +109,10 @@ export default function VatInfoPage() {
 						<br />
 						<br />
 						{ translate(
-							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
 							/* translators: This is a list of tax-related reasons a customer might need to contact support */
 							'If you:' +
 								'{{ul}}' +
+								/* translators: %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
 								'{{li}}Need to update existing %(taxName)s details{{/li}}' +
 								'{{li}}Have been charged taxes as a business subject to reverse charges{{/li}}' +
 								'{{li}}Do not see your country listed in this form{{/li}}' +
