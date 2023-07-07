@@ -61,5 +61,6 @@ export const useLoginUrl = ( {
 		variationName: flowName,
 		redirect_to: redirectTo,
 		pageTitle,
+		toStepper: true,
 	} );
 };
