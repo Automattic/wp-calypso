@@ -23,7 +23,7 @@ export const getStorageStringFromFeature = ( storageFeature: string ) => {
 		// TODO: Remove when upgradeable storage is released in plans 2023
 		case FEATURE_200GB_STORAGE:
 			return translate( '200 GB' );
-		// Add ons are displayed in addition to the default 50GB storage
+		// Displayed string is the Add On + default 50GB storage
 		case PRODUCT_50GB_STORAGE_ADD_ON:
 			return translate( '100 GB' );
 		case PRODUCT_100GB_STORAGE_ADD_ON:
