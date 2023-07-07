@@ -53,12 +53,12 @@
 }
 
 .message-action.active-like {
-	transform: scale(1.35) translateX(20px) rotate(-20deg);
+	animation: like-animation 0.3s ease-in-out forwards;
 	color: #0073aa;
 }
 
 .message-action.active-dislike {
-	transform: scale(1.35) rotate(-20deg);
+	animation: dislike-animation 0.3s ease-in-out forwards;
 	color: #0073aa;
 }
 
@@ -67,3 +67,22 @@
 	visibility: hidden;
 	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out 0.3s;
 }
+
+@keyframes like-animation {
+	0% {
+		transform: scale(1);
+	}
+	100% {
+		transform: scale(1.35) translateX(20px) rotate(-20deg);
+	}
+}
+
+@keyframes dislike-animation {
+	0% {
+		transform: scale(1);
+	}
+	100% {
+		transform: scale(1.35) rotate(-20deg);
+	}
+}
+
