@@ -118,7 +118,7 @@ describe( 'Checkout payment methods list', () => {
 			/>
 		);
 		await waitFor( () => {
-			expect( screen.getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Assign a Payment Method Later' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -145,6 +145,7 @@ describe( 'Checkout payment methods list', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( 'Free Purchase' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Assign a Payment Method Later' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -195,7 +196,7 @@ describe( 'Checkout payment methods list', () => {
 			/>
 		);
 		await waitFor( () => {
-			expect( screen.getByText( 'Free Purchase' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Assign a Payment Method Later' ) ).toBeInTheDocument();
 		} );
 	} );
 
