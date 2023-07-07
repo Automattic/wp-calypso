@@ -1,12 +1,13 @@
+import { PlanSlug } from '@automattic/calypso-products';
 import { usePlansGridContext } from '../../grid-context';
 
-interface HighlightAdjacencyMatrix {
-	[ planName: string ]: {
+type HighlightAdjacencyMatrix = {
+	[ planSlug in PlanSlug ]: {
 		leftOfHighlight: boolean;
 		rightOfHighlight: boolean;
 		isOnlyHighlight?: boolean;
 	};
-}
+};
 
 const useHighlightIndices = () => {
 	const { visiblePlans, planRecords } = usePlansGridContext();
@@ -23,7 +24,7 @@ const useHighlightIndices = () => {
 const useHighlightAdjacencyMatrix = () => {
 	const { visiblePlans } = usePlansGridContext();
 	const highlightIndices = useHighlightIndices();
-	const adjacencyMatrix: HighlightAdjacencyMatrix = {};
+	const adjacencyMatrix: HighlightAdjacencyMatrix = {} as HighlightAdjacencyMatrix;
 
 	visiblePlans.forEach( ( planSlug, index ) => {
 		adjacencyMatrix[ planSlug ] = { leftOfHighlight: false, rightOfHighlight: false };
