@@ -379,7 +379,6 @@
 		"@wordpress/redux-routine": "4.23.0",
 		"@wordpress/reusable-blocks": "4.0.0",
 		"@wordpress/rich-text": "6.0.0",
-		"@wordpress/scripts": "25.0.0",
 		"@wordpress/server-side-render": "4.0.0",
 		"@wordpress/shortcode": "3.23.0",
 		"@wordpress/style-engine": "1.6.0",
