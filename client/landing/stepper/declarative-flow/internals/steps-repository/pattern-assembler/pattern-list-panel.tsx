@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import PatternSelector from './pattern-selector';
+import Panel from './sidebar-panel/panel';
 import type { Pattern, Category } from './types';
 import './pattern-list-panel.scss';
 
@@ -36,18 +37,14 @@ const PatternListPanel = ( {
 	}
 
 	return (
-		<div key="pattern-list-panel" className="pattern-list-panel__wrapper">
-			<div className="pattern-list-panel__title">{ label ?? category?.label }</div>
-			<div className="pattern-list-panel__description">
-				{ description ?? category?.description }
-			</div>
+		<Panel label={ label ?? category?.label } description={ description ?? category?.description }>
 			<PatternSelector
 				patterns={ categoryPatterns }
 				onSelect={ onSelect }
 				selectedPattern={ selectedPattern }
 				selectedPatterns={ selectedPatterns }
 			/>
-		</div>
+		</Panel>
 	);
 };
 

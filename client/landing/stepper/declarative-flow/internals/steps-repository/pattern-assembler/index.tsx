@@ -27,7 +27,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
-import { SITE_TAGLINE, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG, MAIN_ITEMS } from './constants';
+import { SITE_TAGLINE, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoryAll from './hooks/use-category-all';
 import useDotcomPatterns from './hooks/use-dotcom-patterns';
@@ -485,15 +485,14 @@ const PatternAssembler = ( {
 	const onMainItemSelect = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
 
-		// The screen section is not using the panel
-		if ( name === MAIN_ITEMS.SECTION || name === selectedMainItem ) {
+		if ( name === selectedMainItem ) {
 			// Toggle panel
 			closePanel();
 			return;
 		}
 
 		setIsPanelOpen( true );
-		setSelectedMainItem( name );
+		setTimeout( () => setSelectedMainItem( name ), 200 );
 	};
 
 	const onDeleteSection = ( position: number ) => {
