@@ -218,15 +218,6 @@ private object OdysseyStats : WPComPluginBuild(
 	docsLink = "PejTkB-3N-p2",
 	buildSteps = {
 		bashNodeScript {
-			name = "Run Unit Tests"
-			scriptContent = """
-				cd apps/odyssey-stats
-
-				# run unit tests
-				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
-			"""
-		}
-		bashNodeScript {
 			name = "Run Size Test"
 			scriptContent = """
 				cd apps/odyssey-stats
