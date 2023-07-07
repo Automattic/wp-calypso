@@ -905,7 +905,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderStorageAddOnDropdown( properties: PlanProperties ) {
-		const { planName, storageOptions } = properties;
+		const { planName, storageOptions, storageFeatures } = properties;
 		const { selectedStorage } = this.state;
 
 		return (
@@ -918,18 +918,18 @@ export class PlanFeatures2023Grid extends Component<
 				selectedText={
 					selectedStorage[ planName ]
 						? getStorageStringFromFeature( selectedStorage[ planName ] )
-						: getStorageStringFromFeature( storageOptions[ 0 ] )
+						: getStorageStringFromFeature( storageFeatures[ 0 ] )
 				}
 			>
-				{ storageOptions.map( ( storageFeature ) => {
+				{ storageOptions.map( ( storageOption ) => {
 					return (
 						<SelectDropdown.Item
-							key={ `${ planName } ${ storageFeature }` }
-							selected={ storageFeature === selectedStorage[ planName ] }
+							key={ `${ planName } ${ storageOption }` }
+							selected={ storageOption === selectedStorage[ planName ] }
 							onClick={ () => {
 								const updatedSelectedStorage = {
 									...selectedStorage,
-									[ planName ]: storageFeature,
+									[ planName ]: storageOption,
 								};
 
 								this.setState( {
@@ -938,7 +938,7 @@ export class PlanFeatures2023Grid extends Component<
 								} );
 							} }
 						>
-							{ getStorageStringFromFeature( storageFeature ) }
+							{ getStorageStringFromFeature( storageOption ) }
 						</SelectDropdown.Item>
 					);
 				} ) }
