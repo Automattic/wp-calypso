@@ -19,13 +19,13 @@
 				opacity: 0.8;
 			}
 
-			.theme-card__image-label {
+			.home-site-preview__thumbnail-label {
 				opacity: 1;
-				animation: theme-card__image-label 150ms ease-in-out;
+				animation: home-site-preview__thumbnail-label 150ms ease-in-out;
 			}
 		}
 
-		.theme-card__image-label {
+		.home-site-preview__thumbnail-label {
 			background: var(--color-accent);
 			border: 1px solid var(--color-accent);
 			border-radius: 2px;

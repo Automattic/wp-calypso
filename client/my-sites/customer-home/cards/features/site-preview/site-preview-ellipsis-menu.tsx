@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -32,10 +33,28 @@ export const SitePreviewEllipsisMenu = () => {
 					onClose={ () => setIsShowingPopover( false ) }
 					position="bottom left"
 				>
-					<PopoverMenuItem key="settings-link" href={ `/settings/general/${ selectedSite?.slug }` }>
+					<PopoverMenuItem
+						key="settings-link"
+						onClick={ () => {
+							recordTracksEvent( 'calypso_customer_home_site_preview_menu_item_clicked', {
+								context: 'customer-home',
+								item: 'settings',
+							} );
+						} }
+						href={ `/settings/general/${ selectedSite?.slug }` }
+					>
 						{ __( 'Settings' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem key="domain-link" href={ `/domains/add/${ selectedSite?.slug }` }>
+					<PopoverMenuItem
+						key="domain-link"
+						onClick={ () => {
+							recordTracksEvent( 'calypso_customer_home_site_preview_menu_item_clicked', {
+								context: 'customer-home',
+								item: 'manage-domains',
+							} );
+						} }
+						href={ `/domains/add/${ selectedSite?.slug }` }
+					>
 						{ __( 'Manage domains' ) }
 					</PopoverMenuItem>
 				</PopoverMenu>

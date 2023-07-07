@@ -35,7 +35,7 @@ const SitePreview = (): JSX.Element => {
 				className="home-site-preview__thumbnail-wrapper"
 				href={ editSiteSlug }
 			>
-				<div className="theme-card__image-label"> { __( 'Edit site' ) } </div>
+				<div className="home-site-preview__thumbnail-label"> { __( 'Edit site' ) } </div>
 				<SiteItemThumbnail
 					displayMode="tile"
 					className="home-site-preview__thumbnail"
