@@ -153,13 +153,6 @@ describe( 'Sidebar', () => {
 		props.sidebarDomain = sidebarDomain;
 	} );
 
-	it( 'displays an escape hatch from Launchpad that will take the user to Calypso my Home', () => {
-		renderSidebar( props );
-
-		const escapeHatchButton = screen.getByRole( 'button', { name: /Skip to dashboard/i } );
-		expect( escapeHatchButton ).toBeVisible();
-	} );
-
 	it( 'displays the current site url', () => {
 		renderSidebar( props );
 

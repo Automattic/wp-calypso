@@ -4,6 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wp from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { convertBytes } from './util';
@@ -16,6 +18,7 @@ interface FileInfoCardProps {
 const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const dispatch = useDispatch();
 
 	const {
 		isSuccess,
@@ -46,8 +49,14 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 				downloadUrl.searchParams.append( 'disposition', 'attachment' );
 				window.open( downloadUrl, '_blank' );
 				setIsDownloading( false );
+
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
+						fileType: item.type,
+					} )
+				);
 			} );
-	}, [ siteId, item ] );
+	}, [ siteId, item, dispatch ] );
 
 	const showActions = item.type !== 'table' && item.type !== 'archive';
 

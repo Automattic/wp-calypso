@@ -40,7 +40,6 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,
 		"cookie-banner": false,
-		"yolo/edge-cache-i1": true,
 		"google-my-business": false,
 		"help": true,
 		"importers/substack": true,
@@ -108,7 +107,6 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false,
-		"yolo/site-transfers-i1": true
+		"wpcom-user-bootstrap": false
 	}
 }

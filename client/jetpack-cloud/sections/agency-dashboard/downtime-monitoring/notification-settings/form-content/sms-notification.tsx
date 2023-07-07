@@ -39,7 +39,7 @@ export default function SMSNotification( {
 						<div className="notification-settings__beta-tag">{ translate( 'BETA' ) }</div>
 					</div>
 					<div className="notification-settings__content-sub-heading">
-						{ translate( 'Set up text messages to send to one or more people' ) }
+						{ translate( 'Set up text messages to send to one or more people.' ) }
 					</div>
 				</div>
 			</div>

@@ -8,7 +8,6 @@ export const CATEGORY_ALL_SLUG = 'featured';
 export const NAVIGATOR_PATHS = {
 	MAIN: '/',
 	HEADER: '/header',
-	SECTION: '/section',
 	SECTION_PATTERNS: '/section/patterns',
 	FOOTER: '/footer',
 	COLOR_PALETTES: '/color-palettes',

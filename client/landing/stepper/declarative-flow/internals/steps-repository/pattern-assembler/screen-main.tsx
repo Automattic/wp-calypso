@@ -133,7 +133,7 @@ const ScreenMain = ( props: Props ) => {
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
 							checked={ hasSections }
-							path={ hasSections ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
+							path={ NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
 							aria-label={ translate( 'Homepage' ) }
 							onClick={ () => onMainItemSelect( 'section' ) }

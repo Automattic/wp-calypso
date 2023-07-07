@@ -42,7 +42,6 @@ import PatternLargePreview from './pattern-large-preview';
 import ScreenActivation from './screen-activation';
 import ScreenCategoryList from './screen-category-list';
 import ScreenMain from './screen-main';
-import ScreenSection from './screen-section';
 import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
@@ -162,12 +161,6 @@ const PatternAssembler = ( {
 		}
 
 		return patterns.filter( ( pattern ) => pattern ) as Pattern[];
-	};
-
-	const trackEventPatternAdd = ( patternType: string ) => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_ADD_CLICK, {
-			pattern_type: patternType,
-		} );
 	};
 
 	const trackEventPatternSelect = ( {
@@ -503,15 +496,6 @@ const PatternAssembler = ( {
 		setSelectedMainItem( name );
 	};
 
-	const onAddSection = () => {
-		trackEventPatternAdd( 'section' );
-		setSectionPosition( null );
-	};
-
-	const onReplaceSection = ( position: number ) => {
-		setSectionPosition( position );
-	};
-
 	const onDeleteSection = ( position: number ) => {
 		deleteSection( position );
 		setSectionPosition( null );
@@ -593,17 +577,29 @@ const PatternAssembler = ( {
 						onScreenFontsSelect={ onScreenFontsSelect }
 					/>
 				</NavigatorScreen>
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION }>
-					<ScreenSection
-						patterns={ sections }
-						onAddSection={ onAddSection }
-						onReplaceSection={ onReplaceSection }
-						onDeleteSection={ onDeleteSection }
-						onMoveUpSection={ onMoveUpSection }
-						onMoveDownSection={ onMoveDownSection }
-						onBack={ onPatternSelectorBack }
+
+				<NavigatorScreen path={ NAVIGATOR_PATHS.HEADER }>
+					<ScreenHeader
+						selectedPattern={ header }
+						onSelect={ onSelect }
+						onBack={ () => onPatternSelectorBack( 'header' ) }
+						onDoneClick={ () => onDoneClick( 'header' ) }
+						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
+						patterns={ patternsMapByCategory[ 'header' ] || [] }
 					/>
 				</NavigatorScreen>
+
+				<NavigatorScreen path={ NAVIGATOR_PATHS.FOOTER }>
+					<ScreenFooter
+						selectedPattern={ footer }
+						onSelect={ onSelect }
+						onBack={ () => onPatternSelectorBack( 'footer' ) }
+						onDoneClick={ () => onDoneClick( 'footer' ) }
+						updateActivePatternPosition={ () => activateFooterPosition( !! footer ) }
+						patterns={ patternsMapByCategory[ 'footer' ] || [] }
+					/>
+				</NavigatorScreen>
+
 				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION_PATTERNS }>
 					<ScreenCategoryList
 						categories={ categories }
