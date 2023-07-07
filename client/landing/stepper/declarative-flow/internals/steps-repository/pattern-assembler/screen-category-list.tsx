@@ -32,6 +32,7 @@ interface Props {
 	selectedPatterns: Pattern[];
 	recordTracksEvent: ( name: string, eventProperties: any ) => void;
 	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
+	onBack: () => void;
 }
 
 const ScreenCategoryList = ( {
@@ -44,6 +45,7 @@ const ScreenCategoryList = ( {
 	selectedPatterns,
 	recordTracksEvent,
 	onTogglePatternPanelList,
+	onBack,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
@@ -81,6 +83,7 @@ const ScreenCategoryList = ( {
 								'Find the right patterns for you by exploring the list of categories below.'
 						  )
 				}
+				onBack={ onBack }
 			/>
 			<Composite
 				{ ...composite }

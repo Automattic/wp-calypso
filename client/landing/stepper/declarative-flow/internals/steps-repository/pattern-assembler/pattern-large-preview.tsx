@@ -19,6 +19,7 @@ interface Props {
 	sections: Pattern[];
 	footer: Pattern | null;
 	activePosition: number;
+	onReplaceSection: ( position: number ) => void;
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
 	onMoveDownSection: ( position: number ) => void;
@@ -36,6 +37,7 @@ const PatternLargePreview = ( {
 	footer,
 	activePosition,
 	onDeleteSection,
+	onReplaceSection,
 	onMoveUpSection,
 	onMoveDownSection,
 	onDeleteHeader,
@@ -105,6 +107,7 @@ const PatternLargePreview = ( {
 				disableMoveUp: position === 0,
 				disableMoveDown: sections?.length === position + 1,
 				onDelete: () => onDeleteSection( position ),
+				onReplace: () => onReplaceSection( position ),
 				onMoveUp: () => onMoveUpSection( position ),
 				onMoveDown: () => onMoveDownSection( position ),
 			};

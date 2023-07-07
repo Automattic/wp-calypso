@@ -482,6 +482,11 @@ const PatternAssembler = ( {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
 	};
 
+	const onReplaceSection = ( position: number ) => {
+		setSectionPosition( position );
+		navigator.goTo( NAVIGATOR_PATHS.SECTION_PATTERNS );
+	};
+
 	const onDeleteSection = ( position: number ) => {
 		deleteSection( position );
 		setSectionPosition( null );
@@ -586,7 +591,13 @@ const PatternAssembler = ( {
 					<ScreenCategoryList
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
-						onDoneClick={ () => onDoneClick( 'section' ) }
+						onDoneClick={ () => {
+							onDoneClick( 'section' );
+							setSectionPosition( null );
+						} }
+						onBack={ () => {
+							setSectionPosition( null );
+						} }
 						replacePatternMode={ sectionPosition !== null }
 						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
 						onSelect={ onSelect }
@@ -628,6 +639,7 @@ const PatternAssembler = ( {
 				footer={ footer }
 				activePosition={ activePosition }
 				onDeleteSection={ onDeleteSection }
+				onReplaceSection={ onReplaceSection }
 				onMoveUpSection={ onMoveUpSection }
 				onMoveDownSection={ onMoveDownSection }
 				onDeleteHeader={ onDeleteHeader }
