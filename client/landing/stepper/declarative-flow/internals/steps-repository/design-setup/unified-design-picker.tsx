@@ -49,7 +49,7 @@ import {
 } from '../../analytics/record-design';
 import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
-import { RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
+import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import useRecipe from './hooks/use-recipe';
 import UpgradeModal from './upgrade-modal';
@@ -113,10 +113,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		allDesigns.designs = allDesigns.designs.filter(
-			( design ) => RETIRING_DESIGN_SLUGS.indexOf( design.slug ) === -1
-		);
-
 		const blankCanvasDesignOffset = allDesigns.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into the last one for the build and write intents
