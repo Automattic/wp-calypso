@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, Button } from '@automattic/components';
-import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
+import { DesignPreviewImage } from '@automattic/design-picker';
+import { isDefaultGlobalStylesVariationSlug } from '@automattic/global-styles';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -105,6 +106,7 @@ const ThemeNameSectionWrapper = styled.div`
 	flex-wrap: wrap;
 `;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();

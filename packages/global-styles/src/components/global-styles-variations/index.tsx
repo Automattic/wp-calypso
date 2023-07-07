@@ -3,13 +3,13 @@ import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
-import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
 import {
 	GlobalStylesContext,
 	mergeBaseAndUserConfigs,
 	withExperimentalBlockEditorProvider,
 } from '../../gutenberg-bridge';
 import { useRegisterCoreBlocks } from '../../hooks';
+import { isDefaultGlobalStylesVariationSlug } from '../../utils';
 import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
 import './style.scss';
@@ -32,9 +32,6 @@ interface GlobalStylesVariationsProps {
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 	globalStylesInPersonalPlan: boolean;
 }
-
-const isDefaultGlobalStyleVariationSlug = ( globalStylesVariation: GlobalStylesObject ) =>
-	globalStylesVariation.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG;
 
 const GlobalStylesVariation = ( {
 	globalStylesVariation,
@@ -121,14 +118,15 @@ const GlobalStylesVariations = ( {
 	const baseGlobalStyles = useMemo(
 		() =>
 			globalStylesVariations.find( ( globalStylesVariation ) =>
-				isDefaultGlobalStyleVariationSlug( globalStylesVariation )
+				isDefaultGlobalStylesVariationSlug( globalStylesVariation.slug )
 			) ?? ( {} as GlobalStylesObject ),
 		[ globalStylesVariations ]
 	);
 	const globalStylesVariationsWithoutDefault = useMemo(
 		() =>
 			globalStylesVariations.filter(
-				( globalStylesVariation ) => ! isDefaultGlobalStyleVariationSlug( globalStylesVariation )
+				( globalStylesVariation ) =>
+					! isDefaultGlobalStylesVariationSlug( globalStylesVariation.slug )
 			),
 		[ globalStylesVariations ]
 	);
@@ -182,7 +180,7 @@ const GlobalStylesVariations = ( {
 							globalStylesVariation={ baseGlobalStyles }
 							isActive={
 								! selectedGlobalStylesVariation ||
-								isDefaultGlobalStyleVariationSlug( selectedGlobalStylesVariation )
+								isDefaultGlobalStylesVariationSlug( selectedGlobalStylesVariation?.slug )
 							}
 							showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
 							onSelect={ () => onSelect( baseGlobalStyles ) }

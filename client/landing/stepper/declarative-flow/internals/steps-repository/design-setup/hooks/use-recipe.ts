@@ -1,5 +1,9 @@
-import { isDefaultGlobalStylesVariationSlug, isAssemblerDesign } from '@automattic/design-picker';
-import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
+import { isAssemblerDesign } from '@automattic/design-picker';
+import {
+	isDefaultGlobalStylesVariationSlug,
+	useColorPaletteVariations,
+	useFontPairingVariations,
+} from '@automattic/global-styles';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from 'react';
@@ -61,6 +65,7 @@ const useRecipe = (
 			preselectedColorVariationTitle: searchParams.get( 'color_variation_title' ),
 			preselectedFontVariationTitle: searchParams.get( 'font_variation_title' ),
 		} ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 

@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import {
 	GlobalStylesVariations,
 	ColorPaletteVariations,
 	FontPairingVariations,
+	isDefaultGlobalStylesVariationSlug,
 } from '@automattic/global-styles';
 import { color, styles, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -144,6 +144,7 @@ const useScreens = ( {
 						onSubmit: onScreenSubmit,
 					},
 			].filter( Boolean ) as NavigatorScreenObject[],
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[
 			variations,
 			siteId,

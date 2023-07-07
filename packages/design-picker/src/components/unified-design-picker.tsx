@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
+import { isDefaultGlobalStylesVariationSlug } from '@automattic/global-styles';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
@@ -10,7 +11,6 @@ import {
 	getDesignPreviewUrl,
 	getMShotOptions,
 	isBlankCanvasDesign,
-	isDefaultGlobalStylesVariationSlug,
 	filterDesignsByCategory,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';

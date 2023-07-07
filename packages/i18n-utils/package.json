@@ -28,6 +28,7 @@
 		"test": "yarn jest"
 	},
 	"dependencies": {
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@wordpress/compose": "^6.15.0",

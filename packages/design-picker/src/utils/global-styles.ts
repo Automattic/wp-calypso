@@ -1,5 +1,15 @@
-import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../constants';
+let DEFAULT_GLOBAL_STYLES_VARIATION_SLUG = '';
+let isDefaultGlobalStylesVariationSlug = () => false;
 
-export function isDefaultGlobalStylesVariationSlug( slug?: string ): boolean {
-	return ! slug || slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG;
+if ( typeof window !== 'undefined' ) {
+	import( '@automattic/global-styles' )
+		.then( ( module ) => {
+			DEFAULT_GLOBAL_STYLES_VARIATION_SLUG = module.DEFAULT_GLOBAL_STYLES_VARIATION_SLUG;
+			isDefaultGlobalStylesVariationSlug = module.isDefaultGlobalStylesVariationSlug;
+		} )
+		// eslint-disable-next-line @typescript-eslint/no-empty-function
+		.catch( () => {} );
 }
+
+export const asyncGetDefaultGlobalStylesVariationSlug = () => DEFAULT_GLOBAL_STYLES_VARIATION_SLUG;
+export const asyncIsDefaultGlobalStylesVariationSlug = isDefaultGlobalStylesVariationSlug;

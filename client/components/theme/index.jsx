@@ -2,7 +2,7 @@ import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
 	ThemeCard,
-	isDefaultGlobalStylesVariationSlug,
+	asyncIsDefaultGlobalStylesVariationSlug,
 } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import { isEmpty, isEqual } from 'lodash';
@@ -160,7 +160,7 @@ export class Theme extends Component {
 		// With that in mind, we only use mShots for non-default style variations to ensure
 		// that there is no flash of image transition from static image to mShots on page load.
 		if (
-			! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) &&
+			! asyncIsDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) &&
 			! isExternallyManagedTheme
 		) {
 			const { id: themeId, stylesheet } = theme;
@@ -286,7 +286,7 @@ export class Theme extends Component {
 	renderBadge = () => {
 		const isLockedStyleVariation =
 			this.props.shouldLimitGlobalStyles &&
-			! isDefaultGlobalStylesVariationSlug( this.props.selectedStyleVariation?.slug );
+			! asyncIsDefaultGlobalStylesVariationSlug( this.props.selectedStyleVariation?.slug );
 		return (
 			<ThemeTypeBadge
 				siteId={ this.props.siteId }

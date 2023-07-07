@@ -10,10 +10,10 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import {
-	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 	ThemePreview as ThemeWebPreview,
+	asyncGetDefaultGlobalStylesVariationSlug,
+	asyncIsDefaultGlobalStylesVariationSlug,
 	getDesignPreviewUrl,
-	isDefaultGlobalStylesVariationSlug,
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -392,7 +392,7 @@ class ThemeSheet extends Component {
 	shouldRenderUnlockStyleButton() {
 		const { defaultOption, selectedStyleVariationSlug, shouldLimitGlobalStyles, styleVariations } =
 			this.props;
-		const isNonDefaultStyleVariation = ! isDefaultGlobalStylesVariationSlug(
+		const isNonDefaultStyleVariation = ! asyncIsDefaultGlobalStylesVariationSlug(
 			selectedStyleVariationSlug
 		);
 
@@ -503,7 +503,7 @@ class ThemeSheet extends Component {
 	renderWebPreview = () => {
 		const { locale, siteSlug, stylesheet, styleVariations, themeId } = this.props;
 		const baseStyleVariation = styleVariations.find( ( style ) =>
-			isDefaultGlobalStylesVariationSlug( style.slug )
+			asyncIsDefaultGlobalStylesVariationSlug( style.slug )
 		);
 		const baseStyleVariationInlineCss = baseStyleVariation?.inline_css || '';
 		const selectedStyleVariationInlineCss = this.getSelectedStyleVariation()?.inline_css || '';
@@ -1120,7 +1120,7 @@ class ThemeSheet extends Component {
 		const { selectedStyleVariationSlug, themeId } = this.props;
 		return {
 			theme_name: themeId,
-			style_variation: selectedStyleVariationSlug ?? DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
+			style_variation: selectedStyleVariationSlug ?? asyncGetDefaultGlobalStylesVariationSlug(),
 		};
 	};
 

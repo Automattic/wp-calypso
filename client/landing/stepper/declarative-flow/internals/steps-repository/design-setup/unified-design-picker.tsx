@@ -8,13 +8,13 @@ import {
 	useStarterDesignsQuery,
 } from '@automattic/data-stores';
 import {
-	isDefaultGlobalStylesVariationSlug,
 	UnifiedDesignPicker,
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
 	isAssemblerDesign,
 } from '@automattic/design-picker';
+import { isDefaultGlobalStylesVariationSlug } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
