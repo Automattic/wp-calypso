@@ -390,7 +390,7 @@ class AllDomains extends Component {
 				sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
 			},
 			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
-			{ name: 'action', label: null },
+			{ name: 'action', label: translate( 'Actions' ) },
 		];
 
 		if ( isContactEmailEditContext ) {
