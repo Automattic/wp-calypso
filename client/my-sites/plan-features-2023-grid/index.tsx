@@ -19,6 +19,7 @@ import {
 	isWooExpressPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	getAddOnByKey,
 } from '@automattic/calypso-products';
 import {
 	JetpackLogo,
@@ -47,7 +48,6 @@ import FoldableCard from 'calypso/components/foldable-card';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { getAddOnByKey } from 'calypso/lib/plans/add-ons-list';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
