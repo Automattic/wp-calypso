@@ -119,7 +119,7 @@ const linkInBioDomain: Flow = {
 				case 'linkInBioSetup': {
 					if ( domain ) {
 						setHideFreePlan( true );
-						const domainCartItem = domainMapping( { domain } );
+						const domainCartItem = domainMapping( { domain, source: provider ?? '' } );
 						setDomainCartItem( domainCartItem );
 						setPlanCartItem( {
 							product_slug: PLAN_PERSONAL,
@@ -132,7 +132,7 @@ const linkInBioDomain: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
-					const destination = `/domains/mapping/${ providedDependencies.siteSlug }/setup/${ domain }?firstVisit=true`;
+					const destination = `/setup/link-in-bio/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( variantSlug );

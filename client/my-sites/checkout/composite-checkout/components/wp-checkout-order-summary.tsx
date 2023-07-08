@@ -457,6 +457,15 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 		}
 	);
 
+	if ( ! domain.is_domain_registration ) {
+		return (
+			<CheckoutSummaryFeaturesListItem>
+				<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
+				<strong>Connecting { domain.meta }</strong>
+			</CheckoutSummaryFeaturesListItem>
+		);
+	}
+
 	// If domain is using existing credit or bundled with cart, show bundled text.
 	if ( domain.is_bundled ) {
 		return (

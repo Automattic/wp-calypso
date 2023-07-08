@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { BackButton } from '@automattic/onboarding';
+import { BackButton, LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
@@ -43,6 +43,7 @@ function ConnectDomainStep( {
 	selectedSite,
 	showErrors,
 	isFirstVisit,
+	flowName,
 	queryError,
 	queryErrorDescription,
 	currentRoute,
@@ -67,6 +68,11 @@ function ConnectDomainStep( {
 	const step = stepsDefinition[ pageSlug ].step;
 	const prevPageSlug = stepsDefinition[ pageSlug ].prev;
 	const isTwoColumnLayout = ! stepsDefinition[ pageSlug ].singleColumnLayout;
+
+	if ( 'link-in-bio-domain' === flowName && 'dc_return' === initialStep ) {
+		const redirectUrl = '/setup/link-in-bio/launchpad?siteSlug=' + selectedSite.slug;
+		page( redirectUrl );
+	}
 
 	const statusRef = useRef( {} );
 
@@ -170,7 +176,14 @@ function ConnectDomainStep( {
 			.mappingSetupInfo( selectedSite.ID, {
 				redirect_uri:
 					'https://wordpress.com' +
-					domainMappingSetup( selectedSite.slug, domain, stepSlug.DC_RETURN ),
+					domainMappingSetup(
+						selectedSite.slug,
+						domain,
+						stepSlug.DC_RETURN,
+						false,
+						false,
+						flowName
+					),
 			} )
 			.then( ( data ) => {
 				setDomainSetupInfo( { data } );
@@ -321,6 +334,10 @@ function ConnectDomainStep( {
 	};
 
 	const renderSidebar = () => {
+		if ( LINK_IN_BIO_DOMAIN_FLOW === flowName ) {
+			return null;
+		}
+
 		if ( loadingDomainSetupInfo === true ) {
 			return <div className={ baseClassName + '__sidebar-placeholder' }></div>;
 		}
@@ -367,6 +384,7 @@ ConnectDomainStep.propTypes = {
 	showErrors: PropTypes.bool,
 	hasSiteDomainsLoaded: PropTypes.bool,
 	isFirstVisit: PropTypes.bool,
+	flowName: PropTypes.string,
 	queryError: PropTypes.string,
 	queryErrorDescription: PropTypes.string,
 };

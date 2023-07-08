@@ -268,13 +268,18 @@ export function domainMappingSetup(
 	domainName,
 	step = '',
 	showErrors = false,
-	firstVisit = false
+	firstVisit = false,
+	flowName = ''
 ) {
 	let path = `/domains/mapping/${ siteName }/setup/${ domainName }`;
 	const params = {};
 
 	if ( step ) {
 		params.step = step;
+	}
+
+	if ( flowName ) {
+		params.flowName = flowName;
 	}
 
 	if ( showErrors ) {

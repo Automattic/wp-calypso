@@ -118,6 +118,7 @@ const mapDomain = ( context, next ) => {
 const mapDomainSetup = ( context, next ) => {
 	const showErrors = context.query?.showErrors === 'true' || context.query?.showErrors === '1';
 	const isFirstVisit = context.query?.firstVisit === 'true' || context.query?.firstVisit === '1';
+	const flowName = context.query?.flowName ?? '';
 	const error = context.query?.error;
 	const errorDescription = context.query?.error_description;
 
@@ -133,6 +134,7 @@ const mapDomainSetup = ( context, next ) => {
 					domain={ context.params.domain }
 					initialStep={ context.query.step }
 					isFirstVisit={ isFirstVisit }
+					flowName={ flowName }
 					showErrors={ showErrors }
 					queryError={ error }
 					queryErrorDescription={ errorDescription }
