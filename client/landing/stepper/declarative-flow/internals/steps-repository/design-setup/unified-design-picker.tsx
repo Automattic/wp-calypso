@@ -607,7 +607,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					selectedFontVariation={ selectedFontVariation }
 					onSelectFontVariation={ setSelectedFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }
-					onNavigatorPathChange={ ( path: string ) => setShouldHideActionButtons( path !== '/' ) }
+					onNavigatorPathChange={ ( path?: string ) => setShouldHideActionButtons( path !== '/' ) }
 				/>
 			</>
 		);
