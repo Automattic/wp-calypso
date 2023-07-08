@@ -6,6 +6,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import FilePreview from './file-preview';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { convertBytes } from './util';
@@ -128,6 +129,8 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 					</Button>
 				</div>
 			) }
+
+			<FilePreview item={ item } siteId={ siteId } />
 		</div>
 	);
 };
