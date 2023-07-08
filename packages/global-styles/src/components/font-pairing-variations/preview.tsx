@@ -3,7 +3,6 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useResizeObserver, useViewportMatch } from '@wordpress/compose';
-import { translate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import {
 	FONT_PREVIEW_LARGE_WIDTH,
