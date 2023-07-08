@@ -32,7 +32,6 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@jest/globals": "^29.5.0",
-		"@types/jest": "^29.5.2",
 		"@types/node": "^18.11.18",
 		"@types/node-fetch": "^2.6.1",
 		"@wordpress/i18n": "^4.23.0",

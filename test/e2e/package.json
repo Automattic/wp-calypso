@@ -37,7 +37,6 @@
 		"@automattic/jest-circus-allure-reporter": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@types/archiver": "^5.3.1",
-		"@types/jest": "^29.5.2",
 		"archiver": "^5.3.0",
 		"asana-phrase": "^0.0.8",
 		"babel-jest": "^29.6.1",
