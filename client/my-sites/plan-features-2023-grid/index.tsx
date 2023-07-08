@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	getMonthlyPlanByYearly,
@@ -126,6 +125,7 @@ export type PlanFeatures2023GridProps = {
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
 	intent: PlansIntent;
+	showUpgradeableStorage: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -908,7 +908,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanStorageOptions( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { translate, intervalType } = this.props;
+		const { translate, intervalType, showUpgradeableStorage } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -919,9 +919,7 @@ export class PlanFeatures2023Grid extends Component<
 
 				const { planName, storageOptions, storageFeatures } = properties;
 				const canUpgradeStorageForPlan =
-					storageOptions.length > 1 &&
-					intervalType === 'yearly' &&
-					isEnabled( 'plans/upgradeable-storage' );
+					storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
 
 				const storageJSX = canUpgradeStorageForPlan
 					? this.renderStorageAddOnDropdown( properties )

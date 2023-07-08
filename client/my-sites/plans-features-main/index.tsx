@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
@@ -77,6 +78,7 @@ interface PlansFeaturesMainProps {
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
+	showUpgradeableStorage: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
@@ -130,6 +132,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		sitePlanSlug,
 		siteSlug,
 		intent,
+		showUpgradeableStorage,
 	} = props;
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -183,6 +186,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		currentSitePlanSlug: sitePlanSlug,
 		planActionOverrides,
 		intent,
+		showUpgradeableStorage,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -374,6 +378,8 @@ const PlansFeaturesMain = ( {
 		plans: visiblePlans,
 	};
 
+	const showUpgradeableStorage = isEnabled( 'plans/upgradeable-storage' );
+
 	return (
 		<div
 			className={ classNames( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }
@@ -436,6 +442,7 @@ const PlansFeaturesMain = ( {
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
 						intent={ intent }
+						showUpgradeableStorage={ showUpgradeableStorage }
 					/>
 				</>
 			) }
