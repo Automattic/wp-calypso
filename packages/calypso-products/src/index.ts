@@ -8,3 +8,4 @@ export * from './get-interval-type-for-term';
 export * from './get-price-tier-for-units';
 export * from './is-tiered-volume-space-addon';
 export * from './get-storage-addon-display-name';
+export * from './add-ons-list';
