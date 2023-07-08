@@ -563,7 +563,6 @@ describe( 'initial-state', () => {
 				expect( state.dependencyStore ).toEqual(
 					storedState[ 'redux-state-logged-out:signup' ].dependencyStore
 				);
-				expect( state.progress ).toEqual( storedState[ 'redux-state-logged-out:signup' ].progress );
 			} );
 
 			test( 'does not add timestamp to initial state', () => {
@@ -632,7 +631,6 @@ describe( 'initial-state', () => {
 				expect( state.dependencyStore ).toEqual(
 					storedState[ 'redux-state-123456789:signup' ].dependencyStore
 				);
-				expect( state.progress ).toEqual( storedState[ 'redux-state-123456789:signup' ].progress );
 			} );
 
 			test( 'does not add timestamp to initial state', () => {

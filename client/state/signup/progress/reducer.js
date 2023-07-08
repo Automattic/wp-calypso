@@ -11,8 +11,6 @@ import {
 	SIGNUP_PROGRESS_REMOVE_STEP,
 	SIGNUP_PROGRESS_ADD_STEP,
 } from 'calypso/state/action-types';
-import { withSchemaValidation } from 'calypso/state/utils';
-import { schema } from './schema';
 
 const debug = debugFactory( 'calypso:state:signup:progress:reducer' );
 
@@ -113,7 +111,7 @@ const submitStep = ( state, { step } ) => {
 		: addStep( state, { ...step, status } );
 };
 
-export default withSchemaValidation( schema, ( state = {}, action ) => {
+export default ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SIGNUP_PROGRESS_ADD_STEP:
 			return addStep( state, action.step );
@@ -134,4 +132,4 @@ export default withSchemaValidation( schema, ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
