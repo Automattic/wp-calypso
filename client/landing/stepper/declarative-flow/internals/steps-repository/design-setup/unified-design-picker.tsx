@@ -18,7 +18,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -97,6 +97,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		if ( isAtomic ) {
 			exitFlow?.( `/site-editor/${ siteSlugOrId }` );
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isAtomic ] );
 
 	const isPremiumThemeAvailable = Boolean(
@@ -150,7 +151,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	);
 
-	const designs = allDesigns?.designs || [];
+	const designs = useMemo( () => allDesigns?.designs ?? [], [ allDesigns?.designs ] );
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
 		if ( ! hasTrackedView.current && designs.length > 0 ) {
