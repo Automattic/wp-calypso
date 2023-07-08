@@ -102,6 +102,7 @@ export interface PlansFeaturesMainProps {
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
+	showUpgradeableStorage: boolean;
 	visiblePlans: PlanSlug[];
 	planRecords: Record< PlanSlug, GridPlan >;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
