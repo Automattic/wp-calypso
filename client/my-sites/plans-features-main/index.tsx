@@ -78,10 +78,10 @@ interface PlansFeaturesMainProps {
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
-	showUpgradeableStorage: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
+	showUpgradeableStorage: boolean;
 	visiblePlans: PlanSlug[];
 	plans: PlanSlug[];
 	customerType: string;
