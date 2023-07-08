@@ -1,7 +1,7 @@
-import { useMutation, UseMutationResult } from '@tanstack/react-query';
+import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { useOdysseusAssistantContext } from '../context';
-import type { Message, Context } from '../types';
+import type { Chat, Message, Context } from '../types';
 
 function odysseusSendMessage( messages: Message[], context: Context, chat_id?: string | null ) {
 	const path = `/odysseus/send_message`;
@@ -14,7 +14,7 @@ function odysseusSendMessage( messages: Message[], context: Context, chat_id?: s
 
 // It will post a new message using the current chat_id
 export const useOddyseusSendMessage = (): UseMutationResult<
-	{ chat_id: string; message: Message },
+	{ chat_id: string; messages: Message[] },
 	unknown,
 	{ message: Message }
 > => {
@@ -35,3 +35,21 @@ export const useOddyseusSendMessage = (): UseMutationResult<
 };
 
 // TODO: We will add lately a clear chat to forget the session
+
+const odysseusGetChat = ( chat_id: string | null ) => {
+	const path = `/odysseus/get_chat/${ chat_id }`;
+	return wpcom.req.get( {
+		path,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const useOdysseusGetChatQuery = ( chat_id: string | null ) => {
+	return useQuery< Chat, Error >( {
+		queryKey: [ 'odysseus-get-chat', chat_id ],
+		queryFn: async () => await odysseusGetChat( chat_id ),
+		refetchInterval: 5000,
+		refetchOnWindowFocus: false,
+		enabled: !! chat_id,
+	} );
+};
