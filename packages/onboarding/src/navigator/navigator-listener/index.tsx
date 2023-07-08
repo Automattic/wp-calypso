@@ -2,7 +2,7 @@ import { __experimentalUseNavigator as useNavigator } from '@wordpress/component
 import { useEffect } from 'react';
 
 interface Props {
-	onNavigatorPathChange: ( path: string ) => void;
+	onNavigatorPathChange: ( path?: string ) => void;
 }
 
 const NavigatorListener = ( { onNavigatorPathChange }: Props ) => {
