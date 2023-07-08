@@ -1,9 +1,9 @@
+import i18n, { TranslateResult } from 'i18n-calypso';
 import {
 	PRODUCT_1GB_SPACE,
 	PRODUCT_50GB_STORAGE_ADD_ON,
 	PRODUCT_100GB_STORAGE_ADD_ON,
-} from '@automattic/calypso-products';
-import i18n, { TranslateResult } from 'i18n-calypso';
+} from './constants';
 
 export type AddOnsObject = {
 	getSlug: () => string;
