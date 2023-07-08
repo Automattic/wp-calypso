@@ -98,6 +98,7 @@ export interface PlansFeaturesMainProps {
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
+	showUpgradeableStorage: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
@@ -155,6 +156,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isCustomDomainAllowedOnFreePlan,
 		showLegacyStorageFeature,
 		isSpotlightOnCurrentPlan,
+		showUpgradeableStorage,
 	} = props;
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -211,6 +213,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		showLegacyStorageFeature,
 		spotlightPlanSlug,
+		showUpgradeableStorage,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -431,6 +434,8 @@ const PlansFeaturesMain = ( {
 		plans: Object.keys( visiblePlans ),
 	};
 
+	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+
 	return (
 		<div
 			className={ classNames( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }
@@ -531,6 +536,7 @@ const PlansFeaturesMain = ( {
 						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
 						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlan }
+						showUpgradeableStorage={ showUpgradeableStorage }
 					/>
 				</>
 			) }
