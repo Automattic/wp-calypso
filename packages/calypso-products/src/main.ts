@@ -16,7 +16,6 @@ import {
 	TYPE_SECURITY_REALTIME,
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
-	TYPE_JETPACK_STARTER,
 	TYPE_ALL,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
@@ -103,10 +102,6 @@ export function getPlanClass( planKey: string ): string {
 		return 'is-flexible-plan';
 	}
 
-	if ( isStarterPlan( planKey ) ) {
-		return 'is-starter-plan';
-	}
-
 	if ( isBloggerPlan( planKey ) ) {
 		return 'is-blogger-plan';
 	}
@@ -165,10 +160,6 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isCompletePlan( planKey ) ) {
 		return 'is-complete-plan';
-	}
-
-	if ( isJetpackStarterPlan( planKey ) ) {
-		return 'is-jetpack-starter-plan';
 	}
 
 	return '';
@@ -375,10 +366,6 @@ export function isSecurityT2Plan( planSlug: string ): boolean {
 
 export function isCompletePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_ALL } );
-}
-
-export function isJetpackStarterPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_JETPACK_STARTER } );
 }
 
 export function isWpComPlan( planSlug: string ): boolean {

@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPartnerPortalLicenseCounts from 'calypso/components/data/query-jetpack-partner-portal-license-counts';
-import Main from 'calypso/components/main';
 import SiteAddLicenseNotification from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-add-license-notification';
 import SiteSurveyBanner from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-survey-banner';
 import SiteWelcomeBanner from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-welcome-banner';
@@ -65,7 +64,7 @@ export default function Licenses( {
 	const showEmptyStateContent = hasFetched && allLicensesCount === 0;
 
 	return (
-		<Main wideLayout className="licenses">
+		<div className="licenses" role="main">
 			<QueryJetpackPartnerPortalLicenseCounts />
 			<DocumentHead title={ translate( 'Licenses' ) } />
 			<SidebarNavigation />
@@ -76,30 +75,33 @@ export default function Licenses( {
 				</>
 			) }
 			<SiteAddLicenseNotification />
-			<div className="licenses__header">
-				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
-				<SelectPartnerKeyDropdown />
+			<div className="licenses__container">
+				<div className="licenses__header">
+					<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
-				<Button
-					href="/partner-portal/issue-license"
-					onClick={ onIssueNewLicenseClick }
-					primary
-					style={ { marginLeft: 'auto' } }
-				>
-					{ translate( 'Issue New License' ) }
-				</Button>
+					<SelectPartnerKeyDropdown />
+
+					<Button
+						href="/partner-portal/issue-license"
+						onClick={ onIssueNewLicenseClick }
+						primary
+						style={ { marginLeft: 'auto' } }
+					>
+						{ translate( 'Issue New License' ) }
+					</Button>
+				</div>
+
+				{ showEmptyStateContent ? (
+					<OnboardingWidget isLicensesPage />
+				) : (
+					<LicenseListContext.Provider value={ context }>
+						<LicenseStateFilter />
+
+						<LicenseList />
+					</LicenseListContext.Provider>
+				) }
 			</div>
-
-			{ showEmptyStateContent ? (
-				<OnboardingWidget isLicensesPage />
-			) : (
-				<LicenseListContext.Provider value={ context }>
-					<LicenseStateFilter />
-
-					<LicenseList />
-				</LicenseListContext.Provider>
-			) }
-		</Main>
+		</div>
 	);
 }

@@ -29,19 +29,16 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 		createTransientMedia.mockImplementation( ( x ) => x );
 	} );
 
-	it( 'should return a list of tuples which hold media files and transient items', () => {
+	it( 'should return the list of transient items', () => {
 		jest.spyOn( dateUtils, 'getTransientDate' ).mockReturnValue( transientDate );
 		createTransientMedia.mockReturnValueOnce( { transient: true } );
 		const result = createTransientMediaItems( [ file ], site );
 		expect( result ).toEqual( [
-			[
-				file,
-				{
-					date: transientDate,
-					ID: transientId,
-					transient: true,
-				},
-			],
+			{
+				date: transientDate,
+				ID: transientId,
+				transient: true,
+			},
 		] );
 	} );
 

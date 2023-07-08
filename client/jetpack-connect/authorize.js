@@ -446,22 +446,26 @@ export class JetpackAuthorize extends Component {
 		e.preventDefault();
 
 		const { recordTracksEvent } = this.props;
-		const { from } = this.props.authQuery;
-		if ( 'woocommerce-onboarding' === from ) {
-			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
-		} else if ( from === 'woocommerce-core-profiler' ) {
-			recordTracksEvent( 'calypso_jpc_different_user_click' );
-		}
-
-		try {
-			const { redirect_to: redirectTo } = await this.props.logoutUser( loginURL );
-			disablePersistence();
-			await clearStore();
-			window.location.href = redirectTo || '/';
-		} catch ( error ) {
-			// The logout endpoint might fail if the nonce has expired.
-			// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
-			this.props.redirectToLogout( loginURL );
+		switch ( true ) {
+			case this.isWooOnboarding():
+				recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
+				window.location.href = e.target.href;
+				break;
+			case this.isWooCoreProfiler():
+				recordTracksEvent( 'calypso_jpc_different_user_click' );
+				window.location.href = e.target.href;
+				break;
+			default:
+				try {
+					const { redirect_to: redirectTo } = await this.props.logoutUser( loginURL );
+					disablePersistence();
+					await clearStore();
+					window.location.href = redirectTo || '/';
+				} catch ( error ) {
+					// The logout endpoint might fail if the nonce has expired.
+					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+					this.props.redirectToLogout( loginURL );
+				}
 		}
 	};
 

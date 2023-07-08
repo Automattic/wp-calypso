@@ -25,6 +25,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
 import {
@@ -89,6 +90,9 @@ class ThemeShowcase extends Component {
 		loggedOutComponent: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
+		isSiteECommerceFreeTrial: PropTypes.bool,
+		isSiteWooExpress: PropTypes.bool,
+		isSiteWooExpressOrEcomFreeTrial: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -179,17 +183,24 @@ class ThemeShowcase extends Component {
 	};
 
 	getTiers = () => {
-		return [
+		const { isSiteWooExpressOrEcomFreeTrial } = this.props;
+		const tiers = [
 			{ value: 'all', label: this.props.translate( 'All' ) },
 			{ value: 'free', label: this.props.translate( 'Free' ) },
-			{ value: 'premium', label: this.props.translate( 'Premium' ) },
-			{
-				value: 'marketplace',
-				label: this.props.translate( 'Paid', {
-					context: 'Refers to paid service, such as paid theme',
-				} ),
-			},
 		];
+
+		if ( ! isSiteWooExpressOrEcomFreeTrial ) {
+			tiers.push( { value: 'premium', label: this.props.translate( 'Premium' ) } );
+		}
+
+		tiers.push( {
+			value: 'marketplace',
+			label: this.props.translate( 'Paid', {
+				context: 'Refers to paid service, such as paid theme',
+			} ),
+		} );
+
+		return tiers;
 	};
 
 	findTabFilter = ( tabFilters, filterKey ) =>
@@ -375,11 +386,24 @@ class ThemeShowcase extends Component {
 	};
 
 	renderBanner = () => {
-		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner, isUpsellCardDisplayed } =
-			this.props;
+		const {
+			loggedOutComponent,
+			isExpertBannerDissmissed,
+			upsellBanner,
+			isUpsellCardDisplayed,
+			isSiteECommerceFreeTrial,
+		} = this.props;
 
 		// Don't show the banner if there is already an upsell card displayed
 		if ( isUpsellCardDisplayed ) {
+			return null;
+		}
+
+		// In ecommerce trial sites, we only want to show upsell banner.
+		if ( isSiteECommerceFreeTrial ) {
+			if ( upsellBanner ) {
+				return upsellBanner;
+			}
 			return null;
 		}
 
@@ -433,6 +457,7 @@ class ThemeShowcase extends Component {
 			isMultisite,
 			locale,
 			premiumThemesEnabled,
+			isSiteWooExpressOrEcomFreeTrial,
 		} = this.props;
 		const tier = this.props.tier || '';
 
@@ -536,6 +561,9 @@ class ThemeShowcase extends Component {
 				</ThemesHeader>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
+					{ isSiteWooExpressOrEcomFreeTrial && (
+						<div className="themes__showcase">{ this.renderBanner() }</div>
+					) }
 					<div className="themes__controls">
 						<SearchThemes
 							query={ filterString + search }
@@ -544,15 +572,17 @@ class ThemeShowcase extends Component {
 						/>
 						{ tabFilters && (
 							<div className="theme__filters">
-								<ThemesToolbarGroup
-									items={ Object.values( tabFilters ) }
-									selectedKey={ this.state.tabFilter.key }
-									onSelect={ ( key ) =>
-										this.onFilterClick(
-											Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-										)
-									}
-								/>
+								{ ! isSiteWooExpressOrEcomFreeTrial && (
+									<ThemesToolbarGroup
+										items={ Object.values( tabFilters ) }
+										selectedKey={ this.state.tabFilter.key }
+										onSelect={ ( key ) =>
+											this.onFilterClick(
+												Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+											)
+										}
+									/>
+								) }
 								{ premiumThemesEnabled && ! isMultisite && (
 									<SimplifiedSegmentedControl
 										key={ tier }
@@ -565,7 +595,7 @@ class ThemeShowcase extends Component {
 						) }
 					</div>
 					<div className="themes__showcase">
-						{ this.renderBanner() }
+						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
@@ -597,6 +627,10 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
 		isUpsellCardDisplayed: isUpsellCardDisplayedSelector( state ),
+		isSiteECommerceFreeTrial: isSiteOnECommerceTrial( state, siteId ),
+		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
+		isSiteWooExpressOrEcomFreeTrial:
+			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 	};
 };
 

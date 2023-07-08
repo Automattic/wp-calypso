@@ -83,7 +83,6 @@ const FontPairingVariationPreview = () => {
 						height: width ? normalizedHeight : 0,
 						width: '100%',
 						background: 'white',
-						opacity: isLoaded ? 1 : 0,
 						cursor: 'pointer',
 					} }
 				>
@@ -91,6 +90,7 @@ const FontPairingVariationPreview = () => {
 						style={ {
 							height: '100%',
 							overflow: 'hidden',
+							opacity: isLoaded ? 1 : 0,
 						} }
 					>
 						<HStack

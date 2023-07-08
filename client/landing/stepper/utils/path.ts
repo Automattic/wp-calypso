@@ -44,31 +44,23 @@ export function useLangRouteParam() {
 	return match?.params.lang;
 }
 
-export const useLoginUrl = ( params: {
+export const useLoginUrl = ( {
+	flowName,
+	redirectTo,
+	pageTitle,
+	loginPath = `/start/account/user/`,
+}: {
 	flowName?: string;
 	redirectTo?: string;
 	pageTitle?: string;
 	loginPath?: string;
 } ): string => {
 	const locale = useLocale();
-
-	const loginPath = params.loginPath ?? `/start/account/user/`;
 	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
-
-	const nonEmptyQueryParameters = Object.entries( params )
-		.filter( ( [ , value ] ) => value )
-		.map( ( [ key, value ] ) => {
-			switch ( key ) {
-				case 'redirectTo':
-					return [ 'redirect_to', value ];
-				case 'flowName':
-					return [ 'variationName', value ];
-				default:
-					return [ key, value ];
-			}
-		} );
-
-	nonEmptyQueryParameters.push( [ 'toStepper', 'true' ] );
-
-	return addQueryArgs( localizedLoginPath, Object.fromEntries( nonEmptyQueryParameters ) );
+	return addQueryArgs( localizedLoginPath, {
+		variationName: flowName,
+		redirect_to: redirectTo,
+		pageTitle,
+		toStepper: true,
+	} );
 };

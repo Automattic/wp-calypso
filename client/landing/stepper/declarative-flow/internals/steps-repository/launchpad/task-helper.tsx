@@ -1,7 +1,6 @@
 import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
-	PLAN_PREMIUM,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -43,6 +42,7 @@ export function getEnhancedTasks(
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
+	globalStylesMinimumPlan: string,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
@@ -160,7 +160,7 @@ export function getEnhancedTasks(
 						}
 						const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 							...( shouldDisplayWarning && {
-								plan: PLAN_PREMIUM,
+								plan: globalStylesMinimumPlan,
 								feature: isVideoPressFlowWithUnsupportedPlan
 									? FEATURE_VIDEO_UPLOADS
 									: FEATURE_STYLE_CUSTOMIZATION,
@@ -338,8 +338,15 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
-				case 'blog_launched':
+				case 'blog_launched': {
+					const onboardingCartItems = [ planCartItem, domainCartItem ].filter( Boolean );
+					let title = task.title;
+					if ( isBlogOnboardingFlow( flow ) && planCompleted && onboardingCartItems.length ) {
+						title = translate( 'Checkout and launch' );
+					}
+
 					taskData = {
+						title,
 						disabled:
 							( isStartWritingFlow( flow ) &&
 								( ! firstPostPublished ||
@@ -383,6 +390,7 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				}
 				case 'videopress_upload':
 					taskData = {
 						actionUrl: launchpadUploadVideoLink,
