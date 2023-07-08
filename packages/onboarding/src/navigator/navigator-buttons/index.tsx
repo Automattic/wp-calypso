@@ -13,7 +13,7 @@ interface Props {
 	path: string;
 	className?: string;
 	icon?: JSX.Element;
-	children: JSX.Element | string;
+	children: React.ReactNode;
 	onClick?: () => void;
 	checked?: boolean;
 }
@@ -54,8 +54,7 @@ export const NavigationButtonAsItem = ( { className, ...props }: Props ) => {
 	return (
 		<NavigatorButton
 			as={ GenericButton }
-			className={ classnames( 'navigator-button', className ) }
-			wrapperClassName="navigator-button__wrapper"
+			className={ classnames( 'navigator-button__wrapper', 'navigator-button', className ) }
 			{ ...props }
 		/>
 	);
