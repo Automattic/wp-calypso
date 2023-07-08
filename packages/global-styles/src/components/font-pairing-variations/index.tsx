@@ -44,7 +44,8 @@ const FontPairingVariation = ( {
 		return {
 			user: fontPairingVariation,
 			base,
-			merged: mergeBaseAndUserConfigs( base, fontPairingVariation ),
+			// When font paring isn't passed, it should be available on the base.
+			merged: ! fontPairingVariation ? base : mergeBaseAndUserConfigs( base, fontPairingVariation ),
 		};
 	}, [ fontPairingVariation, base ] );
 	return (
