@@ -6,7 +6,7 @@ import {
 	AllureRuntime,
 	AllureConfig,
 } from '@automattic/jest-circus-allure-reporter';
-import { EnvironmentContext } from '@jest/environment';
+import { EnvironmentContext, JestEnvironmentConfig } from '@jest/environment';
 import { parse as parseDocBlock } from 'jest-docblock';
 import NodeEnvironment from 'jest-environment-node';
 import {
@@ -56,22 +56,16 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	/**
 	 * Constructs the instance of the JestEnvironmentNode.
 	 *
-	 * @param {Config.ProjectConfig} config Jest configuration.
-	 * @param {EnvironmentContext} context Jest execution context.
+	 * @param config Jest configuration.
+	 * @param context Jest execution context.
 	 */
-	constructor(
-		{
-			globalConfig,
-			projectConfig,
-		}: { globalConfig: Config.GlobalConfig; projectConfig: Config.ProjectConfig },
-		context: EnvironmentContext
-	) {
-		super( { globalConfig, projectConfig }, context );
+	constructor( config: JestEnvironmentConfig, context: EnvironmentContext ) {
+		super( config, context );
 
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
 		this.testArtifactsPath = '';
-		this.allure = this.initializeAllureReporter( projectConfig );
+		this.allure = this.initializeAllureReporter( config.projectConfig );
 	}
 
 	/**
