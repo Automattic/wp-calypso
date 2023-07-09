@@ -2,13 +2,13 @@ import {
 	PLAN_FREE,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-	PLAN_WOOEXPRESS_PLUS,
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	getPlanPath,
 	getPlans,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -119,8 +119,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	);
 
 	const plansTableProps = {
-		// TODO clk
-		plans: [ smallPlan, mediumPlan, PLAN_WOOEXPRESS_PLUS ],
+		plans: [ smallPlan, mediumPlan ],
 		hidePlansFeatureComparison: false,
 		hideUnavailableFeatures: true,
 		siteId,
@@ -141,6 +140,22 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 			) }
 			<div className="wooexpress-plans__grid is-2023-pricing-grid">
 				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...plansTableProps } />
+			</div>
+
+			<div className="enterprise-ecommerce__banner">
+				<div className="enterprise-ecommerce__content">
+					<h3 className="enterprise-ecommerce__title">{ translate( 'Enterprise ecommerce' ) }</h3>
+					<div className="enterprise-ecommerce__subtitle">
+						{ translate(
+							'Learn how Woo can support the unique needs of high-volume stores throught dedicated support, discounts, and more.'
+						) }
+					</div>
+					<div className="enterprise-ecommerce__cta">
+						<Button href="https://woocommerce.com/enterprise-ecommerce/?utm_source=wooexpress&utm_campaign=plans_grid">
+							{ translate( 'Learn more' ) }
+						</Button>
+					</div>
+				</div>
 			</div>
 		</>
 	);

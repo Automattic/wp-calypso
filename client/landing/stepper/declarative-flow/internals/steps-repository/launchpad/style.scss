@@ -342,6 +342,12 @@
 		}
 	}
 
+	.is-tablet .web-preview__placeholder {
+		@include break-large {
+			max-width: 783px;
+		}
+	}
+
 	.web-preview__placeholder {
 		overflow-y: visible;
 		max-width: 100%;

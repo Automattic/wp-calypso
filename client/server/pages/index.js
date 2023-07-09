@@ -826,6 +826,12 @@ function wpcomPages( app ) {
 		// Otherwise, show them email subscriptions external landing page
 		res.redirect( 'https://wordpress.com/email-subscriptions' );
 	} );
+
+	// Redirects from the /start/domain-transfer flow to the new /setup/domain-transfer.
+	app.get( [ '/start/domain-transfer', '/start/domain-transfer/*' ], function ( req, res ) {
+		const redirectUrl = '/setup/domain-transfer';
+		res.redirect( 301, redirectUrl );
+	} );
 }
 
 export default function pages() {

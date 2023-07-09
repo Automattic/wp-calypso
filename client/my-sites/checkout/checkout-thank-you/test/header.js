@@ -40,10 +40,10 @@ describe( 'CheckoutThankYouHeader', () => {
 		test( 'Should display getText()-based success message when isSimplified=false (default)', () => {
 			render( <CheckoutThankYouHeader isDataLoaded={ true } { ...defaultProps } /> );
 			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
-				'Congratulations on your purchase!'
+				'Get the best out of your site'
 			);
 			expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveTextContent(
-				"Your site is now on the {{strong}}%(productName)s{{/strong}} plan. It's doing somersaults in excitement!"
+				'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan'
 			);
 		} );
 		test( 'Should display an alternative success message when isSimplified=true', () => {
@@ -51,10 +51,10 @@ describe( 'CheckoutThankYouHeader', () => {
 				<CheckoutThankYouHeader isDataLoaded={ true } isSimplified={ true } { ...defaultProps } />
 			);
 			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
-				'Congratulations on your purchase!'
+				'Get the best out of your site'
 			);
 			expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveTextContent(
-				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. Enjoy your powerful new features!'
+				'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan'
 			);
 		} );
 		test( 'Should display a list of success messages when siteUnlaunchedBeforeUpgrade=true', () => {
@@ -67,7 +67,7 @@ describe( 'CheckoutThankYouHeader', () => {
 				/>
 			);
 			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
-				'Congratulations on your purchase!'
+				'Get the best out of your site'
 			);
 			expect( screen.queryByRole( 'heading', { level: 2 } ) ).not.toBeInTheDocument();
 
@@ -75,7 +75,7 @@ describe( 'CheckoutThankYouHeader', () => {
 
 			expect( messages ).toHaveLength( 2 );
 			expect( messages[ 0 ] ).toHaveTextContent(
-				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. Enjoy your powerful new features!'
+				'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan'
 			);
 			expect( messages[ 1 ] ).toHaveTextContent(
 				"Your site has been launched. You can share it with the world whenever you're ready."
