@@ -8,7 +8,6 @@ import {
 	TYPE_PREMIUM,
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
-	TYPE_WOO_EXPRESS_PLUS,
 	getPlan,
 	isBloggerPlan,
 } from '@automattic/calypso-products';
@@ -70,7 +69,7 @@ const usePlanTypesWithIntent = ( {
 	switch ( intent ) {
 		case 'plans-woocommerce':
 			return {
-				planTypes: [ TYPE_WOOEXPRESS_SMALL, TYPE_WOOEXPRESS_MEDIUM, TYPE_WOO_EXPRESS_PLUS ],
+				planTypes: [ TYPE_WOOEXPRESS_SMALL, TYPE_WOOEXPRESS_MEDIUM ],
 			};
 		case 'plans-blog-onboarding':
 			return {
