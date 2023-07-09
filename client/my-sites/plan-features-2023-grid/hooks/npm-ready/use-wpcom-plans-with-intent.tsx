@@ -8,7 +8,6 @@ import {
 	TYPE_PREMIUM,
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
-	TYPE_WOO_EXPRESS_PLUS,
 	getPlan,
 	isBloggerPlan,
 	PlanSlug,
@@ -80,13 +79,12 @@ const useWpcomPlansWithIntent = ( {
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 		TYPE_WOOEXPRESS_SMALL,
 		TYPE_WOOEXPRESS_MEDIUM,
-		TYPE_WOO_EXPRESS_PLUS,
 	];
 
 	let planTypes;
 	switch ( intent ) {
 		case 'plans-woocommerce':
-			planTypes = [ TYPE_WOOEXPRESS_SMALL, TYPE_WOOEXPRESS_MEDIUM, TYPE_WOO_EXPRESS_PLUS ];
+			planTypes = [ TYPE_WOOEXPRESS_SMALL, TYPE_WOOEXPRESS_MEDIUM ];
 			break;
 		case 'plans-blog-onboarding':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
