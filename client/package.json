@@ -77,7 +77,6 @@
 		"@tanstack/react-query": "^4.29.1",
 		"@tanstack/react-query-devtools": "^4.29.1",
 		"@tanstack/react-query-persist-client": "^4.29.1",
-		"@types/react": "^18.2.14",
 		"@wordpress/a11y": "^3.23.0",
 		"@wordpress/api-fetch": "^6.20.0",
 		"@wordpress/base-styles": "^4.14.0",
