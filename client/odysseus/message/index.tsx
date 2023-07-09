@@ -1,10 +1,11 @@
 import classnames from 'classnames';
-import { RefObject, useState } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import ReactMarkdown from 'react-markdown';
+import { lazy, RefObject, Suspense, useState } from 'react';
 import type { Message } from '../types';
 
 import './style.scss';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+const ReactMarkdown = lazy( () => import( 'react-markdown' ) );
 
 type ChatMessageProps = {
 	message: Message;
@@ -43,7 +44,9 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 			ref={ isLast ? messageEndRef : null }
 			className={ `chatbox-message ${ isUser ? 'user' : 'wapuu' }` }
 		>
-			<ReactMarkdown children={ message.content } />
+			<Suspense fallback={ null }>
+				<ReactMarkdown children={ message.content } />
+			</Suspense>
 			{ ! isUser && (
 				<div className="message-actions">
 					<button
