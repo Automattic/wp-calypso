@@ -1,9 +1,20 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .stats-purchase-wizard {
-	max-width: 90%; //TODO: fix positioning
 	--font-body: 16px;
 	--jp-black: #000;
 	--jp-white: #fff;
 	--jp-green-50: #008710;
+	display: flex;
+	justify-content: center;
+
+	@media (max-width: $break-wide) {
+		justify-content: left;
+
+		> div {
+			flex: 1 0 auto;
+		}
+	}
 
 	.stats-purchase-wizard__card-parent {
 		border-radius: 4px;
