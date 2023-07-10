@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import util from 'node:util';
+import util from 'util';
 import glob from 'glob';
 import runTask from './teamcity-task-runner.mjs';
 
@@ -60,8 +60,6 @@ const testClient = withUnitTestInfo( 'test-client --maxWorkers=8' );
 const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=4' );
 const testServer = withUnitTestInfo( 'test-server --maxWorkers=4' );
 const testBuildTools = withUnitTestInfo( 'test-build-tools --maxWorkers=4' );
-// Includes ETK and Odyssey Stats, migrated here from their individual builds.
-const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1' );
 
 const testWorkspaces = {
 	name: 'yarn',
@@ -97,7 +95,6 @@ try {
 		await runTask( testServer );
 		await runTask( testBuildTools );
 		await runTask( testWorkspaces );
-		await runTask( testApps );
 	} )();
 
 	await completeTasks( [ testClientTask, tscTasks, otherTestTasks ] );
