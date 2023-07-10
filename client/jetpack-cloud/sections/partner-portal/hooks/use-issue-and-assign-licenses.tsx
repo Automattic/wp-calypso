@@ -21,7 +21,7 @@ const useIssueLicenses = () => {
 	const translate = useTranslate();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
-	const issueLicenseMutation = useIssueLicenseMutation( {
+	const { mutateAsync, isIdle } = useIssueLicenseMutation( {
 		onError: ( error: APIError ) => {
 			if ( error.code === 'missing_valid_payment_method' ) {
 				dispatch(
@@ -62,24 +62,21 @@ const useIssueLicenses = () => {
 
 	return useMemo( () => {
 		const issueLicenses = ( productSlugs: string[] ) => {
-			const requests = productSlugs.map( ( slug ) =>
-				issueLicenseMutation.mutateAsync( { product: slug } )
-			);
-
+			const requests = productSlugs.map( ( slug ) => mutateAsync( { product: slug } ) );
 			return Promise.allSettled( requests );
 		};
 
 		return {
-			isReady: issueLicenseMutation.isIdle,
+			isReady: isIdle,
 			issueLicenses,
 		};
-	}, [ issueLicenseMutation ] );
+	}, [ mutateAsync, isIdle ] );
 };
 
 const useAssignLicensesToSite = ( siteId: number | undefined ) => {
 	const dispatch = useDispatch();
 
-	const assignLicenseMutation = useAssignLicenseMutation( {
+	const { mutateAsync, isIdle } = useAssignLicenseMutation( {
 		onError: ( error: Error ) => {
 			dispatch( errorNotice( error.message, { isPersistent: true } ) );
 		},
@@ -94,17 +91,17 @@ const useAssignLicensesToSite = ( siteId: number | undefined ) => {
 			}
 
 			const requests = licenseKeys.map( ( key ) =>
-				assignLicenseMutation.mutateAsync( { licenseKey: key, selectedSite: siteId as number } )
+				mutateAsync( { licenseKey: key, selectedSite: siteId as number } )
 			);
 
 			return Promise.allSettled( requests );
 		};
 
 		return {
-			isReady: assignLicenseMutation.isIdle,
+			isReady: isIdle,
 			assignLicensesToSite,
 		};
-	}, [ siteId, assignLicenseMutation ] );
+	}, [ siteId, mutateAsync, isIdle ] );
 };
 
 const useGetLicenseIssuedMessage = () => {
