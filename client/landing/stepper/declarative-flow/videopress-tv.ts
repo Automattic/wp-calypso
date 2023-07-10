@@ -34,10 +34,6 @@ const videopressTv: Flow = {
 		setStepProgress( flowProgress );
 
 		const clearOnboardingSiteOptions = () => {
-			setSiteTitle( '' );
-			setSiteDescription( '' );
-			setDomain( undefined );
-			setSelectedDesign( undefined );
 		};
 
 		switch ( _currentStep ) {
