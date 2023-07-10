@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { CheckoutCheckIcon } from '@automattic/composite-checkout';
 import { Modal } from '@wordpress/components';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -11,7 +12,6 @@ import {
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setPreference } from 'calypso/state/preferences/actions';
-import getPageValueFromUrl from './utils/get-page-value-from-url';
 
 import './style.scss';
 
@@ -45,7 +45,7 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 		translate( 'Access to our Pro Dashboard – manage all of your sites in one place.' ),
 	];
 
-	const redirectURLPage = getPageValueFromUrl( redirectTo ) ?? '';
+	const redirectURLPage = getQueryArg( redirectTo ?? '', 'page' );
 
 	const isAgencyPartner = useSelector( isAgencyUser );
 
@@ -56,7 +56,8 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 		isDismissed ||
 		! (
 			productSourceFromUrl === 'jetpack-plans' ||
-			[ 'my-jetpack', 'jetpack' ].includes( redirectURLPage )
+			redirectURLPage === 'my-jetpack' ||
+			redirectURLPage === 'jetpack'
 		)
 	) {
 		return null;
