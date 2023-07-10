@@ -2,6 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_TV_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import './internals/videopress.scss';
 import SiteOptions from './internals/steps-repository/site-options';
@@ -39,16 +40,34 @@ const videopressTv: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+		const { setSiteDescription, setSiteTitle } = useDispatch( ONBOARD_STORE );
 
 		setStepProgress( flowProgress );
 
-		switch ( _currentStep ) {
-			case 'intro':
-				break;
-			case 'options':
-				// todo: validate user logged in
-				break;
-		}
+		const clearOnboardingSiteOptions = () => {
+			setSiteTitle( '' );
+			setSiteDescription( '' );
+		};
+
+		const stepValidateUserIsLoggedIn = () => {
+			if ( ! userIsLoggedIn ) {
+				navigate( 'intro' );
+				return false;
+			}
+			return true;
+		};
+
+		// needs to be wrapped in a useEffect because validation can call `navigate` which needs to be called in a useEffect
+		useEffect( () => {
+			switch ( _currentStep ) {
+				case 'intro':
+					clearOnboardingSiteOptions();
+					break;
+				case 'options':
+					stepValidateUserIsLoggedIn();
+					break;
+			}
+		} );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
