@@ -6,8 +6,8 @@ import {
 	PlanSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { isPopularPlan } from '../../lib/is-popular-plan';
-import type { PlansIntent } from '../../grid-context';
+import { isPopularPlan } from './is-popular-plan';
+import type { PlansIntent } from './use-wpcom-plans-with-intent';
 import type { TranslateResult } from 'i18n-calypso';
 
 interface Props {

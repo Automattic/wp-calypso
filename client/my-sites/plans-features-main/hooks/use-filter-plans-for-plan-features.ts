@@ -6,7 +6,7 @@ import {
 	isPremiumPlan,
 	PlanSlug,
 } from '@automattic/calypso-products';
-import { GridPlan } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/use-wpcom-plans-with-intent';
+import { GridPlan } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 
 interface Props {
 	plans: Record< PlanSlug, GridPlan >;

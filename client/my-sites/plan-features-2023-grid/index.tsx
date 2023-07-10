@@ -67,7 +67,7 @@ import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { PlansIntent } from './grid-context';
-import type { GridPlan } from './hooks/npm-ready/use-wpcom-plans-with-intent';
+import type { GridPlan } from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import type { PlanActionOverrides } from './types';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';

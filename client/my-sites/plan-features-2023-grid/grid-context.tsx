@@ -1,6 +1,9 @@
 import { PlanSlug } from '@automattic/calypso-products';
 import { createContext, useContext } from '@wordpress/element';
-import type { GridPlan, PlansIntent } from './hooks/npm-ready/use-wpcom-plans-with-intent';
+import type {
+	GridPlan,
+	PlansIntent,
+} from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 
 interface PlansGridContext {
 	intent?: PlansIntent;
