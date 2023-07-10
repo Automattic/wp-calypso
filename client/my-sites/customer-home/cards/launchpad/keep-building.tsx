@@ -120,6 +120,12 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 						window.location.assign( `/page/${ siteSlug }` );
 					};
 					break;
+				case 'edit_page':
+					actionDispatch = () => {
+						recordTaskClickTracksEvent( task );
+						window.location.assign( `/pages/${ siteSlug }` );
+					};
+					break;
 
 				case 'share_site':
 					actionDispatch = () => {

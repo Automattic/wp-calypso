@@ -1,4 +1,4 @@
-import { useLaunchpad, updateLaunchpadSettings } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localize } from 'i18n-calypso';
 import { useEffect } from 'react';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
@@ -14,22 +14,12 @@ import SharingServicesGroup from './services-group';
 const SharingConnections = ( { translate, isP2Hub, siteId, siteSlug } ) => {
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.POST_SHARING_ENABLED );
 
-	const { data: { checklist: launchpadChecklist } = {} } = useLaunchpad(
-		siteSlug,
-		'keep-building'
-	);
-
 	useEffect( () => {
-		const driveTrafficTask = launchpadChecklist?.find(
-			( task ) => task.id === 'drive_traffic' && task.completed === false
-		);
-		if ( driveTrafficTask ) {
-			// Mark the task as done
-			updateLaunchpadSettings( siteSlug, {
-				checklist_statuses: { drive_traffic: true },
-			} );
-		}
-	}, [ launchpadChecklist ] );
+		// Mark the task as done
+		updateLaunchpadSettings( siteSlug, {
+			checklist_statuses: { drive_traffic: true },
+		} );
+	}, [] );
 
 	return (
 		<div className="connections__sharing-settings connections__sharing-connections">

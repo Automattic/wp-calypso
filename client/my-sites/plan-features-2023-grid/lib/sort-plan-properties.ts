@@ -4,7 +4,7 @@ import type { PlanProperties } from '../types';
 
 export function sortPlans(
 	planProperties: PlanProperties[],
-	currentSitePlanProductSlug?: string,
+	currentSitePlanProductSlug?: string | null,
 	isMobile?: boolean
 ): PlanProperties[] {
 	let firstPlanIndex = -1;

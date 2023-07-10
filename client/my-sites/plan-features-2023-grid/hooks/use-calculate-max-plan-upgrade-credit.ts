@@ -4,18 +4,18 @@ import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors/get-sit
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import type { PlanSlug } from '@automattic/calypso-products';
 
+interface Props {
+	siteId?: number | null;
+	plans: PlanSlug[];
+}
+
 /**
  * Calculate available plan credits given a set of displayed plans
  * This is the maximum possible credit value possible when comparing credits per plan
  *
- * @param {*} siteId the selected site id
- * @param {PlanSlug[]}  plans Plans that are considered for the given calculation
  * @returns {number} The maximum amount of credits possible for a given set of plans
  */
-export function useCalculateMaxPlanUpgradeCredit(
-	siteId: number | undefined,
-	plans: PlanSlug[]
-): number {
+export function useCalculateMaxPlanUpgradeCredit( { siteId, plans }: Props ): number {
 	const plansDetails = useSelector( ( state ) =>
 		plans.map( ( planName ) => ( {
 			isPlanAvailableForPurchase: isPlanAvailableForPurchase( state, siteId ?? 0, planName ),
@@ -23,6 +23,7 @@ export function useCalculateMaxPlanUpgradeCredit(
 			sitePlanRawPrice: getSitePlanRawPrice( state, siteId ?? 0, planName ),
 		} ) )
 	);
+
 	if ( ! siteId ) {
 		return 0;
 	}
