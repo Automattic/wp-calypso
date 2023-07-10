@@ -30,7 +30,16 @@ type SubscribersProps = {
 	sortTermChanged: ( term: SubscribersSortBy ) => void;
 };
 
-const SubscribersPage = ( { filterOption, pageNumber, searchTerm, sortTerm, filterOptionChanged, pageChanged, searchTermChanged, sortTermChanged }: SubscribersProps ) => {
+const SubscribersPage = ( {
+	filterOption,
+	pageNumber,
+	searchTerm,
+	sortTerm,
+	filterOptionChanged,
+	pageChanged,
+	searchTermChanged,
+	sortTermChanged,
+}: SubscribersProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const pageArgs = {
@@ -43,9 +52,7 @@ const SubscribersPage = ( { filterOption, pageNumber, searchTerm, sortTerm, filt
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
 		useUnsubscribeModal( selectedSite?.ID, pageArgs );
 	const onClickView = ( { subscription_id, user_id }: Subscriber ) => {
-		page.show(
-			getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs )
-		);
+		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};
 
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );

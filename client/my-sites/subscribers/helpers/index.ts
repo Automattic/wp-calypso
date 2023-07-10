@@ -52,7 +52,10 @@ const getSubscribersQueryString = (
 	return `page=${ pageNumber }${ queryString }`;
 };
 
-const getSubscribersUrl = ( siteSlug: string | undefined | null, args: SubscriberListArgs ): string => {
+const getSubscribersUrl = (
+	siteSlug: string | undefined | null,
+	args: SubscriberListArgs
+): string => {
 	const { currentPage, searchTerm, sortTerm, filterOption } = args;
 	const queryString = getSubscribersQueryString( currentPage, searchTerm, sortTerm, filterOption );
 
