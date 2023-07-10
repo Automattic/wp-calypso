@@ -7,7 +7,6 @@ type DomainItem = {
 	product_slug?: string;
 };
 
-// TODO: this can be so much simpler once all the call sites of this functions are TS
 export const getIntervalType = ( path?: string ): IntervalType => {
 	const url = path ?? window?.location?.href ?? '';
 	const intervalType = getUrlParts( url ).searchParams.get( 'intervalType' ) || 'yearly';
