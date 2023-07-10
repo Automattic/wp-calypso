@@ -266,7 +266,7 @@ function useIssueAndAssignLicenses(
 			);
 
 			// If no site is selected, announce that licenses were issued;
-			// then, redirect to somewher more appropriate
+			// then, redirect to somewhere more appropriate
 			if ( ! selectedSiteId ) {
 				const issuedProductNames: string[] = issuedProducts.map( ( { name } ) => name );
 				const issuedMessage = getLicenseIssuedMessage( issuedProductNames );
