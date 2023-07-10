@@ -1,7 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
+import { useLocale } from '@automattic/i18n-utils';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { Modal } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n/';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
@@ -23,10 +25,16 @@ const AddSubscribersModal = ( {
 	onAddFinished,
 }: AddSubscribersModalProps ) => {
 	const translate = useTranslate();
-	const modalTitle = translate( 'Add subscribers to %s', {
-		args: [ siteTitle ],
-		comment: "%s is the site's title",
-	} );
+	const locale = useLocale();
+	const { hasTranslation } = useI18n();
+
+	const modalTitle =
+		locale.startsWith( 'en' ) || hasTranslation( 'Add subscribers to %s' )
+			? translate( 'Add subscribers to %s', {
+					args: [ siteTitle ],
+					comment: "%s is the site's title",
+			  } )
+			: translate( 'Add subscribers' );
 
 	const [ isUploading, setIsUploading ] = useState( false );
 	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
@@ -49,7 +57,8 @@ const AddSubscribersModal = ( {
 				<>
 					<LoadingBar progress={ 0.5 } />
 					<span className="add-subscribers-modal__loading-text">
-						{ translate( 'Uploading CSV file' ) }...
+						{ ( locale.startsWith( 'en' ) || hasTranslation( 'Uploading CSV file…' ) ) &&
+							translate( 'Uploading CSV file…' ) }
 					</span>
 				</>
 			) }
