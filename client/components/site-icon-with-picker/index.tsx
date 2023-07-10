@@ -38,7 +38,7 @@ export function SiteIconWithPicker( {
 
 	const handleFileChange = useCallback(
 		( file: File | undefined ) => {
-			if ( file ) {
+			if ( file && file.size ) {
 				setEditingFileName( file.name );
 				setEditingFile( URL.createObjectURL( file ) );
 				setImageEditorOpen( true );
