@@ -101,6 +101,17 @@
 				max-width: max-content;
 				padding: 0 8px;
 
+				&--is-loading {
+					margin-bottom: 0;
+					padding: 0;
+					max-width: 100%;
+
+					.placeholder {
+						height: 100px;
+						margin: 0;
+					}
+				}
+
 				audio,
 				video,
 				pre,

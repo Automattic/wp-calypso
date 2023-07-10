@@ -1,4 +1,5 @@
 import { useEffect, useState } from '@wordpress/element';
+import classnames from 'classnames';
 import { FunctionComponent } from 'react';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
@@ -13,9 +14,13 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 
 	// Let's restrict previews to these types for now
 	const validTypes = [ 'text', 'code', 'audio', 'image', 'video' ];
-
 	const isValidType = validTypes.includes( item.type );
+
+	// Determine if the file is sensitive
 	const isSensitive = item.manifestPath === 'f5:/wp-config.php';
+
+	const isTextContent = item.type === 'text' || item.type === 'code';
+
 	const shouldPreviewFile = isValidType && ! isSensitive;
 
 	const { isSuccess, isInitialLoading, data } = useBackupFileQuery(
@@ -26,55 +31,64 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 	);
 
 	useEffect( () => {
-		if ( isSuccess && data && data.url && ( item.type === 'text' || item.type === 'code' ) ) {
+		if ( isSuccess && data && data.url && isTextContent ) {
 			window
 				.fetch( data.url )
 				.then( ( response ) => response.text() )
 				.then( ( fileData ) => setFileContent( fileData ) );
 		}
-	}, [ item.type, isSuccess, data ] );
+	}, [ item.type, isSuccess, data, isTextContent ] );
 
-	if ( ! shouldPreviewFile || ! isSuccess ) {
+	if ( ! shouldPreviewFile ) {
 		return null;
 	}
 
-	if ( isInitialLoading ) {
-		return <div className="file-browser-node__loading placeholder" />;
-	}
+	const renderFileContent = () => {
+		let content;
 
-	let content;
+		switch ( item.type ) {
+			case 'text':
+			case 'code':
+				content = <pre>{ fileContent }</pre>;
+				break;
+			case 'image':
+				content = <img src={ data.url } alt="file-preview" />;
+				break;
+			case 'audio':
+				content = (
+					// We don't have captions for backed up audio files
+					// eslint-disable-next-line jsx-a11y/media-has-caption
+					<audio controls>
+						<source src={ data.url } type="audio/mpeg" />
+					</audio>
+				);
+				break;
+			case 'video':
+				content = (
+					// We don't have captions for backed up video files
+					// eslint-disable-next-line jsx-a11y/media-has-caption
+					<video controls>
+						<source src={ data.url } type="video/mp4" />
+					</video>
+				);
+				break;
+		}
 
-	switch ( item.type ) {
-		case 'text':
-		case 'code':
-			content = <pre>{ fileContent }</pre>;
-			break;
-		case 'image':
-			content = <img src={ data.url } alt="file-preview" />;
-			break;
-		case 'audio':
-			content = (
-				// We don't have captions for backed up audio files
-				// eslint-disable-next-line jsx-a11y/media-has-caption
-				<audio controls>
-					<source src={ data.url } type="audio/mpeg" />
-				</audio>
-			);
-			break;
-		case 'video':
-			content = (
-				// We don't have captions for backed up video files
-				// eslint-disable-next-line jsx-a11y/media-has-caption
-				<video controls>
-					<source src={ data.url } type="video/mp4" />
-				</video>
-			);
-			break;
-	}
+		return content;
+	};
+
+	const isLoading = isTextContent ? ! fileContent : isInitialLoading;
+	const isReady = isTextContent ? fileContent : isSuccess;
+	const classNames = classnames( 'file-card__preview', item.type, {
+		'file-card__preview--is-loading': isLoading,
+	} );
 
 	return (
 		<>
-			<div className={ `file-card__preview ${ item.type }` }>{ content }</div>
+			<div className={ classNames }>
+				{ isLoading && <div className="file-browser-node__loading placeholder" /> }
+				{ isReady ? renderFileContent() : null }
+			</div>
 		</>
 	);
 };
