@@ -1,4 +1,4 @@
-export const COLOR_VARIATIONS_BLACK_LIST = [
+export const COLOR_VARIATIONS_BLOCK_LIST = [
 	'pub/aldente',
 	'pub/calyx',
 	'pub/jinjang',
