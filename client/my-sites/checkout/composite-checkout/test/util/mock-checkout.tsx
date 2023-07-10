@@ -1,4 +1,4 @@
-import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { StripeHookProvider, StripeSetupIntentIdProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { PropsOf } from '@emotion/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
@@ -38,17 +38,25 @@ export function MockCheckout( {
 		getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
 		setCart: setCart || mockSetCartEndpoint,
 	} );
+
+	const isPurchaseFree = { ...initialCart, ...cartChanges }.total_cost_integer === 0;
+
 	return (
 		<ReduxProvider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
 				<ShoppingCartProvider managerClient={ managerClient }>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-						<CheckoutMain
-							siteId={ useUndefinedSiteId ? undefined : siteId }
-							siteSlug="foo.com"
-							overrideCountryList={ countryList }
-							{ ...additionalProps }
-						/>
+						<StripeSetupIntentIdProvider
+							fetchStipeSetupIntentId={ fetchStripeConfiguration }
+							isDisabled={ ! isPurchaseFree }
+						>
+							<CheckoutMain
+								siteId={ useUndefinedSiteId ? undefined : siteId }
+								siteSlug="foo.com"
+								overrideCountryList={ countryList }
+								{ ...additionalProps }
+							/>
+						</StripeSetupIntentIdProvider>
 					</StripeHookProvider>
 				</ShoppingCartProvider>
 			</QueryClientProvider>
