@@ -28,7 +28,7 @@ const videopressTv: Flow = {
 		}
 
 		const name = this.name;
-		const { setDomain, setSelectedDesign, setSiteDescription, setSiteTitle, setStepProgress } =
+		const { setStepProgress } =
 			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
