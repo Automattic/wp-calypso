@@ -380,6 +380,9 @@ const PatternAssembler = ( {
 		const design = getDesign();
 		const stylesheet = design.recipe?.stylesheet ?? '';
 		const themeId = getThemeIdFromStylesheet( stylesheet );
+		const hasBlogPatterns = !! sections.find(
+			( { categories } ) => categories[ 'posts' ] || categories[ 'blog' ]
+		);
 
 		if ( ! siteSlugOrId || ! site?.ID || ! themeId ) {
 			return;
@@ -405,8 +408,9 @@ const PatternAssembler = ( {
 							headerHtml: header?.html,
 							footerHtml: footer?.html,
 							globalStyles: syncedGlobalStylesUserConfig,
-							// Newly created sites should reset the starter content created from the default Headstart annotation
-							shouldResetContent: isNewSite,
+							// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
+							// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
+							shouldResetContent: isNewSite && hasBlogPatterns,
 							// All sites using the assembler set the option wpcom_site_setup
 							siteSetupOption: design.is_virtual ? 'assembler-virtual-theme' : 'assembler',
 						} )
