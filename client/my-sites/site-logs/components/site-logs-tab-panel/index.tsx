@@ -28,8 +28,8 @@ export const SiteLogsTabPanel = ( {
 			initialTabName={ selectedTab }
 			className={ classnames( 'site-logs-tab-panel', className ) }
 			tabs={ tabs }
-			onSelect={ ( tabName: SiteLogsTab ) => {
-				updateLogTypeQueryParam( tabName );
+			onSelect={ ( tabName ) => {
+				updateLogTypeQueryParam( tabName as SiteLogsTab );
 				onSelected?.( tabName as SiteLogsTab );
 			} }
 		>
