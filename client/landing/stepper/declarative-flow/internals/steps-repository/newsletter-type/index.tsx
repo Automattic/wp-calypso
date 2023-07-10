@@ -38,7 +38,7 @@ const NewsletterType: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="newsletter-setup-header"
-					headerText={ translate( 'Choose a way to get started.' ) }
+					headerText={ translate( 'Choose a way to get started' ) }
 					align="center"
 				/>
 			}
