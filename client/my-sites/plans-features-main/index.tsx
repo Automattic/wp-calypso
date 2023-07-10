@@ -77,6 +77,7 @@ interface PlansFeaturesMainProps {
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
+	showBiennialToggle?: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
@@ -233,6 +234,7 @@ const PlansFeaturesMain = ( {
 	hideEnterprisePlan,
 	intent: intentFromProps, // do not set a default value for this prop here
 	isReskinned,
+	showBiennialToggle,
 	customerType = 'personal',
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
@@ -370,6 +372,7 @@ const PlansFeaturesMain = ( {
 		siteSlug,
 		selectedPlan,
 		selectedFeature,
+		showBiennialToggle,
 		kind: planTypeSelector,
 		plans: visiblePlans,
 	};
