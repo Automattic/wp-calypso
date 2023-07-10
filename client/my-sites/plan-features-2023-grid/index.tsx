@@ -138,18 +138,16 @@ type PlanFeatures2023GridState = {
 };
 
 const PlanLogo: React.FunctionComponent< {
-	planPropertiesObj: PlanProperties[];
+	renderedPlans: PlanSlug[];
 	planIndex: number;
 	planProperties: PlanProperties;
 	isMobile?: boolean;
 	isInSignup?: boolean;
-} > = ( { planPropertiesObj, planProperties, planIndex, isMobile, isInSignup } ) => {
+} > = ( { renderedPlans, planProperties, planIndex, isMobile, isInSignup } ) => {
 	const { planRecords } = usePlansGridContext();
 	const { planName, current } = planProperties;
 	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
-		renderedPlans: planPropertiesObj.map( ( { planName } ) => planName ),
-	} );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( { renderedPlans } );
 	const headerClasses = classNames(
 		'plan-features-2023-grid__header-logo',
 		getPlanClass( planName )
@@ -161,7 +159,7 @@ const PlanLogo: React.FunctionComponent< {
 		'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
 		'is-current-plan': current,
 		'is-first-in-row': planIndex === 0,
-		'is-last-in-row': planIndex === planPropertiesObj.length - 1,
+		'is-last-in-row': planIndex === renderedPlans.length - 1,
 	} );
 	const popularBadgeClasses = classNames( {
 		'with-plan-logo': ! (
@@ -552,21 +550,20 @@ export class PlanFeatures2023Grid extends Component<
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { isInSignup } = this.props;
+		const renderedPlans = planPropertiesObj.filter( ( { isVisible } ) => isVisible );
 
-		return planPropertiesObj
-			.filter( ( { isVisible } ) => isVisible )
-			.map( ( properties, index ) => {
-				return (
-					<PlanLogo
-						key={ properties.planName }
-						planIndex={ index }
-						planPropertiesObj={ planPropertiesObj }
-						planProperties={ properties }
-						isMobile={ options?.isMobile }
-						isInSignup={ isInSignup }
-					/>
-				);
-			} );
+		return renderedPlans.map( ( properties, index ) => {
+			return (
+				<PlanLogo
+					key={ properties.planName }
+					planIndex={ index }
+					renderedPlans={ renderedPlans.map( ( { planName } ) => planName ) }
+					planProperties={ properties }
+					isMobile={ options?.isMobile }
+					isInSignup={ isInSignup }
+				/>
+			);
+		} );
 	}
 
 	renderPlanHeaders( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
