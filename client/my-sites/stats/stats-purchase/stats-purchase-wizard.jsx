@@ -11,8 +11,7 @@ import './styles.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-wizard';
 const SCREEN_TYPE_SELECTION = 0;
-// const SCREEN_PERSONAL_CHECKLIST = 1;
-const SCREEN_PURCHASE = 2;
+const SCREEN_PURCHASE = 1;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
 const DEFAULT_STARTING_PRICE = 6;
