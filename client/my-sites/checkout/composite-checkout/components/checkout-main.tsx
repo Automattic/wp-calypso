@@ -1,5 +1,9 @@
 import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
-import { useStripe, useStripeSetupIntentId } from '@automattic/calypso-stripe';
+import {
+	StripeSetupIntentIdProvider,
+	useStripe,
+	useStripeSetupIntentId,
+} from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -18,6 +22,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
@@ -73,32 +78,7 @@ import type {
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:checkout-main' );
 
-export default function CheckoutMain( {
-	siteSlug,
-	siteId,
-	productAliasFromUrl,
-	productSourceFromUrl,
-	overrideCountryList,
-	redirectTo,
-	feature,
-	plan,
-	purchaseId,
-	couponCode: couponCodeFromUrl,
-	isComingFromUpsell,
-	isLoggedOutCart,
-	isNoSiteCart,
-	isGiftPurchase,
-	infoMessage,
-	isInModal,
-	onAfterPaymentComplete,
-	disabledThankYouPage,
-	sitelessCheckoutType,
-	akismetSiteSlug,
-	jetpackSiteSlug,
-	jetpackPurchaseToken,
-	isUserComingFromLoginForm,
-	customizedPreviousPath,
-}: {
+export interface CheckoutMainProps {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
@@ -126,7 +106,34 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
-} ) {
+}
+
+function CheckoutMain( {
+	siteSlug,
+	siteId,
+	productAliasFromUrl,
+	productSourceFromUrl,
+	overrideCountryList,
+	redirectTo,
+	feature,
+	plan,
+	purchaseId,
+	couponCode: couponCodeFromUrl,
+	isComingFromUpsell,
+	isLoggedOutCart,
+	isNoSiteCart,
+	isGiftPurchase,
+	infoMessage,
+	isInModal,
+	onAfterPaymentComplete,
+	disabledThankYouPage,
+	sitelessCheckoutType,
+	akismetSiteSlug,
+	jetpackSiteSlug,
+	jetpackPurchaseToken,
+	isUserComingFromLoginForm,
+	customizedPreviousPath,
+}: CheckoutMainProps ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
@@ -818,3 +825,22 @@ function getAnalyticsPath(
 
 	return { analyticsPath, analyticsProps };
 }
+
+/**
+ * This exists so that CheckoutMain can call useStripeSetupIntentId. It must be inside the CalypsoShoppingCartProvider.
+ */
+function InnerCheckoutMainWrapper( props: CheckoutMainProps ) {
+	const cartKey = useCartKey();
+	const { responseCart, isLoading, isPendingUpdate } = useShoppingCart( cartKey );
+	const isPurchaseFree = responseCart.total_cost_integer === 0;
+	return (
+		<StripeSetupIntentIdProvider
+			fetchStipeSetupIntentId={ getStripeConfiguration }
+			isDisabled={ ! isPurchaseFree || isLoading || isPendingUpdate }
+		>
+			<CheckoutMain { ...props } />
+		</StripeSetupIntentIdProvider>
+	);
+}
+
+export default InnerCheckoutMainWrapper;
