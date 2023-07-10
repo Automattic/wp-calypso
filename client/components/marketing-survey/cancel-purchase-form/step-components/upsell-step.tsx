@@ -53,7 +53,6 @@ function Upsell( { image, ...props }: UpsellProps ) {
 							props.onAccept?.();
 						} }
 						isBusy={ busyButton === 'accept' }
-						disabled={ Boolean( busyButton && busyButton !== 'accept' ) }
 					>
 						{ props.acceptButtonText }
 					</Button>
