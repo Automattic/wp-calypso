@@ -18,3 +18,4 @@ function MyComponent() {
 The following props are available to customize the Badge:
 
 - `type`: `'warning'`, `'success'`, `'info'`, `'info-blue'`, `'error'`
+- `className`: additional class name to add to the badge
