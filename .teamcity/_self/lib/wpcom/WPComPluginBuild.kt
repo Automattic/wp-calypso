@@ -53,6 +53,10 @@ open class WPComPluginBuild(
 		artifactRules = "$pluginSlug.zip"
 		buildNumberPattern = "%build.prefix%.%build.counter%"
 
+		failureConditions {
+			executionTimeoutMin = 6
+		}
+
 		triggers {
 			vcs {
 				branchFilter = """
@@ -60,9 +64,10 @@ open class WPComPluginBuild(
 					-:pull*
 				""".trimIndent()
 				triggerRules = """
-					-:test/e2e/**.md
+					-:test/e2e/**
 					-:docs/**.md
 					-:comment=stress test:**
+					-:packages/calypso-e2e/**
 				""".trimIndent()
 			}
 		}

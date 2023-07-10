@@ -144,7 +144,6 @@ private object EditingToolkit : WPComPluginBuild(
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
 			"""
 		}
-
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
 		// code is also formatted correctly.
 		bashNodeScript {

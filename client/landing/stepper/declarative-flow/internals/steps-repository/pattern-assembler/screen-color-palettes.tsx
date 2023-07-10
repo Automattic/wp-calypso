@@ -31,9 +31,7 @@ const ScreenColorPalettes = ( {
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Colors' ) } /> }
-				description={ translate(
-					'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
-				) }
+				description={ translate( 'Discover your ideal color blend, from free to premium styles.' ) }
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">

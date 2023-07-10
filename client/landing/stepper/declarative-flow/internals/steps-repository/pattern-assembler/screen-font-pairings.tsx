@@ -32,7 +32,7 @@ const ScreenFontPairings = ( {
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Fonts' ) } /> }
 				description={ translate(
-					'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
+					'Elevate your design with expertly curated font pairings, including free and premium.'
 				) }
 				onBack={ onBack }
 			/>

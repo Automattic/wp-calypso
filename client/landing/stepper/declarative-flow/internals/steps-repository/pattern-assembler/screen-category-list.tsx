@@ -22,6 +22,7 @@ interface Props {
 	categories: Category[];
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
 	onDoneClick: () => void;
+	onBack: () => void;
 	onSelect: (
 		type: string,
 		selectedPattern: Pattern | null,
@@ -38,6 +39,7 @@ const ScreenCategoryList = ( {
 	patternsMapByCategory,
 	categories,
 	onDoneClick,
+	onBack,
 	replacePatternMode,
 	onSelect,
 	selectedPattern,
@@ -68,7 +70,7 @@ const ScreenCategoryList = ( {
 				title={
 					<NavigatorTitle
 						title={
-							replacePatternMode ? translate( 'Replace pattern' ) : translate( 'Add patterns' )
+							replacePatternMode ? translate( 'Replace section' ) : translate( 'Add sections' )
 						}
 					/>
 				}
@@ -78,9 +80,10 @@ const ScreenCategoryList = ( {
 								'Replace the selected pattern by choosing from the list of categories below.'
 						  )
 						: translate(
-								'Find the right patterns for you by exploring the list of categories below.'
+								'Find the right patterns for your homepage by exploring the pattern categories below.'
 						  )
 				}
+				onBack={ onBack }
 			/>
 			<Composite
 				{ ...composite }

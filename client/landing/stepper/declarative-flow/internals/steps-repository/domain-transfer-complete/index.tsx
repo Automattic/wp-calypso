@@ -1,5 +1,5 @@
 import { OnboardSelect } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
@@ -24,12 +24,12 @@ const Complete: Step = function Complete( { flow } ) {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getBulkDomainsData(),
 		[]
 	);
-
 	const storedDomainsAmount = Object.keys( { ...storedDomainsState } ).length;
+	const { resetOnboardStore } = useWpDataDispatch( ONBOARD_STORE );
 
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const userPurchases = useSelector( ( state ) => getUserPurchases( state ) );
-	const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+	const oneDay = 999999 * 60 * 60 * 1000; // Number of milliseconds in a day
 
 	const newlyTransferredDomains = userPurchases?.filter(
 		( purchase ) =>
@@ -40,6 +40,10 @@ const Complete: Step = function Complete( { flow } ) {
 	useEffect( () => {
 		dispatch( fetchUserPurchases( userId ) );
 	}, [] );
+
+	const clearDomainsStore = () => {
+		resetOnboardStore();
+	};
 
 	return (
 		<>
@@ -63,9 +67,22 @@ const Complete: Step = function Complete( { flow } ) {
 						) }
 						align="center"
 						children={
-							<a href="/domains/manage" className="components-button is-primary manage-all-domains">
-								{ __( 'Manage all domains' ) }
-							</a>
+							<div className="domain-header-buttons">
+								<a
+									href="/setup/domain-transfer"
+									onClick={ clearDomainsStore }
+									className="components-button is-secondary"
+								>
+									{ __( 'Transfer more domains' ) }
+								</a>
+
+								<a
+									href="/domains/manage"
+									className="components-button is-primary manage-all-domains"
+								>
+									{ __( 'Manage all domains' ) }
+								</a>
+							</div>
 						}
 					/>
 				}

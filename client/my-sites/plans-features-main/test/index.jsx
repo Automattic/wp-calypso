@@ -3,10 +3,9 @@
  */
 
 jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( 'calypso/components/async-load', () => ( { visiblePlans, popularPlanSpec } ) => (
+jest.mock( 'calypso/components/async-load', () => ( { visiblePlans } ) => (
 	<div data-testid="plan-features">
 		<div data-testid="visible-plans">{ JSON.stringify( visiblePlans ) }</div>
-		<div data-testid="popular-plan-spec">{ JSON.stringify( popularPlanSpec ) }</div>
 	</div>
 ) );
 jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector', () => () => (
@@ -20,7 +19,6 @@ jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => j
 jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
 
 import {
-	GROUP_WPCOM,
 	PLAN_FREE,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -34,12 +32,9 @@ import {
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	TYPE_BUSINESS,
-	TYPE_PREMIUM,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
-import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import useIntentFromSiteMeta from '../hooks/use-intent-from-site-meta';
 import PlansFeaturesMain from '../index';
@@ -267,40 +262,6 @@ describe( 'PlansFeaturesMain', () => {
 					PLAN_ECOMMERCE_2_YEARS,
 					PLAN_ENTERPRISE_GRID_WPCOM,
 				] )
-			);
-		} );
-
-		test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type', () => {
-			renderWithProvider( <PlansFeaturesMain { ...myProps } customerType="personal" /> );
-
-			expect( screen.getByTestId( 'popular-plan-spec' ) ).toHaveTextContent(
-				JSON.stringify( {
-					type: TYPE_PREMIUM,
-					group: GROUP_WPCOM,
-				} )
-			);
-		} );
-
-		test( 'Highlights TYPE_BUSINESS as popular plan for business customer type', () => {
-			renderWithProvider( <PlansFeaturesMain { ...myProps } customerType="business" /> );
-
-			expect( screen.getByTestId( 'popular-plan-spec' ) ).toHaveTextContent(
-				JSON.stringify( {
-					type: TYPE_BUSINESS,
-					group: GROUP_WPCOM,
-				} )
-			);
-		} );
-
-		test( 'Highlights TYPE_BUSINESS as popular plan for empty customer type', () => {
-			canUpgradeToPlan.mockReturnValue( true );
-			renderWithProvider( <PlansFeaturesMain { ...myProps } siteId={ 1 } /> );
-
-			expect( screen.getByTestId( 'popular-plan-spec' ) ).toHaveTextContent(
-				JSON.stringify( {
-					type: TYPE_BUSINESS,
-					group: GROUP_WPCOM,
-				} )
 			);
 		} );
 	} );
