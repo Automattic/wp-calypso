@@ -46,7 +46,9 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	const { __, _n } = useI18n();
 
-	const allGood = Object.values( domainsState ).every( ( { valid } ) => valid );
+	const allGood = Object.values( domainsState )
+		.filter( ( x ) => x.domain && x.auth )
+		.every( ( { valid } ) => valid );
 
 	const hasAnyDomains = Object.values( domainsState ).some(
 		( { domain, auth } ) => domain.trim() || auth.trim()
