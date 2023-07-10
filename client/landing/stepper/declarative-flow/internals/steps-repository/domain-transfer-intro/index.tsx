@@ -22,8 +22,10 @@ const Intro: Step = function Intro( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-transfer-header"
-					headerText={ __( 'Transfer domains' ) }
-					subHeaderText={ __( 'Follow along these 3 steps to transfer domains to WordPress.com' ) }
+					headerText={ __( 'Domain Transfer Center' ) }
+					subHeaderText={ __(
+						'Follow these 3 simple steps to transfer your domains to WordPress.com'
+					) }
 				/>
 			}
 			stepContent={ <IntroStep onSubmit={ handleSubmit } /> }
