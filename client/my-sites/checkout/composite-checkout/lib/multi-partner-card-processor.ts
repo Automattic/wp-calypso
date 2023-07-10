@@ -3,6 +3,7 @@ import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
+	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
@@ -294,6 +295,10 @@ export default async function multiPartnerCardProcessor(
 				address: dataForProcessor.contactDetails?.address1?.value,
 			}
 		);
+		if ( newCardResponse.type === PaymentProcessorResponseType.ERROR ) {
+			return newCardResponse;
+		}
+
 		const storedCard = newCardResponse.payload;
 		if ( ! isValidNewCardResponseData( storedCard ) ) {
 			throw new Error( 'New card was not saved' );
