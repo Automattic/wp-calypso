@@ -40,8 +40,8 @@ const SitePreview = (): JSX.Element => {
 					displayMode="tile"
 					className="home-site-preview__thumbnail"
 					site={ selectedSite }
-					width={ 235 }
-					height={ 235 }
+					width={ 312 }
+					height={ 312 }
 				/>
 			</a>
 			<div className="home-site-preview__action-bar">
