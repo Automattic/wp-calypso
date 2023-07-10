@@ -15,12 +15,14 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 	const validTypes = [ 'text', 'code', 'audio', 'image', 'video' ];
 
 	const isValidType = validTypes.includes( item.type );
+	const isSensitive = item.manifestPath === 'f5:/wp-config.php';
+	const shouldPreviewFile = isValidType && ! isSensitive;
 
 	const { isSuccess, isInitialLoading, data } = useBackupFileQuery(
 		siteId,
 		item.period,
 		item.manifestPath,
-		isValidType
+		shouldPreviewFile
 	);
 
 	useEffect( () => {
@@ -32,16 +34,12 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 		}
 	}, [ item.type, isSuccess, data ] );
 
-	if ( ! isValidType ) {
+	if ( ! shouldPreviewFile || ! isSuccess ) {
 		return null;
 	}
 
 	if ( isInitialLoading ) {
 		return <div className="file-browser-node__loading placeholder" />;
-	}
-
-	if ( ! isSuccess ) {
-		return null;
 	}
 
 	let content;
