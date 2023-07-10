@@ -216,6 +216,7 @@ const videopress: Flow = {
 			} );
 		};
 
+		// needs to be wrapped in a useEffect because validation can call `navigate` which needs to be called in a useEffect
 		useEffect( () => {
 			switch ( _currentStep ) {
 				case 'intro':
