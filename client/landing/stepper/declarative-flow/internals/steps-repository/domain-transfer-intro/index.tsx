@@ -24,7 +24,7 @@ const Intro: Step = function Intro( { navigation } ) {
 					id="domain-transfer-header"
 					headerText={ __( 'Domain Transfer Center' ) }
 					subHeaderText={ __(
-						'Follow these 3 simple steps to transfer your domains to WordPress.com'
+						'Follow these 3 simple steps to transfer your domains to WordPress.com.'
 					) }
 				/>
 			}
