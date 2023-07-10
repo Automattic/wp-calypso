@@ -147,7 +147,9 @@ const PlanLogo: React.FunctionComponent< {
 	const { planRecords } = usePlansGridContext();
 	const { planName, current } = planProperties;
 	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix();
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
+		renderedPlans: planPropertiesObj.map( ( { planName } ) => planName ),
+	} );
 	const headerClasses = classNames(
 		'plan-features-2023-grid__header-logo',
 		getPlanClass( planName )

@@ -9,10 +9,14 @@ type HighlightAdjacencyMatrix = {
 	};
 };
 
-const useHighlightIndices = () => {
-	const { visiblePlans, planRecords } = usePlansGridContext();
+interface Props {
+	renderedPlans: PlanSlug[];
+}
 
-	return visiblePlans.reduce< number[] >( ( acc, planSlug, index ) => {
+const useHighlightIndices = ( { renderedPlans }: Props ) => {
+	const { planRecords } = usePlansGridContext();
+
+	return renderedPlans.reduce< number[] >( ( acc, planSlug, index ) => {
 		if ( planRecords[ planSlug ].highlightLabel ) {
 			acc.push( index );
 		}
@@ -21,12 +25,11 @@ const useHighlightIndices = () => {
 	}, [] );
 };
 
-const useHighlightAdjacencyMatrix = () => {
-	const { visiblePlans } = usePlansGridContext();
-	const highlightIndices = useHighlightIndices();
+const useHighlightAdjacencyMatrix = ( { renderedPlans }: Props ) => {
+	const highlightIndices = useHighlightIndices( { renderedPlans } );
 	const adjacencyMatrix = {} as HighlightAdjacencyMatrix;
 
-	visiblePlans.forEach( ( planSlug, index ) => {
+	renderedPlans.forEach( ( planSlug, index ) => {
 		adjacencyMatrix[ planSlug ] = { leftOfHighlight: false, rightOfHighlight: false };
 
 		highlightIndices.forEach( ( highlightIndex ) => {
@@ -40,7 +43,7 @@ const useHighlightAdjacencyMatrix = () => {
 	} );
 
 	if ( highlightIndices.length === 1 ) {
-		adjacencyMatrix[ visiblePlans[ highlightIndices[ 0 ] ] ].isOnlyHighlight = true;
+		adjacencyMatrix[ renderedPlans[ highlightIndices[ 0 ] ] ].isOnlyHighlight = true;
 	}
 
 	return adjacencyMatrix;

@@ -381,7 +381,9 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const { planRecords } = usePlansGridContext();
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix();
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
+		renderedPlans: visiblePlansProperties.map( ( { planName } ) => planName ),
+	} );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': planRecords[ planName ]?.highlightLabel,
 		'is-last-in-row': isLastInRow,
@@ -547,7 +549,9 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 } > = ( { feature, visiblePlansProperties, restructuredFeatures, planName, isStorageFeature } ) => {
 	const { planRecords } = usePlansGridContext();
 	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix();
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
+		renderedPlans: visiblePlansProperties.map( ( { planName } ) => planName ),
+	} );
 	const featureSlug = feature?.getSlug();
 	const hasFeature =
 		isStorageFeature ||
