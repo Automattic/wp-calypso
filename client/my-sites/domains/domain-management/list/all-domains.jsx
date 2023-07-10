@@ -416,7 +416,9 @@ class AllDomains extends Component {
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
 				<DomainsTable
 					currentRoute={ currentRoute }
-					defaultSortKey={ queryParams.get( 'sortKey' ) }
+					defaultSortKey={
+						domainsTableColumns?.find( ( c ) => c.name === queryParams.get( 'sortKey' ) )?.name
+					}
 					domains={ domains }
 					handleDomainItemToggle={ this.handleDomainItemToggle }
 					domainsTableColumns={ domainsTableColumns }
