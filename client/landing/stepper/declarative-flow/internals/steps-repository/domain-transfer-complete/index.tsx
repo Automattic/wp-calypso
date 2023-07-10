@@ -63,9 +63,18 @@ const Complete: Step = function Complete( { flow } ) {
 						) }
 						align="center"
 						children={
-							<a href="/domains/manage" className="components-button is-primary manage-all-domains">
-								{ __( 'Manage all domains' ) }
-							</a>
+							<div className="domain-header-buttons">
+								<a href="/setup/domain-transfer/intro" className="components-button is-secondary">
+									{ __( 'Transfer more domains' ) }
+								</a>
+
+								<a
+									href="/domains/manage"
+									className="components-button is-primary manage-all-domains"
+								>
+									{ __( 'Manage all domains' ) }
+								</a>
+							</div>
 						}
 					/>
 				}
