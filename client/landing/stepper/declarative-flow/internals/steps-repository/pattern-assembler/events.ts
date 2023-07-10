@@ -39,7 +39,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	/**
 	 * Pattern Panels
 	 */
-	PATTERN_ADD_CLICK: 'calypso_signup_pattern_assembler_pattern_add_click',
 	PATTERN_SELECT_CLICK: 'calypso_signup_pattern_assembler_pattern_select_click',
 	PATTERN_SELECT_BACK_CLICK: 'calypso_signup_pattern_assembler_pattern_select_back_click',
 	PATTERN_SELECT_DONE_CLICK: 'calypso_signup_pattern_assembler_pattern_select_done_click',
