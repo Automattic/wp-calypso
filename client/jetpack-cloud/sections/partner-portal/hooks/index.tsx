@@ -15,6 +15,7 @@ import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-das
 import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import getProductSlugFromLicenseKey from '../lib/get-product-slug-from-license-key';
 
 /**
  * Redirect to the partner portal or a present "return" GET parameter given a certain condition.
@@ -150,7 +151,7 @@ export function useAssignLicenses(
 			const { status, value: license } = promise;
 			if ( license ) {
 				const licenseKey = license.license_key;
-				const productSlug = licenseKey.split( '_' )[ 0 ];
+				const productSlug = getProductSlugFromLicenseKey( licenseKey );
 				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
 				if ( selectedProduct ) {
 					const item = {

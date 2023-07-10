@@ -15,6 +15,7 @@ import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-pr
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError, APILicense, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
+import getProductSlugFromLicenseKey from '../lib/get-product-slug-from-license-key';
 
 const useIssueLicenses = () => {
 	const dispatch = useDispatch();
@@ -249,7 +250,7 @@ function useIssueAndAssignLicenses(
 			const issuedKeys = issuedLicenses.map( ( { value } ) => value.license_key );
 			const issuedProducts = issuedKeys
 				.map( ( key ) => {
-					const productSlug = key.split( '_' )[ 0 ];
+					const productSlug = getProductSlugFromLicenseKey( key );
 					return products?.data?.find( ( p ) => p.slug === productSlug );
 				} )
 				.filter( ( p ): p is APIProductFamilyProduct => p !== undefined );
@@ -296,7 +297,7 @@ function useIssueAndAssignLicenses(
 			const assignedLicenses = assignLicenseResponses
 				.filter( ( p ): p is PromiseFulfilledResult< APILicense > => p.status === 'fulfilled' )
 				.map( ( { status, value } ) => {
-					const productSlug = value.license_key.split( '_' )[ 0 ];
+					const productSlug = getProductSlugFromLicenseKey( value.license_key );
 
 					// We already confirmed during/after the issue process that
 					// the product slug is in the list of products and has a name
