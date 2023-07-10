@@ -1,0 +1,9 @@
+.stepper__flow-question {
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		border-color: var(--studio-black);
+		background-color: var(--studio-grey-0);
+	}
+}

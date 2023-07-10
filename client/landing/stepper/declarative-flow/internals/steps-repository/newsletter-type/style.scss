@@ -4,17 +4,16 @@
 
 	.step-container {
 		padding-top: 20px;
+		max-width: 400px;
 		@include break-medium {
 			padding-top: 0;
 		}
 	}
 
-	/*
 	.step-container__content {
 		display: flex;
 		justify-content: center;
 	}
-	*/
 
 	.step-container__header {
 		margin-bottom: 40px;

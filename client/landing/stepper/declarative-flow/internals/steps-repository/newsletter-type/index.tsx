@@ -1,42 +1,15 @@
 import { Onboard } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Card,
-	CardBody,
-	Icon,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { chevronRight, reusableBlock } from '@wordpress/icons';
+import { reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 import './style.scss';
-
-interface NewsletterOptionProps {
-	icon: JSX.Element;
-	onClick: () => void;
-	text: string;
-	title: string;
-}
-
-const NewsletterOption = ( { icon, onClick, text, title }: NewsletterOptionProps ) => (
-	<Card as="button" size="small" onClick={ onClick }>
-		<CardBody>
-			<HStack>
-				<Icon icon={ icon } size={ 20 } />
-				<div>
-					<h3>{ title }</h3>
-					<p>{ text }</p>
-				</div>
-				<Icon icon={ chevronRight } size={ 20 } />
-			</HStack>
-		</CardBody>
-	</Card>
-);
 
 const NewsletterType: Step = ( { navigation } ) => {
 	const { submit } = navigation;
@@ -71,7 +44,7 @@ const NewsletterType: Step = ( { navigation } ) => {
 			}
 			stepContent={
 				<VStack alignment="center" spacing="2">
-					<NewsletterOption
+					<FlowCard
 						icon={ reusableBlock }
 						title={ translate( 'Free newsletter' ) }
 						text={ translate(
@@ -79,7 +52,7 @@ const NewsletterType: Step = ( { navigation } ) => {
 						) }
 						onClick={ () => handleSubmit( null ) }
 					/>
-					<NewsletterOption
+					<FlowCard
 						icon={ reusableBlock }
 						title={ translate( 'Paid newsletter' ) }
 						text={ translate(
@@ -87,7 +60,7 @@ const NewsletterType: Step = ( { navigation } ) => {
 						) }
 						onClick={ () => handleSubmit( Onboard.SiteGoal.PaidSubscribers ) }
 					/>
-					<NewsletterOption
+					<FlowCard
 						icon={ reusableBlock }
 						title={ translate( 'Import an existing newsletter' ) }
 						text={ translate(
