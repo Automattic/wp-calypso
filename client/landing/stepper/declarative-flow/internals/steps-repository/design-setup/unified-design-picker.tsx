@@ -590,7 +590,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						! isPluginBundleEligible
 					}
 					title={ headerDesignTitle }
-					description={ ! selectedDesign.is_virtual && selectedDesign.description }
+					description={ selectedDesign.description }
 					variations={
 						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
 					}
@@ -601,6 +601,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					limitGlobalStyles={ shouldLimitGlobalStyles }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
+					isVirtual={ selectedDesign.is_virtual }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ setSelectedColorVariation }
 					selectedFontVariation={ selectedFontVariation }

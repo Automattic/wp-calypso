@@ -15,6 +15,7 @@ import type { NavigatorScreenObject } from '@automattic/onboarding';
 interface Props {
 	siteId: number;
 	stylesheet: string;
+	isVirtual?: boolean;
 	limitGlobalStyles?: boolean;
 	variations?: StyleVariation[];
 	splitPremiumVariations: boolean;
@@ -29,6 +30,7 @@ interface Props {
 const useScreens = ( {
 	siteId,
 	stylesheet,
+	isVirtual,
 	limitGlobalStyles,
 	variations,
 	splitPremiumVariations,
@@ -71,6 +73,7 @@ const useScreens = ( {
 					},
 				variations &&
 					variations.length === 0 &&
+					! isVirtual &&
 					isEnabled( 'signup/design-picker-preview-colors' ) && {
 						checked: !! selectedColorVariation,
 						icon: color,
@@ -96,6 +99,7 @@ const useScreens = ( {
 					},
 				variations &&
 					variations.length === 0 &&
+					! isVirtual &&
 					isEnabled( 'signup/design-picker-preview-fonts' ) && {
 						checked: !! selectedFontVariation,
 						icon: typography,

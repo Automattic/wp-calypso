@@ -26,6 +26,7 @@ interface DesignPreviewProps {
 	recordDeviceClick: ( device: string ) => void;
 	siteId: number;
 	stylesheet: string;
+	isVirtual?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
@@ -53,6 +54,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	recordDeviceClick,
 	siteId,
 	stylesheet,
+	isVirtual,
 	selectedColorVariation,
 	onSelectColorVariation,
 	selectedFontVariation,
@@ -74,6 +76,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	const screens = useScreens( {
 		siteId,
 		stylesheet,
+		isVirtual,
 		limitGlobalStyles,
 		variations,
 		splitPremiumVariations,
