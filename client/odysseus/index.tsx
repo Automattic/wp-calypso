@@ -115,7 +115,7 @@ const OdysseusAssistant = () => {
 		const newVisibility = ! isVisible;
 
 		dispatch(
-			recordTracksEvent( 'calypso_odisseus_chat_toggle_visibility_click', {
+			recordTracksEvent( 'calypso_odysseus_chat_toggle_visibility_click', {
 				visible: newVisibility,
 				bot_name: 'Wapuu',
 			} )
