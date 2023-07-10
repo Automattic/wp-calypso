@@ -44,7 +44,7 @@ const odysseusGetChat = ( chat_id: string | null ) => {
 	} );
 };
 
-export const useOdysseusGetChatQuery = ( chat_id: string | null ) => {
+export const useOdysseusGetChatPollQuery = ( chat_id: string | null ) => {
 	return useQuery< Chat, Error >( {
 		queryKey: [ 'odysseus-get-chat', chat_id ],
 		queryFn: async () => await odysseusGetChat( chat_id ),

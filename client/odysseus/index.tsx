@@ -2,7 +2,7 @@ import { TextControl, Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
 import { useOdysseusAssistantContext } from './context';
-import { useOdysseusGetChatQuery, useOddyseusSendMessage } from './query';
+import { useOdysseusGetChatPollQuery, useOddyseusSendMessage } from './query';
 import WapuuRibbon from './wapuu-ribbon';
 
 import './style.scss';
@@ -14,7 +14,7 @@ const OdysseusAssistant = () => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const { mutateAsync: sendOdysseusMessage } = useOddyseusSendMessage();
-	const { data: chatData } = useOdysseusGetChatQuery( chat.chat_id ?? null );
+	const { data: chatData } = useOdysseusGetChatPollQuery( chat.chat_id ?? null );
 
 	useEffect( () => {
 		if ( isLoadingChat ) {
