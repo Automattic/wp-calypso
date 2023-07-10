@@ -8,6 +8,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import FlowCard from '../components/flow-card';
+import { IconPaid, IconFree, IconImport } from './icons';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -45,7 +46,7 @@ const NewsletterType: Step = ( { navigation } ) => {
 			stepContent={
 				<VStack alignment="center" spacing="2">
 					<FlowCard
-						icon={ reusableBlock }
+						icon={ IconFree }
 						title={ translate( 'Free newsletter' ) }
 						text={ translate(
 							'Start a newsletter with free content and grow your audience. You can always monetize it later.'
@@ -53,7 +54,7 @@ const NewsletterType: Step = ( { navigation } ) => {
 						onClick={ () => handleSubmit( null ) }
 					/>
 					<FlowCard
-						icon={ reusableBlock }
+						icon={ IconPaid }
 						title={ translate( 'Paid newsletter' ) }
 						text={ translate(
 							'Add paid subscriptions and gated content to allow your readers to support your work.'
@@ -61,7 +62,7 @@ const NewsletterType: Step = ( { navigation } ) => {
 						onClick={ () => handleSubmit( Onboard.SiteGoal.PaidSubscribers ) }
 					/>
 					<FlowCard
-						icon={ reusableBlock }
+						icon={ IconImport }
 						title={ translate( 'Import an existing newsletter' ) }
 						text={ translate(
 							'Bring your subscribers along from another platform to your free or paid newsletter.'
