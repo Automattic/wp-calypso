@@ -37,8 +37,13 @@ class DomainsTable extends PureComponent {
 	constructor( props ) {
 		super( props );
 
+		const queryParams = new URLSearchParams( window.location.search );
+		const queryParamSort = props.domainsTableColumns?.find(
+			( c ) => c.name === queryParams.get( 'sortKey' )
+		)?.name;
+
 		this.state = {
-			sortKey: props.defaultSortKey || 'status', // initial column to sort by - should match the header columns
+			sortKey: props.defaultSortKey || queryParamSort || 'status', // initial column to sort by - should match the header columns
 			sortOrder: props.defaultSortOrder || -1, // initial sort order where 1 = ascending and -1 = descending
 		};
 	}
