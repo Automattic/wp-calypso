@@ -8,7 +8,6 @@ import {
 	NEWSLETTER_FLOW,
 	DOMAIN_UPSELL_FLOW,
 	ONBOARDING_PM_FLOW,
-	isOnboardingPMFlow,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -106,9 +105,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
-			if ( ! isOnboardingPMFlow( flow ) ) {
-				setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
-			}
+			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
 		}
 
