@@ -28,17 +28,12 @@ const videopressTv: Flow = {
 		}
 
 		const name = this.name;
-		const { setStepProgress } =
-			useDispatch( ONBOARD_STORE );
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
 
-		const clearOnboardingSiteOptions = () => {
-		};
-
 		switch ( _currentStep ) {
 			case 'intro':
-				clearOnboardingSiteOptions();
 				break;
 		}
 
