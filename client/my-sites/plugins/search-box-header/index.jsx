@@ -36,14 +36,17 @@ const SearchBox = ( {
 
 			page.show( localizePath( `/plugins/${ selectedSite?.slug || '' }` ) ); // Ensures location.href is on the main Plugins page before setQueryArgs uses it to construct the redirect.
 			setQueryArgs( '' !== s ? { s } : {} );
-			searchBoxRef.current.blur();
-			scrollTo( {
-				x: 0,
-				y:
-					categoriesRef.current?.getBoundingClientRect().y - // Get to the top of categories
-					categoriesRef.current?.getBoundingClientRect().height, // But don't show the categories
-				duration: 300,
-			} );
+
+			if ( s ) {
+				searchBoxRef.current.blur();
+				scrollTo( {
+					x: 0,
+					y:
+						categoriesRef.current?.getBoundingClientRect().y - // Get to the top of categories
+						categoriesRef.current?.getBoundingClientRect().height, // But don't show the categories
+					duration: 300,
+				} );
+			}
 		},
 		[ searchBoxRef, categoriesRef, dispatch, selectedSite, localizePath ]
 	);
