@@ -593,6 +593,7 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 						onTogglePatternPanelList={ setIsPatternPanelListOpen }
 						selectedPatterns={ sections }
+						onBack={ () => onPatternSelectorBack( 'section' ) }
 					/>
 				</NavigatorScreen>
 
