@@ -1,8 +1,7 @@
 import config from '@automattic/calypso-config';
-import { StripeHookProvider, StripeSetupIntentIdProvider } from '@automattic/calypso-stripe';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -17,9 +16,7 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMain from './composite-checkout/components/checkout-main';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
 import { convertErrorToString } from './composite-checkout/lib/analytics';
-import useCartKey from './use-cart-key';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
-import type { ReactNode } from 'react';
 
 const logCheckoutError = ( error: Error ) => {
 	logToLogstash( {
@@ -114,46 +111,30 @@ export default function CheckoutMainWrapper( {
 			>
 				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-						<InnerCheckoutMainWrapper>
-							<CheckoutMain
-								siteSlug={ siteSlug }
-								siteId={ selectedSiteId }
-								productAliasFromUrl={ productAliasFromUrl }
-								productSourceFromUrl={ productSourceFromUrl }
-								purchaseId={ purchaseId }
-								couponCode={ couponCode }
-								redirectTo={ redirectTo }
-								feature={ selectedFeature }
-								plan={ plan }
-								isComingFromUpsell={ isComingFromUpsell }
-								infoMessage={ prepurchaseNotices }
-								sitelessCheckoutType={ sitelessCheckoutType }
-								isLoggedOutCart={ isLoggedOutCart }
-								isNoSiteCart={ isNoSiteCart }
-								isGiftPurchase={ isGiftPurchase }
-								jetpackSiteSlug={ jetpackSiteSlug }
-								jetpackPurchaseToken={ jetpackPurchaseToken }
-								isUserComingFromLoginForm={ isUserComingFromLoginForm }
-							/>
-						</InnerCheckoutMainWrapper>
+						<CheckoutMain
+							siteSlug={ siteSlug }
+							siteId={ selectedSiteId }
+							productAliasFromUrl={ productAliasFromUrl }
+							productSourceFromUrl={ productSourceFromUrl }
+							purchaseId={ purchaseId }
+							couponCode={ couponCode }
+							redirectTo={ redirectTo }
+							feature={ selectedFeature }
+							plan={ plan }
+							isComingFromUpsell={ isComingFromUpsell }
+							infoMessage={ prepurchaseNotices }
+							sitelessCheckoutType={ sitelessCheckoutType }
+							isLoggedOutCart={ isLoggedOutCart }
+							isNoSiteCart={ isNoSiteCart }
+							isGiftPurchase={ isGiftPurchase }
+							jetpackSiteSlug={ jetpackSiteSlug }
+							jetpackPurchaseToken={ jetpackPurchaseToken }
+							isUserComingFromLoginForm={ isUserComingFromLoginForm }
+						/>
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>
 			</CheckoutErrorBoundary>
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
 		</CheckoutMainWrapperStyles>
-	);
-}
-
-function InnerCheckoutMainWrapper( { children }: { children: ReactNode } ) {
-	const cartKey = useCartKey();
-	const { responseCart, isLoading, isPendingUpdate } = useShoppingCart( cartKey );
-	const isPurchaseFree = responseCart.total_cost_integer === 0;
-	return (
-		<StripeSetupIntentIdProvider
-			fetchStipeSetupIntentId={ getStripeConfiguration }
-			isDisabled={ ! isPurchaseFree || isLoading || isPendingUpdate }
-		>
-			{ children }
-		</StripeSetupIntentIdProvider>
 	);
 }

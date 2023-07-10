@@ -1,22 +1,31 @@
 /**
  * @jest-environment jsdom
  */
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
+import { Provider as ReduxProvider } from 'react-redux';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import useCartKey from '../../use-cart-key';
+import CheckoutMain from '../components/checkout-main';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
+	siteId,
 	domainProduct,
 	planWithoutDomain,
+	fetchStripeConfiguration,
+	mockSetCartEndpointWith,
+	mockGetCartEndpointWith,
 	getActivePersonalPlanDataForType,
 	getBusinessPlanForInterval,
 	getVariantItemTextForInterval,
 	getPlansItemsState,
+	createTestReduxStore,
 	countryList,
 	mockUserAgent,
 	getPlanSubtitleTextForInterval,
@@ -25,9 +34,7 @@ import {
 	mockGetSupportedCountriesEndpoint,
 	mockGetVatInfoEndpoint,
 	mockMatchMediaOnWindow,
-	getBasicCart,
 } from './util';
-import { MockCheckout } from './util/mock-checkout';
 
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
@@ -48,26 +55,88 @@ jest.setTimeout( 12000 );
 /* eslint-disable jest/no-conditional-expect */
 
 describe( 'CheckoutMain with a variant picker', () => {
-	const initialCart = getBasicCart();
-	const mainCartKey = 123456;
+	let MyCheckout;
 
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
 		jest.clearAllMocks();
-		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+		getPlansBySiteId.mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
 		hasLoadedSiteDomains.mockImplementation( () => true );
 		getDomainsBySiteId.mockImplementation( () => [] );
 		isMarketplaceProduct.mockImplementation( () => false );
-		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
-		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 
+		const initialCart = {
+			coupon: '',
+			coupon_savings_total: 0,
+			coupon_savings_total_integer: 0,
+			coupon_savings_total_display: '0',
+			currency: 'BRL',
+			locale: 'br-pt',
+			is_coupon_applied: false,
+			products: [ planWithoutDomain ],
+			tax: {
+				display_taxes: true,
+				location: {},
+			},
+			temporary: false,
+			allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
+			total_tax_integer: 700,
+			total_tax_display: 'R$7',
+			total_cost_integer: 15600,
+			total_cost_display: 'R$156',
+			sub_total_integer: 15600,
+			sub_total_display: 'R$156',
+			coupon_discounts_integer: [],
+		};
+
+		const mockSetCartEndpoint = mockSetCartEndpointWith( {
+			currency: initialCart.currency,
+			locale: initialCart.locale,
+		} );
+
+		const store = createTestReduxStore();
+		const queryClient = new QueryClient();
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetVatInfoEndpoint( {} );
 		mockMatchMediaOnWindow();
+
+		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
+			const managerClient = createShoppingCartManagerClient( {
+				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
+				setCart: mockSetCartEndpoint,
+			} );
+			const mainCartKey = 'foo.com';
+			( useCartKey as jest.Mock ).mockImplementation( () =>
+				useUndefinedCartKey ? undefined : mainCartKey
+			);
+			return (
+				<ReduxProvider store={ store }>
+					<QueryClientProvider client={ queryClient }>
+						<ShoppingCartProvider
+							managerClient={ managerClient }
+							options={ {
+								defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+							} }
+							{ ...additionalCartProps }
+						>
+							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+								<CheckoutMain
+									siteId={ siteId }
+									siteSlug="foo.com"
+									getStoredCards={ async () => [] }
+									overrideCountryList={ countryList }
+									{ ...additionalProps }
+								/>
+							</StripeHookProvider>
+						</ShoppingCartProvider>
+					</QueryClientProvider>
+				</ReduxProvider>
+			);
+		};
 	} );
 
 	it.each( [
@@ -80,12 +149,12 @@ describe( 'CheckoutMain with a variant picker', () => {
 	] )(
 		'renders the variant picker with a $expectedVariant variant when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
-			( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
 			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
-			render( <MockCheckout initialCart={ initialCart } cartChanges={ cartChanges } /> );
+			render( <MyCheckout cartChanges={ cartChanges } /> );
 
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
@@ -106,12 +175,12 @@ describe( 'CheckoutMain with a variant picker', () => {
 	] )(
 		'renders the variant picker with a $expectedVariant variant when the cart initially contains $initialPlan and then is changed to $cartPlan',
 		async ( { initialPlan, cartPlan, expectedVariant } ) => {
-			( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( 'none' ),
 			} ) );
 			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( initialPlan ) ] };
-			render( <MockCheckout initialCart={ initialCart } cartChanges={ cartChanges } /> );
+			render( <MyCheckout cartChanges={ cartChanges } /> );
 
 			// Open the variant picker
 			let openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
@@ -144,12 +213,12 @@ describe( 'CheckoutMain with a variant picker', () => {
 	] )(
 		'renders the variant picker without a $expectedVariant variant when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
-			( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
 			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
-			render( <MockCheckout initialCart={ initialCart } cartChanges={ cartChanges } /> );
+			render( <MyCheckout cartChanges={ cartChanges } /> );
 
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
@@ -165,12 +234,12 @@ describe( 'CheckoutMain with a variant picker', () => {
 	it.each( [ { activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' } ] )(
 		'renders the $expectedVariant variant with a discount percentage for a $cartPlan plan when the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
-			( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
 			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
-			render( <MockCheckout initialCart={ initialCart } cartChanges={ cartChanges } /> );
+			render( <MyCheckout cartChanges={ cartChanges } /> );
 
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
@@ -189,12 +258,12 @@ describe( 'CheckoutMain with a variant picker', () => {
 				( plan ) => plan.product_slug === variantSlug
 			);
 			const finalPrice = variantData.raw_price;
-			const variantInterval = parseInt( String( variantData.bill_period ), 10 );
+			const variantInterval = parseInt( variantData.bill_period, 10 );
 			const currentVariantData = getPlansItemsState().find(
 				( plan ) => plan.product_slug === currentVariantSlug
 			);
 			const currentVariantPrice = currentVariantData.raw_price;
-			const currentVariantInterval = parseInt( String( currentVariantData.bill_period ), 10 );
+			const currentVariantInterval = parseInt( currentVariantData.bill_period, 10 );
 			const intervalsInVariant = Math.round( variantInterval / currentVariantInterval );
 			const priceBeforeDiscount = currentVariantPrice * intervalsInVariant;
 
@@ -207,7 +276,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 
 	it( 'does not render the variant picker if there are no variants', async () => {
 		const cartChanges = { products: [ domainProduct ] };
-		render( <MockCheckout initialCart={ initialCart } cartChanges={ cartChanges } /> );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
 
 		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 	} );
@@ -215,19 +284,19 @@ describe( 'CheckoutMain with a variant picker', () => {
 	it( 'does not render the variant picker for a renewal of the current plan', async () => {
 		const currentPlanRenewal = { ...planWithoutDomain, extra: { purchaseType: 'renewal' } };
 		const cartChanges = { products: [ currentPlanRenewal ] };
-		render( <MockCheckout initialCart={ initialCart } cartChanges={ cartChanges } /> );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
 
 		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 	} );
 
 	it( 'does not render the variant picker when userAgent is Woo mobile', async () => {
-		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+		getPlansBySiteId.mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'none' ),
 		} ) );
 		const cartChanges = { products: [ getBusinessPlanForInterval( 'yearly' ) ] };
 
 		mockUserAgent( 'wc-ios' );
-		render( <MockCheckout initialCart={ initialCart } cartChanges={ cartChanges } /> );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
 
 		await expect(
 			screen.findByLabelText( 'Change the billing term for this product' )

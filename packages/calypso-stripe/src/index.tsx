@@ -435,10 +435,7 @@ const setupIntentRequestArgs = { needs_intent: true };
  * since a Setup Intent may need to be recreated. You can force the
  * configuration to reload by calling `reload()`.
  */
-function useFetchSetupIntentId(
-	fetchStripeConfiguration: GetStripeSetupIntentId,
-	{ isDisabled }: { isDisabled?: boolean }
-): {
+function useFetchSetupIntentId( fetchStripeConfiguration: GetStripeSetupIntentId ): {
 	setupIntentId: StripeSetupIntentId | undefined;
 	error: undefined | Error;
 	reload: ReloadSetupIntentId;
@@ -449,14 +446,8 @@ function useFetchSetupIntentId(
 	const reload = useCallback( () => setReloadCount( ( count ) => count + 1 ), [] );
 
 	useEffect( () => {
-		let isSubscribed = true;
-		if ( isDisabled ) {
-			debug( 'not loading stripe setup intent id because it is disabled' );
-			return () => {
-				isSubscribed = false;
-			};
-		}
 		debug( 'loading stripe setup intent id' );
+		let isSubscribed = true;
 		fetchStripeConfiguration( setupIntentRequestArgs )
 			.then( ( configuration ) => {
 				if ( ! isSubscribed ) {
@@ -477,7 +468,7 @@ function useFetchSetupIntentId(
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ stripeReloadCount, fetchStripeConfiguration, isDisabled ] );
+	}, [ stripeReloadCount, fetchStripeConfiguration ] );
 	return { setupIntentId, error, reload };
 }
 
@@ -494,12 +485,10 @@ function areRequestArgsEqual(
 export function StripeSetupIntentIdProvider( {
 	children,
 	fetchStipeSetupIntentId,
-	isDisabled,
 }: PropsWithChildren< {
 	fetchStipeSetupIntentId: GetStripeSetupIntentId;
-	isDisabled?: boolean;
 } > ) {
-	const setupIntentData = useFetchSetupIntentId( fetchStipeSetupIntentId, { isDisabled } );
+	const setupIntentData = useFetchSetupIntentId( fetchStipeSetupIntentId );
 
 	return (
 		<StripeSetupIntentContext.Provider value={ setupIntentData }>

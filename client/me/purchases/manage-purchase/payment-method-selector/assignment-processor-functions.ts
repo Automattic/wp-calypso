@@ -6,6 +6,7 @@ import {
 } from '@automattic/composite-checkout';
 import { ManagedContactDetails } from '@automattic/wpcom-checkout';
 import { addQueryArgs } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
 import wp from 'calypso/lib/wp';
 import { getTaxValidationResult } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -19,7 +20,6 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
-import type { LocalizeProps } from 'i18n-calypso';
 
 const wpcomAssignPaymentMethod = (
 	subscriptionId: string,
@@ -70,7 +70,7 @@ export async function assignNewCardProcessor(
 		eventSource,
 	}: {
 		purchase: Purchase | undefined;
-		translate: LocalizeProps[ 'translate' ];
+		translate: ReturnType< typeof useTranslate >;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
 		stripeSetupIntentId: StripeSetupIntentId | undefined;
