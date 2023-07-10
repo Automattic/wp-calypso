@@ -8,6 +8,7 @@ import {
 import { color, styles, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { COLOR_VARIATIONS_BLACK_LIST } from '../constants';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { NavigatorScreenObject } from '@automattic/onboarding';
@@ -75,6 +76,7 @@ const useScreens = ( {
 					variations.length === 0 &&
 					// Disable Colors for themes that don't play well with them. See pbxlJb-4cl-p2 for more context.
 					! isVirtual &&
+					! COLOR_VARIATIONS_BLACK_LIST.includes( stylesheet ) &&
 					isEnabled( 'signup/design-picker-preview-colors' ) && {
 						checked: !! selectedColorVariation,
 						icon: color,
