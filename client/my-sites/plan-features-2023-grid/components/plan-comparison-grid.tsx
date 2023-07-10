@@ -1021,7 +1021,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 						</div>
 					);
 				} ) }
-				{ /* <PlanComparisonGridHeader
+				<PlanComparisonGridHeader
 					displayedPlansProperties={ displayedPlansProperties }
 					visiblePlansProperties={ visiblePlansProperties }
 					isInSignup={ isInSignup }
@@ -1037,7 +1037,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					siteId={ siteId }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
-				/> */ }
+				/>
 			</Grid>
 
 			<div className="plan-comparison-grid__footer">
