@@ -57,7 +57,6 @@ import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import { OnChangeItemVariant } from './item-variation-picker';
-import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -129,7 +128,6 @@ export default function CheckoutMain( {
 	customizedPreviousPath?: string;
 } ) {
 	const translate = useTranslate();
-
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
@@ -744,13 +742,6 @@ export default function CheckoutMain( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 				/>
-				{
-					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
-					<JetpackProRedirectModal
-						redirectTo={ redirectTo }
-						productSourceFromUrl={ productSourceFromUrl }
-					/>
-				}
 			</CheckoutProvider>
 		</Fragment>
 	);
