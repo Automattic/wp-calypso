@@ -13,7 +13,7 @@ import {
 	PlanSlug,
 	TERMS_LIST,
 } from '@automattic/calypso-products';
-import HighlightLabel from '../../components/npm-ready/highlight-label';
+import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
 
 // TODO clk: move to plans data store
@@ -42,7 +42,9 @@ interface Props {
 	selectedPlan?: PlanSlug;
 	sitePlanSlug?: PlanSlug | null;
 	hideEnterprisePlan?: boolean;
-	useIsPlanAvailableForUpgradeCheck?: ( { planSlug }: { planSlug: PlanSlug } ) => boolean;
+	usePlanUpgradeabilityCheck?: ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
+		[ planSlug in PlanSlug ]: boolean;
+	};
 }
 
 // TODO clk: move to plans data store
@@ -52,7 +54,7 @@ const useWpcomPlansWithIntent = ( {
 	hideEnterprisePlan,
 	intent,
 	term,
-	useIsPlanAvailableForUpgradeCheck,
+	usePlanUpgradeabilityCheck,
 }: Props ): Record< PlanSlug, GridPlan > => {
 	const isBloggerAvailable =
 		( selectedPlan && isBloggerPlan( selectedPlan ) ) ||
@@ -128,18 +130,19 @@ const useWpcomPlansWithIntent = ( {
 	}
 
 	const planSlugs = usePlansFromTypes( { planTypes, term } );
+	const highlightLabels = useHighlightLabels( {
+		planSlugs,
+		currentSitePlanSlug: sitePlanSlug,
+		selectedPlan,
+		usePlanUpgradeabilityCheck,
+	} );
 
 	return planSlugs.reduce( ( acc, planSlug ) => {
 		return {
 			...acc,
 			[ planSlug ]: {
 				planSlug,
-				highlightLabel: HighlightLabel( {
-					planSlug,
-					currentSitePlanSlug: sitePlanSlug,
-					selectedPlan,
-					useIsPlanAvailableForUpgradeCheck,
-				} ),
+				highlightLabel: highlightLabels[ planSlug ],
 			},
 		};
 	}, {} as Record< PlanSlug, GridPlan > );

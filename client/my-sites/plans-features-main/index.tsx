@@ -37,10 +37,10 @@ import usePlansWithIntent, {
 } from '../plan-features-2023-grid/hooks/npm-ready/use-wpcom-plans-with-intent';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
-import useIsPlanAvailableForUpgradeCheck from './hooks/use-is-plan-available-for-upgrade-check';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import usePlanUpgradeabilityCheck from './hooks/use-plan-upgradeability-check';
 import type { IntervalType } from './types';
 import type { PlansIntent } from '../plan-features-2023-grid/hooks/npm-ready/use-wpcom-plans-with-intent';
 import type { DomainSuggestion } from '@automattic/data-stores';
@@ -320,7 +320,7 @@ const PlansFeaturesMain = ( {
 		sitePlanSlug,
 		hideEnterprisePlan,
 		term,
-		useIsPlanAvailableForUpgradeCheck,
+		usePlanUpgradeabilityCheck,
 	} );
 	const planRecordsWithIntent = usePlansWithIntent( {
 		intent,
@@ -328,7 +328,7 @@ const PlansFeaturesMain = ( {
 		sitePlanSlug,
 		hideEnterprisePlan,
 		term,
-		useIsPlanAvailableForUpgradeCheck,
+		usePlanUpgradeabilityCheck,
 	} );
 	const visiblePlans =
 		useFilterPlansForPlanFeatures( {
