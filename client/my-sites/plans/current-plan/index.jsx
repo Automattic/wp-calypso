@@ -161,7 +161,7 @@ class CurrentPlan extends Component {
 	renderMain() {
 		const { selectedSiteId, selectedSite, showJetpackChecklist, translate } = this.props;
 		const isLoading = this.isLoading();
-		const currentPlanSlug = selectedSite.plan.product_slug;
+		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 		const planTitle = getPlan( currentPlanSlug ).getTitle();
 		const planFeaturesHeader = translate( '{{planName/}} plan features', {
 			components: { planName: <>{ planTitle }</> },
@@ -214,7 +214,7 @@ class CurrentPlan extends Component {
 			isJetpackNotAtomic,
 		} = this.props;
 
-		const currentPlanSlug = selectedSite.plan.product_slug;
+		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
