@@ -3,6 +3,7 @@ import { Button, Card, Panel, PanelRow, PanelBody } from '@wordpress/components'
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
 import CommercialPurchase from './stats-purchase-commercial';
 import PersonalPurchase from './stats-purchase-personal';
 import StatsPurchaseSVG from './stats-purchase-svg';
@@ -158,9 +159,12 @@ const ProductCard = ( { siteSlug } ) => {
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						<StatsPurchaseSVG
 							isFree={ subscriptionValue === 0 }
-							hasHighlight={ subscriptionValue >= 40 } // TODO: replace with IMAGE_CELEBRATION_PRICE if this makes sense.
-							extraMessage={ subscriptionValue >= 40 }
+							hasHighlight={ subscriptionValue >= 10 } // TODO: replace with IMAGE_CELEBRATION_PRICE if this makes sense.
+							extraMessage={ subscriptionValue >= 10 }
 						/>
+						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
+							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
+						</div>
 					</div>
 				</div>
 			</Card>
