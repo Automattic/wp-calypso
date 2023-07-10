@@ -213,6 +213,7 @@ class RegisterDomainStep extends Component {
 			availabilityError: null,
 			availabilityErrorData: null,
 			availabilityErrorDomain: null,
+			availabilityErrorDomainTld: null,
 			availableTlds: [],
 			bloggerFilterAdded: false,
 			clickedExampleSuggestion: false,
@@ -398,6 +399,7 @@ class RegisterDomainStep extends Component {
 			availabilityError,
 			availabilityErrorData,
 			availabilityErrorDomain,
+			availabilityErrorDomainTld,
 			showAvailabilityNotice,
 			showSuggestionNotice,
 			suggestionError,
@@ -415,7 +417,7 @@ class RegisterDomainStep extends Component {
 			? getAvailabilityNotice( suggestionErrorDomain, suggestionError, suggestionErrorData )
 			: {};
 		const { message: availabilityMessage, severity: availabilitySeverity } = showAvailabilityNotice
-			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData )
+			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData, null, availabilityErrorDomainTld )
 			: {};
 
 		const containerDivClassName = classNames( 'register-domain-step', {
@@ -749,6 +751,7 @@ class RegisterDomainStep extends Component {
 			availabilityError: null,
 			availabilityErrorData: null,
 			availabilityErrorDomain: null,
+			availabilityErrorDomainTld: null,
 			exactMatchDomain: null,
 			lastDomainSearched: null,
 			lastFilters: this.state.filters,
@@ -856,6 +859,7 @@ class RegisterDomainStep extends Component {
 				availabilityError: null,
 				availabilityErrorData: null,
 				availabilityErrorDomain: null,
+				availabilityErrorDomainTld: null,
 				exactMatchDomain: null,
 				lastDomainSearched: null,
 				isQueryInvalid: false,
@@ -989,6 +993,7 @@ class RegisterDomainStep extends Component {
 
 					this.setState( {
 						exactMatchDomain: domainChecked,
+						lastDomainTld: result.tld,
 						lastDomainStatus: availabilityStatus,
 						lastDomainIsTransferrable: isDomainTransferrable,
 					} );
@@ -1011,6 +1016,7 @@ class RegisterDomainStep extends Component {
 						this.showAvailabilityErrorMessage( domain, availabilityStatus, {
 							site,
 							maintenanceEndTime: get( result, 'maintenance_end_time', null ),
+							tld: result.tld,
 						} );
 					}
 
@@ -1390,6 +1396,7 @@ class RegisterDomainStep extends Component {
 			lastDomainIsTransferrable,
 			lastDomainSearched,
 			lastDomainStatus,
+			lastDomainTld,
 			premiumDomains,
 		} = this.state;
 
@@ -1426,6 +1433,7 @@ class RegisterDomainStep extends Component {
 				isDomainOnly={ this.props.isDomainOnly }
 				lastDomainSearched={ lastDomainSearched }
 				lastDomainStatus={ lastDomainStatus }
+				lastDomainTld={ lastDomainTld }
 				lastDomainIsTransferrable={ lastDomainIsTransferrable }
 				onAddMapping={ onAddMapping }
 				onClickResult={ this.onAddDomain }
@@ -1579,6 +1587,7 @@ class RegisterDomainStep extends Component {
 			availabilityError: error,
 			availabilityErrorData: errorData,
 			availabilityErrorDomain: domain,
+			availabilityErrorDomainTld: errorData?.tld,
 		} );
 	}
 

@@ -70,7 +70,8 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		validationResult?.status,
 		null,
 		true,
-		'_blank'
+		'_blank',
+		validationResult?.tld
 	);
 
 	// final success
