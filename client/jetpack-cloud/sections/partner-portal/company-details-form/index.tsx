@@ -159,7 +159,7 @@ export default function CompanyDetailsForm( {
 					{ showCountryFields && (
 						<SearchableDropdown
 							value={ countryValue }
-							onChange={ ( value?: string ) => {
+							onChange={ ( value ) => {
 								setCountryValue( value ?? '' );
 							} }
 							options={ countryOptions }
@@ -175,7 +175,7 @@ export default function CompanyDetailsForm( {
 						<FormLabel>{ translate( 'State' ) }</FormLabel>
 						<SearchableDropdown
 							value={ addressState }
-							onChange={ ( value?: string ) => setAddressState( value ?? '' ) }
+							onChange={ ( value ) => setAddressState( value ?? '' ) }
 							options={ stateOptions }
 							disabled={ isLoading }
 							allowReset={ false }
