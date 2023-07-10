@@ -38,6 +38,7 @@ export function MockCheckout( {
 		getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
 		setCart: setCart || mockSetCartEndpoint,
 	} );
+
 	return (
 		<ReduxProvider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>

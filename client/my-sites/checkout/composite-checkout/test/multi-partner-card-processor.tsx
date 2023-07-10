@@ -1,4 +1,4 @@
-import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import {
@@ -14,6 +14,8 @@ import {
 	contactDetailsForDomain,
 	mockCreateAccountSiteCreatedResponse,
 	mockCreateAccountSiteNotCreatedResponse,
+	planWithoutDomain,
+	getBasicCart,
 } from './util';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -105,13 +107,13 @@ describe( 'multiPartnerCardProcessor', () => {
 		public_key: 'pk_test_1234567890',
 		setup_intent_id: null,
 	};
-	const product = getEmptyResponseCartProduct();
+	const product = planWithoutDomain;
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
 		meta: 'example.com',
 		is_domain_registration: true,
 	};
-	const cart = { ...getEmptyResponseCart(), products: [ product ] };
+	const cart = { ...getBasicCart(), products: [ product ] };
 
 	const mockCardNumberElement = () => <div>mock card number</div>;
 

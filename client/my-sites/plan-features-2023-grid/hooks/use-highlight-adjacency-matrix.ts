@@ -17,7 +17,7 @@ interface HighlightAdjacencyMatrix {
 
 interface Props {
 	visiblePlans: PlanProperties[];
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	selectedPlan?: string;
 }
 

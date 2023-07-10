@@ -9,7 +9,7 @@ import { useRecordSubscriberRemoved } from '../tracks';
 import type { SubscriberEndpointResponse, Subscriber } from '../types';
 
 const useSubscriberRemoveMutation = (
-	siteId: number | null,
+	siteId: number | undefined | null,
 	currentPage: number,
 	invalidateDetailsCache = false
 ) => {
