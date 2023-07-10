@@ -37,19 +37,23 @@ export default function AssignToAllPaymentMethods( {
 				disabled={ isDisabled }
 				checked={ isChecked }
 				onChange={ handleChangeEvent }
-				label={ translate(
-					'Use this payment method for all subscriptions on my account. {{link}}Learn more.{{/link}}',
-					{
-						components: {
-							link: (
-								<InlineSupportLink
-									supportContext="payment_method_all_subscriptions"
-									showIcon={ false }
-								/>
-							),
-						},
-					}
-				) }
+				label={
+					translate(
+						'Use this payment method for all subscriptions on my account. {{link}}Learn more.{{/link}}',
+						{
+							components: {
+								link: (
+									<InlineSupportLink
+										supportContext="payment_method_all_subscriptions"
+										showIcon={ false }
+									/>
+								),
+							},
+						}
+						// As far as I can tell, label will correctly render the
+						// component, so we cast to string to make the types work.
+					) as string
+				}
 			/>
 		</CheckboxWrapper>
 	);
