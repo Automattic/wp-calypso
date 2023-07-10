@@ -20,11 +20,12 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	newsletter: {
 		intro: 0,
 		user: 0,
-		newsletterSetup: 0,
-		domains: 1,
-		'plans-newsletter': 2,
-		subscribers: 3,
-		launchpad: 4,
+		newsletterType: 0,
+		newsletterSetup: 1,
+		domains: 2,
+		'plans-newsletter': 3,
+		subscribers: 4,
+		launchpad: 5,
 	},
 	[ LINK_IN_BIO_FLOW ]: {
 		intro: 0,
