@@ -45,7 +45,9 @@ const PatternLargePreview = ( {
 	const navigator = useNavigator();
 	const hasSelectedPattern = header || sections.length || footer;
 	const shouldShowSelectPatternHint =
-		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
+		! hasSelectedPattern &&
+		navigator.location.path &&
+		STYLES_PATHS.includes( navigator.location.path );
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
