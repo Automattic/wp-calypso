@@ -4,13 +4,12 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { ONBOARD_STORE as DOMAINS_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import { ONBOARD_STORE } from '../../../../stores';
 import { CompleteDomainsTransferred } from './complete-domains-transferred';
 import type { Step } from '../../types';
 import './styles.scss';
@@ -22,7 +21,7 @@ const Complete: Step = function Complete( { flow } ) {
 	// Use the stored domains as a clue for the number of domains that were transferred to render placeholders.
 	// This number is used as a rough guess, and shouldn't be used to render anything.
 	const storedDomainsState = useSelect(
-		( select ) => ( select( DOMAINS_STORE ) as OnboardSelect ).getBulkDomainsData(),
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getBulkDomainsData(),
 		[]
 	);
 	const storedDomainsAmount = Object.keys( { ...storedDomainsState } ).length;
