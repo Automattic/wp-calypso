@@ -15,7 +15,7 @@ export default class Badge extends Component {
 			'info-green',
 			'info-purple',
 			'error',
-		] ),
+		] ).isRequired,
 	};
 
 	static defaultProps = {
