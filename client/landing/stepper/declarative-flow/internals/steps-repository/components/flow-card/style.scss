@@ -1,9 +1,20 @@
-.stepper__flow-question {
+
+@import "@automattic/typography/styles/variables";
+
+
+.flow-question {
 	cursor: pointer;
+	max-width: 433px;
+	text-align: left;
 
 	&:hover,
 	&:focus {
 		border-color: var(--studio-black);
 		background-color: var(--studio-grey-0);
 	}
+}
+
+.flow-question__heading {
+	font-weight: bold;
+	font-size: $font-body;
 }

@@ -1,4 +1,4 @@
-import { __experimentalHStack as HStack, Card, CardBody, Icon } from '@wordpress/components';
+import { Flex, FlexBlock, FlexItem, Card, CardBody, Icon } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
 import './style.scss';
 
@@ -11,16 +11,20 @@ interface FlowCardProps {
 
 const FlowCard = ( { icon, onClick, text, title }: FlowCardProps ) => {
 	return (
-		<Card className="stepper__flow-question" as="button" size="small" onClick={ onClick }>
+		<Card className="flow-question" as="button" size="small" onClick={ onClick }>
 			<CardBody>
-				<HStack>
-					<Icon icon={ icon } size={ 20 } />
-					<div>
-						<h3>{ title }</h3>
+				<Flex>
+					<FlexItem>
+						<Icon icon={ icon } size={ 20 } />
+					</FlexItem>
+					<FlexBlock>
+						<h3 className="flow-question__heading">{ title }</h3>
 						<p>{ text }</p>
-					</div>
-					<Icon icon={ chevronRight } size={ 20 } />
-				</HStack>
+					</FlexBlock>
+					<FlexItem>
+						<Icon icon={ chevronRight } size={ 20 } />
+					</FlexItem>
+				</Flex>
 			</CardBody>
 		</Card>
 	);
