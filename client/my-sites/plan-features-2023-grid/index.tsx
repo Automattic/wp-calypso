@@ -93,7 +93,6 @@ const Container = (
 };
 
 export type PlanFeatures2023GridProps = {
-	// either you specify the plans prop or isPlaceholder prop
 	plans: PlanSlug[];
 	visiblePlans: PlanSlug[];
 	isInSignup?: boolean;
