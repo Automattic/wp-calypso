@@ -16,6 +16,9 @@ export const JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE =
 export const JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE =
 	'jetpack-dashboard-agency-program-survey-banner-preference';
 
+export const JETPACK_DASHBOARD_CHECKOUT_REDIRECT_MODAL_DISMISSED =
+	'agency-program-checkout-redirect-modal-dismissed';
+
 /**
  * Returns preference associated with the key provided.
  */

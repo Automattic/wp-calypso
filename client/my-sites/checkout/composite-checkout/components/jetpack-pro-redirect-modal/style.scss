@@ -1,0 +1,124 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+.jetpack-pro-redirect-modal {
+	position: relative;
+
+	.banner__close-icon {
+		width: 20px;
+		height: 20px;
+	}
+
+	.components-modal__header .components-button {
+		top: -40px;
+	}
+
+	.components-modal__header {
+		padding: 0 16px;
+		height: 120px;
+		background-image: url(calypso/assets/images/jetpack/jetpack-jitm-background.png);
+		background-position: top right;
+		background-repeat: no-repeat;
+	}
+
+	.components-modal__content {
+		margin-top: 120px;
+	}
+
+	.jetpack-pro-redirect-modal__container {
+		margin-block-start: 32px;
+		padding-block-end: 100px;
+
+		@include break-small {
+			padding-block-end: 0;
+		}
+
+		.jetpack-pro-redirect-modal__top-header {
+			position: absolute;
+			inset-block-start: 48px;
+			z-index: 99;
+			inset-inline-start: 50%;
+			transform: translateX(-50%);
+			font-size: 1rem;
+			font-weight: 700;
+			white-space: nowrap;
+		}
+
+		p {
+			margin-bottom: 16px;
+		}
+	}
+
+	.jetpack-pro-redirect-modal__heading {
+		color: var(--studio-gray-100);
+		font-weight: 700;
+		font-size: 1.5rem;
+		margin-block-end: 16px;
+	}
+
+	.jetpack-pro-redirect-modal__list {
+		margin: 16px 0;
+		list-style: none;
+
+		li {
+			letter-spacing: -0.16px;
+
+			svg {
+				fill: var(--studio-green-40);
+				position: relative;
+				top: 5px;
+				right: 5px;
+			}
+		}
+	}
+
+	.jetpack-pro-redirect-modal__logo {
+		position: relative;
+		top: 5px;
+		right: 10px;
+	}
+
+	.jetpack-pro-redirect-modal__footer {
+		width: calc(100% - 64px); // reducing the left and right padding
+		display: flex;
+		justify-content: flex-start;
+		flex-direction: column;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		padding: 16px 32px;
+		background: var(--studio-white);
+
+		.jetpack-pro-redirect-modal__footer-buttons {
+			display: flex;
+			flex-direction: column;
+		}
+
+		@include break-mobile {
+			position: static;
+			justify-content: right;
+			flex-direction: initial;
+			margin-block-start: 32px;
+			width: auto;
+			padding: 0;
+
+			.jetpack-pro-redirect-modal__footer-buttons {
+				width: 100%;
+				flex-direction: initial;
+			}
+		}
+
+		.button {
+			&.is-borderless {
+				margin-inline-start: 24px;
+				text-decoration: underline;
+			}
+
+			&.is-primary {
+				background-color: var(--studio-green-50);
+				border: 1px solid var(--studio-green-50);
+				color: #fff;
+			}
+		}
+	}
+}
