@@ -29,7 +29,7 @@ const Complete: Step = function Complete( { flow } ) {
 
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const userPurchases = useSelector( ( state ) => getUserPurchases( state ) );
-	const oneDay = 999999 * 60 * 60 * 1000; // Number of milliseconds in a day
+	const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
 
 	const newlyTransferredDomains = userPurchases?.filter(
 		( purchase ) =>
