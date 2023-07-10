@@ -69,7 +69,7 @@ const PersonalPurchase = ( {
 			/>
 
 			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
-				{ translate( 'The average person pays %(value)s per month', {
+				{ translate( 'Our users pay %(value)s per month on average', {
 					args: {
 						value: AVERAGE_PRICE_INFO,
 					},
