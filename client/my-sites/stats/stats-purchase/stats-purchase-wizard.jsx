@@ -117,14 +117,14 @@ const ProductCard = ( { siteSlug } ) => {
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-body--left` }>
 											<p>
 												{ translate(
-													`Sites and blogs used for hobby or personal use. Doesn't generate any money in a direct or an indirect way.`
+													`A hobby or personal site. You don't attempt to make money from your site in any way.`
 												) }
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-body--right` }>
 											<p>
 												{ translate(
-													`Sites and blogs used for commercial activities. Includes selling or advertising a product/service, person or business.`
+													`A site used for commercial activity. Your site sells or advertises a product or service.`
 												) }
 											</p>
 										</div>

@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -37,6 +38,7 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 			</div>
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
+				<p>{ translate( 'Benefits:' ) }</p>
 				<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 					<li>{ translate( 'Instant access to upcoming features' ) }</li>
 					<li>{ translate( 'Priority support' ) }</li>
@@ -49,7 +51,13 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
 					{
 						components: {
-							a: <Button variant="link" href="#" />,
+							a: (
+								<Button
+									variant="link"
+									target="_blank"
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+								/>
+							),
 							b: <Button variant="link" href="#" />,
 						},
 					}

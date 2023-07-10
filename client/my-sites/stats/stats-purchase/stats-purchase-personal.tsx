@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { PricingSlider, RenderThumbFunction } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -49,7 +50,7 @@ const PersonalPurchase = ( {
 			{ subscriptionValue < 10 && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 					{ translate(
-						'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial paln{{/Button}}.',
+						'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial plan{{/Button}}.',
 						{
 							components: {
 								Button: <Button variant="link" href="#" onClick={ ( e ) => handlePlanSwap( e ) } />,
@@ -83,16 +84,24 @@ const PersonalPurchase = ( {
 						<li>{ translate( "You'll see upsells and ads in the Stats page" ) }</li>
 					</ul>
 				) : (
-					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
-						<li>{ translate( 'Instant access to upcoming features' ) }</li>
-						<li>{ translate( 'Priority support' ) }</li>
-						<li>{ translate( 'Ad-free experience' ) }</li>
-					</ul>
+					<>
+						<p>{ translate( 'Benefits:' ) }</p>
+						<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
+							<li>{ translate( 'Instant access to upcoming features' ) }</li>
+							<li>{ translate( 'Priority support' ) }</li>
+							<li>{ translate( 'Ad-free experience' ) }</li>
+						</ul>
+					</>
 				) }
 			</div>
 
 			{ subscriptionValue === 0 && (
 				<p>
+					<p>
+						<strong>
+							{ translate( 'Please confirm non-commercial usage by checking each box:' ) }
+						</strong>
+					</p>
 					<ul>
 						<li>
 							<CheckboxControl
@@ -133,7 +142,13 @@ const PersonalPurchase = ( {
 					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
 					{
 						components: {
-							a: <Button variant="link" href="#" />,
+							a: (
+								<Button
+									variant="link"
+									target="_blank"
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+								/>
+							),
 							b: <Button variant="link" href="#" />,
 						},
 					}
