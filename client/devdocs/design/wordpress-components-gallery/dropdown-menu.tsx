@@ -36,6 +36,7 @@ const DropdownMenuExample = () => {
 							] }
 							value={ mode }
 							onSelect={ setMode }
+							onHover={ () => undefined }
 						/>
 					</MenuGroup>
 				</Fragment>
