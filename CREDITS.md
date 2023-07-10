@@ -1431,7 +1431,7 @@ SOFTWARE.
 
 ## <https://github.com/remarkjs/react-markdown>
 
-### packages/react-markdown
+### remarkjs/react-markdown
 
 ```text
 The MIT License (MIT)
