@@ -6,6 +6,7 @@ import {
 	SENSEI_FLOW,
 	VIDEOPRESS_FLOW,
 	isLinkInBioFlow,
+	isVideoPressTVFlow,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
@@ -116,6 +117,27 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				modal: {
 					buttonText: __( 'Learn more' ),
 					onClick: () => recordTracksEvent( 'calypso_videopress_signup_learn_more_button_clicked' ),
+					content: VideoPressIntroModalContent,
+				},
+			};
+		}
+
+		if ( isVideoPressTVFlow( flowName ) ) {
+			return {
+				title: createInterpolateElement(
+					__( 'An ad-free, home for all your videos.<br />Play. Roll. Share.' ),
+					{ br: <br /> }
+				),
+				secondaryText: sprintf(
+					/* translators: Days of trial displayed on VideoPress intro page. First %s is days of trial. */
+					__( 'Start your %s-day free trial' ),
+					30
+				),
+				buttonText: __( 'Get started' ),
+				modal: {
+					buttonText: __( 'Learn more' ),
+					onClick: () =>
+						recordTracksEvent( 'calypso_videopress_tv_signup_learn_more_button_clicked' ),
 					content: VideoPressIntroModalContent,
 				},
 			};
