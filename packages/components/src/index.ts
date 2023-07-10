@@ -1,5 +1,9 @@
 export { default as Badge } from './badge';
+<<<<<<< HEAD
 export type { BadgeType } from './badge';
+=======
+export type { BadgeProps } from './badge';
+>>>>>>> 7e2b101506b (Fix type errors)
 export { default as Button } from './button';
 export * as Animation from './animation';
 export { default as Card } from './card';
