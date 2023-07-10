@@ -44,7 +44,7 @@ const SiteSubscriptionsManager = () => {
 			<Main className="site-subscriptions-manager">
 				<DocumentHead title={ translate( 'Manage subscriptions' ) } />
 
-				<HStack className="site-subscriptions-manager__header-h-stack" justifyContent="center">
+				<HStack className="site-subscriptions-manager__header-h-stack" justify="center">
 					<FormattedHeader
 						headerText={ translate( 'Manage subscribed sites' ) }
 						subHeaderText={ translate( 'Manage your newsletter and blog subscriptions.' ) }
