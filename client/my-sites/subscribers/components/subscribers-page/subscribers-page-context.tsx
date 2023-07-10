@@ -1,7 +1,10 @@
+import { translate } from 'i18n-calypso';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
+import { successNotice } from 'calypso/state/notices/actions';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import { useSubscribersQuery } from '../../queries';
 
@@ -32,6 +35,9 @@ type SubscribersPageContextProps = {
 	setSortTerm: ( term: SubscribersSortBy ) => void;
 	filterOption: SubscribersFilterBy;
 	setFilterOption: ( option: SubscribersFilterBy ) => void;
+	showAddSubscribersModal: boolean;
+	setShowAddSubscribersModal: ( show: boolean ) => void;
+	addSubscribersCallback: () => void;
 };
 
 const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
@@ -53,11 +59,14 @@ export const SubscribersPageProvider = ( {
 	sortTermChanged,
 }: SubscribersPageProviderProps ) => {
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
+	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
 
 	const grandTotalQueryResult = useSubscribersQuery( { siteId } );
 	const grandTotal = grandTotalQueryResult.data?.total || 0;
+
+	const dispatch = useDispatch();
 
 	const subscribersQueryResult = useSubscribersQuery( {
 		page: pageNumber,
@@ -73,6 +82,20 @@ export const SubscribersPageProvider = ( {
 		pageChanged,
 		subscribersQueryResult.isFetching
 	);
+
+	const addSubscribersCallback = () => {
+		setShowAddSubscribersModal( false );
+		dispatch(
+			successNotice(
+				translate(
+					"Your subscriber list is being processed. We'll send you an email when it's finished importing."
+				),
+				{
+					duration: 5000,
+				}
+			)
+		);
+	};
 
 	const handleSearch = useCallback( ( term: string ) => {
 		searchTermChanged( term );
@@ -108,6 +131,9 @@ export const SubscribersPageProvider = ( {
 				setSortTerm: sortTermChanged,
 				filterOption,
 				setFilterOption: filterOptionChanged,
+				showAddSubscribersModal,
+				setShowAddSubscribersModal,
+				addSubscribersCallback,
 			} }
 		>
 			{ children }

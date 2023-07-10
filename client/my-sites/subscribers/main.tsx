@@ -1,14 +1,12 @@
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import { SubscribersPageProvider } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
-import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { SubscribersHeader } from './components/subscribers-header';
@@ -55,23 +53,7 @@ const SubscribersPage = ( {
 		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};
 
-	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
-	const dispatch = useDispatch();
 	const localizeUrl = useLocalizeUrl();
-
-	const addSubscribersCallback = () => {
-		setShowAddSubscribersModal( false );
-		dispatch(
-			successNotice(
-				translate(
-					"Your subscriber list is being processed. We'll send you an email when it's finished importing."
-				),
-				{
-					duration: 5000,
-				}
-			)
-		);
-	};
 
 	const navigationItems: Item[] = [
 		{
@@ -117,13 +99,11 @@ const SubscribersPage = ( {
 				<SubscribersHeader
 					navigationItems={ navigationItems }
 					selectedSiteId={ selectedSite?.ID }
-					setShowAddSubscribersModal={ setShowAddSubscribersModal }
 				/>
 
 				<SubscriberListContainer
 					onClickView={ onClickView }
 					onClickUnsubscribe={ onClickUnsubscribe }
-					setShowAddSubscribersModal={ setShowAddSubscribersModal }
 				/>
 
 				<UnsubscribeModal
@@ -135,9 +115,6 @@ const SubscribersPage = ( {
 					<AddSubscribersModal
 						siteId={ selectedSite.ID }
 						siteTitle={ selectedSite.title }
-						showModal={ showAddSubscribersModal }
-						onClose={ () => setShowAddSubscribersModal( false ) }
-						onAddFinished={ () => addSubscribersCallback() }
 					/>
 				) }
 			</Main>
