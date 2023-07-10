@@ -20,7 +20,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
 	const buttonRef = useRef< HTMLButtonElement >( null );
 	const downloadCsvLink = addQueryArgs(
-		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'email' },
+		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'all' },
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
 	const recordExport = useRecordExport();
@@ -56,7 +56,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 				focusOnShow={ false }
 			>
 				<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>
-					{ translate( 'Download email subscribers as CSV' ) }
+					{ translate( 'Download subscribers as CSV' ) }
 				</PopoverMenuItem>
 			</PopoverMenu>
 		</div>
