@@ -112,6 +112,7 @@ const Settings = ( {
 		}
 		if (
 			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.type === domainTypes.TRANSFER ||
 			domain.transferStatus === transferStatus.PENDING_ASYNC
 		) {
 			return null;
