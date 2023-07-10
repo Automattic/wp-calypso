@@ -127,13 +127,13 @@ const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut
 						</motion.div>
 						<VStack spacing={ 4 * ratio }>
 							{ highlightedColors.map(
-								( { slug, color }: { slug: string; color: Color }, index: number ) => (
+								( { slug, color }: { slug: string; color: string }, index: number ) => (
 									<motion.div
 										key={ slug }
 										style={ {
 											height: normalizedColorSwatchSize * ratio,
 											width: normalizedColorSwatchSize * ratio,
-											background: color.color,
+											background: color,
 											borderRadius: ( normalizedColorSwatchSize * ratio ) / 2,
 										} }
 										animate={ { scale: 1, opacity: 1 } }
