@@ -1,3 +1,4 @@
+import { isMobile } from '@automattic/viewport';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -12,7 +13,7 @@ const SitePreview = (): JSX.Element => {
 	const { __ } = useI18n();
 	const selectedSite = useSelector( getSelectedSite );
 
-	if ( ! selectedSite ) {
+	if ( isMobile() || ! selectedSite ) {
 		return <div></div>;
 	}
 
