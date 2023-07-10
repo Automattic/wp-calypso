@@ -1,11 +1,9 @@
 import classnames from 'classnames';
-import { lazy, RefObject, Suspense, useState } from 'react';
+import { RefObject, useState } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import type { Message } from '../types';
 
 import './style.scss';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
-const ReactMarkdown = lazy( () => import( 'react-markdown' ) );
 
 type ChatMessageProps = {
 	message: Message;
@@ -44,9 +42,7 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 			ref={ isLast ? messageEndRef : null }
 			className={ `chatbox-message ${ isUser ? 'user' : 'wapuu' }` }
 		>
-			<Suspense fallback={ null }>
-				<ReactMarkdown children={ message.content } />
-			</Suspense>
+			<AsyncLoad require="react-markdown" children={ message.content } />
 			{ ! isUser && (
 				<div className="message-actions">
 					<button
