@@ -131,6 +131,7 @@ const useWpcomPlansWithIntent = ( {
 
 	const planSlugs = usePlansFromTypes( { planTypes, term } );
 	const highlightLabels = useHighlightLabels( {
+		intent,
 		planSlugs,
 		currentSitePlanSlug: sitePlanSlug,
 		selectedPlan,

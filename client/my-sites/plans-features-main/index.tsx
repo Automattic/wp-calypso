@@ -341,6 +341,11 @@ const PlansFeaturesMain = ( {
 			hideBusinessPlan,
 			hideEcommercePlan,
 		} ) || null;
+	// merge/update default plans with plans with intent
+	const gridPlanRecords = {
+		...defaultPlanRecords,
+		...visiblePlans,
+	};
 
 	// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
 	let hidePlanSelector = 'customer' === planTypeSelector && isDisplayingPlansNeededForFeature();
@@ -407,7 +412,7 @@ const PlansFeaturesMain = ( {
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<OnboardingPricingGrid2023
-						planRecords={ defaultPlanRecords }
+						planRecords={ gridPlanRecords }
 						visiblePlans={ Object.keys( visiblePlans ) as PlanSlug[] }
 						domainName={ domainName }
 						isInSignup={ isInSignup }

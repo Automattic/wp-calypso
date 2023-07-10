@@ -6,11 +6,12 @@ import {
 	PlanSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../../grid-context';
 import { isPopularPlan } from '../../lib/is-popular-plan';
+import type { PlansIntent } from '../../grid-context';
 import type { TranslateResult } from 'i18n-calypso';
 
 interface Props {
+	intent: PlansIntent;
 	planSlugs: PlanSlug[];
 	currentSitePlanSlug?: PlanSlug | null;
 	selectedPlan?: PlanSlug; // Value of the `?plan=` query param, so we can highlight a given plan.
@@ -19,13 +20,14 @@ interface Props {
 	};
 }
 
+// TODO clk: move to plans data store
 const useHighlightLabels = ( {
+	intent,
 	planSlugs,
 	currentSitePlanSlug,
 	selectedPlan,
 	usePlanUpgradeabilityCheck,
 }: Props ) => {
-	const { intent } = usePlansGridContext();
 	const translate = useTranslate();
 	const planUpgradeability = usePlanUpgradeabilityCheck?.( { planSlugs } );
 
