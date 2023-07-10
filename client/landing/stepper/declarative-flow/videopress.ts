@@ -3,7 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -216,22 +216,24 @@ const videopress: Flow = {
 			} );
 		};
 
-		switch ( _currentStep ) {
-			case 'intro':
-				clearOnboardingSiteOptions();
-				break;
-			case 'options':
-				stepValidateUserIsLoggedIn();
-				break;
-			case 'chooseADomain':
-				stepValidateSiteTitle();
-				break;
-			case 'processing':
-				if ( ! _siteSlug ) {
-					addVideoPressPendingAction();
-				}
-				break;
-		}
+		useEffect( () => {
+			switch ( _currentStep ) {
+				case 'intro':
+					clearOnboardingSiteOptions();
+					break;
+				case 'options':
+					stepValidateUserIsLoggedIn();
+					break;
+				case 'chooseADomain':
+					stepValidateSiteTitle();
+					break;
+				case 'processing':
+					if ( ! _siteSlug ) {
+						addVideoPressPendingAction();
+					}
+					break;
+			}
+		} );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
