@@ -4,7 +4,6 @@ import {
 	isFreePlan,
 	isPersonalPlan,
 	getPlanPath,
-	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	PlanSlug,
 } from '@automattic/calypso-products';
@@ -48,7 +47,7 @@ import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
-interface PlansFeaturesMainProps {
+export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
 	isInSignup?: boolean;
@@ -79,6 +78,7 @@ interface PlansFeaturesMainProps {
 	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
 	showBiennialToggle?: boolean;
+	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
@@ -126,6 +126,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		intervalType,
 		planTypeSelectorProps,
 		hidePlansFeatureComparison,
+		hideUnavailableFeatures,
 		sitePlanSlug,
 		siteSlug,
 		intent,
@@ -168,6 +169,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isReskinned,
 		intervalType,
 		hidePlansFeatureComparison,
+		hideUnavailableFeatures,
 		currentSitePlanSlug: sitePlanSlug,
 		planActionOverrides,
 		intent,
@@ -220,6 +222,7 @@ const PlansFeaturesMain = ( {
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
 	hidePlansFeatureComparison = false,
+	hideUnavailableFeatures = false,
 	isInSignup = false,
 	isPlansInsideStepper = false,
 	isStepperUpgradeFlow = false,
@@ -300,8 +303,10 @@ const PlansFeaturesMain = ( {
 		? 'default'
 		: intentFromProps || intentFromSiteMeta.intent || 'default';
 
+	// TODO clk: "defaultPlans" to be removed once plan properties are computed outside of the grid component
+	// i.e. there will be no need to pass the full set of plans through
 	const defaultPlanTypes = usePlanTypesWithIntent( {
-		intent: 'default',
+		intent: 'plans-woocommerce' === intent ? 'plans-woocommerce' : 'default',
 		selectedPlan,
 		sitePlanSlug,
 		hideEnterprisePlan,
@@ -313,13 +318,11 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	} );
 	const defaultPlans = usePlansFromTypes( {
-		planTypes: defaultPlanTypes?.planTypes || [],
-		group: GROUP_WPCOM,
+		planTypes: defaultPlanTypes?.planTypes,
 		term,
 	} );
 	const plansWithIntent = usePlansFromTypes( {
-		planTypes: planTypesWithIntent?.planTypes || [],
-		group: GROUP_WPCOM,
+		planTypes: planTypesWithIntent?.planTypes,
 		term,
 	} );
 	const visiblePlans =
@@ -416,6 +419,7 @@ const PlansFeaturesMain = ( {
 						intervalType={ intervalType }
 						planTypeSelectorProps={ planTypeSelectorProps }
 						hidePlansFeatureComparison={ hidePlansFeatureComparison }
+						hideUnavailableFeatures={ hideUnavailableFeatures }
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
 						intent={ intent }

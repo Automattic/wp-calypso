@@ -51,6 +51,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				if ( hideUnavailableFeatures && ! currentFeature.availableForCurrentPlan ) {
 					return null;
 				}
+
 				const key = `${ currentFeature.getSlug() }-${ featureIndex }`;
 
 				const isFreePlanAndCustomDomainFeature =
