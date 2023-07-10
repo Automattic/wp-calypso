@@ -14,7 +14,7 @@ import {
 	TERMS_LIST,
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
-import usePlansFromTypes from '../use-plans-from-types';
+import usePlansFromTypes from './use-plans-from-types';
 
 // TODO clk: move to plans data store
 export type PlansIntent =
