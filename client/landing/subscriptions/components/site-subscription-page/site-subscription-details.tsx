@@ -258,7 +258,6 @@ const SiteSubscriptionDetails = ( {
 								className="site-subscription-page__manage-button"
 								variant="primary"
 								href="/me/purchases"
-								disabled={ unsubscribing }
 							>
 								{ translate( 'Manage purchases' ) }
 							</Button>
