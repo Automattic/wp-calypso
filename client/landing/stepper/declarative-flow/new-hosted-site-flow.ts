@@ -10,7 +10,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE } from '../stores';
-import { isInHostingFlow } from '../utils/is-in-hosting-flow';
+import { startedInHostingFlow } from '../utils/hosting-flow';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -54,7 +54,7 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const hostingFlow = useSelector( isInHostingFlow );
+		const hostingFlow = useSelector( startedInHostingFlow );
 		const { setSiteTitle, setPlanCartItem, setSiteGeoAffinity } = useDispatch( ONBOARD_STORE );
 		const { siteGeoAffinity, planCartItem } = useSelect(
 			( select ) => ( {
@@ -112,6 +112,10 @@ const hosting: Flow = {
 
 		if ( hostingFlow ) {
 			const goBack = () => {
+				if ( _currentStepSlug === 'options' ) {
+					return window.location.assign( '/sites?hosting-flow=true' );
+				}
+
 				if ( _currentStepSlug === 'plans' ) {
 					navigate( 'options' );
 				}
@@ -157,6 +161,10 @@ const hosting: Flow = {
 		}
 
 		const goBack = () => {
+			if ( _currentStepSlug === 'plans' ) {
+				return window.location.assign( '/sites' );
+			}
+
 			if ( _currentStepSlug === 'options' ) {
 				navigate( 'plans' );
 			}

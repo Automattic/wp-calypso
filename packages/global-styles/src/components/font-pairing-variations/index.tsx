@@ -9,6 +9,7 @@ import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/compo
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
+import { InView, IntersectionObserverProps } from 'react-intersection-observer';
 import { useFontPairingVariations } from '../../hooks';
 import FontPairingVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -26,6 +27,7 @@ interface FontPairingVariationsProps {
 	stylesheet: string;
 	selectedFontPairingVariation: GlobalStylesObject | null;
 	onSelect: ( fontPairingVariation: GlobalStylesObject | null ) => void;
+	limitGlobalStyles?: boolean;
 }
 
 const FontPairingVariation = ( {
@@ -61,11 +63,19 @@ const FontPairingVariation = ( {
 				} ) as string
 			}
 		>
-			<div className="global-styles-variation__item-preview">
-				<GlobalStylesContext.Provider value={ context }>
-					<FontPairingVariationPreview />
-				</GlobalStylesContext.Provider>
-			</div>
+			<InView triggerOnce>
+				{
+					( ( { inView, ref } ) => (
+						<div className="global-styles-variation__item-preview" ref={ ref }>
+							{ ( isActive || inView ) && (
+								<GlobalStylesContext.Provider value={ context }>
+									<FontPairingVariationPreview />
+								</GlobalStylesContext.Provider>
+							) }
+						</div>
+					) ) as IntersectionObserverProps[ 'children' ]
+				}
+			</InView>
 		</CompositeItem>
 	);
 };
@@ -75,6 +85,7 @@ const FontPairingVariations = ( {
 	stylesheet,
 	selectedFontPairingVariation,
 	onSelect,
+	limitGlobalStyles,
 }: FontPairingVariationsProps ) => {
 	// The theme font pairings don't include the default font pairing
 	const fontPairingVariations = useFontPairingVariations( siteId, stylesheet ) ?? [];
@@ -85,31 +96,42 @@ const FontPairingVariations = ( {
 			{ ...composite }
 			role="listbox"
 			aria-label={ translate( 'Font pairing variations' ) }
+			className="global-styles-variations__container"
 		>
-			<h3 className="global-styles-variation__title">{ translate( 'Free font' ) }</h3>
-			<div className="font-pairing-variations">
-				<FontPairingVariation
-					key="base"
-					// The base is the theme.json, which has the default font pairing
-					isActive={ ! selectedFontPairingVariation }
-					composite={ composite }
-					onSelect={ () => onSelect( null ) }
-				/>
-			</div>
-			<h3 className="global-styles-variation__title">
-				{ translate( 'Premium fonts' ) }
-				<PremiumBadge shouldHideTooltip shouldCompactWithAnimation />
-			</h3>
-			<div className="font-pairing-variations">
-				{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
+			<div className="global-styles-variations__group">
+				<h3 className="global-styles-variations__group-title">{ translate( 'Free font' ) }</h3>
+				<div className="font-pairing-variations">
 					<FontPairingVariation
-						key={ index }
-						fontPairingVariation={ fontPairingVariation }
-						isActive={ fontPairingVariation.title === selectedFontPairingVariation?.title }
+						key="base"
+						// The base is the theme.json, which has the default font pairing
+						isActive={ ! selectedFontPairingVariation }
 						composite={ composite }
-						onSelect={ () => onSelect( fontPairingVariation ) }
+						onSelect={ () => onSelect( null ) }
 					/>
-				) ) }
+				</div>
+			</div>
+			<div className="global-styles-variations__group">
+				<h3 className="global-styles-variations__group-title">
+					{ translate( 'Custom fonts' ) }
+					{ limitGlobalStyles && (
+						<PremiumBadge
+							shouldHideTooltip
+							shouldCompactWithAnimation
+							labelText={ translate( 'Upgrade' ) }
+						/>
+					) }
+				</h3>
+				<div className="font-pairing-variations">
+					{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
+						<FontPairingVariation
+							key={ index }
+							fontPairingVariation={ fontPairingVariation }
+							isActive={ fontPairingVariation.title === selectedFontPairingVariation?.title }
+							composite={ composite }
+							onSelect={ () => onSelect( fontPairingVariation ) }
+						/>
+					) ) }
+				</div>
 			</div>
 		</Composite>
 	);

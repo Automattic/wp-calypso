@@ -46,7 +46,6 @@ import ScreenFontPairings from './screen-font-pairings';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
-import ScreenSection from './screen-section';
 import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
@@ -165,12 +164,6 @@ const PatternAssembler = ( {
 		}
 
 		return patterns.filter( ( pattern ) => pattern ) as Pattern[];
-	};
-
-	const trackEventPatternAdd = ( patternType: string ) => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_ADD_CLICK, {
-			pattern_type: patternType,
-		} );
 	};
 
 	const trackEventPatternSelect = ( {
@@ -385,8 +378,11 @@ const PatternAssembler = ( {
 
 	const onSubmit = () => {
 		const design = getDesign();
-		const stylesheet = design?.recipe?.stylesheet ?? '';
+		const stylesheet = design.recipe?.stylesheet ?? '';
 		const themeId = getThemeIdFromStylesheet( stylesheet );
+		const hasBlogPatterns = !! sections.find(
+			( { categories } ) => categories[ 'posts' ] || categories[ 'blog' ]
+		);
 
 		if ( ! siteSlugOrId || ! site?.ID || ! themeId ) {
 			return;
@@ -412,10 +408,11 @@ const PatternAssembler = ( {
 							headerHtml: header?.html,
 							footerHtml: footer?.html,
 							globalStyles: syncedGlobalStylesUserConfig,
-							// Newly created sites should reset the starter content created from the default Headstart annotation
-							shouldResetContent: isNewSite,
-							// Also, new sites except for virtual themes set the option wpcom_site_setup=assembler
-							siteSetupOption: isNewSite && ! design.is_virtual ? 'assembler' : '',
+							// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
+							// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
+							shouldResetContent: isNewSite && hasBlogPatterns,
+							// All sites using the assembler set the option wpcom_site_setup
+							siteSetupOption: design.is_virtual ? 'assembler-virtual-theme' : 'assembler',
 						} )
 					)
 			);
@@ -487,15 +484,6 @@ const PatternAssembler = ( {
 
 	const onMainItemSelect = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
-	};
-
-	const onAddSection = () => {
-		trackEventPatternAdd( 'section' );
-		setSectionPosition( null );
-	};
-
-	const onReplaceSection = ( position: number ) => {
-		setSectionPosition( position );
 	};
 
 	const onDeleteSection = ( position: number ) => {
@@ -598,16 +586,6 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION }>
-					<ScreenSection
-						patterns={ sections }
-						onAddSection={ onAddSection }
-						onReplaceSection={ onReplaceSection }
-						onDeleteSection={ onDeleteSection }
-						onMoveUpSection={ onMoveUpSection }
-						onMoveDownSection={ onMoveDownSection }
-					/>
-				</NavigatorScreen>
 				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION_PATTERNS }>
 					<ScreenCategoryList
 						categories={ categories }
@@ -619,6 +597,7 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 						onTogglePatternPanelList={ setIsPatternPanelListOpen }
 						selectedPatterns={ sections }
+						onBack={ () => onPatternSelectorBack( 'section' ) }
 					/>
 				</NavigatorScreen>
 

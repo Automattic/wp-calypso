@@ -1,9 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -68,15 +66,11 @@ export const CacheCard = ( {
 	siteSlug,
 	translate,
 } ) => {
-	const dispatch = useDispatch();
-	const showEdgeCache = config.isEnabled( 'yolo/edge-cache-i1' );
 	const {
 		isLoading: getEdgeCacheLoading,
 		data: isEdgeCacheActive,
 		isInitialLoading: getEdgeCacheInitialLoading,
-	} = useEdgeCacheQuery( siteId, {
-		enabled: showEdgeCache,
-	} );
+	} = useEdgeCacheQuery( siteId, {} );
 
 	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
@@ -85,33 +79,29 @@ export const CacheCard = ( {
 		{
 			onSettled: ( ...args ) => {
 				const active = args[ 2 ];
-				dispatch(
-					recordTracksEvent(
-						active
-							? 'calypso_hosting_configuration_edge_cache_enable'
-							: 'calypso_hosting_configuration_edge_cache_disable',
-						{
-							site_id: siteId,
-						}
-					)
+				recordTracksEvent(
+					active
+						? 'calypso_hosting_configuration_edge_cache_enable'
+						: 'calypso_hosting_configuration_edge_cache_disable',
+					{
+						site_id: siteId,
+					}
 				);
 			},
 		}
 	);
 	const { clearEdgeCache, isLoading: clearEdgeCacheLoading } = useClearEdgeCacheMutation( siteId, {
 		onSuccess: () => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
-					site_id: siteId,
-				} )
-			);
+			recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
+				site_id: siteId,
+			} );
 		},
 	} );
 
 	const isClearingCache = isClearingWordpressCache || clearEdgeCacheLoading;
 
 	const clearCache = () => {
-		if ( isEdgeCacheActive && showEdgeCache ) {
+		if ( isEdgeCacheActive ) {
 			clearEdgeCache();
 		}
 		clearAtomicWordPressCache( siteId, 'Manually clearing again.' );
@@ -128,14 +118,15 @@ export const CacheCard = ( {
 						disabled ||
 						isClearingCache ||
 						shouldRateLimitCacheClear ||
-						( showEdgeCache && ( getEdgeCacheLoading || toggleEdgeCacheLoading ) )
+						getEdgeCacheLoading ||
+						toggleEdgeCacheLoading
 					}
 				>
 					<span>{ translate( 'Clear cache' ) }</span>
 				</Button>
 				<EdgeCacheNotice>
 					{ translate(
-						'Be careful, clearing the cache may make your site less responsive while it is being rebuilt.'
+						'Clearing the cache may temporarily make your site less responsive while the cache refreshes.'
 					) }
 				</EdgeCacheNotice>
 				{ shouldRateLimitCacheClear && (
@@ -148,9 +139,9 @@ export const CacheCard = ( {
 	};
 
 	const edgeCacheToggleDescription = isEdgeCacheEligible
-		? translate( 'Enable edge caching for faster content delivery.' )
+		? translate( 'Enable global edge caching for faster content delivery.' )
 		: translate(
-				'Edge cache can only be enabled for public sites. {{a}}Review privacy settings.{{/a}}',
+				'Global edge cache can only be enabled for public sites. {{a}}Review privacy settings.{{/a}}',
 				{
 					components: {
 						a: <a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />,
@@ -173,28 +164,22 @@ export const CacheCard = ( {
 						},
 					} ) }
 				</EdgeCacheDescription>
-				{ showEdgeCache && (
-					<>
-						<ToggleContainer>
-							{ getEdgeCacheInitialLoading ? (
-								<EdgeCacheLoadingPlaceholder />
-							) : (
-								<>
-									<ToggleLabel>{ translate( 'Edge cache' ) }</ToggleLabel>
-									<ToggleControl
-										disabled={
-											clearEdgeCacheLoading || getEdgeCacheLoading || ! isEdgeCacheEligible
-										}
-										checked={ isEdgeCacheActive }
-										onChange={ toggleEdgeCache }
-										label={ edgeCacheToggleDescription }
-									/>
-									<Hr />
-								</>
-							) }
-						</ToggleContainer>
-					</>
-				) }
+				<ToggleContainer>
+					{ getEdgeCacheInitialLoading ? (
+						<EdgeCacheLoadingPlaceholder />
+					) : (
+						<>
+							<ToggleLabel>{ translate( 'Global edge cache' ) }</ToggleLabel>
+							<ToggleControl
+								disabled={ clearEdgeCacheLoading || getEdgeCacheLoading || ! isEdgeCacheEligible }
+								checked={ isEdgeCacheActive }
+								onChange={ toggleEdgeCache }
+								label={ edgeCacheToggleDescription }
+							/>
+							<Hr />
+						</>
+					) }
+				</ToggleContainer>
 				{ getClearCacheContent() }
 			</CardBody>
 		</Card>

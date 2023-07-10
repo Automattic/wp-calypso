@@ -531,7 +531,7 @@ class ThemeSheet extends Component {
 		const selectedStyleVariationInlineCss = this.getSelectedStyleVariation()?.inline_css || '';
 		const url = getDesignPreviewUrl(
 			{ slug: themeId, recipe: { stylesheet } },
-			{ language: locale }
+			{ language: locale, viewport_unit_to_px: true }
 		);
 
 		return (
@@ -539,8 +539,10 @@ class ThemeSheet extends Component {
 				<ThemeWebPreview
 					url={ url }
 					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
+					iframeScaleRatio={ 0.5 }
 					isShowFrameBorder={ false }
 					isShowDeviceSwitcher={ false }
+					isFitHeight
 				/>
 			</div>
 		);
@@ -1452,7 +1454,7 @@ class ThemeSheet extends Component {
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
-		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId || -1 );
+		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
 	},
 	'withSiteGlobalStylesStatus'

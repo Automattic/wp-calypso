@@ -37,16 +37,15 @@ export type PlanTypeSelectorProps = {
 	intervalType: string;
 	customerType: string;
 	withDiscount?: string;
-	hidePersonalPlan: boolean;
 	siteSlug?: string | null;
 	selectedPlan?: string;
 	selectedFeature?: string;
-	showBiannualToggle?: boolean;
+	showBiennialToggle?: boolean;
 	isInSignup: boolean;
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
 	isPlansInsideStepper: boolean;
-	hideDiscountLabel: boolean;
+	hideDiscountLabel?: boolean;
 	redirectTo?: string | null;
 	isStepperUpgradeFlow: boolean;
 };
@@ -132,7 +131,7 @@ export type IntervalTypeProps = Pick<
 	| 'isPlansInsideStepper'
 	| 'hideDiscountLabel'
 	| 'redirectTo'
-	| 'showBiannualToggle'
+	| 'showBiennialToggle'
 	| 'selectedPlan'
 	| 'selectedFeature'
 >;
@@ -144,7 +143,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
 		hideDiscountLabel,
-		showBiannualToggle,
+		showBiennialToggle,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
@@ -157,14 +156,14 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
 	} );
 
-	if ( showBiannualToggle ) {
+	if ( showBiennialToggle ) {
 		// skip showing toggle if current plan's term is higher than 1 year
 		if ( currentPlanBillingPeriod && PLAN_ANNUAL_PERIOD < currentPlanBillingPeriod ) {
 			return null;
 		}
 	}
 
-	if ( ! showBiannualToggle ) {
+	if ( ! showBiennialToggle ) {
 		if ( ! eligibleForWpcomMonthlyPlans ) {
 			return null;
 		}
@@ -184,7 +183,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 
 	const isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
 
-	const intervalTabs = showBiannualToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
+	const intervalTabs = showBiennialToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
 		<IntervalTypeToggleWrapper
@@ -211,11 +210,11 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 							}
 						>
 							{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
-							{ interval === 'yearly' && ! showBiannualToggle ? translate( 'Pay annually' ) : null }
-							{ interval === 'yearly' && showBiannualToggle ? translate( 'Pay 1 year' ) : null }
+							{ interval === 'yearly' && ! showBiennialToggle ? translate( 'Pay annually' ) : null }
+							{ interval === 'yearly' && showBiennialToggle ? translate( 'Pay 1 year' ) : null }
 							{ interval === '2yearly' ? translate( 'Pay 2 years' ) : null }
 						</span>
-						{ ! showBiannualToggle && hideDiscountLabel ? null : (
+						{ ! showBiennialToggle && hideDiscountLabel ? null : (
 							<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
 								{ translate(
 									'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',

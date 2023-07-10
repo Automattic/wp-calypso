@@ -1,8 +1,5 @@
 import {
 	applyTestFiltersToPlansList,
-	getMonthlyPlanByYearly,
-	findPlansKeys,
-	getPlan as getPlanFromKey,
 	getPlanClass,
 	isFreePlan,
 	isPersonalPlan,
@@ -10,7 +7,6 @@ import {
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
-	TERM_MONTHLY,
 	isBusinessPlan,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
@@ -34,12 +30,7 @@ import {
 	VIPLogo,
 	WooLogo,
 } from '@automattic/components';
-import {
-	isAnyHostingFlow,
-	isLinkInBioFlow,
-	isNewsletterFlow,
-	isBlogOnboardingFlow,
-} from '@automattic/onboarding';
+import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -55,13 +46,7 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import {
-	getPlan,
-	getPlanBySlug,
-	getPlanRawPrice,
-	getPlanSlug,
-} from 'calypso/state/plans/selectors';
+import { getPlan, getPlanRawPrice } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
@@ -76,11 +61,13 @@ import { PlanFeaturesItem } from './components/item';
 import { PlanComparisonGrid } from './components/plan-comparison-grid';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
+import PlansGridContextProvider from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from './hooks/use-highlight-label';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
+import type { PlansIntent } from './grid-context';
 import type { PlanActionOverrides } from './types';
 import type { IAppState } from 'calypso/state/types';
 
@@ -105,35 +92,34 @@ const Container = (
 	);
 };
 
-type PlanFeatures2023GridProps = {
-	isInSignup: boolean;
-	siteId: number;
-	isLaunchPage: boolean;
-	isReskinned: boolean;
-	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
-	// either you specify the plans prop or isPlaceholder prop
+export type PlanFeatures2023GridProps = {
 	plans: PlanSlug[];
-	visiblePlans: Array< string >;
-	flowName: string;
-	domainName: string;
+	visiblePlans: PlanSlug[];
+	isInSignup?: boolean;
+	siteId?: number | null;
+	isLaunchPage?: boolean | null;
+	isReskinned?: boolean;
+	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
+	flowName?: string | null;
+	domainName?: string;
 	placeholder?: string;
-	isLandingPage?: boolean;
-	intervalType: string;
-	currentSitePlanSlug?: string;
-	hidePlansFeatureComparison: boolean;
-	hideUnavailableFeatures: boolean;
+	intervalType?: string;
+	currentSitePlanSlug?: string | null;
+	hidePlansFeatureComparison?: boolean;
+	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	planActionOverrides?: PlanActionOverrides;
 	// Value of the `?plan=` query param, so we can highlight a given plan.
 	selectedPlan?: string;
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
+	intent?: PlansIntent;
 };
 
 type PlanFeatures2023GridConnectedProps = {
 	translate: LocalizeProps[ 'translate' ];
 	recordTracksEvent: ( slug: string ) => void;
 	planProperties: Array< PlanProperties >;
-	canUserPurchasePlan: boolean;
+	canUserPurchasePlan: boolean | null;
 	current: boolean;
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	manageHref: string;
@@ -154,10 +140,9 @@ const PlanLogo: React.FunctionComponent< {
 	planPropertiesObj: PlanProperties[];
 	planIndex: number;
 	planProperties: PlanProperties;
-	flowName: string;
 	isMobile?: boolean;
-	isInSignup: boolean;
-	currentSitePlanSlug?: string;
+	isInSignup?: boolean;
+	currentSitePlanSlug?: string | null;
 	selectedPlan?: string;
 } > = ( {
 	planPropertiesObj,
@@ -165,7 +150,6 @@ const PlanLogo: React.FunctionComponent< {
 	planIndex,
 	isMobile,
 	isInSignup,
-	flowName,
 	currentSitePlanSlug,
 	selectedPlan,
 } ) => {
@@ -173,13 +157,11 @@ const PlanLogo: React.FunctionComponent< {
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: planPropertiesObj,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
 	const highlightLabel = useHighlightLabel( {
 		planName,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );
@@ -213,7 +195,6 @@ const PlanLogo: React.FunctionComponent< {
 				isInSignup={ isInSignup }
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
-				flowName={ flowName }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				selectedPlan={ selectedPlan }
 			/>
@@ -257,6 +238,7 @@ export class PlanFeatures2023Grid extends Component<
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
 
 	componentDidMount() {
+		// TODO clk: move these to PlansFeaturesMain (after Woo plans migrate)
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
 	}
@@ -300,63 +282,66 @@ export class PlanFeatures2023Grid extends Component<
 			siteId,
 			selectedPlan,
 			selectedFeature,
+			intent,
 		} = this.props;
 		return (
-			<div className="plans-wrapper">
-				<QueryActivePromotions />
-				<div className="plan-features">
-					<div className="plan-features-2023-grid__content">
-						<div>
-							<div className="plan-features-2023-grid__desktop-view">
-								{ this.renderTable( planProperties ) }
-							</div>
-							<div className="plan-features-2023-grid__tablet-view">
-								{ this.renderTabletView() }
-							</div>
-							<div className="plan-features-2023-grid__mobile-view">
-								{ this.renderMobileView() }
+			<PlansGridContextProvider intent={ intent }>
+				<div className="plans-wrapper">
+					<QueryActivePromotions />
+					<div className="plan-features">
+						<div className="plan-features-2023-grid__content">
+							<div>
+								<div className="plan-features-2023-grid__desktop-view">
+									{ this.renderTable( planProperties ) }
+								</div>
+								<div className="plan-features-2023-grid__tablet-view">
+									{ this.renderTabletView() }
+								</div>
+								<div className="plan-features-2023-grid__mobile-view">
+									{ this.renderMobileView() }
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				{ ! hidePlansFeatureComparison && (
-					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-						<Button onClick={ this.toggleShowPlansComparisonGrid }>
-							{ this.state.showPlansComparisonGrid
-								? translate( 'Hide comparison' )
-								: translate( 'Compare plans' ) }
-						</Button>
-					</div>
-				) }
-				{ ! hidePlansFeatureComparison && this.state.showPlansComparisonGrid ? (
-					<div
-						ref={ this.plansComparisonGridContainerRef }
-						className="plan-features-2023-grid__plan-comparison-grid-container"
-					>
-						<PlanComparisonGrid
-							planTypeSelectorProps={ planTypeSelectorProps }
-							planProperties={ planProperties }
-							intervalType={ intervalType }
-							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
-							flowName={ flowName }
-							currentSitePlanSlug={ currentSitePlanSlug }
-							manageHref={ manageHref }
-							canUserPurchasePlan={ canUserPurchasePlan }
-							selectedSiteSlug={ selectedSiteSlug }
-							onUpgradeClick={ this.handleUpgradeClick }
-							siteId={ siteId }
-							selectedPlan={ selectedPlan }
-							selectedFeature={ selectedFeature }
-						/>
+					{ ! hidePlansFeatureComparison && (
 						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 							<Button onClick={ this.toggleShowPlansComparisonGrid }>
-								{ translate( 'Hide comparison' ) }
+								{ this.state.showPlansComparisonGrid
+									? translate( 'Hide comparison' )
+									: translate( 'Compare plans' ) }
 							</Button>
 						</div>
-					</div>
-				) : null }
-			</div>
+					) }
+					{ ! hidePlansFeatureComparison && this.state.showPlansComparisonGrid ? (
+						<div
+							ref={ this.plansComparisonGridContainerRef }
+							className="plan-features-2023-grid__plan-comparison-grid-container"
+						>
+							<PlanComparisonGrid
+								planTypeSelectorProps={ planTypeSelectorProps }
+								planProperties={ planProperties }
+								intervalType={ intervalType }
+								isInSignup={ isInSignup }
+								isLaunchPage={ isLaunchPage }
+								flowName={ flowName }
+								currentSitePlanSlug={ currentSitePlanSlug }
+								manageHref={ manageHref }
+								canUserPurchasePlan={ canUserPurchasePlan }
+								selectedSiteSlug={ selectedSiteSlug }
+								onUpgradeClick={ this.handleUpgradeClick }
+								siteId={ siteId }
+								selectedPlan={ selectedPlan }
+								selectedFeature={ selectedFeature }
+							/>
+							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
+								<Button onClick={ this.toggleShowPlansComparisonGrid }>
+									{ translate( 'Hide comparison' ) }
+								</Button>
+							</div>
+						</div>
+					) : null }
+				</div>
+			</PlansGridContextProvider>
 		);
 	}
 
@@ -575,7 +560,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isInSignup, flowName, currentSitePlanSlug, selectedPlan } = this.props;
+		const { isInSignup, currentSitePlanSlug, selectedPlan } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -588,7 +573,6 @@ export class PlanFeatures2023Grid extends Component<
 						planProperties={ properties }
 						isMobile={ options?.isMobile }
 						isInSignup={ isInSignup }
-						flowName={ flowName }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						selectedPlan={ selectedPlan }
 					/>
@@ -644,13 +628,15 @@ export class PlanFeatures2023Grid extends Component<
 		const { onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
 		const { cartItemForPlan, planName } = singlePlanProperties;
 
-		if ( ownPropsOnUpgradeClick && cartItemForPlan ) {
-			ownPropsOnUpgradeClick( cartItemForPlan );
+		// TODO clk: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
+
+		if ( cartItemForPlan ) {
+			ownPropsOnUpgradeClick?.( cartItemForPlan );
 			return;
 		}
 
 		if ( isFreePlan( planName ) ) {
-			ownPropsOnUpgradeClick( null );
+			ownPropsOnUpgradeClick?.( null );
 			return;
 		}
 	};
@@ -913,33 +899,29 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const {
 			placeholder,
 			plans,
-			isLandingPage,
 			visiblePlans,
 			isInSignup,
 			siteId,
-			flowName,
 			currentSitePlanSlug,
 			selectedFeature,
+			intent,
 		} = ownProps;
-		const canUserPurchasePlan =
-			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
-		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
+		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
+		const canUserPurchasePlan = siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null;
+		const purchaseId = siteId && getCurrentPlanPurchaseId( state, siteId );
+		// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
 		const selectedSiteSlug = getSiteSlug( state, siteId );
 
+		// TODO clk: plan properties should be passed through props instead of being calculated here
 		const planProperties: PlanProperties[] = plans.map( ( plan: PlanSlug ) => {
 			let isPlaceholder = false;
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
 			const planObject = getPlan( state, planProductId );
-			const billingPeriod = planObject?.bill_period;
 			const isMonthlyPlan = isMonthly( plan );
-			const showMonthly = ! isMonthlyPlan;
-			const relatedMonthlyPlan = showMonthly
-				? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
-				: null;
 
-			// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
-			const showMonthlyPrice = true;
 			if ( placeholder || ( ! planObject && plan !== PLAN_ENTERPRISE_GRID_WPCOM ) ) {
 				isPlaceholder = true;
 			}
@@ -948,17 +930,17 @@ const ConnectedPlanFeatures2023Grid = connect(
 			let jetpackFeatures: FeatureObject[] = [];
 			let tagline = '';
 
-			if ( isNewsletterFlow( flowName ) ) {
+			if ( 'plans-newsletter' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
-			} else if ( isLinkInBioFlow( flowName ) ) {
+			} else if ( 'plans-link-in-bio' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
-			} else if ( isBlogOnboardingFlow( flowName ) ) {
+			} else if ( 'plans-blog-onboarding' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getBlogOnboardingSignupFeatures?.() ?? []
 				);
@@ -978,16 +960,9 @@ const ConnectedPlanFeatures2023Grid = connect(
 				tagline = planConstantObj.getPlanTagline?.() ?? '';
 			}
 
-			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
+			const rawPrice = getPlanRawPrice( state, planProductId, true );
 
-			const monthlyPlanKey = findPlansKeys( {
-				group: planConstantObj.group,
-				term: TERM_MONTHLY,
-				type: planConstantObj.type,
-			} )[ 0 ];
-			const monthlyPlanProductId = getPlanFromKey( monthlyPlanKey )?.getProductId();
 			// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
-			const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId ?? 0, true );
 			const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
 			let planFeaturesTransformed: Array< TransformedFeatureObject > = [];
 			let jetpackFeaturesTransformed: Array< TransformedFeatureObject > = [];
@@ -1047,33 +1022,27 @@ const ConnectedPlanFeatures2023Grid = connect(
 				( planConstantObj.get2023PricingGridSignupStorageOptions &&
 					planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
 				[];
-			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
-			const isCurrentPlan = currentSitePlanSlug === plan;
-			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
+			const availableForPurchase =
+				isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 
 			return {
 				availableForPurchase,
-				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ?? '' ),
-				currencyCode: getCurrentUserCurrencyCode( state ),
-				current: isCurrentPlan,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
-				isLandingPage,
 				isPlaceholder,
-				isVisible,
 				planConstantObj,
 				planName: plan,
-				planObject: planObject,
+				// TODO clk: snake_case?
 				product_name_short,
-				hideMonthly: false,
 				rawPrice,
-				rawPriceForMonthlyPlan,
-				relatedMonthlyPlan,
 				isMonthlyPlan,
 				tagline,
 				storageOptions,
-				billingPeriod,
-				showMonthlyPrice,
+				cartItemForPlan: getCartItemForPlan( plan ),
+				current: currentSitePlanSlug === plan,
+				isVisible: visiblePlans?.indexOf( plan ) !== -1,
+				billingPeriod: planObject?.bill_period,
+				currencyCode: planObject?.currency_code,
 			};
 		} );
 

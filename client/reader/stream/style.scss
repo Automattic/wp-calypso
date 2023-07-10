@@ -661,6 +661,15 @@
 			overflow: hidden;
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
+			white-space: nowrap;
+			position: relative;
+
+			.stream__two-column & {
+				width: 225px;
+			}
+			.stream__two-column &::after {
+				@include long-content-fade( $size: 5% );
+			}
 		}
 	}
 
@@ -710,6 +719,7 @@
 	}
 	.reader-tag-sidebar-related-tags,
 	.reader-tag-sidebar-related-sites {
+		margin-bottom: 32px;
 		h2 {
 			font-size: $font-body;
 			margin-bottom: 14px;
@@ -783,6 +793,10 @@
 
 	.reader-tag-sidebar-related-tags {
 		margin-bottom: 32px;
+	}
+
+	.reader-feed-header__seen-button {
+		margin-bottom: 24px;
 	}
 }
 
@@ -893,13 +907,6 @@
 	}
 }
 
-.is-reader-page .is-site-stream {
-	// Temporary, remove when site stream header is resigned and follow button moved to sidebar.
-	.stream__two-column {
-		border-top: 1px solid var(--color-neutral-10);
-	}
-
-	.reader-post-card.card:nth-child(2) {
-		border-top: none !important;
-	}
+.is-site-stream .stream__two-column .stream__right-column {
+	margin-top: 0;
 }

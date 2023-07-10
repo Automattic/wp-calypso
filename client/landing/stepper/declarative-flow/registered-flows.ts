@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	LINK_IN_BIO_DOMAIN_FLOW,
 	START_WRITING_FLOW,
@@ -7,7 +6,8 @@ import {
 	DESIGN_FIRST_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
-	BULK_DOMAIN_TRANSFER,
+	DOMAIN_TRANSFER,
+	ONBOARDING_PM_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -102,16 +102,15 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 	[ IMPORT_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "import-hosted-site-flow" */ './import-hosted-site' ),
+
+	[ ONBOARDING_PM_FLOW ]: () =>
+		import( /* webpackChunkName: "new-hosted-site-flow" */ './onboarding-pm' ),
+
+	[ DOMAIN_TRANSFER ]: () =>
+		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),
+
+	[ 'plugin-bundle' ]: () =>
+		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
 };
-
-availableFlows[ 'plugin-bundle' ] = () =>
-	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
-
-if ( config.isEnabled( 'bulk-domain-transfer-flow' ) ) {
-	availableFlows[ BULK_DOMAIN_TRANSFER ] = () =>
-		import(
-			/* webpackChunkName: "bulk-domain-transfer" */ '../declarative-flow/bulk-domain-transfer'
-		);
-}
 
 export default availableFlows;

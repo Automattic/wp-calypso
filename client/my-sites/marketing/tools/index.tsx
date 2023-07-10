@@ -9,7 +9,6 @@ import earnIllustration from 'calypso/assets/images/customer-home/illustration--
 import builtByWp from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
 import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
-import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -63,10 +62,6 @@ export const MarketingTools: FunctionComponent = () => {
 
 	const handleCanvaClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_canva_button_click' );
-	};
-
-	const handleSendinblueClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_sendinblue_button_click' );
 	};
 
 	const handleVerblioClick = () => {
@@ -202,23 +197,6 @@ export const MarketingTools: FunctionComponent = () => {
 						target="_blank"
 					>
 						{ translate( 'Start texting' ) }
-					</Button>
-				</MarketingToolsFeature>
-
-				<MarketingToolsFeature
-					title={ translate( 'Turn your visitors into customers' ) }
-					description={ translate(
-						'Sendinblue is an all-in-one marketing and CRM platform to help you grow your business through building stronger customer relationships.'
-					) }
-					imagePath={ sendinblueLogo }
-					imageAlt={ translate( 'Sendinblue logo' ) }
-				>
-					<Button
-						onClick={ handleSendinblueClick }
-						href="https://sendinblue.grsm.io/wordpresscom"
-						target="_blank"
-					>
-						{ translate( 'Start with CRM' ) }
 					</Button>
 				</MarketingToolsFeature>
 

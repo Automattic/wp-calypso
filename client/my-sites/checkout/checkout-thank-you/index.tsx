@@ -22,14 +22,17 @@ import {
 	isStarter,
 	isThemePurchase,
 	isTitanMail,
+	isWpComPlan,
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
-import { Card } from '@automattic/components';
+import { Card, ConfettiAnimation } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -90,10 +93,13 @@ import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
+import MasterbarStyled from './redesign-v2/masterbar-styled';
+import Footer from './redesign-v2/sections/Footer';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
+import './redesign-v2/style.scss';
 import type { SitesPlansResult } from '../composite-checkout/hooks/product-variants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -122,6 +128,7 @@ export interface CheckoutThankYouProps {
 }
 
 export interface CheckoutThankYouConnectedProps {
+	isLoadingPurchases: boolean;
 	isProductsListFetching: boolean;
 	receipt: ReceiptState;
 	gsuiteReceipt: ReceiptState | null;
@@ -274,6 +281,27 @@ export class CheckoutThankYou extends Component<
 			page( `/checkout/thank-you/${ selectedSiteSlug }${ receiptPath }` );
 		}
 	}
+
+	/**
+	 * Determines whether the current checkout flow is for a redesign V2 purchase.
+	 * Used for gradually rolling out the redesign.
+	 *
+	 * @returns {boolean} True if the checkout flow is for a redesign V2 purchase, false otherwise.
+	 */
+	isRedesignV2 = () => {
+		// Fallback to old design when there is a failed purchase.
+		const failedPurchases = getFailedPurchases( this.props );
+		if ( failedPurchases.length > 0 ) {
+			return false;
+		}
+
+		// ThankYou page for only purchasing a plan.
+		const purchases = getPurchases( this.props );
+		if ( purchases.length === 1 ) {
+			return isWpComPlan( purchases[ 0 ].productSlug );
+		}
+		return false;
+	};
 
 	hasPlanOrDomainProduct = () => {
 		return getPurchases( this.props ).some(
@@ -466,7 +494,7 @@ export class CheckoutThankYou extends Component<
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let showHappinessSupport = ! this.props.isSimplified;
+		let showHappinessSupport = ! this.isRedesignV2() && ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
 		let wasDomainProduct = false;
@@ -617,9 +645,24 @@ export class CheckoutThankYou extends Component<
 
 		// standard thanks page
 		return (
-			<Main className="checkout-thank-you">
+			<Main
+				className={ classNames( 'checkout-thank-you', {
+					'is-redesign-v2': this.isRedesignV2(),
+				} ) }
+			>
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-
+				{ this.isDataLoaded() && this.isRedesignV2() && <ConfettiAnimation delay={ 1000 } /> }
+				{ this.isRedesignV2() && this.props.selectedSite?.ID && (
+					<>
+						<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
+						<MasterbarStyled
+							onClick={ () => page( `/home/${ this.props.selectedSiteSlug ?? '' }` ) }
+							backText={ translate( 'Back to dashboard' ) }
+							canGoBack={ true }
+							showContact={ true }
+						/>
+					</>
+				) }
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
 				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
@@ -795,8 +838,9 @@ export class CheckoutThankYou extends Component<
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
 					purchases={ purchases }
+					isRedesignV2={ this.isRedesignV2() }
 				>
-					{ ! isSimplified && primaryPurchase && (
+					{ ! this.isRedesignV2() && ! isSimplified && primaryPurchase && (
 						<CheckoutThankYouFeaturesHeader
 							isDataLoaded={ this.isDataLoaded() }
 							isGenericReceipt={ this.isGenericReceipt() }
@@ -807,10 +851,14 @@ export class CheckoutThankYou extends Component<
 
 					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
-							<PurchaseDetailsWrapper
-								{ ...this.props }
-								componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
-							/>
+							{ this.isRedesignV2() ? (
+								<Footer />
+							) : (
+								<PurchaseDetailsWrapper
+									{ ...this.props }
+									componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
+								/>
+							) }
 						</div>
 					) }
 				</CheckoutThankYouHeader>
@@ -886,6 +934,7 @@ function PurchaseDetailsWrapper(
 	if ( hasFailedPurchases ) {
 		return <FailedPurchaseDetails purchases={ purchases } failedPurchases={ failedPurchases } />;
 	}
+
 	if ( purchases.some( isJetpackPlan ) ) {
 		return (
 			<JetpackPlanDetails

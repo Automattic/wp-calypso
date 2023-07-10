@@ -22,7 +22,6 @@
 	"features": {
 		"ad-tracking": true,
 		"akismet/siteless-checkout": true,
-		"bulk-domain-transfer-flow": false,
 		"bilmur-script": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,

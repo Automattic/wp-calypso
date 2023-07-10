@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import Count from 'calypso/components/count';
+import { useCurrentRoute } from 'calypso/components/route';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { type as domainType } from 'calypso/lib/domains/constants';
@@ -15,6 +16,7 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 		selectedSite.ID,
 		domain.name
 	);
+	const { currentRoute } = useCurrentRoute();
 
 	let emailAddresses: string[] = [];
 
@@ -44,7 +46,7 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 	) : (
 		<DomainInfoCard
 			type="href"
-			href={ emailManagement( selectedSite.slug, domain.name ) }
+			href={ emailManagement( selectedSite.slug, domain.name, currentRoute ) }
 			title={
 				<>
 					{ translate( 'Email' ) }

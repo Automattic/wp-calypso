@@ -692,13 +692,6 @@ function wpcomPages( app ) {
 			next();
 		}
 	} );
-	app.get( '/read/search', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn && calypsoEnv === 'production' ) {
-			res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
-		} else {
-			next();
-		}
-	} );
 
 	app.get( '/plans', function ( req, res, next ) {
 		if ( ! req.context.isLoggedIn ) {
@@ -832,6 +825,12 @@ function wpcomPages( app ) {
 
 		// Otherwise, show them email subscriptions external landing page
 		res.redirect( 'https://wordpress.com/email-subscriptions' );
+	} );
+
+	// Redirects from the /start/domain-transfer flow to the new /setup/domain-transfer.
+	app.get( [ '/start/domain-transfer', '/start/domain-transfer/*' ], function ( req, res ) {
+		const redirectUrl = '/setup/domain-transfer';
+		res.redirect( 301, redirectUrl );
 	} );
 }
 

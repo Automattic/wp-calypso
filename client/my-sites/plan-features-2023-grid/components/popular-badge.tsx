@@ -4,20 +4,12 @@ import PlanPill from 'calypso/components/plans/plan-pill';
 import useHighlightLabel from '../hooks/use-highlight-label';
 
 const PopularBadge: React.FunctionComponent< {
-	isInSignup: boolean;
+	isInSignup?: boolean;
 	planName: string;
-	flowName: string;
 	additionalClassName?: string;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	selectedPlan?: string;
-} > = ( {
-	isInSignup,
-	planName,
-	additionalClassName,
-	flowName,
-	currentSitePlanSlug,
-	selectedPlan,
-} ) => {
+} > = ( { isInSignup, planName, additionalClassName, currentSitePlanSlug, selectedPlan } ) => {
 	const classes = classNames(
 		'plan-features-2023-grid__popular-badge',
 		getPlanClass( planName ),
@@ -25,7 +17,6 @@ const PopularBadge: React.FunctionComponent< {
 	);
 	const highlightLabel = useHighlightLabel( {
 		planName,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );

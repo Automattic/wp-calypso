@@ -32,7 +32,6 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
-		"bulk-domain-transfer-flow": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -61,7 +60,6 @@
 		"domains/premium-domain-purchases": true,
 		"email-accounts/enabled": true,
 		"external-media": true,
-		"yolo/edge-cache-i1": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
@@ -126,6 +124,7 @@
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"newsletter/stats": true,
+		"newsletter/subscribe-modal": true,
 		"oauth": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
@@ -209,7 +208,6 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false,
-		"yolo/site-transfers-i1": true
+		"wpcom-user-bootstrap": false
 	}
 }

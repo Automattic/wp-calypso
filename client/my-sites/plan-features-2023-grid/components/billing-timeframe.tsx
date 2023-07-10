@@ -22,7 +22,7 @@ interface Props {
 	billingTimeframe: TranslateResult;
 	billingPeriod: number | null | undefined;
 	isMonthlyPlan: boolean;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	siteId?: number | null;
 }
 

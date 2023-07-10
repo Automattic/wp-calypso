@@ -60,9 +60,10 @@ open class WPComPluginBuild(
 					-:pull*
 				""".trimIndent()
 				triggerRules = """
-					-:test/e2e/**.md
+					-:test/e2e/**
 					-:docs/**.md
 					-:comment=stress test:**
+					-:packages/calypso-e2e/**
 				""".trimIndent()
 			}
 		}
