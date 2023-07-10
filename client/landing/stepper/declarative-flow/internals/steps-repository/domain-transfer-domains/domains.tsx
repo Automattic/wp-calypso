@@ -102,6 +102,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					extra: {
 						auth_code: auth,
 						signup: false,
+						import_dns_records: storedDomainsState.shouldImportDnsRecords,
 					},
 				} )
 			);
