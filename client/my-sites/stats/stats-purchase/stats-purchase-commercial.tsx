@@ -65,9 +65,9 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 			</p>
 
 			<Button variant="primary">
-				{ translate( 'Get Jetpack Stats for $%(value)s per month', {
+				{ translate( 'Get Jetpack Stats for %(value)s per month', {
 					args: {
-						value: planValue,
+						value: `$${ planValue }`, //TODO: apply dynamic currency symbol
 					},
 				} ) }
 			</Button>
