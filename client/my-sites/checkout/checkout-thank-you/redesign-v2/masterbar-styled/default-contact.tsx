@@ -65,7 +65,7 @@ export function DefaultMasterbarContact() {
 	return (
 		<ContactContainer>
 			<label>{ translate( 'Need extra help?' ) }</label>
-			<Button className="thank-you-help-center" isLink onClick={ toggleHelpCenter }>
+			<Button className="thank-you-help-center" variant="link" onClick={ toggleHelpCenter }>
 				<Gridicon icon="help-outline" />
 				<span>{ translate( 'Visit Help Center' ) }</span>
 			</Button>
