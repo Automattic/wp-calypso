@@ -5,7 +5,7 @@
 	display: flex;
 	gap: 12px;
 	flex-direction: row;
-	@include break-xlarge {
+	@include break-large {
 		flex-direction: column;
 	}
 }
@@ -15,7 +15,7 @@
 	flex-wrap: wrap;
 	gap: 8px;
 	overflow: scroll;
-	padding: 6px 2px 12px 2px;
+	padding: 6px 2px;
 
 	scrollbar-width: none;
 
@@ -23,7 +23,7 @@
 		display: none;
 	}
 
-	@include break-xlarge {
+	@include break-large {
 		padding-top: 12px;
 	}
 
@@ -48,7 +48,7 @@
 		display: none;
 	}
 
-	@include break-xlarge {
+	@include break-large {
 		.global-styles-variations__free-badge {
 			display: inline-flex;
 		}
@@ -74,7 +74,7 @@
 	margin: 0;
 
 	display: none;
-	@include break-xlarge {
+	@include break-large {
 		display: block;
 	}
 }
@@ -137,7 +137,7 @@
 		position: absolute;
 		top: 9px;
 		left: 0;
-		@include break-xlarge {
+		@include break-large {
 			display: none;
 		}
 	}

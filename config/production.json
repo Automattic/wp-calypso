@@ -22,7 +22,6 @@
 	"features": {
 		"ad-tracking": true,
 		"akismet/siteless-checkout": true,
-		"bulk-domain-transfer-flow": false,
 		"bilmur-script": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
@@ -41,7 +40,6 @@
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
 		"external-media": true,
-		"yolo/edge-cache-i1": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
 		"external-media/openverse": true,

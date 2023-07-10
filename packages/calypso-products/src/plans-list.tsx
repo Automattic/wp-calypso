@@ -147,7 +147,6 @@ import {
 	GROUP_WPCOM,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_SECURITY_PLANS,
-	JETPACK_STARTER_PLANS,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_BUSINESS,
@@ -2027,8 +2026,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_T1,
 	getTitle: () => translate( 'Security', { context: 'Jetpack product name' } ),
-	availableFor: ( plan ) =>
-		[ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS, ...JETPACK_STARTER_PLANS ].includes( plan ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
 			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'

@@ -40,6 +40,9 @@ export const getDesignPreviewUrl = (
 			options.style_variation.slug !== 'default' && {
 				style_variation: options.style_variation.title,
 			} ),
+		...( options.viewport_unit_to_px && {
+			viewport_unit_to_px: options.viewport_unit_to_px,
+		} ),
 	} );
 
 	// The preview url is sometimes used in a `background-image: url()` CSS rule and unescaped

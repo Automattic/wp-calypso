@@ -34,6 +34,7 @@
 		position: relative;
 		padding: 0 10px 0 25px;
 		cursor: default;
+		overflow: hidden;
 
 		&,
 		.premium-badge__logo {
@@ -59,8 +60,13 @@
 
 			.premium-badge__label {
 				width: 0;
-				overflow: hidden;
 			}
+		}
+
+		.premium-badge__label {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 

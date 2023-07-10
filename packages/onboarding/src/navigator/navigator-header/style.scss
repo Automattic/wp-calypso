@@ -6,7 +6,7 @@
 	display: none;
 	margin-bottom: 30px;
 
-	@include break-xlarge {
+	@include break-large {
 		display: block;
 	}
 }

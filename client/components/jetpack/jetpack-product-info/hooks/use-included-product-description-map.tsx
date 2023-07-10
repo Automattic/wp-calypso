@@ -1,6 +1,4 @@
 import {
-	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
-	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -12,7 +10,6 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
-	JETPACK_STARTER_PLANS,
 	JETPACK_COMPLETE_PLANS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
@@ -62,21 +59,6 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 		const crmDescription = translate(
 			'Manage your sales funnel. Entrepreneur plan with 30 extensions.'
 		);
-
-		const INCLUDED_PRODUCT_DESCRIPTION_T0_MAP: Record< string, ProductDescription > = {
-			...setProductDescription(
-				[ PRODUCT_JETPACK_BACKUP_T0_YEARLY, PRODUCT_JETPACK_BACKUP_T0_MONTHLY ],
-				{
-					value: backupDescription,
-					calloutText: translate( '1GB cloud storage' ),
-				}
-			),
-
-			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
-				value: antiSpamDescription,
-				calloutText: translate( '1k API calls/mo' ),
-			} ),
-		};
 
 		const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, ProductDescription > = {
 			...setProductDescription(
@@ -129,16 +111,9 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 		};
 
 		const productMap = ( () => {
-			const isJetpackStarterPlan = ( JETPACK_STARTER_PLANS as ReadonlyArray< string > ).includes(
-				productSlug
-			);
 			const isJetpackCompletePlan = ( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes(
 				productSlug
 			);
-
-			if ( isJetpackStarterPlan ) {
-				return INCLUDED_PRODUCT_DESCRIPTION_T0_MAP;
-			}
 
 			if ( isJetpackCompletePlan ) {
 				return INCLUDED_PRODUCT_DESCRIPTION_T2_MAP;
