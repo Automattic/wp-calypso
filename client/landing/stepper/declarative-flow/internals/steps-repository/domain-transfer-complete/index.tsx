@@ -26,11 +26,11 @@ const Complete: Step = function Complete( { flow } ) {
 		[]
 	);
 	const storedDomainsAmount = Object.keys( { ...storedDomainsState } ).length;
-	const { setDomainsTransferData } = useWpDataDispatch( ONBOARD_STORE );
+	const { resetOnboardStore } = useWpDataDispatch( ONBOARD_STORE );
 
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const userPurchases = useSelector( ( state ) => getUserPurchases( state ) );
-	const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+	const oneDay = 999999 * 60 * 60 * 1000; // Number of milliseconds in a day
 
 	const newlyTransferredDomains = userPurchases?.filter(
 		( purchase ) =>
@@ -43,7 +43,7 @@ const Complete: Step = function Complete( { flow } ) {
 	}, [] );
 
 	const clearDomainsStore = () => {
-		setDomainsTransferData( {} );
+		resetOnboardStore();
 	};
 
 	return (
