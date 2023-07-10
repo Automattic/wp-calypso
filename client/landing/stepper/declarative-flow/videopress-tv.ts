@@ -79,6 +79,12 @@ const videopressTv: Flow = {
 					return window.location.replace(
 						`/start/videopress-account/user/${ locale }?variationName=${ name }&flow=${ name }&pageTitle=VideoPress.TV&redirect_to=/setup/videopress-tv/options`
 					);
+				case 'options': {
+					const { siteTitle, tagline } = providedDependencies;
+					setSiteTitle( siteTitle );
+					setSiteDescription( tagline );
+					console.log( 'TODO: site creation with title, description', siteTitle, tagline ); // eslint-disable-line no-console
+				}
 			}
 			return providedDependencies;
 		}
