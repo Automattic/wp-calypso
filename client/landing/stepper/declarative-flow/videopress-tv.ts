@@ -1,9 +1,12 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_TV_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { ONBOARD_STORE } from '../stores';
+import { ONBOARD_STORE, USER_STORE } from '../stores';
 import './internals/videopress.scss';
+import SiteOptions from './internals/steps-repository/site-options';
 import type { Flow, ProvidedDependencies } from './internals/types';
+import type { UserSelect } from '@automattic/data-stores';
 
 const videopressTv: Flow = {
 	name: VIDEOPRESS_TV_FLOW,
@@ -16,6 +19,7 @@ const videopressTv: Flow = {
 				slug: 'intro',
 				asyncComponent: () => import( './internals/steps-repository/intro' ),
 			},
+			{ slug: 'options', component: SiteOptions },
 		];
 	},
 
@@ -30,17 +34,32 @@ const videopressTv: Flow = {
 		const name = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
+		const locale = useLocale();
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+
 		setStepProgress( flowProgress );
 
 		switch ( _currentStep ) {
 			case 'intro':
+				break;
+			case 'options':
+				// todo: validate user logged in
 				break;
 		}
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'intro':
-					return navigate( 'processing' );
+					if ( userIsLoggedIn ) {
+						return navigate( 'options' );
+					}
+
+					return window.location.replace(
+						`/start/videopress-account/user/${ locale }?variationName=${ name }&flow=${ name }&pageTitle=VideoPress.TV&redirect_to=/setup/videopress-tv/options`
+					);
 			}
 			return providedDependencies;
 		}

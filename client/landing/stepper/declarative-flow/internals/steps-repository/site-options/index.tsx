@@ -1,4 +1,8 @@
-import { VIDEOPRESS_FLOW, isNewHostedSiteCreationFlow } from '@automattic/onboarding';
+import {
+	VIDEOPRESS_FLOW,
+	VIDEOPRESS_TV_FLOW,
+	isNewHostedSiteCreationFlow,
+} from '@automattic/onboarding';
 import { NewHostedSiteOptions } from './new-hosted-site-options';
 import { SiteOptions } from './site-options';
 import { VideoPressSiteOptions } from './videopress-site-options';
@@ -10,7 +14,7 @@ const SiteOptionsStepRouter: Step = function SiteOptionsStepRouter( { navigation
 		return <NewHostedSiteOptions navigation={ navigation } />;
 	}
 
-	if ( flow === VIDEOPRESS_FLOW ) {
+	if ( flow === VIDEOPRESS_FLOW || flow === VIDEOPRESS_TV_FLOW ) {
 		return <VideoPressSiteOptions navigation={ navigation } />;
 	}
 
