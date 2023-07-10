@@ -224,11 +224,6 @@ export class PlanFeatures2023Grid extends Component<
 			showPlansComparisonGrid: false,
 			selectedStorage: {},
 		};
-
-		this.props.planProperties.forEach( ( planProperties ) => {
-			const { planName } = planProperties;
-			this.state.selectedStorage[ planName ] = '';
-		} );
 	}
 
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
