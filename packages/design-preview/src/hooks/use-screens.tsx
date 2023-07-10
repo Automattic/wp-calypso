@@ -73,6 +73,7 @@ const useScreens = ( {
 					},
 				variations &&
 					variations.length === 0 &&
+					// Disable Colors for themes that don't play well with them. See pbxlJb-4cl-p2 for more context.
 					! isVirtual &&
 					isEnabled( 'signup/design-picker-preview-colors' ) && {
 						checked: !! selectedColorVariation,
@@ -99,7 +100,6 @@ const useScreens = ( {
 					},
 				variations &&
 					variations.length === 0 &&
-					! isVirtual &&
 					isEnabled( 'signup/design-picker-preview-fonts' ) && {
 						checked: !! selectedFontVariation,
 						icon: typography,
