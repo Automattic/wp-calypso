@@ -46,9 +46,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	const { __, _n } = useI18n();
 
-	const allGood = Object.values( domainsState )
-		.filter( ( x ) => x.domain && x.auth )
-		.every( ( { valid } ) => valid );
+	const filledDomainValues = Object.values( domainsState ).filter( ( x ) => x.domain && x.auth );
+	const allGood = filledDomainValues.every( ( { valid } ) => valid );
 
 	const hasAnyDomains = Object.values( domainsState ).some(
 		( { domain, auth } ) => domain.trim() || auth.trim()
@@ -61,7 +60,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	const handleAddTransfer = () => {
 		if ( allGood ) {
-			const cartItems = Object.values( domainsState ).map( ( { domain, auth } ) =>
+			const cartItems = filledDomainValues.map( ( { domain, auth } ) =>
 				domainTransfer( {
 					domain,
 					extra: {
