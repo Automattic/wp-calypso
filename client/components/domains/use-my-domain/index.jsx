@@ -22,8 +22,8 @@ import {
 	getDomainNameValidationErrorMessage,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
-import { SignupDomainOrigin } from 'calypso/state/signup/steps/website-content/types';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
 import DomainTransferOrConnect from './transfer-or-connect';
@@ -273,7 +273,7 @@ function UseMyDomain( props ) {
 						? showOwnershipVerificationFlow
 						: () =>
 								onConnect( {
-									signupDomainOrigin: isSignupStep ? SignupDomainOrigin.USE_YOUR_DOMAIN : null,
+									signupDomainOrigin: isSignupStep ? SIGNUP_DOMAIN_ORIGIN.use_your_domain : null,
 								} )
 				}
 				onSkip={ onSkip }
