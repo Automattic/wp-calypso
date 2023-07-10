@@ -20,11 +20,18 @@ type ExportResponse = {
 	opml: string;
 };
 
-type ReaderExportButtonProps = ComponentProps< typeof Button > & {
+type ReaderExportButtonProps = {
 	exportType?: ExportType;
 	filename?: string;
 	listId?: number;
 };
+
+// Note: there is a type issue where `disabled` can't be used if we accept every single
+// button prop. As a result, we can pick the props we want to allow.
+type AcceptedButtonProps = Pick<
+	ComponentProps< typeof Button >,
+	'icon' | 'iconSize' | 'variant' | 'disabled'
+>;
 
 const ReaderExportButton = ( {
 	filename = 'reader-export.opml',
@@ -32,7 +39,7 @@ const ReaderExportButton = ( {
 	disabled,
 	listId,
 	...props
-}: ReaderExportButtonProps ) => {
+}: ReaderExportButtonProps & AcceptedButtonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isMounted = useRef( false );
