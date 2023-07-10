@@ -1,7 +1,7 @@
 import { sortPlans } from '../sort-plan-properties';
 import type { PlanProperties } from '../../types';
 
-jest.mock( '../is-popular-plan', () => ( {
+jest.mock( '../../hooks/npm-ready/data-store/is-popular-plan', () => ( {
 	isPopularPlan: ( planSlug ) => planSlug === 'premium',
 } ) );
 jest.mock( '@automattic/calypso-products', () => ( {
