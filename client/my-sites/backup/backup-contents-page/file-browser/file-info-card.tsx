@@ -33,7 +33,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 	);
 
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
-	const size = fileInfo?.size ? convertBytes( fileInfo.size ) : null;
+	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
 
 	const [ isDownloading, setIsDownloading ] = useState< boolean >( false );
 	const downloadFile = useCallback( () => {
@@ -130,7 +130,9 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 				</div>
 			) }
 
-			<FilePreview item={ item } siteId={ siteId } />
+			{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
+				<FilePreview item={ item } siteId={ siteId } />
+			) }
 		</div>
 	);
 };
