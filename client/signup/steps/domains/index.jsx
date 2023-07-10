@@ -14,6 +14,7 @@ import { recordUseYourDomainButtonClick } from 'calypso/components/domains/regis
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import Notice from 'calypso/components/notice';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
 	domainMapping,
@@ -56,7 +57,6 @@ import {
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { SignupDomainOrigin } from 'calypso/state/signup/steps/website-content/types';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getExternalBackUrl } from './utils';
 import './style.scss';
@@ -157,8 +157,8 @@ class DomainsStep extends Component {
 
 	handleAddDomain = ( suggestion, position ) => {
 		const signupDomainOrigin = suggestion?.is_free
-			? SignupDomainOrigin.FREE
-			: SignupDomainOrigin.CUSTOM;
+			? SIGNUP_DOMAIN_ORIGIN.free
+			: SIGNUP_DOMAIN_ORIGIN.custom;
 
 		const stepData = {
 			stepName: this.props.stepName,
@@ -248,7 +248,7 @@ class DomainsStep extends Component {
 
 	handleDomainExplainerClick = () => {
 		const hideFreePlan = true;
-		this.handleSkip( undefined, hideFreePlan, SignupDomainOrigin.CHOOSE_LATER );
+		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.choose_later );
 	};
 
 	handleUseYourDomainClick = () => {
