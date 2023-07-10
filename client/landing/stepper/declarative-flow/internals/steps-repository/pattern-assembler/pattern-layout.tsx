@@ -67,7 +67,7 @@ const PatternLayout = ( {
 			) }
 			<Button className="pattern-layout__add-button" onClick={ () => onAddSection() }>
 				<span className="pattern-layout__add-button-icon">+</span>
-				{ translate( 'Add patterns' ) }
+				{ translate( 'Add sections' ) }
 			</Button>
 		</div>
 	);
