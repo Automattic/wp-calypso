@@ -14,15 +14,15 @@ const FlowCard = ( { icon, onClick, text, title }: FlowCardProps ) => {
 		<Card className="flow-question" as="button" size="small" onClick={ onClick }>
 			<CardBody>
 				<Flex>
-					<FlexItem>
-						<Icon icon={ icon } size={ 20 } />
+					<FlexItem className="flow-question__icon">
+						<Icon icon={ icon } size={ 24 } />
 					</FlexItem>
 					<FlexBlock>
 						<h3 className="flow-question__heading">{ title }</h3>
-						<p>{ text }</p>
+						<p className="flow-question__description">{ text }</p>
 					</FlexBlock>
 					<FlexItem>
-						<Icon icon={ chevronRight } size={ 20 } />
+						<Icon icon={ chevronRight } size={ 24 } />
 					</FlexItem>
 				</Flex>
 			</CardBody>

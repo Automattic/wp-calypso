@@ -1,6 +1,4 @@
-
 @import "@automattic/typography/styles/variables";
-
 
 .flow-question {
 	cursor: pointer;
@@ -14,7 +12,16 @@
 	}
 }
 
+.flow-question__icon {
+	align-self: flex-start;
+	padding: 3px 8px 0 0;
+}
+
 .flow-question__heading {
 	font-weight: bold;
 	font-size: $font-body;
+}
+
+.flow-question__description {
+	color: var(--studio-grey-6);
 }

@@ -2,7 +2,6 @@ import { Onboard } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -44,7 +43,7 @@ const NewsletterType: Step = ( { navigation } ) => {
 				/>
 			}
 			stepContent={
-				<VStack alignment="center" spacing="2">
+				<VStack alignment="top" spacing="2">
 					<FlowCard
 						icon={ IconFree }
 						title={ translate( 'Free newsletter' ) }
