@@ -11,10 +11,10 @@
 		max-height: 235px;
 		cursor: pointer;
 		transition: all 200ms ease-in-out;
-		box-shadow: rgba(0, 0, 0, 0.2) 0 7px 30px -10px;
 
 		&:hover,
 		&:focus {
+			box-shadow: rgba(0, 0, 0, 0.2) 0 7px 30px -10px;
 			.home-site-preview__thumbnail {
 				opacity: 0.8;
 			}
