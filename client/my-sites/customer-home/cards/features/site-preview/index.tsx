@@ -1,28 +1,30 @@
 import { isMobile } from '@automattic/viewport';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
+import classnames from 'classnames';
+import { ReactNode } from 'react';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SiteItemThumbnail } from 'calypso/sites-dashboard/components/sites-site-item-thumbnail';
 import { SiteUrl, Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import { useSelector } from 'calypso/state';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { SitePreviewEllipsisMenu } from './site-preview-ellipsis-menu';
 
-const SitePreview = (): JSX.Element => {
-	const { __ } = useI18n();
-	const selectedSite = useSelector( getSelectedSite );
-
-	if ( isMobile() || ! selectedSite ) {
-		return <div></div>;
-	}
-
-	const editSiteSlug = addQueryArgs( `/site-editor/${ selectedSite.slug }`, {
-		canvas: 'edit',
+interface ThumbnailWrapperProps {
+	showEditSite: boolean;
+	editSiteURL: string;
+	children?: ReactNode;
+}
+const ThumbnailWrapper = ( { showEditSite, editSiteURL, children }: ThumbnailWrapperProps ) => {
+	const classes = classnames( 'home-site-preview__thumbnail-wrapper', {
+		'home-site-preview__remove-pointer': ! showEditSite,
 	} );
 
-	return (
-		<div className="home-site-preview">
+	if ( showEditSite ) {
+		return (
 			<a
 				onClick={ ( event ) => {
 					event.preventDefault();
@@ -33,10 +35,44 @@ const SitePreview = (): JSX.Element => {
 
 					window.location.href = event.currentTarget.href;
 				} }
-				className="home-site-preview__thumbnail-wrapper"
-				href={ editSiteSlug }
+				className={ classes }
+				href={ editSiteURL }
 			>
-				<div className="home-site-preview__thumbnail-label"> { __( 'Edit site' ) } </div>
+				{ children }
+			</a>
+		);
+	}
+
+	return <div className={ classes }> { children } </div>;
+};
+
+interface SitePreviewProps {
+	isFSEActive: boolean;
+}
+
+const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
+	const { __ } = useI18n();
+	const selectedSite = useSelector( getSelectedSite );
+	const canManageSite = useSelector( ( state ) =>
+		canCurrentUser( state, selectedSite?.ID ?? 0, 'manage_options' )
+	);
+
+	if ( isMobile() || ! selectedSite ) {
+		return <div></div>;
+	}
+
+	const shouldShowEditSite = isFSEActive && canManageSite;
+
+	const editSiteURL = addQueryArgs( `/site-editor/${ selectedSite.slug }`, {
+		canvas: 'edit',
+	} );
+
+	return (
+		<div className="home-site-preview">
+			<ThumbnailWrapper showEditSite={ shouldShowEditSite } editSiteURL={ editSiteURL }>
+				{ shouldShowEditSite && (
+					<div className="home-site-preview__thumbnail-label"> { __( 'Edit site' ) } </div>
+				) }
 				<SiteItemThumbnail
 					displayMode="tile"
 					className="home-site-preview__thumbnail"
@@ -44,7 +80,7 @@ const SitePreview = (): JSX.Element => {
 					width={ 312 }
 					height={ 312 }
 				/>
-			</a>
+			</ThumbnailWrapper>
 			<div className="home-site-preview__action-bar">
 				<div className="home-site-preview__site-info">
 					<h2 className="home-site-preview__info-title">{ selectedSite.name }</h2>
@@ -58,4 +94,4 @@ const SitePreview = (): JSX.Element => {
 	);
 };
 
-export default SitePreview;
+export default withIsFSEActive( SitePreview );
