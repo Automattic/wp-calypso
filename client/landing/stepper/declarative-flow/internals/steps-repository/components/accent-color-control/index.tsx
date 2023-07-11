@@ -24,6 +24,8 @@ import { useSite } from '../../../../../hooks/use-site';
 import './style.scss';
 import ColorSwatch from './color-swatch';
 
+type ColorPickerColor = Exclude< React.ComponentProps< typeof ColorPicker >[ 'color' ], undefined >;
+
 interface AccentColorControlProps {
 	accentColor: AccentColor;
 	setAccentColor: Dispatch< SetStateAction< AccentColor > >;
@@ -140,14 +142,18 @@ const AccentColorControl = ( {
 		} );
 	};
 
-	const handleCustomColorSelect = ( { hex, rgb }: ColorPicker.OnChangeCompleteValue ) => {
+	const handleCustomColorSelect = ( color: ColorPickerColor ) => {
+		if ( typeof color === 'string' ) {
+			return;
+		}
+		const { hex, rgb } = color;
 		recordTracksEvent( 'calypso_signup_accent_color_select', {
 			color: 'custom',
 			is_premium: isCustomColorPremium(),
 		} );
 
-		setCustomColor( { hex, rgb: rgb as unknown as RGB } );
-		setAccentColor( { hex, rgb: rgb as unknown as RGB } );
+		setCustomColor( { hex, rgb } );
+		setAccentColor( { hex, rgb } );
 	};
 
 	const getMatchingOption = useCallback(
