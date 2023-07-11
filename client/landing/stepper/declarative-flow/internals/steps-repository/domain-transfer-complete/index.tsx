@@ -37,11 +37,20 @@ const Complete: Step = function Complete( { flow } ) {
 			Date.now() - new Date( purchase.subscribedDate ).getTime() < oneDay
 	);
 
+	const handleUserClick = ( destination: string ) => {
+		recordTracksEvent( 'calypso_domain_transfer_complete_click', {
+			destination,
+		} );
+	};
+
 	useEffect( () => {
 		dispatch( fetchUserPurchases( userId ) );
 	}, [] );
 
 	const clearDomainsStore = () => {
+		recordTracksEvent( 'calypso_domain_transfer_complete_click', {
+			destination: '/setup/domain-transfer',
+		} );
 		resetOnboardStore();
 	};
 
@@ -79,6 +88,7 @@ const Complete: Step = function Complete( { flow } ) {
 								<a
 									href="/domains/manage"
 									className="components-button is-primary manage-all-domains"
+									onClick={ () => handleUserClick( '/domains/manage' ) }
 								>
 									{ __( 'Manage all domains' ) }
 								</a>
