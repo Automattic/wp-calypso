@@ -880,7 +880,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Share to Facebook, Instagram, LinkedIn, Mastodon & Tumblr' ),
 		translate( 'Recycle content' ),
 	];
 	const socialAdvancedIncludesInfo = [
@@ -888,7 +888,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Share to Facebook, Instagram, LinkedIn, Mastodon & Tumblr' ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
 		translate( 'Image generator' ),
@@ -936,11 +936,7 @@ export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
 	string,
 	Array< TranslateResult >
 > => {
-	const socialAdvancedIncludesInfo = [
-		translate( 'Auto-sharing to Instagram & Mastodon' ),
-		translate( 'Multi-image sharing' ),
-		translate( 'Video sharing' ),
-	];
+	const socialAdvancedIncludesInfo = [ translate( 'Multi-image sharing' ) ];
 
 	return {
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
@@ -1009,6 +1005,8 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Easy-to-use interface' ),
 		translate( 'No developer required' ),
 		translate( 'Enhance social media engagement with personalized posts' ),
+		translate( 'Upload & automatically share images and videos to social media' ),
+		translate( 'Automatically create custom images, saving you hours of tedious work' ),
 		translate( 'Repurpose, reuse or republish already published content' ),
 	];
 
@@ -1054,11 +1052,7 @@ export const getJetpackProductsBenefitsComingSoon = (): Record<
 	string,
 	Array< TranslateResult >
 > => {
-	const socialAdvancedBenefits = [
-		translate( 'Share multiple images to social media' ),
-		translate( 'Upload & automatically share videos to social media' ),
-		translate( 'Automatically create custom images, saving you hours of tedious work' ),
-	];
+	const socialAdvancedBenefits = [ translate( 'Share multiple images to social media' ) ];
 
 	return {
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,

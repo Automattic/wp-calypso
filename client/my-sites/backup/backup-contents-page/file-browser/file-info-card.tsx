@@ -7,6 +7,7 @@ import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
+import FilePreview from './file-preview';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
@@ -41,7 +42,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 	};
 
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
-	const size = fileInfo?.size ? convertBytes( fileInfo.size ) : null;
+	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
 
 	const [ isDownloading, setIsDownloading ] = useState< boolean >( false );
 	const downloadFile = useCallback( () => {
@@ -61,7 +62,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 
 				dispatch(
 					recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
-						fileType: item.type,
+						file_type: item.type,
 					} )
 				);
 			} );
@@ -173,6 +174,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 				<div className="file-card__actions">
 					{ requiresPreparation ? prepareDownloadButton : downloadFileButton }
 				</div>
+			) }
+
+			{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
+				<FilePreview item={ item } siteId={ siteId } />
 			) }
 		</div>
 	);
