@@ -1,10 +1,14 @@
+import { SiteSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_TV_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { ONBOARD_STORE, USER_STORE } from '../stores';
+import { useEffect, useState } from 'react';
+import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
+import { useSiteSlug } from '../hooks/use-site-slug';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import './internals/videopress.scss';
+import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
@@ -21,6 +25,7 @@ const videopressTv: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/intro' ),
 			},
 			{ slug: 'options', component: SiteOptions },
+			{ slug: 'processing', component: ProcessingStep },
 		];
 	},
 
@@ -33,7 +38,8 @@ const videopressTv: Flow = {
 		}
 
 		const name = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { createVideoPressTvSite, setPendingAction, setProgress, setStepProgress } =
+			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		const locale = useLocale();
 		const userIsLoggedIn = useSelect(
@@ -41,6 +47,10 @@ const videopressTv: Flow = {
 			[]
 		);
 		const { setSiteDescription, setSiteTitle } = useDispatch( ONBOARD_STORE );
+		const _siteSlug = useSiteSlug();
+		const [ isSiteCreationPending, setIsSiteCreationPending ] = useState( false );
+		const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+		const visibility = useNewSiteVisibility();
 
 		setStepProgress( flowProgress );
 
@@ -57,6 +67,38 @@ const videopressTv: Flow = {
 			return true;
 		};
 
+		const addVideoPressPendingAction = () => {
+			// only allow one call to this action to occur
+			if ( isSiteCreationPending ) {
+				return;
+			}
+
+			setIsSiteCreationPending( true );
+
+			setPendingAction( async () => {
+				setProgress( 0 );
+				try {
+					await createVideoPressTvSite( {
+						languageSlug: locale,
+						visibility,
+					} );
+				} catch ( e ) {
+					return;
+				}
+				setProgress( 0.5 );
+
+				const newSite = getNewSite();
+				if ( ! newSite || ! newSite.site_slug ) {
+					return;
+				}
+
+				setProgress( 1 );
+
+				// go to the new site, and let the "empty state" act as the remaining of onboarding.
+				window.location.href = `https://${ newSite.site_slug }`;
+			} );
+		};
+
 		// needs to be wrapped in a useEffect because validation can call `navigate` which needs to be called in a useEffect
 		useEffect( () => {
 			switch ( _currentStep ) {
@@ -65,6 +107,11 @@ const videopressTv: Flow = {
 					break;
 				case 'options':
 					stepValidateUserIsLoggedIn();
+					break;
+				case 'processing':
+					if ( ! _siteSlug ) {
+						addVideoPressPendingAction();
+					}
 					break;
 			}
 		} );
@@ -83,7 +130,7 @@ const videopressTv: Flow = {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle );
 					setSiteDescription( tagline );
-					console.log( 'TODO: site creation with title, description', siteTitle, tagline ); // eslint-disable-line no-console
+					return navigate( 'processing' );
 				}
 			}
 			return providedDependencies;
