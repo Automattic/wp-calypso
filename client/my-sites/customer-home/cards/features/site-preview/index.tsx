@@ -74,7 +74,7 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 				{ shouldShowEditSite && (
 					<div className="home-site-preview__thumbnail-label"> { __( 'Edit site' ) } </div>
 				) }
-				<div className="home-site-preview__thumbnail-iframe-wrapper">
+				<div className="home-site-preview__thumbnail">
 					<iframe scrolling="no" loading="lazy" title="title" src={ iframeSrcKeepHomepage } />
 				</div>
 			</ThumbnailWrapper>

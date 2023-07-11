@@ -25,7 +25,7 @@
 			}
 		}
 
-		.home-site-preview__thumbnail-iframe-wrapper {
+		.home-site-preview__thumbnail {
 			display: block;
 			height: 235px;
 			width: 100%;
@@ -48,14 +48,6 @@
 			padding: 8px 14px;
 			position: absolute;
 			z-index: 1;
-		}
-
-		.home-site-preview__thumbnail {
-			aspect-ratio: 16 / 11;
-			width: 100%;
-			height: auto;
-			box-sizing: border-box;
-			opacity: 1;
 		}
 	}
 
