@@ -154,6 +154,7 @@
 		"subscriber-importer": true,
 		"subscribers-page-new": false,
 		"subscription-gifting": true,
+		"subscription-management-add-sites-modal": false,
 		"subscription-management-comments-view": true,
 		"subscription-management-pending-view": true,
 		"subscription-management/comments-list-controls": true,
