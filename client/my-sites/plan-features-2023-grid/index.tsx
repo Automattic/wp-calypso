@@ -31,7 +31,7 @@ import {
 } from '@automattic/components';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { Button, CustomSelectControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize, LocalizedComponent, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, createRef } from 'react';
@@ -60,6 +60,7 @@ import { PlanFeaturesItem } from './components/item';
 import { PlanComparisonGrid } from './components/plan-comparison-grid';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
+import { StorageAddOnDropdown } from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
@@ -234,6 +235,15 @@ export class PlanFeatures2023Grid extends Component<
 	toggleShowPlansComparisonGrid = () => {
 		this.setState( ( { showPlansComparisonGrid } ) => ( {
 			showPlansComparisonGrid: ! showPlansComparisonGrid,
+		} ) );
+	};
+
+	setSelectedStorage = ( updatedSelectedStorage: PlanSelectedStorage ) => {
+		this.setState( ( { selectedStorage } ) => ( {
+			selectedStorage: {
+				...selectedStorage,
+				...updatedSelectedStorage,
+			},
 		} ) );
 	};
 
@@ -896,43 +906,9 @@ export class PlanFeatures2023Grid extends Component<
 			} );
 	}
 
-	renderStorageAddOnDropdown( properties: PlanProperties ) {
-		const { planName, storageOptions, storageFeatures } = properties;
-		const { translate } = this.props;
-		const { selectedStorage } = this.state;
-
-		const selectControlOptions = storageOptions.map( ( storageOption ) => ( {
-			key: storageOption,
-			name: getStorageStringFromFeature( storageOption ) || '',
-		} ) );
-
-		const selectedOptionKey = selectedStorage[ planName ] || storageFeatures[ 0 ];
-		const selectedOption = {
-			key: selectedOptionKey,
-			name: getStorageStringFromFeature( selectedOptionKey ) || '',
-		};
-		return (
-			<CustomSelectControl
-				label={ translate( 'Storage' ) }
-				options={ selectControlOptions }
-				value={ selectedOption }
-				onChange={ ( { selectedItem } ) => {
-					const updatedSelectedStorage = {
-						...selectedStorage,
-						[ planName ]: selectedItem?.key,
-					};
-
-					this.setState( {
-						...this.state,
-						selectedStorage: updatedSelectedStorage,
-					} );
-				} }
-			/>
-		);
-	}
-
 	renderPlanStorageOptions( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { translate, intervalType, showUpgradeableStorage } = this.props;
+		const { selectedStorage } = this.state;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -945,15 +921,21 @@ export class PlanFeatures2023Grid extends Component<
 				const canUpgradeStorageForPlan =
 					storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
 
-				const storageJSX = canUpgradeStorageForPlan
-					? this.renderStorageAddOnDropdown( properties )
-					: storageFeatures.map( ( storageFeature: string ) => {
-							return (
-								<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-									{ getStorageStringFromFeature( storageFeature ) }
-								</div>
-							);
-					  } );
+				const storageJSX = canUpgradeStorageForPlan ? (
+					<StorageAddOnDropdown
+						planProperties={ properties }
+						selectedStorage={ selectedStorage }
+						setSelectedStorage={ this.setSelectedStorage }
+					/>
+				) : (
+					storageFeatures.map( ( storageFeature: string ) => {
+						return (
+							<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
+								{ getStorageStringFromFeature( storageFeature ) }
+							</div>
+						);
+					} )
+				);
 
 				return (
 					<Container

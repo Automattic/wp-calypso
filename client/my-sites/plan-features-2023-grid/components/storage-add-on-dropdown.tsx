@@ -7,13 +7,13 @@ import { getStorageStringFromFeature } from '../util';
 type StorageAddOnDropdownProps = {
 	planProperties: PlanProperties;
 	selectedStorage: PlanSelectedStorage;
-	handleSelectedStorageChange: ( selectedStorage: PlanSelectedStorage ) => void;
+	setSelectedStorage: ( selectedStorage: PlanSelectedStorage ) => void;
 };
 
 export const StorageAddOnDropdown = ( {
 	planProperties,
 	selectedStorage,
-	handleSelectedStorageChange,
+	setSelectedStorage,
 }: StorageAddOnDropdownProps ) => {
 	const { planName, storageOptions, storageFeatures } = planProperties;
 	const translate = useTranslate();
@@ -36,14 +36,10 @@ export const StorageAddOnDropdown = ( {
 			value={ selectedOption }
 			onChange={ ( { selectedItem } ) => {
 				const updatedSelectedStorage = {
-					...selectedStorage,
 					[ planName ]: selectedItem?.key || '',
 				};
 
-				handleSelectedStorageChange( {
-					...selectedStorage,
-					selectedStorage: updatedSelectedStorage,
-				} );
+				setSelectedStorage( updatedSelectedStorage );
 			} }
 		/>
 	);
