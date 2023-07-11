@@ -39,7 +39,7 @@ const onboarding: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = ONBOARDING_PM_FLOW;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setHideFreePlan } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: currentStep, flowName } );
 		const { domain, provider } = useDomainParams();
 
@@ -77,6 +77,9 @@ const onboarding: Flow = {
 
 			switch ( currentStep ) {
 				case 'domains':
+					// At the moment, this flow is the only one which doesn't hide the Free plan when a paid domain is picked, so it's done here.
+					// Once this behavior is standardized, we will be able to remove this.
+					setHideFreePlan( false );
 					navigate( 'plans' );
 					return;
 				case 'plans':
