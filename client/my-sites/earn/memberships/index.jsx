@@ -556,7 +556,11 @@ class MembershipsSection extends Component {
 									{
 										components: {
 											link: (
-												<a href="https://wordpress.com/support/wordpress-editor/blocks/payments/#setting-up-payments" />
+												<a
+													href={ localizeUrl(
+														'https://wordpress.com/support/wordpress-editor/blocks/payments/#setting-up-payments'
+													) }
+												/>
 											),
 										},
 									}
