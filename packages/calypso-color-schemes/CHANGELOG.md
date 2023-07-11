@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Added a new color for Nextdoor.
+- Add `root-only` entry point.
 
 ## 3.0.0
 
