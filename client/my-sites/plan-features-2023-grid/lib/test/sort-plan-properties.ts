@@ -12,27 +12,27 @@ describe( 'sortPlans', () => {
 	const planFree = {
 		rawPrice: 0,
 		planName: 'free',
-	} as PlanProperties;
+	} as unknown as PlanProperties;
 
 	const planPersonal = {
 		rawPrice: 100,
 		planName: 'personal',
-	} as PlanProperties;
+	} as unknown as PlanProperties;
 
 	const planPremium = {
 		rawPrice: 200,
 		planName: 'premium',
-	} as PlanProperties;
+	} as unknown as PlanProperties;
 
 	const planBusiness = {
 		rawPrice: 300,
 		planName: 'business',
-	} as PlanProperties;
+	} as unknown as PlanProperties;
 
 	const planEcommerce = {
 		rawPrice: 500,
 		planName: 'ecommerce',
-	} as PlanProperties;
+	} as unknown as PlanProperties;
 
 	const plansInDefaultOrder = [ planFree, planPersonal, planPremium, planBusiness, planEcommerce ];
 
