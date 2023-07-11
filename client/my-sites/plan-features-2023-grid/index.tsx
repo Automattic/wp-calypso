@@ -31,14 +31,13 @@ import {
 } from '@automattic/components';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { Button } from '@wordpress/components';
+import { Button, CustomSelectControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize, LocalizedComponent, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
@@ -139,7 +138,7 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
-	selectedStorage: { [ key: string ]: string };
+	selectedStorage: { [ key: string ]: string | undefined };
 };
 
 const PlanLogo: React.FunctionComponent< {
@@ -901,43 +900,36 @@ export class PlanFeatures2023Grid extends Component<
 
 	renderStorageAddOnDropdown( properties: PlanProperties ) {
 		const { planName, storageOptions, storageFeatures } = properties;
+		const { translate } = this.props;
 		const { selectedStorage } = this.state;
 
-		return (
-			<SelectDropdown
-				onToggle={ ( { open: isOpen }: { open: boolean } ) => {
-					if ( isOpen ) {
-						// record interaction event here
-					}
-				} }
-				selectedText={
-					selectedStorage[ planName ]
-						? getStorageStringFromFeature( selectedStorage[ planName ] )
-						: getStorageStringFromFeature( storageFeatures[ 0 ] )
-				}
-			>
-				{ storageOptions.map( ( storageOption ) => {
-					return (
-						<SelectDropdown.Item
-							key={ `${ planName } ${ storageOption }` }
-							selected={ storageOption === selectedStorage[ planName ] }
-							onClick={ () => {
-								const updatedSelectedStorage = {
-									...selectedStorage,
-									[ planName ]: storageOption,
-								};
+		const selectControlOptions = storageOptions.map( ( storageOption ) => ( {
+			key: storageOption,
+			name: getStorageStringFromFeature( storageOption ) || '',
+		} ) );
 
-								this.setState( {
-									...this.state,
-									selectedStorage: updatedSelectedStorage,
-								} );
-							} }
-						>
-							{ getStorageStringFromFeature( storageOption ) }
-						</SelectDropdown.Item>
-					);
-				} ) }
-			</SelectDropdown>
+		const selectedOptionKey = selectedStorage[ planName ] || storageFeatures[ 0 ];
+		const selectedOption = {
+			key: selectedOptionKey,
+			name: getStorageStringFromFeature( selectedOptionKey ) || '',
+		};
+		return (
+			<CustomSelectControl
+				label={ translate( 'Storage' ) }
+				options={ selectControlOptions }
+				value={ selectedOption }
+				onChange={ ( { selectedItem } ) => {
+					const updatedSelectedStorage = {
+						...selectedStorage,
+						[ planName ]: selectedItem?.key,
+					};
+
+					this.setState( {
+						...this.state,
+						selectedStorage: updatedSelectedStorage,
+					} );
+				} }
+			/>
 		);
 	}
 
@@ -974,7 +966,7 @@ export class PlanFeatures2023Grid extends Component<
 						className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
 						isTableCell={ options?.isTableCell }
 					>
-						{ storageOptions.length ? (
+						{ storageOptions.length === 1 ? (
 							<div className="plan-features-2023-grid__storage-title">
 								{ translate( 'Storage' ) }
 							</div>
