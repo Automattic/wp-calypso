@@ -23,7 +23,7 @@ interface GlobalStylesVariationsProps {
 	selectedGlobalStylesVariation: GlobalStylesObject | null;
 	description?: TranslateResult;
 	showOnlyHoverViewDefaultVariation?: boolean;
-	splitPremiumVariations?: boolean;
+	splitDefaultVariation?: boolean;
 	displayFreeLabel?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
@@ -102,7 +102,7 @@ const GlobalStylesVariations = ( {
 	description,
 	showOnlyHoverViewDefaultVariation,
 	onSelect,
-	splitPremiumVariations = true,
+	splitDefaultVariation = true,
 	displayFreeLabel = true,
 }: GlobalStylesVariationsProps ) => {
 	const baseGlobalStyles = useMemo(
@@ -121,13 +121,13 @@ const GlobalStylesVariations = ( {
 		[ globalStylesVariations ]
 	);
 
-	const premiumStylesDescription =
+	const nonDefaultStylesDescription =
 		description ??
 		translate(
-			'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
+			'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
 		);
 
-	const premiumStyles = globalStylesVariationsWithoutDefault.map(
+	const nonDefaultStyles = globalStylesVariationsWithoutDefault.map(
 		( globalStylesVariation, index ) => (
 			<GlobalStylesVariation
 				key={ index }
@@ -139,14 +139,14 @@ const GlobalStylesVariations = ( {
 		)
 	);
 
-	const headerText = splitPremiumVariations ? translate( 'Default Style' ) : translate( 'Styles' );
+	const headerText = splitDefaultVariation ? translate( 'Default Style' ) : translate( 'Styles' );
 
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
 			<div className="global-styles-variations__container">
 				<div
 					className={ classnames( 'global-styles-variations__type', {
-						'combined-variations': ! splitPremiumVariations,
+						'combined-variations': ! splitDefaultVariation,
 					} ) }
 				>
 					<div className="global-styles-variations__header">
@@ -158,7 +158,7 @@ const GlobalStylesVariations = ( {
 								</div>
 							) }
 						</h2>
-						{ ! splitPremiumVariations && (
+						{ ! splitDefaultVariation && (
 							<div>
 								<p>{ translate( 'You can change your style at any time.' ) }</p>
 							</div>
@@ -176,20 +176,20 @@ const GlobalStylesVariations = ( {
 							showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
 							onSelect={ () => onSelect( baseGlobalStyles ) }
 						/>
-						{ ! splitPremiumVariations && premiumStyles }
+						{ ! splitDefaultVariation && nonDefaultStyles }
 					</div>
 				</div>
-				{ splitPremiumVariations && (
+				{ splitDefaultVariation && (
 					<div className="global-styles-variations__type">
 						<div className="global-styles-variations__header">
 							<h2>
-								{ translate( 'Premium style', 'Premium styles', {
-									count: premiumStyles.length,
+								{ translate( 'Custom Style', 'Custom Styles', {
+									count: nonDefaultStyles.length,
 								} ) }
 							</h2>
-							<p>{ premiumStylesDescription }</p>
+							<p>{ nonDefaultStylesDescription }</p>
 						</div>
-						<div className="global-styles-variations">{ premiumStyles }</div>
+						<div className="global-styles-variations">{ nonDefaultStyles }</div>
 					</div>
 				) }
 			</div>
