@@ -392,20 +392,12 @@ function CheckoutSummaryFeaturesList( props: {
 			{ hasDomainTransferProduct && (
 				<>
 					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon id="features-list-support-text" />
-						{ translate( 'Extremely fast DNS with SSL' ) }
-					</CheckoutSummaryFeaturesListItem>
-					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon id="features-list-support-privacy" />
-						{ translate( 'Private domain registration and SSL certificate included for free' ) }
-					</CheckoutSummaryFeaturesListItem>
-					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="features-list-support-another-year" />
 						{ translate( "We'll renew your domain for another year" ) }
 					</CheckoutSummaryFeaturesListItem>
 					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon id="features-list-support-manage" />
-						{ translate( 'Manage everything you need in one place' ) }
+						<WPCheckoutCheckIcon id="features-list-support-privacy" />
+						{ translate( 'Private domain registration and SSL certificate included for free' ) }
 					</CheckoutSummaryFeaturesListItem>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="annual-live-chat" />
