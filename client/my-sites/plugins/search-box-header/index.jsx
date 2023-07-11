@@ -85,14 +85,12 @@ const SearchBoxHeader = ( props ) => {
 		searchTerms,
 	} = props;
 
-	// Clear the keyword in search box on PluginsBrowser load if required.
-	// Required when navigating to a new plugins browser location
-	// without using close search ("X") to clear. e.g. When clicking
-	// clear in the search results header.
+	// Update the search box with the value from the url everytime it changes
+	// This allows the component to be refilled with a keyword
+	// when navigating back to a page via breadcrumb,
+	// and get empty when the user accesses a non-search page
 	useEffect( () => {
-		if ( ! searchTerm ) {
-			searchRef?.current?.setKeyword( '' );
-		}
+		searchRef?.current?.setKeyword( searchTerm ?? '' );
 	}, [ searchRef, searchTerm ] );
 
 	const classNames = [ 'search-box-header' ];
