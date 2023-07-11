@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -72,7 +73,9 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 		<div className="home-site-preview">
 			<ThumbnailWrapper showEditSite={ shouldShowEditSite } editSiteURL={ editSiteURL }>
 				{ shouldShowEditSite && (
-					<div className="home-site-preview__thumbnail-label"> { __( 'Edit site' ) } </div>
+					<Button primary className="home-site-preview__thumbnail-label">
+						{ __( 'Edit site' ) }
+					</Button>
 				) }
 				<div className="home-site-preview__thumbnail">
 					<iframe scrolling="no" loading="lazy" title="title" src={ iframeSrcKeepHomepage } />
