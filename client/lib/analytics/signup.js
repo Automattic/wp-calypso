@@ -9,6 +9,10 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { identifyUser } from 'calypso/lib/analytics/identify-user';
 import { addToQueue } from 'calypso/lib/analytics/queue';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	getDomainOrigin,
+	removeDomainOrigin,
+} from 'calypso/lib/analytics/utils/signup_domain_origin';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 
@@ -20,15 +24,6 @@ export function recordSignupStart( flow, ref, optionalProps ) {
 	// Marketing
 	adTrackSignupStart( flow );
 }
-
-// domain sources for calypso_signup_complete tracks event
-export const SIGNUP_DOMAIN_ORIGIN = {
-	use_your_domain: 'use-your-domain',
-	choose_later: 'choose-later',
-	free: 'free',
-	custom: 'custom',
-	not_set: 'not-set',
-};
 
 export function recordSignupComplete(
 	{
@@ -45,7 +40,6 @@ export function recordSignupComplete(
 		startingPoint,
 		isTransfer,
 		isMapping,
-		signupDomainOrigin,
 	},
 	now
 ) {
@@ -70,11 +64,12 @@ export function recordSignupComplete(
 				startingPoint,
 				isTransfer,
 				isMapping,
-				signupDomainOrigin,
 			},
 			true
 		);
 	}
+
+	const signUpDomainOrigin = getDomainOrigin();
 
 	// Tracks
 	// Note that Tracks expects blog_id to differntiate sites, hence using
@@ -94,8 +89,10 @@ export function recordSignupComplete(
 		starting_point: startingPoint,
 		is_transfer: isTransfer,
 		is_mapping: isMapping,
-		signup_domain_origin: signupDomainOrigin,
+		signup_domain_origin: signUpDomainOrigin,
 	} );
+
+	removeDomainOrigin();
 
 	// Google Analytics
 	const flags = [
