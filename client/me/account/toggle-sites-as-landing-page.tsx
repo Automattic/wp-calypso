@@ -7,9 +7,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isSavingPreference } from 'calypso/state/preferences/selectors';
 
 const ToggleControl = OriginalToggleControl as React.ComponentType<
-	OriginalToggleControl.Props & {
-		disabled?: boolean;
-	}
+	React.ComponentProps< typeof OriginalToggleControl > & { disabled?: boolean }
 >;
 
 function ToggleSitesAsLandingPage() {

@@ -6,14 +6,12 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 export const FEATURED_IMAGE_IN_EMAIL_OPTION = 'wpcom_featured_image_in_email';
 
 const ToggleControl = OriginalToggleControl as React.ComponentType<
-	OriginalToggleControl.Props & {
-		disabled?: boolean;
-	}
+	React.ComponentProps< typeof OriginalToggleControl > & { disabled?: boolean }
 >;
 
 type FeaturedImageEmailSettingProps = {
 	value?: boolean;
-	handleToggle: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	disabled?: boolean;
 };
 
