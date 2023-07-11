@@ -216,14 +216,10 @@ export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
 	PlanFeatures2023GridState
 > {
-	constructor( props: PlanFeatures2023GridType ) {
-		super( props );
-
-		this.state = {
-			showPlansComparisonGrid: false,
-			selectedStorage: {},
-		};
-	}
+	state = {
+		showPlansComparisonGrid: false,
+		selectedStorage: {},
+	};
 
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
 
