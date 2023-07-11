@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import Stream from 'calypso/reader/stream';
@@ -12,6 +13,9 @@ function FollowingStream( { ...props } ) {
 			<Stream
 				{ ...props }
 				className="following"
+				streamHeader={
+					config.isEnabled( 'reader/editor' ) && <AsyncLoad require="calypso/reader/post-editor" />
+				}
 				streamSidebar={ <ReaderListFollowedSites path={ window.location.pathname } /> }
 			>
 				<FollowingIntro />
