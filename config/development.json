@@ -174,7 +174,7 @@
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
 		"signup/design-picker-pattern-assembler": true,
-		"signup/design-picker-preview-colors": false,
+		"signup/design-picker-preview-colors": true,
 		"signup/design-picker-preview-fonts": true,
 		"signup/professional-email-step": false,
 		"signup/social": true,
