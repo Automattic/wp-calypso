@@ -1,13 +1,15 @@
 import { Button, Spinner } from '@automattic/components';
 import { useCallback, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
+import { usePrepareDownload } from './use-prepare-download';
 import { convertBytes } from './util';
 
 interface FileInfoCardProps {
@@ -30,6 +32,13 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 		item.manifestPath ?? '',
 		item.extensionType ?? ''
 	);
+
+	const { prepareDownload, prepareDownloadStatus } = usePrepareDownload();
+	const prepareDownloadTexts = {
+		[ PREPARE_DOWNLOAD_STATUS.DEFAULT ]: translate( 'Prepare and download' ),
+		[ PREPARE_DOWNLOAD_STATUS.PREPARING ]: translate( 'Preparing' ),
+		[ PREPARE_DOWNLOAD_STATUS.DOWNLOADING ]: translate( 'Downloading' ),
+	};
 
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
 	const size = fileInfo?.size ? convertBytes( fileInfo.size ) : null;
@@ -58,7 +67,27 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 			} );
 	}, [ siteId, item, dispatch ] );
 
-	const showActions = item.type !== 'table' && item.type !== 'archive';
+	const prepareDownloadClick = useCallback( () => {
+		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
+			// @TODO: We should dispatch an error notice
+			return;
+		}
+
+		prepareDownload( siteId, item.period, fileInfo.manifestFilter, fileInfo.dataType );
+	}, [ fileInfo, item.period, prepareDownload, siteId ] );
+
+	useEffect( () => {
+		if (
+			prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ||
+			prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.DOWNLOADING
+		) {
+			setIsDownloading( true );
+		} else {
+			setIsDownloading( false );
+		}
+	}, [ prepareDownloadStatus ] );
+
+	const showActions = item.type !== 'archive';
 
 	// Do not display file info if the item hasChildren (it could be a directory, plugins, themes, etc.)
 	if ( item.hasChildren ) {
@@ -72,6 +101,25 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 	if ( ! isSuccess ) {
 		return null;
 	}
+
+	const requiresPreparation = item.type === 'table';
+
+	const downloadFileButton = (
+		<Button className="file-card__action" onClick={ downloadFile } disabled={ isDownloading }>
+			{ isDownloading ? <Spinner /> : translate( 'Download file' ) }
+		</Button>
+	);
+
+	const prepareDownloadButton = (
+		<Button
+			className="file-card__action"
+			onClick={ prepareDownloadClick }
+			disabled={ isDownloading }
+		>
+			{ isDownloading && <Spinner className="file-card__prepare-download-spinner" size={ 16 } /> }
+			{ prepareDownloadTexts[ prepareDownloadStatus ] }
+		</Button>
+	);
 
 	return (
 		<div className="file-card">
@@ -123,9 +171,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 
 			{ showActions && (
 				<div className="file-card__actions">
-					<Button className="file-card__action" onClick={ downloadFile } disabled={ isDownloading }>
-						{ isDownloading ? <Spinner /> : translate( 'Download file' ) }
-					</Button>
+					{ requiresPreparation ? prepareDownloadButton : downloadFileButton }
 				</div>
 			) }
 		</div>
