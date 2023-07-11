@@ -173,6 +173,20 @@ describe( 'PlanFeatures2023GridActions', () => {
 
 				expect( upgradeButton ).toBeEnabled();
 			} );
+
+			test( 'should render the price when isStuck is true', () => {
+				render(
+					<PlanFeatures2023GridActions
+						{ ...defaultProps }
+						planName={ PLAN_BUSINESS_3_YEARS }
+						planSlug={ PLAN_BUSINESS_3_YEARS }
+						isStuck={ true }
+					/>
+				);
+				const upgradeButton = screen.getByRole( 'button', { name: 'Upgrade – $50' } );
+
+				expect( upgradeButton ).toHaveTextContent( 'Upgrade – $50' );
+			} );
 		} );
 	} );
 } );
