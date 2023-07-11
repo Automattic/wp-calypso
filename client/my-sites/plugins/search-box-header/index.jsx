@@ -28,16 +28,16 @@ const SearchBox = ( {
 	const searchTermSuggestion = useTermsSuggestions( searchTerms ) || 'ecommerce';
 
 	const pageToSearch = useCallback(
-		( s ) => {
+		( search ) => {
 			const isCategoryPage = window.location.href.includes( '/plugins/browse/' );
 			if ( isCategoryPage ) {
 				dispatch( resetBreadcrumbs() );
 			}
 
 			page.show( localizePath( `/plugins/${ selectedSite?.slug || '' }` ) ); // Ensures location.href is on the main Plugins page before setQueryArgs uses it to construct the redirect.
-			setQueryArgs( '' !== s ? { s } : {} );
+			setQueryArgs( '' !== search ? { s: search } : {} );
 
-			if ( s ) {
+			if ( search ) {
 				searchBoxRef.current.blur();
 				scrollTo( {
 					x: 0,
