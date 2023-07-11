@@ -39,13 +39,6 @@ describe( '#announceSuccess()', () => {
 	const tempImageSrc = 'tempImageSrc';
 
 	beforeAll( () => {
-		Object.defineProperty(
-			global,
-			'FormData',
-			jest.fn( () => ( {
-				append: noop,
-			} ) )
-		);
 		global.FileReader = jest.fn( () => ( {
 			readAsDataURL: noop,
 			addEventListener: function ( event, callback ) {
