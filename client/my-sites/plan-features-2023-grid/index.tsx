@@ -125,6 +125,7 @@ type PlanFeatures2023GridConnectedProps = {
 	manageHref: string;
 	selectedSiteSlug: string | null;
 	isPlanUpgradeCreditEligible: boolean;
+	isGlobalStylesOnPersonal?: boolean;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -283,6 +284,7 @@ export class PlanFeatures2023Grid extends Component<
 			selectedPlan,
 			selectedFeature,
 			intent,
+			isGlobalStylesOnPersonal,
 		} = this.props;
 		return (
 			<PlansGridContextProvider intent={ intent }>
@@ -332,6 +334,7 @@ export class PlanFeatures2023Grid extends Component<
 								siteId={ siteId }
 								selectedPlan={ selectedPlan }
 								selectedFeature={ selectedFeature }
+								isGlobalStylesOnPersonal={ isGlobalStylesOnPersonal }
 							/>
 							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 								<Button onClick={ this.toggleShowPlansComparisonGrid }>
@@ -895,7 +898,7 @@ const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
-	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
+	( state: IAppState, ownProps: PlanFeatures2023GridType ) => {
 		const {
 			placeholder,
 			plans,
@@ -905,6 +908,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			currentSitePlanSlug,
 			selectedFeature,
 			intent,
+			isGlobalStylesOnPersonal,
 		} = ownProps;
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = siteId
@@ -932,32 +936,32 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			if ( 'plans-newsletter' === intent ) {
 				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
+					planConstantObj?.getNewsletterSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
 				);
-				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
+				tagline = planConstantObj.getNewsletterTagLine?.( isGlobalStylesOnPersonal ) ?? '';
 			} else if ( 'plans-link-in-bio' === intent ) {
 				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
+					planConstantObj?.getLinkInBioSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
 				);
-				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
+				tagline = planConstantObj.getLinkInBioTagLine?.( isGlobalStylesOnPersonal ) ?? '';
 			} else if ( 'plans-blog-onboarding' === intent ) {
 				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.getBlogOnboardingSignupFeatures?.() ?? []
+					planConstantObj?.getBlogOnboardingSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
 				);
 
 				jetpackFeatures = getPlanFeaturesObject(
 					planConstantObj.getBlogOnboardingSignupJetpackFeatures?.() ?? []
 				);
-				tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
+				tagline = planConstantObj.getBlogOnboardingTagLine?.( isGlobalStylesOnPersonal ) ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
-					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( isGlobalStylesOnPersonal ) ?? []
 				);
 
 				jetpackFeatures = getPlanFeaturesObject(
 					planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
 				);
-				tagline = planConstantObj.getPlanTagline?.() ?? '';
+				tagline = planConstantObj.getPlanTagline?.( isGlobalStylesOnPersonal ) ?? '';
 			}
 
 			const rawPrice = getPlanRawPrice( state, planProductId, true );
