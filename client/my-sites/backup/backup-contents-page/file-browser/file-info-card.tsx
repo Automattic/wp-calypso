@@ -52,7 +52,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 
 				dispatch(
 					recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
-						fileType: item.type,
+						file_type: item.type,
 					} )
 				);
 			} );
