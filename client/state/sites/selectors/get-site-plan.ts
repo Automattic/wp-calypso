@@ -1,4 +1,4 @@
-import { PlanSlug, PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
+import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import type { AppState } from 'calypso/types';
 
@@ -8,7 +8,7 @@ export interface SitePlan {
 	is_free?: boolean;
 	product_id: number;
 	product_name_short: string;
-	product_slug: PlanSlug;
+	product_slug: string; // this should be PlanSlug, but it's defined in calypso-products, while SiteDetails (from getRawSite) in data-stores (one is published on NPM, the other not)
 	user_is_owner?: boolean;
 }
 

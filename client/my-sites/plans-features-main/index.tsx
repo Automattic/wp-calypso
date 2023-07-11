@@ -240,7 +240,9 @@ const PlansFeaturesMain = ( {
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
-	const sitePlanSlug = useSelector( ( state: IAppState ) => getSitePlanSlug( state, siteId ) );
+	const sitePlanSlug = useSelector( ( state: IAppState ) =>
+		siteId ? getSitePlanSlug( state, siteId ) : null
+	);
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
