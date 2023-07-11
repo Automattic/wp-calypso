@@ -20,7 +20,6 @@ import { useInterval } from 'calypso/lib/interval';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
-import { useVideoPressLoadingMessages } from './hooks/use-videopress-loading-messages';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -35,10 +34,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const { flow } = props;
 
 	const { __ } = useI18n();
-	const videoPressLoadingMessages = useVideoPressLoadingMessages();
-	const defaultLoadingMessages = useProcessingLoadingMessages( flow );
-	const loadingMessages =
-		'videopress' === flow ? videoPressLoadingMessages : defaultLoadingMessages;
+	const loadingMessages = useProcessingLoadingMessages( flow );
 
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
