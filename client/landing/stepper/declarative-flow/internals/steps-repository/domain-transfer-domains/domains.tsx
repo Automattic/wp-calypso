@@ -61,7 +61,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const handleAddTransfer = () => {
 		recordTracksEvent( 'calypso_domain_transfer_submit_form', {
 			valid: allGood,
-			numberOfValidDomains: numberOfValidDomains,
+			number_of_valid_domains: numberOfValidDomains,
 		} );
 
 		if ( allGood ) {
