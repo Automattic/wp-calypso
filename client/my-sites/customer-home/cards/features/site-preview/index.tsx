@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import { ReactNode } from 'react';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { SiteItemThumbnail } from 'calypso/sites-dashboard/components/sites-site-item-thumbnail';
 import { SiteUrl, Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -67,19 +66,17 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 		canvas: 'edit',
 	} );
 
+	const iframeSrcKeepHomepage = `//${ selectedSite.domain }/?hide_banners=true&preview_overlay=true`;
+
 	return (
 		<div className="home-site-preview">
 			<ThumbnailWrapper showEditSite={ shouldShowEditSite } editSiteURL={ editSiteURL }>
 				{ shouldShowEditSite && (
 					<div className="home-site-preview__thumbnail-label"> { __( 'Edit site' ) } </div>
 				) }
-				<SiteItemThumbnail
-					displayMode="tile"
-					className="home-site-preview__thumbnail"
-					site={ selectedSite }
-					width={ 312 }
-					height={ 312 }
-				/>
+				<div className="home-site-preview__thumbnail-iframe-wrapper">
+					<iframe scrolling="no" loading="lazy" title="title" src={ iframeSrcKeepHomepage } />
+				</div>
 			</ThumbnailWrapper>
 			<div className="home-site-preview__action-bar">
 				<div className="home-site-preview__site-info">
