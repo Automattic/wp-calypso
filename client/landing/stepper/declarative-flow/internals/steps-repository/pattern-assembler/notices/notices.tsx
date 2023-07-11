@@ -1,4 +1,4 @@
-import { NoticeList, SnackbarList } from '@wordpress/components';
+import { Notice, SnackbarList } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import i18n from 'i18n-calypso';
 import { ComponentType, ReactNode, ReactElement, useState } from 'react';
@@ -7,8 +7,10 @@ import './notices.scss';
 
 const NOTICE_TIMEOUT = 5000;
 
-type Notice = NoticeList.Notice & {
+type Notice = Omit< React.ComponentProps< typeof Notice >, 'children' > & {
 	timer?: ReturnType< typeof setTimeout >;
+	id: string;
+	content: string;
 };
 
 interface NoticeOperationsProps {
@@ -45,10 +47,10 @@ const withNotices = createHigherOrderComponent(
 					}, NOTICE_TIMEOUT ),
 				};
 
-				setNoticeList( ( current ) => [
-					...current.filter( ( notice ) => notice.id !== id ),
-					newNotice,
-				] );
+				setNoticeList(
+					( current ) =>
+						[ ...current.filter( ( notice ) => notice.id !== id ), newNotice ] as Notice[]
+				);
 			};
 
 			const noticeOperations: NoticeOperationsProps = {

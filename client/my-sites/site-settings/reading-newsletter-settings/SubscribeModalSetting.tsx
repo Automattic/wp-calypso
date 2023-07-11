@@ -10,14 +10,12 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
 const ToggleControl = OriginalToggleControl as React.ComponentType<
-	OriginalToggleControl.Props & {
-		disabled?: boolean;
-	}
+	React.ComponentProps< typeof OriginalToggleControl > & { disabled?: boolean }
 >;
 
 type SubscribeModalSettingProps = {
 	value?: boolean;
-	handleToggle: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	disabled?: boolean;
 };
 

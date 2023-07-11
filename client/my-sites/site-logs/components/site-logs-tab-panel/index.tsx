@@ -11,7 +11,7 @@ export const tabs = [
 ];
 
 interface SiteLogsTabPanelProps {
-	children( tab: TabPanel.Tab ): JSX.Element;
+	children: React.ComponentProps< typeof TabPanel >[ 'children' ];
 	selectedTab?: SiteLogsTab;
 	className?: string;
 	onSelected?: ( tabName: SiteLogsTab ) => void;
