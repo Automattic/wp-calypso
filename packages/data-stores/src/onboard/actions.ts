@@ -102,12 +102,16 @@ export function* createVideoPressTvSite( {
 	);
 
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
+	const blogTitle = 'VideoPress TV';
 
 	const params: CreateSiteParams = {
 		blog_name: '', // will be replaced on server with random domain
-		blog_title: '', // will be replaced on server based on domain
+		blog_title: blogTitle,
 		public: visibility,
 		options: {
+			site_information: {
+				title: blogTitle,
+			},
 			lang_id: lang_id,
 			site_creation_flow: 'videopress-tv',
 			enable_fse: true,
