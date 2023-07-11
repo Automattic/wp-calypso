@@ -43,7 +43,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 			<?php esc_html_e( 'Unlock tools, expert help, and community for your brand\'s growth and success.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<a href="<?php echo esc_url( 'https://wordpress.com//pricing' ); ?>">
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com//pricing' ) ); ?>">
 					<?php esc_html_e( 'Upgrade your plan', 'happy-blocks' ); ?>
 				</a>
 			</div>
