@@ -11,7 +11,7 @@ import { IconPaid, IconFree, IconImport } from './icons';
 import type { Step } from '../../types';
 import './style.scss';
 
-const NewsletterType: Step = ( { navigation } ) => {
+const NewsletterGoals: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const translate = useTranslate();
 
@@ -76,4 +76,4 @@ const NewsletterType: Step = ( { navigation } ) => {
 	);
 };
 
-export default NewsletterType;
+export default NewsletterGoals;

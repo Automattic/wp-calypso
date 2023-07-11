@@ -36,8 +36,8 @@ const newsletter: Flow = {
 				  ]
 				: [] ),
 			{
-				slug: 'newsletterType',
-				asyncComponent: () => import( './internals/steps-repository/newsletter-type' ),
+				slug: 'newsletterGoals',
+				asyncComponent: () => import( './internals/steps-repository/newsletter-goals' ),
 			},
 			{
 				slug: 'newsletterSetup',
@@ -117,11 +117,11 @@ const newsletter: Flow = {
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
-						return navigate( 'newsletterType' );
+						return navigate( 'newsletterGoals' );
 					}
 					return window.location.assign( logInUrl );
 
-				case 'newsletterType':
+				case 'newsletterGaols':
 					return navigate( 'newsletterSetup' );
 
 				case 'newsletterSetup':

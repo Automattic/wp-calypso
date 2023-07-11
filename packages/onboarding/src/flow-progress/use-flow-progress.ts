@@ -20,7 +20,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	newsletter: {
 		intro: 0,
 		user: 0,
-		newsletterType: 0,
+		newsletterGoals: 0,
 		newsletterSetup: 1,
 		domains: 2,
 		'plans-newsletter': 3,
