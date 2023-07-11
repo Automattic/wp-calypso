@@ -330,7 +330,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					<ToggleControl
 						onChange={ handleMarkAsDonation }
 						checked={ 'donation' === editedMarkAsDonation }
-						label={ translate( 'Tips and donation' ) }
+						label={ translate( 'Mark this plan as a donation' ) }
 					/>
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }
