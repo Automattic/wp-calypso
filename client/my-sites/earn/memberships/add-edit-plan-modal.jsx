@@ -253,7 +253,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				},
 			] }
 		>
-			<FormSectionHeading>{ product && product.ID ? editPlan : addPlan }</FormSectionHeading>
+			<FormSectionHeading>{ editing ? editPlan : addPlan }</FormSectionHeading>
 			<div className="memberships__dialog-sections">
 				<FormFieldset>
 					<FormLabel htmlFor="title">{ translate( 'Describe the offer' ) }</FormLabel>

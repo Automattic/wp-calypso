@@ -315,7 +315,7 @@
 .memberships__dialog-sections {
 	display: grid;
 	grid-template: "item" 1fr / 1fr;
-	@include breakpoint-deprecated( "<600px" ) {
+	@include breakpoint-deprecated( ">600px" ) {
 		min-width: 580px;
 	}
 	.form-setting-explanation {
@@ -368,7 +368,7 @@
 .memberships__dialog-sections-price-field-container {
 	display: flex;
 	flex-direction: column;
-	max-width: 200px;
+	width: 200px;
 	&:first-child {
 		margin-right: 35px;
 	}
