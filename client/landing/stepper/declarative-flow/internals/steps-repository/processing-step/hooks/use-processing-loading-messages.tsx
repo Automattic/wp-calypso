@@ -1,5 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
-import { isWooExpressFlow } from '@automattic/onboarding';
+import { isWooExpressFlow, VIDEOPRESS_FLOW, VIDEOPRESS_TV_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import WooPurpleHeart from 'calypso/assets/images/onboarding/woo-purple-heart.png';
@@ -134,7 +134,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 					},
 				];
 		}
-	} else if ( 'videopress' === flow ) {
+	} else if ( VIDEOPRESS_FLOW === flow ) {
 		const videoPressLoadingMessages = [
 			{ title: __( 'Setting up your video site' ), duration: 5000 },
 			{ title: __( 'Scouting the locations' ), duration: 5000 },
@@ -142,7 +142,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 			{ title: __( "Let's head to the checkout" ), duration: 5000 },
 		];
 		return videoPressLoadingMessages;
-	} else if ( 'videopress-tv' === flow ) {
+	} else if ( VIDEOPRESS_TV_FLOW === flow ) {
 		const videoPressLoadingMessages = [
 			{ title: __( 'Starting up your channel' ), duration: 5000 },
 		];
