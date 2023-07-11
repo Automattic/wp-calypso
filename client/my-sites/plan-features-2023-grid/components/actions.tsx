@@ -18,7 +18,6 @@ import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import { usePlanPricesDisplay } from '../hooks/use-plan-prices-display';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
@@ -47,6 +46,7 @@ type PlanFeaturesActionsButtonProps = {
 	showMonthlyPrice: boolean;
 	siteId?: number | null;
 	isStuck: boolean;
+	currencyCode: string;
 };
 
 const DummyDisabledButton = styled.div`
@@ -335,11 +335,11 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	planActionOverrides,
 	showMonthlyPrice,
 	siteId,
+	currencyCode,
 	isStuck,
 } ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
 		'is-current-plan': current,

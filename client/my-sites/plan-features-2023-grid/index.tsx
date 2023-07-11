@@ -654,7 +654,7 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
-				const { planName, isPlaceholder, planConstantObj, current } = properties;
+				const { planName, isPlaceholder, planConstantObj, current, currencyCode } = properties;
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
 					'is-top-buttons',
@@ -700,6 +700,7 @@ export class PlanFeatures2023Grid extends Component<
 							showMonthlyPrice={ true }
 							siteId={ siteId }
 							isStuck={ options?.isStuck || false }
+							currencyCode={ currencyCode || 'USD' }
 						/>
 					</Container>
 				);
