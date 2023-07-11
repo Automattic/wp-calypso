@@ -1,6 +1,9 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
 import wp from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 
 interface PrepareDownloadArgs {
@@ -24,9 +27,25 @@ interface FilteredStatusResponse {
 }
 
 export const usePrepareDownload = ( siteId: number ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
 	const [ status, setStatus ] = useState( PREPARE_DOWNLOAD_STATUS.NOT_STARTED );
 	const [ dataType, setDataType ] = useState( 0 );
 	const [ buildKey, setBuildKey ] = useState( '' );
+
+	const handleError = useCallback( () => {
+		// Reset the status to not started so that the user can try again.
+		setStatus( PREPARE_DOWNLOAD_STATUS.NOT_STARTED );
+
+		// Dispatch an error notice
+		dispatch(
+			errorNotice( translate( 'There was an error preparing your download. Please, try again.' ), {
+				duration: 5000,
+				isPersistent: true,
+			} )
+		);
+	}, [ dispatch, translate ] );
 
 	const { data } = useQuery( {
 		queryKey: [ 'jetpack-backup-filtered-status', buildKey, siteId, dataType ],
@@ -41,7 +60,7 @@ export const usePrepareDownload = ( siteId: number ) => {
 					key: buildKey,
 				}
 			),
-		enabled: buildKey !== '' && status !== PREPARE_DOWNLOAD_STATUS.READY,
+		enabled: buildKey !== '' && status === PREPARE_DOWNLOAD_STATUS.PREPARING,
 		refetchInterval: 5000, // 5 seconds
 		retry: false,
 		onSuccess: ( data: FilteredStatusResponse ) => {
@@ -49,6 +68,7 @@ export const usePrepareDownload = ( siteId: number ) => {
 				setStatus( PREPARE_DOWNLOAD_STATUS.READY );
 			}
 		},
+		onError: handleError,
 	} );
 
 	const mutation = useMutation( {
@@ -67,6 +87,7 @@ export const usePrepareDownload = ( siteId: number ) => {
 		onSuccess: ( data: FilteredPrepareResponse ) => {
 			setBuildKey( data.key );
 		},
+		onError: handleError,
 	} );
 
 	const { mutate } = mutation;
@@ -85,6 +106,5 @@ export const usePrepareDownload = ( siteId: number ) => {
 		prepareDownloadStatus: status,
 		buildKey,
 		downloadUrl: data?.url,
-		...mutation,
 	};
 };
