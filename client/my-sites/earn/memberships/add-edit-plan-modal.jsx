@@ -318,6 +318,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							onCurrencyChange={ handleCurrencyChange }
 							currencyList={ currencyList }
 							placeholder="0.00"
+							noWrap
 						/>
 					</div>
 				</FormFieldset>

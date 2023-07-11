@@ -363,14 +363,22 @@
 .memberships__dialog-sections-price {
 	display: flex;
 	justify-content: flex-start;
+	flex-direction: column;
+
+	@include break-medium {
+		flex-direction: row;
+	}
 }
 
 .memberships__dialog-sections-price-field-container {
 	display: flex;
 	flex-direction: column;
-	width: 200px;
-	&:first-child {
+	margin-bottom: 25px;
+
+	@include break-medium {
+		margin-bottom: 0;
 		margin-right: 35px;
+		max-width: 200px;
 	}
 }
 
