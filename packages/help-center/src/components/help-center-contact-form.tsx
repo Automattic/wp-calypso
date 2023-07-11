@@ -515,7 +515,7 @@ export const HelpCenterContactForm = () => {
 				<section className="contact-form-submit">
 					<Button
 						isBusy={ isFetchingGPTResponse }
-						disabled={ isFetchingGPTResponse }
+						disabled={ isFetchingGPTResponse || isCTADisabled() }
 						onClick={ handleCTA }
 						isPrimary={ ! showingGPTResponse || isGPTError }
 						isSecondary={ showingGPTResponse && ! isGPTError }
