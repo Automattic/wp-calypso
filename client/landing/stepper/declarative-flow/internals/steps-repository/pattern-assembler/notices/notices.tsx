@@ -13,7 +13,6 @@ type Notice = NoticeList.Notice & {
 
 interface NoticeOperationsProps {
 	showPatternInsertedNotice: ( pattern: Pattern ) => void;
-	showPatternReplacedNotice: ( pattern: Pattern ) => void;
 	showPatternRemovedNotice: ( pattern: Pattern ) => void;
 }
 
@@ -57,14 +56,6 @@ const withNotices = createHigherOrderComponent(
 					createNotice(
 						'pattern-inserted',
 						i18n.translate( 'Block pattern "%(patternName)s" inserted.', {
-							args: { patternName: pattern.title },
-						} )
-					);
-				},
-				showPatternReplacedNotice: ( pattern: Pattern ) => {
-					createNotice(
-						'pattern-replaced',
-						i18n.translate( 'Block pattern "%(patternName)s" replaced.', {
 							args: { patternName: pattern.title },
 						} )
 					);
