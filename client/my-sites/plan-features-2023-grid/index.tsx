@@ -1060,7 +1060,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
 		props.siteId,
-		Object.keys( props.planRecords ) as PlanSlug[]
+		props.visiblePlans
 	);
 
 	if ( props.isInSignup ) {
