@@ -216,7 +216,7 @@ export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
 	PlanFeatures2023GridState
 > {
-	state = {
+	state: PlanFeatures2023GridState = {
 		showPlansComparisonGrid: false,
 		selectedStorage: {},
 	};
