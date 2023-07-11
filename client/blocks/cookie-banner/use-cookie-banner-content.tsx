@@ -21,6 +21,7 @@ const Link = ( props: LinkProps ) => {
 };
 
 export const useCookieBannerContent = (): CookieBannerProps[ 'content' ] => {
+	const localizeUrl = useLocalizeUrl();
 	const translate = useTranslate();
 
 	return {
@@ -37,8 +38,8 @@ export const useCookieBannerContent = (): CookieBannerProps[ 'content' ] => {
 				{
 					components: {
 						strong: <strong />,
-						privacyPolicyLink: <Link href="https://automattic.com/privacy/" />,
-						cookiePolicyLink: <Link href="https://automattic.com/cookies/" />,
+						privacyPolicyLink: <Link href={ localizeUrl( 'https://automattic.com/privacy/' ) } />,
+						cookiePolicyLink: <Link href={ localizeUrl( 'https://automattic.com/cookies/' ) } />,
 					},
 				}
 			),

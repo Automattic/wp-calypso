@@ -1,6 +1,7 @@
 import './style.scss';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Dialog, Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -38,6 +39,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
+	const localizeUrl = useLocalizeUrl();
 	const translate = useTranslate();
 
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
@@ -147,7 +149,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 			label: __( 'Contact support' ),
 			onClick: async () => {
 				setShowErrorDialog( false );
-				window.open( 'https://wordpress.com/support/', '_blank' );
+				window.open( localizeUrl( 'https://wordpress.com/support/' ), '_blank' );
 			},
 		},
 		{
@@ -316,7 +318,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 								components: {
 									wpcomTos: (
 										<a
-											href="https://wordpress.com/tos/"
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
