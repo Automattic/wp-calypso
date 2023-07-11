@@ -95,13 +95,9 @@ const videopressTv: Flow = {
 		useEffect( () => {
 			switch ( _currentStep ) {
 				case 'intro':
-					if ( userIsLoggedIn ) {
-						navigate( 'processing' );
-					} else {
-						window.location.replace(
-							`/start/videopress-account/user/${ locale }?variationName=${ name }&flow=${ name }&pageTitle=VideoPress.TV&redirect_to=/setup/videopress-tv/processing`
-						);
-					}
+					window.location.replace(
+						`/start/videopress-account/user/${ locale }?variationName=${ name }&flow=${ name }&pageTitle=VideoPress.TV&redirect_to=/setup/videopress-tv/processing`
+					);
 					break;
 				case 'processing':
 					stepValidateUserIsLoggedIn();
