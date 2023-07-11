@@ -301,13 +301,14 @@
 	flex: 50 50 0;
 }
 .list__auto-renew-cell {
-	flex: 30 30 0;
+	flex: 40 40 0;
 }
 .list__email-cell {
 	flex: 30 30 0;
 }
 .list__action-cell {
-	flex: 6 6 0;
+	justify-content: center;
+	flex: 20 20 0;
 }
 
 .domain-only-upsell-carousel {

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import { Button, Icon } from '@wordpress/components';
 import { check, trash, closeSmall, update } from '@wordpress/icons';
@@ -59,6 +60,15 @@ export function DomainCodePair( {
 	}, [ domain, id, onChange, auth, valid, loading ] );
 
 	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
+
+	useEffect( () => {
+		if ( shouldReportError && ! valid && message ) {
+			recordTracksEvent( 'calypso_domain_transfer_domain_error', {
+				domain,
+				error: message,
+			} );
+		}
+	}, [ shouldReportError, valid, domain, message ] );
 
 	return (
 		<div className="domains__domain-info-and-validation">

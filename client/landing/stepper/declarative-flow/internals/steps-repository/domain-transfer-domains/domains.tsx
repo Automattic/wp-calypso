@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainTransferData } from '@automattic/data-stores';
 import { useDataLossWarning } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
@@ -58,6 +59,11 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const changeKey = JSON.stringify( domainsState );
 
 	const handleAddTransfer = () => {
+		recordTracksEvent( 'calypso_domain_transfer_submit_form', {
+			valid: allGood,
+			numberOfValidDomains: numberOfValidDomains,
+		} );
+
 		if ( allGood ) {
 			const cartItems = Object.values( domainsState ).map( ( { domain, auth } ) =>
 				domainTransfer( {
@@ -92,6 +98,9 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	);
 
 	function addDomain() {
+		recordTracksEvent( 'calypso_domain_transfer_add_domain', {
+			resulting_domain_count: domainCount + 1,
+		} );
 		const newDomainsState = { ...domainsState };
 		newDomainsState[ uuid() ] = {
 			domain: '',
@@ -102,6 +111,9 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	}
 
 	function removeDomain( key: string ) {
+		recordTracksEvent( 'calypso_domain_transfer_remove_domain', {
+			resulting_domain_count: domainCount - 1,
+		} );
 		const newDomainsState = { ...domainsState };
 		delete newDomainsState[ key ];
 		setDomainsTransferData( newDomainsState );
