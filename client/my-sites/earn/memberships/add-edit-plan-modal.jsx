@@ -228,12 +228,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 
 	const addPlan = editedPostsEmail
-		? translate( 'Create a paid newsletter subscription plan' )
-		: translate( 'Create a payment plan' );
+		? translate( 'Set up newsletter payment options' )
+		: translate( 'Set up payment options' );
 
 	const editPlan = editedPostsEmail
-		? translate( 'Edit a paid newsletter subscription plan' )
-		: translate( 'Edit a payment plan' );
+		? translate( 'Edit newsletter payment options' )
+		: translate( 'Edit payment options' );
 
 	const editing = product && product.ID;
 	return (
@@ -256,7 +256,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			<FormSectionHeading>{ product && product.ID ? editPlan : addPlan }</FormSectionHeading>
 			<div className="memberships__dialog-sections">
 				<FormFieldset>
-					<FormLabel htmlFor="title">{ translate( 'Describe the payment plan' ) }</FormLabel>
+					<FormLabel htmlFor="title">{ translate( 'Describe the offer' ) }</FormLabel>
 					<FormTextInput
 						id="title"
 						value={ editedProductName }
@@ -264,7 +264,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						onBlur={ () => setFocusedName( true ) }
 					/>
 					<FormSettingExplanation>
-						{ translate( 'Use this to tell your users what they’ll get.' ) }
+						{ translate( "Let your subscriber know what they'll get when they subscribe." ) }
 					</FormSettingExplanation>
 					{ ! isFormValid( 'name' ) && focusedName && (
 						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
@@ -296,6 +296,18 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				) }
 				<FormFieldset className="memberships__dialog-sections-price">
 					<div className="memberships__dialog-sections-price-field-container">
+						<FormLabel htmlFor="renewal_schedule">{ translate( 'Renewal frequency' ) }</FormLabel>
+						<FormSelect
+							id="renewal_schedule"
+							value={ editedSchedule }
+							onChange={ onSelectSchedule }
+						>
+							<option value="1 month">{ translate( 'Monthly' ) }</option>
+							<option value="1 year">{ translate( 'Yearly' ) }</option>
+							<option value="one-time">{ translate( 'One time sale' ) }</option>
+						</FormSelect>
+					</div>
+					<div className="memberships__dialog-sections-price-field-container">
 						<FormLabel htmlFor="currency">{ translate( 'Amount' ) }</FormLabel>
 						<FormCurrencyInput
 							name="currency"
@@ -308,30 +320,25 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							placeholder="0.00"
 						/>
 					</div>
-					<div className="memberships__dialog-sections-price-field-container">
-						<FormLabel htmlFor="renewal_schedule">{ translate( 'Renewal frequency' ) }</FormLabel>
-						<FormSelect
-							id="renewal_schedule"
-							value={ editedSchedule }
-							onChange={ onSelectSchedule }
-						>
-							<option value="1 month">{ translate( 'Monthly' ) }</option>
-							<option value="1 year">{ translate( 'Yearly' ) }</option>
-							<option value="one-time">{ translate( 'One time sale' ) }</option>
-						</FormSelect>
-					</div>
 				</FormFieldset>
 				<FormFieldset>
+					{ /*<ToggleControl*/ }
+					{ /*	label={ translate( 'Product, service, or download' ) }*/ }
+					{ /*	onChange={ () => {} }*/ }
+					{ /*/>*/ }
+					<ToggleControl
+						onChange={ handleMarkAsDonation }
+						checked={ 'donation' === editedMarkAsDonation }
+						label={ translate( 'Tips and donation' ) }
+					/>
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }
 						checked={ editedPostsEmail }
-						label={ translate( 'Email newly published posts to your subscribers' ) }
+						label={ translate( 'Paid newsletter subscription' ) }
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="renewal_schedule">
-						{ translate( 'Personalized confirmation message' ) }
-					</FormLabel>
+					<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
 					<CountedTextArea
 						value={ editedCustomConfirmationMessage }
 						onChange={ ( event ) => setEditedCustomConfirmationMessage( event.target.value ) }
@@ -340,7 +347,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						placeholder={ translate( 'Thank you for subscribing!' ) }
 					/>
 					<FormSettingExplanation>
-						{ translate( 'Your new customers will receive this message' ) }
+						{ translate( 'The welcome message sent when your subscriber completes their order.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FoldableCard
@@ -353,25 +360,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							onChange={ handlePayWhatYouWant }
 							checked={ editedPayWhatYouWant }
 							label={ translate(
-								'Enable customers to pick their own amount ("Pay what you want").'
+								'Enable customers to pick their own amount (“Pay what you want”)'
 							) }
 						/>
-					</FormFieldset>
-					<FormFieldset>
 						<ToggleControl
 							onChange={ handleMultiplePerUser }
 							checked={ editedMultiplePerUser }
-							label={ translate(
-								'Allow the same customer to purchase or sign up to this plan multiple times.'
-							) }
-						/>
-					</FormFieldset>
-					<FormFieldset>
-						<ToggleControl
-							onChange={ handleMarkAsDonation }
-							checked={ 'donation' === editedMarkAsDonation }
-							label={ translate( 'Mark this plan as a donation.' ) }
-							disabled={ !! product && product.ID }
+							label={ translate( 'Enable customers to make the same purchase multiple times' ) }
 						/>
 					</FormFieldset>
 				</FoldableCard>
