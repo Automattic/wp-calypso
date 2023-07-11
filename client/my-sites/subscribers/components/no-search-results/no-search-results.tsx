@@ -17,12 +17,14 @@ const NoSearchResults = ( { searchTerm, setShowAddSubscribersModal }: NoSearchRe
 	return (
 		<div className="no-search-results">
 			<p className="no-search-results__heading">{ translate( '0 subscribers found' ) }</p>
-			<p className="no-search-results__query">
-				{ translate( '“%(searchTerm)s” did not match any current subscribers.', {
-					args: { searchTerm },
-					comment: '%(searchTerm)s is the search term the user entered.',
-				} ) }
-			</p>
+			{ searchTerm && (
+				<p className="no-search-results__query">
+					{ translate( '“%(searchTerm)s” did not match any current subscribers.', {
+						args: { searchTerm },
+						comment: '%(searchTerm)s is the search term the user entered.',
+					} ) }
+				</p>
+			) }
 			{ siteTitle && (
 				<p>
 					{ translate( 'Do you want to invite someone to join %(siteTitle)s?', {
