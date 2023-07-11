@@ -19,7 +19,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	GUTENBERG_EDGE: false,
 	GUTENBERG_NIGHTLY: false,
 	COBLOCKS_EDGE: false,
-	AUTHENTICATE_ACCOUNTS: [ 'simpleSitePersonalPlanUser', 'atomicUser', 'defaultUser' ],
+	AUTHENTICATE_ACCOUNTS: [],
 	COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 	TEST_ON_ATOMIC: false,
