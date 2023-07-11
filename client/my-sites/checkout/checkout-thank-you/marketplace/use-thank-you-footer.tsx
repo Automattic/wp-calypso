@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale } from '@automattic/i18n-utils';
+import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -48,6 +48,7 @@ export function useThankYouFoooter(
 }
 
 function usePluginSteps(): FooterStep[] {
+	const localizeUrl = useLocalizeUrl();
 	const translate = useTranslate();
 	const { hasTranslation } = useI18n();
 	const locale = useLocale();
@@ -68,7 +69,7 @@ function usePluginSteps(): FooterStep[] {
 			key: 'thank_you_footer_explore',
 			title: translate( 'Need help setting your plugin up?' ),
 			description: descriptionText,
-			link: `https://wordpress.com/support/plugins/use-your-plugins/`,
+			link: localizeUrl( 'https://wordpress.com/support/plugins/use-your-plugins/' ),
 			linkText: translate( 'Plugin setup guide' ),
 			eventKey: 'calypso_plugin_thank_you_explore_plugins_click',
 			blankTarget: false,
@@ -79,7 +80,7 @@ function usePluginSteps(): FooterStep[] {
 			description: translate(
 				`Unlock your plugin's potential with our comprehensive support documentation.`
 			),
-			link: 'https://wordpress.com/support/category/plugins-and-integrations/',
+			link: localizeUrl( 'https://wordpress.com/support/category/plugins-and-integrations/' ),
 			linkText: translate( 'Plugin documentation' ),
 			eventKey: 'calypso_plugin_thank_you_plugin_support_click',
 		},
@@ -87,6 +88,7 @@ function usePluginSteps(): FooterStep[] {
 }
 
 function useThemeSteps(): FooterStep[] {
+	const localizeUrl = useLocalizeUrl();
 	const translate = useTranslate();
 
 	return [
@@ -96,7 +98,7 @@ function useThemeSteps(): FooterStep[] {
 			description: translate(
 				'Check out our support documentation for step-by-step instructions and expert guidance on your theme set up.'
 			),
-			link: 'https://wordpress.com/support/themes/set-up-your-theme/',
+			link: localizeUrl( 'https://wordpress.com/support/themes/set-up-your-theme/' ),
 			linkText: translate( 'Get set up support' ),
 			eventKey: 'calypso_plugin_thank_you_theme_setup_guide_click',
 		},
@@ -106,7 +108,7 @@ function useThemeSteps(): FooterStep[] {
 			description: translate(
 				'Take a look at our comprehensive support documentation and learn more about themes.'
 			),
-			link: 'https://wordpress.com/support/themes/',
+			link: localizeUrl( 'https://wordpress.com/support/themes/' ),
 			linkText: translate( 'Learn more about themes' ),
 			eventKey: 'calypso_plugin_thank_you_theme_support_click',
 		},
