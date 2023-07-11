@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
@@ -59,7 +60,7 @@ function TeamInvite( props: Props ) {
 						args: { sitename: site.name ?? translate( 'this site' ) },
 					} ) }
 				</HeaderCake>
-				<PeopleSectionAddNav selectedFilter="team" />
+				{ isEnabled( 'subscribers-page-new' ) || <PeopleSectionAddNav selectedFilter="team" /> }
 				<EmptyContent
 					title={ translate( 'Oops, only administrators can invite other people' ) }
 					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
@@ -80,7 +81,7 @@ function TeamInvite( props: Props ) {
 				} ) }
 			</HeaderCake>
 
-			<PeopleSectionAddNav selectedFilter="team" />
+			{ isEnabled( 'subscribers-page-new' ) || <PeopleSectionAddNav selectedFilter="team" /> }
 
 			{ isSiteForTeams && <P2TeamBanner context="invite" site={ site } /> }
 
