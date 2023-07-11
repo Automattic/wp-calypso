@@ -76,6 +76,8 @@ type PlanRowOptions = {
 	isTableCell?: boolean;
 };
 
+export type PlanSelectedStorage = { [ key: string ]: string };
+
 const Container = (
 	props: (
 		| React.HTMLAttributes< HTMLDivElement >
@@ -138,7 +140,7 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
-	selectedStorage: { [ key: string ]: string | undefined };
+	selectedStorage: PlanSelectedStorage;
 };
 
 const PlanLogo: React.FunctionComponent< {
