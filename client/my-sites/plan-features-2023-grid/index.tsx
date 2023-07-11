@@ -113,6 +113,7 @@ export type PlanFeatures2023GridProps = {
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
 	intent?: PlansIntent;
+	isGlobalStylesOnPersonal?: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
