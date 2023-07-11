@@ -41,7 +41,6 @@ const options = {
 	jetpack_promotion: 'jetpack_promotion',
 	jetpack_news: 'jetpack_news',
 	jetpack_reports: 'jetpack_reports',
-	jetpack_agencies_pro_onboarding: 'jetpack_agencies_pro_onboarding',
 };
 
 class WPCOMNotifications extends Component {
@@ -175,13 +174,6 @@ class WPCOMNotifications extends Component {
 							isEnabled={ get( settings, options.jetpack_reports ) }
 							title={ translate( 'Reports' ) }
 							description={ translate( 'Jetpack security and performance reports.' ) }
-						/>
-
-						<EmailCategory
-							name={ options.jetpack_agencies_pro_onboarding }
-							isEnabled={ get( settings, options.jetpack_agencies_pro_onboarding ) }
-							title={ translate( 'Jetpack Agencies Pro Onboarding' ) }
-							description={ translate( 'Jetpack Agency & Pro program setup and onboarding.' ) }
 						/>
 					</>
 				) : (
