@@ -162,7 +162,8 @@ class Block_Patterns_From_API {
 
 		$this->update_core_patterns_with_wpcom_categories();
 
-		$this->update_pattern_post_types();
+		// Temporarily removing the call to `update_pattern_post_types` while we investigate
+		// https://github.com/Automattic/wp-calypso/issues/79145.
 
 		return $results;
 	}
