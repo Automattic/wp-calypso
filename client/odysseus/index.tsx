@@ -32,7 +32,7 @@ const OdysseusAssistant = () => {
 
 	useEffect( () => {
 		if ( chatData ) {
-			if ( chat.messages.length !== chatData.messages.length ) {
+			if ( chat.messages.length < chatData.messages.length ) {
 				const countNewMessages = chatData.messages.length - chat.messages.length;
 				const newMessages = chatData.messages.slice( -countNewMessages );
 				newMessages.forEach( ( message ) => {
