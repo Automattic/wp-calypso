@@ -34,12 +34,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 		item.extensionType ?? ''
 	);
 
-	const { prepareDownload, prepareDownloadStatus } = usePrepareDownload();
-	const prepareDownloadTexts = {
-		[ PREPARE_DOWNLOAD_STATUS.DEFAULT ]: translate( 'Prepare and download' ),
-		[ PREPARE_DOWNLOAD_STATUS.PREPARING ]: translate( 'Preparing' ),
-		[ PREPARE_DOWNLOAD_STATUS.DOWNLOADING ]: translate( 'Downloading' ),
-	};
+	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload( siteId );
 
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
 	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
@@ -78,15 +73,16 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 	}, [ fileInfo, item.period, prepareDownload, siteId ] );
 
 	useEffect( () => {
-		if (
-			prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ||
-			prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.DOWNLOADING
-		) {
+		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
 			setIsDownloading( true );
 		} else {
 			setIsDownloading( false );
 		}
-	}, [ prepareDownloadStatus ] );
+
+		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.READY ) {
+			window.open( downloadUrl, '_blank' );
+		}
+	}, [ downloadUrl, prepareDownloadStatus ] );
 
 	const showActions = item.type !== 'archive';
 
@@ -117,8 +113,14 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 			onClick={ prepareDownloadClick }
 			disabled={ isDownloading }
 		>
-			{ isDownloading && <Spinner className="file-card__prepare-download-spinner" size={ 16 } /> }
-			{ prepareDownloadTexts[ prepareDownloadStatus ] }
+			{ isDownloading ? (
+				<>
+					<Spinner className="file-card__prepare-download-spinner" size={ 16 } />
+					{ translate( 'Preparing' ) }
+				</>
+			) : (
+				translate( 'Prepare and download' )
+			) }
 		</Button>
 	);
 
