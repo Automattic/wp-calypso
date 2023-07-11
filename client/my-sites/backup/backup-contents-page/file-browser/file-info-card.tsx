@@ -6,6 +6,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import FilePreview from './file-preview';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { convertBytes } from './util';
@@ -32,7 +33,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 	);
 
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
-	const size = fileInfo?.size ? convertBytes( fileInfo.size ) : null;
+	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
 
 	const [ isDownloading, setIsDownloading ] = useState< boolean >( false );
 	const downloadFile = useCallback( () => {
@@ -127,6 +128,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 						{ isDownloading ? <Spinner /> : translate( 'Download file' ) }
 					</Button>
 				</div>
+			) }
+
+			{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
+				<FilePreview item={ item } siteId={ siteId } />
 			) }
 		</div>
 	);
