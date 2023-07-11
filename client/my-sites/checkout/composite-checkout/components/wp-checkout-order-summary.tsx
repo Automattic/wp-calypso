@@ -387,8 +387,6 @@ function CheckoutSummaryFeaturesList( props: {
 				</CheckoutSummaryFeaturesListItem>
 			) }
 
-			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
-
 			{ hasDomainTransferProduct && (
 				<>
 					<CheckoutSummaryFeaturesListItem>
@@ -399,11 +397,14 @@ function CheckoutSummaryFeaturesList( props: {
 						<WPCheckoutCheckIcon id="features-list-support-privacy" />
 						{ translate( 'Private domain registration and SSL certificate included for free' ) }
 					</CheckoutSummaryFeaturesListItem>
-					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon id="annual-live-chat" />
-						{ translate( 'Live chat support' ) }
-					</CheckoutSummaryFeaturesListItem>
 				</>
+			) }
+
+			{ ( ! hasPlanInCart || hasDomainTransferProduct ) && (
+				<CheckoutSummaryChatIfAvailable
+					siteId={ siteId }
+					hasDomainTransferInCart={ hasDomainTransferProduct }
+				/>
 			) }
 
 			<CheckoutSummaryRefundWindows cart={ responseCart } />
@@ -576,7 +577,10 @@ function CheckoutSummaryPlanFeatures( props: {
 	);
 }
 
-function CheckoutSummaryChatIfAvailable( props: { siteId: number | undefined } ) {
+function CheckoutSummaryChatIfAvailable( props: {
+	siteId: number | undefined;
+	hasDomainTransferInCart: boolean;
+} ) {
 	const translate = useTranslate();
 
 	const currentPlan = useSelector( ( state ) =>
@@ -586,11 +590,12 @@ function CheckoutSummaryChatIfAvailable( props: { siteId: number | undefined } )
 	const currentPlanSlug = currentPlan?.productSlug;
 
 	const isChatAvailable =
-		currentPlanSlug &&
-		( isWpComPremiumPlan( currentPlanSlug ) ||
-			isWpComBusinessPlan( currentPlanSlug ) ||
-			isWpComEcommercePlan( currentPlanSlug ) ) &&
-		! isMonthly( currentPlanSlug );
+		props.hasDomainTransferInCart ||
+		( currentPlanSlug &&
+			( isWpComPremiumPlan( currentPlanSlug ) ||
+				isWpComBusinessPlan( currentPlanSlug ) ||
+				isWpComEcommercePlan( currentPlanSlug ) ) &&
+			! isMonthly( currentPlanSlug ) );
 
 	if ( ! isChatAvailable ) {
 		return null;
