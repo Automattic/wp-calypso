@@ -345,7 +345,7 @@ jobs:
             yarn --version
       - run:
           name: Install Make
-          command: cinst make
+          command: choco install make
       - run:
           name: Install Desktop Dependencies
           command: yarn
