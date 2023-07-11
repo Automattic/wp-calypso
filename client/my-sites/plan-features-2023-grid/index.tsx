@@ -950,9 +950,6 @@ export class PlanFeatures2023Grid extends Component<
 				const storageJSX = canUpgradeStorageForPlan
 					? this.renderStorageAddOnDropdown( properties )
 					: storageFeatures.map( ( storageFeature: string ) => {
-							if ( storageFeature.length <= 0 ) {
-								return;
-							}
 							return (
 								<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
 									{ getStorageStringFromFeature( storageFeature ) }
