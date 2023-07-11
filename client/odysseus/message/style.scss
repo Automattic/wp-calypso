@@ -1,4 +1,4 @@
-.chatbox-message {
+.odysseus-chatbox-message {
 	display: flex;
 	justify-content: space-between;
 	align-items: self-start;
@@ -9,23 +9,26 @@
 	border-radius: 4px;
 	font-size: $font-body-small;
 	line-height: 1.4;
-}
-
-.chatbox-message.user {
-	align-self: flex-end;
-	background-color: #dcf8c6;
 	color: #000;
-}
-
-.chatbox-message.wapuu {
-	align-self: flex-start;
-	background-color: #f1f0f0;
-	color: #000;
-	display: flex;
 	flex-direction: column;
 }
 
-.message-actions {
+.odysseus-chatbox-message.odyssus-chatbox-message-user {
+	align-self: flex-end;
+	background-color: #dcf8c6;
+}
+
+.odysseus-chatbox-message.odyssus-chatbox-message-user > :last-child {
+	margin-bottom: 0;
+}
+
+.odysseus-chatbox-message.odyssus-chatbox-message-wapuu {
+	align-self: flex-start;
+	background-color: #f1f0f0;
+}
+
+
+.odysseus-chatbox-message-actions {
 	display: flex;
 	gap: 8px;
 	align-self: flex-end;
@@ -39,36 +42,36 @@
 	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-.message-action:focus {
+.odysseus-chatbox-message-action:focus {
 	outline: none;
 }
 
-.message-action {
+.odysseus-chatbox-message-action {
 	cursor: pointer;
 	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-.message-action:hover {
+.odysseus-chatbox-message-action:hover {
 	color: #0073aa;
 }
 
-.message-action.active-like {
-	animation: like-animation 0.3s ease-in-out forwards;
+.odysseus-chatbox-message-action.odysseus-chatbox-message-active-like {
+	animation: odysseus-chatbox-message-like-animation 0.3s ease-in-out forwards;
 	color: #0073aa;
 }
 
-.message-action.active-dislike {
-	animation: dislike-animation 0.3s ease-in-out forwards;
+.odysseus-chatbox-message-action.odysseus-chatbox-message-active-dislike {
+	animation: odysseus-chatbox-message-dislike-animation 0.3s ease-in-out forwards;
 	color: #0073aa;
 }
 
-.message-action.hide {
+.odysseus-chatbox-message-action.odysseus-chatbox-message-hide {
 	opacity: 0;
 	visibility: hidden;
 	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out 0.3s;
 }
 
-@keyframes like-animation {
+@keyframes odysseus-chatbox-message-like-animation {
 	0% {
 		transform: scale(1);
 	}
@@ -77,7 +80,7 @@
 	}
 }
 
-@keyframes dislike-animation {
+@keyframes odysseus-chatbox-message-dislike-animation {
 	0% {
 		transform: scale(1);
 	}

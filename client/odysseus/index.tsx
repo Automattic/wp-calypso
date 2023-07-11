@@ -104,7 +104,7 @@ const OdysseusAssistant = () => {
 				content:
 					"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!",
 				role: 'bot',
-				type: 'message',
+				type: 'error',
 			} );
 		} finally {
 			setIsLoading( false );

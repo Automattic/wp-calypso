@@ -12,57 +12,56 @@ type ChatMessageProps = {
 };
 
 const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => {
-	const [ liked, setLiked ] = useState( false );
-	const [ disliked, setDisliked ] = useState( false );
+	const [ reaction, setReaction ] = useState< null | 'liked' | 'disliked' >( null );
 
 	const isUser = message.role === 'user';
 
 	const onLike = () => {
-		if ( liked ) {
-			setLiked( false );
-			setDisliked( false );
+		if ( reaction === 'liked' ) {
+			setReaction( null );
 			return;
 		}
-		setLiked( true );
-		setDisliked( false );
+		setReaction( 'liked' );
 	};
 
 	const onDislike = () => {
-		if ( disliked ) {
-			setLiked( false );
-			setDisliked( false );
+		if ( reaction === 'disliked' ) {
+			setReaction( null );
 			return;
 		}
-		setLiked( false );
-		setDisliked( true );
+		setReaction( 'disliked' );
 	};
 
 	return (
 		<div
 			ref={ isLast ? messageEndRef : null }
-			className={ `chatbox-message ${ isUser ? 'user' : 'wapuu' }` }
+			className={ `odysseus-chatbox-message ${
+				isUser ? 'odyssus-chatbox-message-user' : 'odyssus-chatbox-message-wapuu'
+			}` }
 		>
-			<AsyncLoad require="react-markdown" children={ message.content } />
-			{ ! isUser && (
-				<div className="message-actions">
+			<AsyncLoad require="react-markdown" placeholder={ null }>
+				{ message.content }
+			</AsyncLoad>
+			{ ! isUser && message.type !== 'error' && (
+				<div className="odysseus-chatbox-message-actions">
 					<button
 						aria-label="Like this message"
-						className={ classnames( 'message-action', 'dashicons', {
+						className={ classnames( 'odysseus-chatbox-message-action', 'dashicons', {
 							'dashicons-thumbs-up': true,
-							'active-like': liked,
-							hide: disliked,
+							'odysseus-chatbox-message-active-like': reaction === 'liked',
+							'odysseus-chatbox-message-hide': reaction === 'disliked',
 						} ) }
-						disabled={ disliked }
+						disabled={ reaction === 'disliked' }
 						onClick={ onLike }
 					></button>
 					<button
 						aria-label="Dislike this message"
-						className={ classnames( 'message-action', 'dashicons', {
+						className={ classnames( 'odysseus-chatbox-message-action', 'dashicons', {
 							'dashicons-thumbs-down': true,
-							'active-dislike': disliked,
-							hide: liked,
+							'odysseus-chatbox-message-active-dislike': reaction === 'disliked',
+							'odysseus-chatbox-message-hide': reaction === 'liked',
 						} ) }
-						disabled={ liked }
+						disabled={ reaction === 'liked' }
 						onClick={ onDislike }
 					></button>
 				</div>
