@@ -49,7 +49,7 @@ interface SitesMenuItemProps {
 	onClick?: () => void;
 }
 
-interface MenuItemLinkProps extends Omit< CoreMenuItem.Props, 'href' > {
+interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof CoreMenuItem >, 'href' > {
 	href?: string;
 }
 

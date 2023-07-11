@@ -1,14 +1,16 @@
-import { NoticeList, SnackbarList } from '@wordpress/components';
+import { Notice, SnackbarList } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import i18n from 'i18n-calypso';
-import { ComponentType, ReactNode, ReactChild, useState } from 'react';
+import { ComponentType, ReactNode, useState } from 'react';
 import type { Pattern } from '../types';
 import './notices.scss';
 
 const NOTICE_TIMEOUT = 5000;
 
-type Notice = NoticeList.Notice & {
+type Notice = Omit< React.ComponentProps< typeof Notice >, 'children' > & {
 	timer?: ReturnType< typeof setTimeout >;
+	id: string;
+	content: string;
 };
 
 interface NoticeOperationsProps {
@@ -31,7 +33,7 @@ const withNotices = createHigherOrderComponent(
 				setNoticeList( ( current ) => current.filter( ( notice ) => notice.id !== id ) );
 			};
 
-			const createNotice = ( id: string, content: ReactChild ) => {
+			const createNotice = ( id: string, content: ReactNode ) => {
 				const existingNoticeWithSameId = noticeList.find( ( notice ) => notice.id === id );
 				if ( existingNoticeWithSameId?.timer ) {
 					clearTimeout( existingNoticeWithSameId.timer );
@@ -46,10 +48,10 @@ const withNotices = createHigherOrderComponent(
 					}, NOTICE_TIMEOUT ),
 				};
 
-				setNoticeList( ( current ) => [
-					...current.filter( ( notice ) => notice.id !== id ),
-					newNotice,
-				] );
+				setNoticeList(
+					( current ) =>
+						[ ...current.filter( ( notice ) => notice.id !== id ), newNotice ] as Notice[]
+				);
 			};
 
 			const noticeOperations: NoticeOperationsProps = {
