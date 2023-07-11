@@ -20,12 +20,13 @@ interface DesignPreviewProps {
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
 	siteId: number;
 	stylesheet: string;
+	isVirtual?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
@@ -47,12 +48,13 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	variations,
 	selectedVariation,
 	onSelectVariation,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
 	siteId,
 	stylesheet,
+	isVirtual,
 	selectedColorVariation,
 	onSelectColorVariation,
 	selectedFontVariation,
@@ -74,9 +76,10 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	const screens = useScreens( {
 		siteId,
 		stylesheet,
+		isVirtual,
 		limitGlobalStyles,
 		variations,
-		splitPremiumVariations,
+		splitDefaultVariation,
 		selectedVariation,
 		selectedColorVariation,
 		selectedFontVariation,
@@ -117,6 +120,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				url={ previewUrl }
 				inlineCss={ inlineCss }
 				isFullscreen={ isFullscreen }
+				animated={ ! isDesktop }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>

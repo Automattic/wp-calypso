@@ -31,16 +31,34 @@
 					text-align: left;
 				}
 			}
+			.domain-header-buttons {
+				margin-top: 20px;
+
+				a {
+					border-radius: 4px;
+					font-weight: 500;
+					font-size: 0.875rem;
+					padding: 10px 24px;
+					height: 40px;
+				}
+				.is-secondary {
+					margin-right: 20px;
+					border: 1px solid #c3c4c7;
+					box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+					&:hover {
+						color: unset;
+						box-shadow: none;
+					}
+				}
+				.manage-all-domains {
+					@media ( max-width: $break-small ) {
+						margin-top: 20px;
+					}
+				}
+			}
 		}
-		.manage-all-domains {
-			height: 40px;
-			padding: 10px 24px;
-			font-size: 0.875rem;
-			font-style: normal;
-			font-weight: 500;
-			margin-top: 20px;
-			border-radius: 4px;
-		}
+
 		.step-container__content {
 			width: 70%;
 			display: flex;

@@ -39,11 +39,13 @@ interface Props {
 	manualListEmailInviting?: boolean;
 	recordTracksEvent?: RecordTrackEvents;
 	onSkipBtnClick?: () => void;
+	onImportStarted?: ( hasFile: boolean ) => void;
 	onImportFinished?: () => void;
 	onChangeIsImportValid?: ( isValid: boolean ) => void;
 	titleText?: string;
 	subtitleText?: string;
 	showSkipLink?: boolean;
+	hidden?: boolean;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -65,12 +67,14 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		allowEmptyFormSubmit,
 		manualListEmailInviting,
 		recordTracksEvent,
+		onImportStarted,
 		onImportFinished,
 		onChangeIsImportValid,
 		onSkipBtnClick,
 		titleText,
 		subtitleText,
 		showSkipLink,
+		hidden = false,
 	} = props;
 
 	const {
@@ -162,6 +166,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();
 		setSubmitAttemptCount( submitAttemptCount + 1 );
+		onImportStarted?.( !! selectedFile );
 
 		const validEmails = getValidEmails();
 
@@ -443,6 +448,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 				</label>
 			)
 		);
+	}
+
+	if ( hidden ) {
+		return null;
 	}
 
 	return (

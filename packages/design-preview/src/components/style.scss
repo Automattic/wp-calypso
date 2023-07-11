@@ -48,10 +48,12 @@ $design-preview-sidebar-width: 311px;
 		z-index: 1;
 
 		.design-preview__sidebar {
+			position: relative;
 			padding: 0;
 			border-bottom: 1px solid rgb(0 0 0 / 5%);
 			box-shadow: -4px 0 8px rgb(0 0 0 / 7%);
-			overflow: auto;
+			z-index: 1;
+			animation: sidebarFadeIn 0.3s ease-out;
 		}
 
 		.design-preview__site-preview {
@@ -75,7 +77,6 @@ $design-preview-sidebar-width: 311px;
 
 .design-preview__sidebar {
 	flex-shrink: 0;
-	align-items: center;
 	background-color: var(--color-body-background);
 	box-sizing: border-box;
 	display: flex;
@@ -253,9 +254,11 @@ $design-preview-sidebar-width: 311px;
 }
 
 .design-preview__sidebar-variations {
-	display: block;
-	padding: 16px 24px 8px 32px;
-	margin: 0 -16px;
+	display: flex;
+	width: 100%;
+	padding: 16px 20px 8px;
+	box-sizing: border-box;
+	overflow: auto;
 
 	> p {
 		color: var(--studio-gray-100);
@@ -299,7 +302,9 @@ $design-preview-sidebar-width: 311px;
 
 	@include break-large {
 		padding: 8px 16px 0;
-		overflow-y: auto;
+		margin: 0 -16px;
+		box-sizing: content-box;
+		animation: none;
 
 		> p {
 			display: block;
@@ -406,5 +411,15 @@ $design-preview-sidebar-width: 311px;
 		color: var(--color-neutral-0);
 		padding: 8px;
 		-webkit-font-smoothing: antialiased;
+	}
+}
+
+// We cannot use translate here as the sidebar might container element with fixed position
+@keyframes sidebarFadeIn {
+	from {
+		top: -100%;
+	}
+	to {
+		top: 0;
 	}
 }
