@@ -62,13 +62,13 @@ export function DomainCodePair( {
 	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
 
 	useEffect( () => {
-		if ( shouldReportError ) {
+		if ( shouldReportError && ! valid && message ) {
 			recordTracksEvent( 'calypso_domain_transfer_domain_error', {
 				domain,
-				message,
+				error: message,
 			} );
 		}
-	}, [ shouldReportError, domain, message ] );
+	}, [ shouldReportError, valid, domain, message ] );
 
 	return (
 		<div className="domains__domain-info-and-validation">
