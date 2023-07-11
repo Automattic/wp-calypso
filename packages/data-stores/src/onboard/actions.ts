@@ -96,22 +96,18 @@ export function* createVideoPressTvSite( {
 	languageSlug,
 	visibility = Visibility.PublicNotIndexed,
 }: CreateSiteBaseActionParameters ) {
-	const { selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State = yield select(
+	const { selectedDesign, selectedFonts, selectedFeatures }: State = yield select(
 		STORE_KEY,
 		'getState'
 	);
 
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const params: CreateSiteParams = {
 		blog_name: '', // will be replaced on server with random domain
-		blog_title: blogTitle,
+		blog_title: '', // will be replaced on server based on domain
 		public: visibility,
 		options: {
-			site_information: {
-				title: blogTitle,
-			},
 			lang_id: lang_id,
 			site_creation_flow: 'videopress-tv',
 			enable_fse: true,
