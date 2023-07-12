@@ -1,4 +1,5 @@
 export {
+	Badge,
 	Button,
 	Card,
 	CompactCard,
@@ -17,7 +18,6 @@ export {
 export { default as ActionCard } from 'calypso/components/action-card';
 export { default as Animate } from 'calypso/components/animate';
 export { default as BackButton } from 'calypso/components/back-button';
-export { default as Badge } from 'calypso/components/badge';
 export { default as Banner } from 'calypso/components/banner';
 export { default as BulkSelect } from 'calypso/components/bulk-select';
 export { default as ButtonGroup } from 'calypso/components/button-group';

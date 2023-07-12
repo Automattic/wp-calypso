@@ -1,7 +1,7 @@
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export { default as Animate } from 'calypso/components/animate/docs/example';
 export { default as BackButton } from 'calypso/components/back-button/docs/example';
-export { default as Badge } from 'calypso/components/badge/docs/example';
+export { default as Badge } from '@automattic/components/src/badge/docs/example';
 export { default as Banner } from 'calypso/components/banner/docs/example';
 export { default as BulkSelect } from 'calypso/components/bulk-select/docs/example';
 export { default as ButtonGroups } from 'calypso/components/button-group/docs/example';
