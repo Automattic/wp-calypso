@@ -5,20 +5,21 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ExperimentAssignment } from '@automattic/explat-client';
-import type { ExperimentOptions } from '@automattic/explat-client-react-helpers';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-let useExperiment = (
-	experimentName: string,
-	options?: ExperimentOptions
-): [ boolean, ExperimentAssignment | null ] => [ false, null ];
-/* eslint-enable @typescript-eslint/no-unused-vars */
+/*
+ * We cannot import `loadExperimentAssignment` directly from 'calypso/lib/explat'
+ * because it runs a side effect that produces an error on SSR contexts.
+ */
+let loadExperimentAssignment = ( experimentName: string ): Promise< ExperimentAssignment > =>
+	new Promise( ( resolve ) =>
+		resolve( { experimentName, variationName: null, retrievedTimestamp: 0, ttl: 0 } )
+	);
 ( async () => {
 	if ( typeof window === 'undefined' ) {
 		return;
 	}
 	try {
-		( { useExperiment } = await import( 'calypso/lib/explat' ) );
+		( { loadExperimentAssignment } = await import( 'calypso/lib/explat' ) );
 	} catch ( e ) {}
 } )();
 
@@ -38,14 +39,29 @@ const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
 
 const getGlobalStylesInfoForSite = (
 	siteId: number | null,
-	currentUserHasGlobalStylesInPersonalPlan: boolean
-): GlobalStylesStatus => {
-	if ( siteId == null ) {
-		return {
-			shouldLimitGlobalStyles: true,
-			globalStylesInUse: false,
-			globalStylesInPersonalPlan: currentUserHasGlobalStylesInPersonalPlan,
-		};
+	isLoggedIn: boolean
+): Promise< GlobalStylesStatus > => {
+	if ( siteId === null ) {
+		return new Promise( ( resolve ) => {
+			if ( isLoggedIn ) {
+				loadExperimentAssignment( 'calypso_global_styles_personal' ).then(
+					( experimentAssignment ) =>
+						resolve( {
+							shouldLimitGlobalStyles: true,
+							globalStylesInUse: false,
+							globalStylesInPersonalPlan: experimentAssignment.variationName === 'treatment',
+						} )
+				);
+				return;
+			}
+
+			resolve( {
+				shouldLimitGlobalStyles: true,
+				globalStylesInUse: false,
+				globalStylesInPersonalPlan: false,
+			} );
+			return;
+		} );
 	}
 
 	return wpcom.req
@@ -77,15 +93,9 @@ export function useSiteGlobalStylesStatus(
 		return site?.ID ?? null;
 	} );
 
-	const [ , experimentAssignment ] = useExperiment( 'calypso_global_styles_personal', {
-		isEligible: siteId === null && isLoggedIn,
-	} );
-	const currentUserHasGlobalStylesInPersonalPlan =
-		experimentAssignment?.variationName === 'treatment';
-
 	const { data: globalStylesInfo } = useQuery( {
-		queryKey: [ 'globalStylesInfo', siteId, currentUserHasGlobalStylesInPersonalPlan ],
-		queryFn: () => getGlobalStylesInfoForSite( siteId, currentUserHasGlobalStylesInPersonalPlan ),
+		queryKey: [ 'globalStylesInfo', siteId, isLoggedIn ],
+		queryFn: () => getGlobalStylesInfoForSite( siteId, isLoggedIn ),
 		placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
 		refetchOnWindowFocus: false,
 	} );
