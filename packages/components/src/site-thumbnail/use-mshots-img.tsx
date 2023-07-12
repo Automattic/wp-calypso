@@ -79,6 +79,9 @@ export const useMshotsImg = (
 
 		async function checkRedirectImage() {
 			const { isError, isRedirect } = await fetchAwaitRedirect( mshotUrl );
+			if ( ! timeout.current ) {
+				return;
+			}
 			if ( isError ) {
 				setIsLoading( false );
 				setIsError( true );

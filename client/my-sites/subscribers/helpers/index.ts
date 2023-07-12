@@ -6,11 +6,12 @@ const getEarnPaymentsPageUrl = ( siteSlug: string | null ) =>
 	`${ URL_PREFIX }/earn/payments/${ siteSlug ?? '' }`;
 
 const getSubscribersCacheKey = (
-	siteId: number | null,
+	siteId: number | undefined | null,
 	currentPage?: number,
 	perPage?: number,
 	search?: string,
-	sortTerm?: string
+	sortTerm?: string,
+	filterOption?: string
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
 	if ( currentPage ) {
@@ -25,11 +26,14 @@ const getSubscribersCacheKey = (
 	if ( sortTerm ) {
 		cacheKey.push( 'sort-term', sortTerm );
 	}
+	if ( filterOption ) {
+		cacheKey.push( 'filter-option', filterOption );
+	}
 	return cacheKey;
 };
 
 const getSubscriberDetailsUrl = (
-	siteSlug: string | null,
+	siteSlug: string | undefined | null,
 	subscriptionId: number | undefined,
 	userId: number | undefined,
 	pageNumber = 1
@@ -42,7 +46,7 @@ const getSubscriberDetailsUrl = (
 };
 
 const getSubscriberDetailsCacheKey = (
-	siteId: number | null,
+	siteId: number | undefined | null,
 	subscriptionId: number | undefined,
 	userId: number | undefined,
 	type: string

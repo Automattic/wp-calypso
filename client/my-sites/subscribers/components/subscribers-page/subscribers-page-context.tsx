@@ -2,11 +2,11 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import { useDebounce } from 'use-debounce';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
-import { SubscribersSortBy } from '../../constants';
+import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import { useSubscribersQuery } from '../../queries';
 
 type SubscribersPageProviderProps = {
-	siteId: number | null;
+	siteId: number | undefined;
 	page: number;
 	pageChanged: ( page: number ) => void;
 	children: React.ReactNode;
@@ -24,6 +24,8 @@ type SubscribersPageContextProps = {
 	pageClickCallback: ( page: number ) => void;
 	sortTerm: SubscribersSortBy;
 	setSortTerm: ( term: SubscribersSortBy ) => void;
+	filterOption: SubscribersFilterBy;
+	setFilterOption: ( option: SubscribersFilterBy ) => void;
 };
 
 const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
@@ -41,6 +43,7 @@ export const SubscribersPageProvider = ( {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
 	const [ sortTerm, setSortTerm ] = useState( SubscribersSortBy.DateSubscribed );
+	const [ filterOption, setFilterOption ] = useState( SubscribersFilterBy.All );
 
 	const handleSearch = useCallback( ( term: string ) => {
 		setSearchTerm( term );
@@ -57,6 +60,7 @@ export const SubscribersPageProvider = ( {
 		search: debouncedSearchTerm,
 		siteId,
 		sortTerm,
+		filterOption,
 	} );
 
 	const { total, per_page, subscribers } = subscribersQueryResult.data || {
@@ -91,6 +95,8 @@ export const SubscribersPageProvider = ( {
 				pageClickCallback,
 				sortTerm,
 				setSortTerm,
+				filterOption,
+				setFilterOption,
 			} }
 		>
 			{ children }

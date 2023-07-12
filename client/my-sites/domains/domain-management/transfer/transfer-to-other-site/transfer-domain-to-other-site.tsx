@@ -18,6 +18,7 @@ import {
 	domainManagementEdit,
 	domainManagementList,
 	domainManagementTransfer,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -73,7 +74,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		targetSite: TransferDomainToOtherSiteProps[ 'selectedSite' ],
 		closeDialog: () => void
 	): void => {
-		const { selectedDomainName, selectedSite } = this.props;
+		const { selectedDomainName, selectedSite, currentRoute } = this.props;
 		const targetSiteTitle = targetSite.title;
 		const successMessage = this.props.translate(
 			'%(selectedDomainName)s has been transferred to site: %(targetSiteTitle)s',
@@ -97,9 +98,9 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 					if ( this.props.isDomainOnly ) {
 						this.props.requestSites();
 						const transferedTo = this.props.sites.find( ( site ) => site.ID === targetSite.ID );
-						page( domainManagementList( transferedTo?.slug ?? '' ) );
+						page( domainManagementList( transferedTo?.slug ?? '', currentRoute ) );
 					} else {
-						page( domainManagementList( this.props.selectedSite?.slug ) );
+						page( domainManagementList( this.props.selectedSite?.slug, currentRoute ) );
 					}
 				},
 				( error: Error ) => {
@@ -120,7 +121,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const { selectedDomainName: domainName, translate } = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 		return translate(
-			"Transfer {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
+			"Connect {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
 			translateArgs
 		);
 	}
@@ -149,7 +150,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				<FormattedHeader
 					hasScreenOptions={ false }
 					brandFont
-					headerText={ translate( 'Transfer to another WordPress.com site' ) }
+					headerText={ translate( 'Connect to another WordPress.com site' ) }
 					align="left"
 				/>
 				<div className={ `${ componentClassName }__container` }>
@@ -164,7 +165,9 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
 					selectedDomainName,
@@ -176,7 +179,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
-				label: translate( 'Transfer' ),
+				label: translate( 'Connect' ),
 				href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{ label: translate( 'To another WordPress.com site' ) },

@@ -201,10 +201,12 @@ const streamApis = {
 	},
 	discover: {
 		path: ( { streamKey } ) => {
-			if ( ! streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
-				return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
+			if ( streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
+				return '/read/tags/cards';
+			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
+				return '/read/tags/posts';
 			}
-			return '/read/tags/cards';
+			return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
 		},
 		dateProperty: 'date',
 		query: ( extras, { tags } ) =>

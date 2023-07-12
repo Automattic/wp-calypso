@@ -27,7 +27,7 @@ export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
-export const BULK_DOMAIN_TRANSFER = 'bulk-domain-transfer';
+export const DOMAIN_TRANSFER = 'domain-transfer';
 export const ONBOARDING_PM_FLOW = 'onboarding-media';
 
 export const isOnboardingPMFlow = ( flowName: string | null | undefined ) => {
@@ -85,7 +85,7 @@ export const isTransferringHostedSiteCreationFlow = ( flowName: string | null ) 
 	return Boolean( flowName && TRANSFERRING_HOSTED_SITE_FLOW === flowName );
 };
 
-export const isAnyHostingFlow = ( flowName: string | null ) => {
+export const isAnyHostingFlow = ( flowName?: string | null ) => {
 	return Boolean(
 		flowName &&
 			[ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW, TRANSFERRING_HOSTED_SITE_FLOW ].includes( flowName )

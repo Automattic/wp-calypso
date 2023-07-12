@@ -1,46 +1,62 @@
 import { TextControl, Button } from '@wordpress/components';
+import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useOdysseusAssistantContext } from './context';
-import { useOddyseusEndpointPost } from './query';
+import { useOdysseusGetChatPollQuery, useOddyseusSendMessage } from './query';
 import WapuuRibbon from './wapuu-ribbon';
-import type { Message } from './query';
 
 import './style.scss';
 
 const OdysseusAssistant = () => {
-	const siteId = useSelector( getSelectedSiteId );
-	const { lastNudge, sectionName } = useOdysseusAssistantContext();
+	const { lastNudge, chat, isLoadingChat, addMessage, setMessages } = useOdysseusAssistantContext();
 	const [ input, setInput ] = useState( '' );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
-	const { mutateAsync } = useOddyseusEndpointPost( siteId );
-	const [ messages, setMessages ] = useState< Message[] >( [
-		{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'assistant' },
-	] );
+	const { mutateAsync: sendOdysseusMessage } = useOddyseusSendMessage();
+	const { data: chatData } = useOdysseusGetChatPollQuery( chat.chat_id ?? null );
 
-	// Clear messages when switching sections
 	useEffect( () => {
-		setMessages( [] );
-	}, [ sectionName ] );
+		if ( isLoadingChat ) {
+			setMessages( [
+				{ content: 'Remembering any previous conversation...', role: 'bot', type: 'message' },
+			] );
+		} else if ( ! chat ) {
+			setMessages( [
+				{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot', type: 'message' },
+			] );
+		} else if ( chat ) {
+			setMessages( chat.messages );
+		}
+	}, [ chat, isLoadingChat, setMessages, chat.messages ] );
 
-	const addMessage = ( content: string, role: 'user' | 'assistant' ) => {
-		setMessages( ( prevMessages ) => [ ...prevMessages, { content, role } ] );
-	};
+	useEffect( () => {
+		if ( chatData ) {
+			if ( chat.messages.length < chatData.messages.length ) {
+				const countNewMessages = chatData.messages.length - chat.messages.length;
+				const newMessages = chatData.messages.slice( -countNewMessages );
+				newMessages.forEach( ( message ) => {
+					addMessage( message );
+				} );
+			}
+		}
+	}, [ chat, chatData, addMessage ] );
+
+	const environmentBadge = document.querySelector( 'body > .environment-badge' );
 
 	const messagesEndRef = useRef< HTMLDivElement | null >( null );
 
 	useEffect( () => {
 		messagesEndRef.current?.scrollIntoView( { behavior: 'smooth' } );
-	}, [ messages ] );
+	}, [ chat.messages ] );
+
 	useEffect( () => {
 		if ( lastNudge ) {
 			setMessages( [
 				{
 					content: lastNudge.initialMessage,
-					role: 'assistant',
+					role: 'bot',
+					type: 'message',
 				},
 			] );
 
@@ -53,11 +69,7 @@ const OdysseusAssistant = () => {
 				clearTimeout( timeoutId );
 			};
 		}
-
-		setMessages( [
-			{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'assistant' },
-		] );
-	}, [ lastNudge ] );
+	}, [ lastNudge, setMessages ] );
 
 	const handleMessageChange = ( text: string ) => {
 		setInput( text );
@@ -66,24 +78,29 @@ const OdysseusAssistant = () => {
 	const handleSendMessage = async () => {
 		try {
 			setIsLoading( true );
-			addMessage( input, 'user' );
-			setInput( '' );
-			const response = await mutateAsync( {
-				prompt: input,
-				context: lastNudge ?? {
-					nudge: 'none',
-					context: {},
-					initialMessage: 'Hello, I am Wapuu, your personal WordPress assistant',
-				},
-				messages,
+			addMessage( {
+				content: input,
+				role: 'user',
+				type: 'message',
 			} );
 
-			addMessage( response, 'assistant' );
-		} catch ( _ ) {
-			addMessage(
-				"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!",
-				'assistant'
-			);
+			setInput( '' );
+			const response = await sendOdysseusMessage( {
+				message: { content: input, role: 'user', type: 'message' },
+			} );
+
+			addMessage( {
+				content: response.messages[ 0 ].content,
+				role: 'bot',
+				type: 'message',
+			} );
+		} catch ( e ) {
+			addMessage( {
+				content:
+					"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!",
+				role: 'bot',
+				type: 'message',
+			} );
 		} finally {
 			setIsLoading( false );
 		}
@@ -104,11 +121,22 @@ const OdysseusAssistant = () => {
 
 	function handleFormSubmit( event: React.FormEvent ) {
 		event.preventDefault();
+
+		if ( isLoading ) {
+			return;
+		}
+
 		handleSendMessage();
 	}
 
 	return (
-		<div className={ `chatbox ${ isVisible ? 'chatbox-show' : 'chatbox-hide' }` }>
+		<div
+			className={ classnames( 'chatbox', {
+				'chatbox-show': isVisible,
+				'chatbox-hide': ! isVisible,
+				'using-environment-badge': environmentBadge,
+			} ) }
+		>
 			<WapuuRibbon
 				onToggleVisibility={ handleToggleVisibility }
 				isNudging={ isNudging }
@@ -117,15 +145,15 @@ const OdysseusAssistant = () => {
 			<div className="chatbox-header">Wapuu Assistant</div>
 			<div className="chat-box-message-container">
 				<div className="chatbox-messages">
-					{ messages.map( ( message, index ) => (
+					{ chat.messages.map( ( message, index ) => (
 						<div
+							ref={ index === chat.messages.length - 1 ? messagesEndRef : null }
 							className={ `chatbox-message ${ message.role === 'user' ? 'user' : 'wapuu' }` }
 							key={ index }
 						>
 							{ message.content }
 						</div>
 					) ) }
-					<div ref={ messagesEndRef } />
 				</div>
 				<form onSubmit={ handleFormSubmit }>
 					<div className="chatbox-input-area">
@@ -136,7 +164,12 @@ const OdysseusAssistant = () => {
 							onChange={ handleMessageChange }
 							onKeyDown={ handleKeyDown }
 						/>
-						<Button onClick={ handleSendMessage } className="chatbox-send-btn" type="button">
+						<Button
+							disabled={ isLoading }
+							onClick={ handleSendMessage }
+							className="chatbox-send-btn"
+							type="button"
+						>
 							Send
 						</Button>
 					</div>

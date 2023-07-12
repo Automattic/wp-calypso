@@ -30,6 +30,7 @@ import {
 	domainManagementList,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { useDispatch } from 'calypso/state';
 import {
@@ -80,10 +81,10 @@ const TransferPage = ( props: TransferPageProps ) => {
 		const items = [
 			{
 				// translators: Internet domains, e.g. mygroovydomain.com
-				label: __( 'Domains' ),
+				label: isUnderDomainManagementAll( currentRoute ) ? __( 'All Domains' ) : __( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
-					selectedDomainName,
+					currentRoute,
 					selectedSite?.options?.is_domain_only
 				),
 			},

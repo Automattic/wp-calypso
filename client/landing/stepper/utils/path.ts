@@ -44,31 +44,28 @@ export function useLangRouteParam() {
 	return match?.params.lang;
 }
 
-export const useLoginUrl = ( params: {
-	flowName?: string;
-	redirectTo?: string;
-	pageTitle?: string;
+export const useLoginUrl = ( {
+	variationName,
+	redirectTo,
+	pageTitle,
+	loginPath = `/start/account/user/`,
+}: {
+	/**
+	 * Variation name is used to track the relevant login flow in the signup framework as explained in https://github.com/Automattic/wp-calypso/issues/67173
+	 */
+	variationName?: string | null;
+	redirectTo?: string | null;
+	pageTitle?: string | null;
 	loginPath?: string;
 } ): string => {
 	const locale = useLocale();
-
-	const loginPath = params.loginPath ?? `/start/account/user/`;
 	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
 
-	const nonEmptyQueryParameters = Object.entries( params )
-		.filter( ( [ , value ] ) => value )
-		.map( ( [ key, value ] ) => {
-			switch ( key ) {
-				case 'redirectTo':
-					return [ 'redirect_to', value ];
-				case 'flowName':
-					return [ 'variationName', value ];
-				default:
-					return [ key, value ];
-			}
-		} );
-
-	nonEmptyQueryParameters.push( [ 'toStepper', 'true' ] );
-
-	return addQueryArgs( localizedLoginPath, Object.fromEntries( nonEmptyQueryParameters ) );
+	// Empty values are ignored down the call stack, so we don't need to check for them here.
+	return addQueryArgs( localizedLoginPath, {
+		variationName,
+		redirect_to: redirectTo,
+		pageTitle,
+		toStepper: true,
+	} );
 };

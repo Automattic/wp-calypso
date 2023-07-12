@@ -2,25 +2,26 @@ import {
 	PlanSlug,
 	TYPE_ENTERPRISE_GRID_WPCOM,
 	TYPE_FREE,
+	TYPE_WOO_EXPRESS_PLUS,
 	findPlansKeys,
 } from '@automattic/calypso-products';
 import warn from '@wordpress/warning';
 
 interface Props {
 	planTypes: string[];
-	group: string;
 	term: string;
 }
 
-const usePlansFromTypes = ( { planTypes, group, term }: Props ): PlanSlug[] => {
+const usePlansFromTypes = ( { planTypes, term }: Props ): PlanSlug[] => {
 	const plans = planTypes.reduce( ( accum: PlanSlug[], type ) => {
-		// the Free plan and the Enterprise plan don't have a term.
+		// the Free, Enterprise and WooExpressPlus plans don't have a term.
 		// We may consider to move this logic into the underlying `planMatches` function, but that would have wider implication so it's TBD
-		const planQuery =
-			type === TYPE_FREE || type === TYPE_ENTERPRISE_GRID_WPCOM
-				? { group, type }
-				: { group, type, term };
-		const plan = findPlansKeys( planQuery )[ 0 ] as PlanSlug;
+		const planQuery = [ TYPE_FREE, TYPE_ENTERPRISE_GRID_WPCOM, TYPE_WOO_EXPRESS_PLUS ].includes(
+			type
+		)
+			? { type }
+			: { type, term };
+		const plan = findPlansKeys( planQuery )[ 0 ];
 
 		if ( ! plan ) {
 			warn(
@@ -28,7 +29,7 @@ const usePlansFromTypes = ( { planTypes, group, term }: Props ): PlanSlug[] => {
 			);
 		}
 
-		return plan ? [ ...accum, plan ] : accum;
+		return plan ? [ ...accum, plan as PlanSlug ] : accum;
 	}, [] );
 
 	return plans;

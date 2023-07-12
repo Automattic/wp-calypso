@@ -13,7 +13,6 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
-		"bulk-domain-transfer-flow": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -112,7 +111,7 @@
 		"settings/security/monitor": true,
 		"sign-in-with-apple": false,
 		"signup/design-picker-pattern-assembler": true,
-		"signup/design-picker-preview-colors": false,
+		"signup/design-picker-preview-colors": true,
 		"signup/design-picker-preview-fonts": true,
 		"signup/professional-email-step": false,
 		"signup/social": true,
@@ -126,7 +125,9 @@
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
+		"subscribers-page-new": false,
 		"subscription-gifting": true,
+		"subscription-management-add-sites-modal": false,
 		"subscription-management-comments-view": true,
 		"subscription-management-pending-view": true,
 		"subscription-management/comments-list-controls": true,
@@ -144,8 +145,7 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true,
-		"yolo/site-transfers-i1": true
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

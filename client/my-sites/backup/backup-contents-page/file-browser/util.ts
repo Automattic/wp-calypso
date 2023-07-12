@@ -14,6 +14,8 @@ const extensionToFileType: Record< string, FileType > = {
 	gif: 'image',
 	ico: 'image',
 	png: 'image',
+	webp: 'image',
+	svg: 'image',
 	mp4: 'video',
 	ogg: 'video',
 	ogv: 'video',

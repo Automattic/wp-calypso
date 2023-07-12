@@ -35,6 +35,7 @@ interface LaunchpadResponse {
 	launchpad_screen?: string | boolean | null | undefined;
 	checklist?: Task[] | null;
 	checklist_statuses?: ChecklistStatuses;
+	is_enabled: boolean;
 }
 
 type LaunchpadUpdateSettings = {
@@ -77,6 +78,7 @@ export const useLaunchpad = (
 			launchpad_screen: undefined,
 			checklist_statuses: {},
 			checklist: null,
+			is_enabled: false,
 		},
 	} );
 };

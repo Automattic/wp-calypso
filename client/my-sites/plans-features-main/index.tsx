@@ -1,16 +1,15 @@
 import {
 	chooseDefaultCustomerType,
 	getPlan,
-	getPopularPlanSpec,
 	isFreePlan,
 	isPersonalPlan,
 	getPlanPath,
-	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	PlanSlug,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import { isOnboardingPMFlow } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import classNames from 'classnames';
@@ -30,8 +29,9 @@ import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useIntentFromSiteMeta from './hooks/use-intent-from-site-meta';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
@@ -42,12 +42,14 @@ import useVisiblePlansForPlanFeatures from './hooks/use-visible-plans-for-plan-f
 import type { PlansIntent } from './hooks/use-plan-types-with-intent';
 import type { IntervalType } from './types';
 import type { DomainSuggestion } from '@automattic/data-stores';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
+import type { PlanActionOverrides } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
-interface PlansFeaturesMainProps {
+export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
 	isInSignup?: boolean;
@@ -56,7 +58,7 @@ interface PlansFeaturesMainProps {
 	basePlansPath?: string;
 	selectedPlan?: string;
 	selectedFeature?: string;
-	onUpgradeClick?: ( cartItemForPlan?: { product_slug: string } | null ) => void;
+	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	domainName?: string;
@@ -77,15 +79,17 @@ interface PlansFeaturesMainProps {
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
+	showBiennialToggle?: boolean;
+	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	visiblePlans: PlanSlug[];
 	plans: PlanSlug[];
-	customerType: string;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	sitePlanSlug?: string | null;
 	siteSlug?: string | null;
+	intent?: PlansIntent;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -111,7 +115,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	const {
 		plans,
 		visiblePlans,
-		customerType,
 		domainName,
 		isInSignup,
 		isLaunchPage,
@@ -119,14 +122,13 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		onUpgradeClick,
 		selectedFeature,
 		selectedPlan,
-		withDiscount,
-		discountEndDate,
 		siteId,
 		plansWithScroll,
 		isReskinned,
 		intervalType,
 		planTypeSelectorProps,
 		hidePlansFeatureComparison,
+		hideUnavailableFeatures,
 		sitePlanSlug,
 		siteSlug,
 		intent,
@@ -134,12 +136,12 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
-	const isJetpack = useSelector( ( state: IAppState ) => isJetpackSite( state, siteId ) ) ?? false;
 	const showDomainUpsellDialog = useCallback( () => {
 		setShowDomainUpsellDialog( true );
 	}, [ setShowDomainUpsellDialog ] );
+	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
 
-	let planActionOverrides;
+	let planActionOverrides: PlanActionOverrides | undefined;
 	if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
 		planActionOverrides = {
 			loggedInFreePlan: domainFromHomeUpsellFlow
@@ -156,8 +158,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		};
 	}
 
-	// TODO clk: Needs typing to PlanFeatures2023GridProps
-	const asyncProps = {
+	const asyncProps: PlanFeatures2023GridProps = {
 		domainName,
 		isInSignup,
 		isLaunchPage,
@@ -167,22 +168,15 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		visiblePlans,
 		selectedFeature,
 		selectedPlan,
-		withDiscount,
-		discountEndDate,
-		withScroll: plansWithScroll,
-		popularPlanSpec: getPopularPlanSpec( {
-			flowName,
-			customerType,
-			isJetpack,
-			availablePlans: visiblePlans,
-		} ),
 		siteId,
 		isReskinned,
 		intervalType,
 		hidePlansFeatureComparison,
+		hideUnavailableFeatures,
 		currentSitePlanSlug: sitePlanSlug,
 		planActionOverrides,
 		intent,
+		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -195,15 +189,9 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 
 	return (
 		<div
-			className={ classNames(
-				'plans-features-main__group',
-				'is-wpcom',
-				`is-customer-${ customerType }`,
-				'is-2023-pricing-grid',
-				{
-					'is-scrollable': plansWithScroll,
-				}
-			) }
+			className={ classNames( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
+				'is-scrollable': plansWithScroll,
+			} ) }
 			data-e2e-plans="wpcom"
 		>
 			{ asyncPlanFeatures2023Grid }
@@ -233,10 +221,12 @@ const PlansFeaturesMain = ( {
 	hideEnterprisePlan,
 	intent: intentFromProps, // do not set a default value for this prop here
 	isReskinned,
+	showBiennialToggle,
 	customerType = 'personal',
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
 	hidePlansFeatureComparison = false,
+	hideUnavailableFeatures = false,
 	isInSignup = false,
 	isPlansInsideStepper = false,
 	isStepperUpgradeFlow = false,
@@ -287,7 +277,11 @@ const PlansFeaturesMain = ( {
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// - only applicable to main onboarding flow (default `/start`)
-		if ( 'onboarding' === flowName && domainName && ! cartItemForPlan ) {
+		if (
+			( 'onboarding' === flowName || isOnboardingPMFlow( flowName ) ) &&
+			domainName &&
+			! cartItemForPlan
+		) {
 			toggleIsFreePlanPaidDomainDialogOpen();
 			return;
 		}
@@ -317,8 +311,10 @@ const PlansFeaturesMain = ( {
 		? 'default'
 		: intentFromProps || intentFromSiteMeta.intent || 'default';
 
+	// TODO clk: "defaultPlans" to be removed once plan properties are computed outside of the grid component
+	// i.e. there will be no need to pass the full set of plans through
 	const defaultPlanTypes = usePlanTypesWithIntent( {
-		intent: 'default',
+		intent: 'plans-woocommerce' === intent ? 'plans-woocommerce' : 'default',
 		selectedPlan,
 		sitePlanSlug,
 		hideEnterprisePlan,
@@ -330,13 +326,11 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	} );
 	const defaultPlans = usePlansFromTypes( {
-		planTypes: defaultPlanTypes?.planTypes || [],
-		group: GROUP_WPCOM,
+		planTypes: defaultPlanTypes?.planTypes,
 		term,
 	} );
 	const plansWithIntent = usePlansFromTypes( {
-		planTypes: planTypesWithIntent?.planTypes || [],
-		group: GROUP_WPCOM,
+		planTypes: planTypesWithIntent?.planTypes,
 		term,
 	} );
 	const visiblePlans =
@@ -370,6 +364,7 @@ const PlansFeaturesMain = ( {
 		siteSlug,
 		selectedPlan,
 		selectedFeature,
+		showBiennialToggle,
 		kind: planTypeSelector,
 		plans: visiblePlans,
 	};
@@ -417,7 +412,6 @@ const PlansFeaturesMain = ( {
 					<OnboardingPricingGrid2023
 						plans={ defaultPlans }
 						visiblePlans={ visiblePlans }
-						customerType={ _customerType }
 						domainName={ domainName }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
@@ -433,6 +427,7 @@ const PlansFeaturesMain = ( {
 						intervalType={ intervalType }
 						planTypeSelectorProps={ planTypeSelectorProps }
 						hidePlansFeatureComparison={ hidePlansFeatureComparison }
+						hideUnavailableFeatures={ hideUnavailableFeatures }
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
 						intent={ intent }

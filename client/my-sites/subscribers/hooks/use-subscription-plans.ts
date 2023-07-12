@@ -3,8 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
 import { Subscriber, SubscriptionPlan } from '../types';
 
-const freePlan = 'Free';
-
 type SubscriptionPlanData = {
 	plan: ReactNode;
 	startDate?: string;
@@ -13,6 +11,7 @@ type SubscriptionPlanData = {
 
 const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] => {
 	const translate = useTranslate();
+	const freePlan = translate( 'Free' );
 
 	const getPaymentInterval = ( renew_interval: string ) => {
 		if ( renew_interval === null ) {
@@ -36,7 +35,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 	const transformSubscriptionPlans = ( subscriptions?: SubscriptionPlan[] ) => {
 		const defaultSubscription = [
 			{
-				renewalPrice: translate( 'Free' ),
+				renewalPrice: freePlan,
 				when: '',
 				title: undefined,
 				start_date: undefined,

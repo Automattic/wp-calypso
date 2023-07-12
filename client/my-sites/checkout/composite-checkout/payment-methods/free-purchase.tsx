@@ -4,7 +4,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { Fragment } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WordPressLogo from '../components/wordpress-logo';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
@@ -92,9 +91,25 @@ function WordPressFreePurchaseLabel() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
+	const doesCartHaveRenewalWithPaymentMethod = responseCart.products.some(
+		( product ) => product.is_renewal_and_will_auto_renew
+	);
+	const isCartAllOneTimePurchases = responseCart.products.every(
+		( product ) => product.is_one_time_purchase
+	);
+
+	if ( ! isCartAllOneTimePurchases && ! doesCartHaveRenewalWithPaymentMethod ) {
+		return (
+			<>
+				<div>{ __( 'Assign a Payment Method Later' ) }</div>
+				<WordPressLogo />
+			</>
+		);
+	}
+
 	if ( doesPurchaseHaveFullCredits( responseCart ) ) {
 		return (
-			<Fragment>
+			<>
 				<div>
 					{
 						/* translators: %(amount)s is the total amount of credits available in localized currency */
@@ -107,15 +122,15 @@ function WordPressFreePurchaseLabel() {
 					}
 				</div>
 				<WordPressLogo />
-			</Fragment>
+			</>
 		);
 	}
 
 	return (
-		<Fragment>
+		<>
 			<div>{ __( 'Free Purchase' ) }</div>
 			<WordPressLogo />
-		</Fragment>
+		</>
 	);
 }
 

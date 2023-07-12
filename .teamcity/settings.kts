@@ -63,8 +63,7 @@ project {
 		// as supported (even though both TeamCity and chalk support that.)
 		param("env.FORCE_COLOR", "1")
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
-		text("JEST_E2E_WORKERS", "100%", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
-		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
+		text("JEST_E2E_WORKERS", "100%", label = "Jest max workers", description = "Number or percent of cores to use when running E2E tests.", allowEmpty = true)
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
 		text("docker_image", "registry.a8c.com/calypso/base:latest", label = "Docker image", description = "Default Docker image used to run builds", allowEmpty = true)
@@ -81,9 +80,8 @@ project {
 		param("teamcity.git.fetchAllHeads", "true")
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
-		password("E2E_SECRETS_ENCRYPTION_KEY_NOV_30_22", "credentialsJSON:d9abde26-f565-4d21-bdf3-e2e00d3e45ec", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_JAN_20_23", "credentialsJSON:873582a4-c421-4647-b901-56c86abf09c8", display = ParameterDisplay.HIDDEN)
 		password("E2E_SECRETS_ENCRYPTION_KEY_JUN_27_23", "credentialsJSON:7f7a0165-754f-4a52-93ef-c97852cd83e0", display = ParameterDisplay.HIDDEN)
+		// Define the currently used encryption key here. This allows easy swapping between previously used keys.
 		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_JUN_27_23%", display = ParameterDisplay.HIDDEN)
 
 		// Calypso dashboard AWS secrets for S3 bucket.

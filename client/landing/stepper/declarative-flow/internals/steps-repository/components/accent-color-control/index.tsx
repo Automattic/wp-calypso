@@ -60,7 +60,9 @@ const AccentColorControl = ( {
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
 	const site = useSite();
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
+	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
+		site?.ID
+	);
 
 	const getColorOptions = useCallback(
 		(): ColorOption[] => [
@@ -204,12 +206,13 @@ const AccentColorControl = ( {
 
 		const freeColors = getColorOptions().filter( ( { isPremium } ) => ! isPremium );
 		const premiumColors = getColorOptions().filter( ( { isPremium } ) => isPremium );
+		const planText = globalStylesInPersonalPlan
+			? __( 'Unlock more colors with a Personal plan' )
+			: __( 'Unlock more colors with a Premium plan' );
 
 		const dropdownOptions = [
 			...freeColors.map( ( freeColor ) => getDropdownOption( freeColor ) ),
-			<SelectDropdown.Label key="dropdown-label">
-				{ __( 'Unlock more colors with a Premium plan' ) }
-			</SelectDropdown.Label>,
+			<SelectDropdown.Label key="dropdown-label">{ planText }</SelectDropdown.Label>,
 			...premiumColors.map( ( premiumColor ) => getDropdownOption( premiumColor ) ),
 		];
 

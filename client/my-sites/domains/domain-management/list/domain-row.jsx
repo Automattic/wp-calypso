@@ -19,7 +19,11 @@ import {
 	isDomainUpdateable,
 	resolveDomainStatus,
 } from 'calypso/lib/domains';
-import { type as domainTypes, domainInfoContext } from 'calypso/lib/domains/constants';
+import {
+	type as domainTypes,
+	domainInfoContext,
+	transferStatus,
+} from 'calypso/lib/domains/constants';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
 import { isRecentlyRegisteredAndDoesNotPointToWpcom } from 'calypso/lib/domains/utils/is-recently-registered-and-does-not-point-to-wpcom';
@@ -28,10 +32,10 @@ import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import {
-	domainManagementList,
 	createSiteFromDomainOnly,
-	domainManagementEditContactInfo,
 	domainManagementDns,
+	domainManagementEditContactInfo,
+	domainManagementList,
 	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import {
@@ -40,6 +44,7 @@ import {
 } from 'calypso/my-sites/email/paths';
 import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 import './domain-row.scss';
 
@@ -95,10 +100,10 @@ class DomainRow extends PureComponent {
 	}
 
 	renderSite() {
-		const { site } = this.props;
+		const { site, currentRoute } = this.props;
 		return (
 			<div className="domain-row__site-cell">
-				<Button href={ domainManagementList( site?.slug ) } plain>
+				<Button href={ domainManagementList( site?.slug, currentRoute ) } plain>
 					{ site?.title || site?.slug }
 				</Button>
 			</div>
@@ -123,10 +128,11 @@ class DomainRow extends PureComponent {
 	}
 
 	renderDomainStatus() {
-		const { domain, site, isLoadingDomainDetails, translate, dispatch } = this.props;
+		const { currentRoute, domain, site, isLoadingDomainDetails, translate, dispatch } = this.props;
 		const { status, statusClass } = resolveDomainStatus( domain, null, translate, dispatch, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
+			currentRoute,
 		} );
 
 		const domainStatusClass = classnames( 'domain-row__status-cell', {
@@ -385,9 +391,15 @@ class DomainRow extends PureComponent {
 							? translate( 'View transfer' )
 							: translate( 'View settings' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
-						{ translate( 'Manage DNS' ) }
-					</PopoverMenuItem>
+					{ ! (
+						domain.type === domainTypes.SITE_REDIRECT ||
+						domain.transferStatus === transferStatus.PENDING_ASYNC
+					) &&
+						domain.canManageDnsRecords && (
+							<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
+								{ translate( 'Manage DNS' ) }
+							</PopoverMenuItem>
+						) }
 
 					{ domain.type === domainTypes.REGISTERED &&
 						( isDomainUpdateable( domain ) || isDomainInGracePeriod( domain ) ) && (
@@ -414,7 +426,7 @@ class DomainRow extends PureComponent {
 							{ translate( 'Transfer to WordPress.com' ) }
 						</PopoverMenuItem>
 					) }
-					{ site.options?.is_domain_only && (
+					{ site.options?.is_domain_only && domain.type !== domainTypes.TRANSFER && (
 						<PopoverMenuItem href={ createSiteFromDomainOnly( site.slug, site.siteId ) }>
 							<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ translate( 'Create site' ) }
@@ -472,8 +484,16 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, isManagingAllSites, site, showCheckbox, purchase, translate, dispatch } =
-			this.props;
+		const {
+			currentRoute,
+			domain,
+			isManagingAllSites,
+			site,
+			showCheckbox,
+			purchase,
+			translate,
+			dispatch,
+		} = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
 		const { noticeText, statusClass } = resolveDomainStatus(
@@ -484,6 +504,7 @@ class DomainRow extends PureComponent {
 			{
 				siteSlug: site?.slug,
 				getMappingErrors: true,
+				currentRoute,
 			}
 		);
 
@@ -540,4 +561,9 @@ function withOdysseusAssistantContext( Component ) {
 	};
 }
 
-export default connect()( withOdysseusAssistantContext( localize( DomainRow ) ) );
+export default connect( ( state ) => {
+	const currentRoute = getCurrentRoute( state );
+	return {
+		currentRoute,
+	};
+} )( withOdysseusAssistantContext( localize( DomainRow ) ) );
