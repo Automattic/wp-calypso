@@ -23,27 +23,27 @@ const ThumbnailWrapper = ( { showEditSite, editSiteURL, children }: ThumbnailWra
 		'home-site-preview__remove-pointer': ! showEditSite,
 	} );
 
-	if ( showEditSite ) {
-		return (
-			<a
-				onClick={ ( event ) => {
-					event.preventDefault();
-
-					recordTracksEvent( 'calypso_customer_home_site_preview_clicked', {
-						context: 'customer-home',
-					} );
-
-					window.location.href = event.currentTarget.href;
-				} }
-				className={ classes }
-				href={ editSiteURL }
-			>
-				{ children }
-			</a>
-		);
+	if ( ! showEditSite ) {
+		return <div className={ classes }> { children } </div>;
 	}
 
-	return <div className={ classes }> { children } </div>;
+	return (
+		<a
+			onClick={ ( event ) => {
+				event.preventDefault();
+
+				recordTracksEvent( 'calypso_customer_home_site_preview_clicked', {
+					context: 'customer-home',
+				} );
+
+				window.location.href = event.currentTarget.href;
+			} }
+			className={ classes }
+			href={ editSiteURL }
+		>
+			{ children }
+		</a>
+	);
 };
 
 interface SitePreviewProps {
@@ -79,7 +79,12 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 					</Button>
 				) }
 				<div className="home-site-preview__thumbnail">
-					<iframe scrolling="no" loading="lazy" title="title" src={ iframeSrcKeepHomepage } />
+					<iframe
+						scrolling="no"
+						loading="lazy"
+						title={ __( 'Site Preview' ) }
+						src={ iframeSrcKeepHomepage }
+					/>
 				</div>
 			</ThumbnailWrapper>
 			<div className="home-site-preview__action-bar">

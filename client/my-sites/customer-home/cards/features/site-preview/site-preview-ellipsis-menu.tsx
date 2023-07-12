@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
@@ -20,7 +21,11 @@ export const SitePreviewEllipsisMenu = () => {
 	return (
 		<span className={ classes }>
 			<button
-				aria-label={ `More options for site ${ selectedSite?.name }` }
+				aria-label={ sprintf(
+					/* translators: %s is the site name */
+					__( 'More options for site %s' ),
+					selectedSite?.name
+				) }
 				ref={ moreButtonRef }
 				onClick={ () => setIsShowingPopover( ! isShowingPopover ) }
 			>
