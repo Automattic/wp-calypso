@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SiteUrl, Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { SitePreviewEllipsisMenu } from './site-preview-ellipsis-menu';
@@ -57,8 +58,9 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 		canCurrentUser( state, selectedSite?.ID ?? 0, 'manage_options' )
 	);
 	const isMobile = useMobileBreakpoint();
+	const wpcomDomain = useSelector( ( state ) => getWpComDomainBySiteId( state, selectedSite?.ID ) );
 
-	if ( isMobile || ! selectedSite ) {
+	if ( isMobile || ! selectedSite || ! wpcomDomain ) {
 		return <></>;
 	}
 
@@ -68,7 +70,7 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 		canvas: 'edit',
 	} );
 
-	const iframeSrcKeepHomepage = `//${ selectedSite.domain }/?hide_banners=true&preview_overlay=true`;
+	const iframeSrcKeepHomepage = `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true`;
 
 	return (
 		<div className="home-site-preview">
