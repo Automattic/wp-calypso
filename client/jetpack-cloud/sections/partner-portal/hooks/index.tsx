@@ -16,6 +16,8 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import getProductSlugFromLicenseKey from '../lib/get-product-slug-from-license-key';
+import type { ProductInfo } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 /**
  * Redirect to the partner portal or a present "return" GET parameter given a certain condition.
@@ -136,39 +138,46 @@ export function useAssignLicenses(
 			} )
 		);
 
-		const assignLicenseRequests = licenseKeys.map( ( licenseKey ) =>
-			assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
-		);
-		const assignLicensePromises = await Promise.allSettled( assignLicenseRequests );
-		const allSelectedProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] =
-			[];
+		const keysWithProductNames = licenseKeys
+			.map( ( key ) => {
+				const productSlug = getProductSlugFromLicenseKey( key );
+				const selectedProduct = products?.data?.find?.( ( p ) => p.slug === productSlug );
 
-		assignLicensePromises.forEach( ( promise: any ) => {
-			const { status, value: license } = promise;
-			if ( license ) {
-				const licenseKey = license.license_key;
-				const productSlug = getProductSlugFromLicenseKey( licenseKey );
-				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
-				if ( selectedProduct ) {
-					const item = {
-						key: licenseKey,
-						name: getProductTitle( selectedProduct.name ),
-						status,
-					};
-					allSelectedProducts.push( item );
-				}
-			}
-		} );
+				return {
+					key,
+					product: selectedProduct,
+				};
+			} )
+			// If we can't determine which product a license is meant for, filter it out
+			.filter( ( { product } ) => Boolean( product ) )
+			// We only need the product's title/display name
+			.map( ( { key, product } ) => ( {
+				key,
+				name: getProductTitle( ( product as APIProductFamilyProduct ).name ),
+			} ) );
+
+		// Purposely catch any error responses and let them through,
+		// so we can pass all their information along as ProductInfo objects
+		// (not currently available via PromiseSettledResult<T>)
+		const apiRequests = keysWithProductNames.map( ( { key, name } ) =>
+			assignLicense
+				.mutateAsync( { licenseKey: key, selectedSite: selectedSiteId } )
+				.then( () => ( { key, name, status: 'fulfilled' } as ProductInfo ) )
+				.catch( () => ( { key, name, status: 'rejected' } as ProductInfo ) )
+		);
 
 		const assignLicenseStatus = {
 			selectedSite: selectedSite?.domain || '',
-			selectedProducts: allSelectedProducts,
+			selectedProducts: await Promise.all( apiRequests ),
 		};
+
 		dispatch( resetSite() );
 		dispatch( setPurchasedLicense( assignLicenseStatus ) );
+
 		if ( fromDashboard ) {
 			return page.redirect( '/dashboard' );
 		}
+
 		return page.redirect( partnerPortalBasePath( '/licenses' ) );
 	}, [
 		dispatch,
