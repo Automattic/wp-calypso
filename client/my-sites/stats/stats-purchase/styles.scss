@@ -1,16 +1,27 @@
 .stats-purchase-wizard {
-	max-width: 90%;
+	max-width: 90%; //TODO: fix positioning
+	--font-body: 16px;
+	--jp-black: #000;
+	--jp-white: #fff;
+	--jp-green-50: #008710;
+
+	.stats-purchase-wizard__card-parent {
+		border-radius: 4px;
+	}
 
 	.stats-purchase-wizard__card {
 		display: flex;
 	}
 
-	.left {
-		width: 674px;
+	.stats-purchase-wizard__card-inner--left {
+		// width: 674px;
 		padding: 64px;
+		min-width: 500px;
+		max-width: 700px;
+		box-sizing: border-box;
 	}
 
-	.right {
+	.stats-purchase-wizard__card-inner--right {
 		display: flex;
 		align-items: center;
 		width: 456px;
@@ -19,57 +30,51 @@
 		border-bottom-right-radius: 4px;
 	}
 
-	.range-container {
-		margin: 2rem 0;
-	}
-
-	.average-price {
+	.stats-purchase-wizard__average-price {
 		margin-bottom: 3em;
 		// font-size: 14px;
 		color: #2c3338;
 		text-align: center;
 	}
 
-	.benefits ul {
-		list-style: none;
-		margin: 0 0 40px;
-		padding: 0;
+	.stats-purchase-wizard__benefits {
+		ul {
+			margin: 0 0 40px;
+		}
+
+		li {
+			margin-bottom: 8px;
+			padding-left: 28px;
+			background: no-repeat 0 50%;
+		}
 	}
 
-	.benefits li {
-		margin-bottom: 8px;
-		padding-left: 28px;
-		background: no-repeat 0 50%;
-	}
-
-	.included li {
+	.stats-purchase-wizard__benefits--included li {
 		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNCIgeD0iMyIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Im04Ljc1NyAxNS45LTQuMTgtNC4yLTEuMzkzIDEuNCA1LjU3MyA1LjYgMTEuOTQxLTEyLTEuMzkzLTEuNEw4Ljc1NyAxNS45WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjMDY5RTA4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
 	}
 
-	.not-included li {
+	.stats-purchase-wizard__benefits--not-included li {
 		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNCIgeD0iNCIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xOC45MDcgNi40MSAxNy41MDQgNWwtNS41NjMgNS41OUw2LjM4IDUgNC45NzUgNi40MSAxMC41MzggMTJsLTUuNTYzIDUuNTlMNi4zOCAxOWw1LjU2Mi01LjU5TDE3LjUwNCAxOWwxLjQwMy0xLjQxTDEzLjM0NCAxMmw1LjU2My01LjU5WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjRDYzNjM4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
 	}
 
-	.qualifications {
-		margin-bottom: 2rem;
-	}
-
-	.qualifications ul {
+	ul {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 	}
 
-	.qualifications li {
-		margin-bottom: 4px;
+	.stats-purchase-wizard__qualifications {
+		li {
+			margin-bottom: 8px;
+		}
 	}
 
-	.celebrate {
+	.stats-purchase-wizard__celebrate {
 		position: absolute;
 		z-index: 0;
 	}
 
-	.biggest-supporters {
+	.stats-purchase-wizard__biggest-supporters {
 		position: absolute;
 		width: 100%;
 		top: 32px;
@@ -83,22 +88,31 @@
 		margin: 0;
 	}
 
-	.site-type {
-		display: flex;
-		gap: 32px;
-	}
+	.stats-purchase-wizard__pricing {
+		margin-bottom: 1.5rem;
 
-	.site-type div {
-		width: 50%;
-	}
+		.stats-purchase-wizard__pricing-value {
+			display: flex;
+			align-items: flex-start;
+			gap: 2px;
+			margin-bottom: -1em;
+		}
 
-	.type {
-		display: flex;
-		flex-direction: column;
-	}
+		.stats-purchase-wizard__pricing-currency {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 24px;
+			line-height: 60px;
+		}
 
-	.type button {
-		margin-top: auto;
+		.stats-purchase-wizard__pricing-amount {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 54px;
+			font-weight: 700;
+		}
+
+		.stats-purchase-wizard__pricing-cadency {
+			color: #787c82;
+		}
 	}
 
 	.stats-purchase-wizard__card-grid {
@@ -132,8 +146,7 @@
 	.stats-purchase-wizard__card-grid-header--left,
 	.stats-purchase-wizard__card-grid-header--right {
 		font-weight: 600;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 16px;
+		font-size: var(--font-body);
 	}
 
 	.stats-purchase-wizard__card-grid-action--left,
@@ -142,5 +155,105 @@
 			width: 100%;
 			justify-content: center;
 		}
+	}
+
+	.stats-purchase-wizard__card-title-indicator {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		min-width: 24px;
+		height: 24px;
+		margin-right: 8px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 14px;
+		border: 1.5px solid var(--jp-black);
+		border-radius: 50%;
+
+		&.active {
+			color: var(--jp-white);
+			background: var(--jp-green-50);
+			border-color: var(--jp-green-50);
+		}
+	}
+
+	.components-button {
+		&.is-primary {
+			border-radius: 4px;
+			color: var(--jp-white);
+			background-color: #1a1a1a;
+			border-color: #1a1a1a;
+			transition: all 0.25s ease-out;
+			font-size: var(--font-body);
+			line-height: 24px;
+			padding: 8px 32px;
+			height: auto;
+
+			&:hover,
+			&:active,
+			&:focus {
+				background: #2c3338;
+				border-color: #2c3338;
+			}
+
+			&[disabled],
+			&:disabled,
+			&.disabled {
+				opacity: 0.3;
+			}
+		}
+
+		&.is-link {
+			color: var(--jp-green-50);
+			font-size: inherit;
+			display: inline;
+		}
+	}
+
+	// override panel
+	.components-panel__body > .components-panel__body-title:hover {
+		background-color: transparent;
+	}
+
+	.components-panel__body-toggle.components-button {
+		padding: 16px;
+
+		.components-panel__arrow {
+			display: none;
+		}
+	}
+
+	.components-base-control__field {
+		display: flex;
+		align-items: center;
+
+		// add label wrapping
+		label {
+			display: flex;
+			width: calc(100% - 32px); // 32px - checkbox width
+			max-width: calc(100% - 32px);
+		}
+	}
+
+	.stats-purchase-wizard__notice {
+		padding: 8px 12px;
+		background: #f5e6b3;
+		border-radius: 4px;
+
+		.is-link {
+			color: var(--jp-black);
+		}
+	}
+
+	.stats-purchase-wizard__slider {
+		padding: 32px 0 16px;
+	}
+
+	.stats-purchase-wizard__notice--green {
+		background-color: #d0e6b8;
+	}
+
+	.stats-purchase-wizard__control--checkbox {
+		font-size: var(--font-body);
 	}
 }

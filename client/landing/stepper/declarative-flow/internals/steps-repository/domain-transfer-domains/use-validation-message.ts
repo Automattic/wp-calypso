@@ -65,7 +65,13 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		};
 	}
 
-	const availabilityNotice = getAvailabilityNotice( domain, validationResult?.status, null, true );
+	const availabilityNotice = getAvailabilityNotice(
+		domain,
+		validationResult?.status,
+		null,
+		true,
+		'_blank'
+	);
 
 	// final success
 	if ( validationResult?.auth_code_valid ) {
@@ -87,6 +93,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			valid: false,
 			loading: false,
 			message: availabilityNotice?.message,
+			refetch,
 		};
 	}
 

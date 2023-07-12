@@ -22,8 +22,6 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
-	PLAN_JETPACK_STARTER_YEARLY,
-	PLAN_JETPACK_STARTER_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
@@ -882,7 +880,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Share to Facebook, Instagram, LinkedIn, Mastodon & Tumblr' ),
 		translate( 'Recycle content' ),
 	];
 	const socialAdvancedIncludesInfo = [
@@ -890,7 +888,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Share to Facebook, Instagram, LinkedIn, Mastodon & Tumblr' ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
 		translate( 'Image generator' ),
@@ -938,11 +936,7 @@ export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
 	string,
 	Array< TranslateResult >
 > => {
-	const socialAdvancedIncludesInfo = [
-		translate( 'Auto-sharing to Instagram & Mastodon' ),
-		translate( 'Multi-image sharing' ),
-		translate( 'Video sharing' ),
-	];
+	const socialAdvancedIncludesInfo = [ translate( 'Multi-image sharing' ) ];
 
 	return {
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
@@ -1011,6 +1005,8 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Easy-to-use interface' ),
 		translate( 'No developer required' ),
 		translate( 'Enhance social media engagement with personalized posts' ),
+		translate( 'Upload & automatically share images and videos to social media' ),
+		translate( 'Automatically create custom images, saving you hours of tedious work' ),
 		translate( 'Repurpose, reuse or republish already published content' ),
 	];
 
@@ -1056,11 +1052,7 @@ export const getJetpackProductsBenefitsComingSoon = (): Record<
 	string,
 	Array< TranslateResult >
 > => {
-	const socialAdvancedBenefits = [
-		translate( 'Share multiple images to social media' ),
-		translate( 'Upload & automatically share videos to social media' ),
-		translate( 'Automatically create custom images, saving you hours of tedious work' ),
-	];
+	const socialAdvancedBenefits = [ translate( 'Share multiple images to social media' ) ];
 
 	return {
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
@@ -1116,8 +1108,6 @@ export const getJetpackProductsFAQs = (
 	];
 
 	return {
-		[ PLAN_JETPACK_STARTER_MONTHLY ]: backupFAQs,
-		[ PLAN_JETPACK_STARTER_YEARLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupFAQs,
@@ -1147,8 +1137,6 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 	];
 
 	return {
-		[ PLAN_JETPACK_STARTER_MONTHLY ]: [ ...socialFree, ...videoPressFree, ...freeBundleFeatures ],
-		[ PLAN_JETPACK_STARTER_YEARLY ]: [ ...socialFree, ...videoPressFree, ...freeBundleFeatures ],
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: [
 			...socialFree,
 			...videoPressFree,
@@ -1288,13 +1276,11 @@ export const useJetpackStorageAmountTextByProductSlug = (): ( (
 				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY ]: THREE_TERABYTE,
 				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY ]: FIVE_TERABYTE,
 
-				[ PLAN_JETPACK_STARTER_MONTHLY ]: ONE_GIGABYTE,
-				[ PLAN_JETPACK_STARTER_YEARLY ]: ONE_GIGABYTE,
 				[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: ONE_TERABYTE,
 				[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: ONE_TERABYTE,
 			}[ productSlug ] ),
-		[ TEN_GIGABYTES, HUNDRED_GIGABYTES, ONE_TERABYTE, THREE_TERABYTE, FIVE_TERABYTE ]
+		[ ONE_GIGABYTE, TEN_GIGABYTES, HUNDRED_GIGABYTES, ONE_TERABYTE, THREE_TERABYTE, FIVE_TERABYTE ]
 	);
 };

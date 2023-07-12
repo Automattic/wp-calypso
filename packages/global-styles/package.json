@@ -29,8 +29,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/design-picker": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
 		"@wordpress/block-editor": "^11.0.0",
 		"@wordpress/block-library": "^8.0.0",
@@ -42,6 +42,7 @@
 		"i18n-calypso": "workspace:^",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-intersection-observer": "^9.4.3",
 		"tslib": "^2.3.0",
 		"wpcom-proxy-request": "workspace:^"
 	},

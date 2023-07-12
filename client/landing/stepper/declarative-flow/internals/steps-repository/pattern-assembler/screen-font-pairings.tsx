@@ -25,22 +25,13 @@ const ScreenFontPairings = ( {
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
-	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
-		useSiteGlobalStylesStatus( siteId );
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
 	return (
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Fonts' ) } /> }
-				description={
-					globalStylesInPersonalPlan
-						? translate(
-								'Choose from our curated font pairings when you upgrade to the Personal plan or above.'
-						  )
-						: translate(
-								'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-						  )
-				}
+				description={ translate( 'Elevate your design with expertly curated font pairings.' ) }
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">

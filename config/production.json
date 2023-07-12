@@ -22,7 +22,6 @@
 	"features": {
 		"ad-tracking": true,
 		"akismet/siteless-checkout": true,
-		"bulk-domain-transfer-flow": false,
 		"bilmur-script": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
@@ -153,7 +152,9 @@
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
+		"subscribers-page-new": false,
 		"subscription-gifting": true,
+		"subscription-management-add-sites-modal": false,
 		"subscription-management-comments-view": true,
 		"subscription-management-pending-view": true,
 		"subscription-management/comments-list-controls": true,

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import { Button, Icon } from '@wordpress/components';
 import { check, trash, closeSmall, update } from '@wordpress/icons';
@@ -60,12 +61,29 @@ export function DomainCodePair( {
 
 	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
 
+	useEffect( () => {
+		if ( shouldReportError && ! valid && message ) {
+			recordTracksEvent( 'calypso_domain_transfer_domain_error', {
+				domain,
+				error: message,
+			} );
+		}
+	}, [ shouldReportError, valid, domain, message ] );
+
 	return (
 		<div className="domains__domain-info-and-validation">
 			<div className="domains__domain-info">
 				<div className="domains__domain-domain">
 					<FormFieldset>
-						{ showLabels && <FormLabel htmlFor={ id }>{ __( 'Domain name' ) }</FormLabel> }
+						<FormLabel
+							className={ classnames( {
+								'is-first-label-title': showLabels,
+							} ) }
+							htmlFor={ id }
+						>
+							{ __( 'Domain name' ) }
+						</FormLabel>
+
 						<FormInput
 							disabled={ valid }
 							id={ id }
@@ -79,9 +97,15 @@ export function DomainCodePair( {
 				</div>
 				<div className="domains__domain-key">
 					<FormFieldset>
-						{ showLabels && (
-							<FormLabel htmlFor={ id + '-auth' }>{ __( 'Authorization code' ) }</FormLabel>
-						) }
+						<FormLabel
+							className={ classnames( {
+								'is-first-label-title': showLabels,
+							} ) }
+							htmlFor={ id + '-auth' }
+						>
+							{ __( 'Authorization code' ) }
+						</FormLabel>
+
 						<FormInput
 							id={ id + '-auth' }
 							disabled={ valid || hasDuplicates }
@@ -95,29 +119,23 @@ export function DomainCodePair( {
 				</div>
 				<div className="domains__domain-controls">
 					<div className="domains__domain-refresh">
-						<FormFieldset>
-							<Button
-								title={ __( 'Refresh' ) }
-								disabled={ ! refetch }
-								icon={ update }
-								onClick={ () => refetch?.() }
-							/>
-							<FormLabel htmlFor={ id }>{ __( 'Refresh' ) }</FormLabel>
-						</FormFieldset>
+						<Button
+							title={ __( 'Refresh' ) }
+							disabled={ ! refetch }
+							icon={ update }
+							onClick={ () => refetch?.() }
+						>
+							<span className="refresh-label">{ __( 'Refresh' ) }</span>
+						</Button>
 					</div>
 					<div className="domains__domain-delete">
-						<FormFieldset>
-							<Button
-								className={ classnames( { 'has-delete-button': showDelete } ) }
-								icon={ trash }
-								onClick={ () => onRemove( id ) }
-							/>
-							{ showDelete && (
-								<FormLabel className="delete-label" htmlFor={ id }>
-									{ __( 'Delete' ) }
-								</FormLabel>
-							) }
-						</FormFieldset>
+						<Button
+							className={ classnames( { 'has-delete-button': showDelete } ) }
+							icon={ trash }
+							onClick={ () => onRemove( id ) }
+						>
+							<span className="delete-label">{ __( 'Delete' ) }</span>
+						</Button>
 					</div>
 				</div>
 				{ shouldReportError && (

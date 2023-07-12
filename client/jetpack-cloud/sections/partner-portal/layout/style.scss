@@ -1,0 +1,40 @@
+
+
+.partner-portal-layout {
+	&__container {
+		max-width: 1500px;
+		margin: auto;
+
+		padding: 0;
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+
+		> * + * {
+			margin-left: 24px;
+		}
+
+		@include breakpoint-deprecated( "<960px" ) {
+			flex-wrap: wrap;
+
+			> * {
+				width: 100%;
+				margin-bottom: 16px;
+			}
+
+			> * + * {
+				margin-left: 0;
+			}
+		}
+
+		.card-heading {
+			margin-block-start: initial;
+		}
+
+		a.button {
+			margin-left: auto;
+		}
+	}
+}

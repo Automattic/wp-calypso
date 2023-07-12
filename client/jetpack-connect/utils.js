@@ -2,6 +2,7 @@ import config, { isCalypsoLive } from '@automattic/calypso-config';
 import { includes, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
+import validUrl from 'valid-url';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs, untrailingslashit } from 'calypso/lib/route';
@@ -36,7 +37,9 @@ export function authQueryTransformer( queryObject ) {
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || '[unknown]',
 		jpVersion: queryObject.jp_version || null,
-		redirectAfterAuth: queryObject.redirect_after_auth || null,
+		redirectAfterAuth: validUrl.isWebUri( queryObject.redirect_after_auth )
+			? queryObject.redirect_after_auth
+			: null,
 		siteIcon: queryObject.site_icon || null,
 		siteUrl: queryObject.site_url || null,
 		userEmail: queryObject.user_email || null,

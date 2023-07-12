@@ -1,25 +1,9 @@
 .licenses {
-	&__header {
-		display: flex;
-		align-items: center;
+	header.current-section {
+		padding: 0 16px;
 
-		> * + * {
-			margin-left: 24px;
-		}
-	}
-}
-
-@include breakpoint-deprecated( "<960px" ) {
-	.licenses__header {
-		flex-wrap: wrap;
-
-		> * {
-			width: 100%;
-			margin-bottom: 16px;
-		}
-
-		> * + * {
-			margin-left: 0;
+		button {
+			padding: 20px 8px;
 		}
 	}
 }

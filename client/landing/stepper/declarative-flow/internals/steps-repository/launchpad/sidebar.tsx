@@ -1,3 +1,4 @@
+import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
@@ -6,14 +7,12 @@ import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -29,7 +28,6 @@ type SidebarProps = {
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
 	flow: string | null;
-	hideNavigation: boolean | null;
 };
 
 function getUrlInfo( url: string ) {
@@ -43,15 +41,7 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-const Sidebar = ( {
-	sidebarDomain,
-	siteSlug,
-	submit,
-	goNext,
-	goToStep,
-	flow,
-	hideNavigation,
-}: SidebarProps ) => {
+const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	let showClipboardButton = false;
@@ -62,7 +52,8 @@ const Sidebar = ( {
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
-	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
+	const { globalStylesInUse, shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
+		useSiteGlobalStylesStatus( site?.ID );
 
 	const {
 		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
@@ -97,6 +88,7 @@ const Sidebar = ( {
 			site,
 			submit,
 			globalStylesInUse && shouldLimitGlobalStyles,
+			globalStylesInPersonalPlan ? PLAN_PERSONAL : PLAN_PREMIUM,
 			goToStep,
 			flow,
 			isEmailVerified,
@@ -227,19 +219,6 @@ const Sidebar = ( {
 					makeLastTaskPrimaryAction={ true }
 				/>
 			</div>
-			{ ! hideNavigation && (
-				<div className="launchpad__sidebar-admin-link">
-					<StepNavigationLink
-						direction="forward"
-						handleClick={ () => {
-							recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
-							goNext?.();
-						} }
-						label={ translate( 'Skip to dashboard' ) }
-						borderless={ true }
-					/>
-				</div>
-			) }
 		</div>
 	);
 };

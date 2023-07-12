@@ -1,12 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/components';
 import {
 	FREE_THEME,
 	DOT_ORG_THEME,
 	MARKETPLACE_THEME,
 	WOOCOMMERCE_THEME,
 	PREMIUM_THEME,
-	PremiumBadge,
-	WooCommerceBundledBadge,
 } from '@automattic/design-picker';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';

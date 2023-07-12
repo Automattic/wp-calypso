@@ -1,5 +1,7 @@
 import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
-import { useMemo } from 'react';
+import { useViewportMatch } from '@wordpress/compose';
+import classnames from 'classnames';
+import { useMemo, useState } from 'react';
 import { useInlineCss, useScreens } from '../hooks';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
@@ -18,19 +20,19 @@ interface DesignPreviewProps {
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
 	siteId: number;
 	stylesheet: string;
+	isVirtual?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 	onGlobalStylesChange: ( globalStyles: GlobalStylesObject | null ) => void;
 	limitGlobalStyles: boolean;
-	globalStylesInPersonalPlan: boolean;
 	onNavigatorPathChange?: ( path: string ) => void;
 }
 
@@ -46,21 +48,23 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	variations,
 	selectedVariation,
 	onSelectVariation,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
 	siteId,
 	stylesheet,
+	isVirtual,
 	selectedColorVariation,
 	onSelectColorVariation,
 	selectedFontVariation,
 	onSelectFontVariation,
 	onGlobalStylesChange,
 	limitGlobalStyles,
-	globalStylesInPersonalPlan,
 	onNavigatorPathChange,
 } ) => {
+	const isDesktop = useViewportMatch( 'large' );
+	const [ isInitialScreen, setIsInitialScreen ] = useState( true );
 	const selectedVariations = useMemo(
 		() =>
 			[ selectedColorVariation, selectedFontVariation ].filter( Boolean ) as GlobalStylesObject[],
@@ -72,10 +76,10 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	const screens = useScreens( {
 		siteId,
 		stylesheet,
+		isVirtual,
 		limitGlobalStyles,
-		globalStylesInPersonalPlan,
 		variations,
-		splitPremiumVariations,
+		splitDefaultVariation,
 		selectedVariation,
 		selectedColorVariation,
 		selectedFontVariation,
@@ -84,10 +88,22 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		onSelectFontVariation,
 	} );
 
+	const isFullscreen = ! isDesktop && ( screens.length === 1 || ! isInitialScreen );
+
+	const handleNavigatorPathChange = ( path: string ) => {
+		setIsInitialScreen( path === '/' );
+		onNavigatorPathChange?.( path );
+	};
+
 	useSyncGlobalStylesUserConfig( selectedVariations, onGlobalStylesChange );
 
 	return (
-		<div className="design-preview">
+		<div
+			className={ classnames( 'design-preview', {
+				'design-preview--has-multiple-screens': screens.length > 1,
+				'design-preview--is-fullscreen': isFullscreen,
+			} ) }
+		>
 			<Sidebar
 				title={ title }
 				author={ author }
@@ -98,11 +114,13 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				screens={ screens }
 				actionButtons={ actionButtons }
 				onClickCategory={ onClickCategory }
-				onNavigatorPathChange={ onNavigatorPathChange }
+				onNavigatorPathChange={ handleNavigatorPathChange }
 			/>
 			<SitePreview
 				url={ previewUrl }
 				inlineCss={ inlineCss }
+				isFullscreen={ isFullscreen }
+				animated={ ! isDesktop }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>
