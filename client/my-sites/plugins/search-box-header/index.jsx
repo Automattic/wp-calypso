@@ -69,6 +69,9 @@ const SearchBox = ( {
 				delaySearch={ false }
 				recordEvent={ recordSearchEvent }
 				searching={ isSearching }
+				submitOnOpenIconClick
+				openIconSide="right"
+				displayOpenAndCloseIcons
 			/>
 		</div>
 	);
