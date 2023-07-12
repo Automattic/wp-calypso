@@ -96,6 +96,13 @@
 				font-weight: bold;
 			}
 
+			&__prepare-download-spinner {
+				display: inline-block;
+				margin-right: 6px;
+				margin-top: -3px;
+				vertical-align: middle;
+			}
+
 			&__preview {
 				margin: 16px auto 0;
 				max-width: max-content;
