@@ -1,7 +1,8 @@
-import { Gridicon, Popover } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useMemo, useRef, useState } from 'react';
+import Gridicon from '../../gridicon';
+import Popover from '../../popover';
 
 import './style.scss';
 

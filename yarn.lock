@@ -487,6 +487,7 @@ __metadata:
     "@wordpress/base-styles": ^4.14.0
     "@wordpress/components": ^23.0.0
     "@wordpress/icons": ^9.14.0
+    "@wordpress/react-i18n": ^3.35.0
     canvas-confetti: ^1.6.0
     classnames: ^2.3.1
     framer-motion: 6.2.8
@@ -500,7 +501,6 @@ __metadata:
     resize-observer-polyfill: ^1.5.1
     typescript: ^4.7.4
     utility-types: ^3.10.0
-    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^8.0.0
     react: ^18.2.0
@@ -622,6 +622,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/js-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
@@ -800,8 +801,8 @@ __metadata:
   resolution: "@automattic/global-styles@workspace:packages/global-styles"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/design-picker": "workspace:^"
     "@tanstack/react-query": ^4.29.1
     "@wordpress/block-editor": ^11.0.0
     "@wordpress/block-library": ^8.0.0
