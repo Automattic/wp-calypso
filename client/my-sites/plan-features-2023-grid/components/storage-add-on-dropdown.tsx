@@ -50,7 +50,7 @@ export const StorageAddOnDropdown = ( {
 			onChange={ ( { selectedItem } ) => {
 				const updatedSelectedStorage = {
 					[ planName ]: selectedItem?.key || '',
-				};
+				} as PlanSelectedStorage;
 
 				setSelectedStorage( updatedSelectedStorage );
 			} }
