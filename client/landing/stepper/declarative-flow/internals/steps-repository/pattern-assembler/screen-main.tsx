@@ -5,7 +5,7 @@ import {
 	NavigatorItemGroup,
 } from '@automattic/onboarding';
 import {
-	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { focus } from '@wordpress/dom';
@@ -97,7 +97,7 @@ const ScreenMain = ( {
 				hideBack
 			/>
 			<div className="screen-container__body" ref={ wrapperRef }>
-				<HStack direction="column" alignment="top" spacing="4" expanded={ false }>
+				<VStack spacing="4">
 					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
 						<NavigationButtonAsItem
 							checked={ hasHeader }
@@ -149,7 +149,7 @@ const ScreenMain = ( {
 							</NavigationButtonAsItem>
 						</>
 					</NavigatorItemGroup>
-				</HStack>
+				</VStack>
 				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
 			</div>
 			<div className="screen-container__footer">
