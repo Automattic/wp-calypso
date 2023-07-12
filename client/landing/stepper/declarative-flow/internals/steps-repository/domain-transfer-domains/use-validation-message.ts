@@ -86,7 +86,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: false,
-			message: __( 'This domain is unlocked but the authentication code seems incorrect.' ),
+			message: __( 'This domain is unlocked but the authorization code seems incorrect.' ),
 		};
 	} else if ( availabilityNotice?.message ) {
 		return {
