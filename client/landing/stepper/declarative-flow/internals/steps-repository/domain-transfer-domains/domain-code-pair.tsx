@@ -117,6 +117,16 @@ export function DomainCodePair( {
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
 				</div>
+				<div className="domains__domain-validation is-mobile">
+					{ shouldReportError && (
+						<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
+					) }
+					{ message && loading && (
+						<div>
+							<FormExplanation>{ message }</FormExplanation>
+						</div>
+					) }
+				</div>
 				<div className="domains__domain-price">
 					<FormFieldset>
 						<FormLabel
@@ -153,7 +163,7 @@ export function DomainCodePair( {
 					</div>
 				</div>
 			</div>
-			<div className="domains__domain-validation">
+			<div className="domains__domain-validation is-desktop">
 				{ shouldReportError && (
 					<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
 				) }

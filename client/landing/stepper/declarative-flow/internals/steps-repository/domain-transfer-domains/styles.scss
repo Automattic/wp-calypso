@@ -121,6 +121,26 @@
 
 	.domains__domain-validation {
 		margin-top: 12px;
+
+		&.is-mobile {
+			display: none;
+		}
+
+		&.is-desktop {
+			display: block;
+		}
+
+		@media (max-width: $break-medium ) {
+			margin-top: 0;
+
+			&.is-mobile {
+				display: block;
+			}
+
+			&.is-desktop {
+				display: none;
+			}
+		}
 	}
 
 	.domains__domain-domain {
@@ -267,6 +287,7 @@
 
 			div:nth-of-type(2) {
 				flex: 2;
+				text-align: right;
 			}
 		}
 
@@ -307,9 +328,11 @@
 		margin-bottom: 12px;
 
 		@media (max-width: $break-medium ) {
-			border-bottom: solid 1px #dcdcde;
-			padding-bottom: 32px;
-			margin-bottom: 32px;
+			&not:last-of-type {
+				border-bottom: solid 1px #dcdcde;
+				padding-bottom: 32px;
+				margin-bottom: 32px;
+			}
 		}
 
 		.form-input-validation {
