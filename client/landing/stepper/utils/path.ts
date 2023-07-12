@@ -54,8 +54,8 @@ export const useLoginUrl = ( {
 	 * Variation name is used to track the relevant login flow in the signup framework as explained in https://github.com/Automattic/wp-calypso/issues/67173
 	 */
 	variationName?: string | null;
-	redirectTo?: string;
-	pageTitle?: string;
+	redirectTo?: string | null;
+	pageTitle?: string | null;
 	loginPath?: string;
 } ): string => {
 	const locale = useLocale();
