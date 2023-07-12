@@ -239,7 +239,7 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
+				<StatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 
 				{ statsPurchaseSuccess && <p>Thank you for using Jetpack Stats</p> }
 
