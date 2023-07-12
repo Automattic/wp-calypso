@@ -330,7 +330,8 @@ export function FreePlanPaidDomainDialog( {
 	onPlanSelected,
 	onClose,
 }: DomainPlanDialogProps & { onClose: () => void } ) {
-	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( domainName );
+	const [ isLoadingAssignment, isCustomDomainAllowedOnFreePlan ] =
+		useIsCustomDomainAllowedOnFreePlan( domainName );
 
 	const dialogCommonProps: DomainPlanDialogProps = {
 		domainName,
@@ -357,7 +358,8 @@ export function FreePlanPaidDomainDialog( {
 					}
 				` }
 			/>
-			{ isCustomDomainAllowedOnFreePlan ? (
+			{ isLoadingAssignment && <LoadingPlaceHolder /> }
+			{ ! isLoadingAssignment && isCustomDomainAllowedOnFreePlan ? (
 				<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
 			) : (
 				<DialogPaidPlanIsRequired { ...dialogCommonProps } />

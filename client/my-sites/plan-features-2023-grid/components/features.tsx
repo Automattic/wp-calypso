@@ -30,7 +30,8 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
 
 	const translate = useTranslate();
-	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( domainName );
+	const [ isLoadingAssignment, isCustomDomainAllowedOnFreePlan ] =
+		useIsCustomDomainAllowedOnFreePlan( domainName );
 	const wpcomFreeDomain = ! isError && wordPressSubdomainSuggestions?.[ 0 ]?.domain_name;
 
 	return (
@@ -41,7 +42,7 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 			} ) }
 		>
 			<SubdomainSuggestion>
-				{ isInitialLoading && <LoadingPlaceHolder /> }
+				{ ( isInitialLoading || isLoadingAssignment ) && <LoadingPlaceHolder /> }
 				{ ! isError && isCustomDomainAllowedOnFreePlan ? (
 					<div>
 						{ translate( '%s will be a redirect', {

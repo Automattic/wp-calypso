@@ -1,14 +1,21 @@
-import config from '@automattic/calypso-config';
 import { getTld } from 'calypso/lib/domains';
+import { useExperiment } from 'calypso/lib/explat';
 
-// TODO
-// it's not really a hook now, but it eventually will contain a request fetching assigned variations from ExPlat endpoints
-const useIsCustomDomainAllowedOnFreePlan = ( domainName?: string ) => {
-	if ( ! domainName ) {
-		return false;
+const useIsCustomDomainAllowedOnFreePlan = ( domainName?: string ): [ boolean, boolean | null ] => {
+	const [ isLoadingAssignment, experimentAssignment ] = useExperiment(
+		'calypso_onboarding_plans_dotblog_on_free_plan_202307'
+	);
+
+	if ( isLoadingAssignment ) {
+		return [ true, null ];
 	}
 
-	return config.isEnabled( 'domains/blog-domain-free-plan' ) && getTld( domainName ) === 'blog';
+	return [
+		isLoadingAssignment,
+		experimentAssignment?.variationName === 'treatment'
+			? domainName != null && getTld( domainName ) === 'blog'
+			: false,
+	];
 };
 
 export default useIsCustomDomainAllowedOnFreePlan;
