@@ -13,8 +13,8 @@ const circleTag = process.env.CIRCLE_TAG;
 const isReleaseBuild =
 	process.platform === 'darwin' && !! circleTag && circleTag.startsWith( 'desktop-v' );
 
-// Always build both Intel and Apple Silicon versions.
-const arches = [ 'x64', 'arm64' ];
+// Build Apple Silicon binaries only unless tagged for release.
+const arches = isReleaseBuild ? [ 'x64', 'arm64' ] : [ 'arm64' ];
 
 for ( let i = 0; i < arches.length; i++ ) {
 	const arch = arches[ i ];
