@@ -627,7 +627,7 @@ class AllDomains extends Component {
 				key="breadcrumb_see_all_domains_link"
 				onClick={ handleClick }
 			>
-				{ translate( 'See all domains' ) }
+				{ translate( 'Reset filter' ) }
 			</a>
 		);
 	}
