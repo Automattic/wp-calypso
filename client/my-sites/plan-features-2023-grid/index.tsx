@@ -14,6 +14,7 @@ import {
 	isWooExpressPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import {
 	JetpackLogo,
@@ -77,7 +78,7 @@ type PlanRowOptions = {
 	isTableCell?: boolean;
 };
 
-export type PlanSelectedStorage = { [ key: string ]: string };
+export type PlanSelectedStorage = { [ key: string ]: WPComStorageAddOnSlug | null };
 
 const Container = (
 	props: (

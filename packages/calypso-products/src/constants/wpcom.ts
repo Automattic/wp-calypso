@@ -11,6 +11,10 @@ export const PRODUCT_100GB_STORAGE_ADD_ON = 'wpcom_100gb_storage_addon';
 export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
 
 export const WPCOM_SEARCH_PRODUCTS = <const>[ PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY ];
+export const WPCOM_STORAGE_ADD_ONS = <const>[
+	PRODUCT_50GB_STORAGE_ADD_ON,
+	PRODUCT_100GB_STORAGE_ADD_ON,
+];
 
 export const WPCOM_PRODUCTS = <const>[ ...WPCOM_SEARCH_PRODUCTS ];
 

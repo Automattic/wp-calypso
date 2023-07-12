@@ -4,6 +4,7 @@ import type {
 	GROUP_WPCOM,
 	WPCOM_PRODUCTS,
 	WPCOM_PLANS,
+	WPCOM_STORAGE_ADD_ONS,
 	PLAN_JETPACK_FREE,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_LEGACY_PLANS,
@@ -35,6 +36,7 @@ export type Feature = string;
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
 export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
+export type WPComStorageAddOnSlug = ( typeof WPCOM_STORAGE_ADD_ONS )[ number ];
 
 export interface WPComPlan extends Plan {
 	getAudience?: () => TranslateResult;
