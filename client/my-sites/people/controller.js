@@ -5,7 +5,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { getSiteFragment } from 'calypso/lib/route';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import EditTeamMember from './edit-team-member-form';
 import InvitePeople from './invite-people';
 import PeopleList from './main';
@@ -64,7 +64,14 @@ export default {
 	},
 
 	subscribers( context, next ) {
-		renderSubscribers( context, next );
+		if ( isEnabled( 'subscribers-page-new' ) ) {
+			const state = context.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			const redirectURL = '/subscribers/' + ( siteSlug ? siteSlug : '' );
+			page.redirect( redirectURL );
+		} else {
+			renderSubscribers( context, next );
+		}
 	},
 
 	subscriberDetails( context, next ) {
@@ -72,7 +79,14 @@ export default {
 	},
 
 	peopleAddSubscribers( context, next ) {
-		renderPeopleAddSubscribers( context, next );
+		if ( isEnabled( 'subscribers-page-new' ) ) {
+			const state = context.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			const redirectURL = '/subscribers/' + ( siteSlug ? siteSlug : '' );
+			page.redirect( redirectURL );
+		} else {
+			renderPeopleAddSubscribers( context, next );
+		}
 	},
 };
 

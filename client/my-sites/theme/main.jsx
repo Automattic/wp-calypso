@@ -697,7 +697,7 @@ class ThemeSheet extends Component {
 	renderStyleVariations = () => {
 		const { styleVariations } = this.props;
 
-		const splitPremiumVariations =
+		const splitDefaultVariation =
 			! this.props.isExternallyManagedTheme &&
 			! this.props.isThemePurchased &&
 			! this.props.isBundledSoftwareSet &&
@@ -707,7 +707,7 @@ class ThemeSheet extends Component {
 			styleVariations.length > 0 && (
 				<ThemeStyleVariations
 					description={ this.getStyleVariationDescription() }
-					splitPremiumVariations={ splitPremiumVariations }
+					splitDefaultVariation={ splitDefaultVariation }
 					selectedVariation={ this.getSelectedStyleVariation() }
 					variations={ styleVariations }
 					onClick={ this.onStyleVariationClick }

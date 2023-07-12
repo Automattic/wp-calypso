@@ -2,7 +2,7 @@ import { TextControl, Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
 import { useOdysseusAssistantContext } from './context';
-import { useOddyseusSendMessage } from './query';
+import { useOdysseusGetChatPollQuery, useOddyseusSendMessage } from './query';
 import WapuuRibbon from './wapuu-ribbon';
 
 import './style.scss';
@@ -14,6 +14,7 @@ const OdysseusAssistant = () => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const { mutateAsync: sendOdysseusMessage } = useOddyseusSendMessage();
+	const { data: chatData } = useOdysseusGetChatPollQuery( chat.chat_id ?? null );
 
 	useEffect( () => {
 		if ( isLoadingChat ) {
@@ -28,6 +29,18 @@ const OdysseusAssistant = () => {
 			setMessages( chat.messages );
 		}
 	}, [ chat, isLoadingChat, setMessages, chat.messages ] );
+
+	useEffect( () => {
+		if ( chatData ) {
+			if ( chat.messages.length < chatData.messages.length ) {
+				const countNewMessages = chatData.messages.length - chat.messages.length;
+				const newMessages = chatData.messages.slice( -countNewMessages );
+				newMessages.forEach( ( message ) => {
+					addMessage( message );
+				} );
+			}
+		}
+	}, [ chat, chatData, addMessage ] );
 
 	const environmentBadge = document.querySelector( 'body > .environment-badge' );
 
@@ -77,7 +90,7 @@ const OdysseusAssistant = () => {
 			} );
 
 			addMessage( {
-				content: response.message.content,
+				content: response.messages[ 0 ].content,
 				role: 'bot',
 				type: 'message',
 			} );

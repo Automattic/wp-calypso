@@ -6,39 +6,4 @@
 			padding: 20px 8px;
 		}
 	}
-
-	&__container {
-		max-width: 1500px;
-		margin: auto;
-
-		padding: 0 16px;
-	}
-
-	&__header {
-		display: flex;
-		align-items: center;
-
-		> * + * {
-			margin-left: 24px;
-		}
-
-		.card-heading {
-			margin-block-start: initial;
-		}
-	}
-}
-
-@include breakpoint-deprecated( "<960px" ) {
-	.licenses__header {
-		flex-wrap: wrap;
-
-		> * {
-			width: 100%;
-			margin-bottom: 16px;
-		}
-
-		> * + * {
-			margin-left: 0;
-		}
-	}
 }
