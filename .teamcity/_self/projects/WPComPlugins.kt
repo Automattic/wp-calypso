@@ -152,7 +152,7 @@ private object EditingToolkit : WPComPluginBuild(
 				cd apps/editing-toolkit
 				yarn lint:php
 
-				# Do some extra checks on the textdomain, since we have some weird syncing logic with newspack blocks..
+				# Do some extra checks on the textdomain, since we have some weird syncing logic with newspack blocks.
 				./bin/verify-textdomain.sh
 			"""
 		}
