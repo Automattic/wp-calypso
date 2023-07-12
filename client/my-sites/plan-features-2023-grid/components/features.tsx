@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { LoadingPlaceHolder } from '../../plans-features-main/components/loading-placeholder';
+import useIsCustomDomainAllowedOnFreePlan from '../../plans-features-main/hooks/use-is-custom-domain-allowed-on-free-plan';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
@@ -28,12 +29,32 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 		isError,
 	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
 
+	const translate = useTranslate();
+	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( domainName );
+
+	const getFreeDomainSuggestion = ( suggestions?: DomainSuggestions.DomainSuggestion[] ) => {
+		return suggestions?.[ 0 ]?.domain_name;
+	};
+
 	return (
-		<SubdomainSuggestion>
-			<div className="is-domain-name">{ domainName }</div>
-			{ isInitialLoading && <LoadingPlaceHolder /> }
-			{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
-		</SubdomainSuggestion>
+		<Plans2023Tooltip
+			text={ translate( '%s is not included', {
+				args: [ domainName ],
+				comment: '%s is a domain name.',
+			} ) }
+		>
+			<SubdomainSuggestion>
+				<div className="is-domain-name">{ domainName }</div>
+				{ isInitialLoading && <LoadingPlaceHolder /> }
+				{ ! isError && isCustomDomainAllowedOnFreePlan ? (
+					<div>{ `${ domainName } redirects to ${ getFreeDomainSuggestion(
+						wordPressSubdomainSuggestions
+					) }` }</div>
+				) : (
+					<div>{ getFreeDomainSuggestion( wordPressSubdomainSuggestions ) }</div>
+				) }
+			</SubdomainSuggestion>
+		</Plans2023Tooltip>
 	);
 };
 
@@ -44,7 +65,6 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
 } > = ( { features, planName, domainName, hideUnavailableFeatures, selectedFeature } ) => {
-	const translate = useTranslate();
 	return (
 		<>
 			{ features.map( ( currentFeature, featureIndex ) => {
@@ -84,17 +104,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
 									{ isFreePlanAndCustomDomainFeature ? (
-										<Plans2023Tooltip
-											text={ translate( '%s is not included', {
-												args: [ domainName as string ],
-												comment: '%s is a domain name.',
-											} ) }
-										>
-											<FreePlanCustomDomainFeature
-												key={ key }
-												domainName={ domainName as string }
-											/>
-										</Plans2023Tooltip>
+										<FreePlanCustomDomainFeature key={ key } domainName={ domainName as string } />
 									) : (
 										<Plans2023Tooltip text={ currentFeature.getDescription?.() }>
 											{ currentFeature.getTitle( domainName ) }

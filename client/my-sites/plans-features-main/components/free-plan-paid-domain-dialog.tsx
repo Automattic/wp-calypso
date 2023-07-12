@@ -8,10 +8,10 @@ import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { getTld } from 'calypso/lib/domains';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import usePlanPrices from '../../plans/hooks/use-plan-prices';
+import useIsCustomDomainAllowedOnFreePlan from '../hooks/use-is-custom-domain-allowed-on-free-plan';
 import { LoadingPlaceHolder } from './loading-placeholder';
 import type { DomainSuggestion } from '@automattic/data-stores';
 
@@ -232,7 +232,7 @@ function DialogPaidPlanIsRequired( {
 	);
 }
 
-function DialogBlogDomainAndFreePlan( {
+function DialogCustomDomainAndFreePlan( {
 	domainName,
 	suggestedPlanSlug,
 	onFreePlanSelected,
@@ -322,10 +322,8 @@ export function FreePlanPaidDomainDialog( {
 	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
 	onPlanSelected: () => void;
 } ) {
-	// The complete condition here is actually a .blog domain + Free plan.
-	// It means that this condition relies on the parent component to handle the implied "free plan is picked" condition, which is not a good practice.
-	// However, it's also not an immediate concern before we are sure about making this the default behavior.
-	const isBlogDomainAndFreePlan = getTld( domainName ) === 'blog';
+	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( domainName );
+
 	const dialogCommonProps: DomainPlanDialogProps = {
 		domainName,
 		suggestedPlanSlug,
@@ -351,8 +349,8 @@ export function FreePlanPaidDomainDialog( {
 					}
 				` }
 			/>
-			{ isBlogDomainAndFreePlan ? (
-				<DialogBlogDomainAndFreePlan { ...dialogCommonProps } />
+			{ isCustomDomainAllowedOnFreePlan ? (
+				<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
 			) : (
 				<DialogPaidPlanIsRequired { ...dialogCommonProps } />
 			) }
