@@ -39,9 +39,9 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
 	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
 
-	const [ isDownloading, setIsDownloading ] = useState< boolean >( false );
+	const [ isProcessingDownload, setIsProcessingDownload ] = useState< boolean >( false );
 	const downloadFile = useCallback( () => {
-		setIsDownloading( true );
+		setIsProcessingDownload( true );
 		const manifestPath = window.btoa( item.manifestPath ?? '' );
 
 		wp.req
@@ -53,7 +53,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 				const downloadUrl = new URL( response.url );
 				downloadUrl.searchParams.append( 'disposition', 'attachment' );
 				window.open( downloadUrl, '_blank' );
-				setIsDownloading( false );
+				setIsProcessingDownload( false );
 
 				dispatch(
 					recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
@@ -74,9 +74,9 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
-			setIsDownloading( true );
+			setIsProcessingDownload( true );
 		} else {
-			setIsDownloading( false );
+			setIsProcessingDownload( false );
 		}
 
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.READY ) {
@@ -102,8 +102,12 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 	const requiresPreparation = item.type === 'table';
 
 	const downloadFileButton = (
-		<Button className="file-card__action" onClick={ downloadFile } disabled={ isDownloading }>
-			{ isDownloading ? <Spinner /> : translate( 'Download file' ) }
+		<Button
+			className="file-card__action"
+			onClick={ downloadFile }
+			disabled={ isProcessingDownload }
+		>
+			{ isProcessingDownload ? <Spinner /> : translate( 'Download file' ) }
 		</Button>
 	);
 
@@ -111,9 +115,9 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 		<Button
 			className="file-card__action"
 			onClick={ prepareDownloadClick }
-			disabled={ isDownloading }
+			disabled={ isProcessingDownload }
 		>
-			{ isDownloading ? (
+			{ isProcessingDownload ? (
 				<>
 					<Spinner className="file-card__prepare-download-spinner" size={ 16 } />
 					{ translate( 'Preparing' ) }
