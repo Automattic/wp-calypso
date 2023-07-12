@@ -1,8 +1,8 @@
-import { SiteDetails } from '@automattic/data-stores';
 import { useMutation } from '@tanstack/react-query';
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import type { AnalysisReport } from './types';
+import type { AnalysisReport } from '../types';
+import type { SiteDetails } from '@automattic/data-stores';
 
 type ForumTopic = {
 	site?: SiteDetails;

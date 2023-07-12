@@ -2,7 +2,7 @@ import { useDebounce } from 'use-debounce';
 import { useIsWpOrgSite } from './use-is-wporg-site';
 import { useUserSites } from './use-user-sites';
 import { useWpcomSite } from './use-wpcom-site';
-import type { AnalysisReport } from './types';
+import type { AnalysisReport } from '../types';
 
 // a simple way to check if a string is host to save on API calls
 function isHost( string: string | undefined ) {

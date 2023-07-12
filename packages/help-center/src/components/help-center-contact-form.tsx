@@ -6,7 +6,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
-import { SiteDetails, HelpCenterSite } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
@@ -39,8 +38,8 @@ import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
 import { HelpCenterSitePicker } from './help-center-site-picker';
 import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
-import type { AnalysisReport } from '../data/types';
-import type { HelpCenterSelect } from '@automattic/data-stores';
+import type { AnalysisReport } from '../types';
+import type { HelpCenterSelect, SiteDetails, HelpCenterSite } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
