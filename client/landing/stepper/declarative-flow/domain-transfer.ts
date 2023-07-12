@@ -2,9 +2,8 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -14,7 +13,6 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import { redirect } from './internals/steps-repository/import/util';
 import {
 	Flow,
 	ProvidedDependencies,
@@ -48,41 +46,22 @@ const domainTransfer: Flow = {
 		];
 	},
 
-	useAssertConditions(): AssertConditionResult {
-		const flowName = this.name;
+	useAssertConditions( navigate ): AssertConditionResult {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+		const navigateToIntro = useCallback( () => {
+			navigate( 'intro' );
+		}, [ navigate ] );
 
-		const logInUrl =
-			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?redirect_to=/setup/domain-transfer`
-				: `/start/account/user?redirect_to=/setup/domain-transfer`;
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
-				redirect( logInUrl );
+				navigateToIntro();
 			}
-		}, [] );
+		}, [ isLoggedIn ] );
 
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-
-		if ( ! isLoggedIn ) {
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: `${ flowName } requires a logged in user`,
-			};
-		}
-
-		return result;
+		return { state: AssertConditionState.SUCCESS };
 	},
+
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
@@ -96,8 +75,8 @@ const domainTransfer: Flow = {
 
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domain`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/pattedomainrns`;
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domains`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domains`;
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
