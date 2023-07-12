@@ -159,7 +159,7 @@ class Posts_List_Block {
 			esc_url( get_the_permalink() ),
 			sprintf(
 				/* translators: %s: Name of current post */
-				esc_attr__( 'Continue reading %s', 'full-site-editing' ),
+				esc_attr__( 'Continue reading %s', 'hello' ),
 				the_title_attribute( array( 'echo' => false ) )
 			),
 			esc_html__( 'Read more', 'full-site-editing' )
