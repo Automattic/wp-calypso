@@ -1,10 +1,10 @@
 import { action } from '@storybook/addon-actions';
 import { ReduxDecorator } from 'calypso/__mocks__/storybook/redux';
-import { AutoLoadingHomepageModal } from './auto-loading-homepage-modal';
+import { ActivationModal } from './activation-modal';
 
 export default {
-	title: 'client/my-sites/themes/AutoLoadingHomepageModal',
-	component: AutoLoadingHomepageModal,
+	title: 'client/my-sites/themes/ActivationModal',
+	component: ActivationModal,
 	decorators: [
 		( Story ) => {
 			return (
@@ -16,14 +16,13 @@ export default {
 	],
 };
 
-const Template = ( args ) => <AutoLoadingHomepageModal { ...args } />;
+const Template = ( args ) => <ActivationModal { ...args } />;
 
 const baseProps = {
-	acceptAutoLoadingHomepageWarning: action( 'acceptAutoLoadingHomepageWarning' ),
+	acceptActivationMOdal: action( 'acceptActivationMOdal' ),
 	activateTheme: action( 'activateTheme' ),
 	hasActivated: false,
-	hasAutoLoadingHomepage: true,
-	hideAutoLoadingHomepageWarning: action( 'hideAutoLoadingHomepageWarning' ),
+	dismissActivationMOdal: action( 'dismissActivationMOdal' ),
 	isActivating: false,
 	isCurrentTheme: false,
 	isVisible: true,
@@ -49,12 +48,6 @@ export const isCurrentTheme = Template.bind( {} );
 isCurrentTheme.args = {
 	...baseProps,
 	isCurrentTheme: true,
-};
-
-export const noAutoLoadingHomepage = Template.bind( {} );
-noAutoLoadingHomepage.args = {
-	...baseProps,
-	hasAutoLoadingHomepage: false,
 };
 
 export const isActivating = Template.bind( {} );

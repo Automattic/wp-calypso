@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { useSelector, useDispatch } from 'calypso/state';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
@@ -130,7 +130,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	return (
 		<ThemeSectionContainer>
 			<QueryActiveTheme siteId={ siteId } />
-			<AutoLoadingHomepageModal source="details" />
+			<ActivationModal source="details" />
 			<ThemeSectionContent>
 				<ThemeNameSectionWrapper>
 					<ThemeSectionName>
