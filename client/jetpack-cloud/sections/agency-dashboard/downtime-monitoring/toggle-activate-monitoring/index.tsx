@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -9,6 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent, useToggleActivateMonitor } from '../../hooks';
 import NotificationSettings from '../notification-settings';
+import UpgradePopover from '../upgrade-popover';
 import type { AllowedStatusTypes, MonitorSettings, Site } from '../../sites-overview/types';
 
 import './style.scss';
@@ -40,6 +42,13 @@ export default function ToggleActivateMonitoring( {
 	const statuses = useSelector( getSiteMonitorStatuses );
 	const [ showNotificationSettings, setShowNotificationSettings ] = useState< boolean >( false );
 	const [ showTooltip, setShowTooltip ] = useState( false );
+
+	const isDowntimeMonitoringPaidTierEnabled = isEnabled(
+		'jetpack/pro-dashboard-monitor-paid-tier'
+	);
+
+	// TODO: Need to figure out if current site has not existing paid version of downtime monitoring.
+	const shouldDisplayUpgradePopover = isDowntimeMonitoringPaidTierEnabled;
 
 	const handleShowTooltip = () => {
 		setShowTooltip( true );
@@ -147,27 +156,14 @@ export default function ToggleActivateMonitoring( {
 		);
 	}
 
-	return (
+	const displayablePopover = shouldDisplayUpgradePopover ? (
+		<UpgradePopover
+			context={ statusContentRef.current }
+			isVisible={ showTooltip }
+			position="bottom left"
+		/>
+	) : (
 		<>
-			<span
-				ref={ statusContentRef }
-				role="button"
-				tabIndex={ 0 }
-				onMouseEnter={ handleShowTooltip }
-				onMouseLeave={ handleHideTooltip }
-				onMouseDown={ handleHideTooltip }
-				className="toggle-activate-monitoring__toggle-button"
-			>
-				{ toggleContent }
-			</span>
-			{ showNotificationSettings && (
-				<NotificationSettings
-					onClose={ handleToggleNotificationSettings }
-					sites={ [ site ] }
-					settings={ settings }
-					isLargeScreen={ isLargeScreen }
-				/>
-			) }
 			{ tooltip && (
 				<Tooltip
 					id={ tooltipId }
@@ -178,6 +174,33 @@ export default function ToggleActivateMonitoring( {
 				>
 					{ tooltip }
 				</Tooltip>
+			) }
+		</>
+	);
+
+	return (
+		<>
+			<span
+				className="toggle-activate-monitoring__toggle-button"
+				onMouseDown={ handleHideTooltip }
+				onMouseEnter={ handleShowTooltip }
+				onMouseLeave={ handleHideTooltip }
+				ref={ statusContentRef }
+				role="button"
+				tabIndex={ 0 }
+			>
+				{ toggleContent }
+
+				{ displayablePopover }
+			</span>
+
+			{ showNotificationSettings && (
+				<NotificationSettings
+					onClose={ handleToggleNotificationSettings }
+					sites={ [ site ] }
+					settings={ settings }
+					isLargeScreen={ isLargeScreen }
+				/>
 			) }
 		</>
 	);
