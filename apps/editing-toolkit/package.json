@@ -42,7 +42,7 @@
 		"sync:newspack-blocks": "./bin/sync-newspack-blocks.sh",
 		"test:js": "yarn run -T test-apps apps/editing-toolkit",
 		"test:js:watch": "yarn test:js --watch",
-		"test:php": "npx wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/editing-toolkit-plugin/phpunit.xml.dist'",
+		"test:php": "wp-env run --env-cwd='wp-content/plugins/editing-toolkit-plugin' tests-wordpress vendor/bin/phpunit -c phpunit.xml.dist",
 		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
