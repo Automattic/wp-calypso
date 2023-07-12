@@ -1,9 +1,5 @@
 export { default as Badge } from './badge';
-<<<<<<< HEAD
 export type { BadgeType } from './badge';
-=======
-export type { BadgeProps } from './badge';
->>>>>>> 4cfb7445d90 (Fix typescript errors with badge type)
 export { default as Button } from './button';
 export * as Animation from './animation';
 export { default as Card } from './card';
