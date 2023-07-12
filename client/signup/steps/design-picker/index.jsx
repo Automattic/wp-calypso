@@ -1,7 +1,6 @@
 import { PLAN_PREMIUM, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, PremiumBadge } from '@automattic/components';
 import DesignPicker, {
-	PremiumBadge,
 	isBlankCanvasDesign,
 	getDesignUrl,
 	useCategorization,

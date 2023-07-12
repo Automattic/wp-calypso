@@ -1,6 +1,5 @@
-import { Button } from '@automattic/components';
+import { Button, PremiumBadge } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
-import { PremiumBadge } from '@automattic/design-picker';
 import { SelectCardCheckbox } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';

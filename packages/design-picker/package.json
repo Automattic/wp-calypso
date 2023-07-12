@@ -30,6 +30,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
+		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
