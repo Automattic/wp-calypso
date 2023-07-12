@@ -329,7 +329,10 @@
 	flex-direction: column;
 	align-items: center;
 	padding: 32px 16px;
-	border-top: 1px solid;
 	width: fit-content;
 	margin: 0 auto;
+
+	&.separator {
+		border-top: 1px solid;
+	}
 }

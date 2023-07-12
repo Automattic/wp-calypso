@@ -2,6 +2,7 @@
 
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -228,7 +229,7 @@ export class SiteDomains extends Component {
 					/>
 				) }
 
-				{ ! this.isLoading() && this.renderManageDomainsSection() }
+				{ ! this.isLoading() && this.renderManageDomainsSection( nonWpcomDomains ) }
 
 				<DomainToPlanNudge />
 			</>
@@ -315,7 +316,7 @@ export class SiteDomains extends Component {
 		);
 	}
 
-	renderManageDomainsSection() {
+	renderManageDomainsSection( nonWpcomDomains ) {
 		const { dispatch, translate } = this.props;
 
 		const handleClick = () => {
@@ -323,7 +324,11 @@ export class SiteDomains extends Component {
 		};
 
 		return (
-			<div className="domain-management__all-domains-section">
+			<div
+				className={ classnames( 'domain-management__all-domains-section', {
+					separator: nonWpcomDomains.length === 0,
+				} ) }
+			>
 				<p css={ { marginBottom: '1rem', textAlign: 'center' } }>
 					{ translate( 'Manage all the domains you own on WordPress.com' ) }
 				</p>
