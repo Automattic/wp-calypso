@@ -891,6 +891,14 @@ a.masterbar__quick-language-switcher {
 		@include breakpoint-deprecated( "<480px" ) {
 			display: none;
 		}
+
+		&.is-active {
+			background: transparent;
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
 	}
 
 	svg {
