@@ -133,11 +133,9 @@ cp $CODE/src/types/index.d.ts $TARGET/types/
 # imperfections will be caught by CI with failing tsc, etc.)
 sed "${sedi[@]}" -e "s| function| Function|g" "$TARGET/types/index.d.ts"
 
-echo "Fixing the text domains…"
-echo -n "eslint --fix: "
-DEBUG=eslint:* npx eslint . --fix
-echo "done"
-echo -n "phpcbf: "
+echo "Fixing JS textdomain:"
+npx eslint . --fix
+echo "Fixing PHP textdomain:"
 ../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || PHPCBF_ERRORED=1
 
 if [ "$PHPCBF_ERRORED" = 1 ] ; then
