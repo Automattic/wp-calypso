@@ -3,11 +3,14 @@ import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
+	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
+import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/payment-method-selector/assignment-processor-functions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import existingCardProcessor from './existing-card-processor';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -16,9 +19,10 @@ import {
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { StripeSetupIntentId, StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
+import type { LocalizeProps } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:composite-checkout:multi-partner-card-processor' );
 
@@ -232,13 +236,84 @@ async function ebanxCardProcessor(
 		} );
 }
 
+export interface FreePurchaseData {
+	stripeSetupIntentId: StripeSetupIntentId | undefined;
+	translate: LocalizeProps[ 'translate' ];
+}
+
 export default async function multiPartnerCardProcessor(
 	submitData: unknown,
-	dataForProcessor: PaymentProcessorOptions
+	dataForProcessor: PaymentProcessorOptions,
+	freePurchaseData?: FreePurchaseData
 ): Promise< PaymentProcessorResponse > {
 	if ( ! isValidMultiPartnerTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
+
+	// For free purchases we cannot use the regular processor because it requires
+	// making a charge. Instead, we will create a new card, then use the
+	// existingCardProcessor because it works for free purchases.
+	const isPurchaseFree =
+		dataForProcessor.responseCart.total_cost_integer === 0 &&
+		dataForProcessor.responseCart.products.length > 0;
+	if ( isPurchaseFree ) {
+		if ( ! isValidStripeCardTransactionData( submitData ) ) {
+			throw new Error( 'Required purchase data is missing' );
+		}
+		if ( submitData.paymentPartner === 'ebanx' ) {
+			throw new Error( 'Cannot use Ebanx for free purchases' );
+		}
+		if ( ! freePurchaseData?.translate ) {
+			throw new Error( 'Required free purchase data is missing' );
+		}
+		const newCardResponse = await assignNewCardProcessor(
+			{
+				purchase: undefined,
+				translate: freePurchaseData.translate,
+				stripe: dataForProcessor.stripe,
+				stripeConfiguration: dataForProcessor.stripeConfiguration,
+				stripeSetupIntentId: freePurchaseData?.stripeSetupIntentId,
+				cardNumberElement: submitData.cardNumberElement,
+				reduxDispatch: dataForProcessor.reduxDispatch,
+				eventSource: '/checkout',
+			},
+			{
+				...submitData,
+				// In `PaymentMethodSelector` which is used for adding new cards, the
+				// stripe payment method is passed `shouldShowTaxFields` which causes
+				// it to show required tax location fields in the payment method
+				// itself; that data is then submitted to the `assignNewCardProcessor`
+				// to send to Stripe as part of saving the card. However, in checkout
+				// we do not display those fields since they are already included in
+				// the billing details step. Therefore we must pass in the tax location
+				// data explicitly here so we can use `assignNewCardProcessor`.
+				countryCode: dataForProcessor.contactDetails?.countryCode?.value,
+				postalCode: getPostalCode( dataForProcessor.contactDetails ),
+				state: dataForProcessor.contactDetails?.state?.value,
+				city: dataForProcessor.contactDetails?.city?.value,
+				organization: dataForProcessor.contactDetails?.organization?.value,
+				address: dataForProcessor.contactDetails?.address1?.value,
+			}
+		);
+		if ( newCardResponse.type === PaymentProcessorResponseType.ERROR ) {
+			return newCardResponse;
+		}
+
+		const storedCard = newCardResponse.payload;
+		if ( ! isValidNewCardResponseData( storedCard ) ) {
+			throw new Error( 'New card was not saved' );
+		}
+		return existingCardProcessor(
+			{
+				...submitData,
+				storedDetailsId: storedCard.stored_details_id,
+				paymentMethodToken: storedCard.mp_ref,
+				paymentPartnerProcessorId: storedCard.payment_partner,
+			},
+			dataForProcessor
+		);
+	}
+
 	const paymentPartner = submitData.paymentPartner;
 	if ( paymentPartner === 'stripe' ) {
 		return stripeCardProcessor( submitData, dataForProcessor );
@@ -281,6 +356,20 @@ function isValidEbanxCardTransactionData(
 	const data = submitData as EbanxCardTransactionRequest;
 	if ( ! data ) {
 		throw new Error( 'Transaction requires data and none was provided' );
+	}
+	return true;
+}
+
+interface NewCardResponseData {
+	stored_details_id: string;
+	mp_ref: string;
+	payment_partner: string;
+}
+
+function isValidNewCardResponseData( submitData: unknown ): submitData is NewCardResponseData {
+	const data = submitData as NewCardResponseData;
+	if ( ! data || ! data.stored_details_id || ! data.mp_ref || ! data.payment_partner ) {
+		throw new Error( 'New card was not saved' );
 	}
 	return true;
 }

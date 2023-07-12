@@ -1255,6 +1255,13 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /start/domain-transfer', () => {
+		it( 'redirects to /setup/domain-transfer', async () => {
+			const { response } = await app.run( { request: { url: '/start/domain-transfer' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, '/setup/domain-transfer' );
+		} );
+	} );
+
 	describe( 'Route /cspreport', () => {
 		let customApp;
 

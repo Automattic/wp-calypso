@@ -11,7 +11,7 @@ import { useRecordExport } from '../../tracks';
 import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
-	siteId: number | null;
+	siteId: number | undefined;
 };
 
 const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) => {

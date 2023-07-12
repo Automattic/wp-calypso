@@ -112,13 +112,7 @@ body.is-section-promote-post-i2 {
 		}
 
 		&__post-promote-button {
-			color: var(--studio-simplenote-blue-50);
-			text-decoration: none;
-
-			&:hover:not(:disabled) {
-				color: var(--studio-simplenote-blue-50);
-				text-decoration: underline;
-			}
+			border-radius: 4px;
 		}
 	}
 
@@ -222,11 +216,8 @@ body.is-section-promote-post-i2 {
 
 		// Promote link
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
-			@include blazepress-data-row-font-mobile;
-
-			color: #3858ea;
-			height: 16px;
-			padding: 0 12px;
+			height: 26px;
+			margin-left: 5px;
 		}
 	}
 }

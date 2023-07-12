@@ -206,7 +206,11 @@ export class AuthFormHeader extends Component {
 	getSiteCard() {
 		const { isWpcomMigration, isWooCoreProfiler } = this.props;
 		const { jpVersion } = this.props.authQuery;
-		if ( ! versionCompare( jpVersion, '4.0.3', '>' ) ) {
+		if (
+			// Always show the site card for Woo Core Profiler
+			! isWooCoreProfiler &&
+			! versionCompare( jpVersion, '4.0.3', '>' )
+		) {
 			return null;
 		}
 

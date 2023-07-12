@@ -418,21 +418,6 @@ export const HelpCenterContactForm = () => {
 
 	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale );
 
-	const isCTADisabled = () => {
-		if ( isSubmitting || ! message || ownershipStatusLoading ) {
-			return true;
-		}
-
-		switch ( mode ) {
-			case 'CHAT':
-				return ! supportSite;
-			case 'EMAIL':
-				return ! supportSite || ! subject;
-			case 'FORUM':
-				return ! subject;
-		}
-	};
-
 	const getHEsTraySection = () => {
 		return (
 			<section>
@@ -464,6 +449,27 @@ export const HelpCenterContactForm = () => {
 		stopAt: 'response',
 		enabled: enableGPTResponse,
 	} );
+
+	const isCTADisabled = () => {
+		if ( isSubmitting || ! message || ownershipStatusLoading ) {
+			return true;
+		}
+
+		// We're prefetching the GPT response,
+		// so only disabling the button while fetching if we're on the response screen
+		if ( isFetchingGPTResponse && ! showingGPTResponse ) {
+			return true;
+		}
+
+		switch ( mode ) {
+			case 'CHAT':
+				return ! supportSite;
+			case 'EMAIL':
+				return ! supportSite || ! subject;
+			case 'FORUM':
+				return ! subject;
+		}
+	};
 
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
@@ -515,7 +521,7 @@ export const HelpCenterContactForm = () => {
 				<section className="contact-form-submit">
 					<Button
 						isBusy={ isFetchingGPTResponse }
-						disabled={ isFetchingGPTResponse }
+						disabled={ isCTADisabled() }
 						onClick={ handleCTA }
 						isPrimary={ ! showingGPTResponse || isGPTError }
 						isSecondary={ showingGPTResponse && ! isGPTError }

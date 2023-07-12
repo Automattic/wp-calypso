@@ -9,7 +9,7 @@ import Main from 'calypso/components/main';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import { SubscribersPageProvider } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { successNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { SubscribersHeader } from './components/subscribers-header';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
@@ -24,12 +24,13 @@ type SubscribersProps = {
 };
 
 const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const selectedSite = useSelector( getSelectedSite );
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
-		useUnsubscribeModal( selectedSiteId, pageNumber );
+		useUnsubscribeModal( selectedSite?.ID, pageNumber );
 	const onClickView = ( { subscription_id, user_id }: Subscriber ) => {
-		page.show( getSubscriberDetailsUrl( selectedSiteSlug, subscription_id, user_id, pageNumber ) );
+		page.show(
+			getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageNumber )
+		);
 	};
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const dispatch = useDispatch();
@@ -52,7 +53,7 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	const navigationItems: Item[] = [
 		{
 			label: translate( 'Subscribers' ),
-			href: `/subscribers/${ selectedSiteSlug }`,
+			href: `/subscribers/${ selectedSite?.slug }`,
 			helpBubble: (
 				<span>
 					{ translate(
@@ -77,7 +78,7 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 
 	return (
 		<SubscribersPageProvider
-			siteId={ selectedSiteId }
+			siteId={ selectedSite?.ID }
 			page={ pageNumber }
 			pageChanged={ pageChanged }
 		>
@@ -86,7 +87,7 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 
 				<SubscribersHeader
 					navigationItems={ navigationItems }
-					selectedSiteId={ selectedSiteId }
+					selectedSiteId={ selectedSite?.ID }
 					setShowAddSubscribersModal={ setShowAddSubscribersModal }
 				/>
 
@@ -101,9 +102,10 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 					onCancel={ resetSubscriber }
 					onConfirm={ onConfirmModal }
 				/>
-				{ selectedSiteId && (
+				{ selectedSite && (
 					<AddSubscribersModal
-						siteId={ selectedSiteId }
+						siteId={ selectedSite.ID }
+						siteTitle={ selectedSite.title }
 						showModal={ showAddSubscribersModal }
 						onClose={ () => setShowAddSubscribersModal( false ) }
 						onAddFinished={ () => addSubscribersCallback() }

@@ -49,7 +49,7 @@ import {
 } from '../../analytics/record-design';
 import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
-import { RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
+import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import useRecipe from './hooks/use-recipe';
 import UpgradeModal from './upgrade-modal';
@@ -83,9 +83,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
+	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
+		site?.ID
+	);
 	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
-	const [ shouldHideBack, setShouldHideBack ] = useState( false );
+	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
 
 	const { goToCheckout } = useCheckout();
 
@@ -113,10 +115,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		allDesigns.designs = allDesigns.designs.filter(
-			( design ) => RETIRING_DESIGN_SLUGS.indexOf( design.slug ) === -1
-		);
-
 		const blankCanvasDesignOffset = allDesigns.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into the last one for the build and write intents
@@ -388,7 +386,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
-				plan: 'premium',
+				plan: globalStylesInPersonalPlan ? 'personal' : 'premium',
 			} );
 
 			setShowPremiumGlobalStylesModal( false );
@@ -519,7 +517,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function getPrimaryActionButton() {
 		if ( shouldUpgrade ) {
 			return (
-				<Button primary borderless={ false } onClick={ upgradePlan }>
+				<Button className="navigation-link" primary borderless={ false } onClick={ upgradePlan }>
 					{ translate( 'Unlock theme' ) }
 				</Button>
 			);
@@ -534,7 +532,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		};
 
 		return (
-			<Button primary borderless={ false } onClick={ selectStyle }>
+			<Button className="navigation-link" primary borderless={ false } onClick={ selectStyle }>
 				{ translate( 'Continue' ) }
 			</Button>
 		);
@@ -586,7 +584,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					require="@automattic/design-preview"
 					placeholder={ null }
 					previewUrl={ previewUrl }
-					splitPremiumVariations={
+					splitDefaultVariation={
 						! selectedDesign.is_premium &&
 						! isBundledWithWooCommerce &&
 						! isPremiumThemeAvailable &&
@@ -594,7 +592,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						! isPluginBundleEligible
 					}
 					title={ headerDesignTitle }
-					description={ ! selectedDesign.is_virtual && selectedDesign.description }
+					description={ selectedDesign.description }
 					variations={
 						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
 					}
@@ -605,12 +603,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					limitGlobalStyles={ shouldLimitGlobalStyles }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
+					isVirtual={ selectedDesign.is_virtual }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ setSelectedColorVariation }
 					selectedFontVariation={ selectedFontVariation }
 					onSelectFontVariation={ setSelectedFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }
-					onNavigatorPathChange={ ( path: string ) => setShouldHideBack( path !== '/' ) }
+					onNavigatorPathChange={ ( path: string ) => setShouldHideActionButtons( path !== '/' ) }
 				/>
 			</>
 		);
@@ -620,10 +619,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				hideBack={ shouldHideBack }
+				hideBack={ shouldHideActionButtons }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
-				customizedActionButtons={ actionButtons }
+				customizedActionButtons={ ! shouldHideActionButtons ? actionButtons : undefined }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		);

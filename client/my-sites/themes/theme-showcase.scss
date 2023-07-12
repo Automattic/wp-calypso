@@ -141,6 +141,10 @@
 		padding: 24px 30px;
 		border-radius: 4px;
 
+		&.is-wooexpress-or-free-trial-plan {
+			margin-bottom: 32px;
+		}
+
 		&.is-dismissible {
 			.dismissible-card__close-button {
 				height: 16px;

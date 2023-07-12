@@ -206,7 +206,7 @@ const ThemeTypeBadgeTooltip = ( {
 		} else if ( ! isPurchased && isIncludedCurrentPlan ) {
 			/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 			message = translate(
-				'This premium theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
+				'This theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
 				{
 					args: {
 						annualPrice: subscriptionPrices.year ?? '',
@@ -218,7 +218,7 @@ const ThemeTypeBadgeTooltip = ( {
 			message = createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
-					'This premium theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
+					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
 					{
 						args: {
 							annualPrice: subscriptionPrices.year ?? '',
