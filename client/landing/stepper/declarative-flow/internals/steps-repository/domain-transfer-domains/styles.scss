@@ -101,7 +101,7 @@
 
 	.domains__domain-info {
 		display: flex;
-		gap: 16px;
+		gap: 20px;
 		align-items: flex-end;
 		flex-wrap: wrap;
 
@@ -120,11 +120,15 @@
 	}
 
 	.domains__domain-domain {
-		flex: 1 0 55%;
+		flex: 7;
 	}
 
 	.domains__domain-key {
-		flex: 1 0 15%;
+		flex: 2.5;
+	}
+
+	.domains__domain-price {
+		flex: 1;
 	}
 
 	.domains__domain-domain,
@@ -181,6 +185,7 @@
 	.domains__domain-controls {
 		display: flex;
 		gap: 16px;
+		flex: 1;
 
 		.domains__domain-refresh {
 			button {
@@ -242,6 +247,15 @@
 			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 			font-weight: 500;
 			padding: 20px 0;
+			margin-bottom: 42px;
+
+			div:nth-of-type(1) {
+				flex: 7;
+			}
+
+			div:nth-of-type(2) {
+				flex: 2;
+			}
 		}
 
 		.bulk-domain-transfer__cta-container {
