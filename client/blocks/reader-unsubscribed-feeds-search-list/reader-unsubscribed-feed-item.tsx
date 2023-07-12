@@ -38,7 +38,7 @@ const ReaderUnsubscribedFeedItem = ( { feed }: ReaderUnsubscribedFeedItemProps )
 	const siteUrl = getSiteUrl( { feed, site } );
 
 	return (
-		<HStack as="li" className="reader-unsubscribed-feed-item" alignItems="center" spacing={ 8 }>
+		<HStack as="li" className="reader-unsubscribed-feed-item" alignment="center" spacing={ 8 }>
 			<HStack className="reader-unsubscribed-feed-item__site-preview-h-stack" spacing={ 3 }>
 				<SiteIcon iconUrl={ site?.icon?.img ?? site?.icon?.ico } size={ 40 } />
 				<VStack className="reader-unsubscribed-feed-item__title-with-url-v-stack" spacing={ 0 }>
