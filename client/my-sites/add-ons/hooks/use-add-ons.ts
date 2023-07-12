@@ -50,7 +50,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 			displayCost: useAddOnDisplayCost( PRODUCT_JETPACK_AI_MONTHLY ),
 			featured: true,
 			description: translate(
-				'Bring the power of AI right into your WordPress editor, let your content creation soar to new heights.'
+				'Elevate your content with Jetpack AI, your AI assistant in the WordPress Editor. Save time writing with effortless content crafting, tone adjustment, title generation, grammar checks, translation, and more.'
 			),
 		},
 		{
