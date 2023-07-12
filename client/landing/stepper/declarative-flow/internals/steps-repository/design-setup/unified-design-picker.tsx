@@ -443,10 +443,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	}
 
-	function pickBlankCanvasDesign( blankCanvasDesign: Design, shouldGoToAssemblerStep: boolean ) {
+	function designYourOwn( design: Design, shouldGoToAssemblerStep: boolean ) {
 		if ( shouldGoToAssemblerStep ) {
 			const _selectedDesign = {
-				...blankCanvasDesign,
+				...design,
 				design_type: 'assembler',
 			} as Design;
 
@@ -463,7 +463,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				selectedSiteCategory: categorization.selection,
 			} );
 		} else {
-			pickDesign( blankCanvasDesign );
+			pickDesign( design );
 		}
 	}
 
@@ -645,7 +645,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		<UnifiedDesignPicker
 			designs={ designs }
 			locale={ locale }
-			onSelectBlankCanvas={ pickBlankCanvasDesign }
+			onDesignYourOwn={ designYourOwn }
 			onPreview={ previewDesign }
 			onChangeVariation={ onChangeVariation }
 			onViewAllDesigns={ trackAllDesignsView }
