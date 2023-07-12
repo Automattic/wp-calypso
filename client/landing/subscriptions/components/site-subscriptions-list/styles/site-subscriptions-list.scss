@@ -3,18 +3,14 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "client/assets/stylesheets/p2-vars";
 @import "client/landing/subscriptions/styles/row-title-label";
+@import "./placeholders";
 
 
 .site-subscriptions-list {
 	margin: 0;
 
 	.row {
-		border-block-end: 1px solid rgb(238, 238, 238);
-		display: flex;
-		align-items: center;
-		flex-direction: row;
-		padding-top: 20px;
-		padding-bottom: 20px;
+		@extend %site-subscriptions-list-site-row;
 
 		* {
 			flex: 1;
@@ -54,19 +50,7 @@
 		}
 
 		.title-name {
-			font-weight: 600;
-			font-size: $font-code;
-			line-height: 22px;
-			color: $studio-gray-100;
-			letter-spacing: -0.24px;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			overflow: hidden;
-			padding-right: 10px;
-
-			&:hover {
-				text-decoration: underline;
-			}
+			@extend %site-subscriptions-list-site-title;
 
 			.p2-label {
 				@extend %p2-label;
@@ -78,17 +62,7 @@
 		}
 
 		.title-url {
-			font-weight: 400;
-			font-size: $font-body-extra-small;
-			line-height: 18px;
-			color: $studio-gray-40;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			overflow: hidden;
-
-			&:hover {
-				text-decoration: underline;
-			}
+			@extend %site-subscriptions-list-site-url;
 		}
 
 		.title-cell,
@@ -96,11 +70,7 @@
 		.date-cell,
 		.new-posts-cell,
 		.new-comments-cell {
-			font-weight: 400;
-			font-size: $font-body-small;
-			line-height: 20px;
-			letter-spacing: -0.15px;
-			color: $studio-gray-60;
+			@extend %site-subscriptions-list-default-text;
 		}
 
 		.new-posts-cell,
@@ -127,10 +97,6 @@
 			.gridicon {
 				fill: $studio-gray-50;
 			}
-		}
-
-		&:last-child {
-			border-bottom: none;
 		}
 	}
 

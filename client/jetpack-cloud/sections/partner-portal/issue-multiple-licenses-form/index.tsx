@@ -55,9 +55,16 @@ export default function IssueMultipleLicensesForm( {
 		allProducts?.filter(
 			( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-packs'
 		) || [];
+	const wooExtensions =
+		allProducts?.filter(
+			( { family_slug }: { family_slug: string } ) =>
+				family_slug.substring( 0, 'woocommerce-'.length ) === 'woocommerce-'
+		) || [];
 	const products =
 		allProducts?.filter(
-			( { family_slug }: { family_slug: string } ) => family_slug !== 'jetpack-packs'
+			( { family_slug }: { family_slug: string } ) =>
+				family_slug !== 'jetpack-packs' &&
+				family_slug.substring( 0, 'woocommerce-'.length ) !== 'woocommerce-'
 		) || [];
 
 	const hasPurchasedProductsWithoutBundle = useSelector( ( state ) =>
@@ -205,23 +212,49 @@ export default function IssueMultipleLicensesForm( {
 								/>
 							) ) }
 					</div>
-					<hr className="issue-multiple-licenses-form__separator" />
-					<p className="issue-multiple-licenses-form__description">
-						{ translate( 'Or select any of our {{strong}}recommended bundles{{/strong}}:', {
-							components: { strong: <strong /> },
-						} ) }
-					</p>
-					<div className="issue-multiple-licenses-form__bottom">
-						{ bundles &&
-							bundles.map( ( productOption, i ) => (
-								<LicenseBundleCard
-									key={ productOption.slug }
-									product={ productOption }
-									onSelectProduct={ onSelectProduct }
-									tabIndex={ 100 + ( products?.length || 0 ) + i }
-								/>
-							) ) }
-					</div>
+					{ bundles && (
+						<>
+							<hr className="issue-multiple-licenses-form__separator" />
+							<p className="issue-multiple-licenses-form__description">
+								{ translate( 'Or select any of our {{strong}}recommended bundles{{/strong}}:', {
+									components: { strong: <strong /> },
+								} ) }
+							</p>
+							<div className="issue-multiple-licenses-form__bottom">
+								{ bundles.map( ( productOption, i ) => (
+									<LicenseBundleCard
+										key={ productOption.slug }
+										product={ productOption }
+										onSelectProduct={ onSelectProduct }
+										tabIndex={ 100 + ( products?.length || 0 ) + i }
+									/>
+								) ) }
+							</div>
+						</>
+					) }
+					{ wooExtensions && (
+						<>
+							<hr className="issue-multiple-licenses-form__separator" />
+							<p className="issue-multiple-licenses-form__description">
+								{ translate( 'WooCommerce Extensions:' ) }
+							</p>
+							<div className="issue-multiple-licenses-form__bottom">
+								{ wooExtensions &&
+									wooExtensions.map( ( productOption, i ) => (
+										<LicenseProductCard
+											isMultiSelect
+											key={ productOption.slug }
+											product={ productOption }
+											onSelectProduct={ onSelectProduct }
+											isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+											isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
+											tabIndex={ 100 + i }
+											suggestedProduct={ suggestedProduct }
+										/>
+									) ) }
+							</div>
+						</>
+					) }
 				</>
 			) }
 		</div>

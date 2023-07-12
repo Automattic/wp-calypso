@@ -65,13 +65,13 @@ const Complete: Step = function Complete( { flow } ) {
 					<FormattedHeader
 						id="domains-header"
 						headerText={ _n(
-							'Congrats on your domain transfer',
-							'Congrats on your domain transfers',
+							'Congrats on your domain transfer!',
+							'Congrats on your domain transfers!',
 							newlyTransferredDomains?.length || storedDomainsAmount
 						) }
 						subHeaderText={ _n(
-							'Hold tight as we complete the set up of your newly transferred domain.',
-							'Hold tight as we complete the set up of your newly transferred domains.',
+							"We've got it from here! We'll let you know when your newly transferred domain is ready to use.",
+							"We've got it from here! We'll let you know when your newly transferred domains are ready to use.",
 							newlyTransferredDomains?.length || storedDomainsAmount
 						) }
 						align="center"
@@ -86,7 +86,7 @@ const Complete: Step = function Complete( { flow } ) {
 								</a>
 
 								<a
-									href="/domains/manage"
+									href="/domains/manage?filter=owned-by-me&sortKey=registered-until"
 									className="components-button is-primary manage-all-domains"
 									onClick={ () => handleUserClick( '/domains/manage' ) }
 								>

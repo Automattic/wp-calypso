@@ -58,4 +58,8 @@ export {
 	SiteSubscriptionsSortBy,
 } from './constants';
 export { isErrorResponse } from './helpers';
+export { UnsubscribedFeedsSearchProvider, useUnsubscribedFeedsSearch } from './contexts';
+export { useReadFeedSearchQuery, useReadFeedSiteQuery } from './queries';
+
 export * from './types';
+export type { FeedItem } from './queries';

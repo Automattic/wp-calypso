@@ -1,5 +1,5 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/design-picker';
+import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/components';
 import { useSelect } from '@wordpress/data';
 import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';

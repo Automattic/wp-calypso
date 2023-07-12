@@ -18,7 +18,7 @@ import { SubscriptionsEllipsisMenu } from 'calypso/landing/subscriptions/compone
 import { downloadCloud, uploadCloud } from 'calypso/reader/icons';
 import { useDispatch } from 'calypso/state';
 import { markFollowsAsStale } from 'calypso/state/reader/follows/actions';
-import SiteSubscriptions from './site-subscriptions';
+import ReaderSiteSubscriptions from './reader-site-subscriptions';
 import './style.scss';
 
 const useMarkFollowsAsStaleOnUnmount = () => {
@@ -66,7 +66,7 @@ const SiteSubscriptionsManager = () => {
 					</SubscriptionsEllipsisMenu>
 				</HStack>
 
-				<SiteSubscriptions />
+				<ReaderSiteSubscriptions />
 			</Main>
 		</SubscriptionManagerContextProvider>
 	);

@@ -145,6 +145,19 @@
 					max-height: 400px;
 				}
 			}
+
+			&__preview-sensitive {
+				background-color: var(--studio-gray-60);
+				color: #fff;
+				margin: 16px auto 0;
+				max-width: 100%;
+				padding: 20px 8px;
+				text-align: center;
+
+				p {
+					font-size: 0.875rem;
+				}
+			}
 		}
 	}
 }

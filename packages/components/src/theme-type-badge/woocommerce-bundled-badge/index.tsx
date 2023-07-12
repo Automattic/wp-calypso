@@ -1,7 +1,7 @@
-import { Popover } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { FunctionComponent, useRef, useMemo, useState } from 'react';
+import Popover from '../../popover';
 
 import './style.scss';
 

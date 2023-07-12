@@ -555,8 +555,11 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_MULTI_SITE,
 		FEATURE_SECURITY_MALWARE,
 		FEATURE_SECURITY_DDOS,
+		FEATURE_PREMIUM_CONTENT_JP,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
+		FEATURE_PAID_SUBSCRIBERS_JP,
+		FEATURE_PREMIUM_CONTENT_JP,
 		FEATURE_DONATIONS_AND_TIPS_JP,
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
@@ -812,7 +815,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
-	get2023PricingGridSignupJetpackFeatures: () => [ FEATURE_PREMIUM_CONTENT_JP ],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_6GB_STORAGE ],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getNewsletterDescription: () =>
