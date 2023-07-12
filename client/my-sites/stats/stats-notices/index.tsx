@@ -11,8 +11,23 @@ import FeedbackNotice from './feedback-notice';
 import LegacyStatsNotices from './legacy-notices';
 import OptOutNotice from './opt-out-notice';
 import { StatsNoticesProps } from './types';
+import type { RawSiteProduct } from 'calypso/state/sites/selectors/get-site-products';
 
 import './style.scss';
+
+const formatPurchasesToSiteProducts = (
+	purchases: Record< string, string >[]
+): RawSiteProduct[] => {
+	return purchases.map( ( purchase ) => ( {
+		product_id: purchase.product_id,
+		product_slug: purchase.product_slug,
+		product_name: purchase.product_name,
+		// `product_name_short`, `expired`, and `user_is_owner` are not available in the purchase object.
+		product_name_short: purchase.product_name_short || null,
+		expired: !! purchase.expired,
+		user_is_owner: !! purchase.user_is_owner,
+	} ) );
+};
 
 /**
  * New notices aim to support Calypso and Odyssey stats.
@@ -39,7 +54,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 					reduxDispatch( {
 						type: SITE_PURCHASES_UPDATE,
 						siteId,
-						purchases: purchases,
+						purchases: formatPurchasesToSiteProducts( purchases ),
 					} );
 				} )
 				.catch( ( error: Error ) => setError( error ) );
