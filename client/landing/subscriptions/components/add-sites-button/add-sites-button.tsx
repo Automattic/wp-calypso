@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -7,6 +8,10 @@ import { AddSitesModal } from 'calypso/landing/subscriptions/components/add-site
 const AddSitesButton = () => {
 	const translate = useTranslate();
 	const [ isAddSitesModalVisible, setIsAddSitesModalVisible ] = useState( false );
+
+	if ( ! isEnabled( 'subscription-management-add-sites-modal' ) ) {
+		return null;
+	}
 
 	return (
 		<>
