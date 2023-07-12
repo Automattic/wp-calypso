@@ -104,11 +104,12 @@
 	.stats-purchase-wizard__biggest-supporters {
 		position: absolute;
 		width: 100%;
-		top: 32px;
+		top: 10px;
 		left: 50%;
 		font-weight: 500;
 		text-align: center;
 		transform: translateX(-50%);
+		backdrop-filter: blur(2px);
 	}
 
 	h3 {
