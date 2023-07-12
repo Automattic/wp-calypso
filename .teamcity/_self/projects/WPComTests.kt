@@ -103,7 +103,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				checked = "true",
 				unchecked = "false"
 			)
-			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser")
+			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
 			if (atomic) {
 				param("env.TEST_ON_ATOMIC", "true")
