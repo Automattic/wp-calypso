@@ -1,3 +1,5 @@
+import { SubscribersFilterBy, SubscribersSortBy } from '../constants';
+
 export type SubscriberEndpointResponse = {
 	per_page: number;
 	total: number;
@@ -33,4 +35,12 @@ export type Subscriber = {
 		name: string;
 	};
 	url?: string;
+};
+
+export type SubscriberListArgs = {
+	currentPage: number;
+	perPage?: number;
+	filterOption?: SubscribersFilterBy;
+	searchTerm?: string;
+	sortTerm?: SubscribersSortBy;
 };
