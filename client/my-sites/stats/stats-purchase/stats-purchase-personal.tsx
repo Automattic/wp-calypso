@@ -1,25 +1,24 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { PricingSlider, RenderThumbFunction } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
-import { COMPONENT_CLASS_NAME, IMAGE_CELEBRATION_PRICE } from './stats-purchase-wizard';
+import { COMPONENT_CLASS_NAME, PRICING_CONFIG } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
 	setSubscriptionValue: ( value: number ) => number;
 	handlePlanSwap: ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
+	currencyCode: string;
 }
-
-const AVERAGE_PRICE_INFO = '$6';
-const MAX_SLIDER_PRICE = 10;
-const EMOJI_HEART_TIER = 5;
 
 const PersonalPurchase = ( {
 	subscriptionValue,
 	setSubscriptionValue,
 	handlePlanSwap,
+	currencyCode,
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -29,18 +28,18 @@ const PersonalPurchase = ( {
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
 
-		if ( subscriptionValue <= EMOJI_HEART_TIER ) {
+		if ( subscriptionValue <= PRICING_CONFIG.EMOJI_HEART_TIER ) {
 			emoji = String.fromCodePoint( 0x1f60a ); /* Smiling face emoji */
-		} else if ( subscriptionValue < IMAGE_CELEBRATION_PRICE ) {
+		} else if ( subscriptionValue < PRICING_CONFIG.IMAGE_CELEBRATION_PRICE ) {
 			emoji = String.fromCodePoint( 0x2764, 0xfe0f ); /* Heart emoji */
-		} else if ( subscriptionValue >= IMAGE_CELEBRATION_PRICE ) {
+		} else if ( subscriptionValue >= PRICING_CONFIG.IMAGE_CELEBRATION_PRICE ) {
 			emoji = String.fromCodePoint( 0x1f525 ); /* Fire emoji */
 		}
 
 		return (
 			<div { ...props }>
-				${ state?.valueNow || subscriptionValue }/{ translate( 'month' ) }{ ' ' }
-				{ subscriptionValue > 0 && emoji }
+				{ formatCurrency( state?.valueNow || subscriptionValue, currencyCode ) }/
+				{ translate( 'month' ) } { subscriptionValue > 0 && emoji }
 			</div>
 		);
 	} ) as RenderThumbFunction;
@@ -64,14 +63,14 @@ const PersonalPurchase = ( {
 				value={ subscriptionValue }
 				renderThumb={ sliderLabel }
 				onChange={ setSubscriptionValue }
-				maxValue={ MAX_SLIDER_PRICE }
-				step={ 0.5 }
+				maxValue={ PRICING_CONFIG.MAX_SLIDER_PRICE }
+				step={ PRICING_CONFIG.SLIDER_STEP }
 			/>
 
 			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
 				{ translate( 'Our users pay %(value)s per month on average', {
 					args: {
-						value: AVERAGE_PRICE_INFO,
+						value: formatCurrency( PRICING_CONFIG.AVERAGE_PRICE_INFO, currencyCode ),
 					},
 				} ) }
 			</p>
@@ -96,7 +95,7 @@ const PersonalPurchase = ( {
 			</div>
 
 			{ subscriptionValue === 0 && (
-				<p>
+				<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
 					<p>
 						<strong>
 							{ translate( 'Please confirm non-commercial usage by checking each box:' ) }
@@ -134,7 +133,7 @@ const PersonalPurchase = ( {
 							/>
 						</li>
 					</ul>
-				</p>
+				</div>
 			) }
 
 			<p>
@@ -164,9 +163,9 @@ const PersonalPurchase = ( {
 				</Button>
 			) : (
 				<Button variant="primary">
-					{ translate( 'Get Jetpack Stats for $%(value)s per month', {
+					{ translate( 'Get Jetpack Stats for %(value)s per month', {
 						args: {
-							value: subscriptionValue,
+							value: formatCurrency( subscriptionValue, currencyCode ),
 						},
 					} ) }
 				</Button>

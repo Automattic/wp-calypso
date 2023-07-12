@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { formatCurrency, getCurrencyObject } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -6,10 +7,12 @@ import { useTranslate } from 'i18n-calypso';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 interface CommercialPurchaseProps {
 	planValue: number;
+	currencyCode: string;
 }
 
-const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
+const CommercialPurchase = ( { planValue, currencyCode }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
+	const planPriceObject = getCurrencyObject( planValue, currencyCode );
 
 	return (
 		<div>
@@ -29,8 +32,14 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__pricing` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-value` }>
-					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>$</div>
-					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-amount` }>{ `${ planValue }` }</div>
+					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>
+						{ planPriceObject.symbol }
+					</div>
+					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-amount` }>
+						{ planPriceObject.hasNonZeroFraction
+							? formatCurrency( planValue, currencyCode ).replace( planPriceObject.symbol, '' )
+							: planPriceObject.integer }
+					</div>
 				</div>
 				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-cadency` }>
 					/{ translate( 'month' ) }
@@ -67,7 +76,7 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 			<Button variant="primary">
 				{ translate( 'Get Jetpack Stats for %(value)s per month', {
 					args: {
-						value: `$${ planValue }`, //TODO: apply dynamic currency symbol
+						value: formatCurrency( planValue, currencyCode ),
 					},
 				} ) }
 			</Button>

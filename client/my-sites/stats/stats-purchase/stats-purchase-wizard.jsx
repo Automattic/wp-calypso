@@ -4,6 +4,8 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import CommercialPurchase from './stats-purchase-commercial';
 import PersonalPurchase from './stats-purchase-personal';
 import StatsPurchaseSVG from './stats-purchase-svg';
@@ -14,9 +16,17 @@ const SCREEN_TYPE_SELECTION = 0;
 const SCREEN_PURCHASE = 1;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
-const DEFAULT_STARTING_PRICE = 6;
-const FLAT_COMMERCIAL_PRICE = 10;
-const IMAGE_CELEBRATION_PRICE = 8;
+
+// TODO: Get pricing config from an API
+const PRICING_CONFIG = {
+	AVERAGE_PRICE_INFO: 6, // used to display how much a users pays on average (below price slider)
+	MAX_SLIDER_PRICE: 10, // max slider amount for PWYW slider
+	SLIDER_STEP: 0.5, // single step for PWYW slider
+	EMOJI_HEART_TIER: 5, // value when slider emoji is changed to a heart emoji
+	IMAGE_CELEBRATION_PRICE: 8, // minimal price that enables image celebration image
+	DEFAULT_STARTING_PRICE: 6, // default position for PWYW slider
+	FLAT_COMMERCIAL_PRICE: 10, // commercial price
+};
 
 const TitleNode = ( { label, indicatorNumber, active } ) => {
 	return (
@@ -34,10 +44,13 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 };
 
 const ProductCard = ( { siteSlug } ) => {
-	const [ subscriptionValue, setSubscriptionValue ] = useState( DEFAULT_STARTING_PRICE );
+	const [ subscriptionValue, setSubscriptionValue ] = useState(
+		PRICING_CONFIG.DEFAULT_STARTING_PRICE
+	);
 	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
 	const [ siteType, setSiteType ] = useState( null );
 	const translate = useTranslate();
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
@@ -49,7 +62,7 @@ const ProductCard = ( { siteSlug } ) => {
 	};
 
 	const setCommercialSite = () => {
-		setSubscriptionValue( FLAT_COMMERCIAL_PRICE );
+		setSubscriptionValue( PRICING_CONFIG.FLAT_COMMERCIAL_PRICE );
 		setSiteType( TYPE_COMMERCIAL );
 		setWizardStep( SCREEN_PURCHASE );
 	};
@@ -147,9 +160,13 @@ const ProductCard = ( { siteSlug } ) => {
 											subscriptionValue={ subscriptionValue }
 											setSubscriptionValue={ setSubscriptionValue }
 											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
+											currencyCode={ currencyCode }
 										/>
 									) : (
-										<CommercialPurchase planValue={ FLAT_COMMERCIAL_PRICE } />
+										<CommercialPurchase
+											planValue={ PRICING_CONFIG.FLAT_COMMERCIAL_PRICE }
+											currencyCode={ currencyCode }
+										/>
 									) }
 								</PanelRow>
 							</PanelBody>
@@ -175,4 +192,4 @@ const StatsPurchaseWizard = ( { siteSlug } ) => {
 	return <ProductCard siteSlug={ siteSlug } />;
 };
 
-export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, IMAGE_CELEBRATION_PRICE };
+export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, PRICING_CONFIG };
