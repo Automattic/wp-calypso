@@ -136,6 +136,7 @@
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
+		"signup/color-variations-categorization": false,
 		"signup/design-picker-pattern-assembler": true,
 		"signup/design-picker-preview-colors": false,
 		"signup/design-picker-preview-fonts": false,

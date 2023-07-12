@@ -97,6 +97,7 @@ const useScreens = ( {
 									stylesheet={ stylesheet }
 									limitGlobalStyles={ limitGlobalStyles }
 									selectedColorPaletteVariation={ selectedColorVariation }
+									enableCategorization={ isEnabled( 'signup/color-variations-categorization' ) }
 									onSelect={ onSelectColorVariation }
 								/>
 							</div>

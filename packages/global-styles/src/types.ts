@@ -22,7 +22,6 @@ export interface GlobalStylesObject {
 	id?: number;
 	slug?: string;
 	title?: string;
-	inline_css?: string;
 	settings: {
 		color?: {
 			palette: {
@@ -38,6 +37,12 @@ export interface GlobalStylesObject {
 		};
 		typography?: Typography;
 	};
+
+	/**
+	 * WP.com only
+	 */
+	inline_css?: string;
+	wpcom_category?: string;
 }
 
 export enum GlobalStylesVariationType {

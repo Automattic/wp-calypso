@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { ColorPaletteVariations } from '@automattic/global-styles';
 import { NavigatorHeader } from '@automattic/onboarding';
@@ -41,6 +42,7 @@ const ScreenColorPalettes = ( {
 					selectedColorPaletteVariation={ selectedColorPaletteVariation }
 					onSelect={ onSelect }
 					limitGlobalStyles={ shouldLimitGlobalStyles }
+					enableCategorization={ isEnabled( 'signup/color-variations-categorization' ) }
 				/>
 			</div>
 			<div className="screen-container__footer">
