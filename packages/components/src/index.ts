@@ -1,5 +1,5 @@
 export { default as Badge } from './badge';
-export type { BadgeProps } from './badge';
+export type { BadgeType } from './badge';
 export { default as Button } from './button';
 export * as Animation from './animation';
 export { default as Card } from './card';

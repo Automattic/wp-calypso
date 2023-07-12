@@ -7,7 +7,7 @@ import FormattedDate from 'calypso/components/formatted-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import InvoicesListRow from 'calypso/jetpack-cloud/sections/partner-portal/invoices-list-row';
 import usePayInvoiceMutation from 'calypso/state/partner-portal/invoices/hooks/pay-invoice-mutation';
-import type { BadgeProps } from '@automattic/components';
+import type { BadgeType } from '@automattic/components';
 import type { Invoice } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
@@ -22,7 +22,7 @@ function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUr
 		[ id, payInvoice.mutate ]
 	);
 
-	let badgeType: BadgeProps[ 'type' ] = 'info';
+	let badgeType: BadgeType = 'info';
 	let badgeLabel = translate( 'Draft' );
 
 	switch ( status ) {

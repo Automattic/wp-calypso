@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Badge from 'calypso/components/badge';
-import type { BadgeProps } from '@automattic/components';
+import type { BadgeType } from '@automattic/components';
 
 interface DeploymentStatusBadgeProps {
 	status: string;
@@ -11,7 +11,7 @@ interface DeploymentStatusBadgeProps {
 export const DeploymentStatusBadge = ( { status, totalFailures }: DeploymentStatusBadgeProps ) => {
 	const translate = useTranslate();
 
-	const { type, message } = useMemo< { type: BadgeProps[ 'type' ]; message: string } >( () => {
+	const { type, message } = useMemo< { type: BadgeType; message: string } >( () => {
 		if ( status === 'failed' ) {
 			return {
 				type: 'error',
