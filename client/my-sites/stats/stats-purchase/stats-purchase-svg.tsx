@@ -2,13 +2,13 @@ import { useTranslate } from 'i18n-calypso';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 
 interface StatsPurchaseSVG {
-	isFree: boolean;
+	isFree: boolean | undefined;
 	hasHighlight: boolean;
 	extraMessage: boolean;
 }
 
 const StatsPurchaseSVG = ( {
-	isFree = false,
+	isFree,
 	hasHighlight = false,
 	extraMessage = false,
 }: StatsPurchaseSVG ) => {
@@ -81,7 +81,7 @@ const StatsPurchaseSVG = ( {
 							transform="matrix(0 -1 -1 0 99.114 293.605)"
 						/>
 					</g>
-					{ isFree && (
+					{ !! isFree && (
 						<>
 							<g>
 								<path
