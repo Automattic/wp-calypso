@@ -8867,13 +8867,13 @@ __metadata:
   linkType: hard
 
 "agentkeepalive@npm:^4.1.3":
-  version: 4.3.0
-  resolution: "agentkeepalive@npm:4.3.0"
+  version: 4.1.4
+  resolution: "agentkeepalive@npm:4.1.4"
   dependencies:
     debug: ^4.1.0
-    depd: ^2.0.0
+    depd: ^1.1.2
     humanize-ms: ^1.2.1
-  checksum: 61cbdab12d45e82e9ae515b0aa8d09617b66f72409e541a646dd7be4b7260d335d7f56a38079ad305bf0ffb8405592a459faf1294111289107f48352a20c2799
+  checksum: 9fce2a75711ec5759f009846b6be0581eaac389f5fb275e98ff2c0edc95c56acf251a3135e04bb0df2d0f5f8b4b655aaa9e9bfbb2a9123bd527a6f600fe4c182
   languageName: node
   linkType: hard
 
@@ -13059,14 +13059,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"depd@npm:2.0.0, depd@npm:^2.0.0":
+"depd@npm:2.0.0":
   version: 2.0.0
   resolution: "depd@npm:2.0.0"
   checksum: 58bd06ec20e19529b06f7ad07ddab60e504d9e0faca4bd23079fac2d279c3594334d736508dc350e06e510aba5e22e4594483b3a6562ce7c17dd797f4cc4ad2c
   languageName: node
   linkType: hard
 
-"depd@npm:~1.1.2":
+"depd@npm:^1.1.2, depd@npm:~1.1.2":
   version: 1.1.2
   resolution: "depd@npm:1.1.2"
   checksum: acb24aaf936ef9a227b6be6d495f0d2eb20108a9a6ad40585c5bda1a897031512fef6484e4fdbb80bd249fdaa82841fa1039f416ece03188e677ba11bcfda249
@@ -16620,9 +16620,9 @@ __metadata:
   linkType: hard
 
 "graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.4, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.3, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
-  version: 4.2.11
-  resolution: "graceful-fs@npm:4.2.11"
-  checksum: 386d011a553e02bc594ac2ca0bd6d9e4c22d7fa8cfbfc448a6d148c59ea881b092db9dbe3547ae4b88e55f1b01f7c4a2ecc53b310c042793e63aa44cf6c257f2
+  version: 4.2.9
+  resolution: "graceful-fs@npm:4.2.9"
+  checksum: 2a66760ce6677ca18a24a1ef15d440cfd970086446af1e78c9e9de083c48122d8bd9c3fdc37f8f80f34aae833fa0d9dd52725e75a1c3f433ddd34eece39e7376
   languageName: node
   linkType: hard
 
@@ -17179,9 +17179,9 @@ __metadata:
   linkType: hard
 
 "http-cache-semantics@npm:^4.0.0, http-cache-semantics@npm:^4.1.0":
-  version: 4.1.1
-  resolution: "http-cache-semantics@npm:4.1.1"
-  checksum: ce1319b8a382eb3cbb4a37c19f6bfe14e5bb5be3d09079e885e8c513ab2d3cd9214902f8a31c9dc4e37022633ceabfc2d697405deeaf1b8f3552bb4ed996fdfc
+  version: 4.1.0
+  resolution: "http-cache-semantics@npm:4.1.0"
+  checksum: abe115ddd9f24914a49842f2745ecc8380837bbe30b59b154648c76ebc1bd3d5f8bd05c1789aaa2ae6b79624c591d13c8aa79104ff21078e117140a65ac20654
   languageName: node
   linkType: hard
 
@@ -21807,13 +21807,13 @@ __metadata:
   linkType: hard
 
 "node-gyp-build@npm:^4.2.1":
-  version: 4.6.0
-  resolution: "node-gyp-build@npm:4.6.0"
+  version: 4.5.0
+  resolution: "node-gyp-build@npm:4.5.0"
   bin:
     node-gyp-build: bin.js
     node-gyp-build-optional: optional.js
     node-gyp-build-test: build-test.js
-  checksum: 147add65942acd3cf641d11d9becd030128c7298a5b4aec4ebf3ad4afcc3d0298ad2562afba3e7b2bf70160c5e2e82235e3bc043ff9c52dc68bdd36c856764fe
+  checksum: 4ca30ae1f7ba570cd33ae6b71c7e3eb249c3901c0b8a02014cfe2ce18f7f23df621c8d087868973e4f32c90b1c4ad753b4dff1d8bf54666a3f848f414828c14f
   languageName: node
   linkType: hard
 
