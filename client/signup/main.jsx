@@ -523,7 +523,7 @@ class Signup extends Component {
 				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 				isMapping: domainItem && isDomainMapping( domainItem ),
 				isTransfer: domainItem && isDomainTransfer( domainItem ),
-				signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.not_set,
+				signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 			} );
 		}
 	};

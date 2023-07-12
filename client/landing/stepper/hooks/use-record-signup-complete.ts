@@ -64,7 +64,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			isTransfer: hasPaidDomainItem
 				? isDomainTransfer( domainCartItem as MinimalRequestCartProduct )
 				: undefined,
-			signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.not_set,
+			signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 		} );
 	}, [ domainCartItem, flow, planCartItem, selectedDomain, siteCount, siteId, theme ] );
 };

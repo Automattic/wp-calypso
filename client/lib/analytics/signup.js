@@ -23,11 +23,11 @@ export function recordSignupStart( flow, ref, optionalProps ) {
 
 // domain sources for calypso_signup_complete tracks event
 export const SIGNUP_DOMAIN_ORIGIN = {
-	use_your_domain: 'use-your-domain',
-	choose_later: 'choose-later',
-	free: 'free',
-	custom: 'custom',
-	not_set: 'not-set',
+	USE_YOUR_DOMAIN: 'use-your-domain',
+	CHOOSE_LATER: 'choose-later',
+	FREE: 'free',
+	CUSTOM: 'custom',
+	NOT_SET: 'not-set',
 };
 
 export function recordSignupComplete(
