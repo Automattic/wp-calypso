@@ -119,6 +119,10 @@
 		}
 	}
 
+	.domains__domain-validation {
+		margin-top: 12px;
+	}
+
 	.domains__domain-domain {
 		flex: 7;
 	}
@@ -132,7 +136,8 @@
 	}
 
 	.domains__domain-domain,
-	.domains__domain-key {
+	.domains__domain-key,
+	.domains__domain-price {
 
 		// Show the titles on mobile and hide on desktop (except for the first one)
 		.form-label {
@@ -144,6 +149,7 @@
 
 			&.is-first-label-title {
 				display: block;
+				margin-bottom: 16px;
 			}
 		}
 
@@ -171,6 +177,12 @@
 						fill: #d63638;
 					}
 				}
+			}
+
+			div {
+				height: 40px;
+				display: flex;
+				align-items: center;
 			}
 		}
 
@@ -292,7 +304,7 @@
 	}
 
 	.domains__domain-info-and-validation {
-		margin-bottom: 16px;
+		margin-bottom: 12px;
 
 		@media (max-width: $break-medium ) {
 			border-bottom: solid 1px #dcdcde;

@@ -152,6 +152,8 @@ export function DomainCodePair( {
 						</Button>
 					</div>
 				</div>
+			</div>
+			<div className="domains__domain-validation">
 				{ shouldReportError && (
 					<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
 				) }
