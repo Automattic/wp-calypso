@@ -172,6 +172,7 @@ class StatsSite extends Component {
 			isOdysseyStats,
 			context,
 			moduleSettings,
+			statsPurchaseSuccess,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -238,7 +239,10 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				<StatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
+				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
+
+				{ statsPurchaseSuccess && <p>Thank you for using Jetpack Stats</p> }
+
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
