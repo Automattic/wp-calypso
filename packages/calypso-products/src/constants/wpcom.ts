@@ -50,6 +50,7 @@ export const PLAN_WPCOM_PRO_MONTHLY = 'pro-plan-monthly';
 export const PLAN_WPCOM_PRO_2_YEARS = 'pro-plan-2y';
 export const PLAN_WPCOM_STARTER = 'starter-plan';
 export const PLAN_ENTERPRISE_GRID_WPCOM = 'plan-enterprise-grid-wpcom'; // Not a real plan; we show the VIP section in the plans grid as part of pdgrnI-1Qp-p2.
+export const PLAN_MIGRATION_TRIAL = 'wp_bundle_migration_trial_monthly';
 
 export const WPCOM_PLANS = <const>[
 	PLAN_BUSINESS_MONTHLY,
@@ -89,6 +90,7 @@ export const WPCOM_PLANS = <const>[
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_PLUS,
+	PLAN_MIGRATION_TRIAL,
 ];
 
 export const WPCOM_MONTHLY_PLANS = <const>[
