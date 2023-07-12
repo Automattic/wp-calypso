@@ -41,9 +41,13 @@ const useShowPluginActionDialog = () => {
 };
 
 // For use in situations where hooks aren't supported :-(
-export const withShowPluginActionDialog = ( Component: React.Component ) => ( props ) => {
-	const showPluginActionDialog = useShowPluginActionDialog();
-	return <Component showPluginActionDialog={ showPluginActionDialog } { ...props } />;
-};
+export function withShowPluginActionDialog< ComponentProps >(
+	Component: React.ComponentType< ComponentProps >
+) {
+	return ( props: ComponentProps ) => {
+		const showPluginActionDialog = useShowPluginActionDialog();
+		return <Component showPluginActionDialog={ showPluginActionDialog } { ...props } />;
+	};
+}
 
 export default useShowPluginActionDialog;
