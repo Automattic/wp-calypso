@@ -30,7 +30,7 @@ type SiteIconProps = {
 	defaultIcon?: JSX.Element | null;
 };
 
-function SiteIcon( {
+export function SiteIcon( {
 	siteId,
 	site,
 	iconUrl,

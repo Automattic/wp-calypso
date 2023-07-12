@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -191,7 +192,7 @@ const SiteRow = ( {
 	};
 
 	return ! isDeleted ? (
-		<li className="row" role="row">
+		<HStack as="li" alignItems="center" className="row" role="row">
 			<span className="title-cell" role="cell">
 				<Link
 					className="title-icon"
@@ -317,7 +318,7 @@ const SiteRow = ( {
 					unsubscribing={ unsubscribing }
 				/>
 			</span>
-		</li>
+		</HStack>
 	) : null;
 };
 
