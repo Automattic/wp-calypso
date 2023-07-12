@@ -578,14 +578,14 @@ export const domainTransferAuthCodes: Reducer<
 };
 
 export const shouldImportDomainTransferDnsRecords: Reducer< boolean, OnboardAction > = (
-	state = false,
+	state = true,
 	action
 ) => {
 	if ( action.type === 'SET_SHOULD_IMPORT_DOMAIN_TRANSFER_DNS_RECORDS' ) {
 		return action.shouldImportDomainTransferDnsRecords;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
+		return true;
 	}
 	return state;
 };

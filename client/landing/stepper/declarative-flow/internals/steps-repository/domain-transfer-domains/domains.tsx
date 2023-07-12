@@ -24,7 +24,7 @@ export interface Props {
 }
 
 const defaultState: DomainTransferForm = {
-	shouldImportDnsRecords: false,
+	shouldImportDnsRecords: true,
 	domains: {
 		[ uuid() ]: {
 			domain: '',
