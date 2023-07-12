@@ -119,29 +119,23 @@ export function DomainCodePair( {
 				</div>
 				<div className="domains__domain-controls">
 					<div className="domains__domain-refresh">
-						<FormFieldset>
-							<Button
-								title={ __( 'Refresh' ) }
-								disabled={ ! refetch }
-								icon={ update }
-								onClick={ () => refetch?.() }
-							/>
-							<FormLabel htmlFor={ id }>{ __( 'Refresh' ) }</FormLabel>
-						</FormFieldset>
+						<Button
+							title={ __( 'Refresh' ) }
+							disabled={ ! refetch }
+							icon={ update }
+							onClick={ () => refetch?.() }
+						>
+							<span className="refresh-label">{ __( 'Refresh' ) }</span>
+						</Button>
 					</div>
 					<div className="domains__domain-delete">
-						<FormFieldset>
-							<Button
-								className={ classnames( { 'has-delete-button': showDelete } ) }
-								icon={ trash }
-								onClick={ () => onRemove( id ) }
-							/>
-							{ showDelete && (
-								<FormLabel className="delete-label" htmlFor={ id }>
-									{ __( 'Delete' ) }
-								</FormLabel>
-							) }
-						</FormFieldset>
+						<Button
+							className={ classnames( { 'has-delete-button': showDelete } ) }
+							icon={ trash }
+							onClick={ () => onRemove( id ) }
+						>
+							<span className="delete-label">{ __( 'Delete' ) }</span>
+						</Button>
 					</div>
 				</div>
 				{ shouldReportError && (
