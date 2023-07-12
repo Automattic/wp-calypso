@@ -272,7 +272,9 @@ function UseMyDomain( props ) {
 					'auth_code' === domainAvailabilityData?.ownership_verification_type
 						? showOwnershipVerificationFlow
 						: () =>
+								onConnect &&
 								onConnect( {
+									domain: domainName,
 									// we only want to record the domain origin if the user is connecting their domain as part of the signup flow
 									signupDomainOrigin: isSignupStep ? SIGNUP_DOMAIN_ORIGIN.use_your_domain : null,
 								} )
