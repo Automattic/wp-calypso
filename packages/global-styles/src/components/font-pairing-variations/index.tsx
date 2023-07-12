@@ -1,4 +1,4 @@
-import { PremiumBadge } from '@automattic/design-picker';
+import { PremiumBadge } from '@automattic/components';
 import {
 	__unstableComposite as Composite,
 	__unstableUseCompositeState as useCompositeState,

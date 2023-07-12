@@ -55,6 +55,9 @@ export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-pop
 export { default as JetpackUpsellCard } from './jetpack-upsell-card';
 export { UpsellMenuGroup } from './upsell-menu-group';
 export { default as PricingSlider } from './pricing-slider';
+export * from './theme-type-badge';
+
+// Types
 export type { RenderThumbFunction } from './pricing-slider/types';
 
 // Logos

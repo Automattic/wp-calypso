@@ -19,7 +19,7 @@ interface Props {
 	isVirtual?: boolean;
 	limitGlobalStyles?: boolean;
 	variations?: StyleVariation[];
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	selectedVariation?: StyleVariation;
 	selectedColorVariation: GlobalStylesObject | null;
 	selectedFontVariation: GlobalStylesObject | null;
@@ -34,7 +34,7 @@ const useScreens = ( {
 	isVirtual,
 	limitGlobalStyles,
 	variations,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	selectedVariation,
 	selectedColorVariation,
 	selectedFontVariation,
@@ -60,8 +60,8 @@ const useScreens = ( {
 										key="style-variations"
 										globalStylesVariations={ variations as GlobalStylesObject[] }
 										selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
-										splitPremiumVariations={ splitPremiumVariations }
-										displayFreeLabel={ splitPremiumVariations }
+										splitDefaultVariation={ splitDefaultVariation }
+										displayFreeLabel={ splitDefaultVariation }
 										showOnlyHoverViewDefaultVariation={ false }
 										onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
 											onSelectVariation( globalStyleVariation as StyleVariation )

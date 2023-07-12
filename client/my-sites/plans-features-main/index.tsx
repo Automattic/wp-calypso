@@ -9,6 +9,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import { isOnboardingPMFlow } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import classNames from 'classnames';
@@ -28,6 +29,7 @@ import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
@@ -137,6 +139,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	const showDomainUpsellDialog = useCallback( () => {
 		setShowDomainUpsellDialog( true );
 	}, [ setShowDomainUpsellDialog ] );
+	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
 
 	let planActionOverrides: PlanActionOverrides | undefined;
 	if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
@@ -173,6 +176,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		currentSitePlanSlug: sitePlanSlug,
 		planActionOverrides,
 		intent,
+		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -273,7 +277,11 @@ const PlansFeaturesMain = ( {
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// - only applicable to main onboarding flow (default `/start`)
-		if ( 'onboarding' === flowName && domainName && ! cartItemForPlan ) {
+		if (
+			( 'onboarding' === flowName || isOnboardingPMFlow( flowName ) ) &&
+			domainName &&
+			! cartItemForPlan
+		) {
 			toggleIsFreePlanPaidDomainDialogOpen();
 			return;
 		}

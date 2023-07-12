@@ -697,7 +697,7 @@ class ThemeSheet extends Component {
 	renderStyleVariations = () => {
 		const { styleVariations } = this.props;
 
-		const splitPremiumVariations =
+		const splitDefaultVariation =
 			! this.props.isExternallyManagedTheme &&
 			! this.props.isThemePurchased &&
 			! this.props.isBundledSoftwareSet &&
@@ -707,7 +707,7 @@ class ThemeSheet extends Component {
 			styleVariations.length > 0 && (
 				<ThemeStyleVariations
 					description={ this.getStyleVariationDescription() }
-					splitPremiumVariations={ splitPremiumVariations }
+					splitDefaultVariation={ splitDefaultVariation }
 					selectedVariation={ this.getSelectedStyleVariation() }
 					variations={ styleVariations }
 					onClick={ this.onStyleVariationClick }
@@ -1131,11 +1131,14 @@ class ThemeSheet extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
+		const { globalStylesOnPersonalExperiment } = this.props;
+		const plan = globalStylesOnPersonalExperiment ? 'personal' : 'premium';
+
 		const params = new URLSearchParams();
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		page( `/checkout/${ this.props.siteSlug || '' }/premium?${ params.toString() }` );
+		page( `/checkout/${ this.props.siteSlug || '' }/${ plan }?${ params.toString() }` );
 	};
 
 	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
@@ -1454,8 +1457,16 @@ class ThemeSheet extends Component {
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
-		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
-		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+		const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
+			useSiteGlobalStylesStatus( siteId );
+
+		return (
+			<Wrapped
+				{ ...props }
+				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+				globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
+			/>
+		);
 	},
 	'withSiteGlobalStylesStatus'
 );
