@@ -165,11 +165,15 @@ class VideoPressStatsModule extends Component {
 
 		const isNewVideoPage = config.isEnabled( 'stats/new-video-summary' );
 
+		const csvData = [
+			[ 'post_id', 'title', 'impressions', 'watch_time', 'retention_rate', 'views' ],
+			...completeVideoStats,
+		];
 		const downloadCSV = (
 			<div className="stats-module__heaver-nav-button">
 				<DownloadCsv
 					statType={ statType }
-					data={ completeVideoStats }
+					data={ csvData }
 					query={ query }
 					path={ path }
 					period={ period }
