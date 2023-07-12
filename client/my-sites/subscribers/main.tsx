@@ -112,10 +112,7 @@ const SubscribersPage = ( {
 					onConfirm={ onConfirmModal }
 				/>
 				{ selectedSite && (
-					<AddSubscribersModal
-						siteId={ selectedSite.ID }
-						siteTitle={ selectedSite.title }
-					/>
+					<AddSubscribersModal siteId={ selectedSite.ID } siteTitle={ selectedSite.title } />
 				) }
 			</Main>
 		</SubscribersPageProvider>
