@@ -120,7 +120,6 @@ export type PlanFeatures2023GridProps = {
 	showLegacyStorageFeature?: boolean;
 	spotlightPlanSlug?: PlanSlug;
 	showUpgradeableStorage: boolean;
-	isGlobalStylesOnPersonal?: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -980,6 +979,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			intent,
 			isGlobalStylesOnPersonal,
 			showLegacyStorageFeature,
+			showUpgradeableStorage,
 		} = ownProps;
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = siteId
@@ -1086,6 +1086,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
+				// TODO: Rename get2023PricingGridSignupStorageOptions to get2023PricingGridSignupStorageFeatures
 				const storageFeatures =
 					( planConstantObj.get2023PricingGridSignupStorageOptions &&
 						planConstantObj.get2023PricingGridSignupStorageOptions(
@@ -1093,11 +1094,14 @@ const ConnectedPlanFeatures2023Grid = connect(
 							isCurrentPlan
 						) ) ||
 					[];
+
 				const storageAddOns =
 					( planConstantObj.get2023PricingGridSignupStorageAddOns &&
 						planConstantObj.get2023PricingGridSignupStorageAddOns() ) ||
 					[];
-				const storageOptions = [ ...storageFeatures, ...storageAddOns ];
+				const storageOptions = showUpgradeableStorage
+					? [ ...storageFeatures, ...storageAddOns ]
+					: storageFeatures;
 				const availableForPurchase =
 					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 
