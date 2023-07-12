@@ -1,6 +1,8 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -10,6 +12,7 @@ import ReaderImportButton from 'calypso/blocks/reader-import-button';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import { AddSitesButton } from 'calypso/landing/subscriptions/components/add-sites-button';
 import {
 	SubscriptionsPortal,
 	SubscriptionManagerContextProvider,
@@ -44,12 +47,14 @@ const SiteSubscriptionsManager = () => {
 			<Main className="site-subscriptions-manager">
 				<DocumentHead title={ translate( 'Manage subscriptions' ) } />
 
-				<HStack className="site-subscriptions-manager__header-h-stack" justifyContent="center">
+				<HStack className="site-subscriptions-manager__header-h-stack">
 					<FormattedHeader
 						headerText={ translate( 'Manage subscribed sites' ) }
 						subHeaderText={ translate( 'Manage your newsletter and blog subscriptions.' ) }
 						align="left"
 					/>
+					<Spacer />
+					<AddSitesButton />
 					<SubscriptionsEllipsisMenu
 						toggleTitle={ translate( 'More' ) }
 						popoverClassName="site-subscriptions-manager__import-export-popover"
