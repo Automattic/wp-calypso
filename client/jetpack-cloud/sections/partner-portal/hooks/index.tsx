@@ -129,13 +129,6 @@ export function useAssignLicenses(
 	const isLoading = assignLicense.isLoading;
 	const selectedSiteId = selectedSite?.ID as number;
 	const assignMultipleLicenses = useCallback( async () => {
-		const assignLicenseRequests: any = [];
-		licenseKeys.forEach( ( licenseKey ) => {
-			assignLicenseRequests.push(
-				assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
-			);
-		} );
-
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
 				products: licenseKeys.join( ',' ),
@@ -143,6 +136,9 @@ export function useAssignLicenses(
 			} )
 		);
 
+		const assignLicenseRequests = licenseKeys.map( ( licenseKey ) =>
+			assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
+		);
 		const assignLicensePromises = await Promise.allSettled( assignLicenseRequests );
 		const allSelectedProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] =
 			[];
