@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
+import wpcom from 'calypso/lib/wp';
 import { SITE_PURCHASES_UPDATE } from 'calypso/state/action-types';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
