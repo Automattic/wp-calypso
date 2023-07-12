@@ -47,6 +47,9 @@
 	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable" >
 		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
 	</rule>
+	<rule ref="MediaWiki.Usage.ForbiddenFunctions.isset">
+		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
+	</rule>
 
 	<rule ref="Squiz.Commenting.FileComment.MissingPackageTag">
 		<severity>0</severity>
