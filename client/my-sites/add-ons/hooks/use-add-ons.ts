@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_AI_MONTHLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
@@ -40,6 +41,7 @@ export interface AddOnMeta {
 // some memoization. executes far too many times
 const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 	const translate = useTranslate();
+	const aiAssistantAddOnIsEnabled = config.isEnabled( 'jetpack/ai-assistant-request-limit' );
 
 	const addOnsActive = [
 		{
@@ -124,6 +126,11 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				// remove all upgrades smaller than the smallest purchased upgrade (we only allow purchasing upgrades in ascending order)
 				if ( spaceUpgradesPurchased.length && addOn.productSlug === PRODUCT_1GB_SPACE ) {
 					return ( addOn.quantity ?? 0 ) >= Math.min( ...spaceUpgradesPurchased );
+				}
+
+				// remove the Jetpack AI add-on if the feature flag is not enabled for the current environment
+				if ( addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY && ! aiAssistantAddOnIsEnabled ) {
+					return false;
 				}
 
 				return true;
