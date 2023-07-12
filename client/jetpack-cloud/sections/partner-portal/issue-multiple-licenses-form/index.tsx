@@ -53,7 +53,8 @@ export default function IssueMultipleLicensesForm( {
 
 	const bundles =
 		allProducts?.filter(
-			( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-packs'
+			( { family_slug }: { family_slug: string } ) =>
+				family_slug === 'jetpack-packs' && family_slug !== 'woocommerce-extensions'
 		) || [];
 	const backupAddons =
 		allProducts
