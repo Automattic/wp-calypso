@@ -136,7 +136,7 @@ sed "${sedi[@]}" -e "s| function| Function|g" "$TARGET/types/index.d.ts"
 echo "Fixing JS textdomain:"
 npx eslint . --fix
 echo "Fixing PHP textdomain:"
-# ../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || PHPCBF_ERRORED=1
+../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || PHPCBF_ERRORED=1
 
 if [ "$PHPCBF_ERRORED" = 1 ] ; then
 	echo '!! There was an error executing phpcbf!'
