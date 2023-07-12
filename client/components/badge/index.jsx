@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { Badge as BadgeWrapper } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -23,11 +23,11 @@ export default class Badge extends Component {
 	};
 
 	render() {
-		const { className, type } = this.props;
+		const { className, type, children } = this.props;
 		return (
-			<div className={ classNames( `badge badge--${ type }`, className ) }>
-				{ this.props.children }
-			</div>
+			<BadgeWrapper type={ type } className={ className }>
+				{ children }
+			</BadgeWrapper>
 		);
 	}
 }
