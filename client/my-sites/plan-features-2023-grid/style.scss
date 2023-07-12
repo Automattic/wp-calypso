@@ -346,6 +346,10 @@ $mobile-card-max-width: 440px;
 			max-width: $table-cell-max-width * 4;
 		}
 
+		.components-custom-select-control__label {
+			color: var(--studio-gray-100);
+		}
+
 		.components-custom-select-control__menu {
 			margin-left: 0;
 		}
