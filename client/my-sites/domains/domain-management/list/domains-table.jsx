@@ -29,13 +29,22 @@ class DomainsTable extends PureComponent {
 		translate: PropTypes.func,
 	};
 
-	state = {
-		sortKey: 'status', // initial column to sort by - should match the header columns
-		sortOrder: -1, // initial sort order where 1 = ascending and -1 = descending
-	};
-
 	renderedQuerySiteDomains = {};
 	renderedQuerySitePurchases = {};
+
+	constructor( props ) {
+		super( props );
+
+		const queryParams = new URLSearchParams( window.location.search );
+		const queryParamSort = props.domainsTableColumns?.find(
+			( c ) => c.name === queryParams.get( 'sortKey' )
+		)?.name;
+
+		this.state = {
+			sortKey: queryParamSort || 'status', // initial column to sort by - should match the header columns
+			sortOrder: -1, // initial sort order where 1 = ascending and -1 = descending
+		};
+	}
 
 	changeTableSort = ( selectedColumn, sortOrder = null ) => {
 		const { domainsTableColumns } = this.props;

@@ -5,7 +5,7 @@ import { getSubscribersCacheKey } from '../helpers';
 import type { SubscriberEndpointResponse } from '../types';
 
 type SubscriberQueryParams = {
-	siteId: number | null;
+	siteId: number | undefined | null;
 	page?: number;
 	perPage?: number;
 	search?: string;

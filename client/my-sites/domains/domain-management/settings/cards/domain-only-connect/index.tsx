@@ -32,7 +32,7 @@ const DomainOnlyConnectCard = ( props: DomainOnlyConnectCardProps ) => {
 						currentRoute
 					) }
 				>
-					{ translate( 'Transfer to an existing site' ) }
+					{ translate( 'Connect to an existing site' ) }
 				</Button>
 			</div>
 		</div>

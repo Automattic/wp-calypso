@@ -2,10 +2,13 @@ import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
+import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { resetBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useTermsSuggestions } from './useTermsSuggestions';
 import './style.scss';
 
@@ -19,23 +22,33 @@ const SearchBox = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
+	const { localizePath } = useLocalizedPlugins();
 
 	const searchTermSuggestion = useTermsSuggestions( searchTerms ) || 'ecommerce';
 
 	const pageToSearch = useCallback(
-		( s ) => {
-			page.show( page.current ); // Ensures location.href is up to date before setQueryArgs uses it to construct the redirect.
-			setQueryArgs( '' !== s ? { s } : {} );
-			searchBoxRef.current.blur();
-			scrollTo( {
-				x: 0,
-				y:
-					categoriesRef.current?.getBoundingClientRect().y - // Get to the top of categories
-					categoriesRef.current?.getBoundingClientRect().height, // But don't show the categories
-				duration: 300,
-			} );
+		( search ) => {
+			const isCategoryPage = window.location.href.includes( '/plugins/browse/' );
+			if ( isCategoryPage ) {
+				dispatch( resetBreadcrumbs() );
+			}
+
+			page.show( localizePath( `/plugins/${ selectedSite?.slug || '' }` ) ); // Ensures location.href is on the main Plugins page before setQueryArgs uses it to construct the redirect.
+			setQueryArgs( '' !== search ? { s: search } : {} );
+
+			if ( search ) {
+				searchBoxRef.current.blur();
+				scrollTo( {
+					x: 0,
+					y:
+						categoriesRef.current?.getBoundingClientRect().y - // Get to the top of categories
+						categoriesRef.current?.getBoundingClientRect().height, // But don't show the categories
+					duration: 300,
+				} );
+			}
 		},
-		[ searchBoxRef, categoriesRef ]
+		[ searchBoxRef, categoriesRef, dispatch, selectedSite, localizePath ]
 	);
 
 	const recordSearchEvent = ( eventName ) =>
@@ -75,14 +88,12 @@ const SearchBoxHeader = ( props ) => {
 		searchTerms,
 	} = props;
 
-	// Clear the keyword in search box on PluginsBrowser load if required.
-	// Required when navigating to a new plugins browser location
-	// without using close search ("X") to clear. e.g. When clicking
-	// clear in the search results header.
+	// Update the search box with the value from the url everytime it changes
+	// This allows the component to be refilled with a keyword
+	// when navigating back to a page via breadcrumb,
+	// and get empty when the user accesses a non-search page
 	useEffect( () => {
-		if ( ! searchTerm ) {
-			searchRef?.current?.setKeyword( '' );
-		}
+		searchRef?.current?.setKeyword( searchTerm ?? '' );
 	}, [ searchRef, searchTerm ] );
 
 	const classNames = [ 'search-box-header' ];

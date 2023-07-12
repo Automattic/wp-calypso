@@ -40,8 +40,8 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planName: string;
-	domainName: string;
-	hideUnavailableFeatures: boolean;
+	domainName?: string;
+	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
 } > = ( { features, planName, domainName, hideUnavailableFeatures, selectedFeature } ) => {
 	const translate = useTranslate();
@@ -51,6 +51,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				if ( hideUnavailableFeatures && ! currentFeature.availableForCurrentPlan ) {
 					return null;
 				}
+
 				const key = `${ currentFeature.getSlug() }-${ featureIndex }`;
 
 				const isFreePlanAndCustomDomainFeature =
@@ -85,11 +86,14 @@ const PlanFeatures2023GridFeatures: React.FC< {
 									{ isFreePlanAndCustomDomainFeature ? (
 										<Plans2023Tooltip
 											text={ translate( '%s is not included', {
-												args: [ domainName ],
+												args: [ domainName as string ],
 												comment: '%s is a domain name.',
 											} ) }
 										>
-											<FreePlanCustomDomainFeature key={ key } domainName={ domainName } />
+											<FreePlanCustomDomainFeature
+												key={ key }
+												domainName={ domainName as string }
+											/>
 										</Plans2023Tooltip>
 									) : (
 										<Plans2023Tooltip text={ currentFeature.getDescription?.() }>

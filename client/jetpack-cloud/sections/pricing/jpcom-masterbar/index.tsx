@@ -101,6 +101,16 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 						href: `${ JETPACK_COM_BASE_URL }/features/growth/`,
 						items: [
 							{
+								label: translate( 'AI Assistant', { context: 'Jetpack product name' } ),
+								tagline: translate( 'Write smarter, not harder' ),
+								href: `${ JETPACK_COM_BASE_URL }/ai/`,
+							},
+							{
+								label: translate( 'Stats', { context: 'Jetpack product name' } ),
+								tagline: translate( 'Simple, yet powerful analytics' ),
+								href: `${ JETPACK_COM_BASE_URL }/stats/`,
+							},
+							{
 								label: translate( 'Social', { context: 'Jetpack product name' } ),
 								tagline: translate( 'Write once, post everywhere' ),
 								href: `${ JETPACK_COM_BASE_URL }/social/`,
@@ -124,8 +134,8 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 				href: `${ JETPACK_COM_BASE_URL }/pricing/`,
 			},
 			{
-				label: translate( 'Agencies' ),
-				href: `${ JETPACK_COM_BASE_URL }/for/agencies/`,
+				label: translate( 'Partners' ),
+				href: `${ JETPACK_COM_BASE_URL }/jetpack-partners/`,
 			},
 			{
 				label: translate( 'Support' ),

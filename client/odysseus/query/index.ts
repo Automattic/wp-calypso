@@ -1,60 +1,55 @@
-import { useQuery, useMutation, UseMutationResult } from '@tanstack/react-query';
+import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { Nudge, useOdysseusAssistantContext } from '../context';
+import { useOdysseusAssistantContext } from '../context';
+import type { Chat, Message, Context } from '../types';
 
-function queryValidate( siteId: number | null ) {
-	const path = `/sites/${ siteId }/odysseus`;
-	return wpcom.req.get( { path, apiNamespace: 'wpcom/v2' } );
-}
-
-export type Message = {
-	content: string;
-	role: 'user' | 'assistant';
-};
-
-// It just checks that the endpoint is working
-export const useOddyseusEndpointSanityCheck = ( siteId: number | null ) => {
-	return useQuery( {
-		queryKey: [ 'oddyseus-assistant-validation', siteId ],
-		queryFn: () => queryValidate( siteId ),
-		staleTime: 5 * 60 * 1000,
-		enabled: siteId !== null,
-	} );
-};
-
-function postOddyseus(
-	siteId: number | null,
-	prompt: string,
-	context: Nudge,
-	messages: Message[] = [],
-	sectionName: string
-) {
-	const path = `/sites/${ siteId }/odysseus`;
+function odysseusSendMessage( messages: Message[], context: Context, chat_id?: string | null ) {
+	const path = `/odysseus/send_message`;
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { prompt, context, messages, sectionName },
+		body: { messages, context, chat_id: chat_id },
 	} );
 }
 
-export const useOddyseusEndpointPost = (
-	siteId: number | null
-): UseMutationResult<
-	string,
+// It will post a new message using the current chat_id
+export const useOddyseusSendMessage = (): UseMutationResult<
+	{ chat_id: string; messages: Message[] },
 	unknown,
-	{ prompt: string; context: Nudge; messages: Message[] }
+	{ message: Message }
 > => {
-	const { sectionName } = useOdysseusAssistantContext();
+	const { chat, setChat } = useOdysseusAssistantContext();
 
 	return useMutation( {
-		mutationFn: ( {
-			prompt,
-			context,
-			messages,
-		}: {
-			prompt: string;
-			context: Nudge;
-			messages: Message[];
-		} ) => postOddyseus( siteId, prompt, context, messages, sectionName ),
+		mutationFn: ( { message }: { message: Message } ) => {
+			// If chat_id is defined, we only send the message to the current chat
+			// Otherwise we send previous messages and the new one appended to the end to the server
+			const messagesToSend = chat?.chat_id ? [ message ] : [ ...chat.messages, message ];
+
+			return odysseusSendMessage( messagesToSend, chat.context, chat.chat_id );
+		},
+		onSuccess: ( data ) => {
+			setChat( { ...chat, chat_id: data.chat_id } );
+		},
+	} );
+};
+
+// TODO: We will add lately a clear chat to forget the session
+
+const odysseusGetChat = ( chat_id: string | null ) => {
+	const path = `/odysseus/get_chat/${ chat_id }`;
+	return wpcom.req.get( {
+		path,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const useOdysseusGetChatPollQuery = ( chat_id: string | null ) => {
+	return useQuery< Chat, Error >( {
+		queryKey: [ 'odysseus-get-chat', chat_id ],
+		queryFn: async () => await odysseusGetChat( chat_id ),
+		refetchInterval: 5000,
+		refetchOnWindowFocus: false,
+		enabled: !! chat_id,
 	} );
 };

@@ -18,7 +18,13 @@ import {
 	domainTransferIn,
 } from 'calypso/my-sites/domains/paths';
 
-function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = false ) {
+function getAvailabilityNotice(
+	domain,
+	error,
+	errorData,
+	isForTransferOnly = false,
+	linksTarget = '_self'
+) {
 	const tld = domain ? getTld( domain ) : null;
 	const { site, maintenanceEndTime, availabilityPreCheck } = errorData || {};
 
@@ -51,21 +57,34 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 			} );
 			break;
 		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
-			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to {{a}}move it to this site{{/a}}?',
-				{
-					args: { domain, site },
-					components: {
-						strong: <strong />,
-						a: (
-							<a
-								rel="noopener noreferrer"
-								href={ domainManagementTransferToOtherSite( site, domain ) }
-							/>
-						),
-					},
-				}
-			);
+			if ( site ) {
+				message = translate(
+					'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to {{a}}move it to this site{{/a}}?',
+					{
+						args: { domain, site },
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									target={ linksTarget }
+									rel="noopener noreferrer"
+									href={ domainManagementTransferToOtherSite( site, domain ) }
+								/>
+							),
+						},
+					}
+				);
+			} else {
+				message = translate(
+					'{{strong}}%(domain)s{{/strong}} is already registered on another site you own.',
+					{
+						args: { domain },
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+			}
 			break;
 		case domainAvailability.IN_REDEMPTION:
 			message = translate(
@@ -76,12 +95,14 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 						strong: <strong />,
 						redemptionLink: (
 							<a
+								target={ linksTarget }
 								rel="noopener noreferrer"
 								href="https://www.icann.org/resources/pages/grace-2013-05-03-en"
 							/>
 						),
 						aboutRenewingLink: (
 							<a
+								target={ linksTarget }
 								rel="noopener noreferrer"
 								href="https://www.icann.org/news/blog/do-you-have-a-domain-name-here-s-what-you-need-to-know-part-5"
 							/>
@@ -102,19 +123,27 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 			);
 			break;
 		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
-			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to this site, but registered somewhere else. Do you want to move ' +
-					'it from your current domain provider to WordPress.com so you can manage the domain and the site ' +
-					'together? {{a}}Yes, transfer it to WordPress.com.{{/a}}',
-				{
-					args: { domain },
-					components: {
-						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ domainTransferIn( site, domain ) } />,
-					},
-				}
-			);
-			break;
+			if ( site ) {
+				message = translate(
+					'{{strong}}%(domain)s{{/strong}} is already connected to this site, but registered somewhere else. Do you want to move ' +
+						'it from your current domain provider to WordPress.com so you can manage the domain and the site ' +
+						'together? {{a}}Yes, transfer it to WordPress.com.{{/a}}',
+					{
+						args: { domain },
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									target={ linksTarget }
+									rel="noopener noreferrer"
+									href={ domainTransferIn( site, domain ) }
+								/>
+							),
+						},
+					}
+				);
+				break;
+			}
 		case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to this site and cannot be transferred to WordPress.com. {{a}}Learn more{{/a}}.',
@@ -124,6 +153,7 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 						strong: <strong />,
 						a: (
 							<a
+								target={ linksTarget }
 								rel="noopener noreferrer"
 								href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS ) }
 							/>
@@ -140,7 +170,7 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 					args: { domain, site },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ CALYPSO_CONTACT } />,
+						a: <a target={ linksTarget } rel="noopener noreferrer" href={ CALYPSO_CONTACT } />,
 					},
 				}
 			);
@@ -152,7 +182,13 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ domainManagementTransferIn( site, domain ) } />,
+						a: (
+							<a
+								target={ linksTarget }
+								rel="noopener noreferrer"
+								href={ site ? domainManagementTransferIn( site, domain ) : '/domains/manage' }
+							/>
+						),
 					},
 				}
 			);
@@ -167,6 +203,7 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 						strong: <strong />,
 						a: (
 							<a
+								target={ linksTarget }
 								rel="noopener noreferrer"
 								href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS ) }
 							/>
@@ -183,7 +220,13 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 						args: { tld },
 						components: {
 							strong: <strong />,
-							a: <a rel="noopener noreferrer" href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
+							a: (
+								<a
+									target={ linksTarget }
+									rel="noopener noreferrer"
+									href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+								/>
+							),
 						},
 					}
 				);
@@ -239,7 +282,13 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 					'This domain cannot be transferred to WordPress.com but it can be connected instead. {{a}}Learn More.{{/a}}',
 					{
 						components: {
-							a: <a rel="noopener noreferrer" href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
+							a: (
+								<a
+									target={ linksTarget }
+									rel="noopener noreferrer"
+									href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+								/>
+							),
 						},
 					}
 				);
@@ -284,11 +333,12 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 							strong: <strong />,
 							a1: (
 								<a
+									target={ linksTarget }
 									rel="noopener noreferrer"
 									href="http://wordpressfoundation.org/trademark-policy/"
 								/>
 							),
-							a2: <a href={ CALYPSO_CONTACT } />,
+							a2: <a target={ linksTarget } href={ CALYPSO_CONTACT } />,
 						},
 					}
 				);
@@ -343,7 +393,7 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 				'This domain expired recently. To get it back please {{a}}contact support{{/a}}.',
 				{
 					components: {
-						a: <a href={ CALYPSO_CONTACT } />,
+						a: <a target={ linksTarget } href={ CALYPSO_CONTACT } />,
 					},
 				}
 			);
@@ -387,16 +437,34 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 			break;
 
 		case domainAvailability.AVAILABLE_PREMIUM:
-			message = translate(
-				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchasing this premium domain on WordPress.com, but if you purchase the domain elsewhere, you can {{a}}map it to your site{{/a}}.",
-				{
-					args: { domain },
-					components: {
-						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
-					},
-				}
-			);
+			if ( site ) {
+				message = translate(
+					"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchasing this premium domain on WordPress.com, but if you purchase the domain elsewhere, you can {{a}}map it to your site{{/a}}.",
+					{
+						args: { domain },
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									target={ linksTarget }
+									rel="noopener noreferrer"
+									href={ domainMapping( site, domain ) }
+								/>
+							),
+						},
+					}
+				);
+			} else {
+				message = translate(
+					"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchasing this premium domain on WordPress.com.",
+					{
+						args: { domain },
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+			}
 			break;
 
 		case domainAvailability.AVAILABLE_RESERVED:
@@ -412,16 +480,34 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 			break;
 
 		case domainAvailability.TRANSFERRABLE_PREMIUM:
-			message = translate(
-				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com, but if you are the owner of this domain, you can {{a}}map it to your site{{/a}}.",
-				{
-					args: { domain },
-					components: {
-						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
-					},
-				}
-			);
+			if ( site ) {
+				message = translate(
+					"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com, but if you are the owner of this domain, you can {{a}}map it to your site{{/a}}.",
+					{
+						args: { domain },
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									target={ linksTarget }
+									rel="noopener noreferrer"
+									href={ domainMapping( site, domain ) }
+								/>
+							),
+						},
+					}
+				);
+			} else {
+				message = translate(
+					"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com.",
+					{
+						args: { domain },
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+			}
 			break;
 
 		case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
@@ -454,7 +540,7 @@ function getAvailabilityNotice( domain, error, errorData, isForTransferOnly = fa
 				'Oops! Sorry an error has occurred. Please {{a}}click here{{/a}} to contact us so that we can fix it. Please remember that you have to provide the full, complete Blog URL, otherwise we can not fix it.',
 				{
 					components: {
-						a: <a rel="noopener noreferrer" href={ supportURL } />,
+						a: <a target={ linksTarget } rel="noopener noreferrer" href={ supportURL } />,
 					},
 				}
 			);

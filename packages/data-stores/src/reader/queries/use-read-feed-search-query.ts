@@ -8,13 +8,13 @@ export enum FeedSort {
 	Relevance = 'relevance',
 }
 
-type FetchReadFeedSearchType = {
+type ReadFeedSearchQueryProps = {
 	query?: string;
 	excludeFollowed?: boolean;
 	sort?: FeedSort;
 };
 
-type FeedItem = {
+export type FeedItem = {
 	URL: string;
 	blog_ID: string;
 	feed_ID: string;
@@ -37,13 +37,13 @@ type FeedResponse = {
 	total: number;
 };
 
-const useReadFeedSearch = ( {
+const useReadFeedSearchQuery = ( {
 	query,
 	excludeFollowed = false,
 	sort = FeedSort.Relevance,
-}: FetchReadFeedSearchType ) => {
+}: ReadFeedSearchQueryProps ) => {
 	return useInfiniteQuery(
-		[ 'readFeedSearch', query, excludeFollowed, sort ],
+		[ 'read', 'feed', 'search', query, excludeFollowed, sort ],
 		async ( { pageParam: pageParamQueryString } ) => {
 			if ( query === undefined ) {
 				return;
@@ -69,4 +69,4 @@ const useReadFeedSearch = ( {
 	);
 };
 
-export default useReadFeedSearch;
+export default useReadFeedSearchQuery;

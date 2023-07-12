@@ -32,6 +32,10 @@ const domainTransfer: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
+			{
+				slug: 'complete',
+				asyncComponent: () => import( './internals/steps-repository/domain-transfer-complete' ),
+			},
 		];
 	},
 
@@ -48,8 +52,8 @@ const domainTransfer: Flow = {
 
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domain`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/pattedomainrns`;
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domains`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domains`;
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
@@ -68,7 +72,7 @@ const domainTransfer: Flow = {
 					return navigate( 'processing', undefined );
 				}
 				case 'processing': {
-					const destination = '/domains/manage?filter=owned-by-me';
+					const destination = '/setup/domain-transfer/complete';
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( flowName );

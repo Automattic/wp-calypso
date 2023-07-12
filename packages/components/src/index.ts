@@ -1,3 +1,4 @@
+export { default as Badge } from './badge';
 export { default as Button } from './button';
 export * as Animation from './animation';
 export { default as Card } from './card';
@@ -54,6 +55,9 @@ export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-pop
 export { default as JetpackUpsellCard } from './jetpack-upsell-card';
 export { UpsellMenuGroup } from './upsell-menu-group';
 export { default as PricingSlider } from './pricing-slider';
+export * from './theme-type-badge';
+
+// Types
 export type { RenderThumbFunction } from './pricing-slider/types';
 
 // Logos
