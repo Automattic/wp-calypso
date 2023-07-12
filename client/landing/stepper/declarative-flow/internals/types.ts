@@ -87,7 +87,7 @@ export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 ) => NavigationControls;
 
 export type UseAssertConditionsHook< FlowSteps extends StepperStep[] > = (
-	navigate: Navigate< FlowSteps >
+	navigate?: Navigate< FlowSteps >
 ) => AssertConditionResult;
 
 export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
