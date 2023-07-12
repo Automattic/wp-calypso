@@ -22,7 +22,6 @@ import {
 	getDomainNameValidationErrorMessage,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
@@ -271,13 +270,7 @@ function UseMyDomain( props ) {
 				onConnect={
 					'auth_code' === domainAvailabilityData?.ownership_verification_type
 						? showOwnershipVerificationFlow
-						: () =>
-								onConnect &&
-								onConnect( {
-									domain: domainName,
-									// we only want to record the domain origin if the user is connecting their domain as part of the signup flow
-									signupDomainOrigin: isSignupStep ? SIGNUP_DOMAIN_ORIGIN.use_your_domain : null,
-								} )
+						: onConnect && onConnect
 				}
 				onSkip={ onSkip }
 				onTransfer={ onTransfer ?? showTransferDomainFlow }

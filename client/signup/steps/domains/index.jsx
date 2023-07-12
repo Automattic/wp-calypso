@@ -157,8 +157,8 @@ class DomainsStep extends Component {
 
 	handleAddDomain = ( suggestion, position ) => {
 		const signupDomainOrigin = suggestion?.is_free
-			? SIGNUP_DOMAIN_ORIGIN.free
-			: SIGNUP_DOMAIN_ORIGIN.custom;
+			? SIGNUP_DOMAIN_ORIGIN.FREE
+			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
 
 		const stepData = {
 			stepName: this.props.stepName,
@@ -248,7 +248,7 @@ class DomainsStep extends Component {
 
 	handleDomainExplainerClick = () => {
 		const hideFreePlan = true;
-		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.choose_later );
+		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
 	};
 
 	handleUseYourDomainClick = () => {
@@ -316,7 +316,7 @@ class DomainsStep extends Component {
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
 
-	handleAddMapping = ( { sectionName, domain, state, signupDomainOrigin } ) => {
+	handleAddMapping = ( { sectionName, domain, state } ) => {
 		const domainItem = domainMapping( { domain } );
 		const isPurchasingItem = true;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -338,11 +338,9 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign(
-				{ domainItem },
-				useThemeHeadstartItem,
-				signupDomainOrigin ? { signupDomainOrigin } : {}
-			)
+			Object.assign( { domainItem }, useThemeHeadstartItem, {
+				signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
+			} )
 		);
 
 		this.props.goToNextStep();
@@ -571,8 +569,8 @@ class DomainsStep extends Component {
 		);
 	};
 
-	onUseMyDomainConnect = ( { domain, signupDomainOrigin } ) => {
-		this.handleAddMapping( { sectionName: 'useYourDomainForm', domain, signupDomainOrigin } );
+	onUseMyDomainConnect = ( { domain } ) => {
+		this.handleAddMapping( { sectionName: 'useYourDomainForm', domain } );
 	};
 
 	insertUrlParams( params ) {
