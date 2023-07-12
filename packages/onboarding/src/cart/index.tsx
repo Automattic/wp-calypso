@@ -32,7 +32,7 @@ type NewSiteParams = {
 	find_available_url: boolean;
 	options: {
 		designType: string;
-		theme: string;
+		theme?: string;
 		use_theme_annotation: boolean;
 		default_annotation_as_primary_fallback: boolean;
 		site_segment: undefined;
@@ -75,7 +75,6 @@ export const getNewSiteParams = ( {
 		public: siteVisibility,
 		options: {
 			designType: '',
-			theme: themeSlugWithRepo,
 			use_theme_annotation: useThemeHeadstart,
 			default_annotation_as_primary_fallback: true,
 			site_segment: undefined,
@@ -87,6 +86,7 @@ export const getNewSiteParams = ( {
 			wpcom_public_coming_soon: siteVisibility === 0 ? 1 : 0,
 			...( sourceSlug && { site_source_slug: sourceSlug } ),
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
+			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
 		},
 		validate: false,
 	};

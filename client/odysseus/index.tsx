@@ -1,23 +1,25 @@
 import { TextControl, Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useOdysseusAssistantContext } from './context';
-import { useOddyseusSendMessage } from './query';
+import ChatMessage from './message';
+import { useOdysseusGetChatPollQuery, useOddyseusSendMessage } from './query';
 import WapuuRibbon from './wapuu-ribbon';
 
 import './style.scss';
 
 const OdysseusAssistant = () => {
-	const siteId = useSelector( getSelectedSiteId );
-	const { lastNudge, chat, isLoadingChat, addMessage, messages, setMessages } =
-		useOdysseusAssistantContext();
+	const { lastNudge, chat, isLoadingChat, addMessage, setMessages } = useOdysseusAssistantContext();
 	const [ input, setInput ] = useState( '' );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
-	const { mutateAsync: sendOdysseusMessage } = useOddyseusSendMessage( siteId );
+	const { mutateAsync: sendOdysseusMessage } = useOddyseusSendMessage();
+	const { data: chatData } = useOdysseusGetChatPollQuery( chat.chat_id ?? null );
+
+	const dispatch = useDispatch();
 
 	useEffect( () => {
 		if ( isLoadingChat ) {
@@ -31,7 +33,19 @@ const OdysseusAssistant = () => {
 		} else if ( chat ) {
 			setMessages( chat.messages );
 		}
-	}, [ chat, isLoadingChat, setMessages ] );
+	}, [ chat, isLoadingChat, setMessages, chat.messages ] );
+
+	useEffect( () => {
+		if ( chatData ) {
+			if ( chat.messages.length < chatData.messages.length ) {
+				const countNewMessages = chatData.messages.length - chat.messages.length;
+				const newMessages = chatData.messages.slice( -countNewMessages );
+				newMessages.forEach( ( message ) => {
+					addMessage( message );
+				} );
+			}
+		}
+	}, [ chat, chatData, addMessage ] );
 
 	const environmentBadge = document.querySelector( 'body > .environment-badge' );
 
@@ -39,7 +53,7 @@ const OdysseusAssistant = () => {
 
 	useEffect( () => {
 		messagesEndRef.current?.scrollIntoView( { behavior: 'smooth' } );
-	}, [ messages ] );
+	}, [ chat.messages ] );
 
 	useEffect( () => {
 		if ( lastNudge ) {
@@ -60,10 +74,6 @@ const OdysseusAssistant = () => {
 				clearTimeout( timeoutId );
 			};
 		}
-
-		setMessages( [
-			{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot', type: 'message' },
-		] );
 	}, [ lastNudge, setMessages ] );
 
 	const handleMessageChange = ( text: string ) => {
@@ -82,25 +92,19 @@ const OdysseusAssistant = () => {
 			setInput( '' );
 			const response = await sendOdysseusMessage( {
 				message: { content: input, role: 'user', type: 'message' },
-				context: lastNudge ?? {
-					nudge: 'none',
-					context: {},
-					initialMessage: 'Hello, I am Wapuu, your personal WordPress assistant',
-				},
 			} );
 
 			addMessage( {
-				content: response.message.content,
+				content: response.messages[ 0 ].content,
 				role: 'bot',
 				type: 'message',
-				chatId: response.chatId,
 			} );
 		} catch ( e ) {
 			addMessage( {
 				content:
 					"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!",
 				role: 'bot',
-				type: 'message',
+				type: 'error',
 			} );
 		} finally {
 			setIsLoading( false );
@@ -108,7 +112,16 @@ const OdysseusAssistant = () => {
 	};
 
 	const handleToggleVisibility = () => {
-		setIsVisible( ! isVisible );
+		const newVisibility = ! isVisible;
+
+		dispatch(
+			recordTracksEvent( 'calypso_odysseus_chat_toggle_visibility_click', {
+				visible: newVisibility,
+				bot_name: 'Wapuu',
+			} )
+		);
+
+		setIsVisible( newVisibility );
 	};
 
 	function handleKeyDown( event: React.KeyboardEvent< HTMLInputElement > ) {
@@ -146,14 +159,13 @@ const OdysseusAssistant = () => {
 			<div className="chatbox-header">Wapuu Assistant</div>
 			<div className="chat-box-message-container">
 				<div className="chatbox-messages">
-					{ messages.map( ( message, index ) => (
-						<div
-							ref={ index === messages.length - 1 ? messagesEndRef : null }
-							className={ `chatbox-message ${ message.role === 'user' ? 'user' : 'wapuu' }` }
+					{ chat.messages.map( ( message, index ) => (
+						<ChatMessage
+							message={ message }
+							isLast={ index === chat.messages.length - 1 }
+							messageEndRef={ messagesEndRef }
 							key={ index }
-						>
-							{ message.content }
-						</div>
+						/>
 					) ) }
 				</div>
 				<form onSubmit={ handleFormSubmit }>

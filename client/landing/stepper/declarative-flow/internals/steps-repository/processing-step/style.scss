@@ -99,14 +99,3 @@
 	}
 }
 
-
-.is-section-stepper .newsletter.processing {
-	.processing-step {
-		.loading-bar {
-			background-color: var(--studio-blue-10);
-			&::before {
-				background: var(--studio-blue-50);
-			}
-		}
-	}
-}

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainTransferData } from '@automattic/data-stores';
 import { useDataLossWarning } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
@@ -12,6 +13,8 @@ import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client
 import { ONBOARD_STORE } from '../../../../stores';
 import { DomainCodePair } from './domain-code-pair';
 import type { OnboardSelect } from '@automattic/data-stores';
+
+const MAX_DOMAINS = 50;
 
 export interface Props {
 	onSubmit: () => void;
@@ -34,6 +37,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	);
 	const domainsState = storedDomainsState || defaultState;
 
+	const domainCount = Object.keys( domainsState ).length;
+
 	const numberOfValidDomains = Object.values( domainsState ).filter(
 		( { valid } ) => valid
 	).length;
@@ -42,7 +47,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	const { __, _n } = useI18n();
 
-	const allGood = Object.values( domainsState ).every( ( { valid } ) => valid );
+	const filledDomainValues = Object.values( domainsState ).filter( ( x ) => x.domain && x.auth );
+	const allGood = filledDomainValues.every( ( { valid } ) => valid );
 
 	const hasAnyDomains = Object.values( domainsState ).some(
 		( { domain, auth } ) => domain.trim() || auth.trim()
@@ -54,8 +60,13 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const changeKey = JSON.stringify( domainsState );
 
 	const handleAddTransfer = () => {
+		recordTracksEvent( 'calypso_domain_transfer_submit_form', {
+			valid: allGood,
+			number_of_valid_domains: numberOfValidDomains,
+		} );
+
 		if ( allGood ) {
-			const cartItems = Object.values( domainsState ).map( ( { domain, auth } ) =>
+			const cartItems = filledDomainValues.map( ( { domain, auth } ) =>
 				domainTransfer( {
 					domain,
 					extra: {
@@ -88,6 +99,9 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	);
 
 	function addDomain() {
+		recordTracksEvent( 'calypso_domain_transfer_add_domain', {
+			resulting_domain_count: domainCount + 1,
+		} );
 		const newDomainsState = { ...domainsState };
 		newDomainsState[ uuid() ] = {
 			domain: '',
@@ -98,6 +112,9 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	}
 
 	function removeDomain( key: string ) {
+		recordTracksEvent( 'calypso_domain_transfer_remove_domain', {
+			resulting_domain_count: domainCount - 1,
+		} );
 		const newDomainsState = { ...domainsState };
 		delete newDomainsState[ key ];
 		setDomainsTransferData( newDomainsState );
@@ -118,15 +135,17 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						( { domain: otherDomain }, otherIndex ) =>
 							otherDomain && otherDomain === domain.domain && otherIndex < index
 					) }
-					showDelete={ Object.values( domainsState ).length > 1 }
+					showDelete={ domainCount > 1 && index > 0 }
 				/>
 			) ) }
-			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-				{ __( 'Add another domain' ) }
-			</Button>
+			{ domainCount < MAX_DOMAINS && (
+				<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
+					{ __( 'Add another domain' ) }
+				</Button>
+			) }
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
-					disabled={ numberOfValidDomains === 0 }
+					disabled={ numberOfValidDomains === 0 || ! allGood }
 					className="bulk-domain-transfer__cta"
 					onClick={ handleAddTransfer }
 				>

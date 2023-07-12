@@ -1,4 +1,4 @@
-import { PremiumBadge } from '@automattic/design-picker';
+import { PremiumBadge } from '@automattic/components';
 import {
 	__unstableComposite as Composite,
 	__unstableUseCompositeState as useCompositeState,
@@ -9,6 +9,7 @@ import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/compo
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
+import { InView, IntersectionObserverProps } from 'react-intersection-observer';
 import { useFontPairingVariations } from '../../hooks';
 import FontPairingVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -62,11 +63,19 @@ const FontPairingVariation = ( {
 				} ) as string
 			}
 		>
-			<div className="global-styles-variation__item-preview">
-				<GlobalStylesContext.Provider value={ context }>
-					<FontPairingVariationPreview />
-				</GlobalStylesContext.Provider>
-			</div>
+			<InView triggerOnce>
+				{
+					( ( { inView, ref } ) => (
+						<div className="global-styles-variation__item-preview" ref={ ref }>
+							{ ( isActive || inView ) && (
+								<GlobalStylesContext.Provider value={ context }>
+									<FontPairingVariationPreview />
+								</GlobalStylesContext.Provider>
+							) }
+						</div>
+					) ) as IntersectionObserverProps[ 'children' ]
+				}
+			</InView>
 		</CompositeItem>
 	);
 };

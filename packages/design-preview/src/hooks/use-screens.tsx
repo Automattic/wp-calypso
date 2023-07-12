@@ -8,6 +8,7 @@ import {
 import { color, styles, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { COLOR_VARIATIONS_BLOCK_LIST } from '../constants';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { NavigatorScreenObject } from '@automattic/onboarding';
@@ -15,10 +16,11 @@ import type { NavigatorScreenObject } from '@automattic/onboarding';
 interface Props {
 	siteId: number;
 	stylesheet: string;
+	isVirtual?: boolean;
 	limitGlobalStyles?: boolean;
 	globalStylesInPersonalPlan: boolean;
 	variations?: StyleVariation[];
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	selectedVariation?: StyleVariation;
 	selectedColorVariation: GlobalStylesObject | null;
 	selectedFontVariation: GlobalStylesObject | null;
@@ -30,10 +32,11 @@ interface Props {
 const useScreens = ( {
 	siteId,
 	stylesheet,
+	isVirtual,
 	limitGlobalStyles,
 	globalStylesInPersonalPlan,
 	variations,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	selectedVariation,
 	selectedColorVariation,
 	selectedFontVariation,
@@ -59,8 +62,8 @@ const useScreens = ( {
 										key="style-variations"
 										globalStylesVariations={ variations as GlobalStylesObject[] }
 										selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
-										splitPremiumVariations={ splitPremiumVariations }
-										displayFreeLabel={ splitPremiumVariations }
+										splitDefaultVariation={ splitDefaultVariation }
+										displayFreeLabel={ splitDefaultVariation }
 										showOnlyHoverViewDefaultVariation={ false }
 										onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
 											onSelectVariation( globalStyleVariation as StyleVariation )
@@ -74,6 +77,9 @@ const useScreens = ( {
 					},
 				variations &&
 					variations.length === 0 &&
+					// Disable Colors for themes that don't play well with them. See pbxlJb-4cl-p2 for more context.
+					! isVirtual &&
+					! COLOR_VARIATIONS_BLOCK_LIST.includes( stylesheet ) &&
 					isEnabled( 'signup/design-picker-preview-colors' ) && {
 						checked: !! selectedColorVariation,
 						icon: color,
@@ -81,7 +87,7 @@ const useScreens = ( {
 						path: '/color-palettes',
 						title: translate( 'Colors' ),
 						description: translate(
-							'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+							'Discover your ideal color blend, from free to custom styles.'
 						),
 						content: (
 							<div className="design-preview__sidebar-variations">
@@ -105,9 +111,7 @@ const useScreens = ( {
 						label: translate( 'Fonts' ),
 						path: '/font-pairings',
 						title: translate( 'Fonts' ),
-						description: translate(
-							'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-						),
+						description: translate( 'Elevate your design with expertly curated font pairings.' ),
 						content: (
 							<div key="font-variations" className="design-preview__sidebar-variations">
 								<FontPairingVariations

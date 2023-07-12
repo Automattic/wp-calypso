@@ -31,9 +31,7 @@ const ScreenFontPairings = ( {
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Fonts' ) } /> }
-				description={ translate(
-					'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-				) }
+				description={ translate( 'Elevate your design with expertly curated font pairings.' ) }
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">

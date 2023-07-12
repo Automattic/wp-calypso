@@ -1,7 +1,13 @@
 import { isDomainTransfer } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
 import BundledDomainNotice from './bundled-domain-notice';
 import DomainRegistrationAgreement from './domain-registration-agreement';
@@ -19,6 +25,14 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	const isGiftPurchase = cart.is_gift_purchase;
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+	const isJetpackNotAtomic = useSelector( ( state ) => {
+		return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
+	} );
+	const shouldShowRefundPolicy =
+		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();
+	const shouldShowInternationalFeeNotice =
+		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();
 
 	// Domain transfer is a one-time purchase, but it creates a renewable
 	// subscription behind the scenes so we need to show the full TOS including
@@ -43,12 +57,12 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 			{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
 			{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
 			{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
-			<RefundPolicies cart={ cart } />
+			{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
 			{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
 			{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 			{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
 			<EbanxTermsOfService />
-			<InternationalFeeNotice />
+			{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
 			{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
 			<JetpackSocialAdvancedPricingDisclaimer />
 		</Fragment>

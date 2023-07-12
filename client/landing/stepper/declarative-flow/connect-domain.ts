@@ -3,6 +3,7 @@ import { CONNECT_DOMAIN_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { domainMapping } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -31,7 +32,17 @@ const connectDomain: Flow = {
 	useAssertConditions: () => {
 		const { domain, provider } = useDomainParams();
 		const flowName = CONNECT_DOMAIN_FLOW;
-		const locale = useLocale();
+
+		// There is a race condition where useLocale is reporting english,
+		// despite there being a locale in the URL so we need to look it up manually.
+		// We also need to support both query param and path suffix localized urls
+		// depending on where the user is coming from.
+		const useLocaleSlug = useLocale();
+		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
+		const queryLocaleSlug = getLocaleFromQueryParam();
+		const pathLocaleSlug = getLocaleFromPathname();
+		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -54,8 +65,18 @@ const connectDomain: Flow = {
 				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Connect%20your%20Domain&redirect_to=${ redirectTo }`
 				: `/start/account/user?variationName=${ flowName }&pageTitle=Connect%20your%20Domain&redirect_to=${ redirectTo }`;
 
+		// Despite sending a CHECKING state, this function gets called again with the
+		// /setup/blog/blogger-intent route which has no locale in the path so we need to
+		// redirect off of the first render.
+		// This effects both /setup/blog/<locale> starting points and /setup/blog/blogger-intent/<locale> urls.
+		// The double call also hapens on urls without locale.
+		useEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				redirect( logInUrl );
+			}
+		}, [] );
+
 		if ( ! userIsLoggedIn ) {
-			window.location.assign( logInUrl );
 			return {
 				state: AssertConditionState.FAILURE,
 			};

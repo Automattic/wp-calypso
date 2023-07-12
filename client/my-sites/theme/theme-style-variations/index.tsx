@@ -8,7 +8,7 @@ interface ThemeStyleVariationsProps {
 	description: TranslateResult;
 	selectedVariation: StyleVariation;
 	variations: StyleVariation[];
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	onClick: ( variation: StyleVariation ) => void;
 }
 
@@ -16,7 +16,7 @@ const ThemeStyleVariations = ( {
 	description,
 	selectedVariation,
 	variations,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	onClick,
 }: ThemeStyleVariationsProps ) => {
 	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus();
@@ -31,8 +31,8 @@ const ThemeStyleVariations = ( {
 					placeholder={ null }
 					globalStylesVariations={ variations }
 					selectedGlobalStylesVariation={ selectedVariation }
-					splitPremiumVariations={ splitPremiumVariations }
-					displayFreeLabel={ splitPremiumVariations }
+					splitDefaultVariation={ splitDefaultVariation }
+					displayFreeLabel={ splitDefaultVariation }
 					showOnlyHoverViewDefaultVariation={ false }
 					onSelect={ onClick }
 					globalStylesInPersonalPlan={ globalStylesInPersonalPlan }

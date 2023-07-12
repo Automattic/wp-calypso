@@ -13,7 +13,7 @@ import { isPopularPlan } from '../lib/is-popular-plan';
 
 interface Props {
 	planName: string;
-	currentSitePlanSlug?: string;
+	currentSitePlanSlug?: string | null;
 	selectedPlan?: string;
 }
 

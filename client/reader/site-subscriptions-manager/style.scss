@@ -1,6 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 @import "client/landing/subscriptions/styles/search-component";
+@import "client/landing/subscriptions/components/site-subscriptions-list/styles/variables";
 
 .site-subscriptions-manager {
 	&.main {
@@ -64,11 +65,17 @@
 		}
 	}
 
-	.not-found-site-subscriptions {
+	.not-found-site-subscriptions,
+	.site-subscriptions__search-recommendations-label {
 		color: $studio-gray-60;
 		font-size: $font-body-small;
 		font-weight: 500;
 		font-family: "SF Pro Text", $sans;
 		line-height: $font-title-small;
+		margin: 48px 0 16px;
+	}
+
+	.reader-unsubscribed-feeds-search-list {
+		border-block-start: 1px solid $site-subscriptions-list-row-divider-color;
 	}
 }

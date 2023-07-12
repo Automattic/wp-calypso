@@ -85,8 +85,13 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		theme = DEFAULT_WOOEXPRESS_FLOW;
 	} else if ( isStartWritingFlow( flow ) ) {
 		theme = DEFAULT_START_WRITING_THEME;
+	} else if ( isNewHostedSiteCreationFlow( flow ) ) {
+		// Causes no theme to be set, so WordPress's default theme gets used.
+		theme = '';
+	} else if ( isLinkInBioFlow( flow ) ) {
+		theme = DEFAULT_LINK_IN_BIO_THEME;
 	} else {
-		theme = isLinkInBioFlow( flow ) ? DEFAULT_LINK_IN_BIO_THEME : DEFAULT_NEWSLETTER_THEME;
+		theme = DEFAULT_NEWSLETTER_THEME;
 	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
@@ -124,7 +129,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
 	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
-	const useThemeHeadstart = ! isStartWritingFlow( flow );
+	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {

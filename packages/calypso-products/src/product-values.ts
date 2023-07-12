@@ -111,8 +111,6 @@ export { isSecurityT2 } from './is-security-t2';
 export { isJetpackSecuritySlug } from './is-jetpack-security-slug';
 export { isJetpackSecurityT1Slug } from './is-jetpack-security-t1-slug';
 export { isTieredVolumeSpaceAddon } from './is-tiered-volume-space-addon';
-export { isJetpackStarter } from './is-jetpack-starter';
-export { isJetpackStarterSlug } from './is-jetpack-starter-slug';
 export { isThemePurchase } from './is-theme-purchase';
 export { isTitanMail } from './is-titan-mail';
 export { isTitanMailMonthly } from './is-titan-mail-monthly';

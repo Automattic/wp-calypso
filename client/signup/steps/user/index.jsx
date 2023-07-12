@@ -62,7 +62,10 @@ function getRedirectToAfterLoginUrl( {
 	) {
 		return initialContext.query.oauth2_redirect;
 	}
-	if ( initialContext?.canonicalPath?.startsWith( '/start/account' ) ) {
+	if (
+		initialContext?.canonicalPath?.startsWith( '/start/account' ) ||
+		initialContext?.canonicalPath?.startsWith( '/start/videopress-account' )
+	) {
 		return initialContext.query.redirect_to;
 	}
 
@@ -217,7 +220,13 @@ export class UserStep extends Component {
 					'By creating an account via any of the options below, {{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
 					{
 						components: {
-							a: <a href="https://wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+							a: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
 							br: <br />,
 						},
 					}

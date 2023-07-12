@@ -153,6 +153,10 @@ object E2ETests : BuildType({
 		}
 	}
 
+	failureConditions {
+		executionTimeoutMin = 5
+	}
+
 	triggers {
 		vcs {
 			branchFilter = """
