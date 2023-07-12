@@ -17,7 +17,7 @@ const tips = [
 		description: getTipDescription(
 			__(
 				'You can visit the <a>theme directory</a> to select a different design for your site.',
-				'hello'
+				'full-site-editing'
 			),
 			{
 				a: <TipLink section="themes" />,
