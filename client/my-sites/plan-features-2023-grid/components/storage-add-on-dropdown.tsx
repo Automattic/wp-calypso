@@ -18,6 +18,7 @@ export const StorageAddOnDropdown = ( {
 	const { planName, storageOptions, storageFeatures } = planProperties;
 	const translate = useTranslate();
 
+	// TODO: Consider transforming storageOptions outside of this component
 	const selectControlOptions = storageOptions.reduce(
 		( acc: { key: string; name: string }[], storageOption ) => {
 			const storageString = getStorageStringFromFeature( storageOption );
