@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { isMobile } from '@automattic/viewport';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
@@ -56,9 +56,10 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 	const canManageSite = useSelector( ( state ) =>
 		canCurrentUser( state, selectedSite?.ID ?? 0, 'manage_options' )
 	);
+	const isMobile = useMobileBreakpoint();
 
-	if ( isMobile() || ! selectedSite ) {
-		return <div></div>;
+	if ( isMobile || ! selectedSite ) {
+		return <></>;
 	}
 
 	const shouldShowEditSite = isFSEActive && canManageSite;
