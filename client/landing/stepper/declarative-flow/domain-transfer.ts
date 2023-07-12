@@ -50,9 +50,10 @@ const domainTransfer: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
 		useEffect( () => {
-			if ( ! isLoggedIn ) {
+			if ( ! isLoggedIn && navigate ) {
 				navigate( 'intro' );
 			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [ isLoggedIn ] );
 
 		return { state: AssertConditionState.SUCCESS };
