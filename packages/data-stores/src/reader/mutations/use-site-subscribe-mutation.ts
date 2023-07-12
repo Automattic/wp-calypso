@@ -8,6 +8,8 @@ type SubscribeParams = {
 	blog_id?: number | string;
 	url?: string;
 	doNotInvalidateSiteSubscriptions?: boolean;
+	onSuccess?: () => void;
+	onError?: () => void;
 };
 
 type SubscribeResponse = {
@@ -104,7 +106,7 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 
 			return { previousSiteSubscriptions, previousSiteSubscriptionDetails };
 		},
-		onError: ( error, variables, context ) => {
+		onError: ( error, params, context ) => {
 			if ( context?.previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
 			}
@@ -115,6 +117,8 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 					context.previousSiteSubscriptionDetails
 				);
 			}
+
+			params.onError?.();
 		},
 		onSettled: ( _data, _error, params: SubscribeParams ) => {
 			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
@@ -122,6 +126,10 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 			}
 			queryClient.invalidateQueries( subscriptionsCountCacheKey );
 			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
+			queryClient.invalidateQueries( [ 'read', 'feed', 'search' ] );
+			params.blog_id &&
+				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blog_id ) ] );
+			params.onSuccess?.();
 		},
 	} );
 };

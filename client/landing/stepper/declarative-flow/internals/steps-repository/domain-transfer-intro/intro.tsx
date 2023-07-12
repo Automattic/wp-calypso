@@ -18,12 +18,12 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				intents={ [
 					{
 						key: 'unlock',
-						title: __( 'Unlock at current registrar' ),
+						title: __( 'Unlock your domains' ),
 						description: (
 							<>
 								<p>
 									{ __(
-										'Your domain management interface should have an option for you to remove this lock.'
+										"Your current registrar's domain management interface should have an option for you to remove the lock."
 									) }
 								</p>
 								<a
@@ -47,7 +47,11 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						title: __( 'Add domains' ),
 						description: (
 							<>
-								<p>{ __( 'Add all domain names with authorization codes to start transfer.' ) }</p>
+								<p>
+									{ __(
+										'Add all domain names (along with their authorization codes) to start the transfer.'
+									) }
+								</p>
 								<a
 									href={ localizeUrl(
 										'https://wordpress.com/support/domains/incoming-domain-transfer/'
@@ -67,7 +71,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						description: <p>{ __( 'Add your payment details to finalize.' ) }</p>,
+						description: <p>{ __( 'Add your contact and payment details.' ) }</p>,
 						icon: <Icon icon={ payment } />,
 						value: 'finalize',
 						actionText: null,

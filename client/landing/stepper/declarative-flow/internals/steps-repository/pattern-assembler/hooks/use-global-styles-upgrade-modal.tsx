@@ -31,24 +31,44 @@ const useGlobalStylesUpgradeModal = ( {
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
+	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
+		site?.ID
+	);
 	const translate = useTranslate();
 	const { goToCheckout } = useCheckout();
 
 	let description;
 
 	if ( hasSelectedColorVariation && hasSelectedFontVariation ) {
-		description = translate(
-			'Your font and color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-		);
+		if ( globalStylesInPersonalPlan ) {
+			description = translate(
+				'Your font and color choices will be only visible to visitors after upgrading to the Personal plan or higher.'
+			);
+		} else {
+			description = translate(
+				'Your font and color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
+			);
+		}
 	} else if ( hasSelectedColorVariation ) {
-		description = translate(
-			'Your color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-		);
+		if ( globalStylesInPersonalPlan ) {
+			description = translate(
+				'Your color choices will be only visible to visitors after upgrading to the Personal plan or higher.'
+			);
+		} else {
+			description = translate(
+				'Your color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
+			);
+		}
 	} else if ( hasSelectedFontVariation ) {
-		description = translate(
-			'Your font choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-		);
+		if ( globalStylesInPersonalPlan ) {
+			description = translate(
+				'Your font choices will be only visible to visitors after upgrading to the Personal plan or higher.'
+			);
+		} else {
+			description = translate(
+				'Your font choices will be only visible to visitors after upgrading to the Premium plan or higher.'
+			);
+		}
 	}
 
 	description = (
@@ -84,7 +104,7 @@ const useGlobalStylesUpgradeModal = ( {
 			stepName,
 			siteSlug: siteUrl,
 			destination: redirectUrl,
-			plan: 'premium',
+			plan: globalStylesInPersonalPlan ? 'personal' : 'premium',
 		} );
 
 		setIsOpen( false );

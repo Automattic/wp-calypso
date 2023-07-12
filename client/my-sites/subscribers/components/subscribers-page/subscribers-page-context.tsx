@@ -7,8 +7,14 @@ import { useSubscribersQuery } from '../../queries';
 
 type SubscribersPageProviderProps = {
 	siteId: number | undefined;
-	page: number;
+	filterOption: SubscribersFilterBy;
+	pageNumber: number;
+	searchTerm: string;
+	sortTerm: SubscribersSortBy;
+	filterOptionChanged: ( option: SubscribersFilterBy ) => void;
 	pageChanged: ( page: number ) => void;
+	searchTermChanged: ( term: string ) => void;
+	sortTermChanged: ( term: SubscribersSortBy ) => void;
 	children: React.ReactNode;
 };
 
@@ -21,7 +27,7 @@ type SubscribersPageContextProps = {
 	subscribers: Subscriber[];
 	total: number;
 	grandTotal: number;
-	pageClickCallback: ( page: number ) => void;
+	pageChangeCallback: ( page: number ) => void;
 	sortTerm: SubscribersSortBy;
 	setSortTerm: ( term: SubscribersSortBy ) => void;
 	filterOption: SubscribersFilterBy;
@@ -37,17 +43,16 @@ const DEFAULT_PER_PAGE = 10;
 export const SubscribersPageProvider = ( {
 	children,
 	siteId,
-	page,
+	filterOption = SubscribersFilterBy.All,
+	pageNumber,
+	searchTerm,
+	sortTerm = SubscribersSortBy.DateSubscribed,
+	filterOptionChanged,
 	pageChanged,
+	searchTermChanged,
+	sortTermChanged,
 }: SubscribersPageProviderProps ) => {
-	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
-	const [ sortTerm, setSortTerm ] = useState( SubscribersSortBy.DateSubscribed );
-	const [ filterOption, setFilterOption ] = useState( SubscribersFilterBy.All );
-
-	const handleSearch = useCallback( ( term: string ) => {
-		setSearchTerm( term );
-	}, [] );
 
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
 
@@ -55,13 +60,25 @@ export const SubscribersPageProvider = ( {
 	const grandTotal = grandTotalQueryResult.data?.total || 0;
 
 	const subscribersQueryResult = useSubscribersQuery( {
-		page,
+		page: pageNumber,
 		perPage,
 		search: debouncedSearchTerm,
 		siteId,
 		sortTerm,
 		filterOption,
 	} );
+
+	const { pageChangeCallback } = usePagination(
+		pageNumber,
+		pageChanged,
+		subscribersQueryResult.isFetching
+	);
+
+	const handleSearch = useCallback( ( term: string ) => {
+		searchTermChanged( term );
+		pageChangeCallback( 1 );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	const { total, per_page, subscribers } = subscribersQueryResult.data || {
 		total: 0,
@@ -75,28 +92,22 @@ export const SubscribersPageProvider = ( {
 		setPerPage( per_page );
 	}, [ per_page ] );
 
-	const { pageClickCallback } = usePagination(
-		page,
-		pageChanged,
-		subscribersQueryResult.isFetching
-	);
-
 	return (
 		<SubscribersPageContext.Provider
 			value={ {
 				searchTerm,
 				handleSearch,
-				page,
+				page: pageNumber,
 				grandTotal,
 				total,
 				perPage,
 				setPerPage,
 				subscribers,
-				pageClickCallback,
+				pageChangeCallback,
 				sortTerm,
-				setSortTerm,
+				setSortTerm: sortTermChanged,
 				filterOption,
-				setFilterOption,
+				setFilterOption: filterOptionChanged,
 			} }
 		>
 			{ children }

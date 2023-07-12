@@ -26,6 +26,7 @@ interface GlobalStylesVariationsProps {
 	splitDefaultVariation?: boolean;
 	displayFreeLabel?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
+	globalStylesInPersonalPlan: boolean;
 }
 
 const isDefaultGlobalStyleVariationSlug = ( globalStylesVariation: GlobalStylesObject ) =>
@@ -104,7 +105,16 @@ const GlobalStylesVariations = ( {
 	onSelect,
 	splitDefaultVariation = true,
 	displayFreeLabel = true,
+	globalStylesInPersonalPlan,
 }: GlobalStylesVariationsProps ) => {
+	const premiumStylesDescription = globalStylesInPersonalPlan
+		? translate(
+				'Unlock custom styles and tons of other features with the Personal plan, or try them out now for free.'
+		  )
+		: translate(
+				'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
+		  );
+
 	const baseGlobalStyles = useMemo(
 		() =>
 			globalStylesVariations.find( ( globalStylesVariation ) =>
@@ -121,12 +131,7 @@ const GlobalStylesVariations = ( {
 		[ globalStylesVariations ]
 	);
 
-	const nonDefaultStylesDescription =
-		description ??
-		translate(
-			'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
-		);
-
+	const nonDefaultStylesDescription = description ?? premiumStylesDescription;
 	const nonDefaultStyles = globalStylesVariationsWithoutDefault.map(
 		( globalStylesVariation, index ) => (
 			<GlobalStylesVariation
