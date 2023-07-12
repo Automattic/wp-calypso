@@ -86,7 +86,7 @@ const Complete: Step = function Complete( { flow } ) {
 								</a>
 
 								<a
-									href="/domains/manage"
+									href="/domains/manage?filter=owned-by-me&sortKey=registered-until"
 									className="components-button is-primary manage-all-domains"
 									onClick={ () => handleUserClick( '/domains/manage' ) }
 								>
