@@ -119,6 +119,7 @@ export type PlanFeatures2023GridProps = {
 	showLegacyStorageFeature?: boolean;
 	spotlightPlanSlug?: PlanSlug;
 	showUpgradeableStorage: boolean;
+	isGlobalStylesOnPersonal?: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
