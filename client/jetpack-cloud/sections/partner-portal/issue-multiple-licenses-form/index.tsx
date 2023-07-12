@@ -241,11 +241,15 @@ export default function IssueMultipleLicensesForm( {
 							<div className="issue-multiple-licenses-form__bottom">
 								{ wooExtensions &&
 									wooExtensions.map( ( productOption, i ) => (
-										<LicenseBundleCard
+										<LicenseProductCard
+											isMultiSelect
 											key={ productOption.slug }
 											product={ productOption }
 											onSelectProduct={ onSelectProduct }
-											tabIndex={ 100 + ( products?.length || 0 ) + bundles.length + i }
+											isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+											isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
+											tabIndex={ 100 + i }
+											suggestedProduct={ suggestedProduct }
 										/>
 									) ) }
 							</div>
