@@ -1,7 +1,6 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
