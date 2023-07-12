@@ -117,6 +117,20 @@ export function DomainCodePair( {
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
 				</div>
+				<div className="domains__domain-price">
+					<FormFieldset>
+						<FormLabel
+							className={ classnames( {
+								'is-first-label-title': showLabels,
+							} ) }
+							htmlFor={ id + '-price' }
+						>
+							{ __( 'Price' ) }
+						</FormLabel>
+
+						<div>$24</div>
+					</FormFieldset>
+				</div>
 				<div className="domains__domain-controls">
 					<div className="domains__domain-refresh">
 						<Button

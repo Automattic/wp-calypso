@@ -120,7 +120,7 @@
 	}
 
 	.domains__domain-domain {
-		flex: 1 0 60%;
+		flex: 1 0 55%;
 	}
 
 	.domains__domain-key {
@@ -231,8 +231,17 @@
 			font-size: 0.875rem;
 			font-weight: 500;
 			color: #0675c4;
-			margin-bottom: 32px;
+			margin-bottom: 22px;
 			margin-top: 2px;
+		}
+
+		.bulk-domain-transfer__total-price {
+			display: flex;
+			justify-content: space-between;
+			border-top: 1px solid rgba(220, 220, 222, 0.64);
+			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
+			font-weight: 500;
+			padding: 20px 0;
 		}
 
 		.bulk-domain-transfer__cta-container {

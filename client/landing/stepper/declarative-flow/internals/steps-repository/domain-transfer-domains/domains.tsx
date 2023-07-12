@@ -143,6 +143,10 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					{ __( 'Add another domain' ) }
 				</Button>
 			) }
+			<div className="bulk-domain-transfer__total-price">
+				<div>{ __( 'Total' ) }</div>
+				<div>$48</div>
+			</div>
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }
