@@ -1,10 +1,9 @@
 /**
  * LocalStorage polyfill from https://gist.github.com/juliocesar/926500
  * length and key methods were added to allow for implementing removeExpiredExperimentAssignments
- * Altered to match window.localStorage signature exactly
  * Exported only for testing purposes
  */
-export const polyfilledLocalStorage: typeof window.localStorage = {
+export const polyfilledLocalStorage: Storage = {
 	_data: {} as Record< string, string >,
 	setItem: function ( id: string, val: string ): void {
 		this._data[ id ] = val;
@@ -33,10 +32,9 @@ export const polyfilledLocalStorage: typeof window.localStorage = {
  */
 let localStorage = polyfilledLocalStorage;
 try {
-	localStorage =
-		typeof window !== 'undefined' && window.localStorage
-			? window.localStorage
-			: polyfilledLocalStorage;
+	if ( window.localStorage ) {
+		localStorage = window.localStorage;
+	}
 } catch ( e ) {}
 
 export default localStorage;
