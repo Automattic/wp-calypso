@@ -31,7 +31,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return \A8C\FSE\WPCOM_Domain_Upsell_Callout
 	 */
 	public static function init() {
-		if ( is_null( self::$instance ) ) {
+		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
 		return self::$instance;
@@ -81,7 +81,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function should_not_show_callout() {
-		$blog_id = defined( 'IS_WPCOM' ) && IS_WPCOM ? get_current_blog_id() : \Jetpack_Options::get_option( 'id' );
+		$blog_id = class_exists( '\Jetpack_Options' ) ? \Jetpack_Options::get_option( 'id' ) : get_current_blog_id();
 
 		return $this->has_unlaunched_launchpad() || $this->blog_has_custom_domain( $blog_id ) || $this->user_has_email_unverified() || $this->blog_is_p2( $blog_id ) || $this->blog_is_wpcom_staging();
 	}
@@ -140,7 +140,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function blog_has_custom_domain( $blog_id ) {
-		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+		if ( ! class_exists( '\Domain_Mapping' ) ) {
 			$domain = $this->get_domain_from_site_url();
 			if ( ! $this->is_wpcom_owned_tld( $domain ) ) {
 				return true;
@@ -166,7 +166,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function blog_is_p2( $blog_id ) {
-		return defined( 'IS_ATOMIC' ) && IS_ATOMIC ? false : \WPForTeams\is_wpforteams_site( $blog_id );
+		return ! class_exists( '\WPForTeams' ) ? false : \WPForTeams\is_wpforteams_site( $blog_id );
 	}
 
 	/**
@@ -190,7 +190,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function user_has_email_unverified() {
-		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+		if ( ! class_exists( '\Email_Verification' ) ) {
 			$is_email_unverified = false;
 		} else {
 			$user_id             = get_current_user_id();
