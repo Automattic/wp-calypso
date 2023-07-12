@@ -30,6 +30,9 @@
 			height: 235px;
 			width: 100%;
 			iframe {
+				// The idea is to zoom-out the iframe to get most of the content
+				// into the thumbnail and then we scale it down so it remains the
+				// size of the parent component (357% * 0.28 ~= 100%)
 				height: 357%;
 				width: 357%;
 				max-width: 357%;
