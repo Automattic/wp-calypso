@@ -3,7 +3,6 @@ import {
 	planHasFeature,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isBlogOnboardingFlow,
 	isDesignFirstFlow,
@@ -12,7 +11,6 @@ import {
 	replaceProductsInCart,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { ExternalLink } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -41,8 +39,6 @@ export function getEnhancedTasks(
 	siteSlug: string | null,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
-	displayGlobalStylesWarning: boolean,
-	globalStylesMinimumPlan: string,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
@@ -93,7 +89,7 @@ export function getEnhancedTasks(
 	const isVideoPressFlowWithUnsupportedPlan =
 		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
 
-	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
+	const shouldDisplayWarning = isVideoPressFlowWithUnsupportedPlan;
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -152,15 +148,8 @@ export function getEnhancedTasks(
 					/* eslint-disable no-case-declarations */
 					const openPlansPage = () => {
 						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						if ( displayGlobalStylesWarning ) {
-							recordTracksEvent(
-								'calypso_launchpad_global_styles_gating_plan_selected_task_clicked',
-								{ flow }
-							);
-						}
 						const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 							...( shouldDisplayWarning && {
-								plan: globalStylesMinimumPlan,
 								feature: isVideoPressFlowWithUnsupportedPlan
 									? FEATURE_VIDEO_UPLOADS
 									: FEATURE_STYLE_CUSTOMIZATION,
@@ -170,33 +159,7 @@ export function getEnhancedTasks(
 					};
 
 					const completed = task.completed && ! isVideoPressFlowWithUnsupportedPlan;
-					let subtitle = task.subtitle;
-
-					if ( displayGlobalStylesWarning ) {
-						const removeCustomStyles = translate( 'Or, {{a}}remove your custom styles{{/a}}.', {
-							components: {
-								a: (
-									<ExternalLink
-										href={ localizeUrl(
-											'https://wordpress.com/support/using-styles/#reset-all-styles'
-										) }
-										onClick={ ( event ) => {
-											event.stopPropagation();
-											recordTracksEvent(
-												'calypso_launchpad_global_styles_gating_plan_selected_reset_styles',
-												{ flow }
-											);
-										} }
-									/>
-								),
-							},
-						} );
-						subtitle = (
-							<>
-								{ subtitle }&nbsp;{ removeCustomStyles }
-							</>
-						);
-					}
+					const subtitle = task.subtitle;
 
 					taskData = {
 						actionDispatch: openPlansPage,
