@@ -47,6 +47,7 @@
 		"help/gpt-response": true,
 		"i18n/empathy-mode": true,
 		"importer/unified": true,
+		"jetpack-ai-request-limit": false,
 		"jetpack/agency-dashboard": true,
 		"jetpack/api-cache": true,
 		"jetpack/backup-messaging-i3": true,
