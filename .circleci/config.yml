@@ -219,7 +219,9 @@ jobs:
             # If this isn't a full artifact build, ensure to persist the built application for inspection
             if ! ls desktop/release/*.zip &>/dev/null
             then
-              ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
+              # Wildcard is to support both Intel and Apple Silicon builds.
+              # Intel artifcats are in `/mac`, Apple Silicon is in `/mac-arm64`.
+              ditto -ck --rsrc --sequesterRsrc desktop/release/mac* desktop/release/mac.app.zip
             fi
       - run:
           when: always
