@@ -18,10 +18,22 @@ export const StorageAddOnDropdown = ( {
 	const { planName, storageOptions, storageFeatures } = planProperties;
 	const translate = useTranslate();
 
-	const selectControlOptions = storageOptions.map( ( storageOption ) => ( {
-		key: storageOption,
-		name: getStorageStringFromFeature( storageOption ) || '',
-	} ) );
+	const selectControlOptions = storageOptions.reduce(
+		( acc: { key: string; name: string }[], storageOption ) => {
+			const storageString = getStorageStringFromFeature( storageOption );
+
+			// Only show storage options that have a string to display
+			if ( storageString ) {
+				acc.push( {
+					key: storageOption,
+					name: storageString,
+				} );
+			}
+
+			return acc;
+		},
+		[]
+	);
 
 	const selectedOptionKey = selectedStorage[ planName ] || storageFeatures[ 0 ];
 	const selectedOption = {
