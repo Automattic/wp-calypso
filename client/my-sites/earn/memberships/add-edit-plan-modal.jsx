@@ -264,7 +264,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						onBlur={ () => setFocusedName( true ) }
 					/>
 					<FormSettingExplanation>
-						{ translate( "Let your subscriber know what they'll get when they subscribe." ) }
+						{ translate( "Let your audience know what they'll get when they subscribe." ) }
 					</FormSettingExplanation>
 					{ ! isFormValid( 'name' ) && focusedName && (
 						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
