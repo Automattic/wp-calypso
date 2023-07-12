@@ -220,7 +220,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 			},
 		} ),
 		translate( 'Tap the My Site Tab.' ),
-		translate( 'Tap your Profile image in the top right corner of the screen.' ),
+		translate( 'Tap your Profile image.' ),
 		translate( 'Tap the {{strong}}Scan Login Code{{/strong}} option.', {
 			components: {
 				strong: <strong />,
