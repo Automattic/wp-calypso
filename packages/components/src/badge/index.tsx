@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 
 import './style.scss';
 
-type BadgeProps = {
-	type:
+export type BadgeProps = {
+	type?:
 		| 'warning'
 		| 'warning-clear'
 		| 'success'
