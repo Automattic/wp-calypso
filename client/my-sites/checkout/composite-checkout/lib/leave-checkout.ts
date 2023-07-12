@@ -1,4 +1,4 @@
-import { isTailoredSignupFlow } from '@automattic/onboarding';
+import { isUpsellIgnoredTailoredSignupFlow } from '@automattic/onboarding';
 import { getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -37,7 +37,7 @@ export const leaveCheckout = ( {
 	const launchpadURLRegex = /^\/setup\/[a-z][a-z\-_]*[a-z]\/launchpad\b/g;
 	const launchpadURLRegexMatch = redirectToParam?.toString().match( launchpadURLRegex );
 
-	if ( isTailoredSignupFlow( signupFlowName ) ) {
+	if ( isUpsellIgnoredTailoredSignupFlow( signupFlowName ) ) {
 		const urlFromCookie = retrieveSignupDestination();
 		if ( urlFromCookie ) {
 			window.location.assign( urlFromCookie );
