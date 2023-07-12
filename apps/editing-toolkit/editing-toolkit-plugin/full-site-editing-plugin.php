@@ -203,7 +203,7 @@ function load_blog_posts_block() {
 	$disable_block = (
 		( defined( 'WP_CLI' ) && WP_CLI ) ||
 		/* phpcs:ignore WordPress.Security.NonceVerification */
-		( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && preg_match( $slug_regex, sanitize_text_field( wp_unslash( $_GET['plugin'] ) ) ) ) ||
+		( isset( $_GET['action'] ) && isset( $_GET['plugin'] ) && 'activate' === $_GET['action'] && preg_match( $slug_regex, sanitize_text_field( wp_unslash( $_GET['plugin'] ) ) ) ) ||
 		preg_grep( $slug_regex, (array) get_option( 'active_plugins' ) ) ||
 		preg_grep( $slug_regex, (array) get_site_option( 'active_sitewide_plugins' ) )
 	);
@@ -337,6 +337,9 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar'
  * What's New section of the Tools menu.
  */
 function load_whats_new() {
+	if ( ! class_exists( '\Automattic\Jetpack\Connection\Client' ) ) {
+		return;
+	}
 	require_once __DIR__ . '/whats-new/class-whats-new.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
@@ -369,6 +372,11 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  * Help center
  */
 function load_help_center() {
+	// Doesn't work without this function defined, and it's only defined on wpcom.
+	if ( ! function_exists( 'wpcom_get_site_purchases' ) ) {
+		return;
+	}
+
 	// disable help center in P2s.
 	if ( defined( 'IS_WPCOM' ) && IS_WPCOM && \WPForTeams\is_wpforteams_site( get_current_blog_id() ) ) {
 		return false;
@@ -406,6 +414,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
  * Load WP.com Global Styles.
  */
 function load_wpcom_global_styles() {
+	// Doesn't work without this function defined, and it's only defined on wpcom.
+	if ( ! function_exists( 'wpcom_get_site_purchases' ) ) {
+		return;
+	}
 	require_once __DIR__ . '/wpcom-global-styles/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
