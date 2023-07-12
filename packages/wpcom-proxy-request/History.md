@@ -4,6 +4,10 @@
 
 - Don't modify a falsy boolean JSON response body by defaulting it.
 
+## 7.0.4 / 2023-07-11
+
+- Remove dependendy `progress-event`. This polyfill is no longer needed due to ProgressEvent being widely supported now.
+
 ## 6.0.0 / 2021-03-19
 
 - Add "support" for streamed responses and `onStreamRecord`. Doesn't implement, just tolerates the callback.
