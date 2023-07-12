@@ -323,22 +323,12 @@ export class SiteDomains extends Component {
 		};
 
 		return (
-			<div
-				css={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					padding: '32px 16px',
-					borderTop: '1px solid',
-					width: 'fit-content',
-					margin: '0 auto',
-				} }
-			>
+			<div className="domain-management__all-domains-section">
 				<p css={ { marginBottom: '1rem', textAlign: 'center' } }>
 					{ translate( 'Manage all the domains you own on WordPress.com' ) }
 				</p>
 				<Button
-					className="domains-table-see-all-domains-link"
+					className="domain-management__all-domains-link"
 					href={ domainManagementRoot() }
 					key="breadcrumb_see_all_domains_link"
 					onClick={ handleClick }
