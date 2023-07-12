@@ -28,7 +28,7 @@ const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {
 			cost = priceTier?.maximum_price / 100;
 		}
 
-		if ( product.product_term === 'month' ) {
+		if ( product?.product_term === 'month' ) {
 			const formattedCost = formatCurrency( cost, currencyCode, {
 				stripZeros: true,
 			} );
