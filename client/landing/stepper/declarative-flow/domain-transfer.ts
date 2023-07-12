@@ -2,7 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	clearSignupDestinationCookie,
@@ -49,13 +49,9 @@ const domainTransfer: Flow = {
 	useAssertConditions( navigate ): AssertConditionResult {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
-		const navigateToIntro = useCallback( () => {
-			navigate( 'intro' );
-		}, [ navigate ] );
-
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
-				navigateToIntro();
+				navigate( 'intro' );
 			}
 		}, [ isLoggedIn ] );
 
