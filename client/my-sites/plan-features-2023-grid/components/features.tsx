@@ -33,6 +33,7 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 	const [ isLoadingAssignment, isCustomDomainAllowedOnFreePlan ] =
 		useIsCustomDomainAllowedOnFreePlan( domainName );
 	const wpcomFreeDomain = ! isError && wordPressSubdomainSuggestions?.[ 0 ]?.domain_name;
+	const isLoading = isInitialLoading || isLoadingAssignment;
 
 	return (
 		<Plans2023Tooltip
@@ -42,20 +43,22 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 			} ) }
 		>
 			<SubdomainSuggestion>
-				{ ( isInitialLoading || isLoadingAssignment ) && <LoadingPlaceHolder /> }
-				{ ! isError && isCustomDomainAllowedOnFreePlan ? (
-					<div>
-						{ translate( '%s will be a redirect', {
-							args: [ domainName ],
-							comment: '%s is a domain name.',
-						} ) }
-					</div>
-				) : (
-					<>
-						<div className="is-domain-name">{ domainName }</div>
-						<div>{ wpcomFreeDomain }</div>
-					</>
-				) }
+				{ isLoading && <LoadingPlaceHolder /> }
+				{ ! isError &&
+					! isLoading &&
+					( isCustomDomainAllowedOnFreePlan ? (
+						<div>
+							{ translate( '%s will be a redirect', {
+								args: [ domainName ],
+								comment: '%s is a domain name.',
+							} ) }
+						</div>
+					) : (
+						<>
+							<div className="is-domain-name">{ domainName }</div>
+							<div>{ wpcomFreeDomain }</div>
+						</>
+					) ) }
 			</SubdomainSuggestion>
 		</Plans2023Tooltip>
 	);

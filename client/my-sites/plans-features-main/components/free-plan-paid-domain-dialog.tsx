@@ -359,11 +359,12 @@ export function FreePlanPaidDomainDialog( {
 				` }
 			/>
 			{ isLoadingAssignment && <LoadingPlaceHolder /> }
-			{ ! isLoadingAssignment && isCustomDomainAllowedOnFreePlan ? (
-				<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
-			) : (
-				<DialogPaidPlanIsRequired { ...dialogCommonProps } />
-			) }
+			{ ! isLoadingAssignment &&
+				( isCustomDomainAllowedOnFreePlan ? (
+					<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
+				) : (
+					<DialogPaidPlanIsRequired { ...dialogCommonProps } />
+				) ) }
 		</Dialog>
 	);
 }
