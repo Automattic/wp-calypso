@@ -412,21 +412,23 @@ class AllDomains extends Component {
 		return (
 			<>
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
-				<DomainsTable
-					currentRoute={ currentRoute }
-					domains={ domains }
-					handleDomainItemToggle={ this.handleDomainItemToggle }
-					domainsTableColumns={ domainsTableColumns }
-					isManagingAllSites={ true }
-					isContactEmailEditContext={ isContactEmailEditContext }
-					goToEditDomainRoot={ this.handleDomainItemClick }
-					isLoading={ this.isLoading() }
-					purchases={ purchases }
-					sites={ sites }
-					requestingSiteDomains={ requestingSiteDomains }
-					hasLoadedPurchases={ hasLoadedUserPurchases }
-					isSavingContactInfo={ isSavingContactInfo }
-				/>
+				<div className="all-domains__table-container">
+					<DomainsTable
+						currentRoute={ currentRoute }
+						domains={ domains }
+						handleDomainItemToggle={ this.handleDomainItemToggle }
+						domainsTableColumns={ domainsTableColumns }
+						isManagingAllSites={ true }
+						isContactEmailEditContext={ isContactEmailEditContext }
+						goToEditDomainRoot={ this.handleDomainItemClick }
+						isLoading={ this.isLoading() }
+						purchases={ purchases }
+						sites={ sites }
+						requestingSiteDomains={ requestingSiteDomains }
+						hasLoadedPurchases={ hasLoadedUserPurchases }
+						isSavingContactInfo={ isSavingContactInfo }
+					/>
+				</div>
 			</>
 		);
 	}
