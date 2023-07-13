@@ -3,6 +3,9 @@ import { Button } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { Fragment } from 'react';
+// @ts-expect-error Missing definition
+// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+import validUrl from 'valid-url';
 import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
@@ -62,17 +65,19 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 							</a>
 						</li>
 						<li className="masterbar__woo-nav-item">
-							{ shouldShowNoThanks && typeof redirectTo === 'string' && redirectTo.length && (
-								<Button
-									onClick={ () => {
-										recordTracksEvent( 'calypso_jpc_wc_coreprofiler_skip' );
-										window.location.href = redirectTo;
-									} }
-									className="masterbar__no-thanks-button"
-								>
-									{ translate( 'No, Thanks' ) }
-								</Button>
-							) }
+							{ shouldShowNoThanks &&
+								typeof redirectTo === 'string' &&
+								validUrl.isWebUri( redirectTo ) && (
+									<Button
+										onClick={ () => {
+											recordTracksEvent( 'calypso_jpc_wc_coreprofiler_skip' );
+											window.location.href = redirectTo;
+										} }
+										className="masterbar__no-thanks-button"
+									>
+										{ translate( 'No, Thanks' ) }
+									</Button>
+								) }
 						</li>
 					</ul>
 				</nav>
