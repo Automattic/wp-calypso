@@ -32,10 +32,10 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps
 	// 	30 * 24 * 3600
 	// );
 
-	const dismissNotice = () => {
-		setNoticeDismissed( true );
-		postponeNoticeAsync();
-	};
+	// const dismissNotice = () => {
+	// 	setNoticeDismissed( true );
+	// 	postponeNoticeAsync();
+	// };
 
 	// const gotoJetpackStatsProduct = () => {
 	// 	isOdysseyStats
@@ -49,17 +49,17 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps
 	// 	setTimeout( () => ( window.location.href = getStatsPurchaseURL( siteId ) ), 250 );
 	// };
 
-	useEffect( () => {
-		if ( ! noticeDismissed && showNotice ) {
-			isOdysseyStats
-				? recordTracksEvent( 'jetpack_odyssey_stats_free_plan_purchase_success_notice_viewed' )
-				: recordTracksEvent( 'calypso_stats_free_plan_purchase_success_notice_viewed' );
-		}
-	}, [ noticeDismissed, showNotice, isOdysseyStats ] );
+	// useEffect( () => {
+	// 	if ( ! noticeDismissed && showNotice ) {
+	// 		isOdysseyStats
+	// 			? recordTracksEvent( 'jetpack_odyssey_stats_free_plan_purchase_success_notice_viewed' )
+	// 			: recordTracksEvent( 'calypso_stats_free_plan_purchase_success_notice_viewed' );
+	// 	}
+	// }, [ noticeDismissed, showNotice, isOdysseyStats ] );
 
-	if ( noticeDismissed || ! showNotice ) {
-		return null;
-	}
+	// if ( noticeDismissed || ! showNotice ) {
+	// 	return null;
+	// }
 
 	return (
 		<div className="inner-notice-container has-odyssey-stats-bg-color">
