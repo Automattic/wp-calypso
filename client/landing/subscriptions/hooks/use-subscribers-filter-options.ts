@@ -26,6 +26,7 @@ const useSubscribersFilterOptions = ( newDropdownOptionsReady: boolean ) => {
 	if ( newDropdownOptionsReady ) {
 		return newDropdownOptions;
 	}
+
 	return oldDropdownOptions;
 };
 
