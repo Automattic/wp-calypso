@@ -26,14 +26,14 @@ const defaultState: DomainTransferData = {
 		domain: '',
 		auth: '',
 		valid: false,
+		rawPrice: 0,
+		saleCost: undefined,
+		currencyCode: 'USD',
 	},
 };
 
-type DomainPrices = Record< string, number >;
-
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
-	const [ domainPrices, setDomainPrices ] = useState< DomainPrices >( {} );
 
 	const storedDomainsState = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getBulkDomainsData(),
@@ -62,7 +62,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	// create a string key representing the current state of the domains
 	const changeKey = JSON.stringify( domainsState );
-	const pricesChangeKey = JSON.stringify( domainPrices );
 
 	const handleAddTransfer = () => {
 		recordTracksEvent( 'calypso_domain_transfer_submit_form', {
@@ -93,20 +92,26 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		}
 	};
 
-	const updateTotalPrice = useCallback(
-		( id: string, price: number ) => {
-			const newDomainPrices = { ...domainPrices };
-			newDomainPrices[ id ] = price;
-			setDomainPrices( newDomainPrices );
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ pricesChangeKey ]
-	);
+	const totalPrice = Object.values( domainsState ).reduce( ( total, currentDomain ) => {
+		if ( currentDomain.saleCost ) {
+			return total + currentDomain.saleCost;
+		}
 
-	const totalPrice = Object.values( domainPrices ).reduce( ( a, b ) => a + b, 0 );
+		return total + currentDomain.rawPrice;
+	}, 0 );
 
 	const handleChange = useCallback(
-		( id: string, value: { domain: string; auth: string; valid: boolean } ) => {
+		(
+			id: string,
+			value: {
+				domain: string;
+				auth: string;
+				valid: boolean;
+				rawPrice: number;
+				saleCost?: number;
+				currencyCode: string;
+			}
+		) => {
 			const newDomainsState = { ...domainsState };
 			newDomainsState[ id ] = value;
 			setDomainsTransferData( newDomainsState );
@@ -124,6 +129,9 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			domain: '',
 			auth: '',
 			valid: false,
+			rawPrice: 0,
+			saleCost: undefined,
+			currencyCode: 'USD',
 		};
 		setDomainsTransferData( newDomainsState );
 	}
@@ -135,10 +143,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		const newDomainsState = { ...domainsState };
 		delete newDomainsState[ key ];
 		setDomainsTransferData( newDomainsState );
-
-		const newDomainPrices = { ...domainPrices };
-		delete newDomainPrices[ key ];
-		setDomainPrices( newDomainPrices );
 	}
 
 	return (

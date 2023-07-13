@@ -17,12 +17,21 @@ type Props = {
 	id: string;
 	domain: string;
 	auth: string;
-	onChange: ( id: string, value: { domain: string; auth: string; valid: boolean } ) => void;
+	onChange: (
+		id: string,
+		value: {
+			domain: string;
+			auth: string;
+			valid: boolean;
+			rawPrice: number;
+			saleCost?: number;
+			currencyCode: string;
+		}
+	) => void;
 	onRemove: ( id: string ) => void;
 	showLabels: boolean;
 	hasDuplicates: boolean;
 	showDelete: boolean;
-	updateTotalPrice: ( id: string, price: number ) => void;
 };
 
 type DomainPriceProps = {
@@ -52,7 +61,11 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 	const { __ } = useI18n();
 
 	if ( ! rawPrice ) {
-		return <div className="domains__domain-price-number disabled">$0</div>;
+		return (
+			<div className="domains__domain-price-number disabled">
+				{ formatCurrency( 0, currencyCode, { stripZeros: true } ) }
+			</div>
+		);
 	}
 
 	if ( ! saleCost && saleCost !== 0 ) {
@@ -87,27 +100,24 @@ export function DomainCodePair( {
 	showLabels,
 	hasDuplicates,
 	showDelete,
-	updateTotalPrice,
 }: Props ) {
 	const { __ } = useI18n();
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
 
-	const { valid, loading, message, rawPrice, saleCost, currencyCode, refetch } = validation;
+	const {
+		valid,
+		loading,
+		message,
+		rawPrice = 0,
+		saleCost,
+		currencyCode = 'USD',
+		refetch,
+	} = validation;
 
 	useEffect( () => {
-		if ( rawPrice ) {
-			if ( ! saleCost && saleCost !== 0 ) {
-				updateTotalPrice( id, rawPrice );
-			} else {
-				updateTotalPrice( id, saleCost );
-			}
-		}
-	}, [ id, rawPrice, saleCost, updateTotalPrice ] );
-
-	useEffect( () => {
-		onChange( id, { domain, auth, valid } );
-	}, [ domain, id, onChange, auth, valid, loading ] );
+		onChange( id, { domain, auth, valid, rawPrice, saleCost, currencyCode } );
+	}, [ domain, id, onChange, auth, valid, loading, rawPrice, saleCost, currencyCode ] );
 
 	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
 
@@ -138,7 +148,14 @@ export function DomainCodePair( {
 							id={ id }
 							value={ domain }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-								onChange( id, { domain: event.target.value.trim().toLowerCase(), auth, valid } )
+								onChange( id, {
+									domain: event.target.value.trim().toLowerCase(),
+									auth,
+									valid,
+									rawPrice,
+									saleCost,
+									currencyCode,
+								} )
 							}
 						/>
 						{ domainInputFieldIcon( valid, shouldReportError ) }
@@ -169,7 +186,14 @@ export function DomainCodePair( {
 							disabled={ valid || hasDuplicates }
 							value={ auth }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-								onChange( id, { domain, auth: event.target.value.trim(), valid } )
+								onChange( id, {
+									domain,
+									auth: event.target.value.trim(),
+									valid,
+									rawPrice,
+									saleCost,
+									currencyCode,
+								} )
 							}
 						/>
 						{ domainInputFieldIcon( valid, shouldReportError ) }
