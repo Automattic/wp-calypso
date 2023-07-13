@@ -163,6 +163,7 @@
 		"subscription-management-add-sites-modal": false,
 		"subscription-management-comments-view": true,
 		"subscription-management-pending-view": true,
+		"subscription-management-redirect-following": false,
 		"subscription-management/comments-list-controls": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/block-theme-previews-poc": true,
