@@ -5,10 +5,21 @@ import {
 } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-const getStatsPurchaseURL = ( siteSlug: string, product: string ) => {
-	const purchasePath = `/checkout/${ siteSlug }/${ product }`;
+const getStatsPurchaseURL = ( siteSlug: string, product: string, redirectUrl?: string ) => {
+	const checkoutUrl = new URL( 'https://wordpress.com/checkout/' );
+	const checkoutProductUrl = new URL( `${ checkoutUrl }${ siteSlug }/${ product }` );
 
-	return `https://wordpress.com${ purchasePath }`;
+	// Add redirect_to parameter
+	if ( redirectUrl ) {
+		checkoutProductUrl.searchParams.set( 'redirect_to', redirectUrl ); // TODO: add a redirect URL with query parameter showing proper success/fail banner
+	} else {
+		checkoutProductUrl.searchParams.set(
+			'redirect_to',
+			`https://wordpress.com/stats/${ siteSlug }`
+		);
+	}
+
+	return checkoutProductUrl.toString();
 };
 
 const getYearlyPrice = ( monthlyPrice: number ) => {
