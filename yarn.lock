@@ -1811,6 +1811,7 @@ __metadata:
     calypso: "workspace:^"
     classnames: ^2.3.1
     eslint: ^8.34.0
+    eslint-filtered-fix: ^0.3.0
     eslint-nibble: ^8.1.0
     eslint-plugin-inclusive-language: ^2.2.0
     eslint-plugin-json-es: ^1.5.7
