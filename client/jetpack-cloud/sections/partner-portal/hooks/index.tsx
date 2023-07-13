@@ -195,18 +195,6 @@ export function useAssignLicenses(
 export { default as useIssueAndAssignLicenses } from './use-issue-and-assign-licenses';
 
 /**
- * Handle multiple license assignment
- *
- */
-export function useAssignMultipleLicenses(
-	selectedLicenseKeys: Array< string >,
-	selectedSite: { ID: number; domain: string } | null
-): [ () => void, boolean ] {
-	const [ assign, isLoading ] = useAssignLicenses( selectedLicenseKeys, selectedSite );
-	return [ assign, isLoading ];
-}
-
-/**
  * Returns product description and features with given product slug.
  *
  * @param productSlug

@@ -7,7 +7,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
 import { SITE_CARDS_PER_PAGE } from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form/constants';
-import { useAssignMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { useAssignLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { areLicenseKeysAssignableToMultisite } from '../utils';
 import './style.scss';
@@ -51,7 +51,7 @@ export default function AssignLicenseForm( {
 	const onSelectSite = ( site: any ) => {
 		setSelectedSite( site );
 	};
-	const [ assignLicenses, isLoading ] = useAssignMultipleLicenses( licenseKeysArray, selectedSite );
+	const [ assignLicenses, isLoading ] = useAssignLicenses( licenseKeysArray, selectedSite );
 
 	// We need to filter out multisites if the licenses are not assignable to a multisite.
 	let results = areLicenseKeysAssignableToMultisite( licenseKeysArray )
