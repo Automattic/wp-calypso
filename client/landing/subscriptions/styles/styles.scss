@@ -44,6 +44,15 @@ body {
 		padding: 0;
 	}
 
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	.gridicon {
+		fill: currentColor;
+	}
+
 	@extend %search-component-subscriptions-style;
 
 	hr.subscriptions__separator {

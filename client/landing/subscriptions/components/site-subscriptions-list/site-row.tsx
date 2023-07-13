@@ -4,6 +4,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import TimeSince from 'calypso/components/time-since';
@@ -23,7 +24,6 @@ import {
 import { successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
-import { SiteIcon } from '../site-icon';
 import { useSubscriptionManagerContext } from '../subscription-manager-context';
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
@@ -201,7 +201,7 @@ const SiteRow = ( {
 						recordSiteIconClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 					} }
 				>
-					<SiteIcon iconUrl={ site_icon } size={ 40 } siteName={ name } />
+					<SiteIcon iconUrl={ site_icon } size={ 40 } alt={ name } />
 				</Link>
 				<span className="title-column">
 					<Link
