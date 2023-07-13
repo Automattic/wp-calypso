@@ -1,6 +1,6 @@
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { isSiteAssemblerFlow, isUpsellIgnoredTailoredSignupFlow } from '@automattic/onboarding';
+import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -43,7 +43,7 @@ export class PlansStep extends Component {
 		);
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
-		if ( isUpsellIgnoredTailoredSignupFlow( this.props.flowName ) ) {
+		if ( isTailoredSignupFlow( this.props.flowName ) ) {
 			// trigger guides on this step, we don't care about failures or response
 			wp.req.post(
 				'guides/trigger',

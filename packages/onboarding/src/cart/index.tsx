@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { startsWith, isEmpty } from 'lodash';
 import wpcomRequest from 'wpcom-proxy-request';
-import { setupSiteAfterCreation, isUpsellIgnoredTailoredSignupFlow, isMigrationFlow } from '../';
+import { setupSiteAfterCreation, isTailoredSignupFlow, isMigrationFlow } from '../';
 import cartManagerClient from './create-cart-manager-client';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -156,7 +156,7 @@ export const createSiteWithCart = async (
 		domainItem,
 	};
 
-	if ( isUpsellIgnoredTailoredSignupFlow( flowName ) ) {
+	if ( isTailoredSignupFlow( flowName ) ) {
 		await setupSiteAfterCreation( { siteId, flowName } );
 	}
 

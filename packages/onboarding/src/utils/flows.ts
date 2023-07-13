@@ -63,7 +63,7 @@ export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
 	);
 };
 
-export const isUpsellIgnoredTailoredSignupFlow = ( flowName: string | null ) => {
+export const isTailoredSignupFlow = ( flowName: string | null ) => {
 	return Boolean(
 		flowName &&
 			( isNewsletterOrLinkInBioFlow( flowName ) ||

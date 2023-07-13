@@ -26,7 +26,7 @@ import {
 	getUrlParts,
 	getUrlFromParts,
 } from '@automattic/calypso-url';
-import { isUpsellIgnoredTailoredSignupFlow } from '@automattic/onboarding';
+import { isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import {
 	getGoogleApps,
@@ -324,10 +324,10 @@ export default function getThankYouPageUrl( {
 	}
 
 	// disable upsell for given tailored signup users
-	const isUpsellIgnoredTailoredFlow = isUpsellIgnoredTailoredSignupFlow( signupFlowName );
+	const isTailoredSignup = isTailoredSignupFlow( signupFlowName );
 
 	const redirectUrlForPostCheckoutUpsell =
-		! isUpsellIgnoredTailoredFlow && receiptIdOrPlaceholder
+		! isTailoredSignup && receiptIdOrPlaceholder
 			? getRedirectUrlForPostCheckoutUpsell( {
 					receiptId: receiptIdOrPlaceholder,
 					cart,
