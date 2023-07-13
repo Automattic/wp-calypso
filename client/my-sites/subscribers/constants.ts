@@ -8,3 +8,5 @@ export enum SubscribersFilterBy {
 	Email = 'email',
 	WPCOM = 'wpcom',
 }
+
+export const DEFAULT_PER_PAGE = 10;

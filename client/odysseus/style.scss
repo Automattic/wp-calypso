@@ -65,30 +65,6 @@
 	padding-bottom: 4px;
 }
 
-.chatbox-message {
-	display: inline-block;
-	margin-bottom: 8px;
-	max-width: 70%;
-	word-wrap: break-word;
-	padding: 12px;
-	border-radius: 4px;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 14px;
-	line-height: 1.4;
-}
-
-.chatbox-message.user {
-	background-color: #dcf8c6;
-	color: #000;
-	align-self: flex-end;
-}
-
-.chatbox-message.wapuu {
-	background-color: #f1f0f0;
-	color: #000;
-	align-self: flex-start;
-}
-
 .chatbox-input-area {
 	display: flex;
 	justify-content: space-between;

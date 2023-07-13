@@ -135,7 +135,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						( { domain: otherDomain }, otherIndex ) =>
 							otherDomain && otherDomain === domain.domain && otherIndex < index
 					) }
-					showDelete={ Object.values( domainsState ).length > 1 }
+					showDelete={ domainCount > 1 && index > 0 }
 				/>
 			) ) }
 			{ domainCount < MAX_DOMAINS && (
@@ -145,7 +145,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			) }
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
-					disabled={ numberOfValidDomains === 0 }
+					disabled={ numberOfValidDomains === 0 || ! allGood }
 					className="bulk-domain-transfer__cta"
 					onClick={ handleAddTransfer }
 				>

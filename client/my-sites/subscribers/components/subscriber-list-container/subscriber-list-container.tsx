@@ -21,7 +21,7 @@ const SubscriberListContainer = ( {
 	onClickUnsubscribe,
 	setShowAddSubscribersModal,
 }: SubscriberListContainerProps ) => {
-	const { grandTotal, total, perPage, page, pageClickCallback, searchTerm } = useSubscribersPage();
+	const { grandTotal, total, perPage, page, pageChangeCallback, searchTerm } = useSubscribersPage();
 	useRecordSearch();
 
 	return (
@@ -48,7 +48,7 @@ const SubscriberListContainer = ( {
 						page={ page }
 						perPage={ perPage }
 						total={ total }
-						pageClick={ pageClickCallback }
+						pageClick={ pageChangeCallback }
 					/>
 
 					<GrowYourAudience />

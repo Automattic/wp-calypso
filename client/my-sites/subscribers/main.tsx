@@ -13,25 +13,48 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { SubscribersHeader } from './components/subscribers-header';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
-import { getSubscriberDetailsUrl } from './helpers';
+import { SubscribersFilterBy, SubscribersSortBy } from './constants';
+import { getSubscriberDetailsUrl, getSubscribersUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
 import { Subscriber } from './types';
 import './style.scss';
 
 type SubscribersProps = {
+	filterOption: SubscribersFilterBy;
 	pageNumber: number;
+	searchTerm: string;
+	sortTerm: SubscribersSortBy;
+	filterOptionChanged: ( option: SubscribersFilterBy ) => void;
 	pageChanged: ( page: number ) => void;
+	searchTermChanged: ( term: string ) => void;
+	sortTermChanged: ( term: SubscribersSortBy ) => void;
 };
 
-const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
+const SubscribersPage = ( {
+	filterOption,
+	pageNumber,
+	searchTerm,
+	sortTerm,
+	filterOptionChanged,
+	pageChanged,
+	searchTermChanged,
+	sortTermChanged,
+}: SubscribersProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
-	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
-		useUnsubscribeModal( selectedSite?.ID, pageNumber );
-	const onClickView = ( { subscription_id, user_id }: Subscriber ) => {
-		page.show(
-			getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageNumber )
-		);
+
+	const pageArgs = {
+		currentPage: pageNumber,
+		filterOption,
+		searchTerm,
+		sortTerm,
 	};
+
+	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
+		useUnsubscribeModal( selectedSite?.ID, pageArgs );
+	const onClickView = ( { subscription_id, user_id }: Subscriber ) => {
+		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
+	};
+
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const dispatch = useDispatch();
 	const localizeUrl = useLocalizeUrl();
@@ -53,7 +76,7 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	const navigationItems: Item[] = [
 		{
 			label: translate( 'Subscribers' ),
-			href: `/subscribers/${ selectedSite?.slug }`,
+			href: getSubscribersUrl( selectedSite?.slug, pageArgs ),
 			helpBubble: (
 				<span>
 					{ translate(
@@ -79,8 +102,14 @@ const SubscribersPage = ( { pageNumber, pageChanged }: SubscribersProps ) => {
 	return (
 		<SubscribersPageProvider
 			siteId={ selectedSite?.ID }
-			page={ pageNumber }
+			filterOption={ filterOption }
+			pageNumber={ pageNumber }
+			searchTerm={ searchTerm }
+			sortTerm={ sortTerm }
+			filterOptionChanged={ filterOptionChanged }
 			pageChanged={ pageChanged }
+			searchTermChanged={ searchTermChanged }
+			sortTermChanged={ sortTermChanged }
 		>
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />

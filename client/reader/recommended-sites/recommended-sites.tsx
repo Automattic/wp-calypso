@@ -21,7 +21,7 @@ export const seed = Math.floor( Math.random() * 10001 );
 
 type RecommendedSiteType = {
 	blogId: number;
-	feedId: number;
+	feedId?: number;
 	railcar: Railcar;
 	title: string;
 	url: string;

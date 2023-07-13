@@ -134,7 +134,6 @@ const onboarding: Flow = {
 			[]
 		);
 		const logInUrl = useLoginUrl( {
-			flowName,
 			redirectTo: `/setup/${ flowName }`,
 			pageTitle: 'Onboarding',
 			loginPath: `/start/${ flowName }/`,
