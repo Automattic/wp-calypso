@@ -18,6 +18,9 @@ export default function EmptySearchRecommendedPost( { post, postKey, streamKey }
 			} )
 		);
 	}
+	if ( ! post ) {
+		return null;
+	}
 
 	return <Post post={ post } handleClick={ handlePostClick } />;
 }
