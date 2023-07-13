@@ -1,27 +1,36 @@
 @import "@automattic/typography/styles/variables";
 
 .flow-question {
+	margin-bottom: 18px;
+	// !important needed here to override component styles
+	border-radius: 4px !important;
+
 	cursor: pointer;
 	max-width: 433px;
 	text-align: left;
 
+	.components-card__body {
+		padding: 22px 22px 24px;
+	}
+
 	&:hover,
 	&:focus {
-		border-color: var(--studio-black);
-		background-color: var(--studio-grey-0);
+		background-color: var(--studio-gray-0);
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
 	}
 }
 
 .flow-question__icon {
 	align-self: flex-start;
-	padding: 3px 8px 0 0;
+	padding: 2px 1px 0 0;
 }
 
 .flow-question__heading {
-	font-weight: bold;
-	font-size: $font-body;
+	font-weight: 500;
+	font-size: $font-body-large;
 }
 
 .flow-question__description {
-	color: var(--studio-grey-6);
+	color: var(--studio-gray-60);
+	padding-right: 10px;
 }
