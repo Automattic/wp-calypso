@@ -9,6 +9,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
+import InfoPopover from 'calypso/components/info-popover';
 import { useValidationMessage } from './use-validation-message';
 
 type Props = {
@@ -77,7 +78,7 @@ export function DomainCodePair( {
 					<FormFieldset>
 						<FormLabel
 							className={ classnames( {
-								'is-first-label-title': showLabels,
+								'is-first-row': showLabels,
 							} ) }
 							htmlFor={ id }
 						>
@@ -97,15 +98,26 @@ export function DomainCodePair( {
 				</div>
 				<div className="domains__domain-key">
 					<FormFieldset>
-						<FormLabel
-							className={ classnames( {
-								'is-first-label-title': showLabels,
-							} ) }
-							htmlFor={ id + '-auth' }
-						>
-							{ __( 'Authorization code' ) }
-						</FormLabel>
-
+						<div>
+							<FormLabel
+								className={ classnames( {
+									'is-first-row': showLabels,
+								} ) }
+								htmlFor={ id + '-auth' }
+							>
+								{ __( 'Authorization code' ) }
+							</FormLabel>
+							<InfoPopover
+								className={ classnames( {
+									'is-first-row': showLabels,
+								} ) }
+								position="right"
+							>
+								{ __(
+									'Unique code proving ownership, needed for secure domain transfer between registrars.'
+								) }
+							</InfoPopover>
+						</div>
 						<FormInput
 							id={ id + '-auth' }
 							disabled={ valid || hasDuplicates }
@@ -131,13 +143,12 @@ export function DomainCodePair( {
 					<FormFieldset>
 						<FormLabel
 							className={ classnames( {
-								'is-first-label-title': showLabels,
+								'is-first-row': showLabels,
 							} ) }
 							htmlFor={ id + '-price' }
 						>
 							{ __( 'Price' ) }
 						</FormLabel>
-
 						<div>$24</div>
 					</FormFieldset>
 				</div>

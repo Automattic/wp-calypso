@@ -148,7 +148,7 @@
 	}
 
 	.domains__domain-key {
-		flex: 2.5;
+		flex: 3;
 	}
 
 	.domains__domain-price {
@@ -160,17 +160,26 @@
 	.domains__domain-price {
 
 		// Show the titles on mobile and hide on desktop (except for the first one)
-		.form-label {
+		.form-label,
+		.info-popover {
 			display: none;
+		}
+
+		.form-label {
+			&.is-first-row {
+				display: inline-block;
+				margin-bottom: 16px;
+			}
 
 			@media (max-width: $break-medium ) {
 				display: block;
 			}
+		}
 
-			&.is-first-label-title {
-				display: block;
-				margin-bottom: 16px;
-			}
+		.info-popover.is-first-row {
+			display: inline-block;
+			margin-bottom: 11px;
+
 		}
 
 		.form-fieldset {
@@ -287,7 +296,10 @@
 
 			div:nth-of-type(2) {
 				flex: 2;
-				text-align: right;
+
+				@media (max-width: $break-medium ) {
+					text-align: right;
+				}
 			}
 		}
 
