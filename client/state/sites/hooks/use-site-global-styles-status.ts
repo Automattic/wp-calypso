@@ -84,7 +84,7 @@ function shouldRunGlobalStylesOnPersonalExperiment(
 	}
 
 	// Do not run it on the logged-out theme showcase.
-	if ( ! isLoggedIn && window.location.pathname.startsWith( '/themes' ) ) {
+	if ( ! isLoggedIn && window.location.pathname.startsWith( '/theme' ) ) {
 		return false;
 	}
 
@@ -113,7 +113,7 @@ export function useSiteGlobalStylesStatus(
 	} );
 
 	const { data: globalStylesOnPersonalExperimentAssignment } = useQuery( {
-		queryKey: [ 'globalStylesOnPersonalExperimentAssignment', siteId, isLoggedIn ],
+		queryKey: [ 'globalStylesOnPersonalExperimentAssignment', siteId ],
 		queryFn: () => getExperimentAssignment( 'calypso_global_styles_personal' ),
 		placeholderData: null,
 		refetchOnWindowFocus: false,
