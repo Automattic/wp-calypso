@@ -73,8 +73,8 @@ const Complete: Step = function Complete( { flow } ) {
 							<>
 								<span>
 									{ _n(
-										'Hold tight as we complete the set up of your newly transferred domain.',
-										'Hold tight as we complete the set up of your newly transferred domains',
+										"We got it from here! We'll let you know when your newly transferred domain is ready to use!",
+										"We got it from here! We'll let you know when your newly transferred domains are ready to use!",
 										newlyTransferredDomains?.length || storedDomainsAmount
 									) }
 								</span>
