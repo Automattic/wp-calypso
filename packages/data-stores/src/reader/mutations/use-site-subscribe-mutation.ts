@@ -47,13 +47,6 @@ const useSiteSubscribeMutation = () => {
 
 	return useMutation( {
 		mutationFn: async ( params: SubscribeParams ) => {
-			if ( ! params.blog_id ) {
-				throw new Error(
-					// reminder: translate this string when we add it to the UI
-					'Something went wrong while subscribing.'
-				);
-			}
-
 			const { path, apiVersion, body } = getSubscriptionMutationParams(
 				'new',
 				isLoggedIn,
@@ -163,7 +156,8 @@ const useSiteSubscribeMutation = () => {
 
 			queryClient.invalidateQueries( subscriptionsCountCacheKey );
 			queryClient.invalidateQueries( [ 'read', 'feed', 'search' ] );
-
+		},
+		onSuccess: ( data, params ) => {
 			params.onSuccess?.();
 		},
 	} );
