@@ -12,7 +12,7 @@ export default function SiteAddLicenseNotification() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const licenseInfo = useSelector( getPurchasedLicense );
+	const licensesAdded = useSelector( getPurchasedLicense );
 
 	// Dismiss the banner once this component unloads
 	useEffect( () => {
@@ -21,17 +21,17 @@ export default function SiteAddLicenseNotification() {
 		};
 	}, [ dispatch ] );
 
-	if ( ! licenseInfo || ! licenseInfo.selectedSite ) {
+	if ( ! licensesAdded || ! licensesAdded.selectedSite ) {
 		return null;
 	}
 
-	const { selectedSite, selectedProducts } = licenseInfo;
+	const { selectedSite, selectedProducts } = licensesAdded;
 	const assignedLicenses = selectedProducts.filter( ( product ) => product.status === 'fulfilled' );
 	const rejectedLicenses = selectedProducts.filter( ( product ) => product.status === 'rejected' );
 
 	const clearLicenses = ( type: 'fulfilled' | 'rejected' ) => {
 		const license = {
-			...licenseInfo,
+			...licensesAdded,
 			selectedProducts: selectedProducts.filter( ( product ) => product.status !== type ),
 		};
 		dispatch( setPurchasedLicense( license.selectedProducts.length ? license : undefined ) );
