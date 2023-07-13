@@ -166,7 +166,10 @@ const PersonalPurchase = ( {
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</Button>
 			) : (
-				<Button variant="primary" onClick={ () => gotoCheckoutPage( 'pwyw', siteSlug ) }>
+				<Button
+					variant="primary"
+					onClick={ () => gotoCheckoutPage( 'pwyw', siteSlug, subscriptionValue ) }
+				>
 					{ translate( 'Get Jetpack Stats for %(value)s per month', {
 						args: {
 							value: formatCurrency( subscriptionValue, currencyCode ),
