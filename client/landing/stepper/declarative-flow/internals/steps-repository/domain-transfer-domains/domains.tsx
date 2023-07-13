@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainTransferData } from '@automattic/data-stores';
+import formatCurrency from '@automattic/format-currency';
 import { useDataLossWarning } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -28,8 +29,11 @@ const defaultState: DomainTransferData = {
 	},
 };
 
+type DomainPrices = Record< string, number >;
+
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
+	const [ domainPrices, setDomainPrices ] = useState< DomainPrices >( {} );
 
 	const storedDomainsState = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getBulkDomainsData(),
@@ -58,6 +62,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	// create a string key representing the current state of the domains
 	const changeKey = JSON.stringify( domainsState );
+	const pricesChangeKey = JSON.stringify( domainPrices );
 
 	const handleAddTransfer = () => {
 		recordTracksEvent( 'calypso_domain_transfer_submit_form', {
@@ -87,6 +92,18 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			} );
 		}
 	};
+
+	const updateTotalPrice = useCallback(
+		( id: string, price: number ) => {
+			const newDomainPrices = { ...domainPrices };
+			newDomainPrices[ id ] = price;
+			setDomainPrices( newDomainPrices );
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ pricesChangeKey ]
+	);
+
+	const totalPrice = Object.values( domainPrices ).reduce( ( a, b ) => a + b, 0 );
 
 	const handleChange = useCallback(
 		( id: string, value: { domain: string; auth: string; valid: boolean } ) => {
@@ -145,7 +162,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			) }
 			<div className="bulk-domain-transfer__total-price">
 				<div>{ __( 'Total' ) }</div>
-				<div>$48</div>
+				<div>{ formatCurrency( totalPrice, 'USD', { stripZeros: true } ) }</div>
 			</div>
 			<div className="bulk-domain-transfer__cta-container">
 				<Button

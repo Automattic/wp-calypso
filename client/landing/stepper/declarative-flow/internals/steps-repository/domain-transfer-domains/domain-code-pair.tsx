@@ -22,6 +22,7 @@ type Props = {
 	showLabels: boolean;
 	hasDuplicates: boolean;
 	showDelete: boolean;
+	updateTotalPrice: ( id: string, price: number ) => void;
 };
 
 type DomainPriceProps = {
@@ -47,7 +48,7 @@ const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolea
 	);
 };
 
-const DomainPrice = ( { rawPrice, saleCost, currencyCode }: DomainPriceProps ) => {
+const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceProps ) => {
 	const { __ } = useI18n();
 
 	if ( ! rawPrice ) {
@@ -86,12 +87,23 @@ export function DomainCodePair( {
 	showLabels,
 	hasDuplicates,
 	showDelete,
+	updateTotalPrice,
 }: Props ) {
 	const { __ } = useI18n();
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
 
 	const { valid, loading, message, rawPrice, saleCost, currencyCode, refetch } = validation;
+
+	useEffect( () => {
+		if ( rawPrice ) {
+			if ( ! saleCost && saleCost !== 0 ) {
+				updateTotalPrice( id, rawPrice );
+			} else {
+				updateTotalPrice( id, saleCost );
+			}
+		}
+	}, [ id, rawPrice, saleCost, updateTotalPrice ] );
 
 	useEffect( () => {
 		onChange( id, { domain, auth, valid } );
@@ -121,7 +133,6 @@ export function DomainCodePair( {
 						>
 							{ __( 'Domain name' ) }
 						</FormLabel>
-
 						<FormInput
 							disabled={ valid }
 							id={ id }
