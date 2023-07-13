@@ -131,6 +131,16 @@ export function useAssignLicensesToSite(
 	const isLoading = assignLicense.isLoading;
 	const assignLicensesToSite = useCallback(
 		async ( licenseKeys: string[] ) => {
+			// Only proceed if the mutation is in a fresh/ready state
+			if ( ! assignLicense.isIdle ) {
+				return;
+			}
+
+			// Only proceed if we have licenses to assign :-)
+			if ( licenseKeys.length === 0 ) {
+				return;
+			}
+
 			// We need a valid site ID in order to assign licenses to a site;
 			// otherwise, we assign nothing
 			const selectedSiteId = selectedSite?.ID;
