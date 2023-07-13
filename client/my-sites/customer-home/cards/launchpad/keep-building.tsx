@@ -1,5 +1,4 @@
 import { useLaunchpad } from '@automattic/data-stores';
-import { Task } from '@automattic/launchpad';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
@@ -10,6 +9,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ShareSiteModal from '../../components/share-site-modal';
 import CustomerHomeLaunchpad from '.';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Task } from '@automattic/launchpad';
 
 import './style.scss';
 

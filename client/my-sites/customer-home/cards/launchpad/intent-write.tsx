@@ -1,5 +1,4 @@
 import { useLaunchpad } from '@automattic/data-stores';
-import { Task } from '@automattic/launchpad';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -7,6 +6,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CustomerHomeLaunchpad from '.';
+import type { Task } from '@automattic/launchpad';
 import type { AppState } from 'calypso/types';
 
 const checklistSlug = 'intent-write';
@@ -23,7 +23,6 @@ const LaunchpadIntentWrite = (): JSX.Element => {
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const tasklistCompleted = numberOfSteps > 0 && completedSteps === numberOfSteps;
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const recordTaskClickTracksEvent = ( task: Task ) => {
 		recordTracksEvent( 'calypso_launchpad_task_clicked', {
 			checklist_slug: checklistSlug,
