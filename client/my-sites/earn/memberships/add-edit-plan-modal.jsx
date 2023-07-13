@@ -323,10 +323,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					</div>
 				</FormFieldset>
 				<FormFieldset>
-					{ /*<ToggleControl*/ }
-					{ /*	label={ translate( 'Product, service, or download' ) }*/ }
-					{ /*	onChange={ () => {} }*/ }
-					{ /*/>*/ }
 					<ToggleControl
 						onChange={ handleMarkAsDonation }
 						checked={ 'donation' === editedMarkAsDonation }
