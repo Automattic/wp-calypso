@@ -5,37 +5,47 @@ import {
 } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-const getStatsPurchaseURL = ( siteSlug: string, page: string ) => {
-	const purchasePath = `/checkout/${ siteSlug }/${ page }`;
+const getStatsPurchaseURL = ( siteSlug: string, product: string ) => {
+	const purchasePath = `/checkout/${ siteSlug }/${ product }`;
 
 	return `https://wordpress.com${ purchasePath }`;
 };
 
-const gotoCheckoutPage = ( type: 'pwyw' | 'free' | 'commercial', siteSlug: string ) => {
+const getYearlyPrice = ( monthlyPrice: number ) => {
+	return monthlyPrice * 12;
+};
+
+const gotoCheckoutPage = (
+	type: 'pwyw' | 'free' | 'commercial',
+	siteSlug: string,
+	price?: number
+) => {
 	let eventName = '';
-	let page: string;
+	let product: string;
 
 	switch ( type ) {
 		case 'pwyw':
 			// YEARLY!
 			eventName = 'pwyw';
-			page = PRODUCT_JETPACK_STATS_PWYW_YEARLY;
+			product = price
+				? `${ PRODUCT_JETPACK_STATS_PWYW_YEARLY }:-q-${ getYearlyPrice( price ) }` // specify price per unit or the plan will default to a free plan
+				: `${ PRODUCT_JETPACK_STATS_PWYW_YEARLY }`;
 			break;
 		case 'free':
 			eventName = 'free';
-			page = PRODUCT_JETPACK_STATS_FREE;
+			product = PRODUCT_JETPACK_STATS_FREE;
 			break;
 		case 'commercial':
 			// MONTHLY!
 			eventName = 'commercial';
-			page = PRODUCT_JETPACK_STATS_MONTHLY;
+			product = PRODUCT_JETPACK_STATS_MONTHLY;
 			break;
 	}
 
 	recordTracksEvent( `calypso_stats_${ eventName }_purchase_button_clicked` );
 
 	// Allow some time for the event to be recorded before redirecting.
-	setTimeout( () => ( window.location.href = getStatsPurchaseURL( siteSlug, page ) ), 250 );
+	setTimeout( () => ( window.location.href = getStatsPurchaseURL( siteSlug, product ) ), 250 );
 };
 
 export default gotoCheckoutPage;
