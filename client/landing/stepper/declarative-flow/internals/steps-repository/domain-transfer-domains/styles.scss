@@ -152,7 +152,39 @@
 	}
 
 	.domains__domain-price {
-		flex: 1;
+		flex: 2;
+
+		.domains__domain-price-number {
+			align-items: center;
+			font-weight: 500;
+			line-height: 24px;
+
+			&.raw-price {
+				color: var(--studio-gray-40);
+				font-size: 0.75rem;
+				font-weight: 400;
+				line-height: 20px;
+				margin-left: 4px;
+				text-decoration-line: line-through;
+			}
+
+			&.disabled {
+				color: var(--studio-gray-5);
+			}
+		}
+
+		.domains__domain-price-value {
+			align-items: flex-start;
+			flex-direction: column;
+			justify-content: center;
+
+			.domains__domain-price-text {
+				color: var(--studio-green-50);
+				font-size: 0.75rem;
+				font-weight: 500;
+				line-height: 16px;
+			}
+		}
 	}
 
 	.domains__domain-domain,
@@ -166,6 +198,10 @@
 		}
 
 		.form-label {
+			font-size: 0.875rem;
+			font-weight: 400;
+
+
 			&.is-first-row {
 				display: inline-block;
 				margin-bottom: 16px;
@@ -184,12 +220,17 @@
 			}
 
 			svg {
-				margin-bottom: -2px;
+				margin-bottom: -4px;
 			}
 		}
 
 		.form-fieldset {
 			position: relative;
+
+			div {
+				height: 40px;
+				display: flex;
+			}
 
 			input {
 				padding-right: 30px;
@@ -212,12 +253,6 @@
 						fill: #d63638;
 					}
 				}
-			}
-
-			div {
-				height: 40px;
-				display: flex;
-				align-items: center;
 			}
 		}
 
@@ -297,11 +332,12 @@
 			margin-bottom: 42px;
 
 			div:nth-of-type(1) {
-				flex: 7;
+				flex: 8;
 			}
 
 			div:nth-of-type(2) {
-				flex: 2;
+				flex: 3;
+				margin-left: -12px;
 
 				@media (max-width: $break-medium ) {
 					text-align: right;

@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { Button, Icon } from '@wordpress/components';
 import { check, trash, closeSmall, update } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -23,6 +24,12 @@ type Props = {
 	showDelete: boolean;
 };
 
+type DomainPriceProps = {
+	rawPrice?: number;
+	saleCost?: number;
+	currencyCode: string;
+};
+
 const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolean ) => {
 	return (
 		shouldReportError && (
@@ -40,6 +47,36 @@ const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolea
 	);
 };
 
+const DomainPrice = ( { rawPrice, saleCost, currencyCode }: DomainPriceProps ) => {
+	const { __ } = useI18n();
+
+	if ( ! rawPrice ) {
+		return <div className="domains__domain-price-number disabled">$0</div>;
+	}
+
+	if ( ! saleCost && saleCost !== 0 ) {
+		return (
+			<div className="domains__domain-price-number">
+				{ formatCurrency( rawPrice, currencyCode, { stripZeros: true } ) }
+			</div>
+		);
+	}
+
+	return (
+		<div className="domains__domain-price-value">
+			<div>
+				<span className="domains__domain-price-number">
+					{ formatCurrency( saleCost, currencyCode, { stripZeros: true } ) }
+				</span>
+				<span className="domains__domain-price-number raw-price">
+					{ formatCurrency( rawPrice, currencyCode, { stripZeros: true } ) }
+				</span>
+			</div>
+			<div className="domains__domain-price-text">{ __( 'First year free' ) }</div>
+		</div>
+	);
+};
+
 export function DomainCodePair( {
 	id,
 	domain,
@@ -54,7 +91,7 @@ export function DomainCodePair( {
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
 
-	const { valid, loading, message, refetch } = validation;
+	const { valid, loading, message, rawPrice, saleCost, currencyCode, refetch } = validation;
 
 	useEffect( () => {
 		onChange( id, { domain, auth, valid } );
@@ -147,7 +184,11 @@ export function DomainCodePair( {
 						>
 							{ __( 'Price' ) }
 						</FormLabel>
-						<div>$24</div>
+						<DomainPrice
+							rawPrice={ rawPrice }
+							saleCost={ saleCost }
+							currencyCode={ currencyCode }
+						/>
 					</FormFieldset>
 				</div>
 				<div className="domains__domain-controls">
