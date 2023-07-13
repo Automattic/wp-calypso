@@ -101,7 +101,7 @@
 
 	.domains__domain-info {
 		display: flex;
-		gap: 16px;
+		gap: 20px;
 		align-items: flex-end;
 		flex-wrap: wrap;
 
@@ -119,32 +119,126 @@
 		}
 	}
 
+	.domains__domain-validation {
+		margin-top: 12px;
+
+		&.is-mobile {
+			display: none;
+		}
+
+		&.is-desktop {
+			display: block;
+		}
+
+		@media (max-width: $break-medium ) {
+			margin-top: 0;
+
+			&.is-mobile {
+				display: block;
+			}
+
+			&.is-desktop {
+				display: none;
+			}
+		}
+	}
+
 	.domains__domain-domain {
-		flex: 1 0 60%;
+		flex: 7;
 	}
 
 	.domains__domain-key {
-		flex: 1 0 15%;
+		flex: 3;
+
+		.info-popover {
+			margin-left: 5px;
+			padding: 2px;
+		}
+		.info-popover:focus {
+			outline: 1px solid var(--studio-blue-50);
+		}
+	}
+
+	.domains__domain-price {
+		flex: 2;
+
+		.domains__domain-price-number {
+			align-items: center;
+			font-weight: 500;
+			line-height: 24px;
+
+			&.raw-price {
+				color: var(--studio-gray-40);
+				font-size: 0.75rem;
+				font-weight: 400;
+				line-height: 20px;
+				margin-left: 4px;
+				text-decoration-line: line-through;
+			}
+
+			&.disabled {
+				color: var(--studio-gray-5);
+			}
+		}
+
+		.domains__domain-price-value {
+			align-items: flex-start;
+			flex-direction: column;
+			justify-content: center;
+
+			.domains__domain-price-text {
+				color: var(--studio-green-50);
+				font-size: 0.75rem;
+				font-weight: 500;
+				line-height: 16px;
+			}
+		}
 	}
 
 	.domains__domain-domain,
-	.domains__domain-key {
+	.domains__domain-key,
+	.domains__domain-price {
 
 		// Show the titles on mobile and hide on desktop (except for the first one)
-		.form-label {
+		.form-label,
+		.info-popover {
 			display: none;
+		}
+
+		.form-label {
+			font-size: 0.875rem;
+			font-weight: 400;
+
+
+			&.is-first-row {
+				display: inline-block;
+				margin-bottom: 16px;
+			}
 
 			@media (max-width: $break-medium ) {
 				display: block;
 			}
+		}
 
-			&.is-first-label-title {
-				display: block;
+		.info-popover.is-first-row {
+			display: inline-block;
+
+			@media (max-width: $break-mobile ) {
+				margin-left: 3px;
+			}
+
+			svg {
+				margin-bottom: -4px;
 			}
 		}
 
 		.form-fieldset {
 			position: relative;
+
+			div {
+				height: 40px;
+				display: flex;
+			}
 
 			input {
 				padding-right: 30px;
@@ -181,6 +275,7 @@
 	.domains__domain-controls {
 		display: flex;
 		gap: 16px;
+		flex: 1;
 
 		.domains__domain-refresh {
 			button {
@@ -231,8 +326,31 @@
 			font-size: 0.875rem;
 			font-weight: 500;
 			color: #0675c4;
-			margin-bottom: 32px;
+			margin-bottom: 22px;
 			margin-top: 2px;
+		}
+
+		.bulk-domain-transfer__total-price {
+			display: flex;
+			justify-content: space-between;
+			border-top: 1px solid rgba(220, 220, 222, 0.64);
+			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
+			font-weight: 500;
+			padding: 20px 0;
+			margin-bottom: 42px;
+
+			div:nth-of-type(1) {
+				flex: 8;
+			}
+
+			div:nth-of-type(2) {
+				flex: 3;
+				margin-left: -12px;
+
+				@media (max-width: $break-medium ) {
+					text-align: right;
+				}
+			}
 		}
 
 		.bulk-domain-transfer__cta-container {
@@ -269,12 +387,14 @@
 	}
 
 	.domains__domain-info-and-validation {
-		margin-bottom: 16px;
+		margin-bottom: 12px;
 
 		@media (max-width: $break-medium ) {
-			border-bottom: solid 1px #dcdcde;
-			padding-bottom: 32px;
-			margin-bottom: 32px;
+			&not:last-of-type {
+				border-bottom: solid 1px #dcdcde;
+				padding-bottom: 32px;
+				margin-bottom: 32px;
+			}
 		}
 
 		.form-input-validation {

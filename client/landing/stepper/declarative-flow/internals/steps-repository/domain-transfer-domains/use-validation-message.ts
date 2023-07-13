@@ -79,6 +79,9 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			valid: true,
 			loading: false,
 			message: __( 'This domain is unlocked and ready to be transferred.' ),
+			rawPrice: validationResult.raw_price,
+			saleCost: validationResult.sale_cost,
+			currencyCode: validationResult.currency_code,
 		};
 	} else if ( validationResult?.auth_code_valid === false ) {
 		// the auth check API has a bug and returns error 400 for incorrect auth codes,
@@ -86,13 +89,19 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: false,
-			message: __( 'This domain is unlocked but the authentication code seems incorrect.' ),
+			message: __( 'This domain is unlocked but the authorization code seems incorrect.' ),
+			rawPrice: validationResult.raw_price,
+			saleCost: validationResult.sale_cost,
+			currencyCode: validationResult.currency_code,
 		};
 	} else if ( availabilityNotice?.message ) {
 		return {
 			valid: false,
 			loading: false,
 			message: availabilityNotice?.message,
+			rawPrice: validationResult?.raw_price,
+			saleCost: validationResult?.sale_cost,
+			currencyCode: validationResult?.currency_code,
 			refetch,
 		};
 	}
