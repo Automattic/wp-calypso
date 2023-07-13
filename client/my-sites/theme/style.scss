@@ -352,15 +352,11 @@ $theme-sheet-content-max-width: 1462px;
 	width: 98%;
 	z-index: 1;
 
-	// with width: 98%, gives 4:3 ratio before the image loads
-	// also x-browser issues, so it's smaller than 4:3 proper
-	min-height: 36.15vw; // 36.75vw would be correct, but Safari is slightly off
-
 	@include breakpoint-deprecated( "<960px" ) {
 		border-radius: 0;
 		box-shadow: none;
 		position: relative;
-		height: 100vw; // force proportions
+		max-height: 100vw;
 		overflow: hidden;
 		margin-top: 0;
 		top: 0;

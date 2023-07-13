@@ -1,5 +1,6 @@
 import { useEffect, useState } from '@wordpress/element';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
@@ -10,7 +11,9 @@ interface FilePreviewProps {
 }
 
 const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) => {
+	const translate = useTranslate();
 	const [ fileContent, setFileContent ] = useState( '' );
+	const [ showSensitivePreview, setShowSensitivePreview ] = useState( false );
 
 	// Let's restrict previews to these types for now
 	const validTypes = [ 'text', 'code', 'audio', 'image', 'video' ];
@@ -20,8 +23,8 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 	const isSensitive = item.manifestPath === 'f5:/wp-config.php';
 
 	const isTextContent = item.type === 'text' || item.type === 'code';
-
-	const shouldPreviewFile = isValidType && ! isSensitive;
+	const shouldPreviewFile =
+		isValidType && ( ! isSensitive || ( isSensitive && showSensitivePreview ) );
 
 	const { isSuccess, isInitialLoading, data } = useBackupFileQuery(
 		siteId,
@@ -38,6 +41,17 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 				.then( ( fileData ) => setFileContent( fileData ) );
 		}
 	}, [ item.type, isSuccess, data, isTextContent ] );
+
+	if ( isSensitive && ! showSensitivePreview ) {
+		return (
+			<div className="file-card__preview-sensitive">
+				<p>{ translate( 'This preview is hidden because it contains sensitive information.' ) }</p>
+				<button className="button button-small" onClick={ () => setShowSensitivePreview( true ) }>
+					{ translate( 'Show preview' ) }
+				</button>
+			</div>
+		);
+	}
 
 	if ( ! shouldPreviewFile ) {
 		return null;

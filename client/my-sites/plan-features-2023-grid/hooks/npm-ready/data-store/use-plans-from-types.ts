@@ -4,12 +4,13 @@ import {
 	TYPE_FREE,
 	TYPE_WOO_EXPRESS_PLUS,
 	findPlansKeys,
+	TERMS_LIST,
 } from '@automattic/calypso-products';
 import warn from '@wordpress/warning';
 
 interface Props {
 	planTypes: string[];
-	term: string;
+	term: ( typeof TERMS_LIST )[ number ];
 }
 
 const usePlansFromTypes = ( { planTypes, term }: Props ): PlanSlug[] => {

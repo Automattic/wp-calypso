@@ -701,7 +701,8 @@ class ThemeSheet extends Component {
 			! this.props.isExternallyManagedTheme &&
 			! this.props.isThemePurchased &&
 			! this.props.isBundledSoftwareSet &&
-			! this.props.isPremium;
+			! this.props.isPremium &&
+			this.props.shouldLimitGlobalStyles;
 
 		return (
 			styleVariations.length > 0 && (

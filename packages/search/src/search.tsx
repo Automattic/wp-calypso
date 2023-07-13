@@ -55,6 +55,7 @@ type Props = {
 	dir?: 'ltr' | 'rtl';
 	disableAutocorrect?: boolean;
 	disabled?: boolean;
+	displayOpenAndCloseIcons?: boolean;
 	fitsContainer?: boolean;
 	hideClose?: boolean;
 	isReskinned?: boolean;
@@ -78,6 +79,7 @@ type Props = {
 	value?: string;
 	searchMode?: 'when-typing' | 'on-enter';
 	searchIcon?: ReactNode;
+	submitOnOpenIconClick?: boolean;
 };
 
 //This is fix for IE11. Does not work on Edge.
@@ -127,6 +129,7 @@ const InnerSearch = (
 		delayTimeout = SEARCH_DEBOUNCE_MS,
 		defaultValue = '',
 		defaultIsOpen = false,
+		displayOpenAndCloseIcons = false,
 		autoFocus = false,
 		onSearchOpen,
 		recordEvent,
@@ -147,6 +150,7 @@ const InnerSearch = (
 		isReskinned = false,
 		searchMode = 'when-typing',
 		searchIcon,
+		submitOnOpenIconClick = false,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -347,13 +351,13 @@ const InnerSearch = (
 		}
 	};
 
-	const handleSubmit = ( event: FormEvent ) => {
+	const handleSubmit = ( event?: FormEvent ) => {
 		if ( 'on-enter' === searchMode ) {
 			onSearch?.( keyword );
 			onSearchChange?.( keyword );
 		}
-		event.preventDefault();
-		event.stopPropagation();
+		event?.preventDefault();
+		event?.stopPropagation();
 	};
 
 	const searchValue = keyword;
@@ -421,11 +425,23 @@ const InnerSearch = (
 			return renderReskinSearchIcon();
 		}
 
+		const onClick = ( props: React.MouseEvent< HTMLButtonElement > ) => {
+			if ( submitOnOpenIconClick ) {
+				handleSubmit();
+			}
+
+			if ( enableOpenIcon ) {
+				return openSearch( props );
+			}
+
+			return () => searchInput.current?.focus();
+		};
+
 		return (
 			<Button
 				className="search-component__icon-navigation"
 				ref={ openIcon }
-				onClick={ enableOpenIcon ? openSearch : () => searchInput.current?.focus() }
+				onClick={ onClick }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? openListener : undefined }
 				aria-controls={ 'search-component-' + instanceId }
@@ -455,9 +471,33 @@ const InnerSearch = (
 		return null;
 	};
 
+	const renderRightIcons = () => {
+		const closeButton = renderCloseButton();
+
+		if ( displayOpenAndCloseIcons ) {
+			return (
+				<>
+					{ renderOpenIcon() }
+					{ closeButton && (
+						<>
+							<div className="search-component__icon-navigation-separator">|</div>
+							{ closeButton }
+						</>
+					) }
+				</>
+			);
+		}
+
+		if ( shouldRenderRightOpenIcon ) {
+			return renderOpenIcon();
+		}
+
+		return closeButton;
+	};
+
 	return (
 		<div dir={ dir } className={ searchClass } role="search">
-			<Spinner />
+			{ openIconSide === 'left' && <Spinner /> }
 			{ openIconSide === 'left' && renderOpenIcon() }
 			<form className={ fadeClass } action="." onSubmit={ handleSubmit }>
 				<input
@@ -488,7 +528,8 @@ const InnerSearch = (
 				{ renderStylingDiv() }
 			</form>
 			{ childrenBeforeCloseButton }
-			{ shouldRenderRightOpenIcon ? renderOpenIcon() : renderCloseButton() }
+			{ openIconSide === 'right' && <Spinner /> }
+			{ renderRightIcons() }
 			{ children }
 		</div>
 	);
