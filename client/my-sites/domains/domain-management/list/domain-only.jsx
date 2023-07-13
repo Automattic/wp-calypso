@@ -6,6 +6,7 @@ import Illustration from 'calypso/assets/images/domains/domain.svg';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import { canCurrentUserCreateSiteFromDomainOnly } from 'calypso/lib/domains';
+import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { domainManagementEdit, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
@@ -13,6 +14,7 @@ import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 import './domain-only.scss';
@@ -20,6 +22,7 @@ import './domain-only.scss';
 const DomainOnly = ( {
 	currentRoute,
 	primaryDomain,
+	domains,
 	hasNotice,
 	recordTracks,
 	siteId,
@@ -27,6 +30,28 @@ const DomainOnly = ( {
 	translate,
 } ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	const domain = domains.find( ( item ) => item.name === slug );
+
+	if (
+		! primaryDomain &&
+		domain &&
+		domain.type === domainTypes.TRANSFER &&
+		domain.transferStatus !== transferStatus.COMPLETED
+	) {
+		return (
+			<div>
+				<EmptyContent
+					title={ translate( '%(domainName)s is not ready yet.', {
+						args: { domainName: domain.name },
+					} ) }
+					action={ translate( 'Manage domain' ) }
+					actionURL={ domainManagementEdit( slug, domain.name, currentRoute ) }
+					illustration={ Illustration }
+				></EmptyContent>
+			</div>
+		);
+	}
+
 	if ( ! primaryDomain ) {
 		return (
 			<div>
@@ -98,6 +123,7 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			slug: getSiteSlug( state, ownProps.siteId ),
 			primaryDomain: getPrimaryDomainBySiteId( state, ownProps.siteId ),
+			domains: getDomainsBySiteId( state, ownProps.siteId ),
 		};
 	},
 	{ recordTracks: recordTracksEvent }
