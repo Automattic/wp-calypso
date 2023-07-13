@@ -20,8 +20,11 @@
 				font-size: 3rem;
 			}
 			.formatted-header__subtitle {
+				width: 60%;
+				margin: 0 auto;
 				text-align: center;
 			}
+
 			@media ( max-width: $break-medium ) {
 				text-align: left;
 				.formatted-header__title {
@@ -29,6 +32,7 @@
 				}
 				.formatted-header__subtitle {
 					text-align: left;
+					width: 100%;
 				}
 			}
 			.domain-header-buttons {

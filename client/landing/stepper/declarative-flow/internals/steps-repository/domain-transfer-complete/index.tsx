@@ -1,5 +1,6 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
@@ -69,10 +70,13 @@ const Complete: Step = function Complete( { flow } ) {
 							'Congrats on your domain transfers!',
 							newlyTransferredDomains?.length || storedDomainsAmount
 						) }
-						subHeaderText={ _n(
-							"We've got it from here! We'll let you know when your newly transferred domain is ready to use.",
-							"We've got it from here! We'll let you know when your newly transferred domains are ready to use.",
-							newlyTransferredDomains?.length || storedDomainsAmount
+						subHeaderText={ createInterpolateElement(
+							_n(
+								"We've got it from here! We'll let you know when your newly transferred domain is ready to use! <strong>Domain transfers may take up to 5-10 days.</strong>",
+								"We've got it from here! We'll let you know when your newly transferred domains are ready to use! <strong>Domain transfers may take up to 5-10 days.</strong>",
+								newlyTransferredDomains?.length || storedDomainsAmount
+							),
+							{ strong: createElement( 'strong' ) }
 						) }
 						align="center"
 						children={
