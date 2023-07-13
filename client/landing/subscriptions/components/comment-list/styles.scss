@@ -83,10 +83,12 @@
 			align-items: center;
 			min-width: 0;
 
-			.subscriptions__site-icon {
-				flex: none;
-				width: 40px;
-				height: 40px;
+			.site-icon {
+				max-width: 40px;
+			}
+
+			.site-icon.is-blank .gridicon {
+				fill: var(--color-neutral-100);
 			}
 
 			.title-column {
