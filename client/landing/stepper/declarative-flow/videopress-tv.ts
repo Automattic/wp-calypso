@@ -9,6 +9,7 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import './internals/videopress.scss';
 import ProcessingStep from './internals/steps-repository/processing-step';
+import VideoPressTvTrialExists from './internals/steps-repository/videopress-tv-trial-exists';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -24,6 +25,7 @@ const videopressTv: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/intro' ),
 			},
 			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'trial', component: VideoPressTvTrialExists },
 		];
 	},
 
@@ -46,7 +48,10 @@ const videopressTv: Flow = {
 		);
 		const _siteSlug = useSiteSlug();
 		const [ isSiteCreationPending, setIsSiteCreationPending ] = useState( false );
-		const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+		const { getNewSite, getNewSiteError } = useSelect(
+			( select ) => select( SITE_STORE ) as SiteSelect,
+			[]
+		);
 		const visibility = useNewSiteVisibility();
 
 		setStepProgress( flowProgress );
@@ -70,10 +75,17 @@ const videopressTv: Flow = {
 			setPendingAction( async () => {
 				setProgress( 0 );
 				try {
-					await createVideoPressTvSite( {
+					const result = await createVideoPressTvSite( {
 						languageSlug: locale,
 						visibility,
 					} );
+
+					if ( false === result ) {
+						const error = getNewSiteError();
+						if ( 'trial_exists' === error?.error ) {
+							navigate( 'trial', { url: error.message } );
+						}
+					}
 				} catch ( e ) {
 					return;
 				}
@@ -104,6 +116,8 @@ const videopressTv: Flow = {
 					if ( ! _siteSlug ) {
 						addVideoPressPendingAction();
 					}
+					break;
+				case 'trial':
 					break;
 			}
 		} );
