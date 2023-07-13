@@ -1409,15 +1409,16 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
-	get2023PlanComparisonFeatureOverride: ( isGlobalStylesOnPersonal = false ) => [
-		FEATURE_PAYPAL_JP,
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_LIVE_CHAT_SUPPORT,
-		FEATURE_PREMIUM_THEMES_V2,
-		FEATURE_WORDADS,
-		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
-		FEATURE_PAYMENT_TRANSACTION_FEES_4,
-	],
+	// get2023PlanComparisonFeatureOverride: ( isGlobalStylesOnPersonal = false ) => [
+	// 	FEATURE_PAYPAL_JP,
+	// 	FEATURE_CUSTOM_DOMAIN,
+	// 	FEATURE_LIVE_CHAT_SUPPORT,
+	// 	FEATURE_PREMIUM_THEMES_V2,
+	// 	FEATURE_WORDADS,
+	// 	...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
+	// 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	// ],
+	get2023PlanComparisonJetpackFeatureOverride: () => [ FEATURE_PAYPAL_JP ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
