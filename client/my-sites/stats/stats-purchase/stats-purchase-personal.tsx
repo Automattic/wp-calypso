@@ -38,8 +38,13 @@ const PersonalPurchase = ( {
 
 		return (
 			<div { ...props }>
-				{ formatCurrency( state?.valueNow || subscriptionValue, currencyCode ) }/
-				{ translate( 'month' ) } { subscriptionValue > 0 && emoji }
+				{ translate( '%(value)s/month', {
+					args: {
+						value: formatCurrency( state?.valueNow || subscriptionValue, currencyCode ),
+					},
+					comment: 'Price per month selected by the user via the pricing slider',
+				} ) }
+				{ subscriptionValue > 0 && emoji }
 			</div>
 		);
 	} ) as RenderThumbFunction;
