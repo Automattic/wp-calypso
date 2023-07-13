@@ -64,7 +64,7 @@ import PopularBadge from './components/popular-badge';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
-import { PlanProperties, TransformedFeatureObject } from './types';
+import { GridSize, PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { PlansIntent } from './grid-context';
 import type { GridPlan } from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
@@ -113,7 +113,7 @@ export type PlanFeatures2023GridProps = {
 	selectedFeature?: string;
 	intent?: PlansIntent;
 	isGlobalStylesOnPersonal?: boolean;
-	isLargeScreen: boolean;
+	gridSize: GridSize;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -268,7 +268,7 @@ export class PlanFeatures2023Grid extends Component<
 			isGlobalStylesOnPersonal,
 			planRecords,
 			visiblePlans,
-			isLargeScreen,
+			gridSize,
 		} = this.props;
 		return (
 			<PlansGridContextProvider
@@ -281,19 +281,13 @@ export class PlanFeatures2023Grid extends Component<
 					<div className="plan-features">
 						<div className="plan-features-2023-grid__content">
 							<div>
-								{ isLargeScreen && (
-									<div className="plan-features-2023-grid__desktop-view">
-										{ this.renderTable( planProperties ) }
+								{ [ 'medium', 'large' ].includes( gridSize ) ? (
+									<div className="plan-features-2023-grid__table-view">
+										{ this.renderTableView() }
 									</div>
-								) }
-								{ isLargeScreen && (
-									<div className="plan-features-2023-grid__tablet-view">
-										{ this.renderTabletView() }
-									</div>
-								) }
-								{ ! isLargeScreen && (
-									<div className="plan-features-2023-grid__mobile-view">
-										{ this.renderMobileView() }
+								) : (
+									<div className="plan-features-2023-grid__column-view">
+										{ this.renderColumnView() }
 									</div>
 								) }
 							</div>
@@ -370,15 +364,19 @@ export class PlanFeatures2023Grid extends Component<
 		);
 	}
 
-	renderTabletView() {
-		const { planProperties } = this.props;
+	renderTableView() {
+		const { planProperties, gridSize } = this.props;
 		let plansToShow = [];
 
 		plansToShow = planProperties
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => properties.planName );
 
-		const numberOfPlansToShowOnTop = 4 === plansToShow.length ? 2 : 3;
+		let numberOfPlansToShowOnTop = plansToShow.length;
+		if ( gridSize === 'medium' ) {
+			numberOfPlansToShowOnTop = 4 === plansToShow.length ? 2 : 3;
+		}
+
 		const topRowPlans = plansToShow.slice( 0, numberOfPlansToShowOnTop );
 		const bottomRowPlans = plansToShow.slice( numberOfPlansToShowOnTop, plansToShow.length );
 		const planPropertiesForTopRow = planProperties.filter( ( properties: PlanProperties ) =>
@@ -402,7 +400,7 @@ export class PlanFeatures2023Grid extends Component<
 		);
 	}
 
-	renderMobileView() {
+	renderColumnView() {
 		const { planProperties, translate, selectedFeature } = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planName: string }

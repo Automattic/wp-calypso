@@ -12,8 +12,7 @@ jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector',
 	<div>PlanTypeSelector</div>
 ) );
 jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
-jest.mock( '../hooks/use-intent-from-site-meta', () => jest.fn() );
-jest.mock( '../hooks/use-is-large-screen', () => ( { useIsLargeScreen: jest.fn() } ) );
+jest.mock( '../hooks/use-get-grid-size', () => ( { useGetGridSize: jest.fn() } ) );
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
@@ -42,8 +41,7 @@ import {
 import { screen } from '@testing-library/react';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import useIntentFromSiteMeta from '../hooks/use-intent-from-site-meta';
-import { useIsLargeScreen } from '../hooks/use-is-large-screen';
+import { useGetGridSize } from '../hooks/use-get-grid-size';
 import useIntentFromSiteMeta from '../hooks/use-plan-intent-from-site-meta';
 import PlansFeaturesMain from '../index';
 
@@ -60,9 +58,10 @@ describe( 'PlansFeaturesMain', () => {
 			processing: false,
 			intent: null,
 		} ) );
+
 		getSelectedSiteId.mockImplementation( () => 123 );
 
-		useIsLargeScreen.mockImplementation( () => true );
+		useGetGridSize.mockImplementation( () => 'small' );
 	} );
 
 	describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {

@@ -35,3 +35,5 @@ export interface PlanActionOverrides {
 		text: TranslateResult;
 	};
 }
+
+export type GridSize = 'small' | 'medium' | 'large';
