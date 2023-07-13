@@ -409,6 +409,8 @@ import {
 	FEATURE_SHIPPING_INTEGRATIONS,
 	FEATURE_THE_READER,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	FEATURE_PAYMENT_BUTTONS_JP,
+	FEATURE_PAYPAL_JP,
 } from './constants';
 import type {
 	BillingTerm,
@@ -556,7 +558,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_MULTI_SITE,
 		FEATURE_SECURITY_MALWARE,
 		FEATURE_SECURITY_DDOS,
-		FEATURE_PAYPAL_JP,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
@@ -571,6 +572,8 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonJetpackFeatureOverride: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
 		FEATURE_DONATIONS_AND_TIPS_JP,
+		FEATURE_PREMIUM_CONTENT_JP,
+		FEATURE_PAYMENT_BUTTONS_JP,
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
 		FEATURE_CONTACT_FORM_JP,
@@ -1406,6 +1409,15 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
+	get2023PlanComparisonFeatureOverride: ( isGlobalStylesOnPersonal = false ) => [
+		FEATURE_PAYPAL_JP,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PREMIUM_THEMES_V2,
+		FEATURE_WORDADS,
+		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
+		FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
