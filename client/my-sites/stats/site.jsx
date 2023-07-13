@@ -48,7 +48,6 @@ import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
-import FreePlanPurchaseSuccessJetpackStatsNotice from './stats-notices/free-plan-purchase-success-notice';
 import StatsPageHeader from './stats-page-header';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -244,7 +243,6 @@ class StatsSite extends Component {
 
 				{ statsPurchaseSuccess && <p>Thank you for using Jetpack Stats</p> }
 
-				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
