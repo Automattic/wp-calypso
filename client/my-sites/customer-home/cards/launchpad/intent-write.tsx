@@ -1,26 +1,19 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import { useState } from 'react';
-import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getSite } from 'calypso/state/sites/selectors';
+import { useSelector } from 'calypso/state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import ShareSiteModal from '../../components/share-site-modal';
 import CustomerHomeLaunchpad from '.';
-import type { SiteDetails } from '@automattic/data-stores';
 import type { Task } from '@automattic/launchpad';
+import type { AppState } from 'calypso/types';
 
-import './style.scss';
+const checklistSlug = 'intent-write';
 
-const checklistSlug = 'keep-building';
-
-interface LaunchpadKeepBuildingProps {
-	site: SiteDetails | null;
-}
-
-const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Element => {
-	const siteSlug = site?.slug || null;
+const LaunchpadIntentWrite = (): JSX.Element => {
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
 
 	const {
 		data: { checklist },
@@ -28,7 +21,7 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
-	const tasklistCompleted = completedSteps === numberOfSteps;
+	const tasklistCompleted = numberOfSteps > 0 && completedSteps === numberOfSteps;
 
 	const recordTaskClickTracksEvent = ( task: Task ) => {
 		recordTracksEvent( 'calypso_launchpad_task_clicked', {
@@ -39,8 +32,6 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 			context: 'customer-home',
 		} );
 	};
-
-	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
 		const completedTasks = tasks.filter( ( task: Task ) => task.completed );
@@ -94,25 +85,6 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 						window.location.assign( url );
 					};
 					break;
-				case 'add_new_page':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign( `/page/${ siteSlug }` );
-					};
-					break;
-				case 'edit_page':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign( `/pages/${ siteSlug }` );
-					};
-					break;
-
-				case 'share_site':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						setShareSiteModalIsOpen( true );
-					};
-					break;
 			}
 
 			return { ...task, actionDispatch };
@@ -120,24 +92,11 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 	};
 
 	return (
-		<>
-			<CustomerHomeLaunchpad
-				checklistSlug={ checklistSlug }
-				taskFilter={ sortedTasksWithActions }
-			></CustomerHomeLaunchpad>
-			{ shareSiteModalIsOpen && (
-				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
-			) }
-		</>
+		<CustomerHomeLaunchpad
+			checklistSlug={ checklistSlug }
+			taskFilter={ sortedTasksWithActions }
+		></CustomerHomeLaunchpad>
 	);
 };
 
-const ConnectedLaunchpadKeepBuilding = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state ) || undefined;
-	// The type definition for getSite is incorrect, it returns a SiteDetails object
-	const site = getSite( state as object, siteId ) as any as SiteDetails;
-
-	return { site };
-} )( LaunchpadKeepBuilding );
-
-export default ConnectedLaunchpadKeepBuilding;
+export default LaunchpadIntentWrite;
