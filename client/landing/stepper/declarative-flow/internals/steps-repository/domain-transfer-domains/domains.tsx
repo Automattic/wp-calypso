@@ -32,6 +32,23 @@ const defaultState: DomainTransferData = {
 	},
 };
 
+const getFormattedTotalPrice = ( state: DomainTransferData ) => {
+	if ( Object.keys( state ).length > 0 ) {
+		const currencyCode = Object.values( state )[ 0 ].currencyCode;
+		const totalPrice = Object.values( state ).reduce( ( total, currentDomain ) => {
+			if ( currentDomain.saleCost ) {
+				return total + currentDomain.saleCost;
+			}
+
+			return total + currentDomain.rawPrice;
+		}, 0 );
+
+		return formatCurrency( totalPrice, currencyCode ?? 'USD', { stripZeros: true } );
+	}
+
+	return 0;
+};
+
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
 
@@ -92,14 +109,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		}
 	};
 
-	const totalPrice = Object.values( domainsState ).reduce( ( total, currentDomain ) => {
-		if ( currentDomain.saleCost ) {
-			return total + currentDomain.saleCost;
-		}
-
-		return total + currentDomain.rawPrice;
-	}, 0 );
-
 	const handleChange = useCallback(
 		(
 			id: string,
@@ -131,7 +140,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			valid: false,
 			rawPrice: 0,
 			saleCost: undefined,
-			currencyCode: 'USD',
+			currencyCode: undefined,
 		};
 		setDomainsTransferData( newDomainsState );
 	}
@@ -170,7 +179,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			) }
 			<div className="bulk-domain-transfer__total-price">
 				<div>{ __( 'Total' ) }</div>
-				<div>{ formatCurrency( totalPrice, 'USD', { stripZeros: true } ) }</div>
+				<div>{ getFormattedTotalPrice( domainsState ) }</div>
 			</div>
 			<div className="bulk-domain-transfer__cta-container">
 				<Button

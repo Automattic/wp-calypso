@@ -33,6 +33,6 @@ export type DomainTransferData = Record<
 		valid: boolean;
 		rawPrice: number;
 		saleCost?: number;
-		currencyCode: string;
+		currencyCode?: string;
 	}
 >;
