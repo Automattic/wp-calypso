@@ -491,6 +491,11 @@ export const getProductSlugFromProductType = ( type: string ): string | undefine
 
 export const availableNotificationDurations = [
 	{
+		time: 1,
+		label: translate( 'After 1 minute' ),
+		paid_tier: true,
+	},
+	{
 		time: 5,
 		label: translate( 'After 5 minutes' ),
 	},
