@@ -34,6 +34,7 @@ import {
 	domainManagementDnsAddRecord,
 	domainManagementDnsEditRecord,
 	domainAddNew,
+	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
@@ -55,7 +56,6 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -256,8 +256,13 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		`/purchases/billing-history/${ slug }`,
 		`/purchases/payment-methods/${ slug }`,
 		`/purchases/subscriptions/${ slug }`,
-		// Any page under `/domsina/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
+		// Any page under `/domains/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
 		'/domains/manage/all/',
+		// Add A Domain > Search for a domain
+		domainAddNew( slug ),
+		// Add A Domain > Use a domain I own
+		// Start Transfer button
+		domainUseMyDomain( slug ),
 	];
 
 	if ( some( startsWithPaths, ( startsWithPath ) => startsWith( path, startsWithPath ) ) ) {
@@ -340,12 +345,6 @@ function onSelectedSiteAvailable( context ) {
 			context.params
 		)
 	) {
-		if ( ! primaryDomain ) {
-			const currentRoute = getCurrentRoute( state );
-			return page.redirect(
-				domainManagementEdit( selectedSite.slug, selectedSite.domain, currentRoute )
-			);
-		}
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
 		return false;
 	}
