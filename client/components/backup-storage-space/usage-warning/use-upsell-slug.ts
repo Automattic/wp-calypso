@@ -111,7 +111,7 @@ export default ( siteId: number ) => {
 	);
 
 	return useMemo(
-		() => ( { upsellSlug, originalPrice, isPriceFetching: isFetching, currencyCode } ),
+		() => ( { upsellSlug, originalPrice, isPriceFetching: isFetching as boolean, currencyCode } ),
 		[ upsellSlug, currencyCode, originalPrice, isFetching ]
 	);
 };
