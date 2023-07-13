@@ -1,10 +1,6 @@
-import { Button } from '@automattic/components';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { WAPUU_ERROR_MESSAGE } from '..';
-import { useOdysseusAssistantContext } from '../context';
-import { useOddyseusSendMessage } from '../query';
-import { Message } from '../types';
+import { SendMessageButton } from './send-message-button';
 
 import './style.scss';
 
@@ -16,55 +12,12 @@ import './style.scss';
 // - etc.
 const CustomALink = ( { href, children }: { href: string; children: React.ReactNode } ) => {
 	const isPrompt = href.startsWith( 'prompt://' );
-	const { addMessage, setIsLoading } = useOdysseusAssistantContext();
-	const { mutateAsync: sendOdysseusMessage } = useOddyseusSendMessage();
 	const dispatch = useDispatch();
 
 	const unencodedHref = decodeURIComponent( href.replace( 'prompt://', '' ) );
 
 	if ( isPrompt ) {
-		return (
-			<Button
-				borderless
-				className="odysseus-chatbox-message-action-button"
-				primary
-				onClick={ async ( event: { preventDefault: () => void } ) => {
-					try {
-						event.preventDefault();
-						dispatch(
-							recordTracksEvent( 'calypso_odysseus_chat_message_action_click', {
-								bot_name_slug: 'wapuu',
-								action: 'prompt',
-								href: unencodedHref,
-							} )
-						);
-						const message = {
-							content: unencodedHref,
-							role: 'user',
-							type: 'message',
-						} as Message;
-
-						addMessage( {
-							content: message.content,
-							role: 'user',
-							type: 'message',
-						} );
-						setIsLoading( true );
-						await sendOdysseusMessage( { message } );
-					} catch ( e ) {
-						addMessage( {
-							content: WAPUU_ERROR_MESSAGE,
-							role: 'bot',
-							type: 'error',
-						} );
-					} finally {
-						setIsLoading( false );
-					}
-				} }
-			>
-				{ children }
-			</Button>
-		);
+		return <SendMessageButton unencodedHref={ unencodedHref }>{ children }</SendMessageButton>;
 	}
 	return (
 		<a
