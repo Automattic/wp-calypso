@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useIssueAndAssignLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
@@ -36,7 +36,6 @@ export default function IssueMultipleLicensesForm( {
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ selectedBundle, setSelectedBundle ] = useState< string | null >( null );
 
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 
@@ -111,13 +110,6 @@ export default function IssueMultipleLicensesForm( {
 
 	const onSelectProduct = useCallback(
 		( product: APIProductFamilyProduct ) => {
-			// A bundle cannot be combined with other products.
-			if ( isJetpackBundle( product.slug ) ) {
-				dispatch( clearSelectedProductSlugs() );
-				setSelectedBundle( product.slug );
-				return;
-			}
-
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select_multiple', {
 					product: product.slug,
@@ -131,27 +123,29 @@ export default function IssueMultipleLicensesForm( {
 		[ dispatch, selectedProductSlugs ]
 	);
 
-	useEffect( () => {
-		if ( ! selectedBundle ) {
-			return;
-		}
+	const onSelectBundle = useCallback(
+		( product: APIProductFamilyProduct ) => {
+			// People aren't allowed to select anything else after selecting a bundle;
+			// thus, after someone selects a bundle, we immediately clear any existing
+			// selections and issue a license for the bundle
+			// (as well as do any necessary page redirects on the front end).
 
-		// People aren't allowed to select anything else after selecting a bundle;
-		// thus, after someone selects a bundle, we immediately issue a license
-		// for it (including any necessary page redirects on the front end).
+			dispatch( clearSelectedProductSlugs() );
 
-		if ( hasPurchasedProductsWithoutBundle ) {
-			// If this person already had an existing standalone product license
-			// before purchasing this bundle, let's make a note of it
-			dispatch(
-				recordTracksEvent(
-					'calypso_partner_portal_issue_bundle_license_with_existing_standalone_products'
-				)
-			);
-		}
+			if ( hasPurchasedProductsWithoutBundle ) {
+				// If this person already had an existing standalone product license
+				// before purchasing this bundle, let's make a note of it
+				dispatch(
+					recordTracksEvent(
+						'calypso_partner_portal_issue_bundle_license_with_existing_standalone_products'
+					)
+				);
+			}
 
-		issueAndAssignLicenses( [ selectedBundle ] );
-	}, [ dispatch, hasPurchasedProductsWithoutBundle, issueAndAssignLicenses, selectedBundle ] );
+			issueAndAssignLicenses( [ product.slug ] );
+		},
+		[ dispatch, hasPurchasedProductsWithoutBundle, issueAndAssignLicenses ]
+	);
 
 	if ( isLoadingProducts ) {
 		return (
@@ -163,7 +157,6 @@ export default function IssueMultipleLicensesForm( {
 
 	const selectedSiteDomain = selectedSite?.domain;
 	const selectedLicenseCount = selectedProductSlugs.length;
-	const itemsToIssue = selectedBundle ? [ selectedBundle ] : selectedProductSlugs;
 
 	return (
 		<div className="issue-multiple-licenses-form">
@@ -189,7 +182,7 @@ export default function IssueMultipleLicensesForm( {
 							primary
 							className="issue-multiple-licenses-form__select-license"
 							busy={ ! isIssueAndAssignLicensesReady }
-							onClick={ () => issueAndAssignLicenses( itemsToIssue ) }
+							onClick={ () => issueAndAssignLicenses( selectedProductSlugs ) }
 						>
 							{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 								context: 'button label',
@@ -230,7 +223,7 @@ export default function IssueMultipleLicensesForm( {
 							<LicenseBundleCard
 								key={ productOption.slug }
 								product={ productOption }
-								onSelectProduct={ onSelectProduct }
+								onSelectProduct={ onSelectBundle }
 								tabIndex={ 100 + ( products?.length || 0 ) + i }
 							/>
 						) ) }
