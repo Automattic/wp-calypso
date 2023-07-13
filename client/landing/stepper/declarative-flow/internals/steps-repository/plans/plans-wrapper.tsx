@@ -23,7 +23,6 @@ import { localize, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
-import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
@@ -33,7 +32,7 @@ import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { OnboardSelect } from '@automattic/data-stores';
+import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
 import type { PlansIntent } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import './style.scss';
 
