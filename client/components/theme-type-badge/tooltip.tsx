@@ -10,6 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import {
 	canUseTheme,
 	getThemeType,
@@ -71,6 +72,7 @@ const ThemeTypeBadgeTooltip = ( {
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
+	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
 	const isPurchased = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return false;
@@ -121,9 +123,15 @@ const ThemeTypeBadgeTooltip = ( {
 
 	let message;
 	if ( isLockedStyleVariation ) {
-		message = translate(
-			'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-		);
+		if ( globalStylesInPersonalPlan ) {
+			message = translate(
+				'Unlock this style, and tons of other features, by upgrading to a Personal plan.'
+			);
+		} else {
+			message = translate(
+				'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
+			);
+		}
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );

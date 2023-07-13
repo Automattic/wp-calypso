@@ -1,6 +1,7 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -10,6 +11,7 @@ import ReaderImportButton from 'calypso/blocks/reader-import-button';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import { AddSitesButton } from 'calypso/landing/subscriptions/components/add-sites-button';
 import {
 	SubscriptionsPortal,
 	SubscriptionManagerContextProvider,
@@ -18,7 +20,7 @@ import { SubscriptionsEllipsisMenu } from 'calypso/landing/subscriptions/compone
 import { downloadCloud, uploadCloud } from 'calypso/reader/icons';
 import { useDispatch } from 'calypso/state';
 import { markFollowsAsStale } from 'calypso/state/reader/follows/actions';
-import SiteSubscriptions from './site-subscriptions';
+import ReaderSiteSubscriptions from './reader-site-subscriptions';
 import './style.scss';
 
 const useMarkFollowsAsStaleOnUnmount = () => {
@@ -44,12 +46,14 @@ const SiteSubscriptionsManager = () => {
 			<Main className="site-subscriptions-manager">
 				<DocumentHead title={ translate( 'Manage subscriptions' ) } />
 
-				<HStack className="site-subscriptions-manager__header-h-stack" justifyContent="center">
+				<HStack className="site-subscriptions-manager__header-h-stack">
 					<FormattedHeader
 						headerText={ translate( 'Manage subscribed sites' ) }
 						subHeaderText={ translate( 'Manage your newsletter and blog subscriptions.' ) }
 						align="left"
 					/>
+					<Spacer />
+					<AddSitesButton />
 					<SubscriptionsEllipsisMenu
 						toggleTitle={ translate( 'More' ) }
 						popoverClassName="site-subscriptions-manager__import-export-popover"
@@ -66,7 +70,7 @@ const SiteSubscriptionsManager = () => {
 					</SubscriptionsEllipsisMenu>
 				</HStack>
 
-				<SiteSubscriptions />
+				<ReaderSiteSubscriptions />
 			</Main>
 		</SubscriptionManagerContextProvider>
 	);

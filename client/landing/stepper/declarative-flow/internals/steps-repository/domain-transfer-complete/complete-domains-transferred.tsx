@@ -28,7 +28,10 @@ export const CompleteDomainsTransferred = ( {
 						? newlyTransferredDomains.map( ( { meta, domain }, key ) => {
 								return (
 									<li className="domain-complete-list-item" key={ key }>
-										<h2>{ meta }</h2>
+										<div>
+											<h2>{ meta }</h2>
+											<p>{ __( 'Auto-renew enabled' ) }</p>
+										</div>
 										<a
 											href={ `/domains/manage/all/${ meta }/transfer/in/${ domain }` }
 											className="components-button is-secondary"
@@ -44,7 +47,11 @@ export const CompleteDomainsTransferred = ( {
 						: [ ...Array( placeHolderCount ) ].map( ( data, key ) => {
 								return (
 									<li className="domain-complete-list-item" key={ key }>
-										<p className="loading-placeholder"></p>
+										<div>
+											<p className="loading-placeholder"></p>
+											<p className="loading-placeholder"></p>
+										</div>
+
 										<button className="components-button loading-placeholder"></button>
 									</li>
 								);

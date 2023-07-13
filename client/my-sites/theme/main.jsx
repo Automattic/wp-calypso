@@ -701,7 +701,8 @@ class ThemeSheet extends Component {
 			! this.props.isExternallyManagedTheme &&
 			! this.props.isThemePurchased &&
 			! this.props.isBundledSoftwareSet &&
-			! this.props.isPremium;
+			! this.props.isPremium &&
+			this.props.shouldLimitGlobalStyles;
 
 		return (
 			styleVariations.length > 0 && (
@@ -1131,11 +1132,14 @@ class ThemeSheet extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
+		const { globalStylesOnPersonalExperiment } = this.props;
+		const plan = globalStylesOnPersonalExperiment ? 'personal' : 'premium';
+
 		const params = new URLSearchParams();
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		page( `/checkout/${ this.props.siteSlug || '' }/premium?${ params.toString() }` );
+		page( `/checkout/${ this.props.siteSlug || '' }/${ plan }?${ params.toString() }` );
 	};
 
 	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
@@ -1454,8 +1458,16 @@ class ThemeSheet extends Component {
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
-		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
-		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+		const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
+			useSiteGlobalStylesStatus( siteId );
+
+		return (
+			<Wrapped
+				{ ...props }
+				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+				globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
+			/>
+		);
 	},
 	'withSiteGlobalStylesStatus'
 );

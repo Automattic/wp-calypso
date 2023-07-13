@@ -110,6 +110,13 @@ const Settings = ( {
 		if ( ! isSecuredWithUs( domain ) ) {
 			return null;
 		}
+		if (
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.type === domainTypes.TRANSFER ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC
+		) {
+			return null;
+		}
 
 		return (
 			<Accordion
@@ -128,7 +135,10 @@ const Settings = ( {
 	};
 
 	const renderStatusSection = () => {
-		if ( ! ( domain && selectedSite?.options?.is_domain_only ) ) {
+		if (
+			! ( domain && selectedSite?.options?.is_domain_only ) ||
+			domain.type === domainTypes.TRANSFER
+		) {
 			return null;
 		}
 
@@ -273,7 +283,8 @@ const Settings = ( {
 		if (
 			! domain ||
 			domain.type === domainTypes.SITE_REDIRECT ||
-			domain.transferStatus === transferStatus.PENDING_ASYNC
+			domain.transferStatus === transferStatus.PENDING_ASYNC ||
+			! domain.canManageDnsRecords
 		) {
 			return null;
 		}

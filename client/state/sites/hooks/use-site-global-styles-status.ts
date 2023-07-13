@@ -91,7 +91,7 @@ export function useSiteGlobalStylesStatus(
 		queryFn: () => getExperimentAssignment( 'calypso_global_styles_personal' ),
 		placeholderData: null,
 		refetchOnWindowFocus: false,
-		enabled: typeof window !== undefined && siteId === null && isLoggedIn,
+		enabled: typeof window !== 'undefined' && siteId === null && isLoggedIn,
 	} );
 	const currentUserHasGlobalStylesInPersonalPlan =
 		globalStylesOnPersonalExperimentAssignment === 'treatment';

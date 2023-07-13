@@ -1,16 +1,15 @@
-import { CircularProgressBar } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
-import { Launchpad, Task } from '@automattic/launchpad';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ShareSiteModal from '../../components/share-site-modal';
+import CustomerHomeLaunchpad from '.';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Task } from '@automattic/launchpad';
 
 import './style.scss';
 
@@ -21,7 +20,6 @@ interface LaunchpadKeepBuildingProps {
 }
 
 const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Element => {
-	const translate = useTranslate();
 	const siteSlug = site?.slug || null;
 
 	const {
@@ -41,24 +39,6 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 			context: 'customer-home',
 		} );
 	};
-
-	recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
-		checklist_slug: checklistSlug,
-		tasks: `,${ checklist?.map( ( task: Task ) => task.id ).join( ',' ) },`,
-		is_completed: tasklistCompleted,
-		number_of_steps: numberOfSteps,
-		number_of_completed_steps: completedSteps,
-		context: 'customer-home',
-	} );
-
-	recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
-		checklist_slug: checklistSlug,
-		tasks: `,${ checklist?.map( ( task: Task ) => task.id ).join( ',' ) },`,
-		is_completed: completedSteps === numberOfSteps,
-		number_of_steps: numberOfSteps,
-		number_of_completed_steps: completedSteps,
-		context: 'customer-home',
-	} );
 
 	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
 
@@ -141,26 +121,10 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 
 	return (
 		<>
-			<div className="launchpad-keep-building">
-				<div className="launchpad-keep-building__header">
-					<h2 className="launchpad-keep-building__title">
-						{ translate( 'Next steps for your site' ) }
-					</h2>
-					<div className="launchpad-keep-building__progress-bar-container">
-						<CircularProgressBar
-							size={ 40 }
-							enableDesktopScaling
-							numberOfSteps={ numberOfSteps }
-							currentStep={ completedSteps }
-						/>
-					</div>
-				</div>
-				<Launchpad
-					siteSlug={ siteSlug }
-					checklistSlug={ checklistSlug }
-					taskFilter={ sortedTasksWithActions }
-				/>
-			</div>
+			<CustomerHomeLaunchpad
+				checklistSlug={ checklistSlug }
+				taskFilter={ sortedTasksWithActions }
+			></CustomerHomeLaunchpad>
 			{ shareSiteModalIsOpen && (
 				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
 			) }

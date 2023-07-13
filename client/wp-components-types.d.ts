@@ -8,6 +8,7 @@ declare module '@wordpress/components' {
 	export const __experimentalDivider: React.ComponentType< Props >;
 	export const __experimentalHStack: React.ComponentType< Props >;
 	export const __experimentalVStack: React.ComponentType< Props >;
+	export const __experimentalSpacer: React.ComponentType< Props >;
 	export const __experimentalItem: React.ComponentType< Props >;
 	export const __experimentalItemGroup: React.ComponentType< Props >;
 	export const __experimentalNavigatorBackButton: React.ComponentType< Props >;

@@ -559,7 +559,13 @@ export const domainTransferAuthCodes: Reducer<
 		// we don't want to store empty objects
 		if ( action.bulkDomainsData && Object.keys( action.bulkDomainsData ).length > 0 ) {
 			return Object.entries( action.bulkDomainsData ).reduce( ( authCodes, [ key, value ] ) => {
-				authCodes[ key ] = { auth: value.auth, valid: value.valid };
+				authCodes[ key ] = {
+					auth: value.auth,
+					valid: value.valid,
+					rawPrice: value.rawPrice,
+					saleCost: value.saleCost,
+					currencyCode: value.currencyCode,
+				};
 				return authCodes;
 			}, {} as DomainTransferAuthCodes );
 		}

@@ -1,4 +1,4 @@
-import { Badge } from '..';
+import Badge from '..';
 
 const BadgeExample = () => this.props.exampleCode;
 

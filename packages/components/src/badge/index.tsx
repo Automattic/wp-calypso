@@ -3,16 +3,17 @@ import type { ReactNode } from 'react';
 
 import './style.scss';
 
+export type BadgeType =
+	| 'warning'
+	| 'warning-clear'
+	| 'success'
+	| 'info'
+	| 'info-blue'
+	| 'info-green'
+	| 'info-purple'
+	| 'error';
 type BadgeProps = {
-	type:
-		| 'warning'
-		| 'warning-clear'
-		| 'success'
-		| 'info'
-		| 'info-blue'
-		| 'info-green'
-		| 'info-purple'
-		| 'error';
+	type?: BadgeType;
 	className?: string;
 	children?: ReactNode;
 };
