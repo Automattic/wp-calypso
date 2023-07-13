@@ -85,10 +85,14 @@
 
 			.site-icon {
 				max-width: 40px;
-			}
 
-			.site-icon.is-blank .gridicon {
-				fill: var(--color-neutral-100);
+				&.is-blank {
+					background-color: transparent;
+
+					.gridicon {
+						fill: var(--color-neutral-100);
+					}
+				}
 			}
 
 			.title-column {
@@ -130,10 +134,6 @@
 						text-decoration: underline;
 					}
 				}
-			}
-
-			.site-icon.is-blank {
-				background-color: transparent;
 			}
 		}
 
