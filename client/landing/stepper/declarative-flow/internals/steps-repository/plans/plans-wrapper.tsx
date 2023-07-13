@@ -23,6 +23,7 @@ import { localize, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
@@ -75,7 +76,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	}, [] );
 	const { flowName, hostingFlow } = props;
 
-	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem, setDomain, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const { __ } = useI18n();
@@ -109,7 +110,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		props.onSubmit?.( selectedPlan );
 	};
 
-	const getDomainName = () => {
+	const getPaidDomainName = () => {
 		return domainCartItem?.meta;
 	};
 
@@ -124,6 +125,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				<LoadingEllipsis className="active" />
 			</div>
 		);
+	};
+	const replacePaidDomainWithFreeDomain = ( freeDomainSuggestion: DomainSuggestion ) => {
+		setDomain( freeDomainSuggestion );
+		setDomainCartItem( null );
 	};
 
 	const plansFeaturesList = () => {
@@ -142,13 +147,14 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ onSelectPlan }
-					domainName={ getDomainName() }
+					paidDomainName={ getPaidDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
 					flowName={ flowName }
 					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ plansIntent }
+					replacePaidDomainWithFreeDomain={ replacePaidDomainWithFreeDomain }
 				/>
 			</div>
 		);
