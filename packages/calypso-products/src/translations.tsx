@@ -894,11 +894,11 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Image generator' ),
 	];
 	const aiAssistantIncludesInfo = [
-		translate( 'Prompt based content generation' ),
-		translate( 'Generate text, tables, and lists' ),
-		translate( 'Adaptive Tone Adjustment' ),
-		translate( 'Superior spelling and Grammar Correction' ),
-		translate( 'Title & summary generation' ),
+		translate( 'Prompt-based content generation' ),
+		translate( 'Text, table, and list generation' ),
+		translate( 'Adaptive tone adjustment' ),
+		translate( 'Superior spelling and grammar correction' ),
+		translate( 'Title and summary generation' ),
 	];
 
 	return {
@@ -1011,10 +1011,10 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	];
 
 	const aiAssistantBenefits = [
-		translate( 'Harness AI Power Directly from Your Editor' ),
-		translate( 'Unlock High‑Quality, Tailored Content at Your Command' ),
-		translate( 'Maintain Professional Standards with Ease' ),
-		translate( 'Best in-class support from WordPress experts' ),
+		translate( 'Harness AI power directly from your editor' ),
+		translate( 'Unlock high-quality, tailored content at your command' ),
+		translate( 'Maintain professional standards with ease' ),
+		translate( 'Best-in-class support from WordPress experts' ),
 	];
 
 	return {
