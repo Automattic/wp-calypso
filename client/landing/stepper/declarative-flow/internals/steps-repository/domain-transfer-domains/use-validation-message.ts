@@ -90,12 +90,18 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			valid: false,
 			loading: false,
 			message: __( 'This domain is unlocked but the authorization code seems incorrect.' ),
+			rawPrice: validationResult.raw_price,
+			saleCost: validationResult.sale_cost,
+			currencyCode: validationResult.currency_code,
 		};
 	} else if ( availabilityNotice?.message ) {
 		return {
 			valid: false,
 			loading: false,
 			message: availabilityNotice?.message,
+			rawPrice: validationResult?.raw_price,
+			saleCost: validationResult?.sale_cost,
+			currencyCode: validationResult?.currency_code,
 			refetch,
 		};
 	}
