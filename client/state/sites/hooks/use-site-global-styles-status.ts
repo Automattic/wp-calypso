@@ -37,31 +37,56 @@ const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
 	globalStylesInPersonalPlan: false,
 };
 
+function shouldRunGlobalStylesOnPersonalExperiment(
+	siteId: number | null,
+	isLoggedIn: boolean
+): boolean {
+	// Do not run it on SSR contexts.
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+
+	// Always run it if a site has been selected.
+	if ( siteId !== null ) {
+		return true;
+	}
+
+	// Do not run it on the logged-out theme showcase.
+	if ( ! isLoggedIn && window.location.pathname.startsWith( '/theme' ) ) {
+		return false;
+	}
+
+	// Run it by default. Ideally, we should not run it if the user is logged out, but
+	// we cannot rely on the `isUserLoggedIn` selector for users who just signed up
+	// (see p1689256995094619-slack-C04DZ8M0GHW). So, we assume that this hook is not
+	// used in any logged-out context apart from the theme showcase.
+	return true;
+}
+
 const getGlobalStylesInfoForSite = (
 	siteId: number | null,
 	isLoggedIn: boolean
 ): Promise< GlobalStylesStatus > => {
-	if ( siteId === null ) {
-		return new Promise( ( resolve ) => {
-			if ( isLoggedIn ) {
-				loadExperimentAssignment( 'calypso_global_styles_personal' ).then(
-					( experimentAssignment ) =>
-						resolve( {
-							shouldLimitGlobalStyles: true,
-							globalStylesInUse: false,
-							globalStylesInPersonalPlan: experimentAssignment.variationName === 'treatment',
-						} )
-				);
-				return;
-			}
-
+	if ( ! shouldRunGlobalStylesOnPersonalExperiment( siteId, isLoggedIn ) ) {
+		return new Promise( ( resolve ) =>
 			resolve( {
 				shouldLimitGlobalStyles: true,
 				globalStylesInUse: false,
 				globalStylesInPersonalPlan: false,
-			} );
-			return;
-		} );
+			} )
+		);
+	}
+
+	if ( siteId === null ) {
+		return new Promise( ( resolve ) =>
+			loadExperimentAssignment( 'calypso_global_styles_personal' ).then( ( experimentAssignment ) =>
+				resolve( {
+					shouldLimitGlobalStyles: true,
+					globalStylesInUse: false,
+					globalStylesInPersonalPlan: experimentAssignment.variationName === 'treatment',
+				} )
+			)
+		);
 	}
 
 	return wpcom.req
