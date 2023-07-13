@@ -1,6 +1,7 @@
 import { FormInputValidation } from '@automattic/components';
 import { TextControl } from '@wordpress/components';
 import { check, Icon } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
@@ -21,30 +22,24 @@ const AddSitesForm = ( { recordTracksEvent, onClose, onAddFinished }: AddSitesFo
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [ isUploading, setIsUploading ] = useState( false );
 
-	const handleInvalidUrl = useCallback(
-		( showError: boolean ) => {
-			setIsValidUrl( false );
-			if ( showError ) {
-				setInputFieldError( translate( 'Please enter a valid URL' ) );
+	const validateInputValue = useCallback(
+		( url: string, showError = false ) => {
+			if ( url.length === 0 ) {
+				setIsValidUrl( false );
+				setInputFieldError( null );
+				return;
+			}
+			if ( ! CAPTURE_URL_RGX.test( url ) ) {
+				setIsValidUrl( false );
+				if ( showError ) {
+					setInputFieldError( translate( 'Please enter a valid URL' ) );
+				}
+			} else {
+				setInputFieldError( null );
+				setIsValidUrl( true );
 			}
 		},
 		[ translate ]
-	);
-
-	const handleValidUrl = useCallback( () => {
-		setIsValidUrl( true );
-		setInputFieldError( null );
-	}, [] );
-
-	const validateInputValue = useCallback(
-		( url: string, showError = false ) => {
-			if ( url.length === 0 || ! CAPTURE_URL_RGX.test( url ) ) {
-				handleInvalidUrl( showError );
-			} else {
-				handleValidUrl();
-			}
-		},
-		[ translate, handleInvalidUrl, handleValidUrl ]
 	);
 
 	const onTextFieldChange = useCallback(
@@ -62,7 +57,10 @@ const AddSitesForm = ( { recordTracksEvent, onClose, onAddFinished }: AddSitesFo
 			</label>
 
 			<TextControl
-				className={ inputFieldError ? 'is-error' : '' }
+				className={ classnames(
+					'subscriptions-add-sites__form-input',
+					inputFieldError ? 'is-error' : ''
+				) }
 				disabled={ isUploading }
 				placeholder={ translate( 'https://www.site.com' ) }
 				value={ inputValue }
