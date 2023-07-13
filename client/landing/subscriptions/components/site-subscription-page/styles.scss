@@ -37,6 +37,10 @@
 		flex-direction: column;
 		align-items: center;
 
+		.site-icon.is-blank {
+			background-color: transparent;
+		}
+
 		.formatted-header {
 			&__title {
 				font-weight: 600;

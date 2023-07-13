@@ -49,10 +49,6 @@ body {
 		height: auto;
 	}
 
-	.gridicon {
-		fill: currentColor;
-	}
-
 	@extend %search-component-subscriptions-style;
 
 	hr.subscriptions__separator {

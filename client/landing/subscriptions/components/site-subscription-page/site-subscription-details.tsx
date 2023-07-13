@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
@@ -193,7 +194,13 @@ const SiteSubscriptionDetails = ( {
 	return (
 		<>
 			<header className="site-subscription-page__header site-subscription-page__centered-content">
-				<SiteIcon iconUrl={ siteIcon } size={ 116 } alt={ name } />
+				<SiteIcon
+					iconUrl={ siteIcon }
+					/* eslint-disable wpcalypso/jsx-gridicon-size */
+					defaultIcon={ <Gridicon key="globe-icon" icon="globe" size={ 116 } /> }
+					size={ 116 }
+					alt={ name }
+				/>
 				<FormattedHeader brandFont headerText={ name } subHeaderText={ subHeaderText } />
 			</header>
 

@@ -201,7 +201,13 @@ const SiteRow = ( {
 						recordSiteIconClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 					} }
 				>
-					<SiteIcon iconUrl={ site_icon } size={ 40 } alt={ name } />
+					<SiteIcon
+						/* eslint-disable wpcalypso/jsx-gridicon-size */
+						defaultIcon={ <Gridicon key="globe-icon" icon="globe" size={ 40 } /> }
+						iconUrl={ site_icon }
+						size={ 40 }
+						alt={ name }
+					/>
 				</Link>
 				<span className="title-column">
 					<Link

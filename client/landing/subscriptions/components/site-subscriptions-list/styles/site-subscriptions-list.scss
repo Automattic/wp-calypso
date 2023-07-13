@@ -98,6 +98,14 @@
 				fill: $studio-gray-50;
 			}
 		}
+
+		.gridicons-globe {
+			fill: var(--color-neutral-100);
+		}
+
+		.site-icon.is-blank {
+			background-color: transparent;
+		}
 	}
 
 	@media (max-width: $break-xlarge) {

@@ -129,6 +129,10 @@
 					}
 				}
 			}
+
+			.site-icon.is-blank {
+				background-color: transparent;
+			}
 		}
 
 		@media (max-width: $break-small) {
