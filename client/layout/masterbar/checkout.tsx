@@ -6,7 +6,9 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import AkismetLogo from 'calypso/components/akismet-logo';
+import ChatButton from 'calypso/components/chat-button';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import MaterialIcon from 'calypso/components/material-icon';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { DefaultMasterbarContact } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled/default-contact';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
@@ -14,6 +16,8 @@ import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import Item from './item';
 import Masterbar from './masterbar';
+import type { HelpCenterSelect } from '@automattic/data-stores';
+const HELP_CENTER_STORE = HelpCenter.register();
 
 interface Props {
 	title: string;
@@ -80,6 +84,7 @@ const CheckoutMasterbar = ( {
 	};
 
 	const showCloseButton = isLeavingAllowed && checkoutType === 'wpcom';
+	const icon = 'chat_bubble';
 
 	return (
 		<Masterbar
@@ -108,7 +113,31 @@ const CheckoutMasterbar = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
+
 			{ loadHelpCenterIcon && <DefaultMasterbarContact /> }
+
+			<div className="masterbar__item-help-icons">
+				{ loadHelpCenterIcon && (
+					<Item
+						onClick={ () => setShowHelpCenter( ! isShowingHelpCenter ) }
+						className={ classnames( 'masterbar__item-help', {
+							'is-active': isShowingHelpCenter,
+						} ) }
+						icon={ <HelpIcon /> }
+					>
+						{ translate( 'Help' ) }
+					</Item>
+				) }
+				<ChatButton
+					chatIntent="PRESALES"
+					initialMessage="Test"
+					siteUrl="test"
+					className={ classnames( 'masterbar__item masterbar__item-help' ) }
+				>
+					{ icon && <MaterialIcon icon={ icon } /> }
+				</ChatButton>
+			</div>
+
 			<CheckoutModal
 				title={ modalTitleText }
 				copy={ modalBodyText }
