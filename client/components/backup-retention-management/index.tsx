@@ -108,12 +108,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 	);
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
-	const { upsellSlug, originalPrice, isPriceFetching, currencyCode } = useUpsellInfo(
-		siteId,
-		estimatedCurrentSiteSize,
-		retentionSelected,
-		storageLimitBytes
-	);
+	const { upsellSlug, originalPrice, isPriceFetching, currencyCode } = useUpsellInfo( siteId );
 
 	const upgradePrice = (
 		<UpsellPrice
