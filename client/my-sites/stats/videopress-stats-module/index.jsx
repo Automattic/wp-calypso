@@ -166,7 +166,7 @@ class VideoPressStatsModule extends Component {
 		const isNewVideoPage = config.isEnabled( 'stats/new-video-summary' );
 
 		const csvData = [
-			[ 'post_id', 'title', 'impressions', 'watch_time', 'retention_rate', 'views' ],
+			[ 'post_id', 'title', 'views', 'impressions', 'watch_time', 'retention_rate' ],
 			...completeVideoStats,
 		];
 		const downloadCSV = (
