@@ -192,7 +192,11 @@ export class SiteDomains extends Component {
 					/>
 				) }
 
-				<div className="domain-management-list__items">
+				<div
+					className={ classnames( 'domain-management-list__items', {
+						[ 'has-no-wpcom-domain' ]: ! wpcomDomain,
+					} ) }
+				>
 					<div className="domain-management-list__filter">
 						{ this.renderDomainTableFilterButton() }
 					</div>
@@ -211,7 +215,6 @@ export class SiteDomains extends Component {
 						hasLoadedPurchases={ ! isFetchingPurchases }
 					/>
 				</div>
-
 				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }

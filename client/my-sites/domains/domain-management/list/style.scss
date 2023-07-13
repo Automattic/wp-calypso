@@ -85,6 +85,10 @@
 	box-shadow: none;
 }
 
+.domain-management-list__items.has-no-wpcom-domain {
+	margin-top: 24px;
+}
+
 .domain-management-list__items + .empty-domains-list-card {
 	margin-top: 16px;
 	margin-bottom: 0;
