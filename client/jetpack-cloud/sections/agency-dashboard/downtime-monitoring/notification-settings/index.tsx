@@ -477,7 +477,7 @@ export default function NotificationSettings( {
 					recordEvent={ recordEvent }
 					selectedDuration={ selectedDuration }
 					selectDuration={ selectDuration }
-					showPaidDuration={ ! isBulkUpdate && isDowntimeMonitoringPaidTierEnabled }
+					showPaidDuration={ isDowntimeMonitoringPaidTierEnabled }
 					disablePaidDuration={ ! hasDowntimeMonitoringPaidLicense }
 				/>
 				{ isSMSNotificationEnabled && (
