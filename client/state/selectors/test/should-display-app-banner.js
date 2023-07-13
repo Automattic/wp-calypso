@@ -192,4 +192,31 @@ describe( 'shouldDisplayAppBanner()', () => {
 		const output = shouldDisplayAppBanner( state );
 		expect( output ).toBe( false );
 	} );
+
+	test( 'should return false if launchpad_screen is "full"', () => {
+		const state = {
+			ui: {
+				appBannerVisibility: true,
+				layoutFocus: {
+					current: 'not-sidebar',
+				},
+				section: {
+					name: 'gutenberg-editor',
+				},
+				selectedSiteId: 123,
+			},
+			preferences: {
+				remoteValues: [ 'something' ],
+			},
+			sites: {
+				items: {
+					123: {
+						options: { launchpad_screen: 'full' },
+					},
+				},
+			},
+		};
+		const output = shouldDisplayAppBanner( state );
+		expect( output ).toBe( false );
+	} );
 } );
