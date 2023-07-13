@@ -128,7 +128,7 @@ export function useAssignLicensesToSite(
 		},
 	} );
 
-	const isLoading = assignLicense.isLoading;
+	const isReady = assignLicense.isIdle;
 	const assignLicensesToSite = useCallback(
 		async ( licenseKeys: string[] ) => {
 			// Only proceed if the mutation is in a fresh/ready state
@@ -200,7 +200,7 @@ export function useAssignLicensesToSite(
 		[ dispatch, selectedSite, assignLicense, products, fromDashboard ]
 	);
 
-	return [ assignLicensesToSite, isLoading ];
+	return [ assignLicensesToSite, isReady ];
 }
 
 export { default as useIssueAndAssignLicenses } from './use-issue-and-assign-licenses';

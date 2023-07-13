@@ -59,7 +59,7 @@ export default function AssignLicenseForm( {
 	const onSelectSite = ( site: any ) => {
 		setSelectedSite( site );
 	};
-	const [ assignLicensesToSite, isLoading ] = useAssignLicensesToSite( selectedSite );
+	const [ assignLicensesToSite, isReady ] = useAssignLicensesToSite( selectedSite );
 
 	const licenseKeysArray = getLicenseKeysFromUrl();
 
@@ -84,7 +84,7 @@ export default function AssignLicenseForm( {
 						className="assign-license-form__site-card-radio"
 						label={ site.domain }
 						name="site_select"
-						disabled={ isLoading }
+						disabled={ ! isReady }
 						checked={ selectedSite?.ID === site.ID }
 					/>
 				</Card>
@@ -144,7 +144,7 @@ export default function AssignLicenseForm( {
 					<Button
 						borderless
 						onClick={ onClickAssignLater }
-						disabled={ isLoading }
+						disabled={ ! isReady }
 						className="assign-license-form__assign-later"
 					>
 						{ translate( 'Assign later' ) }
@@ -153,7 +153,7 @@ export default function AssignLicenseForm( {
 						primary
 						className="assign-license-form__assign-now"
 						disabled={ selectedSite?.ID === 0 }
-						busy={ isLoading }
+						busy={ ! isReady }
 						onClick={ onClickAssignLicenses }
 					>
 						{ translate( 'Assign %(numLicenses)d License', 'Assign %(numLicenses)d Licenses', {
