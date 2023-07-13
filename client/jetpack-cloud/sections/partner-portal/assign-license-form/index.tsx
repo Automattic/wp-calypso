@@ -34,6 +34,17 @@ function paginate( arr: Array< any >, currentPage: number ): Array< any > {
 	);
 }
 
+const getLicenseKeysFromUrl = () => {
+	const products = getQueryArg( window.location.href, 'products' );
+
+	if ( ! products ) {
+		const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
+		return [ licenseKey ];
+	}
+
+	return ( products as string ).split( ',' );
+};
+
 export default function AssignLicenseForm( {
 	sites,
 	currentPage,
@@ -45,13 +56,12 @@ export default function AssignLicenseForm( {
 } ) {
 	const translate = useTranslate();
 	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
-	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
-	const products = getQueryArg( window.location.href, 'products' ) as string;
-	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
 	const onSelectSite = ( site: any ) => {
 		setSelectedSite( site );
 	};
 	const [ assignLicensesToSite, isLoading ] = useAssignLicensesToSite( selectedSite );
+
+	const licenseKeysArray = getLicenseKeysFromUrl();
 
 	// We need to filter out multisites if the licenses are not assignable to a multisite.
 	let results = areLicenseKeysAssignableToMultisite( licenseKeysArray )
