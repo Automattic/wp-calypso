@@ -37,6 +37,10 @@
 		border-radius: 4px;
 		list-style-type: none;
 
+		&__profile {
+			margin-top: -5px;
+		}
+
 		.reader-avatar {
 			margin: 0;
 			color: $studio-gray-50;
@@ -46,11 +50,16 @@
 			}
 		}
 
+		&__profile-data {
+			height: 40px;
+		}
+
 		&__dismiss-button {
 			color: $studio-gray-60;
 			padding: 0;
 			min-height: unset;
 			height: fit-content;
+			line-height: rem(20px);
 		}
 
 		&__site-title {
@@ -58,9 +67,9 @@
 			font-style: normal;
 			font-weight: 600;
 			font-size: $font-body;
-			line-height: rem(22px);
+			line-height: rem(20px);
 			color: $studio-gray-100;
-			margin-right: 36px; // width of dismiss button
+			width: 182px;
 			@extend %ellipsis;
 		}
 
@@ -69,7 +78,7 @@
 			font-style: normal;
 			font-weight: 400;
 			font-size: $font-body-extra-small;
-			line-height: rem(18px);
+			line-height: rem(13px);
 			color: $studio-gray-40;
 			@extend %ellipsis;
 		}
@@ -95,6 +104,7 @@
 			padding-right: 24px;
 		}
 
+		&__profile-avatar.is-placeholder,
 		&__dismiss-button.is-placeholder,
 		&__site-title.is-placeholder,
 		&__site-url.is-placeholder,
@@ -102,6 +112,34 @@
 		&__subscribe-button.is-placeholder {
 			@include placeholder();
 		}
+
+		&__profile-avatar.is-placeholder {
+			height: 40px;
+			width: 40px;
+		}
+
+		&__site-url.is-placeholder {
+			width: 85px;
+		}
+
+		&__site-description.is-placeholder {
+			height: auto;
+			margin: 18px 0 7px 0;
+		}
+
+		&__subscribe-button.is-placeholder {
+			width: 68px;
+			height: 40px;
+		}
+
+		&__dismiss-button.is-placeholder {
+			width: 36px;
+			height: 20px;
+		}
+	}
+
+	.recommended-site.is-placeholder p:last-of-type {
+		margin: 0 0 15px 0;
 	}
 
 	.dot-pager {
