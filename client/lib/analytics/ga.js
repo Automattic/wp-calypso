@@ -21,7 +21,7 @@ function initialize() {
 			...getGoogleAnalyticsDefaultConfig(),
 		};
 
-		// We enable custom cross-domain linking only for Akismet checkouts
+		// We enable custom cross-domain linking for Akismet and Jetpack checkouts + Jetpack Cloud
 		if ( isAkismetCheckout() || isJetpackCloud() || isJetpackCheckout() ) {
 			const queryParams = new URLSearchParams( location.search );
 			const gl = queryParams.get( '_gl' );
