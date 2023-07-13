@@ -21,7 +21,7 @@ export type DomainTransferAuthCodes = Record<
 		valid: boolean;
 		rawPrice: number;
 		saleCost?: number;
-		currencyCode: string;
+		currencyCode: string | undefined;
 	}
 >;
 
