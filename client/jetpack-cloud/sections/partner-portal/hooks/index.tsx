@@ -127,10 +127,17 @@ export function useAssignLicensesToSite(
 			dispatch( errorNotice( error.message, { isPersistent: true } ) );
 		},
 	} );
+
 	const isLoading = assignLicense.isLoading;
-	const selectedSiteId = selectedSite?.ID as number;
 	const assignLicensesToSite = useCallback(
 		async ( licenseKeys: string[] ) => {
+			// We need a valid site ID in order to assign licenses to a site;
+			// otherwise, we assign nothing
+			const selectedSiteId = selectedSite?.ID;
+			if ( ! selectedSiteId ) {
+				return;
+			}
+
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
 					products: licenseKeys.join( ',' ),
@@ -180,7 +187,7 @@ export function useAssignLicensesToSite(
 
 			return page.redirect( partnerPortalBasePath( '/licenses' ) );
 		},
-		[ dispatch, selectedSite, assignLicense, products, fromDashboard, selectedSiteId ]
+		[ dispatch, selectedSite, assignLicense, products, fromDashboard ]
 	);
 
 	return [ assignLicensesToSite, isLoading ];
