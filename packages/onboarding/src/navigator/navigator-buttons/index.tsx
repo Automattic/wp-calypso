@@ -55,7 +55,6 @@ export const NavigationButtonAsItem = ( { className, ...props }: Props ) => {
 		<NavigatorButton
 			as={ GenericButton }
 			className={ classnames( 'navigator-button', className ) }
-			// wrapperClassName="navigator-button__wrapper"
 			{ ...props }
 		/>
 	);
