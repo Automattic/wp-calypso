@@ -87,7 +87,7 @@ export function useSiteGlobalStylesStatus(
 	} );
 
 	const { data: globalStylesOnPersonalExperimentAssignment } = useQuery( {
-		queryKey: [ 'globalStylesOnPersonalExperimentAssignment', siteId ],
+		queryKey: [ 'globalStylesOnPersonalExperimentAssignment', siteId, isLoggedIn ],
 		queryFn: () => getExperimentAssignment( 'calypso_global_styles_personal' ),
 		placeholderData: null,
 		refetchOnWindowFocus: false,
