@@ -135,6 +135,10 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		const newDomainsState = { ...domainsState };
 		delete newDomainsState[ key ];
 		setDomainsTransferData( newDomainsState );
+
+		const newDomainPrices = { ...domainPrices };
+		delete newDomainPrices[ key ];
+		setDomainPrices( newDomainPrices );
 	}
 
 	return (
