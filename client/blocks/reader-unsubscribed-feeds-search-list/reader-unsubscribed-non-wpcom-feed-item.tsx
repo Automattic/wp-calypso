@@ -13,27 +13,36 @@ type ReaderUnsubscribedNonWpcomFeedItemProps = {
 };
 
 const ReaderUnsubscribedNonWpcomFeedItem = ( {
-	feed: { subscribe_URL: subscribeUrl, feed_ID: feedId },
+	feed: { feed_ID: feedId, meta, subscribe_URL: subscribeUrl },
 }: ReaderUnsubscribedNonWpcomFeedItemProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const {
-		mutate: subscribe,
-		isLoading: subscribing,
-		isSuccess: subscribed,
-	} = SubscriptionManager.useSiteSubscribeMutation();
+	const subscribe = SubscriptionManager.useSiteSubscribeMutation();
 	const filteredDisplayUrl = filterURLForDisplay( subscribeUrl );
-	const feedUrl = Reader.isValidId( feedId ) ? getFeedUrl( feedId ) : subscribeUrl;
+
+	const feedQuery = Reader.useReadFeedQuery( feedId );
+	if ( feedQuery.isLoading ) {
+		return null;
+	}
+
+	const feedUrl =
+		meta.links?.feed ||
+		feedQuery.data?.feed_URL ||
+		feedQuery.data?.meta.links.self ||
+		( Reader.isValidId( feedId ) && getFeedUrl( feedId ) );
 
 	return (
 		<ReaderUnsubscribedFeedItem
 			defaultIcon={ rss }
+			description={ feedQuery.data?.description }
 			displayUrl={ subscribeUrl }
-			feedUrl={ feedUrl }
-			isSubscribing={ subscribing }
-			title={ filterURLForDisplay( subscribeUrl ) }
+			feedUrl={ feedUrl || subscribeUrl }
+			hasSubscribed={ feedQuery.data?.is_following || subscribe.isSuccess }
+			iconUrl={ feedQuery.data?.image }
+			isSubscribing={ subscribe.isLoading }
 			onSubscribeClick={ () => {
-				subscribe( {
+				subscribe.mutate( {
+					feed_id: feedId,
 					url: subscribeUrl,
 					onSuccess: () => {
 						dispatch(
@@ -52,7 +61,10 @@ const ReaderUnsubscribedNonWpcomFeedItem = ( {
 					},
 				} );
 			} }
-			hasSubscribed={ subscribed }
+			subscribeDisabled={
+				feedQuery.data?.is_following || subscribe.isLoading || subscribe.isSuccess
+			}
+			title={ feedQuery.data?.name ?? filterURLForDisplay( subscribeUrl ) }
 		/>
 	);
 };

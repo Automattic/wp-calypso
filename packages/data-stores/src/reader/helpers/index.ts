@@ -123,5 +123,5 @@ const isErrorResponse = (
 };
 
 export { callApi, applyCallbackToPages, getSubkey, getSubscriptionMutationParams, isErrorResponse };
-export { default as buildCacheKey } from './cache-key';
+export { default as buildQueryKey } from './query-key';
 export { default as isValidId } from './validators';

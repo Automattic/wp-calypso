@@ -65,6 +65,7 @@ const useReadFeedSearchQuery = ( {
 		{
 			enabled: Boolean( query ),
 			getNextPageParam: ( lastPage ) => lastPage?.next_page,
+			refetchOnWindowFocus: false,
 		}
 	);
 };

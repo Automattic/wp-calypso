@@ -1,9 +1,9 @@
-import buildCacheKey from '../helpers/cache-key';
+import buildQueryKey from '../helpers/query-key';
 import useIsLoggedIn from './use-is-logged-in';
 
-const useCacheKey = ( key: string[] ) => {
+const useCacheKey = ( keyPrefix: string[] ) => {
 	const { id, isLoggedIn } = useIsLoggedIn();
-	return buildCacheKey( key, isLoggedIn, id );
+	return buildQueryKey( keyPrefix, isLoggedIn, id );
 };
 
 export default useCacheKey;

@@ -33,8 +33,8 @@ const ReaderUnsubscribedFeedItem = ( {
 	onDisplayUrlClick,
 	onSubscribeClick,
 	onTitleClick,
-	subscribeDisabled = false,
 	hasSubscribed = false,
+	subscribeDisabled = false,
 	title,
 }: ReaderUnsubscribedFeedItemProps ) => {
 	const translate = useTranslate();

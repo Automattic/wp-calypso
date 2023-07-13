@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { buildCacheKey, callApi, getSubscriptionMutationParams, isValidId } from '../helpers';
+import { buildQueryKey, callApi, getSubscriptionMutationParams, isValidId } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
 import { SiteSubscriptionsPages } from '../types';
 import type { SiteSubscriptionDetails } from '../types';
 
 type SubscribeParams = {
 	blog_id?: number | string;
+	feed_id?: number | string;
 	url?: string;
 	doNotInvalidateSiteSubscriptions?: boolean;
 	onSuccess?: () => void;
@@ -28,18 +29,18 @@ const buildSubscriptionDetailsCacheKey = (
 	isLoggedIn: boolean,
 	userId?: number
 ) => {
-	return buildCacheKey( [ 'read', 'site-subscription-details', blogId ], isLoggedIn, userId );
+	return buildQueryKey( [ 'read', 'site-subscription-details', blogId ], isLoggedIn, userId );
 };
 
 const useSiteSubscribeMutation = () => {
 	const { isLoggedIn, id: userId } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-	const siteSubscriptionsCacheKey = buildCacheKey(
+	const siteSubscriptionsCacheKey = buildQueryKey(
 		[ 'read', 'site-subscriptions' ],
 		isLoggedIn,
 		userId
 	);
-	const subscriptionsCountCacheKey = buildCacheKey(
+	const subscriptionsCountCacheKey = buildQueryKey(
 		[ 'read', 'subscriptions-count' ],
 		isLoggedIn,
 		userId
@@ -154,8 +155,12 @@ const useSiteSubscribeMutation = () => {
 				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blog_id ) ] );
 			}
 
+			if ( isValidId( params.feed_id ) ) {
+				const feedCacheKey = [ 'read', 'feeds', Number( params.feed_id ) ];
+				queryClient.invalidateQueries( feedCacheKey );
+			}
+
 			queryClient.invalidateQueries( subscriptionsCountCacheKey );
-			queryClient.invalidateQueries( [ 'read', 'feed', 'search' ] );
 		},
 		onSuccess: ( data, params ) => {
 			params.onSuccess?.();
