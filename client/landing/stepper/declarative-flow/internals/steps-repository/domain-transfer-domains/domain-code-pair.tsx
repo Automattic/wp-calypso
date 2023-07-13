@@ -166,17 +166,18 @@ export function DomainCodePair( {
 							htmlFor={ id + '-auth' }
 						>
 							{ __( 'Authorization code' ) }
+							<InfoPopover
+								className={ classnames( {
+									'is-first-row': showLabels,
+								} ) }
+								position="right"
+							>
+								{ __(
+									'Unique code proving ownership, needed for secure domain transfer between registrars.'
+								) }
+							</InfoPopover>
 						</FormLabel>
-						<InfoPopover
-							className={ classnames( {
-								'is-first-row': showLabels,
-							} ) }
-							position="right"
-						>
-							{ __(
-								'Unique code proving ownership, needed for secure domain transfer between registrars.'
-							) }
-						</InfoPopover>
+
 						<FormInput
 							id={ id + '-auth' }
 							disabled={ valid || hasDuplicates }

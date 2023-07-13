@@ -149,6 +149,14 @@
 
 	.domains__domain-key {
 		flex: 3;
+
+		.info-popover {
+			margin-left: 5px;
+			padding: 2px;
+		}
+		.info-popover:focus {
+			outline: 1px solid var(--studio-blue-50);
+		}
 	}
 
 	.domains__domain-price {
