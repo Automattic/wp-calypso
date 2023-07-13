@@ -19,11 +19,11 @@ const AnimatedFullscreen = ( { className, children, isFullscreen, enabled }: Pro
 			return;
 		}
 
-		const { offsetLeft, offsetTop, offsetHeight } = positionerRef.current;
+		const { offsetLeft, offsetTop, offsetHeight, offsetWidth } = positionerRef.current;
+		targetRef.current.style.height = `${ offsetHeight }px`;
+		targetRef.current.style.width = `${ offsetWidth }px`;
 		targetRef.current.style.left = `${ offsetLeft }px`;
-		targetRef.current.style.right = `${ offsetLeft }px`;
 		targetRef.current.style.top = `${ offsetTop }px`;
-		targetRef.current.style.bottom = `${ offsetTop + offsetHeight }px`;
 	}, [ isFullscreen, width, height, enabled ] );
 
 	if ( ! enabled ) {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.4
+
+- Fix case where checking for localstorage throws an error.
+
 ## 0.0.3
 
 - Shortened timeout
