@@ -148,10 +148,7 @@ function ButtonContents( {
 	}
 	if ( formStatus === FormStatus.READY && isPurchaseFree ) {
 		const defaultText = (
-			<CreditCardPayButtonWrapper>
-				<StyledMaterialIcon icon="credit_card" />
-				{ __( 'Complete Checkout' ) }
-			</CreditCardPayButtonWrapper>
+			<CreditCardPayButtonWrapper>{ __( 'Complete Checkout' ) }</CreditCardPayButtonWrapper>
 		);
 		/* translators: %s is the total to be paid in localized currency */
 		return <>{ activeButtonText || defaultText }</>;
