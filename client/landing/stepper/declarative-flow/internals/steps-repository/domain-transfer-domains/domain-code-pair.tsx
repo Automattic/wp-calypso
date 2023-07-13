@@ -98,26 +98,24 @@ export function DomainCodePair( {
 				</div>
 				<div className="domains__domain-key">
 					<FormFieldset>
-						<div>
-							<FormLabel
-								className={ classnames( {
-									'is-first-row': showLabels,
-								} ) }
-								htmlFor={ id + '-auth' }
-							>
-								{ __( 'Authorization code' ) }
-							</FormLabel>
-							<InfoPopover
-								className={ classnames( {
-									'is-first-row': showLabels,
-								} ) }
-								position="right"
-							>
-								{ __(
-									'Unique code proving ownership, needed for secure domain transfer between registrars.'
-								) }
-							</InfoPopover>
-						</div>
+						<FormLabel
+							className={ classnames( {
+								'is-first-row': showLabels,
+							} ) }
+							htmlFor={ id + '-auth' }
+						>
+							{ __( 'Authorization code' ) }
+						</FormLabel>
+						<InfoPopover
+							className={ classnames( {
+								'is-first-row': showLabels,
+							} ) }
+							position="right"
+						>
+							{ __(
+								'Unique code proving ownership, needed for secure domain transfer between registrars.'
+							) }
+						</InfoPopover>
 						<FormInput
 							id={ id + '-auth' }
 							disabled={ valid || hasDuplicates }

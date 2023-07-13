@@ -178,8 +178,14 @@
 
 		.info-popover.is-first-row {
 			display: inline-block;
-			margin-bottom: 11px;
 
+			@media (max-width: $break-mobile ) {
+				margin-left: 3px;
+			}
+
+			svg {
+				margin-bottom: -2px;
+			}
 		}
 
 		.form-fieldset {
