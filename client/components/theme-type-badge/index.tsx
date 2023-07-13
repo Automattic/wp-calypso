@@ -83,8 +83,8 @@ const ThemeTypeBadge = ( {
 			<PremiumBadge
 				{ ...badgeContentProps }
 				className={ classNames( badgeContentProps.className, 'is-marketplace' ) }
-				labelText={ translate( 'Paid', {
-					context: 'Refers to paid service, such as paid theme',
+				labelText={ translate( 'Marketplace', {
+					context: 'This theme is developed and supported by a third-party creator',
 					textOnly: true,
 				} ) }
 			/>
