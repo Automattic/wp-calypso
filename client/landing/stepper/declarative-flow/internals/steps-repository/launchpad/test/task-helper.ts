@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { getEnhancedTasks } from '../task-helper';
 import { buildTask } from './lib/fixtures';
 
@@ -15,7 +16,7 @@ describe( 'Task Helpers', () => {
 				];
 				expect(
 					// eslint-disable-next-line @typescript-eslint/no-empty-function
-					getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {} )
+					getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {}, false, PLAN_PREMIUM )
 				).toEqual( fakeTasks );
 			} );
 		} );
@@ -30,6 +31,8 @@ describe( 'Task Helpers', () => {
 						null,
 						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						() => {},
+						false,
+						PLAN_PREMIUM,
 						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						() => {},
 						'newsletter',
@@ -49,6 +52,8 @@ describe( 'Task Helpers', () => {
 						null,
 						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						() => {},
+						false,
+						PLAN_PREMIUM,
 						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						() => {},
 						'start-writing'
