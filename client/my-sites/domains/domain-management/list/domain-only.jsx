@@ -1,9 +1,10 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+// import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import { canCurrentUserCreateSiteFromDomainOnly } from 'calypso/lib/domains';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
@@ -13,7 +14,7 @@ import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, getSiteDomain } from 'calypso/state/sites/selectors';
 
 import './domain-only.scss';
 
@@ -24,16 +25,23 @@ const DomainOnly = ( {
 	recordTracks,
 	siteId,
 	slug,
+	domain,
 	translate,
 } ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 	if ( ! primaryDomain ) {
-		return (
-			<div>
-				<QuerySiteDomains siteId={ siteId } />
-				<EmptyContent className="domain-only-site__placeholder" illustration={ Illustration } />
-			</div>
-		);
+		return page.redirect( domainManagementEdit( slug, domain, currentRoute ) );
+
+		// Redirect to manage domain page as the placeholder needs fixing.
+		// Context: p1689208002859209-slack-C05CT832K2T
+		//
+		// return (
+		// 	<div>
+		// 		<QuerySiteDomains siteId={ siteId } />
+		// 		<EmptyContent className="domain-only-site__placeholder" illustration={ Illustration } />
+		// 	</div>
+		// );
 	}
 
 	const hasEmailWithUs = hasGSuiteWithUs( primaryDomain ) || hasTitanMailWithUs( primaryDomain );
@@ -97,6 +105,7 @@ export default connect(
 		return {
 			currentRoute: getCurrentRoute( state ),
 			slug: getSiteSlug( state, ownProps.siteId ),
+			domain: getSiteDomain( state, ownProps.siteId ),
 			primaryDomain: getPrimaryDomainBySiteId( state, ownProps.siteId ),
 		};
 	},
