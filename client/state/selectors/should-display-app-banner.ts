@@ -5,6 +5,7 @@ import {
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 	ALLOWED_SECTIONS,
 	GUTENBERG,
+	HOME,
 	isDismissed,
 	getCurrentSection,
 } from 'calypso/blocks/app-banner/utils';
@@ -57,7 +58,7 @@ export const shouldDisplayAppBanner = ( state: AppState ): boolean | undefined =
 	// Do not show the banner if the user will be redirected to launchpad
 	const currentSiteId = getSelectedSiteId( state );
 	const launchpadScreen = getSiteOption( state, currentSiteId, 'launchpad_screen' );
-	if ( launchpadScreen === 'full' ) {
+	if ( launchpadScreen === 'full' && HOME === currentSection ) {
 		return false;
 	}
 
