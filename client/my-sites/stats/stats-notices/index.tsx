@@ -44,6 +44,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	// TODO: Display error messages on the notice.
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [ error, setError ] = useState< Error | null >( null );
+	const [ hasLoadedPurchases, setHasLoadedPurchases ] = useState< boolean | undefined >(
+		! isOdysseyStats
+	);
 
 	// Update site purchases in Redux store for Odyssey Stats.
 	useEffect( () => {
@@ -58,15 +61,20 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 						purchases: formatPurchasesToSiteProducts( purchases ),
 					} );
 				} )
-				.catch( ( error: Error ) => setError( error ) );
+				.catch( ( error: Error ) => setError( error ) )
+				.finally( () => setHasLoadedPurchases( true ) );
 		}
 	}, [ isOdysseyStats, reduxDispatch, siteId ] );
 
+	const showPaidStatsNotice =
+		config.isEnabled( 'stats/paid-stats' ) &&
+		isSiteJetpackNotAtomic &&
+		! hasPaidStats &&
+		hasLoadedPurchases;
+
 	return (
 		<>
-			{ config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic && ! hasPaidStats && (
-				<DoYouLoveJetpackStatsNotice siteId={ siteId } />
-			) }
+			{ showPaidStatsNotice && <DoYouLoveJetpackStatsNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <OptOutNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <FeedbackNotice siteId={ siteId } /> }
 		</>
