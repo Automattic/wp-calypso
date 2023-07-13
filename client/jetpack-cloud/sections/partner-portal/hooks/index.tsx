@@ -116,10 +116,9 @@ export function useCursorPagination(
 	return [ page, showPagination, onNavigate ];
 }
 
-export function useAssignLicenses(
-	licenseKeys: Array< string >,
+export function useAssignLicensesToSite(
 	selectedSite: { ID: number; domain: string } | null
-): [ () => void, boolean ] {
+): [ ( licenseKeys: string[] ) => void, boolean ] {
 	const products = useProductsQuery();
 	const dispatch = useDispatch();
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
@@ -130,66 +129,61 @@ export function useAssignLicenses(
 	} );
 	const isLoading = assignLicense.isLoading;
 	const selectedSiteId = selectedSite?.ID as number;
-	const assignMultipleLicenses = useCallback( async () => {
-		dispatch(
-			recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
-				products: licenseKeys.join( ',' ),
-				selected_site: selectedSiteId,
-			} )
-		);
+	const assignLicensesToSite = useCallback(
+		async ( licenseKeys: string[] ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
+					products: licenseKeys.join( ',' ),
+					selected_site: selectedSiteId,
+				} )
+			);
 
-		const keysWithProductNames = licenseKeys
-			.map( ( key ) => {
-				const productSlug = getProductSlugFromLicenseKey( key );
-				const selectedProduct = products?.data?.find?.( ( p ) => p.slug === productSlug );
+			const keysWithProductNames = licenseKeys
+				.map( ( key ) => {
+					const productSlug = getProductSlugFromLicenseKey( key );
+					const selectedProduct = products?.data?.find?.( ( p ) => p.slug === productSlug );
 
-				return {
+					return {
+						key,
+						product: selectedProduct,
+					};
+				} )
+				// If we can't determine which product a license is meant for, filter it out
+				.filter( ( { product } ) => Boolean( product ) )
+				// We only need the product's title/display name
+				.map( ( { key, product } ) => ( {
 					key,
-					product: selectedProduct,
-				};
-			} )
-			// If we can't determine which product a license is meant for, filter it out
-			.filter( ( { product } ) => Boolean( product ) )
-			// We only need the product's title/display name
-			.map( ( { key, product } ) => ( {
-				key,
-				name: getProductTitle( ( product as APIProductFamilyProduct ).name ),
-			} ) );
+					name: getProductTitle( ( product as APIProductFamilyProduct ).name ),
+				} ) );
 
-		// Purposely catch any error responses and let them through,
-		// so we can pass all their information along as ProductInfo objects
-		// (not currently available via PromiseSettledResult<T>)
-		const apiRequests = keysWithProductNames.map( ( { key, name } ) =>
-			assignLicense
-				.mutateAsync( { licenseKey: key, selectedSite: selectedSiteId } )
-				.then( () => ( { key, name, status: 'fulfilled' } as ProductInfo ) )
-				.catch( () => ( { key, name, status: 'rejected' } as ProductInfo ) )
-		);
+			// Purposely catch any error responses and let them through,
+			// so we can pass all their information along as ProductInfo objects
+			// (not currently available via PromiseSettledResult<T>)
+			const apiRequests = keysWithProductNames.map( ( { key, name } ) =>
+				assignLicense
+					.mutateAsync( { licenseKey: key, selectedSite: selectedSiteId } )
+					.then( () => ( { key, name, status: 'fulfilled' } as ProductInfo ) )
+					.catch( () => ( { key, name, status: 'rejected' } as ProductInfo ) )
+			);
 
-		const assignLicenseStatus = {
-			selectedSite: selectedSite?.domain || '',
-			selectedProducts: await Promise.all( apiRequests ),
-		};
+			const assignLicenseStatus = {
+				selectedSite: selectedSite?.domain || '',
+				selectedProducts: await Promise.all( apiRequests ),
+			};
 
-		dispatch( resetSite() );
-		dispatch( setPurchasedLicense( assignLicenseStatus ) );
+			dispatch( resetSite() );
+			dispatch( setPurchasedLicense( assignLicenseStatus ) );
 
-		if ( fromDashboard ) {
-			return page.redirect( '/dashboard' );
-		}
+			if ( fromDashboard ) {
+				return page.redirect( '/dashboard' );
+			}
 
-		return page.redirect( partnerPortalBasePath( '/licenses' ) );
-	}, [
-		dispatch,
-		licenseKeys,
-		selectedSite,
-		assignLicense,
-		products,
-		fromDashboard,
-		selectedSiteId,
-	] );
+			return page.redirect( partnerPortalBasePath( '/licenses' ) );
+		},
+		[ dispatch, selectedSite, assignLicense, products, fromDashboard, selectedSiteId ]
+	);
 
-	return [ assignMultipleLicenses, isLoading ];
+	return [ assignLicensesToSite, isLoading ];
 }
 
 export { default as useIssueAndAssignLicenses } from './use-issue-and-assign-licenses';
