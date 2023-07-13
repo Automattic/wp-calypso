@@ -55,7 +55,6 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -340,12 +339,6 @@ function onSelectedSiteAvailable( context ) {
 			context.params
 		)
 	) {
-		if ( ! primaryDomain ) {
-			const currentRoute = getCurrentRoute( state );
-			return page.redirect(
-				domainManagementEdit( selectedSite.slug, selectedSite.domain, currentRoute )
-			);
-		}
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
 		return false;
 	}
