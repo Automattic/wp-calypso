@@ -78,7 +78,7 @@ class DomainToPlanNudge extends Component {
 		return (
 			<div className="domain-to-plan-nudge">
 				<QuerySitePlans siteId={ siteId } />
-				{ true && this.renderDomainToPlanNudge() }
+				{ this.isSiteEligible() && this.renderDomainToPlanNudge() }
 			</div>
 		);
 	}
