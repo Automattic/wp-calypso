@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import '../style.scss';
 
@@ -23,6 +24,8 @@ const getSiteFromItem = ( item ) => {
 };
 
 const ReaderPopularSitesSidebar = ( { items, followSource } ) => {
+	const translate = useTranslate();
+
 	const sites = items
 		.map( ( item ) => getSiteFromItem( item ) )
 		.filter( ( site ) => site !== null );
@@ -45,7 +48,12 @@ const ReaderPopularSitesSidebar = ( { items, followSource } ) => {
 		return null;
 	}
 
-	return <div className="reader-tag-sidebar-recommended-sites">{ popularSitesLinks }</div>;
+	return (
+		<div className="reader-tag-sidebar-recommended-sites">
+			<h2>{ translate( 'Popular Sites' ) }</h2>
+			{ popularSitesLinks }
+		</div>
+	);
 };
 
 export default ReaderPopularSitesSidebar;

@@ -16,6 +16,7 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import UpdateNotice from 'calypso/reader/update-notice';
@@ -47,6 +48,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
+import ReaderPopularSitesSidebar from './reader-popular-sites-sidebar';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 900;
@@ -492,9 +494,17 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			const sidebarContent = this.props.streamSidebar;
+			let sidebarContent = this.props.streamSidebar;
 
-			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
+			// Add the sidebar on the search page when there's no search input. Sidebar is handled by `<SiteResults>' when there's a search query.
+			// TODO: use `streamSidebar` prop in search stream component, rather than using conditionals here.
+			if ( streamType === 'custom_recs_sites_with_images' ) {
+				sidebarContent = (
+					<ReaderPopularSitesSidebar items={ items } followSource={ READER_SEARCH_POPULAR_SITES } />
+				);
+			}
+
+			// Exclude the sidebar layout when there's a search query, since it's handled by `<SiteResults>`.
 			if ( ! sidebarContent || streamType === 'search' ) {
 				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {

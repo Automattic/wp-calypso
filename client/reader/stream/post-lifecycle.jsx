@@ -53,9 +53,7 @@ class PostLifecycle extends Component {
 				</div>
 			);
 		} else if ( ! isDiscoverStream && streamKey.indexOf( 'rec' ) > -1 ) {
-			return (
-				<EmptySearchRecommendedPost post={ post } postKey={ postKey } streamKey={ streamKey } />
-			);
+			return <EmptySearchRecommendedPost post={ post } site={ postKey } />;
 		} else if ( postKey.isGap ) {
 			return (
 				<ListGap

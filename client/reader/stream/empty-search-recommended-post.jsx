@@ -1,23 +1,32 @@
-import { useDispatch } from 'react-redux';
+import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
 import { recordTrackForPost, recordAction } from 'calypso/reader/stats';
-import { showSelectedPost } from 'calypso/reader/utils';
-import Post from './post';
 
-export default function EmptySearchRecommendedPost( { post, postKey, streamKey } ) {
-	const dispatch = useDispatch();
-
+export default function EmptySearchRecommendedPost( { post } ) {
 	function handlePostClick() {
 		recordTrackForPost( 'calypso_reader_recommended_post_clicked', post, {
 			recommendation_source: 'empty-search',
 		} );
 		recordAction( 'search_page_rec_post_click' );
-		dispatch(
-			showSelectedPost( {
-				postKey: postKey,
-				streamKey,
-			} )
-		);
 	}
 
-	return <Post post={ post } handleClick={ handlePostClick } />;
+	function handleSiteClick() {
+		recordTrackForPost( 'calypso_reader_recommended_site_clicked', post, {
+			recommendation_source: 'empty-search',
+		} );
+		recordAction( 'search_page_rec_site_click' );
+	}
+
+	const site = { title: post && post.site_name };
+
+	/* eslint-disable  wpcalypso/jsx-classname-namespace */
+	return (
+		<div className="search-stream__recommendation-list-item" key={ post && post.global_ID }>
+			<RelatedPostCard
+				post={ post }
+				site={ site }
+				onSiteClick={ handleSiteClick }
+				onPostClick={ handlePostClick }
+			/>
+		</div>
+	);
 }
