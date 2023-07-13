@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import Notice from 'calypso/components/notice';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -14,15 +14,12 @@ export default function SiteAddLicenseNotification() {
 
 	const licenseInfo = useSelector( getPurchasedLicense );
 
-	const dismissBanner = useCallback( () => {
-		dispatch( setPurchasedLicense() );
-	}, [ dispatch ] );
-
+	// Dismiss the banner once this component unloads
 	useEffect( () => {
 		return () => {
-			dismissBanner();
+			dispatch( setPurchasedLicense() );
 		};
-	}, [ dismissBanner ] );
+	}, [ dispatch ] );
 
 	if ( ! licenseInfo || ! licenseInfo.selectedSite ) {
 		return null;
