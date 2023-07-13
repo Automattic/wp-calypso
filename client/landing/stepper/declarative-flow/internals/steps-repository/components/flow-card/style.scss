@@ -1,7 +1,7 @@
 @import "@automattic/typography/styles/variables";
 
 .flow-question {
-	margin-bottom: 18px;
+	margin: 0 10px 18px;
 	// !important needed here to override component styles
 	border-radius: 4px !important;
 
