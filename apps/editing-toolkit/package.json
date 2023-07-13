@@ -128,6 +128,8 @@
 		"@wordpress/eslint-plugin": "^13.7.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^2.6.0",
 		"babel-jest": "^29.6.1",
+		"eslint-filtered-fix": "^0.3.0",
+		"eslint-nibble": "^8.1.0",
 		"eslint-plugin-inclusive-language": "^2.2.0",
 		"eslint-plugin-json-es": "^1.5.7",
 		"eslint-plugin-md": "^1.0.19",
