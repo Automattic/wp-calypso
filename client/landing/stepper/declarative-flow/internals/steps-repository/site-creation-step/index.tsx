@@ -14,6 +14,7 @@ import {
 	isWooExpressFlow,
 	isNewHostedSiteCreationFlow,
 	isBlogOnboardingFlow,
+	isOnboardingMediaFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -79,7 +80,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	let theme: string;
-	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
+	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) || isOnboardingMediaFlow( flow ) ) {
 		theme = DEFAULT_WP_SITE_THEME;
 	} else if ( isWooExpressFlow( flow ) ) {
 		theme = DEFAULT_WOOEXPRESS_FLOW;
