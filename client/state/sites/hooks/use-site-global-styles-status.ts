@@ -69,6 +69,32 @@ const getGlobalStylesInfoForSite = (
 		.catch( () => DEFAULT_GLOBAL_STYLES_INFO );
 };
 
+function shouldRunGlobalStylesOnPersonalExperiment(
+	siteId: number | null,
+	isLoggedIn: boolean
+): boolean {
+	// Do not run it on SSR contexts.
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+
+	// Always run it if a site has been selected.
+	if ( siteId !== null ) {
+		return true;
+	}
+
+	// Do not run it on the logged-out theme showcase.
+	if ( ! isLoggedIn && window.location.pathname.startsWith( '/themes' ) ) {
+		return false;
+	}
+
+	// Run it by default. Ideally, we should not run it if the user is logged out, but
+	// we cannot rely on the `isUserLoggedIn` selector for users who just signed up
+	// (see p1689256995094619-slack-C04DZ8M0GHW). So, we assume that this hook is not
+	// used in any logged-out context apart from the theme showcase.
+	return true;
+}
+
 export function useSiteGlobalStylesStatus(
 	siteIdOrSlug: number | string | null = null
 ): GlobalStylesStatus {
@@ -91,7 +117,7 @@ export function useSiteGlobalStylesStatus(
 		queryFn: () => getExperimentAssignment( 'calypso_global_styles_personal' ),
 		placeholderData: null,
 		refetchOnWindowFocus: false,
-		enabled: typeof window !== 'undefined' && siteId === null && isLoggedIn,
+		enabled: shouldRunGlobalStylesOnPersonalExperiment( siteId, isLoggedIn ),
 	} );
 	const currentUserHasGlobalStylesInPersonalPlan =
 		globalStylesOnPersonalExperimentAssignment === 'treatment';
