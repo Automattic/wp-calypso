@@ -60,7 +60,6 @@ export {
 	SiteSubscriptionsSortBy,
 } from './constants';
 export { isErrorResponse, isValidId } from './helpers';
-export { useCacheKey } from './hooks';
 export { UnsubscribedFeedsSearchProvider, useUnsubscribedFeedsSearch } from './contexts';
 export { useReadFeedSearchQuery, useReadFeedSiteQuery, useReadFeedQuery } from './queries';
 
