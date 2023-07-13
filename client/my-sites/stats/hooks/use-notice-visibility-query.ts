@@ -8,6 +8,7 @@ export type Notices = {
 	traffic_page_highlights_module_settings: boolean;
 	traffic_page_settings: boolean;
 	do_you_love_jetpack_stats: boolean;
+	free_plan_purchase_success: boolean;
 };
 
 // These notices are mutually exclusive, so if one is active, the other should be hidden.
