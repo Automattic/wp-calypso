@@ -36,7 +36,7 @@ const getFormattedTotalPrice = ( state: DomainTransferData ) => {
 	if ( Object.keys( state ).length > 0 ) {
 		const currencyCode = Object.values( state )[ 0 ].currencyCode;
 		const totalPrice = Object.values( state ).reduce( ( total, currentDomain ) => {
-			if ( currentDomain.saleCost ) {
+			if ( currentDomain.saleCost || currentDomain.saleCost === 0 ) {
 				return total + currentDomain.saleCost;
 			}
 
