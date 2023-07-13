@@ -19,10 +19,10 @@ export default {
 const Template = ( args ) => <ActivationModal { ...args } />;
 
 const baseProps = {
-	acceptActivationMOdal: action( 'acceptActivationMOdal' ),
+	acceptActivationModal: action( 'acceptActivationModal' ),
 	activateTheme: action( 'activateTheme' ),
 	hasActivated: false,
-	dismissActivationMOdal: action( 'dismissActivationMOdal' ),
+	dismissActivationModal: action( 'dismissActivationModal' ),
 	isActivating: false,
 	isCurrentTheme: false,
 	isVisible: true,
