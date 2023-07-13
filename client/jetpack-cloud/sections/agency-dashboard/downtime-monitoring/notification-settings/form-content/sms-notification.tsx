@@ -1,6 +1,7 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ContactList from '../../contact-list';
+import UpgradeBadge from '../../upgrade-badge';
 import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 	toggleModal: () => void;
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
 	verifiedItem?: { [ key: string ]: string };
+	restricted?: boolean;
 }
 
 export default function SMSNotification( {
@@ -19,6 +21,7 @@ export default function SMSNotification( {
 	toggleModal,
 	allPhoneItems,
 	verifiedItem,
+	restricted,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -44,8 +47,10 @@ export default function SMSNotification( {
 				</div>
 				<div className="notification-settings__toggle-content">
 					<div className="notification-settings__content-heading-with-beta">
-						<div className="notification-settings__content-heading">{ translate( 'Mobile' ) }</div>
-						<div className="notification-settings__beta-tag">{ translate( 'BETA' ) }</div>
+						<div className="notification-settings__content-heading">
+							{ translate( 'SMS Notification' ) }
+							{ restricted && <UpgradeBadge /> }
+						</div>
 					</div>
 					<div className="notification-settings__content-sub-heading">
 						{ translate( 'Set up text messages to send to one or more people.' ) }

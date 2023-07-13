@@ -472,7 +472,8 @@ export default function NotificationSettings( {
 					selectDuration={ selectDuration }
 					enablePaidDurations={ hasDowntimeMonitoringPaidLicense }
 				/>
-				{ isSMSNotificationEnabled && (
+
+				{ isSMSNotificationEnabled && isDowntimeMonitoringPaidTierEnabled && (
 					<SMSNotification
 						recordEvent={ recordEvent }
 						enableSMSNotification={ enableSMSNotification }
@@ -480,13 +481,10 @@ export default function NotificationSettings( {
 						toggleModal={ toggleAddSMSModal }
 						allPhoneItems={ allPhoneItems }
 						verifiedItem={ verifiedItem }
+						restricted={ ! hasDowntimeMonitoringPaidLicense }
 					/>
 				) }
-				<MobilePushNotification
-					recordEvent={ recordEvent }
-					enableMobileNotification={ enableMobileNotification }
-					setEnableMobileNotification={ setEnableMobileNotification }
-				/>
+
 				<EmailNotification
 					recordEvent={ recordEvent }
 					verifiedItem={ verifiedItem }
@@ -495,6 +493,12 @@ export default function NotificationSettings( {
 					defaultUserEmailAddresses={ defaultUserEmailAddresses }
 					toggleAddEmailModal={ toggleAddEmailModal }
 					allEmailItems={ allEmailItems }
+				/>
+
+				<MobilePushNotification
+					recordEvent={ recordEvent }
+					enableMobileNotification={ enableMobileNotification }
+					setEnableMobileNotification={ setEnableMobileNotification }
 				/>
 			</div>
 			<NotificationSettingsFormFooter
