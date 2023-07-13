@@ -69,11 +69,20 @@ const Complete: Step = function Complete( { flow } ) {
 							'Congrats on your domain transfers!',
 							newlyTransferredDomains?.length || storedDomainsAmount
 						) }
-						subHeaderText={ _n(
-							"We've got it from here! We'll let you know when your newly transferred domain is ready to use.",
-							"We've got it from here! We'll let you know when your newly transferred domains are ready to use.",
-							newlyTransferredDomains?.length || storedDomainsAmount
-						) }
+						subHeaderText={
+							<>
+								<span>
+									{ _n(
+										'Hold tight as we complete the set up of your newly transferred domain.',
+										'Hold tight as we complete the set up of your newly transferred domains',
+										newlyTransferredDomains?.length || storedDomainsAmount
+									) }
+								</span>
+								<span className="formatted-header-subtitle__bold">
+									{ __( 'Domain transfers may take up to 5-10 days.' ) }
+								</span>
+							</>
+						}
 						align="center"
 						children={
 							<div className="domain-header-buttons">
