@@ -589,7 +589,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						! isBundledWithWooCommerce &&
 						! isPremiumThemeAvailable &&
 						! didPurchaseSelectedTheme &&
-						! isPluginBundleEligible
+						! isPluginBundleEligible &&
+						shouldLimitGlobalStyles
 					}
 					title={ headerDesignTitle }
 					description={ selectedDesign.description }
