@@ -23,7 +23,6 @@ export const StorageAddOnDropdown = ( {
 		( acc: { key: string; name: string }[], storageOption ) => {
 			const storageString = getStorageStringFromFeature( storageOption );
 
-			// Only show storage options that have a string to display
 			if ( storageString ) {
 				acc.push( {
 					key: storageOption,
