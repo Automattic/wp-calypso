@@ -161,11 +161,13 @@ const ProductCard = ( { siteSlug } ) => {
 											setSubscriptionValue={ setSubscriptionValue }
 											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
 											currencyCode={ currencyCode }
+											siteSlug={ siteSlug }
 										/>
 									) : (
 										<CommercialPurchase
 											planValue={ PRICING_CONFIG.FLAT_COMMERCIAL_PRICE }
 											currencyCode={ currencyCode }
+											siteSlug={ siteSlug }
 										/>
 									) }
 								</PanelRow>
