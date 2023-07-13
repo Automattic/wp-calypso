@@ -135,7 +135,7 @@ sed "${sedi[@]}" -e "s| function| Function|g" "$TARGET/types/index.d.ts"
 
 # Note: I would have used eslint-nibble, but it doesn't support autofixing via the CLI.
 echo "Changing JS textdomain to match ETK:"
-npx eslint-filtered-fix  --rule "@wordpress/i18n-text-domain" $TARGET
+# npx eslint-filtered-fix  --rule "@wordpress/i18n-text-domain" $TARGET
 
 echo "Changing PHP textdomain to match ETK:"
 ../../vendor/bin/phpcbf -q $TARGET
