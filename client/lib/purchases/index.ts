@@ -631,7 +631,7 @@ export function isRechargeable( purchase: Purchase ): boolean {
  * contacts a Happiness Engineer), use maybeWithinRefundPeriod().
  */
 export function isRefundable( purchase: Purchase ): boolean {
-	return purchase.isRefundable;
+	return purchase.isRefundable && purchase.productType !== 'saas_plugin';
 }
 
 /**
