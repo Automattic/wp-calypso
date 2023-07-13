@@ -45,7 +45,7 @@ const DomainOnly = ( {
 						args: { domainName: domain.name },
 					} ) }
 					action={ translate( 'Manage domain' ) }
-					actionURL={ domainManagementEdit( slug, domain.name, currentRoute ) }
+					actionURL="/domains/manage"
 					illustration={ Illustration }
 				></EmptyContent>
 			</div>
