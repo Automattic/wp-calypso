@@ -9,7 +9,7 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import './internals/videopress.scss';
 import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteOptions from './internals/steps-repository/site-options';
+import VideoPressTvTrialExists from './internals/steps-repository/videopress-tv-trial-exists';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -24,8 +24,8 @@ const videopressTv: Flow = {
 				slug: 'intro',
 				asyncComponent: () => import( './internals/steps-repository/intro' ),
 			},
-			{ slug: 'options', component: SiteOptions },
 			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'trial', component: VideoPressTvTrialExists },
 		];
 	},
 
@@ -46,18 +46,15 @@ const videopressTv: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
-		const { setSiteDescription, setSiteTitle } = useDispatch( ONBOARD_STORE );
 		const _siteSlug = useSiteSlug();
 		const [ isSiteCreationPending, setIsSiteCreationPending ] = useState( false );
-		const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+		const { getNewSite, getNewSiteError } = useSelect(
+			( select ) => select( SITE_STORE ) as SiteSelect,
+			[]
+		);
 		const visibility = useNewSiteVisibility();
 
 		setStepProgress( flowProgress );
-
-		const clearOnboardingSiteOptions = () => {
-			setSiteTitle( '' );
-			setSiteDescription( '' );
-		};
 
 		const stepValidateUserIsLoggedIn = () => {
 			if ( ! userIsLoggedIn ) {
@@ -78,10 +75,17 @@ const videopressTv: Flow = {
 			setPendingAction( async () => {
 				setProgress( 0 );
 				try {
-					await createVideoPressTvSite( {
+					const result = await createVideoPressTvSite( {
 						languageSlug: locale,
 						visibility,
 					} );
+
+					if ( false === result ) {
+						const error = getNewSiteError();
+						if ( 'trial_exists' === error?.error ) {
+							navigate( 'trial', { url: error.message } );
+						}
+					}
 				} catch ( e ) {
 					return;
 				}
@@ -103,36 +107,22 @@ const videopressTv: Flow = {
 		useEffect( () => {
 			switch ( _currentStep ) {
 				case 'intro':
-					clearOnboardingSiteOptions();
-					break;
-				case 'options':
-					stepValidateUserIsLoggedIn();
+					window.location.replace(
+						`/start/videopress-account/user/${ locale }?variationName=${ name }&flow=${ name }&pageTitle=VideoPress.TV&redirect_to=/setup/videopress-tv/processing`
+					);
 					break;
 				case 'processing':
+					stepValidateUserIsLoggedIn();
 					if ( ! _siteSlug ) {
 						addVideoPressPendingAction();
 					}
+					break;
+				case 'trial':
 					break;
 			}
 		} );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			switch ( _currentStep ) {
-				case 'intro':
-					if ( userIsLoggedIn ) {
-						return navigate( 'options' );
-					}
-
-					return window.location.replace(
-						`/start/videopress-account/user/${ locale }?variationName=${ name }&flow=${ name }&pageTitle=VideoPress.TV&redirect_to=/setup/videopress-tv/options`
-					);
-				case 'options': {
-					const { siteTitle, tagline } = providedDependencies;
-					setSiteTitle( siteTitle );
-					setSiteDescription( tagline );
-					return navigate( 'processing' );
-				}
-			}
 			return providedDependencies;
 		}
 

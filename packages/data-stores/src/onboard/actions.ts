@@ -96,13 +96,13 @@ export function* createVideoPressTvSite( {
 	languageSlug,
 	visibility = Visibility.PublicNotIndexed,
 }: CreateSiteBaseActionParameters ) {
-	const { selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State = yield select(
+	const { selectedDesign, selectedFonts, selectedFeatures }: State = yield select(
 		STORE_KEY,
 		'getState'
 	);
 
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
+	const blogTitle = 'VideoPress TV';
 
 	const params: CreateSiteParams = {
 		blog_name: '', // will be replaced on server with random domain
