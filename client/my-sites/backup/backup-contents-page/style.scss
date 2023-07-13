@@ -96,6 +96,13 @@
 				font-weight: bold;
 			}
 
+			&__prepare-download-spinner {
+				display: inline-block;
+				margin-right: 6px;
+				margin-top: -3px;
+				vertical-align: middle;
+			}
+
 			&__preview {
 				margin: 16px auto 0;
 				max-width: max-content;
@@ -136,6 +143,19 @@
 					font-size: 0.75rem;
 					margin: 0;
 					max-height: 400px;
+				}
+			}
+
+			&__preview-sensitive {
+				background-color: var(--studio-gray-60);
+				color: #fff;
+				margin: 16px auto 0;
+				max-width: 100%;
+				padding: 20px 8px;
+				text-align: center;
+
+				p {
+					font-size: 0.875rem;
 				}
 			}
 		}

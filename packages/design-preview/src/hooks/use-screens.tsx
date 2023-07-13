@@ -18,6 +18,7 @@ interface Props {
 	stylesheet: string;
 	isVirtual?: boolean;
 	limitGlobalStyles?: boolean;
+	globalStylesInPersonalPlan: boolean;
 	variations?: StyleVariation[];
 	splitDefaultVariation: boolean;
 	selectedVariation?: StyleVariation;
@@ -33,6 +34,7 @@ const useScreens = ( {
 	stylesheet,
 	isVirtual,
 	limitGlobalStyles,
+	globalStylesInPersonalPlan,
 	variations,
 	splitDefaultVariation,
 	selectedVariation,
@@ -66,6 +68,7 @@ const useScreens = ( {
 										onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
 											onSelectVariation( globalStyleVariation as StyleVariation )
 										}
+										globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 									/>
 								</div>
 							</div>
@@ -84,7 +87,7 @@ const useScreens = ( {
 						path: '/color-palettes',
 						title: translate( 'Colors' ),
 						description: translate(
-							'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+							'Discover your ideal color blend, from free to custom styles.'
 						),
 						content: (
 							<div className="design-preview__sidebar-variations">
@@ -108,9 +111,7 @@ const useScreens = ( {
 						label: translate( 'Fonts' ),
 						path: '/font-pairings',
 						title: translate( 'Fonts' ),
-						description: translate(
-							'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-						),
+						description: translate( 'Elevate your design with expertly curated font pairings.' ),
 						content: (
 							<div key="font-variations" className="design-preview__sidebar-variations">
 								<FontPairingVariations

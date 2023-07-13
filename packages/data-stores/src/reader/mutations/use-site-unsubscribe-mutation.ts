@@ -150,6 +150,9 @@ const useSiteUnsubscribeMutation = ( blog_id?: string ) => {
 			}
 			queryClient.invalidateQueries( subscriptionsCountCacheKey );
 			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey, { refetchType: 'none' } );
+			queryClient.invalidateQueries( [ 'read', 'feed', 'search' ] );
+			params.blog_id &&
+				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blog_id ) ] );
 		},
 	} );
 };

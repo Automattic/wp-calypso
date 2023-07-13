@@ -45,20 +45,25 @@ export function useLangRouteParam() {
 }
 
 export const useLoginUrl = ( {
-	flowName,
+	variationName,
 	redirectTo,
 	pageTitle,
 	loginPath = `/start/account/user/`,
 }: {
-	flowName?: string;
-	redirectTo?: string;
-	pageTitle?: string;
+	/**
+	 * Variation name is used to track the relevant login flow in the signup framework as explained in https://github.com/Automattic/wp-calypso/issues/67173
+	 */
+	variationName?: string | null;
+	redirectTo?: string | null;
+	pageTitle?: string | null;
 	loginPath?: string;
 } ): string => {
 	const locale = useLocale();
 	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
+
+	// Empty values are ignored down the call stack, so we don't need to check for them here.
 	return addQueryArgs( localizedLoginPath, {
-		variationName: flowName,
+		variationName,
 		redirect_to: redirectTo,
 		pageTitle,
 		toStepper: true,

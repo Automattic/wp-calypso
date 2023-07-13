@@ -1,5 +1,5 @@
-@import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
 
 %ellipsis {
@@ -20,6 +20,10 @@
 
 	&__heading {
 		margin: 0 0 16px 0;
+		color: $studio-gray-60;
+		font-size: $font-body-small;
+		font-family: "SF Pro Text", sans-serif;
+		line-height: $font-title-small;
 	}
 
 	&__horizontal-list {

@@ -2,11 +2,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react-hooks';
 import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import useReadFeedSearch, { FeedSort } from '../use-read-feed-search-query';
+import useReadFeedSearchQuery, { FeedSort } from '../use-read-feed-search-query';
 
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 
-describe( 'useReadFeedSearch', () => {
+describe( 'useReadFeedSearchQuery', () => {
 	beforeEach( () => {
 		( wpcomRequest as jest.MockedFunction< typeof wpcomRequest > ).mockResolvedValue( {
 			algorithm: 'example_algorithm',
@@ -27,7 +27,7 @@ describe( 'useReadFeedSearch', () => {
 		);
 
 		const query = 'example';
-		renderHook( () => useReadFeedSearch( { query } ), { wrapper } );
+		renderHook( () => useReadFeedSearchQuery( { query } ), { wrapper } );
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
 			path: '/read/feed',
@@ -45,7 +45,7 @@ describe( 'useReadFeedSearch', () => {
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
 
-		renderHook( () => useReadFeedSearch( {} ), { wrapper } );
+		renderHook( () => useReadFeedSearchQuery( {} ), { wrapper } );
 
 		expect( wpcomRequest ).not.toHaveBeenCalled();
 	} );

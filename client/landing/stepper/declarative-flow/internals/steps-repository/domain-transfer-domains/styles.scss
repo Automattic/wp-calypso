@@ -11,6 +11,10 @@
 	align-items: center;
 	gap: 30px;
 
+	button:disabled {
+		pointer-events: none;
+	}
+
 	&.domains {
 		padding: 0;
 		width: 754px;
@@ -129,9 +133,11 @@
 		// Show the titles on mobile and hide on desktop (except for the first one)
 		.form-label {
 			display: none;
-			@media ( max-width: $break-medium ) {
+
+			@media (max-width: $break-medium ) {
 				display: block;
 			}
+
 			&.is-first-label-title {
 				display: block;
 			}
@@ -177,23 +183,17 @@
 		gap: 16px;
 
 		.domains__domain-refresh {
-			.form-fieldset {
-				display: flex;
-				align-items: center;
-			}
-
 			button {
 				cursor: pointer;
 			}
 
-			label {
+			.refresh-label {
 				display: none;
 			}
 
 			@media (max-width: $break-medium ) {
-				label {
+				.refresh-label {
 					display: block;
-					margin-bottom: 0;
 				}
 			}
 		}
@@ -218,14 +218,8 @@
 			@media (max-width: $break-medium ) {
 				order: 1;
 
-				.form-fieldset {
-					display: flex;
-					align-items: center;
-
-					.delete-label {
-						margin: 0;
-						display: block;
-					}
+				.delete-label {
+					display: block;
 				}
 			}
 		}
@@ -297,6 +291,7 @@
 		width: 300px;
 		@include placeholder();
 	}
+
 	button.loading-placeholder {
 		width: 150px;
 		@include placeholder();

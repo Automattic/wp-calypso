@@ -85,7 +85,7 @@ const newsletter: Flow = {
 		} );
 		setStepProgress( flowProgress );
 		const logInUrl = useLoginUrl( {
-			flowName,
+			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/newsletterSetup`,
 			pageTitle: 'Newsletter',
 		} );
