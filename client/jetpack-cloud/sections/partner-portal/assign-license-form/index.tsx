@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
@@ -82,12 +82,18 @@ export default function AssignLicenseForm( {
 		}
 	} );
 
-	const onAssignLater = () => {
+	const onClickAssignLater = useCallback( () => {
 		if ( licenseKeysArray.length > 1 ) {
 			page.redirect( '/partner-portal/licenses' );
 		}
+
+		const licenseKey = licenseKeysArray[ 0 ];
 		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
-	};
+	}, [ licenseKeysArray ] );
+
+	const onClickAssignLicenses = useCallback( () => {
+		assignLicensesToSite( licenseKeysArray );
+	}, [ assignLicensesToSite, licenseKeysArray ] );
 
 	if ( ! results.length ) {
 		return (
@@ -97,7 +103,7 @@ export default function AssignLicenseForm( {
 						'It looks like you don’t have any connected Jetpack sites you can apply this license to.'
 					) }
 				</p>
-				<Button primary onClick={ onAssignLater }>
+				<Button primary onClick={ onClickAssignLater }>
 					{ translate( 'Assign license later', 'Assign licenses later', {
 						count: licenseKeysArray.length,
 					} ) }
@@ -127,7 +133,7 @@ export default function AssignLicenseForm( {
 				<div className="assign-license-form__controls">
 					<Button
 						borderless
-						onClick={ onAssignLater }
+						onClick={ onClickAssignLater }
 						disabled={ isLoading }
 						className="assign-license-form__assign-later"
 					>
@@ -138,7 +144,7 @@ export default function AssignLicenseForm( {
 						className="assign-license-form__assign-now"
 						disabled={ selectedSite?.ID === 0 }
 						busy={ isLoading }
-						onClick={ () => assignLicensesToSite( licenseKeysArray ) }
+						onClick={ onClickAssignLicenses }
 					>
 						{ translate( 'Assign %(numLicenses)d License', 'Assign %(numLicenses)d Licenses', {
 							count: licenseKeysArray.length,
