@@ -40,7 +40,7 @@ const SiteSubscriptionDetails = ( {
 		isLoading: subscribing,
 		isSuccess: subscribed,
 		error: subscribeError,
-	} = SubscriptionManager.useSiteSubscribeMutation( blogId );
+	} = SubscriptionManager.useSiteSubscribeMutation();
 	const {
 		mutate: unsubscribe,
 		isLoading: unsubscribing,
