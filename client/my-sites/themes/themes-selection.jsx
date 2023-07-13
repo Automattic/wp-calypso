@@ -309,6 +309,7 @@ export const ConnectedThemesSelection = connect(
 			source,
 			forceWpOrgSearch,
 			isLoading: isCustomizedThemeListLoading,
+			tabFilter,
 		}
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
@@ -353,6 +354,8 @@ export const ConnectedThemesSelection = connect(
 			sourceSiteId !== 'wporg' &&
 			// Only fetch WP.org themes when searching a term.
 			!! search &&
+			// unless just searching over locally installed themes
+			tabFilter !== 'my-themes' &&
 			// WP.org themes are not a good fit for any of the tiers,
 			// unless the site can install themes, then they can be searched in the 'free' tier.
 			( ! tier || ( tier === 'free' && canInstallThemes ) );
