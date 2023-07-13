@@ -73,7 +73,6 @@ export default ( siteId: number ) => {
 		};
 
 		//if usage has crossed over the storage limit, then dynamically calculate the upgrade option
-		//if ( bytesUsed && bytesAvailable && bytesUsed > bytesAvailable ) {
 		const additionalBytesNeeded =
 			estimatedCurrentSiteSize * currentRetentionPeriod - bytesAvailable;
 
