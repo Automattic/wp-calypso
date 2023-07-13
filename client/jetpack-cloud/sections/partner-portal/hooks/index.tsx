@@ -116,9 +116,10 @@ export function useCursorPagination(
 	return [ page, showPagination, onNavigate ];
 }
 
-export function useAssignLicensesToSite(
-	selectedSite: { ID: number; domain: string } | null
-): [ ( licenseKeys: string[] ) => void, boolean ] {
+export function useAssignLicensesToSite( selectedSite: { ID: number; domain: string } | null ): {
+	assignLicensesToSite: ( licenseKeys: string[] ) => void;
+	isReady: boolean;
+} {
 	const products = useProductsQuery();
 	const dispatch = useDispatch();
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
@@ -200,7 +201,7 @@ export function useAssignLicensesToSite(
 		[ dispatch, selectedSite, assignLicense, products, fromDashboard ]
 	);
 
-	return [ assignLicensesToSite, isReady ];
+	return { assignLicensesToSite, isReady };
 }
 
 export { default as useIssueAndAssignLicenses } from './use-issue-and-assign-licenses';

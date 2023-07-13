@@ -59,7 +59,7 @@ export default function AssignLicenseForm( {
 	const onSelectSite = ( site: any ) => {
 		setSelectedSite( site );
 	};
-	const [ assignLicensesToSite, isReady ] = useAssignLicensesToSite( selectedSite );
+	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite );
 
 	const licenseKeysArray = getLicenseKeysFromUrl();
 
