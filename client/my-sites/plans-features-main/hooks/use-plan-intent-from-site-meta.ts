@@ -1,14 +1,14 @@
 import { useSiteIntent } from '@automattic/data-stores';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
+import type { PlansIntent } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 
 interface IntentFromSiteMeta {
 	processing: boolean;
 	intent: PlansIntent | null | undefined;
 }
 
-const useIntentFromSiteMeta = (): IntentFromSiteMeta => {
+const usePlanIntentFromSiteMeta = (): IntentFromSiteMeta => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
 	const siteIntent = useSiteIntent( selectedSiteId );
 
@@ -32,4 +32,4 @@ const useIntentFromSiteMeta = (): IntentFromSiteMeta => {
 	};
 };
 
-export default useIntentFromSiteMeta;
+export default usePlanIntentFromSiteMeta;

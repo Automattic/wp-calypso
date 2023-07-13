@@ -11,7 +11,7 @@ jest.mock( 'calypso/components/async-load', () => ( { visiblePlans } ) => (
 jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector', () => () => (
 	<div>PlanTypeSelector</div>
 ) );
-jest.mock( '../hooks/use-intent-from-site-meta', () => jest.fn() );
+jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
@@ -38,8 +38,9 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import useIntentFromSiteMeta from '../hooks/use-intent-from-site-meta';
+import useIntentFromSiteMeta from '../hooks/use-plan-intent-from-site-meta';
 import PlansFeaturesMain from '../index';
 
 const props = {
@@ -55,11 +56,12 @@ describe( 'PlansFeaturesMain', () => {
 			processing: false,
 			intent: null,
 		} ) );
+		getSelectedSiteId.mockImplementation( () => 123 );
 	} );
 
 	describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
-		test( 'Should render <PlanFeatures /> with default WPCOM plans when called with nullish/default intent', () => {
-			renderWithProvider( <PlansFeaturesMain { ...props } /> );
+		test( 'Should render <PlanFeatures /> with default WPCOM plans', () => {
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-default-wpcom" /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
 				JSON.stringify( [
 					PLAN_FREE,
