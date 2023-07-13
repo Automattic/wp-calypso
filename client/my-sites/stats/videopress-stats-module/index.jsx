@@ -262,7 +262,7 @@ class VideoPressStatsModule extends Component {
 							{ summary && (
 								<DownloadCsv
 									statType={ statType }
-									data={ completeVideoStats }
+									data={ csvData }
 									query={ query }
 									path={ path }
 									period={ period }
