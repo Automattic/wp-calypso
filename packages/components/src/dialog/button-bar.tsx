@@ -18,7 +18,7 @@ export type BaseButton = {
 export type Button = ReactElement | BaseButton;
 
 type Props = {
-	buttons?: Button[];
+	buttons?: BaseButton[];
 	baseClassName: string;
 	onButtonClick: ( button: BaseButton ) => void;
 };
