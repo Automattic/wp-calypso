@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, Button } from '@automattic/components';
 import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
+import { useLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -107,6 +108,7 @@ const ThemeNameSectionWrapper = styled.div`
 
 export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	const translate = useTranslate();
+	const locale = useLocale();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const isActive = useSelector( ( state ) => isThemeActive( state, theme.id, siteId ) );
@@ -182,7 +184,12 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 					{ ! isDefaultGlobalStylesVariationSlug( themeStyleVariation?.slug ) ? (
 						<ThemeSectionMShotsContainer>
 							<DesignPreviewImage
-								design={ { slug: theme.id, recipe: { stylesheet: theme.stylesheet } } }
+								design={ {
+									...theme,
+									slug: theme.id,
+									recipe: { stylesheet: theme.stylesheet },
+								} }
+								locale={ locale }
 								styleVariation={ themeStyleVariation }
 							/>
 						</ThemeSectionMShotsContainer>
