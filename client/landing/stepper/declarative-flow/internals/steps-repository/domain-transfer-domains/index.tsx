@@ -26,9 +26,13 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 				<FormattedHeader
 					id="domain-transfer-header"
 					headerText={ __( 'Add your domains' ) }
-					subHeaderText={ __(
-						'Next, add your domain name and authorization code below. Add as little or as many domains as you want.'
-					) }
+					subHeaderText={
+						<>
+							<span>{ __( 'Next, add your domain name and authorization code below.' ) }</span>
+							<br />
+							<span>{ __( 'Add as few or as many domains as you want.' ) }</span>
+						</>
+					}
 					align="center"
 					subHeaderAlign="center"
 				/>
