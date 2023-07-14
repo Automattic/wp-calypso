@@ -71,3 +71,17 @@
 		height: 76px;
 	}
 }
+
+.domain-settings-page {
+	.domain-header__spacer {
+		height: 40px;
+
+		@include breakpoint-deprecated( "<960px" ) {
+			height: 66px;
+		}
+
+		@include breakpoint-deprecated( "<660px" ) {
+			height: 76px;
+		}
+	}
+}
