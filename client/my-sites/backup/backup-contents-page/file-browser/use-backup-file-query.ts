@@ -20,6 +20,6 @@ export const useBackupFileQuery = (
 		enabled: !! siteId && !! rewindId && !! manifestPath && shouldFetch,
 		meta: { persist: false },
 		staleTime: Infinity,
-		retry: false, // Do not retry on error
+		retry: 2,
 	} );
 };
