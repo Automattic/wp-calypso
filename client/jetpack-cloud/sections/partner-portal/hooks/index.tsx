@@ -7,15 +7,16 @@ import {
 	ensurePartnerPortalReturnUrl,
 	getProductTitle,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
-import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import getProductSlugFromLicenseKey from '../lib/get-product-slug-from-license-key';
-import type { ProductInfo } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import type {
+	ProductInfo,
+	PurchasedProductsInfo,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 /**
@@ -116,12 +117,11 @@ export function useCursorPagination(
 }
 
 export function useAssignLicensesToSite( selectedSite: { ID: number; domain: string } | null ): {
-	assignLicensesToSite: ( licenseKeys: string[] ) => void;
+	assignLicensesToSite: ( licenseKeys: string[] ) => Promise< PurchasedProductsInfo >;
 	isReady: boolean;
 } {
 	const products = useProductsQuery();
 	const dispatch = useDispatch();
-	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 	const assignLicense = useAssignLicenseMutation( {
 		onError: ( error: Error ) => {
 			dispatch( errorNotice( error.message, { isPersistent: true } ) );
@@ -130,22 +130,17 @@ export function useAssignLicensesToSite( selectedSite: { ID: number; domain: str
 
 	const isReady = assignLicense.isIdle;
 	const assignLicensesToSite = useCallback(
-		async ( licenseKeys: string[] ) => {
+		async ( licenseKeys: string[] ): Promise< PurchasedProductsInfo > => {
 			// Only proceed if the mutation is in a fresh/ready state
 			if ( ! assignLicense.isIdle ) {
-				return;
-			}
-
-			// Only proceed if we have licenses to assign :-)
-			if ( licenseKeys.length === 0 ) {
-				return;
+				throw new Error( 'The mutation for assigning licenses is not ready' );
 			}
 
 			// We need a valid site ID in order to assign licenses to a site;
 			// otherwise, we assign nothing
 			const selectedSiteId = selectedSite?.ID;
 			if ( ! selectedSiteId ) {
-				return;
+				throw new Error( 'A site ID is required for license assignment but was missing' );
 			}
 
 			const keysWithProductNames = licenseKeys
@@ -176,21 +171,12 @@ export function useAssignLicensesToSite( selectedSite: { ID: number; domain: str
 					.catch( () => ( { key, name, status: 'rejected' } as ProductInfo ) )
 			);
 
-			const assignLicenseStatus = {
+			return {
 				selectedSite: selectedSite?.domain || '',
 				selectedProducts: await Promise.all( apiRequests ),
 			};
-
-			dispatch( resetSite() );
-			dispatch( setPurchasedLicense( assignLicenseStatus ) );
-
-			if ( fromDashboard ) {
-				return page.redirect( '/dashboard' );
-			}
-
-			return page.redirect( partnerPortalBasePath( '/licenses' ) );
 		},
-		[ dispatch, selectedSite, assignLicense, products, fromDashboard ]
+		[ selectedSite, assignLicense, products ]
 	);
 
 	return { assignLicensesToSite, isReady };

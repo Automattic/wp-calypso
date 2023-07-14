@@ -9,8 +9,10 @@ import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
 import { SITE_CARDS_PER_PAGE } from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form/constants';
 import { useAssignLicensesToSite } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { areLicenseKeysAssignableToMultisite } from '../utils';
 import './style.scss';
 
@@ -104,7 +106,7 @@ export default function AssignLicenseForm( {
 		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
 	}, [ licenseKeysArray ] );
 
-	const onClickAssignLicenses = useCallback( () => {
+	const onClickAssignLicenses = useCallback( async () => {
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
 				products: licenseKeysArray.join( ',' ),
@@ -112,7 +114,17 @@ export default function AssignLicenseForm( {
 			} )
 		);
 
-		assignLicensesToSite( licenseKeysArray );
+		const assignLicenseStatus = await assignLicensesToSite( licenseKeysArray );
+
+		dispatch( resetSite() );
+		dispatch( setPurchasedLicense( assignLicenseStatus ) );
+
+		const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+		if ( fromDashboard ) {
+			return page.redirect( '/dashboard' );
+		}
+
+		return page.redirect( partnerPortalBasePath( '/licenses' ) );
 	}, [ assignLicensesToSite, dispatch, licenseKeysArray, selectedSite?.ID ] );
 
 	if ( ! results.length ) {
