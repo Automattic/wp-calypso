@@ -3,7 +3,7 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
@@ -65,11 +65,10 @@ const SelectedNewPostDeliveryMethods = ( {
 	return <>{ selectedNewPostDeliveryMethods }</>;
 };
 
-type SiteRowProps = Reader.SiteSubscription & {
-	successNotice: typeof successNotice;
-};
+type SiteRowProps = Reader.SiteSubscription;
 
 const SiteRow = ( {
+	ID: subscriptionId,
 	blog_ID: blog_id,
 	feed_ID: feed_id,
 	name,
@@ -80,7 +79,6 @@ const SiteRow = ( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	isDeleted,
-	successNotice,
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -303,7 +301,11 @@ const SiteRow = ( {
 						unsubscribeInProgress.current = true;
 						unsubscribeCallback();
 						unsubscribe(
-							{ blog_id, url, doNotInvalidateSiteSubscriptions: true },
+							{
+								subscriptionId: Number( subscriptionId ),
+								url,
+								doNotInvalidateSiteSubscriptions: true,
+							},
 							{
 								onSuccess: () => {
 									unsubscribeInProgress.current = false;
@@ -328,4 +330,4 @@ const SiteRow = ( {
 	) : null;
 };
 
-export default connect( null, { successNotice } )( SiteRow );
+export default SiteRow;

@@ -1,6 +1,7 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest from 'wpcom-proxy-request';
 import { ErrorResponse } from '../types';
+import isValidId from './validators';
 
 type callApiParams = {
 	apiNamespace?: string;
@@ -89,17 +90,22 @@ const getSubscriptionMutationParams = (
 	isLoggedIn: boolean,
 	blogId?: number | string,
 	url?: string,
-	emailId?: string
+	emailId?: string,
+	subscriptionId?: number
 ) => {
 	if ( isLoggedIn ) {
-		if ( ! url ) {
-			throw new Error( 'URL is required for wpcom user to subscribe' );
+		const isSubscriptionIdValid = isValidId( subscriptionId );
+		if ( ! isSubscriptionIdValid && ! url ) {
+			throw new Error( 'Subscription ID or URL is required to subscribe' );
 		}
 
 		return {
 			path: `/read/following/mine/${ action }`,
 			apiVersion: '1.1',
-			body: { source: 'calypso', url: url, ...( emailId ? { email_id: emailId } : {} ) },
+			body: {
+				source: 'calypso',
+				...( isSubscriptionIdValid ? { sub_id: subscriptionId } : { url } ),
+			},
 		};
 	}
 

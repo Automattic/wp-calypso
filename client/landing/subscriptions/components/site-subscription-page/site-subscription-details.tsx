@@ -47,7 +47,7 @@ const SiteSubscriptionDetails = ( {
 		isLoading: unsubscribing,
 		isSuccess: unsubscribed,
 		error: unsubscribeError,
-	} = SubscriptionManager.useSiteUnsubscribeMutation( blogId );
+	} = SubscriptionManager.useSiteUnsubscribeMutation();
 
 	const [ paymentPlans, setPaymentPlans ] = useState< PaymentPlan[] >( [] );
 
