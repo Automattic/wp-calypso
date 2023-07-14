@@ -55,7 +55,9 @@ function TokenQRCode( { tokenData } ) {
 	};
 	return (
 		<QRCodeSVG
-			value={ localizeUrl( `https://apps.wordpress.com/get/?campaign=login-qr-code#qr-code-login?token=${ token }&data=${ encrypted }` ) }
+			value={ localizeUrl(
+				`https://apps.wordpress.com/get/?campaign=login-qr-code#qr-code-login?token=${ token }&data=${ encrypted }`
+			) }
 			size={ 300 }
 			imageSettings={ imageSettings }
 		/>
