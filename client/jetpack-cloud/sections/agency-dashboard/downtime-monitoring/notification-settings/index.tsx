@@ -497,6 +497,7 @@ export default function NotificationSettings( {
 					defaultUserEmailAddresses={ defaultUserEmailAddresses }
 					toggleAddEmailModal={ toggleAddEmailModal }
 					allEmailItems={ allEmailItems }
+					restricted={ ! hasDowntimeMonitoringPaidLicense }
 				/>
 
 				<MobilePushNotification

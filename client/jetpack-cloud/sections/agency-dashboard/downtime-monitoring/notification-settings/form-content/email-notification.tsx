@@ -12,6 +12,7 @@ interface Props {
 	defaultUserEmailAddresses: string[];
 	toggleAddEmailModal: () => void;
 	allEmailItems: StateMonitorSettingsEmail[];
+	restricted?: boolean;
 }
 
 export default function EmailNotification( {
@@ -22,12 +23,19 @@ export default function EmailNotification( {
 	defaultUserEmailAddresses,
 	toggleAddEmailModal,
 	allEmailItems,
+	restricted,
 }: Props ) {
 	const translate = useTranslate();
 
 	const isMultipleEmailEnabled: boolean = isEnabled(
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
 	);
+
+	const isDowntimeMonitoringPaidTierEnabled = isEnabled(
+		'jetpack/pro-dashboard-monitor-paid-tier'
+	);
+
+	const allowMultipleRecipient = isMultipleEmailEnabled && isDowntimeMonitoringPaidTierEnabled;
 
 	return (
 		<>
@@ -50,11 +58,8 @@ export default function EmailNotification( {
 				<div className="notification-settings__toggle-content">
 					<div className="notification-settings__content-heading-with-beta">
 						<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
-						{ isMultipleEmailEnabled && (
-							<div className="notification-settings__beta-tag">{ translate( 'BETA' ) }</div>
-						) }
 					</div>
-					{ isMultipleEmailEnabled ? (
+					{ allowMultipleRecipient ? (
 						<>
 							<div className="notification-settings__content-sub-heading">
 								{ translate( 'Receive email notifications with one or more recipients.' ) }
@@ -70,13 +75,14 @@ export default function EmailNotification( {
 				</div>
 			</div>
 
-			{ enableEmailNotification && isMultipleEmailEnabled && (
+			{ enableEmailNotification && allowMultipleRecipient && (
 				<ContactList
 					type="email"
 					onAction={ toggleAddEmailModal }
 					items={ allEmailItems }
 					recordEvent={ recordEvent }
 					verifiedItemKey={ verifiedItem?.email }
+					restricted={ restricted }
 				/>
 			) }
 		</>

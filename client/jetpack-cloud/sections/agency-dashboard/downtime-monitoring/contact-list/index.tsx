@@ -9,6 +9,7 @@ import {
 	StateMonitorSettingsEmail,
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
+import UpgradeBadge from '../upgrade-badge';
 import ContactListItem from './item';
 import { getContactActionEventName, getContactItemValue } from './utils';
 
@@ -23,6 +24,7 @@ export type Props = {
 	recordEvent?: ( action: string, params?: object ) => void;
 	type: AllowedMonitorContactTypes;
 	verifiedItemKey?: string;
+	restricted?: boolean;
 };
 
 export default function ContactList( {
@@ -31,6 +33,7 @@ export default function ContactList( {
 	recordEvent,
 	type,
 	verifiedItemKey,
+	restricted,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -81,11 +84,27 @@ export default function ContactList( {
 						showVerifiedBadge={ getContactItemValue( type, item ) === verifiedItemKey }
 					/>
 				) ) }
+
 				{ showAddButton && (
-					<Button compact className="contact-list__button" onClick={ onAddContact }>
-						<Icon size={ 18 } icon={ plus } />
-						{ addButtonLabel }
-					</Button>
+					<div className="contact-list__action">
+						<Button
+							compact
+							className="contact-list__action-button"
+							onClick={ onAddContact }
+							disabled={ restricted }
+						>
+							<Icon size={ 18 } icon={ plus } />
+							{ addButtonLabel }
+						</Button>
+
+						{ restricted && <UpgradeBadge /> }
+					</div>
+				) }
+
+				{ showAddButton && restricted && (
+					<div className="contact-list__upgrade-message">
+						{ translate( 'Multiple email recipients is part of the Basic plan.' ) }
+					</div>
 				) }
 			</div>
 		</>
