@@ -85,6 +85,14 @@ const CheckoutMasterbar = ( {
 
 	const showCloseButton = isLeavingAllowed && checkoutType === 'wpcom';
 	const icon = 'chat_bubble';
+	const initialMessage =
+		'Customer is contacting us from the checkout pre-sales flow.\n' +
+		`Product${ responseCart.products.length > 1 && 's' } they're attempting to purchase: ` +
+		responseCart.products.map( ( product ) => product.product_name ).join( ', ' );
+
+	const handleClick = () => {
+		// Add tracks details here
+	};
 
 	return (
 		<Masterbar
@@ -130,9 +138,10 @@ const CheckoutMasterbar = ( {
 				) }
 				<ChatButton
 					chatIntent="PRESALES"
-					initialMessage="Test"
-					siteUrl="test"
-					className={ classnames( 'masterbar__item masterbar__item-help' ) }
+					initialMessage={ initialMessage }
+					siteUrl={ siteSlug }
+					className={ classnames( 'masterbar__item' ) }
+					onClick={ handleClick }
 				>
 					{ icon && <MaterialIcon icon={ icon } /> }
 				</ChatButton>
