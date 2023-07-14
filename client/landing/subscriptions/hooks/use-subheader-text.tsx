@@ -10,10 +10,10 @@ const useSubheaderText = () => {
 	return useMemo( () => {
 		if ( emailAddress ) {
 			return hasTranslation(
-				'Manage WordPress.com blogs and subscriptions you’ve subscribed with {{span}}%(emailAddress)s{{/span}}.'
+				'Manage WordPress.com sites and newsletters you’ve subscribed to with {{span}}%(emailAddress)s{{/span}}.'
 			)
 				? translate(
-						'Manage WordPress.com blogs and subscriptions you’ve subscribed with {{span}}%(emailAddress)s{{/span}}.',
+						'Manage WordPress.com sites and newsletters you’ve subscribed to with {{span}}%(emailAddress)s{{/span}}.',
 						{
 							args: {
 								emailAddress: emailAddress,
@@ -35,8 +35,8 @@ const useSubheaderText = () => {
 						}
 				  );
 		}
-		return hasTranslation( 'Manage your blog and newsletter subscriptions' )
-			? translate( 'Manage your blog and newsletter subscriptions' )
+		return hasTranslation( 'Manage your blog and newsletter subscriptions.' )
+			? translate( 'Manage your blog and newsletter subscriptions.' )
 			: translate( 'Manage your WordPress.com blog and newsletter subscriptions.' );
 	}, [ emailAddress, translate ] );
 };

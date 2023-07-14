@@ -53,8 +53,8 @@ const SiteSubscriptionsManager = () => {
 					<FormattedHeader
 						headerText={ translate( 'Manage subscribed sites' ) }
 						subHeaderText={
-							hasTranslation( 'Manage your blog and newsletter subscriptions.' )
-								? translate( 'Manage your blog and newsletter subscriptions.' )
+							hasTranslation( 'Manage your site, RSS, and newsletter subscriptions.' )
+								? translate( 'Manage your site, RSS, and newsletter subscriptions.' )
 								: translate( 'Manage your newsletter and blog subscriptions.' )
 						}
 						align="left"
