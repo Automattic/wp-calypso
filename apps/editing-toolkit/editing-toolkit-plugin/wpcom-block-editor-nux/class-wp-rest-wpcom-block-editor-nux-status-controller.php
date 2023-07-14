@@ -79,7 +79,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 			$variant = 'tour';
 		}
 
-		if ( ! class_exists( '\WPForTeams' ) ) {
+		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
 			$is_p2 = false;
 		} else {
 			$blog_id = get_current_blog_id();

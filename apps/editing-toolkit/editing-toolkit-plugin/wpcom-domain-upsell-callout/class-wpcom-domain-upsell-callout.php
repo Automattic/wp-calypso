@@ -81,7 +81,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function should_not_show_callout() {
-		$blog_id = class_exists( '\Jetpack_Options' ) ? \Jetpack_Options::get_option( 'id' ) : get_current_blog_id();
+		$blog_id = defined( 'IS_WPCOM' ) && IS_WPCOM ? get_current_blog_id() : \Jetpack_Options::get_option( 'id' );
 
 		return $this->has_unlaunched_launchpad() || $this->blog_has_custom_domain( $blog_id ) || $this->user_has_email_unverified() || $this->blog_is_p2( $blog_id ) || $this->blog_is_wpcom_staging();
 	}
@@ -140,7 +140,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function blog_has_custom_domain( $blog_id ) {
-		if ( ! class_exists( '\Domain_Mapping' ) ) {
+		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
 			$domain = $this->get_domain_from_site_url();
 			if ( ! $this->is_wpcom_owned_tld( $domain ) ) {
 				return true;
@@ -166,7 +166,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function blog_is_p2( $blog_id ) {
-		return ! class_exists( '\WPForTeams' ) ? false : \WPForTeams\is_wpforteams_site( $blog_id );
+		return defined( 'IS_ATOMIC' ) && IS_ATOMIC ? false : \WPForTeams\is_wpforteams_site( $blog_id );
 	}
 
 	/**
@@ -190,7 +190,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function user_has_email_unverified() {
-		if ( ! class_exists( '\Email_Verification' ) ) {
+		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
 			$is_email_unverified = false;
 		} else {
 			$user_id             = get_current_user_id();
