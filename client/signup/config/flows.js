@@ -1,5 +1,5 @@
 import {
-	BLANK_CANVAS_DESIGN,
+	DEFAULT_ASSEMBLER_DESIGN,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	WOOCOMMERCE_THEME,
@@ -116,7 +116,7 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
-	if ( isSiteAssemblerFlow( flowName ) && themeParameter === BLANK_CANVAS_DESIGN.slug ) {
+	if ( isSiteAssemblerFlow( flowName ) && themeParameter === DEFAULT_ASSEMBLER_DESIGN.slug ) {
 		// Go to the site assembler flow if viewport width >= 960px as the layout doesn't support small
 		// screen for now.
 		if ( isWithinBreakpoint( '>=960px' ) ) {
