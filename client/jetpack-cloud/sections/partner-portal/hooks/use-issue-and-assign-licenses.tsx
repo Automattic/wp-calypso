@@ -9,7 +9,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
 import useIssueLicenses, { FulfilledIssueLicenseResult } from './use-issue-licenses';
@@ -20,13 +19,17 @@ const NO_OP = () => {
 
 const useGetLicenseIssuedMessage = () => {
 	const translate = useTranslate();
+	const products = useProductsQuery();
 
 	return useCallback(
-		( productNames: string[] ) => {
-			if ( productNames.length === 0 ) {
+		( licenses: FulfilledIssueLicenseResult[] ) => {
+			if ( licenses.length === 0 ) {
 				return;
 			}
 
+			const productNames: string[] = licenses
+				.map( ( { slug } ) => products?.data?.find?.( ( p ) => p.slug === slug )?.name )
+				.filter( ( name ): name is string => Boolean( name ) );
 			const components = {
 				strong: <strong />,
 			};
@@ -75,7 +78,7 @@ const useGetLicenseIssuedMessage = () => {
 				}
 			);
 		},
-		[ translate ]
+		[ products?.data, translate ]
 	);
 };
 
@@ -87,7 +90,6 @@ function useIssueAndAssignLicenses(
 	options: UseIssueAndAssignLicensesOptions = {}
 ) {
 	const dispatch = useDispatch();
-	const products = useProductsQuery();
 	const sitesCount = useSelector( getSites ).length;
 
 	const issueLicenses = useIssueLicenses();
@@ -109,18 +111,14 @@ function useIssueAndAssignLicenses(
 				( r ): r is FulfilledIssueLicenseResult => r.status === 'fulfilled'
 			);
 
-			const issuedProductSlugs = issuedLicenses
-				.map( ( { slug } ) => products?.data?.find?.( ( p ) => p.slug === slug ) )
-				.filter( ( p ): p is APIProductFamilyProduct => p !== undefined );
-
 			// Exit early if we don't see any issued licenses matching a product we know
-			if ( issuedProductSlugs.length === 0 ) {
+			if ( issuedLicenses.length === 0 ) {
 				return;
 			}
 
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_multiple_licenses_issued', {
-					products: issuedProductSlugs.map( ( { slug } ) => slug ).join( ',' ),
+					products: issuedLicenses.map( ( { slug } ) => slug ).join( ',' ),
 				} )
 			);
 
@@ -130,8 +128,7 @@ function useIssueAndAssignLicenses(
 			// then, redirect to somewhere more appropriate
 			const selectedSiteId = selectedSite?.ID;
 			if ( ! selectedSiteId ) {
-				const issuedProductNames: string[] = issuedProductSlugs.map( ( { name } ) => name );
-				const issuedMessage = getLicenseIssuedMessage( issuedProductNames );
+				const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
 				dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
 
 				// If this user has no sites, send them to the licenses listing page
