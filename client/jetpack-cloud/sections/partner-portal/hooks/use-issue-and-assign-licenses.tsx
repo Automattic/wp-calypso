@@ -100,28 +100,27 @@ function useIssueAndAssignLicenses(
 	return useMemo( () => {
 		const isReady = issueLicenses.isReady && assignLicensesToSite.isReady;
 
-		const issueAndAssignLicenses = async ( selectedProducts: string[] ) => {
-			if ( ! isReady || selectedProducts.length === 0 ) {
+		const issueAndAssignLicenses = async ( productSlugs: string[] ) => {
+			if ( ! isReady || productSlugs.length === 0 ) {
 				return;
 			}
 
-			const issueLicenseResponses = await issueLicenses.issueLicenses( selectedProducts );
-
-			const issuedLicenses = issueLicenseResponses.filter(
+			const issuedLicenses = ( await issueLicenses.issueLicenses( productSlugs ) ).filter(
 				( r ): r is FulfilledIssueLicenseResult => r.status === 'fulfilled'
 			);
-			const issuedProducts = issuedLicenses
+
+			const issuedProductSlugs = issuedLicenses
 				.map( ( { slug } ) => products?.data?.find?.( ( p ) => p.slug === slug ) )
 				.filter( ( p ): p is APIProductFamilyProduct => p !== undefined );
 
 			// Exit early if we don't see any issued licenses matching a product we know
-			if ( issuedProducts.length === 0 ) {
+			if ( issuedProductSlugs.length === 0 ) {
 				return;
 			}
 
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_multiple_licenses_issued', {
-					products: issuedProducts.map( ( { slug } ) => slug ).join( ',' ),
+					products: issuedProductSlugs.map( ( { slug } ) => slug ).join( ',' ),
 				} )
 			);
 
@@ -131,7 +130,7 @@ function useIssueAndAssignLicenses(
 			// then, redirect to somewhere more appropriate
 			const selectedSiteId = selectedSite?.ID;
 			if ( ! selectedSiteId ) {
-				const issuedProductNames: string[] = issuedProducts.map( ( { name } ) => name );
+				const issuedProductNames: string[] = issuedProductSlugs.map( ( { name } ) => name );
 				const issuedMessage = getLicenseIssuedMessage( issuedProductNames );
 				dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
 
