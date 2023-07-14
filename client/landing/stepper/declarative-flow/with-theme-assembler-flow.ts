@@ -34,6 +34,8 @@ const withThemeAssemblerFlow: Flow = {
 
 		useEffect( () => {
 			if ( ! theme ) {
+				// eslint-disable-next-line no-console
+				console.log( `The ${ selectedTheme } theme is loading...` );
 				return;
 			}
 
