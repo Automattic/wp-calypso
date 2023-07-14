@@ -96,7 +96,9 @@ const RecommendedSites = () => {
 					);
 				} ) }
 				{ filteredRecommendedSites.length < displayRecommendedSitesTotal && (
-					<RecommendedSitesPlaceholder count={ amountOfPlaceHolders } />
+					<RecommendedSitesPlaceholder
+						count={ amountOfPlaceHolders - filteredRecommendedSites.length }
+					/>
 				) }
 			</RecommendedSitesResponsiveContainer>
 		</div>
