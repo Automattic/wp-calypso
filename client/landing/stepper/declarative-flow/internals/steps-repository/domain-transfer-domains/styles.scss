@@ -48,6 +48,11 @@
 			border: none;
 			box-shadow: none;
 		}
+		.formatted-header__subtitle {
+			span {
+				display: block;
+			}
+		}
 
 		@media (min-width: $break-medium ) {
 			.formatted-header .formatted-header__subtitle {
