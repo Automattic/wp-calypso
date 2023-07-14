@@ -2,7 +2,7 @@ import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ONBOARD_STORE } from '../../../../../stores';
 import type { GlobalStyles, OnboardSelect, StarterDesigns } from '@automattic/data-stores';
@@ -45,10 +45,23 @@ const useRecipe = (
 
 	const [ globalStyles, setGlobalStyles ] = useState< GlobalStylesObject | null >( null );
 
-	const preselectedTheme = searchParams.get( 'theme' );
-	const preselectedStyle = searchParams.get( 'style_variation' );
-	const preselectedColorVariationTitle = searchParams.get( 'color_variation_title' );
-	const preselectedFontVariationTitle = searchParams.get( 'font_variation_title' );
+	/**
+	 * Get the preselect data only when mounting and ignore any changes later.
+	 */
+	const {
+		preselectedTheme,
+		preselectedStyle,
+		preselectedColorVariationTitle,
+		preselectedFontVariationTitle,
+	} = useMemo(
+		() => ( {
+			preselectedTheme: searchParams.get( 'theme' ),
+			preselectedStyle: searchParams.get( 'style_variation' ),
+			preselectedColorVariationTitle: searchParams.get( 'color_variation_title' ),
+			preselectedFontVariationTitle: searchParams.get( 'font_variation_title' ),
+		} ),
+		[]
+	);
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
 
@@ -167,8 +180,10 @@ const useRecipe = (
 			return;
 		}
 
-		const requestedDesign = allDesigns.designs.find(
-			( design ) => design.recipe?.slug === preselectedTheme || design.slug === preselectedTheme
+		const requestedDesign = allDesigns.designs.find( ( design ) =>
+			design.is_virtual
+				? design.recipe?.slug === preselectedTheme
+				: design.slug === preselectedTheme
 		);
 		if ( ! requestedDesign ) {
 			return;
