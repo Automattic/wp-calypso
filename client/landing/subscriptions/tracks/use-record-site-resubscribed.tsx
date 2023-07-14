@@ -7,7 +7,7 @@ const useRecordSiteResubscribed = () => {
 	const recordSiteSubscribed = useRecordSiteSubscribed();
 
 	const recordSiteResubscribed = ( tracksProps: {
-		blog_id: string;
+		blog_id: string | null;
 		url: string;
 		source?: string;
 	} ) => {

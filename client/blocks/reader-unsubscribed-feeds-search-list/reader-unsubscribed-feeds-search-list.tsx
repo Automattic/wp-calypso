@@ -14,12 +14,13 @@ const ReaderUnsubscribedFeedsSearchList = () => {
 			return [];
 		}
 
-		return feedItems?.map( ( feed ) => {
+		return feedItems?.map( ( feed, index ) => {
 			if ( isWpcomFeedItem( feed ) ) {
 				return (
 					<ReaderUnsubscribedWpcomFeedItem
 						key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
 						feed={ feed }
+						uiPosition={ index }
 					/>
 				);
 			}
@@ -29,6 +30,7 @@ const ReaderUnsubscribedFeedsSearchList = () => {
 					<ReaderUnsubscribedNonWpcomFeedItem
 						key={ `${ feed.feed_ID }-${ feed.subscribe_URL }` }
 						feed={ feed }
+						uiPosition={ index }
 					/>
 				);
 			}

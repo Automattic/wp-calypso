@@ -1,9 +1,15 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { useEffect } from 'react';
 import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
 import {
 	SiteSubscriptionsList,
 	SiteSubscriptionsListActionsBar,
 } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
+import {
+	useRecordSearchPerformed,
+	useRecordSearchByUrlPerformed,
+} from 'calypso/landing/subscriptions/tracks';
+import { resemblesUrl } from 'calypso/lib/url';
 import { RecommendedSites } from '../recommended-sites';
 import NotFoundSiteSubscriptions from './not-found-site-subscriptions';
 
@@ -14,6 +20,17 @@ const ReaderSiteSubscriptions = () => {
 
 	const hasSomeSubscriptions = siteSubscriptionsQuery.data.subscriptions.length > 0;
 	const hasSomeUnsubscribedSearchResults = ( unsubscribedFeedsSearch?.feedItems.length ?? 0 ) > 0;
+
+	const recordSearchPerformed = useRecordSearchPerformed();
+	const recordSearchByUrlPerformed = useRecordSearchByUrlPerformed();
+
+	useEffect( () => {
+		recordSearchPerformed( { query: searchTerm } );
+
+		if ( resemblesUrl( searchTerm ) ) {
+			recordSearchByUrlPerformed( { url: searchTerm } );
+		}
+	}, [ searchTerm, recordSearchPerformed, recordSearchByUrlPerformed ] );
 
 	return (
 		<>
