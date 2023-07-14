@@ -277,6 +277,10 @@
 		gap: 16px;
 		flex: 1;
 
+		@media (min-width: $break-medium ) {
+			margin-left: -25px;
+		}
+
 		.domains__domain-refresh {
 			button {
 				cursor: pointer;
