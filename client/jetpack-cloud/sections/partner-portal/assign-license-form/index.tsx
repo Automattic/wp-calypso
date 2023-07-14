@@ -120,10 +120,10 @@ export default function AssignLicenseForm( {
 			} )
 		);
 
-		const assignLicenseStatus = await assignLicensesToSite( licenseKeysArray );
+		const assignLicensesResult = await assignLicensesToSite( licenseKeysArray );
 
 		dispatch( resetSite() );
-		dispatch( setPurchasedLicense( assignLicenseStatus ) );
+		dispatch( setPurchasedLicense( assignLicensesResult ) );
 
 		const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 		if ( fromDashboard ) {
