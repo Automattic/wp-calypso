@@ -172,6 +172,22 @@ class MasterbarLoggedOut extends Component {
 		);
 	}
 
+	renderWordPressItem() {
+		const { locale } = this.props;
+
+		let homeUrl = '/';
+		if ( ! isDefaultLocale( locale ) ) {
+			homeUrl = addLocaleToPath( homeUrl, locale );
+		}
+
+		return (
+			<Item url={ homeUrl } className="masterbar__item-logo masterbar__item--always-show-content">
+				<WordPressLogo className="masterbar__wpcom-logo" />
+				<WordPressWordmark className="masterbar__wpcom-wordmark" />
+			</Item>
+		);
+	}
+
 	render() {
 		const { title, isCheckout, isCheckoutPending } = this.props;
 
@@ -188,10 +204,7 @@ class MasterbarLoggedOut extends Component {
 
 		return (
 			<Masterbar className="masterbar__loggedout">
-				<Item className="masterbar__item-logo masterbar__item--always-show-content">
-					<WordPressLogo className="masterbar__wpcom-logo" />
-					<WordPressWordmark className="masterbar__wpcom-wordmark" />
-				</Item>
+				{ this.renderWordPressItem() }
 				<Item className="masterbar__item-title">{ title }</Item>
 				<div className="masterbar__login-links">
 					{ this.renderTagsItem() }

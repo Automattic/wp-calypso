@@ -44,6 +44,7 @@ $masterbar-color-secondary: #101517;
 
 	&.masterbar__loggedout {
 		padding-top: 10px;
+		padding-bottom: 40px;
 
 		.masterbar__item:hover {
 			background: transparent;
@@ -51,6 +52,14 @@ $masterbar-color-secondary: #101517;
 		}
 		.masterbar__item:last-child {
 			margin-left: 6px;
+			margin-right: 12px;
+			background-color: #fff;
+			border-radius: 2px;
+
+			.masterbar__item-content {
+				font-weight: 600;
+				color: var(--color-sidebar-text);
+			}
 		}
 		.masterbar__item:last-child:hover {
 			background: #fff;
@@ -609,22 +618,7 @@ $masterbar-color-secondary: #101517;
 	}
 
 	.masterbar__item:last-child {
-		margin-right: 12px;
-		background-color: #fff;
-		border-radius: 2px;
-
-
-		.masterbar__item-content {
-			font-weight: 600;
-			color: var(--color-sidebar-text);
-		}
-
-		&:hover {
-			background-color: #aaa;
-			.masterbar__item-content {
-				color: #fff;
-			}
-		}
+		margin-right: 20px;
 	}
 }
 
