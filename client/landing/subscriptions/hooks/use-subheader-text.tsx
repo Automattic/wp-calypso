@@ -35,8 +35,8 @@ const useSubheaderText = () => {
 						}
 				  );
 		}
-		return hasTranslation( 'Manage your blog and newsletter subscriptions.' )
-			? translate( 'Manage your blog and newsletter subscriptions.' )
+		return hasTranslation( 'Manage your WordPress.com site and newsletter subscriptions.' )
+			? translate( 'Manage your WordPress.com site and newsletter subscriptions.' )
 			: translate( 'Manage your WordPress.com blog and newsletter subscriptions.' );
 	}, [ emailAddress, translate ] );
 };
