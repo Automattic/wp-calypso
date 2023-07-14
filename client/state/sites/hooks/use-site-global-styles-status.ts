@@ -10,9 +10,7 @@ import type { ExperimentAssignment } from '@automattic/explat-client';
  * because it runs a side effect that produces an error on SSR contexts.
  */
 let loadExperimentAssignment = ( experimentName: string ): Promise< ExperimentAssignment > =>
-	new Promise( ( resolve ) =>
-		resolve( { experimentName, variationName: null, retrievedTimestamp: 0, ttl: 0 } )
-	);
+	Promise.resolve( { experimentName, variationName: null, retrievedTimestamp: 0, ttl: 0 } );
 if ( typeof window !== 'undefined' ) {
 	import( 'calypso/lib/explat' )
 		.then( ( module ) => {
