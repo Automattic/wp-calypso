@@ -43,7 +43,7 @@ import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
-import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
+import LegacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -296,7 +296,10 @@ class CurrentPlan extends Component {
 								</Notice>
 							) }
 
-							{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
+							<LegacyPlanNotice
+								eligibleForProPlan={ eligibleForProPlan }
+								plan={ selectedSite.plan }
+							/>
 
 							{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
 

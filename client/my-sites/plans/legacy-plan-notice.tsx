@@ -1,17 +1,21 @@
 import { isBlogger, isPersonal, isPremium } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
+import type { SiteDetails } from '@automattic/data-stores';
 
 /**
  * Renders a "You're on a legacy plan" for sites on legacy plans (excluding free, business, and ecommerce plan).
- *
- * @param {boolean} eligibleForProPlan - Is the user eligible for pro plan?
- * @param {Object} selectedSite - Site object from store.
- * @param {Object} selectedSite.plan - The plan object nested inside the selectedSite object.
- * @returns {import('react').Element} - Legacy plan Notice component.
  */
-const maybeRenderLegacyPlanNotice = ( eligibleForProPlan, { plan } ) => {
-	const eligibleLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
+const LegacyPlanNotice = ( {
+	eligibleForProPlan,
+	plan,
+}: {
+	eligibleForProPlan: boolean;
+	plan: SiteDetails[ 'plan' ];
+} ) => {
+	const translate = useTranslate();
+	const eligibleLegacyPlan =
+		plan && ( isBlogger( plan ) || isPersonal( plan ) || isPremium( plan ) );
 
 	if ( eligibleForProPlan && eligibleLegacyPlan ) {
 		return (
@@ -28,4 +32,4 @@ const maybeRenderLegacyPlanNotice = ( eligibleForProPlan, { plan } ) => {
 	return null;
 };
 
-export default maybeRenderLegacyPlanNotice;
+export default LegacyPlanNotice;
