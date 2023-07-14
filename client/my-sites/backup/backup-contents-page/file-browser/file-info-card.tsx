@@ -8,6 +8,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import FilePreview from './file-preview';
+import { onPreparingDownloadError } from './notices';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
@@ -109,12 +110,12 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
-			// @TODO: We should dispatch an error notice
+			dispatch( onPreparingDownloadError() );
 			return;
 		}
 
 		prepareDownload( siteId, item.period, fileInfo.manifestFilter, fileInfo.dataType );
-	}, [ fileInfo, item.period, prepareDownload, siteId ] );
+	}, [ dispatch, fileInfo, item.period, prepareDownload, siteId ] );
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
