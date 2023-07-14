@@ -1,4 +1,4 @@
-import type { Design, Font } from './types';
+import type { Font } from './types';
 
 export const FONT_TITLES: Partial< Record< Font, string > > = {
 	'Playfair Display': 'Playfair',
@@ -68,14 +68,14 @@ export const STICKY_OFFSET_TOP = 109;
 /**
  * Hard-coded design
  */
-export const DEFAULT_ASSEMBLER_DESIGN = {
-	slug: 'creatio',
-	title: 'Creatio',
+export const BLANK_CANVAS_DESIGN = {
+	slug: 'blank-canvas-3',
+	title: 'Blank Canvas',
 	recipe: {
-		stylesheet: 'pub/creatio',
+		stylesheet: 'pub/blank-canvas-3',
 	},
 	design_type: 'assembler',
-} as Design;
+};
 
 export const FREE_THEME = 'free';
 export const PREMIUM_THEME = 'premium';
