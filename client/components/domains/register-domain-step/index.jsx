@@ -417,7 +417,14 @@ class RegisterDomainStep extends Component {
 			? getAvailabilityNotice( suggestionErrorDomain, suggestionError, suggestionErrorData )
 			: {};
 		const { message: availabilityMessage, severity: availabilitySeverity } = showAvailabilityNotice
-			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData, null, availabilityErrorDomainTld )
+			? getAvailabilityNotice(
+					availabilityErrorDomain,
+					availabilityError,
+					availabilityErrorData,
+					null,
+					null,
+					availabilityErrorDomainTld
+			  )
 			: {};
 
 		const containerDivClassName = classNames( 'register-domain-step', {
