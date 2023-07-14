@@ -162,16 +162,22 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	}, [ returnQueryArg, products, reduxDispatch ] );
 
 	useEffect( () => {
-		if ( ! paymentMethodRequired && products ) {
-			const itemsToIssue = products.split( ',' );
-
-			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_issue_multiple_licenses_submit', {
-					products,
-				} )
-			);
-			issueAndAssignLicenses( itemsToIssue );
+		if ( paymentMethodRequired ) {
+			return;
 		}
+
+		if ( ! products ) {
+			return;
+		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_issue_multiple_licenses_submit', {
+				products,
+			} )
+		);
+
+		const itemsToIssue = products.split( ',' );
+		issueAndAssignLicenses( itemsToIssue );
 		// Do not update the dependency array with issueMultipleLicense since
 		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
