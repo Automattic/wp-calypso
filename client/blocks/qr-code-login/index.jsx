@@ -11,6 +11,7 @@ import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 import { useInterval } from 'calypso/lib/interval';
 import { login } from 'calypso/lib/paths';
 import { postLoginRequest, getErrorFromHTTPError } from 'calypso/state/login/utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 
 import './style.scss';
 
@@ -54,7 +55,7 @@ function TokenQRCode( { tokenData } ) {
 	};
 	return (
 		<QRCodeSVG
-			value={ `https://apps.wordpress.com/get/?campaign=login-qr-code#qr-code-login?token=${ token }&data=${ encrypted }` }
+			value={ localizeUrl( `https://apps.wordpress.com/get/?campaign=login-qr-code#qr-code-login?token=${ token }&data=${ encrypted }` ) }
 			size={ 300 }
 			imageSettings={ imageSettings }
 		/>
