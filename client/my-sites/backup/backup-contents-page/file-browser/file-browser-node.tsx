@@ -79,8 +79,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			let childIsAlternate = isAlternate;
 
 			return backupFiles.map( ( childItem ) => {
-				childIsAlternate = ! childIsAlternate;
-
 				// Let's hide archives that don't have an extension version
 				// and changed extensions item node
 				if (
@@ -89,6 +87,8 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 				) {
 					return null;
 				}
+
+				childIsAlternate = ! childIsAlternate;
 
 				return (
 					<FileBrowserNode
