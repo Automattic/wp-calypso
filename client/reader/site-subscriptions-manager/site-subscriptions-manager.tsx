@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -36,6 +37,7 @@ const useMarkFollowsAsStaleOnUnmount = () => {
 
 const SiteSubscriptionsManager = () => {
 	const translate = useTranslate();
+	const locale = useLocale();
 	const { hasTranslation } = useI18n();
 
 	// Mark follows as stale on unmount to ensure that the reader
@@ -53,6 +55,7 @@ const SiteSubscriptionsManager = () => {
 					<FormattedHeader
 						headerText={ translate( 'Manage subscribed sites' ) }
 						subHeaderText={
+							locale.startsWith( 'en' ) ||
 							hasTranslation( 'Manage your site, RSS, and newsletter subscriptions.' )
 								? translate( 'Manage your site, RSS, and newsletter subscriptions.' )
 								: translate( 'Manage your newsletter and blog subscriptions.' )
