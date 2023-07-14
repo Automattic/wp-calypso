@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { PatternAssemblerCta, DEFAULT_ASSEMBLER_DESIGN } from '@automattic/design-picker';
+import { PatternAssemblerCta, BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
 import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
@@ -86,7 +86,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 			const basePathname = isLoggedIn ? '/setup' : '/start';
 			const params = new URLSearchParams( {
 				ref: 'calypshowcase',
-				theme: DEFAULT_ASSEMBLER_DESIGN.slug,
+				theme: BLANK_CANVAS_DESIGN.slug,
 			} );
 
 			if ( selectedSite?.slug ) {
