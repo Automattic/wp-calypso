@@ -12,7 +12,9 @@
 		}
 	}
 
-	@include break-mobile {
+	// We are using the deprecated mixin to match the when the mobile navigation appears
+	// which is at 660px instead of the 600px break-small breakpoint.
+	@include breakpoint-deprecated( ">660px" ) {
 		&__back-button.components-button.is-link {
 			padding: 0;
 			margin: 0;
