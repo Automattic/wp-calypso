@@ -377,7 +377,9 @@ export const ConnectedThemesSelection = connect(
 			// We limit the WP.org themes to one page only.
 			page: 1,
 			// WP.com theme filters don't match WP.org ones, so we add them to the search term.
-			search: filter ? `${ search } ${ filter.replace( /[+-]/g, ' ' ) }` : search,
+			search: filter
+				? `${ search } ${ filter.replaceAll( 'subject:', '' ).replace( /[+-]/g, ' ' ) }`
+				: search,
 		};
 		const wpOrgThemes = shouldFetchWpOrgThemes
 			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []
