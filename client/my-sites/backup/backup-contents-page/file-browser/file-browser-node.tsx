@@ -16,6 +16,7 @@ interface FileBrowserNodeProps {
 	isAlternate: boolean; // This decides if the node will have a background color or not
 	setActiveNodePath: ( path: string ) => void;
 	activeNodePath: string;
+	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -26,6 +27,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	isAlternate,
 	setActiveNodePath,
 	activeNodePath,
+	parentItem,
 } ) => {
 	const isRoot = path === '/';
 	const isCurrentNodeClicked = activeNodePath === path;
@@ -88,6 +90,8 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						isAlternate={ childIsAlternate }
 						activeNodePath={ activeNodePath }
 						setActiveNodePath={ setActiveNodePath }
+						// Hacky way to pass extensions details to the child node
+						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
 					/>
 				);
 			} );
@@ -124,7 +128,14 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					</Button>
 				) }
 			</div>
-			{ isCurrentNodeClicked && <FileInfoCard siteId={ siteId } item={ item } /> }
+			{ isCurrentNodeClicked && (
+				<FileInfoCard
+					siteId={ siteId }
+					rewindId={ rewindId }
+					item={ item }
+					parentItem={ parentItem }
+				/>
+			) }
 			{ isOpen && (
 				<>
 					{ item.hasChildren && (
