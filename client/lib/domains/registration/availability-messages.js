@@ -178,7 +178,7 @@ function getAvailabilityNotice(
 				break;
 			} else {
 				message = translate(
-					'{{strong}}%(domain)s{{/strong}} is either already connected to another WordPress.com site you own.',
+					'{{strong}}%(domain)s{{/strong}} is already connected to another site you own on WordPress.com.',
 					{
 						args: { domain },
 						components: {
