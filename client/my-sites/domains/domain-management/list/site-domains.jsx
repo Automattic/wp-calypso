@@ -43,7 +43,6 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import DomainOnly from './domain-only';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import { filterDomainsByOwner } from './helpers';
@@ -344,15 +343,8 @@ export class SiteDomains extends Component {
 
 		if ( this.props.isDomainOnly ) {
 			if ( ! this.props.renderAllSites ) {
-				return (
-					<Main>
-						<DocumentHead title={ this.props.translate( 'Settings' ) } />
-						<DomainOnly
-							hasNotice={ this.isFreshDomainOnlyRegistration() }
-							siteId={ this.props.selectedSite.ID }
-						/>
-					</Main>
-				);
+				page.redirect( domainManagementRoot() );
+				return null;
 			}
 
 			if ( filterOutWpcomDomains( this.props.domains ).length === 0 ) {
