@@ -34,7 +34,6 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 						</>
 					}
 					align="center"
-					subHeaderAlign="center"
 				/>
 			}
 			stepContent={

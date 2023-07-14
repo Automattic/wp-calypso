@@ -49,8 +49,13 @@
 			box-shadow: none;
 		}
 
-		@media (max-width: $break-medium ) {
+		@media (min-width: $break-medium ) {
+			.formatted-header .formatted-header__subtitle {
+				text-align: center;
+			}
+		}
 
+		@media (max-width: $break-medium ) {
 			.step-container__header {
 				width: 100%;
 				margin-top: 48px;
@@ -59,10 +64,6 @@
 					font-size: 2rem;
 					text-align: left;
 				}
-			}
-
-			header {
-				text-align: center;
 			}
 
 			gap: 0;
