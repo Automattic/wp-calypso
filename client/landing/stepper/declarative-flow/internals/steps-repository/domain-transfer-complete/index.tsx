@@ -66,7 +66,7 @@ const Complete: Step = function Complete( { flow } ) {
 						id="domains-header"
 						headerText={ _n(
 							'Your domain transfer has started',
-							'Your domain transfers has started',
+							'Your domain transfers have started',
 							newlyTransferredDomains?.length || storedDomainsAmount
 						) }
 						subHeaderText={
