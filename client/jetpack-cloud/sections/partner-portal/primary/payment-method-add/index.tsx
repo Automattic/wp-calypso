@@ -34,6 +34,7 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
+import { APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import Layout from '../../layout';
 import LayoutHeader from '../../layout/header';
@@ -82,7 +83,30 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		useIssueAndAssignLicenses(
 			siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null,
 			{
-				onError: ( error: Error ) =>
+				onIssueError: ( error: APIError ) => {
+					if ( error.code === 'missing_valid_payment_method' ) {
+						dispatch(
+							errorNotice(
+								translate(
+									'A primary payment method is required.{{br/}} {{a}}Try adding a new payment method{{/a}} or contact support.',
+									{
+										components: {
+											a: (
+												<a href="/partner-portal/payment-methods/add?return=/partner-portal/issue-license" />
+											),
+											br: <br />,
+										},
+									}
+								)
+							)
+						);
+
+						return;
+					}
+
+					dispatch( errorNotice( error.message ) );
+				},
+				onAssignError: ( error: Error ) =>
 					dispatch( errorNotice( error.message, { isPersistent: true } ) ),
 			}
 		);

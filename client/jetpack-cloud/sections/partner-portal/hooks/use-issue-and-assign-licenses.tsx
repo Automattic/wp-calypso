@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import { APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
 import useIssueLicenses, { FulfilledIssueLicenseResult } from './use-issue-licenses';
@@ -83,7 +84,8 @@ const useGetLicenseIssuedMessage = () => {
 };
 
 type UseIssueAndAssignLicensesOptions = {
-	onError?: ( ( error: Error ) => void ) | ( () => void );
+	onIssueError?: ( ( error: APIError ) => void ) | ( () => void );
+	onAssignError?: ( ( error: Error ) => void ) | ( () => void );
 };
 function useIssueAndAssignLicenses(
 	selectedSite?: { ID: number; domain: string } | null,
@@ -92,9 +94,12 @@ function useIssueAndAssignLicenses(
 	const dispatch = useDispatch();
 	const sitesCount = useSelector( getSites ).length;
 
-	const issueLicenses = useIssueLicenses();
+	const issueLicenses = useIssueLicenses( {
+		onError: options.onIssueError ?? NO_OP,
+	} );
+
 	const assignLicensesToSite = useAssignLicensesToSite( selectedSite, {
-		onError: options.onError ?? NO_OP,
+		onError: options.onAssignError ?? NO_OP,
 	} );
 
 	const getLicenseIssuedMessage = useGetLicenseIssuedMessage();

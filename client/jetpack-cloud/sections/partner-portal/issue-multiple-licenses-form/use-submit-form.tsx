@@ -1,4 +1,5 @@
 import { getQueryArg } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback } from 'react';
 import { useIssueAndAssignLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
@@ -8,6 +9,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import { APIError } from 'calypso/state/partner-portal/types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const containEquivalentItems = ( arr1: string[], arr2: string[] ) => {
@@ -30,9 +32,35 @@ const containEquivalentItems = ( arr1: string[], arr2: string[] ) => {
 
 const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs?: string[] ) => {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
+
 	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
 		useIssueAndAssignLicenses( selectedSite, {
-			onError: ( error: Error ) => dispatch( errorNotice( error.message, { isPersistent: true } ) ),
+			onIssueError: ( error: APIError ) => {
+				if ( error.code === 'missing_valid_payment_method' ) {
+					dispatch(
+						errorNotice(
+							translate(
+								'A primary payment method is required.{{br/}} {{a}}Try adding a new payment method{{/a}} or contact support.',
+								{
+									components: {
+										a: (
+											<a href="/partner-portal/payment-methods/add?return=/partner-portal/issue-license" />
+										),
+										br: <br />,
+									},
+								}
+							)
+						)
+					);
+
+					return;
+				}
+
+				dispatch( errorNotice( error.message ) );
+			},
+			onAssignError: ( error: Error ) =>
+				dispatch( errorNotice( error.message, { isPersistent: true } ) ),
 		} );
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
