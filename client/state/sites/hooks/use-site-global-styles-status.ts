@@ -67,15 +67,13 @@ const getGlobalStylesInfoForSite = ( siteId: number | null ): Promise< GlobalSty
 	}
 
 	if ( siteId === null ) {
-		return new Promise( ( resolve ) =>
-			loadExperimentAssignment( 'calypso_global_styles_personal_v2' ).then(
-				( experimentAssignment ) =>
-					resolve( {
-						shouldLimitGlobalStyles: true,
-						globalStylesInUse: false,
-						globalStylesInPersonalPlan: experimentAssignment.variationName === 'treatment',
-					} )
-			)
+		return loadExperimentAssignment( 'calypso_global_styles_personal_v2' ).then(
+			( experimentAssignment ) =>
+				Promise.resolve( {
+					shouldLimitGlobalStyles: true,
+					globalStylesInUse: false,
+					globalStylesInPersonalPlan: experimentAssignment.variationName === 'treatment',
+				} )
 		);
 	}
 
