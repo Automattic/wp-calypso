@@ -27,7 +27,6 @@ $masterbar-color-secondary: #101517;
 	position: fixed;
 	left: 0;
 	top: 0;
-	padding-top: 10px;
 	width: 100%;
 	max-width: 100vw;
 	z-index: z-index("root", ".masterbar");
@@ -41,6 +40,10 @@ $masterbar-color-secondary: #101517;
 		// Use generic colors so that they override whatever theme colors the user has picked.
 		background: var(--studio-orange);
 		border-bottom: 1px solid var(--studio-orange-60);
+	}
+
+	&.masterbar__loggedout {
+		padding-top: 10px;
 	}
 
 	&.masterbar--is-checkout {
