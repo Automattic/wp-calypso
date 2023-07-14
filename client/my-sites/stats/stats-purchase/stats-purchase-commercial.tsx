@@ -4,13 +4,16 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
+
 interface CommercialPurchaseProps {
 	planValue: number;
 	currencyCode: string;
+	siteSlug: string;
 }
 
-const CommercialPurchase = ( { planValue, currencyCode }: CommercialPurchaseProps ) => {
+const CommercialPurchase = ( { planValue, currencyCode, siteSlug }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const planPriceObject = getCurrencyObject( planValue, currencyCode );
 
@@ -73,7 +76,7 @@ const CommercialPurchase = ( { planValue, currencyCode }: CommercialPurchaseProp
 				) }
 			</p>
 
-			<Button variant="primary">
+			<Button variant="primary" onClick={ () => gotoCheckoutPage( 'commercial', siteSlug ) }>
 				{ translate( 'Get Jetpack Stats for %(value)s per month', {
 					args: {
 						value: formatCurrency( planValue, currencyCode ),
