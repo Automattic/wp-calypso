@@ -35,7 +35,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize, LocalizedComponent, LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Component, createRef } from 'react';
+import React, { Component, createRef, useLayoutEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -113,7 +113,6 @@ export type PlanFeatures2023GridProps = {
 	selectedFeature?: string;
 	intent?: PlansIntent;
 	isGlobalStylesOnPersonal?: boolean;
-	gridSize: GridSize;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -136,6 +135,7 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
+	gridSize: GridSize;
 };
 
 const PlanLogo: React.FunctionComponent< {
@@ -209,12 +209,65 @@ const PlanLogo: React.FunctionComponent< {
 	);
 };
 
+const PlanFeaturesGrid = ( {
+	children,
+	gridSize,
+	setGridSize,
+	visiblePlans,
+}: {
+	setGridSize: ( gridSize: GridSize ) => void;
+	gridSize: GridSize;
+	children: React.ReactNode;
+	visiblePlans: PlanSlug[];
+} ) => {
+	const containerRef = useRef< HTMLDivElement >( null );
+	const columnMinWidth = 200;
+	const largeFit = visiblePlans.length * columnMinWidth;
+	const mediumFit = 3 * columnMinWidth;
+
+	useLayoutEffect( () => {
+		const handleResize = () => {
+			const width = containerRef.current?.offsetWidth;
+
+			if ( width ) {
+				if ( width <= 780 ) {
+					if ( gridSize !== 'small' ) {
+						setGridSize( 'small' );
+					}
+				} else if ( width >= largeFit ) {
+					if ( gridSize !== 'large' ) {
+						setGridSize( 'large' );
+					}
+				} else if ( width >= mediumFit ) {
+					if ( gridSize !== 'medium' ) {
+						setGridSize( 'medium' );
+					}
+				}
+			}
+		};
+
+		window.addEventListener( 'resize', handleResize );
+		handleResize();
+
+		return () => {
+			window.removeEventListener( 'resize', handleResize );
+		};
+	}, [ gridSize, largeFit, mediumFit, setGridSize ] );
+
+	return <div ref={ containerRef }>{ children }</div>;
+};
+
 export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
 	PlanFeatures2023GridState
 > {
 	state = {
 		showPlansComparisonGrid: false,
+		gridSize: 'small' as GridSize,
+	};
+
+	setGridSize = ( gridSize: GridSize ) => {
+		this.setState( { gridSize } );
 	};
 
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
@@ -268,8 +321,9 @@ export class PlanFeatures2023Grid extends Component<
 			isGlobalStylesOnPersonal,
 			planRecords,
 			visiblePlans,
-			gridSize,
 		} = this.props;
+
+		const { gridSize } = this.state;
 		return (
 			<PlansGridContextProvider
 				intent={ intent }
@@ -280,7 +334,11 @@ export class PlanFeatures2023Grid extends Component<
 					<QueryActivePromotions />
 					<div className="plan-features">
 						<div className="plan-features-2023-grid__content">
-							<div>
+							<PlanFeaturesGrid
+								gridSize={ gridSize }
+								setGridSize={ this.setGridSize }
+								visiblePlans={ visiblePlans }
+							>
 								{ [ 'medium', 'large' ].includes( gridSize ) ? (
 									<div className="plan-features-2023-grid__table-view">
 										{ this.renderTableView() }
@@ -290,7 +348,7 @@ export class PlanFeatures2023Grid extends Component<
 										{ this.renderColumnView() }
 									</div>
 								) }
-							</div>
+							</PlanFeaturesGrid>
 						</div>
 					</div>
 					{ ! hidePlansFeatureComparison && (
@@ -365,7 +423,8 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTableView() {
-		const { planProperties, gridSize } = this.props;
+		const { planProperties } = this.props;
+		const { gridSize } = this.state;
 		let plansToShow = [];
 
 		plansToShow = planProperties
