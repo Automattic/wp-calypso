@@ -16,6 +16,10 @@ import getSites from 'calypso/state/selectors/get-sites';
 import getProductSlugFromLicenseKey from '../lib/get-product-slug-from-license-key';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
 
+const NO_OP = () => {
+	/* Do nothing */
+};
+
 const useIssueLicenses = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -134,7 +138,13 @@ const useGetLicenseIssuedMessage = () => {
 	);
 };
 
-function useIssueAndAssignLicenses( selectedSite?: { ID: number; domain: string } | null ) {
+type UseIssueAndAssignLicensesOptions = {
+	onError?: ( ( error: Error ) => void ) | ( () => void );
+};
+function useIssueAndAssignLicenses(
+	selectedSite?: { ID: number; domain: string } | null,
+	options: UseIssueAndAssignLicensesOptions = {}
+) {
 	const dispatch = useDispatch();
 	const products = useProductsQuery();
 	const sitesCount = useSelector( getSites ).length;
@@ -143,9 +153,7 @@ function useIssueAndAssignLicenses( selectedSite?: { ID: number; domain: string 
 
 	const issueLicenses = useIssueLicenses();
 	const assignLicensesToSite = useAssignLicensesToSite( selectedSite, {
-		onError: ( error: Error ) => {
-			dispatch( errorNotice( error.message, { isPersistent: true } ) );
-		},
+		onError: options.onError ?? NO_OP,
 	} );
 
 	const getLicenseIssuedMessage = useGetLicenseIssuedMessage();

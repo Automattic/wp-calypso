@@ -11,6 +11,7 @@ import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/tot
 import { isJetpackBundle } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import {
 	getAssignedPlanAndProductIDsForSite,
@@ -124,7 +125,9 @@ export default function IssueMultipleLicensesForm( {
 		.split( ',' );
 
 	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
-		useIssueAndAssignLicenses( selectedSite );
+		useIssueAndAssignLicenses( selectedSite, {
+			onError: ( error: Error ) => dispatch( errorNotice( error.message, { isPersistent: true } ) ),
+		} );
 
 	const maybeTrackUnsuggestedSelection = useCallback(
 		( selectedSlugs: string[] ) => {

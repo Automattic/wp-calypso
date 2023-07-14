@@ -77,9 +77,14 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		[]
 	);
 
+	const dispatch = useDispatch();
 	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
 		useIssueAndAssignLicenses(
-			siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null
+			siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null,
+			{
+				onError: ( error: Error ) =>
+					dispatch( errorNotice( error.message, { isPersistent: true } ) ),
+			}
 		);
 
 	useReturnUrl( ! paymentMethodRequired );
