@@ -325,12 +325,6 @@
 
 		.domains__domain-delete {
 			button {
-				visibility: hidden;
-
-				&.has-delete-button {
-					visibility: visible;
-				}
-
 				&:hover {
 					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
 				}
