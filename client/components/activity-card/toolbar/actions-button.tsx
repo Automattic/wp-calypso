@@ -179,7 +179,7 @@ const ActionsButton: React.FC< OwnProps > = ( {
 	const actionableRewindId = getActionableRewindId( activity );
 
 	// Let's validate if the activity is a successful backup so we could decide which actions to show.
-	const isSuccessfulBackup = SUCCESSFUL_BACKUP_ACTIVITIES.includes( activity.activityName );
+	const isSuccessfulBackup = SUCCESSFUL_BACKUP_ACTIVITIES.includes( activity?.activityName );
 
 	const isMultisite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	if ( isMultisite ) {
