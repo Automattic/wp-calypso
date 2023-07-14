@@ -28,6 +28,7 @@ export interface Purchase {
 	introductoryOffer: PurchaseIntroductoryOffer | null;
 	isAutoRenewEnabled: boolean;
 	isCancelable: boolean;
+	isDomain?: boolean;
 	isDomainRegistration?: boolean;
 	isInAppPurchase: boolean;
 	isLocked: boolean;
@@ -190,6 +191,7 @@ export interface RawPurchase {
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
 	is_cancelable: boolean;
+	is_domain: boolean;
 	is_domain_registration: boolean;
 	is_locked: boolean;
 	is_iap_purchase: boolean;
