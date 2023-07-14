@@ -63,7 +63,13 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 
 	const renderChildren = () => {
 		if ( isInitialLoading ) {
-			return <div className="file-browser-node__loading placeholder" />;
+			return (
+				<>
+					<div className="file-browser-node__loading placeholder" />
+					<div className="file-browser-node__loading placeholder" />
+					<div className="file-browser-node__loading placeholder" />
+				</>
+			);
 		}
 
 		// @TODO: Add a message when the API fails to fetch
@@ -107,7 +113,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const nodeItemClassName = classNames( 'file-browser-node__item', {
 		'is-alternate': isAlternate,
 	} );
-	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 50, item.type );
+	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
 
 	const nodeContentsClassName = classNames( 'file-browser-node__contents', {
 		'is-root': isRoot,
