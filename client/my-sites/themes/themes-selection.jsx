@@ -377,6 +377,7 @@ export const ConnectedThemesSelection = connect(
 			// We limit the WP.org themes to one page only.
 			page: 1,
 			// WP.com theme filters don't match WP.org ones, so we add them to the search term.
+			// Filters are slugified and concatenated, so we clear `-` and `+` characters; we also remove the `subject:` prefix that can appear when changing categories.
 			search: filter
 				? `${ search } ${ filter.replaceAll( 'subject:', '' ).replace( /[+-]/g, ' ' ) }`
 				: search,
