@@ -3,21 +3,8 @@ import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-	ensurePartnerPortalReturnUrl,
-	getProductTitle,
-} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { ensurePartnerPortalReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
-import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import getProductSlugFromLicenseKey from '../lib/get-product-slug-from-license-key';
-import type {
-	ProductInfo,
-	PurchasedProductsInfo,
-} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 /**
  * Redirect to the partner portal or a present "return" GET parameter given a certain condition.
@@ -116,72 +103,7 @@ export function useCursorPagination(
 	return [ page, showPagination, onNavigate ];
 }
 
-export function useAssignLicensesToSite( selectedSite: { ID: number; domain: string } | null ): {
-	assignLicensesToSite: ( licenseKeys: string[] ) => Promise< PurchasedProductsInfo >;
-	isReady: boolean;
-} {
-	const products = useProductsQuery();
-	const dispatch = useDispatch();
-	const assignLicense = useAssignLicenseMutation( {
-		onError: ( error: Error ) => {
-			dispatch( errorNotice( error.message, { isPersistent: true } ) );
-		},
-	} );
-
-	const isReady = assignLicense.isIdle;
-	const assignLicensesToSite = useCallback(
-		async ( licenseKeys: string[] ): Promise< PurchasedProductsInfo > => {
-			// Only proceed if the mutation is in a fresh/ready state
-			if ( ! assignLicense.isIdle ) {
-				throw new Error( 'The mutation for assigning licenses is not ready' );
-			}
-
-			// We need a valid site ID in order to assign licenses to a site;
-			// otherwise, we assign nothing
-			const selectedSiteId = selectedSite?.ID;
-			if ( ! selectedSiteId ) {
-				throw new Error( 'A site ID is required for license assignment but was missing' );
-			}
-
-			const keysWithProductNames = licenseKeys
-				.map( ( key ) => {
-					const productSlug = getProductSlugFromLicenseKey( key );
-					const selectedProduct = products?.data?.find?.( ( p ) => p.slug === productSlug );
-
-					return {
-						key,
-						product: selectedProduct,
-					};
-				} )
-				// If we can't determine which product a license is meant for, filter it out
-				.filter( ( { product } ) => Boolean( product ) )
-				// We only need the product's title/display name
-				.map( ( { key, product } ) => ( {
-					key,
-					name: getProductTitle( ( product as APIProductFamilyProduct ).name ),
-				} ) );
-
-			// Purposely catch any error responses and let them through,
-			// so we can pass all their information along as ProductInfo objects
-			// (not currently available via PromiseSettledResult<T>)
-			const apiRequests = keysWithProductNames.map( ( { key, name } ) =>
-				assignLicense
-					.mutateAsync( { licenseKey: key, selectedSite: selectedSiteId } )
-					.then( () => ( { key, name, status: 'fulfilled' } as ProductInfo ) )
-					.catch( () => ( { key, name, status: 'rejected' } as ProductInfo ) )
-			);
-
-			return {
-				selectedSite: selectedSite?.domain || '',
-				selectedProducts: await Promise.all( apiRequests ),
-			};
-		},
-		[ selectedSite, assignLicense, products ]
-	);
-
-	return { assignLicensesToSite, isReady };
-}
-
+export { default as useAssignLicensesToSite } from './use-assign-licenses-to-site';
 export { default as useIssueAndAssignLicenses } from './use-issue-and-assign-licenses';
 
 /**
