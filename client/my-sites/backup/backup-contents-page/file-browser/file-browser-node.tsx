@@ -52,6 +52,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			setFetchContentsOnMount( true );
 		}
 
+		// If the node doesn't have children, let's open the file info card
 		if ( ! item.hasChildren ) {
 			if ( ! isOpen ) {
 				setActiveNodePath( path );
