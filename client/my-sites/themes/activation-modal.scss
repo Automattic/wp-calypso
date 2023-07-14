@@ -3,12 +3,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.dialog__content.themes__auto-loading-homepage-modal {
+.dialog__content.themes__activation-modal {
 	position: relative;
 	padding: 48px 48px 16px;
 	max-width: 640px;
 	box-sizing: border-box;
-	.auto-loading-homepage-modal__heading {
+	.activation-modal__heading {
 		@extend .wp-brand-font;
 		font-size: $font-title-large;
 		line-height: 1.1;
@@ -22,7 +22,7 @@
 	flex-direction: column;
 }
 
-.themes__auto-loading-homepage-modal-close-icon {
+.themes__activation-modal-close-icon {
 	cursor: pointer;
 	color: var(--color-text-subtle);
 	position: absolute;
@@ -30,11 +30,11 @@
 	right: 12px;
 }
 
-.auto-loading-homepage-modal__description {
+.activation-modal__description {
 	margin-bottom: 56px;
 }
 
-.auto-loading-homepage-modal__checkbox {
+.activation-modal__checkbox {
 	margin-bottom: 16px;
 	.components-base-control__field {
 		display: flex;
@@ -45,7 +45,7 @@
 	}
 }
 
-.auto-loading-homepage-modal__actions {
+.activation-modal__actions {
 	display: flex;
 	justify-content: flex-end;
 

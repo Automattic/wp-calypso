@@ -775,6 +775,10 @@ describe( 'actions', () => {
 					queries: {
 						wpcom: new ThemeQueryManager(),
 					},
+					themeActivationModal: {
+						themeId: 'karuna',
+						accepted: true,
+					},
 				},
 			} );
 			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
@@ -811,6 +815,10 @@ describe( 'actions', () => {
 								items: { karuna: {} },
 							} ),
 						},
+						themeActivationModal: {
+							themeId: 'karuna',
+							accepted: true,
+						},
 					},
 				} );
 				test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
@@ -833,6 +841,10 @@ describe( 'actions', () => {
 					...sitesState,
 					themes: {
 						queries: {},
+						themeActivationModal: {
+							themeId: 'karuna',
+							accepted: true,
+						},
 					},
 				} );
 				test( 'should dispatch (only) installAndActivateTheme() and pass the suffixed themeId', () => {
