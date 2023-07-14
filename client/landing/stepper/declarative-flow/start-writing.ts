@@ -214,9 +214,14 @@ const startWriting: Flow = {
 		// This effects both /setup/start-writing/<locale> starting points and /setup/start-writing/site-creation-step/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
+			const currentPath2 = window.location.pathname;
+			const isSiteCreationStep2 =
+				currentPath2.endsWith( 'setup/start-writing/' ) ||
+				currentPath2.includes( 'setup/start-writing/site-creation-step' );
+
 			if ( ! isLoggedIn ) {
 				redirect( logInUrl );
-			} else if ( userAlreadyHasSites && isSiteCreationStep ) {
+			} else if ( userAlreadyHasSites && isSiteCreationStep2 ) {
 				// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
 				// This prevents a bunch of sites being created accidentally.
 				redirect( `/post?${ START_WRITING_FLOW }=true` );
