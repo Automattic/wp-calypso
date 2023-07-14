@@ -15,7 +15,7 @@ export default async (): Promise< void > => {
 
 	// If the list of accounts for which to pre-authenticate and save cookies
 	// for is empty, then don't run.
-	if ( AUTHENTICATE_ACCOUNTS.length <= 0 ) {
+	if ( AUTHENTICATE_ACCOUNTS.length === 0 ) {
 		return;
 	}
 
