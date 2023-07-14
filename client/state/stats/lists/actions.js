@@ -63,6 +63,12 @@ export function requestSiteStats( siteId, statType, query ) {
 			query,
 		} );
 
+		/////////////// TEMP JANK BEGIN //////////////////
+		if ( statType === 'allSitesStatsSummary' ) {
+			return requestAllSitesStatsSummary( dispatch, query );
+		}
+		/////////////// TEMP JANK END  //////////////////
+
 		let subpath;
 		let apiNamespace;
 		if ( wpcomV1Endpoints.hasOwnProperty( statType ) ) {
@@ -122,3 +128,30 @@ export function requestSiteStats( siteId, statType, query ) {
 			} );
 	};
 }
+
+/////////////// TEMP JANK BEGIN //////////////////
+function requestAllSitesStatsSummary( dispatch, query ) {
+	console.log( '---------- requestAllSitesStatsSummary --------------', query );
+	wpcom.req
+		.get( { path: '/me/sites/stats/summary' }, query )
+		.then( ( data ) => {
+			console.log( 'wait a minute.. we actually got data: ', data );
+			const { stats } = data;
+			console.log( 'dispatching actions for each site..' );
+			for ( const siteId in stats ) {
+				if ( stats.hasOwnProperty( siteId ) ) {
+					const siteData = stats[ siteId ];
+					const singleStatType = 'statsSummary';
+					// console.log( [ siteId, singleStatType, query, siteData, Date.now() ] );
+					// Probably better to write a new reducer that updates all at once
+					dispatch( receiveSiteStats( siteId, singleStatType, query, siteData, Date.now() ) );
+				}
+			}
+			console.log( 'finished dispatching.' );
+		} )
+		.catch( ( error ) => {
+			// Should we dispatch an error action here?
+			console.log( 'error getting all sites stats summary: ', error );
+		} );
+}
+/////////////// TEMP JANK END  //////////////////

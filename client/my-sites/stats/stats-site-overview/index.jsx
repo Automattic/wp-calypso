@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QuerySiteStats from 'calypso/components/data/query-site-stats';
+// import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import SectionHeader from 'calypso/components/section-header';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
@@ -38,7 +38,7 @@ class StatsSiteOverview extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
 			<div>
-				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsSummary" query={ query } /> }
+				{ /* siteId && <QuerySiteStats siteId={ siteId } statType="statsSummary" query={ query } /> */ }
 				<SectionHeader label={ title } href={ headerPath } />
 				<Card className="stats__overview stats-module is-site-overview">
 					<StatsTabs borderless>

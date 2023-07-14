@@ -15,6 +15,7 @@ import DatePicker from './stats-date-picker';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import PageViewTracker from './stats-page-view-tracker';
 import SiteOverview from './stats-site-overview';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 
 class StatsOverview extends Component {
 	static propTypes = {
@@ -82,9 +83,16 @@ class StatsOverview extends Component {
 			);
 		} );
 
+		const date = moment()
+			.utcOffset( 0 ) // Don't have one site to choose a timezone from...
+			//.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
+			.format( 'YYYY-MM-DD' );
+		const query = { date, period }; // Makes a new object each render = bad
+
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ translate( 'Stats' ) } />
+				<QuerySiteStats siteId={ null } statType="allSitesStatsSummary" query={ query } />
 				<PageViewTracker
 					path={ `/stats/${ period }` }
 					title={ `Stats > ${ titlecase( period ) }` }
