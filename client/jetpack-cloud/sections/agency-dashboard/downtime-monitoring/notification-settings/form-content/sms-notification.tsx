@@ -1,6 +1,7 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ContactList from '../../contact-list';
+import { RestrictionType } from '../../types';
 import UpgradeBadge from '../../upgrade-badge';
 import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
@@ -11,7 +12,7 @@ interface Props {
 	toggleModal: () => void;
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
 	verifiedItem?: { [ key: string ]: string };
-	restricted?: boolean;
+	restriction: RestrictionType;
 }
 
 export default function SMSNotification( {
@@ -21,7 +22,7 @@ export default function SMSNotification( {
 	toggleModal,
 	allPhoneItems,
 	verifiedItem,
-	restricted,
+	restriction,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -43,13 +44,14 @@ export default function SMSNotification( {
 						onChange={ handleToggleClick }
 						checked={ enableSMSNotification }
 						className="notification-settings__toggle-control"
+						disabled={ restriction !== 'none' }
 					/>
 				</div>
 				<div className="notification-settings__toggle-content">
 					<div className="notification-settings__content-heading-with-beta">
 						<div className="notification-settings__content-heading">
 							{ translate( 'SMS Notification' ) }
-							{ restricted && <UpgradeBadge /> }
+							{ restriction === 'upgrade_required' && <UpgradeBadge /> }
 						</div>
 					</div>
 					<div className="notification-settings__content-sub-heading">
