@@ -17,7 +17,7 @@ type UseAssignLicensesToSiteOptions = {
 	onError?: ( ( error: Error ) => void ) | ( () => void );
 };
 const useAssignLicensesToSite = (
-	selectedSite: { ID: number; domain: string } | null,
+	selectedSite?: { ID: number; domain: string } | null,
 	options: UseAssignLicensesToSiteOptions = {}
 ): {
 	assignLicensesToSite: ( licenseKeys: string[] ) => Promise< PurchasedProductsInfo >;
