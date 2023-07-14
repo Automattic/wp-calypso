@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
@@ -6,21 +7,21 @@ import { availableNotificationDurations as durations } from '../../../sites-over
 import type { MonitorDuration } from '../../../sites-overview/types';
 
 interface Props {
-	disablePaidDuration?: boolean;
+	enablePaidDurations?: boolean;
 	selectedDuration?: MonitorDuration;
 	selectDuration: ( duration: MonitorDuration ) => void;
-	showPaidDuration?: boolean;
 	recordEvent: ( action: string, params?: object ) => void;
 }
 
 export default function NotificationDuration( {
-	disablePaidDuration = true,
+	enablePaidDurations,
 	selectedDuration,
 	selectDuration,
-	showPaidDuration,
 	recordEvent,
 }: Props ) {
 	const translate = useTranslate();
+
+	const showPaidDuration = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
 	const selectableDuration = useMemo(
 		() =>
@@ -53,7 +54,7 @@ export default function NotificationDuration( {
 						key={ duration.time }
 						selected={ duration.time === selectedDuration?.time }
 						onClick={ () => selectDuration( duration ) }
-						disabled={ duration.paid_tier && disablePaidDuration }
+						disabled={ duration.paid_tier && ! enablePaidDurations }
 					>
 						{ duration.label }
 					</SelectDropdown.Item>

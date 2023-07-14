@@ -98,10 +98,6 @@ export default function NotificationSettings( {
 		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
 
-	const isDowntimeMonitoringPaidTierEnabled = isEnabled(
-		'jetpack/pro-dashboard-monitor-paid-tier'
-	);
-
 	// TODO: Need to figure out where to fetch site license information from.
 	const hasDowntimeMonitoringPaidLicense = false;
 
@@ -343,10 +339,7 @@ export default function NotificationSettings( {
 				);
 
 				// We need to make sure that we are not setting a paid duration if there is no license.
-				if (
-					( foundDuration?.paid_tier && hasDowntimeMonitoringPaidLicense ) ||
-					! foundDuration?.paid_tier
-				) {
+				if ( hasDowntimeMonitoringPaidLicense || ! foundDuration?.paid_tier ) {
 					setSelectedDuration( foundDuration );
 				}
 			}
@@ -477,8 +470,7 @@ export default function NotificationSettings( {
 					recordEvent={ recordEvent }
 					selectedDuration={ selectedDuration }
 					selectDuration={ selectDuration }
-					showPaidDuration={ isDowntimeMonitoringPaidTierEnabled }
-					disablePaidDuration={ ! hasDowntimeMonitoringPaidLicense }
+					enablePaidDurations={ hasDowntimeMonitoringPaidLicense }
 				/>
 				{ isSMSNotificationEnabled && (
 					<SMSNotification
