@@ -6,6 +6,7 @@ import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import i18n, { getLocaleSlug } from 'i18n-calypso';
 import MaterialIcon from 'calypso/components/material-icon';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { actions, selectors } from './store';
@@ -14,7 +15,7 @@ import type { CardFieldState, CardStoreType } from './types';
 import type { ProcessPayment, LineItem } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
-const debug = debugFactory( 'calypso:credit-card' );
+const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
 export default function CreditCardPayButton( {
 	disabled,
@@ -142,26 +143,21 @@ function ButtonContents( {
 	activeButtonText?: ReactNode;
 } ) {
 	const { __ } = useI18n();
-	const isPurchaseFree = total.amount.value === 0;
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <>{ __( 'Processing…' ) }</>;
-	}
-	if ( formStatus === FormStatus.READY && isPurchaseFree ) {
-		const defaultText = (
-			<CreditCardPayButtonWrapper>{ __( 'Complete Checkout' ) }</CreditCardPayButtonWrapper>
-		);
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ activeButtonText || defaultText }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
 		const defaultText = (
 			<CreditCardPayButtonWrapper>
 				<StyledMaterialIcon icon="credit_card" />
-				{ sprintf(
-					/* translators: %s is the total to be paid in localized currency */
-					__( 'Pay %s now' ),
-					total.amount.displayValue
-				) }
+				{ getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'Pay %s now' )
+					? sprintf(
+							/* translators: %s is the total to be paid in localized currency */
+							__( 'Pay %s now' ),
+							total.amount.displayValue
+					  )
+					: /* translators: %s is the total to be paid in localized currency */
+					  sprintf( __( 'Pay %s' ), total.amount.displayValue ) }
 			</CreditCardPayButtonWrapper>
 		);
 
