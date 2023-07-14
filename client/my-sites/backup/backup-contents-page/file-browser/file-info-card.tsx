@@ -50,7 +50,14 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	const downloadFile = useCallback( () => {
 		setIsProcessingDownload( true );
 
-		if ( item.type !== 'archive' ) {
+		if ( item.type === 'wordpress' ) {
+			if ( fileInfo === undefined || ! fileInfo.downloadUrl ) {
+				return;
+			}
+
+			window.open( fileInfo.downloadUrl, '_blank' );
+			setIsProcessingDownload( false );
+		} else if ( item.type !== 'archive' ) {
 			const manifestPath = window.btoa( item.manifestPath ?? '' );
 			wp.req
 				.get( {

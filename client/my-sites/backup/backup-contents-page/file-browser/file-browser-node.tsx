@@ -52,7 +52,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			setFetchContentsOnMount( true );
 		}
 
-		if ( ! item.hasChildren && item.type !== 'wordpress' ) {
+		if ( ! item.hasChildren ) {
 			if ( ! isOpen ) {
 				setActiveNodePath( path );
 			} else {
@@ -119,7 +119,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	} );
 	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
 
-	const nodeClassName = classNames( 'file-browser-node', {
+	const nodeClassName = classNames( 'file-browser-node', item.type, {
 		'is-root': isRoot,
 	} );
 
