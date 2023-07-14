@@ -99,12 +99,14 @@
 			}
 		}
 
-		.gridicons-globe {
-			fill: var(--color-neutral-100);
-		}
+		.site-icon {
+			&.is-blank {
+				background-color: transparent;
 
-		.site-icon.is-blank {
-			background-color: transparent;
+				.gridicon {
+					fill: var(--color-neutral-100);
+				}
+			}
 		}
 	}
 

@@ -37,8 +37,14 @@
 		flex-direction: column;
 		align-items: center;
 
-		.site-icon.is-blank {
-			background-color: transparent;
+		.site-icon {
+			&.is-blank {
+				background-color: transparent;
+
+				.gridicon {
+					fill: var(--color-neutral-100);
+				}
+			}
 		}
 
 		.formatted-header {
