@@ -12,8 +12,8 @@ The section displays all the users that subscribed to a certain site, including:
 - `index.js` provides all the routes for this section
 - `controller.js` decides which component to render
 - `main.js` includes the main component with the list of subscribers
-- `subscriber-details-page.tsx` is the component that displays page with individual subscribers details.
+- `subscriber-details-page.tsx` displays page with individual subscribers details
 
 ## Data
 
-The data are retrieved and mutated using React Query. Please review the `/queries` and `/mutations` folders for details.
+The data are retrieved and mutated using React Query. Please review the `/queries` and `/mutations` folders for details (e.g. which endpoints are used).
