@@ -206,16 +206,6 @@ export function DomainCodePair( {
 						) }
 					</div>
 				) }
-				{ /* <div className="domains__domain-validation is-mobile">
-					{ shouldReportError && (
-						<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
-					) }
-					{ message && loading && (
-						<div>
-							<FormExplanation>{ message }</FormExplanation>
-						</div>
-					) }
-				</div> */ }
 				<div className="domains__domain-price">
 					<FormFieldset>
 						<FormLabel
