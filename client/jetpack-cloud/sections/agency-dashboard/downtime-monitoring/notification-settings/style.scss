@@ -63,6 +63,14 @@
 	position: relative;
 }
 
+.notification-settings__content-block .select-dropdown__item.is-disabled {
+	opacity: 1;
+
+	.select-dropdown__item-text {
+		color: var(--studio-gray-20);
+	}
+}
+
 .notification-settings__link {
 	text-decoration: underline;
 }
