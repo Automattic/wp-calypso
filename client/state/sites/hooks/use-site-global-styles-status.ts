@@ -13,14 +13,14 @@ let loadExperimentAssignment = ( experimentName: string ): Promise< ExperimentAs
 	new Promise( ( resolve ) =>
 		resolve( { experimentName, variationName: null, retrievedTimestamp: 0, ttl: 0 } )
 	);
-( async () => {
-	if ( typeof window === 'undefined' ) {
-		return;
-	}
-	try {
-		( { loadExperimentAssignment } = await import( 'calypso/lib/explat' ) );
-	} catch ( e ) {}
-} )();
+if ( typeof window !== 'undefined' ) {
+	import( 'calypso/lib/explat' )
+		.then( ( module ) => {
+			loadExperimentAssignment = module.loadExperimentAssignment;
+		} )
+		// eslint-disable-next-line @typescript-eslint/no-empty-function
+		.catch( () => {} );
+}
 
 export type GlobalStylesStatus = {
 	shouldLimitGlobalStyles: boolean;
