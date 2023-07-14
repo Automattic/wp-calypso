@@ -167,6 +167,37 @@ body.archive {
 			padding: 0 24px;
 		}
 	}
+
+	&.happy-blocks-header__learn {
+		margin-top: 120px;
+		margin-bottom: 70px;
+
+		.happy-blocks-global-header-site__title {
+			display: flex;
+			flex-direction: column;
+
+			h1 {
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				font-size: 70px;
+				line-height: 76px;
+			}
+			// subtitle
+			p {
+				margin: 16px 0 32px 0;
+			}
+			// search bar
+			form {
+				display: flex;
+				justify-content: start;
+
+				.happy-blocks-search__inside-wrapper {
+					input {
+						background-color: var(--studio-gray-0);
+					}
+				}
+			}
+		}
+	}
 }
 
 .happy-blocks-global-header-site__title {
