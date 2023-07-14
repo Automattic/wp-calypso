@@ -13,7 +13,6 @@ import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 import './domain-only.scss';
@@ -98,7 +97,6 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			slug: getSiteSlug( state, ownProps.siteId ),
 			primaryDomain: getPrimaryDomainBySiteId( state, ownProps.siteId ),
-			domains: getDomainsBySiteId( state, ownProps.siteId ),
 		};
 	},
 	{ recordTracks: recordTracksEvent }
