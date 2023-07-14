@@ -104,7 +104,7 @@ class DomainRow extends PureComponent {
 		return (
 			<div className="domain-row__site-cell">
 				<Button href={ domainManagementList( site?.slug, currentRoute ) } plain>
-					{ site?.title || site?.slug }
+					{ ! site.options?.is_domain_only ? site?.title || site?.slug : '' }
 				</Button>
 			</div>
 		);
