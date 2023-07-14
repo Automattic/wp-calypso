@@ -407,9 +407,9 @@
 		margin-bottom: 12px;
 
 		@media (max-width: $break-medium ) {
-			&not:last-of-type {
-				border-bottom: solid 1px #dcdcde;
-				padding-bottom: 32px;
+			&:not(:first-of-type) {
+				border-top: solid 1px #dcdcde;
+				padding-top: 32px;
 				margin-bottom: 32px;
 			}
 		}
