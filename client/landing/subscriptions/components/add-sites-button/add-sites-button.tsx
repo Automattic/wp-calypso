@@ -17,7 +17,7 @@ const AddSitesButton = () => {
 		<>
 			<Button
 				primary
-				className="subscriptions-add-sites-button"
+				className="subscriptions-add-sites__button"
 				onClick={ () => setIsAddSitesModalVisible( true ) }
 			>
 				{ translate( 'Add sites' ) }
