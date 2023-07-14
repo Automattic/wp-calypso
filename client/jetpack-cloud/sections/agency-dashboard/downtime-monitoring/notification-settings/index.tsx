@@ -98,6 +98,10 @@ export default function NotificationSettings( {
 		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
 
+	const isDowntimeMonitoringPaidTierEnabled = isEnabled(
+		'jetpack/pro-dashboard-monitor-paid-tier'
+	);
+
 	// TODO: Need to figure out where to fetch site license information from.
 	const hasDowntimeMonitoringPaidLicense = false;
 
