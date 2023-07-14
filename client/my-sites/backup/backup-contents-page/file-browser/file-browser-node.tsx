@@ -107,7 +107,11 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const nodeItemClassName = classNames( 'file-browser-node__item', {
 		'is-alternate': isAlternate,
 	} );
-	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
+	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 50, item.type );
+
+	const nodeContentsClassName = classNames( 'file-browser-node__contents', {
+		'is-root': isRoot,
+	} );
 
 	return (
 		<div className="file-browser-node">
@@ -128,7 +132,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			{ isOpen && (
 				<>
 					{ item.hasChildren && (
-						<div className="file-browser-node__contents">{ renderChildren() }</div>
+						<div className={ nodeContentsClassName }>{ renderChildren() }</div>
 					) }
 				</>
 			) }

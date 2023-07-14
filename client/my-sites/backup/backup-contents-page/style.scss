@@ -25,6 +25,10 @@
 	}
 
 	.file-browser-node {
+		margin-top: 2px;
+		margin-left: 2px;
+		min-width: fit-content;
+
 		&__loading {
 			&.placeholder {
 				height: 26px;
@@ -36,11 +40,11 @@
 		&__contents {
 			display: flex;
 			flex-direction: column;
-			overflow-x: auto;
 			background-color: #fff;
+			padding-left: 26px;
 
-			&:not(:first-child) {
-				padding-left: 26px;
+			&.is-root {
+				padding-left: 0;
 			}
 		}
 
