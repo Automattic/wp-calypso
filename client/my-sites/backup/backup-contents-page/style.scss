@@ -29,8 +29,9 @@
 
 	&__body {
 		border-top: 1px solid var(--studio-gray-5);
-		overflow-x: scroll;
+		overflow-x: auto;
 		padding-top: 30px;
+		padding-bottom: 14px;
 	}
 
 	.file-browser-node {
