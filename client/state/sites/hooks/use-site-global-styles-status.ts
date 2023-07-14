@@ -61,13 +61,11 @@ const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
 
 const getGlobalStylesInfoForSite = ( siteId: number | null ): Promise< GlobalStylesStatus > => {
 	if ( ! shouldRunGlobalStylesOnPersonalExperiment( siteId ) ) {
-		return new Promise( ( resolve ) =>
-			resolve( {
-				shouldLimitGlobalStyles: true,
-				globalStylesInUse: false,
-				globalStylesInPersonalPlan: false,
-			} )
-		);
+		return Promise.resolve( {
+			shouldLimitGlobalStyles: true,
+			globalStylesInUse: false,
+			globalStylesInPersonalPlan: false,
+		} );
 	}
 
 	if ( siteId === null ) {
