@@ -9,24 +9,23 @@ import { connect } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
-	acceptAutoLoadingHomepageWarning,
-	hideAutoLoadingHomepageWarning,
+	acceptActivationModal,
+	dismissActivationModal,
 	activate as activateTheme,
 } from 'calypso/state/themes/actions';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
-	themeHasAutoLoadingHomepage,
 	isActivatingTheme,
 	isThemeActive,
-	shouldShowHomepageWarning,
-	getPreActivateThemeId,
+	shouldShowActivationModal,
+	getThemeIdToActivate,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-import './auto-loading-homepage-modal.scss';
+import './activation-modal.scss';
 
-export class AutoLoadingHomepageModal extends Component {
+export class ActivationModal extends Component {
 	static propTypes = {
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		theme: PropTypes.shape( {
@@ -37,7 +36,6 @@ export class AutoLoadingHomepageModal extends Component {
 		} ),
 		hasActivated: PropTypes.bool.isRequired,
 		isActivating: PropTypes.bool.isRequired,
-		hasAutoLoadingHomepage: PropTypes.bool,
 		siteId: PropTypes.number,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func,
@@ -69,7 +67,7 @@ export class AutoLoadingHomepageModal extends Component {
 		() => {
 			const { installingThemeId, siteId, source } = this.props;
 			if ( 'activeTheme' === action ) {
-				this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
+				this.props.acceptActivationModal( installingThemeId );
 
 				/**
 				 * We don't want to keep the current homepage since it's "broken" for now.
@@ -95,29 +93,17 @@ export class AutoLoadingHomepageModal extends Component {
 					action: 'escape',
 					theme: installingThemeId,
 				} );
-				return this.props.hideAutoLoadingHomepageWarning();
+				return this.props.dismissActivationModal();
 			}
 		};
 
 	render() {
-		const {
-			theme,
-			hasActivated,
-			isActivating,
-			hasAutoLoadingHomepage,
-			isCurrentTheme,
-			isVisible = false,
-		} = this.props;
+		const { theme, hasActivated, isActivating, isCurrentTheme, isVisible = false } = this.props;
 
 		const { hasConfirmed } = this.state;
 
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
-			return null;
-		}
-
-		// Nothing to show if the theme doesn't have auto loading homepage.
-		if ( ! hasAutoLoadingHomepage ) {
 			return null;
 		}
 
@@ -134,7 +120,7 @@ export class AutoLoadingHomepageModal extends Component {
 
 		return (
 			<Dialog
-				className="themes__auto-loading-homepage-modal"
+				className="themes__activation-modal"
 				isVisible={ isVisible }
 				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
@@ -143,7 +129,7 @@ export class AutoLoadingHomepageModal extends Component {
 					eventProperties={ { theme: themeId } }
 				/>
 				<Button
-					className="themes__auto-loading-homepage-modal-close-icon"
+					className="themes__activation-modal-close-icon"
 					borderless
 					onClick={ this.closeModalHandler( 'dismiss' ) }
 				>
@@ -151,12 +137,12 @@ export class AutoLoadingHomepageModal extends Component {
 					<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
 				</Button>
 				<div className="themes__theme-preview-wrapper">
-					<h1 className="auto-loading-homepage-modal__heading">
+					<h1 className="activation-modal__heading">
 						{ translate( 'Activate %(themeName)s', {
 							args: { themeName },
 						} ) }
 					</h1>
-					<p className="auto-loading-homepage-modal__description">
+					<p className="activation-modal__description">
 						{ translate(
 							'After activation, this layout will replace your existing homepage. But you can still access your old content. {{a}}Learn more{{/a}}.',
 							{
@@ -173,14 +159,14 @@ export class AutoLoadingHomepageModal extends Component {
 						) }
 					</p>
 					<CheckboxControl
-						className="auto-loading-homepage-modal__checkbox"
+						className="activation-modal__checkbox"
 						label={ translate(
 							'I understand that this layout will replace my existing homepage.'
 						) }
 						checked={ hasConfirmed }
 						onChange={ () => this.setState( { hasConfirmed: ! hasConfirmed } ) }
 					/>
-					<div className="auto-loading-homepage-modal__actions">
+					<div className="activation-modal__actions">
 						<Button
 							primary
 							onClick={ this.closeModalHandler( 'activeTheme' ) }
@@ -200,7 +186,7 @@ export class AutoLoadingHomepageModal extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const installingThemeId = getPreActivateThemeId( state );
+		const installingThemeId = getThemeIdToActivate( state );
 
 		return {
 			siteId,
@@ -209,15 +195,14 @@ export default connect(
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
-			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId, siteId ),
 			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
-			isVisible: shouldShowHomepageWarning( state, installingThemeId ),
+			isVisible: shouldShowActivationModal( state, installingThemeId ),
 		};
 	},
 	{
-		acceptAutoLoadingHomepageWarning,
-		hideAutoLoadingHomepageWarning,
+		acceptActivationModal,
+		dismissActivationModal,
 		activateTheme,
 		recordTracksEvent,
 	}
-)( AutoLoadingHomepageModal );
+)( ActivationModal );

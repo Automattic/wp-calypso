@@ -64,3 +64,5 @@ export const getDesignPreviewUrl = (
 
 	return url;
 };
+
+export const isAssemblerDesign = ( design?: Design ) => design?.design_type === 'assembler';

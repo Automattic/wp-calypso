@@ -169,7 +169,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						( { domain: otherDomain }, otherIndex ) =>
 							otherDomain && otherDomain === domain.domain && otherIndex < index
 					) }
-					showDelete={ domainCount > 1 && index > 0 }
 				/>
 			) ) }
 			{ domainCount < MAX_DOMAINS && (

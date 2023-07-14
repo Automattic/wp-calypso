@@ -31,7 +31,6 @@ type Props = {
 	onRemove: ( id: string ) => void;
 	showLabels: boolean;
 	hasDuplicates: boolean;
-	showDelete: boolean;
 };
 
 type DomainPriceProps = {
@@ -95,7 +94,6 @@ export function DomainCodePair( {
 	onRemove,
 	showLabels,
 	hasDuplicates,
-	showDelete,
 }: Props ) {
 	const { __ } = useI18n();
 
@@ -196,16 +194,18 @@ export function DomainCodePair( {
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
 				</div>
-				<div className="domains__domain-validation is-mobile">
-					{ shouldReportError && (
-						<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
-					) }
-					{ message && loading && (
-						<div>
-							<FormExplanation>{ message }</FormExplanation>
-						</div>
-					) }
-				</div>
+				{ ( shouldReportError || ( message && loading ) ) && (
+					<div className="domains__domain-validation is-mobile">
+						{ shouldReportError && (
+							<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
+						) }
+						{ message && loading && (
+							<div>
+								<FormExplanation>{ message }</FormExplanation>
+							</div>
+						) }
+					</div>
+				) }
 				<div className="domains__domain-price">
 					<FormFieldset>
 						<FormLabel
@@ -235,11 +235,7 @@ export function DomainCodePair( {
 						</Button>
 					</div>
 					<div className="domains__domain-delete">
-						<Button
-							className={ classnames( { 'has-delete-button': showDelete } ) }
-							icon={ trash }
-							onClick={ () => onRemove( id ) }
-						>
+						<Button icon={ trash } onClick={ () => onRemove( id ) }>
 							<span className="delete-label">{ __( 'Delete' ) }</span>
 						</Button>
 					</div>
