@@ -172,6 +172,14 @@ class ThemesSelection extends Component {
 	//intercept preview and add primary and secondary
 	getOptions = ( themeId, styleVariation, context ) => {
 		let options = this.props.getOptions( themeId, styleVariation );
+
+		const wrappedActivateAction = ( action ) => {
+			return ( t ) => {
+				this.props.setThemePreviewOptions( themeId, null, null, styleVariation );
+				return action( t, context );
+			};
+		};
+
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
@@ -200,6 +208,7 @@ class ThemesSelection extends Component {
 				} else {
 					defaultOption = options.activate;
 				}
+
 				this.props.setThemePreviewOptions(
 					themeId,
 					defaultOption,
@@ -212,6 +221,10 @@ class ThemesSelection extends Component {
 
 		if ( options ) {
 			options = addStyleVariation( options, styleVariation, this.props.isLoggedIn );
+			if ( options.activate ) {
+				options.activate.action = wrappedActivateAction( options.activate.action );
+			}
+
 			if ( options.preview ) {
 				options.preview.action = wrappedPreviewAction( options.preview.action );
 			}
