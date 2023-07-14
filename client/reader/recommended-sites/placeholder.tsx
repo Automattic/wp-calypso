@@ -11,7 +11,7 @@ export const RecommendedSitePlaceholder = () => {
 			<Flex justify="flex-end">
 				<div className="recommended-site__dismiss-button is-placeholder">Dismiss Button</div>
 			</Flex>
-			<HStack justify="flex-start" className="recommended-site__profile" spacing="4">
+			<HStack justify="flex-start" className="recommended-site__profile is-placeholder" spacing="4">
 				<span className="recommended-site__profile-avatar is-placeholder">Avatar</span>
 				<VStack spacing={ 0 } className="recommended-site__profile-data is-placeholder">
 					<h3 className="recommended-site__site-title is-placeholder">Site title</h3>
