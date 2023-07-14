@@ -15,6 +15,7 @@ export {
 	getFontTitle,
 	getDesignUrl,
 	getDesignPreviewUrl,
+	isAssemblerDesign,
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,

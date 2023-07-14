@@ -1,4 +1,4 @@
-import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
+import { isDefaultGlobalStylesVariationSlug, isAssemblerDesign } from '@automattic/design-picker';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -125,7 +125,7 @@ const useRecipe = (
 
 	const previewDesign = ( design: Design, styleVariation?: StyleVariation ) => {
 		// Redirect to Site Assembler if the design_type is set to "assembler".
-		const shouldGoToAssembler = isDesktop && design.design_type === 'assembler';
+		const shouldGoToAssembler = isDesktop && isAssemblerDesign( design );
 
 		recordPreviewDesign( design, styleVariation );
 
