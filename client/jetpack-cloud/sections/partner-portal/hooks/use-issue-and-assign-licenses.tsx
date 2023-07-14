@@ -9,7 +9,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
@@ -91,8 +90,6 @@ function useIssueAndAssignLicenses(
 	const products = useProductsQuery();
 	const sitesCount = useSelector( getSites ).length;
 
-	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
-
 	const issueLicenses = useIssueLicenses();
 	const assignLicensesToSite = useAssignLicensesToSite( selectedSite, {
 		onError: options.onError ?? NO_OP,
@@ -106,22 +103,6 @@ function useIssueAndAssignLicenses(
 		const issueAndAssignLicenses = async ( selectedProducts: string[] ) => {
 			if ( ! isReady || selectedProducts.length === 0 ) {
 				return;
-			}
-
-			const selectedSiteId = selectedSite?.ID;
-			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
-
-			// If we need a payment method, redirect now to have the user enter one
-			if ( paymentMethodRequired ) {
-				const nextStep = addQueryArgs(
-					{
-						products: selectedProducts.join( ',' ),
-						...( selectedSiteId && { site_id: selectedSiteId } ),
-						...( fromDashboard && { source: 'dashboard' } ),
-					},
-					partnerPortalBasePath( '/payment-methods/add' )
-				);
-				return page( nextStep );
 			}
 
 			const issueLicenseResponses = await issueLicenses.issueLicenses( selectedProducts );
@@ -148,6 +129,7 @@ function useIssueAndAssignLicenses(
 
 			// If no site is selected, announce that licenses were issued;
 			// then, redirect to somewhere more appropriate
+			const selectedSiteId = selectedSite?.ID;
 			if ( ! selectedSiteId ) {
 				const issuedProductNames: string[] = issuedProducts.map( ( { name } ) => name );
 				const issuedMessage = getLicenseIssuedMessage( issuedProductNames );
@@ -179,6 +161,7 @@ function useIssueAndAssignLicenses(
 
 			// If we know this person came from the dashboard,
 			// let's politely send them back there
+			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 			if ( fromDashboard ) {
 				return page.redirect( '/dashboard' );
 			}
@@ -193,7 +176,6 @@ function useIssueAndAssignLicenses(
 		dispatch,
 		getLicenseIssuedMessage,
 		issueLicenses,
-		paymentMethodRequired,
 		products?.data,
 		selectedSite,
 		sitesCount,

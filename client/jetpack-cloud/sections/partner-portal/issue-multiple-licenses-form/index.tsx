@@ -4,14 +4,12 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { useIssueAndAssignLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
 import { isJetpackBundle } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import {
 	getAssignedPlanAndProductIDsForSite,
@@ -28,26 +26,9 @@ import {
 } from 'calypso/state/partner-portal/products/selectors';
 import { APIProductFamilyProduct, PartnerPortalStore } from 'calypso/state/partner-portal/types';
 import { AssignLicenceProps } from '../types';
+import useSubmitForm from './use-submit-form';
 
 import './style.scss';
-
-const containEquivalentItems = ( arr1: string[], arr2: string[] ) => {
-	if ( arr1.length !== arr2.length ) {
-		return false;
-	}
-
-	const [ sorted1, sorted2 ] = [ [ ...arr1 ].sort(), [ ...arr2 ].sort() ];
-	for ( let i = 0; i < sorted1.length; ++i ) {
-		// If the two lists are sorted and an element differs between the two
-		// at any index, they must not contain exactly the same items
-		// in exactly the same quantities
-		if ( sorted1[ i ] !== sorted2[ i ] ) {
-			return false;
-		}
-	}
-
-	return true;
-};
 
 export default function IssueMultipleLicensesForm( {
 	selectedSite,
@@ -124,29 +105,6 @@ export default function IssueMultipleLicensesForm( {
 		?.toString()
 		.split( ',' );
 
-	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
-		useIssueAndAssignLicenses( selectedSite, {
-			onError: ( error: Error ) => dispatch( errorNotice( error.message, { isPersistent: true } ) ),
-		} );
-
-	const maybeTrackUnsuggestedSelection = useCallback(
-		( selectedSlugs: string[] ) => {
-			// We want to know when someone purchases different product(s)
-			// from what we recommend on the dashboard
-			if (
-				suggestedProductSlugs?.length &&
-				! containEquivalentItems( selectedSlugs, suggestedProductSlugs )
-			) {
-				dispatch(
-					recordTracksEvent(
-						'calypso_partner_portal_issue_multiple_licenses_changed_selection_after_dashboard_visit'
-					)
-				);
-			}
-		},
-		[ dispatch, suggestedProductSlugs ]
-	);
-
 	const onSelectProduct = useCallback(
 		( product: APIProductFamilyProduct ) => {
 			dispatch(
@@ -161,6 +119,8 @@ export default function IssueMultipleLicensesForm( {
 		},
 		[ dispatch, selectedProductSlugs ]
 	);
+
+	const { submitForm, isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
 	const onSelectBundle = useCallback(
 		( product: APIProductFamilyProduct ) => {
@@ -181,21 +141,14 @@ export default function IssueMultipleLicensesForm( {
 				);
 			}
 
-			maybeTrackUnsuggestedSelection( [ product.slug ] );
-			issueAndAssignLicenses( [ product.slug ] );
+			submitForm( [ product.slug ] );
 		},
-		[
-			dispatch,
-			hasPurchasedProductsWithoutBundle,
-			issueAndAssignLicenses,
-			maybeTrackUnsuggestedSelection,
-		]
+		[ dispatch, submitForm, hasPurchasedProductsWithoutBundle ]
 	);
 
 	const onClickIssueLicenses = useCallback( () => {
-		maybeTrackUnsuggestedSelection( selectedProductSlugs );
-		issueAndAssignLicenses( selectedProductSlugs );
-	}, [ issueAndAssignLicenses, maybeTrackUnsuggestedSelection, selectedProductSlugs ] );
+		submitForm( selectedProductSlugs );
+	}, [ submitForm, selectedProductSlugs ] );
 
 	if ( isLoadingProducts ) {
 		return (
@@ -231,7 +184,7 @@ export default function IssueMultipleLicensesForm( {
 						<Button
 							primary
 							className="issue-multiple-licenses-form__select-license"
-							busy={ ! isIssueAndAssignLicensesReady }
+							busy={ ! isReady }
 							onClick={ onClickIssueLicenses }
 						>
 							{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
