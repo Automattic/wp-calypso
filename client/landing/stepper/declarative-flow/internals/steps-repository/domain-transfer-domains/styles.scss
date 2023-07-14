@@ -15,6 +15,17 @@
 		pointer-events: none;
 	}
 
+	.components-button:focus:not(:disabled) {
+		border: 0;
+		outline: none;
+		box-shadow: unset;
+	}
+
+	.components-button:active:not(:disabled) {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+		outline: 3px solid transparent;
+	}
+
 	&.domains {
 		padding: 0;
 		width: 754px;
@@ -154,6 +165,7 @@
 			margin-left: 5px;
 			padding: 2px;
 		}
+
 		.info-popover:focus {
 			outline: 1px solid var(--studio-blue-50);
 		}
