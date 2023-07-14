@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, Button } from '@automattic/components';
+import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -11,9 +12,10 @@ import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { activate } from 'calypso/state/themes/actions';
 import {
+	getThemePreviewThemeOptions,
+	hasActivatedTheme,
 	isThemeActive,
 	isActivatingTheme,
-	hasActivatedTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
@@ -34,11 +36,21 @@ const ThemeSectionImageContainer = styled.div`
 	border-radius: 16px;
 	box-shadow: 0px 15px 20px rgba( 0, 0, 0, 0.04 ), 0px 13px 10px rgba( 0, 0, 0, 0.03 ),
 		0px 6px 6px rgba( 0, 0, 0, 0.02 );
+	width: 100%;
+`;
+
+const ThemeSectionMShotsContainer = styled.div`
+	border-radius: 13px;
+	margin-bottom: 8px;
+	position: relative;
+	overflow: hidden;
+	padding-top: 74%;
+	width: 100%;
 `;
 
 const ThemeSectionImage = styled.img`
-	width: 100%;
 	border-radius: 13px;
+	width: 100%;
 `;
 
 const ThemeSectionContent = styled.div`
@@ -106,6 +118,10 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 		getCustomizeUrl( state, theme.id, siteId, isFSEActive )
 	);
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) ) ?? undefined;
+	const themeOptions = useSelector( ( state ) => getThemePreviewThemeOptions( state ) );
+
+	const themeStyleVariation =
+		themeOptions && themeOptions.themeId === theme.id ? themeOptions.styleVariation : undefined;
 
 	const isValidThankyouSectionTheme = useIsValidThankYouTheme( theme, siteId );
 
@@ -163,16 +179,25 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 					</ThemeSectionButtons>
 				</ThemeNameSectionWrapper>
 				<ThemeSectionImageContainer>
-					<ThemeSectionImage
-						src={ theme.screenshot }
-						alt={
-							translate( "%(theme)s's icon", {
-								args: {
-									theme: theme.name,
-								},
-							} ) as string
-						}
-					/>
+					{ ! isDefaultGlobalStylesVariationSlug( themeStyleVariation?.slug ) ? (
+						<ThemeSectionMShotsContainer>
+							<DesignPreviewImage
+								design={ { slug: theme.id, recipe: { stylesheet: theme.stylesheet } } }
+								styleVariation={ themeStyleVariation }
+							/>
+						</ThemeSectionMShotsContainer>
+					) : (
+						<ThemeSectionImage
+							src={ theme.screenshot }
+							alt={
+								translate( "%(theme)s's icon", {
+									args: {
+										theme: theme.name,
+									},
+								} ) as string
+							}
+						/>
+					) }
 				</ThemeSectionImageContainer>
 			</ThemeSectionContent>
 		</ThemeSectionContainer>
