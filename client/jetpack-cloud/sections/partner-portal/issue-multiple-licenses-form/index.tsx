@@ -147,6 +147,10 @@ export default function IssueMultipleLicensesForm( {
 		[ dispatch, hasPurchasedProductsWithoutBundle, issueAndAssignLicenses ]
 	);
 
+	const onClickIssueLicenses = useCallback( () => {
+		issueAndAssignLicenses( selectedProductSlugs );
+	}, [ issueAndAssignLicenses, selectedProductSlugs ] );
+
 	if ( isLoadingProducts ) {
 		return (
 			<div className="issue-multiple-licenses-form">
@@ -182,7 +186,7 @@ export default function IssueMultipleLicensesForm( {
 							primary
 							className="issue-multiple-licenses-form__select-license"
 							busy={ ! isIssueAndAssignLicensesReady }
-							onClick={ () => issueAndAssignLicenses( selectedProductSlugs ) }
+							onClick={ onClickIssueLicenses }
 						>
 							{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 								context: 'button label',
