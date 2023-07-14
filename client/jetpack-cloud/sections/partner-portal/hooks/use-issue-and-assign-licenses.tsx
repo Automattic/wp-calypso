@@ -133,7 +133,8 @@ function useIssueAndAssignLicenses(
 
 				// If this user has no sites, send them to the licenses listing page
 				if ( sitesCount === 0 ) {
-					return page.redirect( partnerPortalBasePath( '/licenses' ) );
+					page.redirect( partnerPortalBasePath( '/licenses' ) );
+					return;
 				}
 
 				// If they do have a site, send them to a page where they can assign
@@ -145,7 +146,8 @@ function useIssueAndAssignLicenses(
 					partnerPortalBasePath( '/assign-license' )
 				);
 
-				return page.redirect( nextStep );
+				page.redirect( nextStep );
+				return;
 			}
 
 			// If a specific site is already selected,
@@ -159,11 +161,12 @@ function useIssueAndAssignLicenses(
 			// let's politely send them back there
 			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 			if ( fromDashboard ) {
-				return page.redirect( '/dashboard' );
+				page.redirect( '/dashboard' );
+				return;
 			}
 
 			// Otherwise, send them to the overview of all licenses
-			return page.redirect( partnerPortalBasePath( '/licenses' ) );
+			page.redirect( partnerPortalBasePath( '/licenses' ) );
 		};
 
 		return { issueAndAssignLicenses, isReady };
@@ -172,7 +175,6 @@ function useIssueAndAssignLicenses(
 		dispatch,
 		getLicenseIssuedMessage,
 		issueLicenses,
-		products?.data,
 		selectedSite,
 		sitesCount,
 	] );
