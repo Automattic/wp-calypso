@@ -2,20 +2,19 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo } from 'react';
-import { getProductTitle } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError, APILicense, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import getProductSlugFromLicenseKey from '../lib/get-product-slug-from-license-key';
+import useAssignLicensesToSite from './use-assign-licenses-to-site';
 
 const useIssueLicenses = () => {
 	const dispatch = useDispatch();
@@ -72,37 +71,6 @@ const useIssueLicenses = () => {
 			issueLicenses,
 		};
 	}, [ mutateAsync, isIdle ] );
-};
-
-const useAssignLicensesToSite = ( siteId: number | undefined ) => {
-	const dispatch = useDispatch();
-
-	const { mutateAsync, isIdle } = useAssignLicenseMutation( {
-		onError: ( error: Error ) => {
-			dispatch( errorNotice( error.message, { isPersistent: true } ) );
-		},
-	} );
-
-	return useMemo( () => {
-		const assignLicensesToSite = ( licenseKeys: string[] ) => {
-			// We need a valid site ID in order to assign licenses to a site;
-			// otherwise, we assign nothing
-			if ( ! Number.isInteger( siteId ) ) {
-				return Promise.resolve( [] as PromiseSettledResult< APILicense >[] );
-			}
-
-			const requests = licenseKeys.map( ( key ) =>
-				mutateAsync( { licenseKey: key, selectedSite: siteId as number } )
-			);
-
-			return Promise.allSettled( requests );
-		};
-
-		return {
-			isReady: isIdle,
-			assignLicensesToSite,
-		};
-	}, [ siteId, mutateAsync, isIdle ] );
 };
 
 const useGetLicenseIssuedMessage = () => {
@@ -174,7 +142,11 @@ function useIssueAndAssignLicenses( selectedSite?: { ID: number; domain: string 
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
 	const issueLicenses = useIssueLicenses();
-	const assignLicensesToSite = useAssignLicensesToSite( selectedSite?.ID );
+	const assignLicensesToSite = useAssignLicensesToSite( selectedSite, {
+		onError: ( error: Error ) => {
+			dispatch( errorNotice( error.message, { isPersistent: true } ) );
+		},
+	} );
 
 	const getLicenseIssuedMessage = useGetLicenseIssuedMessage();
 
@@ -252,29 +224,7 @@ function useIssueAndAssignLicenses( selectedSite?: { ID: number; domain: string 
 
 			// If a specific site is already selected,
 			// let's assign the licenses we just issued to it
-			const assignLicenseResponses = await assignLicensesToSite.assignLicensesToSite( issuedKeys );
-
-			const assignedLicenses = assignLicenseResponses
-				.filter( ( p ): p is PromiseFulfilledResult< APILicense > => p.status === 'fulfilled' )
-				.map( ( { status, value } ) => {
-					const productSlug = getProductSlugFromLicenseKey( value.license_key );
-
-					// We already confirmed during/after the issue process that
-					// the product slug is in the list of products and has a name
-					const productName = products?.data?.find( ( p ) => p.slug === productSlug )
-						?.name as string;
-
-					return {
-						key: value.license_key,
-						name: getProductTitle( productName ),
-						status,
-					};
-				} );
-
-			const assignLicensesStatus = {
-				selectedSite: selectedSite?.domain || '',
-				selectedProducts: assignedLicenses,
-			};
+			const assignLicensesStatus = await assignLicensesToSite.assignLicensesToSite( issuedKeys );
 
 			dispatch( resetSite() );
 			dispatch( setPurchasedLicense( assignLicensesStatus ) );
