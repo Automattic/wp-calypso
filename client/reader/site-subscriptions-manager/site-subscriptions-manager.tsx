@@ -54,12 +54,13 @@ const SiteSubscriptionsManager = () => {
 					/>
 					<Spacer />
 					<AddSitesButton />
+
 					<SubscriptionsEllipsisMenu
 						toggleTitle={ translate( 'More' ) }
 						popoverClassName="site-subscriptions-manager__import-export-popover"
 						verticalToggle
 					>
-						<VStack>
+						<VStack spacing={ 1 }>
 							<ReaderImportButton icon={ uploadCloud } iconSize={ 20 } />
 							<ReaderExportButton
 								icon={ downloadCloud }
