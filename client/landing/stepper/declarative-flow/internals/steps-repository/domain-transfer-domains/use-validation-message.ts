@@ -11,7 +11,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 	const [ authDebounced ] = useDebounce( auth, 500 );
 
 	const hasGoodDomain = doesStringResembleDomain( domainDebounced );
-	const hasGoodAuthCode = hasGoodDomain && auth.trim().length > 6;
+	const hasGoodAuthCode = hasGoodDomain && auth.trim().length > 5;
 
 	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode && ! hasDuplicates;
 
