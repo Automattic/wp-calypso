@@ -3,10 +3,19 @@
 .backup-contents-page {
 	&__back-button.components-button.is-link {
 		color: #000;
+		padding: 12px 0;
 		text-decoration: none;
+		margin: 4px 0;
 
 		svg {
 			margin-right: 2px;
+		}
+	}
+
+	@include break-mobile {
+		&__back-button.components-button.is-link {
+			padding: 0;
+			margin: 0;
 		}
 	}
 
@@ -82,6 +91,7 @@
 			@include break-mobile {
 				&__detail-group {
 					display: flex;
+					flex-wrap: wrap;
 					justify-content: space-between;
 				}
 			}
@@ -109,8 +119,9 @@
 
 			&__preview {
 				margin: 16px auto 0;
-				max-width: max-content;
 				padding: 0 8px;
+				max-width: 620px;
+				text-align: center;
 
 				&--is-loading {
 					margin-bottom: 0;
@@ -125,7 +136,6 @@
 
 				audio,
 				video,
-				pre,
 				img {
 					max-width: 100%;
 				}
@@ -139,7 +149,7 @@
 				&.code,
 				&.text {
 					margin-bottom: -12px;
-					max-width: 100%;
+					text-align: initial;
 				}
 
 				pre {
