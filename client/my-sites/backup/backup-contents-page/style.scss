@@ -20,7 +20,7 @@
 	// which is at 660px instead of the 600px break-small breakpoint.
 	@include breakpoint-deprecated( ">660px" ) {
 		&__back-button.components-button.is-link {
-			padding: 0;
+			padding: 0 0 12px 0;
 			margin: 0;
 		}
 	}
