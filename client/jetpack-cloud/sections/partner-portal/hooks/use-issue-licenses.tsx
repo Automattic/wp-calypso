@@ -4,7 +4,18 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
-import { APIError } from 'calypso/state/partner-portal/types';
+import { APIError, APILicense } from 'calypso/state/partner-portal/types';
+
+export type FulfilledIssueLicenseResult = APILicense & {
+	status: 'fulfilled';
+	slug: string;
+};
+export type RejectedIssueLicenseResult = {
+	status: 'rejected';
+	slug: string;
+};
+
+export type IssueLicenseResult = FulfilledIssueLicenseResult | RejectedIssueLicenseResult;
 
 const useIssueLicenses = () => {
 	const dispatch = useDispatch();
@@ -51,9 +62,16 @@ const useIssueLicenses = () => {
 	} );
 
 	return useMemo( () => {
-		const issueLicenses = ( productSlugs: string[] ) => {
-			const requests = productSlugs.map( ( slug ) => mutateAsync( { product: slug } ) );
-			return Promise.allSettled( requests );
+		const issueLicenses = ( productSlugs: string[] ): Promise< IssueLicenseResult[] > => {
+			const requests: Promise< IssueLicenseResult >[] = productSlugs.map( ( slug ) =>
+				mutateAsync( { product: slug } )
+					.then(
+						( value ): FulfilledIssueLicenseResult => ( { slug, status: 'fulfilled', ...value } )
+					)
+					.catch( (): RejectedIssueLicenseResult => ( { slug, status: 'rejected' } ) )
+			);
+
+			return Promise.all( requests );
 		};
 
 		return {

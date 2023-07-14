@@ -10,11 +10,10 @@ import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-das
 import { successNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
-import { APILicense, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
-import getProductSlugFromLicenseKey from '../lib/get-product-slug-from-license-key';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
-import useIssueLicenses from './use-issue-licenses';
+import useIssueLicenses, { FulfilledIssueLicenseResult } from './use-issue-licenses';
 
 const NO_OP = () => {
 	/* Do nothing */
@@ -128,14 +127,10 @@ function useIssueAndAssignLicenses(
 			const issueLicenseResponses = await issueLicenses.issueLicenses( selectedProducts );
 
 			const issuedLicenses = issueLicenseResponses.filter(
-				( p ): p is PromiseFulfilledResult< APILicense > => p.status === 'fulfilled'
+				( r ): r is FulfilledIssueLicenseResult => r.status === 'fulfilled'
 			);
-			const issuedKeys = issuedLicenses.map( ( { value } ) => value.license_key );
-			const issuedProducts = issuedKeys
-				.map( ( key ) => {
-					const productSlug = getProductSlugFromLicenseKey( key );
-					return products?.data?.find( ( p ) => p.slug === productSlug );
-				} )
+			const issuedProducts = issuedLicenses
+				.map( ( { slug } ) => products?.data?.find?.( ( p ) => p.slug === slug ) )
 				.filter( ( p ): p is APIProductFamilyProduct => p !== undefined );
 
 			// Exit early if we don't see any issued licenses matching a product we know
@@ -145,9 +140,11 @@ function useIssueAndAssignLicenses(
 
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_multiple_licenses_issued', {
-					products: issuedProducts.join( ',' ),
+					products: issuedProducts.map( ( { slug } ) => slug ).join( ',' ),
 				} )
 			);
+
+			const issuedKeys = issuedLicenses.map( ( { license_key } ) => license_key );
 
 			// If no site is selected, announce that licenses were issued;
 			// then, redirect to somewhere more appropriate
