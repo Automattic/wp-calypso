@@ -115,12 +115,12 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	} );
 	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
 
-	const nodeContentsClassName = classNames( 'file-browser-node__contents', {
+	const nodeClassName = classNames( 'file-browser-node', {
 		'is-root': isRoot,
 	} );
 
 	return (
-		<div className="file-browser-node">
+		<div className={ nodeClassName }>
 			<div className={ nodeItemClassName }>
 				{ ! isRoot && (
 					<Button
@@ -138,7 +138,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			{ isOpen && (
 				<>
 					{ item.hasChildren && (
-						<div className={ nodeContentsClassName }>{ renderChildren() }</div>
+						<div className="file-browser-node__contents">{ renderChildren() }</div>
 					) }
 				</>
 			) }
