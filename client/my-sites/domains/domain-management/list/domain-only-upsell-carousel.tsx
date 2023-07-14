@@ -4,7 +4,6 @@ import moment from 'moment';
 import { useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import addEmailImage from 'calypso/assets/images/domains/add-email.svg';
-import createSiteImage from 'calypso/assets/images/domains/create-site.svg';
 import DotPager from 'calypso/components/dot-pager';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -15,7 +14,6 @@ import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { IAppState } from 'calypso/state/types';
-import { createSiteFromDomainOnly } from '../../paths';
 import {
 	DomainOnlyUpsellCarouselConnectedProps,
 	DomainOnlyUpsellCarouselOwnProps,
@@ -36,14 +34,11 @@ const shouldHideCard = ( date: string | null ): boolean => {
 
 const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ) => {
 	const translate = useTranslate();
-	const [ areHideSiteCardOptionsVisible, setHideSiteCardOptionsVisible ] = useState( false );
 	const [ areHideEmailCardOptionsVisible, setHideEmailCardOptionsVisible ] = useState( false );
-	const hideCreateSiteCardButtonRef = useRef( null );
 	const hideAddEmailCardButtonRef = useRef( null );
 	const [ isRequestingDomainNotices, setIsRequestingDomainNotices ] = useState( false );
 	const [ isUpdatingDomainNotices, setIsUpdatingDomainNotices ] = useState( false );
 	const [ hideAddEmailCard, setHideEmailCard ] = useState( false );
-	const [ hideCreateSiteCard, setHideCreateSiteCard ] = useState( false );
 
 	const { domain, dispatchRecordTracksEvent } = props;
 
@@ -60,16 +55,12 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ) => {
 					setHideEmailCard(
 						shouldHideCard( domainNotices[ UpsellCardNoticeType.HIDE_ADD_EMAIL_CARD ] )
 					);
-					setHideCreateSiteCard(
-						shouldHideCard( domainNotices[ UpsellCardNoticeType.HIDE_CREATE_SITE_CARD ] )
-					);
 				}
 				setIsRequestingDomainNotices( false );
 			},
 			() => {
 				setIsRequestingDomainNotices( false );
 				setHideEmailCard( true );
-				setHideCreateSiteCard( true );
 			}
 		);
 	}, [ domainName ] );
@@ -86,7 +77,6 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ) => {
 		noticeType: UpsellCardNoticeType,
 		sourceCardType: string
 	) => {
-		setHideSiteCardOptionsVisible( false );
 		setHideEmailCardOptionsVisible( false );
 		const mapReminderToMomentArgs = {
 			[ HideCardDuration.ONE_WEEK ]: { weeks: 1 },
@@ -107,8 +97,6 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ) => {
 					setIsUpdatingDomainNotices( false );
 					if ( noticeType === UpsellCardNoticeType.HIDE_ADD_EMAIL_CARD ) {
 						setHideEmailCard( true );
-					} else if ( noticeType === UpsellCardNoticeType.HIDE_CREATE_SITE_CARD ) {
-						setHideCreateSiteCard( true );
 					}
 				}
 			},
@@ -213,26 +201,6 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ) => {
 	}
 
 	const cards = [];
-
-	if ( ! hideCreateSiteCard ) {
-		cards.push(
-			renderCard( {
-				actionUrl: createSiteFromDomainOnly( domain.domain, domain.blogId ),
-				imageUrl: createSiteImage,
-				title: translate( 'Create a site for %(domain)s', {
-					args: { domain: domain.domain },
-				} ),
-				subtitle: translate( 'Choose a theme, customize and launch your site.' ),
-				ref: hideCreateSiteCardButtonRef,
-				buttonLabel: translate( 'Create site' ),
-				cardName: 'create-site',
-				cardNoticeType: UpsellCardNoticeType.HIDE_CREATE_SITE_CARD,
-				eventTrackViewName: 'calypso_domain_only_upsell_carousel_card_impression',
-				areHideOptionsVisible: areHideSiteCardOptionsVisible,
-				setHideOptionsVisible: setHideSiteCardOptionsVisible,
-			} )
-		);
-	}
 
 	if ( ! hasPaidEmailWithUs( domain ) && ! hideAddEmailCard ) {
 		cards.push(
