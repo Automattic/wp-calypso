@@ -32,6 +32,42 @@ class MasterbarLoggedOut extends Component {
 		title: '',
 	};
 
+	renderTagsItem() {
+		const { locale, translate } = this.props;
+
+		let tagsUrl = '/tags';
+		if ( ! isDefaultLocale( locale ) ) {
+			tagsUrl = addLocaleToPath( tagsUrl, locale );
+		}
+
+		return (
+			<Item url={ tagsUrl }>
+				{ translate( 'Popular Tags', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~15 chars',
+				} ) }
+			</Item>
+		);
+	}
+
+	renderSearchItem() {
+		const { locale, translate } = this.props;
+
+		let tagsUrl = '/read/search';
+		if ( ! isDefaultLocale( locale ) ) {
+			tagsUrl = addLocaleToPath( tagsUrl, locale );
+		}
+
+		return (
+			<Item url={ tagsUrl }>
+				{ translate( 'Search', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~12 chars',
+				} ) }
+			</Item>
+		);
+	}
+
 	renderLoginItem() {
 		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
 		if ( sectionName === 'login' ) {
@@ -156,8 +192,10 @@ class MasterbarLoggedOut extends Component {
 				</Item>
 				<Item className="masterbar__item-title">{ title }</Item>
 				<div className="masterbar__login-links">
-					{ this.renderSignupItem() }
+					{ this.renderTagsItem() }
+					{ this.renderSearchItem() }
 					{ this.renderLoginItem() }
+					{ this.renderSignupItem() }
 				</div>
 			</Masterbar>
 		);
