@@ -73,7 +73,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		processing: 1,
 	},
 	[ VIDEOPRESS_TV_PURCHASE_FLOW ]: {
-		processing: 1,
+		processing: 0,
 	},
 	sensei: {
 		senseiSetup: 1,
