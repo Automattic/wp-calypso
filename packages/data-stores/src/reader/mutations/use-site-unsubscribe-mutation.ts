@@ -87,7 +87,10 @@ const useSiteUnsubscribeMutation = () => {
 							subscriptions: page.subscriptions.map( ( siteSubscription ) => ( {
 								...siteSubscription,
 								isDeleted:
-									siteSubscription.blog_ID === params.blog_id ? true : siteSubscription.isDeleted,
+									Number( siteSubscription.ID ) === params.subscriptionId ||
+									siteSubscription.blog_ID === params.blog_id
+										? true
+										: siteSubscription.isDeleted,
 							} ) ),
 						};
 					} ),
