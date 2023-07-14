@@ -2527,6 +2527,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_MIGRATION_TRIAL ]: {
 		...getPlanBusinessDetails(),
 		term: TERM_ANNUALLY,
+		getTitle: () => i18n.translate( 'Business Trial' ),
 		getProductId: () => 1057,
 		getStoreSlug: () => PLAN_MIGRATION_TRIAL,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
