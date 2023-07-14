@@ -1,4 +1,5 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { useTranslate } from 'i18n-calypso';
 import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
 import {
 	SiteSubscriptionsList,
@@ -8,6 +9,7 @@ import { RecommendedSites } from '../recommended-sites';
 import NotFoundSiteSubscriptions from './not-found-site-subscriptions';
 
 const ReaderSiteSubscriptions = () => {
+	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
 	const siteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery();
 	const unsubscribedFeedsSearch = Reader.useUnsubscribedFeedsSearch();
@@ -23,9 +25,7 @@ const ReaderSiteSubscriptions = () => {
 
 			{ hasSomeSubscriptions && hasSomeUnsubscribedSearchResults ? (
 				<div className="site-subscriptions__search-recommendations-label">
-					{
-						'Here are some other sites that match your search.' // TODO: translate once we have the final string
-					}
+					{ translate( 'Here are some other sites that match your search.' ) }
 				</div>
 			) : null }
 			<UnsubscribedFeedsSearchList />
