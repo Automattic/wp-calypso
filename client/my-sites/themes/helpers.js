@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { isMagnificentLocale, addLocaleToPath } from '@automattic/i18n-utils';
 import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
@@ -171,7 +170,7 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 	);
 
 	// 3. WP.org themes (only if the list of WP.com themes has reached the last page).
-	if ( isEnabled( 'themes/interlaced-dotorg-themes' ) && isLastPage ) {
+	if ( isLastPage ) {
 		interlacedThemes.push(
 			...validWpOrgThemes.filter( ( theme ) => theme.id !== matchingTheme?.id )
 		);
