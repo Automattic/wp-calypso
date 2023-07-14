@@ -172,26 +172,9 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 
 	// 3. WP.org themes (only if the list of WP.com themes has reached the last page).
 	if ( isEnabled( 'themes/interlaced-dotorg-themes' ) && isLastPage ) {
-		const restWpOrgBlockThemes = [];
-		const restWpOrgClassicThemes = [];
-
-		validWpOrgThemes.forEach( ( theme ) => {
-			if ( theme.id === matchingTheme?.id ) {
-				return;
-			}
-			if (
-				theme.taxonomies?.theme_feature?.some(
-					( feature ) => feature?.slug === 'full-site-editing'
-				)
-			) {
-				restWpOrgBlockThemes.push( theme );
-			} else {
-				restWpOrgClassicThemes.push( theme );
-			}
-		} );
-
-		interlacedThemes.push( ...restWpOrgBlockThemes );
-		interlacedThemes.push( ...restWpOrgClassicThemes );
+		interlacedThemes.push(
+			...validWpOrgThemes.filter( ( theme ) => theme.id !== matchingTheme?.id )
+		);
 	}
 
 	return interlacedThemes;
