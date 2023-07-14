@@ -163,18 +163,31 @@ function getAvailabilityNotice(
 			);
 			break;
 		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER:
-			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. If you want to connect it to this site ' +
-					'instead, we will be happy to help you do that. {{a}}Contact us.{{/a}}',
-				{
-					args: { domain, site },
-					components: {
-						strong: <strong />,
-						a: <a target={ linksTarget } rel="noopener noreferrer" href={ CALYPSO_CONTACT } />,
-					},
-				}
-			);
-			break;
+			if ( site ) {
+				message = translate(
+					'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. If you want to connect it to this site ' +
+						'instead, we will be happy to help you do that. {{a}}Contact us.{{/a}}',
+					{
+						args: { domain, site },
+						components: {
+							strong: <strong />,
+							a: <a target={ linksTarget } rel="noopener noreferrer" href={ CALYPSO_CONTACT } />,
+						},
+					}
+				);
+				break;
+			} else {
+				message = translate(
+					'{{strong}}%(domain)s{{/strong}} is either already connected to another WordPress.com site you own.',
+					{
+						args: { domain },
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+				break;
+			}
 		case domainAvailability.TRANSFER_PENDING_SAME_USER:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is pending transfer. {{a}}Check the transfer status{{/a}} to learn more.',
