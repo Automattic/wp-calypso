@@ -8,7 +8,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import FilePreview from './file-preview';
-import { onPreparingDownloadError } from './notices';
+import { onPreparingDownloadError, onProcessingDownloadError } from './notices';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
@@ -48,6 +48,12 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
 
 	const [ isProcessingDownload, setIsProcessingDownload ] = useState< boolean >( false );
+
+	const handleDownloadError = useCallback( () => {
+		setIsProcessingDownload( false );
+		dispatch( onProcessingDownloadError() );
+	}, [ dispatch ] );
+
 	const downloadFile = useCallback( () => {
 		setIsProcessingDownload( true );
 
@@ -59,6 +65,11 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					apiNamespace: 'wpcom/v2',
 				} )
 				.then( ( response: { url: string } ) => {
+					if ( ! response.url ) {
+						handleDownloadError();
+						return;
+					}
+
 					const downloadUrl = new URL( response.url );
 					downloadUrl.searchParams.append( 'disposition', 'attachment' );
 					window.open( downloadUrl, '_blank' );
@@ -69,9 +80,14 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 							file_type: item.type,
 						} )
 					);
+				} )
+				.catch( () => {
+					handleDownloadError();
+					return;
 				} );
 		} else {
 			if ( fileInfo === undefined || parentItem === undefined ) {
+				handleDownloadError();
 				return;
 			}
 
@@ -96,6 +112,11 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					}
 				)
 				.then( ( response: { url: string } ) => {
+					if ( ! response.url ) {
+						handleDownloadError();
+						return;
+					}
+
 					window.open( response.url, '_blank' );
 					setIsProcessingDownload( false );
 
@@ -104,9 +125,13 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 							file_type: archiveType,
 						} )
 					);
+				} )
+				.catch( () => {
+					handleDownloadError();
+					return;
 				} );
 		}
-	}, [ dispatch, fileInfo, item, parentItem, rewindId, siteId ] );
+	}, [ dispatch, fileInfo, handleDownloadError, item, parentItem, rewindId, siteId ] );
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
