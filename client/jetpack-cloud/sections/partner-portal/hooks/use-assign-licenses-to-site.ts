@@ -1,7 +1,5 @@
 import { useCallback } from 'react';
 import { getProductTitle } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import getProductSlugFromLicenseKey from '../lib/get-product-slug-from-license-key';
@@ -11,18 +9,23 @@ import type {
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
+const NO_OP = () => {
+	/* Do nothing */
+};
+
+type UseAssignLicensesToSiteOptions = {
+	onError?: ( ( error: Error ) => void ) | ( () => void );
+};
 const useAssignLicensesToSite = (
-	selectedSite: { ID: number; domain: string } | null
+	selectedSite: { ID: number; domain: string } | null,
+	options: UseAssignLicensesToSiteOptions = {}
 ): {
 	assignLicensesToSite: ( licenseKeys: string[] ) => Promise< PurchasedProductsInfo >;
 	isReady: boolean;
 } => {
 	const products = useProductsQuery();
-	const dispatch = useDispatch();
 	const assignLicense = useAssignLicenseMutation( {
-		onError: ( error: Error ) => {
-			dispatch( errorNotice( error.message, { isPersistent: true } ) );
-		},
+		onError: options.onError ?? NO_OP,
 	} );
 
 	const isReady = assignLicense.isIdle;

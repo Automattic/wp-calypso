@@ -13,6 +13,7 @@ import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { areLicenseKeysAssignableToMultisite } from '../utils';
 import './style.scss';
 
@@ -64,7 +65,12 @@ export default function AssignLicenseForm( {
 	const onSelectSite = ( site: any ) => {
 		setSelectedSite( site );
 	};
-	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite );
+
+	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite, {
+		onError: ( error: Error ) => {
+			dispatch( errorNotice( error.message, { isPersistent: true } ) );
+		},
+	} );
 
 	const licenseKeysArray = getLicenseKeysFromUrl();
 
