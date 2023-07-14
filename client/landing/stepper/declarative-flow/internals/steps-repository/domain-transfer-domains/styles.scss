@@ -364,12 +364,12 @@
 			margin-bottom: 42px;
 
 			div:nth-of-type(1) {
-				flex: 8;
+				flex: 9;
 			}
 
 			div:nth-of-type(2) {
 				flex: 3;
-				margin-left: -12px;
+				margin-left: 4px;
 
 				@media (max-width: $break-medium ) {
 					text-align: right;
