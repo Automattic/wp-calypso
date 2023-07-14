@@ -133,6 +133,29 @@ body.is-section-home.theme-default.color-scheme {
 			margin-bottom: 16px;
 		}
 	}
+
+	> .card,
+	> .card.quick-links,
+	> .card.go-mobile {
+		padding: 16px 0;
+
+		.foldable-card__header {
+			padding: 16px 0 14px;
+
+			.foldable-card__action {
+				width: auto;
+				margin-right: 0;
+			}
+		}
+
+		.foldable-card__content {
+			padding-right: 0;
+			.quick-links__action-box {
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
+	}
 }
 
 .customer-home__loading-placeholder {
