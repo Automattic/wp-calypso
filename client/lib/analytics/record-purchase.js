@@ -21,7 +21,7 @@ export function recordPurchase( { cart, orderId, sitePlanSlug } ) {
 		recordOrder( cart, orderId, sitePlanSlug );
 	}
 
-	if ( hasTransferProduct && mayWeTrackByTracker( 'googleAds' ) ) {
+	if ( hasTransferProduct( cart ) && mayWeTrackByTracker( 'googleAds' ) ) {
 		const params = [
 			'event',
 			'conversion',
