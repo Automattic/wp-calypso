@@ -135,6 +135,12 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	useEffect( () => {
 		if ( ! paymentMethodRequired && products ) {
 			const itemsToIssue = products.split( ',' );
+
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_multiple_licenses_submit', {
+					products,
+				} )
+			);
 			issueAndAssignLicenses( itemsToIssue );
 		}
 		// Do not update the dependency array with issueMultipleLicense since

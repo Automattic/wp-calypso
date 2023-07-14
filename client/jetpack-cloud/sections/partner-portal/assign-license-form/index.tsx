@@ -3,12 +3,14 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
 import { SITE_CARDS_PER_PAGE } from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form/constants';
 import { useAssignLicensesToSite } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { areLicenseKeysAssignableToMultisite } from '../utils';
 import './style.scss';
 
@@ -54,6 +56,7 @@ export default function AssignLicenseForm( {
 	currentPage: number;
 	search: string;
 } ) {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
 	const onSelectSite = ( site: any ) => {
@@ -102,8 +105,15 @@ export default function AssignLicenseForm( {
 	}, [ licenseKeysArray ] );
 
 	const onClickAssignLicenses = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
+				products: licenseKeysArray.join( ',' ),
+				selected_site: selectedSite?.ID,
+			} )
+		);
+
 		assignLicensesToSite( licenseKeysArray );
-	}, [ assignLicensesToSite, licenseKeysArray ] );
+	}, [ assignLicensesToSite, dispatch, licenseKeysArray, selectedSite?.ID ] );
 
 	if ( ! results.length ) {
 		return (

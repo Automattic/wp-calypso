@@ -10,7 +10,6 @@ import {
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
@@ -148,13 +147,6 @@ export function useAssignLicensesToSite( selectedSite: { ID: number; domain: str
 			if ( ! selectedSiteId ) {
 				return;
 			}
-
-			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
-					products: licenseKeys.join( ',' ),
-					selected_site: selectedSiteId,
-				} )
-			);
 
 			const keysWithProductNames = licenseKeys
 				.map( ( key ) => {

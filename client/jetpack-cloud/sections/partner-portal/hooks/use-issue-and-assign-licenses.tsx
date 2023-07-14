@@ -207,12 +207,6 @@ function useIssueAndAssignLicenses(
 				return;
 			}
 
-			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_issue_multiple_licenses_submit', {
-					products: selectedProducts.join( ',' ),
-				} )
-			);
-
 			// We want to know when someone purchases different product(s)
 			// from what we recommend on the dashboard
 			if (
