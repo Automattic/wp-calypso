@@ -82,7 +82,11 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 				childIsAlternate = ! childIsAlternate;
 
 				// Let's hide archives that don't have an extension version
-				if ( childItem.type === 'archive' && ! item.extensionVersion ) {
+				// and changed extensions item node
+				if (
+					( childItem.type === 'archive' && ! item.extensionVersion ) ||
+					childItem.extensionType === 'changed'
+				) {
 					return null;
 				}
 
