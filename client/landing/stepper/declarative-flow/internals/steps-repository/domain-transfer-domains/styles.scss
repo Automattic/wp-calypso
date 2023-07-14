@@ -180,6 +180,10 @@
 			font-weight: 500;
 			line-height: 24px;
 
+			@media (max-width: $break-medium ) {
+				align-items: flex-start;
+			}
+
 			&.raw-price {
 				color: var(--studio-gray-40);
 				font-size: 0.75rem;
@@ -230,6 +234,10 @@
 
 			@media (max-width: $break-medium ) {
 				display: block;
+
+				&.is-first-row {
+					margin-bottom: 8px;
+				}
 			}
 		}
 
@@ -407,10 +415,11 @@
 		margin-bottom: 12px;
 
 		@media (max-width: $break-medium ) {
+			margin-bottom: 32px;
+
 			&:not(:first-of-type) {
 				border-top: solid 1px #dcdcde;
 				padding-top: 32px;
-				margin-bottom: 32px;
 			}
 		}
 
