@@ -166,28 +166,7 @@ const useGetLicenseIssuedMessage = () => {
 	);
 };
 
-const containEquivalentItems = ( arr1: string[], arr2: string[] ) => {
-	if ( arr1.length !== arr2.length ) {
-		return false;
-	}
-
-	const [ sorted1, sorted2 ] = [ [ ...arr1 ].sort(), [ ...arr2 ].sort() ];
-	for ( let i = 0; i < sorted1.length; ++i ) {
-		// If the two lists are sorted and an element differs between the two
-		// at any index, they must not contain exactly the same items
-		// in exactly the same quantities
-		if ( sorted1[ i ] !== sorted2[ i ] ) {
-			return false;
-		}
-	}
-
-	return true;
-};
-
-function useIssueAndAssignLicenses(
-	selectedSite?: { ID: number; domain: string } | null,
-	suggestedProducts: string[] = []
-) {
+function useIssueAndAssignLicenses( selectedSite?: { ID: number; domain: string } | null ) {
 	const dispatch = useDispatch();
 	const products = useProductsQuery();
 	const sitesCount = useSelector( getSites ).length;
@@ -205,19 +184,6 @@ function useIssueAndAssignLicenses(
 		const issueAndAssignLicenses = async ( selectedProducts: string[] ) => {
 			if ( ! isReady || selectedProducts.length === 0 ) {
 				return;
-			}
-
-			// We want to know when someone purchases different product(s)
-			// from what we recommend on the dashboard
-			if (
-				suggestedProducts.length > 0 &&
-				! containEquivalentItems( selectedProducts, suggestedProducts )
-			) {
-				dispatch(
-					recordTracksEvent(
-						'calypso_partner_portal_issue_multiple_licenses_changed_selection_after_dashboard_visit'
-					)
-				);
 			}
 
 			const selectedSiteId = selectedSite?.ID;
@@ -333,7 +299,6 @@ function useIssueAndAssignLicenses(
 		products?.data,
 		selectedSite,
 		sitesCount,
-		suggestedProducts,
 	] );
 }
 

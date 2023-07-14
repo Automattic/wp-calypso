@@ -30,6 +30,24 @@ import { AssignLicenceProps } from '../types';
 
 import './style.scss';
 
+const containEquivalentItems = ( arr1: string[], arr2: string[] ) => {
+	if ( arr1.length !== arr2.length ) {
+		return false;
+	}
+
+	const [ sorted1, sorted2 ] = [ [ ...arr1 ].sort(), [ ...arr2 ].sort() ];
+	for ( let i = 0; i < sorted1.length; ++i ) {
+		// If the two lists are sorted and an element differs between the two
+		// at any index, they must not contain exactly the same items
+		// in exactly the same quantities
+		if ( sorted1[ i ] !== sorted2[ i ] ) {
+			return false;
+		}
+	}
+
+	return true;
+};
+
 export default function IssueMultipleLicensesForm( {
 	selectedSite,
 	suggestedProduct,
@@ -106,7 +124,25 @@ export default function IssueMultipleLicensesForm( {
 		.split( ',' );
 
 	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
-		useIssueAndAssignLicenses( selectedSite, suggestedProductSlugs );
+		useIssueAndAssignLicenses( selectedSite );
+
+	const maybeTrackUnsuggestedSelection = useCallback(
+		( selectedSlugs: string[] ) => {
+			// We want to know when someone purchases different product(s)
+			// from what we recommend on the dashboard
+			if (
+				suggestedProductSlugs?.length &&
+				! containEquivalentItems( selectedSlugs, suggestedProductSlugs )
+			) {
+				dispatch(
+					recordTracksEvent(
+						'calypso_partner_portal_issue_multiple_licenses_changed_selection_after_dashboard_visit'
+					)
+				);
+			}
+		},
+		[ dispatch, suggestedProductSlugs ]
+	);
 
 	const onSelectProduct = useCallback(
 		( product: APIProductFamilyProduct ) => {
@@ -142,14 +178,21 @@ export default function IssueMultipleLicensesForm( {
 				);
 			}
 
+			maybeTrackUnsuggestedSelection( [ product.slug ] );
 			issueAndAssignLicenses( [ product.slug ] );
 		},
-		[ dispatch, hasPurchasedProductsWithoutBundle, issueAndAssignLicenses ]
+		[
+			dispatch,
+			hasPurchasedProductsWithoutBundle,
+			issueAndAssignLicenses,
+			maybeTrackUnsuggestedSelection,
+		]
 	);
 
 	const onClickIssueLicenses = useCallback( () => {
+		maybeTrackUnsuggestedSelection( selectedProductSlugs );
 		issueAndAssignLicenses( selectedProductSlugs );
-	}, [ issueAndAssignLicenses, selectedProductSlugs ] );
+	}, [ issueAndAssignLicenses, maybeTrackUnsuggestedSelection, selectedProductSlugs ] );
 
 	if ( isLoadingProducts ) {
 		return (
