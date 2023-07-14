@@ -202,9 +202,9 @@ const SiteRow = ( {
 					} }
 				>
 					<SiteIcon
+						iconUrl={ site_icon }
 						/* eslint-disable wpcalypso/jsx-gridicon-size */
 						defaultIcon={ <Gridicon key="globe-icon" icon="globe" size={ 40 } /> }
-						iconUrl={ site_icon }
 						size={ 40 }
 						alt={ name }
 					/>
