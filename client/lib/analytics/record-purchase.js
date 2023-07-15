@@ -27,9 +27,10 @@ export function recordPurchase( { cart, orderId, sitePlanSlug } ) {
 			'conversion',
 			{
 				send_to: TRACKING_IDS.wpcomGoogleAdsGtagDomainTransferPurchase,
+				transaction_id: orderId,
 			},
 		];
-		debug( 'adTrackSignupStart: [Google Ads Gtag]', params );
+		debug( 'recordOrderInGoogleAds: WPCom Domain Transfer Purchase', params );
 		window.gtag( ...params );
 	}
 }
