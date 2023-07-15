@@ -1,16 +1,33 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .backup-contents-page {
+	.card {
+		padding: 24px 22px;
+	}
+
 	&__back-button.components-button.is-link {
 		color: #000;
+		padding: 12px 0;
 		text-decoration: none;
+		margin: 4px 0;
 
 		svg {
 			margin-right: 2px;
 		}
 	}
 
+	// We are using the deprecated mixin to match the when the mobile navigation appears
+	// which is at 660px instead of the 600px break-small breakpoint.
+	@include breakpoint-deprecated( ">660px" ) {
+		&__back-button.components-button.is-link {
+			padding: 0 0 12px 0;
+			margin: 0;
+		}
+	}
+
 	&__header {
+		padding-left: 2px;
+		padding-right: 2px;
 		padding-bottom: 30px;
 
 		&.daily-backup-status {
@@ -20,11 +37,20 @@
 
 	&__body {
 		border-top: 1px solid var(--studio-gray-5);
-		overflow-x: scroll;
+		overflow-x: auto;
 		padding-top: 30px;
+		padding-bottom: 14px;
 	}
 
 	.file-browser-node {
+		margin-top: 2px;
+		margin-left: 2px;
+		min-width: fit-content;
+
+		&.is-root {
+			margin-left: 0;
+		}
+
 		&__loading {
 			&.placeholder {
 				height: 26px;
@@ -36,12 +62,12 @@
 		&__contents {
 			display: flex;
 			flex-direction: column;
-			overflow-x: auto;
 			background-color: #fff;
+			padding-left: 26px;
+		}
 
-			&:not(:first-child) {
-				padding-left: 26px;
-			}
+		&.is-root > .file-browser-node__contents {
+			padding-left: 0;
 		}
 
 		.file-browser-node__title {
@@ -78,6 +104,7 @@
 			@include break-mobile {
 				&__detail-group {
 					display: flex;
+					flex-wrap: wrap;
 					justify-content: space-between;
 				}
 			}
@@ -96,10 +123,18 @@
 				font-weight: bold;
 			}
 
+			&__prepare-download-spinner {
+				display: inline-block;
+				margin-right: 6px;
+				margin-top: -3px;
+				vertical-align: middle;
+			}
+
 			&__preview {
 				margin: 16px auto 0;
-				max-width: max-content;
 				padding: 0 8px;
+				max-width: 620px;
+				text-align: center;
 
 				&--is-loading {
 					margin-bottom: 0;
@@ -114,7 +149,6 @@
 
 				audio,
 				video,
-				pre,
 				img {
 					max-width: 100%;
 				}
@@ -128,7 +162,7 @@
 				&.code,
 				&.text {
 					margin-bottom: -12px;
-					max-width: 100%;
+					text-align: initial;
 				}
 
 				pre {
@@ -136,6 +170,19 @@
 					font-size: 0.75rem;
 					margin: 0;
 					max-height: 400px;
+				}
+			}
+
+			&__preview-sensitive {
+				background-color: var(--studio-gray-60);
+				color: #fff;
+				margin: 16px auto 0;
+				max-width: 100%;
+				padding: 20px 8px;
+				text-align: center;
+
+				p {
+					font-size: 0.875rem;
 				}
 			}
 		}

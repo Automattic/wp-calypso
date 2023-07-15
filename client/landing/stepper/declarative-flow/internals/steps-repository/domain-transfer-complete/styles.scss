@@ -21,6 +21,11 @@
 			}
 			.formatted-header__subtitle {
 				text-align: center;
+
+				.formatted-header-subtitle__bold {
+					font-weight: 600;
+					display: block;
+				}
 			}
 			@media ( max-width: $break-medium ) {
 				text-align: left;

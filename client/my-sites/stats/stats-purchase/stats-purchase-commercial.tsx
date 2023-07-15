@@ -1,14 +1,21 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { formatCurrency, getCurrencyObject } from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
+
 interface CommercialPurchaseProps {
 	planValue: number;
+	currencyCode: string;
+	siteSlug: string;
 }
 
-const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
+const CommercialPurchase = ( { planValue, currencyCode, siteSlug }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
+	const planPriceObject = getCurrencyObject( planValue, currencyCode );
 
 	return (
 		<div>
@@ -28,8 +35,14 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__pricing` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-value` }>
-					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>$</div>
-					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-amount` }>{ `${ planValue }` }</div>
+					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>
+						{ planPriceObject.symbol }
+					</div>
+					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-amount` }>
+						{ planPriceObject.hasNonZeroFraction
+							? formatCurrency( planValue, currencyCode ).replace( planPriceObject.symbol, '' )
+							: planPriceObject.integer }
+					</div>
 				</div>
 				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-cadency` }>
 					/{ translate( 'month' ) }
@@ -37,6 +50,7 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 			</div>
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
+				<p>{ translate( 'Benefits:' ) }</p>
 				<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 					<li>{ translate( 'Instant access to upcoming features' ) }</li>
 					<li>{ translate( 'Priority support' ) }</li>
@@ -49,17 +63,23 @@ const CommercialPurchase = ( { planValue }: CommercialPurchaseProps ) => {
 					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
 					{
 						components: {
-							a: <Button variant="link" href="#" />,
+							a: (
+								<Button
+									variant="link"
+									target="_blank"
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+								/>
+							),
 							b: <Button variant="link" href="#" />,
 						},
 					}
 				) }
 			</p>
 
-			<Button variant="primary">
+			<Button variant="primary" onClick={ () => gotoCheckoutPage( 'commercial', siteSlug ) }>
 				{ translate( 'Get Jetpack Stats for %(value)s per month', {
 					args: {
-						value: planValue,
+						value: formatCurrency( planValue, currencyCode ),
 					},
 				} ) }
 			</Button>

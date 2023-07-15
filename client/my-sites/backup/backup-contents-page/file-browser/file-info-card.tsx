@@ -1,22 +1,31 @@
 import { Button, Spinner } from '@automattic/components';
 import { useCallback, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import FilePreview from './file-preview';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
+import { usePrepareDownload } from './use-prepare-download';
 import { convertBytes } from './util';
 
 interface FileInfoCardProps {
 	siteId: number;
 	item: FileBrowserItem;
+	rewindId: number;
+	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 }
 
-const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } ) => {
+const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
+	siteId,
+	item,
+	rewindId,
+	parentItem,
+} ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
@@ -32,34 +41,95 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 		item.extensionType ?? ''
 	);
 
+	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload( siteId );
+
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
 	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
 
-	const [ isDownloading, setIsDownloading ] = useState< boolean >( false );
+	const [ isProcessingDownload, setIsProcessingDownload ] = useState< boolean >( false );
 	const downloadFile = useCallback( () => {
-		setIsDownloading( true );
-		const manifestPath = window.btoa( item.manifestPath ?? '' );
+		setIsProcessingDownload( true );
 
-		wp.req
-			.get( {
-				path: `/sites/${ siteId }/rewind/backup/${ item.period }/file/${ manifestPath }/url`,
-				apiNamespace: 'wpcom/v2',
-			} )
-			.then( ( response: { url: string } ) => {
-				const downloadUrl = new URL( response.url );
-				downloadUrl.searchParams.append( 'disposition', 'attachment' );
-				window.open( downloadUrl, '_blank' );
-				setIsDownloading( false );
+		if ( item.type !== 'archive' ) {
+			const manifestPath = window.btoa( item.manifestPath ?? '' );
+			wp.req
+				.get( {
+					path: `/sites/${ siteId }/rewind/backup/${ item.period }/file/${ manifestPath }/url`,
+					apiNamespace: 'wpcom/v2',
+				} )
+				.then( ( response: { url: string } ) => {
+					const downloadUrl = new URL( response.url );
+					downloadUrl.searchParams.append( 'disposition', 'attachment' );
+					window.open( downloadUrl, '_blank' );
+					setIsProcessingDownload( false );
 
-				dispatch(
-					recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
-						file_type: item.type,
-					} )
-				);
-			} );
-	}, [ siteId, item, dispatch ] );
+					dispatch(
+						recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
+							file_type: item.type,
+						} )
+					);
+				} );
+		} else {
+			if ( fileInfo === undefined || parentItem === undefined ) {
+				return;
+			}
 
-	const showActions = item.type !== 'table' && item.type !== 'archive';
+			let archiveType: string;
+			if ( fileInfo.dataType === 2 ) {
+				archiveType = 'plugin';
+			} else {
+				archiveType = 'theme';
+			}
+
+			const period = Math.round( rewindId );
+
+			wp.req
+				.post(
+					{
+						path: `/sites/${ siteId }/rewind/backup/${ period }/extension/${ archiveType }/url`,
+						apiNamespace: 'wpcom/v2',
+					},
+					{
+						extension_slug: parentItem.name,
+						extension_version: parentItem.extensionVersion,
+					}
+				)
+				.then( ( response: { url: string } ) => {
+					window.open( response.url, '_blank' );
+					setIsProcessingDownload( false );
+
+					dispatch(
+						recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
+							file_type: archiveType,
+						} )
+					);
+				} );
+		}
+	}, [ dispatch, fileInfo, item, parentItem, rewindId, siteId ] );
+
+	const prepareDownloadClick = useCallback( () => {
+		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
+			// @TODO: We should dispatch an error notice
+			return;
+		}
+
+		prepareDownload( siteId, item.period, fileInfo.manifestFilter, fileInfo.dataType );
+	}, [ fileInfo, item.period, prepareDownload, siteId ] );
+
+	useEffect( () => {
+		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
+			setIsProcessingDownload( true );
+		} else {
+			setIsProcessingDownload( false );
+		}
+
+		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.READY ) {
+			window.open( downloadUrl, '_blank' );
+		}
+	}, [ downloadUrl, prepareDownloadStatus ] );
+
+	const showActions =
+		item.type !== 'archive' || ( item.type === 'archive' && item.extensionType === 'unchanged' );
 
 	// Do not display file info if the item hasChildren (it could be a directory, plugins, themes, etc.)
 	if ( item.hasChildren ) {
@@ -73,6 +143,35 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 	if ( ! isSuccess ) {
 		return null;
 	}
+
+	const requiresPreparation = item.type === 'table';
+
+	const downloadFileButton = (
+		<Button
+			className="file-card__action"
+			onClick={ downloadFile }
+			disabled={ isProcessingDownload }
+		>
+			{ isProcessingDownload ? <Spinner /> : translate( 'Download file' ) }
+		</Button>
+	);
+
+	const prepareDownloadButton = (
+		<Button
+			className="file-card__action"
+			onClick={ prepareDownloadClick }
+			disabled={ isProcessingDownload }
+		>
+			{ isProcessingDownload ? (
+				<>
+					<Spinner className="file-card__prepare-download-spinner" size={ 16 } />
+					{ translate( 'Preparing' ) }
+				</>
+			) : (
+				translate( 'Prepare and download' )
+			) }
+		</Button>
+	);
 
 	return (
 		<div className="file-card">
@@ -124,9 +223,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( { siteId, item } 
 
 			{ showActions && (
 				<div className="file-card__actions">
-					<Button className="file-card__action" onClick={ downloadFile } disabled={ isDownloading }>
-						{ isDownloading ? <Spinner /> : translate( 'Download file' ) }
-					</Button>
+					{ requiresPreparation ? prepareDownloadButton : downloadFileButton }
 				</div>
 			) }
 

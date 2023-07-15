@@ -87,16 +87,24 @@ const applyCallbackToPages = < K extends string, T >(
 const getSubscriptionMutationParams = (
 	action: 'new' | 'delete',
 	isLoggedIn: boolean,
-	blogId: number | string,
+	blogId?: number | string,
 	url?: string,
 	emailId?: string
 ) => {
 	if ( isLoggedIn ) {
+		if ( ! url ) {
+			throw new Error( 'URL is required for wpcom user to subscribe' );
+		}
+
 		return {
 			path: `/read/following/mine/${ action }`,
 			apiVersion: '1.1',
 			body: { source: 'calypso', url: url, ...( emailId ? { email_id: emailId } : {} ) },
 		};
+	}
+
+	if ( ! blogId ) {
+		throw new Error( 'Blog ID is required for non-wpcom user to subscribe' );
 	}
 
 	return {
@@ -115,3 +123,5 @@ const isErrorResponse = (
 };
 
 export { callApi, applyCallbackToPages, getSubkey, getSubscriptionMutationParams, isErrorResponse };
+export { default as buildQueryKey } from './query-key';
+export { default as isValidId } from './validators';

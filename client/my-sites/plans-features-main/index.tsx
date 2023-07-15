@@ -32,15 +32,17 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import usePlansWithIntent, {
+	GridPlan,
+} from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
-import useIntentFromSiteMeta from './hooks/use-intent-from-site-meta';
+import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
-import usePlanTypesWithIntent from './hooks/use-plan-types-with-intent';
-import usePlansFromTypes from './hooks/use-plans-from-types';
-import useVisiblePlansForPlanFeatures from './hooks/use-visible-plans-for-plan-features';
-import type { PlansIntent } from './hooks/use-plan-types-with-intent';
+import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import usePlanUpgradeabilityCheck from './hooks/use-plan-upgradeability-check';
 import type { IntervalType } from './types';
+import type { PlansIntent } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
@@ -56,7 +58,7 @@ export interface PlansFeaturesMainProps {
 	plansWithScroll?: boolean;
 	customerType?: string;
 	basePlansPath?: string;
-	selectedPlan?: string;
+	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
 	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
 	redirectToAddDomainFlow?: boolean;
@@ -85,9 +87,9 @@ export interface PlansFeaturesMainProps {
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	visiblePlans: PlanSlug[];
-	plans: PlanSlug[];
+	planRecords: Record< PlanSlug, GridPlan >;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	sitePlanSlug?: string | null;
+	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	intent?: PlansIntent;
 };
@@ -113,7 +115,7 @@ const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) 
 
 const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	const {
-		plans,
+		planRecords,
 		visiblePlans,
 		domainName,
 		isInSignup,
@@ -163,7 +165,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isInSignup,
 		isLaunchPage,
 		onUpgradeClick,
-		plans, // We need all the plans in order to show the correct features in the plan comparison table
+		planRecords, // We need all the plans in order to show the correct features in the plan comparison table
 		flowName,
 		visiblePlans,
 		selectedFeature,
@@ -238,7 +240,9 @@ const PlansFeaturesMain = ( {
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
-	const sitePlanSlug = useSelector( ( state: IAppState ) => getSitePlanSlug( state, siteId ) );
+	const sitePlanSlug = useSelector( ( state: IAppState ) =>
+		siteId ? getSitePlanSlug( state, siteId ) : null
+	);
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
@@ -303,39 +307,34 @@ const PlansFeaturesMain = ( {
 		intervalType,
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
-
-	const intentFromSiteMeta = useIntentFromSiteMeta();
+	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
 	// plans from upsells takes precedence for setting intent, globally
 	const intent = planFromUpsells
-		? 'default'
-		: intentFromProps || intentFromSiteMeta.intent || 'default';
+		? 'plans-default-wpcom'
+		: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom';
 
-	// TODO clk: "defaultPlans" to be removed once plan properties are computed outside of the grid component
-	// i.e. there will be no need to pass the full set of plans through
-	const defaultPlanTypes = usePlanTypesWithIntent( {
-		intent: 'plans-woocommerce' === intent ? 'plans-woocommerce' : 'default',
+	// TODO clk: these should be reindexed to respect planRecordsWithIntent in the order defined
+	// - depending on final form. works by maintaining an ordered index on default plans for now
+	const defaultPlanRecords = usePlansWithIntent( {
+		intent: 'default',
 		selectedPlan,
 		sitePlanSlug,
 		hideEnterprisePlan,
+		term,
+		usePlanUpgradeabilityCheck,
 	} );
-	const planTypesWithIntent = usePlanTypesWithIntent( {
+	const planRecordsWithIntent = usePlansWithIntent( {
 		intent,
 		selectedPlan,
 		sitePlanSlug,
 		hideEnterprisePlan,
-	} );
-	const defaultPlans = usePlansFromTypes( {
-		planTypes: defaultPlanTypes?.planTypes,
 		term,
-	} );
-	const plansWithIntent = usePlansFromTypes( {
-		planTypes: planTypesWithIntent?.planTypes,
-		term,
+		usePlanUpgradeabilityCheck,
 	} );
 	const visiblePlans =
-		useVisiblePlansForPlanFeatures( {
-			availablePlans: plansWithIntent,
+		useFilterPlansForPlanFeatures( {
+			plans: planRecordsWithIntent,
 			isDisplayingPlansNeededForFeature: isDisplayingPlansNeededForFeature(),
 			selectedPlan,
 			hideFreePlan,
@@ -344,6 +343,11 @@ const PlansFeaturesMain = ( {
 			hideBusinessPlan,
 			hideEcommercePlan,
 		} ) || null;
+	// merge/update default plans with plans with intent
+	const gridPlanRecords = {
+		...defaultPlanRecords,
+		...visiblePlans,
+	};
 
 	// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
 	let hidePlanSelector = 'customer' === planTypeSelector && isDisplayingPlansNeededForFeature();
@@ -366,7 +370,7 @@ const PlansFeaturesMain = ( {
 		selectedFeature,
 		showBiennialToggle,
 		kind: planTypeSelector,
-		plans: visiblePlans,
+		plans: Object.keys( visiblePlans ),
 	};
 
 	return (
@@ -393,7 +397,7 @@ const PlansFeaturesMain = ( {
 			) }
 			{ siteId && (
 				<PlanNotice
-					visiblePlans={ visiblePlans }
+					visiblePlans={ Object.keys( visiblePlans ) as PlanSlug[] }
 					siteId={ siteId }
 					isInSignup={ isInSignup }
 					{ ...( withDiscount &&
@@ -410,8 +414,8 @@ const PlansFeaturesMain = ( {
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<OnboardingPricingGrid2023
-						plans={ defaultPlans }
-						visiblePlans={ visiblePlans }
+						planRecords={ gridPlanRecords }
+						visiblePlans={ Object.keys( visiblePlans ) as PlanSlug[] }
 						domainName={ domainName }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }

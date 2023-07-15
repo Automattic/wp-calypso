@@ -730,7 +730,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 		""".trimIndent(),
 		testGroup = "calypso-pr",
 		buildParams = {
-			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,defaultUser,atomicUser")
+			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 			param("env.LIVEBRANCHES", "true")
 			param("env.VIEWPORT_NAME", "$targetDevice")
 		},

@@ -150,11 +150,10 @@ private object EditingToolkit : WPComPluginBuild(
 			name = "Run PHP Lint"
 			scriptContent = """
 				cd apps/editing-toolkit
-				if [ ! -d "./editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks" ] ; then
-					echo "Newspack blocks were not built correctly."
-					exit 1
-				fi
 				yarn lint:php
+
+				# Do some extra checks on the textdomain, since we're manually changing it for the newspack blocks.
+				./bin/verify-textdomain.sh
 			"""
 		}
 	},

@@ -150,8 +150,8 @@ class ThemePreview extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
-		const { globalStylesOnPersonalExperiment } = this.props;
-		const plan = globalStylesOnPersonalExperiment ? 'personal' : 'premium';
+		const { globalStylesInPersonalPlan } = this.props;
+		const plan = globalStylesInPersonalPlan ? 'personal' : 'premium';
 
 		const params = new URLSearchParams();
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );

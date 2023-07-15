@@ -4,9 +4,17 @@ import { SubscribersFilterBy } from 'calypso/my-sites/subscribers/constants';
 
 const FilterBy = SubscribersFilterBy;
 
-const useSubscribersFilterOptions = () => {
+const useSubscribersFilterOptions = ( newDropdownOptionsReady: boolean ) => {
 	const translate = useTranslate();
-	return useMemo(
+	const newDropdownOptions = useMemo(
+		() => [
+			{ value: FilterBy.All, label: translate( 'All' ) },
+			{ value: FilterBy.Email, label: translate( 'Via Email' ) },
+			{ value: FilterBy.WPCOM, label: translate( 'Via WordPress.com' ) },
+		],
+		[ translate ]
+	);
+	const oldDropdownOptions = useMemo(
 		() => [
 			{ value: FilterBy.All, label: translate( 'All' ) },
 			{ value: FilterBy.Email, label: translate( 'Email subscriber' ) },
@@ -14,6 +22,12 @@ const useSubscribersFilterOptions = () => {
 		],
 		[ translate ]
 	);
+
+	if ( newDropdownOptionsReady ) {
+		return newDropdownOptions;
+	}
+
+	return oldDropdownOptions;
 };
 
 export default useSubscribersFilterOptions;

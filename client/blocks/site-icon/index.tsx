@@ -28,6 +28,7 @@ type SiteIconProps = {
 	imgSize?: number;
 	isTransientIcon?: boolean;
 	defaultIcon?: JSX.Element | null;
+	alt?: string;
 };
 
 export function SiteIcon( {
@@ -38,6 +39,7 @@ export function SiteIcon( {
 	imgSize = 120,
 	isTransientIcon,
 	defaultIcon = null,
+	alt = '',
 }: SiteIconProps ) {
 	const iconSrc = resizeImageUrl( iconUrl, imgSize, null );
 
@@ -59,7 +61,7 @@ export function SiteIcon( {
 		<div className={ classes } style={ style }>
 			{ ! site && typeof siteId === 'number' && siteId > 0 && <QuerySites siteId={ siteId } /> }
 			{ iconSrc ? (
-				<MediaImage component={ Image } className="site-icon__img" src={ iconSrc } alt="" />
+				<MediaImage component={ Image } className="site-icon__img" src={ iconSrc } alt={ alt } />
 			) : (
 				icon
 			) }

@@ -4,6 +4,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp';
 import {
+	clearSignupDestinationCookie,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
@@ -86,16 +87,16 @@ const onboarding: Flow = {
 					navigate( 'siteCreationStep' );
 					return;
 				case 'siteCreationStep':
-					// clearSignupDestinationCookie(); // not sure if this is needed and if it is, where it should go
+					clearSignupDestinationCookie();
 					navigate( 'processing' );
 					return;
 				case 'processing': {
-					// clearSignupDestinationCookie();
+					clearSignupDestinationCookie();
 					const destination = addQueryArgs( '/setup/site-setup/goals', {
 						siteSlug: providedDependencies.siteSlug,
 					} );
 
-					persistSignupDestination( destination ); // not sure if this is needed
+					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies.siteSlug );
 					setSignupCompleteFlowName( flowName );
 

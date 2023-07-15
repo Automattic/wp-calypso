@@ -1,16 +1,26 @@
+import { PlanSlug } from '@automattic/calypso-products';
 import { createContext, useContext } from '@wordpress/element';
-import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
+import type {
+	GridPlan,
+	PlansIntent,
+} from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 
 interface PlansGridContext {
 	intent?: PlansIntent;
+	planRecords: Record< PlanSlug, GridPlan >;
+	visiblePlans: PlanSlug[];
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
 
 const PlansGridContextProvider: React.FunctionComponent<
 	PlansGridContext & { children: React.ReactNode }
-> = ( { intent, children } ) => {
-	return <PlansGridContext.Provider value={ { intent } }>{ children }</PlansGridContext.Provider>;
+> = ( { intent, planRecords, visiblePlans, children } ) => {
+	return (
+		<PlansGridContext.Provider value={ { intent, planRecords, visiblePlans } }>
+			{ children }
+		</PlansGridContext.Provider>
+	);
 };
 
 export const usePlansGridContext = (): PlansGridContext => useContext( PlansGridContext );

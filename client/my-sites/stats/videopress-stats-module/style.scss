@@ -36,7 +36,7 @@
 
 .videopress-stats-module__grid-link {
 	color: var(--color-primary);
-	overflow-x: clip;
+	overflow-x: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }

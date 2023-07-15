@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { Fragment } from 'react';
+import { isWebUri } from 'valid-url';
 import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
@@ -62,12 +63,12 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 							</a>
 						</li>
 						<li className="masterbar__woo-nav-item">
-							{ shouldShowNoThanks && typeof redirectTo === 'string' && redirectTo.length && (
+							{ shouldShowNoThanks && typeof redirectTo === 'string' && isWebUri( redirectTo ) && (
 								<Button
 									onClick={ () => {
 										recordTracksEvent( 'calypso_jpc_wc_coreprofiler_skip' );
-										window.location.href = redirectTo;
 									} }
+									href={ redirectTo }
 									className="masterbar__no-thanks-button"
 								>
 									{ translate( 'No, Thanks' ) }
