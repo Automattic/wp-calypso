@@ -893,7 +893,7 @@ a.masterbar__quick-language-switcher {
 		}
 
 		&.is-active {
-			background: transparent;
+			background: var(--color-checkout-masterbar-item-hover-background);
 		}
 
 		&:focus {
