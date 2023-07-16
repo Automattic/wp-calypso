@@ -43,7 +43,13 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 					<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
 				</>
 			) }
+<<<<<<< HEAD
 >>>>>>> 9a4ffb0a11 (add banner display to stats-notices index)
+=======
+			{ config.isEnabled( 'stats/paid-stats' ) && (
+				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
+			) }
+>>>>>>> d91649b752 (test notice display)
 			{ isOdysseyStats && <OptOutNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <FeedbackNotice siteId={ siteId } /> }
 		</>

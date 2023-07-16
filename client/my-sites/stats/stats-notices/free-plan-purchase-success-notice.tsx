@@ -18,10 +18,7 @@ const getStatsPurchaseURL = ( siteId: number | null ) => {
 const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
-	const { data: showNotice } = useNoticeVisibilityQuery(
-		siteId,
-		'jetpack_stats_free_plan_purchase_success'
-	);
+	const { data: showNotice } = useNoticeVisibilityQuery( siteId, 'free_plan_purchase_success' );
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
 		'free_plan_purchase_success',
