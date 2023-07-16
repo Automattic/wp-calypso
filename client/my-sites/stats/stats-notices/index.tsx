@@ -2,8 +2,8 @@ import config from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
-import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+// import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
+// import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FeedbackNotice from './feedback-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
@@ -18,10 +18,10 @@ import './style.scss';
  * New notices are based on async API call and hence is faster than the old notices.
  */
 const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
-	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
-	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
-	);
+	// const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
+	// const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+	// 	isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	// );
 
 	// TODO: Display error messages on the notice.
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
@@ -36,13 +36,18 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		<>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			{ showPaidStatsNotice && <DoYouLoveJetpackStatsNotice siteId={ siteId } /> }
 =======
 =======
+=======
+			{ /* { config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic && ! hasPaidStats && ( */ }
+>>>>>>> 21fc7827d2 (more testing changes)
 			<>
 				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
 				<DoYouLoveJetpackStatsNotice siteId={ siteId } />
 			</>
+<<<<<<< HEAD
 >>>>>>> df2b0895be (temp change for testing purposes)
 			{ config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic && ! hasPaidStats && (
 				<>
@@ -52,6 +57,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 <<<<<<< HEAD
 >>>>>>> 9a4ffb0a11 (add banner display to stats-notices index)
 =======
+=======
+			{ /* ) } */ }
+>>>>>>> 21fc7827d2 (more testing changes)
 			{ config.isEnabled( 'stats/paid-stats' ) && (
 				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
 			) }
