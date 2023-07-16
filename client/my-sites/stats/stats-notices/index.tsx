@@ -35,11 +35,17 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	return (
 		<>
 <<<<<<< HEAD
+<<<<<<< HEAD
 			{ showPaidStatsNotice && <DoYouLoveJetpackStatsNotice siteId={ siteId } /> }
 =======
+=======
+			<>
+				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
+				<DoYouLoveJetpackStatsNotice siteId={ siteId } />
+			</>
+>>>>>>> df2b0895be (temp change for testing purposes)
 			{ config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic && ! hasPaidStats && (
 				<>
-					<DoYouLoveJetpackStatsNotice siteId={ siteId } />
 					<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
 				</>
 			) }
