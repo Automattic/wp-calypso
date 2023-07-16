@@ -83,7 +83,7 @@ function WordPressFreePurchaseLabel() {
 	if ( ! isCartAllOneTimePurchases && ! doesCartHaveRenewalWithPaymentMethod ) {
 		return (
 			<>
-				<div>{ __( 'Assign a Payment Method Later' ) }</div>
+				<div>{ __( 'Assign a payment method later' ) }</div>
 				<WordPressLogo />
 			</>
 		);
