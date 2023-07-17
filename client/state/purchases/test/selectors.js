@@ -100,6 +100,7 @@ describe( 'selectors', () => {
 				introductoryOffer: null,
 				isAutoRenewEnabled: true,
 				isCancelable: false,
+				isDomain: false,
 				isDomainRegistration: false,
 				isLocked: false,
 				isInAppPurchase: false,
