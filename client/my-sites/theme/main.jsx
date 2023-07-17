@@ -46,7 +46,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
@@ -701,7 +701,8 @@ class ThemeSheet extends Component {
 			! this.props.isExternallyManagedTheme &&
 			! this.props.isThemePurchased &&
 			! this.props.isBundledSoftwareSet &&
-			! this.props.isPremium;
+			! this.props.isPremium &&
+			this.props.shouldLimitGlobalStyles;
 
 		return (
 			styleVariations.length > 0 && (
@@ -1131,8 +1132,8 @@ class ThemeSheet extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
-		const { globalStylesOnPersonalExperiment } = this.props;
-		const plan = globalStylesOnPersonalExperiment ? 'personal' : 'premium';
+		const { globalStylesInPersonalPlan } = this.props;
+		const plan = globalStylesInPersonalPlan ? 'personal' : 'premium';
 
 		const params = new URLSearchParams();
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
@@ -1399,7 +1400,7 @@ class ThemeSheet extends Component {
 					) /* TODO: Make QueryActiveTheme handle falsey siteId */
 				}
 				<ThanksModal source="details" themeId={ this.props.themeId } />
-				<AutoLoadingHomepageModal source="details" />
+				<ActivationModal source="details" />
 				<div className="theme__sheet-action-bar-container">
 					<HeaderCake
 						className="theme__sheet-action-bar"

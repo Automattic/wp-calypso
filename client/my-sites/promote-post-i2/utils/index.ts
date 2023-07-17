@@ -258,6 +258,6 @@ export const getShortDateString = ( date: string ) => {
 export const getLongDateString = ( date: string ) => {
 	const timestamp = moment( Date.parse( date ) );
 	// translators: "ll" refers to date (eg. 21 Apr) & "LT" refers to time (eg. 18:00) - "at" is translated
-	const sameElse: string = __( 'll [at] LT' );
+	const sameElse: string = __( 'll [at] LT' ) ?? 'll [at] LT';
 	return timestamp.calendar( null, { sameElse } );
 };

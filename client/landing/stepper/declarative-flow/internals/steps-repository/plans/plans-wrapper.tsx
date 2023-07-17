@@ -32,8 +32,8 @@ import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { OnboardSelect } from '@automattic/data-stores';
-import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
+import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
+import type { PlansIntent } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import './style.scss';
 
 interface Props {
@@ -75,7 +75,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	}, [] );
 	const { flowName, hostingFlow } = props;
 
-	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem, setDomain, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const { __ } = useI18n();
@@ -109,7 +109,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		props.onSubmit?.( selectedPlan );
 	};
 
-	const getDomainName = () => {
+	const getPaidDomainName = () => {
 		return domainCartItem?.meta;
 	};
 
@@ -124,6 +124,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				<LoadingEllipsis className="active" />
 			</div>
 		);
+	};
+	const replacePaidDomainWithFreeDomain = ( freeDomainSuggestion: DomainSuggestion ) => {
+		setDomain( freeDomainSuggestion );
+		setDomainCartItem( null );
 	};
 
 	const plansFeaturesList = () => {
@@ -142,13 +146,14 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ onSelectPlan }
-					domainName={ getDomainName() }
+					paidDomainName={ getPaidDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
 					flowName={ flowName }
 					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ plansIntent }
+					replacePaidDomainWithFreeDomain={ replacePaidDomainWithFreeDomain }
 				/>
 			</div>
 		);

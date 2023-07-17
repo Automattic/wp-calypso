@@ -1,8 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Button, CheckboxControl, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
+import { Button, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import CommercialPurchase from './stats-purchase-commercial';
 import PersonalPurchase from './stats-purchase-personal';
 import StatsPurchaseSVG from './stats-purchase-svg';
@@ -10,12 +13,20 @@ import './styles.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-wizard';
 const SCREEN_TYPE_SELECTION = 0;
-const SCREEN_PERSONAL_CHECKLIST = 1;
-const SCREEN_PURCHASE = 2;
+const SCREEN_PURCHASE = 1;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
-const DEFAULT_STARTING_PRICE = 6;
-const FLAT_COMMERCIAL_PRICE = 10;
+
+// TODO: Get pricing config from an API
+const PRICING_CONFIG = {
+	AVERAGE_PRICE_INFO: 6, // used to display how much a users pays on average (below price slider)
+	MAX_SLIDER_PRICE: 10, // max slider amount for PWYW slider
+	SLIDER_STEP: 0.5, // single step for PWYW slider
+	EMOJI_HEART_TIER: 5, // value when slider emoji is changed to a heart emoji
+	IMAGE_CELEBRATION_PRICE: 8, // minimal price that enables image celebration image
+	DEFAULT_STARTING_PRICE: 6, // default position for PWYW slider
+	FLAT_COMMERCIAL_PRICE: 10, // commercial price
+};
 
 const TitleNode = ( { label, indicatorNumber, active } ) => {
 	return (
@@ -33,13 +44,13 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 };
 
 const ProductCard = ( { siteSlug } ) => {
-	const [ subscriptionValue, setSubscriptionValue ] = useState( DEFAULT_STARTING_PRICE );
+	const [ subscriptionValue, setSubscriptionValue ] = useState(
+		PRICING_CONFIG.DEFAULT_STARTING_PRICE
+	);
 	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
 	const [ siteType, setSiteType ] = useState( null );
-	const [ isAdsChecked, setAdsChecked ] = useState( false );
-	const [ isSellingChecked, setSellingChecked ] = useState( false );
-	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const translate = useTranslate();
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
@@ -47,11 +58,11 @@ const ProductCard = ( { siteSlug } ) => {
 
 	const setPersonalSite = () => {
 		setSiteType( TYPE_PERSONAL );
-		setWizardStep( SCREEN_PERSONAL_CHECKLIST );
+		setWizardStep( SCREEN_PURCHASE );
 	};
 
 	const setCommercialSite = () => {
-		setSubscriptionValue( FLAT_COMMERCIAL_PRICE );
+		setSubscriptionValue( PRICING_CONFIG.FLAT_COMMERCIAL_PRICE );
 		setSiteType( TYPE_COMMERCIAL );
 		setWizardStep( SCREEN_PURCHASE );
 	};
@@ -83,7 +94,7 @@ const ProductCard = ( { siteSlug } ) => {
 					  } )
 					: selectedTypeLabel
 			}
-			active={ wizardStep === SCREEN_TYPE_SELECTION || wizardStep === SCREEN_PERSONAL_CHECKLIST }
+			active={ wizardStep === SCREEN_TYPE_SELECTION }
 		/>
 	);
 
@@ -118,14 +129,14 @@ const ProductCard = ( { siteSlug } ) => {
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-body--left` }>
 											<p>
 												{ translate(
-													`Sites and blogs used for hobby or personal use. Doesn't generate any money in a direct or an indirect way.`
+													`A hobby or personal site. You don't attempt to make money from your site in any way.`
 												) }
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-body--right` }>
 											<p>
 												{ translate(
-													`Sites and blogs used for commercial activities. Includes selling or advertising a product/service, person or business.`
+													`A site used for commercial activity. Your site sells or advertises a product or service.`
 												) }
 											</p>
 										</div>
@@ -142,74 +153,6 @@ const ProductCard = ( { siteSlug } ) => {
 									</div>
 								</PanelRow>
 							</PanelBody>
-							<PanelBody opened={ wizardStep === SCREEN_PERSONAL_CHECKLIST }>
-								<PanelRow>
-									<div className={ `${ COMPONENT_CLASS_NAME }__qualifications` }>
-										<p>
-											<strong>
-												{ translate( 'Please confirm non-commercial usage by checking each box:' ) }
-											</strong>
-										</p>
-										<p>
-											<ul>
-												<li>
-													<CheckboxControl
-														className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-														checked={ isAdsChecked }
-														label={ translate( `I don't have ads on my site` ) }
-														onChange={ ( value ) => {
-															setAdsChecked( value );
-														} }
-													/>
-												</li>
-												<li>
-													<CheckboxControl
-														className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-														checked={ isSellingChecked }
-														label={ translate( `I don't sell products/services on my site` ) }
-														onChange={ ( value ) => {
-															setSellingChecked( value );
-														} }
-													/>
-												</li>
-												<li>
-													<CheckboxControl
-														className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-														checked={ isBusinessChecked }
-														label={ translate( `I don't promote a business on my site` ) }
-														onChange={ ( value ) => {
-															setBusinessChecked( value );
-														} }
-													/>
-												</li>
-											</ul>
-										</p>
-										<p>
-											{ translate(
-												`If your site doesn't meet these criteria, {{Button}}you will need to use the commercial plan{{/Button}}.`,
-												{
-													components: {
-														Button: (
-															<Button
-																variant="link"
-																href="#"
-																onClick={ ( e ) => handlePlanSwap( e ) }
-															/>
-														),
-													},
-												}
-											) }
-										</p>
-										<Button
-											variant="primary"
-											onClick={ () => setWizardStep( SCREEN_PURCHASE ) }
-											disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
-										>
-											{ translate( 'Confirm personal site' ) }
-										</Button>
-									</div>
-								</PanelRow>
-							</PanelBody>
 							<PanelBody title={ secondStepTitleNode } opened={ wizardStep === SCREEN_PURCHASE }>
 								<PanelRow>
 									{ siteType === TYPE_PERSONAL ? (
@@ -217,9 +160,15 @@ const ProductCard = ( { siteSlug } ) => {
 											subscriptionValue={ subscriptionValue }
 											setSubscriptionValue={ setSubscriptionValue }
 											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
+											currencyCode={ currencyCode }
+											siteSlug={ siteSlug }
 										/>
 									) : (
-										<CommercialPurchase planValue={ FLAT_COMMERCIAL_PRICE } />
+										<CommercialPurchase
+											planValue={ PRICING_CONFIG.FLAT_COMMERCIAL_PRICE }
+											currencyCode={ currencyCode }
+											siteSlug={ siteSlug }
+										/>
 									) }
 								</PanelRow>
 							</PanelBody>
@@ -228,9 +177,12 @@ const ProductCard = ( { siteSlug } ) => {
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						<StatsPurchaseSVG
 							isFree={ subscriptionValue === 0 }
-							hasHighlight={ subscriptionValue >= 40 }
-							extraMessage={ subscriptionValue >= 40 }
+							hasHighlight={ subscriptionValue >= 10 } // TODO: replace with IMAGE_CELEBRATION_PRICE if this makes sense.
+							extraMessage={ subscriptionValue >= 10 }
 						/>
+						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
+							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
+						</div>
 					</div>
 				</div>
 			</Card>
@@ -242,4 +194,4 @@ const StatsPurchaseWizard = ( { siteSlug } ) => {
 	return <ProductCard siteSlug={ siteSlug } />;
 };
 
-export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME };
+export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, PRICING_CONFIG };

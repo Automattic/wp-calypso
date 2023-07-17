@@ -15,19 +15,19 @@ type ReadFeedSearchQueryProps = {
 };
 
 export type FeedItem = {
-	URL: string;
-	blog_ID: string;
-	feed_ID: string;
+	URL?: string;
+	blog_ID?: string;
+	feed_ID?: string;
 	meta: {
-		links: {
-			feed: string;
-			site: string;
+		links?: {
+			feed?: string;
+			site?: string;
 		};
 	};
-	railcar: Railcar;
+	railcar?: Railcar;
 	subscribe_URL: string;
-	subscribers_count: number;
-	title: string;
+	subscribers_count?: number;
+	title?: string;
 };
 
 type FeedResponse = {
@@ -65,6 +65,7 @@ const useReadFeedSearchQuery = ( {
 		{
 			enabled: Boolean( query ),
 			getNextPageParam: ( lastPage ) => lastPage?.next_page,
+			refetchOnWindowFocus: false,
 		}
 	);
 };
