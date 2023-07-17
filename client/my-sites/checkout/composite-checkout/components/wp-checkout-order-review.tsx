@@ -246,7 +246,11 @@ function getDomainToDisplayInCheckoutHeader(
 		return responseCart.gift_details.receiver_blog_url;
 	}
 
-	if ( sitelessCheckoutSlug && sitelessCheckoutSlug !== 'no-user' ) {
+	if (
+		sitelessCheckoutSlug &&
+		sitelessCheckoutSlug !== 'no-user' &&
+		sitelessCheckoutSlug !== 'no-site'
+	) {
 		return sitelessCheckoutSlug;
 	}
 
