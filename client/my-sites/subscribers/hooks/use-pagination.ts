@@ -8,7 +8,7 @@ const usePagination = (
 ) => {
 	const [ currentPage, setCurrentPage ] = useState( page );
 	const recordPaged = useRecordPaged();
-	const pageClickCallback = ( page: number ) => {
+	const pageChangeCallback = ( page: number ) => {
 		recordPaged( { page } );
 		setCurrentPage( page );
 	};
@@ -19,7 +19,7 @@ const usePagination = (
 		}
 	}, [ currentPage, isFetching, page, pageChanged ] );
 
-	return { pageClickCallback };
+	return { pageChangeCallback };
 };
 
 export default usePagination;

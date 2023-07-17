@@ -9,7 +9,7 @@ import FeedbackNotice from './feedback-notice';
 import LegacyStatsNotices from './legacy-notices';
 import OptOutNotice from './opt-out-notice';
 import { StatsNoticesProps } from './types';
-
+import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-products';
 import './style.scss';
 
 /**
@@ -22,11 +22,18 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
+	// TODO: Display error messages on the notice.
+	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
+
+	const showPaidStatsNotice =
+		config.isEnabled( 'stats/paid-stats' ) &&
+		isSiteJetpackNotAtomic &&
+		! hasPaidStats &&
+		hasLoadedPurchases;
+
 	return (
 		<>
-			{ config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic && ! hasPaidStats && (
-				<DoYouLoveJetpackStatsNotice siteId={ siteId } />
-			) }
+			{ showPaidStatsNotice && <DoYouLoveJetpackStatsNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <OptOutNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <FeedbackNotice siteId={ siteId } /> }
 		</>

@@ -1,4 +1,6 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainTransferData } from '@automattic/data-stores';
+import formatCurrency from '@automattic/format-currency';
 import { useDataLossWarning } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -24,7 +26,27 @@ const defaultState: DomainTransferData = {
 		domain: '',
 		auth: '',
 		valid: false,
+		rawPrice: 0,
+		saleCost: undefined,
+		currencyCode: 'USD',
 	},
+};
+
+const getFormattedTotalPrice = ( state: DomainTransferData ) => {
+	if ( Object.keys( state ).length > 0 ) {
+		const currencyCode = Object.values( state )[ 0 ].currencyCode;
+		const totalPrice = Object.values( state ).reduce( ( total, currentDomain ) => {
+			if ( currentDomain.saleCost || currentDomain.saleCost === 0 ) {
+				return total + currentDomain.saleCost;
+			}
+
+			return total + currentDomain.rawPrice;
+		}, 0 );
+
+		return formatCurrency( totalPrice, currencyCode ?? 'USD', { stripZeros: true } );
+	}
+
+	return 0;
 };
 
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
@@ -46,7 +68,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	const { __, _n } = useI18n();
 
-	const allGood = Object.values( domainsState ).every( ( { valid } ) => valid );
+	const filledDomainValues = Object.values( domainsState ).filter( ( x ) => x.domain && x.auth );
+	const allGood = filledDomainValues.every( ( { valid } ) => valid );
 
 	const hasAnyDomains = Object.values( domainsState ).some(
 		( { domain, auth } ) => domain.trim() || auth.trim()
@@ -58,8 +81,13 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const changeKey = JSON.stringify( domainsState );
 
 	const handleAddTransfer = () => {
+		recordTracksEvent( 'calypso_domain_transfer_submit_form', {
+			valid: allGood,
+			number_of_valid_domains: numberOfValidDomains,
+		} );
+
 		if ( allGood ) {
-			const cartItems = Object.values( domainsState ).map( ( { domain, auth } ) =>
+			const cartItems = filledDomainValues.map( ( { domain, auth } ) =>
 				domainTransfer( {
 					domain,
 					extra: {
@@ -82,7 +110,17 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	};
 
 	const handleChange = useCallback(
-		( id: string, value: { domain: string; auth: string; valid: boolean } ) => {
+		(
+			id: string,
+			value: {
+				domain: string;
+				auth: string;
+				valid: boolean;
+				rawPrice: number;
+				saleCost?: number;
+				currencyCode: string;
+			}
+		) => {
 			const newDomainsState = { ...domainsState };
 			newDomainsState[ id ] = value;
 			setDomainsTransferData( newDomainsState );
@@ -92,16 +130,25 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	);
 
 	function addDomain() {
+		recordTracksEvent( 'calypso_domain_transfer_add_domain', {
+			resulting_domain_count: domainCount + 1,
+		} );
 		const newDomainsState = { ...domainsState };
 		newDomainsState[ uuid() ] = {
 			domain: '',
 			auth: '',
 			valid: false,
+			rawPrice: 0,
+			saleCost: undefined,
+			currencyCode: undefined,
 		};
 		setDomainsTransferData( newDomainsState );
 	}
 
 	function removeDomain( key: string ) {
+		recordTracksEvent( 'calypso_domain_transfer_remove_domain', {
+			resulting_domain_count: domainCount - 1,
+		} );
 		const newDomainsState = { ...domainsState };
 		delete newDomainsState[ key ];
 		setDomainsTransferData( newDomainsState );
@@ -122,7 +169,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						( { domain: otherDomain }, otherIndex ) =>
 							otherDomain && otherDomain === domain.domain && otherIndex < index
 					) }
-					showDelete={ Object.values( domainsState ).length > 1 }
 				/>
 			) ) }
 			{ domainCount < MAX_DOMAINS && (
@@ -130,9 +176,13 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					{ __( 'Add another domain' ) }
 				</Button>
 			) }
+			<div className="bulk-domain-transfer__total-price">
+				<div>{ __( 'Total' ) }</div>
+				<div>{ getFormattedTotalPrice( domainsState ) }</div>
+			</div>
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
-					disabled={ numberOfValidDomains === 0 }
+					disabled={ numberOfValidDomains === 0 || ! allGood }
 					className="bulk-domain-transfer__cta"
 					onClick={ handleAddTransfer }
 				>

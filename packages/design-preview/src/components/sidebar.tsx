@@ -57,59 +57,57 @@ const Sidebar: React.FC< SidebarProps > = ( {
 
 	return (
 		<div className="design-preview__sidebar">
-			<div className="design-preview__sidebar-content">
-				<NavigatorScreens screens={ screens } onNavigatorPathChange={ onNavigatorPathChange }>
-					<>
-						<div className="design-preview__sidebar-header">
-							<div className="design-preview__sidebar-title">
-								<h1>{ title }</h1>
-							</div>
-							{ author && (
-								<div className="design-preview__sidebar-author">
-									{ translate( 'By %(author)s', { args: { author } } ) }
-								</div>
-							) }
-							{ ( pricingBadge || categories.length > 0 ) && (
-								<div className="design-preview__sidebar-badges">
-									{ pricingBadge }
-									{ categories.map( ( category ) => (
-										<CategoryBadge
-											key={ category.slug }
-											category={ category }
-											onClick={ onClickCategory }
-										/>
-									) ) }
-								</div>
-							) }
-							{ ( description || shortDescription ) && (
-								<div className="design-preview__sidebar-description">
-									<p>
-										{ isShowDescriptionToggle ? (
-											<>
-												{ isShowFullDescription ? description : shortDescription }
-												<Button
-													borderless
-													onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
-												>
-													{ isShowFullDescription
-														? translate( 'Read less' )
-														: translate( 'Read more' ) }
-												</Button>
-											</>
-										) : (
-											description ?? shortDescription
-										) }
-									</p>
-								</div>
-							) }
+			<NavigatorScreens screens={ screens } onNavigatorPathChange={ onNavigatorPathChange }>
+				<>
+					<div className="design-preview__sidebar-header">
+						<div className="design-preview__sidebar-title">
+							<h1>{ title }</h1>
 						</div>
-						{ navigatorButtons }
-						{ actionButtons && (
-							<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
+						{ author && (
+							<div className="design-preview__sidebar-author">
+								{ translate( 'By %(author)s', { args: { author } } ) }
+							</div>
 						) }
-					</>
-				</NavigatorScreens>
-			</div>
+						{ ( pricingBadge || categories.length > 0 ) && (
+							<div className="design-preview__sidebar-badges">
+								{ pricingBadge }
+								{ categories.map( ( category ) => (
+									<CategoryBadge
+										key={ category.slug }
+										category={ category }
+										onClick={ onClickCategory }
+									/>
+								) ) }
+							</div>
+						) }
+						{ ( description || shortDescription ) && (
+							<div className="design-preview__sidebar-description">
+								<p>
+									{ isShowDescriptionToggle ? (
+										<>
+											{ isShowFullDescription ? description : shortDescription }
+											<Button
+												borderless
+												onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
+											>
+												{ isShowFullDescription
+													? translate( 'Read less' )
+													: translate( 'Read more' ) }
+											</Button>
+										</>
+									) : (
+										description ?? shortDescription
+									) }
+								</p>
+							</div>
+						) }
+					</div>
+					{ navigatorButtons }
+					{ actionButtons && (
+						<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
+					) }
+				</>
+			</NavigatorScreens>
 		</div>
 	);
 };

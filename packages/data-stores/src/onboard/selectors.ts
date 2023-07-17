@@ -20,6 +20,9 @@ export const getBulkDomainsData = ( state: State ) => {
 			domain: state.domainTransferNames[ key ],
 			auth: state.domainTransferAuthCodes?.[ key ].auth ?? '',
 			valid: state.domainTransferAuthCodes?.[ key ].valid ?? false,
+			rawPrice: state.domainTransferAuthCodes?.[ key ].rawPrice ?? 0,
+			saleCost: state.domainTransferAuthCodes?.[ key ].saleCost,
+			currencyCode: state.domainTransferAuthCodes?.[ key ].currencyCode ?? 'USD',
 		};
 	}
 	return domainTransferData;

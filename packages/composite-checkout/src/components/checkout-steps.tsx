@@ -119,6 +119,12 @@ function createCheckoutStepGroupActions(
 		onStateChange();
 	};
 
+	const validateActiveStepNumber = () => {
+		if ( state.activeStepNumber > state.totalSteps ) {
+			state.activeStepNumber = state.totalSteps;
+		}
+	};
+
 	const setTotalSteps = ( stepCount: number ) => {
 		if ( stepCount < 0 ) {
 			throw new Error( `Cannot set total steps to '${ stepCount }' because it is too low` );
@@ -127,6 +133,7 @@ function createCheckoutStepGroupActions(
 			return;
 		}
 		state.totalSteps = stepCount;
+		validateActiveStepNumber();
 		onStateChange();
 	};
 

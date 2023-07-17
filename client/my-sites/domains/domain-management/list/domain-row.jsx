@@ -1,5 +1,5 @@
 import { Button, Spinner } from '@automattic/components';
-import { Icon, home, info, redo, plus } from '@wordpress/icons';
+import { Icon, home, info, redo } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -19,7 +19,11 @@ import {
 	isDomainUpdateable,
 	resolveDomainStatus,
 } from 'calypso/lib/domains';
-import { type as domainTypes, domainInfoContext } from 'calypso/lib/domains/constants';
+import {
+	type as domainTypes,
+	domainInfoContext,
+	transferStatus,
+} from 'calypso/lib/domains/constants';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
 import { isRecentlyRegisteredAndDoesNotPointToWpcom } from 'calypso/lib/domains/utils/is-recently-registered-and-does-not-point-to-wpcom';
@@ -28,7 +32,6 @@ import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import {
-	createSiteFromDomainOnly,
 	domainManagementDns,
 	domainManagementEditContactInfo,
 	domainManagementList,
@@ -387,9 +390,15 @@ class DomainRow extends PureComponent {
 							? translate( 'View transfer' )
 							: translate( 'View settings' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
-						{ translate( 'Manage DNS' ) }
-					</PopoverMenuItem>
+					{ ! (
+						domain.type === domainTypes.SITE_REDIRECT ||
+						domain.transferStatus === transferStatus.PENDING_ASYNC
+					) &&
+						domain.canManageDnsRecords && (
+							<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
+								{ translate( 'Manage DNS' ) }
+							</PopoverMenuItem>
+						) }
 
 					{ domain.type === domainTypes.REGISTERED &&
 						( isDomainUpdateable( domain ) || isDomainInGracePeriod( domain ) ) && (
@@ -414,12 +423,6 @@ class DomainRow extends PureComponent {
 						>
 							<Icon icon={ redo } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ translate( 'Transfer to WordPress.com' ) }
-						</PopoverMenuItem>
-					) }
-					{ site.options?.is_domain_only && (
-						<PopoverMenuItem href={ createSiteFromDomainOnly( site.slug, site.siteId ) }>
-							<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-							{ translate( 'Create site' ) }
 						</PopoverMenuItem>
 					) }
 				</EllipsisMenu>

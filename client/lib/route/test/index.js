@@ -160,6 +160,11 @@ describe( 'route', function () {
 						'/checkout/example.wordpress.com/offer-plan-upgrade/business-monthly/75806534'
 					)
 				).toEqual( 'example.wordpress.com' );
+				expect(
+					route.getSiteFragment(
+						'/checkout/offer-professional-email/new-domain.com/75806534/example.wordpress.com'
+					)
+				).toEqual( 'example.wordpress.com' );
 			} );
 			test( 'should return the correct site fragment on domain renewals', function () {
 				expect(

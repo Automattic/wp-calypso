@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { SubscribersFilterBy, SubscribersSortBy } from '../constants';
+import { DEFAULT_PER_PAGE, SubscribersFilterBy, SubscribersSortBy } from '../constants';
 import { getSubscribersCacheKey } from '../helpers';
 import type { SubscriberEndpointResponse } from '../types';
 
 type SubscriberQueryParams = {
-	siteId: number | null;
+	siteId: number | undefined | null;
 	page?: number;
 	perPage?: number;
 	search?: string;
@@ -16,7 +16,7 @@ type SubscriberQueryParams = {
 const useSubscribersQuery = ( {
 	siteId,
 	page = 1,
-	perPage = 10,
+	perPage = DEFAULT_PER_PAGE,
 	search,
 	sortTerm = SubscribersSortBy.DateSubscribed,
 	filterOption = SubscribersFilterBy.All,

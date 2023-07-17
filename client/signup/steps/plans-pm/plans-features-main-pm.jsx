@@ -164,7 +164,7 @@ export class PlansFeaturesMainPM extends Component {
 			eligibleForWpcomMonthlyPlans: true,
 			isInSignup: this.props.isInSignup,
 			intervalType: this.props.intervalType,
-			showBiannualToggle: this.props.showBiannualToggle,
+			showBiennialToggle: this.props.showBiennialToggle,
 		};
 		const plans = this.getPlans();
 
@@ -195,7 +195,7 @@ PlansFeaturesMainPM.propTypes = {
 	plansWithScroll: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
 	redirectToAddDomainFlow: PropTypes.bool,
-	showBiannualToggle: PropTypes.bool,
+	showBiennialToggle: PropTypes.bool,
 	shouldShowPlansFeatureComparison: PropTypes.bool,
 };
 
@@ -207,7 +207,7 @@ PlansFeaturesMainPM.defaultProps = {
 	isReskinned: true,
 	plansWithScroll: false,
 	planTypeSelector: 'interval',
-	showBiannualToggle: true,
+	showBiennialToggle: true,
 	shouldShowPlansFeatureComparison: true,
 };
 

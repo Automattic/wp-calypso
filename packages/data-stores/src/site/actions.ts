@@ -444,7 +444,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 
 		const response: { blog: string } = yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup/?_locale=user`,
 			apiNamespace: 'wpcom/v2',
 			body: themeSetupOptions,
 			method: 'POST',

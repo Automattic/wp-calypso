@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { Purchase } from 'calypso/lib/purchases/types';
@@ -13,6 +14,12 @@ export const CompleteDomainsTransferred = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 
+	const handleUserClick = ( destination: string ) => {
+		recordTracksEvent( 'calypso_domain_transfer_complete_click', {
+			destination,
+		} );
+	};
+
 	return (
 		<>
 			<div className="domain-complete-summary">
@@ -21,10 +28,16 @@ export const CompleteDomainsTransferred = ( {
 						? newlyTransferredDomains.map( ( { meta, domain }, key ) => {
 								return (
 									<li className="domain-complete-list-item" key={ key }>
-										<h2>{ meta }</h2>
+										<div>
+											<h2>{ meta }</h2>
+											<p>{ __( 'Auto renew enabled' ) }</p>
+										</div>
 										<a
 											href={ `/domains/manage/all/${ meta }/transfer/in/${ domain }` }
 											className="components-button is-secondary"
+											onClick={ () =>
+												handleUserClick( `/domains/manage/all/${ meta }/transfer/in/${ domain }` )
+											}
 										>
 											{ __( 'Manage domain' ) }
 										</a>
@@ -34,7 +47,11 @@ export const CompleteDomainsTransferred = ( {
 						: [ ...Array( placeHolderCount ) ].map( ( data, key ) => {
 								return (
 									<li className="domain-complete-list-item" key={ key }>
-										<p className="loading-placeholder"></p>
+										<div>
+											<p className="loading-placeholder"></p>
+											<p className="loading-placeholder"></p>
+										</div>
+
 										<button className="components-button loading-placeholder"></button>
 									</li>
 								);
@@ -50,7 +67,12 @@ export const CompleteDomainsTransferred = ( {
 								"Unlock the domain world's secrets. Dive into our comprehensive resource to learn the basics of domains, from registration to management."
 							) }
 						</p>
-						<a href={ localizeUrl( 'https://wordpress.com/support/domains/' ) }>
+						<a
+							href={ localizeUrl( 'https://wordpress.com/support/domains/' ) }
+							onClick={ () =>
+								handleUserClick( localizeUrl( 'https://wordpress.com/support/domains/' ) )
+							}
+						>
 							{ __( 'Master the domain basics' ) }
 						</a>
 					</div>
@@ -61,7 +83,12 @@ export const CompleteDomainsTransferred = ( {
 								'You can find step-by-step guides below that will help you move your site to WordPress.com'
 							) }
 						</p>
-						<a href={ localizeUrl( 'https://wordpress.com/support/moving-a-blog/' ) }>
+						<a
+							href={ localizeUrl( 'https://wordpress.com/support/moving-a-blog/' ) }
+							onClick={ () =>
+								handleUserClick( localizeUrl( 'https://wordpress.com/support/moving-a-blog/' ) )
+							}
+						>
 							{ __( 'Learn more about site transfers' ) }
 						</a>
 					</div>

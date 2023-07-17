@@ -30,6 +30,7 @@ import DashboardDataContext from './dashboard-data-context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import SiteContentHeader from './site-content-header';
+import SiteDowntimeMonitoringUpgradeBanner from './site-downtime-monitoring-upgrade-banner';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteSurveyBanner from './site-survey-banner';
 import SiteWelcomeBanner from './site-welcome-banner';
@@ -240,6 +241,8 @@ export default function SitesOverview() {
 					<div className="sites-overview__content-wrapper">
 						<SiteSurveyBanner isDashboardView />
 						<SiteWelcomeBanner isDashboardView />
+						<SiteDowntimeMonitoringUpgradeBanner />
+
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader
 							content={ renderIssueLicenseButton() }

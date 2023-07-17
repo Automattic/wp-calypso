@@ -1,5 +1,5 @@
 import { OnboardSelect } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
@@ -24,8 +24,8 @@ const Complete: Step = function Complete( { flow } ) {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getBulkDomainsData(),
 		[]
 	);
-
 	const storedDomainsAmount = Object.keys( { ...storedDomainsState } ).length;
+	const { resetOnboardStore } = useWpDataDispatch( ONBOARD_STORE );
 
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const userPurchases = useSelector( ( state ) => getUserPurchases( state ) );
@@ -37,9 +37,22 @@ const Complete: Step = function Complete( { flow } ) {
 			Date.now() - new Date( purchase.subscribedDate ).getTime() < oneDay
 	);
 
+	const handleUserClick = ( destination: string ) => {
+		recordTracksEvent( 'calypso_domain_transfer_complete_click', {
+			destination,
+		} );
+	};
+
 	useEffect( () => {
 		dispatch( fetchUserPurchases( userId ) );
 	}, [] );
+
+	const clearDomainsStore = () => {
+		recordTracksEvent( 'calypso_domain_transfer_complete_click', {
+			destination: '/setup/domain-transfer',
+		} );
+		resetOnboardStore();
+	};
 
 	return (
 		<>
@@ -52,20 +65,43 @@ const Complete: Step = function Complete( { flow } ) {
 					<FormattedHeader
 						id="domains-header"
 						headerText={ _n(
-							'Congrats on your domain transfer',
-							'Congrats on your domain transfers',
+							'Your domain transfer has started',
+							'Your domain transfers have started',
 							newlyTransferredDomains?.length || storedDomainsAmount
 						) }
-						subHeaderText={ _n(
-							'Hold tight as we complete the set up of your newly transferred domain.',
-							'Hold tight as we complete the set up of your newly transferred domains.',
-							newlyTransferredDomains?.length || storedDomainsAmount
-						) }
+						subHeaderText={
+							<>
+								<span>
+									{ _n(
+										"We've got it from here! We'll let you know when your newly transferred domain is ready to use!",
+										"We've got it from here! We'll let you know when your newly transferred domains are ready to use!",
+										newlyTransferredDomains?.length || storedDomainsAmount
+									) }
+								</span>
+								<span className="formatted-header-subtitle__bold">
+									{ __( 'Domain transfers may take up to 5-10 days.' ) }
+								</span>
+							</>
+						}
 						align="center"
 						children={
-							<a href="/domains/manage" className="components-button is-primary manage-all-domains">
-								{ __( 'Manage all domains' ) }
-							</a>
+							<div className="domain-header-buttons">
+								<a
+									href="/setup/domain-transfer"
+									onClick={ clearDomainsStore }
+									className="components-button is-secondary"
+								>
+									{ __( 'Transfer more domains' ) }
+								</a>
+
+								<a
+									href="/domains/manage?filter=owned-by-me&sortKey=registered-until"
+									className="components-button is-primary manage-all-domains"
+									onClick={ () => handleUserClick( '/domains/manage' ) }
+								>
+									{ __( 'Manage all domains' ) }
+								</a>
+							</div>
 						}
 					/>
 				}

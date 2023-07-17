@@ -6,6 +6,8 @@ import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SiteSubscription } from '../types';
 
+export const siteSubscriptionsQueryKeyPrefix = [ 'read', 'site-subscriptions' ];
+
 type SubscriptionManagerSiteSubscriptions = {
 	subscriptions: SiteSubscription[];
 	page: number;
@@ -47,7 +49,7 @@ const useSiteSubscriptionsQuery = ( {
 }: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
-	const cacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
+	const cacheKey = useCacheKey( siteSubscriptionsQueryKeyPrefix );
 	const { searchTerm, filterOption, sortTerm } = useSiteSubscriptionsQueryProps();
 
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching, ...rest } =

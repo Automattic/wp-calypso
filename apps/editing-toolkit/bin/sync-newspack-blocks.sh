@@ -133,20 +133,12 @@ cp $CODE/src/types/index.d.ts $TARGET/types/
 # imperfections will be caught by CI with failing tsc, etc.)
 sed "${sedi[@]}" -e "s| function| Function|g" "$TARGET/types/index.d.ts"
 
-echo "Fixing the text domains…"
-echo -n "eslint --fix: "
-npx eslint . --fix > /dev/null 2>&1
-echo "done"
-echo -n "phpcbf: "
-../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || PHPCBF_ERRORED=1
+# Note: I would have used eslint-nibble, but it doesn't support autofixing via the CLI.
+echo "Changing JS textdomain to match ETK:"
+npx eslint-filtered-fix  --rule "@wordpress/i18n-text-domain" $TARGET
 
-if [ "$PHPCBF_ERRORED" = 1 ] ; then
-	echo '!! There was an error executing phpcbf!'
-
-	if [ "$MODE" != "npm" ] ; then
-		exit 1
-	fi
-fi
+echo "Changing PHP textdomain to match ETK:"
+../../vendor/bin/phpcbf -q $TARGET
 
 if [ "$MODE" = "npm" ] ; then
 	# Finds and prints the version of newspack from package.json

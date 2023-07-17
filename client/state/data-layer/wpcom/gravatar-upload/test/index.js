@@ -35,17 +35,10 @@ describe( '#uploadGravatar()', () => {
 } );
 
 describe( '#announceSuccess()', () => {
-	let oFormData;
-	let oFileReader;
 	const noop = () => {};
 	const tempImageSrc = 'tempImageSrc';
 
 	beforeAll( () => {
-		oFormData = global.FormData;
-		oFileReader = global.FileReader;
-		global.FormData = jest.fn( () => ( {
-			append: noop,
-		} ) );
 		global.FileReader = jest.fn( () => ( {
 			readAsDataURL: noop,
 			addEventListener: function ( event, callback ) {
@@ -53,10 +46,6 @@ describe( '#announceSuccess()', () => {
 				callback();
 			},
 		} ) );
-	} );
-	afterAll( () => {
-		global.FormData = oFormData;
-		global.FileReader = oFileReader;
 	} );
 
 	test( 'dispatches a success action when the file is read', () => {

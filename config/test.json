@@ -25,7 +25,6 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
-		"bulk-domain-transfer-flow": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": false,
@@ -101,7 +100,6 @@
 		"stats/paid-stats": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
-		"themes/interlaced-dotorg-themes": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,

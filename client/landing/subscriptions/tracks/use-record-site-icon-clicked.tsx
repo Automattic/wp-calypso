@@ -4,8 +4,8 @@ const useRecordSiteIconClicked = () => {
 	const recordSubscriptionsTracksEvent = useRecordSubscriptionsTracksEvent();
 
 	const recordSiteIconClicked = ( tracksProps: {
-		blog_id: string;
-		feed_id: string;
+		blog_id: string | null;
+		feed_id?: string;
 		source?: string;
 	} ) => {
 		recordSubscriptionsTracksEvent( 'calypso_subscriptions_site_icon_clicked', tracksProps );
