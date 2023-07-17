@@ -302,6 +302,7 @@ const SiteRow = ( {
 						unsubscribeCallback();
 						unsubscribe(
 							{
+								blog_id,
 								subscriptionId: Number( subscriptionId ),
 								url,
 								doNotInvalidateSiteSubscriptions: true,
