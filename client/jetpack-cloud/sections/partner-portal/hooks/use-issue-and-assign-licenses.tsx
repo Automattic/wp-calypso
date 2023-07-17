@@ -129,6 +129,8 @@ function useIssueAndAssignLicenses(
 
 			const issuedKeys = issuedLicenses.map( ( { license_key } ) => license_key );
 
+			// TODO: Move dispatch events and redirects outside this function
+			//
 			// If no site is selected, announce that licenses were issued;
 			// then, redirect to somewhere more appropriate
 			const selectedSiteId = selectedSite?.ID;
@@ -159,6 +161,7 @@ function useIssueAndAssignLicenses(
 			// let's assign the licenses we just issued to it
 			const assignLicensesStatus = await assignLicensesToSite.assignLicensesToSite( issuedKeys );
 
+			// TODO: Move dispatch events and redirects outside this function
 			dispatch( resetSite() );
 			dispatch( setPurchasedLicense( assignLicensesStatus ) );
 
