@@ -178,10 +178,10 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 		const itemsToIssue = products.split( ',' );
 		issueAndAssignLicenses( itemsToIssue );
-		// Do not update the dependency array with issueMultipleLicense since
+		// Do not update the dependency array with products since
 		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ paymentMethodRequired ] );
+	}, [ dispatch, issueAndAssignLicenses, paymentMethodRequired ] );
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
