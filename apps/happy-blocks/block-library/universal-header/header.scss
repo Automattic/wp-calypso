@@ -1,5 +1,6 @@
 @import "@automattic/calypso-color-schemes";
 @import "~@automattic/color-studio/dist/color-variables";
+@import "@automattic/onboarding/styles/mixins";
 
 $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
@@ -176,14 +177,28 @@ body.archive {
 			display: flex;
 			flex-direction: column;
 
+			.happy-blocks-global-header-site__title__wrapper {
+				margin-bottom: 32px;
+			}
+
 			h1 {
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				font-size: 70px;
+				font-size: rem(70px);
 				line-height: 76px;
+				@media ( max-width: $breakpoint-mobile ) {
+					font-size: rem(50px);
+					line-height: 57px;
+				}
 			}
 			// subtitle
 			p {
-				margin: 16px 0 32px 0;
+				margin-top: 16px;
+				font-size: rem(18px);
+				line-height: 26px;
+				@media ( max-width: $breakpoint-mobile ) {
+					font-size: 1rem;
+					line-height: 24px;
+				}
+
 			}
 			// search bar
 			form {
