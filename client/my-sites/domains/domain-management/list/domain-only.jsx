@@ -25,7 +25,6 @@ const DomainOnly = ( {
 	slug,
 	translate,
 } ) => {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	if ( ! primaryDomain ) {
 		return (
 			<div>

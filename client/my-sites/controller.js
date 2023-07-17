@@ -12,14 +12,12 @@ import { composeHandlers } from 'calypso/controller/shared';
 import { render } from 'calypso/controller/web-util';
 import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
 import { withoutHttp } from 'calypso/lib/url';
-import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
 import {
 	domainManagementContactsPrivacy,
 	domainManagementDns,
@@ -34,6 +32,7 @@ import {
 	domainManagementDnsAddRecord,
 	domainManagementDnsEditRecord,
 	domainAddNew,
+	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
@@ -168,20 +167,6 @@ export function renderNoVisibleSites( context ) {
 	clientRender( context );
 }
 
-function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	reactContext.primary = (
-		<>
-			<PageViewTracker path="/view/:site" title="Domain Only" />
-			<DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />
-		</>
-	);
-
-	reactContext.secondary = createNavigation( reactContext );
-
-	makeLayout( reactContext, noop );
-	clientRender( reactContext );
-}
-
 function renderSelectedSiteIsDIFMLiteInProgress( reactContext, selectedSite ) {
 	reactContext.primary = <DIFMLiteInProgress siteId={ selectedSite.ID } />;
 
@@ -255,8 +240,13 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		`/purchases/billing-history/${ slug }`,
 		`/purchases/payment-methods/${ slug }`,
 		`/purchases/subscriptions/${ slug }`,
-		// Any page under `/domsina/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
+		// Any page under `/domains/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
 		'/domains/manage/all/',
+		// Add A Domain > Search for a domain
+		domainAddNew( slug ),
+		// Add A Domain > Use a domain I own
+		// Start Transfer button
+		domainUseMyDomain( slug ),
 	];
 
 	if ( some( startsWithPaths, ( startsWithPath ) => startsWith( path, startsWithPath ) ) ) {
@@ -339,7 +329,7 @@ function onSelectedSiteAvailable( context ) {
 			context.params
 		)
 	) {
-		renderSelectedSiteIsDomainOnly( context, selectedSite );
+		page.redirect( domainManagementRoot() );
 		return false;
 	}
 

@@ -28,10 +28,11 @@ function registerStandardDomainManagementPages( pathFunction, controller ) {
 
 function getCommonHandlers( {
 	noSitePath = paths.domainManagementRoot(),
+	noSiteSelection = false,
 	warnIfJetpack = true,
 } = {} ) {
 	const handlers = [
-		siteSelection,
+		...( noSiteSelection ? [] : [ siteSelection ] ),
 		navigation,
 		wpForTeamsGeneralNotSupportedRedirect,
 		stagingSiteNotSupportedRedirect,
@@ -140,7 +141,7 @@ export default function () {
 
 	page(
 		paths.domainManagementRoot(),
-		...getCommonHandlers( { noSitePath: false } ),
+		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
 		domainManagementController.domainManagementListAllSites,
 		makeLayout,
 		clientRender
