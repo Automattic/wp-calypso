@@ -67,6 +67,12 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		[ dispatch ]
 	);
 
+	const triggerFileDownload = useCallback( ( fileUrl: string ) => {
+		const link = document.createElement( 'a' );
+		link.href = fileUrl;
+		link.click();
+	}, [] );
+
 	const downloadFile = useCallback( () => {
 		setIsProcessingDownload( true );
 
@@ -85,7 +91,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 
 					const downloadUrl = new URL( response.url );
 					downloadUrl.searchParams.append( 'disposition', 'attachment' );
-					window.open( downloadUrl, '_blank' );
+					triggerFileDownload( downloadUrl.toString() );
 					setIsProcessingDownload( false );
 					trackDownloadByType( item.type );
 				} )
@@ -125,7 +131,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 						return;
 					}
 
-					window.open( response.url, '_blank' );
+					triggerFileDownload( response.url );
 					setIsProcessingDownload( false );
 
 					trackDownloadByType( archiveType );
@@ -135,7 +141,16 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					return;
 				} );
 		}
-	}, [ fileInfo, handleDownloadError, item, parentItem, rewindId, siteId, trackDownloadByType ] );
+	}, [
+		fileInfo,
+		handleDownloadError,
+		item,
+		parentItem,
+		rewindId,
+		siteId,
+		trackDownloadByType,
+		triggerFileDownload,
+	] );
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
@@ -154,10 +169,22 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		}
 
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.READY ) {
-			window.open( downloadUrl, '_blank' );
+			if ( downloadUrl === undefined ) {
+				handleDownloadError();
+				return;
+			}
+
+			triggerFileDownload( downloadUrl );
 			trackDownloadByType( item.type );
 		}
-	}, [ downloadUrl, item, prepareDownloadStatus, trackDownloadByType ] );
+	}, [
+		downloadUrl,
+		handleDownloadError,
+		item,
+		prepareDownloadStatus,
+		trackDownloadByType,
+		triggerFileDownload,
+	] );
 
 	const showActions =
 		item.type !== 'archive' || ( item.type === 'archive' && item.extensionType === 'unchanged' );
@@ -190,7 +217,6 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			className="file-card__action"
 			href={ fileInfo.downloadUrl }
 			onClick={ () => trackDownloadByType( item.type ) }
-			download
 		>
 			{ translate( 'Download file' ) }
 		</Button>
