@@ -835,7 +835,9 @@ function InnerCheckoutMainWrapper( props: CheckoutMainProps ) {
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	return (
 		<StripeSetupIntentIdProvider
-			fetchStripeSetupIntentId={ () => getStripeConfiguration( { needs_intent: true } ) }
+			fetchStripeSetupIntentId={ () =>
+				getStripeConfiguration( { needs_intent: true, source: 'checkout' } )
+			}
 			isDisabled={ ! isPurchaseFree || isLoading || isPendingUpdate }
 		>
 			<CheckoutMain { ...props } />
