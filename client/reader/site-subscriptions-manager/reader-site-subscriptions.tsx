@@ -25,12 +25,11 @@ const ReaderSiteSubscriptions = () => {
 	const recordSearchPerformed = useRecordSearchPerformed();
 	const recordSearchByUrlPerformed = useRecordSearchByUrlPerformed();
 
-	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 1000 );
+	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 600 );
 
 	useEffect( () => {
-		if ( debouncedSearchTerm !== '' ) {
+		if ( debouncedSearchTerm ) {
 			recordSearchPerformed( { query: debouncedSearchTerm } );
-
 			if ( resemblesUrl( debouncedSearchTerm ) ) {
 				recordSearchByUrlPerformed( { url: debouncedSearchTerm } );
 			}
