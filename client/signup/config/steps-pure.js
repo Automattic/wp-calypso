@@ -368,9 +368,8 @@ export function generateSteps( {
 				'themeItem',
 				'shouldHideFreePlan',
 				'isManageSiteFlow',
-				'signupDomainOrigin',
 			],
-			optionalDependencies: [ 'signupDomainOrigin', 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
 			props: {
 				isDomainOnly: false,
 			},
