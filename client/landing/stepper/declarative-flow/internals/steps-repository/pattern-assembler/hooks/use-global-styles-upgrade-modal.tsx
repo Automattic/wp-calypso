@@ -34,6 +34,9 @@ const useGlobalStylesUpgradeModal = ( {
 		site?.ID
 	);
 	const { goToCheckout } = useCheckout();
+	const numOfSelectedGlobalStyles = [ hasSelectedColorVariation, hasSelectedFontVariation ].filter(
+		Boolean
+	).length;
 
 	const openModal = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_SHOW );
@@ -72,10 +75,10 @@ const useGlobalStylesUpgradeModal = ( {
 	};
 
 	return {
-		shouldUnlockGlobalStyles:
-			( hasSelectedColorVariation || hasSelectedFontVariation ) && shouldLimitGlobalStyles,
+		shouldUnlockGlobalStyles: numOfSelectedGlobalStyles > 0 && shouldLimitGlobalStyles,
 		globalStylesUpgradeModalProps: {
 			isOpen,
+			numOfSelectedGlobalStyles,
 			closeModal,
 			checkout,
 			tryStyle: upgradeLater,
