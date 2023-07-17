@@ -100,10 +100,6 @@ export const isCopySiteFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ COPY_SITE_FLOW ].includes( flowName ) );
 };
 
-export const isOnboardingMediaFlow = ( flowName?: string | null ) => {
-	return Boolean( flowName && [ ONBOARDING_PM_FLOW ].includes( flowName ) );
-};
-
 export const isWooExpressFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ WOOEXPRESS_FLOW ].includes( flowName ) );
 };
