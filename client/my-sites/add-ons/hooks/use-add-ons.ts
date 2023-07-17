@@ -4,6 +4,7 @@ import {
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
+	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
@@ -139,7 +140,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				// remove the Jetpack AI add-on if the site already supports the feature
 				if (
 					addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
-					siteFeatures?.active?.includes( 'ai-assistant' )
+					siteFeatures?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
 				) {
 					return false;
 				}
