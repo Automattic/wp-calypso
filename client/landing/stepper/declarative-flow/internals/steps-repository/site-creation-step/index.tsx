@@ -13,7 +13,9 @@ import {
 	isStartWritingFlow,
 	isWooExpressFlow,
 	isNewHostedSiteCreationFlow,
+	isNewsletterFlow,
 	isBlogOnboardingFlow,
+	isOnboardingPMFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -39,7 +41,7 @@ import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
 
-const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
+const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
@@ -78,19 +80,17 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
-	let theme: string;
+	// when it's empty, the default WordPress theme will be used.
+	let theme = '';
 	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
-		theme = DEFAULT_WP_SITE_THEME;
+		theme = DEFAULT_SITE_MIGRATION_THEME;
 	} else if ( isWooExpressFlow( flow ) ) {
 		theme = DEFAULT_WOOEXPRESS_FLOW;
 	} else if ( isStartWritingFlow( flow ) ) {
 		theme = DEFAULT_START_WRITING_THEME;
-	} else if ( isNewHostedSiteCreationFlow( flow ) ) {
-		// Causes no theme to be set, so WordPress's default theme gets used.
-		theme = '';
 	} else if ( isLinkInBioFlow( flow ) ) {
 		theme = DEFAULT_LINK_IN_BIO_THEME;
-	} else {
+	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
@@ -113,6 +113,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		isMigrationFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
+		isOnboardingPMFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
