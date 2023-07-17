@@ -153,6 +153,10 @@ const SiteRow = ( {
 		}
 
 		if ( isSubscriptionsPortal ) {
+			if ( ! Reader.isValidId( blog_id ) ) {
+				// If it is a non-wpcom feed item, we want to open the reader's page for that feed
+				return `/read/feeds/${ feed_id }`;
+			}
 			return `/subscriptions/site/${ blog_id }`;
 		}
 	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal ] );
@@ -208,46 +212,25 @@ const SiteRow = ( {
 					/>
 				</Link>
 				<span className="title-column">
-					{
-						// When clicking on a title of non-wpcom site subscription in the subscriptions portal, we want to open the site in a new tab
-						! Reader.isValidId( blog_id ) && isSubscriptionsPortal ? (
-							<ExternalLink
-								className="title-name"
-								href={ url }
-								onClick={ () => {
-									recordSiteTitleClicked( {
-										blog_id: null,
-										feed_id,
-										source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
-									} );
-								} }
-								rel="noreferrer noopener"
-								target="_blank"
-							>
-								{ name }
-							</ExternalLink>
-						) : (
-							<Link
-								className="title-name"
-								href={ siteTitleUrl }
-								onClick={ () => {
-									recordSiteTitleClicked( {
-										blog_id,
-										feed_id,
-										source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
-									} );
-								} }
-							>
-								{ name }
-								{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
-								{ !! is_paid_subscription && (
-									<span className="paid-label">
-										{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
-									</span>
-								) }
-							</Link>
-						)
-					}
+					<Link
+						className="title-name"
+						href={ siteTitleUrl }
+						onClick={ () => {
+							recordSiteTitleClicked( {
+								blog_id,
+								feed_id,
+								source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
+							} );
+						} }
+					>
+						{ name }
+						{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
+						{ !! is_paid_subscription && (
+							<span className="paid-label">
+								{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
+							</span>
+						) }
+					</Link>
 					<ExternalLink
 						className="title-url"
 						{ ...( url && { href: url } ) }
