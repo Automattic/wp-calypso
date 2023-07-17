@@ -43,7 +43,7 @@ const ReaderUnsubscribedNonWpcomFeedItem = ( {
 	const recordSiteUrlClicked = useRecordSiteUrlClicked();
 	const recordSearchSiteSubscribed = useRecordSearchSiteSubscribed();
 
-	const feed_id = feed_ID;
+	const feed_id = feedId;
 	const url = feedUrl || subscribeUrl;
 	const source = SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST;
 
