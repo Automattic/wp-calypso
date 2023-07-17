@@ -607,31 +607,6 @@ class AllDomains extends Component {
 		);
 	}
 
-	maybeRenderSeeAllDomainsLink() {
-		const { context, translate, dispatch } = this.props;
-
-		const selectedFilter = context?.query?.filter || 'all-domains';
-
-		if ( selectedFilter === 'all-domains' ) {
-			return null;
-		}
-
-		const handleClick = () => {
-			dispatch( recordTracksEvent( 'calypso_domain_management_see_all_domains_link_click' ) );
-		};
-
-		return (
-			<a
-				className="domains-table-see-all-domains-link"
-				href={ domainManagementRoot() }
-				key="breadcrumb_see_all_domains_link"
-				onClick={ handleClick }
-			>
-				{ translate( 'Reset filter' ) }
-			</a>
-		);
-	}
-
 	renderDomainTableFilterButton() {
 		const { context, translate, sites } = this.props;
 
@@ -696,7 +671,6 @@ class AllDomains extends Component {
 		const buttons = hasNoDomains
 			? []
 			: [
-					this.maybeRenderSeeAllDomainsLink(),
 					this.renderDomainTableFilterButton(),
 					<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
 					<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
