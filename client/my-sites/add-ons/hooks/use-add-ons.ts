@@ -15,6 +15,7 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
@@ -103,6 +104,8 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 	const { billingTransactions, isLoading } = usePastBillingTransactions();
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
+		// get the list of supported features
+		const siteFeatures = getFeaturesBySiteId( state, siteId );
 		const filter = getBillingTransactionFilters( state, 'past' );
 		const filteredTransactions =
 			billingTransactions && filterTransactions( billingTransactions, filter, siteId );
@@ -130,6 +133,14 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 
 				// remove the Jetpack AI add-on if the feature flag is not enabled for the current environment
 				if ( addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY && ! aiAssistantAddOnIsEnabled ) {
+					return false;
+				}
+
+				// remove the Jetpack AI add-on if the site already supports the feature
+				if (
+					addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
+					siteFeatures?.active?.includes( 'ai-assistant' )
+				) {
 					return false;
 				}
 
