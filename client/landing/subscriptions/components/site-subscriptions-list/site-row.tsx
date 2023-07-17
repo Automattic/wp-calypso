@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { isValidId } from '@automattic/data-stores/src/reader';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
@@ -319,6 +320,7 @@ const SiteRow = ( {
 						);
 					} }
 					unsubscribing={ unsubscribing }
+					isWpComSite={ isValidId( blog_id ) }
 				/>
 			</span>
 		</HStack>
