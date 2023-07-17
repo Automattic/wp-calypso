@@ -10,12 +10,24 @@ import WapuuRibbon from './wapuu-ribbon';
 
 import './style.scss';
 
+export const WAPUU_ERROR_MESSAGE =
+	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
+
 const OdysseusAssistant = () => {
-	const { lastNudge, chat, isLoadingChat, addMessage, setMessages } = useOdysseusAssistantContext();
+	const {
+		lastNudge,
+		chat,
+		isLoadingChat,
+		addMessage,
+		setMessages,
+		isLoading,
+		setIsLoading,
+		isNudging,
+		setIsNudging,
+		isVisible,
+		setIsVisible,
+	} = useOdysseusAssistantContext();
 	const [ input, setInput ] = useState( '' );
-	const [ isVisible, setIsVisible ] = useState( false );
-	const [ isLoading, setIsLoading ] = useState( false );
-	const [ isNudging, setIsNudging ] = useState( false );
 	const { mutateAsync: sendOdysseusMessage } = useOddyseusSendMessage();
 	const { data: chatData } = useOdysseusGetChatPollQuery( chat.chat_id ?? null );
 
@@ -101,8 +113,7 @@ const OdysseusAssistant = () => {
 			} );
 		} catch ( e ) {
 			addMessage( {
-				content:
-					"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!",
+				content: WAPUU_ERROR_MESSAGE,
 				role: 'bot',
 				type: 'error',
 			} );
@@ -117,7 +128,7 @@ const OdysseusAssistant = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_odysseus_chat_toggle_visibility_click', {
 				visible: newVisibility,
-				bot_name: 'Wapuu',
+				bot_name_slug: 'wapuu',
 			} )
 		);
 
