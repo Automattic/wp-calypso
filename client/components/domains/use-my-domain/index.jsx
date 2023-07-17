@@ -270,7 +270,7 @@ function UseMyDomain( props ) {
 				onConnect={
 					'auth_code' === domainAvailabilityData?.ownership_verification_type
 						? showOwnershipVerificationFlow
-						: onConnect && onConnect
+						: onConnect
 				}
 				onSkip={ onSkip }
 				onTransfer={ onTransfer ?? showTransferDomainFlow }
