@@ -39,6 +39,10 @@ const newsletter: Flow = {
 				slug: 'newsletterSetup',
 				asyncComponent: () => import( './internals/steps-repository/newsletter-setup' ),
 			},
+			{
+				slug: 'newsletterGoals',
+				asyncComponent: () => import( './internals/steps-repository/newsletter-goals' ),
+			},
 			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
@@ -118,6 +122,9 @@ const newsletter: Flow = {
 					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':
+					return navigate( 'newsletterGoals' );
+
+				case 'newsletterGoals':
 					return navigate( 'domains' );
 
 				case 'domains':

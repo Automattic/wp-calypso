@@ -198,6 +198,7 @@ const designFirst: Flow = {
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const currentPath = window.location.pathname;
 		const isSiteCreationStep =
+			currentPath.endsWith( 'setup/design-first' ) ||
 			currentPath.endsWith( 'setup/design-first/' ) ||
 			currentPath.includes( 'setup/design-first/site-creation-step' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;

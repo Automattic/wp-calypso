@@ -77,22 +77,32 @@ export default function Prices() {
 						<div>{ translate( 'Jetpack.com Pricing' ) }</div>
 						<span className="prices__th-detail">{ translate( 'billed yearly' ) }</span>
 					</div>
-					<div>
-						{ translate( '%(price)s/day', {
-							args: {
-								price: formatCurrency( dailyUserYearlyPrice, 'USD', currencyFormatOptions ),
-							},
-						} ) }
-					</div>
-					<div>
-						{ translate( '%(price)s/year', {
-							args: {
-								price:
-									userYearlyProduct &&
-									formatCurrency( userYearlyProduct.cost, 'USD', currencyFormatOptions ),
-							},
-						} ) }
-					</div>
+
+					{ /* If monthly and yearly prices are equal we're going to assume there is no yearly plan
+					  and hide the yearly price. Currently this is the case with the Jetpack AI Assistant product.
+					  */ }
+					{ userYearlyProduct.cost !== userMonthlyProduct?.cost && (
+						<>
+							<div>
+								{ translate( '%(price)s/day', {
+									args: {
+										price: formatCurrency( dailyUserYearlyPrice, 'USD', currencyFormatOptions ),
+									},
+								} ) }
+							</div>
+							<div>
+								{ translate( '%(price)s/year', {
+									args: {
+										price:
+											userYearlyProduct &&
+											formatCurrency( userYearlyProduct.cost, 'USD', currencyFormatOptions ),
+									},
+								} ) }
+							</div>
+						</>
+					) }
+
+					{ userYearlyProduct.cost === userMonthlyProduct?.cost && <Gridicon icon="minus" /> }
 				</td>
 				<td>
 					<div className="prices__mobile-description">

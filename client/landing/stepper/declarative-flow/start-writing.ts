@@ -189,6 +189,7 @@ const startWriting: Flow = {
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const currentPath = window.location.pathname;
 		const isSiteCreationStep =
+			currentPath.endsWith( 'setup/start-writing' ) ||
 			currentPath.endsWith( 'setup/start-writing/' ) ||
 			currentPath.includes( 'setup/start-writing/site-creation-step' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;

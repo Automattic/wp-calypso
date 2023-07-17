@@ -79,3 +79,12 @@
 		border-block-start: 1px solid $site-subscriptions-list-row-divider-color;
 	}
 }
+
+hr.subscriptions__separator {
+	width: 100%;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	border: none;
+	border-top: 1px solid $studio-gray-5;
+}

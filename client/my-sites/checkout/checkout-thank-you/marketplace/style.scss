@@ -44,6 +44,15 @@
 		padding: 0;
 		margin-bottom: 16px;
 		flex-grow: 1;
+
+		.mshots-image__container {
+			border-radius: 13px; /* stylelint-disable-line scales/radii */
+			height: auto;
+			min-height: 100%;
+			position: absolute;
+			top: 0;
+			width: 100%;
+		}
 	}
 
 	.thank-you__header-title,
