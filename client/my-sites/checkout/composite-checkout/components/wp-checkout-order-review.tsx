@@ -1,8 +1,4 @@
-import {
-	isDomainMapping,
-	isDomainRegistration,
-	isDomainTransfer,
-} from '@automattic/calypso-products';
+import { isDomainMapping, isDomainRegistration } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
@@ -234,8 +230,7 @@ function getDomainToDisplayInCheckoutHeader(
 	}
 
 	const firstDomainProduct = responseCart.products.find(
-		( product ) =>
-			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
+		( product ) => isDomainRegistration( product ) || isDomainMapping( product )
 	);
 
 	if ( firstDomainProduct?.meta ) {
