@@ -1,5 +1,6 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useEffect } from 'react';
+import { useDebounce } from 'use-debounce';
 import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
 import {
 	SiteSubscriptionsList,
@@ -24,13 +25,17 @@ const ReaderSiteSubscriptions = () => {
 	const recordSearchPerformed = useRecordSearchPerformed();
 	const recordSearchByUrlPerformed = useRecordSearchByUrlPerformed();
 
-	useEffect( () => {
-		recordSearchPerformed( { query: searchTerm } );
+	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 1000 );
 
-		if ( resemblesUrl( searchTerm ) ) {
-			recordSearchByUrlPerformed( { url: searchTerm } );
+	useEffect( () => {
+		if ( debouncedSearchTerm !== '' ) {
+			recordSearchPerformed( { query: debouncedSearchTerm } );
+
+			if ( resemblesUrl( debouncedSearchTerm ) ) {
+				recordSearchByUrlPerformed( { url: debouncedSearchTerm } );
+			}
 		}
-	}, [ searchTerm, recordSearchPerformed, recordSearchByUrlPerformed ] );
+	}, [ debouncedSearchTerm, recordSearchPerformed, recordSearchByUrlPerformed ] );
 
 	return (
 		<>
