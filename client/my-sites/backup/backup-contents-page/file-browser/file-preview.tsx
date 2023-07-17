@@ -10,6 +10,9 @@ interface FilePreviewProps {
 	siteId: number;
 }
 
+/**
+ * This component is responsible for rendering the preview of a file.
+ */
 const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) => {
 	const translate = useTranslate();
 	const [ fileContent, setFileContent ] = useState( '' );
@@ -26,7 +29,7 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 	const shouldPreviewFile =
 		isValidType && ( ! isSensitive || ( isSensitive && showSensitivePreview ) );
 
-	const { isSuccess, isInitialLoading, data } = useBackupFileQuery(
+	const { isSuccess, isError, isInitialLoading, data } = useBackupFileQuery(
 		siteId,
 		item.period,
 		item.manifestPath,
@@ -91,7 +94,7 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 		return content;
 	};
 
-	const isLoading = isTextContent ? ! fileContent : isInitialLoading;
+	const isLoading = isTextContent ? ! fileContent && ! isError : isInitialLoading;
 	const isReady = isTextContent ? fileContent : isSuccess;
 	const classNames = classnames( 'file-card__preview', item.type, {
 		'file-card__preview--is-loading': isLoading,

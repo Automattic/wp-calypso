@@ -8,6 +8,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import FilePreview from './file-preview';
+import { onPreparingDownloadError, onProcessingDownloadError } from './notices';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
@@ -48,6 +49,11 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 
 	const [ isProcessingDownload, setIsProcessingDownload ] = useState< boolean >( false );
 
+	const handleDownloadError = useCallback( () => {
+		setIsProcessingDownload( false );
+		dispatch( onProcessingDownloadError() );
+	}, [ dispatch ] );
+
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
 			dispatch(
@@ -72,15 +78,24 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					apiNamespace: 'wpcom/v2',
 				} )
 				.then( ( response: { url: string } ) => {
+					if ( ! response.url ) {
+						handleDownloadError();
+						return;
+					}
+
 					const downloadUrl = new URL( response.url );
 					downloadUrl.searchParams.append( 'disposition', 'attachment' );
 					window.open( downloadUrl, '_blank' );
 					setIsProcessingDownload( false );
-
 					trackDownloadByType( item.type );
+				} )
+				.catch( () => {
+					handleDownloadError();
+					return;
 				} );
 		} else {
 			if ( fileInfo === undefined || parentItem === undefined ) {
+				handleDownloadError();
 				return;
 			}
 
@@ -105,22 +120,31 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					}
 				)
 				.then( ( response: { url: string } ) => {
+					if ( ! response.url ) {
+						handleDownloadError();
+						return;
+					}
+
 					window.open( response.url, '_blank' );
 					setIsProcessingDownload( false );
 
 					trackDownloadByType( archiveType );
+				} )
+				.catch( () => {
+					handleDownloadError();
+					return;
 				} );
 		}
-	}, [ fileInfo, item, parentItem, rewindId, siteId, trackDownloadByType ] );
+	}, [ fileInfo, handleDownloadError, item, parentItem, rewindId, siteId, trackDownloadByType ] );
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
-			// @TODO: We should dispatch an error notice
+			dispatch( onPreparingDownloadError() );
 			return;
 		}
 
 		prepareDownload( siteId, item.period, fileInfo.manifestFilter, fileInfo.dataType );
-	}, [ fileInfo, item.period, prepareDownload, siteId ] );
+	}, [ dispatch, fileInfo, item.period, prepareDownload, siteId ] );
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {

@@ -1,10 +1,9 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
+import { onPreparingDownloadError } from './notices';
 
 interface PrepareDownloadArgs {
 	siteId: number;
@@ -28,7 +27,6 @@ interface FilteredStatusResponse {
 
 export const usePrepareDownload = ( siteId: number ) => {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 
 	const [ status, setStatus ] = useState( PREPARE_DOWNLOAD_STATUS.NOT_STARTED );
 	const [ dataType, setDataType ] = useState( 0 );
@@ -39,13 +37,8 @@ export const usePrepareDownload = ( siteId: number ) => {
 		setStatus( PREPARE_DOWNLOAD_STATUS.NOT_STARTED );
 
 		// Dispatch an error notice
-		dispatch(
-			errorNotice( translate( 'There was an error preparing your download. Please, try again.' ), {
-				duration: 5000,
-				isPersistent: true,
-			} )
-		);
-	}, [ dispatch, translate ] );
+		dispatch( onPreparingDownloadError() );
+	}, [ dispatch ] );
 
 	const { data } = useQuery( {
 		queryKey: [ 'jetpack-backup-filtered-status', buildKey, siteId, dataType ],
