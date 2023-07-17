@@ -16,6 +16,7 @@ import { requestAdminMenu } from '../../state/admin-menu/actions';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
+import useDomainsViewStatus from './use-domains-view-status';
 
 const useSiteMenuItems = () => {
 	const dispatch = useDispatch();
@@ -25,6 +26,7 @@ const useSiteMenuItems = () => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const locale = useLocale();
+	const isAllDomainsView = useDomainsViewStatus();
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -62,7 +64,7 @@ const useSiteMenuItems = () => {
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
-	if ( ! siteDomain ) {
+	if ( ! siteDomain || isAllDomainsView ) {
 		return allSitesMenu( { showManagePlugins: hasSiteWithPlugins } );
 	}
 
