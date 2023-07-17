@@ -113,12 +113,16 @@ export type PlanFeatures2023GridProps = {
 	intent?: PlansIntent;
 	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
+	spotlightPlanSlug?: PlanSlug;
 };
 
 type PlanFeatures2023GridConnectedProps = {
 	translate: LocalizeProps[ 'translate' ];
 	recordTracksEvent: ( slug: string ) => void;
 	planProperties: Array< PlanProperties >;
+	spotlightPlanProperties?: PlanProperties;
+	planPropertiesForMobile: Array< PlanProperties >;
+	planPropertiesForTable: Array< PlanProperties >;
 	canUserPurchasePlan: boolean | null;
 	current: boolean;
 	planTypeSelectorProps: PlanTypeSelectorProps;
@@ -268,6 +272,9 @@ export class PlanFeatures2023Grid extends Component<
 			planRecords,
 			visiblePlans,
 			showLegacyStorageFeature,
+			spotlightPlanProperties,
+			planPropertiesForMobile,
+			planPropertiesForTable,
 		} = this.props;
 		return (
 			<PlansGridContextProvider
@@ -280,14 +287,19 @@ export class PlanFeatures2023Grid extends Component<
 					<div className="plan-features">
 						<div className="plan-features-2023-grid__content">
 							<div>
+								{ spotlightPlanProperties && (
+									<div className="plan-features-2023-grid__plan-spotlight">
+										{ this.renderSpotlightPlan( [ spotlightPlanProperties ] ) }
+									</div>
+								) }
 								<div className="plan-features-2023-grid__desktop-view">
-									{ this.renderTable( planProperties ) }
+									{ this.renderTable( planPropertiesForTable ) }
 								</div>
 								<div className="plan-features-2023-grid__tablet-view">
-									{ this.renderTabletView() }
+									{ this.renderTabletView( planPropertiesForTable ) }
 								</div>
 								<div className="plan-features-2023-grid__mobile-view">
-									{ this.renderMobileView() }
+									{ this.renderMobileView( planPropertiesForMobile ) }
 								</div>
 							</div>
 						</div>
@@ -364,8 +376,7 @@ export class PlanFeatures2023Grid extends Component<
 		);
 	}
 
-	renderTabletView() {
-		const { planProperties } = this.props;
+	renderTabletView( planProperties: PlanProperties[] ) {
 		let plansToShow = [];
 
 		plansToShow = planProperties
@@ -396,8 +407,8 @@ export class PlanFeatures2023Grid extends Component<
 		);
 	}
 
-	renderMobileView() {
-		const { planProperties, translate, selectedFeature } = this.props;
+	renderMobileView( planProperties: PlanProperties[] ) {
+		const { translate, selectedFeature } = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planName: string }
 		) => {
@@ -450,6 +461,28 @@ export class PlanFeatures2023Grid extends Component<
 				previousProductNameShort = properties.product_name_short;
 				return planCardJsx;
 			} );
+	}
+
+	/**
+	 * Similar to `renderMobileView` above.
+	 */
+	renderSpotlightPlan( planPropertiesObj: PlanProperties[] ) {
+		const planCardClasses = classNames(
+			'plan-features-2023-grid__mobile-plan-card',
+			'plan-features-2023-grid__plan-spotlight-card',
+			getPlanClass( planPropertiesObj[ 0 ].planName )
+		);
+
+		return (
+			<div className={ planCardClasses }>
+				{ this.renderPlanLogos( planPropertiesObj, { isMobile: true } ) }
+				{ this.renderPlanHeaders( planPropertiesObj, { isMobile: true } ) }
+				{ this.renderPlanTagline( planPropertiesObj, { isMobile: true } ) }
+				{ this.renderPlanPrice( planPropertiesObj, { isMobile: true } ) }
+				{ this.renderBillingTimeframe( planPropertiesObj, { isMobile: true } ) }
+				{ this.renderTopButtons( planPropertiesObj, { isMobile: true } ) }
+			</div>
+		);
 	}
 
 	renderMobileFreeDomain( planName: string, isMonthlyPlan: boolean ) {
@@ -901,6 +934,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			intent,
 			isGlobalStylesOnPersonal,
 			showLegacyStorageFeature,
+			spotlightPlanSlug,
 		} = ownProps;
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = siteId
@@ -1039,14 +1073,40 @@ const ConnectedPlanFeatures2023Grid = connect(
 			}
 		);
 
+		let spotlightPlanProperties;
+		// planPropertiesForMobile can be removed once the mobile layout is hidden via props.
+		let planPropertiesForMobile = planProperties;
+		// planPropertiesForTable is required since we need to preserve the full planProperties for the comparison grid.
+		const planPropertiesForTable = [ ...planProperties ];
+
+		if ( spotlightPlanSlug ) {
+			const spotlightPlanIndex = planProperties.findIndex(
+				( properties ) => properties.planName === spotlightPlanSlug
+			);
+			if ( spotlightPlanIndex > -1 ) {
+				spotlightPlanProperties = { ...planProperties[ spotlightPlanIndex ] };
+				planPropertiesForTable[ spotlightPlanIndex ] = {
+					...planPropertiesForTable[ spotlightPlanIndex ],
+					isVisible: false,
+				};
+				planPropertiesForMobile = [
+					planPropertiesForMobile[ spotlightPlanIndex ],
+					...planPropertiesForMobile.slice( 0, spotlightPlanIndex ),
+					...planPropertiesForMobile.slice( spotlightPlanIndex + 1 ),
+				];
+			}
+		}
+
 		const manageHref =
 			purchaseId && selectedSiteSlug
 				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 				: `/plans/my-plan/${ siteId }`;
 
 		return {
-			currentSitePlanSlug,
 			planProperties,
+			planPropertiesForTable,
+			planPropertiesForMobile,
+			spotlightPlanProperties,
 			canUserPurchasePlan,
 			manageHref,
 			selectedSiteSlug,
