@@ -170,7 +170,9 @@ export function SiteLevelAddNewPaymentMethod( props: { siteSlug: string } ) {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
+			<StripeSetupIntentIdProvider
+				fetchStripeSetupIntentId={ () => getStripeConfiguration( { needs_intent: true } ) }
+			>
 				<SiteLevelAddNewPaymentMethodForm { ...props } />
 			</StripeSetupIntentIdProvider>
 		</StripeHookProvider>

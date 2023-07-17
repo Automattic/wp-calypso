@@ -121,7 +121,9 @@ export default function ChangePaymentMethodWrapper( props: ChangePaymentMethodPr
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
+			<StripeSetupIntentIdProvider
+				fetchStripeSetupIntentId={ () => getStripeConfiguration( { needs_intent: true } ) }
+			>
 				<ChangePaymentMethod { ...props } />
 			</StripeSetupIntentIdProvider>
 		</StripeHookProvider>
