@@ -1,5 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { compose } from '@wordpress/compose';
+import { getQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -64,14 +65,23 @@ export class AppBanner extends Component {
 	constructor( props ) {
 		super( props );
 
+		let isDraftPostModalShown = false;
 		if (
 			typeof window !== 'undefined' &&
 			window.sessionStorage?.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
 		) {
-			this.state = { isDraftPostModalShown: true };
-		} else {
-			this.state = { isDraftPostModalShown: false };
+			isDraftPostModalShown = true;
 		}
+
+		let isLaunchpadEnabled = false;
+		if (
+			typeof window !== 'undefined' &&
+			getQueryArg( window.location.href, 'showLaunchpad' ) === 'true'
+		) {
+			isLaunchpadEnabled = true;
+		}
+
+		this.state = { isDraftPostModalShown, isLaunchpadEnabled };
 	}
 
 	stopBubblingEvents = ( event ) => {
@@ -194,7 +204,11 @@ export class AppBanner extends Component {
 	};
 
 	render() {
-		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
+		if (
+			! this.props.shouldDisplayAppBanner ||
+			this.state.isDraftPostModalShown ||
+			this.state.isLaunchpadEnabled
+		) {
 			return null;
 		}
 

@@ -2,8 +2,62 @@
  * @jest-environment jsdom
  */
 
-import { getiOSDeepLink, buildDeepLinkFragment } from 'calypso/blocks/app-banner';
-import { NOTES, READER, STATS, getCurrentSection } from 'calypso/blocks/app-banner/utils';
+import { isMobile } from '@automattic/viewport';
+import { screen, render } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import AppBanner, { getiOSDeepLink, buildDeepLinkFragment } from 'calypso/blocks/app-banner';
+import {
+	GUTENBERG,
+	NOTES,
+	READER,
+	STATS,
+	getCurrentSection,
+} from 'calypso/blocks/app-banner/utils';
+
+jest.mock( '@automattic/viewport' );
+
+describe( 'when showing launchpad', () => {
+	let originalWindowLocation;
+	beforeAll( () => {
+		originalWindowLocation = window.location;
+		delete window.location;
+		isMobile.mockReturnValue( true );
+		window.location = {
+			href: 'https://wordpress.com/?showLaunchpad=true',
+		};
+	} );
+
+	afterAll( () => {
+		isMobile.mockRestore();
+		window.location = originalWindowLocation;
+	} );
+
+	test( 'renders nothing', () => {
+		const mockStore = configureStore();
+		const store = mockStore( {
+			ui: {
+				appBannerVisibility: true,
+				layoutFocus: {
+					current: 'not-sidebar',
+				},
+				section: {
+					name: GUTENBERG,
+				},
+			},
+			preferences: {
+				remoteValues: [ 'something' ],
+			},
+		} );
+		render(
+			<Provider store={ store }>
+				<AppBanner />
+			</Provider>
+		);
+
+		expect( screen.queryByText( 'Rich mobile publishing.' ) ).toBeNull();
+	} );
+} );
 
 describe( 'iOS deep link fragments', () => {
 	test( 'properly encodes tricky fragments', () => {
