@@ -94,25 +94,25 @@ function useIssueAndAssignLicenses(
 	const dispatch = useDispatch();
 	const sitesCount = useSelector( getSites ).length;
 
-	const issueLicenses = useIssueLicenses( {
+	const { isReady: isIssueReady, issueLicenses } = useIssueLicenses( {
 		onError: options.onIssueError ?? NO_OP,
 	} );
 
-	const assignLicensesToSite = useAssignLicensesToSite( selectedSite, {
+	const { isReady: isAssignReady, assignLicensesToSite } = useAssignLicensesToSite( selectedSite, {
 		onError: options.onAssignError ?? NO_OP,
 	} );
 
 	const getLicenseIssuedMessage = useGetLicenseIssuedMessage();
 
 	return useMemo( () => {
-		const isReady = issueLicenses.isReady && assignLicensesToSite.isReady;
+		const isReady = isIssueReady && isAssignReady;
 
 		const issueAndAssignLicenses = async ( productSlugs: string[] ) => {
 			if ( ! isReady || productSlugs.length === 0 ) {
 				return;
 			}
 
-			const issuedLicenses = ( await issueLicenses.issueLicenses( productSlugs ) ).filter(
+			const issuedLicenses = ( await issueLicenses( productSlugs ) ).filter(
 				( r ): r is FulfilledIssueLicenseResult => r.status === 'fulfilled'
 			);
 
@@ -159,7 +159,7 @@ function useIssueAndAssignLicenses(
 
 			// If a specific site is already selected,
 			// let's assign the licenses we just issued to it
-			const assignLicensesStatus = await assignLicensesToSite.assignLicensesToSite( issuedKeys );
+			const assignLicensesStatus = await assignLicensesToSite( issuedKeys );
 
 			// TODO: Move dispatch events and redirects outside this function
 			dispatch( resetSite() );
@@ -182,8 +182,10 @@ function useIssueAndAssignLicenses(
 		assignLicensesToSite,
 		dispatch,
 		getLicenseIssuedMessage,
+		isAssignReady,
+		isIssueReady,
 		issueLicenses,
-		selectedSite,
+		selectedSite?.ID,
 		sitesCount,
 	] );
 }
