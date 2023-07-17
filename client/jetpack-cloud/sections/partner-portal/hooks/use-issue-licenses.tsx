@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
@@ -42,24 +41,22 @@ const useIssueLicenses = ( options: UseIssueLicensesOptions = {} ) => {
 		},
 	} );
 
-	return useMemo( () => {
-		const issueLicenses = ( productSlugs: string[] ): Promise< IssueLicenseResult[] > => {
-			const requests: Promise< IssueLicenseResult >[] = productSlugs.map( ( slug ) =>
-				mutateAsync( { product: slug } )
-					.then(
-						( value ): FulfilledIssueLicenseResult => ( { slug, status: 'fulfilled', ...value } )
-					)
-					.catch( (): RejectedIssueLicenseResult => ( { slug, status: 'rejected' } ) )
-			);
+	const issueLicenses = ( productSlugs: string[] ): Promise< IssueLicenseResult[] > => {
+		const requests: Promise< IssueLicenseResult >[] = productSlugs.map( ( slug ) =>
+			mutateAsync( { product: slug } )
+				.then(
+					( value ): FulfilledIssueLicenseResult => ( { slug, status: 'fulfilled', ...value } )
+				)
+				.catch( (): RejectedIssueLicenseResult => ( { slug, status: 'rejected' } ) )
+		);
 
-			return Promise.all( requests );
-		};
+		return Promise.all( requests );
+	};
 
-		return {
-			isReady: isIdle,
-			issueLicenses,
-		};
-	}, [ mutateAsync, isIdle ] );
+	return {
+		isReady: isIdle,
+		issueLicenses,
+	};
 };
 
 export default useIssueLicenses;
