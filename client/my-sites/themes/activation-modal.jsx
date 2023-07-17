@@ -15,7 +15,6 @@ import {
 } from 'calypso/state/themes/actions';
 import {
 	getCanonicalTheme,
-	hasActivatedTheme,
 	isActivatingTheme,
 	isThemeActive,
 	shouldShowActivationModal,
@@ -34,7 +33,6 @@ export class ActivationModal extends Component {
 			id: PropTypes.string,
 			name: PropTypes.string,
 		} ),
-		hasActivated: PropTypes.bool.isRequired,
 		isActivating: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 		isVisible: PropTypes.bool,
@@ -45,21 +43,8 @@ export class ActivationModal extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
-			wasVisible: props.isVisible,
 			hasConfirmed: false,
 		};
-	}
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		// This component doesn't unmount when the dialog closes, so the state
-		// needs to be reset back to defaults each time it opens.
-		if ( nextProps.isVisible && ! prevState.wasVisible ) {
-			return { wasVisible: true };
-		} else if ( ! nextProps.isVisible && prevState.wasVisible ) {
-			return { wasVisible: false };
-		}
-		return null;
 	}
 
 	closeModalHandler =
@@ -98,7 +83,7 @@ export class ActivationModal extends Component {
 		};
 
 	render() {
-		const { theme, hasActivated, isActivating, isCurrentTheme, isVisible = false } = this.props;
+		const { theme, isActivating, isCurrentTheme, isVisible = false } = this.props;
 
 		const { hasConfirmed } = this.state;
 
@@ -107,8 +92,8 @@ export class ActivationModal extends Component {
 			return null;
 		}
 
-		// Hide while is activating or when it's activated.
-		if ( isActivating || hasActivated ) {
+		// Hide while is activating.
+		if ( isActivating ) {
 			return null;
 		}
 
@@ -194,7 +179,6 @@ export default connect(
 			installingThemeId,
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
-			hasActivated: !! hasActivatedTheme( state, siteId ),
 			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
 			isVisible: shouldShowActivationModal( state, installingThemeId ),
 		};
