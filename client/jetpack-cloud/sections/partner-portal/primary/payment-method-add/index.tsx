@@ -272,7 +272,9 @@ export default function PaymentMethodAddWrapper( {
 
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
+			<StripeSetupIntentIdProvider
+				fetchStripeSetupIntentId={ () => getStripeConfiguration( { needs_intent: true } ) }
+			>
 				<PaymentMethodAdd selectedSite={ selectedSite } />
 			</StripeSetupIntentIdProvider>
 		</StripeHookProvider>
