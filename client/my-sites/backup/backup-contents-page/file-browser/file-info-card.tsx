@@ -49,10 +49,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	const [ isProcessingDownload, setIsProcessingDownload ] = useState< boolean >( false );
 
 	const trackDownloadByType = useCallback(
-		( type: string ) => {
+		( fileType: string ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
-					file_type: type,
+					file_type: fileType,
 				} )
 			);
 
