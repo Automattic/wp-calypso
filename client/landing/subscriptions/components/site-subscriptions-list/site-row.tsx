@@ -154,6 +154,10 @@ const SiteRow = ( {
 		}
 
 		if ( isSubscriptionsPortal ) {
+			if ( ! Reader.isValidId( blog_id ) ) {
+				// If it is a non-wpcom feed item, we want to open the reader's page for that feed
+				return `/read/feeds/${ feed_id }`;
+			}
 			return `/subscriptions/site/${ blog_id }`;
 		}
 	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal ] );
