@@ -216,7 +216,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									onClick={ () => {
 										onSelect( planProduct?.productId );
 									} }
-									variant={ isPopular ? 'primary' : 'secondary' }
+									variant={ isPopular ? 'primary' : undefined }
 									disabled={ !! disabledLabel }
 								>
 									<span>

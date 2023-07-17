@@ -669,6 +669,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
     "@wordpress/components": ^25.1.0
+    "@wordpress/html-entities": ^3.36.0
     "@wordpress/icons": ^9.26.0
     "@wordpress/react-i18n": ^3.33.0
     classnames: ^2.3.1

@@ -244,7 +244,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						showIcon={ false }
 						showSupportModal={ ! isRunningInJetpack }
 					/>
-					<Button variant="link" onClick={ onClickPromote }>
+					<Button variant="primary" onClick={ onClickPromote }>
 						{ translate( 'Promote' ) }
 					</Button>
 				</div>
