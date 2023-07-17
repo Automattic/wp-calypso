@@ -6,7 +6,7 @@ import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-si
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FeedbackNotice from './feedback-notice';
-import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
+// import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
 import LegacyStatsNotices from './legacy-notices';
 import OptOutNotice from './opt-out-notice';
 import { StatsNoticesProps } from './types';
