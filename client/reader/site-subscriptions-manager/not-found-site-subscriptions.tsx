@@ -8,7 +8,7 @@ const NotFoundSiteSubscriptions = () => {
 
 	return (
 		<div className="not-found-site-subscriptions">
-			{ searchTerm
+			{ searchTerm && searchTerm.length
 				? /* translators: the string is the exact text that the user entered into the search input in site subscriptions manager in Reader */
 				  translate( 'No results found for “%s”.', {
 						args: searchTerm,
