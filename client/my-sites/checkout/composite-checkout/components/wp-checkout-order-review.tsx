@@ -1,4 +1,8 @@
-import { isDomainMapping, isDomainRegistration } from '@automattic/calypso-products';
+import {
+	isDomainMapping,
+	isDomainRegistration,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
@@ -229,12 +233,9 @@ function getDomainToDisplayInCheckoutHeader(
 		return primaryDomainForMapping;
 	}
 
-	const firstDomainProduct = responseCart.products.find(
-		( product ) => isDomainRegistration( product ) || isDomainMapping( product )
-	);
-
-	if ( firstDomainProduct?.meta ) {
-		return firstDomainProduct.meta;
+	const domainUrl = getDomainProductUrlToDisplayInCheckoutHeader( responseCart, selectedSiteData );
+	if ( domainUrl ) {
+		return domainUrl;
 	}
 
 	if ( responseCart.gift_details?.receiver_blog_url ) {
@@ -250,4 +251,28 @@ function getDomainToDisplayInCheckoutHeader(
 	}
 
 	return undefined;
+}
+
+function getDomainProductUrlToDisplayInCheckoutHeader(
+	responseCart: ResponseCart,
+	selectedSiteData: SiteDetails | undefined | null
+): string | undefined {
+	const domainProducts = responseCart.products.filter(
+		( product ) =>
+			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
+	);
+
+	const firstDomainProduct = domainProducts.length > 0 ? domainProducts[ 0 ] : undefined;
+
+	const isPurchaseSiteless = ! selectedSiteData;
+
+	if ( ! firstDomainProduct?.meta ) {
+		return undefined;
+	}
+
+	if ( isPurchaseSiteless && domainProducts.length > 1 ) {
+		return undefined;
+	}
+
+	return firstDomainProduct.meta;
 }
