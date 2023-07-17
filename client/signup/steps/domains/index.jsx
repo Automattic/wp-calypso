@@ -14,7 +14,10 @@ import { recordUseYourDomainButtonClick } from 'calypso/components/domains/regis
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import Notice from 'calypso/components/notice';
-import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import {
+	SIGNUP_DOMAIN_ORIGIN,
+	setDomainOrigin,
+} from 'calypso/lib/analytics/utils/signup_domain_origin';
 import {
 	domainRegistration,
 	domainMapping,
@@ -156,9 +159,10 @@ class DomainsStep extends Component {
 	};
 
 	handleAddDomain = ( suggestion, position ) => {
-		const signupDomainOrigin = suggestion?.is_free
-			? SIGNUP_DOMAIN_ORIGIN.FREE
-			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
+		const domainOrigin = suggestion?.is_free
+			? SIGNUP_DOMAIN_ORIGIN.free
+			: SIGNUP_DOMAIN_ORIGIN.custom;
+		setDomainOrigin( domainOrigin );
 
 		const stepData = {
 			stepName: this.props.stepName,
@@ -174,7 +178,7 @@ class DomainsStep extends Component {
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain( { signupDomainOrigin } );
+			this.submitWithDomain();
 		} );
 	};
 
@@ -220,7 +224,7 @@ class DomainsStep extends Component {
 		);
 	};
 
-	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin ) => {
+	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
 		const tracksProperties = Object.assign(
 			{
 				section: this.getAnalyticsSection(),
@@ -242,21 +246,23 @@ class DomainsStep extends Component {
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain( { googleAppsCartItem, shouldHideFreePlan, signupDomainOrigin } );
+			this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
 		} );
 	};
 
 	handleDomainExplainerClick = () => {
+		setDomainOrigin( SIGNUP_DOMAIN_ORIGIN.choose_later );
 		const hideFreePlan = true;
-		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
+		this.handleSkip( undefined, hideFreePlan );
 	};
 
 	handleUseYourDomainClick = () => {
-		page( this.getUseYourDomainUrl() );
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
+		setDomainOrigin( SIGNUP_DOMAIN_ORIGIN.use_your_domain );
+		page( this.getUseYourDomainUrl() );
 	};
 
-	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
+	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -304,8 +310,7 @@ class DomainsStep extends Component {
 			Object.assign(
 				{ domainItem },
 				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
-				useThemeHeadstartItem,
-				signupDomainOrigin ? { signupDomainOrigin } : {}
+				useThemeHeadstartItem
 			)
 		);
 
@@ -316,7 +321,7 @@ class DomainsStep extends Component {
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
 
-	handleAddMapping = ( { sectionName, domain, state } ) => {
+	handleAddMapping = ( sectionName, domain, state ) => {
 		const domainItem = domainMapping( { domain } );
 		const isPurchasingItem = true;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -338,9 +343,7 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem, {
-				signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
-			} )
+			Object.assign( { domainItem }, useThemeHeadstartItem )
 		);
 
 		this.props.goToNextStep();
@@ -530,7 +533,7 @@ class DomainsStep extends Component {
 					otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
-					onAddMapping={ this.handleAddMapping.bind( this, { sectionName: 'domainForm' } ) }
+					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 					onSave={ this.handleSave.bind( this, 'domainForm' ) }
 					offerUnavailableOption={ ! this.props.isDomainOnly }
 					isDomainOnly={ this.props.isDomainOnly }
@@ -570,7 +573,7 @@ class DomainsStep extends Component {
 	};
 
 	onUseMyDomainConnect = ( { domain } ) => {
-		this.handleAddMapping( { sectionName: 'useYourDomainForm', domain } );
+		this.handleAddMapping( 'useYourDomainForm', domain );
 	};
 
 	insertUrlParams( params ) {

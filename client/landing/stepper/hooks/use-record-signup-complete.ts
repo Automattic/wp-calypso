@@ -3,7 +3,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from 'react';
 import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { SIGNUP_DOMAIN_ORIGIN, recordSignupComplete } from 'calypso/lib/analytics/signup';
+import { recordSignupComplete } from 'calypso/lib/analytics/signup';
 import { useSite } from './use-site';
 import type { UserSelect, OnboardSelect } from '@automattic/data-stores';
 
@@ -64,7 +64,6 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			isTransfer: hasPaidDomainItem
 				? isDomainTransfer( domainCartItem as MinimalRequestCartProduct )
 				: undefined,
-			signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 		} );
 	}, [ domainCartItem, flow, planCartItem, selectedDomain, siteCount, siteId, theme ] );
 };

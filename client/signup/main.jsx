@@ -36,7 +36,6 @@ import {
 	recordSignupInvalidStep,
 	recordSignupProcessingScreen,
 	recordSignupPlanChange,
-	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -484,7 +483,6 @@ class Signup extends Component {
 		const selectedDesign = get( dependencies, 'selectedDesign' );
 		const intent = get( dependencies, 'intent' );
 		const startingPoint = get( dependencies, 'startingPoint' );
-		const signupDomainOrigin = get( dependencies, 'signupDomainOrigin' );
 
 		const debugProps = {
 			isNewishUser,
@@ -523,7 +521,6 @@ class Signup extends Component {
 				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 				isMapping: domainItem && isDomainMapping( domainItem ),
 				isTransfer: domainItem && isDomainTransfer( domainItem ),
-				signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 			} );
 		}
 	};
