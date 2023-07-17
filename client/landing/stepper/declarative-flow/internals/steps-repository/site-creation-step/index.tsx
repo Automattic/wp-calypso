@@ -64,17 +64,24 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const urlData = useSelector( getUrlData );
 
-	const { domainCartItem, planCartItem, siteAccentColor, selectedSiteTitle, productCartItems } =
-		useSelect(
-			( select ) => ( {
-				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-				siteAccentColor: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteAccentColor(),
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-				productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
-				selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
-			} ),
-			[]
-		);
+	const {
+		domainItem,
+		domainCartItem,
+		planCartItem,
+		siteAccentColor,
+		selectedSiteTitle,
+		productCartItems,
+	} = useSelect(
+		( select ) => ( {
+			domainItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			siteAccentColor: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteAccentColor(),
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
+			selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		} ),
+		[]
+	);
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
@@ -151,6 +158,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			siteAccentColor,
 			useThemeHeadstart,
 			username,
+			domainItem,
 			domainCartItem,
 			sourceSlug
 		);

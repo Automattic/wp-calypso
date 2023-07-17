@@ -58,8 +58,8 @@ export function useGetDomainSuggestions(
 /**
  * Returns the expected *.wordpress.com for a given domain name
  */
-export function useGetWordPressSubdomain( domainName: string ) {
-	return useGetDomainSuggestions( domainName, {
+export function useGetWordPressSubdomain( paidDomainName: string ) {
+	return useGetDomainSuggestions( paidDomainName, {
 		quantity: 1,
 		include_wordpressdotcom: true,
 		include_dotblogsubdomain: false,
