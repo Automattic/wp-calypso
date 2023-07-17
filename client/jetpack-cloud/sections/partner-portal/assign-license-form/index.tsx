@@ -41,13 +41,16 @@ function paginate( arr: Array< any >, currentPage: number ): Array< any > {
 
 const getLicenseKeysFromUrl = () => {
 	const products = getQueryArg( window.location.href, 'products' );
+	if ( typeof products === 'string' ) {
+		return products.split( ',' );
+	}
 
-	if ( ! products ) {
-		const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
+	const licenseKey = getQueryArg( window.location.href, 'key' );
+	if ( typeof licenseKey === 'string' ) {
 		return [ licenseKey ];
 	}
 
-	return ( products as string ).split( ',' );
+	return [];
 };
 
 export default function AssignLicenseForm( {
