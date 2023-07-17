@@ -1,9 +1,10 @@
 # Release Notes
 
-## Unreleased
+## 3.1.0
 
+- Updated colors for checkout.
 - Added a new color for Nextdoor.
-- Add `root-only` entry point.
+- Added `root-only` entry point.
 
 ## 3.0.0
 
