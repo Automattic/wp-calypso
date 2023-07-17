@@ -51,6 +51,10 @@
 			margin-left: 0;
 		}
 
+		&.wordpress > .file-card .file-card__actions {
+			margin-top: 0;
+		}
+
 		&__loading {
 			&.placeholder {
 				height: 26px;
