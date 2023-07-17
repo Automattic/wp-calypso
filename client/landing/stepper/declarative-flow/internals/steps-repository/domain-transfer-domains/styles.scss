@@ -362,7 +362,7 @@
 			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 			font-weight: 500;
 			padding: 20px 0;
-			margin-bottom: 42px;
+			margin-bottom: 20px;
 
 			div:nth-of-type(1) {
 				flex: 9;
@@ -377,11 +377,9 @@
 				}
 			}
 		}
-		
+
 		.bulk-domain-transfer__import-dns-records {
 			margin-bottom: 42px;
-			padding-top: 20px;
-			border-top: 1px solid #d9d9d9;
 		}
 
 		.bulk-domain-transfer__cta-container {
