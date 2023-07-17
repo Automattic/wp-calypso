@@ -9,8 +9,9 @@ import {
 	useRecordSearchSiteSubscribed,
 	SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST,
 } from 'calypso/landing/subscriptions/tracks';
-import { getFeedUrl, getSiteName, getSiteUrl } from 'calypso/reader/get-helpers';
+import { getSiteName, getSiteUrl } from 'calypso/reader/get-helpers';
 import { WpcomFeedItem } from 'calypso/reader/helpers/types';
+import { getFeedUrl } from 'calypso/reader/route';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import ReaderUnsubscribedFeedItem from './reader-unsubscribed-feed-item';
@@ -69,7 +70,7 @@ const ReaderUnsubscribedWpcomFeedItem = ( {
 		<ReaderUnsubscribedFeedItem
 			description={ site?.description }
 			displayUrl={ getSiteUrl( { feed, site } ) }
-			feedUrl={ getFeedUrl( { feed, site } ) }
+			feedUrl={ getFeedUrl( feed_id ) }
 			iconUrl={ site?.icon?.img ?? site?.icon?.ico }
 			isSubscribing={ subscribing }
 			onSubscribeClick={ () => {

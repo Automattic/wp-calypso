@@ -71,7 +71,8 @@ const ReaderUnsubscribedNonWpcomFeedItem = ( {
 			defaultIcon={ rss }
 			description={ feedQuery.data?.description }
 			displayUrl={ subscribeUrl }
-			feedUrl={ feedUrl || subscribeUrl }
+			feedUrl={ subscribeUrl }
+			isExternalLink
 			hasSubscribed={ feedQuery.data?.is_following || subscribe.isSuccess }
 			iconUrl={ feedQuery.data?.image }
 			isSubscribing={ subscribe.isLoading }
