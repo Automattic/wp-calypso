@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.1.1
+
+- Republish unbuilt version.
+
 ## 3.1.0
 
 - Updated colors for checkout.
