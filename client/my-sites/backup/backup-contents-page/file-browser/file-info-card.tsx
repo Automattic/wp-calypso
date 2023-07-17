@@ -164,7 +164,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	const downloadWordPressButton = (
 		<Button
 			className="file-card__action"
-			href={ fileInfo?.downloadUrl }
+			href={ fileInfo.downloadUrl }
 			onClick={ () => trackDownloadByType( item.type ) }
 			download
 		>
