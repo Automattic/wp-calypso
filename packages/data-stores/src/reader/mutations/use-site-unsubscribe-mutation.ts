@@ -88,7 +88,7 @@ const useSiteUnsubscribeMutation = () => {
 								...siteSubscription,
 								isDeleted:
 									Number( siteSubscription.ID ) === params.subscriptionId ||
-									siteSubscription.blog_ID === params.blog_id
+									( isValidId( params.blog_id ) && siteSubscription.blog_ID === params.blog_id ) //siteSubscription.blog_ID is not valid ID for non-wpcom subscriptions, so when unsubscribing from such site, the param.blog_id will also be not valid, this would create false positive
 										? true
 										: siteSubscription.isDeleted,
 							} ) ),
