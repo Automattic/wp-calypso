@@ -712,10 +712,10 @@ class AllDomains extends Component {
 				<div>
 					<QueryAllDomains />
 					<QueryUserPurchases />
-					<Main wideLayout>
+					<>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<div>{ this.renderDomainsList() }</div>
-					</Main>
+					</>
 				</div>
 			</>
 		);

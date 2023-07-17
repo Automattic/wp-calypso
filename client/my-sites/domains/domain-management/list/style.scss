@@ -7,7 +7,7 @@
 		margin-left: 2px;
 		margin-right: 2px;
 
-		@include break-mobile {
+		@include break-large {
 			margin-left: 0;
 		}
 	}
@@ -21,7 +21,7 @@
 		height: 28px;
 		margin-left: 0;
 
-		@include break-mobile {
+		@include break-large {
 			width: 24px;
 			height: 24px;
 		}
@@ -107,12 +107,13 @@
 .all-domains__filter {
 	padding: 0 16px;
 	> .domains-table-filter-button.is-mobile-version {
+		padding-top: 16px;
 		width: 100%;
 		.select-dropdown__container {
 			width: 100%;
 		}
 
-		@include break-mobile {
+		@include break-large {
 			display: none;
 		}
 	}
@@ -205,7 +206,7 @@
 	color: var(--color-neutral-50);
 
 	border-bottom: 1px solid var(--color-neutral-5);
-	@include break-mobile {
+	@include break-large {
 		border-bottom: 1px solid var(--color-neutral-20);
 	}
 
@@ -254,7 +255,7 @@
 		display: none;
 	}
 
-	@include break-mobile {
+	@include break-large {
 		&.domain-table-header__desktop {
 			display: flex;
 		}
@@ -313,5 +314,27 @@
 
 	&.separator {
 		border-top: 1px solid var(--studio-gray-5);
+	}
+}
+
+.is-section-domains main.main {
+	padding-top: 59px;
+}
+
+@include breakpoint-deprecated( ">660px" ) {
+	.is-section-domains main.main {
+		padding-top: 45px;
+	}
+}
+
+@include breakpoint-deprecated( ">800px" ) {
+	.is-section-domains main.main {
+		padding-top: 32px;
+	}
+}
+
+@include breakpoint-deprecated( ">960px" ) {
+	.is-section-domains main.main {
+		padding-top: 24px;
 	}
 }
