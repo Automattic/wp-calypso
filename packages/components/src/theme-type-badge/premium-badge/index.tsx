@@ -46,13 +46,16 @@ const PremiumBadge = ( {
 		  );
 
 	const divRef = useRef( null );
+	const labelRef = useRef( null );
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
 	const [ isHovered, setIsHovered ] = useState( false );
 	const [ isPressed, setIsPressed ] = useState( false );
 
 	// Display the label as a tooltip if the tooltip is being hidden and the label is too long.
 	const displayLabelAsTooltip =
-		shouldHideTooltip && divRef.current?.scrollWidth > divRef.current?.clientWidth;
+		!! shouldHideTooltip &&
+		!! labelRef.current?.offsetWidth &&
+		labelRef.current?.scrollWidth > labelRef.current?.offsetWidth;
 
 	labelText = labelText || __( 'Premium' );
 
@@ -110,7 +113,9 @@ const PremiumBadge = ( {
 					<Gridicon className="premium-badge__logo" icon="star" size={ 14 } />
 				</>
 			) }
-			<span className="premium-badge__label">{ labelText }</span>
+			<span className="premium-badge__label" ref={ labelRef }>
+				{ labelText }
+			</span>
 			{ ! shouldHideTooltip && (
 				<Popover
 					className={ classNames( 'premium-badge__popover', tooltipClassName ) }
