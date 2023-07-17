@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { urlToSlug } from 'calypso/lib/url';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
@@ -34,53 +33,10 @@ const useGlobalStylesUpgradeModal = ( {
 	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
 		site?.ID
 	);
-	const translate = useTranslate();
 	const { goToCheckout } = useCheckout();
-
-	let description;
-
-	if ( hasSelectedColorVariation && hasSelectedFontVariation ) {
-		if ( globalStylesInPersonalPlan ) {
-			description = translate(
-				'Your font and color choices will be only visible to visitors after upgrading to the Personal plan or higher.'
-			);
-		} else {
-			description = translate(
-				'Your font and color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-			);
-		}
-	} else if ( hasSelectedColorVariation ) {
-		if ( globalStylesInPersonalPlan ) {
-			description = translate(
-				'Your color choices will be only visible to visitors after upgrading to the Personal plan or higher.'
-			);
-		} else {
-			description = translate(
-				'Your color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-			);
-		}
-	} else if ( hasSelectedFontVariation ) {
-		if ( globalStylesInPersonalPlan ) {
-			description = translate(
-				'Your font choices will be only visible to visitors after upgrading to the Personal plan or higher.'
-			);
-		} else {
-			description = translate(
-				'Your font choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-			);
-		}
-	}
-
-	description = (
-		<>
-			<p>{ description }</p>
-			<p>
-				{ translate(
-					'Upgrade now to unlock your current choices and get access to tons of other features. Or you can decide later and try them out first in the editor.'
-				) }
-			</p>
-		</>
-	);
+	const numOfSelectedGlobalStyles = [ hasSelectedColorVariation, hasSelectedFontVariation ].filter(
+		Boolean
+	).length;
 
 	const openModal = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_SHOW );
@@ -119,11 +75,10 @@ const useGlobalStylesUpgradeModal = ( {
 	};
 
 	return {
-		shouldUnlockGlobalStyles:
-			( hasSelectedColorVariation || hasSelectedFontVariation ) && shouldLimitGlobalStyles,
+		shouldUnlockGlobalStyles: numOfSelectedGlobalStyles > 0 && shouldLimitGlobalStyles,
 		globalStylesUpgradeModalProps: {
 			isOpen,
-			description,
+			numOfSelectedGlobalStyles,
 			closeModal,
 			checkout,
 			tryStyle: upgradeLater,
