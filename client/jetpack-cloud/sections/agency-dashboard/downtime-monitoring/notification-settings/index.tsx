@@ -339,7 +339,7 @@ export default function NotificationSettings( {
 				);
 
 				// We need to make sure that we are not setting a paid duration if there is no license.
-				if ( hasDowntimeMonitoringPaidLicense || ! foundDuration?.paid_tier ) {
+				if ( hasDowntimeMonitoringPaidLicense || ! foundDuration?.isPaid ) {
 					setSelectedDuration( foundDuration );
 				}
 			}

@@ -24,8 +24,7 @@ export default function NotificationDuration( {
 	const showPaidDuration = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
 	const selectableDuration = useMemo(
-		() =>
-			showPaidDuration ? durations : durations.filter( ( duration ) => ! duration.paid_tier ),
+		() => ( showPaidDuration ? durations : durations.filter( ( duration ) => ! duration.isPaid ) ),
 		[ showPaidDuration ]
 	);
 
@@ -54,7 +53,7 @@ export default function NotificationDuration( {
 						key={ duration.time }
 						selected={ duration.time === selectedDuration?.time }
 						onClick={ () => selectDuration( duration ) }
-						disabled={ duration.paid_tier && ! enablePaidDurations }
+						disabled={ duration.isPaid && ! enablePaidDurations }
 					>
 						{ duration.label }
 					</SelectDropdown.Item>

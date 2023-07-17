@@ -493,7 +493,7 @@ export const availableNotificationDurations = [
 	{
 		time: 1,
 		label: translate( 'After 1 minute' ),
-		paid_tier: true,
+		isPaid: true,
 	},
 	{
 		time: 5,
