@@ -32,7 +32,7 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps
 	};
 
 	if ( noticeDismissed || ! showNotice ) {
-		// return null;
+		// return null; this is for testing purposes. TODO uncomment
 	}
 
 	return (
