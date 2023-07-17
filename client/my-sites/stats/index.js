@@ -10,6 +10,7 @@ import {
 	site,
 	summary,
 	wordAds,
+	earn,
 	redirectToActivity,
 	redirectToDefaultModulePage,
 	redirectToDefaultSitePage,
@@ -60,6 +61,9 @@ export default function () {
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
+
+	// Stat Earn Page
+	statsPage( '/stats/earn/:site', earn );
 
 	// Stat Subscribers Page (do not confuse with people/subscribers/)
 	statsPage( '/stats/subscribers/:site', subscribers );

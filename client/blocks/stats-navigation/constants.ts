@@ -43,6 +43,11 @@ const insights = {
 	path: '/stats/insights',
 	showIntervals: false,
 } as NavItem;
+const earn = {
+	label: translate( 'Earn' ),
+	path: '/stats/earn',
+	showIntervals: false,
+} as NavItem;
 // TODO: Consider adding subscriber counts into this nav item in the future.
 // See client/blocks/subscribers-count/index.jsx.
 const subscribers = {
@@ -78,6 +83,7 @@ export interface NavItems {
 const assembleNavItems = () => {
 	const navItems = {
 		traffic,
+		earn,
 		insights,
 		subscribers,
 		store,

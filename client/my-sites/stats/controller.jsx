@@ -254,6 +254,20 @@ export function insights( context, next ) {
 	next();
 }
 
+export function earn( context, next ) {
+	// moment and rangeOfPeriod format needed for summary page link for email mdule
+	const date = moment().locale( 'en' );
+
+	context.primary = (
+		<AsyncLoad
+			require="calypso/my-sites/stats/stats-earn"
+			placeholder={ PageLoading }
+			period={ rangeOfPeriod( 'week', date ) }
+		/>
+	);
+	next();
+}
+
 export function subscribers( context, next ) {
 	const givenSiteId = context.params.site;
 	const filters = getSiteFilters( givenSiteId );
