@@ -47,17 +47,24 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
 
 	const [ isProcessingDownload, setIsProcessingDownload ] = useState< boolean >( false );
+
+	const trackDownloadByType = useCallback(
+		( type: string ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
+					file_type: type,
+				} )
+			);
+
+			return;
+		},
+		[ dispatch ]
+	);
+
 	const downloadFile = useCallback( () => {
 		setIsProcessingDownload( true );
 
-		if ( item.type === 'wordpress' ) {
-			if ( fileInfo === undefined || ! fileInfo.downloadUrl ) {
-				return;
-			}
-
-			window.open( fileInfo.downloadUrl, '_blank' );
-			setIsProcessingDownload( false );
-		} else if ( item.type !== 'archive' ) {
+		if ( item.type !== 'archive' ) {
 			const manifestPath = window.btoa( item.manifestPath ?? '' );
 			wp.req
 				.get( {
@@ -70,11 +77,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					window.open( downloadUrl, '_blank' );
 					setIsProcessingDownload( false );
 
-					dispatch(
-						recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
-							file_type: item.type,
-						} )
-					);
+					trackDownloadByType( item.type );
 				} );
 		} else {
 			if ( fileInfo === undefined || parentItem === undefined ) {
@@ -105,14 +108,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					window.open( response.url, '_blank' );
 					setIsProcessingDownload( false );
 
-					dispatch(
-						recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
-							file_type: archiveType,
-						} )
-					);
+					trackDownloadByType( archiveType );
 				} );
 		}
-	}, [ dispatch, fileInfo, item, parentItem, rewindId, siteId ] );
+	}, [ fileInfo, item, parentItem, rewindId, siteId, trackDownloadByType ] );
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
@@ -132,8 +131,9 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.READY ) {
 			window.open( downloadUrl, '_blank' );
+			trackDownloadByType( item.type );
 		}
-	}, [ downloadUrl, prepareDownloadStatus ] );
+	}, [ downloadUrl, item, prepareDownloadStatus, trackDownloadByType ] );
 
 	const showActions =
 		item.type !== 'archive' || ( item.type === 'archive' && item.extensionType === 'unchanged' );
@@ -151,8 +151,6 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		return null;
 	}
 
-	const requiresPreparation = item.type === 'table';
-
 	const downloadFileButton = (
 		<Button
 			className="file-card__action"
@@ -160,6 +158,17 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			disabled={ isProcessingDownload }
 		>
 			{ isProcessingDownload ? <Spinner /> : translate( 'Download file' ) }
+		</Button>
+	);
+
+	const downloadWordPressButton = (
+		<Button
+			className="file-card__action"
+			href={ fileInfo?.downloadUrl }
+			onClick={ () => trackDownloadByType( item.type ) }
+			download
+		>
+			{ translate( 'Download file' ) }
 		</Button>
 	);
 
@@ -179,6 +188,17 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			) }
 		</Button>
 	);
+
+	// Render the download button based on the file type
+	const renderDownloadButton = () => {
+		if ( item.type === 'wordpress' ) {
+			return downloadWordPressButton;
+		} else if ( item.type === 'table' ) {
+			return prepareDownloadButton;
+		}
+
+		return downloadFileButton;
+	};
 
 	return (
 		<div className="file-card">
@@ -228,11 +248,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 				) }
 			</div>
 
-			{ showActions && (
-				<div className="file-card__actions">
-					{ requiresPreparation ? prepareDownloadButton : downloadFileButton }
-				</div>
-			) }
+			{ showActions && <div className="file-card__actions">{ renderDownloadButton() }</div> }
 
 			{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
 				<FilePreview item={ item } siteId={ siteId } />
