@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
@@ -42,7 +41,6 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
-import DomainOnlyUpsellCarousel from './domain-only-upsell-carousel';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import { EmptyDomainsListCardSkeleton } from './empty-domains-list-card-skeleton';
@@ -431,25 +429,6 @@ class AllDomains extends Component {
 		);
 	}
 
-	renderDomainOnlyUpsellCarousel() {
-		const { sites } = this.props;
-		const domains = filterDomainOnlyDomains(
-			this.mergeFilteredDomainsWithDomainsDetails(),
-			sites
-		).sort( ( a, b ) => {
-			if ( moment( a.registrationDate ).isBefore( b.registrationDate ) ) {
-				return 1;
-			} else if ( moment( a.registrationDate ).isAfter( b.registrationDate ) ) {
-				return -1;
-			}
-			return 0;
-		} );
-		if ( domains.length === 0 ) {
-			return null;
-		}
-		return <DomainOnlyUpsellCarousel domain={ domains[ 0 ] } />;
-	}
-
 	handleContactInfoTransferLockOptOutChange = ( transferLockOptOut ) => {
 		this.setState( { transferLockOptOut } );
 	};
@@ -736,7 +715,6 @@ class AllDomains extends Component {
 					<Main wideLayout>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<div>{ this.renderDomainsList() }</div>
-						<div>{ this.renderDomainOnlyUpsellCarousel() }</div>
 					</Main>
 				</div>
 			</>
