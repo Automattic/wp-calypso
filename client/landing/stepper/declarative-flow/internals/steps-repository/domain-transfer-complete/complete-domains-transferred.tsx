@@ -30,7 +30,7 @@ export const CompleteDomainsTransferred = ( {
 									<li className="domain-complete-list-item" key={ key }>
 										<div>
 											<h2>{ meta }</h2>
-											<p>{ __( 'Auto renew enabled' ) }</p>
+											<p>{ __( 'Auto-renew enabled' ) }</p>
 										</div>
 										<a
 											href={ `/domains/manage/all/${ meta }/transfer/in/${ domain }` }
