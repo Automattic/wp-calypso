@@ -4,7 +4,7 @@ const useRecordSiteUrlClicked = () => {
 	const recordSubscriptionsTracksEvent = useRecordSubscriptionsTracksEvent();
 
 	const recordSiteUrlClicked = ( tracksProps: {
-		blog_id: string;
+		blog_id: string | null;
 		feed_id?: string;
 		source?: string;
 	} ) => {

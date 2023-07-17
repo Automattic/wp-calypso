@@ -1,6 +1,8 @@
-import classnames from 'classnames';
-import { RefObject, useState } from 'react';
+import { RefObject } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import CustomALink from './custom-a-link';
+import { LikeDislikeButtons } from './like-dislike-buttons';
+import { uriTransformer } from './uri-transformer';
 import type { Message } from '../types';
 
 import './style.scss';
@@ -12,25 +14,7 @@ type ChatMessageProps = {
 };
 
 const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => {
-	const [ reaction, setReaction ] = useState< null | 'liked' | 'disliked' >( null );
-
 	const isUser = message.role === 'user';
-
-	const onLike = () => {
-		if ( reaction === 'liked' ) {
-			setReaction( null );
-			return;
-		}
-		setReaction( 'liked' );
-	};
-
-	const onDislike = () => {
-		if ( reaction === 'disliked' ) {
-			setReaction( null );
-			return;
-		}
-		setReaction( 'disliked' );
-	};
 
 	return (
 		<div
@@ -39,33 +23,17 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 				isUser ? 'odyssus-chatbox-message-user' : 'odyssus-chatbox-message-wapuu'
 			}` }
 		>
-			<AsyncLoad require="react-markdown" placeholder={ null }>
+			<AsyncLoad
+				require="react-markdown"
+				placeholder={ null }
+				transformLinkUri={ uriTransformer }
+				components={ {
+					a: CustomALink,
+				} }
+			>
 				{ message.content }
 			</AsyncLoad>
-			{ ! isUser && message.type !== 'error' && (
-				<div className="odysseus-chatbox-message-actions">
-					<button
-						aria-label="Like this message"
-						className={ classnames( 'odysseus-chatbox-message-action', 'dashicons', {
-							'dashicons-thumbs-up': true,
-							'odysseus-chatbox-message-active-like': reaction === 'liked',
-							'odysseus-chatbox-message-hide': reaction === 'disliked',
-						} ) }
-						disabled={ reaction === 'disliked' }
-						onClick={ onLike }
-					></button>
-					<button
-						aria-label="Dislike this message"
-						className={ classnames( 'odysseus-chatbox-message-action', 'dashicons', {
-							'dashicons-thumbs-down': true,
-							'odysseus-chatbox-message-active-dislike': reaction === 'disliked',
-							'odysseus-chatbox-message-hide': reaction === 'liked',
-						} ) }
-						disabled={ reaction === 'liked' }
-						onClick={ onDislike }
-					></button>
-				</div>
-			) }
+			<LikeDislikeButtons isUser={ isUser } messageType={ message.type } />
 		</div>
 	);
 };

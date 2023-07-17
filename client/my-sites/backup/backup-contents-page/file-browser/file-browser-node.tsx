@@ -52,7 +52,8 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			setFetchContentsOnMount( true );
 		}
 
-		if ( ! item.hasChildren && item.type !== 'wordpress' ) {
+		// If the node doesn't have children, let's open the file info card
+		if ( ! item.hasChildren ) {
 			if ( ! isOpen ) {
 				setActiveNodePath( path );
 			} else {
@@ -79,12 +80,16 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			let childIsAlternate = isAlternate;
 
 			return backupFiles.map( ( childItem ) => {
-				childIsAlternate = ! childIsAlternate;
-
 				// Let's hide archives that don't have an extension version
-				if ( childItem.type === 'archive' && ! item.extensionVersion ) {
+				// and changed extensions item node
+				if (
+					( childItem.type === 'archive' && ! item.extensionVersion ) ||
+					childItem.extensionType === 'changed'
+				) {
 					return null;
 				}
+
+				childIsAlternate = ! childIsAlternate;
 
 				return (
 					<FileBrowserNode
@@ -119,7 +124,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	} );
 	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
 
-	const nodeClassName = classNames( 'file-browser-node', {
+	const nodeClassName = classNames( 'file-browser-node', item.type, {
 		'is-root': isRoot,
 	} );
 

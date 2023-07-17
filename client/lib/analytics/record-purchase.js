@@ -1,6 +1,9 @@
 import { recordOrder } from 'calypso/lib/analytics/ad-tracking';
 import { costToUSD } from 'calypso/lib/analytics/utils';
+import { hasTransferProduct } from '../cart-values/cart-items';
+import { debug, TRACKING_IDS } from './ad-tracking/constants';
 import { gaRecordEvent } from './ga';
+import { mayWeTrackByTracker } from './tracker-buckets';
 
 export function recordPurchase( { cart, orderId, sitePlanSlug } ) {
 	if ( cart.total_cost >= 0.01 ) {
@@ -16,5 +19,18 @@ export function recordPurchase( { cart, orderId, sitePlanSlug } ) {
 
 		// Marketing
 		recordOrder( cart, orderId, sitePlanSlug );
+	}
+
+	if ( hasTransferProduct( cart ) && mayWeTrackByTracker( 'googleAds' ) ) {
+		const params = [
+			'event',
+			'conversion',
+			{
+				send_to: TRACKING_IDS.wpcomGoogleAdsGtagDomainTransferPurchase,
+				transaction_id: orderId,
+			},
+		];
+		debug( 'recordOrderInGoogleAds: WPCom Domain Transfer Purchase', params );
+		window.gtag( ...params );
 	}
 }

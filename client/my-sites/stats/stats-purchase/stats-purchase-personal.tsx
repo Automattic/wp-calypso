@@ -5,6 +5,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME, PRICING_CONFIG } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
@@ -12,6 +13,7 @@ interface PersonalPurchaseProps {
 	setSubscriptionValue: ( value: number ) => number;
 	handlePlanSwap: ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
 	currencyCode: string;
+	siteSlug: string;
 }
 
 const PersonalPurchase = ( {
@@ -19,6 +21,7 @@ const PersonalPurchase = ( {
 	setSubscriptionValue,
 	handlePlanSwap,
 	currencyCode,
+	siteSlug,
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -161,11 +164,15 @@ const PersonalPurchase = ( {
 				<Button
 					variant="primary"
 					disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
+					onClick={ () => gotoCheckoutPage( 'free', siteSlug ) }
 				>
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</Button>
 			) : (
-				<Button variant="primary">
+				<Button
+					variant="primary"
+					onClick={ () => gotoCheckoutPage( 'pwyw', siteSlug, subscriptionValue ) }
+				>
 					{ translate( 'Get Jetpack Stats for %(value)s per month', {
 						args: {
 							value: formatCurrency( subscriptionValue, currencyCode ),

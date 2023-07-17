@@ -174,7 +174,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		selectedStyleVariation,
 		selectedColorVariation,
 		selectedFontVariation,
-		hasSelectedGlobalStyles,
+		numOfSelectedGlobalStyles,
 		globalStyles,
 		setSelectedDesign,
 		previewDesign,
@@ -352,7 +352,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function unlockPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && hasSelectedGlobalStyles ) {
+		if ( selectedDesign && numOfSelectedGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_show',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -363,7 +363,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function closePremiumGlobalStylesModal() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && hasSelectedGlobalStyles ) {
+		if ( selectedDesign && numOfSelectedGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_close_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -374,7 +374,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function handleCheckoutForPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && hasSelectedGlobalStyles && siteSlugOrId ) {
+		if ( selectedDesign && numOfSelectedGlobalStyles && siteSlugOrId ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_checkout_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -395,7 +395,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function tryPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && hasSelectedGlobalStyles ) {
+		if ( selectedDesign && numOfSelectedGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_try_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -524,7 +524,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 
 		const selectStyle = () => {
-			if ( shouldLimitGlobalStyles && hasSelectedGlobalStyles ) {
+			if ( shouldLimitGlobalStyles && numOfSelectedGlobalStyles ) {
 				unlockPremiumGlobalStyles();
 			} else {
 				pickDesign();
@@ -579,6 +579,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					closeModal={ closePremiumGlobalStylesModal }
 					isOpen={ showPremiumGlobalStylesModal }
 					tryStyle={ tryPremiumGlobalStyles }
+					numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
 				/>
 				<AsyncLoad
 					require="@automattic/design-preview"

@@ -1,3 +1,4 @@
+import { Railcar } from '@automattic/calypso-analytics';
 import { Reader } from '@automattic/data-stores';
 
 export type WpcomFeedItem = {
@@ -11,6 +12,7 @@ export const isWpcomFeedItem = ( item: Reader.FeedItem ): item is WpcomFeedItem 
 export type NonWpcomFeedItem = {
 	subscribe_URL: string;
 	feed_ID?: string;
+	railcar?: Railcar | undefined;
 	meta: {
 		links?: {
 			feed?: string;

@@ -49,7 +49,7 @@ const customerName = 'Human Person';
 const cardNumber = '4242424242424242';
 const cardExpiry = '05/99';
 const cardCvv = '123';
-const activePayButtonText = 'Pay 0 now';
+const activePayButtonText = 'Complete Checkout';
 function getPaymentMethod( store: CardStoreType, additionalArgs = {} ) {
 	return createCreditCardMethod( {
 		store,

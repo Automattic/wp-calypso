@@ -118,7 +118,7 @@ describe( 'Checkout payment methods list', () => {
 			/>
 		);
 		await waitFor( () => {
-			expect( screen.getByText( 'Assign a Payment Method Later' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Assign a payment method later' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -223,7 +223,7 @@ describe( 'Checkout payment methods list', () => {
 			/>
 		);
 		await waitFor( () => {
-			expect( screen.getByText( 'Assign a Payment Method Later' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Assign a payment method later' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -250,7 +250,7 @@ describe( 'Checkout payment methods list', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( 'Free Purchase' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Assign a Payment Method Later' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Assign a payment method later' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -299,7 +299,7 @@ describe( 'Checkout payment methods list', () => {
 			/>
 		);
 		await waitFor( () => {
-			expect( screen.getByText( 'Assign a Payment Method Later' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Assign a payment method later' ) ).toBeInTheDocument();
 		} );
 	} );
 

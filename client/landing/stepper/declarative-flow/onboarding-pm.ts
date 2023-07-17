@@ -96,19 +96,20 @@ const onboarding: Flow = {
 						siteSlug: providedDependencies.siteSlug,
 					} );
 
-					persistSignupDestination( destination );
+					/** This is the final destination we want the flow to reach once any intermediary upsells are completed */
+					const returnUrl = addQueryArgs( destination, { notice: 'purchase-success' } );
+					persistSignupDestination( returnUrl );
+
 					setSignupCompleteSlug( providedDependencies.siteSlug );
 					setSignupCompleteFlowName( flowName );
 
 					if ( providedDependencies.goToCheckout ) {
-						const returnUrl = addQueryArgs( destination, { notice: 'purchase-success' } );
-
 						window.location.assign(
 							addQueryArgs(
 								`/checkout/${ encodeURIComponent(
 									( providedDependencies.siteSlug as string ) ?? ''
 								) }`,
-								{ redirect_to: returnUrl, signup: 1 }
+								{ signup: 1 }
 							)
 						);
 						return;
