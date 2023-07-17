@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useMemo } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
@@ -35,13 +34,7 @@ export default function PendingPostRow( {
 				</span>
 				<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
 					<span className="title-box" role="cell">
-						<SiteIcon
-							iconUrl={ site_icon }
-							/* eslint-disable wpcalypso/jsx-gridicon-size */
-							defaultIcon={ <Gridicon key="globe-icon" icon="globe" size={ 40 } /> }
-							size={ 40 }
-							alt={ site_title }
-						/>
+						<SiteIcon iconUrl={ site_icon } size={ 40 } alt={ site_title } />
 						<span className="title-column">
 							<span className="name">{ site_title }</span>
 							<span className="url">{ hostname }</span>
