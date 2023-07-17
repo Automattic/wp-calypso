@@ -22,7 +22,6 @@ import {
 	isStarter,
 	isThemePurchase,
 	isTitanMail,
-	isWpComPlan,
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
 import { Card, ConfettiAnimation } from '@automattic/components';
@@ -93,6 +92,7 @@ import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
+import isRedesignV2 from './redesign-v2/is-redesign-v2';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import Footer from './redesign-v2/sections/Footer';
 import SiteRedirectDetails from './site-redirect-details';
@@ -176,14 +176,14 @@ type FindPredicate = (
 	}
 ) => boolean;
 
-function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPurchase[] {
+export function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPurchase[] {
 	return [
 		...( props?.receipt?.data?.purchases ?? [] ),
 		...( props?.gsuiteReceipt?.data?.purchases ?? [] ),
 	];
 }
 
-function getFailedPurchases( props: CheckoutThankYouCombinedProps ) {
+export function getFailedPurchases( props: CheckoutThankYouCombinedProps ) {
 	return ( props.receipt.data && props.receipt.data.failedPurchases ) || [];
 }
 
@@ -281,27 +281,6 @@ export class CheckoutThankYou extends Component<
 			page( `/checkout/thank-you/${ selectedSiteSlug }${ receiptPath }` );
 		}
 	}
-
-	/**
-	 * Determines whether the current checkout flow is for a redesign V2 purchase.
-	 * Used for gradually rolling out the redesign.
-	 *
-	 * @returns {boolean} True if the checkout flow is for a redesign V2 purchase, false otherwise.
-	 */
-	isRedesignV2 = () => {
-		// Fallback to old design when there is a failed purchase.
-		const failedPurchases = getFailedPurchases( this.props );
-		if ( failedPurchases.length > 0 ) {
-			return false;
-		}
-
-		// ThankYou page for only purchasing a plan.
-		const purchases = getPurchases( this.props );
-		if ( purchases.length === 1 ) {
-			return isWpComPlan( purchases[ 0 ].productSlug );
-		}
-		return false;
-	};
 
 	hasPlanOrDomainProduct = () => {
 		return getPurchases( this.props ).some(
@@ -494,7 +473,7 @@ export class CheckoutThankYou extends Component<
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let showHappinessSupport = ! this.isRedesignV2() && ! this.props.isSimplified;
+		let showHappinessSupport = ! isRedesignV2( this.props ) && ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
 		let wasDomainProduct = false;
@@ -647,12 +626,14 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main
 				className={ classNames( 'checkout-thank-you', {
-					'is-redesign-v2': this.isRedesignV2(),
+					'is-redesign-v2': isRedesignV2( this.props ),
 				} ) }
 			>
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				{ this.isDataLoaded() && this.isRedesignV2() && <ConfettiAnimation delay={ 1000 } /> }
-				{ this.isRedesignV2() && this.props.selectedSite?.ID && (
+				{ this.isDataLoaded() && isRedesignV2( this.props ) && (
+					<ConfettiAnimation delay={ 1000 } />
+				) }
+				{ isRedesignV2( this.props ) && this.props.selectedSite?.ID && (
 					<>
 						<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
 						<MasterbarStyled
@@ -838,9 +819,9 @@ export class CheckoutThankYou extends Component<
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
 					purchases={ purchases }
-					isRedesignV2={ this.isRedesignV2() }
+					isRedesignV2={ isRedesignV2( this.props ) }
 				>
-					{ ! this.isRedesignV2() && ! isSimplified && primaryPurchase && (
+					{ ! isRedesignV2( this.props ) && ! isSimplified && primaryPurchase && (
 						<CheckoutThankYouFeaturesHeader
 							isDataLoaded={ this.isDataLoaded() }
 							isGenericReceipt={ this.isGenericReceipt() }
@@ -851,7 +832,7 @@ export class CheckoutThankYou extends Component<
 
 					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
-							{ this.isRedesignV2() ? (
+							{ isRedesignV2( this.props ) ? (
 								<Footer />
 							) : (
 								<PurchaseDetailsWrapper
