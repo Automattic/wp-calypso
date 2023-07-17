@@ -32,7 +32,7 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps
 	};
 
 	if ( noticeDismissed || ! showNotice ) {
-		return null;
+		// return null;
 	}
 
 	return (
