@@ -5,6 +5,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME, PRICING_CONFIG } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
@@ -12,6 +13,7 @@ interface PersonalPurchaseProps {
 	setSubscriptionValue: ( value: number ) => number;
 	handlePlanSwap: ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
 	currencyCode: string;
+	siteSlug: string;
 }
 
 const PersonalPurchase = ( {
@@ -19,6 +21,7 @@ const PersonalPurchase = ( {
 	setSubscriptionValue,
 	handlePlanSwap,
 	currencyCode,
+	siteSlug,
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -38,26 +41,29 @@ const PersonalPurchase = ( {
 
 		return (
 			<div { ...props }>
-				{ formatCurrency( state?.valueNow || subscriptionValue, currencyCode ) }/
-				{ translate( 'month' ) } { subscriptionValue > 0 && emoji }
+				{ translate( '%(value)s/month', {
+					args: {
+						value: formatCurrency( state?.valueNow || subscriptionValue, currencyCode ),
+					},
+					comment: 'Price per month selected by the user via the pricing slider',
+				} ) }
+				{ subscriptionValue > 0 && emoji }
 			</div>
 		);
 	} ) as RenderThumbFunction;
 
 	return (
 		<div>
-			{ subscriptionValue < 10 && (
-				<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
-					{ translate(
-						'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial plan{{/Button}}.',
-						{
-							components: {
-								Button: <Button variant="link" href="#" onClick={ ( e ) => handlePlanSwap( e ) } />,
-							},
-						}
-					) }
-				</div>
-			) }
+			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
+				{ translate(
+					'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial plan{{/Button}}.',
+					{
+						components: {
+							Button: <Button variant="link" href="#" onClick={ ( e ) => handlePlanSwap( e ) } />,
+						},
+					}
+				) }
+			</div>
 			<PricingSlider
 				className={ `${ COMPONENT_CLASS_NAME }__slider` }
 				value={ subscriptionValue }
@@ -158,11 +164,15 @@ const PersonalPurchase = ( {
 				<Button
 					variant="primary"
 					disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
+					onClick={ () => gotoCheckoutPage( 'free', siteSlug ) }
 				>
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</Button>
 			) : (
-				<Button variant="primary">
+				<Button
+					variant="primary"
+					onClick={ () => gotoCheckoutPage( 'pwyw', siteSlug, subscriptionValue ) }
+				>
 					{ translate( 'Get Jetpack Stats for %(value)s per month', {
 						args: {
 							value: formatCurrency( subscriptionValue, currencyCode ),

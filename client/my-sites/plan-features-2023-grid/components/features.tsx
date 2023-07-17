@@ -21,16 +21,18 @@ const SubdomainSuggestion = styled.div`
 	}
 `;
 
-const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { domainName } ) => {
+const FreePlanCustomDomainFeature: React.FC< { paidDomainName: string } > = ( {
+	paidDomainName,
+} ) => {
 	const {
 		data: wordPressSubdomainSuggestions,
 		isInitialLoading,
 		isError,
-	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
+	} = DomainSuggestions.useGetWordPressSubdomain( paidDomainName );
 
 	return (
 		<SubdomainSuggestion>
-			<div className="is-domain-name">{ domainName }</div>
+			<div className="is-domain-name">{ paidDomainName }</div>
 			{ isInitialLoading && <LoadingPlaceHolder /> }
 			{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
 		</SubdomainSuggestion>
@@ -40,10 +42,10 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planName: string;
-	domainName?: string;
+	paidDomainName?: string;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
-} > = ( { features, planName, domainName, hideUnavailableFeatures, selectedFeature } ) => {
+} > = ( { features, planName, paidDomainName, hideUnavailableFeatures, selectedFeature } ) => {
 	const translate = useTranslate();
 	return (
 		<>
@@ -57,7 +59,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const isFreePlanAndCustomDomainFeature =
 					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && isFreePlan( planName );
 
-				if ( isFreePlanAndCustomDomainFeature && ! domainName ) {
+				if ( isFreePlanAndCustomDomainFeature && ! paidDomainName ) {
 					return null;
 				}
 
@@ -86,18 +88,18 @@ const PlanFeatures2023GridFeatures: React.FC< {
 									{ isFreePlanAndCustomDomainFeature ? (
 										<Plans2023Tooltip
 											text={ translate( '%s is not included', {
-												args: [ domainName as string ],
+												args: [ paidDomainName as string ],
 												comment: '%s is a domain name.',
 											} ) }
 										>
 											<FreePlanCustomDomainFeature
 												key={ key }
-												domainName={ domainName as string }
+												paidDomainName={ paidDomainName as string }
 											/>
 										</Plans2023Tooltip>
 									) : (
 										<Plans2023Tooltip text={ currentFeature.getDescription?.() }>
-											{ currentFeature.getTitle( domainName ) }
+											{ currentFeature.getTitle( paidDomainName ) }
 										</Plans2023Tooltip>
 									) }
 								</span>

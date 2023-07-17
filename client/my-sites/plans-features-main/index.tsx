@@ -63,7 +63,7 @@ export interface PlansFeaturesMainProps {
 	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
-	domainName?: string;
+	paidDomainName?: string;
 	flowName?: string | null;
 	replacePaidDomainWithFreeDomain?: ( freeDomainSuggestion: DomainSuggestion ) => void;
 	intervalType?: IntervalType;
@@ -117,7 +117,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	const {
 		planRecords,
 		visiblePlans,
-		domainName,
+		paidDomainName,
 		isInSignup,
 		isLaunchPage,
 		flowName,
@@ -161,7 +161,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	}
 
 	const asyncProps: PlanFeatures2023GridProps = {
-		domainName,
+		paidDomainName,
 		isInSignup,
 		isLaunchPage,
 		onUpgradeClick,
@@ -202,7 +202,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 };
 
 const PlansFeaturesMain = ( {
-	domainName,
+	paidDomainName,
 	flowName,
 	replacePaidDomainWithFreeDomain,
 	onUpgradeClick,
@@ -283,7 +283,7 @@ const PlansFeaturesMain = ( {
 		// - only applicable to main onboarding flow (default `/start`)
 		if (
 			( 'onboarding' === flowName || isOnboardingPMFlow( flowName ) ) &&
-			domainName &&
+			paidDomainName &&
 			! cartItemForPlan
 		) {
 			toggleIsFreePlanPaidDomainDialogOpen();
@@ -380,9 +380,9 @@ const PlansFeaturesMain = ( {
 			<QueryPlans />
 			<QuerySites siteId={ siteId } />
 			<QuerySitePlans siteId={ siteId } />
-			{ domainName && isFreePlanPaidDomainDialogOpen && (
+			{ paidDomainName && isFreePlanPaidDomainDialogOpen && (
 				<FreePlanPaidDomainDialog
-					domainName={ domainName }
+					paidDomainName={ paidDomainName }
 					suggestedPlanSlug={ PLAN_PERSONAL }
 					onClose={ toggleIsFreePlanPaidDomainDialogOpen }
 					onFreePlanSelected={ ( freeDomainSuggestion ) => {
@@ -416,7 +416,7 @@ const PlansFeaturesMain = ( {
 					<OnboardingPricingGrid2023
 						planRecords={ gridPlanRecords }
 						visiblePlans={ Object.keys( visiblePlans ) as PlanSlug[] }
-						domainName={ domainName }
+						paidDomainName={ paidDomainName }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
 						flowName={ flowName }

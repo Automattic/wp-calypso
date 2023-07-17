@@ -1,8 +1,10 @@
+import { useLocale } from '@automattic/i18n-utils';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
@@ -35,6 +37,9 @@ const useMarkFollowsAsStaleOnUnmount = () => {
 
 const SiteSubscriptionsManager = () => {
 	const translate = useTranslate();
+	const locale = useLocale();
+	const { hasTranslation } = useI18n();
+
 	// Mark follows as stale on unmount to ensure that the reader
 	// redux store is in a consistent state when the user navigates.
 	// This is necessary because the subscription manager does not
@@ -49,17 +54,23 @@ const SiteSubscriptionsManager = () => {
 				<HStack className="site-subscriptions-manager__header-h-stack">
 					<FormattedHeader
 						headerText={ translate( 'Manage subscribed sites' ) }
-						subHeaderText={ translate( 'Manage your newsletter and blog subscriptions.' ) }
+						subHeaderText={
+							locale.startsWith( 'en' ) ||
+							hasTranslation( 'Manage your site, RSS, and newsletter subscriptions.' )
+								? translate( 'Manage your site, RSS, and newsletter subscriptions.' )
+								: translate( 'Manage your newsletter and blog subscriptions.' )
+						}
 						align="left"
 					/>
 					<Spacer />
 					<AddSitesButton />
+
 					<SubscriptionsEllipsisMenu
 						toggleTitle={ translate( 'More' ) }
 						popoverClassName="site-subscriptions-manager__import-export-popover"
 						verticalToggle
 					>
-						<VStack>
+						<VStack spacing={ 1 }>
 							<ReaderImportButton icon={ uploadCloud } iconSize={ 20 } />
 							<ReaderExportButton
 								icon={ downloadCloud }

@@ -15,6 +15,17 @@
 		pointer-events: none;
 	}
 
+	.components-button:focus:not(:disabled) {
+		border: 0;
+		outline: none;
+		box-shadow: unset;
+	}
+
+	.components-button:active:not(:disabled) {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+		outline: 3px solid transparent;
+	}
+
 	&.domains {
 		padding: 0;
 		width: 754px;
@@ -37,9 +48,19 @@
 			border: none;
 			box-shadow: none;
 		}
+		.formatted-header__subtitle {
+			span {
+				display: block;
+			}
+		}
+
+		@media (min-width: $break-medium ) {
+			.formatted-header .formatted-header__subtitle {
+				text-align: center;
+			}
+		}
 
 		@media (max-width: $break-medium ) {
-
 			.step-container__header {
 				width: 100%;
 				margin-top: 48px;
@@ -48,10 +69,6 @@
 					font-size: 2rem;
 					text-align: left;
 				}
-			}
-
-			header {
-				text-align: center;
 			}
 
 			gap: 0;
@@ -154,6 +171,7 @@
 			margin-left: 5px;
 			padding: 2px;
 		}
+
 		.info-popover:focus {
 			outline: 1px solid var(--studio-blue-50);
 		}
@@ -166,6 +184,10 @@
 			align-items: center;
 			font-weight: 500;
 			line-height: 24px;
+
+			@media (max-width: $break-medium ) {
+				align-items: flex-start;
+			}
 
 			&.raw-price {
 				color: var(--studio-gray-40);
@@ -213,10 +235,15 @@
 			&.is-first-row {
 				display: inline-block;
 				margin-bottom: 16px;
+				white-space: nowrap;
 			}
 
 			@media (max-width: $break-medium ) {
 				display: block;
+
+				&.is-first-row {
+					margin-bottom: 8px;
+				}
 			}
 		}
 
@@ -277,6 +304,10 @@
 		gap: 16px;
 		flex: 1;
 
+		@media (min-width: $break-medium ) {
+			margin-left: -25px;
+		}
+
 		.domains__domain-refresh {
 			button {
 				cursor: pointer;
@@ -295,12 +326,6 @@
 
 		.domains__domain-delete {
 			button {
-				visibility: hidden;
-
-				&.has-delete-button {
-					visibility: visible;
-				}
-
 				&:hover {
 					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
 				}
@@ -340,12 +365,12 @@
 			margin-bottom: 42px;
 
 			div:nth-of-type(1) {
-				flex: 8;
+				flex: 9;
 			}
 
 			div:nth-of-type(2) {
 				flex: 3;
-				margin-left: -12px;
+				margin-left: 4px;
 
 				@media (max-width: $break-medium ) {
 					text-align: right;
@@ -390,10 +415,11 @@
 		margin-bottom: 12px;
 
 		@media (max-width: $break-medium ) {
-			&not:last-of-type {
-				border-bottom: solid 1px #dcdcde;
-				padding-bottom: 32px;
-				margin-bottom: 32px;
+			margin-bottom: 32px;
+
+			&:not(:first-of-type) {
+				border-top: solid 1px var(--studio-gray-5);
+				padding-top: 32px;
 			}
 		}
 

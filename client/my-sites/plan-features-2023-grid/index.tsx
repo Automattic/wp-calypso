@@ -100,7 +100,7 @@ export type PlanFeatures2023GridProps = {
 	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	flowName?: string | null;
-	domainName?: string;
+	paidDomainName?: string;
 	placeholder?: string;
 	intervalType?: string;
 	currentSitePlanSlug?: string | null;
@@ -456,11 +456,11 @@ export class PlanFeatures2023Grid extends Component<
 		if ( isMonthlyPlan || isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 			return null;
 		}
-		const { domainName } = this.props;
+		const { paidDomainName } = this.props;
 
-		const displayText = domainName
-			? translate( '%(domainName)s is included', {
-					args: { domainName },
+		const displayText = paidDomainName
+			? translate( '%(paidDomainName)s is included', {
+					args: { paidDomainName },
 			  } )
 			: translate( 'Free domain for one year' );
 
@@ -784,7 +784,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { domainName, translate, hideUnavailableFeatures, selectedFeature } = this.props;
+		const { paidDomainName, translate, hideUnavailableFeatures, selectedFeature } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
 				! isWpcomEnterpriseGridPlan( properties.planName ) &&
@@ -804,7 +804,7 @@ export class PlanFeatures2023Grid extends Component<
 						<PlanFeatures2023GridFeatures
 							features={ features }
 							planName={ planName }
-							domainName={ domainName }
+							paidDomainName={ paidDomainName }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
 						/>
@@ -822,7 +822,7 @@ export class PlanFeatures2023Grid extends Component<
 						<PlanFeatures2023GridFeatures
 							features={ jpFeatures }
 							planName={ planName }
-							domainName={ domainName }
+							paidDomainName={ paidDomainName }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 						/>
 					</Container>
