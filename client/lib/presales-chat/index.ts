@@ -40,7 +40,6 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 
 	const group = getGroupName( keyType );
 
-	//some types of chat should always show the widget, even if the chat is not available
 	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
 		useMessagingAvailability( group, isEligibleForPresalesChat && ! skipAvailabilityCheck );
 
