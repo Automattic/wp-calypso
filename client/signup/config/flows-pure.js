@@ -24,7 +24,7 @@ export function generateFlows( {
 			steps: [ 'user-hosting' ],
 			destination: getHostingFlowDestination,
 			description: 'Create an account and redirect the user to the hosted site flow forking step.',
-			lastModified: '2023-05-19',
+			lastModified: '2023-07-18',
 			showRecaptcha: true,
 		},
 		{
