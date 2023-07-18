@@ -29,7 +29,6 @@ import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import OdysseusAssistant from 'calypso/odysseus';
 import { OdysseusAssistantProvider } from 'calypso/odysseus/context';
 import { isOffline } from 'calypso/state/application/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -321,7 +320,6 @@ class Layout extends Component {
 						{ this.shouldShowOdysseusAssistant() ? (
 							<OdysseusAssistantProvider sectionName={ this.props.sectionName }>
 								{ this.props.primary }
-								<OdysseusAssistant />
 							</OdysseusAssistantProvider>
 						) : (
 							this.props.primary

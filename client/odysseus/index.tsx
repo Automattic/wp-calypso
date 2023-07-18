@@ -17,7 +17,6 @@ const OdysseusAssistant = () => {
 	const {
 		lastNudge,
 		chat,
-		isLoadingChat,
 		addMessage,
 		setMessages,
 		isLoading,
@@ -32,20 +31,6 @@ const OdysseusAssistant = () => {
 	const { data: chatData } = useOdysseusGetChatPollQuery( chat.chat_id ?? null );
 
 	const dispatch = useDispatch();
-
-	useEffect( () => {
-		if ( isLoadingChat ) {
-			setMessages( [
-				{ content: 'Remembering any previous conversation...', role: 'bot', type: 'message' },
-			] );
-		} else if ( ! chat ) {
-			setMessages( [
-				{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot', type: 'message' },
-			] );
-		} else if ( chat ) {
-			setMessages( chat.messages );
-		}
-	}, [ chat, isLoadingChat, setMessages, chat.messages ] );
 
 	useEffect( () => {
 		if ( chatData ) {
@@ -86,7 +71,7 @@ const OdysseusAssistant = () => {
 				clearTimeout( timeoutId );
 			};
 		}
-	}, [ lastNudge, setMessages ] );
+	}, [ lastNudge, setIsNudging, setMessages ] );
 
 	const handleMessageChange = ( text: string ) => {
 		setInput( text );

@@ -1,7 +1,9 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { Chat, Context, Message, Nudge } from '../types';
+import OdysseusAssistant from '..';
+import { getOdysseusInitialPrompt } from './initial-prompts';
+import type { Chat, Context, Message, Nudge, OdysseusAllowedSectionNames } from '../types';
 import type { ReactNode } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -67,7 +69,7 @@ const OdysseusAssistantProvider = ( {
 	sectionName,
 	children,
 }: {
-	sectionName: string;
+	sectionName: OdysseusAllowedSectionNames;
 	children: ReactNode;
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
@@ -76,12 +78,22 @@ const OdysseusAssistantProvider = ( {
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ messages, setMessages ] = useState< Message[] >( [
-		{ content: 'Hello, I am Wapuu! Your personal assistant.', role: 'bot', type: 'message' },
+		{ content: getOdysseusInitialPrompt( sectionName ), role: 'bot', type: 'message' },
 	] );
 	const [ chat, setChat ] = useState< Chat >( {
 		context: { section_name: sectionName, site_id: siteId },
 		messages,
 	} );
+
+	useEffect( () => {
+		setChat( {
+			chat_id: null,
+			context: { section_name: sectionName, site_id: siteId },
+			messages: [
+				{ content: getOdysseusInitialPrompt( sectionName ), role: 'bot', type: 'message' },
+			],
+		} );
+	}, [ sectionName, siteId ] );
 
 	const addMessage = ( message: Message ) => {
 		setMessages( ( prevMessages ) => {
@@ -115,6 +127,7 @@ const OdysseusAssistantProvider = ( {
 			} }
 		>
 			{ children }
+			<OdysseusAssistant />
 		</OdysseusAssistantContext.Provider>
 	);
 };
