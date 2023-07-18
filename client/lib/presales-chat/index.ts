@@ -39,16 +39,13 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 	const isEligibleForPresalesChat = enabled && isEnglishLocale;
 
 	const group = getGroupName( keyType );
-	const { data: chatAvailability, isInitialLoading } = useMessagingAvailability(
-		group,
-		isEligibleForPresalesChat
-	);
 
 	//some types of chat should always show the widget, even if the chat is not available
-	const isPresalesChatAvailable = skipAvailabilityCheck
-		? true
-		: Boolean( chatAvailability?.is_available );
-	const isLoadingAvailability = skipAvailabilityCheck ? false : isInitialLoading;
+	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
+		useMessagingAvailability( group, isEligibleForPresalesChat && ! skipAvailabilityCheck );
+
+	const isPresalesChatAvailable =
+		skipAvailabilityCheck || Boolean( chatAvailability?.is_available );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const zendeskKeyName = getConfigName( keyType );
