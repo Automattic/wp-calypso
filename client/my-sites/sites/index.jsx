@@ -148,6 +148,9 @@ class Sites extends Component {
 			case 'site-logs':
 				path = translate( 'Site Logs' );
 				break;
+			case 'site-metrics':
+				path = translate( 'Site Metrics' );
+				break;
 		}
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
