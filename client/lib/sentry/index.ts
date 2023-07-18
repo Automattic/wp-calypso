@@ -132,15 +132,21 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 		}
 		state = { state: 'loading' };
 
-		// Enable Sentry only for 10% of requests or always in calypso.live for testing.
-		// Always disable if catch-js-errors is not available in the environment.
-		if ( ! config.isEnabled( 'catch-js-errors' ) || Math.floor( Math.random() * 10 ) !== 1 ) {
+		// Enable Sentry only for 10% of requests. Disable if catch-js-errors is not available in the environment.
+		// When always-enable-sentry is available, bypass the other checks.
+		if (
+			! config.isEnabled( 'always-enable-sentry' ) &&
+			( ! config.isEnabled( 'catch-js-errors' ) || Math.floor( Math.random() * 10 ) !== 1 )
+		) {
 			// Set state to disabled to stop maintaining a queue of sentry method calls.
 			state = { state: 'disabled' };
 			// Note that the `clearQueues()` call in the finally block is still
 			// executed after returning here, so cleanup does happen correctly.
 			return;
 		}
+
+		// eslint-disable-next-line no-console
+		console.info( 'Initializing error reporting...' );
 
 		const errorHandler = ( errorEvent: ErrorEvent ): void =>
 			void errorQueue.push( [
