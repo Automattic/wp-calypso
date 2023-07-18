@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { NavigatorScreens, useNavigatorButtons } from '@automattic/onboarding';
-import { useState } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
 import type { Category } from '@automattic/design-picker/src/types';
 import type { NavigatorScreenObject } from '@automattic/onboarding';
@@ -55,6 +56,16 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
 	const navigatorButtons = useNavigatorButtons( screens );
 
+	const decodedDescription = useMemo(
+		() => ( description ? decodeEntities( description ) : undefined ),
+		[ description ]
+	);
+
+	const decodedShortDescription = useMemo(
+		() => ( shortDescription ? decodeEntities( shortDescription ) : undefined ),
+		[ shortDescription ]
+	);
+
 	return (
 		<div className="design-preview__sidebar">
 			<NavigatorScreens screens={ screens } onNavigatorPathChange={ onNavigatorPathChange }>
@@ -80,12 +91,12 @@ const Sidebar: React.FC< SidebarProps > = ( {
 								) ) }
 							</div>
 						) }
-						{ ( description || shortDescription ) && (
+						{ ( decodedDescription || decodedShortDescription ) && (
 							<div className="design-preview__sidebar-description">
 								<p>
 									{ isShowDescriptionToggle ? (
 										<>
-											{ isShowFullDescription ? description : shortDescription }
+											{ isShowFullDescription ? decodedDescription : decodedShortDescription }
 											<Button
 												borderless
 												onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
@@ -96,7 +107,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 											</Button>
 										</>
 									) : (
-										description ?? shortDescription
+										decodedDescription ?? decodedShortDescription
 									) }
 								</p>
 							</div>
