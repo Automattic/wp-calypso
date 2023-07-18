@@ -873,7 +873,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_50GB_STORAGE ]: {
 		getSlug: () => FEATURE_50GB_STORAGE,
 		getTitle: () => i18n.translate( '50 GB storage space' ),
-
+		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
