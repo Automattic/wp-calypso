@@ -7,6 +7,7 @@ import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -16,7 +17,6 @@ import { requestAdminMenu } from '../../state/admin-menu/actions';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
-import useDomainsViewStatus from './use-domains-view-status';
 
 const useSiteMenuItems = () => {
 	const dispatch = useDispatch();
@@ -26,7 +26,8 @@ const useSiteMenuItems = () => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const locale = useLocale();
-	const isAllDomainsView = useDomainsViewStatus();
+	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
+	const isAllDomainsView = '/domains/manage' === currentRoute;
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
