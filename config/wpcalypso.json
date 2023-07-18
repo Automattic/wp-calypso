@@ -23,7 +23,7 @@
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
-		"catch-js-errors": true,
+		"catch-js-errors": false,
 		"checkout/google-pay": true,
 		"checkout/vat-form": true,
 		"cloudflare": true,
