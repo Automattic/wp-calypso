@@ -316,11 +316,12 @@ const redirectToUseYourDomainIfVipSite = () => {
 };
 
 const jetpackNoDomainsWarning = ( context, next ) => {
+	const isAllDomainsView = context.path === '/domains/manage';
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId );
 
-	if ( siteId && isJetpack ) {
+	if ( siteId && isJetpack && ! isAllDomainsView ) {
 		context.primary = (
 			<Main>
 				<PageViewTracker
