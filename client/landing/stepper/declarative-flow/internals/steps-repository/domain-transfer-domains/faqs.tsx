@@ -37,11 +37,11 @@ const DomainTransferFAQ: FC = () => {
 			if ( isExpanded ) {
 				addHash();
 				// FAQ opened
-				dispatch( recordTracksEvent( 'calypso_plans_faq_open', tracksArgs ) );
+				dispatch( recordTracksEvent( 'calypso_domain_transfer_faq_open', tracksArgs ) );
 			} else {
 				removeHash();
 				// FAQ closed
-				dispatch( recordTracksEvent( 'calypso_plans_faq_closed', tracksArgs ) );
+				dispatch( recordTracksEvent( 'calypso_domain_transfer_faq_closed', tracksArgs ) );
 			}
 		},
 		[ siteId, dispatch ]
