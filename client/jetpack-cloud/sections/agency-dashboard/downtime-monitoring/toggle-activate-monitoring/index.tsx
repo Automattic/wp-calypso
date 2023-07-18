@@ -161,6 +161,7 @@ export default function ToggleActivateMonitoring( {
 			context={ statusContentRef.current }
 			isVisible={ showTooltip }
 			position="bottom left"
+			onClose={ handleHideTooltip }
 		/>
 	) : (
 		<>
@@ -182,7 +183,9 @@ export default function ToggleActivateMonitoring( {
 		<>
 			<span
 				className="toggle-activate-monitoring__toggle-button"
-				onMouseDown={ handleHideTooltip }
+				// We don't want to hide the tooltip when the user clicks on the
+				// upgrade popover since it has buttons that user can interact with.
+				onMouseDown={ shouldDisplayUpgradePopover ? undefined : handleHideTooltip }
 				onMouseEnter={ handleShowTooltip }
 				onMouseLeave={ handleHideTooltip }
 				ref={ statusContentRef }

@@ -26,8 +26,15 @@
 
 	li {
 		background: url(calypso/assets/images/jetpack/jetpack-green-checkmark.svg) no-repeat 0 2px;
-		padding-left: 24px;
+		padding-inline-start: 24px;
 		background-size: 16px;
 		background-position-y: 2px;
+		margin-block: 4px;
 	}
+}
+
+.upgrade-popover__close-button {
+	position: absolute;
+	top: 12px;
+	right: 20px;
 }
