@@ -6,7 +6,7 @@ import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
-function PostGallery( { post, isDiscover, children } ) {
+function PostGallery( { post, children } ) {
 	const imagesToDisplay = getImagesFromPostToDisplay( post, 10 );
 
 	function handleClick( event ) {
@@ -53,7 +53,7 @@ function PostGallery( { post, isDiscover, children } ) {
 						</a>
 					</h2>
 				</AutoDirection>
-				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
+				<ReaderExcerpt post={ post } />
 				{ children }
 			</div>
 		</div>
