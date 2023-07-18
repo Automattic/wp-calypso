@@ -39,7 +39,6 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
-import { getReaderTags } from 'calypso/state/reader/tags/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -125,7 +124,6 @@ class ReaderStream extends Component {
 			this.props.requestPage( {
 				streamKey: this.props.recsStreamKey,
 				pageHandle: this.props.recsStream.pageHandle,
-				tags: this.props.recsStream.tags,
 			} );
 		}
 	}
@@ -368,12 +366,12 @@ class ReaderStream extends Component {
 	};
 
 	poll = () => {
-		const { streamKey, tags } = this.props;
-		this.props.requestPage( { streamKey, isPoll: true, tags } );
+		const { streamKey } = this.props;
+		this.props.requestPage( { streamKey, isPoll: true } );
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		const { streamKey, stream, startDate, tags } = props;
+		const { streamKey, stream, startDate } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
@@ -381,7 +379,7 @@ class ReaderStream extends Component {
 			props.trackScrollPage( pageId );
 		}
 		const pageHandle = stream.pageHandle || { before: startDate };
-		props.requestPage( { streamKey, pageHandle, tags } );
+		props.requestPage( { streamKey, pageHandle } );
 	};
 
 	showUpdates = () => {
@@ -590,7 +588,6 @@ export default connect(
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
-			tags: getReaderTags( state ),
 		};
 	},
 	{
