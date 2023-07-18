@@ -83,6 +83,7 @@ export interface PlansFeaturesMainProps {
 	isPlansInsideStepper?: boolean;
 	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
+	showLegacyStorageFeature?: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
@@ -134,6 +135,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		sitePlanSlug,
 		siteSlug,
 		intent,
+		showLegacyStorageFeature,
 	} = props;
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -179,6 +181,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		planActionOverrides,
 		intent,
 		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
+		showLegacyStorageFeature,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -233,6 +236,7 @@ const PlansFeaturesMain = ( {
 	isPlansInsideStepper = false,
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
+	showLegacyStorageFeature = false,
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
@@ -435,6 +439,7 @@ const PlansFeaturesMain = ( {
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
 						intent={ intent }
+						showLegacyStorageFeature={ showLegacyStorageFeature }
 					/>
 				</>
 			) }

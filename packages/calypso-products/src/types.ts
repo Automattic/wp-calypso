@@ -228,7 +228,7 @@ export type Plan = BillingTerm & {
 	 */
 	get2023PlanComparisonConditionalFeatures?: () => Feature[];
 
-	get2023PricingGridSignupStorageOptions?: () => Feature[];
+	get2023PricingGridSignupStorageOptions?: ( showLegacyStorageFeature?: boolean ) => Feature[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
