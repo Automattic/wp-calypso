@@ -150,7 +150,7 @@ const DomainTransferFAQ: FC = () => {
 							className="domain-transfer-faq__section"
 						>
 							{ translate(
-								'We offer a free first year for all domains being transferred in, but some domain extensions may not ' +
+								'We offer a free first year for all domains being transferred in from Google Domains, but some domain extensions may not ' +
 									'automatically show up. Please {{ExternalLinkWithTracking}}contact our support team{{/ExternalLinkWithTracking}} for assistance.',
 								{
 									components: {
