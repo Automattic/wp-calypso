@@ -6,6 +6,7 @@ export { default as ThemeCard } from './components/theme-card';
 export { default as ThemePreview } from './components/theme-preview';
 export {
 	default as UnifiedDesignPicker,
+	DesignDemoSiteImage,
 	DesignPreviewImage,
 } from './components/unified-design-picker';
 export { default as PatternAssemblerCta } from './components/pattern-assembler-cta';

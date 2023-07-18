@@ -1,6 +1,6 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
-	DesignPreviewImage,
+	DesignDemoSiteImage,
 	ThemeCard,
 	isDefaultGlobalStylesVariationSlug,
 } from '@automattic/design-picker';
@@ -144,7 +144,7 @@ export class Theme extends Component {
 
 	renderScreenshot() {
 		const { isExternallyManagedTheme, selectedStyleVariation, theme } = this.props;
-		const { description, screenshot } = theme;
+		const { demo_uri = '', description, screenshot } = theme;
 
 		if ( ! screenshot ) {
 			return (
@@ -161,13 +161,13 @@ export class Theme extends Component {
 		// that there is no flash of image transition from static image to mShots on page load.
 		if (
 			! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) &&
-			! isExternallyManagedTheme
+			! isExternallyManagedTheme &&
+			demo_uri.length
 		) {
-			const { id: themeId, stylesheet } = theme;
-
 			return (
-				<DesignPreviewImage
-					design={ { slug: themeId, recipe: { stylesheet } } }
+				<DesignDemoSiteImage
+					demoUrl={ demo_uri }
+					description={ decodeEntities( description ) }
 					styleVariation={ selectedStyleVariation }
 				/>
 			);

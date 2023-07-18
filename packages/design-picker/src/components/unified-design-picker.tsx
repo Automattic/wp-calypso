@@ -20,7 +20,24 @@ import type { Design, StyleVariation } from '../types';
 import type { RefCallback } from 'react';
 import './style.scss';
 
-const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
+interface DesignMShotsImage {
+	url: string;
+	altText?: string;
+}
+
+const DesignMShotsImage: React.FC< DesignMShotsImage > = ( { url, altText } ) => {
+	const isMobile = useViewportMatch( 'small', '<' );
+
+	return (
+		<MShotsImage
+			url={ url }
+			aria-labelledby=""
+			alt={ altText }
+			options={ getMShotOptions( { scrollable: false, highRes: ! isMobile, isMobile } ) }
+			scrollable={ false }
+		/>
+	);
+};
 
 interface DesignPreviewImageProps {
 	design: Design;
@@ -32,21 +49,35 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	design,
 	locale,
 	styleVariation,
+} ) => (
+	<DesignMShotsImage
+		url={ getDesignPreviewUrl( design, {
+			use_screenshot_overrides: true,
+			style_variation: styleVariation,
+			...( locale && { language: locale } ),
+		} ) }
+	/>
+);
+
+interface DesignDemoSiteImageProps {
+	demoUrl: string;
+	description?: string;
+	styleVariation?: StyleVariation;
+}
+
+const DesignDemoSiteImage: React.FC< DesignDemoSiteImageProps > = ( {
+	demoUrl,
+	description,
+	styleVariation,
 } ) => {
-	const isMobile = useViewportMatch( 'small', '<' );
+	const params = new URLSearchParams( {
+		iframe: true,
+		theme_preview: true,
+		...( styleVariation && { style_variation: styleVariation.title } ),
+	} );
 
 	return (
-		<MShotsImage
-			url={ getDesignPreviewUrl( design, {
-				use_screenshot_overrides: true,
-				style_variation: styleVariation,
-				...( locale && { language: locale } ),
-			} ) }
-			aria-labelledby={ makeOptionId( design ) }
-			alt=""
-			options={ getMShotOptions( { scrollable: false, highRes: ! isMobile, isMobile } ) }
-			scrollable={ false }
-		/>
+		<DesignMShotsImage url={ `${ demoUrl }?${ params.toString() }` } altText={ description } />
 	);
 };
 
@@ -325,4 +356,4 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	);
 };
 
-export { UnifiedDesignPicker as default, DesignPreviewImage };
+export { UnifiedDesignPicker as default, DesignDemoSiteImage, DesignPreviewImage };

@@ -1,11 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, Button } from '@automattic/components';
-import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
+import { DesignDemoSiteImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
+import { decodeEntities } from 'calypso/lib/formatting';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { useSelector, useDispatch } from 'calypso/state';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
@@ -179,14 +180,11 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 					</ThemeSectionButtons>
 				</ThemeNameSectionWrapper>
 				<ThemeSectionImageContainer>
-					{ ! isDefaultGlobalStylesVariationSlug( themeStyleVariation?.slug ) ? (
+					{ theme.demo_uri && ! isDefaultGlobalStylesVariationSlug( themeStyleVariation?.slug ) ? (
 						<ThemeSectionMShotsContainer>
-							<DesignPreviewImage
-								design={ {
-									...theme,
-									slug: theme.id,
-									recipe: { stylesheet: theme.stylesheet },
-								} }
+							<DesignDemoSiteImage
+								url={ theme.demo_uri }
+								description={ decodeEntities( theme.description ) }
 								styleVariation={ themeStyleVariation }
 							/>
 						</ThemeSectionMShotsContainer>
