@@ -15,6 +15,7 @@ import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { ONBOARD_STORE } from '../../../../stores';
 import { DomainCodePair } from './domain-code-pair';
+import DomainTransferFAQ from './faqs';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 const MAX_DOMAINS = 50;
@@ -214,6 +215,9 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 								numberOfValidDomains
 						  ) }
 				</Button>
+			</div>
+			<div className="bulk-domain-transfer__faqs">
+				<DomainTransferFAQ />
 			</div>
 		</div>
 	);

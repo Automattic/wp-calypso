@@ -355,6 +355,32 @@
 			margin-top: 2px;
 		}
 
+		.bulk-domain-transfer__faqs {
+			.foldable-faq__question {
+				padding: 16px 0;
+			}
+			.foldable-faq__question-text {
+				/* stylelint-disable-next-line scales/font-sizes */
+				font-size: 1.15rem;
+			}
+			h2 {
+				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+				font-size: 2rem;
+				margin: 24px 0;
+				text-align: center;
+			}
+			li {
+				font-size: 1rem;
+			}
+			section {
+				margin-top: 120px;
+			}
+			ul {
+				list-style: none;
+				margin-bottom: 48px;
+			}
+		}
+
 		.bulk-domain-transfer__total-price {
 			display: flex;
 			justify-content: space-between;
