@@ -106,7 +106,6 @@ export default function IssueMultipleLicensesForm( {
 		.split( ',' );
 
 	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses(
-		selectedBundle ? [ selectedBundle ] : selectedProductSlugs,
 		selectedSite,
 		suggestedProductSlugs
 	);
@@ -145,12 +144,9 @@ export default function IssueMultipleLicensesForm( {
 					)
 				);
 			}
-			issueLicenses();
+			issueLicenses( [ selectedBundle ] );
 		}
-		// Do not update the dependency array with issueLicenses since
-		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ selectedBundle ] );
+	}, [ dispatch, hasPurchasedProductsWithoutBundle, issueLicenses, selectedBundle ] );
 
 	const selectedSiteDomain = selectedSite?.domain;
 
@@ -184,7 +180,7 @@ export default function IssueMultipleLicensesForm( {
 									primary
 									className="issue-multiple-licenses-form__select-license"
 									busy={ isLoading }
-									onClick={ issueLicenses }
+									onClick={ () => issueLicenses( selectedProductSlugs ) }
 								>
 									{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 										context: 'button label',
