@@ -318,6 +318,7 @@ type PlanComparisonGridProps = {
 	selectedPlan?: string;
 	selectedFeature?: string;
 	isGlobalStylesOnPersonal?: boolean;
+	showLegacyStorageFeature?: boolean;
 };
 
 type PlanComparisonGridHeaderProps = {
@@ -738,6 +739,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	selectedPlan,
 	selectedFeature,
 	isGlobalStylesOnPersonal,
+	showLegacyStorageFeature,
 } ) => {
 	const translate = useTranslate();
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -889,7 +891,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				] );
 			}
 			previousPlan = planName;
-			const [ storageOption ] = planObject.get2023PricingGridSignupStorageOptions?.() ?? [];
+			const [ storageOption ] =
+				planObject.get2023PricingGridSignupStorageOptions?.( showLegacyStorageFeature ) ?? [];
 			planStorageOptionsMap[ planName ] = storageOption;
 
 			conditionalFeatureMap[ planName ] = new Set(
@@ -897,7 +900,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			);
 		}
 		return { featureMap: planFeatureMap, planStorageOptionsMap, conditionalFeatureMap };
-	}, [ planProperties, isMonthly ] );
+	}, [ planProperties, isMonthly, showLegacyStorageFeature ] );
 
 	const allJetpackFeatures = useMemo( () => {
 		const jetpackFeatures = new Set(

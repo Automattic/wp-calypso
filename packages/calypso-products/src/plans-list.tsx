@@ -1013,7 +1013,11 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
-	get2023PricingGridSignupStorageOptions: () => {
+	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature ) => {
+		if ( showLegacyStorageFeature ) {
+			return [ FEATURE_200GB_STORAGE ];
+		}
+
 		return isEnabled( 'plans/updated-storage-labels' )
 			? [ FEATURE_50GB_STORAGE ]
 			: [ FEATURE_200GB_STORAGE ];
@@ -1584,7 +1588,11 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHIPPING_INTEGRATIONS,
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	],
-	get2023PricingGridSignupStorageOptions: () => {
+	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature ) => {
+		if ( showLegacyStorageFeature ) {
+			return [ FEATURE_200GB_STORAGE ];
+		}
+
 		return isEnabled( 'plans/updated-storage-labels' )
 			? [ FEATURE_50GB_STORAGE ]
 			: [ FEATURE_200GB_STORAGE ];

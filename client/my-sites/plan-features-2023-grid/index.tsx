@@ -15,8 +15,6 @@ import {
 	isWooExpressPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
-	FEATURE_200GB_STORAGE,
-	FEATURE_50GB_STORAGE,
 } from '@automattic/calypso-products';
 import {
 	JetpackLogo,
@@ -270,6 +268,7 @@ export class PlanFeatures2023Grid extends Component<
 			isGlobalStylesOnPersonal,
 			planRecords,
 			visiblePlans,
+			showLegacyStorageFeature,
 		} = this.props;
 		return (
 			<PlansGridContextProvider
@@ -324,6 +323,7 @@ export class PlanFeatures2023Grid extends Component<
 								selectedPlan={ selectedPlan }
 								selectedFeature={ selectedFeature }
 								isGlobalStylesOnPersonal={ isGlobalStylesOnPersonal }
+								showLegacyStorageFeature={ showLegacyStorageFeature }
 							/>
 							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 								<Button onClick={ this.toggleShowPlansComparisonGrid }>
@@ -1013,16 +1013,10 @@ const ConnectedPlanFeatures2023Grid = connect(
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
-				let storageOptions =
+				const storageOptions =
 					( planConstantObj.get2023PricingGridSignupStorageOptions &&
-						planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
+						planConstantObj.get2023PricingGridSignupStorageOptions( showLegacyStorageFeature ) ) ||
 					[];
-
-				if ( showLegacyStorageFeature ) {
-					storageOptions = storageOptions.map( ( option ) =>
-						option === FEATURE_50GB_STORAGE ? FEATURE_200GB_STORAGE : option
-					);
-				}
 
 				const availableForPurchase =
 					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
