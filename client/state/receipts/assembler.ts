@@ -58,6 +58,7 @@ export function createReceiptObject(
 				isRenewal: Boolean( purchase.is_renewal ),
 				willAutoRenew: Boolean( purchase.will_auto_renew ),
 				saasRedirectUrl: purchase.saas_redirect_url ?? '',
+				expiryDate: purchase.expiry ?? '',
 			};
 		} ),
 		failedPurchases: failedPurchases.map( ( purchase ) => {
