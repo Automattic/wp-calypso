@@ -554,7 +554,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 							<ProductPlan
 								siteSlug={ selectedSite.slug }
 								primaryPurchase={ primaryPurchase }
-								purchases={ this.props.purchases }
+								siteID={ selectedSite.ID }
 							/>
 						) }
 						{ this.props.children }
