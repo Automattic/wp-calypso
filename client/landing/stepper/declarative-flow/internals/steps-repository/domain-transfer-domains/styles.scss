@@ -356,11 +356,24 @@
 		}
 
 		.bulk-domain-transfer__faqs {
+			.foldable-faq__question {
+				padding: 16px 0;
+			}
+			.foldable-faq__question-text {
+				/* stylelint-disable-next-line scales/font-sizes */
+				font-size: 1.15rem;
+			}
 			h2 {
 				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-				font-size: 2.75rem;
+				font-size: 2rem;
+				margin: 24px 0;
 				text-align: center;
-				margin: 48px 0;
+			}
+			li {
+				font-size: 1rem;
+			}
+			section {
+				margin-top: 120px;
 			}
 			ul {
 				list-style: none;
