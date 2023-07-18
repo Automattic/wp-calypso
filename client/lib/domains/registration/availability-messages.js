@@ -23,9 +23,10 @@ function getAvailabilityNotice(
 	error,
 	errorData,
 	isForTransferOnly = false,
-	linksTarget = '_self'
+	linksTarget = '_self',
+	domainTld = ''
 ) {
-	const tld = domain ? getTld( domain ) : null;
+	const tld = domainTld || ( domain ? getTld( domain ) : null );
 	const { site, maintenanceEndTime, availabilityPreCheck } = errorData || {};
 
 	// The message is set only when there is a valid error
