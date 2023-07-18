@@ -54,15 +54,34 @@ class MasterbarLoggedOut extends Component {
 	renderSearchItem() {
 		const { translate } = this.props;
 
-		const tagsUrl = '/read/search';
+		const searchUrl = '/read/search';
 		// TODO - renable adding locale once we enable locales for these pages.
 		// if ( ! isDefaultLocale( locale ) ) {
-		// 	tagsUrl = addLocaleToPath( tagsUrl, locale );
+		// 	searchUrl = addLocaleToPath( searchUrl, locale );
 		// }
 
 		return (
-			<Item url={ tagsUrl }>
+			<Item url={ searchUrl }>
 				{ translate( 'Search', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~12 chars',
+				} ) }
+			</Item>
+		);
+	}
+
+	renderDiscoverItem() {
+		const { translate } = this.props;
+
+		const discoverUrl = '/discover';
+		// TODO - renable adding locale once we enable locales for these pages.
+		// if ( ! isDefaultLocale( locale ) ) {
+		// 	discoverUrl = addLocaleToPath( discoverUrl, locale );
+		// }
+
+		return (
+			<Item url={ discoverUrl }>
+				{ translate( 'Discover', {
 					context: 'Toolbar',
 					comment: 'Should be shorter than ~12 chars',
 				} ) }
@@ -207,6 +226,7 @@ class MasterbarLoggedOut extends Component {
 				{ this.renderWordPressItem() }
 				<Item className="masterbar__item-title">{ title }</Item>
 				<div className="masterbar__login-links">
+					{ this.renderDiscoverItem() }
 					{ this.renderTagsItem() }
 					{ this.renderSearchItem() }
 					{ this.renderLoginItem() }
