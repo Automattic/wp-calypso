@@ -28,7 +28,8 @@
 
 	&.domains {
 		padding: 0;
-		width: 754px;
+		width: 100%;
+		min-width: 100%;
 
 		.step-container__header {
 			margin-top: 96px;
@@ -346,6 +347,9 @@
 	}
 
 	.bulk-domain-transfer__container {
+		width: 754px;
+		margin: 0 auto;
+		max-width: 100%;
 
 		.bulk-domain-transfer__add-domain {
 			font-size: 0.875rem;
@@ -355,31 +359,7 @@
 			margin-top: 2px;
 		}
 
-		.bulk-domain-transfer__faqs {
-			background: var(--studio-gray-0);
-			margin: 120px -100vw 0;
-			padding: 32px 100vw;
 
-			.foldable-faq__question {
-				padding: 16px 0;
-			}
-			.foldable-faq__question-text {
-				font-size: 1rem;
-			}
-			h2 {
-				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-				font-size: 2rem;
-				margin: 24px 0;
-				text-align: center;
-			}
-			li {
-				font-size: 1rem;
-			}
-			ul {
-				list-style: none;
-				margin: 0 0 48px 0;
-			}
-		}
 
 		.bulk-domain-transfer__total-price {
 			display: flex;
@@ -470,5 +450,37 @@
 	button.loading-placeholder {
 		width: 150px;
 		@include placeholder();
+	}
+
+	.bulk-domain-transfer__faqs {
+		background: var(--studio-gray-0);
+		margin: 64px 0 0;
+		padding: 32px 0;
+		width: 100%;
+
+		.foldable-faq__question {
+			padding: 16px 0;
+		}
+		.foldable-faq__question-text {
+			font-size: 1rem;
+		}
+		h2 {
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			font-size: 2rem;
+			margin: 24px 0;
+			text-align: center;
+		}
+		li {
+			font-size: 1rem;
+		}
+		section {
+			margin: 0 auto;
+			max-width: 100%;
+			width: 754px;
+		}
+		ul {
+			list-style: none;
+			margin: 0 0 48px 0;
+		}
 	}
 }
