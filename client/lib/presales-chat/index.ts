@@ -34,14 +34,17 @@ function getGroupName( keyType: KeyType ) {
 	}
 }
 
-export function usePresalesChat( keyType: KeyType, enabled = true ) {
+export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabilityCheck = false ) {
 	const isEnglishLocale = useIsEnglishLocale();
 	const isEligibleForPresalesChat = enabled && isEnglishLocale;
 
 	const group = getGroupName( keyType );
+
 	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
-		useMessagingAvailability( group, isEligibleForPresalesChat );
-	const isPresalesChatAvailable = Boolean( chatAvailability?.is_available );
+		useMessagingAvailability( group, isEligibleForPresalesChat && ! skipAvailabilityCheck );
+
+	const isPresalesChatAvailable =
+		skipAvailabilityCheck || Boolean( chatAvailability?.is_available );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const zendeskKeyName = getConfigName( keyType );
