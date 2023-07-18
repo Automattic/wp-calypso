@@ -8,6 +8,7 @@ import { ProductsList } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
@@ -72,6 +73,7 @@ const StatsPurchasePage = () => {
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/purchase/:site" title="Stats > Purchase" />
 			<div className="stats">
+				<QueryProductsList />
 				{
 					// TODO: style loading state
 				 }
