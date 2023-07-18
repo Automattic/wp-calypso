@@ -199,12 +199,11 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHostingFlowDestination( { siteId } ) {
+function getHostingFlowDestination() {
 	return (
 		getQueryArgs().redirect_to ??
 		addQueryArgs(
 			{
-				'new-site': siteId,
 				'hosting-flow': true,
 			},
 			'/sites'
