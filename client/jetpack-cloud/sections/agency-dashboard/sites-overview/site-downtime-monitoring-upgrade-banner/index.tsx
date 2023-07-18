@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import CelebrationIcon from 'calypso/assets/images/jetpack/celebration-icon.svg';
 import Banner from 'calypso/components/banner';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -22,10 +22,11 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 	const preference = useSelector( ( state ) => getPreference( state, preferenceName ) );
 
 	const isDismissed = preference?.dismiss;
+	const viewDate = preference?.view_date;
 
 	const savePreferenceType = useCallback(
-		( type: PreferenceType ) => {
-			dispatch( savePreference( preferenceName, { ...preference, [ type ]: true } ) );
+		( type: PreferenceType, value: boolean | number ) => {
+			dispatch( savePreference( preferenceName, { ...preference, [ type ]: value } ) );
 		},
 		[ dispatch, preference, preferenceName ]
 	);
@@ -34,12 +35,21 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 		'jetpack/pro-dashboard-monitor-paid-tier'
 	);
 
+	useEffect( () => {
+		if ( isDowntimeMonitoringPaidTierEnabled && ! isDismissed && ! viewDate ) {
+			savePreferenceType( 'view_date', Date.now() );
+			// TODO: We need to record event here
+		}
+		// We only want to run this once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
 	if ( ! isDowntimeMonitoringPaidTierEnabled || isDismissed ) {
 		return null;
 	}
 
 	const dismissAndRecordEvent = () => {
-		savePreferenceType( 'dismiss' );
+		savePreferenceType( 'dismiss', true );
 
 		// TODO: We need to record event here
 	};
