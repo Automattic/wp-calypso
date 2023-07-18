@@ -1,21 +1,40 @@
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import type { Task } from './types';
+import type { LaunchpadTracksData, Task } from './types';
 
-export const setUpActions = ( tasks: Task[], siteSlug: string | null ): Task[] => {
+export const setUpActionsForTasks = (
+	tasks: Task[],
+	siteSlug: string | null,
+	tracksData: LaunchpadTracksData,
+	extraActions?: {
+		setShareSiteModalIsOpen: ( isOpen: boolean ) => void;
+	}
+): Task[] => {
+	const { recordTracksEvent, checklistSlug, tasklistCompleted } = tracksData;
+	//Record click events for tasks
+	const recordTaskClickTracksEvent = ( task: Task ) => {
+		recordTracksEvent( 'calypso_launchpad_task_clicked', {
+			checklist_slug: checklistSlug,
+			checklist_completed: tasklistCompleted,
+			task_id: task.id,
+			is_completed: task.completed,
+			context: 'customer-home',
+		} );
+	};
+
 	// Add actions to known tasks
 	return tasks.map( ( task: Task ) => {
-		let actionDispatch;
+		let action: () => void;
 
 		switch ( task.id ) {
 			case 'site_title':
-				actionDispatch = () => {
+				action = () => {
 					window.location.assign( `/settings/general/${ siteSlug }` );
 				};
 				break;
 
 			case 'design_edited':
-				actionDispatch = () => {
+				action = () => {
 					window.location.assign(
 						addQueryArgs( `/site-editor/${ siteSlug }`, {
 							canvas: 'edit',
@@ -27,12 +46,12 @@ export const setUpActions = ( tasks: Task[], siteSlug: string | null ): Task[] =
 			case 'domain_claim':
 			case 'domain_upsell':
 			case 'domain_customize':
-				actionDispatch = () => {
+				action = () => {
 					window.location.assign( `/domains/add/${ siteSlug }` );
 				};
 				break;
 			case 'drive_traffic':
-				actionDispatch = () => {
+				action = () => {
 					const url = isMobile()
 						? `/marketing/connections/${ siteSlug }`
 						: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
@@ -40,16 +59,26 @@ export const setUpActions = ( tasks: Task[], siteSlug: string | null ): Task[] =
 				};
 				break;
 			case 'add_new_page':
-				actionDispatch = () => {
+				action = () => {
 					window.location.assign( `/page/${ siteSlug }` );
 				};
 				break;
 			case 'edit_page':
-				actionDispatch = () => {
+				action = () => {
 					window.location.assign( `/pages/${ siteSlug }` );
 				};
 				break;
+			case 'share_site':
+				action = () => {
+					extraActions?.setShareSiteModalIsOpen( true );
+				};
+				break;
 		}
+
+		const actionDispatch = () => {
+			recordTaskClickTracksEvent( task );
+			action?.();
+		};
 
 		return { ...task, actionDispatch };
 	} );

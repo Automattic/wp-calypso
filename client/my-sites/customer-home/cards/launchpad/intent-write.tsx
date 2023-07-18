@@ -1,5 +1,5 @@
 import { useLaunchpad } from '@automattic/data-stores';
-import { setUpActions } from '@automattic/launchpad';
+import { setUpActionsForTasks } from '@automattic/launchpad';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -21,19 +21,10 @@ const LaunchpadIntentWrite = (): JSX.Element => {
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const tasklistCompleted = numberOfSteps > 0 && completedSteps === numberOfSteps;
-
-	const recordTaskClickTracksEvent = ( task: Task ) => {
-		recordTracksEvent( 'calypso_launchpad_task_clicked', {
-			checklist_slug: checklistSlug,
-			checklist_completed: tasklistCompleted,
-			task_id: task.id,
-			is_completed: task.completed,
-			context: 'customer-home',
-		} );
-	};
+	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted };
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
-		const tasksWithActions = setUpActions( tasks, siteSlug );
+		const tasksWithActions = setUpActionsForTasks( tasks, siteSlug, tracksData );
 
 		const completedTasks = tasksWithActions.filter( ( task: Task ) => task.completed );
 		const incompleteTasks = tasksWithActions.filter( ( task: Task ) => ! task.completed );
@@ -49,13 +40,7 @@ const LaunchpadIntentWrite = (): JSX.Element => {
 				context: 'customer-home',
 			} );
 
-			const originalAction = task.actionDispatch;
-			const newAction = () => {
-				recordTaskClickTracksEvent( task );
-				return originalAction?.();
-			};
-
-			return { ...task, actionDispatch: newAction };
+			return task;
 		} );
 	};
 

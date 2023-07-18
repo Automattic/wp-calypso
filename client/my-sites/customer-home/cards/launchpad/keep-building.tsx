@@ -1,5 +1,5 @@
 import { useLaunchpad } from '@automattic/data-stores';
-import { setUpActions } from '@automattic/launchpad';
+import { setUpActionsForTasks } from '@automattic/launchpad';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -28,30 +28,15 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const tasklistCompleted = completedSteps === numberOfSteps;
-
-	const recordTaskClickTracksEvent = ( task: Task ) => {
-		recordTracksEvent( 'calypso_launchpad_task_clicked', {
-			checklist_slug: checklistSlug,
-			checklist_completed: tasklistCompleted,
-			task_id: task.id,
-			is_completed: task.completed,
-			context: 'customer-home',
-		} );
-	};
+	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted };
 
 	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
+	const extraTaskActions = {
+		setShareSiteModalIsOpen,
+	};
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
-		const tasksWithActions = setUpActions( tasks, siteSlug );
-
-		// Add action to `share_site` task, which has with custom UI.
-		const shareSiteTask = tasksWithActions.find( ( task: Task ) => task.id === 'share_site' );
-		if ( shareSiteTask ) {
-			shareSiteTask.actionDispatch = () => {
-				setShareSiteModalIsOpen( true );
-			};
-		}
-
+		const tasksWithActions = setUpActionsForTasks( tasks, siteSlug, tracksData, extraTaskActions );
 		const completedTasks = tasksWithActions.filter( ( task: Task ) => task.completed );
 		const incompleteTasks = tasksWithActions.filter( ( task: Task ) => ! task.completed );
 
@@ -66,13 +51,7 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 				context: 'customer-home',
 			} );
 
-			const originalAction = task.actionDispatch;
-			const newAction = () => {
-				recordTaskClickTracksEvent( task );
-				return originalAction?.();
-			};
-
-			return { ...task, actionDispatch: newAction };
+			return task;
 		} );
 	};
 

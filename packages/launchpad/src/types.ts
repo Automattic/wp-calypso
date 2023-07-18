@@ -11,6 +11,12 @@ export interface Task {
 
 export type LaunchpadChecklist = Task[];
 
+export type LaunchpadTracksData = {
+	recordTracksEvent: ( event: string, properties: Record< string, unknown > ) => void;
+	checklistSlug: string;
+	tasklistCompleted: boolean;
+};
+
 export interface LaunchpadFlowTaskList {
 	[ string: string ]: string[];
 }
