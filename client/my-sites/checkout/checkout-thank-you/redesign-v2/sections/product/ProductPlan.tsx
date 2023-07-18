@@ -17,7 +17,6 @@ const ProductPlan = ( { siteSlug, primaryPurchase, purchases }: ProductPlanProps
 		[ primaryPurchase.productSlug, purchases ]
 	);
 
-	console.log( 'productPurchase', productPurchase );
 	useEffect( () => {
 		if ( productPurchase?.expiryDate ) {
 			setExpirationDate(
