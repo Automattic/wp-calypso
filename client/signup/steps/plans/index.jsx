@@ -1,6 +1,10 @@
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
+import {
+	isOnboardingPMFlow,
+	isSiteAssemblerFlow,
+	isTailoredSignupFlow,
+} from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -269,9 +273,9 @@ export class PlansStep extends Component {
 				// During onboarding, if the user chooses to use their own domain, but that domain needs to have
 				// its ownership verified, they can skip the domain selection step and the `domainItem` dependency
 				// is not provided. In that case, the "Back" button in the plan selection step needs to go back to
-				// the initial domain seleciton step and no to the "transfer or connect" step.
+				// the initial domain selection step and not to the "transfer or connect" step.
 				if (
-					'onboarding' === flowName &&
+					( 'onboarding' === flowName || isOnboardingPMFlow( flowName ) ) &&
 					undefined === previousStep?.providedDependencies?.domainItem
 				) {
 					backUrl = getStepUrl( 'onboarding', 'domains' );
