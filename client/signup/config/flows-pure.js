@@ -145,7 +145,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
-			lastModified: '2023-01-10',
+			lastModified: '2023-07-18',
 			showRecaptcha: true,
 		},
 		{
