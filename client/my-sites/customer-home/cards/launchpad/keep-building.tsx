@@ -31,28 +31,24 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted };
 
 	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
-	const extraTaskActions = {
-		setShareSiteModalIsOpen,
-	};
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
-		const tasksWithActions = setUpActionsForTasks( tasks, siteSlug, tracksData, extraTaskActions );
+		const tasksWithActions = setUpActionsForTasks( tasks, siteSlug, tracksData );
+
+		// Add action to `share_site` task, which has a custom UI.
+		const shareSiteTask = tasksWithActions.find( ( task: Task ) => task.id === 'share_site' );
+		if ( shareSiteTask ) {
+			shareSiteTask.actionDispatch = () => {
+				setShareSiteModalIsOpen( true );
+			};
+		}
+
 		const completedTasks = tasksWithActions.filter( ( task: Task ) => task.completed );
 		const incompleteTasks = tasksWithActions.filter( ( task: Task ) => ! task.completed );
 
 		const sortedTasks = [ ...completedTasks, ...incompleteTasks ];
 
-		// Add Tracks events to all tasks before dispatching the original action.
-		return sortedTasks.map( ( task: Task ) => {
-			recordTracksEvent( 'calypso_launchpad_task_view', {
-				checklist_slug: checklistSlug,
-				task_id: task.id,
-				is_completed: task.completed,
-				context: 'customer-home',
-			} );
-
-			return task;
-		} );
+		return sortedTasks;
 	};
 
 	return (

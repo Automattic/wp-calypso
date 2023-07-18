@@ -5,12 +5,10 @@ import type { LaunchpadTracksData, Task } from './types';
 export const setUpActionsForTasks = (
 	tasks: Task[],
 	siteSlug: string | null,
-	tracksData: LaunchpadTracksData,
-	extraActions?: {
-		setShareSiteModalIsOpen: ( isOpen: boolean ) => void;
-	}
+	tracksData: LaunchpadTracksData
 ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted } = tracksData;
+
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
 		recordTracksEvent( 'calypso_launchpad_task_clicked', {
@@ -25,6 +23,14 @@ export const setUpActionsForTasks = (
 	// Add actions to known tasks
 	return tasks.map( ( task: Task ) => {
 		let action: () => void;
+
+		//Record task view tracks event
+		recordTracksEvent( 'calypso_launchpad_task_view', {
+			checklist_slug: checklistSlug,
+			task_id: task.id,
+			is_completed: task.completed,
+			context: 'customer-home',
+		} );
 
 		switch ( task.id ) {
 			case 'site_title':
@@ -66,11 +72,6 @@ export const setUpActionsForTasks = (
 			case 'edit_page':
 				action = () => {
 					window.location.assign( `/pages/${ siteSlug }` );
-				};
-				break;
-			case 'share_site':
-				action = () => {
-					extraActions?.setShareSiteModalIsOpen( true );
 				};
 				break;
 		}

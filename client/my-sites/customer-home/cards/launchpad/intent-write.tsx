@@ -31,17 +31,7 @@ const LaunchpadIntentWrite = (): JSX.Element => {
 
 		const sortedTasks = [ ...completedTasks, ...incompleteTasks ];
 
-		// Add Tracks events to all tasks before dispatching the original action.
-		return sortedTasks.map( ( task: Task ) => {
-			recordTracksEvent( 'calypso_launchpad_task_view', {
-				checklist_slug: checklistSlug,
-				task_id: task.id,
-				is_completed: task.completed,
-				context: 'customer-home',
-			} );
-
-			return task;
-		} );
+		return sortedTasks;
 	};
 
 	return (
