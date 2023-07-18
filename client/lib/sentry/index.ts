@@ -134,12 +134,7 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 
 		// Enable Sentry only for 10% of requests or always in calypso.live for testing.
 		// Always disable if catch-js-errors is not available in the environment.
-		if (
-			! (
-				config.isEnabled( 'catch-js-errors' ) &&
-				( config( 'env_id' ) === 'wpcalypso' || Math.floor( Math.random() * 10 ) === 1 )
-			)
-		) {
+		if ( ! config.isEnabled( 'catch-js-errors' ) || Math.floor( Math.random() * 10 ) !== 1 ) {
 			// Set state to disabled to stop maintaining a queue of sentry method calls.
 			state = { state: 'disabled' };
 			// Note that the `clearQueues()` call in the finally block is still
