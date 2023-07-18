@@ -15,6 +15,8 @@ import {
 	isWooExpressPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	FEATURE_200GB_STORAGE,
+	FEATURE_50GB_STORAGE,
 } from '@automattic/calypso-products';
 import {
 	JetpackLogo,
@@ -113,6 +115,7 @@ export type PlanFeatures2023GridProps = {
 	selectedFeature?: string;
 	intent?: PlansIntent;
 	isGlobalStylesOnPersonal?: boolean;
+	showLegacyStorageFeature?: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -831,7 +834,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanStorageOptions( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { translate } = this.props;
+		const { translate, showLegacyStorageFeature } = this.props;
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
@@ -846,7 +849,7 @@ export class PlanFeatures2023Grid extends Component<
 					}
 					return (
 						<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-							{ getStorageStringFromFeature( storageFeature ) }
+							{ getStorageStringFromFeature( storageFeature, showLegacyStorageFeature ) }
 						</div>
 					);
 				} );
@@ -892,6 +895,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			selectedFeature,
 			intent,
 			isGlobalStylesOnPersonal,
+			showLegacyStorageFeature,
 		} = ownProps;
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = siteId
@@ -1009,10 +1013,17 @@ const ConnectedPlanFeatures2023Grid = connect(
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
-				const storageOptions =
+				let storageOptions =
 					( planConstantObj.get2023PricingGridSignupStorageOptions &&
 						planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
 					[];
+
+				if ( showLegacyStorageFeature ) {
+					storageOptions = storageOptions.map( ( option ) =>
+						option === FEATURE_50GB_STORAGE ? FEATURE_200GB_STORAGE : option
+					);
+				}
+
 				const availableForPurchase =
 					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 

@@ -40,6 +40,7 @@ export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
 export const FEATURE_50GB_STORAGE = '50gb-storage';
 export const FEATURE_200GB_STORAGE = '200gb-storage';
+export const FEATURE_LEGACY_STORAGE_200GB = 'upload-space-200gb';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
 export const FEATURE_EMAIL_SUPPORT = 'email-support';
