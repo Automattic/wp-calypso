@@ -112,7 +112,9 @@ const FontPairingVariations = ( {
 			</div>
 			<div className="global-styles-variations__group">
 				<h3 className="global-styles-variations__group-title">
-					{ translate( 'Custom fonts' ) }
+					<span className="global-styles-variations__group-title-actual">
+						{ translate( 'Custom fonts' ) }
+					</span>
 					{ limitGlobalStyles && (
 						<PremiumBadge
 							shouldHideTooltip
