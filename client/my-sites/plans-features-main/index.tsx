@@ -163,6 +163,10 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 
+	/**
+	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
+	 * for the sticky CTA bar.
+	 */
 	useLayoutEffect( () => {
 		const masterbarElement = document.querySelector< HTMLDivElement >( 'header.masterbar' );
 

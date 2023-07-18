@@ -51,6 +51,10 @@ export function StickyContainer( props: Props ) {
 		<>
 			<Global
 				styles={ css`
+					/**
+				 * .layout__content has overflow set to hidden, which prevents position: sticky from working.
+				 * Instead of removing it globally, this CSS only unsets the property when the StickyContainer is rendered.
+				 */
 					.layout__content {
 						overflow: unset;
 					}
