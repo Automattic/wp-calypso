@@ -46,7 +46,7 @@ const PremiumBadge = ( {
 		  );
 
 	const divRef = useRef( null );
-	const labelRef = useRef( null );
+	const labelRef = useRef< HTMLDivElement >( null );
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
 	const [ isHovered, setIsHovered ] = useState( false );
 	const [ isPressed, setIsPressed ] = useState( false );
@@ -59,9 +59,9 @@ const PremiumBadge = ( {
 
 	// Display the label as a tooltip if the tooltip is being hidden and the label is too long.
 	useLayoutEffect( () => {
-		setDisplayLabelAsTooltip(
-			!! shouldHideTooltip && labelRef.current?.scrollWidth > labelRef.current?.offsetWidth
-		);
+		const scrollWidth = labelRef?.current?.scrollWidth ?? 0;
+		const offsetWidth = labelRef?.current?.offsetWidth ?? 0;
+		setDisplayLabelAsTooltip( !! shouldHideTooltip && scrollWidth > offsetWidth );
 		// Now the dimensions of the label are known, it is safe to render the label in compact mode.
 		setMayRenderAsCompact( true );
 	}, [ shouldHideTooltip, labelRef ] );
