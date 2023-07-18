@@ -3,9 +3,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import welcomeImage from 'calypso/assets/images/reader/reader-welcome-illustration.svg';
 import EmptyContent from 'calypso/components/empty-content';
-import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { withReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 
 class FollowingEmptyContent extends Component {
 	shouldComponentUpdate() {
@@ -48,4 +48,4 @@ class FollowingEmptyContent extends Component {
 
 export default connect( null, {
 	recordReaderTracksEvent,
-} )( withPerformanceTrackerStop( localize( FollowingEmptyContent ) ) );
+} )( withReaderPerformanceTrackerStop( localize( FollowingEmptyContent ) ) );
