@@ -80,7 +80,7 @@ const DomainTransferFAQ: FC = () => {
 							{ translate(
 								'No, the remaining time you have with your current registrar will be transferred ' +
 									"over when you move your domain. Furthermore, you will receive an additional year's " +
-									'registration free of charge when transferring any domain to WordPress.com'
+									'registration free of charge when transferring any domain to WordPress.com.'
 							) }
 						</FoldableFAQ>
 					</li>
