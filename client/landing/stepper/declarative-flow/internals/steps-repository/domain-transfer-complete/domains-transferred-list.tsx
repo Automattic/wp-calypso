@@ -26,7 +26,7 @@ const DomainsTransferredList = ( { purchases }: Props ) => {
 		resetOnboardStore();
 	};
 
-	console.log( 'purchases', purchases );
+    //TODO: Missing domain to complete href
 
 	return (
 		<>
