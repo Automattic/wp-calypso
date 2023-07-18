@@ -10,9 +10,10 @@ const documentTitle = translate( '%s ‹ Reader', {
 	comment: '%s is the section name. For example: "My Likes"',
 } );
 
+const emptyContent = () => <EmptyContent />;
+
 class LikedStream extends Component {
 	render() {
-		const emptyContent = <EmptyContent />;
 		return (
 			<Stream
 				{ ...this.props }

@@ -200,7 +200,7 @@ const DiscoverStream = ( props ) => {
 		streamKey += recommendedStreamTags.reduce( ( acc, val ) => acc + `-${ val }`, '' );
 	}
 
-	const streamSidebar =
+	const streamSidebar = () =>
 		( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ? (
 			<>
 				<h2>{ translate( 'Popular Sites' ) }</h2>
@@ -216,7 +216,7 @@ const DiscoverStream = ( props ) => {
 	const streamProps = {
 		...props,
 		streamKey,
-		streamHeader: recommendedTags.length ? <DiscoverNavigation /> : null,
+		streamHeader: recommendedTags.length ? () => <DiscoverNavigation /> : null,
 		useCompactCards: true,
 		streamSidebar,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
