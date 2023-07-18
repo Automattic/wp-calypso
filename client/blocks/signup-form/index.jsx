@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { SelectCardCheckbox } from '@automattic/onboarding';
+import { isOnboardingPMFlow, SelectCardCheckbox } from '@automattic/onboarding';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -1061,7 +1061,7 @@ class SignupForm extends Component {
 				{ ! this.props.isReskinned && (
 					<LoggedOutFormLinks>
 						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ flowName === 'onboarding'
+							{ flowName === 'onboarding' || isOnboardingPMFlow( flowName )
 								? translate( 'Log in to create a site for your existing account.' )
 								: translate( 'Already have a WordPress.com account?' ) }
 						</LoggedOutFormLinkItem>
