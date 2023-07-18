@@ -24,15 +24,11 @@ import {
 	isTitanMail,
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
-import { Card, ConfettiAnimation } from '@automattic/components';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PurchaseDetail from 'calypso/components/purchase-detail';
@@ -40,6 +36,7 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isExternal } from 'calypso/lib/url';
 import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
@@ -93,9 +90,9 @@ import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import isRedesignV2 from './redesign-v2/is-redesign-v2';
-import MasterbarStyled from './redesign-v2/masterbar-styled';
 import Footer from './redesign-v2/sections/Footer';
 import SiteRedirectDetails from './site-redirect-details';
+import StandardCheckoutThankYou from './standard-checkout-thank-you';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
@@ -542,17 +539,31 @@ export class CheckoutThankYou extends Component<
 				);
 			}
 
+			// Keep the AtomicStoreThankYouCard for the Woo Mobile App
+			if ( isWcMobileApp() ) {
+				return (
+					<Main className="checkout-thank-you">
+						{ this.props.transferComplete && this.props.isEmailVerified && (
+							<WpAdminAutoLogin
+								site={ { URL: `https://${ this.props.site?.wpcom_url }` } }
+								delay={ 0 }
+							/>
+						) }
+						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+						<AtomicStoreThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } />
+					</Main>
+				);
+			}
+
 			return (
-				<Main className="checkout-thank-you">
-					{ this.props.transferComplete && this.props.isEmailVerified && (
-						<WpAdminAutoLogin
-							site={ { URL: `https://${ this.props.site?.wpcom_url }` } }
-							delay={ 0 }
-						/>
-					) }
-					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-					<AtomicStoreThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } />
-				</Main>
+				<StandardCheckoutThankYou
+					productRelatedMessages={ this.productRelatedMessages }
+					isDataLoaded={ this.isDataLoaded }
+					getAnalyticsProperties={ this.getAnalyticsProperties }
+					showHappinessSupport={ showHappinessSupport }
+					wasJetpackPlanPurchased={ wasJetpackPlanPurchased }
+					{ ...this.props }
+				/>
 			);
 		} else if ( delayedTransferPurchase ) {
 			const planProps = {
@@ -624,36 +635,14 @@ export class CheckoutThankYou extends Component<
 
 		// standard thanks page
 		return (
-			<Main
-				className={ classNames( 'checkout-thank-you', {
-					'is-redesign-v2': isRedesignV2( this.props ),
-				} ) }
-			>
-				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				{ this.isDataLoaded() && isRedesignV2( this.props ) && (
-					<ConfettiAnimation delay={ 1000 } />
-				) }
-				{ isRedesignV2( this.props ) && this.props.selectedSite?.ID && (
-					<>
-						<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
-						<MasterbarStyled
-							onClick={ () => page( `/home/${ this.props.selectedSiteSlug ?? '' }` ) }
-							backText={ translate( 'Back to dashboard' ) }
-							canGoBack={ true }
-							showContact={ true }
-						/>
-					</>
-				) }
-				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
-				{ showHappinessSupport && (
-					<Card className="checkout-thank-you__footer">
-						<HappinessSupport
-							isJetpack={ wasJetpackPlanPurchased }
-							contactButtonEventName="calypso_plans_autoconfig_chat_initiated"
-						/>
-					</Card>
-				) }
-			</Main>
+			<StandardCheckoutThankYou
+				productRelatedMessages={ this.productRelatedMessages }
+				isDataLoaded={ this.isDataLoaded }
+				getAnalyticsProperties={ this.getAnalyticsProperties }
+				showHappinessSupport={ showHappinessSupport }
+				wasJetpackPlanPurchased={ wasJetpackPlanPurchased }
+				{ ...this.props }
+			/>
 		);
 	}
 
