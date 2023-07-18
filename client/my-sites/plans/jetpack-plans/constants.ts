@@ -186,6 +186,7 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS = (): SelectorProduct => ( {
 		items: [],
 	},
 	hidePrice: true,
+	// TODO: Update the URL when the Paid Stats purchase page is ready.
 	externalUrl: '/stats/purchase/{siteSlug}?flags=stats/paid-stats',
 } );
 
