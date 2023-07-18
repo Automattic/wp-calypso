@@ -834,7 +834,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanStorageOptions( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { translate, showLegacyStorageFeature } = this.props;
+		const { translate } = this.props;
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
@@ -849,7 +849,7 @@ export class PlanFeatures2023Grid extends Component<
 					}
 					return (
 						<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-							{ getStorageStringFromFeature( storageFeature, showLegacyStorageFeature ) }
+							{ getStorageStringFromFeature( storageFeature ) }
 						</div>
 					);
 				} );
