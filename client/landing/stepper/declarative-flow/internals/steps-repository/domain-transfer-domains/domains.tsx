@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainTransferData, DomainTransferForm } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
+import { useLocale } from '@automattic/i18n-utils';
 import { useDataLossWarning } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -84,6 +85,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const hasAnyDomains = Object.values( domainsState ).some(
 		( { domain, auth } ) => domain.trim() || auth.trim()
 	);
+
+	const localeSlug = useLocale();
 
 	useDataLossWarning( hasAnyDomains && enabledDataLossWarning );
 
@@ -216,9 +219,14 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						  ) }
 				</Button>
 			</div>
-			<div className="bulk-domain-transfer__faqs">
-				<DomainTransferFAQ />
-			</div>
+			{
+				// Temporarily disable the FAQ section for non-English locales.
+				( localeSlug === 'en' || localeSlug === 'en-gb' ) && (
+					<div className="bulk-domain-transfer__faqs">
+						<DomainTransferFAQ />
+					</div>
+				)
+			}
 		</div>
 	);
 };
