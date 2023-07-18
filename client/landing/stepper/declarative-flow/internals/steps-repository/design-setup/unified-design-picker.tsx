@@ -261,6 +261,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 	}
 
+	function recordDesignPreviewSelectScreen( screenSlug: string ) {
+		recordTracksEvent( 'calypso_signup_design_preview_screen_select', { name: screenSlug } );
+	}
+
 	// ********** Logic for unlocking a selected premium design
 
 	useQueryThemes( 'wpcom', { tier: '-marketplace', number: 1000 } );
@@ -616,6 +620,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					onSelectFontVariation={ setSelectedFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }
 					onNavigatorPathChange={ ( path?: string ) => setShouldHideActionButtons( path !== '/' ) }
+					onSelectScreen={ recordDesignPreviewSelectScreen }
 				/>
 			</>
 		);

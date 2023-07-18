@@ -35,6 +35,7 @@ interface DesignPreviewProps {
 	limitGlobalStyles: boolean;
 	globalStylesInPersonalPlan: boolean;
 	onNavigatorPathChange?: ( path?: string ) => void;
+	onSelectScreen?: ( screenSlug: string ) => void;
 }
 
 // @todo Get the style variations of theme, and then combine the selected one with colors & fonts for consistency
@@ -63,6 +64,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	onGlobalStylesChange,
 	limitGlobalStyles,
 	globalStylesInPersonalPlan,
+	onSelectScreen,
 	onNavigatorPathChange,
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
@@ -89,6 +91,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		onSelectVariation,
 		onSelectColorVariation,
 		onSelectFontVariation,
+		onSelectScreen,
 	} );
 
 	const isFullscreen = ! isDesktop && ( screens.length === 1 || ! isInitialScreen );

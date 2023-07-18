@@ -27,6 +27,7 @@ interface Props {
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
+	onSelectScreen?: ( screenSlug: string ) => void;
 }
 
 const useScreens = ( {
@@ -43,6 +44,7 @@ const useScreens = ( {
 	onSelectVariation,
 	onSelectColorVariation,
 	onSelectFontVariation,
+	onSelectScreen,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -51,6 +53,7 @@ const useScreens = ( {
 			[
 				variations &&
 					variations.length > 0 && {
+						slug: 'style-variations',
 						checked: ! isDefaultGlobalStylesVariationSlug( selectedVariation?.slug ),
 						icon: styles,
 						label: translate( 'Styles' ),
@@ -74,6 +77,7 @@ const useScreens = ( {
 							</div>
 						),
 						actionText: translate( 'Save styles' ),
+						onSelect: onSelectScreen,
 					},
 				variations &&
 					variations.length === 0 &&
@@ -81,6 +85,7 @@ const useScreens = ( {
 					! isVirtual &&
 					! COLOR_VARIATIONS_BLOCK_LIST.includes( stylesheet ) &&
 					isEnabled( 'signup/design-picker-preview-colors' ) && {
+						slug: 'color-palettes',
 						checked: !! selectedColorVariation,
 						icon: color,
 						label: translate( 'Colors' ),
@@ -102,10 +107,12 @@ const useScreens = ( {
 							</div>
 						),
 						actionText: translate( 'Save colors' ),
+						onSelect: onSelectScreen,
 					},
 				variations &&
 					variations.length === 0 &&
 					isEnabled( 'signup/design-picker-preview-fonts' ) && {
+						slug: 'font-pairings',
 						checked: !! selectedFontVariation,
 						icon: typography,
 						label: translate( 'Fonts' ),
@@ -124,6 +131,7 @@ const useScreens = ( {
 							</div>
 						),
 						actionText: translate( 'Save fonts' ),
+						onSelect: onSelectScreen,
 					},
 			].filter( Boolean ) as NavigatorScreenObject[],
 		[
