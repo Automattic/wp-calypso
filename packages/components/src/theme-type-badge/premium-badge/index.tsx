@@ -139,7 +139,7 @@ const PremiumBadge = ( {
 					className={ classNames( 'premium-badge__popover', tooltipClassName ) }
 					context={ divRef.current }
 					isVisible={ isPopoverVisible }
-					position={ tooltipPosition }
+					position="bottom"
 					focusOnShow={ focusOnShow }
 				>
 					{ labelText }
