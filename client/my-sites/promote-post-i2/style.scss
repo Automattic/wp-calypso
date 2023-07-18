@@ -75,10 +75,10 @@
 
 	@keyframes skeleton-loading {
 		0% {
-			background-color: hsl(200, 20%, 80%);
+			background-color: var(--studio-gray-0);
 		}
 		100% {
-			background-color: hsl(200, 20%, 95%);
+			background-color: var(--color-sidebar-text);
 		}
 	}
 }
