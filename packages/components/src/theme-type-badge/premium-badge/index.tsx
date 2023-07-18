@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Gridicon from '../../gridicon';
 import Popover from '../../popover';
 
@@ -50,14 +50,21 @@ const PremiumBadge = ( {
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
 	const [ isHovered, setIsHovered ] = useState( false );
 	const [ isPressed, setIsPressed ] = useState( false );
-
-	// Display the label as a tooltip if the tooltip is being hidden and the label is too long.
-	const displayLabelAsTooltip =
-		!! shouldHideTooltip &&
-		!! labelRef.current?.offsetWidth &&
-		labelRef.current?.scrollWidth > labelRef.current?.offsetWidth;
+	const [ displayLabelAsTooltip, setDisplayLabelAsTooltip ] = useState( false );
+	// This is used to prevent the label from being rendered in compact mode before the first render
+	// so that the label can be measured in its uncompacted state.
+	const [ mayRenderAsCompact, setMayRenderAsCompact ] = useState( false );
 
 	labelText = labelText || __( 'Premium' );
+
+	// Display the label as a tooltip if the tooltip is being hidden and the label is too long.
+	useLayoutEffect( () => {
+		setDisplayLabelAsTooltip(
+			!! shouldHideTooltip && labelRef.current?.scrollWidth > labelRef.current?.offsetWidth
+		);
+		// Now the dimensions of the label are known, it is safe to render the label in compact mode.
+		setMayRenderAsCompact( true );
+	}, [ shouldHideTooltip, labelRef ] );
 
 	const isClickableProps = useMemo( () => {
 		if ( ! isClickable ) {
@@ -89,7 +96,7 @@ const PremiumBadge = ( {
 		<div
 			className={ classNames( 'premium-badge', className, {
 				'premium-badge__compact-animation': shouldCompactWithAnimation,
-				'premium-badge--compact': shouldCompactWithAnimation && ! isHovered,
+				'premium-badge--compact': shouldCompactWithAnimation && ! isHovered && mayRenderAsCompact,
 				'premium-badge--is-clickable': isClickable,
 			} ) }
 			ref={ divRef }
