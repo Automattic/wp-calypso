@@ -456,6 +456,11 @@
 		padding: 32px 0;
 		width: 100%;
 
+		@media (max-width: $break-medium ) {
+			margin: 64px -20px 0;
+			padding: 32px 20px;
+		}
+
 		.foldable-faq__question {
 			padding: 16px 0;
 		}
