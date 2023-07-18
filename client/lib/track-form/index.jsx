@@ -26,13 +26,14 @@ export const trackForm = ( WrappedComponent ) =>
 
 		replaceFields = ( fields, callback, keepPrevFields = true ) => {
 			debug( 'replaceFields', { fields, keepPrevFields } );
-			const prevFields = keepPrevFields ? this.state.fields : {};
-			const newFields = {
-				...prevFields,
-				...fields,
-			};
-
-			this.setState( { fields: newFields }, callback );
+			this.setState( ( prevState ) => {
+				const prevFields = keepPrevFields ? prevState.fields : {};
+				const newFields = {
+					...prevFields,
+					...fields,
+				};
+				return { fields: newFields };
+			}, callback );
 		};
 
 		clearDirtyFields = () => {
