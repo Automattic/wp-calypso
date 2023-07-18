@@ -100,6 +100,7 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 					translatedText={ newsletterFormText }
 					isLoading={ isLoading }
 					isSubmitError={ isSubmitError }
+					className="newsletter-setup-form"
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
