@@ -399,7 +399,8 @@ export function generateSteps( {
 		},
 		'domain-only': {
 			stepName: 'domain-only',
-			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
+			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem', 'signupDomainOrigin' ], // note: siteId, siteSlug are not provided when used in domain flow
+			optionalDependencies: [ 'signupDomainOrigin' ],
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
