@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useIssueMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
@@ -35,7 +35,6 @@ export default function IssueMultipleLicensesForm( {
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ selectedBundle, setSelectedBundle ] = useState< string | null >( null );
 
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 
@@ -112,13 +111,6 @@ export default function IssueMultipleLicensesForm( {
 
 	const onSelectProduct = useCallback(
 		( product: APIProductFamilyProduct ) => {
-			// A bundle cannot be combined with other products.
-			if ( isJetpackBundle( product.slug ) ) {
-				dispatch( clearSelectedProductSlugs() );
-				setSelectedBundle( product.slug );
-				return;
-			}
-
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select_multiple', {
 					product: product.slug,
@@ -132,11 +124,16 @@ export default function IssueMultipleLicensesForm( {
 		[ dispatch, selectedProductSlugs ]
 	);
 
-	useEffect( () => {
-		// In the case of a bundle, we want to take the user immediately to the next step since
-		// they can't select any additional item after selecting a bundle.
-		if ( selectedBundle ) {
-			// Identify if a user had an existing standalone product license already before purchased a bundle.
+	const onSelectBundle = useCallback(
+		( bundle: APIProductFamilyProduct ) => {
+			// People aren't allowed to select anything else after selecting a bundle;
+			// thus, after someone selects a bundle, we immediately clear any existing
+			// selections and issue a license for that bundle
+			// (as well as do any necessary page redirects on the front end).
+			dispatch( clearSelectedProductSlugs() );
+
+			// If this person already had an existing standalone product license
+			// before purchasing this bundle, let's make a record of it
 			if ( hasPurchasedProductsWithoutBundle ) {
 				dispatch(
 					recordTracksEvent(
@@ -144,9 +141,11 @@ export default function IssueMultipleLicensesForm( {
 					)
 				);
 			}
-			issueLicenses( [ selectedBundle ] );
-		}
-	}, [ dispatch, hasPurchasedProductsWithoutBundle, issueLicenses, selectedBundle ] );
+
+			issueLicenses( [ bundle.slug ] );
+		},
+		[ dispatch, hasPurchasedProductsWithoutBundle, issueLicenses ]
+	);
 
 	const selectedSiteDomain = selectedSite?.domain;
 
@@ -221,7 +220,7 @@ export default function IssueMultipleLicensesForm( {
 									<LicenseBundleCard
 										key={ productOption.slug }
 										product={ productOption }
-										onSelectProduct={ onSelectProduct }
+										onSelectProduct={ onSelectBundle }
 										tabIndex={ 100 + ( products?.length || 0 ) + i }
 									/>
 								) ) }
