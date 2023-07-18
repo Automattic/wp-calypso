@@ -34,6 +34,7 @@ type DomainLockResponse = {
 	raw_price?: number;
 	sale_cost?: number;
 	currency_code?: string;
+	tld?: string;
 };
 
 type DomainCodePair = { domain: string; auth: string };
@@ -59,6 +60,7 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 				if ( ! isUnlocked ) {
 					return {
 						domain: pair.domain,
+						tld: availability.tld,
 						status: availability.status,
 						unlocked: false,
 					};
