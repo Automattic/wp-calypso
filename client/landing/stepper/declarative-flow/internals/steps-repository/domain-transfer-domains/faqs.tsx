@@ -93,8 +93,8 @@ const DomainTransferFAQ: FC = () => {
 							className="domain-transfer-faq__section"
 						>
 							{ translate(
-								'When you transfer a domain name to WordPress.com, we will leave the nameserver associated with , ' +
-									'the domain unchanged so your DNS records will continue keep working the same as before the transfer.'
+								'When you transfer a domain name to WordPress.com, we ensure that the associated name ' +
+									'server remains unchanged. This means your DNS records will continue to work as they did before the transfer.'
 							) }
 						</FoldableFAQ>
 					</li>
