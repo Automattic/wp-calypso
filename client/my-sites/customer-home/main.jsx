@@ -1,10 +1,12 @@
 import { isEcommerce, isFreePlanProduct } from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
+import { isSiteAtomic } from 'calypso/../packages/data-stores/src/site/selectors';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -13,7 +15,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
-import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
+import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
@@ -30,8 +32,10 @@ import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
+import getRequest from 'calypso/state/selectors/get-request';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
+import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
@@ -46,6 +50,7 @@ const Home = ( {
 	canUserUseCustomerHome,
 	hasWooCommerceInstalled,
 	isRequestingSitePlugins,
+	isAtomicSiteLaunching,
 	site,
 	siteId,
 	trackViewSiteAction,
@@ -53,7 +58,8 @@ const Home = ( {
 	isNew7DUser,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
-
+	const [ wasAtomicSiteLaunched, setWasAtomicSiteLaunched ] = useState( false );
+	const queryClient = useQueryClient();
 	const translate = useTranslate();
 
 	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
@@ -88,6 +94,19 @@ const Home = ( {
 			setCelebrateLaunchModalIsOpen( true );
 		}
 	}, [ isSuccess ] );
+
+	useEffect( () => {
+		if ( ! isAtomicSiteLaunching && wasAtomicSiteLaunched ) {
+			queryClient.invalidateQueries( getCacheKey( siteId ) );
+			setWasAtomicSiteLaunched( false );
+		}
+	}, [ isAtomicSiteLaunching, queryClient, siteId, wasAtomicSiteLaunched ] );
+
+	useEffect( () => {
+		if ( isAtomicSiteLaunching ) {
+			setWasAtomicSiteLaunched( true );
+		}
+	}, [ isAtomicSiteLaunching ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -176,6 +195,7 @@ Home.propTypes = {
 	hasWooCommerceInstalled: PropTypes.bool.isRequired,
 	isStaticHomePage: PropTypes.bool.isRequired,
 	isRequestingSitePlugins: PropTypes.bool.isRequired,
+	isAtomicSiteLaunching: PropTypes.bool.isRequired,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
@@ -185,6 +205,7 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 	const installedWooCommercePlugin = getPluginOnSite( state, siteId, 'woocommerce' );
+	const isAtomic = isSiteAtomic( state, siteId );
 
 	return {
 		site: getSelectedSite( state ),
@@ -196,6 +217,8 @@ const mapStateToProps = ( state ) => {
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
+		isAtomicSiteLaunching:
+			isAtomic && ( getRequest( state, launchSite( siteId ) )?.isLoading ?? false ),
 	};
 };
 
