@@ -356,6 +356,10 @@
 		}
 
 		.bulk-domain-transfer__faqs {
+			background: var(--studio-gray-0);
+			margin: 120px -100vw 0;
+			padding: 32px 100vw;
+
 			.foldable-faq__question {
 				padding: 16px 0;
 			}
@@ -370,9 +374,6 @@
 			}
 			li {
 				font-size: 1rem;
-			}
-			section {
-				margin-top: 120px;
 			}
 			ul {
 				list-style: none;
