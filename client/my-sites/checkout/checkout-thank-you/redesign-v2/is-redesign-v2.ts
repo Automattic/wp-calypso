@@ -1,4 +1,4 @@
-import { isWpComPlan } from '@automattic/calypso-products';
+import { isDomainTransfer, isWpComPlan } from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
 
 /**
@@ -16,6 +16,11 @@ const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 
 	// ThankYou page for only purchasing a plan.
 	const purchases = getPurchases( props );
+
+	if ( purchases.every( isDomainTransfer ) ) {
+		return true;
+	}
+
 	if ( purchases.length === 1 ) {
 		return isWpComPlan( purchases[ 0 ].productSlug );
 	}

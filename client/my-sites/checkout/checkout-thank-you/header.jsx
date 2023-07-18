@@ -37,8 +37,8 @@ import {
 } from 'calypso/state/sites/selectors';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 import './style.scss';
+import Product from './redesign-v2/sections/Product';
 import getHeading from './redesign-v2/sections/get-heading';
-import ProductPlan from './redesign-v2/sections/product/ProductPlan';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -85,6 +85,28 @@ export class CheckoutThankYouHeader extends PureComponent {
 						) }
 					</p>
 				</div>
+			);
+		}
+
+		if ( this.isBulkDomainTransfer() ) {
+			return (
+				<>
+					<span>
+						{ /* { _n(
+							"We've got it from here! We'll let you know when your newly transferred domain is ready to use.",
+							"We've got it from here! We'll let you know when your newly transferred domains are ready to use.",
+							purchases?.length
+						) } */ }
+						{ translate(
+							"We've got it from here! We'll let you know when your newly transferred domain is ready to use."
+						) }
+					</span>
+					<span>
+						{ translate( '{{strong}}Domain transfers may take up to 5-10 days.{{/strong}}', {
+							components: { strong: <strong /> },
+						} ) }
+					</span>
+				</>
 			);
 		}
 
@@ -413,6 +435,11 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
+	isBulkDomainTransfer() {
+		const { purchases } = this.props;
+		return purchases?.every( isDomainTransfer );
+	}
+
 	getSearchButtonProps() {
 		const { translate, selectedSite, jetpackSearchCustomizeUrl, jetpackSearchDashboardUrl } =
 			this.props;
@@ -541,7 +568,11 @@ export class CheckoutThankYouHeader extends PureComponent {
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
 						<h1 className="checkout-thank-you__header-heading">
-							{ getHeading( { ...this.props, isSearch: this.isSearch() } ) }
+							{ getHeading( {
+								...this.props,
+								isSearch: this.isSearch(),
+								isBulkDomainTransfer: this.isBulkDomainTransfer(),
+							} ) }
 						</h1>
 
 						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
@@ -551,10 +582,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 						) }
 
 						{ isRedesignV2 && (
-							<ProductPlan
+							<Product
 								siteSlug={ selectedSite.slug }
 								primaryPurchase={ primaryPurchase }
 								siteID={ selectedSite.ID }
+								purchases={ this.props.purchases }
+								isBulkDomainTransfer={ this.isBulkDomainTransfer() }
 							/>
 						) }
 						{ this.props.children }

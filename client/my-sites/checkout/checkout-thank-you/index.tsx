@@ -178,9 +178,29 @@ type FindPredicate = (
 
 export function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPurchase[] {
 	return [
-		...( props?.receipt?.data?.purchases ?? [] ),
-		...( props?.gsuiteReceipt?.data?.purchases ?? [] ),
+		{
+			delayedProvisioning: false,
+			freeTrial: false,
+			isDomainRegistration: false,
+			isEmailVerified: false,
+			isRenewal: false,
+			isRootDomainWithUs: false,
+			meta: 'testing.com',
+			newQuantity: undefined,
+			productId: 5,
+			productName: 'Domain Transfer',
+			productNameShort: 'Domain',
+			productSlug: 'domain_transfer',
+			productType: '',
+			registrarSupportUrl: '',
+			saasRedirectUrl: '',
+			willAutoRenew: false,
+		},
 	];
+	// return [
+	// 	...( props?.receipt?.data?.purchases ?? [] ),
+	// 	...( props?.gsuiteReceipt?.data?.purchases ?? [] ),
+	// ];
 }
 
 export function getFailedPurchases( props: CheckoutThankYouCombinedProps ) {
@@ -484,7 +504,6 @@ export class CheckoutThankYou extends Component<
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
-
 			wasGSuiteOrGoogleWorkspace = purchases.some( isGSuiteOrGoogleWorkspace );
 			wasTitanEmailProduct = purchases.some( isTitanMail );
 			failedPurchases = getFailedPurchases( this.props );
@@ -573,7 +592,7 @@ export class CheckoutThankYou extends Component<
 					<PlanThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasDomainProduct ) {
+		} else if ( wasDomainProduct && ! this.isBulkDomainTransfer( purchases ) ) {
 			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
 			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
 
@@ -699,6 +718,10 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
+	isBulkDomainTransfer( purchases: ReceiptPurchase[] ): boolean {
+		return purchases.every( isDomainTransfer );
+	}
+
 	/**
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
 	 * just performed by the user.
@@ -716,6 +739,15 @@ export class CheckoutThankYou extends Component<
 		if ( hasFailedPurchases ) {
 			return [ 'failed-purchase-details' ];
 		}
+
+		// Check if it is the bulk domain transfer flow
+		if ( this.isBulkDomainTransfer( purchases ) ) {
+			return [
+				'domain-transfer-details',
+				...findPurchaseAndDomain( purchases, isDomainRegistration ),
+			];
+		}
+
 		if ( purchases.some( isJetpackPlan ) ) {
 			return [ 'jetpack-plan-details', purchases.find( isJetpackPlan ) ];
 		}
@@ -833,7 +865,7 @@ export class CheckoutThankYou extends Component<
 					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
 							{ isRedesignV2( this.props ) ? (
-								<Footer />
+								<Footer isBulkDomainFlow={ this.isBulkDomainTransfer( purchases ) } />
 							) : (
 								<PurchaseDetailsWrapper
 									{ ...this.props }
