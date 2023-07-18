@@ -200,12 +200,15 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 }
 
 function getHostingFlowDestination( { siteId } ) {
-	return addQueryArgs(
-		{
-			'new-site': siteId,
-			'hosting-flow': true,
-		},
-		'/sites'
+	return (
+		getQueryArgs().redirect_to ??
+		addQueryArgs(
+			{
+				'new-site': siteId,
+				'hosting-flow': true,
+			},
+			'/sites'
+		)
 	);
 }
 
