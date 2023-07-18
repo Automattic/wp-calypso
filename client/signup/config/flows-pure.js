@@ -23,8 +23,7 @@ export function generateFlows( {
 			name: HOSTING_LP_FLOW,
 			steps: [ 'user-hosting' ],
 			destination: getHostingFlowDestination,
-			description:
-				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
+			description: 'Create an account and redirect the user to the hosted site flow forking step.',
 			lastModified: '2023-05-19',
 			showRecaptcha: true,
 		},
