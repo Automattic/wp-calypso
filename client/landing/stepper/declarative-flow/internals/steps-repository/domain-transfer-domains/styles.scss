@@ -463,7 +463,12 @@
 
 		.foldable-faq__question {
 			padding: 16px 0;
+
+			.gridicon {
+				flex-shrink: 0;
+			}
 		}
+
 		.foldable-faq__question-text {
 			font-size: 1rem;
 		}
