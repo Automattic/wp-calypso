@@ -39,16 +39,6 @@ export const setUpActionsForTasks = (
 				};
 				break;
 
-			case 'design_edited':
-				action = () => {
-					window.location.assign(
-						addQueryArgs( `/site-editor/${ siteSlug }`, {
-							canvas: 'edit',
-						} )
-					);
-				};
-				break;
-
 			case 'domain_claim':
 			case 'domain_upsell':
 			case 'domain_customize':
