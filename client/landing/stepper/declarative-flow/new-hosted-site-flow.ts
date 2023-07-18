@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -9,11 +10,16 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useQuery } from '../hooks/use-query';
-import { ONBOARD_STORE } from '../stores';
+import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { startedInHostingFlow } from '../utils/hosting-flow';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import type { Flow, ProvidedDependencies } from './internals/types';
-import type { OnboardSelect } from '@automattic/data-stores';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
 
@@ -225,6 +231,48 @@ const hosting: Flow = {
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 			[]
 		);
+	},
+	useAssertConditions(): AssertConditionResult {
+		const hostingFlow = useSelector( startedInHostingFlow );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		const locale = useLocale();
+
+		const getStartUrl = () => {
+			let hasFlowParams = false;
+			const flowParams = new URLSearchParams();
+
+			if ( hostingFlow ) {
+				flowParams.set( 'hosting-flow', 'true' );
+				hasFlowParams = true;
+			}
+
+			const redirectTarget =
+				window?.location?.pathname +
+				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
+
+			const url =
+				locale && locale !== 'en'
+					? `/start/hosting/${ locale }?redirect_to=${ redirectTarget }`
+					: `/start/hosting?redirect_to=${ redirectTarget }`;
+
+			return url;
+		};
+
+		if ( ! userIsLoggedIn ) {
+			const logInUrl = getStartUrl();
+			window.location.assign( logInUrl );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message: 'new-hosted-site-flow requires a logged in user',
+			};
+		}
+
+		return result;
 	},
 };
 
