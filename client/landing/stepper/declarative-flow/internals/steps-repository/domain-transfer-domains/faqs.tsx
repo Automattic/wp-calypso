@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -94,7 +95,8 @@ const DomainTransferFAQ: FC = () => {
 						>
 							{ translate(
 								'When you transfer a domain name to WordPress.com, we ensure that the associated name ' +
-									'server remains unchanged. This means your DNS records will continue to work as they did before the transfer.'
+									'servers remain unchanged. This means your DNS records and associated services like ' +
+									'email will continue to work as they did before the transfer.'
 							) }
 						</FoldableFAQ>
 					</li>
@@ -135,6 +137,32 @@ const DomainTransferFAQ: FC = () => {
 						>
 							{ translate(
 								'Yes. Privacy protection is turned on by default for all domains transferred to WordPress.com.'
+							) }
+						</FoldableFAQ>
+					</li>
+					<li>
+						<FoldableFAQ
+							id="privacy-protection"
+							question={ translate(
+								'It looks like I am being charged, I thought the first year was free?'
+							) }
+							onToggle={ onFaqToggle }
+							className="domain-transfer-faq__section"
+						>
+							{ translate(
+								'We offer a free first year for all domains being transferred in from Google Domains, but some domain extensions may not ' +
+									'automatically show up. Please {{ExternalLinkWithTracking}}contact our support team{{/ExternalLinkWithTracking}} for assistance.',
+								{
+									components: {
+										ExternalLinkWithTracking: (
+											<ExternalLinkWithTracking
+												icon={ false }
+												href="https://wordpress.com/help"
+												tracksEventName="domain_transfer_faq_support_link_click"
+											/>
+										),
+									},
+								}
 							) }
 						</FoldableFAQ>
 					</li>
