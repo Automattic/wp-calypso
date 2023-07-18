@@ -693,6 +693,27 @@ function wpcomPages( app ) {
 		}
 	} );
 
+	app.get( '/:locale/plans', function ( req, res ) {
+		if ( ! req.context.isLoggedIn ) {
+			const queryFor = req.query?.for;
+			const ref = req.query?.ref;
+			const locale = req.params?.locale;
+
+			if ( queryFor && 'jetpack' === queryFor ) {
+				res.redirect(
+					'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
+				);
+			} else {
+				const pricingPageUrl = ref
+					? `https://wordpress.com/${ locale }/pricing/?ref=${ ref }`
+					: `https://wordpress.com/${ locale }/pricing/`;
+				res.redirect( pricingPageUrl );
+			}
+		} else {
+			res.redirect( '/plans' );
+		}
+	} );
+
 	app.get( '/plans', function ( req, res, next ) {
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
