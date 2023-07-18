@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useRef, useCallback, ComponentProps } from 'react';
+import { useState, useEffect, useRef, useCallback, ComponentPropsWithoutRef } from 'react';
 import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	READER_EXPORT_TYPE_LIST,
@@ -27,12 +27,9 @@ type ReaderExportButtonProps = {
 	listId?: number;
 };
 
-// Note: there is a type issue where `disabled` can't be used if we accept every single
-// button prop. As a result, we can pick the props we want to allow.
-type AcceptedButtonProps = Pick<
-	ComponentProps< typeof Button >,
-	'icon' | 'iconSize' | 'variant' | 'disabled'
->;
+// Note: since the Button must be disableable, it must not be a link. So we need to remove the link type variant from the accepted props.
+type RemoveAnchorButtonProps< T > = T extends { href: string } ? never : T;
+type AcceptedButtonProps = RemoveAnchorButtonProps< ComponentPropsWithoutRef< typeof Button > >;
 
 const ReaderExportButton = ( {
 	filename = 'reader-export.opml',
