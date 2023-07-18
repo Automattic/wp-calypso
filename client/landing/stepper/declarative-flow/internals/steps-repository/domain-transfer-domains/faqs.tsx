@@ -77,9 +77,9 @@ const DomainTransferFAQ: FC = () => {
 							className="domain-transfer-faq__section"
 						>
 							{ translate(
-								'No, when you transfer your domain, the remaining time you had left with your old registrar ' +
-									'is transferred over. In addition, we give you another free years registration when you ' +
-									'transfer from Google Domains.'
+								'No, the remaining time you have with your current registrar will be transferred ' +
+									"over when you move your domain. Furthermore, you will receive an additional year's " +
+									'registration free of charge when transferring any domain to WordPress.com'
 							) }
 						</FoldableFAQ>
 					</li>
