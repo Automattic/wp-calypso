@@ -87,6 +87,8 @@ const SignupFlowPlanFeatureActionButton = ( {
 				plan: planName,
 				priceString: priceString ?? '',
 			},
+			comment:
+				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
 		} );
 	} else {
 		btnText = translate( 'Get %(plan)s', {
@@ -139,9 +141,8 @@ const LaunchPagePlanFeatureActionButton = ( {
 				plan: planName,
 				priceString: priceString ?? '',
 			},
-			context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
 			comment:
-				'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Select Premium - $10',
 		} );
 	} else {
 		buttonText = translate( 'Select %(plan)s', {
@@ -285,6 +286,8 @@ const LoggedInPlansFeatureActionButton = ( {
 		buttonTextFallback = translate( 'Upgrade – %(priceString)s', {
 			context: 'verb',
 			args: { priceString: priceString ?? '' },
+			comment:
+				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Upgrade - $10',
 		} );
 	} else {
 		buttonTextFallback = translate( 'Upgrade', { context: 'verb' } );
