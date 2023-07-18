@@ -10,6 +10,7 @@ export {
 export {
 	useColorPaletteVariations,
 	useFontPairingVariations,
+	useRegisterCoreBlocks,
 	useSyncGlobalStylesUserConfig,
 } from './hooks';
 

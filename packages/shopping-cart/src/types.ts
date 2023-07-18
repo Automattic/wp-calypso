@@ -603,6 +603,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	selected_page_titles?: string[];
 	site_title?: string;
 	signup_flow?: string;
+	import_dns_records?: boolean;
 	signup?: boolean;
 	headstart_theme?: string;
 }

@@ -52,7 +52,7 @@
 		"importer/unified": true,
 		"is_running_in_jetpack_site": false,
 		"jetpack/agency-dashboard": true,
-		"jetpack/ai-assistant-request-limit": false,
+		"jetpack/ai-assistant-request-limit": true,
 		"jetpack/api-cache": false,
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/backup-retention-settings": true,

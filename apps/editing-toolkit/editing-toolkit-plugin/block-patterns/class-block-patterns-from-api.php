@@ -76,7 +76,7 @@ class Block_Patterns_From_API {
 			foreach ( (array) $block_patterns as $pattern ) {
 				foreach ( (array) $pattern['categories'] as $slug => $category ) {
 					// Register categories from first pattern in each category.
-					if ( ! $pattern_categories[ $slug ] ) {
+					if ( ! isset( $pattern_categories[ $slug ] ) ) {
 						$pattern_categories[ $slug ] = array(
 							'label'       => $category['title'],
 							'description' => $category['description'],

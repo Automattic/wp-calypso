@@ -7,7 +7,6 @@ import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { resetBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useTermsSuggestions } from './useTermsSuggestions';
 import './style.scss';
@@ -29,11 +28,6 @@ const SearchBox = ( {
 
 	const pageToSearch = useCallback(
 		( search ) => {
-			const isCategoryPage = window.location.href.includes( '/plugins/browse/' );
-			if ( isCategoryPage ) {
-				dispatch( resetBreadcrumbs() );
-			}
-
 			page.show( localizePath( `/plugins/${ selectedSite?.slug || '' }` ) ); // Ensures location.href is on the main Plugins page before setQueryArgs uses it to construct the redirect.
 			setQueryArgs( '' !== search ? { s: search } : {} );
 
@@ -48,7 +42,7 @@ const SearchBox = ( {
 				} );
 			}
 		},
-		[ searchBoxRef, categoriesRef, dispatch, selectedSite, localizePath ]
+		[ searchBoxRef, categoriesRef, selectedSite, localizePath ]
 	);
 
 	const recordSearchEvent = ( eventName ) =>

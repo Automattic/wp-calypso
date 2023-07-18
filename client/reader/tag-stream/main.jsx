@@ -98,7 +98,7 @@ class TagStream extends Component {
 	};
 
 	render() {
-		const emptyContent = <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
+		const emptyContent = () => <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
 		const title = this.props.decodedTagSlug;
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
 		const titleText = title.replace( /-/g, ' ' );
@@ -124,13 +124,13 @@ class TagStream extends Component {
 						showFollow={ false }
 						showBack={ this.props.showBack }
 					/>
-					{ emptyContent }
+					{ emptyContent() }
 				</ReaderMain>
 			);
 		}
 
 		// Put the tag stream header at the top of the body, so it can be even with the sidebar in the two column layout.
-		const tagHeader = (
+		const tagHeader = () => (
 			<TagStreamHeader
 				title={ titleText }
 				description={ this.props.description }
@@ -153,7 +153,7 @@ class TagStream extends Component {
 				streamHeader={ tagHeader }
 				showSiteNameOnCards={ false }
 				useCompactCards={ true }
-				streamSidebar={ <ReaderTagSidebar tag={ this.props.decodedTagSlug } /> }
+				streamSidebar={ () => <ReaderTagSidebar tag={ this.props.decodedTagSlug } /> }
 				sidebarTabTitle={ this.props.translate( 'Related' ) }
 			>
 				<QueryReaderFollowedTags />

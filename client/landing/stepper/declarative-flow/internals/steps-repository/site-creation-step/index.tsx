@@ -64,24 +64,17 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const urlData = useSelector( getUrlData );
 
-	const {
-		domainItem,
-		domainCartItem,
-		planCartItem,
-		siteAccentColor,
-		selectedSiteTitle,
-		productCartItems,
-	} = useSelect(
-		( select ) => ( {
-			domainItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
-			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-			siteAccentColor: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteAccentColor(),
-			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
-			selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
-		} ),
-		[]
-	);
+	const { domainItem, domainCartItem, planCartItem, selectedSiteTitle, productCartItems } =
+		useSelect(
+			( select ) => ( {
+				domainItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+				productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
+				selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			} ),
+			[]
+		);
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
@@ -155,7 +148,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			theme,
 			siteVisibility,
 			urlData?.meta.title ?? selectedSiteTitle,
-			siteAccentColor,
+			// We removed the color option during newsletter onboarding.
+			// But backend still expects/needs a value, so supplying the default.
+			// Ideally should remove this and update code downstream to handle this.
+			'#113AF5',
 			useThemeHeadstart,
 			username,
 			domainItem,

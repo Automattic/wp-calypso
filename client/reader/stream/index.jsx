@@ -59,10 +59,10 @@ const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 class ReaderStream extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		emptyContent: PropTypes.object,
+		emptyContent: PropTypes.func,
 		followSource: PropTypes.string,
 		forcePlaceholders: PropTypes.bool,
-		intro: PropTypes.object,
+		intro: PropTypes.func,
 		isDiscoverStream: PropTypes.bool,
 		isMain: PropTypes.bool,
 		onUpdatesShown: PropTypes.func,
@@ -72,8 +72,8 @@ class ReaderStream extends Component {
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
-		streamHeader: PropTypes.element,
-		streamSidebar: PropTypes.element,
+		streamHeader: PropTypes.func,
+		streamSidebar: PropTypes.func,
 		suppressSiteNameLink: PropTypes.bool,
 		trackScrollPage: PropTypes.func.isRequired,
 		translate: PropTypes.func,
@@ -97,6 +97,8 @@ class ReaderStream extends Component {
 	state = {
 		selectedTab: 'posts',
 	};
+
+	isMounted = false;
 
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
@@ -176,6 +178,7 @@ class ReaderStream extends Component {
 		this.props.resetCardExpansions();
 		this.props.viewStream( streamKey, window.location.pathname );
 		this.fetchNextPage( {} );
+		this.isMounted = true;
 
 		window.addEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
@@ -452,7 +455,6 @@ class ReaderStream extends Component {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
-		const hasNoPosts = items.length === 0 && ! isRequesting;
 		let body;
 		let showingStream;
 
@@ -462,6 +464,8 @@ class ReaderStream extends Component {
 			isRequesting = true;
 		}
 
+		const hasNoPosts = this.isMounted && items.length === 0 && ! isRequesting;
+
 		const streamType = getStreamType( streamKey );
 
 		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
@@ -470,7 +474,7 @@ class ReaderStream extends Component {
 
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
-			body = this.props.emptyContent;
+			body = this.props.emptyContent?.();
 			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
 				body = <EmptyContent />;
 			}
@@ -492,26 +496,26 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			const sidebarContent = this.props.streamSidebar;
+			const sidebarContentFn = this.props.streamSidebar;
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
-			if ( ! sidebarContent || streamType === 'search' ) {
+			if ( ! sidebarContentFn || streamType === 'search' ) {
 				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
 						<div className="reader__content">
-							{ streamHeader }
+							{ streamHeader?.() }
 							{ bodyContent }
 						</div>
-						<div className="stream__right-column">{ sidebarContent }</div>
+						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
 				baseClassnames = classnames( 'reader-two-column', baseClassnames );
 			} else {
 				body = (
 					<>
-						{ streamHeader }
+						{ streamHeader?.() }
 						<div className="stream__header">
 							<SectionNav selectedText={ this.state.selectedTab }>
 								<NavTabs label={ translate( 'Status' ) }>
@@ -536,7 +540,7 @@ class ReaderStream extends Component {
 							<div className="reader__content">{ bodyContent }</div>
 						) }
 						{ this.state.selectedTab === 'sites' && (
-							<div className="stream__right-column">{ sidebarContent }</div>
+							<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 						) }
 					</>
 				);
@@ -556,7 +560,7 @@ class ReaderStream extends Component {
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
 				{ this.props.children }
-				{ showingStream && items.length ? this.props.intro : null }
+				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
 				{ showingStream && items.length && ! isRequesting ? <ListEnd /> : null }
 			</TopLevel>
