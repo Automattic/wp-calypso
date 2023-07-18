@@ -22,7 +22,7 @@ interface BadgeProps {
 
 const PremiumBadge = ( {
 	className,
-	labelText,
+	labelText: customLabelText,
 	tooltipContent,
 	tooltipClassName,
 	tooltipPosition = 'bottom left',
@@ -55,7 +55,7 @@ const PremiumBadge = ( {
 	// so that the label can be measured in its uncompacted state.
 	const [ mayRenderAsCompact, setMayRenderAsCompact ] = useState( false );
 
-	labelText = labelText || __( 'Premium' );
+	const labelText = customLabelText || __( 'Premium' );
 
 	// Display the label as a tooltip if the tooltip is being hidden and the label is too long.
 	useLayoutEffect( () => {
