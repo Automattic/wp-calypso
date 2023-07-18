@@ -339,7 +339,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTable( planPropertiesObj: PlanProperties[] ) {
-		const { translate, stickyRowOffset } = this.props;
+		const { translate, stickyRowOffset, isInSignup } = this.props;
 		const tableClasses = classNames(
 			'plan-features-2023-grid__table',
 			`has-${ planPropertiesObj.filter( ( { isVisible } ) => isVisible ).length }-cols`
@@ -357,7 +357,9 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
 					<StickyContainer
-						stickyClass="is-sticky-top-buttons-row"
+						stickyClass={
+							isInSignup ? 'is-sticky-top-buttons-row-signup' : 'is-sticky-top-buttons-row'
+						}
 						element="tr"
 						blockOffset={ stickyRowOffset }
 					>

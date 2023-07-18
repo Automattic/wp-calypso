@@ -696,13 +696,25 @@ body.is-section-signup.is-white-signup,
 
 	.is-sticky-top-buttons-row {
 		.is-top-buttons.plan-features-2023-grid__table-item {
-			padding-top: 36px;
+			/**
+			 * padding-top should be 36px as well.
+			 * On certain pages, the `top` property is calculated from the middle of the CTA button
+			 * instead from the top of the CTA button.
+			 * The height of the CTA button is 20px, so the extra 10px is to account for this difference.
+			 */
+			padding-top: 46px;
 			padding-bottom: 36px;
 			border: none;
 			background-color: #f9f9f9;
 			box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.04);
 			.plan-features-2023-grid__actions-button {
 				font-size: rem(12px);
+			}
+		}
+		&-signup {
+			@extend .is-sticky-top-buttons-row;
+			.is-top-buttons.plan-features-2023-grid__table-item {
+				padding-top: 36px;
 			}
 		}
 	}
