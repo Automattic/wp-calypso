@@ -583,7 +583,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 						{ isRedesignV2 && (
 							<Product
-								siteSlug={ selectedSite.slug }
+								siteSlug={ selectedSite?.slug }
 								primaryPurchase={ primaryPurchase }
 								siteID={ selectedSite.ID }
 								purchases={ this.props.purchases }

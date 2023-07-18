@@ -31,7 +31,6 @@ import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -93,8 +92,8 @@ import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import isRedesignV2 from './redesign-v2/is-redesign-v2';
-import MasterbarStyled from './redesign-v2/masterbar-styled';
 import Footer from './redesign-v2/sections/Footer';
+import Header from './redesign-v2/sections/Header';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
@@ -178,29 +177,9 @@ type FindPredicate = (
 
 export function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPurchase[] {
 	return [
-		{
-			delayedProvisioning: false,
-			freeTrial: false,
-			isDomainRegistration: false,
-			isEmailVerified: false,
-			isRenewal: false,
-			isRootDomainWithUs: false,
-			meta: 'testing.com',
-			newQuantity: undefined,
-			productId: 5,
-			productName: 'Domain Transfer',
-			productNameShort: 'Domain',
-			productSlug: 'domain_transfer',
-			productType: '',
-			registrarSupportUrl: '',
-			saasRedirectUrl: '',
-			willAutoRenew: false,
-		},
+		...( props?.receipt?.data?.purchases ?? [] ),
+		...( props?.gsuiteReceipt?.data?.purchases ?? [] ),
 	];
-	// return [
-	// 	...( props?.receipt?.data?.purchases ?? [] ),
-	// 	...( props?.gsuiteReceipt?.data?.purchases ?? [] ),
-	// ];
 }
 
 export function getFailedPurchases( props: CheckoutThankYouCombinedProps ) {
@@ -637,7 +616,12 @@ export class CheckoutThankYou extends Component<
 			);
 		}
 
-		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
+		if (
+			this.props.domainOnlySiteFlow &&
+			purchases.length > 0 &&
+			! failedPurchases.length &&
+			! this.isBulkDomainTransfer( purchases )
+		) {
 			return null;
 		}
 
@@ -649,19 +633,15 @@ export class CheckoutThankYou extends Component<
 				} ) }
 			>
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				{ this.isDataLoaded() && isRedesignV2( this.props ) && (
-					<ConfettiAnimation delay={ 1000 } />
-				) }
-				{ isRedesignV2( this.props ) && this.props.selectedSite?.ID && (
-					<>
-						<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
-						<MasterbarStyled
-							onClick={ () => page( `/home/${ this.props.selectedSiteSlug ?? '' }` ) }
-							backText={ translate( 'Back to dashboard' ) }
-							canGoBack={ true }
-							showContact={ true }
-						/>
-					</>
+				{ this.isDataLoaded() &&
+					isRedesignV2( this.props ) &&
+					! this.isBulkDomainTransfer( purchases ) && <ConfettiAnimation delay={ 1000 } /> }
+				{ isRedesignV2( this.props ) && (
+					<Header
+						siteId={ this.props.selectedSite?.ID }
+						siteSlug={ this.props.selectedSiteSlug }
+						isBulkDomainTransfer={ this.isBulkDomainTransfer( purchases ) }
+					/>
 				) }
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
 				{ showHappinessSupport && (
