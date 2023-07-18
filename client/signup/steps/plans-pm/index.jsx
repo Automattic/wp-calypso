@@ -57,7 +57,7 @@ export class PlansStepPM extends Component {
 					hideFreePlan={ true }
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ ( cartItem ) => buildUpgradeFunction( this.props, cartItem ) }
-					domainName={ getDomainName( this.props.signupDependencies.domainItem ) }
+					paidDomainName={ getDomainName( this.props.signupDependencies.domainItem ) }
 					plansWithScroll={ this.state.isDesktop }
 					flowName={ flowName }
 					isAllPaidPlansShown={ true }

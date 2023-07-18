@@ -144,7 +144,7 @@ export class PlansStep extends Component {
 			);
 		}
 
-		const domainName = getDomainName( this.props.signupDependencies.domainItem );
+		const paidDomainName = getDomainName( this.props.signupDependencies.domainItem );
 
 		return (
 			<div>
@@ -155,7 +155,7 @@ export class PlansStep extends Component {
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
-					domainName={ domainName }
+					paidDomainName={ paidDomainName }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					plansWithScroll={ this.state.isDesktop }
