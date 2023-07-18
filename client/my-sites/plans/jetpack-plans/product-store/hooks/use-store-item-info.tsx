@@ -30,7 +30,11 @@ import {
 	isJetpackCloudCartEnabled,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import { EXTERNAL_PRODUCTS_LIST, ITEM_TYPE_PLAN } from '../../constants';
+import {
+	EXTERNAL_PRODUCTS_LIST,
+	INDIRECT_CHECKOUT_PRODUCTS_LIST,
+	ITEM_TYPE_PLAN,
+} from '../../constants';
 import { buildCheckoutURL } from '../../get-purchase-url-callback';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
@@ -39,7 +43,11 @@ import { useShoppingCartTracker } from './use-shopping-cart-tracker';
 const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
 
 const getIsExternal = ( item: SelectorProduct ) =>
-	EXTERNAL_PRODUCTS_LIST.includes( item.productSlug );
+	EXTERNAL_PRODUCTS_LIST.includes( item.productSlug ) ||
+	INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( item.productSlug );
+
+const getIsIndirectCheckout = ( item: SelectorProduct ) =>
+	INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( item.productSlug );
 
 const getIsMultisiteCompatible = ( item: SelectorProduct ) => {
 	if ( isJetpackPlanSlug( item.productSlug ) ) {
@@ -393,6 +401,7 @@ export const useStoreItemInfo = ( {
 			getCtaAriaLabel,
 			getIsDeprecated,
 			getIsExternal,
+			getIsIndirectCheckout,
 			getIsIncludedInPlan,
 			getIsIncludedInPlanOrSuperseded,
 			getIsMultisiteCompatible,

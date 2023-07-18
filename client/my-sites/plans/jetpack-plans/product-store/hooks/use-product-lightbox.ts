@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { EXTERNAL_PRODUCTS_LIST } from '../../constants';
+import { EXTERNAL_PRODUCTS_LIST, INDIRECT_CHECKOUT_PRODUCTS_LIST } from '../../constants';
 import slugToSelectorProduct from '../../slug-to-selector-product';
 import { SelectorProduct } from '../../types';
 import { sanitizeLocationHash } from '../utils/sanitize-location-hash';
@@ -36,7 +36,10 @@ export const useProductLightbox = () => {
 					} )
 				);
 
-				if ( ! EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
+				if (
+					! EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) &&
+					! INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( product.productSlug )
+				) {
 					setCurrentProduct( product );
 				}
 			};
