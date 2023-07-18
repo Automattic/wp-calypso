@@ -74,8 +74,8 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			min-width: 0;
 			overflow-wrap: break-word;
 			word-break: break-word;
-			border-bottom: 1px solid var(--studio-gray-5);
-			padding: 32px 16px 32px 0;
+			border-bottom: 1px solid var(--studio-gray-0);
+			padding: 0 16px 32px 0;
 			font-size: 1.25rem;
 		}
 
@@ -116,6 +116,10 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		display: flex;
 		justify-content: space-between;
 		margin-top: 3rem;
+
+		@media (min-width: $breakpoint-mobile) {
+			margin-bottom: 28px;
+		}
 
 		.support-content-subscribe-disclaimer {
 			color: var(--studio-gray-60);
