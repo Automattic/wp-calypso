@@ -211,7 +211,6 @@ class ReaderPostCard extends Component {
 				<CompactPostCard
 					post={ post }
 					title={ title }
-					isDiscover={ isDiscover }
 					isExpanded={ isExpanded }
 					expandCard={ expandCard }
 					site={ site }
@@ -252,7 +251,6 @@ class ReaderPostCard extends Component {
 				<StandardPost
 					post={ post }
 					title={ title }
-					isDiscover={ isDiscover }
 					isExpanded={ isExpanded }
 					expandCard={ expandCard }
 					site={ site }
