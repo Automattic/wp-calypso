@@ -96,7 +96,15 @@ class SharingPreviewPane extends PureComponent {
 		const siteDomain = get( site, 'domain', '' );
 		const imageUrl = getPostImage( post );
 
-		const postProps = {
+		const connection = find( connections, { service: selectedService } ) ?? {};
+
+		/**
+		 * Props to pass to the preview component. Will be populated with the connection
+		 * specific data if the selected service is connected.
+		 *
+		 * @type {Object}
+		 */
+		const previewProps = {
 			articleUrl,
 			articleTitle,
 			articleContent,
@@ -107,35 +115,12 @@ class SharingPreviewPane extends PureComponent {
 			siteDomain,
 			siteIcon,
 			siteName,
+			hidePostPreview: ! connection.ID,
+			externalDisplay: connection.external_display,
+			externalName: connection.external_name,
+			externalProfileURL: connection.external_profile_URL,
+			externalProfilePicture: connection.external_profile_picture,
 		};
-
-		/**
-		 * Props to pass to the preview component. Will be populated with the connection
-		 * specific data if the selected service is connected.
-		 *
-		 * @type {Object}
-		 */
-		const previewProps = { ...postProps };
-
-		const connection = find( connections, { service: selectedService } );
-
-		if ( ! connection ) {
-			previewProps.hidePostPreview = true;
-		} else {
-			const {
-				external_name: externalName,
-				external_profile_url: externalProfileURL,
-				external_profile_picture: externalProfilePicture,
-				external_display: externalDisplay,
-			} = connection;
-
-			Object.assign( previewProps, {
-				externalDisplay,
-				externalName,
-				externalProfileURL,
-				externalProfilePicture,
-			} );
-		}
 
 		const customImage = getPostCustomImage( post );
 
