@@ -93,17 +93,6 @@ const OdieAssistantProvider = ( {
 		} );
 	}, [ sectionName, siteId ] );
 
-	const updatePlaceholderMessage = ( message: Message ) => {
-		setMessages( ( prevMessages ) => {
-			const newMessages = prevMessages.slice( 0, -1 ).concat( message );
-			setChat( ( prevChat ) => ( {
-				...prevChat,
-				messages: newMessages,
-			} ) );
-			return newMessages;
-		} );
-	};
-
 	const addMessage = ( message: Message ) => {
 		setMessages( ( prevMessages ) => {
 			const lastMessage = prevMessages[ prevMessages.length - 1 ];
