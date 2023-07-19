@@ -25,7 +25,6 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -42,10 +41,9 @@ interface Props {
 	flowName: string | null;
 	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
-	hostingFlow: boolean;
 }
 
-function getPlansIntent( flowName: string | null, hostingFlow: boolean ): PlansIntent | null {
+function getPlansIntent( flowName: string | null ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 		case DESIGN_FIRST_FLOW:
@@ -55,7 +53,7 @@ function getPlansIntent( flowName: string | null, hostingFlow: boolean ): PlansI
 		case LINK_IN_BIO_FLOW:
 			return 'plans-link-in-bio';
 		case NEW_HOSTED_SITE_FLOW:
-			return hostingFlow ? 'plans-new-hosted-site-hosting-flow' : 'plans-new-hosted-site';
+			return 'plans-new-hosted-site';
 		default:
 			return null;
 	}
@@ -75,7 +73,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
-	const { flowName, hostingFlow } = props;
+	const { flowName } = props;
 
 	const { setPlanCartItem, setDomain, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 
@@ -89,7 +87,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = flowName === DOMAIN_UPSELL_FLOW ? false : true;
-	const plansIntent = getPlansIntent( flowName, hostingFlow );
+	const plansIntent = getPlansIntent( flowName );
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
@@ -256,6 +254,5 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 export default connect( ( state ) => {
 	return {
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		hostingFlow: startedInHostingFlow( state ),
 	};
 } )( localize( PlansWrapper ) );

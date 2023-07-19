@@ -336,7 +336,6 @@ PlansStep.propTypes = {
 		'plans-newsletter',
 		'plans-link-in-bio',
 		'plans-new-hosted-site',
-		'plans-new-hosted-site-hosting-flow',
 		'plans-plugins',
 		'plans-jetpack-app',
 		'plans-import',
