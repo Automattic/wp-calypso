@@ -104,6 +104,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			saleCost: validationResult?.sale_cost,
 			currencyCode: validationResult?.currency_code,
 			refetch,
+			errorStatus: validationResult?.status,
 		};
 	}
 
@@ -114,5 +115,6 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			'An unknown error occurred while checking the domain transferability. Please try again or contact support'
 		),
 		refetch,
+		errorStatus: null,
 	};
 }
