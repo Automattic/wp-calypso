@@ -43,16 +43,11 @@ export async function queryNotices( siteId: number | null ): Promise< Notices > 
 	return processConflictNotices( payload );
 }
 
-export default function useNoticeVisibilityQuery(
-	siteId: number | null,
-	noticeId: string,
-	statsPurchaseSuccess: boolean
-) {
+export default function useNoticeVisibilityQuery( siteId: number | null, noticeId: string ) {
 	return useQuery( {
 		queryKey: [ 'stats', 'notices-visibility', siteId ],
 		queryFn: () => queryNotices( siteId ),
-		select: ( payload: Record< string, boolean > ): boolean =>
-			statsPurchaseSuccess || !! payload?.[ noticeId ],
+		select: ( payload: Record< string, boolean > ): boolean => !! payload?.[ noticeId ],
 		staleTime: 1000 * 30, // 30 seconds
 		retry: 1,
 		retryDelay: 3 * 1000, // 3 seconds
