@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { isSiteAtomic } from 'calypso/../packages/data-stores/src/site/selectors';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -50,7 +49,7 @@ const Home = ( {
 	canUserUseCustomerHome,
 	hasWooCommerceInstalled,
 	isRequestingSitePlugins,
-	isAtomicSiteLaunching,
+	isSiteLaunching,
 	site,
 	siteId,
 	trackViewSiteAction,
@@ -58,7 +57,7 @@ const Home = ( {
 	isNew7DUser,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
-	const [ wasAtomicSiteLaunched, setWasAtomicSiteLaunched ] = useState( false );
+	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
 
@@ -96,17 +95,17 @@ const Home = ( {
 	}, [ isSuccess ] );
 
 	useEffect( () => {
-		if ( ! isAtomicSiteLaunching && wasAtomicSiteLaunched ) {
+		if ( ! isSiteLaunching && launchedSiteId === siteId ) {
 			queryClient.invalidateQueries( getCacheKey( siteId ) );
-			setWasAtomicSiteLaunched( false );
+			setLaunchedSiteId( null );
 		}
-	}, [ isAtomicSiteLaunching, queryClient, siteId, wasAtomicSiteLaunched ] );
+	}, [ isSiteLaunching, launchedSiteId, queryClient, siteId ] );
 
 	useEffect( () => {
-		if ( isAtomicSiteLaunching ) {
-			setWasAtomicSiteLaunched( true );
+		if ( isSiteLaunching ) {
+			setLaunchedSiteId( siteId );
 		}
-	}, [ isAtomicSiteLaunching ] );
+	}, [ isSiteLaunching, siteId ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -195,7 +194,7 @@ Home.propTypes = {
 	hasWooCommerceInstalled: PropTypes.bool.isRequired,
 	isStaticHomePage: PropTypes.bool.isRequired,
 	isRequestingSitePlugins: PropTypes.bool.isRequired,
-	isAtomicSiteLaunching: PropTypes.bool.isRequired,
+	isSiteLaunching: PropTypes.bool.isRequired,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
@@ -205,7 +204,6 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 	const installedWooCommercePlugin = getPluginOnSite( state, siteId, 'woocommerce' );
-	const isAtomic = isSiteAtomic( state, siteId );
 
 	return {
 		site: getSelectedSite( state ),
@@ -217,8 +215,7 @@ const mapStateToProps = ( state ) => {
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
-		isAtomicSiteLaunching:
-			isAtomic && ( getRequest( state, launchSite( siteId ) )?.isLoading ?? false ),
+		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 	};
 };
 
