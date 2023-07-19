@@ -322,6 +322,12 @@
 		gap: 16px;
 		flex: 1;
 
+		button {
+			&:hover {
+				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #0675c4));
+			}
+		}
+
 		@media (min-width: $break-medium ) {
 			margin-left: -25px;
 		}
@@ -343,12 +349,6 @@
 		}
 
 		.domains__domain-delete {
-			button {
-				&:hover {
-					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
-				}
-			}
-
 			.delete-label {
 				display: none;
 			}
@@ -371,6 +371,9 @@
 			color: #0675c4;
 			margin-bottom: 22px;
 			margin-top: 2px;
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 
 		.bulk-domain-transfer__faqs {
@@ -442,6 +445,10 @@
 				background: var(--blue-blue-50, #0675c4);
 				font-size: 0.875rem;
 				width: 200px;
+
+				&:hover {
+					background: var(--studio-blue-60);
+				}
 
 				&:disabled {
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
