@@ -1,5 +1,6 @@
 import {
 	PRODUCT_JETPACK_AI_MONTHLY,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
@@ -20,6 +21,7 @@ import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billin
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
+import jetpackStatsIcon from '../icons/jetpack-stats';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
@@ -94,6 +96,20 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 			),
 			featured: false,
 			purchased: false,
+		},
+		{
+			productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_STATS_PWYW_YEARLY ),
+			icon: jetpackStatsIcon,
+			overrides: null,
+			displayCost: translate( 'Varies', {
+				comment:
+					'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
+			} ),
+			featured: true,
+			description: translate(
+				'Upgrade Jetpack Stats to unlock upcoming features, priority support, and an ad-free experience.'
+			),
 		},
 	];
 
