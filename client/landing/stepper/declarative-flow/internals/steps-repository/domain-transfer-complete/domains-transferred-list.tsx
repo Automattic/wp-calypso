@@ -26,8 +26,7 @@ const DomainsTransferredList = ( { purchases }: Props ) => {
 		resetOnboardStore();
 	};
 
-    //TODO: Missing domain to complete href
-
+	//TODO: Missing domain to complete href
 	return (
 		<>
 			<div className="domain-header-buttons">
@@ -50,9 +49,9 @@ const DomainsTransferredList = ( { purchases }: Props ) => {
 			<div className="domain-complete-summary">
 				<ul className="domain-complete-list">
 					{ purchases &&
-						purchases.map( ( { meta }, key ) => {
+						purchases.map( ( { meta } ) => {
 							return (
-								<li className="domain-complete-list-item" key={ key }>
+								<li className="domain-complete-list-item" key={ meta }>
 									<div>
 										<h2>{ meta }</h2>
 										<p>{ __( 'Auto-renew enabled' ) }</p>
