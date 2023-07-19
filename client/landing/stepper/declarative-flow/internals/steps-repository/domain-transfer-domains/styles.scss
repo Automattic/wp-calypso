@@ -471,8 +471,12 @@
 		}
 
 		.form-input-validation {
-			padding-top: 0;
-			padding-bottom: 0;
+			padding: 0;
+
+			// remove icon
+			svg {
+				display: none;
+			}
 
 			a {
 				text-decoration: underline;
