@@ -88,7 +88,9 @@ const CommercialPurchase = ( {
 
 			<Button
 				variant="primary"
-				onClick={ () => gotoCheckoutPage( from, 'commercial', siteSlug, adminUrl, redirectUri ) }
+				onClick={ () =>
+					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+				}
 			>
 				{ translate( 'Get Jetpack Stats for %(value)s per month', {
 					args: {

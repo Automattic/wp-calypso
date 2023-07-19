@@ -177,7 +177,9 @@ const PersonalPurchase = ( {
 				<Button
 					variant="primary"
 					disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
-					onClick={ () => gotoCheckoutPage( from, 'free', siteSlug, adminUrl, redirectUri ) }
+					onClick={ () =>
+						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
+					}
 				>
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</Button>
@@ -185,7 +187,14 @@ const PersonalPurchase = ( {
 				<Button
 					variant="primary"
 					onClick={ () =>
-						gotoCheckoutPage( from, 'pwyw', siteSlug, adminUrl, redirectUri, subscriptionValue )
+						gotoCheckoutPage( {
+							from,
+							type: 'pwyw',
+							siteSlug,
+							adminUrl,
+							redirectUri,
+							price: subscriptionValue,
+						} )
 					}
 				>
 					{ translate( 'Get Jetpack Stats for %(value)s per month', {

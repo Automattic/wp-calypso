@@ -6,20 +6,15 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const getStatsPurchaseURL = ( siteSlug: string, product: string, redirectUrl: string ) => {
-	const checkoutUrl = new URL( 'https://wordpress.com/checkout/' );
-	const checkoutProductUrl = new URL( `${ checkoutUrl }${ siteSlug }/${ product }` );
+	const checkoutProductUrl = new URL(
+		`/checkout/${ siteSlug }/${ product }`,
+		window.location.origin
+	);
 
 	// Add redirect_to parameter
-	if ( redirectUrl ) {
-		checkoutProductUrl.searchParams.set( 'redirect_to', redirectUrl ); // TODO: add a redirect URL with query parameter showing proper success/fail banner
-	} else {
-		checkoutProductUrl.searchParams.set(
-			'redirect_to',
-			`https://wordpress.com/stats/${ siteSlug }`
-		);
-	}
+	checkoutProductUrl.searchParams.set( 'redirect_to', redirectUrl );
 
-	return checkoutProductUrl.toString();
+	return checkoutProductUrl.pathname + checkoutProductUrl.search;
 };
 
 const getYearlyPrice = ( monthlyPrice: number ) => {
@@ -27,31 +22,53 @@ const getYearlyPrice = ( monthlyPrice: number ) => {
 };
 
 const addPurchaseTypeToUri = ( uri: string, statsPurchaseSuccess: string ) => {
-	const url = new URL( uri, 'https://wordpress.com' );
+	const url = new URL( uri, window.location.origin );
 	url.searchParams.set( 'statsPurchaseSuccess', statsPurchaseSuccess );
 	return url.pathname + url.search;
 };
 
-const getRedirectUrl = ( from: string, type: string, adminUrl?: string, redirectUri?: string ) => {
+const getRedirectUrl = ( {
+	from,
+	type,
+	adminUrl,
+	redirectUri,
+	siteSlug,
+}: {
+	from: string;
+	type: string;
+	adminUrl?: string;
+	redirectUri?: string;
+	siteSlug: string;
+} ) => {
 	const isFromJetpack = from.startsWith( 'jetpack' );
 	const statsPurchaseSuccess = type === 'free' ? 'free' : 'paid';
+
 	if ( ! isFromJetpack ) {
-		// TODO: add siteSlug to the redirect URL
-		redirectUri = addPurchaseTypeToUri( redirectUri || '/stats/day', statsPurchaseSuccess );
+		redirectUri = addPurchaseTypeToUri(
+			redirectUri || `/stats/day/${ siteSlug }`,
+			statsPurchaseSuccess
+		);
 		return redirectUri;
 	}
 	redirectUri = addPurchaseTypeToUri( redirectUri || 'admin.php?page=stats', statsPurchaseSuccess );
 	return adminUrl + redirectUri;
 };
 
-const gotoCheckoutPage = (
-	from: string,
-	type: 'pwyw' | 'free' | 'commercial',
-	siteSlug: string,
-	adminUrl?: string,
-	redirectUri?: string,
-	price?: number
-) => {
+const gotoCheckoutPage = ( {
+	from,
+	type,
+	siteSlug,
+	adminUrl,
+	redirectUri,
+	price,
+}: {
+	from: string;
+	type: 'pwyw' | 'free' | 'commercial';
+	siteSlug: string;
+	adminUrl?: string;
+	redirectUri?: string;
+	price?: number;
+} ) => {
 	let eventName = '';
 	let product: string;
 
@@ -76,7 +93,7 @@ const gotoCheckoutPage = (
 
 	recordTracksEvent( `calypso_stats_${ eventName }_purchase_button_clicked` );
 
-	const redirectUrl = getRedirectUrl( from, type, adminUrl, redirectUri );
+	const redirectUrl = getRedirectUrl( { from, type, adminUrl, redirectUri, siteSlug } );
 
 	// Allow some time for the event to be recorded before redirecting.
 	setTimeout(
