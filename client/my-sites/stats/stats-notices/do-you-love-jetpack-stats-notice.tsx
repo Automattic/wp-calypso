@@ -43,7 +43,7 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 			: recordTracksEvent(
 					'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
 			  );
-		// TODO: use Jetpack Redirects for more precise tracking.
+		// TODO: use Jetpack Redirects for more precise tracking for Odyssey.
 		// Allow some time for the event to be recorded before redirecting.
 		setTimeout(
 			() => ( window.location.href = getStatsPurchaseURL( siteId, isOdysseyStats ) ),
