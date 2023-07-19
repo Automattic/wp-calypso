@@ -6,9 +6,7 @@ import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
-import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { sectionify } from 'calypso/lib/route';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -27,6 +25,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -37,7 +36,6 @@ import DomainSearch from './domain-search';
 import SiteRedirect from './domain-search/site-redirect';
 import EmailProvidersUpsell from './email-providers-upsell';
 
-const noop = () => {};
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
 		return translate( 'Select a site to add a domain' );
@@ -321,25 +319,8 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	const isJetpack = isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId );
 
 	if ( siteId && isJetpack ) {
-		context.primary = (
-			<Main>
-				<PageViewTracker
-					path={ context.path.startsWith( '/domains/add' ) ? '/domains/add' : '/domains/manage' }
-					title="My Sites > Domains > No Domains On Jetpack"
-				/>
-				<EmptyContent
-					title={ translate( 'Domains are not available for this site.' ) }
-					line={ translate(
-						'You can only purchase domains for sites hosted on WordPress.com at this time.'
-					) }
-					action={ translate( 'View Plans' ) }
-					actionURL={ '/plans/' + getSelectedSiteSlug( state ) }
-				/>
-			</Main>
-		);
-
-		makeLayout( context, noop );
-		clientRender( context );
+		context.store.dispatch( setSelectedSiteId( null ) );
+		page.redirect( '/domains/manage' );
 	} else {
 		next();
 	}
