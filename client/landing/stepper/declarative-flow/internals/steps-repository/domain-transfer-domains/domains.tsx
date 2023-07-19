@@ -186,7 +186,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			) ) }
 			{ domainCount < MAX_DOMAINS && (
 				<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-					{ __( 'Add another domain' ) }
+					{ __( 'Add more' ) }
 				</Button>
 			) }
 			{ numberOfValidDomains > 0 && (
