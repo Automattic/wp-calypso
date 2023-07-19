@@ -27,7 +27,9 @@ interface Props {
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
-	onSelectScreen?: ( screenSlug: string ) => void;
+	onScreenSelect?: ( screenSlug: string ) => void;
+	onScreenBack?: ( screenSlug: string ) => void;
+	onScreenSubmit?: ( screenSlug: string ) => void;
 }
 
 const useScreens = ( {
@@ -44,7 +46,9 @@ const useScreens = ( {
 	onSelectVariation,
 	onSelectColorVariation,
 	onSelectFontVariation,
-	onSelectScreen,
+	onScreenSelect,
+	onScreenBack,
+	onScreenSubmit,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -77,7 +81,9 @@ const useScreens = ( {
 							</div>
 						),
 						actionText: translate( 'Save styles' ),
-						onSelect: onSelectScreen,
+						onSelect: onScreenSelect,
+						onBack: onScreenBack,
+						onSubmit: onScreenSubmit,
 					},
 				variations &&
 					variations.length === 0 &&
@@ -107,7 +113,9 @@ const useScreens = ( {
 							</div>
 						),
 						actionText: translate( 'Save colors' ),
-						onSelect: onSelectScreen,
+						onSelect: onScreenSelect,
+						onBack: onScreenBack,
+						onSubmit: onScreenSubmit,
 					},
 				variations &&
 					variations.length === 0 &&
@@ -131,7 +139,9 @@ const useScreens = ( {
 							</div>
 						),
 						actionText: translate( 'Save fonts' ),
-						onSelect: onSelectScreen,
+						onSelect: onScreenSelect,
+						onBack: onScreenBack,
+						onSubmit: onScreenSubmit,
 					},
 			].filter( Boolean ) as NavigatorScreenObject[],
 		[

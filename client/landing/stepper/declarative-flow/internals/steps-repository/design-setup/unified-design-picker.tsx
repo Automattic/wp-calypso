@@ -266,15 +266,44 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 	}
 
-	function recordDesignPreviewSelectScreen( screenSlug: string ) {
-		recordTracksEvent( 'calypso_signup_design_preview_screen_select', { name: screenSlug } );
+	function recordDesignPreviewScreenSelect( screenSlug: string ) {
+		recordTracksEvent( 'calypso_signup_design_preview_screen_select', {
+			screen_slug: screenSlug,
+			...getEventPropsByDesign( selectedDesign as Design, {
+				styleVariation: selectedStyleVariation,
+				colorVariation: selectedColorVariation,
+				fontVariation: selectedFontVariation,
+			} ),
+		} );
+	}
+
+	function recordDesignPreviewScreenBack( screenSlug: string ) {
+		recordTracksEvent( 'calypso_signup_design_preview_screen_back', {
+			screen_slug: screenSlug,
+			...getEventPropsByDesign( selectedDesign as Design, {
+				styleVariation: selectedStyleVariation,
+				colorVariation: selectedColorVariation,
+				fontVariation: selectedFontVariation,
+			} ),
+		} );
+	}
+
+	function recordDesignPreviewScreenSubmit( screenSlug: string ) {
+		recordTracksEvent( 'calypso_signup_design_preview_screen_submit', {
+			screen_slug: screenSlug,
+			...getEventPropsByDesign( selectedDesign as Design, {
+				styleVariation: selectedStyleVariation,
+				colorVariation: selectedColorVariation,
+				fontVariation: selectedFontVariation,
+			} ),
+		} );
 	}
 
 	function handleSelectColorVariation( colorVariation: GlobalStyles | null ) {
 		setSelectedColorVariation( colorVariation );
 		recordTracksEvent(
 			'calypso_signup_design_preview_color_variation_preview_click',
-			getEventPropsByDesign( selectedDesign!, { colorVariation } )
+			getEventPropsByDesign( selectedDesign as Design, { colorVariation } )
 		);
 	}
 
@@ -282,7 +311,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		setSelectedFontVariation( fontVariation );
 		recordTracksEvent(
 			'calypso_signup_design_preview_font_variation_preview_click',
-			getEventPropsByDesign( selectedDesign!, { fontVariation } )
+			getEventPropsByDesign( selectedDesign as Design, { fontVariation } )
 		);
 	}
 
@@ -665,7 +694,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					onSelectFontVariation={ handleSelectFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }
 					onNavigatorPathChange={ ( path?: string ) => setShouldHideActionButtons( path !== '/' ) }
-					onSelectScreen={ recordDesignPreviewSelectScreen }
+					onScreenSelect={ recordDesignPreviewScreenSelect }
+					onScreenBack={ recordDesignPreviewScreenBack }
+					onScreenSubmit={ recordDesignPreviewScreenSubmit }
 				/>
 			</>
 		);

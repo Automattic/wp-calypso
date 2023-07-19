@@ -11,14 +11,25 @@ const useNavigatorScreens = ( screens: NavigatorScreenObject[] ) => {
 	const translate = useTranslate();
 
 	return screens.map(
-		( { path, label, title, description, hideBack, content, actionText, onSubmit, onBack } ) => (
+		( {
+			slug,
+			path,
+			label,
+			title,
+			description,
+			hideBack,
+			content,
+			actionText,
+			onSubmit,
+			onBack,
+		} ) => (
 			<NavigatorScreen key={ path } path={ path }>
 				<>
 					<NavigatorHeader
 						title={ <>{ title ?? label }</> }
 						description={ description }
 						hideBack={ hideBack }
-						onBack={ onBack }
+						onBack={ () => onBack?.( slug ) }
 					/>
 					{ content }
 					<div className="navigator-screen__footer">
@@ -28,12 +39,12 @@ const useNavigatorScreens = ( screens: NavigatorScreenObject[] ) => {
 							title={ translate( 'Back' ) }
 							borderless={ true }
 							aria-label={ translate( 'Navigate to the previous view' ) }
-							onClick={ onBack }
+							onClick={ () => onBack?.( slug ) }
 						>
 							<Gridicon icon="chevron-left" size={ 18 } />
 							{ translate( 'Back' ) }
 						</NavigatorBackButton>
-						<NavigatorBackButton as={ Button } primary onClick={ onSubmit }>
+						<NavigatorBackButton as={ Button } primary onClick={ () => onSubmit?.( slug ) }>
 							{ actionText }
 						</NavigatorBackButton>
 					</div>

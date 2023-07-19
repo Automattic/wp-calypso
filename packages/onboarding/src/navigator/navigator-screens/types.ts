@@ -10,6 +10,6 @@ export type NavigatorScreenObject = {
 	content: JSX.Element;
 	actionText: string;
 	onSelect?: ( slug: string ) => void;
-	onSubmit?: () => void;
-	onBack?: () => void;
+	onSubmit?: ( slug: string ) => void;
+	onBack?: ( slug: string ) => void;
 };
