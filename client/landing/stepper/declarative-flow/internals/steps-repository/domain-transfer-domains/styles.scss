@@ -324,7 +324,7 @@
 
 		button {
 			&:hover {
-				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #0675c4));
+				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, var(--studio-blue-60)));
 			}
 		}
 
