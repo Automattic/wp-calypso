@@ -38,9 +38,11 @@ function getResponses( siteName?: string ) {
 					),
 					{
 						hosted_on_our_services: (
+							// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
 							<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) } />
 						),
 						wordpress_org_community_forums: (
+							// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
 							<ExternalLink href={ localizeUrl( 'https://wordpress.org/support/forums/' ) } />
 						),
 					}

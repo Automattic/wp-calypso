@@ -19,6 +19,11 @@ export default function MobilePushNotification( {
 		<div className="notification-settings__toggle-container">
 			<div className="notification-settings__toggle">
 				<ToggleControl
+					label={
+						enableMobileNotification
+							? translate( 'Disable mobile notifications' )
+							: translate( 'Enable mobile notifications' )
+					}
 					onChange={ ( isEnabled ) => {
 						recordEvent( isEnabled ? 'mobile_notification_enable' : 'mobile_notification_disable' );
 						setEnableMobileNotification( isEnabled );

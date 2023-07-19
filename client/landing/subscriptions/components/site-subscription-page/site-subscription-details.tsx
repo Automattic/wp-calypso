@@ -256,9 +256,8 @@ const SiteSubscriptionDetails = ( {
 						{ paymentPlans && !! paymentPlans.length && (
 							<Button
 								className="site-subscription-page__manage-button"
-								isPrimary
+								variant="primary"
 								href="/me/purchases"
-								disabled={ unsubscribing }
 							>
 								{ translate( 'Manage purchases' ) }
 							</Button>

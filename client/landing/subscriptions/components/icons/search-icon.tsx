@@ -1,4 +1,5 @@
 import { Icon } from '@wordpress/components';
+import type { ComponentProps } from 'react';
 
 const SearchSVG = (
 	<svg
@@ -26,6 +27,8 @@ const SearchSVG = (
 	</svg>
 );
 
-const SearchIcon = ( props: Icon.Props< never > ) => <Icon icon={ SearchSVG } { ...props } />;
+const SearchIcon = ( props: ComponentProps< typeof Icon > ) => (
+	<Icon icon={ SearchSVG } { ...props } />
+);
 
 export default SearchIcon;

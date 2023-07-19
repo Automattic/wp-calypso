@@ -11,7 +11,7 @@ interface Props {
 	children: JSX.Element;
 	screens: NavigatorScreenObject[];
 	initialPath?: string;
-	onNavigatorPathChange?: ( path: string ) => void;
+	onNavigatorPathChange?: ( path?: string ) => void;
 }
 
 const NavigatorScreens = ( {

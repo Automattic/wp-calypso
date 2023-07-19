@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
@@ -12,10 +12,11 @@ import './style.scss';
 
 const noop = () => undefined;
 
+type ButtonProps = ComponentProps< typeof Button >;
 type ReaderImportButtonProps = {
 	onProgress?: () => void;
-	icon?: Button.ButtonProps[ 'icon' ];
-	iconSize?: Button.ButtonProps[ 'iconSize' ];
+	icon?: ButtonProps[ 'icon' ];
+	iconSize?: ButtonProps[ 'iconSize' ];
 };
 
 const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
