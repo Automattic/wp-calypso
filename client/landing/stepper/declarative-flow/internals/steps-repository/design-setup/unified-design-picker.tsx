@@ -13,6 +13,7 @@ import {
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
+	isAssemblerDesign,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
@@ -463,6 +464,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			handleSubmit( {
 				selectedDesign: _selectedDesign,
 				selectedSiteCategory: categorization.selection,
+				shouldGoToAssemblerStep,
 			} );
 		} else {
 			pickDesign( design );
@@ -471,7 +473,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
-		if ( _selectedDesign?.design_type !== 'assembler' ) {
+		if ( ! isAssemblerDesign( _selectedDesign ) ) {
 			recordSelectedDesign( {
 				flow,
 				intent,
