@@ -1,10 +1,12 @@
 .discover-stream-navigation {
 	position: relative;
 	margin: auto;
+	margin-bottom: -20px;
 	max-width: 600px; // Max width of single column reader stream.
 
 	&.reader-dual-column {
 		max-width: 968px; // Max width of dual column reader stream.
+		margin-bottom: 0;
 	}
 
 	.discover-stream-navigation__left-button-wrapper,
