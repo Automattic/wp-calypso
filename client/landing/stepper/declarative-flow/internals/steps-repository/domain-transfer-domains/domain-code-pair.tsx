@@ -229,7 +229,16 @@ export function DomainCodePair( {
 					</FormFieldset>
 				</div>
 				<div className="domains__domain-controls">
-					<div className="domains__domain-refresh">
+					<div className="domains__domain-delete">
+						<Button icon={ trash } onClick={ () => onRemove( id ) }>
+							<span className="delete-label">{ __( 'Delete' ) }</span>
+						</Button>
+					</div>
+					<div
+						className={ classnames( 'domains__domain-refresh', {
+							'is-invisible-field': ! refetch,
+						} ) }
+					>
 						<Button
 							title={ __( 'Refresh' ) }
 							disabled={ ! refetch }
@@ -237,11 +246,6 @@ export function DomainCodePair( {
 							onClick={ () => refetch?.() }
 						>
 							<span className="refresh-label">{ __( 'Refresh' ) }</span>
-						</Button>
-					</div>
-					<div className="domains__domain-delete">
-						<Button icon={ trash } onClick={ () => onRemove( id ) }>
-							<span className="delete-label">{ __( 'Delete' ) }</span>
 						</Button>
 					</div>
 				</div>

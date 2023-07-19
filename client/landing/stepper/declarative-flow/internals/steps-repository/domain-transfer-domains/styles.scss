@@ -19,6 +19,14 @@
 		pointer-events: none;
 	}
 
+	.is-invisible-field {
+		visibility: hidden;
+		// On mobile, display:none, keeps the layout without breaking it
+		@media (max-width: $break-mobile ) {
+			display: none;
+		}
+	}
+
 	.components-button:focus:not(:disabled) {
 		border: 0;
 		outline: none;
