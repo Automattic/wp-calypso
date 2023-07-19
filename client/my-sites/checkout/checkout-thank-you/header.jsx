@@ -95,13 +95,13 @@ export class CheckoutThankYouHeader extends PureComponent {
 					<span>
 						{ sprintf(
 							translate(
-								"We've got it from here! We'll let you know when your newly transferred %s is ready to use."
+								"We got it from here! We'll let you know when your newly transferred %s ready to use."
 							),
-							purchases?.length > 1 ? 'domains' : 'domain'
+							purchases?.length > 1 ? 'domains are' : 'domain is'
 						) }
 					</span>
 					<span>
-						{ translate( '{{strong}}Domain transfers may take up to 5-10 days.{{/strong}}', {
+						{ translate( ' {{strong}}It may take up to 5-10 days.{{/strong}}', {
 							components: { strong: <strong /> },
 						} ) }
 					</span>

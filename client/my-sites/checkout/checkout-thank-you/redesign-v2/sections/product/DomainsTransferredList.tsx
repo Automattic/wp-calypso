@@ -11,7 +11,7 @@ type Props = {
 };
 
 const DomainsTransferredList = ( { purchases }: Props ) => {
-	const { __ } = useI18n();
+	const { __, _n } = useI18n();
 	const { resetOnboardStore } = useWpDataDispatch( ONBOARD_STORE );
 
 	const handleUserClick = ( destination: string ) => {
@@ -43,7 +43,7 @@ const DomainsTransferredList = ( { purchases }: Props ) => {
 					className="components-button is-primary manage-all-domains"
 					onClick={ () => handleUserClick( '/domains/manage' ) }
 				>
-					{ __( 'Manage all domains' ) }
+					{ _n( 'Manage your domain', 'Manage your domains', purchases?.length ?? 0 ) }
 				</a>
 			</div>
 			<div className="domain-complete-summary">
