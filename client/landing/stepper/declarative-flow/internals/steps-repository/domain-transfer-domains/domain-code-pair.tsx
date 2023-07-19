@@ -2,10 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { Button, Icon } from '@wordpress/components';
-import { check, trash, closeSmall, update } from '@wordpress/icons';
+import { check, trash, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect } from 'react';
+import Gridicon from 'calypso/../packages/components/src/gridicon';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -247,9 +248,9 @@ export function DomainCodePair( {
 						} ) }
 					>
 						<Button
+							icon={ <Gridicon icon="sync" width={ 24 } height={ 24 } /> }
 							title={ __( 'Refresh' ) }
 							disabled={ ! refetch }
-							icon={ update }
 							onClick={ () => refetch?.() }
 						>
 							<span className="refresh-label">{ __( 'Refresh' ) }</span>

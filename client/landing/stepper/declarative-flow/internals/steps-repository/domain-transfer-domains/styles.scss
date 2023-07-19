@@ -335,6 +335,10 @@
 		.domains__domain-refresh {
 			button {
 				cursor: pointer;
+
+				.refresh-label {
+					margin-left: 4px;
+				}
 			}
 
 			.refresh-label {
