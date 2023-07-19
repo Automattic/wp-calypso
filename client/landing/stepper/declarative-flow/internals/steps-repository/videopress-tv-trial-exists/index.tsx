@@ -16,7 +16,7 @@ const VideoPressTvTrialExists: Step = function VideoPressTvTrialExists( { data }
 		<div className="videopress-tv-trial-exists__step-content intro__button-row">
 			<button
 				className="button intro__button is-primary"
-				onClick={ () => ( window.location.href = data?.url ) }
+				onClick={ () => ( window.location.href = String( data?.url ) ) }
 			>
 				Visit your site
 			</button>
