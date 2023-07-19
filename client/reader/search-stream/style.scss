@@ -58,6 +58,12 @@
 	margin: 0;
 }
 
+.search-stream__fixed-area .formatted-header.is-left-align.has-screen-options {
+	@media only screen and (max-width: 660px) {
+		margin-left: 0;
+	}
+}
+
 .search-stream .search-stream__input-card.card {
 	margin-bottom: 0;
 	/* stylelint-disable-next-line scales/radii */

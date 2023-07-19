@@ -114,7 +114,7 @@ const DiscoverStream = ( props ) => {
 		<FormattedHeader
 			brandFont
 			headerText={ translate( 'Discover' ) }
-			subHeaderText={ translate( 'Explore new blogs that inspire and entertain.' ) }
+			subHeaderText={ translate( 'Explore new blogs that inspire, educate, and entertain.' ) }
 			align="left"
 			hasScreenOptions
 			className={ classNames( 'discover-stream-header', {
