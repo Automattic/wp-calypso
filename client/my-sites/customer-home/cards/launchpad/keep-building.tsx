@@ -47,9 +47,7 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 		const completedTasks = tasksWithActions.filter( ( task: Task ) => task.completed );
 		const incompleteTasks = tasksWithActions.filter( ( task: Task ) => ! task.completed );
 
-		const sortedTasks = [ ...completedTasks, ...incompleteTasks ];
-
-		return sortedTasks;
+		return [ ...completedTasks, ...incompleteTasks ];
 	};
 
 	return (
