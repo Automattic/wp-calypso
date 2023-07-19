@@ -30,7 +30,7 @@ const LikeDislikeButtons = ( { isUser, messageType }: LikeDislikeButtonsProps ) 
 	const like = () => {
 		dispatch( { type: 'like' } );
 		trackDispatcher(
-			recordTracksEvent( 'calypso_odysseus_chat_message_rating', {
+			recordTracksEvent( 'calypso_odie_chat_message_rating', {
 				bot_name_slug: 'wapuu',
 				rating: 'like',
 			} )
@@ -39,7 +39,7 @@ const LikeDislikeButtons = ( { isUser, messageType }: LikeDislikeButtonsProps ) 
 	const dislike = () => {
 		dispatch( { type: 'dislike' } );
 		trackDispatcher(
-			recordTracksEvent( 'calypso_odysseus_chat_message_rating', {
+			recordTracksEvent( 'calypso_odie_chat_message_rating', {
 				bot_name_slug: 'wapuu',
 				rating: 'dislike',
 			} )
@@ -51,23 +51,23 @@ const LikeDislikeButtons = ( { isUser, messageType }: LikeDislikeButtonsProps ) 
 	}
 
 	return (
-		<div className="odysseus-chatbox-message-actions">
+		<div className="odie-chatbox-message-actions">
 			<button
 				aria-label="Like this message"
-				className={ classnames( 'odysseus-chatbox-message-action', 'dashicons', {
+				className={ classnames( 'odie-chatbox-message-action', 'dashicons', {
 					'dashicons-thumbs-up': true,
-					'odysseus-chatbox-message-active-like': likeStatus === 'like',
-					'odysseus-chatbox-message-hide': likeStatus === 'dislike',
+					'odie-chatbox-message-active-like': likeStatus === 'like',
+					'odie-chatbox-message-hide': likeStatus === 'dislike',
 				} ) }
 				disabled={ likeStatus !== null }
 				onClick={ like }
 			></button>
 			<button
 				aria-label="Dislike this message"
-				className={ classnames( 'odysseus-chatbox-message-action', 'dashicons', {
+				className={ classnames( 'odie-chatbox-message-action', 'dashicons', {
 					'dashicons-thumbs-down': true,
-					'odysseus-chatbox-message-active-dislike': likeStatus === 'dislike',
-					'odysseus-chatbox-message-hide': likeStatus === 'like',
+					'odie-chatbox-message-active-dislike': likeStatus === 'dislike',
+					'odie-chatbox-message-hide': likeStatus === 'like',
 				} ) }
 				disabled={ likeStatus !== null }
 				onClick={ dislike }

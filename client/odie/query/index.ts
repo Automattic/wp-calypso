@@ -1,9 +1,9 @@
 import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { useOdysseusAssistantContext } from '../context';
+import { useOdieAssistantContext } from '../context';
 import type { Chat, Message, Context } from '../types';
 
-function odysseusSendMessage( messages: Message[], context: Context, chat_id?: string | null ) {
+function odieSendMessage( messages: Message[], context: Context, chat_id?: string | null ) {
 	const path = `/odie/send_message`;
 	return wpcom.req.post( {
 		path,
@@ -13,12 +13,12 @@ function odysseusSendMessage( messages: Message[], context: Context, chat_id?: s
 }
 
 // It will post a new message using the current chat_id
-export const useOddyseusSendMessage = (): UseMutationResult<
+export const useOdieSendMessage = (): UseMutationResult<
 	{ chat_id: string; messages: Message[] },
 	unknown,
 	{ message: Message }
 > => {
-	const { chat, setChat } = useOdysseusAssistantContext();
+	const { chat, setChat } = useOdieAssistantContext();
 
 	return useMutation( {
 		mutationFn: ( { message }: { message: Message } ) => {
@@ -26,7 +26,7 @@ export const useOddyseusSendMessage = (): UseMutationResult<
 			// Otherwise we send previous messages and the new one appended to the end to the server
 			const messagesToSend = chat?.chat_id ? [ message ] : [ ...chat.messages, message ];
 
-			return odysseusSendMessage( messagesToSend, chat.context, chat.chat_id );
+			return odieSendMessage( messagesToSend, chat.context, chat.chat_id );
 		},
 		onSuccess: ( data ) => {
 			setChat( { ...chat, chat_id: data.chat_id } );
@@ -36,7 +36,7 @@ export const useOddyseusSendMessage = (): UseMutationResult<
 
 // TODO: We will add lately a clear chat to forget the session
 
-const odysseusGetChat = ( chat_id: string | null ) => {
+const odieGetChat = ( chat_id: string | null ) => {
 	const path = `/odie/get_chat/${ chat_id }`;
 	return wpcom.req.get( {
 		path,
@@ -44,10 +44,10 @@ const odysseusGetChat = ( chat_id: string | null ) => {
 	} );
 };
 
-export const useOdysseusGetChatPollQuery = ( chat_id: string | null ) => {
+export const useOdieGetChatPollQuery = ( chat_id: string | null ) => {
 	return useQuery< Chat, Error >( {
-		queryKey: [ 'odysseus-get-chat', chat_id ],
-		queryFn: async () => await odysseusGetChat( chat_id ),
+		queryKey: [ 'odie-get-chat', chat_id ],
+		queryFn: async () => await odieGetChat( chat_id ),
 		refetchInterval: 5000,
 		refetchOnWindowFocus: false,
 		enabled: !! chat_id,

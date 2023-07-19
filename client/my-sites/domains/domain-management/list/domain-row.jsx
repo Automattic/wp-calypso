@@ -40,7 +40,7 @@ import {
 	emailManagement,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
-import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
@@ -546,9 +546,9 @@ class DomainRow extends PureComponent {
 	}
 }
 
-function withOdysseusAssistantContext( Component ) {
+function withOdieAssistantContext( Component ) {
 	return function WrappedComponent( props ) {
-		const { sendNudge } = useOdysseusAssistantContext();
+		const { sendNudge } = useOdieAssistantContext();
 		return <Component { ...props } sendNudge={ sendNudge } />;
 	};
 }
@@ -558,4 +558,4 @@ export default connect( ( state ) => {
 	return {
 		currentRoute,
 	};
-} )( withOdysseusAssistantContext( localize( DomainRow ) ) );
+} )( withOdieAssistantContext( localize( DomainRow ) ) );

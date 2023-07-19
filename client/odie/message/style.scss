@@ -1,4 +1,4 @@
-.odysseus-chatbox-message {
+.odie-chatbox-message {
 	display: flex;
 	justify-content: space-between;
 	align-items: self-start;
@@ -13,22 +13,22 @@
 	flex-direction: column;
 }
 
-.odysseus-chatbox-message.odyssus-chatbox-message-user {
+.odie-chatbox-message.odyssus-chatbox-message-user {
 	align-self: flex-end;
 	background-color: #dcf8c6;
 }
 
-.odysseus-chatbox-message.odyssus-chatbox-message-user > :last-child {
+.odie-chatbox-message.odyssus-chatbox-message-user > :last-child {
 	margin-bottom: 0;
 }
 
-.odysseus-chatbox-message.odyssus-chatbox-message-wapuu {
+.odie-chatbox-message.odyssus-chatbox-message-wapuu {
 	align-self: flex-start;
 	background-color: #f1f0f0;
 }
 
 
-.odysseus-chatbox-message-actions {
+.odie-chatbox-message-actions {
 	display: flex;
 	gap: 8px;
 	align-self: flex-end;
@@ -42,36 +42,36 @@
 	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-.odysseus-chatbox-message-action:focus {
+.odie-chatbox-message-action:focus {
 	outline: none;
 }
 
-.odysseus-chatbox-message-action {
+.odie-chatbox-message-action {
 	cursor: pointer;
 	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-.odysseus-chatbox-message-action:hover {
+.odie-chatbox-message-action:hover {
 	color: #0073aa;
 }
 
-.odysseus-chatbox-message-action.odysseus-chatbox-message-active-like {
-	animation: odysseus-chatbox-message-like-animation 0.3s ease-in-out forwards;
+.odie-chatbox-message-action.odie-chatbox-message-active-like {
+	animation: odie-chatbox-message-like-animation 0.3s ease-in-out forwards;
 	color: #0073aa;
 }
 
-.odysseus-chatbox-message-action.odysseus-chatbox-message-active-dislike {
-	animation: odysseus-chatbox-message-dislike-animation 0.3s ease-in-out forwards;
+.odie-chatbox-message-action.odie-chatbox-message-active-dislike {
+	animation: odie-chatbox-message-dislike-animation 0.3s ease-in-out forwards;
 	color: #0073aa;
 }
 
-.odysseus-chatbox-message-action.odysseus-chatbox-message-hide {
+.odie-chatbox-message-action.odie-chatbox-message-hide {
 	opacity: 0;
 	visibility: hidden;
 	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out 0.3s;
 }
 
-@keyframes odysseus-chatbox-message-like-animation {
+@keyframes odie-chatbox-message-like-animation {
 	0% {
 		transform: scale(1);
 	}
@@ -80,7 +80,7 @@
 	}
 }
 
-@keyframes odysseus-chatbox-message-dislike-animation {
+@keyframes odie-chatbox-message-dislike-animation {
 	0% {
 		transform: scale(1);
 	}
@@ -89,7 +89,7 @@
 	}
 }
 
-.odysseus-chatbox-message-action-button {
+.odie-chatbox-message-action-button {
 	display: inline;
 	padding: 0;
 }

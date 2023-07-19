@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import OdysseusAssistant from '..';
-import { getOdysseusInitialPrompt } from './initial-prompts';
-import type { Chat, Context, Message, Nudge, OdysseusAllowedSectionNames } from '../types';
+import OdieAssistant from '..';
+import { getOdieInitialPrompt } from './initial-prompts';
+import type { Chat, Context, Message, Nudge, OdieAllowedSectionNames } from '../types';
 import type { ReactNode } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -20,7 +20,7 @@ const noop = () => {};
  * hand it's also a bit coupling to be setting manually the isLoading state.
  *
  */
-interface OdysseusAssistantContextInterface {
+interface OdieAssistantContextInterface {
 	addMessage: ( message: Message ) => void;
 	chat: Chat;
 	isLoadingChat: boolean;
@@ -57,19 +57,19 @@ const defaultContextInterfaceValues = {
 };
 
 // Create a default new context
-const OdysseusAssistantContext = createContext< OdysseusAssistantContextInterface >(
+const OdieAssistantContext = createContext< OdieAssistantContextInterface >(
 	defaultContextInterfaceValues
 );
 
-// Custom hook to access the OdysseusAssistantContext
-const useOdysseusAssistantContext = () => useContext( OdysseusAssistantContext );
+// Custom hook to access the OdieAssistantContext
+const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 
 // Create a provider component for the context
-const OdysseusAssistantProvider = ( {
+const OdieAssistantProvider = ( {
 	sectionName,
 	children,
 }: {
-	sectionName: OdysseusAllowedSectionNames;
+	sectionName: OdieAllowedSectionNames;
 	children: ReactNode;
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
@@ -78,7 +78,7 @@ const OdysseusAssistantProvider = ( {
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ messages, setMessages ] = useState< Message[] >( [
-		{ content: getOdysseusInitialPrompt( sectionName ), role: 'bot', type: 'message' },
+		{ content: getOdieInitialPrompt( sectionName ), role: 'bot', type: 'message' },
 	] );
 	const [ chat, setChat ] = useState< Chat >( {
 		context: { section_name: sectionName, site_id: siteId },
@@ -89,9 +89,7 @@ const OdysseusAssistantProvider = ( {
 		setChat( {
 			chat_id: null,
 			context: { section_name: sectionName, site_id: siteId },
-			messages: [
-				{ content: getOdysseusInitialPrompt( sectionName ), role: 'bot', type: 'message' },
-			],
+			messages: [ { content: getOdieInitialPrompt( sectionName ), role: 'bot', type: 'message' } ],
 		} );
 	}, [ sectionName, siteId ] );
 
@@ -107,7 +105,7 @@ const OdysseusAssistantProvider = ( {
 	};
 
 	return (
-		<OdysseusAssistantContext.Provider
+		<OdieAssistantContext.Provider
 			value={ {
 				addMessage,
 				chat,
@@ -127,9 +125,9 @@ const OdysseusAssistantProvider = ( {
 			} }
 		>
 			{ children }
-			<OdysseusAssistant />
-		</OdysseusAssistantContext.Provider>
+			<OdieAssistant />
+		</OdieAssistantContext.Provider>
 	);
 };
 
-export { OdysseusAssistantContext, OdysseusAssistantProvider, useOdysseusAssistantContext };
+export { OdieAssistantContext, OdieAssistantProvider, useOdieAssistantContext };
