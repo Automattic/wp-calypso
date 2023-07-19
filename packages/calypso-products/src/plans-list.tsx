@@ -3388,10 +3388,13 @@ PLANS_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
 if ( isEnabled( 'plans/migration-trial' ) ) {
 	PLANS_LIST[ PLAN_MIGRATION_TRIAL_MONTHLY ] = {
 		...getPlanBusinessDetails(),
-		term: TERM_ANNUALLY,
-		getTitle: () => i18n.translate( 'Business Trial' ),
+		type: TYPE_BUSINESS,
+		group: GROUP_WPCOM,
 		getProductId: () => 1057,
+		getPathSlug: () => PLAN_MIGRATION_TRIAL_MONTHLY,
+		term: TERM_MONTHLY,
+		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 		getStoreSlug: () => PLAN_MIGRATION_TRIAL_MONTHLY,
-		getBillingTimeFrame: WPComGetBillingTimeframe,
+		getTitle: () => i18n.translate( 'Business Trial' ),
 	};
 }
