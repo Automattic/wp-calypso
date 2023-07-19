@@ -523,23 +523,18 @@ export const HelpCenterContactForm = () => {
 						isBusy={ isFetchingGPTResponse }
 						disabled={ isCTADisabled() }
 						onClick={ handleCTA }
-						isPrimary={ ! showingGPTResponse || isGPTError }
-						isSecondary={ showingGPTResponse && ! isGPTError }
+						variant={ showingGPTResponse && ! isGPTError ? 'secondary' : 'primary' }
 						className="help-center-contact-form__site-picker-cta"
 					>
 						{ getCTALabel() }
 					</Button>
 					{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
-						<Button
-							isPrimary={ ! isGPTError }
-							isSecondary={ isGPTError }
-							onClick={ handleGPTClose }
-						>
+						<Button variant={ isGPTError ? 'secondary' : 'primary' } onClick={ handleGPTClose }>
 							{ __( 'Close', __i18n_text_domain__ ) }
 						</Button>
 					) }
 					{ isFetchingGPTResponse && ! isGPTError && (
-						<Button isSecondary onClick={ handleGPTCancel }>
+						<Button variant="secondary" onClick={ handleGPTCancel }>
 							{ __( 'Cancel', __i18n_text_domain__ ) }
 						</Button>
 					) }
@@ -572,7 +567,7 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					isPrimary
+					variant="primary"
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }
@@ -654,7 +649,7 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					isPrimary
+					variant="primary"
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }

@@ -195,7 +195,7 @@ const SiteRow = ( {
 	};
 
 	return ! isDeleted ? (
-		<HStack as="li" alignItems="center" className="row" role="row">
+		<HStack as="li" alignment="center" className="row" role="row">
 			<span className="title-cell" role="cell">
 				<Link
 					className="title-icon"

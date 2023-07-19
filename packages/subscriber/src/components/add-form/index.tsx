@@ -368,13 +368,15 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							submitBtnName
 						),
 						{
-							Button: createElement( Button, {
-								isLink: true,
-								target: '_blank',
-								href: localizeUrl(
-									'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
-								),
-							} ),
+							Button: (
+								<Button
+									variant="link"
+									target="_blank"
+									href={ localizeUrl(
+										'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+									) }
+								/>
+							),
 						}
 					) }
 				</p>
@@ -389,14 +391,16 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 		const interpolateElement = {
 			uploadBtn: formFileUploadElement,
-			Button: createElement( Button, {
-				isLink: true,
-				target: '_blank',
-				rel: 'noreferrer',
-				href: localizeUrl(
-					'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
-				),
-			} ),
+			Button: (
+				<Button
+					variant="link"
+					target="_blank"
+					rel="noreferrer"
+					href={ localizeUrl(
+						'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+					) }
+				/>
+			),
 		};
 
 		const labelText = isSiteOnFreePlan
@@ -439,10 +443,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						{
 							strong: createElement( 'strong' ),
 							uploadBtn: formFileUploadElement,
-							removeBtn: createElement( Button, {
-								isLink: true,
-								onClick: onFileRemoveClick,
-							} ),
+							removeBtn: <Button variant="link" onClick={ onFileRemoveClick } />,
 						}
 					) }
 				</label>

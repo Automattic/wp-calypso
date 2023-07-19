@@ -46,19 +46,18 @@ function Upsell( { image, ...props }: UpsellProps ) {
 				<div className="cancel-purchase-form__upsell-text">{ props.children }</div>
 				<div className="cancel-purchase-form__upsell-buttons">
 					<Button
-						isPrimary
+						variant="primary"
 						href={ props.acceptButtonUrl }
 						onClick={ () => {
 							setBusyButton( 'accept' );
 							props.onAccept?.();
 						} }
 						isBusy={ busyButton === 'accept' }
-						disabled={ Boolean( busyButton && busyButton !== 'accept' ) }
 					>
 						{ props.acceptButtonText }
 					</Button>
 					<Button
-						isSecondary
+						variant="primary"
 						onClick={ () => {
 							setBusyButton( 'decline' );
 							props.onDecline?.();

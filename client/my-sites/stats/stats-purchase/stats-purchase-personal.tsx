@@ -56,6 +56,9 @@ const PersonalPurchase = ( {
 		);
 	} ) as RenderThumbFunction;
 
+	const handleClick = ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) =>
+		handlePlanSwap( e );
+
 	return (
 		<div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
@@ -63,7 +66,7 @@ const PersonalPurchase = ( {
 					'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial plan{{/Button}}.',
 					{
 						components: {
-							Button: <Button variant="link" href="#" onClick={ ( e ) => handlePlanSwap( e ) } />,
+							Button: <Button variant="link" href="#" onClick={ handleClick } />,
 						},
 					}
 				) }

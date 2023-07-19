@@ -34,6 +34,11 @@ export default function EmailNotification( {
 			<div className="notification-settings__toggle-container">
 				<div className="notification-settings__toggle">
 					<ToggleControl
+						label={
+							enableEmailNotification
+								? translate( 'Disable email notifications' )
+								: translate( 'Enable email notifications' )
+						}
 						onChange={ ( isEnabled ) => {
 							recordEvent( isEnabled ? 'email_notification_enable' : 'email_notification_disable' );
 							setEnableEmailNotification( isEnabled );

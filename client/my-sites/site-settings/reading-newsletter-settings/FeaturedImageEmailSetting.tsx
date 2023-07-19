@@ -1,19 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 export const FEATURED_IMAGE_IN_EMAIL_OPTION = 'wpcom_featured_image_in_email';
 
-const ToggleControl = OriginalToggleControl as React.ComponentType<
-	OriginalToggleControl.Props & {
-		disabled?: boolean;
-	}
->;
-
 type FeaturedImageEmailSettingProps = {
 	value?: boolean;
-	handleToggle: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	disabled?: boolean;
 };
 
