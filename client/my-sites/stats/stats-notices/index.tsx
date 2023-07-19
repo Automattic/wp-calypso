@@ -51,6 +51,7 @@ const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: PurchaseNoticesP
 
 	return (
 		<>
+			{ /* TODO: Consider combining/refactoring these components into a single component */ }
 			{ showPaidPlanPurchaseSuccessNotice && <PaidPlanPurchaseSuccessJetpackStatsNotice /> }
 			{ showFreePlanPurchaseSuccessNotice && (
 				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
