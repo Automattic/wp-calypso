@@ -66,6 +66,14 @@ export const PRODUCT_JETPACK_BACKUP_REALTIME = 'jetpack_backup_realtime';
 export const PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY = 'jetpack_backup_daily_monthly';
 export const PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY = 'jetpack_backup_realtime_monthly';
 
+// Woo Extensions
+export const PRODUCT_WOOCOMMERCE_BOOKINGS = 'woocommerce_bookings';
+export const PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS = 'woocommerce_subscriptions';
+export const PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES = 'woocommerce_product_bundles';
+export const PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS = 'woocommerce_product_add_ons';
+export const PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES = 'woocommerce_minmax_quantities';
+export const PRODUCT_WOOCOMMERCE_AUTOMATEWOO = 'woocommerce_automatewoo';
+
 // Backup
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = <const>[
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -186,6 +194,16 @@ export const JETPACK_VIDEOPRESS_PRODUCTS = <const>[
 export const JETPACK_AI_PRODUCTS = <const>[ PRODUCT_JETPACK_AI_MONTHLY ];
 
 export const JETPACK_MONTHLY_ONLY_PRODUCTS = <const>[ PRODUCT_JETPACK_AI_MONTHLY ];
+
+// WooCommerce Products
+export const WOOCOMMERCE_PRODUCTS = <const>[
+	PRODUCT_WOOCOMMERCE_BOOKINGS,
+	PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS,
+	PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES,
+	PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
+	PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
+	PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
+];
 
 export const JETPACK_PRODUCTS_LIST = <const>[
 	...JETPACK_BACKUP_PRODUCTS,
