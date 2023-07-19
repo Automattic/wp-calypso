@@ -1,3 +1,4 @@
+import { Spinner } from '@wordpress/components';
 import { RefObject } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import CustomALink from './custom-a-link';
@@ -23,17 +24,23 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 				isUser ? 'odyssus-chatbox-message-user' : 'odyssus-chatbox-message-wapuu'
 			}` }
 		>
-			<AsyncLoad
-				require="react-markdown"
-				placeholder={ null }
-				transformLinkUri={ uriTransformer }
-				components={ {
-					a: CustomALink,
-				} }
-			>
-				{ message.content }
-			</AsyncLoad>
-			<LikeDislikeButtons isUser={ isUser } messageType={ message.type } />
+			{ message.type === 'placeholder' ? (
+				<Spinner />
+			) : (
+				<>
+					<AsyncLoad
+						require="react-markdown"
+						placeholder={ null }
+						transformLinkUri={ uriTransformer }
+						components={ {
+							a: CustomALink,
+						} }
+					>
+						{ message.content }
+					</AsyncLoad>
+					<LikeDislikeButtons isUser={ isUser } messageType={ message.type } />
+				</>
+			) }
 		</div>
 	);
 };
