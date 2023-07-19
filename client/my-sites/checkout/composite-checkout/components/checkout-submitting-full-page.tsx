@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 
 const SubmittingWrapper = styled.div`
-	position: absolute;
+	position: fixed;
 	left: 0;
 	top: 0;
 	background: white;
