@@ -48,7 +48,7 @@ import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import './style.scss';
 
-const WIDE_DISPLAY_CUTOFF = 900;
+export const WIDE_DISPLAY_CUTOFF = 900;
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 const noop = () => {};

@@ -4,12 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { throttle } from 'lodash';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
+import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import Stream from 'calypso/reader/stream';
+import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { useSelector } from 'calypso/state';
@@ -95,26 +96,6 @@ const DiscoverStream = ( props ) => {
 		}
 	};
 
-	// Set the scroll position and focus of navigation tabs when selected tab changes and this
-	// component is forced to rerender.
-	useEffect( () => {
-		// Set 0 timeout to put this at the end of the callstack so it happens after the children
-		// rerender.
-		setTimeout( () => {
-			// Ignore the recommended tab since this is set on load and is next to the reset point.
-			if ( selectedTab !== 'recommended' ) {
-				const selectedElement = document.querySelector(
-					`.${ DEFAULT_CLASS }__tabs .segmented-control__item.is-selected .segmented-control__link`
-				);
-				selectedElement && selectedElement.focus();
-
-				if ( scrollRef.current ) {
-					scrollRef.current.scrollLeft = scrollPosition.current;
-				}
-			}
-		}, 0 );
-	}, [ selectedTab ] );
-
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
 	// Filter followed tags out of interestTags to get recommendedTags.
@@ -129,7 +110,11 @@ const DiscoverStream = ( props ) => {
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
 
 	const DiscoverNavigation = () => (
-		<div className={ DEFAULT_CLASS }>
+		<div
+			className={ classNames( DEFAULT_CLASS, {
+				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
+			} ) }
+		>
 			<div
 				className={ classNames( `${ DEFAULT_CLASS }__left-button-wrapper`, {
 					'display-none': shouldHideLeftScrollButton(),
@@ -208,13 +193,17 @@ const DiscoverStream = ( props ) => {
 	const streamProps = {
 		...props,
 		streamKey,
-		streamHeader: recommendedTags.length ? () => <DiscoverNavigation /> : null,
 		useCompactCards: true,
 		streamSidebar,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
 	};
 
-	return <Stream { ...streamProps } />;
+	return (
+		<>
+			{ DiscoverNavigation() }
+			<Stream { ...streamProps } />
+		</>
+	);
 };
 
-export default DiscoverStream;
+export default withDimensions( DiscoverStream );
