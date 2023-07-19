@@ -48,7 +48,8 @@ export function getEnhancedTasks(
 	isEmailVerified = false,
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
-	domainCartItem?: MinimalRequestCartProduct | null
+	domainCartItem?: MinimalRequestCartProduct | null,
+	stripeConnectUrl?: string | null
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -470,7 +471,9 @@ export function getEnhancedTasks(
 					taskData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
+							stripeConnectUrl
+								? window.location.assign( stripeConnectUrl )
+								: window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
 						},
 					};
 					break;

@@ -11,6 +11,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import useStripeConnectUrl from 'calypso/landing/stepper/hooks/use-stripe-connect-url';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { useSelector } from 'calypso/state';
@@ -50,6 +51,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const siteIntentOption = site?.options?.site_intent ?? null;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+	const stripeConnectUrl = useStripeConnectUrl( site?.ID, flow );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
 		useSiteGlobalStylesStatus( site?.ID );
@@ -93,7 +95,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			isEmailVerified,
 			checklistStatuses,
 			getPlanCartItem(),
-			getDomainCartItem()
+			getDomainCartItem(),
+			stripeConnectUrl
 		);
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
