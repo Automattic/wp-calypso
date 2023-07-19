@@ -187,16 +187,15 @@ export const authenticate = ( context, next ) => {
 		`${ siteAdminUrl }../wp-login.php`
 	);
 
-	if ( siteId === 204039232 || siteId === 149741754 ) {
-		logToLogstash( {
-			feature: 'calypso_client',
-			message: 'e2e atomic auth redirect',
-			severity: 'debug',
-			extra: {
-				state: JSON.stringify( state, null, 2 ),
-			},
-		} );
-	}
+	logToLogstash( {
+		site_id: 204039232,
+		feature: 'calypso_client',
+		message: 'e2e atomic auth redirect',
+		severity: 'debug',
+		extra: {
+			state: 'checking if it works with smaller data',
+		},
+	} );
 
 	window.location.replace( wpAdminLoginUrl );
 };
