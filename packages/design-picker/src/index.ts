@@ -19,6 +19,7 @@ export {
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
+	shouldGoToAssembler,
 } from './utils';
 export {
 	FONT_PAIRINGS,
