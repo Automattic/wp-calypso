@@ -23,14 +23,6 @@ export const setUpActionsForTasks = (
 	return tasks.map( ( task: Task ) => {
 		let action: () => void;
 
-		//Record task view tracks event
-		recordTracksEvent( 'calypso_launchpad_task_view', {
-			checklist_slug: checklistSlug,
-			task_id: task.id,
-			is_completed: task.completed,
-			context: 'customer-home',
-		} );
-
 		switch ( task.id ) {
 			case 'site_title':
 				action = () => {
