@@ -18,7 +18,7 @@ import './style.scss';
  * New notices aim to support Calypso and Odyssey stats.
  * New notices are based on async API call and hence is faster than the old notices.
  */
-const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
+const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: StatsNoticesProps ) => {
 	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -33,14 +33,15 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		! hasPaidStats &&
 		hasLoadedPurchases;
 
-	const showFreePlanPurchaseSuccessNotice = config.isEnabled( 'stats/paid-stats' ) && false;
-	const showPaidPlanPurchaseSuccessNotice = config.isEnabled( 'stats/paid-stats' ) && false;
+	// Check if the GET param is passed to show the Free or Paid plan purchase notices
+	const showFreePlanPurchaseSuccessNotice =
+		config.isEnabled( 'stats/paid-stats' ) && statsPurchaseSuccess === 'free';
+	const showPaidPlanPurchaseSuccessNotice =
+		config.isEnabled( 'stats/paid-stats' ) && statsPurchaseSuccess === 'paid';
 
 	return (
 		<>
-			{ showPaidPlanPurchaseSuccessNotice && (
-				<PaidPlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
-			) }
+			{ showPaidPlanPurchaseSuccessNotice && <PaidPlanPurchaseSuccessJetpackStatsNotice /> }
 			{ showFreePlanPurchaseSuccessNotice && (
 				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
 			) }
@@ -54,16 +55,25 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 /**
  * Return new or old StatsNotices components based on env.
  */
-export default function StatsNotices( { siteId, isOdysseyStats }: StatsNoticesProps ) {
+export default function StatsNotices( {
+	siteId,
+	isOdysseyStats,
+	statsPurchaseSuccess,
+}: StatsNoticesProps ) {
 	const statsAdminVersion = useSelector( ( state: object ) =>
 		getJetpackStatsAdminVersion( state, siteId )
 	);
+
 	const supportNewStatsNotices =
 		! isOdysseyStats ||
 		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
 
 	return supportNewStatsNotices ? (
-		<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
+		<NewStatsNotices
+			siteId={ siteId }
+			isOdysseyStats={ isOdysseyStats }
+			statsPurchaseSuccess={ statsPurchaseSuccess }
+		/>
 	) : (
 		<LegacyStatsNotices siteId={ siteId } />
 	);
