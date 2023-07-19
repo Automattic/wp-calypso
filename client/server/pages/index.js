@@ -832,6 +832,11 @@ function wpcomPages( app ) {
 		const redirectUrl = '/setup/domain-transfer';
 		res.redirect( 301, redirectUrl );
 	} );
+
+	app.get( '/help/courses', function ( req, res ) {
+		const redirectUrl = 'https://wordpress.com/learn/courses';
+		res.redirect( 301, redirectUrl );
+	} );
 }
 
 export default function pages() {
