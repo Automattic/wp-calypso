@@ -2,8 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 export type Notices = {
-	free_plan_purchase_success: boolean;
-	paid_plan_purchase_success: boolean;
 	new_stats_feedback: boolean;
 	opt_in_new_stats: boolean;
 	opt_out_new_stats: boolean;
@@ -45,11 +43,16 @@ export async function queryNotices( siteId: number | null ): Promise< Notices > 
 	return processConflictNotices( payload );
 }
 
-export default function useNoticeVisibilityQuery( siteId: number | null, noticeId: string ) {
+export default function useNoticeVisibilityQuery(
+	siteId: number | null,
+	noticeId: string,
+	statsPurchaseSuccess: boolean
+) {
 	return useQuery( {
 		queryKey: [ 'stats', 'notices-visibility', siteId ],
 		queryFn: () => queryNotices( siteId ),
-		select: ( payload: Record< string, boolean > ): boolean => !! payload?.[ noticeId ],
+		select: ( payload: Record< string, boolean > ): boolean =>
+			statsPurchaseSuccess || !! payload?.[ noticeId ],
 		staleTime: 1000 * 30, // 30 seconds
 		retry: 1,
 		retryDelay: 3 * 1000, // 3 seconds
