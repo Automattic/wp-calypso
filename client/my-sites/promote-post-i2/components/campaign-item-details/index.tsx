@@ -36,6 +36,7 @@ import {
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
 } from '../../utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 
 interface Props {
 	isLoading?: boolean;
@@ -220,8 +221,8 @@ export default function CampaignItemDetails( props: Props ) {
 			label: __( 'Contact support' ),
 			onClick: async () => {
 				setShowErrorDialog( false );
-				// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-				window.open( 'https://wordpress.com/support/', '_blank' );
+				const localizedUrl = localizeUrl( 'https://wordpress.com/support/' );
+				window.open( localizedUrl, '_blank' );
 			},
 		},
 		{
