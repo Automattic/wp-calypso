@@ -13,6 +13,7 @@ import {
 	isTitanMail,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
+import { sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -66,7 +67,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getText() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode } =
+		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode, purchases } =
 			this.props;
 
 		if ( hasFailedPurchases ) {
@@ -92,13 +93,11 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return (
 				<>
 					<span>
-						{ /* { _n(
-							"We've got it from here! We'll let you know when your newly transferred domain is ready to use.",
-							"We've got it from here! We'll let you know when your newly transferred domains are ready to use.",
-							purchases?.length
-						) } */ }
-						{ translate(
-							"We've got it from here! We'll let you know when your newly transferred domain is ready to use."
+						{ sprintf(
+							translate(
+								"We've got it from here! We'll let you know when your newly transferred %s is ready to use."
+							),
+							purchases?.length > 1 ? 'domains' : 'domain'
 						) }
 					</span>
 					<span>
@@ -585,7 +584,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 							<Product
 								siteSlug={ selectedSite?.slug }
 								primaryPurchase={ primaryPurchase }
-								siteID={ selectedSite.ID }
+								siteID={ selectedSite?.ID }
 								purchases={ this.props.purchases }
 								isBulkDomainTransfer={ this.isBulkDomainTransfer() }
 							/>
