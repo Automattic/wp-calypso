@@ -49,7 +49,7 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 export function maybeSitesDashboard( context: PageJSContext, next: () => void ) {
 	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
 
-	if ( context.query[ 'hosting-flow' ] || siteCount === 0 ) {
+	if ( context.query[ 'hosting-flow' ] ) {
 		context.store.dispatch( hideMasterbar() );
 		return emptySites( context, siteCount, next );
 	}
