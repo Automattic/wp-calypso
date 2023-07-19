@@ -2,11 +2,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { Button, Icon } from '@wordpress/components';
-import { check, trash, closeSmall } from '@wordpress/icons';
+import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect } from 'react';
-import Gridicon from 'calypso/../packages/components/src/gridicon';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -132,6 +131,27 @@ export function DomainCodePair( {
 		}
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
+	const domainActions = (
+		<>
+			<Button
+				// Disable the delete button on initial state meaning. no domain, no auth and one row.
+				disabled={ ! domain && ! auth && domainCount === 1 }
+				onClick={ () => onRemove( id ) }
+			>
+				<span className="delete-label">{ __( 'Delete' ) }</span>
+			</Button>
+			<Button
+				title={ __( 'Refresh' ) }
+				disabled={ ! refetch }
+				onClick={ () => refetch?.() }
+				className={ classnames( 'domains__domain-refresh', {
+					'is-invisible-field': ! refetch,
+				} ) }
+			>
+				<span className="refresh-label">{ __( 'Refresh' ) }</span>
+			</Button>
+		</>
+	);
 	return (
 		<div className="domains__domain-info-and-validation">
 			<div className="domains__domain-info">
@@ -205,7 +225,11 @@ export function DomainCodePair( {
 				{ ( shouldReportError || ( message && loading ) ) && (
 					<div className="domains__domain-validation is-mobile">
 						{ shouldReportError && (
-							<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
+							<FormInputValidation
+								isError={ ! valid }
+								text={ message }
+								children={ domainActions }
+							></FormInputValidation>
 						) }
 						{ message && loading && (
 							<div>
@@ -231,36 +255,14 @@ export function DomainCodePair( {
 						/>
 					</FormFieldset>
 				</div>
-				<div className="domains__domain-controls">
-					<div className="domains__domain-delete">
-						<Button
-							// Disable the delete button on initial state meaning. no domain, no auth and one row.
-							disabled={ ! domain && ! auth && domainCount === 1 }
-							icon={ trash }
-							onClick={ () => onRemove( id ) }
-						>
-							<span className="delete-label">{ __( 'Delete' ) }</span>
-						</Button>
-					</div>
-					<div
-						className={ classnames( 'domains__domain-refresh', {
-							'is-invisible-field': ! refetch,
-						} ) }
-					>
-						<Button
-							icon={ <Gridicon icon="sync" width={ 24 } height={ 24 } /> }
-							title={ __( 'Refresh' ) }
-							disabled={ ! refetch }
-							onClick={ () => refetch?.() }
-						>
-							<span className="refresh-label">{ __( 'Refresh' ) }</span>
-						</Button>
-					</div>
-				</div>
 			</div>
 			<div className="domains__domain-validation is-desktop">
 				{ shouldReportError && (
-					<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
+					<FormInputValidation
+						isError={ ! valid }
+						text={ message }
+						children={ domainActions }
+					></FormInputValidation>
 				) }
 				{ message && loading && (
 					<div>

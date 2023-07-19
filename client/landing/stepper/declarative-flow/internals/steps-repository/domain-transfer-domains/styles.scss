@@ -165,6 +165,11 @@
 			display: block;
 		}
 
+		button {
+			padding: 0 5px;
+			text-decoration: underline;
+		}
+
 		@media (max-width: $break-medium ) {
 			margin-top: 0;
 
@@ -179,7 +184,7 @@
 	}
 
 	.domains__domain-domain {
-		flex: 7;
+		flex: 8;
 	}
 
 	.domains__domain-key {
@@ -196,7 +201,7 @@
 	}
 
 	.domains__domain-price {
-		flex: 2;
+		flex: 1;
 
 		.domains__domain-price-number {
 			align-items: center;
