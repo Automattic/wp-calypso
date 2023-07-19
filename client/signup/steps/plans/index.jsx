@@ -1,10 +1,6 @@
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import {
-	isOnboardingPMFlow,
-	isSiteAssemblerFlow,
-	isTailoredSignupFlow,
-} from '@automattic/onboarding';
+import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -275,10 +271,10 @@ export class PlansStep extends Component {
 				// is not provided. In that case, the "Back" button in the plan selection step needs to go back to
 				// the initial domain selection step and not to the "transfer or connect" step.
 				if (
-					( 'onboarding' === flowName || isOnboardingPMFlow( flowName ) ) &&
+					( 'onboarding' === flowName || 'onboarding-pm' === flowName ) &&
 					undefined === previousStep?.providedDependencies?.domainItem
 				) {
-					backUrl = getStepUrl( 'onboarding', 'domains' );
+					backUrl = getStepUrl( flowName, 'domains' );
 				}
 			}
 		}
