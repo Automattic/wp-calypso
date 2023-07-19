@@ -5,7 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-const getStatsPurchaseURL = ( siteSlug: string, product: string, redirectUrl?: string ) => {
+const getStatsPurchaseURL = ( siteSlug: string, product: string, redirectUrl: string ) => {
 	const checkoutUrl = new URL( 'https://wordpress.com/checkout/' );
 	const checkoutProductUrl = new URL( `${ checkoutUrl }${ siteSlug }/${ product }` );
 
@@ -26,9 +26,30 @@ const getYearlyPrice = ( monthlyPrice: number ) => {
 	return monthlyPrice * 12;
 };
 
+const addPurchaseTypeToUri = ( uri: string, statsPurchaseSuccess: string ) => {
+	const url = new URL( uri, 'https://wordpress.com' );
+	url.searchParams.set( 'statsPurchaseSuccess', statsPurchaseSuccess );
+	return url.pathname + url.search;
+};
+
+const getRedirectUrl = ( from: string, type: string, adminUrl?: string, redirectUri?: string ) => {
+	const isFromJetpack = from.startsWith( 'jetpack' );
+	const statsPurchaseSuccess = type === 'free' ? 'free' : 'paid';
+	if ( ! isFromJetpack ) {
+		// TODO: add siteSlug to the redirect URL
+		redirectUri = addPurchaseTypeToUri( redirectUri || '/stats/day', statsPurchaseSuccess );
+		return redirectUri;
+	}
+	redirectUri = addPurchaseTypeToUri( redirectUri || 'admin.php?page=stats', statsPurchaseSuccess );
+	return adminUrl + redirectUri;
+};
+
 const gotoCheckoutPage = (
+	from: string,
 	type: 'pwyw' | 'free' | 'commercial',
 	siteSlug: string,
+	adminUrl?: string,
+	redirectUri?: string,
 	price?: number
 ) => {
 	let eventName = '';
@@ -55,8 +76,13 @@ const gotoCheckoutPage = (
 
 	recordTracksEvent( `calypso_stats_${ eventName }_purchase_button_clicked` );
 
+	const redirectUrl = getRedirectUrl( from, type, adminUrl, redirectUri );
+
 	// Allow some time for the event to be recorded before redirecting.
-	setTimeout( () => ( window.location.href = getStatsPurchaseURL( siteSlug, product ) ), 250 );
+	setTimeout(
+		() => ( window.location.href = getStatsPurchaseURL( siteSlug, product, redirectUrl ) ),
+		250
+	);
 };
 
 export default gotoCheckoutPage;

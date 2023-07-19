@@ -30,7 +30,7 @@ const isProductOwned = ( ownedProducts: SiteProduct[] | null, searchedProduct: s
 		.includes( searchedProduct );
 };
 
-const StatsPurchasePage = () => {
+const StatsPurchasePage = ( { query } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -82,6 +82,9 @@ const StatsPurchasePage = () => {
 							siteSlug={ siteSlug }
 							commercialProduct={ commercialProduct }
 							pwywProduct={ pwywProduct }
+							siteId={ siteId }
+							redirectUri={ query.redirect_uri ?? '' }
+							from={ query.from ?? '' }
 						/>
 					</>
 				) }

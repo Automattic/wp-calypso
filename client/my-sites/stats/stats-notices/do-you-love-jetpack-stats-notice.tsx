@@ -9,9 +9,9 @@ import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { StatsNoticeProps } from './types';
 
-const getStatsPurchaseURL = ( siteId: number | null ) => {
-	const purchasePath = `/stats/purchase/${ siteId }`;
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
+	const from = isOdysseyStats ? 'jetpack' : 'calypso';
+	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats&from=${ from }`;
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
 	}
@@ -43,8 +43,12 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 			: recordTracksEvent(
 					'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
 			  );
+		// TODO: use Jetpack Redirects for more precise tracking.
 		// Allow some time for the event to be recorded before redirecting.
-		setTimeout( () => ( window.location.href = getStatsPurchaseURL( siteId ) ), 250 );
+		setTimeout(
+			() => ( window.location.href = getStatsPurchaseURL( siteId, isOdysseyStats ) ),
+			250
+		);
 	};
 
 	useEffect( () => {
