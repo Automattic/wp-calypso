@@ -65,13 +65,13 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 				return globalThis
 					.fetch( posterEndpoint )
 					.then( handleFetchResponse )
-					.catch( () => {} )
 					.then( ( json ) => {
 						const thumbnailUrl = json?.poster ?? '';
 						if ( thumbnailUrl ) {
 							dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 						}
-					} );
+					} )
+					.catch( () => {} );
 			} catch ( error ) {}
 		}
 		case 'vimeo': {
@@ -82,13 +82,13 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 				return globalThis
 					.fetch( fetchUrl )
 					.then( handleFetchResponse )
-					.catch( () => {} )
 					.then( ( json ) => {
 						const thumbnailUrl = get( json, [ 0, 'thumbnail_large' ] );
 						if ( thumbnailUrl ) {
 							dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 						}
-					} );
+					} )
+					.catch( () => {} );
 			} catch ( error ) {}
 		}
 		default:
