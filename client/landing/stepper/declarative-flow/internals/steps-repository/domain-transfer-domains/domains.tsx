@@ -176,6 +176,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					onRemove={ removeDomain }
 					domain={ domain.domain }
 					auth={ domain.auth }
+					domainCount={ domainCount }
 					showLabels={ index === 0 }
 					hasDuplicates={ Object.values( domainsState ).some(
 						( { domain: otherDomain }, otherIndex ) =>

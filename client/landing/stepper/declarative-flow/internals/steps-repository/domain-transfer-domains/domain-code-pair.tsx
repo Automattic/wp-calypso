@@ -31,6 +31,7 @@ type Props = {
 	onRemove: ( id: string ) => void;
 	showLabels: boolean;
 	hasDuplicates: boolean;
+	domainCount: number;
 };
 
 type DomainPriceProps = {
@@ -98,6 +99,7 @@ export function DomainCodePair( {
 	onRemove,
 	showLabels,
 	hasDuplicates,
+	domainCount,
 }: Props ) {
 	const { __ } = useI18n();
 
@@ -230,7 +232,12 @@ export function DomainCodePair( {
 				</div>
 				<div className="domains__domain-controls">
 					<div className="domains__domain-delete">
-						<Button icon={ trash } onClick={ () => onRemove( id ) }>
+						<Button
+							// Disable the delete button on initial state meaning. no domain, no auth and one row.
+							disabled={ ! domain && ! auth && domainCount === 1 }
+							icon={ trash }
+							onClick={ () => onRemove( id ) }
+						>
 							<span className="delete-label">{ __( 'Delete' ) }</span>
 						</Button>
 					</div>
