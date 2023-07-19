@@ -190,22 +190,27 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 				</Button>
 			) }
 			{ numberOfValidDomains > 0 && (
-				<div className="bulk-domain-transfer__total-price">
-					<div>{ __( 'Total' ) }</div>
-					<div>{ getFormattedTotalPrice( domainsState ) }</div>
-				</div>
-			) }
+				<>
+					<div className="bulk-domain-transfer__total-price">
+						<div>{ __( 'Total' ) }</div>
+						<div>{ getFormattedTotalPrice( domainsState ) }</div>
+					</div>
 
-			<FormLabel htmlFor="import-dns-records" className="bulk-domain-transfer__import-dns-records">
-				<FormInputCheckbox
-					id="import-dns-records"
-					onChange={ ( event ) => {
-						setShouldImportDomainTransferDnsRecords( event.target.checked );
-					} }
-					checked={ storedDomainsState.shouldImportDnsRecords }
-				/>
-				<span>{ __( 'Import DNS records from these domains' ) }</span>
-			</FormLabel>
+					<FormLabel
+						htmlFor="import-dns-records"
+						className="bulk-domain-transfer__import-dns-records"
+					>
+						<FormInputCheckbox
+							id="import-dns-records"
+							onChange={ ( event ) => {
+								setShouldImportDomainTransferDnsRecords( event.target.checked );
+							} }
+							checked={ storedDomainsState.shouldImportDnsRecords }
+						/>
+						<span>{ __( 'Import DNS records from these domains' ) }</span>
+					</FormLabel>
+				</>
+			) }
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }
