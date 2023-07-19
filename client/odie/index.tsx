@@ -13,7 +13,13 @@ import './style.scss';
 export const WAPUU_ERROR_MESSAGE =
 	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
 
-const OdieAssistant = () => {
+type OdieAssistantProps = {
+	botNameSlug: string;
+	simple?: boolean;
+};
+
+const OdieAssistant = ( props: OdieAssistantProps ) => {
+	const { simple } = props;
 	const {
 		lastNudge,
 		chat,
@@ -29,6 +35,7 @@ const OdieAssistant = () => {
 	const [ input, setInput ] = useState( '' );
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const { data: chatData } = useOdieGetChatPollQuery( chat.chat_id ?? null );
+	const [ userInteracted, setUserInteracted ] = useState( false );
 
 	const dispatch = useDispatch();
 
@@ -87,6 +94,13 @@ const OdieAssistant = () => {
 			} );
 
 			setInput( '' );
+
+			addMessage( {
+				content: '...',
+				role: 'bot',
+				type: 'placeholder',
+			} );
+
 			const response = await sendOdieMessage( {
 				message: { content: input, role: 'user', type: 'message' },
 			} );
@@ -109,6 +123,7 @@ const OdieAssistant = () => {
 
 	const handleToggleVisibility = () => {
 		const newVisibility = ! isVisible;
+		setUserInteracted( true );
 
 		dispatch(
 			recordTracksEvent( 'calypso_odie_chat_toggle_visibility_click', {
@@ -142,17 +157,39 @@ const OdieAssistant = () => {
 	return (
 		<div
 			className={ classnames( 'chatbox', {
-				'chatbox-show': isVisible,
-				'chatbox-hide': ! isVisible,
+				'chatbox-show': isVisible && ! simple,
+				'chatbox-show-simple': ! isVisible && simple,
+				'chatbox-show-full': isVisible && simple,
+				'chatbox-hide': ! isVisible && ! simple,
 				'using-environment-badge': environmentBadge,
 			} ) }
 		>
-			<WapuuRibbon
-				onToggleVisibility={ handleToggleVisibility }
-				isNudging={ isNudging }
-				isLoading={ isLoading }
-			/>
-			<div className="chatbox-header">Wapuu Assistant</div>
+			{ ! simple && (
+				<WapuuRibbon
+					onToggleVisibility={ handleToggleVisibility }
+					isNudging={ isNudging }
+					isLoading={ isLoading }
+				/>
+			) }
+			<div className="chatbox-header">
+				{ ! simple ? (
+					'Wapuu Assistant'
+				) : (
+					<>
+						<Button className="chatbox-header-button" onClick={ handleToggleVisibility }>
+							<span
+								className={ classnames( 'chat-chevron', {
+									'chatbox-attention': ! userInteracted,
+								} ) }
+							>
+								{ isVisible ? '❯' : '❮' }
+							</span>
+						</Button>
+						Wapuu Assistant
+					</>
+				) }
+			</div>
+
 			<div className="chat-box-message-container">
 				<div className="chatbox-messages">
 					{ chat.messages.map( ( message, index ) => (

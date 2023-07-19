@@ -93,15 +93,35 @@ const OdieAssistantProvider = ( {
 		} );
 	}, [ sectionName, siteId ] );
 
-	const addMessage = ( message: Message ) => {
+	const updatePlaceholderMessage = ( message: Message ) => {
 		setMessages( ( prevMessages ) => {
-			const newMessages = [ ...prevMessages, message ];
+			const newMessages = prevMessages.slice( 0, -1 ).concat( message );
 			setChat( ( prevChat ) => ( {
 				...prevChat,
 				messages: newMessages,
 			} ) );
 			return newMessages;
 		} );
+	};
+
+	const addMessage = ( message: Message ) => {
+		setMessages( ( prevMessages ) => {
+			const lastMessage = prevMessages[ prevMessages.length - 1 ];
+			// If the last message is placeholder type, replace it with the new message
+			if ( lastMessage?.type === 'placeholder' ) {
+				return [ ...prevMessages.slice( 0, -1 ), message ];
+			}
+			// Otherwise, add the new message
+			return [ ...prevMessages, message ];
+		} );
+
+		setChat( ( prevChat ) => ( {
+			...prevChat,
+			messages:
+				prevChat.messages[ prevChat.messages.length - 1 ].type === 'placeholder'
+					? [ ...prevChat.messages.slice( 0, -1 ), message ]
+					: [ ...prevChat.messages, message ],
+		} ) );
 	};
 
 	return (
@@ -125,7 +145,7 @@ const OdieAssistantProvider = ( {
 			} }
 		>
 			{ children }
-			<OdieAssistant />
+			<OdieAssistant botNameSlug="wapuu" simple />
 		</OdieAssistantContext.Provider>
 	);
 };

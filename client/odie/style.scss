@@ -74,6 +74,7 @@
 }
 
 .chatbox-input {
+	padding-left: 8px;
 	width: 80%;
 }
 
@@ -161,4 +162,52 @@
 
 .using-environment-badge {
 	bottom: 64px;
+}
+
+.chatbox-show-simple {
+	transform: translateX(calc(100% - 25px)); /* When chatbox is partially visible */
+	transition: transform 0.5s ease-in-out;
+}
+
+.chatbox-show-full {
+	transform: translateX(0); /* When chatbox is fully visible */
+	transition: transform 0.5s ease-in-out;
+}
+
+.chatbox-header-button {
+	outline: none !important;
+}
+
+div.chatbox-header > button {
+	box-shadow: none !important;
+	padding-left: 6px;
+	padding-right: 16px;
+}
+
+@keyframes fadeToColor {
+	0%,
+	10%,
+	30%,
+	50%,
+	70% {
+		color: #ece6f6;
+	}
+	20%,
+	40%,
+	60% {
+		color: #007cba;
+	}
+	80%,
+	90%,
+	100% {
+		color: #ece6f6;
+	}
+}
+
+.chatbox-attention {
+	animation: fadeToColor 4s linear infinite;
+}
+
+.chat-chevron {
+	color: #ece6f6;
 }
