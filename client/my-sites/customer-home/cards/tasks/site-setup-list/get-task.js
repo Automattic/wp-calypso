@@ -149,6 +149,19 @@ export const getTask = (
 				isSkippable: true,
 			};
 			break;
+		case CHECKLIST_KNOWN_TASKS.CART_ITEMS_ABANDONED:
+			taskData = {
+				timing: 5,
+				title: translate( 'Unlock all the benefits of managed hosting' ),
+				description: translate(
+					'Complete your checkout to unlock all the benefits of managed hosting, including daily backups, security scanning, and more.'
+				),
+				actionText: translate( 'Go to checkout' ),
+				actionUrl: `/checkout/${ siteSlug }`,
+				actionDisableOnComplete: false,
+				isSkippable: true,
+			};
+			break;
 		case CHECKLIST_KNOWN_TASKS.WOOCOMMERCE_SETUP:
 			taskData = {
 				timing: 7,
