@@ -53,8 +53,14 @@
 			box-shadow: none;
 		}
 		.formatted-header__subtitle {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
 			span {
 				display: block;
+				@media (min-width: $break-medium ) {
+					width: 60%;
+				}
 			}
 		}
 

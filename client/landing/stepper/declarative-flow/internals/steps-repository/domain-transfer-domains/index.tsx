@@ -28,8 +28,11 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 					headerText={ __( 'Add your domains' ) }
 					subHeaderText={
 						<>
-							<span>{ __( 'Next, add your domain name and authorization code below.' ) }</span>
-							<span>{ __( 'Add as few or as many domains as you want.' ) }</span>
+							<span>
+								{ __(
+									'Enter your domain name and the authorization code below to make sure it meets our transfer requirements.'
+								) }
+							</span>
 						</>
 					}
 					align="center"
