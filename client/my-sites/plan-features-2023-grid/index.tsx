@@ -467,13 +467,13 @@ export class PlanFeatures2023Grid extends Component<
 	 * Similar to `renderMobileView` above.
 	 */
 	renderSpotlightPlan( planPropertiesObj: PlanProperties[] ) {
-		const planCardClasses = classNames(
+		const spotlightPlanClasses = classNames(
 			'plan-features-2023-grid__plan-spotlight-card',
 			getPlanClass( planPropertiesObj[ 0 ].planName )
 		);
 
 		return (
-			<div className={ planCardClasses }>
+			<div className={ spotlightPlanClasses }>
 				{ this.renderPlanLogos( planPropertiesObj, { isMobile: true } ) }
 				{ this.renderPlanHeaders( planPropertiesObj, { isMobile: true } ) }
 				{ this.renderPlanTagline( planPropertiesObj, { isMobile: true } ) }
