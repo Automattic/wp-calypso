@@ -6,10 +6,11 @@ import { translate } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import { useState, useRef } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
+import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import Stream from 'calypso/reader/stream';
+import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { useSelector } from 'calypso/state';
@@ -109,7 +110,11 @@ const DiscoverStream = ( props ) => {
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
 
 	const DiscoverNavigation = () => (
-		<div className={ DEFAULT_CLASS }>
+		<div
+			className={ classNames( DEFAULT_CLASS, {
+				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
+			} ) }
+		>
 			<div
 				className={ classNames( `${ DEFAULT_CLASS }__left-button-wrapper`, {
 					'display-none': shouldHideLeftScrollButton(),
@@ -201,4 +206,4 @@ const DiscoverStream = ( props ) => {
 	);
 };
 
-export default DiscoverStream;
+export default withDimensions( DiscoverStream );
