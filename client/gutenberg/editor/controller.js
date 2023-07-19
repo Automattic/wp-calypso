@@ -187,7 +187,7 @@ export const authenticate = ( context, next ) => {
 		`${ siteAdminUrl }../wp-login.php`
 	);
 
-	if ( siteId === 204039232 ) {
+	if ( siteId === 204039232 || siteId === 149741754 ) {
 		logToLogstash( {
 			feature: 'calypso_client',
 			message: 'e2e atomic auth redirect',
