@@ -84,6 +84,7 @@ $heading-font-family: "SF Pro Display", $sans;
 					padding-right: 0;
 
 					.select-items__item {
+						width: 460px;
 						padding: 24px;
 
 						@media (max-width: $break-medium ) {
