@@ -7,6 +7,7 @@ import {
 	sites,
 	wpForTeamsGeneralNotSupportedRedirect,
 	stagingSiteNotSupportedRedirect,
+	noSite,
 } from 'calypso/my-sites/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
@@ -141,6 +142,7 @@ export default function () {
 
 	page(
 		paths.domainManagementRoot(),
+		noSite,
 		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
 		domainManagementController.domainManagementListAllSites,
 		makeLayout,
