@@ -1,7 +1,7 @@
 import warn from '@wordpress/warning';
 import i18n from 'i18n-calypso';
 import { random, map, includes, get } from 'lodash';
-import { getDiscoverStreamTags } from 'calypso/reader/discover/helper';
+import { getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -209,11 +209,11 @@ const streamApis = {
 			return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
 		},
 		dateProperty: 'date',
-		query: ( extras, { tags } ) =>
+		query: ( extras, { streamKey } ) =>
 			getQueryString( {
 				...extras,
 				// Do not supply an empty fallback as null is good info for getDiscoverStreamTags
-				tags: getDiscoverStreamTags( tags && Object.values( tags )?.map( ( tag ) => tag.slug ) ),
+				tags: getTagsFromStreamKey( streamKey ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
 			} ),
