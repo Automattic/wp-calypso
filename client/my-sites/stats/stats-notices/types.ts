@@ -14,4 +14,5 @@ export interface FeedbackNoticeBodyProps extends NoticeBodyProps {
 export interface StatsNoticesProps {
 	siteId: number | null;
 	isOdysseyStats?: boolean;
+	statsPurchaseSuccess?: string;
 }
