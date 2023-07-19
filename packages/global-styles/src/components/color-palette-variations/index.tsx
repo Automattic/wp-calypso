@@ -28,6 +28,7 @@ interface ColorPaletteVariationsProps {
 	selectedColorPaletteVariation: GlobalStylesObject | null;
 	onSelect: ( colorPaletteVariation: GlobalStylesObject | null ) => void;
 	limitGlobalStyles?: boolean;
+	enableCategorization?: boolean;
 }
 
 const ColorPaletteVariation = ( {
@@ -85,10 +86,48 @@ const ColorPaletteVariations = ( {
 	selectedColorPaletteVariation,
 	onSelect,
 	limitGlobalStyles,
+	enableCategorization,
 }: ColorPaletteVariationsProps ) => {
 	const { base } = useContext( GlobalStylesContext );
 	const colorPaletteVariations = useColorPaletteVariations( siteId, stylesheet ) ?? [];
 	const composite = useCompositeState();
+	const categorizedVariations = useMemo(
+		() =>
+			colorPaletteVariations.reduce(
+				( result, { wpcom_category = '', ...variation } ) => ( {
+					...result,
+					[ wpcom_category ]: ( result[ wpcom_category ] || [] ).concat( variation ),
+				} ),
+				{} as Record< string, GlobalStylesObject[] >
+			),
+		[ colorPaletteVariations ]
+	);
+
+	const renderVariationGroup = ( title: string, variations: GlobalStylesObject[] ) => (
+		<div className="global-styles-variations__group">
+			<h3 className="global-styles-variations__group-title">
+				{ title }
+				{ limitGlobalStyles && (
+					<PremiumBadge
+						shouldHideTooltip
+						shouldCompactWithAnimation
+						labelText={ translate( 'Upgrade' ) }
+					/>
+				) }
+			</h3>
+			<div className="color-palette-variations">
+				{ variations.map( ( colorPaletteVariation, index ) => (
+					<ColorPaletteVariation
+						key={ index }
+						colorPaletteVariation={ colorPaletteVariation }
+						isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
+						composite={ composite }
+						onSelect={ () => onSelect( colorPaletteVariation ) }
+					/>
+				) ) }
+			</div>
+		</div>
+	);
 
 	return (
 		<Composite
@@ -109,29 +148,11 @@ const ColorPaletteVariations = ( {
 					/>
 				</div>
 			</div>
-			<div className="global-styles-variations__group">
-				<h3 className="global-styles-variations__group-title">
-					{ translate( 'Custom styles' ) }
-					{ limitGlobalStyles && (
-						<PremiumBadge
-							shouldHideTooltip
-							shouldCompactWithAnimation
-							labelText={ translate( 'Upgrade' ) }
-						/>
-					) }
-				</h3>
-				<div className="color-palette-variations">
-					{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
-						<ColorPaletteVariation
-							key={ index }
-							colorPaletteVariation={ colorPaletteVariation }
-							isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
-							composite={ composite }
-							onSelect={ () => onSelect( colorPaletteVariation ) }
-						/>
-					) ) }
-				</div>
-			</div>
+			{ enableCategorization
+				? Object.keys( categorizedVariations ).map( ( category: string ) =>
+						renderVariationGroup( category, categorizedVariations[ category ] )
+				  )
+				: renderVariationGroup( translate( 'Custom styles' ), colorPaletteVariations ) }
 		</Composite>
 	);
 };
