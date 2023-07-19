@@ -62,10 +62,17 @@ export const startPerformanceTracking = ( name, { fullPageLoad = false } = {} ) 
 	}
 };
 
-export const stopPerformanceTracking = ( name, { state = {}, metadata = {} } = {} ) => {
+export const stopPerformanceTracking = (
+	name,
+	{ state = {}, metadata = {}, extraCollectors = [] } = {}
+) => {
 	if ( isPerformanceTrackingEnabled() ) {
 		stop( name, {
-			collectors: [ buildDefaultCollector( state ), buildMetadataCollector( metadata ) ],
+			collectors: [
+				buildDefaultCollector( state ),
+				buildMetadataCollector( metadata ),
+				...extraCollectors.map( ( collector ) => collector( state, metadata ) ),
+			],
 		} );
 	}
 };

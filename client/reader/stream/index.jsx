@@ -12,7 +12,6 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
@@ -44,6 +43,7 @@ import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
@@ -446,7 +446,7 @@ class ReaderStream extends Component {
 					siteId={ primarySiteId }
 					showFollowButton={ this.props.showFollowButton }
 				/>
-				{ index === 0 && <PerformanceTrackerStop /> }
+				{ index === 0 && <ReaderPerformanceTrackerStop /> }
 			</Fragment>
 		);
 	};

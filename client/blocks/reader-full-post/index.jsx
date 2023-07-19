@@ -31,7 +31,6 @@ import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import scrollTo from 'calypso/lib/scroll-to';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
@@ -42,6 +41,7 @@ import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
+import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import {
 	recordAction,
@@ -592,7 +592,7 @@ export class FullPostView extends Component {
 							fullPost={ true }
 						/>
 
-						{ ! isLoading && <PerformanceTrackerStop /> }
+						{ ! isLoading && <ReaderPerformanceTrackerStop /> }
 
 						{ showRelatedPosts && (
 							<RelatedPostsFromSameSite
