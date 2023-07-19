@@ -6,7 +6,7 @@ import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
 type ActionPrimary = {
@@ -112,7 +112,7 @@ const useModifiedActionPrimary = (
 	addOnMeta: AddOnMeta
 ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 
 	// Add special handling for Jetpack Stats, which uses its own special purchase page.
 	if ( addOnMeta.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY ) {
@@ -120,7 +120,8 @@ const useModifiedActionPrimary = (
 			text: translate( 'Upgrade Stats' ),
 			handler: () => {
 				// Navigate to the stats purchase page, scrolled to the top.
-				page.show( `/stats/purchase/${ siteId }?flags=stats/paid-stats` );
+				// TODO: Remove "?flags=stats/paid-stats" once the new stats purchase page is live.
+				page.show( `/stats/purchase/${ siteSlug }?flags=stats/paid-stats` );
 				window.scrollTo( 0, 0 );
 			},
 		};

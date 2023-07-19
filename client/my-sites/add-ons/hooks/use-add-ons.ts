@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_AI_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
@@ -150,6 +151,15 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				if (
 					addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
 					siteFeatures?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
+				) {
+					return false;
+				}
+
+				// TODO: Remove this check once paid stats is live.
+				// gate the Jetpack Stats add-on on a feature flag
+				if (
+					addOn.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY &&
+					! config.isEnabled( 'stats/paid-stats' )
 				) {
 					return false;
 				}
