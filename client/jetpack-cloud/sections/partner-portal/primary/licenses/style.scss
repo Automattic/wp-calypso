@@ -13,12 +13,8 @@
 	.partner-portal-layout__container {
 		display: flex;
 		flex-direction: column;
-		// The -111px is to undo the padding of .layout__content (79px + 32px) & partner-portal-layout__container (6px + 6px)
-		min-height: calc(100vh - 123px);
-
-		@include break-xlarge {
-			padding: 6px 0;
-		}
+		// The -111px is to undo the padding of .layout__content (79px + 32px)
+		min-height: calc(100vh - 111px);
 	}
 }
 
