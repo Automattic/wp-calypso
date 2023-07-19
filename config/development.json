@@ -142,6 +142,7 @@
 		"pattern-assembler/all-patterns-category": true,
 		"pattern-assembler/logged-in-showcase": true,
 		"pattern-assembler/show-waitlist-patterns": true,
+		"plans/migration-trial": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
