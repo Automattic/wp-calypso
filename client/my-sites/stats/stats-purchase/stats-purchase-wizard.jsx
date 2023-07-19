@@ -194,12 +194,14 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 	);
 };
 
-const StatsPurchaseWizard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
+const StatsPurchaseWizard = ( { siteSlug, commercialProduct, pwywProduct, query } ) => {
+	// redirectTo is a relative URI.
 	return (
 		<ProductCard
 			siteSlug={ siteSlug }
 			commercialProduct={ commercialProduct }
 			pwywProduct={ pwywProduct }
+			query={ query }
 		/>
 	);
 };
