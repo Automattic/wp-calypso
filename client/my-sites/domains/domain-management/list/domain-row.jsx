@@ -1,4 +1,4 @@
-import { Button, Spinner } from '@automattic/components';
+import { Badge, Button, Spinner } from '@automattic/components';
 import { Icon, home, info, redo } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';

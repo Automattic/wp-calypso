@@ -1,11 +1,10 @@
-import { Button, Card } from '@automattic/components';
+import { Badge, Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, FunctionComponent, useState, useCallback } from 'react';
 import ActivityActor, { SIZE_S } from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
 import ActivityMedia from 'calypso/components/activity-card/activity-media';
-import Badge from 'calypso/components/badge';
 import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-success.svg';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
