@@ -34,7 +34,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		hasLoadedPurchases;
 
 	const showFreePlanPurchaseSuccessNotice = config.isEnabled( 'stats/paid-stats' ) && false;
-	const showPaidPlanPurchaseSuccessNotice = config.isEnabled( 'stats/paid-stats' ) && true;
+	const showPaidPlanPurchaseSuccessNotice = config.isEnabled( 'stats/paid-stats' ) && false;
 
 	return (
 		<>
