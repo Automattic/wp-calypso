@@ -26,28 +26,16 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 		data: { checklist },
 	} = useLaunchpad( siteSlug, checklistSlug );
 
+	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
+
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const tasklistCompleted = completedSteps === numberOfSteps;
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
-
-	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
+	const extraActions = { setShareSiteModalIsOpen };
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
-		const tasksWithActions = setUpActionsForTasks( tasks, siteSlug, tracksData );
-
-		// Add action to `share_site` task, which has a custom UI.
-		const shareSiteTask = tasksWithActions.find( ( task: Task ) => task.id === 'share_site' );
-		if ( shareSiteTask ) {
-			shareSiteTask.actionDispatch = () => {
-				setShareSiteModalIsOpen( true );
-			};
-		}
-
-		const completedTasks = tasksWithActions.filter( ( task: Task ) => task.completed );
-		const incompleteTasks = tasksWithActions.filter( ( task: Task ) => ! task.completed );
-
-		return [ ...completedTasks, ...incompleteTasks ];
+		return setUpActionsForTasks( tasks, siteSlug, tracksData, extraActions );
 	};
 
 	return (

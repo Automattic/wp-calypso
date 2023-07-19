@@ -4,9 +4,13 @@ import type { LaunchpadTracksData, Task } from './types';
 export const setUpActionsForTasks = (
 	tasks: Task[],
 	siteSlug: string | null,
-	tracksData: LaunchpadTracksData
+	tracksData: LaunchpadTracksData,
+	extraActions?: {
+		setShareSiteModalIsOpen: ( isOpen: boolean ) => void;
+	}
 ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
+	const { setShareSiteModalIsOpen } = extraActions || {};
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -19,8 +23,13 @@ export const setUpActionsForTasks = (
 		} );
 	};
 
-	// Add actions to known tasks
-	return tasks.map( ( task: Task ) => {
+	// Sort task by completion status.
+	const completedTasks = tasks.filter( ( task: Task ) => task.completed );
+	const incompleteTasks = tasks.filter( ( task: Task ) => ! task.completed );
+	const sortedTasks = [ ...completedTasks, ...incompleteTasks ];
+
+	// Add actions to sorted tasks.
+	return sortedTasks.map( ( task: Task ) => {
 		let action: () => void;
 
 		switch ( task.id ) {
@@ -53,6 +62,11 @@ export const setUpActionsForTasks = (
 			case 'edit_page':
 				action = () => {
 					window.location.assign( `/pages/${ siteSlug }` );
+				};
+				break;
+			case 'share_site':
+				action = () => {
+					setShareSiteModalIsOpen( true );
 				};
 				break;
 		}
