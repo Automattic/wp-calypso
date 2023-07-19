@@ -71,12 +71,13 @@ const CustomerHomeLaunchpad = ( {
 		} );
 
 		// Record views for each task.
-		checklist?.map( ( task: Task ) => {
+		checklist?.map( ( task: Task, index: number ) => {
 			recordTracksEvent( 'calypso_launchpad_task_view', {
 				checklist_slug: checklistSlug,
 				task_id: task.id,
 				is_completed: task.completed,
 				context: 'customer-home',
+				order: index,
 			} );
 		} );
 	}, [ checklist, checklistSlug, completedSteps, numberOfSteps, tasklistCompleted ] );
