@@ -1,4 +1,4 @@
-import DomainsTransferredList from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/domain-transfer-complete/domains-transferred-list';
+import DomainsTransferredList from './product/DomainsTransferredList';
 import ProductPlan, { ProductPlanProps } from './product/ProductPlan';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 

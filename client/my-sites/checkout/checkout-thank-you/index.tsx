@@ -25,6 +25,7 @@ import {
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
 import { Card, ConfettiAnimation } from '@automattic/components';
+import { dispatch } from '@wordpress/data';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -235,6 +236,12 @@ export class CheckoutThankYou extends Component<
 			! gsuiteReceipt.isRequesting
 		) {
 			this.props.fetchReceipt( gsuiteReceiptId );
+		}
+
+		if ( this.isBulkDomainTransfer( getPurchases( this.props ) ) ) {
+			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
+				dispatch( imports.ONBOARD_STORE ).resetOnboardStore()
+			);
 		}
 
 		recordTracksEvent( 'calypso_checkout_thank_you_view' );
