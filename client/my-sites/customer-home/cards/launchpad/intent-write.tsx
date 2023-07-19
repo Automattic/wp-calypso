@@ -9,6 +9,7 @@ import type { Task } from '@automattic/launchpad';
 import type { AppState } from 'calypso/types';
 
 const checklistSlug = 'intent-write';
+const launchpadContext = 'customer-home';
 
 const LaunchpadIntentWrite = (): JSX.Element => {
 	const siteId = useSelector( getSelectedSiteId );
@@ -21,7 +22,7 @@ const LaunchpadIntentWrite = (): JSX.Element => {
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const tasklistCompleted = numberOfSteps > 0 && completedSteps === numberOfSteps;
-	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted };
+	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
 		const tasksWithActions = setUpActionsForTasks( tasks, siteSlug, tracksData );

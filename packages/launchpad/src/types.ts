@@ -15,6 +15,7 @@ export type LaunchpadTracksData = {
 	recordTracksEvent: ( event: string, properties: Record< string, unknown > ) => void;
 	checklistSlug: string;
 	tasklistCompleted: boolean;
+	launchpadContext: string;
 };
 
 export interface LaunchpadFlowTaskList {

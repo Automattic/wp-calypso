@@ -6,7 +6,7 @@ export const setUpActionsForTasks = (
 	siteSlug: string | null,
 	tracksData: LaunchpadTracksData
 ): Task[] => {
-	const { recordTracksEvent, checklistSlug, tasklistCompleted } = tracksData;
+	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -15,7 +15,7 @@ export const setUpActionsForTasks = (
 			checklist_completed: tasklistCompleted,
 			task_id: task.id,
 			is_completed: task.completed,
-			context: 'customer-home',
+			context: launchpadContext,
 		} );
 	};
 

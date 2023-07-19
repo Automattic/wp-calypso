@@ -13,6 +13,7 @@ import type { Task } from '@automattic/launchpad';
 import './style.scss';
 
 const checklistSlug = 'keep-building';
+const launchpadContext = 'customer-home';
 
 interface LaunchpadKeepBuildingProps {
 	site: SiteDetails | null;
@@ -28,7 +29,7 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const tasklistCompleted = completedSteps === numberOfSteps;
-	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted };
+	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
 
 	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
 
