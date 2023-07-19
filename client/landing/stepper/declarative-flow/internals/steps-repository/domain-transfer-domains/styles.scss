@@ -11,6 +11,10 @@
 	align-items: center;
 	gap: 30px;
 
+	.flow-progress.progress-bar {
+		display: none;
+	}
+
 	button:disabled {
 		pointer-events: none;
 	}
