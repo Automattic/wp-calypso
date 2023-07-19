@@ -60,7 +60,11 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 	const { __ } = useI18n();
 
 	if ( ! rawPrice ) {
-		return <div className="domains__domain-price-number disabled">0</div>;
+		return (
+			<div className="domains__domain-price-number disabled">
+				{ formatCurrency( 0, currencyCode, { stripZeros: true } ) }
+			</div>
+		);
 	}
 
 	if ( ! saleCost && saleCost !== 0 ) {

@@ -188,10 +188,13 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					{ __( 'Add another domain' ) }
 				</Button>
 			) }
-			<div className="bulk-domain-transfer__total-price">
-				<div>{ __( 'Total' ) }</div>
-				<div>{ getFormattedTotalPrice( domainsState ) }</div>
-			</div>
+			{ numberOfValidDomains > 0 && (
+				<div className="bulk-domain-transfer__total-price">
+					<div>{ __( 'Total' ) }</div>
+					<div>{ getFormattedTotalPrice( domainsState ) }</div>
+				</div>
+			) }
+
 			<FormLabel htmlFor="import-dns-records" className="bulk-domain-transfer__import-dns-records">
 				<FormInputCheckbox
 					id="import-dns-records"
