@@ -53,18 +53,21 @@ const DiscoverStream = ( props ) => {
 	);
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
 
-	const streamSidebar = () =>
-		( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ? (
-			<>
-				<h2>{ translate( 'Popular Sites' ) }</h2>
-				<ReaderPopularSitesSidebar
-					items={ recommendedSites }
-					followSource={ READER_DISCOVER_POPULAR_SITES }
-				/>
-			</>
-		) : (
-			<ReaderTagSidebar tag={ selectedTab } />
-		);
+	const streamSidebar = () => {
+		if ( ( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ) {
+			return (
+				<>
+					<h2>{ translate( 'Popular Sites' ) }</h2>
+					<ReaderPopularSitesSidebar
+						items={ recommendedSites }
+						followSource={ READER_DISCOVER_POPULAR_SITES }
+					/>
+				</>
+			);
+		} else if ( ! ( isDefaultTab || selectedTab === 'latest' ) ) {
+			return <ReaderTagSidebar tag={ selectedTab } />;
+		}
+	};
 
 	const streamProps = {
 		...props,
