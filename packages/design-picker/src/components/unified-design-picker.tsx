@@ -32,7 +32,7 @@ const DesignMShotsImage: React.FC< DesignMShotsImage > = ( { url, altText } ) =>
 		<MShotsImage
 			url={ url }
 			aria-labelledby=""
-			alt={ altText }
+			alt={ altText || '' }
 			options={ getMShotOptions( { scrollable: false, highRes: ! isMobile, isMobile } ) }
 			scrollable={ false }
 		/>
@@ -70,14 +70,16 @@ const DesignDemoSiteImage: React.FC< DesignDemoSiteImageProps > = ( {
 	description,
 	styleVariation,
 } ) => {
-	const params = new URLSearchParams( {
-		iframe: true,
-		theme_preview: true,
-		...( styleVariation && { style_variation: styleVariation.title } ),
-	} );
+	const params = new URLSearchParams( { iframe: 'true', theme_preview: 'true' } );
+	if ( styleVariation?.title ) {
+		params.append( 'style_variation', styleVariation.title );
+	}
 
 	return (
-		<DesignMShotsImage url={ `${ demoUrl }?${ params.toString() }` } altText={ description } />
+		<DesignMShotsImage
+			url={ `${ demoUrl }?${ params.toString() }` }
+			altText={ description || '' }
+		/>
 	);
 };
 
