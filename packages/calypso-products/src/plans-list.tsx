@@ -408,7 +408,6 @@ import {
 	FEATURE_SELL_60_COUNTRIES,
 	FEATURE_SHIPPING_INTEGRATIONS,
 	FEATURE_THE_READER,
-	PLAN_MIGRATION_TRIAL_MONTHLY,
 } from './constants';
 import type {
 	BillingTerm,
@@ -2538,15 +2537,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1018,
 		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,
 		getPathSlug: () => 'business-monthly',
-	},
-
-	[ PLAN_MIGRATION_TRIAL_MONTHLY ]: {
-		...getPlanBusinessDetails(),
-		term: TERM_ANNUALLY,
-		getTitle: () => i18n.translate( 'Business Trial' ),
-		getProductId: () => 1057,
-		getStoreSlug: () => PLAN_MIGRATION_TRIAL_MONTHLY,
-		getBillingTimeFrame: WPComGetBillingTimeframe,
 	},
 
 	[ PLAN_BUSINESS ]: {
