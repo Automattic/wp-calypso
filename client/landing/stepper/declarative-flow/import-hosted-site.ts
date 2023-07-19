@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
@@ -225,6 +225,18 @@ const importHostedSiteFlow: Flow = {
 		};
 
 		return { goNext, goBack, goToStep, submit };
+	},
+	useSideEffect() {
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+
+		useLayoutEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				window.location.assign( '/start/hosting' );
+			}
+		}, [ userIsLoggedIn ] );
 	},
 };
 
