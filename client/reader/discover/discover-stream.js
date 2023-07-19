@@ -1,34 +1,21 @@
-import { Button, Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
-import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { throttle } from 'lodash';
-import { useState, useRef } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
+import { useState } from 'react';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
+import Stream from 'calypso/reader/stream';
 import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import DiscoverNavigation from './discover-navigation';
 import { getDiscoverStreamTags, DEFAULT_TAB, buildDiscoverStreamKey } from './helper';
 
-import './discover-stream.scss';
-
-const SHOW_SCROLL_THRESHOLD = 10;
-const DEFAULT_CLASS = 'discover-stream-navigation';
-const showElement = ( element ) => element && element.classList.remove( 'display-none' );
-const hideElement = ( element ) => element && element.classList.add( 'display-none' );
-
 const DiscoverStream = ( props ) => {
-	const scrollRef = useRef();
-	const scrollPosition = useRef( 0 );
 	const locale = useLocale();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -53,49 +40,6 @@ const DiscoverStream = ( props ) => {
 		},
 	} );
 
-	const recordTabClick = () => {
-		recordAction( 'click_discover_tab' );
-		recordGaEvent( 'Clicked Discover Tab' );
-	};
-
-	const menuTabClick = ( tab ) => {
-		setSelectedTab( tab );
-		recordTabClick();
-	};
-
-	const shouldHideLeftScrollButton = () => scrollPosition.current < SHOW_SCROLL_THRESHOLD;
-	const shouldHideRightScrollButton = () =>
-		scrollPosition.current >
-		scrollRef.current?.scrollWidth - scrollRef.current?.clientWidth - SHOW_SCROLL_THRESHOLD;
-
-	// To keep track of the navigation tabs scroll position and keep it from appearing to reset
-	// after child render.
-	const handleScroll = throttle( () => {
-		// Save scroll position for later reference.
-		scrollPosition.current = scrollRef.current?.scrollLeft;
-
-		// Determine and set visibility classes on scroll button wrappers.
-		const leftScrollButton = document.querySelector( `.${ DEFAULT_CLASS }__left-button-wrapper` );
-		const rightScrollButton = document.querySelector( `.${ DEFAULT_CLASS }__right-button-wrapper` );
-		shouldHideLeftScrollButton()
-			? hideElement( leftScrollButton )
-			: showElement( leftScrollButton );
-		shouldHideRightScrollButton()
-			? hideElement( rightScrollButton )
-			: showElement( rightScrollButton );
-	}, 50 );
-
-	const bumpScrollX = ( shouldScrollLeft ) => {
-		if ( scrollRef.current ) {
-			const directionMultiplier = shouldScrollLeft ? -1 : 1;
-			const finalPositionX =
-				scrollRef.current.scrollLeft +
-				// 2/3 reflects the fraction of visible width that will scroll.
-				directionMultiplier * scrollRef.current.clientWidth * ( 2 / 3 );
-			scrollRef.current.scrollTo( { top: 0, left: finalPositionX, behavior: 'smooth' } );
-		}
-	};
-
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
 	// Filter followed tags out of interestTags to get recommendedTags.
@@ -108,74 +52,6 @@ const DiscoverStream = ( props ) => {
 		isLoggedIn
 	);
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
-
-	const DiscoverNavigation = () => (
-		<div
-			className={ classNames( DEFAULT_CLASS, {
-				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
-			} ) }
-		>
-			<div
-				className={ classNames( `${ DEFAULT_CLASS }__left-button-wrapper`, {
-					'display-none': shouldHideLeftScrollButton(),
-				} ) }
-				aria-hidden={ true }
-			>
-				<Button
-					className={ `${ DEFAULT_CLASS }__left-button` }
-					onClick={ () => bumpScrollX( true ) }
-					tabIndex={ -1 }
-				>
-					<Gridicon icon="chevron-left" />
-				</Button>
-			</div>
-
-			<div
-				className={ classNames( `${ DEFAULT_CLASS }__right-button-wrapper`, {
-					'display-none': shouldHideRightScrollButton(),
-				} ) }
-				aria-hidden={ true }
-			>
-				<Button
-					className={ `${ DEFAULT_CLASS }__right-button` }
-					onClick={ () => bumpScrollX() }
-					tabIndex={ -1 }
-				>
-					<Gridicon icon="chevron-right" />
-				</Button>
-			</div>
-
-			<div className={ `${ DEFAULT_CLASS }__tabs` } ref={ scrollRef } onScroll={ handleScroll }>
-				<SegmentedControl primary className={ `${ DEFAULT_CLASS }__tab-control` }>
-					<SegmentedControl.Item
-						key={ DEFAULT_TAB }
-						selected={ isDefaultTab }
-						onClick={ () => menuTabClick( DEFAULT_TAB ) }
-					>
-						{ translate( 'Recommended' ) }
-					</SegmentedControl.Item>
-					<SegmentedControl.Item
-						key="latest"
-						selected={ 'latest' === selectedTab }
-						onClick={ () => menuTabClick( 'latest' ) }
-					>
-						{ translate( 'Latest' ) }
-					</SegmentedControl.Item>
-					{ recommendedTags.map( ( tag ) => {
-						return (
-							<SegmentedControl.Item
-								key={ tag.slug }
-								selected={ tag.slug === selectedTab }
-								onClick={ () => menuTabClick( tag.slug ) }
-							>
-								{ tag.title }
-							</SegmentedControl.Item>
-						);
-					} ) }
-				</SegmentedControl>
-			</div>
-		</div>
-	);
 
 	const streamSidebar = () =>
 		( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ? (
@@ -200,7 +76,12 @@ const DiscoverStream = ( props ) => {
 
 	return (
 		<>
-			{ DiscoverNavigation() }
+			<DiscoverNavigation
+				width={ props.width }
+				selectedTab={ selectedTab }
+				setSelectedTab={ setSelectedTab }
+				recommendedTags={ recommendedTags }
+			/>
 			<Stream { ...streamProps } />
 		</>
 	);
