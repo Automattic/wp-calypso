@@ -28,7 +28,7 @@ export type Chat = {
 	context: Context;
 };
 
-export type OdysseusAllowedSectionNames =
+export type OdieAllowedSectionNames =
 	| 'plans'
 	| 'add-ons'
 	| 'domains'
@@ -36,4 +36,4 @@ export type OdysseusAllowedSectionNames =
 	| 'site-purchases'
 	| 'checkout';
 
-export type OdysseusAllowedBots = 'wapuu';
+export type OdieAllowedBots = 'wapuu';

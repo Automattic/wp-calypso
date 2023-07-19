@@ -26,7 +26,7 @@ const CustomALink = ( { href, children }: { href: string; children: React.ReactN
 			rel="noopener noreferrer"
 			onClick={ () => {
 				dispatch(
-					recordTracksEvent( 'calypso_odysseus_chat_message_action_click', {
+					recordTracksEvent( 'calypso_odie_chat_message_action_click', {
 						bot_name_slug: 'wapuu',
 						action: 'link',
 						href: href,

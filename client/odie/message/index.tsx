@@ -19,7 +19,7 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 	return (
 		<div
 			ref={ isLast ? messageEndRef : null }
-			className={ `odysseus-chatbox-message ${
+			className={ `odie-chatbox-message ${
 				isUser ? 'odyssus-chatbox-message-user' : 'odyssus-chatbox-message-wapuu'
 			}` }
 		>

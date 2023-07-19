@@ -3,9 +3,9 @@ import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useOdysseusAssistantContext } from './context';
+import { useOdieAssistantContext } from './context';
 import ChatMessage from './message';
-import { useOdysseusGetChatPollQuery, useOddyseusSendMessage } from './query';
+import { useOdieGetChatPollQuery, useOdieSendMessage } from './query';
 import WapuuRibbon from './wapuu-ribbon';
 
 import './style.scss';
@@ -13,7 +13,7 @@ import './style.scss';
 export const WAPUU_ERROR_MESSAGE =
 	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
 
-const OdysseusAssistant = () => {
+const OdieAssistant = () => {
 	const {
 		lastNudge,
 		chat,
@@ -25,10 +25,10 @@ const OdysseusAssistant = () => {
 		setIsNudging,
 		isVisible,
 		setIsVisible,
-	} = useOdysseusAssistantContext();
+	} = useOdieAssistantContext();
 	const [ input, setInput ] = useState( '' );
-	const { mutateAsync: sendOdysseusMessage } = useOddyseusSendMessage();
-	const { data: chatData } = useOdysseusGetChatPollQuery( chat.chat_id ?? null );
+	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
+	const { data: chatData } = useOdieGetChatPollQuery( chat.chat_id ?? null );
 
 	const dispatch = useDispatch();
 
@@ -87,7 +87,7 @@ const OdysseusAssistant = () => {
 			} );
 
 			setInput( '' );
-			const response = await sendOdysseusMessage( {
+			const response = await sendOdieMessage( {
 				message: { content: input, role: 'user', type: 'message' },
 			} );
 
@@ -111,7 +111,7 @@ const OdysseusAssistant = () => {
 		const newVisibility = ! isVisible;
 
 		dispatch(
-			recordTracksEvent( 'calypso_odysseus_chat_toggle_visibility_click', {
+			recordTracksEvent( 'calypso_odie_chat_toggle_visibility_click', {
 				visible: newVisibility,
 				bot_name_slug: 'wapuu',
 			} )
@@ -188,4 +188,4 @@ const OdysseusAssistant = () => {
 	);
 };
 
-export default OdysseusAssistant;
+export default OdieAssistant;
