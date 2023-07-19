@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
-import { DEFAULT_TAB } from './helper';
+import { DEFAULT_TAB, LATEST_TAB } from './helper';
 
 import './discover-navigation.scss';
 
@@ -104,9 +104,9 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, setSelectedTab, wid
 						{ translate( 'Recommended' ) }
 					</SegmentedControl.Item>
 					<SegmentedControl.Item
-						key="latest"
-						selected={ 'latest' === selectedTab }
-						onClick={ () => menuTabClick( 'latest' ) }
+						key={ LATEST_TAB }
+						selected={ LATEST_TAB === selectedTab }
+						onClick={ () => menuTabClick( LATEST_TAB ) }
 					>
 						{ translate( 'Latest' ) }
 					</SegmentedControl.Item>
