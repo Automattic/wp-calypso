@@ -98,18 +98,26 @@
 			}
 		}
 
-		.checkout-thank-you__purchase-details-list {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
+		div.checkout-thank-you__purchase-details-list {
+			margin-left: 0;
+			margin-right: 0;
+			display: block;
 
 			>div {
 				padding: 0 20px;
 				margin-bottom: 50px;
+				justify-content: space-between;
+				flex-wrap: nowrap;
 
 				@media (max-width: $break-medium ) {
 					flex-direction: column;
 					padding: 0;
+					flex-wrap: wrap;
+				}
+
+				div.purchase-detail {
+					width: unset;
+					max-width: unset;
 				}
 
 				h3 {
