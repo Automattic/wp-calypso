@@ -63,6 +63,7 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 						tld: availability.tld,
 						status: availability.status,
 						unlocked: false,
+						transferrability: availability?.transferrability ?? null,
 					};
 				}
 

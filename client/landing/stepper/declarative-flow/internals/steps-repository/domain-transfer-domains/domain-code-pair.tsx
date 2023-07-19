@@ -125,7 +125,7 @@ export function DomainCodePair( {
 		if ( shouldReportError && ! valid && message ) {
 			recordTracksEvent( 'calypso_domain_transfer_domain_error', {
 				domain,
-				error: errorStatus ? errorStatus : message,
+				error: errorStatus ? errorStatus : String( message ),
 			} );
 		}
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
