@@ -123,7 +123,7 @@ body.is-section-home.theme-default.color-scheme {
 		@include grid-column( 9, 4 );
 	}
 
-	@include break-small {
+	@include break-mobile {
 		> .card,
 		> .card.quick-links,
 		> .card.go-mobile {
