@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
@@ -23,19 +22,9 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 							<>
 								<p>
 									{ __(
-										"Your current registrar's domain management interface should have an option for you to remove the lock."
+										"Head to your current registrar's domain management settings, where you'll find the authorization code to unlock your domain."
 									) }
 								</p>
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/domains/incoming-domain-transfer/'
-									) }
-									target="_blank"
-									rel="noopener noreferrer"
-									className="select-items__item-learn-more"
-								>
-									{ __( 'Learn more' ) }
-								</a>
 							</>
 						),
 						icon: <Icon icon={ unlock } />,
@@ -49,19 +38,9 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 							<>
 								<p>
 									{ __(
-										'Add all domain names (along with their authorization codes) to start the transfer.'
+										'In the next step, add your domains and authorization codes and begin the transfer.'
 									) }
 								</p>
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/domains/incoming-domain-transfer/'
-									) }
-									target="_blank"
-									rel="noopener noreferrer"
-									className="select-items__item-learn-more"
-								>
-									{ __( 'Learn more' ) }
-								</a>
 							</>
 						),
 						icon: <Icon icon={ plus } />,
@@ -71,7 +50,9 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						description: <p>{ __( 'Add your contact and payment details.' ) }</p>,
+						description: (
+							<p>{ __( "Review your payment details and you're ready to start the transfer." ) }</p>
+						),
 						icon: <Icon icon={ payment } />,
 						value: 'finalize',
 						actionText: null,
@@ -82,8 +63,8 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				onSelect={ onSubmit }
 			/>
 			<div style={ { display: 'flex', justifyContent: 'center' } }>
-				<Button isPrimary onClick={ onSubmit }>
-					{ __( "I'm ready!" ) }
+				<Button variant="primary" onClick={ onSubmit }>
+					{ __( 'Get started' ) }
 				</Button>
 			</div>
 		</>
