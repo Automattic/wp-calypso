@@ -64,7 +64,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 			/>
 			<div style={ { display: 'flex', justifyContent: 'center' } }>
 				<Button variant="primary" onClick={ onSubmit }>
-					{ __( "I'm ready!" ) }
+					{ __( 'Get Started' ) }
 				</Button>
 			</div>
 		</>
