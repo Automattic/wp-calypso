@@ -111,8 +111,8 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 
 	// wrapper around onChangeItemVariant to close up dropdown on change
 	const handleChange = useCallback(
-		( uuid: string, productSlug: string, productId: number ) => {
-			onChangeItemVariant( uuid, productSlug, productId );
+		( uuid: string, productSlug: string, productId: number, volume: number ) => {
+			onChangeItemVariant( uuid, productSlug, productId, volume );
 			setOpen( false );
 		},
 		[ onChangeItemVariant ]
@@ -159,7 +159,8 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 						handleChange(
 							selectedItem.uuid,
 							variants[ highlightedVariantIndex ].productSlug,
-							variants[ highlightedVariantIndex ].productId
+							variants[ highlightedVariantIndex ].productId,
+							variants[ highlightedVariantIndex ].volume
 						);
 					} else if ( highlightedVariantIndex === selectedVariantIndex ) {
 						toggleDropDown();
@@ -224,7 +225,7 @@ function ItemVariantOptionList( {
 	variants: WPCOMProductVariant[];
 	highlightedVariantIndex: number | null;
 	selectedItem: ResponseCartProduct;
-	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
+	handleChange: ( uuid: string, productSlug: string, productId: number, volume: number ) => void;
 } ) {
 	const compareTo = variants.find( ( variant ) => variant.productId === selectedItem.product_id );
 	return (
@@ -234,7 +235,12 @@ function ItemVariantOptionList( {
 					key={ variant.productSlug + variant.variantLabel }
 					isSelected={ index === highlightedVariantIndex }
 					onSelect={ () =>
-						handleChange( selectedItem.uuid, variant.productSlug, variant.productId )
+						handleChange(
+							selectedItem.uuid,
+							variant.productSlug,
+							variant.productId,
+							variant.volume
+						)
 					}
 					compareTo={ compareTo }
 					variant={ variant }

@@ -14,6 +14,7 @@ export type WPCOMProductVariant = {
 	introductoryInterval: number;
 	priceBeforeDiscounts: number;
 	productBillingTermInMonths: number;
+	volume: number;
 };
 
 export type ItemVariationPickerProps = {
@@ -27,5 +28,6 @@ export type ItemVariationPickerProps = {
 export type OnChangeItemVariant = (
 	uuid: string,
 	productSlug: WPCOMProductSlug,
-	productId: number
+	productId: number,
+	volume: number
 ) => void;

@@ -104,6 +104,8 @@ export function useGetProductVariants(
 						priceBeforeDiscounts: variant.price_before_discounts_integer,
 						currency: variant.currency,
 						productBillingTermInMonths: variant.bill_period_in_months,
+						// WIP | Make the volume optional since not all variants have volume
+						volume: variant.volume,
 					};
 				} catch ( error ) {
 					// Three-year plans are not yet fully supported, so we need to guard
