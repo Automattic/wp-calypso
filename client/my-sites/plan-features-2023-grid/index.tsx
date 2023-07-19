@@ -468,7 +468,6 @@ export class PlanFeatures2023Grid extends Component<
 	 */
 	renderSpotlightPlan( planPropertiesObj: PlanProperties[] ) {
 		const planCardClasses = classNames(
-			'plan-features-2023-grid__mobile-plan-card',
 			'plan-features-2023-grid__plan-spotlight-card',
 			getPlanClass( planPropertiesObj[ 0 ].planName )
 		);
