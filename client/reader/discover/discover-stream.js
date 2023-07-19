@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import { useState, useRef } from 'react';
+import FormattedHeader from 'calypso/components/formatted-header';
 import SegmentedControl from 'calypso/components/segmented-control';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
@@ -109,6 +110,19 @@ const DiscoverStream = ( props ) => {
 	);
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
 
+	const DiscoverHeader = () => (
+		<FormattedHeader
+			brandFont
+			headerText={ translate( 'Discover' ) }
+			subHeaderText={ translate( 'Explore new blogs that inspire and entertain.' ) }
+			align="left"
+			hasScreenOptions
+			className={ classNames( 'discover-stream-header', {
+				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
+			} ) }
+		/>
+	);
+
 	const DiscoverNavigation = () => (
 		<div
 			className={ classNames( DEFAULT_CLASS, {
@@ -200,6 +214,7 @@ const DiscoverStream = ( props ) => {
 
 	return (
 		<>
+			{ DiscoverHeader() }
 			{ DiscoverNavigation() }
 			<Stream { ...streamProps } />
 		</>

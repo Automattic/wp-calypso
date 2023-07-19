@@ -1,3 +1,13 @@
+.formatted-header.is-left-align.discover-stream-header {
+	margin: 0 auto;
+	max-width: 600px;
+	&.reader-dual-column {
+		max-width: 968px; // Max width of dual column reader stream.
+	}
+	@media only screen and (max-width: 660px) {
+		display: none;
+	}
+}
 .discover-stream-navigation {
 	position: relative;
 	margin: auto;
@@ -47,6 +57,7 @@
 	.discover-stream-navigation__tabs {
 		position: relative;
 		overflow-x: scroll;
+		left: -5px;
 		margin-bottom: 20px;
 		padding-top: 5px;
 		padding-bottom: 15px;
