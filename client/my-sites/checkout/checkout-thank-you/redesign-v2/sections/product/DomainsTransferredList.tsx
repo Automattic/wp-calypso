@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch as useWpDataDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import DomainTransferredListItem from './DomainTransferredListItem';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 import './style.scss';
 
@@ -48,8 +47,13 @@ const DomainsTransferredList = ( { purchases }: Props ) => {
 			</div>
 			<div className="domain-complete-summary">
 				<ul className="domain-complete-list">
-					{ purchases?.map( ( purchase ) => (
-						<DomainTransferredListItem purchase={ purchase } />
+					{ purchases?.map( ( { meta } ) => (
+						<li className="domain-complete-list-item" key={ meta }>
+							<div>
+								<h2>{ meta }</h2>
+							</div>
+							<p>{ __( 'Auto-renew enabled' ) }</p>
+						</li>
 					) ) }
 				</ul>
 			</div>
