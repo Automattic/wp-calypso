@@ -14,6 +14,7 @@ import {
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import * as mobileApp from 'calypso/lib/mobile-app';
 import CheckoutThankYouHeader from '../header';
 import { CheckoutThankYou } from '../index';
 
@@ -199,7 +200,8 @@ describe( 'CheckoutThankYou', () => {
 			isDotComPlan.mockImplementation( () => false );
 		} );
 
-		test( 'Should be there for AT', () => {
+		test( 'Should be there for AT (Woo mobile)', () => {
+			const isWcMobileAppSpy = jest.spyOn( mobileApp, 'isWcMobileApp' ).mockReturnValue( true );
 			render(
 				<Provider store={ store }>
 					<CheckoutThankYou
@@ -210,6 +212,7 @@ describe( 'CheckoutThankYou', () => {
 				</Provider>
 			);
 			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).toBeVisible();
+			isWcMobileAppSpy.mockRestore();
 		} );
 
 		test( 'Should not be there for AT', () => {
@@ -365,6 +368,35 @@ describe( 'CheckoutThankYou', () => {
 		render(
 			<Provider store={ store }>
 				<CheckoutThankYou { ...props } />
+			</Provider>
+		);
+
+		expect( await screen.findByText( 'component--redesign-v2-footer' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the redesignV2 footer content for ecommerce plan that has completed AT transfer', async () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [ { productSlug: PLAN_ECOMMERCE } ],
+				},
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			planSlug: PLAN_ECOMMERCE,
+		};
+
+		render(
+			<Provider store={ store }>
+				<CheckoutThankYou { ...props } transferComplete={ true } isWooCommerceInstalled={ true } />
 			</Provider>
 		);
 
