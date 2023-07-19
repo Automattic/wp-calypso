@@ -28,6 +28,22 @@ export function receiveThumbnail( embedUrl, thumbnailUrl ) {
 }
 
 /**
+ * Handle the fetch response.
+ * Throws an error if response is not OK.
+ * Converts to JSON if response is OK.
+ *
+ * @param {Promise} response A promise that resolves to a Response object.
+ * @returns {string} Reponse, converted to JSON.
+ * @throws Error If the response is not OK.
+ */
+function handleFetchResponse( response ) {
+	if ( ! response.ok ) {
+		throw Error( response.statusText );
+	}
+	return response.json();
+}
+
+/**
  * Either instantly returns an action for the thumbnail info or
  * triggers a network request to fetch a thumbnailUrl if necessary
  *
@@ -48,13 +64,14 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 			try {
 				return globalThis
 					.fetch( posterEndpoint )
-					.then( ( response ) => response.json() )
+					.then( handleFetchResponse )
 					.then( ( json ) => {
 						const thumbnailUrl = json?.poster ?? '';
 						if ( thumbnailUrl ) {
 							dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 						}
-					} );
+					} )
+					.catch( () => {} );
 			} catch ( error ) {}
 		}
 		case 'vimeo': {
@@ -64,13 +81,14 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 			try {
 				return globalThis
 					.fetch( fetchUrl )
-					.then( ( response ) => response.json() )
+					.then( handleFetchResponse )
 					.then( ( json ) => {
 						const thumbnailUrl = get( json, [ 0, 'thumbnail_large' ] );
 						if ( thumbnailUrl ) {
 							dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 						}
-					} );
+					} )
+					.catch( () => {} );
 			} catch ( error ) {}
 		}
 		default:
