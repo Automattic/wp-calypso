@@ -492,6 +492,30 @@ describe( '#localizeUrl', () => {
 		expect( localizeUrl( 'https://wordpress.com/plans/', 'es', true ) ).toEqual(
 			'https://wordpress.com/plans/'
 		);
+
+		// Greek
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'el', false ) ).toEqual(
+			'https://wordpress.com/el/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'el', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Romanian
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'ro', false ) ).toEqual(
+			'https://wordpress.com/ro/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'ro', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		//Non Mag-16, Finnish
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', false ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
 	} );
 
 	test( 'WordPress.com new style support URLs', () => {
