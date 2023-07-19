@@ -55,21 +55,20 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => 
 	const annualLabel = translate( 'Annually' );
 
 	const searchParams = new URLSearchParams( document.location.search );
-	const monthlyParam = searchParams.get( 'monthly' );
-	const annualyParam = searchParams.get( 'annually' );
+	const billingIntervalParam = searchParams.get( 'interval' );
 
 	/**
 	 * Change the billing period based on query params, if passed
 	 */
 	useEffect( () => {
-		if ( monthlyParam !== null ) {
+		if ( billingIntervalParam === 'monthly' ) {
 			onChange( IntervalLength.MONTHLY );
 		}
 
-		if ( annualyParam !== null ) {
+		if ( billingIntervalParam === 'annually' ) {
 			onChange( IntervalLength.ANNUALLY );
 		}
-	}, [ onChange, monthlyParam, annualyParam ] );
+	}, [ onChange, billingIntervalParam ] );
 
 	return (
 		<BillingIntervalSwitcherContainer>
