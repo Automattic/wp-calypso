@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -6,7 +6,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';

@@ -1,8 +1,7 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Badge, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useCallback } from 'react';
-import Badge from 'calypso/components/badge';
 import FormattedDate from 'calypso/components/formatted-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import InvoicesListRow from 'calypso/jetpack-cloud/sections/partner-portal/invoices-list-row';
