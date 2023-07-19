@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
