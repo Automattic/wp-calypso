@@ -8,6 +8,7 @@ import {
 	isTranslatedIncompletely,
 	isDefaultLocale,
 	getLanguageSlugs,
+	localizeUrl,
 } from '@automattic/i18n-utils';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -704,13 +705,16 @@ function wpcomPages( app ) {
 					'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 				);
 			} else {
-				const pricingPageUrl = ref
-					? `https://wordpress.com/${ locale }/pricing/?ref=${ ref }`
-					: `https://wordpress.com/${ locale }/pricing/`;
+				// if the `locale` is a Mag-16 language/Greek/Romanian
+				const pricingPage = 'https://wordpress.com/pricing/';
+				const refQuery = ref ? `?ref=${ ref }` : '';
+				const pricingPageUrl = localizeUrl( `${ pricingPage }${ refQuery }`, locale );
 				res.redirect( pricingPageUrl );
 			}
 		} else {
-			res.redirect( '/plans' );
+			const queryParams = new URLSearchParams( req.query );
+			const queryString = queryParams.toString() ? '?' + queryParams.toString() : '';
+			res.redirect( '/plans' + queryString );
 		}
 	} );
 
