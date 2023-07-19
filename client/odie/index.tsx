@@ -158,9 +158,9 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 		<div
 			className={ classnames( 'chatbox', {
 				'chatbox-show': isVisible && ! simple,
-				'chatbox-show-simple': ! isVisible && simple,
-				'chatbox-show-full': isVisible && simple,
 				'chatbox-hide': ! isVisible && ! simple,
+				'chatbox-show-vertical': isVisible && simple,
+				'chatbox-hide-vertical': ! isVisible && simple,
 				'using-environment-badge': environmentBadge,
 			} ) }
 		>
@@ -176,16 +176,15 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 					'Wapuu Assistant'
 				) : (
 					<>
-						<Button className="chatbox-header-button" onClick={ handleToggleVisibility }>
+						<button className="chatbox-header-button" onClick={ handleToggleVisibility }>
 							<span
-								className={ classnames( 'chat-chevron', {
-									'chatbox-attention': ! userInteracted,
+								className={ classnames( {
+									'chatbox-attention': ! userInteracted || isNudging,
 								} ) }
 							>
-								{ isVisible ? '❯' : '❮' }
+								Wapuu Assistant
 							</span>
-						</Button>
-						Wapuu Assistant
+						</button>
 					</>
 				) }
 			</div>

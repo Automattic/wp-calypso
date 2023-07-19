@@ -18,10 +18,6 @@
 
 .chatbox-header {
 	width: 100%;
-	font-size: large;
-	font-weight: normal;
-	text-align: left;
-	line-height: 62px;
 	background-color: #23282d;
 	color: #fff;
 	border-radius: 4px;
@@ -164,24 +160,14 @@
 	bottom: 64px;
 }
 
-.chatbox-show-simple {
-	transform: translateX(calc(100% - 25px)); /* When chatbox is partially visible */
-	transition: transform 0.5s ease-in-out;
+/* When chatbox is hidden */
+.chatbox-hide-vertical {
+	transform: translateY(calc(100% + 5px));
 }
 
-.chatbox-show-full {
-	transform: translateX(0); /* When chatbox is fully visible */
-	transition: transform 0.5s ease-in-out;
-}
-
-.chatbox-header-button {
-	outline: none !important;
-}
-
-div.chatbox-header > button {
-	box-shadow: none !important;
-	padding-left: 6px;
-	padding-right: 16px;
+/* When chatbox is visible */
+.chatbox-show-vertical {
+	transform: translateY(0);
 }
 
 @keyframes fadeToColor {
@@ -208,6 +194,16 @@ div.chatbox-header > button {
 	animation: fadeToColor 4s linear infinite;
 }
 
-.chat-chevron {
+.chatbox-header-button {
 	color: #ece6f6;
+	border: none;
+	outline: none;
+	padding: 0;
+	cursor: pointer;
+	background: none;
+	font-size: large;
+	font-weight: normal;
+	text-align: left;
+	line-height: 62px;
+	width: 100%;
 }
