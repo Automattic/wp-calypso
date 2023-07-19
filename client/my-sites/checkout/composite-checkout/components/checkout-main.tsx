@@ -827,18 +827,32 @@ function getAnalyticsPath(
 }
 
 /**
- * This exists so that CheckoutMain can call useStripeSetupIntentId. It must be inside the CalypsoShoppingCartProvider.
+ * This exists so that CheckoutMain can call useStripeSetupIntentId which is
+ * used by the new card payment method for free purchases. It must be inside
+ * the CalypsoShoppingCartProvider.
  */
 function InnerCheckoutMainWrapper( props: CheckoutMainProps ) {
 	const cartKey = useCartKey();
-	const { responseCart, isLoading, isPendingUpdate } = useShoppingCart( cartKey );
+	const { responseCart, isLoading } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
+	const areNewCardsSupported = responseCart.allowed_payment_methods.includes(
+		'WPCOM_Billing_Stripe_Payment_Method'
+	);
+	const shouldEnableSetupIntent = ( () => {
+		if ( isLoading ) {
+			return false;
+		}
+		if ( isPurchaseFree && areNewCardsSupported ) {
+			return true;
+		}
+		return false;
+	} )();
 	return (
 		<StripeSetupIntentIdProvider
 			fetchStripeSetupIntentId={ () =>
 				getStripeConfiguration( { needs_intent: true, source: 'checkout' } )
 			}
-			isDisabled={ ! isPurchaseFree || isLoading || isPendingUpdate }
+			isDisabled={ ! shouldEnableSetupIntent }
 		>
 			<CheckoutMain { ...props } />
 		</StripeSetupIntentIdProvider>
