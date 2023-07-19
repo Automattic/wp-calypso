@@ -16,3 +16,13 @@ export interface StatsNoticesProps {
 	isOdysseyStats?: boolean;
 	statsPurchaseSuccess?: string;
 }
+
+export interface NewStatsNoticesProps {
+	siteId: number | null;
+	isOdysseyStats?: boolean;
+}
+
+export interface PurchaseNoticesProps {
+	siteId: number | null;
+	statsPurchaseSuccess: string | undefined;
+}
