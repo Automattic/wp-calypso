@@ -147,9 +147,16 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 			{ title: __( "Let's head to the checkout" ), duration: 5000 },
 		];
 		return videoPressLoadingMessages;
-	} else if ( VIDEOPRESS_TV_FLOW === flow || VIDEOPRESS_TV_PURCHASE_FLOW === flow ) {
+	} else if ( VIDEOPRESS_TV_FLOW === flow ) {
 		const videoPressLoadingMessages = [
 			{ title: __( 'Starting up your channel' ), duration: 5000 },
+		];
+		return videoPressLoadingMessages;
+	} else if ( VIDEOPRESS_TV_PURCHASE_FLOW === flow ) {
+		const videoPressLoadingMessages = [
+			{ title: __( 'Scouting the locations' ), duration: 5000 },
+			{ title: __( 'Kicking off the casting' ), duration: 5000 },
+			{ title: __( "Let's head to the checkout" ), duration: 5000 },
 		];
 		return videoPressLoadingMessages;
 	}
