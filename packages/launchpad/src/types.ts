@@ -1,7 +1,7 @@
 export interface Task {
 	id: string;
-	completed?: boolean;
-	disabled?: boolean;
+	completed: boolean;
+	disabled: boolean;
 	title?: string;
 	subtitle?: string | React.ReactNode | null;
 	badge_text?: string;
