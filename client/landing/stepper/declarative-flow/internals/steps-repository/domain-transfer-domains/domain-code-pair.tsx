@@ -107,6 +107,7 @@ export function DomainCodePair( {
 		saleCost,
 		currencyCode = 'USD',
 		refetch,
+		errorStatus,
 	} = validation;
 
 	useEffect( () => {
@@ -119,10 +120,10 @@ export function DomainCodePair( {
 		if ( shouldReportError && ! valid && message ) {
 			recordTracksEvent( 'calypso_domain_transfer_domain_error', {
 				domain,
-				error: message,
+				error: errorStatus ? errorStatus : message,
 			} );
 		}
-	}, [ shouldReportError, valid, domain, message ] );
+	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
 	return (
 		<div className="domains__domain-info-and-validation">
