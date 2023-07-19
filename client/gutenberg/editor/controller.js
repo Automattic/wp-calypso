@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
@@ -185,6 +186,17 @@ export const authenticate = ( context, next ) => {
 		{ redirect_to: returnUrl },
 		`${ siteAdminUrl }../wp-login.php`
 	);
+
+	if ( siteId === 204039232 ) {
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'e2e atomic auth redirect',
+			severity: 'debug',
+			extra: {
+				state: JSON.stringify( state, null, 2 ),
+			},
+		} );
+	}
 
 	window.location.replace( wpAdminLoginUrl );
 };
