@@ -286,7 +286,7 @@ export class PlanFeatures2023Grid extends Component<
 					<QueryActivePromotions />
 					{ spotlightPlanProperties && (
 						<div className="plan-features-2023-grid__plan-spotlight">
-							{ this.renderSpotlightPlan( [ spotlightPlanProperties ] ) }
+							{ this.renderSpotlightPlan( spotlightPlanProperties ) }
 						</div>
 					) }
 					<div className="plan-features">
@@ -466,20 +466,20 @@ export class PlanFeatures2023Grid extends Component<
 	/**
 	 * Similar to `renderMobileView` above.
 	 */
-	renderSpotlightPlan( planPropertiesObj: PlanProperties[] ) {
+	renderSpotlightPlan( planPropertiesObj: PlanProperties ) {
 		const spotlightPlanClasses = classNames(
 			'plan-features-2023-grid__plan-spotlight-card',
-			getPlanClass( planPropertiesObj[ 0 ].planName )
+			getPlanClass( planPropertiesObj.planName )
 		);
 
 		return (
 			<div className={ spotlightPlanClasses }>
-				{ this.renderPlanLogos( planPropertiesObj, { isMobile: true } ) }
-				{ this.renderPlanHeaders( planPropertiesObj, { isMobile: true } ) }
-				{ this.renderPlanTagline( planPropertiesObj, { isMobile: true } ) }
-				{ this.renderPlanPrice( planPropertiesObj, { isMobile: true } ) }
-				{ this.renderBillingTimeframe( planPropertiesObj, { isMobile: true } ) }
-				{ this.renderTopButtons( planPropertiesObj, { isMobile: true } ) }
+				{ this.renderPlanLogos( [ planPropertiesObj ], { isMobile: true } ) }
+				{ this.renderPlanHeaders( [ planPropertiesObj ], { isMobile: true } ) }
+				{ this.renderPlanTagline( [ planPropertiesObj ], { isMobile: true } ) }
+				{ this.renderPlanPrice( [ planPropertiesObj ], { isMobile: true } ) }
+				{ this.renderBillingTimeframe( [ planPropertiesObj ], { isMobile: true } ) }
+				{ this.renderTopButtons( [ planPropertiesObj ], { isMobile: true } ) }
 			</div>
 		);
 	}
