@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .jetpack-product-store__most-popular {
-	margin-top: 0;
+	margin-top: 3rem;
 }
 
 .jetpack-product-store__most-popular--heading {
@@ -39,12 +39,16 @@
 
 
 	.featured-item-card .display-price {
-		display: inline;
+		@media screen and (min-width: 320px) {
+			display: flex;
+			min-height: 24px;
+		}
 	}
 
 	.featured-item-card .item-price .display-price .display-price__billing-time-frame {
-		display: inline;
-		margin-top: 0;
+		@media screen and (min-width: 320px) {
+			margin-top: 0;
+		}
 	}
 }
 
