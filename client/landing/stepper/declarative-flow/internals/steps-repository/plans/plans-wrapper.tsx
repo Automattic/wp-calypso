@@ -27,6 +27,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -37,6 +38,7 @@ import type { PlansIntent } from 'calypso/my-sites/plan-features-2023-grid/hooks
 import './style.scss';
 
 interface Props {
+	shouldIncludeFAQ?: boolean;
 	flowName: string | null;
 	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
@@ -155,6 +157,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					intent={ plansIntent }
 					replacePaidDomainWithFreeDomain={ replacePaidDomainWithFreeDomain }
 				/>
+				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>
 		);
 	};
