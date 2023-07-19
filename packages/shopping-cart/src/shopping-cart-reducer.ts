@@ -187,7 +187,9 @@ function shoppingCartReducer(
 				doesResponseCartContainProductMatching( state.responseCart, {
 					uuid: uuidToReplace,
 					...action.productPropertiesToChange,
-				} )
+				} ) &&
+				// WIP | Temporary bypass that logic for the domain registration product to allow updating the product by volume instead of product id
+				action.productPropertiesToChange.product_id !== 6
 			) {
 				debug( `variant is already in cart; not submitting again` );
 				return state;
