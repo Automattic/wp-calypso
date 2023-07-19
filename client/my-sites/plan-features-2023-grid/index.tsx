@@ -284,14 +284,14 @@ export class PlanFeatures2023Grid extends Component<
 			>
 				<div className="plans-wrapper">
 					<QueryActivePromotions />
+					{ spotlightPlanProperties && (
+						<div className="plan-features-2023-grid__plan-spotlight">
+							{ this.renderSpotlightPlan( [ spotlightPlanProperties ] ) }
+						</div>
+					) }
 					<div className="plan-features">
 						<div className="plan-features-2023-grid__content">
 							<div>
-								{ spotlightPlanProperties && (
-									<div className="plan-features-2023-grid__plan-spotlight">
-										{ this.renderSpotlightPlan( [ spotlightPlanProperties ] ) }
-									</div>
-								) }
 								<div className="plan-features-2023-grid__desktop-view">
 									{ this.renderTable( planPropertiesForTable ) }
 								</div>
