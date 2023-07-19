@@ -60,6 +60,7 @@ import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
+	PRODUCT_WOOCOMMERCE_BOOKINGS,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -760,6 +761,11 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		'Easily share your website content on your social media channels from one place. Enjoy using the advanced plan for half price over the next year while we continue to develop the features.'
 	);
 
+	// WooCommerce Products
+	const woocommerceBookingsLightboxDescription = translate(
+		'Allow customers to book appointments, make reservations or rent equipment without leaving your site.'
+	);
+
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyLightboxDescription,
@@ -788,6 +794,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsLightboxDescription,
 	};
 };
 
@@ -916,6 +923,20 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Title & summary generation' ),
 	];
 
+	// WooCommerce Extensions
+	const woocommerceBookingsIncludesInfo = [
+		translate(
+			'Flexible online booking system - book classes, schedule appointments, or reserve items'
+		),
+		translate( 'Support for one-on-one appointments or multi-person events' ),
+		translate( 'The ability to offer special pricing for groups, days, or individuals' ),
+		translate( 'Support for all timezones' ),
+		translate( 'The ability to require confirmations or offer free cancellations' ),
+		translate( 'Reminder notifications' ),
+		translate( 'Sync with Google Calendar' ),
+		translate( 'Support for add-ons to customize the experience' ),
+	];
+
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupIncludesInfoT0,
@@ -944,6 +965,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasicIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsIncludesInfo,
 	};
 };
 
@@ -1032,6 +1054,20 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Best in-class support from WordPress experts' ),
 	];
 
+	// WooCommerce Extensions benefits
+	const woocommerceBookingsBenefits = [
+		translate(
+			'Let your customers book reservations, appointments, or rentals independently – no phone calls are required.'
+		),
+		translate(
+			'Offer discounts for groups or people booking multiple slots, show lower prices for early birds, higher prices on weekends, or special prices for kids.'
+		),
+		translate( 'Your customers see availability in their time zone' ),
+		translate( 'Reduce no-shows with reminder notifications' ),
+		translate( 'An intelligent booking system to avoid double-bookings' ),
+		translate( 'Boost your bookings with a range of add-ons' ),
+	];
+
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
@@ -1060,6 +1096,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsBenefits,
 	};
 };
 
