@@ -9,6 +9,7 @@ import FeedbackNotice from './feedback-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
 import LegacyStatsNotices from './legacy-notices';
 import OptOutNotice from './opt-out-notice';
+import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import { StatsNoticesProps } from './types';
 import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-products';
 import './style.scss';
@@ -33,9 +34,13 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		hasLoadedPurchases;
 
 	const showFreePlanPurchaseSuccessNotice = config.isEnabled( 'stats/paid-stats' ) && false;
+	const showPaidPlanPurchaseSuccessNotice = config.isEnabled( 'stats/paid-stats' ) && false;
 
 	return (
 		<>
+			{ showPaidPlanPurchaseSuccessNotice && (
+				<PaidPlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
+			) }
 			{ showFreePlanPurchaseSuccessNotice && (
 				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
 			) }
