@@ -4,7 +4,7 @@ import { useOdysseusAssistantContext } from '../context';
 import type { Chat, Message, Context } from '../types';
 
 function odysseusSendMessage( messages: Message[], context: Context, chat_id?: string | null ) {
-	const path = `/odysseus/send_message`;
+	const path = `/odie/send_message`;
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
@@ -37,7 +37,7 @@ export const useOddyseusSendMessage = (): UseMutationResult<
 // TODO: We will add lately a clear chat to forget the session
 
 const odysseusGetChat = ( chat_id: string | null ) => {
-	const path = `/odysseus/get_chat/${ chat_id }`;
+	const path = `/odie/get_chat/${ chat_id }`;
 	return wpcom.req.get( {
 		path,
 		apiNamespace: 'wpcom/v2',
