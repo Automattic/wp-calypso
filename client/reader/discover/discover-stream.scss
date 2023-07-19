@@ -1,5 +1,14 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .discover-stream-navigation {
 	position: relative;
+	margin: auto;
+	max-width: 90%;
+
+	@include break-xlarge {
+		max-width: 80%;
+	}
 
 	.discover-stream-navigation__left-button-wrapper,
 	.discover-stream-navigation__right-button-wrapper {

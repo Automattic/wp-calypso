@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { throttle } from 'lodash';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import wpcom from 'calypso/lib/wp';
 import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
@@ -94,26 +94,6 @@ const DiscoverStream = ( props ) => {
 			scrollRef.current.scrollTo( { top: 0, left: finalPositionX, behavior: 'smooth' } );
 		}
 	};
-
-	// Set the scroll position and focus of navigation tabs when selected tab changes and this
-	// component is forced to rerender.
-	useEffect( () => {
-		// Set 0 timeout to put this at the end of the callstack so it happens after the children
-		// rerender.
-		setTimeout( () => {
-			// Ignore the recommended tab since this is set on load and is next to the reset point.
-			if ( selectedTab !== 'recommended' ) {
-				const selectedElement = document.querySelector(
-					`.${ DEFAULT_CLASS }__tabs .segmented-control__item.is-selected .segmented-control__link`
-				);
-				selectedElement && selectedElement.focus();
-
-				if ( scrollRef.current ) {
-					scrollRef.current.scrollLeft = scrollPosition.current;
-				}
-			}
-		}, 0 );
-	}, [ selectedTab ] );
 
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
@@ -208,13 +188,17 @@ const DiscoverStream = ( props ) => {
 	const streamProps = {
 		...props,
 		streamKey,
-		streamHeader: recommendedTags.length ? () => <DiscoverNavigation /> : null,
 		useCompactCards: true,
 		streamSidebar,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
 	};
 
-	return <Stream { ...streamProps } />;
+	return (
+		<>
+			{ DiscoverNavigation() }
+			<Stream { ...streamProps } />
+		</>
+	);
 };
 
 export default DiscoverStream;
