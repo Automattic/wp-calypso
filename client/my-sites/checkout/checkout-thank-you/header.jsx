@@ -99,9 +99,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 							),
 							purchases?.length > 1 ? 'domains are' : 'domain is'
 						) }
-					</span>
+					</span>{ ' ' }
 					<span>
-						{ translate( ' {{strong}}It may take up to 5-10 days.{{/strong}}', {
+						{ translate( '{{strong}}It may take up to 5-10 days.{{/strong}}', {
 							components: { strong: <strong /> },
 						} ) }
 					</span>

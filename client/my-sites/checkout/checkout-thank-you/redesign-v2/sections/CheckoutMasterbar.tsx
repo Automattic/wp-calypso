@@ -8,7 +8,7 @@ type HeaderProps = {
 	isBulkDomainTransfer: boolean;
 };
 
-const Header = ( { siteId, siteSlug, isBulkDomainTransfer }: HeaderProps ) => {
+const CheckoutMasterbar = ( { siteId, siteSlug, isBulkDomainTransfer }: HeaderProps ) => {
 	const { __ } = useI18n();
 
 	if ( isBulkDomainTransfer ) {
@@ -41,4 +41,4 @@ const Header = ( { siteId, siteSlug, isBulkDomainTransfer }: HeaderProps ) => {
 	return null;
 };
 
-export default Header;
+export default CheckoutMasterbar;

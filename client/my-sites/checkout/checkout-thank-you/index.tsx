@@ -93,8 +93,8 @@ import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import isRedesignV2 from './redesign-v2/is-redesign-v2';
+import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
-import Header from './redesign-v2/sections/Header';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
@@ -239,6 +239,8 @@ export class CheckoutThankYou extends Component<
 		}
 
 		if ( this.isBulkDomainTransfer( getPurchases( this.props ) ) ) {
+			// We need to reset the store upon checkout completion, on the bulk domain transfer flow
+			// We do it dinamically to avoid loading unnecessary javascript if not necessary.
 			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
 				dispatch( imports.ONBOARD_STORE ).resetOnboardStore()
 			);
@@ -644,7 +646,7 @@ export class CheckoutThankYou extends Component<
 					isRedesignV2( this.props ) &&
 					! this.isBulkDomainTransfer( purchases ) && <ConfettiAnimation delay={ 1000 } /> }
 				{ isRedesignV2( this.props ) && (
-					<Header
+					<CheckoutMasterbar
 						siteId={ this.props.selectedSite?.ID }
 						siteSlug={ this.props.selectedSiteSlug }
 						isBulkDomainTransfer={ this.isBulkDomainTransfer( purchases ) }
