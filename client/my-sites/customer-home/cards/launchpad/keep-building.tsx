@@ -1,7 +1,7 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -39,17 +39,6 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 			context: 'customer-home',
 		} );
 	};
-
-	useEffect( () => {
-		checklist?.map( ( task: Task ) => {
-			recordTracksEvent( 'calypso_launchpad_task_view', {
-				checklist_slug: checklistSlug,
-				task_id: task.id,
-				is_completed: task.completed,
-				context: 'customer-home',
-			} );
-		} );
-	}, [] );
 
 	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
 

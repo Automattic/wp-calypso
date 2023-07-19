@@ -1,7 +1,6 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -33,17 +32,6 @@ const LaunchpadIntentWrite = (): JSX.Element => {
 			context: 'customer-home',
 		} );
 	};
-
-	useEffect( () => {
-		checklist?.map( ( task: Task ) => {
-			recordTracksEvent( 'calypso_launchpad_task_view', {
-				checklist_slug: checklistSlug,
-				task_id: task.id,
-				is_completed: task.completed,
-				context: 'customer-home',
-			} );
-		} );
-	}, [] );
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
 		const completedTasks = tasks.filter( ( task: Task ) => task.completed );
