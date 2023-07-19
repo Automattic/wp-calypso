@@ -8,6 +8,7 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = () => {
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
 	const dismissNotice = () => {
+		// TODO: Remove the query string from the window URL without a refresh.
 		setNoticeDismissed( true );
 	};
 
