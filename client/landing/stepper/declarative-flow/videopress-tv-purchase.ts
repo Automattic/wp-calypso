@@ -135,8 +135,11 @@ const videopressTvPurchase: Flow = {
 			switch ( _currentStep ) {
 				case 'processing':
 					if ( ! userIsLoggedIn ) {
+						const redirectTo = encodeURIComponent(
+							`/setup/videopress-tv-purchase?siteSlug=${ _siteSlug }`
+						);
 						window.location.replace(
-							`/start/videopress-account/user/${ locale }?variationName=${ name }&flow=${ name }&pageTitle=VideoPress.TV&redirect_to=/setup/videopress-tv-purchase/processing`
+							`/start/videopress-account/user/${ locale }?variationName=${ name }&flow=${ name }&pageTitle=VideoPress.TV&redirect_to=${ redirectTo }`
 						);
 						return;
 					}
