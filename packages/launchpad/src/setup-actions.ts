@@ -1,5 +1,4 @@
 import { isMobile } from '@automattic/viewport';
-import { addQueryArgs } from '@wordpress/url';
 import type { LaunchpadTracksData, Task } from './types';
 
 export const setUpActionsForTasks = (
