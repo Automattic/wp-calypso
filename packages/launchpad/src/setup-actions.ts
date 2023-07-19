@@ -66,7 +66,7 @@ export const setUpActionsForTasks = (
 				break;
 			case 'share_site':
 				action = () => {
-					setShareSiteModalIsOpen( true );
+					setShareSiteModalIsOpen?.( true );
 				};
 				break;
 		}
