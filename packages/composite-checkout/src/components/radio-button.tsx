@@ -105,7 +105,6 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	box-sizing: border-box;
 	width: 100%;
 	display: flex;
-	flex-wrap: wrap;
 	justify-content: space-between;
 	align-items: center;
 	align-content: center;

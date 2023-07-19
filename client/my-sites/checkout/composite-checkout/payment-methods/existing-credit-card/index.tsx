@@ -109,8 +109,6 @@ function formatDate( cardExpiry: string ): string {
 
 const CardDetails = styled.span`
 	display: inline-block;
-	margin-right: 8px;
-
 	.rtl & {
 		margin-right: 0;
 		margin-left: 8px;
@@ -121,6 +119,11 @@ const CardHolderName = styled.span`
 	display: block;
 `;
 
+const CardInfo = styled.span`
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 1em;
+`;
 function ExistingCardLabel( {
 	last4,
 	cardExpiry,
@@ -147,16 +150,18 @@ function ExistingCardLabel( {
 		<Fragment>
 			<div>
 				<CardHolderName>{ cardholderName }</CardHolderName>
-				<CardDetails>{ maskedCardDetails }</CardDetails>
-				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
-				{ allowEditingTaxInfo && (
-					<TaxInfoArea
-						last4={ last4 }
-						brand={ brand }
-						storedDetailsId={ storedDetailsId }
-						paymentPartnerProcessorId={ paymentPartnerProcessorId }
-					/>
-				) }
+				<CardInfo>
+					<CardDetails>{ maskedCardDetails }</CardDetails>
+					<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
+					{ allowEditingTaxInfo && (
+						<TaxInfoArea
+							last4={ last4 }
+							brand={ brand }
+							storedDetailsId={ storedDetailsId }
+							paymentPartnerProcessorId={ paymentPartnerProcessorId }
+						/>
+					) }
+				</CardInfo>
 			</div>
 			<div className="existing-credit-card__logo payment-logos">
 				<PaymentLogo brand={ brand } isSummary={ true } />
