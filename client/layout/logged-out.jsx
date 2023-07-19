@@ -81,6 +81,8 @@ const LayoutLoggedOut = ( {
 
 	const isReaderTagPage = sectionName === 'reader' && currentRoute.startsWith( '/tag/' );
 
+	const isReaderDiscoverPage = sectionName === 'reader' && currentRoute.startsWith( '/discover' );
+
 	const isReaderSearchPage =
 		sectionName === 'reader' &&
 		currentRoute.match( new RegExp( `^(/${ localeRegexString })?/read/search` ) );
@@ -134,7 +136,8 @@ const LayoutLoggedOut = ( {
 	} else if (
 		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions' ].includes( sectionName ) &&
 		! isReaderTagPage &&
-		! isReaderSearchPage
+		! isReaderSearchPage &&
+		! isReaderDiscoverPage
 	) {
 		masterbar = (
 			<UniversalNavbarHeader
