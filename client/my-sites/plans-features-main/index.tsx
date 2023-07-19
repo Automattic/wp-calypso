@@ -9,7 +9,6 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
-import { isOnboardingPMFlow } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import classNames from 'classnames';
@@ -284,9 +283,10 @@ const PlansFeaturesMain = ( {
 	const handleUpgradeClick = ( cartItemForPlan?: { product_slug: string } | null ) => {
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
-		// - only applicable to main onboarding flow (default `/start`)
+		// It only applies to main onboarding flow and the paid media flow at the moment.
+		// Standardizing it or not is TBD; see Automattic/growth-foundations#63 and pdgrnI-2nV-p2#comment-4110 for relevant discussion.
 		if (
-			( 'onboarding' === flowName || isOnboardingPMFlow( flowName ) ) &&
+			( 'onboarding' === flowName || 'onboarding-pm' === flowName ) &&
 			paidDomainName &&
 			! cartItemForPlan
 		) {
