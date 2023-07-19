@@ -226,13 +226,15 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					className="bulk-domain-transfer__cta"
 					onClick={ handleAddTransfer }
 				>
-					{ getTotalPrice( domainsState )
-						? sprintf(
+					{ numberOfValidDomains === 0
+						? __( 'Transfer' )
+						: sprintf(
 								/* translators: %s: total price formatted */
 								__( 'Transfer for %s' ),
-								getFormattedTotalPrice( domainsState )
-						  )
-						: __( 'Transfer for free' ) }
+								getTotalPrice( domainsState )
+									? getFormattedTotalPrice( domainsState )
+									: __( 'free' )
+						  ) }
 				</Button>
 			</div>
 			{ isEnabled( 'domain-transfer/faq' ) && (
