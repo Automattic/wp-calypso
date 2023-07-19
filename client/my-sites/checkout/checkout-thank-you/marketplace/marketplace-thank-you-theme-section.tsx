@@ -3,7 +3,7 @@ import { Gridicon, Button } from '@automattic/components';
 import { DesignDemoSiteImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -120,6 +120,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	);
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) ) ?? undefined;
 	const themeOptions = useSelector( ( state ) => getThemePreviewThemeOptions( state ) );
+	const [ themeDemoUrl, setThemeDemoUrl ] = useState( theme.demo_uri );
 
 	const themeStyleVariation =
 		themeOptions && themeOptions.themeId === theme.id ? themeOptions.styleVariation : undefined;
@@ -143,6 +144,14 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 		sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' );
 		dispatch( activate( theme.id, siteId, 'marketplace-thank-you' ) );
 	};
+
+	// The theme state might mutate since some endpoints, such as /themes/mine or /themes?status=active
+	// will not return the theme with attributes like demo_uri.
+	useEffect( () => {
+		if ( typeof theme.demo_uri === 'string' ) {
+			setThemeDemoUrl( theme.demo_uri );
+		}
+	}, [ theme.theme_uri ] );
 
 	return (
 		<ThemeSectionContainer>
@@ -180,10 +189,10 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 					</ThemeSectionButtons>
 				</ThemeNameSectionWrapper>
 				<ThemeSectionImageContainer>
-					{ theme.demo_uri && ! isDefaultGlobalStylesVariationSlug( themeStyleVariation?.slug ) ? (
+					{ themeDemoUrl && ! isDefaultGlobalStylesVariationSlug( themeStyleVariation?.slug ) ? (
 						<ThemeSectionMShotsContainer>
 							<DesignDemoSiteImage
-								url={ theme.demo_uri }
+								demoUrl={ themeDemoUrl }
 								description={ decodeEntities( theme.description ) }
 								styleVariation={ themeStyleVariation }
 							/>
