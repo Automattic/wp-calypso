@@ -33,7 +33,7 @@ const Intro: Step = function Intro( { navigation } ) {
 			showHeaderJetpackPowered={ false }
 			showHeaderWooCommercePowered={ false }
 			showVideoPressPowered={ false }
-			showJetpackPowered={ true }
+			showJetpackPowered={ false }
 		/>
 	);
 };

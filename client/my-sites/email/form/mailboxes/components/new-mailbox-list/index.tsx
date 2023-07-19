@@ -24,7 +24,7 @@ import {
 	MailboxFormFieldBase,
 	MutableFormFieldNames,
 } from 'calypso/my-sites/email/form/mailboxes/types';
-import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -124,7 +124,7 @@ const NewMailBoxList = (
 	};
 
 	const [ mailboxes, setMailboxes ] = useState( [ createNewMailbox() ] );
-	const { sendNudge } = useOdysseusAssistantContext();
+	const { sendNudge } = useOdieAssistantContext();
 	const isTitan = provider === EmailProvider.Titan;
 
 	const persistMailboxesToState = useCallback( () => {

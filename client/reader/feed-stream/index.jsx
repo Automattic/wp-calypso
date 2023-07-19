@@ -22,6 +22,8 @@ import EmptyContent from './empty';
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
 const getReaderSiteId = ( feed ) => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID );
 
+const emptyContent = () => <EmptyContent />;
+
 const FeedStream = ( props ) => {
 	const { className = 'is-site-stream', feedId, showBack = true } = props;
 	const translate = useTranslate();
@@ -45,7 +47,6 @@ const FeedStream = ( props ) => {
 	} );
 
 	const siteTags = useSiteTags( siteId );
-	const emptyContent = <EmptyContent />;
 	const title = getSiteName( { feed, site } ) || translate( 'Loading Feed' );
 	const followerCount = getFollowerCount( feed, site );
 
@@ -57,7 +58,7 @@ const FeedStream = ( props ) => {
 		return <FeedError sidebarTitle={ title } />;
 	}
 
-	const streamSidebar = (
+	const streamSidebar = () => (
 		<FeedStreamSidebar
 			feed={ feed }
 			followerCount={ followerCount }

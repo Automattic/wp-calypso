@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import './style.scss';
 import {
+	Badge,
 	Button,
 	Dialog,
 	Gridicon,
@@ -12,7 +13,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
-import Badge from 'calypso/components/badge';
 import Breadcrumb, { Item } from 'calypso/components/breadcrumb';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -220,6 +220,7 @@ export default function CampaignItemDetails( props: Props ) {
 			label: __( 'Contact support' ),
 			onClick: async () => {
 				setShowErrorDialog( false );
+				// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 				window.open( 'https://wordpress.com/support/', '_blank' );
 			},
 		},
@@ -324,6 +325,7 @@ export default function CampaignItemDetails( props: Props ) {
 								components: {
 									wpcomTos: (
 										<a
+											// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 											href="https://wordpress.com/tos/"
 											target="_blank"
 											rel="noopener noreferrer"

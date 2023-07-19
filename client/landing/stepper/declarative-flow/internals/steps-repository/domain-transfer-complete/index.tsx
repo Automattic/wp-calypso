@@ -45,13 +45,19 @@ const Complete: Step = function Complete( { flow } ) {
 
 	useEffect( () => {
 		dispatch( fetchUserPurchases( userId ) );
-	}, [] );
+	}, [ dispatch, userId ] );
+
+	// Once user purchases are loaded, we don't need the information in the store anymore and can discard it.
+	useEffect( () => {
+		if ( userPurchases ) {
+			resetOnboardStore();
+		}
+	}, [ userPurchases, resetOnboardStore ] );
 
 	const clearDomainsStore = () => {
 		recordTracksEvent( 'calypso_domain_transfer_complete_click', {
 			destination: '/setup/domain-transfer',
 		} );
-		resetOnboardStore();
 	};
 
 	return (
@@ -73,8 +79,8 @@ const Complete: Step = function Complete( { flow } ) {
 							<>
 								<span>
 									{ _n(
-										"We've got it from here! We'll let you know when your newly transferred domain is ready to use!",
-										"We've got it from here! We'll let you know when your newly transferred domains are ready to use!",
+										"We've got it from here! We'll let you know when your newly transferred domain is ready to use.",
+										"We've got it from here! We'll let you know when your newly transferred domains are ready to use.",
 										newlyTransferredDomains?.length || storedDomainsAmount
 									) }
 								</span>

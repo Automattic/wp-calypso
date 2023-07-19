@@ -20,8 +20,6 @@ const TYPE_COMMERCIAL = 'Commercial';
 // TODO: Get pricing config from an API
 const PRICING_CONFIG = {
 	AVERAGE_PRICE_INFO: 6, // used to display how much a users pays on average (below price slider)
-	MAX_SLIDER_PRICE: 10, // max slider amount for PWYW slider
-	SLIDER_STEP: 0.5, // single step for PWYW slider
 	EMOJI_HEART_TIER: 5, // value when slider emoji is changed to a heart emoji
 	IMAGE_CELEBRATION_PRICE: 8, // minimal price that enables image celebration image
 	DEFAULT_STARTING_PRICE: 6, // default position for PWYW slider
@@ -43,7 +41,7 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 	);
 };
 
-const ProductCard = ( { siteSlug } ) => {
+const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 	const [ subscriptionValue, setSubscriptionValue ] = useState(
 		PRICING_CONFIG.DEFAULT_STARTING_PRICE
 	);
@@ -55,6 +53,9 @@ const ProductCard = ( { siteSlug } ) => {
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
 	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
+
+	const maxSliderPrice = commercialProduct.cost;
+	const sliderStep = pwywProduct.cost / 2;
 
 	const setPersonalSite = () => {
 		setSiteType( TYPE_PERSONAL );
@@ -162,12 +163,15 @@ const ProductCard = ( { siteSlug } ) => {
 											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
 											currencyCode={ currencyCode }
 											siteSlug={ siteSlug }
+											sliderStep={ sliderStep }
+											maxSliderPrice={ maxSliderPrice }
 										/>
 									) : (
 										<CommercialPurchase
-											planValue={ PRICING_CONFIG.FLAT_COMMERCIAL_PRICE }
+											planValue={ commercialProduct?.cost }
 											currencyCode={ currencyCode }
 											siteSlug={ siteSlug }
+											commercialProduct={ commercialProduct }
 										/>
 									) }
 								</PanelRow>
@@ -190,8 +194,14 @@ const ProductCard = ( { siteSlug } ) => {
 	);
 };
 
-const StatsPurchaseWizard = ( { siteSlug } ) => {
-	return <ProductCard siteSlug={ siteSlug } />;
+const StatsPurchaseWizard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
+	return (
+		<ProductCard
+			siteSlug={ siteSlug }
+			commercialProduct={ commercialProduct }
+			pwywProduct={ pwywProduct }
+		/>
+	);
 };
 
 export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, PRICING_CONFIG };

@@ -44,7 +44,7 @@ export function useEmailOwnerUserName(
 	}
 
 	const teams = data as InfiniteData< UsersData > & UsersData;
-	const ownerUser = teams.users?.find(
+	const ownerUser = teams?.users?.find(
 		( user ) => ( user.linked_user_ID ?? user.ID ) === emailSubscription?.userId
 	);
 

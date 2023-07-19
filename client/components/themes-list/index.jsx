@@ -61,7 +61,12 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const siteEditorUrl = useSelector( ( state ) => getSiteEditorUrl( state, selectedSite?.ID ) );
+	const siteEditorUrl = useSelector( ( state ) =>
+		getSiteEditorUrl( state, selectedSite?.ID, {
+			canvas: 'edit',
+			assembler: '1',
+		} )
+	);
 
 	const isPatternAssemblerCTAEnabled =
 		! isLoggedIn || isEnabled( 'pattern-assembler/logged-in-showcase' );

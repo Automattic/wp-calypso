@@ -113,6 +113,7 @@ export type PlanFeatures2023GridProps = {
 	selectedFeature?: string;
 	intent?: PlansIntent;
 	isGlobalStylesOnPersonal?: boolean;
+	showLegacyStorageFeature?: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -267,6 +268,7 @@ export class PlanFeatures2023Grid extends Component<
 			isGlobalStylesOnPersonal,
 			planRecords,
 			visiblePlans,
+			showLegacyStorageFeature,
 		} = this.props;
 		return (
 			<PlansGridContextProvider
@@ -321,6 +323,7 @@ export class PlanFeatures2023Grid extends Component<
 								selectedPlan={ selectedPlan }
 								selectedFeature={ selectedFeature }
 								isGlobalStylesOnPersonal={ isGlobalStylesOnPersonal }
+								showLegacyStorageFeature={ showLegacyStorageFeature }
 							/>
 							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 								<Button onClick={ this.toggleShowPlansComparisonGrid }>
@@ -892,6 +895,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			selectedFeature,
 			intent,
 			isGlobalStylesOnPersonal,
+			showLegacyStorageFeature,
 		} = ownProps;
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = siteId
@@ -1011,8 +1015,9 @@ const ConnectedPlanFeatures2023Grid = connect(
 						: planObject?.product_name_short ?? '';
 				const storageOptions =
 					( planConstantObj.get2023PricingGridSignupStorageOptions &&
-						planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
+						planConstantObj.get2023PricingGridSignupStorageOptions( showLegacyStorageFeature ) ) ||
 					[];
+
 				const availableForPurchase =
 					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 

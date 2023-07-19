@@ -13,13 +13,13 @@ import Stream from 'calypso/reader/stream';
 import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import { getDiscoverStreamTags } from './helper';
+import { getDiscoverStreamTags, DEFAULT_TAB, buildDiscoverStreamKey } from './helper';
 
 import './discover-stream.scss';
 
-const DEFAULT_TAB = 'recommended';
 const SHOW_SCROLL_THRESHOLD = 10;
 const DEFAULT_CLASS = 'discover-stream-navigation';
 const showElement = ( element ) => element && element.classList.remove( 'display-none' );
@@ -30,6 +30,7 @@ const DiscoverStream = ( props ) => {
 	const scrollPosition = useRef( 0 );
 	const locale = useLocale();
 	const followedTags = useSelector( getReaderFollowedTags );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const recommendedSites = useSelector(
 		( state ) => getReaderRecommendedSites( state, 'discover-recommendations' ) || []
 	);
@@ -122,8 +123,10 @@ const DiscoverStream = ( props ) => {
 
 	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags.
 	const recommendedStreamTags = getDiscoverStreamTags(
-		followedTags && followedTags.map( ( tag ) => tag.slug )
+		followedTags && followedTags.map( ( tag ) => tag.slug ),
+		isLoggedIn
 	);
+	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
 
 	const DiscoverNavigation = () => (
 		<div className={ DEFAULT_CLASS }>
@@ -189,18 +192,7 @@ const DiscoverStream = ( props ) => {
 		</div>
 	);
 
-	let streamKey = `discover:${ selectedTab }`;
-	// We want a different stream key for recommended depending on the followed tags that are available.
-	if ( isDefaultTab ) {
-		// Ensures a different key depending on the users stream tags list. So the stream can update
-		// when the user follows/unfollows other tags. Sort the list first so the key is the same
-		// per same tags followed. This is necessary since we load a default tag list when none are
-		// followed.
-		recommendedStreamTags.sort();
-		streamKey += recommendedStreamTags.reduce( ( acc, val ) => acc + `-${ val }`, '' );
-	}
-
-	const streamSidebar =
+	const streamSidebar = () =>
 		( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ? (
 			<>
 				<h2>{ translate( 'Popular Sites' ) }</h2>
@@ -216,7 +208,7 @@ const DiscoverStream = ( props ) => {
 	const streamProps = {
 		...props,
 		streamKey,
-		streamHeader: recommendedTags.length ? <DiscoverNavigation /> : null,
+		streamHeader: recommendedTags.length ? () => <DiscoverNavigation /> : null,
 		useCompactCards: true,
 		streamSidebar,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),

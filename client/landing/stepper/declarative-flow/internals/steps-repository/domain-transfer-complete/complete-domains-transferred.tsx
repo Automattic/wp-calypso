@@ -30,7 +30,7 @@ export const CompleteDomainsTransferred = ( {
 									<li className="domain-complete-list-item" key={ key }>
 										<div>
 											<h2>{ meta }</h2>
-											<p>{ __( 'Auto renew enabled' ) }</p>
+											<p>{ __( 'Auto-renew enabled' ) }</p>
 										</div>
 										<a
 											href={ `/domains/manage/all/${ meta }/transfer/in/${ domain }` }
@@ -80,7 +80,7 @@ export const CompleteDomainsTransferred = ( {
 						<h2> { __( 'Consider moving your sites too?' ) }</h2>
 						<p>
 							{ __(
-								'You can find step-by-step guides below that will help you move your site to WordPress.com'
+								'You can find step-by-step guides below that will help you move your site to WordPress.com.'
 							) }
 						</p>
 						<a

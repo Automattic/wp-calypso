@@ -31,7 +31,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return \A8C\FSE\WPCOM_Domain_Upsell_Callout
 	 */
 	public static function init() {
-		if ( is_null( self::$instance ) ) {
+		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
 		return self::$instance;

@@ -36,3 +36,8 @@ export type DomainTransferData = Record<
 		currencyCode?: string;
 	}
 >;
+
+export type DomainTransferForm = {
+	shouldImportDnsRecords: boolean;
+	domains: DomainTransferData;
+};

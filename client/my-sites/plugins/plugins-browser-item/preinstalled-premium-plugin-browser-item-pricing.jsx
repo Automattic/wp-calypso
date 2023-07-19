@@ -1,7 +1,6 @@
-import { Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

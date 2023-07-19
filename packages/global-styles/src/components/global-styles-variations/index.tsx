@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
+import { useRegisterCoreBlocks } from '../../hooks';
 import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
 import './style.scss';
@@ -107,6 +108,7 @@ const GlobalStylesVariations = ( {
 	displayFreeLabel = true,
 	globalStylesInPersonalPlan,
 }: GlobalStylesVariationsProps ) => {
+	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
 	const premiumStylesDescription = globalStylesInPersonalPlan
 		? translate(
 				'Unlock custom styles and tons of other features with the Personal plan, or try them out now for free.'
@@ -145,6 +147,10 @@ const GlobalStylesVariations = ( {
 	);
 
 	const headerText = splitDefaultVariation ? translate( 'Default Style' ) : translate( 'Styles' );
+
+	if ( ! isRegisteredCoreBlocks ) {
+		return null;
+	}
 
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>

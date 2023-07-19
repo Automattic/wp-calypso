@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { DomainTransferData } from '@automattic/data-stores';
+import { isEnabled } from '@automattic/calypso-config';
+import { DomainTransferData, DomainTransferForm } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { useDataLossWarning } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
@@ -9,10 +10,13 @@ import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState } from 'react';
 import { v4 as uuid } from 'uuid';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { ONBOARD_STORE } from '../../../../stores';
 import { DomainCodePair } from './domain-code-pair';
+import DomainTransferFAQ from './faqs';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 const MAX_DOMAINS = 50;
@@ -21,14 +25,17 @@ export interface Props {
 	onSubmit: () => void;
 }
 
-const defaultState: DomainTransferData = {
-	[ uuid() ]: {
-		domain: '',
-		auth: '',
-		valid: false,
-		rawPrice: 0,
-		saleCost: undefined,
-		currencyCode: 'USD',
+const defaultState: DomainTransferForm = {
+	shouldImportDnsRecords: true,
+	domains: {
+		[ uuid() ]: {
+			domain: '',
+			auth: '',
+			valid: false,
+			rawPrice: 0,
+			saleCost: undefined,
+			currencyCode: 'USD',
+		},
 	},
 };
 
@@ -52,11 +59,14 @@ const getFormattedTotalPrice = ( state: DomainTransferData ) => {
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
 
-	const storedDomainsState = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getBulkDomainsData(),
-		[]
-	);
-	const domainsState = storedDomainsState || defaultState;
+	const storedDomainsState = useSelect( ( select ) => {
+		const onboardSelect = select( ONBOARD_STORE ) as OnboardSelect;
+		return {
+			shouldImportDnsRecords: onboardSelect.getBulkDomainsImportDnsRecords(),
+			domains: onboardSelect.getBulkDomainsData(),
+		};
+	}, [] );
+	const domainsState = storedDomainsState.domains || defaultState.domains;
 
 	const domainCount = Object.keys( domainsState ).length;
 
@@ -64,7 +74,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		( { valid } ) => valid
 	).length;
 
-	const { setPendingAction, setDomainsTransferData } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setDomainsTransferData, setShouldImportDomainTransferDnsRecords } =
+		useDispatch( ONBOARD_STORE );
 
 	const { __, _n } = useI18n();
 
@@ -93,6 +104,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					extra: {
 						auth_code: auth,
 						signup: false,
+						import_dns_records: storedDomainsState.shouldImportDnsRecords,
 					},
 				} )
 			);
@@ -180,6 +192,16 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 				<div>{ __( 'Total' ) }</div>
 				<div>{ getFormattedTotalPrice( domainsState ) }</div>
 			</div>
+			<FormLabel htmlFor="import-dns-records" className="bulk-domain-transfer__import-dns-records">
+				<FormInputCheckbox
+					id="import-dns-records"
+					onChange={ ( event ) => {
+						setShouldImportDomainTransferDnsRecords( event.target.checked );
+					} }
+					checked={ storedDomainsState.shouldImportDnsRecords }
+				/>
+				<span>{ __( 'Import DNS records from these domains' ) }</span>
+			</FormLabel>
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }
@@ -195,6 +217,11 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						  ) }
 				</Button>
 			</div>
+			{ isEnabled( 'domain-transfer/faq' ) && (
+				<div className="bulk-domain-transfer__faqs">
+					<DomainTransferFAQ />
+				</div>
+			) }
 		</div>
 	);
 };

@@ -51,6 +51,7 @@
 			padding: 0;
 			min-height: unset;
 			height: fit-content;
+			line-height: rem(20px);
 		}
 
 		&__site-title {
@@ -60,7 +61,7 @@
 			font-size: $font-body;
 			line-height: rem(22px);
 			color: $studio-gray-100;
-			margin-right: 36px; // width of dismiss button
+			margin-right: 36px;
 			@extend %ellipsis;
 		}
 
@@ -95,6 +96,7 @@
 			padding-right: 24px;
 		}
 
+		&__profile-avatar.is-placeholder,
 		&__dismiss-button.is-placeholder,
 		&__site-title.is-placeholder,
 		&__site-url.is-placeholder,
@@ -102,6 +104,48 @@
 		&__subscribe-button.is-placeholder {
 			@include placeholder();
 		}
+
+		&__site-title.is-placeholder {
+			line-height: rem(20px);
+			width: 182px;
+		}
+
+		&__profile.is-placeholder {
+			margin-top: -5px;
+		}
+
+		&__profile-data.is-placeholder {
+			height: 40px;
+		}
+
+		&__profile-avatar.is-placeholder {
+			height: 40px;
+			width: 40px;
+		}
+
+		&__site-url.is-placeholder {
+			line-height: rem(13px);
+			width: 85px;
+		}
+
+		&__site-description.is-placeholder {
+			height: auto;
+			margin: 18px 0 7px 0;
+		}
+
+		&__subscribe-button.is-placeholder {
+			width: 68px;
+			height: 40px;
+		}
+
+		&__dismiss-button.is-placeholder {
+			width: 36px;
+			height: 20px;
+		}
+	}
+
+	.recommended-site.is-placeholder p:last-of-type {
+		margin: 0 0 15px 0;
 	}
 
 	.dot-pager {

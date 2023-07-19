@@ -1,11 +1,10 @@
 import './style.scss';
 import { safeImageUrl } from '@automattic/calypso-url';
-import { Dialog, Gridicon } from '@automattic/components';
+import { Badge, Dialog, Gridicon } from '@automattic/components';
 import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
-import Badge from 'calypso/components/badge';
 import FoldableCard from 'calypso/components/foldable-card';
 import { Campaign } from 'calypso/data/promote-post/types';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
@@ -147,6 +146,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 			label: __( 'Contact support' ),
 			onClick: async () => {
 				setShowErrorDialog( false );
+				// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 				window.open( 'https://wordpress.com/support/', '_blank' );
 			},
 		},
@@ -316,6 +316,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 								components: {
 									wpcomTos: (
 										<a
+											// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 											href="https://wordpress.com/tos/"
 											target="_blank"
 											rel="noopener noreferrer"

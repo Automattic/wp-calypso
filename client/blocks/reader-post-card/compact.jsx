@@ -8,7 +8,6 @@ import FeaturedAsset from './featured-asset';
 const CompactPost = ( {
 	children,
 	post,
-	isDiscover,
 	expandCard,
 	postKey,
 	isExpanded,
@@ -47,7 +46,7 @@ const CompactPost = ( {
 							/>
 						) }
 					</div>
-					<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
+					<ReaderExcerpt post={ post } />
 				</div>
 				{ post.canonical_media && (
 					<div className="reader-post-card__post-media">
@@ -78,7 +77,6 @@ const CompactPost = ( {
 CompactPost.propTypes = {
 	post: PropTypes.object.isRequired,
 	postByline: PropTypes.object,
-	isDiscover: PropTypes.bool,
 };
 
 export default CompactPost;

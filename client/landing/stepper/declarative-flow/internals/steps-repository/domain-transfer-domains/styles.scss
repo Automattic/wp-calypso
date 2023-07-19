@@ -355,6 +355,31 @@
 			margin-top: 2px;
 		}
 
+		.bulk-domain-transfer__faqs {
+			.foldable-faq__question {
+				padding: 16px 0;
+			}
+			.foldable-faq__question-text {
+				font-size: 1rem;
+			}
+			h2 {
+				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+				font-size: 2rem;
+				margin: 24px 0;
+				text-align: center;
+			}
+			li {
+				font-size: 1rem;
+			}
+			section {
+				margin-top: 120px;
+			}
+			ul {
+				list-style: none;
+				margin: 0 0 48px 0;
+			}
+		}
+
 		.bulk-domain-transfer__total-price {
 			display: flex;
 			justify-content: space-between;
@@ -362,7 +387,7 @@
 			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 			font-weight: 500;
 			padding: 20px 0;
-			margin-bottom: 42px;
+			margin-bottom: 20px;
 
 			div:nth-of-type(1) {
 				flex: 9;
@@ -378,6 +403,10 @@
 			}
 		}
 
+		.bulk-domain-transfer__import-dns-records {
+			margin-bottom: 42px;
+		}
+
 		.bulk-domain-transfer__cta-container {
 			display: flex;
 			justify-content: center;
@@ -389,7 +418,6 @@
 			.bulk-domain-transfer__cta {
 				justify-content: center;
 				color: var(--black-white-white, #fff);
-				width: 157px;
 				height: 48px;
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				border-radius: 0.25rem;
