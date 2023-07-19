@@ -34,7 +34,7 @@ interface DesignPreviewProps {
 	onGlobalStylesChange: ( globalStyles: GlobalStylesObject | null ) => void;
 	limitGlobalStyles: boolean;
 	globalStylesInPersonalPlan: boolean;
-	onNavigatorPathChange?: ( path: string ) => void;
+	onNavigatorPathChange?: ( path?: string ) => void;
 }
 
 // @todo Get the style variations of theme, and then combine the selected one with colors & fonts for consistency
@@ -93,7 +93,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 
 	const isFullscreen = ! isDesktop && ( screens.length === 1 || ! isInitialScreen );
 
-	const handleNavigatorPathChange = ( path: string ) => {
+	const handleNavigatorPathChange = ( path?: string ) => {
 		setIsInitialScreen( path === '/' );
 		onNavigatorPathChange?.( path );
 	};

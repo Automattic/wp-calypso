@@ -12,6 +12,10 @@ $heading-font-family: "SF Pro Display", $sans;
 	display: flex;
 	align-items: center;
 
+	.flow-progress.progress-bar {
+		display: none;
+	}
+
 	&.intro {
 		padding: 0;
 

@@ -11,8 +11,20 @@
 	align-items: center;
 	gap: 30px;
 
+	.flow-progress.progress-bar {
+		display: none;
+	}
+
 	button:disabled {
 		pointer-events: none;
+	}
+
+	.is-invisible-field {
+		visibility: hidden;
+		// On mobile, display:none, keeps the layout without breaking it
+		@media (max-width: $break-mobile ) {
+			display: none;
+		}
 	}
 
 	.components-button:focus:not(:disabled) {
@@ -49,8 +61,14 @@
 			box-shadow: none;
 		}
 		.formatted-header__subtitle {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
 			span {
 				display: block;
+				@media (min-width: $break-medium ) {
+					width: 60%;
+				}
 			}
 		}
 
@@ -234,16 +252,11 @@
 
 			&.is-first-row {
 				display: inline-block;
-				margin-bottom: 16px;
 				white-space: nowrap;
 			}
 
 			@media (max-width: $break-medium ) {
 				display: block;
-
-				&.is-first-row {
-					margin-bottom: 8px;
-				}
 			}
 		}
 
@@ -304,6 +317,12 @@
 		gap: 16px;
 		flex: 1;
 
+		button {
+			&:hover {
+				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, var(--studio-blue-60)));
+			}
+		}
+
 		@media (min-width: $break-medium ) {
 			margin-left: -25px;
 		}
@@ -311,6 +330,10 @@
 		.domains__domain-refresh {
 			button {
 				cursor: pointer;
+
+				.refresh-label {
+					margin-left: 4px;
+				}
 			}
 
 			.refresh-label {
@@ -325,12 +348,6 @@
 		}
 
 		.domains__domain-delete {
-			button {
-				&:hover {
-					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
-				}
-			}
-
 			.delete-label {
 				display: none;
 			}
@@ -353,6 +370,9 @@
 			color: #0675c4;
 			margin-bottom: 22px;
 			margin-top: 2px;
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 
 		.bulk-domain-transfer__faqs {
@@ -423,6 +443,11 @@
 				border-radius: 0.25rem;
 				background: var(--blue-blue-50, #0675c4);
 				font-size: 0.875rem;
+				width: 240px;
+
+				&:hover {
+					background: var(--studio-blue-60);
+				}
 
 				&:disabled {
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -452,8 +477,12 @@
 		}
 
 		.form-input-validation {
-			padding-top: 0;
-			padding-bottom: 0;
+			padding: 0;
+
+			// remove icon
+			svg {
+				display: none;
+			}
 
 			a {
 				text-decoration: underline;

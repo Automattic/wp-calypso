@@ -1,6 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
+.domain-transfer.complete {
+	.flow-progress.progress-bar {
+		display: none;
+	}
+}
+
 .step-container.domain-transfer {
 	&.complete {
 		@media ( max-width: $break-medium ) {
