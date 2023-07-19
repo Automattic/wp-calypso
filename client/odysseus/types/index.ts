@@ -27,3 +27,13 @@ export type Chat = {
 	messages: Message[];
 	context: Context;
 };
+
+export type OdysseusAllowedSectionNames =
+	| 'plans'
+	| 'add-ons'
+	| 'domains'
+	| 'email'
+	| 'site-purchases'
+	| 'checkout';
+
+export type OdysseusAllowedBots = 'wapuu';

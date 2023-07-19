@@ -35,6 +35,7 @@
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
+		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
 		"@wordpress/components": "^23.0.0",
 		"@wordpress/react-i18n": "^3.21.0",

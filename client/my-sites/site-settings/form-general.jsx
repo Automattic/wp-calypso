@@ -5,7 +5,6 @@ import {
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 	FEATURE_STYLE_CUSTOMIZATION,
-	PLAN_ECOMMERCE_MONTHLY,
 } from '@automattic/calypso-products';
 import {
 	PLAN_PERSONAL,
@@ -638,12 +637,7 @@ export class SiteSettingsFormGeneral extends Component {
 				'Before you can share your store with the world, you need to {{a}}pick a plan{{/a}}.',
 				{
 					components: {
-						a: (
-							<a
-								href={ `/plans/${ siteSlug }?plan=${ PLAN_ECOMMERCE_MONTHLY }` }
-								onClick={ recordTracksEventForClick }
-							/>
-						),
+						a: <a href={ `/plans/${ siteSlug }` } onClick={ recordTracksEventForClick } />,
 					},
 				}
 			);

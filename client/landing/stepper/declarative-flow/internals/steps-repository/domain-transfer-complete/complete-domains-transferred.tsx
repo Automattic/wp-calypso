@@ -80,7 +80,7 @@ export const CompleteDomainsTransferred = ( {
 						<h2> { __( 'Consider moving your sites too?' ) }</h2>
 						<p>
 							{ __(
-								'You can find step-by-step guides below that will help you move your site to WordPress.com'
+								'You can find step-by-step guides below that will help you move your site to WordPress.com.'
 							) }
 						</p>
 						<a

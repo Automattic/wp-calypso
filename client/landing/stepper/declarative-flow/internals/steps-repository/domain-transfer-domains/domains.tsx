@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { DomainTransferData, DomainTransferForm } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { useDataLossWarning } from '@automattic/onboarding';
@@ -216,9 +217,11 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						  ) }
 				</Button>
 			</div>
-			<div className="bulk-domain-transfer__faqs">
-				<DomainTransferFAQ />
-			</div>
+			{ isEnabled( 'domain-transfer/faq' ) && (
+				<div className="bulk-domain-transfer__faqs">
+					<DomainTransferFAQ />
+				</div>
+			) }
 		</div>
 	);
 };

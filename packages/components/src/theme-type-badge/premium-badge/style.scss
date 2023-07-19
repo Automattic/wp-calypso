@@ -110,6 +110,13 @@
 			}
 		}
 	}
+	&.is-bottom {
+		.popover__arrow {
+			&::before {
+				border-bottom-color: #000 !important;
+			}
+		}
+	}
 	.popover__arrow {
 		border-color: transparent;
 	}

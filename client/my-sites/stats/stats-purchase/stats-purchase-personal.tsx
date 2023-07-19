@@ -14,6 +14,8 @@ interface PersonalPurchaseProps {
 	handlePlanSwap: ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
 	currencyCode: string;
 	siteSlug: string;
+	sliderStep: number;
+	maxSliderPrice: number;
 }
 
 const PersonalPurchase = ( {
@@ -22,6 +24,8 @@ const PersonalPurchase = ( {
 	handlePlanSwap,
 	currencyCode,
 	siteSlug,
+	sliderStep,
+	maxSliderPrice,
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -69,8 +73,8 @@ const PersonalPurchase = ( {
 				value={ subscriptionValue }
 				renderThumb={ sliderLabel }
 				onChange={ setSubscriptionValue }
-				maxValue={ PRICING_CONFIG.MAX_SLIDER_PRICE }
-				step={ PRICING_CONFIG.SLIDER_STEP }
+				maxValue={ maxSliderPrice }
+				step={ sliderStep }
 			/>
 
 			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>

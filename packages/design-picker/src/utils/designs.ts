@@ -1,3 +1,4 @@
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import { DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import type { Design, DesignPreviewOptions } from '../types';
@@ -66,3 +67,7 @@ export const getDesignPreviewUrl = (
 };
 
 export const isAssemblerDesign = ( design?: Design ) => design?.design_type === 'assembler';
+
+// Go to the assembler only when the viewport width >= 960px as the it doesn't support small
+// screen for now.
+export const shouldGoToAssembler = () => isWithinBreakpoint( '>=960px' );

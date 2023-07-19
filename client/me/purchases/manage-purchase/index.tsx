@@ -33,7 +33,9 @@ import {
 	isAkismetProduct,
 	isAkismetFreeProduct,
 	isJetpackBackupT1Slug,
+	isJetpackStarterPlan,
 	AKISMET_UPGRADES_PRODUCTS_MAP,
+	JETPACK_STARTER_UPGRADE_MAP,
 } from '@automattic/calypso-products';
 import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -471,6 +473,14 @@ class ManagePurchase extends Component<
 			return AKISMET_UPGRADES_PRODUCTS_MAP[
 				purchase.productSlug as keyof typeof AKISMET_UPGRADES_PRODUCTS_MAP
 			];
+		}
+
+		if ( isJetpackStarterPlan( purchase.productSlug ) ) {
+			const upgradePlan =
+				JETPACK_STARTER_UPGRADE_MAP[
+					purchase.productSlug as keyof typeof JETPACK_STARTER_UPGRADE_MAP
+				];
+			return `/checkout/${ siteSlug }/${ upgradePlan }`;
 		}
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
