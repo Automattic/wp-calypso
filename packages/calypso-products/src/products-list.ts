@@ -82,6 +82,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
+	PRODUCT_WOOCOMMERCE_BOOKINGS,
 } from './constants';
 import { getJetpackProductsShortNames } from './translations';
 import type { ProductSlug, JetpackProductSlug, WPComProductSlug, Product } from './types';
@@ -632,8 +633,22 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 	},
 };
 
+export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< ProductSlug, Product > = {
+	[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: {
+		product_name: translate( 'WooCommerce Bookings' ),
+		product_slug: PRODUCT_WOOCOMMERCE_BOOKINGS,
+		type: PRODUCT_WOOCOMMERCE_BOOKINGS,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		categories: [],
+		getProductId: () => 2700,
+		getStoreSlug: () => PRODUCT_WOOCOMMERCE_BOOKINGS,
+	},
+};
+
 export const PRODUCTS_LIST: Record< ProductSlug, Product > = {
 	...JETPACK_SITE_PRODUCTS_WITH_FEATURES,
+	...WOOCOMMERCE_EXTENSIONS_PRODUCTS,
 	[ PRODUCT_WPCOM_SEARCH ]: {
 		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_WPCOM_SEARCH ],
 		product_slug: PRODUCT_WPCOM_SEARCH,
