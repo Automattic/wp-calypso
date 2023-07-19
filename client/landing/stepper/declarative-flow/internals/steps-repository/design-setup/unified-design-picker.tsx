@@ -446,8 +446,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	}
 
-	function designYourOwn( design: Design, shouldGoToAssemblerStep: boolean ) {
-		if ( shouldGoToAssemblerStep ) {
+	function designYourOwn( design: Design, shouldGoToAssembler: boolean ) {
+		if ( shouldGoToAssembler ) {
 			const _selectedDesign = {
 				...design,
 				design_type: 'assembler',
@@ -464,7 +464,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			handleSubmit( {
 				selectedDesign: _selectedDesign,
 				selectedSiteCategory: categorization.selection,
-				shouldGoToAssemblerStep,
+				shouldGoToAssembler,
 			} );
 		} else {
 			pickDesign( design );
