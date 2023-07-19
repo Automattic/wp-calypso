@@ -627,6 +627,7 @@ __metadata:
     "@automattic/js-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@automattic/viewport": "workspace:^"
     "@tanstack/react-query": ^4.29.1
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
