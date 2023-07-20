@@ -44,9 +44,7 @@ export function CheckoutSubmittingFullPage() {
 
 	return (
 		<SubmittingWrapper>
-			<SubmittingTitle>
-				{ translate( 'Completing the transaction, please wait a few more moments…' ) }
-			</SubmittingTitle>
+			<SubmittingTitle>{ translate( 'Processing…' ) }</SubmittingTitle>
 			<LoadingEllipsis />
 		</SubmittingWrapper>
 	);
