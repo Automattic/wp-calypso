@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-import { useSupportAvailability, useSupportActivity } from '@automattic/data-stores';
+import { useSupportActivity } from '../data/use-support-activity';
+import { useSupportAvailability } from '../data/use-support-availability';
 /**
  * Internal Dependencies
  */
