@@ -6,7 +6,10 @@ import acceptDialog from 'calypso/lib/accept';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
-import { getPlugins, getPluginsOnSites } from 'calypso/state/plugins/installed/selectors';
+import {
+	getFilteredAndSortedPlugins,
+	getPluginsOnSites,
+} from 'calypso/state/plugins/installed/selectors-ts';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -33,13 +36,7 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
 	const siteIds = useSelector( () => siteObjectsToSiteIds( sites ) ) ?? [];
 	const pluginsWithUpdates = useSelector( ( state ) =>
-		// The types of the getPlugins properties are being inferred incorrectly, so here they are casted
-		// to "any" while the return type is preserved.
-		( getPlugins as ( ...any: any ) => ReturnType< typeof getPlugins > )(
-			state,
-			siteIds,
-			'updates'
-		)
+		getFilteredAndSortedPlugins( state, siteIds, 'updates' )
 	);
 	const allSites = useSelector( getSites );
 
@@ -54,7 +51,7 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 
 	function recordEvent( eventAction: string ) {
 		eventAction += selectedSite ? '' : ' on Multisite';
-		const pluginSlugs = pluginsWithUpdates.map( ( plugin: PluginComponentProps ) => plugin.slug );
+		const pluginSlugs = pluginsWithUpdates.map( ( plugin ) => plugin.slug );
 		dispatch( recordGoogleEvent( 'Plugins', eventAction, 'Plugins', pluginSlugs ) );
 	}
 

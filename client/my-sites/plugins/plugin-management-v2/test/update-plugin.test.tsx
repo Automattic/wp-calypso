@@ -13,7 +13,7 @@ import { site, plugin } from './utils/constants';
 const initialState = {
 	sites: { items: { [ site.ID ]: site } },
 	currentUser: {
-		capabilities: {},
+		capabilities: { [ site.ID ]: { manage_options: true } },
 	},
 	plugins: {
 		installed: {
@@ -54,10 +54,12 @@ describe( '<UpdatePlugin>', () => {
 
 		expect(
 			container.getElementsByClassName( 'update-plugin__current-version' )[ 0 ].textContent
-		).toEqual( plugin.version );
+		).toEqual( plugin.sites[ site.ID ].version );
 
 		const [ updateButton ] = container.getElementsByClassName( 'update-plugin__new-version' );
-		expect( updateButton.textContent ).toEqual( `Update to ${ plugin.update.new_version }` );
+		expect( updateButton.textContent ).toEqual(
+			`Update to ${ plugin.sites[ site.ID ].update.new_version }`
+		);
 
 		await userEvent.click( updateButton );
 		expect( props.updatePlugin ).toHaveBeenCalledTimes( 1 );

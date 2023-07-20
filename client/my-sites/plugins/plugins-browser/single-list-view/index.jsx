@@ -4,7 +4,10 @@ import { useCategories } from 'calypso/my-sites/plugins/categories/use-categorie
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
-import { getPlugins, isEqualSlugOrId } from 'calypso/state/plugins/installed/selectors';
+import {
+	getFilteredAndSortedPlugins,
+	isEqualSlugOrId,
+} from 'calypso/state/plugins/installed/selectors-ts';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -45,7 +48,7 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 	const { localizePath } = useLocalizedPlugins();
 
 	const installedPlugins = useSelector( ( state ) =>
-		getPlugins( state, siteObjectsToSiteIds( sites ) )
+		getFilteredAndSortedPlugins( state, siteObjectsToSiteIds( sites ) )
 	);
 
 	plugins = plugins
