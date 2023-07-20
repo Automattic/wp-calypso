@@ -9,3 +9,8 @@ export const FONT_PREVIEW_HEIGHT = 74;
 export const DEFAULT_GLOBAL_STYLES_VARIATION_TITLE = 'default';
 export const DEFAULT_GLOBAL_STYLES_VARIATION_SLUG = 'default';
 export const SYSTEM_FONT_SLUG = 'system-font';
+
+export const DEFAULT_GLOBAL_STYLES = {
+	settings: {},
+	styles: {},
+};
