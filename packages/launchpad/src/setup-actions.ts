@@ -1,12 +1,12 @@
 import { isMobile } from '@automattic/viewport';
-import type { LaunchpadTaskActions, Task } from './types';
+import type { LaunchpadTaskActionsProps, Task } from './types';
 
 export const setUpActionsForTasks = ( {
 	siteSlug,
 	tasks,
 	tracksData,
 	extraActions,
-}: LaunchpadTaskActions ): Task[] => {
+}: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
 	const { setShareSiteModalIsOpen } = extraActions || {};
 

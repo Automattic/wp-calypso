@@ -47,7 +47,7 @@ export interface LaunchpadResponse {
 	checklist_statuses: LaunchpadStatuses[];
 }
 
-export interface LaunchpadTaskActions {
+export interface LaunchpadTaskActionsProps {
 	siteSlug: string | null;
 	tasks: Task[];
 	tracksData: LaunchpadTracksData;
