@@ -98,15 +98,6 @@ const PrePurchaseNotices = () => {
 		} );
 	};
 
-	// All these notices (and the selectors that drive them)
-	// require a site ID to work. We should *conceptually* always
-	// have a site ID handy; consider this a guard, or an
-	// explicit declaration that all code beyond this point can
-	// safely assume a site ID has been defined.
-	if ( ! siteId ) {
-		return null;
-	}
-
 	const cartProductThatOverlapsSitePlan = useMemo( () => {
 		const planSlugOnSite = currentSitePlan?.product_slug;
 
@@ -131,9 +122,19 @@ const PrePurchaseNotices = () => {
 			Array.isArray( activeConnectedPlugins ) &&
 			activeConnectedPlugins.includes( 'jetpack-backup' );
 		return (
-			backupPluginActive || isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
+			backupPluginActive ||
+			( siteId && isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION ) )
 		);
 	} );
+
+	// All these notices (and the selectors that drive them)
+	// require a site ID to work. We should *conceptually* always
+	// have a site ID handy; consider this a guard, or an
+	// explicit declaration that all code beyond this point can
+	// safely assume a site ID has been defined.
+	if ( ! siteId ) {
+		return null;
+	}
 
 	if ( currentSitePlan && cartProductThatOverlapsSitePlan ) {
 		return (
