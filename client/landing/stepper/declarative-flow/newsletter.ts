@@ -1,3 +1,4 @@
+import { updateLaunchpadSettings, UserSelect } from '@automattic/data-stores';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -17,7 +18,6 @@ import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
 
 const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
@@ -94,6 +94,14 @@ const newsletter: Flow = {
 			pageTitle: 'Newsletter',
 		} );
 
+		const completeSubscribersTask = async () => {
+			if ( siteSlug ) {
+				await updateLaunchpadSettings( siteSlug, {
+					checklist_statuses: { subscribers_added: true },
+				} );
+			}
+		};
+
 		// Unless showing intro step, send non-logged-in users to account screen.
 		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
 			window.location.assign( logInUrl );
@@ -113,6 +121,7 @@ const newsletter: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
 				case 'intro':
@@ -147,28 +156,23 @@ const newsletter: Flow = {
 					}
 
 					if ( providedDependencies?.goToCheckout ) {
-						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
-						persistSignupDestination( destination );
+						persistSignupDestination( launchpadUrl );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
-
-						// Return to subscribers after checkout
-						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/subscribers?siteSlug=${ providedDependencies?.siteSlug }`
-						);
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								( providedDependencies?.siteSlug as string ) ?? ''
-							) }?redirect_to=${ returnUrl }&signup=1`
+							) }?redirect_to=${ launchpadUrl }&signup=1`
 						);
 					}
-					// If the user chooses a free plan, we need to redirect to the subscribers directly and not checkout.
+
 					return window.location.assign(
-						`/setup/${ flowName }/subscribers?siteSlug=${ providedDependencies?.siteSlug }`
+						`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`
 					);
 
 				case 'subscribers':
+					completeSubscribersTask();
 					return navigate( 'launchpad' );
 			}
 		}
