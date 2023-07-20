@@ -835,7 +835,7 @@ function wpcomPages( app ) {
 
 	// Redirects from /help/courses to https://wordpress.com/learn/courses.
 	app.get( '/help/courses', function ( req, res ) {
-		const redirectUrl = '/learn/courses';
+		const redirectUrl = 'https://wordpress.com/learn/courses';
 		res.redirect( 301, redirectUrl );
 	} );
 }
