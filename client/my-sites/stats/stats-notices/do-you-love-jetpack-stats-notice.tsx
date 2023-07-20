@@ -11,10 +11,11 @@ import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats&from=${ from }`;
+	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats&from=${ from }-stats-upgrade-notice`;
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
 	}
+	// We use absolute path here as it runs in Odyssey as well.
 	return `https://wordpress.com${ purchasePath }`;
 };
 
