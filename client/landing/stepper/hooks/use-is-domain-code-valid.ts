@@ -79,7 +79,7 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					unlocked: true,
 					auth_code_valid: response.success,
 					status: availability.status,
-					transferrability: availability.transferrability
+					transferrability: availability.transferrability,
 					raw_price: availability.raw_price,
 					sale_cost: availability.sale_cost,
 					currency_code: availability.currency_code,
