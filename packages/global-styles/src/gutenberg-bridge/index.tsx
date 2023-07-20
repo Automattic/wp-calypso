@@ -29,7 +29,7 @@ const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user: GlobalStylesOb
 };
 
 const withExperimentalBlockEditorProvider = createHigherOrderComponent(
-	< OuterProps, >( InnerComponent: React.ComponentType< OuterProps > ) => {
+	< OuterProps extends object >( InnerComponent: React.ComponentType< OuterProps > ) => {
 		// Use fake assets to eliminate the compatStyles without the id.
 		// See https://github.com/WordPress/gutenberg/blob/f77958cfc13c02b0c0e6b9b697b43bbcad4ba40b/packages/block-editor/src/components/iframe/index.js#L127
 		const settings = {
