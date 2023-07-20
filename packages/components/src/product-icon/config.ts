@@ -1,3 +1,4 @@
+import jetpackAI from './images/jetpack-ai.svg';
 import jetpackAntiSpam from './images/jetpack-anti-spam.svg';
 import jetpackBackupAddon from './images/jetpack-backup-addon.svg';
 import jetpackBackup from './images/jetpack-backup.svg';
@@ -18,6 +19,7 @@ import wpcomPersonal from './images/wpcom-personal.svg';
 import wpcomPremium from './images/wpcom-premium.svg';
 
 export const paths = {
+	'jetpack-ai': jetpackAI,
 	'jetpack-anti-spam': jetpackAntiSpam,
 	'jetpack-backup': jetpackBackup,
 	'jetpack-boost': jetpackBoost,
@@ -62,6 +64,7 @@ export type SupportedSlugs =
 	| 'business-bundle-monthly'
 	| 'pro-plan'
 	| 'starter-plan'
+	| 'jetpack_ai_monthly'
 	| 'jetpack_free'
 	| 'jetpack_personal'
 	| 'jetpack_personal_monthly'
@@ -154,6 +157,7 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 	],
 	'wpcom-ecommerce': [ 'ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly' ],
 	'wpcom-business': [ 'business-bundle', 'business-bundle-2y', 'business-bundle-monthly' ],
+	'jetpack-ai': [ 'jetpack_ai_monthly' ],
 	'jetpack-free': [ 'jetpack_free' ],
 	'jetpack-personal': [ 'jetpack_personal', 'jetpack_personal_monthly' ],
 	'jetpack-premium': [ 'jetpack_premium', 'jetpack_premium_monthly' ],
