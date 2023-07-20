@@ -9,6 +9,7 @@ import jetpackGoldenToken from './images/jetpack-golden-token.svg';
 import jetpackScan from './images/jetpack-scan.svg';
 import jetpackSearch from './images/jetpack-search.svg';
 import jetpackSocial from './images/jetpack-social.svg';
+import jetpackStats from './images/jetpack-stats.svg';
 import jetpackVideoPress from './images/jetpack-videopress.svg';
 import wpcomBlogger from './images/wpcom-blogger.svg';
 import wpcomBusiness from './images/wpcom-business.svg';
@@ -29,6 +30,7 @@ export const paths = {
 	'jetpack-professional': jetpackBundles,
 	'jetpack-scan': jetpackScan,
 	'jetpack-search': jetpackSearch,
+	'jetpack-stats': jetpackStats,
 	'jetpack-security': jetpackBundles,
 	'jetpack-social': jetpackSocial,
 	'jetpack-starter': jetpackBundles,
@@ -101,6 +103,9 @@ export type SupportedSlugs =
 	| 'jetpack_scan_realtime_monthly_v2'
 	| 'jetpack_search'
 	| 'jetpack_search_monthly'
+	| 'jetpack_stats_monthly'
+	| 'jetpack_stats_pwyw_yearly'
+	| 'jetpack_stats_free_yearly'
 	| 'jetpack_social'
 	| 'jetpack_social_monthly'
 	| 'wpcom_search'
@@ -210,6 +215,11 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'wpcom_search_monthly',
 		'jetpack_search_v2',
 		'jetpack_search_monthly_v2',
+	],
+	'jetpack-stats': [
+		'jetpack_stats_monthly',
+		'jetpack_stats_pwyw_yearly',
+		'jetpack_stats_free_yearly',
 	],
 	'jetpack-anti-spam': [
 		'jetpack_anti_spam',
