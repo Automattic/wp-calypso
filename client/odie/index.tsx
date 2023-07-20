@@ -1,6 +1,7 @@
 import { TextControl, Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useOdieAssistantContext } from './context';
@@ -165,6 +166,10 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 				'using-environment-badge': environmentBadge,
 			} ) }
 		>
+			<TrackComponentView
+				eventName="calypso_odie_chatbox_view"
+				eventProperties={ { bot_name_slug: botNameSlug } }
+			/>
 			{ ! simple && (
 				<WapuuRibbon
 					onToggleVisibility={ handleToggleVisibility }
