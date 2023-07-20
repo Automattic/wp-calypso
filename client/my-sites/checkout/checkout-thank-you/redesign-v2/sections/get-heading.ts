@@ -13,11 +13,9 @@ export interface HeadingProps {
 	hasFailedPurchases: boolean;
 	primaryPurchase: ReceiptPurchase;
 	isSearch: boolean;
-	isBulkDomainTransfer: boolean;
 }
 export default function getHeading( props: HeadingProps ) {
-	const { isDataLoaded, hasFailedPurchases, primaryPurchase, isSearch, isBulkDomainTransfer } =
-		props;
+	const { isDataLoaded, hasFailedPurchases, primaryPurchase, isSearch } = props;
 
 	if ( ! isDataLoaded ) {
 		return translate( 'Loading…' );
@@ -29,10 +27,6 @@ export default function getHeading( props: HeadingProps ) {
 
 	if ( isSearch ) {
 		return translate( 'Welcome to Jetpack Search!' );
-	}
-
-	if ( isBulkDomainTransfer ) {
-		return translate( 'Your domain transfer has started' );
 	}
 
 	if (

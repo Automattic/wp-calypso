@@ -13,7 +13,7 @@ import {
 	isTitanMail,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
-import { sprintf } from '@wordpress/i18n';
+import { withI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -57,6 +57,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 		titanAppsUrlPrefix: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		_n: PropTypes.func.isRequired,
 		upgradeIntent: PropTypes.string,
 		isRedesignV2: PropTypes.bool,
 	};
@@ -67,8 +68,15 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getText() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode, purchases } =
-			this.props;
+		const {
+			translate,
+			_n,
+			isDataLoaded,
+			hasFailedPurchases,
+			primaryPurchase,
+			displayMode,
+			purchases,
+		} = this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
@@ -93,11 +101,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return (
 				<>
 					<span>
-						{ sprintf(
-							translate(
-								"We got it from here! We'll let you know when your newly transferred %s ready to use."
-							),
-							purchases?.length > 1 ? 'domains are' : 'domain is'
+						{ _n(
+							"We got it from here! We'll let you know when your newly transferred domain is ready to use.",
+							"We got it from here! We'll let you know when your newly transferred domains are ready to use.",
+							purchases?.length
 						) }
 					</span>{ ' ' }
 					<span>
@@ -533,6 +540,23 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
+	getHeaderText() {
+		const { purchases, _n } = this.props;
+
+		if ( this.isBulkDomainTransfer() ) {
+			return _n(
+				'Your domain transfer has started',
+				'Your domain transfers has started',
+				purchases?.length
+			);
+		}
+
+		return getHeading( {
+			...this.props,
+			isSearch: this.isSearch(),
+		} );
+	}
+
 	render() {
 		const {
 			isDataLoaded,
@@ -566,14 +590,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 				) }
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
-						<h1 className="checkout-thank-you__header-heading">
-							{ getHeading( {
-								...this.props,
-								isSearch: this.isSearch(),
-								isBulkDomainTransfer: this.isBulkDomainTransfer(),
-							} ) }
-						</h1>
-
+						<h1 className="checkout-thank-you__header-heading">{ this.getHeaderText() }</h1>
 						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
 							this.renderSimplifiedContent()
 						) : (
@@ -648,4 +665,4 @@ export default connect(
 		recordStartTransferClickInThankYou,
 		recordTracksEvent,
 	}
-)( localize( CheckoutThankYouHeader ) );
+)( localize( withI18n( CheckoutThankYouHeader ) ) );
