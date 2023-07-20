@@ -49,6 +49,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/core@npm:0.2.7":
+  version: 0.2.7
+  resolution: "@ariakit/core@npm:0.2.7"
+  checksum: 34037157cc4ea267eb5110bb77e3951cb03a9d3f3459ebe63fe9737c03866bb081e1f38611799a6561d351a04e0b2a6818c77b61ff8482b1be1fc238390d6c83
+  languageName: node
+  linkType: hard
+
+"@ariakit/react-core@npm:0.2.12":
+  version: 0.2.12
+  resolution: "@ariakit/react-core@npm:0.2.12"
+  dependencies:
+    "@ariakit/core": 0.2.7
+    "@floating-ui/dom": ^1.0.0
+    use-sync-external-store: ^1.2.0
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  checksum: 817ad300addb04734e38bd31029a1aa8931443fd15bf8ee8c14bb39169c34f9042ede68f1ee8278282bae5f506afc7b652c3e9ea4e4f7f00ab82c67587427f72
+  languageName: node
+  linkType: hard
+
+"@ariakit/react@npm:^0.2.10":
+  version: 0.2.12
+  resolution: "@ariakit/react@npm:0.2.12"
+  dependencies:
+    "@ariakit/react-core": 0.2.12
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  checksum: 5529d1cbcd5a49c424a3dd929767ff54d85b8d5b174c53d5c430ee30c730d0ce5bbc6b15fe63b48c0b5fbfe90fd1d70dae797dd94f7f3f3038d74c6382037ab4
+  languageName: node
+  linkType: hard
+
 "@automattic/accessible-focus@workspace:^, @automattic/accessible-focus@workspace:packages/accessible-focus":
   version: 0.0.0-use.local
   resolution: "@automattic/accessible-focus@workspace:packages/accessible-focus"
@@ -8478,10 +8511,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/components@npm:25.1.0":
-  version: 25.1.0
-  resolution: "@wordpress/components@npm:25.1.0"
+"@wordpress/components@npm:25.3.0":
+  version: 25.3.0
+  resolution: "@wordpress/components@npm:25.3.0"
   dependencies:
+    "@ariakit/react": ^0.2.10
     "@babel/runtime": ^7.16.0
     "@emotion/cache": ^11.7.1
     "@emotion/css": ^11.7.1
@@ -8492,23 +8526,23 @@ __metadata:
     "@floating-ui/react-dom": 1.0.0
     "@radix-ui/react-dropdown-menu": ^2.0.4
     "@use-gesture/react": ^10.2.24
-    "@wordpress/a11y": ^3.35.0
-    "@wordpress/compose": ^6.12.0
-    "@wordpress/date": ^4.35.0
-    "@wordpress/deprecated": ^3.35.0
-    "@wordpress/dom": ^3.35.0
-    "@wordpress/element": ^5.12.0
-    "@wordpress/escape-html": ^2.35.0
-    "@wordpress/hooks": ^3.35.0
-    "@wordpress/html-entities": ^3.35.0
-    "@wordpress/i18n": ^4.35.0
-    "@wordpress/icons": ^9.26.0
-    "@wordpress/is-shallow-equal": ^4.35.0
-    "@wordpress/keycodes": ^3.35.0
-    "@wordpress/primitives": ^3.33.0
-    "@wordpress/private-apis": ^0.17.0
-    "@wordpress/rich-text": ^6.12.0
-    "@wordpress/warning": ^2.35.0
+    "@wordpress/a11y": ^3.37.0
+    "@wordpress/compose": ^6.14.0
+    "@wordpress/date": ^4.37.0
+    "@wordpress/deprecated": ^3.37.0
+    "@wordpress/dom": ^3.37.0
+    "@wordpress/element": ^5.14.0
+    "@wordpress/escape-html": ^2.37.0
+    "@wordpress/hooks": ^3.37.0
+    "@wordpress/html-entities": ^3.37.0
+    "@wordpress/i18n": ^4.37.0
+    "@wordpress/icons": ^9.28.0
+    "@wordpress/is-shallow-equal": ^4.37.0
+    "@wordpress/keycodes": ^3.37.0
+    "@wordpress/primitives": ^3.35.0
+    "@wordpress/private-apis": ^0.19.0
+    "@wordpress/rich-text": ^6.14.0
+    "@wordpress/warning": ^2.37.0
     change-case: ^4.1.2
     classnames: ^2.3.1
     colord: ^2.7.0
@@ -8517,7 +8551,7 @@ __metadata:
     dom-scroll-into-view: ^1.2.1
     downshift: ^6.0.15
     fast-deep-equal: ^3.1.3
-    framer-motion: ^10.11.6
+    framer-motion: ~10.11.6
     gradient-parser: ^0.1.5
     highlight-words-core: ^1.2.2
     is-plain-object: ^5.0.0
@@ -8533,7 +8567,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: d73e7e565e5d2bb387797a6af2de66f30688915fe4e8c02e9a3eb336333e5dba2fac3de4773b9a38bee146a081eb2e89d663ab02fe84fc45d245cdc9ed04ca92
+  checksum: 51c72d046c9d563494707a8008bac03e08babbd8d20547f033f28571ed58ca4bab67b5706126c72d0a0c59bcccd4cad19e638b8ebb9ae2dc3600b5639fba4bda
   languageName: node
   linkType: hard
 
@@ -16509,9 +16543,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^10.11.6":
-  version: 10.12.17
-  resolution: "framer-motion@npm:10.12.17"
+"framer-motion@npm:~10.11.6":
+  version: 10.11.6
+  resolution: "framer-motion@npm:10.11.6"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     tslib: ^2.4.0
@@ -16526,7 +16560,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: d22f173d3de445ead6a784737803bd6316f6e3e78e8fba3cedc3b3f405471e966b190c0caff855f59905afc017c475225e26af69acb932180d0e4ac4d7c9fbdb
+  checksum: ae9cd16d0ca425ec81c65385b5b39a28e8d55c2e01159383fa903ce6854987e87526cd9bd59a14a19067844fa302edf2cd3a360a8b868cd40f98a96b909cbd76
   languageName: node
   linkType: hard
 

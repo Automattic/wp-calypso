@@ -313,7 +313,7 @@
 		"@wordpress/block-serialization-spec-parser": "4.36.0",
 		"@wordpress/blocks": "12.12.0",
 		"@wordpress/browserslist-config": "5.19.0",
-		"@wordpress/components": "25.1.0",
+		"@wordpress/components": "25.3.0",
 		"@wordpress/compose": "6.12.0",
 		"@wordpress/core-data": "6.12.0",
 		"@wordpress/create-block-tutorial-template": "2.24.0",
