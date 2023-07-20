@@ -155,14 +155,18 @@
 	}
 
 	.domains__domain-validation {
-		margin-top: 12px;
-
 		&.is-mobile {
 			display: none;
+			margin-top: 5px;
 		}
 
 		&.is-desktop {
 			display: block;
+		}
+
+		button {
+			padding: 0 5px;
+			text-decoration: underline;
 		}
 
 		@media (max-width: $break-medium ) {
@@ -179,7 +183,7 @@
 	}
 
 	.domains__domain-domain {
-		flex: 7;
+		flex: 8;
 	}
 
 	.domains__domain-key {
@@ -196,7 +200,7 @@
 	}
 
 	.domains__domain-price {
-		flex: 2;
+		flex: 1;
 
 		.domains__domain-price-number {
 			align-items: center;
@@ -312,57 +316,6 @@
 		}
 	}
 
-
-	.domains__domain-controls {
-		display: flex;
-		gap: 16px;
-		flex: 1;
-
-		button {
-			&:hover {
-				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, var(--studio-blue-60)));
-			}
-		}
-
-		@media (min-width: $break-medium ) {
-			margin-left: -25px;
-		}
-
-		.domains__domain-refresh {
-			button {
-				cursor: pointer;
-
-				.refresh-label {
-					margin-left: 4px;
-				}
-			}
-
-			.refresh-label {
-				display: none;
-			}
-
-			@media (max-width: $break-medium ) {
-				.refresh-label {
-					display: block;
-				}
-			}
-		}
-
-		.domains__domain-delete {
-			.delete-label {
-				display: none;
-			}
-
-			@media (max-width: $break-medium ) {
-				order: 1;
-
-				.delete-label {
-					display: block;
-				}
-			}
-		}
-	}
-
 	.bulk-domain-transfer__container {
 
 		.bulk-domain-transfer__add-domain {
@@ -443,7 +396,7 @@
 	}
 
 	.domains__domain-info-and-validation {
-		margin-bottom: 12px;
+		margin-bottom: 20px;
 
 		@media (max-width: $break-medium ) {
 			margin-bottom: 32px;
@@ -455,6 +408,7 @@
 		}
 
 		.form-input-validation {
+			margin-top: 5px;
 			padding: 0;
 
 			// remove icon
@@ -464,6 +418,11 @@
 
 			a {
 				text-decoration: underline;
+			}
+
+			// Remove left-padding for first button to minimize padding when line wraps on mobile.
+			button:first-of-type {
+				padding-left: 0;
 			}
 		}
 	}
