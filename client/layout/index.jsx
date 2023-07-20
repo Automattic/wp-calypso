@@ -24,7 +24,6 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import OfflineStatus from 'calypso/layout/offline-status';
-import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -201,22 +200,20 @@ class Layout extends Component {
 	}
 
 	shouldShowOdieAssistant() {
-		// We will only show the Odie Assistant under the "Upgrades" menu. Every automattician should be able to see it under
-		// the feature flag, but we also want to show it to a percentage of users under the Wapuu Sales Agent experiment.
+		const eligibleSections = [
+			'plans',
+			'add-ons',
+			'domains',
+			'email',
+			'site-purchases',
+			'checkout',
+		];
 
-		const isAutomattician =
-			[ 'plans', 'add-ons', 'domains', 'email', 'site-purchases', 'checkout' ].includes(
-				this.props.sectionName
-			) &&
-			! this.props.isOffline &&
-			config.isEnabled( 'odie' );
+		if ( this.props.isOffline ) {
+			return false;
+		}
 
-		const isTreatment =
-			this.props.wapuuSalesAgentExperimentAssignment?.variationName === 'treatment' &&
-			[ 'plans' ].includes( this.props.sectionName ) &&
-			! this.props.isOffline;
-
-		return isAutomattician || isTreatment;
+		return eligibleSections.includes( this.props.sectionName );
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
@@ -359,13 +356,6 @@ class Layout extends Component {
 	}
 }
 
-// This is a temporal solution that should be removed once the experiment is over.
-const LayoutWithExperimentAssignment = ( props ) => {
-	const [ , experimentAssignment ] = useExperiment( 'calypso_plans_wapuu_sales_agent_v0' );
-
-	return <Layout { ...props } wapuuSalesAgentExperimentAssignment={ experimentAssignment } />;
-};
-
 export default withCurrentRoute(
 	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
 		const sectionGroup = currentSection?.group ?? null;
@@ -440,5 +430,5 @@ export default withCurrentRoute(
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
 		};
-	} )( LayoutWithExperimentAssignment )
+	} )( Layout )
 );
