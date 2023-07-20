@@ -4,6 +4,7 @@
 $headerHeight: 72px;
 $headerHeightI2: 80px;
 $heading-font-family: "SF Pro Display", $sans;
+$heading-font-body-small: 15px;
 
 .blazepress-widget {
 	display: flex;
@@ -23,7 +24,7 @@ $heading-font-family: "SF Pro Display", $sans;
 		z-index: 1000;
 
 		@include break-large {
-			border-bottom: 1px solid var(--studio-gray-20);
+			box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
 		}
 
 		h2 {
@@ -47,7 +48,7 @@ $heading-font-family: "SF Pro Display", $sans;
 			cursor: pointer;
 			font-style: normal;
 			font-weight: 500;
-			font-size: $font-body-small;
+			font-size: $heading-font-body-small;
 			padding-top: 5px;
 		}
 	}
@@ -101,6 +102,10 @@ $heading-font-family: "SF Pro Display", $sans;
 				font-family: $heading-font-family;
 				font-weight: 500;
 				letter-spacing: 0.34px;
+
+				@include break-small {
+					font-size: $heading-font-body-small;
+				}
 			}
 
 			&.no-back-button .blank-canvas__back {
@@ -115,7 +120,7 @@ $heading-font-family: "SF Pro Display", $sans;
 					line-height: 24px;
 					font-style: normal;
 					font-weight: 500;
-					font-size: $font-body-small;
+					font-size: $heading-font-body-small;
 					font-family: $heading-font-family;
 					color: #8f8e93;
 					padding: 0;

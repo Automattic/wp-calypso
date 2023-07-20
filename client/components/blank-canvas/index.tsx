@@ -56,17 +56,11 @@ BlankCanvas.Header = ( {
 	</div>
 );
 
-interface ContentProps {
-	children: ReactNode;
-}
-BlankCanvas.Content = ( { children }: ContentProps ) => (
+BlankCanvas.Content = ( { children }: PropsWithChildren ) => (
 	<div className="blank-canvas__content">{ children }</div>
 );
 
-interface FooterProps {
-	children: ReactNode;
-}
-BlankCanvas.Footer = ( { children }: FooterProps ) => (
+BlankCanvas.Footer = ( { children }: PropsWithChildren ) => (
 	<div className="blank-canvas__footer">{ children }</div>
 );
 
