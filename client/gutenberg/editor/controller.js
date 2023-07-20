@@ -116,15 +116,6 @@ function waitForPreferredEditorView( context ) {
 export const authenticate = ( context, next ) => {
 	const state = context.store.getState();
 
-	logToLogstash( {
-		feature: 'calypso_client',
-		message: 'e2e atomic auth redirect',
-		severity: 'debug',
-		extra: {
-			state: 'checking if authenticate is even called',
-		},
-	} );
-
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isDesktop = isEnabled( 'desktop' );
@@ -140,6 +131,16 @@ export const authenticate = ( context, next ) => {
 	if ( isDesktop && isJetpack && ! isSSOEnabled( state, siteId ) ) {
 		isAuthenticated = false;
 	}
+
+	logToLogstash( {
+		feature: 'calypso_client',
+		message: 'e2e atomic auth redirect',
+		severity: 'debug',
+		extra: {
+			isAuthenticated,
+			state,
+		},
+	} );
 
 	if ( isAuthenticated ) {
 		/*
