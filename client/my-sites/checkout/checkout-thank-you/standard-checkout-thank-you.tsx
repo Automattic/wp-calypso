@@ -1,6 +1,6 @@
+import { Card, ConfettiAnimation } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { Card, ConfettiAnimation } from 'calypso/../packages/components/src';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
