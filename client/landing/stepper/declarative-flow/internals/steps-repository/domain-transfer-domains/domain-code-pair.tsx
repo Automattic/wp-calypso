@@ -138,6 +138,7 @@ export function DomainCodePair( {
 				// Disable the delete button on initial state meaning. no domain, no auth and one row.
 				disabled={ ! domain && ! auth && domainCount === 1 }
 				onClick={ () => onRemove( id ) }
+				variant="link"
 			>
 				<span className="delete-label">{ __( 'Discard Domain' ) }</span>
 			</Button>
@@ -148,6 +149,7 @@ export function DomainCodePair( {
 				className={ classnames( 'domains__domain-refresh', {
 					'is-invisible-field': ! refetch,
 				} ) }
+				variant="link"
 			>
 				<span className="refresh-label">{ __( 'Refresh' ) }</span>
 			</Button>
@@ -222,18 +224,22 @@ export function DomainCodePair( {
 						/>
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
-					{ ( shouldReportError || ( message && loading ) ) && (
-						<div className="domains__domain-validation is-mobile">
-							{ shouldReportError && (
-								<FormInputValidation
-									isError={ ! valid }
-									text={ message }
-									children={ domainActions }
-								></FormInputValidation>
-							) }
-							{ message && loading && <FormExplanation>{ message }</FormExplanation> }
-						</div>
-					) }
+					<div className="domains__domain-validation is-mobile">
+						{ shouldReportError && (
+							<FormInputValidation
+								isError={ ! valid }
+								text={ message }
+								children={ domainActions }
+							></FormInputValidation>
+						) }
+						{ message && loading && <FormExplanation>{ message }</FormExplanation> }
+						{ ! shouldReportError && ! loading && (
+							<FormExplanation>
+								{ __( 'Please enter the domain name and authorization code.' ) }
+								{ domainCount > 1 && domainActions }
+							</FormExplanation>
+						) }
+					</div>
 				</div>
 				<div className="domains__domain-price">
 					<FormFieldset>
@@ -265,6 +271,12 @@ export function DomainCodePair( {
 					<div>
 						<FormExplanation>{ message }</FormExplanation>
 					</div>
+				) }
+				{ ! shouldReportError && ! loading && (
+					<FormExplanation>
+						{ __( 'Please enter the domain name and authorization code.' ) }
+						{ domainCount > 1 && domainActions }
+					</FormExplanation>
 				) }
 			</div>
 		</div>

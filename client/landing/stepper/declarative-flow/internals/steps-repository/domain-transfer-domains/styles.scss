@@ -396,7 +396,7 @@
 	}
 
 	.domains__domain-info-and-validation {
-		margin-bottom: 12px;
+		margin-bottom: 20px;
 
 		@media (max-width: $break-medium ) {
 			margin-bottom: 32px;
@@ -408,6 +408,7 @@
 		}
 
 		.form-input-validation {
+			margin-top: 5px;
 			padding: 0;
 
 			// remove icon
