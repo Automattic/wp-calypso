@@ -17,69 +17,13 @@ import type {
 	BackupNode,
 	ScanNode,
 	MonitorNode,
-	SiteColumns,
 	Backup,
 } from './types';
 
 const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
 
-const isBoostEnabled = config.isEnabled( 'jetpack/pro-dashboard-jetpack-boost' );
-
-// Mapping the columns to the site data keys
-export const siteColumnKeyMap: { [ key: string ]: string } = {
-	site: 'url',
-};
-
-const boostColumn: SiteColumns = isBoostEnabled
-	? [
-			{
-				key: 'boost',
-				title: translate( 'Boost' ),
-				className: 'width-fit-content',
-				isExpandable: true,
-			},
-	  ]
-	: [];
-
-export const siteColumns: SiteColumns = [
-	{
-		key: 'site',
-		title: translate( 'Site' ),
-		isSortable: true,
-	},
-	{
-		key: 'stats',
-		title: translate( 'Stats' ),
-		className: 'width-fit-content',
-		isExpandable: true,
-	},
-	...boostColumn,
-	{
-		key: 'backup',
-		title: translate( 'Backup' ),
-		className: 'fixed-site-column',
-		isExpandable: true,
-	},
-	{
-		key: 'scan',
-		title: translate( 'Scan' ),
-		className: 'fixed-site-column',
-	},
-	{
-		key: 'monitor',
-		title: translate( 'Monitor' ),
-		className: 'min-width-100px',
-		isExpandable: true,
-	},
-	{
-		key: 'plugin',
-		title: translate( 'Plugins' ),
-		className: 'width-fit-content',
-	},
-];
-
 // Event names for all actions for large screen(>960px) and small screen(<960px)
-export const actionEventNames: ActionEventNames = {
+const actionEventNames: ActionEventNames = {
 	issue_license: {
 		large_screen: 'calypso_jetpack_agency_dashboard_issue_license_large_screen',
 		small_screen: 'calypso_jetpack_agency_dashboard_issue_license_small_screen',
