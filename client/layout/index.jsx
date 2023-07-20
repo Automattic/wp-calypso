@@ -361,7 +361,7 @@ class Layout extends Component {
 
 // This is a temporal solution that should be removed once the experiment is over.
 const LayoutWithExperimentAssignment = ( props ) => {
-	const [ , experimentAssignment ] = useExperiment( 'calypso_plans_wapuu_sales_agent_v1' );
+	const [ , experimentAssignment ] = useExperiment( 'calypso_plans_wapuu_sales_agent_v0' );
 
 	return <Layout { ...props } wapuuSalesAgentExperimentAssignment={ experimentAssignment } />;
 };
