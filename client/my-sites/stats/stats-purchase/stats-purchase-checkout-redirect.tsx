@@ -40,10 +40,10 @@ const getRedirectUrl = ( {
 	redirectUri?: string;
 	siteSlug: string;
 } ) => {
-	const isFromJetpack = from.startsWith( 'jetpack' );
+	const isStartedFromJetpackSite = from.startsWith( 'jetpack' );
 	const statsPurchaseSuccess = type === 'free' ? 'free' : 'paid';
 
-	if ( ! isFromJetpack ) {
+	if ( ! isStartedFromJetpackSite ) {
 		redirectUri = addPurchaseTypeToUri(
 			redirectUri || `/stats/day/${ siteSlug }`,
 			statsPurchaseSuccess
