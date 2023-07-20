@@ -2,13 +2,13 @@
 export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
 // Site column object which holds key and title of each column
-export type SiteColumns = Array< {
+export type SiteColumn = {
 	key: AllowedTypes;
 	title: string;
 	className?: string;
 	isExpandable?: boolean;
 	isSortable?: boolean;
-} >;
+};
 
 export type AllowedStatusTypes =
 	| 'active'

@@ -16,13 +16,13 @@ import SiteErrorContent from '../site-error-content';
 import SiteExpandedContent from '../site-expanded-content';
 import SitePhpVersion from '../site-expanded-content/site-php-version';
 import SiteStatusContent from '../site-status-content';
-import type { SiteData, SiteColumns, AllowedTypes } from '../types';
+import type { SiteData, SiteColumn, AllowedTypes } from '../types';
 
 import './style.scss';
 
 interface Props {
 	rows: SiteData;
-	columns: SiteColumns;
+	columns: SiteColumn[];
 }
 
 export default function SiteCard( { rows, columns }: Props ) {

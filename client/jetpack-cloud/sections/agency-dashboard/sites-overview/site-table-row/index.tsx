@@ -14,13 +14,13 @@ import SiteExpandedContent from '../site-expanded-content';
 import SitePhpVersion from '../site-expanded-content/site-php-version';
 import SiteStatusContent from '../site-status-content';
 import SiteTableExpand from '../site-table-expand';
-import type { SiteData, SiteColumns } from '../types';
+import type { SiteData, SiteColumn } from '../types';
 
 import './style.scss';
 
 interface Props {
 	index: number;
-	columns: SiteColumns;
+	columns: SiteColumn[];
 	item: SiteData;
 	setExpanded: () => void;
 	isExpanded: boolean;

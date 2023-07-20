@@ -10,11 +10,11 @@ import SiteBulkSelect from '../site-bulk-select';
 import SiteSort from '../site-sort';
 import SiteTableRow from '../site-table-row';
 import { getProductSlugFromProductType } from '../utils';
-import type { SiteData, SiteColumns } from '../types';
+import type { SiteData, SiteColumn } from '../types';
 
 interface Props {
 	isLoading: boolean;
-	columns: SiteColumns;
+	columns: SiteColumn[];
 	items: Array< SiteData >;
 }
 
