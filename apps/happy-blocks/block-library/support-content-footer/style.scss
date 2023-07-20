@@ -11,7 +11,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	max-width: none !important;
 	align-items: normal !important;
 	box-sizing: border-box;
-	padding: 20px 24px;
+	padding: 96px 24px 64px 24px;
 
 	p {
 		font-size: 1rem;
@@ -116,10 +116,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		display: flex;
 		justify-content: space-between;
 		margin-top: 3rem;
-
-		@media (min-width: $breakpoint-mobile) {
-			margin-bottom: 28px;
-		}
 
 		.support-content-subscribe-disclaimer {
 			color: var(--studio-gray-60);
