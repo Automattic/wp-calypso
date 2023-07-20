@@ -61,6 +61,11 @@ import {
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 	PRODUCT_WOOCOMMERCE_BOOKINGS,
+	PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS,
+	PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES,
+	PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
+	PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
+	PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -765,6 +770,22 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const woocommerceBookingsLightboxDescription = translate(
 		'Allow customers to book appointments, make reservations or rent equipment without leaving your site.'
 	);
+	const woocommerceSubscriptionsLightboxDescription = translate(
+		'Let customers subscribe to your products or services and pay on a weekly, monthly, or annual basis.'
+	);
+	const woocommerceProductBundlesLightboxDescription = translate(
+		'Offer personalized product bundles, bulk discount packages, and assembled products.'
+	);
+	const woocommerceProductAddOnsLightboxDescription = translate(
+		'Offer add-ons like gift wrapping, special messages, or other special options for your products.'
+	);
+
+	const woocommerceMinMaxQuantitiesLightboxDescription = translate(
+		'Minimum and maximum quantity rules for products, orders, and categories.'
+	);
+	const woocommerceAutomateWooLightboxDescription = translate(
+		'Powerful marketing automation for WooCommerce. AutomateWoo has the tools you need to grow your store and make more money.'
+	);
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
@@ -795,6 +816,11 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooLightboxDescription,
 	};
 };
 
@@ -936,6 +962,82 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Sync with Google Calendar' ),
 		translate( 'Support for add-ons to customize the experience' ),
 	];
+	const woocommerceSubscriptionsIncludesInfo = [
+		translate( 'Free Trials & Sign-Up Fees' ),
+		translate( 'Variable Subscriptions' ),
+		translate( 'Subscription Management' ),
+		translate( 'Subscriber Account Management' ),
+		translate( 'Synchronized Payments' ),
+		translate( 'Upgrades/Downgrades' ),
+		translate( 'Flexible Product Options' ),
+		translate( 'Multiple Subscriptions' ),
+		translate( 'Subscription Coupons' ),
+		translate( 'Customer Emails' ),
+	];
+	const woocommerceProductBundlesIncludesInfo = [
+		translate( 'Create bulk discount packages' ),
+		translate( 'Offer personalized boxes' ),
+		translate( 'Create assembled products' ),
+		translate( 'Recommend add-ons and essentials' ),
+		translate( 'Offer more engaging upsells' ),
+	];
+	const woocommerceProductAddOnsIncludesInfo = [
+		translate( 'Image-based selections - customers can see what they’re getting before they buy.' ),
+		translate(
+			'Flat fees - charge customers a flat fee regardless of how many products they ordered.'
+		),
+		translate(
+			'Percentage fees - charge a fee for the add-on based on a percent of the total price.'
+		),
+		translate(
+			'Text input - Let your customers enter custom text to create a custom t-shirt, add a monogram or personalize a card.'
+		),
+		translate(
+			'Dropdown - customers can choose between a few pre-defined options with a drop-down field for your add-on.'
+		),
+		translate( 'Checkboxes - make customization as easy and satisfying as checking a checkbox.' ),
+		translate(
+			'Custom price - let your customers name their price, perfect for tips, donations, and gratuity.'
+		),
+	];
+	const woocommerceMinMaxQuantitiesIncludesInfo = [
+		translate( 'The ability to set quantity rules for products, orders, and categories.' ),
+	];
+	const woocommerceAutomateWooIncludesInfo = [
+		translate(
+			'Follow-up Emails – Automatically email customers who buy specific products, ask for a review, or suggest other products they might like.'
+		),
+		translate(
+			'Abandoned Cart – Remind customers who left items in their cart using emails at set intervals.'
+		),
+		translate(
+			'Win Back Inactive Customers – Target inactive customers with email marketing campaigns. Include special offers and recommendations.'
+		),
+		translate(
+			'SMS Notifications – Send SMS notifications to customers or admins for any of AutomateWoo’s wide range of triggers.'
+		),
+		translate(
+			'Review Rewards – Encourage more product reviews by offering discounts. Limit the discount based on number of reviews posted and the rating given.'
+		),
+		translate(
+			'Wishlist Marketing – Send timed wishlist reminder emails and notify when a wished product goes on sale. Integrates with WooCommerce Wishlists or YITH Wishlists.'
+		),
+		translate(
+			'Card Expiry Notifications – Notify customers before a saved credit or debit card expires. This can reduce failed payments and churn when selling subscriptions.'
+		),
+		translate(
+			'Personalized Coupons – Generate dynamically customized coupons for customers to raise purchase rates.'
+		),
+		translate(
+			'Subscriptions Automation – Action WooCommerce Subscription events such as status changes, failed payments, and renewal reminders.'
+		),
+		translate(
+			'Bookings Automations – Send emails on WooCommerce Bookings events such as booking confirmation or completion.'
+		),
+		translate(
+			'Automatic VIP – Reward your best customers with VIP status based on different spending requirements.'
+		),
+	];
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
@@ -966,6 +1068,11 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooIncludesInfo,
 	};
 };
 
@@ -1067,6 +1174,50 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'An intelligent booking system to avoid double-bookings' ),
 		translate( 'Boost your bookings with a range of add-ons' ),
 	];
+	const woocommerceSubscriptionsBenefits = [
+		translate( 'Multiple billing schedules available to suit your store’s needs' ),
+		translate( 'Integration with over 25 payment gateways for automatic recurring payments' ),
+		translate(
+			'Supports manual renewal payments through any WooCommerce payment gateway, along with automatic email invoices and receipts'
+		),
+		translate( 'Supports automatic rebilling on failed subscription payments' ),
+		translate( 'Give subscribers the ability to manage their own plan' ),
+		translate( 'Built-in renewal notifications and automatic emails' ),
+		translate(
+			'Detailed reports allow you to keep track of recurring revenue, the number of active subscribers, and more'
+		),
+	];
+	const woocommerceProductBundlesBenefits = [
+		translate( 'Sell more by creating discounted bundles or personalized boxes' ),
+		translate( 'Create product offerings made from multiple inventory-managed parts.' ),
+		translate(
+			'Boost your average order value by adding recommendations to popular products, and use discounts to maximize their impact.'
+		),
+	];
+	const woocommerceProductAddOnsBenefits = [
+		translate( 'You can offer special options to your customers.' ),
+		translate(
+			'Enable your customers to personalize products while they are shopping on your online store'
+		),
+	];
+	const woocommerceMinMaxQuantitiesBenefits = [
+		translate( 'Specify minimum and maximum quantity limits per product/variation or order.' ),
+		translate(
+			'Require specific products, or product categories, to be purchased in predefined quantity multiples.'
+		),
+		translate(
+			'Prevent overstocking or stockouts, maintain optimal inventory levels, and reduce storage costs.'
+		),
+	];
+	const woocommerceAutomateWooBenefits = [
+		translate( 'Effortless setup and management right from your WordPress backend' ),
+		translate( 'Send targeted, multi-step campaigns and offer customer incentives' ),
+		translate( 'Measure the success of your campaigns' ),
+		translate( 'Unlimited email sends' ),
+		translate( 'AutomateWoo is 100% extendable' ),
+		translate( 'Multilingual support. AutomateWoo has support for the popular WPML plugin' ),
+		translate( 'AutomateWoo integrates with your favorite plugins and services' ),
+	];
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantBenefits,
@@ -1097,6 +1248,11 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
 		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsBenefits,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsBenefits,
+		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesBenefits,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooBenefits,
 	};
 };
 
