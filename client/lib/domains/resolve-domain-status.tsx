@@ -3,6 +3,7 @@ import { localizeUrl, englishLocales } from '@automattic/i18n-utils';
 import i18n, { getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
+import { getDomainTransferErrorDescription } from 'calypso/lib/domains/utils/get-domain-transfer-error-description';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
@@ -583,6 +584,22 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.TRANSFER:
+			if ( domain.lastTransferError ) {
+				return {
+					statusText: translate( 'Complete setup' ),
+					statusClass: 'status-warning',
+					status: translate( 'Complete setup' ),
+					icon: 'info',
+					noticeText: getDomainTransferErrorDescription(
+						domain.lastTransferError,
+						siteSlug as string,
+						domain.name,
+						translate
+					),
+					listStatusWeight: 600,
+				};
+			}
+
 			if ( domain.transferStatus === transferStatus.PENDING_START ) {
 				return {
 					statusText: translate( 'Complete setup' ),
