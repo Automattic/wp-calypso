@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { AppState } from 'calypso/types';
 import getECommerceTrialDaysLeft from './get-ecommerce-trial-days-left';
 
@@ -9,6 +10,10 @@ import getECommerceTrialDaysLeft from './get-ecommerce-trial-days-left';
  * @returns {boolean|null}
  */
 export default function isMigrationTrialExpired( state: AppState, siteId: number ): boolean | null {
+	if ( ! isEnabled( 'plans/migration-trial' ) ) {
+		return null;
+	}
+
 	const trialDaysLeft = getECommerceTrialDaysLeft( state, siteId );
 
 	if ( trialDaysLeft === null ) {

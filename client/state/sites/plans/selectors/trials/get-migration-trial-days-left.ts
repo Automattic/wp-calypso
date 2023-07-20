@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import moment, { Moment } from 'moment';
 import getMigrationTrialExpiration from './get-migration-trial-expiration';
 import type { AppState } from 'calypso/types';
@@ -13,6 +14,10 @@ export default function getMigrationTrialDaysLeft(
 	state: AppState,
 	siteId: number
 ): number | null {
+	if ( ! isEnabled( 'plans/migration-trial' ) ) {
+		return null;
+	}
+
 	const trialExpirationDate: Moment | null = getMigrationTrialExpiration( state, siteId );
 	if ( ! trialExpirationDate ) {
 		return null;

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import moment, { Moment } from 'moment';
 import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
@@ -25,6 +26,10 @@ export default function getMigrationTrialExpiration(
 	state: AppState,
 	siteId: number
 ): Moment | null {
+	if ( ! isEnabled( 'plans/migration-trial' ) ) {
+		return null;
+	}
+
 	const currentPlan = getCurrentPlan( state, siteId );
 	if ( ! currentPlan || ! isMigrationTrialPlan( currentPlan as SitePlanData ) ) {
 		return null;
