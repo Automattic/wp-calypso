@@ -14,13 +14,14 @@ const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 		return false;
 	}
 
-	// ThankYou page for only purchasing a plan.
 	const purchases = getPurchases( props );
 
+	// We are in the bulk domain transfer flow.
 	if ( purchases.every( isDomainTransfer ) ) {
 		return true;
 	}
 
+	// ThankYou page for only purchasing a plan.
 	if ( purchases.length === 1 ) {
 		return isWpComPlan( purchases[ 0 ].productSlug );
 	}
