@@ -1009,13 +1009,17 @@ const ConnectedPlanFeatures2023Grid = connect(
 					);
 				}
 
+				const isCurrentPlan = currentSitePlanSlug === plan;
 				const product_name_short =
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
 				const storageOptions =
 					( planConstantObj.get2023PricingGridSignupStorageOptions &&
-						planConstantObj.get2023PricingGridSignupStorageOptions( showLegacyStorageFeature ) ) ||
+						planConstantObj.get2023PricingGridSignupStorageOptions(
+							showLegacyStorageFeature,
+							isCurrentPlan
+						) ) ||
 					[];
 
 				const availableForPurchase =
@@ -1035,7 +1039,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					tagline,
 					storageOptions,
 					cartItemForPlan: getCartItemForPlan( plan ),
-					current: currentSitePlanSlug === plan,
+					current: isCurrentPlan,
 					isVisible: visiblePlans.indexOf( plan ) !== -1,
 					billingPeriod: planObject?.bill_period,
 					currencyCode: planObject?.currency_code,
