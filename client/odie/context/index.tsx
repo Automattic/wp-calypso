@@ -145,7 +145,7 @@ const OdieAssistantProvider = ( {
 		>
 			{ children }
 
-			{ odieIsEnabled && <OdieAssistant botNameSlug="wapuu" simple /> }
+			{ odieIsEnabled && <OdieAssistant botNameSlug="wapuu" /> }
 		</OdieAssistantContext.Provider>
 	);
 };
