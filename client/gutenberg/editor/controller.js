@@ -137,8 +137,8 @@ export const authenticate = ( context, next ) => {
 		message: 'e2e atomic auth redirect',
 		severity: 'debug',
 		extra: {
-			isAuthenticated,
-			state,
+			isAuthenticated: isAuthenticated ? 'true' : 'false',
+			state: JSON.stringify( state, null, 2 ),
 		},
 	} );
 
