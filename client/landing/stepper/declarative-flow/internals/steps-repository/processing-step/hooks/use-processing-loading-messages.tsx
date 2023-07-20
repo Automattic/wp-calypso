@@ -28,12 +28,12 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 
 	if ( flow && isTransferringHostedSiteCreationFlow( flow ) ) {
 		return [
-			{ title: __( 'Laying the foundations' ), duration: 3500 },
-			{ title: __( 'Warming up CPUs' ), duration: 2000 },
-			{ title: __( 'Installing WordPress' ), duration: 2000 },
-			{ title: __( 'Securing your data' ), duration: 3500 },
-			{ title: __( 'Distributing your site worldwide' ), duration: 3500 },
-			{ title: __( 'Closing the loop' ), duration: 5000 },
+			{ title: __( 'Laying the foundations' ), duration: 5000 },
+			{ title: __( 'Warming up CPUs' ), duration: 3000 },
+			{ title: __( 'Installing WordPress' ), duration: 3000 },
+			{ title: __( 'Securing your data' ), duration: 5000 },
+			{ title: __( 'Distributing your site worldwide' ), duration: 5000 },
+			{ title: __( 'Closing the loop' ), duration: Infinity },
 		];
 	}
 
