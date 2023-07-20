@@ -45,6 +45,13 @@
 					outline: 1px solid transparent;
 				}
 
+				.components-button {
+					@media (max-width: $break-medium ) {
+						width: 100%;
+						justify-content: center;
+					}
+				}
+
 				.manage-all-domains {
 					justify-content: center;
 					color: var(--black-white-white, #fff);
@@ -68,9 +75,6 @@
 
 					@media (max-width: $break-medium ) {
 						width: 100%;
-					}
-
-					@media (max-width: $break-small ) {
 						margin-top: 20px;
 					}
 				}
