@@ -546,7 +546,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( this.isBulkDomainTransfer() ) {
 			return _n(
 				'Your domain transfer has started',
-				'Your domain transfers has started',
+				'Your domain transfers have started',
 				purchases?.length
 			);
 		}
