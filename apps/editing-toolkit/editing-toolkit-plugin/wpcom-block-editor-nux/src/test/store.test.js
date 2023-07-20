@@ -1,17 +1,14 @@
 import { dispatch, select } from '@wordpress/data';
 import waitForExpect from 'wait-for-expect';
-import { register, DEFAULT_VARIANT } from '../store';
-
-const STORE_KEY = 'automattic/wpcom-welcome-guide';
+import { store, DEFAULT_VARIANT } from '../store';
 
 beforeAll( () => {
-	register();
 	jest.useRealTimers(); // Required for wait-for-expect to work.
 } );
 
 let originalFetch;
 beforeEach( () => {
-	dispatch( STORE_KEY ).resetStore();
+	dispatch( store ).resetStore();
 	originalFetch = window.fetch;
 	window.fetch = jest.fn();
 } );
@@ -26,24 +23,22 @@ test( 'resetting the store', async () => {
 		json: () => Promise.resolve( { show_welcome_guide: true, variant: 'modal' } ),
 	} );
 
-	dispatch( STORE_KEY ).fetchWelcomeGuideStatus();
-	await waitForExpect( () =>
-		expect( select( STORE_KEY ).isWelcomeGuideStatusLoaded() ).toBe( true )
-	);
-	dispatch( STORE_KEY ).setShowWelcomeGuide( true, { openedManually: true } );
-	dispatch( STORE_KEY ).setTourRating( 'thumbs-up' );
+	dispatch( store ).fetchWelcomeGuideStatus();
+	await waitForExpect( () => expect( select( store ).isWelcomeGuideStatusLoaded() ).toBe( true ) );
+	dispatch( store ).setShowWelcomeGuide( true, { openedManually: true } );
+	dispatch( store ).setTourRating( 'thumbs-up' );
 
-	dispatch( STORE_KEY ).resetStore();
+	dispatch( store ).resetStore();
 
-	expect( select( STORE_KEY ).isWelcomeGuideManuallyOpened() ).toBe( false );
-	expect( select( STORE_KEY ).isWelcomeGuideShown() ).toBe( false );
-	expect( select( STORE_KEY ).isWelcomeGuideStatusLoaded() ).toBe( false );
-	expect( select( STORE_KEY ).getTourRating() ).toBeUndefined();
-	expect( select( STORE_KEY ).getWelcomeGuideVariant() ).toBe( DEFAULT_VARIANT );
+	expect( select( store ).isWelcomeGuideManuallyOpened() ).toBe( false );
+	expect( select( store ).isWelcomeGuideShown() ).toBe( false );
+	expect( select( store ).isWelcomeGuideStatusLoaded() ).toBe( false );
+	expect( select( store ).getTourRating() ).toBeUndefined();
+	expect( select( store ).getWelcomeGuideVariant() ).toBe( DEFAULT_VARIANT );
 } );
 
 test( "by default the store isn't loaded", () => {
-	const isLoaded = select( STORE_KEY ).isWelcomeGuideStatusLoaded();
+	const isLoaded = select( store ).isWelcomeGuideStatusLoaded();
 	expect( isLoaded ).toBe( false );
 } );
 
@@ -53,10 +48,10 @@ test( 'after fetching the guide status the store is loaded', async () => {
 		json: () => Promise.resolve( { show_welcome_guide: true, variant: DEFAULT_VARIANT } ),
 	} );
 
-	dispatch( STORE_KEY ).fetchWelcomeGuideStatus();
+	dispatch( store ).fetchWelcomeGuideStatus();
 
 	await waitForExpect( () => {
-		const isLoaded = select( STORE_KEY ).isWelcomeGuideStatusLoaded();
+		const isLoaded = select( store ).isWelcomeGuideStatusLoaded();
 		expect( isLoaded ).toBe( true );
 	} );
 
@@ -66,9 +61,9 @@ test( 'after fetching the guide status the store is loaded', async () => {
 	);
 
 	// Check the store is loaded with the state that came from the server
-	const isWelcomeGuideShown = select( STORE_KEY ).isWelcomeGuideShown();
+	const isWelcomeGuideShown = select( store ).isWelcomeGuideShown();
 	expect( isWelcomeGuideShown ).toBe( true );
-	const welcomeGuideVariant = select( STORE_KEY ).getWelcomeGuideVariant();
+	const welcomeGuideVariant = select( store ).getWelcomeGuideVariant();
 	expect( welcomeGuideVariant ).toBe( DEFAULT_VARIANT );
 } );
 
@@ -77,15 +72,15 @@ test( 'toggle welcome guide visibility', () => {
 	// rejection errors that appear in CLI output
 	window.fetch.mockResolvedValue( { status: 200, json: () => Promise.resolve( {} ) } );
 
-	dispatch( STORE_KEY ).setShowWelcomeGuide( true );
-	expect( select( STORE_KEY ).isWelcomeGuideShown() ).toBe( true );
+	dispatch( store ).setShowWelcomeGuide( true );
+	expect( select( store ).isWelcomeGuideShown() ).toBe( true );
 
-	dispatch( STORE_KEY ).setShowWelcomeGuide( false );
-	expect( select( STORE_KEY ).isWelcomeGuideShown() ).toBe( false );
+	dispatch( store ).setShowWelcomeGuide( false );
+	expect( select( store ).isWelcomeGuideShown() ).toBe( false );
 } );
 
 test( 'guide manually opened flag is false by default', () => {
-	expect( select( STORE_KEY ).isWelcomeGuideManuallyOpened() ).toBe( false );
+	expect( select( store ).isWelcomeGuideManuallyOpened() ).toBe( false );
 } );
 
 test( '"manually opened" flag can be set when opening welcome guide', () => {
@@ -93,11 +88,11 @@ test( '"manually opened" flag can be set when opening welcome guide', () => {
 	// rejection errors that appear in CLI output
 	window.fetch.mockResolvedValue( { status: 200, json: () => Promise.resolve( {} ) } );
 
-	dispatch( STORE_KEY ).setShowWelcomeGuide( true, { openedManually: true } );
-	expect( select( STORE_KEY ).isWelcomeGuideManuallyOpened() ).toBe( true );
+	dispatch( store ).setShowWelcomeGuide( true, { openedManually: true } );
+	expect( select( store ).isWelcomeGuideManuallyOpened() ).toBe( true );
 
-	dispatch( STORE_KEY ).setShowWelcomeGuide( true, { openedManually: false } );
-	expect( select( STORE_KEY ).isWelcomeGuideManuallyOpened() ).toBe( false );
+	dispatch( store ).setShowWelcomeGuide( true, { openedManually: false } );
+	expect( select( store ).isWelcomeGuideManuallyOpened() ).toBe( false );
 } );
 
 test( 'leaving `openedManually` unspecified leaves the flag unchanged', () => {
@@ -105,23 +100,23 @@ test( 'leaving `openedManually` unspecified leaves the flag unchanged', () => {
 	// rejection errors that appear in CLI output
 	window.fetch.mockResolvedValue( { status: 200, json: () => Promise.resolve( {} ) } );
 
-	expect( select( STORE_KEY ).isWelcomeGuideManuallyOpened() ).toBe( false );
+	expect( select( store ).isWelcomeGuideManuallyOpened() ).toBe( false );
 
-	dispatch( STORE_KEY ).setShowWelcomeGuide( true, { openedManually: true } );
-	expect( select( STORE_KEY ).isWelcomeGuideManuallyOpened() ).toBe( true );
+	dispatch( store ).setShowWelcomeGuide( true, { openedManually: true } );
+	expect( select( store ).isWelcomeGuideManuallyOpened() ).toBe( true );
 
-	dispatch( STORE_KEY ).setShowWelcomeGuide( false );
-	expect( select( STORE_KEY ).isWelcomeGuideManuallyOpened() ).toBe( true );
+	dispatch( store ).setShowWelcomeGuide( false );
+	expect( select( store ).isWelcomeGuideManuallyOpened() ).toBe( true );
 } );
 
 test( 'tour rating is "undefined" by default', () => {
-	expect( select( STORE_KEY ).getTourRating() ).toBeUndefined();
+	expect( select( store ).getTourRating() ).toBeUndefined();
 } );
 
 test( 'tour rating can be set to "thumbs-up" or "thumbs-down"', () => {
-	dispatch( STORE_KEY ).setTourRating( 'thumbs-up' );
-	expect( select( STORE_KEY ).getTourRating() ).toBe( 'thumbs-up' );
+	dispatch( store ).setTourRating( 'thumbs-up' );
+	expect( select( store ).getTourRating() ).toBe( 'thumbs-up' );
 
-	dispatch( STORE_KEY ).setTourRating( 'thumbs-down' );
-	expect( select( STORE_KEY ).getTourRating() ).toBe( 'thumbs-down' );
+	dispatch( store ).setTourRating( 'thumbs-down' );
+	expect( select( store ).getTourRating() ).toBe( 'thumbs-down' );
 } );

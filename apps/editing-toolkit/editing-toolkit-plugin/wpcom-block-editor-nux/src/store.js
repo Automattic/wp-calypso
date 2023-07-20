@@ -1,5 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
-import { combineReducers, registerStore } from '@wordpress/data';
+import { combineReducers, createReduxStore, register } from '@wordpress/data';
 import { apiFetch as apiFetchControls, controls } from '@wordpress/data-controls';
 
 import 'a8c-fse-common-data-stores';
@@ -138,12 +138,12 @@ export const selectors = {
 	getShouldShowFirstPostPublishedModal: ( state ) => state.shouldShowFirstPostPublishedModal,
 };
 
-export function register() {
-	return registerStore( 'automattic/wpcom-welcome-guide', {
-		reducer,
-		actions,
-		selectors,
-		controls,
-		persist: true,
-	} );
-}
+export const store = createReduxStore( 'automattic/wpcom-welcome-guide', {
+	reducer,
+	actions,
+	selectors,
+	controls,
+	persist: true, // TODO @noahtallen: persist plugin probably doesn't work here.
+} );
+
+register( store );

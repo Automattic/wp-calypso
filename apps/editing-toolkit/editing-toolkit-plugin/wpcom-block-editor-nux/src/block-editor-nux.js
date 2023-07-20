@@ -1,6 +1,5 @@
 /*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
 import './public-path';
-
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
@@ -18,7 +17,7 @@ import FirstPostPublishedModal from './first-post-published-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
 import PostPublishedSharingModal from './sharing-modal';
-import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
+import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT, store as welcomeGuideStore } from './store';
 import VideoPressCelebrationModal from './video-celebration-modal';
 import WpcomNux from './welcome-modal/wpcom-nux';
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
@@ -41,23 +40,27 @@ function WelcomeTour() {
 		isNewPageLayoutModalOpen,
 		siteEditorCanvasMode,
 	} = useSelect( ( select ) => {
-		const welcomeGuideStoreSelect = select( 'automattic/wpcom-welcome-guide' );
-		const starterPageLayoutsStoreSelect = select( 'automattic/starter-page-layouts' );
+		const {
+			isWelcomeGuideShown,
+			isWelcomeGuideStatusLoaded,
+			getWelcomeGuideVariant,
+			isWelcomeGuideManuallyOpened,
+		} = select( welcomeGuideStore );
 		const _canvasMode =
 			select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode();
 		return {
-			show: welcomeGuideStoreSelect.isWelcomeGuideShown(),
-			isLoaded: welcomeGuideStoreSelect.isWelcomeGuideStatusLoaded(),
-			variant: welcomeGuideStoreSelect.getWelcomeGuideVariant(),
-			isManuallyOpened: welcomeGuideStoreSelect.isWelcomeGuideManuallyOpened(),
-			isNewPageLayoutModalOpen: starterPageLayoutsStoreSelect?.isOpen(), // Handle the case where SPT is not initalized.
+			show: isWelcomeGuideShown(),
+			isLoaded: isWelcomeGuideStatusLoaded(),
+			variant: getWelcomeGuideVariant(),
+			isManuallyOpened: isWelcomeGuideManuallyOpened(),
+			isNewPageLayoutModalOpen: select( 'automattic/starter-page-layouts' )?.isOpen(), // Handle the case where SPT is not initalized.
 			siteEditorCanvasMode: _canvasMode,
 		};
 	}, [] );
 
 	const setOpenState = useDispatch( 'automattic/starter-page-layouts' )?.setOpenState;
 
-	const { fetchWelcomeGuideStatus } = useDispatch( 'automattic/wpcom-welcome-guide' );
+	const { fetchWelcomeGuideStatus } = useDispatch( welcomeGuideStore );
 
 	// On mount check if the WPCOM welcome guide status exists in state (from local storage), otherwise fetch it from the API.
 	useEffect( () => {
