@@ -12,6 +12,7 @@ export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( {
 } ) => {
 	const translate = useTranslate();
 
+	// TODO: Refactor the external link with indirect checkout logic.
 	const isExternalLink = ( isExternal && item.externalUrl ) || !! externalLink;
 
 	const href = isExternalLink ? externalLink || item.externalUrl : `#${ item.productSlug }`;

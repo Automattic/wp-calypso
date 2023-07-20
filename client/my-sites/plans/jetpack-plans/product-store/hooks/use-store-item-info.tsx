@@ -42,6 +42,7 @@ import { UseStoreItemInfoProps } from '../types';
 import { useShoppingCartTracker } from './use-shopping-cart-tracker';
 const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
 
+// TODO: Refactor indirect checkout products checking since they have only similar behaviors to external products but are different.
 const getIsExternal = ( item: SelectorProduct ) =>
 	EXTERNAL_PRODUCTS_LIST.includes( item.productSlug ) ||
 	INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( item.productSlug );

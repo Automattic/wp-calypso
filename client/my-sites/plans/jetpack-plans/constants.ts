@@ -161,6 +161,7 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct >
 
 // Jetpack Stats
 
+// TODO: We'll need to internationalize currencies like we did for the purchase page.
 const STATS_COMMERCIAL_PRICE = 10;
 const STATS_COMMERCIAL_CURRENCY = 'USD';
 
@@ -186,7 +187,7 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS = (): SelectorProduct => ( {
 		items: [],
 	},
 	hidePrice: true,
-	// TODO: Update the URL when the Paid Stats purchase page is ready.
+	// TODO: Refactor the naming for indirect checkout and update the URL when the Paid Stats purchase page is ready.
 	externalUrl: '/stats/purchase/{siteSlug}?flags=stats/paid-stats',
 } );
 
@@ -210,7 +211,7 @@ export const INDIRECT_CHECKOUT_PRODUCTS_LIST = [
 	PRODUCT_JETPACK_STATS_FREE,
 ];
 
-// Indrect checkout Product slugs to SelectorProduct.
+// Indirect checkout Product slugs to SelectorProduct.
 export const INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct > = {
 	[ PRODUCT_JETPACK_STATS_MONTHLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS,
 	[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY,

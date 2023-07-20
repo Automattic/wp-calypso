@@ -36,6 +36,7 @@ export const useProductLightbox = () => {
 					} )
 				);
 
+				// We don't need to show the lightbox for external and indirect checkout products since they have their own landing pages.
 				if (
 					! EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) &&
 					! INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( product.productSlug )

@@ -195,7 +195,7 @@ const useItemPrice = (
 		originalPrice = item.displayPrice || -1;
 	}
 
-	// Jetpack Stats price won't come from the API, so we need to hard-code it for now.
+	// TODO: Fetch the price from the API when it's available.
 	if (
 		item &&
 		JETPACK_STATS_PRODUCTS.includes(
