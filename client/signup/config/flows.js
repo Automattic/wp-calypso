@@ -4,6 +4,7 @@ import {
 	DOT_ORG_THEME,
 	WOOCOMMERCE_THEME,
 	MARKETPLACE_THEME,
+	PAID_PLUGIN,
 	shouldGoToAssembler,
 } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
@@ -163,6 +164,16 @@ function getWithThemeDestination( {
 	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
 }
 
+function getWithPluginDestination( { siteSlug, pluginParameter, pluginType } ) {
+	// send to the thank you page
+	if ( pluginType === PAID_PLUGIN ) {
+		return '/apparently_this_is_needed';
+	}
+
+	// defaults to free plugin route
+	return `/marketplace/plugin/${ pluginParameter }/install/${ siteSlug }`;
+}
+
 function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
 }
@@ -218,6 +229,7 @@ const flows = generateFlows( {
 	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
 	getWithThemeDestination,
+	getWithPluginDestination,
 	getEditorDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,

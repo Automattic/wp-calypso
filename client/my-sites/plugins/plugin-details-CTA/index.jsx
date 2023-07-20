@@ -5,6 +5,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
+import { FREE_PLUGIN, PAID_PLUGIN } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback, useMemo } from 'react';
@@ -199,6 +200,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 				) }
 				{ ! selectedSite && ! isLoggedIn && (
 					<GetStartedButton
+						plugin={ plugin }
+						isMarketplaceProduct={ isMarketplaceProduct }
 						onClick={ () => {
 							dispatch(
 								recordTracksEvent( 'calypso_plugin_details_get_started_click', {
@@ -434,7 +437,13 @@ function PrimaryButton( {
 	}, [ dispatch, plugin, isLoggedIn ] );
 
 	if ( ! isLoggedIn ) {
-		return <GetStartedButton onClick={ onClick } />;
+		return (
+			<GetStartedButton
+				onClick={ onClick }
+				plugin={ plugin }
+				isMarketplaceProduct={ isMarketplaceProduct }
+			/>
+		);
 	}
 	if ( plugin.isSaasProduct ) {
 		return (
@@ -459,15 +468,17 @@ function PrimaryButton( {
 	);
 }
 
-function GetStartedButton( { onClick } ) {
+function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
 
 	const startUrl = addQueryArgs(
 		{
 			ref: sectionName + '-lp',
+			plugin: plugin.slug,
+			plugin_type: isMarketplaceProduct ? PAID_PLUGIN : FREE_PLUGIN,
 		},
-		'/start/business'
+		'/start/with-plugin'
 	);
 	return (
 		<Button

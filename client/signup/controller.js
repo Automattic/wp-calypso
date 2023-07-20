@@ -289,12 +289,17 @@ export default {
 		const themeParameter = query && query.theme;
 		const themeType = query && query.theme_type;
 		const styleVariation = query && query.style_variation;
+		// Set plugin parameter in signup dependency store so we can retrieve it in getWithPluginDestination().
+		const pluginParameter = query && query.plugin;
+		const pluginType = query && query.plugin_type;
 
 		const additionalDependencies = {
 			...( refParameter && { refParameter } ),
 			...( themeParameter && { themeParameter } ),
 			...( themeType && { themeType } ),
 			...( styleVariation && { styleVariation } ),
+			...( pluginParameter && { pluginParameter } ),
+			...( pluginType && { pluginType } ),
 		};
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
