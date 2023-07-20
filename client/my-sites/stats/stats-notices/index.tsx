@@ -5,6 +5,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FeedbackNotice from './feedback-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
@@ -15,6 +16,8 @@ import { NewStatsNoticesProps, StatsNoticesProps, PurchaseNoticesProps } from '.
 import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-products';
 import './style.scss';
 
+const TEAM51_OWNER_ID = 70055110;
+
 /**
  * New notices aim to support Calypso and Odyssey stats.
  * New notices are based on async API call and hence is faster than the old notices.
@@ -23,6 +26,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
 	const isSiteVip = useSelector( ( state ) => isVipSite( state as object, siteId as number ) );
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state as object, siteId as number ) );
+	const isTeam51Site = useSelector(
+		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
+	);
 
 	// TODO: Display error messages on the notice.
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
@@ -31,6 +37,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 		config.isEnabled( 'stats/paid-stats' ) &&
 		! isSiteVip &&
 		! isP2 &&
+		! isTeam51Site &&
 		! hasPaidStats &&
 		hasLoadedPurchases;
 
