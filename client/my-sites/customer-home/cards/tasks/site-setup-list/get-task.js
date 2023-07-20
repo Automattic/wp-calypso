@@ -152,9 +152,9 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.CART_ITEMS_ABANDONED:
 			taskData = {
 				timing: 5,
-				title: translate( 'Unlock all the benefits of managed hosting' ),
+				title: translate( 'Complete checkout' ),
 				description: translate(
-					'Complete your checkout to unlock all the benefits of managed hosting, including daily backups, security scanning, and more.'
+					'Unlock all the benefits of managed hosting, including unmetered bandwidth, multisite management, and realtime backups.'
 				),
 				actionText: translate( 'Go to checkout' ),
 				actionUrl: `/checkout/${ siteSlug }`,
