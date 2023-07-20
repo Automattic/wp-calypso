@@ -1,6 +1,7 @@
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { requestSitePosts } from 'calypso/state/posts/actions';
+import { requestSiteSettings } from 'calypso/state/site-settings/actions';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import {
 	getActiveTheme,
@@ -61,7 +62,9 @@ export function themeActivated(
 		// the admin bar to ensure that those updates are displayed in the UI.
 		dispatch( requestAdminMenu( siteId ) );
 
-		// Update pages in case the front page was updated on theme switch.
+		// In case the front page options were updated on theme switch,
+		// request the latest settings and pages to reflect them.
+		dispatch( requestSiteSettings( siteId ) );
 		dispatch( requestSitePosts( siteId, { type: 'page' } ) );
 	};
 }

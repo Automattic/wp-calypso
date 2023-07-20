@@ -22,9 +22,9 @@ const Intro: Step = function Intro( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-transfer-header"
-					headerText={ __( 'Domain Transfer Center' ) }
+					headerText={ __( 'Transfer Your Domains' ) }
 					subHeaderText={ __(
-						'Follow these 3 simple steps to transfer your domains to WordPress.com.'
+						'Follow these three simple steps to transfer your domains to WordPress.com.'
 					) }
 				/>
 			}

@@ -33,6 +33,7 @@ const CustomerHomeLaunchpad = ( {
 	const tasklistCompleted = completedSteps === numberOfSteps;
 
 	useEffect( () => {
+		// Record task list view as a whole.
 		recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
 			checklist_slug: checklistSlug,
 			tasks: `,${ checklist?.map( ( task: Task ) => task.id ).join( ',' ) },`,
@@ -40,6 +41,16 @@ const CustomerHomeLaunchpad = ( {
 			number_of_steps: numberOfSteps,
 			number_of_completed_steps: completedSteps,
 			context: 'customer-home',
+		} );
+
+		// Record views for each task.
+		checklist?.map( ( task: Task ) => {
+			recordTracksEvent( 'calypso_launchpad_task_view', {
+				checklist_slug: checklistSlug,
+				task_id: task.id,
+				is_completed: task.completed,
+				context: 'customer-home',
+			} );
 		} );
 	}, [ checklist, checklistSlug, completedSteps, numberOfSteps, tasklistCompleted ] );
 

@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 export type Notices = {
-	free_plan_purchase_success: boolean;
 	new_stats_feedback: boolean;
 	opt_in_new_stats: boolean;
 	opt_out_new_stats: boolean;

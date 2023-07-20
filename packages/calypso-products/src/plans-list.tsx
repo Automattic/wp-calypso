@@ -1013,8 +1013,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
-	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature ) => {
-		if ( showLegacyStorageFeature ) {
+	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature, isCurrentPlan ) => {
+		if ( showLegacyStorageFeature && isCurrentPlan ) {
 			return [ FEATURE_200GB_STORAGE ];
 		}
 

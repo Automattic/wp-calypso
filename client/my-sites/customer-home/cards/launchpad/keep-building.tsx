@@ -49,13 +49,6 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 		const sortedTasks = [ ...completedTasks, ...incompleteTasks ];
 
 		return sortedTasks.map( ( task: Task ) => {
-			recordTracksEvent( 'calypso_launchpad_task_view', {
-				checklist_slug: checklistSlug,
-				task_id: task.id,
-				is_completed: task.completed,
-				context: 'customer-home',
-			} );
-
 			let actionDispatch;
 
 			switch ( task.id ) {
