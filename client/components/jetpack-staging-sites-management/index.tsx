@@ -80,7 +80,6 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 					<div className="setting-option">
 						<div className="setting-option__toggle">
 							<ToggleControl
-								label={ translate( 'Set staging site.' ) }
 								disabled={ isLoading }
 								checked={ isStaging }
 								onChange={ toggleStagingFlag }
