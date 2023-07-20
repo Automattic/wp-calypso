@@ -155,10 +155,9 @@
 	}
 
 	.domains__domain-validation {
-		margin-top: 12px;
-
 		&.is-mobile {
 			display: none;
+			margin-top: 5px;
 		}
 
 		&.is-desktop {
@@ -418,6 +417,11 @@
 
 			a {
 				text-decoration: underline;
+			}
+
+			// Remove left-padding for first button to minimize padding when line wraps on mobile.
+			button:first-of-type {
+				padding-left: 0;
 			}
 		}
 	}

@@ -133,12 +133,13 @@ export function DomainCodePair( {
 
 	const domainActions = (
 		<>
+			&nbsp;
 			<Button
 				// Disable the delete button on initial state meaning. no domain, no auth and one row.
 				disabled={ ! domain && ! auth && domainCount === 1 }
 				onClick={ () => onRemove( id ) }
 			>
-				<span className="delete-label">{ __( 'Delete' ) }</span>
+				<span className="delete-label">{ __( 'Discard Domain' ) }</span>
 			</Button>
 			<Button
 				title={ __( 'Refresh' ) }
@@ -221,23 +222,19 @@ export function DomainCodePair( {
 						/>
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
+					{ ( shouldReportError || ( message && loading ) ) && (
+						<div className="domains__domain-validation is-mobile">
+							{ shouldReportError && (
+								<FormInputValidation
+									isError={ ! valid }
+									text={ message }
+									children={ domainActions }
+								></FormInputValidation>
+							) }
+							{ message && loading && <FormExplanation>{ message }</FormExplanation> }
+						</div>
+					) }
 				</div>
-				{ ( shouldReportError || ( message && loading ) ) && (
-					<div className="domains__domain-validation is-mobile">
-						{ shouldReportError && (
-							<FormInputValidation
-								isError={ ! valid }
-								text={ message }
-								children={ domainActions }
-							></FormInputValidation>
-						) }
-						{ message && loading && (
-							<div>
-								<FormExplanation>{ message }</FormExplanation>
-							</div>
-						) }
-					</div>
-				) }
 				<div className="domains__domain-price">
 					<FormFieldset>
 						<FormLabel
