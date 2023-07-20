@@ -35,8 +35,6 @@ export {
 	DOT_ORG_THEME,
 	WOOCOMMERCE_THEME,
 	MARKETPLACE_THEME,
-	PAID_PLUGIN,
-	FREE_PLUGIN,
 } from './constants';
 export type {
 	FontPair,

@@ -5,7 +5,6 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
-import { FREE_PLUGIN, PAID_PLUGIN } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback, useMemo } from 'react';
@@ -471,12 +470,13 @@ function PrimaryButton( {
 function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
+	const billingPeriod = useSelector( getBillingInterval );
 
 	const startUrl = addQueryArgs(
 		{
 			ref: sectionName + '-lp',
 			plugin: plugin.slug,
-			plugin_type: isMarketplaceProduct ? PAID_PLUGIN : FREE_PLUGIN,
+			billing_period: isMarketplaceProduct ? billingPeriod : '',
 		},
 		'/start/with-plugin'
 	);

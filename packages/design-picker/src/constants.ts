@@ -82,6 +82,3 @@ export const PREMIUM_THEME = 'premium';
 export const DOT_ORG_THEME = 'dot-org';
 export const WOOCOMMERCE_THEME = 'woocommerce';
 export const MARKETPLACE_THEME = 'marketplace';
-
-export const FREE_PLUGIN = 'free';
-export const PAID_PLUGIN = 'paid';

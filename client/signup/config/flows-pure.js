@@ -115,7 +115,7 @@ export function generateFlows( {
 			description: 'Preselect a plugin to activate/buy, a Business plan is needed',
 			lastModified: '2023-07-19',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'plugin' ],
+			providesDependenciesInQuery: [ 'plugin', 'billing_period' ],
 		},
 		{
 			name: 'onboarding',
