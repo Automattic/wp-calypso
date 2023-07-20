@@ -62,7 +62,11 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
-			<PageViewTracker path="/stats/purchase/:site" title="Stats > Purchase" />
+			<PageViewTracker
+				path="/stats/purchase/:site"
+				title="Stats > Purchase"
+				options={ { from: query.from } }
+			/>
 			<div className="stats">
 				<QueryProductsList />
 				{
