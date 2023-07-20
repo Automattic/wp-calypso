@@ -116,6 +116,15 @@ function waitForPreferredEditorView( context ) {
 export const authenticate = ( context, next ) => {
 	const state = context.store.getState();
 
+	logToLogstash( {
+		feature: 'calypso_client',
+		message: 'e2e atomic auth redirect',
+		severity: 'debug',
+		extra: {
+			state: 'checking if authenticate is even called',
+		},
+	} );
+
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isDesktop = isEnabled( 'desktop' );
