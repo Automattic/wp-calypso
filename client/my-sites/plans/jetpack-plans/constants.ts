@@ -187,8 +187,8 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS = (): SelectorProduct => ( {
 		items: [],
 	},
 	hidePrice: true,
-	// TODO: Refactor the checkout URL and update it when the Paid Stats purchase page is released.
-	externalUrl: '/stats/purchase/{siteSlug}?from=calypso-plans&flags=stats/paid-stats',
+	// TODO: Refactor the checkout URL.
+	externalUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
 } );
 
 export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct => ( {
