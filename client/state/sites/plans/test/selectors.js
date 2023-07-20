@@ -1,6 +1,6 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { userState } from 'client/state/selectors/test/fixtures/user-state';
 import deepFreeze from 'deep-freeze';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getCurrentPlan,
 	getPlanDiscountedRawPrice,

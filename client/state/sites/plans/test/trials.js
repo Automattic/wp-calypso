@@ -3,9 +3,9 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { userState } from 'client/state/selectors/test/fixtures/user-state';
 import deepFreeze from 'deep-freeze';
 import moment from 'moment';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getECommerceTrialDaysLeft,
 	getECommerceTrialExpiration,
