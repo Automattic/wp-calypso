@@ -19,7 +19,7 @@ type OdieAssistantProps = {
 };
 
 const OdieAssistant = ( props: OdieAssistantProps ) => {
-	const { simple } = props;
+	const { simple, botNameSlug } = props;
 	const {
 		lastNudge,
 		chat,
@@ -128,7 +128,8 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_odie_chat_toggle_visibility_click', {
 				visible: newVisibility,
-				bot_name_slug: 'wapuu',
+				bot_name_slug: botNameSlug,
+				simple_chatbox: simple,
 			} )
 		);
 
