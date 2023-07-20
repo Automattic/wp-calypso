@@ -14,11 +14,12 @@ import {
 	useJetpackAgencyDashboardRecordTrackEvent,
 } from '../../hooks';
 import SitesOverviewContext from '../context';
+import useDefaultSiteColumns from '../hooks/use-default-site-columns';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
-import { formatSites, getProductSlugFromProductType, siteColumns } from '../utils';
+import { formatSites, getProductSlugFromProductType } from '../utils';
 
 import './style.scss';
 
@@ -55,7 +56,8 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 
 	const isLargeScreen = useDashboardShowLargeScreen( siteTableRef, ref );
 
-	const firstColumn = siteColumns[ 0 ];
+	const defaultSiteColumns = useDefaultSiteColumns();
+	const firstColumn = defaultSiteColumns[ 0 ];
 
 	const { data: products } = useProductsQuery();
 
@@ -98,7 +100,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 					<SiteTable
 						ref={ siteTableRef }
 						isLoading={ isLoading }
-						columns={ siteColumns }
+						columns={ defaultSiteColumns }
 						items={ sites }
 					/>
 				</div>
@@ -126,7 +128,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 								<>
 									{ sites.length > 0 &&
 										sites.map( ( rows, index ) => (
-											<SiteCard key={ index } columns={ siteColumns } rows={ rows } />
+											<SiteCard key={ index } columns={ defaultSiteColumns } rows={ rows } />
 										) ) }
 								</>
 							) }
