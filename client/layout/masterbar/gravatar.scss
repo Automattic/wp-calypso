@@ -3,7 +3,7 @@
 
 .gravatar-masterbar {
 	position: absolute;
-	padding: 18px 20px;
+	padding: 18px 21px;
 	z-index: z-index("root", ".masterbar");
 
 	@include break-mobile {

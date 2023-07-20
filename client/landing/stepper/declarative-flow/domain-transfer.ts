@@ -123,6 +123,7 @@ const domainTransfer: Flow = {
 
 		return { goBack, submit };
 	},
+	hasHelpCenter: true,
 };
 
 export default domainTransfer;

@@ -134,6 +134,9 @@ window.AppBoot = async () => {
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }
+					{ flow.hasHelpCenter && (
+						<AsyncLoad require="./stepper-help-center" placeholder={ null } />
+					) }
 				</QueryClientProvider>
 			</Provider>
 		</CalypsoI18nProvider>,
