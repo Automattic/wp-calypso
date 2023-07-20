@@ -62,8 +62,8 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				preventWidows={ preventWidows }
 				onSelect={ onSubmit }
 			/>
-			<div style={ { display: 'flex', justifyContent: 'center' } }>
-				<Button variant="primary" onClick={ onSubmit }>
+			<div className="bulk-domain-transfer__cta-container">
+				<Button className="bulk-domain-transfer__cta" onClick={ onSubmit }>
 					{ __( 'Get Started' ) }
 				</Button>
 			</div>
