@@ -220,11 +220,20 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					{ __( 'Add more' ) }
 				</Button>
 			) }
+			<div className="bulk-domain-transfer__cta-container">
+				<Button
+					disabled={ numberOfValidDomains === 0 || ! allGood }
+					className="bulk-domain-transfer__cta"
+					onClick={ handleAddTransfer }
+				>
+					{ getTransferButtonText() }
+				</Button>
+			</div>
 			{ numberOfValidDomains > 0 && (
-				<>
+				<div className="bulk-domain-transfer__import-dns-records">
 					<FormLabel
 						htmlFor="import-dns-records"
-						className="bulk-domain-transfer__import-dns-records"
+						className="bulk-domain-transfer__import-dns-records-label"
 					>
 						<FormInputCheckbox
 							id="import-dns-records"
@@ -235,17 +244,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						/>
 						<span>{ __( 'Import DNS records from these domains' ) }</span>
 					</FormLabel>
-				</>
+				</div>
 			) }
-			<div className="bulk-domain-transfer__cta-container">
-				<Button
-					disabled={ numberOfValidDomains === 0 || ! allGood }
-					className="bulk-domain-transfer__cta"
-					onClick={ handleAddTransfer }
-				>
-					{ getTransferButtonText() }
-				</Button>
-			</div>
 			{ isEnabled( 'domain-transfer/faq' ) && (
 				<div className="bulk-domain-transfer__faqs">
 					<DomainTransferFAQ />
