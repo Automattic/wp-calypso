@@ -317,57 +317,6 @@
 		}
 	}
 
-
-	.domains__domain-controls {
-		display: flex;
-		gap: 16px;
-		flex: 1;
-
-		button {
-			&:hover {
-				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, var(--studio-blue-60)));
-			}
-		}
-
-		@media (min-width: $break-medium ) {
-			margin-left: -25px;
-		}
-
-		.domains__domain-refresh {
-			button {
-				cursor: pointer;
-
-				.refresh-label {
-					margin-left: 4px;
-				}
-			}
-
-			.refresh-label {
-				display: none;
-			}
-
-			@media (max-width: $break-medium ) {
-				.refresh-label {
-					display: block;
-				}
-			}
-		}
-
-		.domains__domain-delete {
-			.delete-label {
-				display: none;
-			}
-
-			@media (max-width: $break-medium ) {
-				order: 1;
-
-				.delete-label {
-					display: block;
-				}
-			}
-		}
-	}
-
 	.bulk-domain-transfer__container {
 
 		.bulk-domain-transfer__add-domain {
