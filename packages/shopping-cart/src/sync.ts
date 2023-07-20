@@ -81,7 +81,7 @@ export function createCartSyncManager(
 					debug( 'update cart request complete', requestCart, '; updated cart is', response );
 					dispatch( {
 						type: 'RECEIVE_UPDATED_RESPONSE_CART',
-						updatedResponseCart: convertRawResponseCartToResponseCart( response ),
+						updatedResponseCart: convertRawResponseCartToResponseCart( mockResponse( response ) ),
 					} );
 				} )
 				.catch( ( error ) => {
