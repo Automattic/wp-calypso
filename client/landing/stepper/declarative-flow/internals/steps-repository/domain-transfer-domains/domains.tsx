@@ -39,23 +39,6 @@ const defaultState: DomainTransferForm = {
 	},
 };
 
-const getFormattedTotalPrice = ( state: DomainTransferData ) => {
-	if ( Object.keys( state ).length > 0 ) {
-		const currencyCode = Object.values( state )[ 0 ].currencyCode;
-		const totalPrice = Object.values( state ).reduce( ( total, currentDomain ) => {
-			if ( currentDomain.saleCost || currentDomain.saleCost === 0 ) {
-				return total + currentDomain.saleCost;
-			}
-
-			return total + currentDomain.rawPrice;
-		}, 0 );
-
-		return formatCurrency( totalPrice, currencyCode ?? 'USD', { stripZeros: true } );
-	}
-
-	return 0;
-};
-
 const getTotalPrice = ( state: DomainTransferData ) => {
 	if ( Object.keys( state ).length > 0 ) {
 		return Object.values( state ).reduce( ( total, currentDomain ) => {
@@ -65,6 +48,17 @@ const getTotalPrice = ( state: DomainTransferData ) => {
 
 			return total + currentDomain.rawPrice;
 		}, 0 );
+	}
+
+	return 0;
+};
+
+const getFormattedTotalPrice = ( state: DomainTransferData ) => {
+	if ( Object.keys( state ).length > 0 ) {
+		const currencyCode = Object.values( state )[ 0 ].currencyCode;
+		const totalPrice = getTotalPrice( state );
+
+		return formatCurrency( totalPrice, currencyCode ?? 'USD', { stripZeros: true } );
 	}
 
 	return 0;
