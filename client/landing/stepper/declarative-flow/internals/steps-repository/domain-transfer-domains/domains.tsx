@@ -85,7 +85,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const { setPendingAction, setDomainsTransferData, setShouldImportDomainTransferDnsRecords } =
 		useDispatch( ONBOARD_STORE );
 
-	const { __ } = useI18n();
+	const { __, _n } = useI18n();
 
 	const filledDomainValues = Object.values( domainsState ).filter( ( x ) => x.domain && x.auth );
 	const allGood = filledDomainValues.every( ( { valid } ) => valid );
@@ -214,23 +214,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					{ __( 'Add more' ) }
 				</Button>
 			) }
-			{ numberOfValidDomains > 0 && (
-				<>
-					<FormLabel
-						htmlFor="import-dns-records"
-						className="bulk-domain-transfer__import-dns-records"
-					>
-						<FormInputCheckbox
-							id="import-dns-records"
-							onChange={ ( event ) => {
-								setShouldImportDomainTransferDnsRecords( event.target.checked );
-							} }
-							checked={ storedDomainsState.shouldImportDnsRecords }
-						/>
-						<span>{ __( 'Import DNS records from these domains' ) }</span>
-					</FormLabel>
-				</>
-			) }
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }
@@ -240,6 +223,29 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					{ getTransferButtonText() }
 				</Button>
 			</div>
+			{ numberOfValidDomains > 0 && (
+				<div className="bulk-domain-transfer__import-dns-records">
+					<FormLabel
+						htmlFor="import-dns-records"
+						className="bulk-domain-transfer__import-dns-records-label"
+					>
+						<FormInputCheckbox
+							id="import-dns-records"
+							onChange={ ( event ) => {
+								setShouldImportDomainTransferDnsRecords( event.target.checked );
+							} }
+							checked={ storedDomainsState.shouldImportDnsRecords }
+						/>
+						<span>
+							{ _n(
+								'Import DNS records from this domain',
+								'Import DNS records from these domains',
+								domainCount
+							) }
+						</span>
+					</FormLabel>
+				</div>
+			) }
 			{ isEnabled( 'domain-transfer/faq' ) && (
 				<div className="bulk-domain-transfer__faqs">
 					<DomainTransferFAQ />
