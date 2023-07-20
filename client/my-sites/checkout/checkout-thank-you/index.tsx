@@ -31,7 +31,6 @@ import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -635,7 +634,6 @@ export class CheckoutThankYou extends Component<
 				) }
 				{ isRedesignV2( this.props ) && this.props.selectedSite?.ID && (
 					<>
-						<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
 						<MasterbarStyled
 							onClick={ () => page( `/home/${ this.props.selectedSiteSlug ?? '' }` ) }
 							backText={ translate( 'Back to dashboard' ) }
