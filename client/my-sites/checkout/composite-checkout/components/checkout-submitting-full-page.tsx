@@ -26,7 +26,7 @@ const SubmittingTitle = styled.div`
 `;
 
 export function CheckoutSubmittingFullPage() {
-	const showLoadingInfoThresholdMs = 3000;
+	const showLoadingInfoThresholdMs = 4000;
 	const [ shouldShowLoadingInfo, setShowLoadingInfo ] = useState( false );
 	useEffect( () => {
 		const timer = setTimeout( () => {
