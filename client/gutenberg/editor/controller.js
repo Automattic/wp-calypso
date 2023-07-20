@@ -188,12 +188,11 @@ export const authenticate = ( context, next ) => {
 	);
 
 	logToLogstash( {
-		site_id: 204039232,
 		feature: 'calypso_client',
 		message: 'e2e atomic auth redirect',
 		severity: 'debug',
 		extra: {
-			state: 'checking if it works with smaller data',
+			state: 'checking if it works at all',
 		},
 	} );
 
