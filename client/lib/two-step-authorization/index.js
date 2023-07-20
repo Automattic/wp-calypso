@@ -3,6 +3,7 @@ import { get as webauthn_auth } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import emitter from 'calypso/lib/mixins/emitter';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import wp from 'calypso/lib/wp';
@@ -59,6 +60,16 @@ TwoStepAuthorization.prototype.fetch = function ( callback ) {
 
 TwoStepAuthorization.prototype.postLoginRequest = function ( endpoint, data ) {
 	if ( ! this.getTwoStepWebauthnNonce() ) {
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'e2e atomic auth redirect',
+			severity: 'debug',
+			extra: {
+				message: 'Invalid nonce',
+				endpoint,
+			},
+		} );
+
 		return Promise.reject( 'Invalid nonce' );
 	}
 
