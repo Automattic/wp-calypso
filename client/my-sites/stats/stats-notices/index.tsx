@@ -10,7 +10,7 @@ import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-succ
 import LegacyStatsNotices from './legacy-notices';
 import OptOutNotice from './opt-out-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
-import { StatsNoticesProps } from './types';
+import { NewStatsNoticesProps, StatsNoticesProps, PurchaseNoticesProps } from './types';
 import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-products';
 import './style.scss';
 
@@ -18,7 +18,7 @@ import './style.scss';
  * New notices aim to support Calypso and Odyssey stats.
  * New notices are based on async API call and hence is faster than the old notices.
  */
-const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
+const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => {
 	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -33,17 +33,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		! hasPaidStats &&
 		hasLoadedPurchases;
 
-	const showFreePlanPurchaseSuccessNotice = config.isEnabled( 'stats/paid-stats' ) && false;
-	const showPaidPlanPurchaseSuccessNotice = config.isEnabled( 'stats/paid-stats' ) && false;
-
 	return (
 		<>
-			{ showPaidPlanPurchaseSuccessNotice && (
-				<PaidPlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
-			) }
-			{ showFreePlanPurchaseSuccessNotice && (
-				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
-			) }
 			{ showPaidStatsNotice && <DoYouLoveJetpackStatsNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <OptOutNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <FeedbackNotice siteId={ siteId } /> }
@@ -51,19 +42,43 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	);
 };
 
+const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: PurchaseNoticesProps ) => {
+	// Check if the GET param is passed to show the Free or Paid plan purchase notices
+	const showFreePlanPurchaseSuccessNotice = statsPurchaseSuccess === 'free';
+	const showPaidPlanPurchaseSuccessNotice = statsPurchaseSuccess === 'paid';
+
+	return (
+		<>
+			{ /* TODO: Consider combining/refactoring these components into a single component */ }
+			{ showPaidPlanPurchaseSuccessNotice && <PaidPlanPurchaseSuccessJetpackStatsNotice /> }
+			{ showFreePlanPurchaseSuccessNotice && (
+				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
+			) }
+		</>
+	);
+};
+
 /**
  * Return new or old StatsNotices components based on env.
  */
-export default function StatsNotices( { siteId, isOdysseyStats }: StatsNoticesProps ) {
+export default function StatsNotices( {
+	siteId,
+	isOdysseyStats,
+	statsPurchaseSuccess,
+}: StatsNoticesProps ) {
 	const statsAdminVersion = useSelector( ( state: object ) =>
 		getJetpackStatsAdminVersion( state, siteId )
 	);
+
 	const supportNewStatsNotices =
 		! isOdysseyStats ||
 		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
 
 	return supportNewStatsNotices ? (
-		<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
+		<>
+			<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
+			<PostPurchaseNotices siteId={ siteId } statsPurchaseSuccess={ statsPurchaseSuccess } />
+		</>
 	) : (
 		<LegacyStatsNotices siteId={ siteId } />
 	);

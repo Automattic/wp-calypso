@@ -25,6 +25,8 @@ const ContactContainer = styled.div`
 	}
 	button.thank-you-help-center {
 		text-decoration: underline;
+		line-height: 20px;
+		font-size: 14px;
 	}
 	.gridicon {
 		display: block;

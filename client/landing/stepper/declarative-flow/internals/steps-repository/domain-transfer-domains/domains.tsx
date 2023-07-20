@@ -39,16 +39,24 @@ const defaultState: DomainTransferForm = {
 	},
 };
 
-const getFormattedTotalPrice = ( state: DomainTransferData ) => {
+const getTotalPrice = ( state: DomainTransferData ) => {
 	if ( Object.keys( state ).length > 0 ) {
-		const currencyCode = Object.values( state )[ 0 ].currencyCode;
-		const totalPrice = Object.values( state ).reduce( ( total, currentDomain ) => {
+		return Object.values( state ).reduce( ( total, currentDomain ) => {
 			if ( currentDomain.saleCost || currentDomain.saleCost === 0 ) {
 				return total + currentDomain.saleCost;
 			}
 
 			return total + currentDomain.rawPrice;
 		}, 0 );
+	}
+
+	return 0;
+};
+
+const getFormattedTotalPrice = ( state: DomainTransferData ) => {
+	if ( Object.keys( state ).length > 0 ) {
+		const currencyCode = Object.values( state )[ 0 ].currencyCode;
+		const totalPrice = getTotalPrice( state );
 
 		return formatCurrency( totalPrice, currencyCode ?? 'USD', { stripZeros: true } );
 	}
@@ -166,6 +174,23 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		setDomainsTransferData( newDomainsState );
 	}
 
+	function getTransferButtonText() {
+		if ( numberOfValidDomains === 0 ) {
+			return __( 'Transfer' );
+		}
+
+		const totalPrice = getTotalPrice( domainsState );
+		if ( totalPrice ) {
+			return sprintf(
+				/* translators: %s: total price formatted */
+				__( 'Transfer for %s' ),
+				getFormattedTotalPrice( domainsState )
+			);
+		}
+
+		return __( 'Transfer for free' );
+	}
+
 	return (
 		<div className="bulk-domain-transfer__container">
 			{ Object.entries( domainsState ).map( ( [ key, domain ], index ) => (
@@ -189,16 +214,20 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					{ __( 'Add more' ) }
 				</Button>
 			) }
+			<div className="bulk-domain-transfer__cta-container">
+				<Button
+					disabled={ numberOfValidDomains === 0 || ! allGood }
+					className="bulk-domain-transfer__cta"
+					onClick={ handleAddTransfer }
+				>
+					{ getTransferButtonText() }
+				</Button>
+			</div>
 			{ numberOfValidDomains > 0 && (
-				<>
-					<div className="bulk-domain-transfer__total-price">
-						<div>{ __( 'Total' ) }</div>
-						<div>{ getFormattedTotalPrice( domainsState ) }</div>
-					</div>
-
+				<div className="bulk-domain-transfer__import-dns-records">
 					<FormLabel
 						htmlFor="import-dns-records"
-						className="bulk-domain-transfer__import-dns-records"
+						className="bulk-domain-transfer__import-dns-records-label"
 					>
 						<FormInputCheckbox
 							id="import-dns-records"
@@ -207,25 +236,16 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 							} }
 							checked={ storedDomainsState.shouldImportDnsRecords }
 						/>
-						<span>{ __( 'Import DNS records from these domains' ) }</span>
+						<span>
+							{ _n(
+								'Import DNS records from this domain',
+								'Import DNS records from these domains',
+								domainCount
+							) }
+						</span>
 					</FormLabel>
-				</>
+				</div>
 			) }
-			<div className="bulk-domain-transfer__cta-container">
-				<Button
-					disabled={ numberOfValidDomains === 0 || ! allGood }
-					className="bulk-domain-transfer__cta"
-					onClick={ handleAddTransfer }
-				>
-					{ numberOfValidDomains === 0
-						? __( 'Transfer' )
-						: sprintf(
-								/* translators: %s: number valid domains */
-								_n( 'Transfer %s domain', 'Transfer %s domains', numberOfValidDomains ),
-								numberOfValidDomains
-						  ) }
-				</Button>
-			</div>
 			{ isEnabled( 'domain-transfer/faq' ) && (
 				<div className="bulk-domain-transfer__faqs">
 					<DomainTransferFAQ />

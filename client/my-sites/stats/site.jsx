@@ -239,10 +239,11 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				<StatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
-
-				{ statsPurchaseSuccess && <p>Thank you for using Jetpack Stats</p> }
-
+				<StatsNotices
+					siteId={ siteId }
+					isOdysseyStats={ isOdysseyStats }
+					statsPurchaseSuccess={ statsPurchaseSuccess }
+				/>
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>

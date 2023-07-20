@@ -9,7 +9,7 @@
 
 .step-container.domain-transfer {
 	&.complete {
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium ) {
 			align-items: flex-start;
 			justify-content: center;
 		}
@@ -17,14 +17,17 @@
 		.step-container__header {
 			margin-bottom: 0;
 			margin-top: 0;
-			@media ( max-width: $break-medium ) {
+
+			@media (max-width: $break-medium ) {
 				margin-top: 30px;
 			}
 		}
+
 		.formatted-header {
 			.formatted-header__title {
 				font-size: 3rem;
 			}
+
 			.formatted-header__subtitle {
 				text-align: center;
 
@@ -33,15 +36,19 @@
 					display: block;
 				}
 			}
-			@media ( max-width: $break-medium ) {
+
+			@media (max-width: $break-medium ) {
 				text-align: left;
+
 				.formatted-header__title {
 					font-size: 2rem;
 				}
+
 				.formatted-header__subtitle {
 					text-align: left;
 				}
 			}
+
 			.domain-header-buttons {
 				margin-top: 20px;
 
@@ -52,6 +59,7 @@
 					padding: 10px 24px;
 					height: 40px;
 				}
+
 				.is-secondary {
 					margin-right: 20px;
 					border: 1px solid #c3c4c7;
@@ -62,8 +70,9 @@
 						box-shadow: none;
 					}
 				}
+
 				.manage-all-domains {
-					@media ( max-width: $break-small ) {
+					@media (max-width: $break-small ) {
 						margin-top: 20px;
 					}
 				}
@@ -75,7 +84,8 @@
 			display: flex;
 			flex-direction: column;
 			gap: 50px;
-			@media ( max-width: $break-medium ) {
+
+			@media (max-width: $break-medium ) {
 				width: 100%;
 				gap: 40px;
 			}
@@ -86,6 +96,7 @@
 				justify-content: center;
 
 			}
+
 			.domain-complete-list {
 				margin: 0;
 
@@ -97,11 +108,12 @@
 					gap: 16px;
 					border-radius: 2px;
 					border: 1px solid var(--studio-gray-5);
+
 					&:not(:first-child) {
 						margin-top: 16px;
 					}
 
-					@media ( max-width: $break-medium ) {
+					@media (max-width: $break-medium ) {
 						align-items: flex-start;
 						flex-direction: column;
 					}
@@ -109,9 +121,12 @@
 					h2 {
 						font-weight: 500;
 					}
+
 					p {
 						font-size: 0.875rem;
+						text-align: left;
 					}
+
 					a.components-button {
 						border-radius: 4px;
 						border: 1px solid var(--studio-gray-10);
@@ -119,6 +134,7 @@
 						color: #101517;
 						box-shadow: none;
 						font-weight: 500;
+
 						&:hover {
 							color: unset;
 							box-shadow: none;
@@ -131,10 +147,12 @@
 				display: flex;
 				flex-direction: row;
 				justify-content: center;
+
 				.domain-complete-tips-items {
 					padding: 0 20px;
 					margin-bottom: 50px;
-					@media ( max-width: $break-medium ) {
+
+					@media (max-width: $break-medium ) {
 						flex-direction: column;
 						padding: 0;
 					}
@@ -142,16 +160,19 @@
 					h2 {
 						font-weight: 500;
 					}
+
 					p {
 						font-size: 0.875rem;
 						margin-top: 5px;
 						margin-bottom: 16px;
 					}
+
 					a {
 						text-decoration: underline;
 						font-size: 0.875rem;
 						font-weight: 500;
 					}
+
 					display: flex;
 					gap: 40px;
 				}

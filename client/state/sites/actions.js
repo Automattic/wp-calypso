@@ -258,15 +258,13 @@ export const updateSiteFrontPage = ( siteId, frontPageOptions ) => async ( dispa
 			page_for_posts_id: frontPageOptions.page_for_posts,
 		} );
 
-		dispatch( {
-			type: SITE_FRONT_PAGE_UPDATE,
-			siteId,
-			frontPageOptions: {
+		dispatch(
+			receiveSiteFrontPage( siteId, {
 				show_on_front: response.is_page_on_front ? 'page' : 'posts',
-				page_on_front: parseInt( response.page_on_front_id, 10 ),
-				page_for_posts: parseInt( response.page_for_posts_id, 10 ),
-			},
-		} );
+				page_on_front: response.page_on_front_id,
+				page_for_posts: response.page_for_posts_id,
+			} )
+		);
 	} catch {}
 };
 
@@ -279,6 +277,18 @@ function isPageOnFront( showOnFront ) {
 		default:
 			return undefined;
 	}
+}
+
+export function receiveSiteFrontPage( siteId, { show_on_front, page_on_front, page_for_posts } ) {
+	return {
+		type: SITE_FRONT_PAGE_UPDATE,
+		siteId,
+		frontPageOptions: {
+			show_on_front,
+			page_on_front: parseInt( page_on_front, 10 ),
+			page_for_posts: parseInt( page_for_posts, 10 ),
+		},
+	};
 }
 
 /**
