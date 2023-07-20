@@ -414,6 +414,8 @@
 
 			.form-checkbox + span {
 				display: inline;
+				margin-left: 0.5rem;
+				vertical-align: middle;
 			}
 
 			@media (max-width: $break-medium ) {
