@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null ) => {
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats`;
+	const purchasePath = `/stats/purchase/${ siteId }`;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
