@@ -3,22 +3,6 @@ import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { ExperimentAssignment } from '@automattic/explat-client';
-
-/*
- * We cannot import `loadExperimentAssignment` directly from 'calypso/lib/explat'
- * because it runs a side effect that produces an error on SSR contexts.
- */
-let loadExperimentAssignment = ( experimentName: string ): Promise< ExperimentAssignment > =>
-	Promise.resolve( { experimentName, variationName: null, retrievedTimestamp: 0, ttl: 0 } );
-if ( typeof window !== 'undefined' ) {
-	import( 'calypso/lib/explat' )
-		.then( ( module ) => {
-			loadExperimentAssignment = module.loadExperimentAssignment;
-		} )
-		// eslint-disable-next-line @typescript-eslint/no-empty-function
-		.catch( () => {} );
-}
 
 export type GlobalStylesStatus = {
 	shouldLimitGlobalStyles: boolean;
@@ -62,19 +46,16 @@ const getGlobalStylesInfoForSite = ( siteId: number | null ): Promise< GlobalSty
 		return Promise.resolve( {
 			shouldLimitGlobalStyles: true,
 			globalStylesInUse: false,
-			globalStylesInPersonalPlan: false,
+			globalStylesInPersonalPlan: true,
 		} );
 	}
 
 	if ( siteId === null ) {
-		return loadExperimentAssignment( 'calypso_global_styles_personal_v2' ).then(
-			( experimentAssignment ) =>
-				Promise.resolve( {
-					shouldLimitGlobalStyles: true,
-					globalStylesInUse: false,
-					globalStylesInPersonalPlan: experimentAssignment.variationName === 'treatment',
-				} )
-		);
+		return Promise.resolve( {
+			shouldLimitGlobalStyles: true,
+			globalStylesInUse: false,
+			globalStylesInPersonalPlan: true,
+		} );
 	}
 
 	return wpcom.req
