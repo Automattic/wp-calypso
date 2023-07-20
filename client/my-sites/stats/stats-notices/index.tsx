@@ -44,10 +44,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 
 const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: PurchaseNoticesProps ) => {
 	// Check if the GET param is passed to show the Free or Paid plan purchase notices
-	const showFreePlanPurchaseSuccessNotice =
-		config.isEnabled( 'stats/paid-stats' ) && statsPurchaseSuccess === 'free';
-	const showPaidPlanPurchaseSuccessNotice =
-		config.isEnabled( 'stats/paid-stats' ) && statsPurchaseSuccess === 'paid';
+	const showFreePlanPurchaseSuccessNotice = statsPurchaseSuccess === 'free';
+	const showPaidPlanPurchaseSuccessNotice = statsPurchaseSuccess === 'paid';
 
 	return (
 		<>
