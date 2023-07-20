@@ -1466,13 +1466,19 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Power your' +
 				' business website with custom plugins and themes,' +
-				' 50 GB storage, and the ability to remove WordPress.com branding.',
-			plansDescriptionHeadingComponent
+				' %(nmOfGB)s GB storage, and the ability to remove WordPress.com branding.',
+			{
+				...plansDescriptionHeadingComponent,
+				args: {
+					nmOfGB: isEnabled( 'plans/updated-storage-labels' ) ? '50' : '200',
+				},
+			}
 		),
 	getShortDescription: () =>
 		i18n.translate(
 			'Power your business website with custom plugins and themes,' +
-				' 50 GB storage, and the ability to remove WordPress.com branding.'
+				' %(nmOfGB)s GB storage, and the ability to remove WordPress.com branding.',
+			{ args: { nmOfGB: isEnabled( 'plans/updated-storage-labels' ) ? '50' : '200' } }
 		),
 	getTagline: () =>
 		i18n.translate(
