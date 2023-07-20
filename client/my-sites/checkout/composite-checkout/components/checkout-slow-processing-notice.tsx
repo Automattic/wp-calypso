@@ -25,7 +25,8 @@ const SubmittingTitle = styled.div`
 	margin: 0;
 `;
 
-export function CheckoutSubmittingFullPage() {
+export function CheckoutSlowProcessingNotice() {
+	// This component will display its notice after this timeout is reached.
 	const showLoadingInfoThresholdMs = 4000;
 	const [ shouldShowLoadingInfo, setShowLoadingInfo ] = useState( false );
 	useEffect( () => {
