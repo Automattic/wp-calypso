@@ -143,7 +143,7 @@ export function DomainCodePair( {
 				onClick={ () => onRemove( id ) }
 				variant="link"
 			>
-				<span className="delete-label">{ __( 'Discard Domain' ) }</span>
+				<span className="delete-label">{ __( 'Clear domain' ) }</span>
 			</Button>
 			<Button
 				title={ __( 'Refresh' ) }
@@ -154,7 +154,7 @@ export function DomainCodePair( {
 				} ) }
 				variant="link"
 			>
-				<span className="refresh-label">{ __( 'Refresh' ) }</span>
+				<span className="refresh-label">{ __( 'Try again' ) }</span>
 			</Button>
 		</>
 	);
