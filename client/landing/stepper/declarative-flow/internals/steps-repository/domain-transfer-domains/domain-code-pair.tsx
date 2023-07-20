@@ -8,7 +8,6 @@ import classnames from 'classnames';
 import { useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { useValidationMessage } from './use-validation-message';
@@ -232,12 +231,16 @@ export function DomainCodePair( {
 								children={ domainActions }
 							></FormInputValidation>
 						) }
-						{ message && loading && <FormExplanation>{ message }</FormExplanation> }
+						{ message && loading && (
+							<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+						) }
 						{ ! shouldReportError && ! loading && (
-							<FormExplanation>
-								{ __( 'Please enter the domain name and authorization code.' ) }
-								{ domainCount > 1 && domainActions }
-							</FormExplanation>
+							<FormInputValidation
+								isError={ false }
+								isMuted={ true }
+								text={ __( 'Please enter the domain name and authorization code.' ) }
+								children={ domainCount > 1 && domainActions }
+							/>
 						) }
 					</div>
 				</div>
@@ -268,15 +271,15 @@ export function DomainCodePair( {
 					></FormInputValidation>
 				) }
 				{ message && loading && (
-					<div>
-						<FormExplanation>{ message }</FormExplanation>
-					</div>
+					<FormInputValidation text={ message } isError={ false } isMuted={ true } />
 				) }
 				{ ! shouldReportError && ! loading && (
-					<FormExplanation>
-						{ __( 'Please enter the domain name and authorization code.' ) }
-						{ domainCount > 1 && domainActions }
-					</FormExplanation>
+					<FormInputValidation
+						isError={ false }
+						isMuted={ true }
+						text={ __( 'Please enter the domain name and authorization code.' ) }
+						children={ domainCount > 1 && domainActions }
+					/>
 				) }
 			</div>
 		</div>
