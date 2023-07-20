@@ -107,8 +107,8 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 	}, [ areTipsEnabled, disableTips, isWelcomeGuideActive, toggleFeature ] );
 
 	const handleClose = useCallback( () => {
-		setUsedPageOrPatternsModal();
 		setOpenState( 'CLOSED' );
+		setUsedPageOrPatternsModal?.();
 	}, [ setOpenState, setUsedPageOrPatternsModal ] );
 
 	return (

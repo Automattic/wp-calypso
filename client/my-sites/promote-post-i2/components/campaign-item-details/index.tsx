@@ -8,6 +8,7 @@ import {
 	HorizontalBarList,
 	HorizontalBarListItem,
 } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -220,8 +221,8 @@ export default function CampaignItemDetails( props: Props ) {
 			label: __( 'Contact support' ),
 			onClick: async () => {
 				setShowErrorDialog( false );
-				// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-				window.open( 'https://wordpress.com/support/', '_blank' );
+				const localizedUrl = localizeUrl( 'https://wordpress.com/support/' );
+				window.open( localizedUrl, '_blank' );
 			},
 		},
 		{
@@ -325,8 +326,7 @@ export default function CampaignItemDetails( props: Props ) {
 								components: {
 									wpcomTos: (
 										<a
-											// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-											href="https://wordpress.com/tos/"
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

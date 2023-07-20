@@ -36,7 +36,7 @@ interface SidebarProps {
 	screens: NavigatorScreenObject[];
 	actionButtons: React.ReactNode;
 	onClickCategory?: ( category: Category ) => void;
-	onNavigatorPathChange?: ( path: string ) => void;
+	onNavigatorPathChange?: ( path?: string ) => void;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {

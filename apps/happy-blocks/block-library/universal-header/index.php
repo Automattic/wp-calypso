@@ -16,24 +16,8 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
-$happy_blocks_current_tab = $args['active_tab'];
-
-$happy_blocks_tabs = array(
-	'learn'   => array(
-		'title' => __( 'Learn', 'happy-blocks' ),
-		'url'   => 'https://wordpress.com/learn/',
-	),
-	'support' => array(
-		'title' => __( 'Support', 'happy-blocks' ),
-		'url'   => localized_wpcom_url( 'https://wordpress.com/support/' ),
-	),
-	'forums'  => array(
-		'title' => __( 'Forums', 'happy-blocks' ),
-		'url'   => localized_wpcom_url( 'https://wordpress.com/forums/' ),
-	),
-);
-
-$happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
+$happy_blocks_current_page = $args['active_page'];
+$happy_blocks_is_english   = ( 0 === stripos( get_locale(), 'en' ) );
 ?>
 <div id="lpc-header-nav" class="lpc lpc-header-nav">
 	<div class="x-root lpc-header-nav-wrapper">
@@ -434,7 +418,7 @@ $happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 		</div>
 	</div>
 </div>
-<div class="happy-blocks-mini-search happy-blocks-header__<?php echo esc_html( $args['active_tab'] ); ?>">
+<div class="happy-blocks-mini-search happy-blocks-header is-<?php echo esc_html( $happy_blocks_current_page ); ?>">
 	<div class="happy-blocks-search-container">
 		<div class="happy-blocks-global-header-site__title">
 			<?php if ( $args['include_site_title'] ) : ?>

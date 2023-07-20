@@ -1,25 +1,8 @@
 import { useDebounce } from 'use-debounce';
-import { HelpCenterSite } from '../help-center';
-import { SiteDetails } from '../site';
 import { useIsWpOrgSite } from './use-is-wporg-site';
 import { useUserSites } from './use-user-sites';
 import { useWpcomSite } from './use-wpcom-site';
-
-type ResultType =
-	| 'DISABLED'
-	| 'LOADING'
-	| 'OWNED_BY_USER'
-	| 'WPORG'
-	| 'UNKNOWN'
-	| 'NOT_OWNED_BY_USER'
-	| 'UNKNOWN';
-
-export type AnalysisReport = {
-	result: ResultType;
-	site?: SiteDetails | HelpCenterSite;
-	siteURL: string | undefined;
-	isWpcom: boolean;
-};
+import type { AnalysisReport } from '../types';
 
 // a simple way to check if a string is host to save on API calls
 function isHost( string: string | undefined ) {

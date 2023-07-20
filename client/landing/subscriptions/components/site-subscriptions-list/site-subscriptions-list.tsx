@@ -65,7 +65,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 
 	return (
 		<ul className="site-subscriptions-list" role="table">
-			<HStack className="row header" role="row" as="li" alignItems="center">
+			<HStack className="row header" role="row" as="li" alignment="center">
 				<span className="title-cell" role="columnheader">
 					{ translate( 'Subscribed site' ) }
 				</span>

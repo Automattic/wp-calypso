@@ -2,13 +2,12 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { Button, Icon } from '@wordpress/components';
-import { check, trash, closeSmall, update } from '@wordpress/icons';
+import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { useValidationMessage } from './use-validation-message';
@@ -31,6 +30,7 @@ type Props = {
 	onRemove: ( id: string ) => void;
 	showLabels: boolean;
 	hasDuplicates: boolean;
+	domainCount: number;
 };
 
 type DomainPriceProps = {
@@ -60,7 +60,11 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 	const { __ } = useI18n();
 
 	if ( ! rawPrice ) {
-		return <div className="domains__domain-price-number disabled">0</div>;
+		return (
+			<div className="domains__domain-price-number disabled">
+				{ formatCurrency( 0, currencyCode, { stripZeros: true } ) }
+			</div>
+		);
 	}
 
 	if ( ! saleCost && saleCost !== 0 ) {
@@ -94,6 +98,7 @@ export function DomainCodePair( {
 	onRemove,
 	showLabels,
 	hasDuplicates,
+	domainCount,
 }: Props ) {
 	const { __ } = useI18n();
 
@@ -125,6 +130,30 @@ export function DomainCodePair( {
 		}
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
+	const domainActions = (
+		<>
+			&nbsp;
+			<Button
+				// Disable the delete button on initial state meaning. no domain, no auth and one row.
+				disabled={ ! domain && ! auth && domainCount === 1 }
+				onClick={ () => onRemove( id ) }
+				variant="link"
+			>
+				<span className="delete-label">{ __( 'Discard Domain' ) }</span>
+			</Button>
+			<Button
+				title={ __( 'Refresh' ) }
+				disabled={ ! refetch }
+				onClick={ () => refetch?.() }
+				className={ classnames( 'domains__domain-refresh', {
+					'is-invisible-field': ! refetch,
+				} ) }
+				variant="link"
+			>
+				<span className="refresh-label">{ __( 'Refresh' ) }</span>
+			</Button>
+		</>
+	);
 	return (
 		<div className="domains__domain-info-and-validation">
 			<div className="domains__domain-info">
@@ -194,19 +223,27 @@ export function DomainCodePair( {
 						/>
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
-				</div>
-				{ ( shouldReportError || ( message && loading ) ) && (
 					<div className="domains__domain-validation is-mobile">
 						{ shouldReportError && (
-							<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
+							<FormInputValidation
+								isError={ ! valid }
+								text={ message }
+								children={ domainActions }
+							></FormInputValidation>
 						) }
 						{ message && loading && (
-							<div>
-								<FormExplanation>{ message }</FormExplanation>
-							</div>
+							<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+						) }
+						{ ! shouldReportError && ! loading && (
+							<FormInputValidation
+								isError={ false }
+								isMuted={ true }
+								text={ __( 'Please enter the domain name and authorization code.' ) }
+								children={ domainCount > 1 && domainActions }
+							/>
 						) }
 					</div>
-				) }
+				</div>
 				<div className="domains__domain-price">
 					<FormFieldset>
 						<FormLabel
@@ -224,32 +261,25 @@ export function DomainCodePair( {
 						/>
 					</FormFieldset>
 				</div>
-				<div className="domains__domain-controls">
-					<div className="domains__domain-refresh">
-						<Button
-							title={ __( 'Refresh' ) }
-							disabled={ ! refetch }
-							icon={ update }
-							onClick={ () => refetch?.() }
-						>
-							<span className="refresh-label">{ __( 'Refresh' ) }</span>
-						</Button>
-					</div>
-					<div className="domains__domain-delete">
-						<Button icon={ trash } onClick={ () => onRemove( id ) }>
-							<span className="delete-label">{ __( 'Delete' ) }</span>
-						</Button>
-					</div>
-				</div>
 			</div>
 			<div className="domains__domain-validation is-desktop">
 				{ shouldReportError && (
-					<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
+					<FormInputValidation
+						isError={ ! valid }
+						text={ message }
+						children={ domainActions }
+					></FormInputValidation>
 				) }
 				{ message && loading && (
-					<div>
-						<FormExplanation>{ message }</FormExplanation>
-					</div>
+					<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+				) }
+				{ ! shouldReportError && ! loading && (
+					<FormInputValidation
+						isError={ false }
+						isMuted={ true }
+						text={ __( 'Please enter the domain name and authorization code.' ) }
+						children={ domainCount > 1 && domainActions }
+					/>
 				) }
 			</div>
 		</div>

@@ -13,6 +13,7 @@ export class TumblrSharePreview extends PureComponent {
 			articleContent,
 			imageUrl,
 			message,
+			hidePostPreview,
 		} = this.props;
 
 		const username = externalProfileURL?.match( /[^/]+$/ )?.[ 0 ];
@@ -28,6 +29,7 @@ export class TumblrSharePreview extends PureComponent {
 					displayName: externalName === 'Untitled' && username ? username : externalName,
 					avatarUrl: externalProfilePicture,
 				} }
+				hidePostPreview={ hidePostPreview }
 			/>
 		);
 	}

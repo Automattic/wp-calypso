@@ -19,7 +19,7 @@ type Fields = {
 
 type NewsletterSettingsSectionProps = {
 	fields: Fields;
-	handleToggle: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
 	isSavingSettings: boolean;

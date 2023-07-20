@@ -70,6 +70,7 @@ export interface Purchase {
 	saas_redirect_url?: string;
 	will_auto_renew?: boolean;
 	tax_vendor_info?: TaxVendorInfo;
+	blog_id: number;
 }
 
 export interface TransactionRequest {

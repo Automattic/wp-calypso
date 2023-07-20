@@ -5,6 +5,7 @@ import { getSiteUrl as readerRouteGetSiteUrl } from 'calypso/reader/route';
 
 const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
 export const DEFAULT_TAB = 'recommended';
+export const LATEST_TAB = 'latest';
 /**
  * Filters tags data and returns the tags intended to be loaded by the discover pages recommended
  * section. If tags is null, we return an empty array as we have yet to recieve the users followed
@@ -35,7 +36,7 @@ export function getDiscoverStreamTags( tags, isLoggedIn ) {
 export function buildDiscoverStreamKey( selectedTab, tags ) {
 	let streamKey = `discover:${ selectedTab }`;
 	// We want a different stream key for recommended depending on the followed tags that are available.
-	if ( selectedTab === DEFAULT_TAB ) {
+	if ( selectedTab === DEFAULT_TAB || selectedTab === LATEST_TAB ) {
 		// Ensures a different key depending on the users stream tags list. So the stream can update
 		// when the user follows/unfollows other tags. Sort the list first so the key is the same
 		// per same tags followed. This is necessary since we load a default tag list when none are
@@ -53,7 +54,10 @@ export function buildDiscoverStreamKey( selectedTab, tags ) {
  * @returns {Array} An array of tag slugs.
  */
 export function getTagsFromStreamKey( streamKey = '' ) {
-	if ( streamKey.includes( 'discover:recommended' ) ) {
+	if (
+		streamKey.includes( `discover:${ DEFAULT_TAB }` ) ||
+		streamKey.includes( `discover:${ LATEST_TAB }` )
+	) {
 		const tags = streamKey.split( '--' );
 		tags.shift();
 		return tags;

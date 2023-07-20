@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
-	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -38,10 +37,6 @@ const domainTransfer: Flow = {
 			{
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-			{
-				slug: 'complete',
-				asyncComponent: () => import( './internals/steps-repository/domain-transfer-complete' ),
 			},
 		];
 	},
@@ -92,17 +87,14 @@ const domainTransfer: Flow = {
 					return navigate( 'processing', undefined );
 				}
 				case 'processing': {
-					const destination = '/setup/domain-transfer/complete';
-					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( flowName );
-					const returnUrl = encodeURIComponent( destination );
 
 					const checkoutBackURL = new URL( '/setup/domain-transfer/domains', window.location.href );
 
 					// use replace instead of assign to remove the processing URL from history
 					return window.location.replace(
-						`/checkout/no-site?redirect_to=${ returnUrl }&signup=0&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
+						`/checkout/no-site?signup=0&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
 							checkoutBackURL.href
 						) }`
 					);

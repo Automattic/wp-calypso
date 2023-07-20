@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
@@ -36,11 +35,6 @@ const StatsPurchasePage = () => {
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const isPurchaseEnabled = config.isEnabled( 'stats/paid-stats' );
-
-	if ( ! isPurchaseEnabled ) {
-		page( '/stats', '/stats/day' );
-	}
 
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 
@@ -63,9 +57,6 @@ const StatsPurchasePage = () => {
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_PWYW_YEARLY )
 	) as ProductsList.ProductsListItem | null;
 
-	// eslint-disable-next-line no-console
-	console.log( 'product debug:', commercialProduct, pwywProduct );
-
 	const isLoading = ! commercialProduct || ! pwywProduct;
 
 	return (
@@ -87,13 +78,11 @@ const StatsPurchasePage = () => {
 								 }
 							</>
 						) }
-						{ isPurchaseEnabled && (
-							<StatsPurchaseWizard
-								siteSlug={ siteSlug }
-								commercialProduct={ commercialProduct }
-								pwywProduct={ pwywProduct }
-							/>
-						) }
+						<StatsPurchaseWizard
+							siteSlug={ siteSlug }
+							commercialProduct={ commercialProduct }
+							pwywProduct={ pwywProduct }
+						/>
 					</>
 				) }
 				<JetpackColophon />

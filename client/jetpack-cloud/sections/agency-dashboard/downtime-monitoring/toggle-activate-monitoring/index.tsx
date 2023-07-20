@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useState, useRef } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
@@ -47,12 +47,6 @@ export default function ToggleActivateMonitoring( {
 	const handleHideTooltip = () => {
 		setShowTooltip( false );
 	};
-
-	const ToggleControl = OriginalToggleControl as React.ComponentType<
-		OriginalToggleControl.Props & {
-			disabled?: boolean;
-		}
-	>;
 
 	function handleToggleActivateMonitoring( checked: boolean ) {
 		recordEvent( checked ? 'enable_monitor_click' : 'disable_monitor_click' );
