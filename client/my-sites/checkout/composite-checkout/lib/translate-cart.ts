@@ -141,7 +141,7 @@ function addRegistrationDataToGSuiteCartProduct(
  * @returns String with the value of the sensitive_pixel_options cookie, or an empty string if the cookie is not present.
  */
 function getConversionValuesFromCookies(): { ad_details: string; sensitive_pixel_options: string } {
-	const cookies = cookie.parse( document.cookie );
+	const cookies = typeof document !== 'undefined' ? cookie.parse( document.cookie ) : {};
 	return {
 		ad_details: cookies.ad_details || '',
 		sensitive_pixel_options: cookies.sensitive_pixel_options || '', // sensitive_pixel_options
