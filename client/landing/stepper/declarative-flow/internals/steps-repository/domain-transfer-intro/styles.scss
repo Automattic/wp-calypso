@@ -4,6 +4,12 @@
 $font-family: "SF Pro Text", $sans;
 $heading-font-family: "SF Pro Display", $sans;
 
+:root {
+	--wp-components-color-accent: var(--studio-blue-50);
+	--wp-components-color-accent-darker-20: var(--studio-blue-60);
+	--wp-components-color-accent-darker-10: var(--studio-blue-60);
+}
+
 .domain-transfer {
 	height: 100%;
 	padding: 60px 0 0;
@@ -23,26 +29,10 @@ $heading-font-family: "SF Pro Display", $sans;
 		margin-bottom: 32px;
 
 		.bulk-domain-transfer__cta {
-			justify-content: center;
-			color: var(--black-white-white, #fff);
 			height: 48px;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			border-radius: 0.25rem;
-			background: var(--blue-blue-50, #0675c4);
-			font-size: 0.875rem;
 			width: 240px;
 			font-weight: 500;
-
-			&:hover {
-				background: var(--studio-blue-60);
-			}
-
-			&:disabled {
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				border-radius: 0.25rem;
-				background: var(--gray-gray-5, #dcdcde);
-				opacity: 1;
-			}
+			justify-content: center;
 
 			@media (max-width: $break-medium ) {
 				width: 100%;

@@ -218,6 +218,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }
 					className="bulk-domain-transfer__cta"
+					variant="primary"
 					onClick={ handleAddTransfer }
 				>
 					{ getTransferButtonText() }

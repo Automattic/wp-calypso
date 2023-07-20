@@ -63,7 +63,12 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				onSelect={ onSubmit }
 			/>
 			<div className="bulk-domain-transfer__cta-container">
-				<Button className="bulk-domain-transfer__cta" onClick={ onSubmit }>
+				<Button
+					variant="primary"
+					__next40pxDefaultSize
+					className="bulk-domain-transfer__cta"
+					onClick={ onSubmit }
+				>
 					{ __( 'Get Started' ) }
 				</Button>
 			</div>
