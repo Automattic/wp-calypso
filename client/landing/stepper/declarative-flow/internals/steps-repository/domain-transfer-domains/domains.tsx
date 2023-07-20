@@ -91,7 +91,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const { setPendingAction, setDomainsTransferData, setShouldImportDomainTransferDnsRecords } =
 		useDispatch( ONBOARD_STORE );
 
-	const { __ } = useI18n();
+	const { __, _n } = useI18n();
 
 	const filledDomainValues = Object.values( domainsState ).filter( ( x ) => x.domain && x.auth );
 	const allGood = filledDomainValues.every( ( { valid } ) => valid );
@@ -242,7 +242,13 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 							} }
 							checked={ storedDomainsState.shouldImportDnsRecords }
 						/>
-						<span>{ __( 'Import DNS records from these domains' ) }</span>
+						<span>
+							{ _n(
+								'Import DNS records from this domain',
+								'Import DNS records from these domains',
+								domainCount
+							) }
+						</span>
 					</FormLabel>
 				</div>
 			) }
