@@ -1,5 +1,5 @@
 /* eslint-disable require-jsdoc */
-import { chromium } from 'playwright';
+import { Browser, chromium } from 'playwright';
 import envVariables from '../env-variables';
 import { TestAccount } from '../lib/test-account';
 import pwConfig from './playwright-config';
@@ -31,15 +31,37 @@ export default async (): Promise< void > => {
 				return;
 			}
 
-			const page = await browser.newPage( pwConfig.contextOptions );
-			page.setDefaultTimeout( envVariables.TIMEOUT );
-
-			await testAccount.logInViaLoginPage( page );
-			await testAccount.saveAuthCookies( page.context() );
-
-			await page.close();
+			await loginAndSaveCookiesWithRetry( testAccount, browser );
 		} )
 	);
 
 	await browser.close();
 };
+
+async function loginAndSaveCookiesWithRetry( testAccount: TestAccount, browser: Browser ) {
+	const MAX_ATTEMPTS = 2;
+	let numberOfAttempts = 0;
+
+	let error: Error | undefined;
+	while ( numberOfAttempts < MAX_ATTEMPTS ) {
+		try {
+			return await loginAndSaveCookies( testAccount, browser );
+		} catch ( err ) {
+			numberOfAttempts++;
+			error = err as Error;
+		}
+	}
+
+	throw error;
+}
+
+async function loginAndSaveCookies( testAccount: TestAccount, browser: Browser ) {
+	const page = await browser.newPage( pwConfig.contextOptions );
+	page.setDefaultTimeout( envVariables.TIMEOUT );
+	try {
+		await testAccount.logInViaLoginPage( page );
+		await testAccount.saveAuthCookies( page.context() );
+	} finally {
+		await page.close();
+	}
+}

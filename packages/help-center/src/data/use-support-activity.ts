@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import type { SupportActivity } from './types';
+import type { SupportActivity } from '../types';
 
 const ACTIVE_STATUSES = [ 'New', 'Open', 'Hold' ];
 

@@ -1,10 +1,9 @@
-import { SupportActivity } from '@automattic/data-stores';
 import { localizeUrl, useLocale, getRelativeTimeString } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import type { AnalysisReport } from '@automattic/data-stores';
+import type { AnalysisReport, SupportActivity } from '../types';
 import type { ReactNode } from 'react';
 
 type Props = {

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { SiteDetails } from '../site';
+import type { SiteDetails } from '@automattic/data-stores';
 
 export function useUserSites( userId: number | string, enabled = true ) {
 	return useQuery( {

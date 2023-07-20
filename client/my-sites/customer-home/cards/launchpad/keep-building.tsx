@@ -1,6 +1,5 @@
 import { useLaunchpad } from '@automattic/data-stores';
-import { isMobile } from '@automattic/viewport';
-import { addQueryArgs } from '@wordpress/url';
+import { setUpActionsForTasks } from '@automattic/launchpad';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -14,6 +13,7 @@ import type { Task } from '@automattic/launchpad';
 import './style.scss';
 
 const checklistSlug = 'keep-building';
+const launchpadContext = 'customer-home';
 
 interface LaunchpadKeepBuildingProps {
 	site: SiteDetails | null;
@@ -26,90 +26,16 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 		data: { checklist },
 	} = useLaunchpad( siteSlug, checklistSlug );
 
+	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
+
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const tasklistCompleted = completedSteps === numberOfSteps;
-
-	const recordTaskClickTracksEvent = ( task: Task ) => {
-		recordTracksEvent( 'calypso_launchpad_task_clicked', {
-			checklist_slug: checklistSlug,
-			checklist_completed: tasklistCompleted,
-			task_id: task.id,
-			is_completed: task.completed,
-			context: 'customer-home',
-		} );
-	};
-
-	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
+	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
+	const extraActions = { setShareSiteModalIsOpen };
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
-		const completedTasks = tasks.filter( ( task: Task ) => task.completed );
-		const incompleteTasks = tasks.filter( ( task: Task ) => ! task.completed );
-
-		const sortedTasks = [ ...completedTasks, ...incompleteTasks ];
-
-		return sortedTasks.map( ( task: Task ) => {
-			let actionDispatch;
-
-			switch ( task.id ) {
-				case 'site_title':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign( `/settings/general/${ siteSlug }` );
-					};
-					break;
-
-				case 'design_edited':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign(
-							addQueryArgs( `/site-editor/${ siteSlug }`, {
-								canvas: 'edit',
-							} )
-						);
-					};
-					break;
-
-				case 'domain_claim':
-				case 'domain_upsell':
-				case 'domain_customize':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign( `/domains/add/${ siteSlug }` );
-					};
-					break;
-				case 'drive_traffic':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						const url = isMobile()
-							? `/marketing/connections/${ siteSlug }`
-							: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
-						window.location.assign( url );
-					};
-					break;
-				case 'add_new_page':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign( `/page/${ siteSlug }` );
-					};
-					break;
-				case 'edit_page':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						window.location.assign( `/pages/${ siteSlug }` );
-					};
-					break;
-
-				case 'share_site':
-					actionDispatch = () => {
-						recordTaskClickTracksEvent( task );
-						setShareSiteModalIsOpen( true );
-					};
-					break;
-			}
-
-			return { ...task, actionDispatch };
-		} );
+		return setUpActionsForTasks( { tasks, siteSlug, tracksData, extraActions } );
 	};
 
 	return (

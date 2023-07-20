@@ -355,16 +355,31 @@
 		}
 
 		.bulk-domain-transfer__import-dns-records {
-			margin-bottom: 42px;
+			text-align: center;
+
+			.form-checkbox {
+				float: none;
+			}
+
+			.form-label {
+				display: inline;
+			}
+
+			.form-checkbox + span {
+				display: inline;
+				margin-left: 0.5rem;
+				vertical-align: middle;
+			}
+
+			@media (max-width: $break-medium ) {
+				margin-bottom: 50px;
+			}
 		}
 
 		.bulk-domain-transfer__cta-container {
 			display: flex;
 			justify-content: center;
-
-			@media (max-width: $break-medium ) {
-				margin-bottom: 50px;
-			}
+			margin-bottom: 32px;
 
 			.bulk-domain-transfer__cta {
 				justify-content: center;
