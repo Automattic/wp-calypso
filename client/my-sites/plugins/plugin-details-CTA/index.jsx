@@ -5,6 +5,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -143,6 +144,11 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const toggleDisplayManageSitePluginsModal = useCallback( () => {
 		setDisplayManageSitePluginsModal( ! displayManageSitePluginsModal );
 	}, [ displayManageSitePluginsModal ] );
+
+	const onIntervalSwitcherChange = useCallback(
+		( interval ) => dispatch( setBillingInterval( interval ) ),
+		[ dispatch ]
+	);
 
 	// Activation and deactivation translations.
 	const activeText = translate( '{{span}}active{{/span}}', {
@@ -335,7 +341,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 				{ isMarketplaceProduct && ! plugin.isSaasProduct && (
 					<BillingIntervalSwitcher
 						billingPeriod={ billingPeriod }
-						onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
+						onChange={ onIntervalSwitcherChange }
 						plugin={ plugin }
 					/>
 				) }
@@ -363,7 +369,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 										<a
 											target="_blank"
 											rel="noopener noreferrer"
-											href="https://wordpress.com/tos/"
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 										/>
 									),
 									thirdPartyTos: (
