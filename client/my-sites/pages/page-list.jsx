@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import ListEnd from 'calypso/components/list-end';
@@ -462,7 +461,6 @@ export default class PageList extends Component {
 		return (
 			<div>
 				<QueryPosts siteId={ siteId } query={ { ...query, page } } />
-				<QuerySiteSettings siteId={ siteId } />
 				<ConnectedPages
 					incrementPage={ this.incrementPage }
 					query={ { ...query, page } }
