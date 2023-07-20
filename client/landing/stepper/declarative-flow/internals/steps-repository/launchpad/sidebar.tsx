@@ -11,7 +11,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import useStripeConnectUrl from 'calypso/landing/stepper/hooks/use-stripe-connect-url';
+import { useStripeConnectUrl } from 'calypso/landing/stepper/hooks/use-stripe-connect-url';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { useSelector } from 'calypso/state';

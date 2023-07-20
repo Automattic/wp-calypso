@@ -18,7 +18,7 @@ type MembershipsData = {
 const fetchMembershipsData = ( siteId: number ): Promise< MembershipsData > =>
 	wpcom.req.get( `/sites/${ siteId }/memberships/status`, { apiNamespace: 'wpcom/v2' } );
 
-export default function useStripeConnectUrl(
+export function useStripeConnectUrl(
 	siteId: number | undefined,
 	flow: string | null
 ): StripeConnectUrl {

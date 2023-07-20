@@ -22,6 +22,8 @@ const mockSite = {
 	},
 };
 
+const mockStripeUrl = 'https://connect.stripe.com';
+
 const siteSlug = 'testlinkinbio.wordpress.com';
 
 const stepContentProps = {
@@ -87,6 +89,10 @@ jest.mock( '@wordpress/data', () => {
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => mockSite,
+} ) );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-stripe-connect-url', () => ( {
+	useStripeConnectUrl: () => mockStripeUrl,
 } ) );
 
 jest.mock( 'react-router-dom', () => ( {
