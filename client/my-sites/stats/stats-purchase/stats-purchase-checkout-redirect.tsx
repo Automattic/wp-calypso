@@ -51,7 +51,7 @@ const getRedirectUrl = ( {
 		return redirectUri;
 	}
 	redirectUri = addPurchaseTypeToUri( redirectUri || 'admin.php?page=stats', statsPurchaseSuccess );
-	return adminUrl + redirectUri;
+	return adminUrl + redirectUri.replace( /^\//, '' );
 };
 
 const gotoCheckoutPage = ( {
