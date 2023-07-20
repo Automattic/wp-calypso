@@ -16,14 +16,12 @@ const cleanEmptyObject = < T, >( object: T ) => {
 	return Object.keys( cleanedNestedObjects ).length > 0 ? cleanedNestedObjects : undefined;
 };
 
-type SetConfig = ( callback: ( config: GlobalStylesObject ) => GlobalStylesObject ) => void;
-
 const useGlobalStylesUserConfig = (): [ boolean, GlobalStylesObject, SetConfig ] => {
 	const [ userConfig, setUserConfig ] = useState< GlobalStylesObject >( {
 		settings: {},
 		styles: {},
 	} );
-	const setConfig: SetConfig = useCallback(
+	const setConfig = useCallback(
 		( callback ) => {
 			setUserConfig( ( currentConfig ) => {
 				const updatedConfig = callback( currentConfig );
