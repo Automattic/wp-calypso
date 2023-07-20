@@ -1,4 +1,4 @@
-import { Icon, warning, info, check, close } from '@wordpress/icons';
+import { Icon, warning, info, check, closeSmall } from '@wordpress/icons';
 import classNames from 'classnames';
 import React from 'react';
 import './style.scss';
@@ -81,7 +81,7 @@ const NoticeBanner: React.FC< NoticeBannerProps > = ( {
 
 			{ ! hideCloseButton && (
 				<button aria-label="close" className="notice-banner__close-button" onClick={ onClose }>
-					<Icon icon={ close } />
+					<Icon icon={ closeSmall } />
 				</button>
 			) }
 		</div>

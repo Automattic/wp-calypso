@@ -13,12 +13,13 @@ import {
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
+	isAssemblerDesign,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -83,7 +84,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
+	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
+		site?.ID
+	);
 	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
 	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
 
@@ -97,6 +100,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		if ( isAtomic ) {
 			exitFlow?.( `/site-editor/${ siteSlugOrId }` );
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isAtomic ] );
 
 	const isPremiumThemeAvailable = Boolean(
@@ -150,7 +154,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	);
 
-	const designs = allDesigns?.designs || [];
+	const designs = useMemo( () => allDesigns?.designs ?? [], [ allDesigns?.designs ] );
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
 		if ( ! hasTrackedView.current && designs.length > 0 ) {
@@ -172,7 +176,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		selectedStyleVariation,
 		selectedColorVariation,
 		selectedFontVariation,
-		hasSelectedGlobalStyles,
+		numOfSelectedGlobalStyles,
 		globalStyles,
 		setSelectedDesign,
 		previewDesign,
@@ -350,7 +354,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function unlockPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && hasSelectedGlobalStyles ) {
+		if ( selectedDesign && numOfSelectedGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_show',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -361,7 +365,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function closePremiumGlobalStylesModal() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && hasSelectedGlobalStyles ) {
+		if ( selectedDesign && numOfSelectedGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_close_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -372,7 +376,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function handleCheckoutForPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && hasSelectedGlobalStyles && siteSlugOrId ) {
+		if ( selectedDesign && numOfSelectedGlobalStyles && siteSlugOrId ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_checkout_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -384,7 +388,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
-				plan: 'premium',
+				plan: globalStylesInPersonalPlan ? 'personal' : 'premium',
 			} );
 
 			setShowPremiumGlobalStylesModal( false );
@@ -393,7 +397,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function tryPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && hasSelectedGlobalStyles ) {
+		if ( selectedDesign && numOfSelectedGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_try_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
@@ -443,10 +447,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	}
 
-	function pickBlankCanvasDesign( blankCanvasDesign: Design, shouldGoToAssemblerStep: boolean ) {
-		if ( shouldGoToAssemblerStep ) {
+	function designYourOwn( design: Design, shouldGoToAssembler: boolean ) {
+		if ( shouldGoToAssembler ) {
 			const _selectedDesign = {
-				...blankCanvasDesign,
+				...design,
 				design_type: 'assembler',
 			} as Design;
 
@@ -461,15 +465,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			handleSubmit( {
 				selectedDesign: _selectedDesign,
 				selectedSiteCategory: categorization.selection,
+				shouldGoToAssembler,
 			} );
 		} else {
-			pickDesign( blankCanvasDesign );
+			pickDesign( design );
 		}
 	}
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
-		if ( _selectedDesign?.design_type !== 'assembler' ) {
+		if ( ! isAssemblerDesign( _selectedDesign ) ) {
 			recordSelectedDesign( {
 				flow,
 				intent,
@@ -522,7 +527,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 
 		const selectStyle = () => {
-			if ( shouldLimitGlobalStyles && hasSelectedGlobalStyles ) {
+			if ( shouldLimitGlobalStyles && numOfSelectedGlobalStyles ) {
 				unlockPremiumGlobalStyles();
 			} else {
 				pickDesign();
@@ -577,20 +582,22 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					closeModal={ closePremiumGlobalStylesModal }
 					isOpen={ showPremiumGlobalStylesModal }
 					tryStyle={ tryPremiumGlobalStyles }
+					numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
 				/>
 				<AsyncLoad
 					require="@automattic/design-preview"
 					placeholder={ null }
 					previewUrl={ previewUrl }
-					splitPremiumVariations={
+					splitDefaultVariation={
 						! selectedDesign.is_premium &&
 						! isBundledWithWooCommerce &&
 						! isPremiumThemeAvailable &&
 						! didPurchaseSelectedTheme &&
-						! isPluginBundleEligible
+						! isPluginBundleEligible &&
+						shouldLimitGlobalStyles
 					}
 					title={ headerDesignTitle }
-					description={ ! selectedDesign.is_virtual && selectedDesign.description }
+					description={ selectedDesign.description }
 					variations={
 						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
 					}
@@ -599,14 +606,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					actionButtons={ actionButtons }
 					recordDeviceClick={ recordDeviceClick }
 					limitGlobalStyles={ shouldLimitGlobalStyles }
+					globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
+					isVirtual={ selectedDesign.is_virtual }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ setSelectedColorVariation }
 					selectedFontVariation={ selectedFontVariation }
 					onSelectFontVariation={ setSelectedFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }
-					onNavigatorPathChange={ ( path: string ) => setShouldHideActionButtons( path !== '/' ) }
+					onNavigatorPathChange={ ( path?: string ) => setShouldHideActionButtons( path !== '/' ) }
 				/>
 			</>
 		);
@@ -644,7 +653,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		<UnifiedDesignPicker
 			designs={ designs }
 			locale={ locale }
-			onSelectBlankCanvas={ pickBlankCanvasDesign }
+			onDesignYourOwn={ designYourOwn }
 			onPreview={ previewDesign }
 			onChangeVariation={ onChangeVariation }
 			onViewAllDesigns={ trackAllDesignsView }

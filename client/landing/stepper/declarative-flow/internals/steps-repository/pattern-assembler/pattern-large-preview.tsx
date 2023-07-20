@@ -1,8 +1,7 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { Button, DeviceSwitcher } from '@automattic/components';
-import { useStyle } from '@automattic/global-styles';
+import { useGlobalStyle } from '@automattic/global-styles';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
-import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState, CSSProperties } from 'react';
@@ -46,13 +45,15 @@ const PatternLargePreview = ( {
 	const navigator = useNavigator();
 	const hasSelectedPattern = header || sections.length || footer;
 	const shouldShowSelectPatternHint =
-		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
+		! hasSelectedPattern &&
+		navigator.location.path &&
+		STYLES_PATHS.includes( navigator.location.path );
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 	const [ device, setDevice ] = useState< string >( 'computer' );
-	const [ blockGap ] = useStyle( 'spacing.blockGap' );
-	const [ backgroundColor ] = useStyle( 'color.background' );
+	const [ blockGap ] = useGlobalStyle( 'spacing.blockGap' );
+	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
 		'--pattern-large-preview-block-gap': blockGap,
 		'--pattern-large-preview-background': backgroundColor,
@@ -70,7 +71,7 @@ const PatternLargePreview = ( {
 
 	const getTitle = () => {
 		if ( ! shouldShowSelectPatternHint ) {
-			return translate( 'Welcome to your blank canvas.' );
+			return translate( 'Welcome to your homepage.' );
 		}
 
 		return translate( 'Ready to start designing?' );
@@ -206,7 +207,6 @@ const PatternLargePreview = ( {
 				</ul>
 			) : (
 				<div className="pattern-large-preview__placeholder">
-					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 56 } />
 					<h2>{ getTitle() }</h2>
 					<span>{ getDescription() }</span>
 					{ getAction() }

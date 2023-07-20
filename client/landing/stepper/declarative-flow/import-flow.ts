@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
+import { Design, isAssemblerDesign } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -145,8 +145,8 @@ const importFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					const _selectedDesign = providedDependencies?.selectedDesign as Design;
-					if ( _selectedDesign?.design_type === 'assembler' ) {
+					const { selectedDesign: _selectedDesign, shouldGoToAssembler } = providedDependencies;
+					if ( isAssemblerDesign( _selectedDesign as Design ) && shouldGoToAssembler ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -182,7 +182,7 @@ const importFlow: Flow = {
 							  );
 					}
 					// End of Pattern Assembler flow
-					if ( isBlankCanvasDesign( selectedDesign ) ) {
+					if ( isAssemblerDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 

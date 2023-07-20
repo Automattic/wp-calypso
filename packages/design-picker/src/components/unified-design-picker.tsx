@@ -4,7 +4,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { SHOW_ALL_SLUG } from '../constants';
+import { SHOW_ALL_SLUG, DEFAULT_ASSEMBLER_DESIGN } from '../constants';
 import {
 	getDesignPreviewUrl,
 	getMShotOptions,
@@ -24,7 +24,7 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 
 interface DesignPreviewImageProps {
 	design: Design;
-	locale: string;
+	locale?: string;
 	styleVariation?: StyleVariation;
 }
 
@@ -38,9 +38,9 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	return (
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
-				language: locale,
 				use_screenshot_overrides: true,
 				style_variation: styleVariation,
+				...( locale && { language: locale } ),
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
@@ -187,7 +187,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 
 interface DesignPickerProps {
 	locale: string;
-	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onDesignYourOwn: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	designs: Design[];
@@ -199,7 +199,7 @@ interface DesignPickerProps {
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
-	onSelectBlankCanvas,
+	onDesignYourOwn,
 	onPreview,
 	onChangeVariation,
 	designs,
@@ -229,14 +229,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 			<div className="design-picker__grid">
 				{ filteredDesigns.map( ( design, index ) => {
 					if ( isBlankCanvasDesign( design ) ) {
-						return (
-							<PatternAssemblerCta
-								key={ index }
-								onButtonClick={ ( shouldGoToAssemblerStep ) =>
-									onSelectBlankCanvas( design, shouldGoToAssemblerStep )
-								}
-							/>
-						);
+						return null;
 					}
 
 					return (
@@ -253,6 +246,11 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					);
 				} ) }
+				<PatternAssemblerCta
+					onButtonClick={ ( shouldGoToAssemblerStep ) =>
+						onDesignYourOwn( DEFAULT_ASSEMBLER_DESIGN, shouldGoToAssemblerStep )
+					}
+				/>
 			</div>
 		</div>
 	);
@@ -260,7 +258,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
-	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onDesignYourOwn: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
@@ -274,7 +272,7 @@ export interface UnifiedDesignPickerProps {
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
-	onSelectBlankCanvas,
+	onDesignYourOwn,
 	onPreview,
 	onChangeVariation,
 	onViewAllDesigns,
@@ -312,7 +310,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			<div className="unified-design-picker__designs">
 				<DesignPicker
 					locale={ locale }
-					onSelectBlankCanvas={ onSelectBlankCanvas }
+					onDesignYourOwn={ onDesignYourOwn }
 					onPreview={ onPreview }
 					onChangeVariation={ onChangeVariation }
 					designs={ designs }

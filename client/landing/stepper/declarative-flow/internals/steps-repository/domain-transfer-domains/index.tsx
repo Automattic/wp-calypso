@@ -25,8 +25,17 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-transfer-header"
-					headerText={ __( 'Add unlocked domains' ) }
-					align="left"
+					headerText={ __( 'Add your domains' ) }
+					subHeaderText={
+						<>
+							<span>
+								{ __(
+									'Enter your domain names and authorization codes below. You can transfer up to 50 domains at a time.'
+								) }
+							</span>
+						</>
+					}
+					align="center"
 				/>
 			}
 			stepContent={
@@ -38,7 +47,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			showHeaderJetpackPowered={ false }
 			showHeaderWooCommercePowered={ false }
 			showVideoPressPowered={ false }
-			showJetpackPowered={ true }
+			showJetpackPowered={ false }
 		/>
 	);
 };

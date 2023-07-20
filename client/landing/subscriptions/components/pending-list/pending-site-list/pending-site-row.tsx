@@ -1,6 +1,6 @@
-import { Gridicon } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useMemo } from 'react';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import TimeSince from 'calypso/components/time-since';
 import { PendingSubscriptionSettingsPopover } from 'calypso/landing/subscriptions/components/settings';
 
@@ -13,12 +13,6 @@ export default function PendingSiteRow( {
 	date_subscribed,
 }: Reader.PendingSiteSubscription ) {
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
-	const siteIcon = useMemo( () => {
-		if ( site_icon ) {
-			return <img className="icon" src={ site_icon } alt={ site_title } />;
-		}
-		return <Gridicon className="icon" icon="globe" size={ 48 } />;
-	}, [ site_icon, site_title ] );
 
 	const { mutate: confirmPendingSubscription, isLoading: confirmingPendingSubscription } =
 		SubscriptionManager.usePendingSiteConfirmMutation();
@@ -29,7 +23,7 @@ export default function PendingSiteRow( {
 		<li className="row" role="row">
 			<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
 				<span className="title-box" role="cell">
-					{ siteIcon }
+					<SiteIcon iconUrl={ site_icon } size={ 40 } alt={ site_title } />
 					<span className="title-column">
 						<span className="name">{ site_title }</span>
 						<span className="url">{ hostname }</span>

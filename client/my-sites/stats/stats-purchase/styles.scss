@@ -1,9 +1,20 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .stats-purchase-wizard {
-	max-width: 90%; //TODO: fix positioning
 	--font-body: 16px;
 	--jp-black: #000;
 	--jp-white: #fff;
 	--jp-green-50: #008710;
+	display: flex;
+	justify-content: center;
+
+	@media (max-width: $break-wide) {
+		justify-content: left;
+
+		> div {
+			flex: 1 0 auto;
+		}
+	}
 
 	.stats-purchase-wizard__card-parent {
 		border-radius: 4px;
@@ -14,7 +25,6 @@
 	}
 
 	.stats-purchase-wizard__card-inner--left {
-		// width: 674px;
 		padding: 64px;
 		min-width: 500px;
 		max-width: 700px;
@@ -28,11 +38,24 @@
 		background: #f9f9f6;
 		border-top-right-radius: 4px;
 		border-bottom-right-radius: 4px;
+
+		> * {
+			z-index: 2;
+		}
+	}
+
+	.stats-purchase-wizard__card-inner--right-background {
+		position: absolute;
+		overflow: hidden;
+		width: 100%;
+		height: 100%;
+		z-index: 0;
+		display: flex;
+		align-items: center;
 	}
 
 	.stats-purchase-wizard__average-price {
 		margin-bottom: 3em;
-		// font-size: 14px;
 		color: #2c3338;
 		text-align: center;
 	}
@@ -57,6 +80,10 @@
 		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNCIgeD0iNCIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xOC45MDcgNi40MSAxNy41MDQgNWwtNS41NjMgNS41OUw2LjM4IDUgNC45NzUgNi40MSAxMC41MzggMTJsLTUuNTYzIDUuNTlMNi4zOCAxOWw1LjU2Mi01LjU5TDE3LjUwNCAxOWwxLjQwMy0xLjQxTDEzLjM0NCAxMmw1LjU2My01LjU5WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjRDYzNjM4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
 	}
 
+	.stats-purchase-wizard__persnal-checklist {
+		margin-bottom: 24px;
+	}
+
 	ul {
 		list-style: none;
 		margin: 0;
@@ -71,17 +98,18 @@
 
 	.stats-purchase-wizard__celebrate {
 		position: absolute;
-		z-index: 0;
+		z-index: 1;
 	}
 
 	.stats-purchase-wizard__biggest-supporters {
 		position: absolute;
 		width: 100%;
-		top: 32px;
+		top: 10px;
 		left: 50%;
 		font-weight: 500;
 		text-align: center;
 		transform: translateX(-50%);
+		backdrop-filter: blur(2px);
 	}
 
 	h3 {
@@ -186,7 +214,7 @@
 			transition: all 0.25s ease-out;
 			font-size: var(--font-body);
 			line-height: 24px;
-			padding: 8px 32px;
+			padding: 8px 12px;
 			height: auto;
 
 			&:hover,

@@ -1,8 +1,7 @@
-import { Card, Button } from '@automattic/components';
+import { Badge, Card, Button } from '@automattic/components';
 import { Icon, moreHorizontal } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useContext, useCallback } from 'react';
-import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';

@@ -4,6 +4,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp';
 import {
+	clearSignupDestinationCookie,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
@@ -39,7 +40,7 @@ const onboarding: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = ONBOARDING_PM_FLOW;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setHideFreePlan } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: currentStep, flowName } );
 		const { domain, provider } = useDomainParams();
 
@@ -77,34 +78,38 @@ const onboarding: Flow = {
 
 			switch ( currentStep ) {
 				case 'domains':
+					// At the moment, this flow is the only one which doesn't hide the Free plan when a paid domain is picked, so it's done here.
+					// Once this behavior is standardized, we will be able to remove this.
+					setHideFreePlan( false );
 					navigate( 'plans' );
 					return;
 				case 'plans':
 					navigate( 'siteCreationStep' );
 					return;
 				case 'siteCreationStep':
-					// clearSignupDestinationCookie(); // not sure if this is needed and if it is, where it should go
+					clearSignupDestinationCookie();
 					navigate( 'processing' );
 					return;
 				case 'processing': {
-					// clearSignupDestinationCookie();
+					clearSignupDestinationCookie();
 					const destination = addQueryArgs( '/setup/site-setup/goals', {
 						siteSlug: providedDependencies.siteSlug,
 					} );
 
-					persistSignupDestination( destination ); // not sure if this is needed
+					/** This is the final destination we want the flow to reach once any intermediary upsells are completed */
+					const returnUrl = addQueryArgs( destination, { notice: 'purchase-success' } );
+					persistSignupDestination( returnUrl );
+
 					setSignupCompleteSlug( providedDependencies.siteSlug );
 					setSignupCompleteFlowName( flowName );
 
 					if ( providedDependencies.goToCheckout ) {
-						const returnUrl = addQueryArgs( destination, { notice: 'purchase-success' } );
-
 						window.location.assign(
 							addQueryArgs(
 								`/checkout/${ encodeURIComponent(
 									( providedDependencies.siteSlug as string ) ?? ''
 								) }`,
-								{ redirect_to: returnUrl, signup: 1 }
+								{ signup: 1 }
 							)
 						);
 						return;
@@ -131,7 +136,6 @@ const onboarding: Flow = {
 			[]
 		);
 		const logInUrl = useLoginUrl( {
-			flowName,
 			redirectTo: `/setup/${ flowName }`,
 			pageTitle: 'Onboarding',
 			loginPath: `/start/${ flowName }/`,

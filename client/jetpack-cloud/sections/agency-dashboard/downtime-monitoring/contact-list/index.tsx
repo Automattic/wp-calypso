@@ -51,6 +51,15 @@ export default function ContactList( {
 		}
 	}, [ type, translate ] );
 
+	const showAddButton = useMemo( () => {
+		switch ( type ) {
+			case 'sms':
+				return items.length < 1;
+			default:
+				return true;
+		}
+	}, [ items.length, type ] );
+
 	return (
 		<>
 			{ type === 'sms' && ! items.length && (
@@ -72,11 +81,12 @@ export default function ContactList( {
 						showVerifiedBadge={ getContactItemValue( type, item ) === verifiedItemKey }
 					/>
 				) ) }
-
-				<Button compact className="contact-list__button" onClick={ onAddContact }>
-					<Icon size={ 18 } icon={ plus } />
-					{ addButtonLabel }
-				</Button>
+				{ showAddButton && (
+					<Button compact className="contact-list__button" onClick={ onAddContact }>
+						<Icon size={ 18 } icon={ plus } />
+						{ addButtonLabel }
+					</Button>
+				) }
 			</div>
 		</>
 	);

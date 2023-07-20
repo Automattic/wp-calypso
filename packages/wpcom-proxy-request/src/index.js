@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import ProgressEvent from 'progress-event';
 import { v4 as uuidv4 } from 'uuid';
 import WPError from 'wp-error';
 
@@ -472,7 +471,7 @@ function onprogress( data ) {
 	debug( 'got "progress" event: %o', data );
 	const xhr = requests[ data.callbackId ];
 	if ( xhr ) {
-		const prog = new ProgressEvent( 'progress', data );
+		const prog = new window.ProgressEvent( 'progress', data );
 		const target = data.upload ? xhr.upload : xhr;
 		target.dispatchEvent( prog );
 	}
@@ -486,7 +485,7 @@ function onprogress( data ) {
  */
 
 function resolve( xhr, body, headers ) {
-	const e = new ProgressEvent( 'load' );
+	const e = new window.ProgressEvent( 'load' );
 	e.data = e.body = e.response = body;
 	e.headers = headers;
 	xhr.dispatchEvent( e );
@@ -500,7 +499,7 @@ function resolve( xhr, body, headers ) {
  */
 
 function reject( xhr, err, headers ) {
-	const e = new ProgressEvent( 'error' );
+	const e = new window.ProgressEvent( 'error' );
 	e.error = e.err = err;
 	e.headers = headers;
 	xhr.dispatchEvent( e );

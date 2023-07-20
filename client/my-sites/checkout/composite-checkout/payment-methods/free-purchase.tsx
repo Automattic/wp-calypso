@@ -4,11 +4,9 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { Fragment } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WordPressLogo from '../components/wordpress-logo';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
 
 export function createFreePaymentMethod(): PaymentMethod {
 	return {
@@ -29,8 +27,6 @@ function FreePurchaseSubmitButton( {
 	onClick?: ProcessPayment;
 } ) {
 	const { formStatus } = useFormStatus();
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -53,18 +49,12 @@ function FreePurchaseSubmitButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } responseCart={ responseCart } />
+			<ButtonContents formStatus={ formStatus } />
 		</Button>
 	);
 }
 
-function ButtonContents( {
-	formStatus,
-	responseCart,
-}: {
-	formStatus: FormStatus;
-	responseCart: ResponseCart;
-} ) {
+function ButtonContents( { formStatus }: { formStatus: FormStatus } ) {
 	const { __ } = useI18n();
 
 	if ( formStatus === FormStatus.SUBMITTING ) {
@@ -72,15 +62,6 @@ function ButtonContents( {
 	}
 
 	if ( formStatus === FormStatus.READY ) {
-		if ( doesPurchaseHaveFullCredits( responseCart ) ) {
-			const total = formatCurrency(
-				responseCart.sub_total_with_taxes_integer,
-				responseCart.currency,
-				{ isSmallestUnit: true, stripZeros: true }
-			);
-			/* translators: %s is the total to be paid in localized currency */
-			return <>{ sprintf( __( 'Pay %s with credits' ), total ) }</>;
-		}
 		return <>{ __( 'Complete Checkout' ) }</>;
 	}
 
@@ -92,9 +73,25 @@ function WordPressFreePurchaseLabel() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
+	const doesCartHaveRenewalWithPaymentMethod = responseCart.products.some(
+		( product ) => product.is_renewal_and_will_auto_renew
+	);
+	const isCartAllOneTimePurchases = responseCart.products.every(
+		( product ) => product.is_one_time_purchase
+	);
+
+	if ( ! isCartAllOneTimePurchases && ! doesCartHaveRenewalWithPaymentMethod ) {
+		return (
+			<>
+				<div>{ __( 'Assign a payment method later' ) }</div>
+				<WordPressLogo />
+			</>
+		);
+	}
+
 	if ( doesPurchaseHaveFullCredits( responseCart ) ) {
 		return (
-			<Fragment>
+			<>
 				<div>
 					{
 						/* translators: %(amount)s is the total amount of credits available in localized currency */
@@ -107,15 +104,15 @@ function WordPressFreePurchaseLabel() {
 					}
 				</div>
 				<WordPressLogo />
-			</Fragment>
+			</>
 		);
 	}
 
 	return (
-		<Fragment>
+		<>
 			<div>{ __( 'Free Purchase' ) }</div>
 			<WordPressLogo />
-		</Fragment>
+		</>
 	);
 }
 

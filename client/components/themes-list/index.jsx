@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { PatternAssemblerCta, BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import { PatternAssemblerCta, DEFAULT_ASSEMBLER_DESIGN } from '@automattic/design-picker';
 import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
@@ -61,7 +61,12 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const siteEditorUrl = useSelector( ( state ) => getSiteEditorUrl( state, selectedSite?.ID ) );
+	const siteEditorUrl = useSelector( ( state ) =>
+		getSiteEditorUrl( state, selectedSite?.ID, {
+			canvas: 'edit',
+			assembler: '1',
+		} )
+	);
 
 	const isPatternAssemblerCTAEnabled =
 		! isLoggedIn || isEnabled( 'pattern-assembler/logged-in-showcase' );
@@ -86,7 +91,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 			const basePathname = isLoggedIn ? '/setup' : '/start';
 			const params = new URLSearchParams( {
 				ref: 'calypshowcase',
-				theme: BLANK_CANVAS_DESIGN.slug,
+				theme: DEFAULT_ASSEMBLER_DESIGN.slug,
 			} );
 
 			if ( selectedSite?.slug ) {

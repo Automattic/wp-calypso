@@ -2,7 +2,7 @@ import { START_WRITING_FLOW, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { useEffect, createPortal, useState } from '@wordpress/element';
-import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
+import { registerPlugin } from '@wordpress/plugins';
 import useSiteIntent from '../../dotcom-fse/lib/site-intent/use-site-intent';
 import WpcomBlockEditorNavSidebar from './components/nav-sidebar';
 import ToggleSidebarButton from './components/toggle-sidebar-button';
@@ -10,9 +10,6 @@ import ToggleSidebarButton from './components/toggle-sidebar-button';
 type CoreEditPostPlaceholder = {
 	isFeatureActive: ( ...args: unknown[] ) => boolean;
 };
-
-const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
-	originalRegisterPlugin( name, settings as PluginSettings );
 
 if ( typeof MainDashboardButton !== 'undefined' ) {
 	registerPlugin( 'a8c-full-site-editing-nav-sidebar', {

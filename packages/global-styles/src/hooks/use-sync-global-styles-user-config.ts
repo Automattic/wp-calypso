@@ -1,6 +1,5 @@
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import { useContext, useEffect } from 'react';
+import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../gutenberg-bridge';
 import type { GlobalStylesObject } from '../types';
 
 const useSyncGlobalStylesUserConfig = (
@@ -8,12 +7,14 @@ const useSyncGlobalStylesUserConfig = (
 	onChange?: ( globalStyle: GlobalStylesObject ) => void
 ) => {
 	const { user, setUserConfig } = useContext( GlobalStylesContext );
-
 	useEffect( () => {
 		setUserConfig( () =>
 			globalStyles
 				.filter( Boolean )
-				.reduce( ( prev, current ) => mergeBaseAndUserConfigs( prev, current ), {} )
+				.reduce(
+					( prev, current ) => mergeBaseAndUserConfigs( prev, current ),
+					{} as GlobalStylesObject
+				)
 		);
 	}, [ globalStyles ] );
 

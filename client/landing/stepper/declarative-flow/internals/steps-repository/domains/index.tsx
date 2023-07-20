@@ -37,7 +37,7 @@ import type { DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
-	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
@@ -87,7 +87,19 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		suggestion: DomainSuggestion | undefined,
 		shouldHideFreePlan = false
 	) => {
-		if ( suggestion ) {
+		if ( ! suggestion ) {
+			setHideFreePlan( false );
+			setDomainCartItem( undefined );
+			setDomain( undefined );
+			return submit?.();
+		}
+
+		setDomain( suggestion );
+
+		if ( suggestion?.is_free ) {
+			setHideFreePlan( false );
+			setDomainCartItem( undefined );
+		} else {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
@@ -96,11 +108,9 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
-		} else {
-			setDomainCartItem( undefined );
 		}
 
-		submit?.();
+		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
 	const handleSkip = ( _googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {

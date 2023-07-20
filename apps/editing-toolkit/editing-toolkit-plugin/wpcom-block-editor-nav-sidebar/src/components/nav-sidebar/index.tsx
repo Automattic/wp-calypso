@@ -35,17 +35,8 @@ type CorePlaceholder = {
 };
 
 const Button = forwardRef(
-	(
-		{
-			children,
-			...rest
-		}: OriginalButton.Props & { icon?: unknown; iconSize?: number; showTooltip?: boolean },
-		ref
-	) => (
-		<OriginalButton
-			ref={ ref as string | ( ( instance: HTMLElement | null ) => void ) }
-			{ ...rest }
-		>
+	( { children, ...rest }: React.ComponentProps< typeof OriginalButton >, ref ) => (
+		<OriginalButton ref={ ref } { ...rest }>
 			{ children }
 		</OriginalButton>
 	)

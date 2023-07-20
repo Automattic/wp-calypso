@@ -20,10 +20,15 @@ export const getBulkDomainsData = ( state: State ) => {
 			domain: state.domainTransferNames[ key ],
 			auth: state.domainTransferAuthCodes?.[ key ].auth ?? '',
 			valid: state.domainTransferAuthCodes?.[ key ].valid ?? false,
+			rawPrice: state.domainTransferAuthCodes?.[ key ].rawPrice ?? 0,
+			saleCost: state.domainTransferAuthCodes?.[ key ].saleCost,
+			currencyCode: state.domainTransferAuthCodes?.[ key ].currencyCode ?? 'USD',
 		};
 	}
 	return domainTransferData;
 };
+export const getBulkDomainsImportDnsRecords = ( state: State ) =>
+	state.shouldImportDomainTransferDnsRecords;
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;
 export const getPlanCartItem = ( state: State ) => state.planCartItem;

@@ -22,17 +22,16 @@ import {
 	isStarter,
 	isThemePurchase,
 	isTitanMail,
-	isWpComPlan,
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
 import { Card, ConfettiAnimation } from '@automattic/components';
+import { dispatch } from '@wordpress/data';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -93,7 +92,8 @@ import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
-import MasterbarStyled from './redesign-v2/masterbar-styled';
+import isRedesignV2 from './redesign-v2/is-redesign-v2';
+import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
@@ -176,14 +176,14 @@ type FindPredicate = (
 	}
 ) => boolean;
 
-function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPurchase[] {
+export function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPurchase[] {
 	return [
 		...( props?.receipt?.data?.purchases ?? [] ),
 		...( props?.gsuiteReceipt?.data?.purchases ?? [] ),
 	];
 }
 
-function getFailedPurchases( props: CheckoutThankYouCombinedProps ) {
+export function getFailedPurchases( props: CheckoutThankYouCombinedProps ) {
 	return ( props.receipt.data && props.receipt.data.failedPurchases ) || [];
 }
 
@@ -238,6 +238,14 @@ export class CheckoutThankYou extends Component<
 			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
+		if ( this.isBulkDomainTransfer( getPurchases( this.props ) ) ) {
+			// We need to reset the store upon checkout completion, on the bulk domain transfer flow
+			// We do it dinamically to avoid loading unnecessary javascript if not necessary.
+			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
+				dispatch( imports.ONBOARD_STORE ).resetOnboardStore()
+			);
+		}
+
 		recordTracksEvent( 'calypso_checkout_thank_you_view' );
 
 		window.scrollTo( 0, 0 );
@@ -281,27 +289,6 @@ export class CheckoutThankYou extends Component<
 			page( `/checkout/thank-you/${ selectedSiteSlug }${ receiptPath }` );
 		}
 	}
-
-	/**
-	 * Determines whether the current checkout flow is for a redesign V2 purchase.
-	 * Used for gradually rolling out the redesign.
-	 *
-	 * @returns {boolean} True if the checkout flow is for a redesign V2 purchase, false otherwise.
-	 */
-	isRedesignV2 = () => {
-		// Fallback to old design when there is a failed purchase.
-		const failedPurchases = getFailedPurchases( this.props );
-		if ( failedPurchases.length > 0 ) {
-			return false;
-		}
-
-		// ThankYou page for only purchasing a plan.
-		const purchases = getPurchases( this.props );
-		if ( purchases.length === 1 ) {
-			return isWpComPlan( purchases[ 0 ].productSlug );
-		}
-		return false;
-	};
 
 	hasPlanOrDomainProduct = () => {
 		return getPurchases( this.props ).some(
@@ -494,7 +481,7 @@ export class CheckoutThankYou extends Component<
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let showHappinessSupport = ! this.isRedesignV2() && ! this.props.isSimplified;
+		let showHappinessSupport = ! isRedesignV2( this.props ) && ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
 		let wasDomainProduct = false;
@@ -505,7 +492,6 @@ export class CheckoutThankYou extends Component<
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
-
 			wasGSuiteOrGoogleWorkspace = purchases.some( isGSuiteOrGoogleWorkspace );
 			wasTitanEmailProduct = purchases.some( isTitanMail );
 			failedPurchases = getFailedPurchases( this.props );
@@ -594,7 +580,7 @@ export class CheckoutThankYou extends Component<
 					<PlanThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasDomainProduct ) {
+		} else if ( wasDomainProduct && ! this.isBulkDomainTransfer( purchases ) ) {
 			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
 			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
 
@@ -639,7 +625,12 @@ export class CheckoutThankYou extends Component<
 			);
 		}
 
-		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
+		if (
+			this.props.domainOnlySiteFlow &&
+			purchases.length > 0 &&
+			! failedPurchases.length &&
+			! this.isBulkDomainTransfer( purchases )
+		) {
 			return null;
 		}
 
@@ -647,21 +638,19 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main
 				className={ classNames( 'checkout-thank-you', {
-					'is-redesign-v2': this.isRedesignV2(),
+					'is-redesign-v2': isRedesignV2( this.props ),
 				} ) }
 			>
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				{ this.isDataLoaded() && this.isRedesignV2() && <ConfettiAnimation delay={ 1000 } /> }
-				{ this.isRedesignV2() && this.props.selectedSite?.ID && (
-					<>
-						<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
-						<MasterbarStyled
-							onClick={ () => page( `/home/${ this.props.selectedSiteSlug ?? '' }` ) }
-							backText={ translate( 'Back to dashboard' ) }
-							canGoBack={ true }
-							showContact={ true }
-						/>
-					</>
+				{ this.isDataLoaded() &&
+					isRedesignV2( this.props ) &&
+					! this.isBulkDomainTransfer( purchases ) && <ConfettiAnimation delay={ 1000 } /> }
+				{ isRedesignV2( this.props ) && (
+					<CheckoutMasterbar
+						siteId={ this.props.selectedSite?.ID }
+						siteSlug={ this.props.selectedSiteSlug }
+						isBulkDomainTransfer={ this.isBulkDomainTransfer( purchases ) }
+					/>
 				) }
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
 				{ showHappinessSupport && (
@@ -718,6 +707,10 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
+	isBulkDomainTransfer( purchases: ReceiptPurchase[] ): boolean {
+		return purchases.every( isDomainTransfer );
+	}
+
 	/**
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
 	 * just performed by the user.
@@ -735,6 +728,15 @@ export class CheckoutThankYou extends Component<
 		if ( hasFailedPurchases ) {
 			return [ 'failed-purchase-details' ];
 		}
+
+		// Check if it is the bulk domain transfer flow
+		if ( this.isBulkDomainTransfer( purchases ) ) {
+			return [
+				'domain-transfer-details',
+				...findPurchaseAndDomain( purchases, isDomainRegistration ),
+			];
+		}
+
 		if ( purchases.some( isJetpackPlan ) ) {
 			return [ 'jetpack-plan-details', purchases.find( isJetpackPlan ) ];
 		}
@@ -838,9 +840,9 @@ export class CheckoutThankYou extends Component<
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
 					purchases={ purchases }
-					isRedesignV2={ this.isRedesignV2() }
+					isRedesignV2={ isRedesignV2( this.props ) }
 				>
-					{ ! this.isRedesignV2() && ! isSimplified && primaryPurchase && (
+					{ ! isRedesignV2( this.props ) && ! isSimplified && primaryPurchase && (
 						<CheckoutThankYouFeaturesHeader
 							isDataLoaded={ this.isDataLoaded() }
 							isGenericReceipt={ this.isGenericReceipt() }
@@ -851,8 +853,8 @@ export class CheckoutThankYou extends Component<
 
 					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
-							{ this.isRedesignV2() ? (
-								<Footer />
+							{ isRedesignV2( this.props ) ? (
+								<Footer isBulkDomainFlow={ this.isBulkDomainTransfer( purchases ) } />
 							) : (
 								<PurchaseDetailsWrapper
 									{ ...this.props }

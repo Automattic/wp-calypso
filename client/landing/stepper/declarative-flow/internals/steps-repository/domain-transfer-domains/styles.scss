@@ -11,6 +11,33 @@
 	align-items: center;
 	gap: 30px;
 
+	.flow-progress.progress-bar {
+		display: none;
+	}
+
+	button:disabled {
+		pointer-events: none;
+	}
+
+	.is-invisible-field {
+		visibility: hidden;
+		// On mobile, display:none, keeps the layout without breaking it
+		@media (max-width: $break-mobile ) {
+			display: none;
+		}
+	}
+
+	.components-button:focus:not(:disabled) {
+		border: 0;
+		outline: none;
+		box-shadow: unset;
+	}
+
+	.components-button:active:not(:disabled) {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+		outline: 3px solid transparent;
+	}
+
 	&.domains {
 		padding: 0;
 		width: 754px;
@@ -33,9 +60,25 @@
 			border: none;
 			box-shadow: none;
 		}
+		.formatted-header__subtitle {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			span {
+				display: block;
+				@media (min-width: $break-medium ) {
+					width: 60%;
+				}
+			}
+		}
+
+		@media (min-width: $break-medium ) {
+			.formatted-header .formatted-header__subtitle {
+				text-align: center;
+			}
+		}
 
 		@media (max-width: $break-medium ) {
-
 			.step-container__header {
 				width: 100%;
 				margin-top: 48px;
@@ -44,10 +87,6 @@
 					font-size: 2rem;
 					text-align: left;
 				}
-			}
-
-			header {
-				text-align: center;
 			}
 
 			gap: 0;
@@ -97,7 +136,7 @@
 
 	.domains__domain-info {
 		display: flex;
-		gap: 16px;
+		gap: 20px;
 		align-items: flex-end;
 		flex-wrap: wrap;
 
@@ -115,30 +154,136 @@
 		}
 	}
 
+	.domains__domain-validation {
+		&.is-mobile {
+			display: none;
+			margin-top: 5px;
+		}
+
+		&.is-desktop {
+			display: block;
+		}
+
+		button {
+			padding: 0 5px;
+			text-decoration: underline;
+		}
+
+		@media (max-width: $break-medium ) {
+			margin-top: 0;
+
+			&.is-mobile {
+				display: block;
+			}
+
+			&.is-desktop {
+				display: none;
+			}
+		}
+	}
+
 	.domains__domain-domain {
-		flex: 1 0 60%;
+		flex: 8;
 	}
 
 	.domains__domain-key {
-		flex: 1 0 15%;
+		flex: 3;
+
+		.info-popover {
+			margin-left: 5px;
+			padding: 2px;
+		}
+
+		.info-popover:focus {
+			outline: 1px solid var(--studio-blue-50);
+		}
+	}
+
+	.domains__domain-price {
+		flex: 1;
+
+		.domains__domain-price-number {
+			align-items: center;
+			font-weight: 500;
+			line-height: 24px;
+
+			@media (max-width: $break-medium ) {
+				align-items: flex-start;
+			}
+
+			&.raw-price {
+				color: var(--studio-gray-40);
+				font-size: 0.75rem;
+				font-weight: 400;
+				line-height: 20px;
+				margin-left: 4px;
+				text-decoration-line: line-through;
+			}
+
+			&.disabled {
+				color: var(--studio-gray-5);
+			}
+		}
+
+		.domains__domain-price-value {
+			align-items: flex-start;
+			flex-direction: column;
+			justify-content: center;
+
+			.domains__domain-price-text {
+				color: var(--studio-green-50);
+				font-size: 0.75rem;
+				font-weight: 500;
+				line-height: 16px;
+			}
+		}
 	}
 
 	.domains__domain-domain,
-	.domains__domain-key {
+	.domains__domain-key,
+	.domains__domain-price {
 
 		// Show the titles on mobile and hide on desktop (except for the first one)
-		.form-label {
+		.form-label,
+		.info-popover {
 			display: none;
-			@media ( max-width: $break-medium ) {
+		}
+
+		.form-label {
+			font-size: 0.875rem;
+			font-weight: 400;
+
+
+			&.is-first-row {
+				display: inline-block;
+				white-space: nowrap;
+				line-height: 24px;
+			}
+
+			@media (max-width: $break-medium ) {
 				display: block;
 			}
-			&.is-first-label-title {
-				display: block;
+		}
+
+		.info-popover.is-first-row {
+			display: inline-block;
+
+			@media (max-width: $break-mobile ) {
+				margin-left: 3px;
+			}
+
+			svg {
+				margin-bottom: -4px;
 			}
 		}
 
 		.form-fieldset {
 			position: relative;
+
+			div {
+				height: 40px;
+				display: flex;
+			}
 
 			input {
 				padding-right: 30px;
@@ -171,93 +316,84 @@
 		}
 	}
 
-
-	.domains__domain-controls {
-		display: flex;
-		gap: 16px;
-
-		.domains__domain-refresh {
-			.form-fieldset {
-				display: flex;
-				align-items: center;
-			}
-
-			button {
-				cursor: pointer;
-			}
-
-			label {
-				display: none;
-			}
-
-			@media (max-width: $break-medium ) {
-				label {
-					display: block;
-					margin-bottom: 0;
-				}
-			}
-		}
-
-		.domains__domain-delete {
-			button {
-				visibility: hidden;
-
-				&.has-delete-button {
-					visibility: visible;
-				}
-
-				&:hover {
-					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
-				}
-			}
-
-			.delete-label {
-				display: none;
-			}
-
-			@media (max-width: $break-medium ) {
-				order: 1;
-
-				.form-fieldset {
-					display: flex;
-					align-items: center;
-
-					.delete-label {
-						margin: 0;
-						display: block;
-					}
-				}
-			}
-		}
-	}
-
 	.bulk-domain-transfer__container {
 
 		.bulk-domain-transfer__add-domain {
 			font-size: 0.875rem;
 			font-weight: 500;
 			color: #0675c4;
-			margin-bottom: 32px;
+			margin-bottom: 22px;
 			margin-top: 2px;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
+		.bulk-domain-transfer__faqs {
+			.foldable-faq__question {
+				padding: 16px 0;
+			}
+			.foldable-faq__question-text {
+				font-size: 1rem;
+			}
+			h2 {
+				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+				font-size: 2rem;
+				margin: 24px 0;
+				text-align: center;
+			}
+			li {
+				font-size: 1rem;
+			}
+			section {
+				margin-top: 120px;
+			}
+			ul {
+				list-style: none;
+				margin: 0 0 48px 0;
+			}
+		}
+
+		.bulk-domain-transfer__import-dns-records {
+			text-align: center;
+
+			.form-checkbox {
+				float: none;
+			}
+
+			.form-label {
+				display: inline;
+			}
+
+			.form-checkbox + span {
+				display: inline;
+				margin-left: 0.5rem;
+				vertical-align: middle;
+			}
+
+			@media (max-width: $break-medium ) {
+				margin-bottom: 50px;
+			}
 		}
 
 		.bulk-domain-transfer__cta-container {
 			display: flex;
 			justify-content: center;
-
-			@media (max-width: $break-medium ) {
-				margin-bottom: 50px;
-			}
+			margin-bottom: 32px;
 
 			.bulk-domain-transfer__cta {
 				justify-content: center;
 				color: var(--black-white-white, #fff);
-				width: 157px;
 				height: 48px;
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				border-radius: 0.25rem;
 				background: var(--blue-blue-50, #0675c4);
 				font-size: 0.875rem;
+				width: 240px;
+
+				&:hover {
+					background: var(--studio-blue-60);
+				}
 
 				&:disabled {
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -275,20 +411,33 @@
 	}
 
 	.domains__domain-info-and-validation {
-		margin-bottom: 16px;
+		margin-bottom: 20px;
 
 		@media (max-width: $break-medium ) {
-			border-bottom: solid 1px #dcdcde;
-			padding-bottom: 32px;
 			margin-bottom: 32px;
+
+			&:not(:first-of-type) {
+				border-top: solid 1px var(--studio-gray-5);
+				padding-top: 32px;
+			}
 		}
 
 		.form-input-validation {
-			padding-top: 0;
-			padding-bottom: 0;
+			margin-top: 5px;
+			padding: 0;
+
+			// remove icon
+			svg {
+				display: none;
+			}
 
 			a {
 				text-decoration: underline;
+			}
+
+			// Remove left-padding for first button to minimize padding when line wraps on mobile.
+			button:first-of-type {
+				padding-left: 0;
 			}
 		}
 	}
@@ -297,6 +446,7 @@
 		width: 300px;
 		@include placeholder();
 	}
+
 	button.loading-placeholder {
 		width: 150px;
 		@include placeholder();

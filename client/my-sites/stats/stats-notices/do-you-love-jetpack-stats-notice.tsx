@@ -10,7 +10,7 @@ import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-vi
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null ) => {
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats`;
+	const purchasePath = `/stats/purchase/${ siteId }`;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
@@ -67,7 +67,7 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					"{{p}}Now that you've gotten familiar with the new Jetpack Stats, we'd love to hear about your experience so we can continue to shape Jetpack to meet your needs.{{/p}}{{p}}{{jetpackStatsProductLink}}I want to support Jetpack Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}Learn more{{/learnMoreLink}}{{externalIcon /}}{{/p}}",
+					'{{p}}Upgrade Jetpack Stats to unlock upcoming features, priority support, and an ad-free experience.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
 					{
 						components: {
 							p: <p />,
@@ -82,9 +82,12 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 								<a
 									className="notice-banner__action-link"
 									href={ JETPACK_STATS_PRODUCT_LANDING_PAGE_URL }
+									target="_blank"
+									rel="noreferrer"
 								/>
 							),
-							externalIcon: <Icon className="stats-icon" icon={ external } size={ 18 } />,
+							learnMoreLinkText: <span />,
+							externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
 						},
 					}
 				) }

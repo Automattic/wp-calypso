@@ -612,7 +612,7 @@ function wpcom_site_has_global_styles_in_personal_plan( $blog_id = 0 ) {
 		return false;
 	}
 
-	$experiment_assignment              = \ExPlat\get_user_assignment( 'calypso_global_styles_personal', $owner );
+	$experiment_assignment              = \ExPlat\assign_user( 'calypso_global_styles_personal_v2', $owner );
 	$has_global_styles_in_personal_plan = 'treatment' === $experiment_assignment;
 	// Cache the experiment assignment to prevent duplicate DB queries in the frontend.
 	wp_cache_set( $cache_key, $has_global_styles_in_personal_plan, 'a8c_experiments', MONTH_IN_SECONDS );
@@ -664,7 +664,9 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 		$has_personal_plan = wpcom_site_has_personal_plan( $blog_id );
 		$note              = 'See https://wp.me/paYJgx-3yE';
 		if ( $has_personal_plan ) {
-			add_blog_sticker( 'wpcom-global-styles-personal-plan', $note, null, $blog_id );
+			if ( ! wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
+				add_blog_sticker( 'wpcom-global-styles-personal-plan', $note, null, $blog_id );
+			}
 		} else {
 			remove_blog_sticker( 'wpcom-global-styles-personal-plan', $note, null, $blog_id );
 		}

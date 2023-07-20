@@ -72,7 +72,7 @@ describe( 'Checkout contact step', () => {
 	it( 'renders the step after the contact step as active if the purchase is free', async () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
-		expect( await screen.findByText( 'Free Purchase' ) ).toBeVisible();
+		expect( await screen.findByText( 'Assign a payment method later' ) ).toBeVisible();
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {

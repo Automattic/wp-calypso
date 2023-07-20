@@ -1,7 +1,7 @@
 @import "@automattic/color-studio/dist/color-variables";
 
 .list-actions-bar {
-	margin-bottom: 57px;
+	margin-bottom: 24px;
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
@@ -14,7 +14,7 @@
 		&.select-dropdown,
 		.select-dropdown__header {
 			height: 48px;
-			justify-content: normal;
+			justify-content: space-between;
 
 			.gridicon {
 				margin-left: 10px;
