@@ -138,7 +138,7 @@ export const authenticate = ( context, next ) => {
 		severity: 'debug',
 		extra: {
 			isAuthenticated: isAuthenticated ? 'true' : 'false',
-			state: JSON.stringify( state, null, 2 ),
+			// state: JSON.stringify( state, null, 2 ),
 		},
 	} );
 
