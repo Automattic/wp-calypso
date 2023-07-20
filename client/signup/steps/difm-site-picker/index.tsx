@@ -59,7 +59,7 @@ export default function DIFMSitePickerStep( props: Props ) {
 			components: {
 				SupportLink: <a className="subtitle-link" rel="noopener noreferrer" href="/help/contact" />,
 				NewSiteLink: (
-					<Button isLink={ true } className="subtitle-link" onClick={ onNewSiteClicked } />
+					<Button variant="link" className="subtitle-link" onClick={ onNewSiteClicked } />
 				),
 			},
 		}

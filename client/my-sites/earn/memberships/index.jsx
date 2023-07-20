@@ -556,7 +556,11 @@ class MembershipsSection extends Component {
 									{
 										components: {
 											link: (
-												<a href="https://wordpress.com/support/wordpress-editor/blocks/payments/#setting-up-payments" />
+												<a
+													href={ localizeUrl(
+														'https://wordpress.com/support/wordpress-editor/blocks/payments/#setting-up-payments'
+													) }
+												/>
 											),
 										},
 									}
@@ -681,7 +685,7 @@ class MembershipsSection extends Component {
 				<QueryMembershipsEarnings siteId={ this.props.siteId } />
 				<QueryMembershipsSettings siteId={ this.props.siteId } source={ this.props.source } />
 				{ this.props.connectedAccountId && this.renderStripeConnected() }
-				{ this.props.connectUrl && ! this.props.connectedAccountId && this.renderConnectStripe() }
+				{ this.props.connectUrl && this.renderConnectStripe() }
 
 				{ ! this.props.connectedAccountId && ! this.props.connectUrl && (
 					<div className="earn__payments-loading">

@@ -21,7 +21,7 @@ export const seed = Math.floor( Math.random() * 10001 );
 
 type RecommendedSiteType = {
 	blogId: number;
-	feedId: number;
+	feedId?: number;
 	railcar: Railcar;
 	title: string;
 	url: string;
@@ -54,6 +54,7 @@ const RecommendedSitesPlaceholder = ( { count }: { count: number } ) => {
 const RecommendedSites = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const amountOfPlaceHolders = useBreakpoint( '<1040px' ) ? 1 : 2;
 
 	const recommendedSites = useSelector(
 		( state ) => getReaderRecommendedSites( state, seed ) as RecommendedSiteType[]
@@ -96,7 +97,7 @@ const RecommendedSites = () => {
 				} ) }
 				{ filteredRecommendedSites.length < displayRecommendedSitesTotal && (
 					<RecommendedSitesPlaceholder
-						count={ displayRecommendedSitesTotal - filteredRecommendedSites.length }
+						count={ amountOfPlaceHolders - filteredRecommendedSites.length }
 					/>
 				) }
 			</RecommendedSitesResponsiveContainer>

@@ -9,6 +9,7 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	FEATURE_LEGACY_STORAGE_200GB,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -36,7 +37,7 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -44,6 +45,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -274,6 +276,7 @@ class Plans extends Component {
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
+				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
 			/>
 		);
@@ -470,11 +473,12 @@ const ConnectedPlans = connect( ( state ) => {
 		isDomainUpsellSuggested: getCurrentQueryArguments( state )?.domain === 'true',
 		isFreePlan: isFreePlanProduct( currentPlan ),
 		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
+		siteHasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
 export default function PlansWrapper( props ) {
-	const { sendNudge } = useOdysseusAssistantContext();
+	const { sendNudge } = useOdieAssistantContext();
 
 	useEffect( () => {
 		if ( props.intervalType === 'monthly' ) {

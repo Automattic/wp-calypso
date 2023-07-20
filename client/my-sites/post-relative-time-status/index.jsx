@@ -53,20 +53,22 @@ class PostRelativeTime extends PureComponent {
 				nextDay: this.props.translate( '[tomorrow at] LT', {
 					comment: 'LT refers to time (eg. 18:00)',
 				} ),
-				sameElse: this.props.translate( 'll [at] LT', {
-					comment:
-						'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - "at" is translated',
-				} ),
+				sameElse:
+					this.props.translate( 'll [at] LT', {
+						comment:
+							'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - "at" is translated',
+					} ) ?? 'll [at] LT',
 			} );
 		} else {
 			if ( Math.abs( now.diff( this.getTimestamp(), 'days' ) ) < 7 ) {
 				return timestamp.fromNow();
 			}
 
-			const sameElse = this.props.translate( 'll [at] LT', {
-				comment:
-					'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
-			} );
+			const sameElse =
+				this.props.translate( 'll [at] LT', {
+					comment:
+						'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
+				} ) ?? 'll [at] LT';
 
 			displayedTime = timestamp.calendar( null, {
 				sameElse,

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -54,9 +53,7 @@ export default function () {
 	statsPage( '/stats/insights', sites );
 
 	// Stat Purchase Page
-	if ( config.isEnabled( 'stats/paid-stats' ) ) {
-		statsPage( '/stats/purchase/:site', purchase );
-	}
+	statsPage( '/stats/purchase/:site', purchase );
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );

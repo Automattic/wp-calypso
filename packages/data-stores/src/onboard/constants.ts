@@ -6,6 +6,7 @@ export enum SiteGoal {
 	Promote = 'promote',
 	DIFM = 'difm', // "Do It For Me"
 	Import = 'import',
+	ImportSubscribers = 'import-subscribers',
 	Other = 'other',
 	PaidSubscribers = 'paid-subscribers',
 }

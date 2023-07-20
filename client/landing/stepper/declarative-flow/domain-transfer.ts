@@ -2,17 +2,24 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import type { Flow, ProvidedDependencies } from './internals/types';
+import {
+	Flow,
+	ProvidedDependencies,
+	AssertConditionResult,
+	AssertConditionState,
+} from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
-
 const domainTransfer: Flow = {
 	name: DOMAIN_TRANSFER,
 	get title() {
@@ -39,6 +46,19 @@ const domainTransfer: Flow = {
 		];
 	},
 
+	useAssertConditions( navigate ): AssertConditionResult {
+		const isLoggedIn = useSelector( isUserLoggedIn );
+
+		useEffect( () => {
+			if ( ! isLoggedIn && navigate ) {
+				navigate( 'intro' );
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ isLoggedIn ] );
+
+		return { state: AssertConditionState.SUCCESS };
+	},
+
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
@@ -52,8 +72,8 @@ const domainTransfer: Flow = {
 
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domain`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/pattedomainrns`;
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domains`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domains`;
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );

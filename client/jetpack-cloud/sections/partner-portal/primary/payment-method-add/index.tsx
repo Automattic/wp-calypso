@@ -15,8 +15,6 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
-import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
@@ -27,7 +25,6 @@ import {
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
 import { getStripeConfiguration } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-stripe-configuration';
 import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -38,6 +35,8 @@ import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 import getSites from 'calypso/state/selectors/get-sites';
+import Layout from '../../layout';
+import LayoutHeader from '../../layout/header';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -182,17 +181,14 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	};
 
 	return (
-		<Main wideLayout className="payment-method-add">
-			<DocumentHead title={ translate( 'Payment Methods' ) } />
-			<SidebarNavigation />
-
+		<Layout className="payment-method-add" title={ translate( 'Payment Methods' ) }>
 			{ ( !! returnQueryArg || products ) && (
 				<AssignLicenseStepProgress currentStep="addPaymentMethod" selectedSite={ selectedSite } />
 			) }
 
-			<div className="payment-method-add__header">
+			<LayoutHeader>
 				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
-			</div>
+			</LayoutHeader>
 
 			<CheckoutProvider
 				onPaymentComplete={ () => {
@@ -263,7 +259,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 					</div>
 				</Card>
 			</CheckoutProvider>
-		</Main>
+		</Layout>
 	);
 }
 
@@ -276,7 +272,9 @@ export default function PaymentMethodAddWrapper( {
 
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
+			<StripeSetupIntentIdProvider
+				fetchStripeSetupIntentId={ () => getStripeConfiguration( { needs_intent: true } ) }
+			>
 				<PaymentMethodAdd selectedSite={ selectedSite } />
 			</StripeSetupIntentIdProvider>
 		</StripeHookProvider>

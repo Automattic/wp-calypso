@@ -39,11 +39,11 @@ describe( 'length', () => {
 } );
 
 describe( 'key', () => {
-	it( 'should return undefined for any index if localStorage is empty', () => {
-		expect( localStorage.key( 0 ) ).toBe( undefined );
-		expect( localStorage.key( 5 ) ).toBe( undefined );
-		expect( localStorage.key( 200 ) ).toBe( undefined );
-		expect( localStorage.key( -1 ) ).toBe( undefined );
+	it( 'should return null for any index if localStorage is empty', () => {
+		expect( localStorage.key( 0 ) ).toBe( null );
+		expect( localStorage.key( 5 ) ).toBe( null );
+		expect( localStorage.key( 200 ) ).toBe( null );
+		expect( localStorage.key( -1 ) ).toBe( null );
 	} );
 
 	it( 'should return the key at the given index if there are elements in localStorage', () => {
@@ -53,10 +53,10 @@ describe( 'key', () => {
 		expect( localStorage.key( 1 ) ).toBe( 'key2' );
 	} );
 
-	it( 'should return undefined if there are elements in localStorage and the index is out of bounds', () => {
+	it( 'should return null if there are elements in localStorage and the index is out of bounds', () => {
 		localStorage.setItem( 'key1', 'value1' );
 		localStorage.setItem( 'key2', 'value2' );
-		expect( localStorage.key( 2 ) ).toBe( undefined );
-		expect( localStorage.key( -1 ) ).toBe( undefined );
+		expect( localStorage.key( 2 ) ).toBe( null );
+		expect( localStorage.key( -1 ) ).toBe( null );
 	} );
 } );

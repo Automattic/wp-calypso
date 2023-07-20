@@ -15,7 +15,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
-import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -74,7 +74,7 @@ export const QuickLinks = ( {
 	isAtomic,
 } ) => {
 	const translate = useTranslate();
-	const { sendNudge } = useOdysseusAssistantContext();
+	const { sendNudge } = useOdieAssistantContext();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
 		,

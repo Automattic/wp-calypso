@@ -19,6 +19,9 @@ export type DomainTransferAuthCodes = Record<
 	{
 		auth: string;
 		valid: boolean;
+		rawPrice: number;
+		saleCost?: number;
+		currencyCode: string | undefined;
 	}
 >;
 
@@ -28,5 +31,13 @@ export type DomainTransferData = Record<
 		domain: string;
 		auth: string;
 		valid: boolean;
+		rawPrice: number;
+		saleCost?: number;
+		currencyCode?: string;
 	}
 >;
+
+export type DomainTransferForm = {
+	shouldImportDnsRecords: boolean;
+	domains: DomainTransferData;
+};

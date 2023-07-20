@@ -34,7 +34,7 @@ class Whats_New {
 	 * @return \A8C\FSE\Whats_New
 	 */
 	public static function init() {
-		if ( is_null( self::$instance ) ) {
+		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
 		return self::$instance;

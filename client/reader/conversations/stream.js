@@ -6,10 +6,11 @@ import Stream from 'calypso/reader/stream';
 import ConversationsIntro from './intro';
 import './stream.scss';
 
+const emptyContent = () => <ConversationsEmptyContent />;
+
 export default function ( props ) {
 	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
-	const emptyContent = <ConversationsEmptyContent />;
-	const intro = <ConversationsIntro isInternal={ isInternal } />;
+	const intro = () => <ConversationsIntro isInternal={ isInternal } />;
 
 	const ConversationTitle = () => {
 		const translate = useTranslate();

@@ -9,11 +9,12 @@ import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-s
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { SITE_PICKER_FILTER_CONFIG } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import { redirect } from '../import/util';
 import type { Step } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import './styles.scss';
 
 const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
@@ -21,6 +22,10 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	const { __ } = useI18n();
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
 		[]
 	);
 	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
@@ -42,6 +47,9 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 		if ( ! submit || ! sourceSiteMigrationStatus || isErrorSourceSiteMigrationStatus || ! sites ) {
 			return;
 		}
+
+		const migrationFlow = 'MtWplugin';
+		triggerMigrationStartingEvent( currentUser, migrationFlow );
 
 		submit( {
 			isFromMigrationPlugin: true,

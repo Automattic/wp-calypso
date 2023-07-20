@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import wpcom from 'calypso/lib/wp';
@@ -13,18 +13,26 @@ import './continue-as-user.scss';
 // Validate redirect URL using the REST endpoint.
 // Return validated URL in case of success, `null` in case of failure.
 function useValidatedURL( redirectUrl ) {
-	const response = useQuery( {
-		queryKey: [ redirectUrl ],
-		queryFn: function () {
-			return wpcom.req
-				.get( '/me/validate-redirect', { redirect_url: redirectUrl } )
-				.then( ( res ) => res.redirect_to );
-		},
-		enabled: !! redirectUrl,
-		staleTime: Infinity,
-	} );
+	const [ url, setURL ] = useState( '' );
+	const [ isLoading, setIsLoading ] = useState( false );
 
-	return { url: response.data, loading: response.isLoading && !! redirectUrl };
+	useEffect( () => {
+		if ( redirectUrl ) {
+			setIsLoading( true );
+			wpcom.req
+				.get( '/me/validate-redirect', { redirect_url: redirectUrl } )
+				.then( ( res ) => {
+					setURL( res?.redirect_to );
+					setIsLoading( false );
+				} )
+				.catch( () => {
+					setURL( null );
+					setIsLoading( false );
+				} );
+		}
+	}, [ redirectUrl ] );
+
+	return { url, loading: isLoading && !! redirectUrl };
 }
 
 function ContinueAsUser( {

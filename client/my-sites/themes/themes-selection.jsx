@@ -172,6 +172,14 @@ class ThemesSelection extends Component {
 	//intercept preview and add primary and secondary
 	getOptions = ( themeId, styleVariation, context ) => {
 		let options = this.props.getOptions( themeId, styleVariation );
+
+		const wrappedActivateAction = ( action ) => {
+			return ( t ) => {
+				this.props.setThemePreviewOptions( themeId, null, null, styleVariation );
+				return action( t, context );
+			};
+		};
+
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
@@ -200,6 +208,7 @@ class ThemesSelection extends Component {
 				} else {
 					defaultOption = options.activate;
 				}
+
 				this.props.setThemePreviewOptions(
 					themeId,
 					defaultOption,
@@ -212,6 +221,10 @@ class ThemesSelection extends Component {
 
 		if ( options ) {
 			options = addStyleVariation( options, styleVariation, this.props.isLoggedIn );
+			if ( options.activate ) {
+				options.activate.action = wrappedActivateAction( options.activate.action );
+			}
+
 			if ( options.preview ) {
 				options.preview.action = wrappedPreviewAction( options.preview.action );
 			}
@@ -309,6 +322,7 @@ export const ConnectedThemesSelection = connect(
 			source,
 			forceWpOrgSearch,
 			isLoading: isCustomizedThemeListLoading,
+			tabFilter,
 		}
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
@@ -353,6 +367,8 @@ export const ConnectedThemesSelection = connect(
 			sourceSiteId !== 'wporg' &&
 			// Only fetch WP.org themes when searching a term.
 			!! search &&
+			// unless just searching over locally installed themes
+			tabFilter !== 'my-themes' &&
 			// WP.org themes are not a good fit for any of the tiers,
 			// unless the site can install themes, then they can be searched in the 'free' tier.
 			( ! tier || ( tier === 'free' && canInstallThemes ) );
@@ -361,7 +377,10 @@ export const ConnectedThemesSelection = connect(
 			// We limit the WP.org themes to one page only.
 			page: 1,
 			// WP.com theme filters don't match WP.org ones, so we add them to the search term.
-			search: filter ? `${ search } ${ filter.replace( /[+-]/g, ' ' ) }` : search,
+			// Filters are slugified and concatenated, so we clear `-` and `+` characters; we also remove the `subject:` prefix that can appear when changing categories.
+			search: filter
+				? `${ search } ${ filter.replaceAll( 'subject:', '' ).replace( /[+-]/g, ' ' ) }`
+				: search,
 		};
 		const wpOrgThemes = shouldFetchWpOrgThemes
 			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []

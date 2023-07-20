@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-color-schemes",
-	"version": "3.0.0",
+	"version": "3.1.1",
 	"description": "Calypso Shared Style Bits.",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
@@ -22,7 +22,7 @@
 		"access": "public"
 	},
 	"scripts": {
-		"clean": "rm -rf js css src/__color-studio",
+		"clean": "rm -rf js css root-only src/__color-studio",
 		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
 	},
 	"devDependencies": {

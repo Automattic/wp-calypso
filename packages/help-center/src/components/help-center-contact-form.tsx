@@ -418,21 +418,6 @@ export const HelpCenterContactForm = () => {
 
 	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale );
 
-	const isCTADisabled = () => {
-		if ( isSubmitting || ! message || ownershipStatusLoading ) {
-			return true;
-		}
-
-		switch ( mode ) {
-			case 'CHAT':
-				return ! supportSite;
-			case 'EMAIL':
-				return ! supportSite || ! subject;
-			case 'FORUM':
-				return ! subject;
-		}
-	};
-
 	const getHEsTraySection = () => {
 		return (
 			<section>
@@ -464,6 +449,27 @@ export const HelpCenterContactForm = () => {
 		stopAt: 'response',
 		enabled: enableGPTResponse,
 	} );
+
+	const isCTADisabled = () => {
+		if ( isSubmitting || ! message || ownershipStatusLoading ) {
+			return true;
+		}
+
+		// We're prefetching the GPT response,
+		// so only disabling the button while fetching if we're on the response screen
+		if ( isFetchingGPTResponse && ! showingGPTResponse ) {
+			return true;
+		}
+
+		switch ( mode ) {
+			case 'CHAT':
+				return ! supportSite;
+			case 'EMAIL':
+				return ! supportSite || ! subject;
+			case 'FORUM':
+				return ! subject;
+		}
+	};
 
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
@@ -515,25 +521,20 @@ export const HelpCenterContactForm = () => {
 				<section className="contact-form-submit">
 					<Button
 						isBusy={ isFetchingGPTResponse }
-						disabled={ isFetchingGPTResponse }
+						disabled={ isCTADisabled() }
 						onClick={ handleCTA }
-						isPrimary={ ! showingGPTResponse || isGPTError }
-						isSecondary={ showingGPTResponse && ! isGPTError }
+						variant={ showingGPTResponse && ! isGPTError ? 'secondary' : 'primary' }
 						className="help-center-contact-form__site-picker-cta"
 					>
 						{ getCTALabel() }
 					</Button>
 					{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
-						<Button
-							isPrimary={ ! isGPTError }
-							isSecondary={ isGPTError }
-							onClick={ handleGPTClose }
-						>
+						<Button variant={ isGPTError ? 'secondary' : 'primary' } onClick={ handleGPTClose }>
 							{ __( 'Close', __i18n_text_domain__ ) }
 						</Button>
 					) }
 					{ isFetchingGPTResponse && ! isGPTError && (
-						<Button isSecondary onClick={ handleGPTCancel }>
+						<Button variant="secondary" onClick={ handleGPTCancel }>
 							{ __( 'Cancel', __i18n_text_domain__ ) }
 						</Button>
 					) }
@@ -566,7 +567,7 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					isPrimary
+					variant="primary"
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }
@@ -648,7 +649,7 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					isPrimary
+					variant="primary"
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }

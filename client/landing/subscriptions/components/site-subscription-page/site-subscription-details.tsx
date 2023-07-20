@@ -3,11 +3,11 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useEffect, useState, useMemo } from 'react';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
-import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { CancelPaidSubscriptionModal } from '../cancel-paid-subscription-modal';
 import {
@@ -40,13 +40,13 @@ const SiteSubscriptionDetails = ( {
 		isLoading: subscribing,
 		isSuccess: subscribed,
 		error: subscribeError,
-	} = SubscriptionManager.useSiteSubscribeMutation( blogId );
+	} = SubscriptionManager.useSiteSubscribeMutation();
 	const {
 		mutate: unsubscribe,
 		isLoading: unsubscribing,
 		isSuccess: unsubscribed,
 		error: unsubscribeError,
-	} = SubscriptionManager.useSiteUnsubscribeMutation( blogId );
+	} = SubscriptionManager.useSiteUnsubscribeMutation();
 
 	const [ paymentPlans, setPaymentPlans ] = useState< PaymentPlan[] >( [] );
 
@@ -193,7 +193,7 @@ const SiteSubscriptionDetails = ( {
 	return (
 		<>
 			<header className="site-subscription-page__header site-subscription-page__centered-content">
-				<SiteIcon iconUrl={ siteIcon } size={ 116 } />
+				<SiteIcon iconUrl={ siteIcon } size={ 116 } alt={ name } />
 				<FormattedHeader brandFont headerText={ name } subHeaderText={ subHeaderText } />
 			</header>
 
@@ -256,9 +256,8 @@ const SiteSubscriptionDetails = ( {
 						{ paymentPlans && !! paymentPlans.length && (
 							<Button
 								className="site-subscription-page__manage-button"
-								isPrimary
+								variant="primary"
 								href="/me/purchases"
-								disabled={ unsubscribing }
 							>
 								{ translate( 'Manage purchases' ) }
 							</Button>

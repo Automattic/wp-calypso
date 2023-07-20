@@ -1,5 +1,5 @@
 import { isFreePlan } from '@automattic/calypso-products';
-import { isPopularPlan } from './is-popular-plan';
+import { isPopularPlan } from '../hooks/npm-ready/data-store/is-popular-plan';
 import type { PlanProperties } from '../types';
 
 export function sortPlans(

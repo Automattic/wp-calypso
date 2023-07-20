@@ -18,8 +18,9 @@ interface Props {
 	stylesheet: string;
 	isVirtual?: boolean;
 	limitGlobalStyles?: boolean;
+	globalStylesInPersonalPlan: boolean;
 	variations?: StyleVariation[];
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	selectedVariation?: StyleVariation;
 	selectedColorVariation: GlobalStylesObject | null;
 	selectedFontVariation: GlobalStylesObject | null;
@@ -33,8 +34,9 @@ const useScreens = ( {
 	stylesheet,
 	isVirtual,
 	limitGlobalStyles,
+	globalStylesInPersonalPlan,
 	variations,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	selectedVariation,
 	selectedColorVariation,
 	selectedFontVariation,
@@ -60,12 +62,13 @@ const useScreens = ( {
 										key="style-variations"
 										globalStylesVariations={ variations as GlobalStylesObject[] }
 										selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
-										splitPremiumVariations={ splitPremiumVariations }
-										displayFreeLabel={ splitPremiumVariations }
+										splitDefaultVariation={ splitDefaultVariation }
+										displayFreeLabel={ splitDefaultVariation }
 										showOnlyHoverViewDefaultVariation={ false }
 										onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
 											onSelectVariation( globalStyleVariation as StyleVariation )
 										}
+										globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 									/>
 								</div>
 							</div>
@@ -84,7 +87,7 @@ const useScreens = ( {
 						path: '/color-palettes',
 						title: translate( 'Colors' ),
 						description: translate(
-							'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+							'Discover your ideal color blend, from free to custom styles.'
 						),
 						content: (
 							<div className="design-preview__sidebar-variations">
@@ -108,9 +111,7 @@ const useScreens = ( {
 						label: translate( 'Fonts' ),
 						path: '/font-pairings',
 						title: translate( 'Fonts' ),
-						description: translate(
-							'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-						),
+						description: translate( 'Elevate your design with expertly curated font pairings.' ),
 						content: (
 							<div key="font-variations" className="design-preview__sidebar-variations">
 								<FontPairingVariations

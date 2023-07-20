@@ -104,7 +104,7 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 						'You’ve supercharged your spam protection by increasing your API limit! Make sure to cancel any existing plans that you don’t need on your <a>account page</a>.',
 						'akismet-thank-you'
 					),
-					{ a: <ExternalLink href="https://akismet.com/account/" /> }
+					{ a: <ExternalLink href="https://akismet.com/account/" children={ null } /> }
 				);
 			}
 		}

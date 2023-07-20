@@ -67,7 +67,7 @@ const useInvalidateSiteSubscriptionsCache = ( isSubscribeLoading: boolean ) => {
 
 type RecommendedSiteProps = {
 	siteId: number;
-	feedId: number; // Used for train-tracks
+	feedId?: number; // Used for train-tracks
 	siteTitle: string;
 	siteDescription: string;
 	siteDomain: string;
@@ -119,18 +119,14 @@ const RecommendedSite = ( {
 	const { isReaderPortal } = useSubscriptionManagerContext();
 
 	const blog_id = String( siteId );
-	if ( feedId === undefined ) {
-		throw new Error( 'feedId is undefined' );
-	}
-	const feed_id = String( feedId );
 
 	const recordSiteIconClicked = useRecordSiteIconClicked();
 	const recordSiteTitleClicked = useRecordSiteTitleClicked();
 	const recordSiteUrlClicked = useRecordSiteUrlClicked();
 	const siteTracksEventProps = {
 		blog_id,
-		feed_id,
 		source: 'recommended-sites',
+		...( feedId === undefined ? {} : { feed_id: String( feedId ) } ),
 	};
 
 	const recordRecommendedSiteSubscribed = useRecordRecommendedSiteSubscribed();
@@ -245,7 +241,7 @@ const RecommendedSite = ( {
 			</HStack>
 			<p className="recommended-site__site-description">{ siteDescription }</p>
 			<Button
-				isPrimary
+				variant="primary"
 				isBusy={ isSubscribeLoading }
 				disabled={ isSubscribeLoading }
 				className="recommended-site__subscribe-button"
@@ -276,10 +272,6 @@ const RecommendedSiteWithConnectedSite = ( {
 }: ConnectSiteComponentProps ) => {
 	if ( typeof siteId !== 'number' || ! site ) {
 		return <RecommendedSitePlaceholder />;
-	}
-
-	if ( ! feedId ) {
-		throw new Error( 'feedId is required to render RecommendedSite' );
 	}
 
 	const siteTitle = getSiteName( { site, feed } );

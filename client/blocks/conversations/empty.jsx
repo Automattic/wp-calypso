@@ -3,7 +3,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
 import EmptyContent from 'calypso/components/empty-content';
-import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { withReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
@@ -50,5 +50,5 @@ class ConversationsEmptyContent extends Component {
 }
 
 export default connect( null, { recordReaderTracksEvent } )(
-	withPerformanceTrackerStop( localize( ConversationsEmptyContent ) )
+	withReaderPerformanceTrackerStop( localize( ConversationsEmptyContent ) )
 );

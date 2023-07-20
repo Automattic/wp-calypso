@@ -1,5 +1,5 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { Spinner } from '@wordpress/components';
+import { Spinner, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { Notice, NoticeType } from '../notice';
 import SiteRow from './site-row';
@@ -65,7 +65,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 
 	return (
 		<ul className="site-subscriptions-list" role="table">
-			<li className="row header" role="row">
+			<HStack className="row header" role="row" as="li" alignment="center">
 				<span className="title-cell" role="columnheader">
 					{ translate( 'Subscribed site' ) }
 				</span>
@@ -86,7 +86,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 					{ translate( 'Email frequency' ) }
 				</span>
 				<span className="actions-cell" role="columnheader" />
-			</li>
+			</HStack>
 			{ subscriptions.map( ( siteSubscription ) => (
 				<SiteRow key={ `sites.siteRow.${ siteSubscription.ID }` } { ...siteSubscription } />
 			) ) }

@@ -37,40 +37,40 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 	<div class="support-content-resources alignwide" style="border-radius:0px; margin-bottom:0px">
 		<div class="support-content-resource">
 			<h4 class="support-content-resource__title">
-				<?php esc_html_e( 'Upgrade now', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Go further', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-			<?php esc_html_e( 'Unlock tools, expert help, and community for your brand\'s growth and success.', 'happy-blocks' ); ?>
+			<?php esc_html_e( 'Upgrade and unlock features, tools, and expert help with a paid plan.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<a href="https://www.youtube.com/wordpressdotcom">
-					<?php esc_html_e( 'Upgrade your plan', 'happy-blocks' ); ?>
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/pricing' ) ); ?>">
+					<?php esc_html_e( 'View plans', 'happy-blocks' ); ?>
 				</a>
 			</div>
 		</div>
 		<div class="support-content-resource">
 			<h4 class="support-content-resource__title">
-				<?php esc_html_e( 'Forums', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Join the forum', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-				<?php esc_html_e( 'Connect with other WordPress customers around the world.', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Connect and learn with the WordPress.com community.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
 				<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/forums/' ) ); ?>">
-					<?php esc_html_e( 'Ask the Community', 'happy-blocks' ); ?>
+					<?php esc_html_e( 'Join the Community', 'happy-blocks' ); ?>
 				</a>
 			</div>
 		</div>
 		<div class="support-content-resource">
 			<h4 class="support-content-resource__title">
-				<?php esc_html_e( 'Support Guides', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Check our guides', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-				<?php esc_html_e( 'Find the answer to the questions you know you have about WordPress.com.', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Find and follow step-by-step guides for every WordPress.com question.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
 				<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
-					<?php esc_html_e( 'Subscribe now', 'happy-blocks' ); ?>
+					<?php esc_html_e( 'Visit support guides', 'happy-blocks' ); ?>
 				</a>
 			</div>
 		</div>

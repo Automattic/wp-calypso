@@ -228,11 +228,7 @@ const PatternAssembler = ( {
 		setHeader( pattern );
 		updateActivePatternPosition( -1 );
 		if ( pattern ) {
-			if ( header ) {
-				noticeOperations.showPatternReplacedNotice( pattern );
-			} else {
-				noticeOperations.showPatternInsertedNotice( pattern );
-			}
+			noticeOperations.showPatternInsertedNotice( pattern );
 		} else if ( header ) {
 			noticeOperations.showPatternRemovedNotice( header );
 		}
@@ -247,11 +243,7 @@ const PatternAssembler = ( {
 		setFooter( pattern );
 		activateFooterPosition( !! pattern );
 		if ( pattern ) {
-			if ( footer ) {
-				noticeOperations.showPatternReplacedNotice( pattern );
-			} else {
-				noticeOperations.showPatternInsertedNotice( pattern );
-			}
+			noticeOperations.showPatternInsertedNotice( pattern );
 		} else if ( footer ) {
 			noticeOperations.showPatternRemovedNotice( footer );
 		}
@@ -268,7 +260,7 @@ const PatternAssembler = ( {
 				...sections.slice( sectionPosition + 1 ),
 			] );
 			updateActivePatternPosition( sectionPosition );
-			noticeOperations.showPatternReplacedNotice( pattern );
+			noticeOperations.showPatternInsertedNotice( pattern );
 		}
 	};
 

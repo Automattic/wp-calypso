@@ -21,15 +21,6 @@
 			display: none;
 		}
 
-		&.header {
-			padding-bottom: $font-code;
-			padding-top: 0;
-
-			@media (max-width: $break-small) {
-				display: none;
-			}
-		}
-
 		.subscriber-list__checkbox-column,
 		.subscriber-list__profile-column,
 		.subscriber-list__subscription-type-column,
@@ -63,6 +54,19 @@
 
 			.gridicon {
 				fill: $studio-gray-50;
+			}
+		}
+
+		&.header {
+			padding-bottom: $font-code;
+			padding-top: 0;
+
+			span {
+				font-weight: 500;
+			}
+
+			@media (max-width: $break-small) {
+				display: none;
 			}
 		}
 

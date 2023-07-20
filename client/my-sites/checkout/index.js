@@ -238,6 +238,16 @@ export default function () {
 		);
 	}
 
+	// Use `noSite` instead of the `siteSelection` middleware for the no-site route.
+	page(
+		'/checkout/offer-professional-email/:domain/:receiptId/no-site',
+		redirectLoggedOut,
+		noSite,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		'/checkout/offer-professional-email/:domain/:receiptId/:site?',
 		redirectLoggedOut,

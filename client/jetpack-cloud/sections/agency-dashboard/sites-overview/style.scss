@@ -17,10 +17,7 @@
 	flex-direction: column;
 	// The -123px is to undo the padding of .layout__content (79px + 32px) and .sites-overview_container ( 8px + 8px )
 	min-height: calc(100vh - 123px);
-	padding: 16px 0;
-	@include break-xlarge {
-		padding: 6px 0;
-	}
+	padding: 6px 0;
 }
 .sites-overview__content-wrapper {
 	max-width: 1500px;

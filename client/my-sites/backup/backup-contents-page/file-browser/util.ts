@@ -14,6 +14,8 @@ const extensionToFileType: Record< string, FileType > = {
 	gif: 'image',
 	ico: 'image',
 	png: 'image',
+	webp: 'image',
+	svg: 'image',
 	mp4: 'video',
 	ogg: 'video',
 	ogv: 'video',
@@ -161,7 +163,7 @@ export const parseBackupPathInfo = ( payload: BackupPathInfoResponse ): FileBrow
 	}
 
 	if ( payload.data_type !== undefined ) {
-		result.dataType = payload.data_type;
+		result.dataType = Number( payload.data_type );
 	}
 
 	if ( payload.manifest_filter !== undefined ) {

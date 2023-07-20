@@ -1,4 +1,9 @@
-import { Design, StyleVariation } from '@automattic/design-picker/src';
+import {
+	Design,
+	StyleVariation,
+	isAssemblerDesign,
+	shouldGoToAssembler,
+} from '@automattic/design-picker';
 import { getVariationTitle, getVariationType } from '@automattic/global-styles';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -54,7 +59,7 @@ export function recordSelectedDesign( {
 
 export function getDesignTypeProps( design?: Design ) {
 	return {
-		goes_to_assembler_step: design?.design_type === 'assembler',
+		goes_to_assembler_step: isAssemblerDesign( design ) && shouldGoToAssembler(),
 		assembler_source: getAssemblerSource( design ),
 	};
 }

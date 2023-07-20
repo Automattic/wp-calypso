@@ -20,6 +20,8 @@ import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import EmptyContent from './empty';
 
+const emptyContent = () => <EmptyContent />;
+
 const SiteStream = ( props ) => {
 	const { className = 'is-site-stream', showBack = true, siteId } = props;
 	const translate = useTranslate();
@@ -42,7 +44,6 @@ const SiteStream = ( props ) => {
 	}, [ site ] );
 
 	const siteTags = useSiteTags( siteId );
-	const emptyContent = <EmptyContent />;
 	const title = site ? site.name : translate( 'Loading Site' );
 	const followerCount = getFollowerCount( feed, site );
 
@@ -54,7 +55,7 @@ const SiteStream = ( props ) => {
 		return <FeedError sidebarTitle={ title } />;
 	}
 
-	const streamSidebar = (
+	const streamSidebar = () => (
 		<FeedStreamSidebar
 			feed={ feed }
 			followerCount={ followerCount }

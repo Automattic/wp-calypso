@@ -243,6 +243,9 @@ export function generateSteps( {
 			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				showBiennialToggle: true,
+			},
 		},
 
 		'plans-new': {

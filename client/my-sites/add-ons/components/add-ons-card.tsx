@@ -1,10 +1,9 @@
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
-import { Button, Gridicon, Spinner } from '@automattic/components';
+import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import Badge from 'calypso/components/badge';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
 export interface Props {

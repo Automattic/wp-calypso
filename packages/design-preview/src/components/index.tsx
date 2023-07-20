@@ -20,7 +20,7 @@ interface DesignPreviewProps {
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
@@ -33,7 +33,8 @@ interface DesignPreviewProps {
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 	onGlobalStylesChange: ( globalStyles: GlobalStylesObject | null ) => void;
 	limitGlobalStyles: boolean;
-	onNavigatorPathChange?: ( path: string ) => void;
+	globalStylesInPersonalPlan: boolean;
+	onNavigatorPathChange?: ( path?: string ) => void;
 }
 
 // @todo Get the style variations of theme, and then combine the selected one with colors & fonts for consistency
@@ -48,7 +49,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	variations,
 	selectedVariation,
 	onSelectVariation,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
@@ -61,6 +62,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	onSelectFontVariation,
 	onGlobalStylesChange,
 	limitGlobalStyles,
+	globalStylesInPersonalPlan,
 	onNavigatorPathChange,
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
@@ -78,8 +80,9 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		stylesheet,
 		isVirtual,
 		limitGlobalStyles,
+		globalStylesInPersonalPlan,
 		variations,
-		splitPremiumVariations,
+		splitDefaultVariation,
 		selectedVariation,
 		selectedColorVariation,
 		selectedFontVariation,
@@ -90,7 +93,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 
 	const isFullscreen = ! isDesktop && ( screens.length === 1 || ! isInitialScreen );
 
-	const handleNavigatorPathChange = ( path: string ) => {
+	const handleNavigatorPathChange = ( path?: string ) => {
 		setIsInitialScreen( path === '/' );
 		onNavigatorPathChange?.( path );
 	};
@@ -120,7 +123,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				url={ previewUrl }
 				inlineCss={ inlineCss }
 				isFullscreen={ isFullscreen }
-				animated={ ! isDesktop }
+				animated={ ! isDesktop && screens.length > 0 }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>

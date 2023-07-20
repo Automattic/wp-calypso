@@ -144,7 +144,7 @@ export class PlansStep extends Component {
 			);
 		}
 
-		const domainName = getDomainName( this.props.signupDependencies.domainItem );
+		const paidDomainName = getDomainName( this.props.signupDependencies.domainItem );
 
 		return (
 			<div>
@@ -155,7 +155,7 @@ export class PlansStep extends Component {
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
-					domainName={ domainName }
+					paidDomainName={ paidDomainName }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					plansWithScroll={ this.state.isDesktop }
@@ -167,6 +167,7 @@ export class PlansStep extends Component {
 					hidePremiumPlan={ this.props.hidePremiumPlan }
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
+					showBiennialToggle={ this.props.showBiennialToggle }
 					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
 				/>
 			</div>
@@ -268,12 +269,12 @@ export class PlansStep extends Component {
 				// During onboarding, if the user chooses to use their own domain, but that domain needs to have
 				// its ownership verified, they can skip the domain selection step and the `domainItem` dependency
 				// is not provided. In that case, the "Back" button in the plan selection step needs to go back to
-				// the initial domain seleciton step and no to the "transfer or connect" step.
+				// the initial domain selection step and not to the "transfer or connect" step.
 				if (
-					'onboarding' === flowName &&
+					( 'onboarding' === flowName || 'onboarding-pm' === flowName ) &&
 					undefined === previousStep?.providedDependencies?.domainItem
 				) {
-					backUrl = getStepUrl( 'onboarding', 'domains' );
+					backUrl = getStepUrl( flowName, 'domains' );
 				}
 			}
 		}

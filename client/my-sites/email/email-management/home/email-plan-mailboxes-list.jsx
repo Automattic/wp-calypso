@@ -1,8 +1,7 @@
-import { CompactCard, Gridicon } from '@automattic/components';
+import { Badge, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Badge from 'calypso/components/badge';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';

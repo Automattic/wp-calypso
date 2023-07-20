@@ -30,8 +30,11 @@ describe( 'Help Center: Interact with Results', function () {
 			await supportComponent.openPopover();
 		} );
 
-		it( 'Search for domain-related help article', async function () {
-			await supportComponent.search( 'domain' );
+		it( 'Search for posts-related help article', async function () {
+			// We use domains below, but one of the domain-adjacent articles is currently broken:
+			// https://github.com/Automattic/wp-calypso/issues/79576
+			// Until that's fixed, let's steer clear and search a different topic.
+			await supportComponent.search( 'posts' );
 		} );
 
 		it( 'Click on the second Help Docs result', async function () {

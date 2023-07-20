@@ -83,7 +83,7 @@ export default function PostItem( { post }: Props ) {
 
 			<div className="post-item__promote-link">
 				<Button
-					isPrimary={ true }
+					variant="primary"
 					isBusy={ loading }
 					disabled={ loading }
 					onClick={ onClickPromote }

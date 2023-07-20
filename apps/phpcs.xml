@@ -11,6 +11,13 @@
 	<ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
 
 	<rule ref="Jetpack"/>
+
+	<rule ref="Jetpack.Functions.I18n">
+		<properties>
+			<property name="text_domain" value="full-site-editing" />
+		</properties>
+	</rule>
+
 	<rule ref="WordPress.Utils.I18nTextDomainFixer">
 		<properties>
 			<property name="old_text_domain" type="array">
@@ -39,6 +46,13 @@
 	-->
 	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable" >
 		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
+	</rule>
+	<rule ref="MediaWiki.Usage.ForbiddenFunctions.isset">
+		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Commenting.FileComment.MissingPackageTag">
+		<severity>0</severity>
 	</rule>
 
 	<!-- Ignore assset files and undeployed files. -->

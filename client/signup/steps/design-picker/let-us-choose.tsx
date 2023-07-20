@@ -56,7 +56,7 @@ const LetUsChoose = ( { flowName, designs, onSelect }: Props ) => {
 					"Can't decide? No problem, our experts can choose the perfect design for your site!"
 				) }
 			</div>
-			<LetUsChooseButton isSecondary onClick={ onClick }>
+			<LetUsChooseButton variant="secondary" onClick={ onClick }>
 				{ translate( 'Let us choose' ) }
 			</LetUsChooseButton>
 		</LetUsChooseContainer>
