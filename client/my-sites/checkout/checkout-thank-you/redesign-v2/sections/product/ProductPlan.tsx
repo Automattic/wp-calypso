@@ -11,7 +11,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { ReceiptPurchase } from 'calypso/state/receipts/types';
 
-type ProductPlanProps = {
+export type ProductPlanProps = {
 	siteSlug: string;
 	primaryPurchase: ReceiptPurchase;
 	siteID: number;
