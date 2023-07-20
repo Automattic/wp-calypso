@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FeedbackNotice from './feedback-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
@@ -20,16 +21,16 @@ import './style.scss';
  */
 const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => {
 	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
-	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
-	);
+	const isSiteVip = useSelector( ( state ) => isVipSite( state as object, siteId as number ) );
+	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state as object, siteId as number ) );
 
 	// TODO: Display error messages on the notice.
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
 
 	const showPaidStatsNotice =
 		config.isEnabled( 'stats/paid-stats' ) &&
-		isSiteJetpackNotAtomic &&
+		! isSiteVip &&
+		! isP2 &&
 		! hasPaidStats &&
 		hasLoadedPurchases;
 
