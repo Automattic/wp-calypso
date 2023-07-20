@@ -31,7 +31,7 @@ export default function ( props ) {
 			<FormattedHeader
 				brandFont
 				headerText={ translate( 'Conversations' ) }
-				subHeaderText={ translate( 'Monitor your ongoing discussions.' ) }
+				subHeaderText={ translate( 'Monitor all of your ongoing discussions.' ) }
 				align="left"
 				hasScreenOptions
 				className="conversations-stream-header"
