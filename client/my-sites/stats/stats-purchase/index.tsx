@@ -65,7 +65,7 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 			<PageViewTracker
 				path="/stats/purchase/:site"
 				title="Stats > Purchase"
-				options={ { from: query.from } }
+				from={ query.from ?? '' }
 			/>
 			<div className="stats">
 				<QueryProductsList />
