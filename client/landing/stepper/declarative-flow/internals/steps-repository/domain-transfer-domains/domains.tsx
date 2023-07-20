@@ -85,7 +85,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const { setPendingAction, setDomainsTransferData, setShouldImportDomainTransferDnsRecords } =
 		useDispatch( ONBOARD_STORE );
 
-	const { __ } = useI18n();
+	const { __, _n } = useI18n();
 
 	const filledDomainValues = Object.values( domainsState ).filter( ( x ) => x.domain && x.auth );
 	const allGood = filledDomainValues.every( ( { valid } ) => valid );
