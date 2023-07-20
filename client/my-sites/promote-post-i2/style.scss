@@ -64,8 +64,6 @@
 				height: 42px;
 			}
 		}
-
-
 	}
 }
 
@@ -75,10 +73,10 @@
 
 	@keyframes skeleton-loading {
 		0% {
-			background-color: var(--studio-gray-0);
+			background-color: #eceded;
 		}
 		100% {
-			background-color: var(--color-sidebar-text);
+			background-color: #e6e7e7;
 		}
 	}
 }
