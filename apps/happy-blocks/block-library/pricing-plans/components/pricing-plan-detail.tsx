@@ -12,7 +12,7 @@ import BillingOptions from './billing-options';
  * These URLs are broken down into parts due to 119-gh-Automattic/lighthouse-forums
  */
 const CHECKOUT_URL = 'https' + '://' + 'wordpress.com/checkout';
-const PLANS_URL = 'https' + '://' + 'wordpress.com/plans/';
+const PLANS_URL = 'https' + '://' + 'wordpress.com/plans';
 
 interface Props {
 	currentPlan: BlockPlan;
