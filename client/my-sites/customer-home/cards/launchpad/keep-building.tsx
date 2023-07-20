@@ -35,7 +35,7 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 	const extraActions = { setShareSiteModalIsOpen };
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
-		return setUpActionsForTasks( tasks, siteSlug, tracksData, extraActions );
+		return setUpActionsForTasks( { tasks, siteSlug, tracksData, extraActions } );
 	};
 
 	return (

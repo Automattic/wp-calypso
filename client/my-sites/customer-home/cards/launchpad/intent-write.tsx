@@ -25,7 +25,7 @@ const LaunchpadIntentWrite = (): JSX.Element => {
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
-		return setUpActionsForTasks( tasks, siteSlug, tracksData );
+		return setUpActionsForTasks( { tasks, siteSlug, tracksData } );
 	};
 
 	return (
