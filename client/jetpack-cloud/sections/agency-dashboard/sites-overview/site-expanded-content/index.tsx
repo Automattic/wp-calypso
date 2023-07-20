@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
-import { siteColumns } from '../utils';
+import useDefaultSiteColumns from '../hooks/use-default-site-columns';
 import BackupStorage from './backup-storage';
 import BoostSitePerformance from './boost-site-performance';
 import InsightsStats from './insights-stats';
@@ -9,22 +9,23 @@ import type { Site, AllowedTypes } from '../types';
 
 import './style.scss';
 
-interface Props {
+type Props = {
 	site: Site;
 	columns?: AllowedTypes[];
 	isSmallScreen?: boolean;
 	hasError: boolean;
-}
-
-const defaultColumns: AllowedTypes[] = siteColumns.map( ( { key } ) => key );
+};
 
 export default function SiteExpandedContent( {
 	site,
-	columns = defaultColumns,
+	columns,
 	isSmallScreen = false,
 	hasError,
 }: Props ) {
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], ! isSmallScreen );
+
+	const defaultColumns = useDefaultSiteColumns().map( ( c ) => c.key );
+	const columnsToRender = columns ?? defaultColumns;
 
 	const stats = site.site_stats;
 	const boostData = site.jetpack_boost_scores;
@@ -41,14 +42,14 @@ export default function SiteExpandedContent( {
 				'is-small-screen': isSmallScreen,
 			} ) }
 		>
-			{ columns.includes( 'stats' ) && stats && (
+			{ columnsToRender.includes( 'stats' ) && stats && (
 				<InsightsStats
 					stats={ stats }
 					siteUrlWithScheme={ siteUrlWithScheme }
 					trackEvent={ trackEvent }
 				/>
 			) }
-			{ columns.includes( 'boost' ) && (
+			{ columnsToRender.includes( 'boost' ) && (
 				<BoostSitePerformance
 					boostData={ boostData }
 					siteId={ site.blog_id }
@@ -58,10 +59,10 @@ export default function SiteExpandedContent( {
 					hasError={ hasError }
 				/>
 			) }
-			{ columns.includes( 'backup' ) && stats && (
+			{ columnsToRender.includes( 'backup' ) && stats && (
 				<BackupStorage site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			) }
-			{ columns.includes( 'monitor' ) && (
+			{ columnsToRender.includes( 'monitor' ) && (
 				<MonitorActivity
 					hasMonitor={ hasMonitor }
 					site={ site }
