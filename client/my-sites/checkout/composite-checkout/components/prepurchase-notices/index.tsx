@@ -9,6 +9,7 @@ import {
 	isJetpackVideoPressSlug,
 	isJetpackSocialSlug,
 	getAllFeaturesForPlan,
+	planFeaturesIncludesProducts,
 	planHasSuperiorFeature,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_BOOST_PRODUCTS,
@@ -19,7 +20,7 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -50,14 +51,7 @@ const PrePurchaseNotices = () => {
 		return getSitePlan( state, siteId );
 	} );
 
-	const planFeaturesIncludesProducts = (
-		planFeatures: ReadonlyArray< string >,
-		products: ReadonlyArray< string >
-	) => {
-		return products.some( ( product ) => planFeatures.includes( product ) );
-	};
-
-	const getMatchingProducts = ( items: ResponseCartProduct[], planSlug: string ) => {
+	const getMatchingProducts = useCallback( ( items: ResponseCartProduct[], planSlug: string ) => {
 		const planFeatures = getAllFeaturesForPlan( planSlug ) as ReadonlyArray< string >;
 
 		return items.filter( ( item ) => {
@@ -96,7 +90,7 @@ const PrePurchaseNotices = () => {
 
 			return false;
 		} );
-	};
+	}, [] );
 
 	const cartProductThatOverlapsSitePlan = useMemo( () => {
 		const planSlugOnSite = currentSitePlan?.product_slug;
@@ -109,7 +103,7 @@ const PrePurchaseNotices = () => {
 		const matchingProducts = getMatchingProducts( responseCart.products, planSlugOnSite );
 
 		return matchingProducts?.[ 0 ];
-	}, [ currentSitePlan, responseCart.products ] );
+	}, [ currentSitePlan?.product_slug, getMatchingProducts, responseCart.products ] );
 
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
 	const siteHasBackupMinimumPluginVersion = useSelector( ( state: AppState ) => {
