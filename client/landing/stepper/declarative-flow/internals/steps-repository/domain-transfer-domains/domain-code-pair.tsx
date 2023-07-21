@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -207,6 +208,17 @@ export function DomainCodePair( {
 								{ __(
 									'Unique code proving ownership, needed for secure domain transfer between registrars.'
 								) }
+								<div>
+									<Button
+										href={ localizeUrl(
+											'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+										) }
+										target="_blank"
+										variant="link"
+									>
+										<span className="learn-more-label">{ __( 'Learn more' ) }</span>
+									</Button>
+								</div>
 							</InfoPopover>
 						</FormLabel>
 
