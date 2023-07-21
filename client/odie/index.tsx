@@ -1,6 +1,7 @@
 import { TextControl, Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useOdieAssistantContext } from './context';
@@ -19,7 +20,7 @@ type OdieAssistantProps = {
 };
 
 const OdieAssistant = ( props: OdieAssistantProps ) => {
-	const { simple } = props;
+	const { simple, botNameSlug } = props;
 	const {
 		lastNudge,
 		chat,
@@ -128,7 +129,8 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_odie_chat_toggle_visibility_click', {
 				visible: newVisibility,
-				bot_name_slug: 'wapuu',
+				bot_name_slug: botNameSlug,
+				simple_chatbox: simple,
 			} )
 		);
 
@@ -164,6 +166,10 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 				'using-environment-badge': environmentBadge,
 			} ) }
 		>
+			<TrackComponentView
+				eventName="calypso_odie_chatbox_view"
+				eventProperties={ { bot_name_slug: botNameSlug } }
+			/>
 			{ ! simple && (
 				<WapuuRibbon
 					onToggleVisibility={ handleToggleVisibility }

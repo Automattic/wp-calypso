@@ -348,7 +348,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FoldableCard
-					header={ translate( 'Advanced Options' ) }
+					header={ translate( 'Advanced options' ) }
 					hideSummary
 					className="memberships__dialog-advanced-options"
 				>

@@ -109,6 +109,7 @@ export type MoreInfoLinkProps = {
 	item: SelectorProduct;
 	onClick?: VoidFunction;
 	isExternal?: boolean;
+	externalLink?: string;
 };
 
 export type PricingBreakdownProps = {

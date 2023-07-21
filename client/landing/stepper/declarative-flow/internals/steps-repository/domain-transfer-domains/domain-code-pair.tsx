@@ -6,10 +6,12 @@ import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useValidationMessage } from './use-validation-message';
 
 type Props = {
@@ -104,13 +106,15 @@ export function DomainCodePair( {
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
 
+	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
+
 	const {
 		valid,
 		loading,
 		message,
 		rawPrice = 0,
 		saleCost,
-		currencyCode = 'USD',
+		currencyCode = userCurrencyCode,
 		refetch,
 		errorStatus,
 	} = validation;
@@ -139,7 +143,7 @@ export function DomainCodePair( {
 				onClick={ () => onRemove( id ) }
 				variant="link"
 			>
-				<span className="delete-label">{ __( 'Discard Domain' ) }</span>
+				<span className="delete-label">{ __( 'Clear domain' ) }</span>
 			</Button>
 			<Button
 				title={ __( 'Refresh' ) }
@@ -150,7 +154,7 @@ export function DomainCodePair( {
 				} ) }
 				variant="link"
 			>
-				<span className="refresh-label">{ __( 'Refresh' ) }</span>
+				<span className="refresh-label">{ __( 'Try again' ) }</span>
 			</Button>
 		</>
 	);

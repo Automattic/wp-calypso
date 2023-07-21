@@ -23,6 +23,7 @@ import {
 import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
 import Layout from '../../layout';
 import LayoutHeader from '../../layout/header';
+import LicenseSearch from '../../license-search';
 import OnboardingWidget from '../onboarding-widget';
 
 import './style.scss';
@@ -75,30 +76,38 @@ export default function Licenses( {
 			) }
 			<SiteAddLicenseNotification />
 
-			<LayoutHeader>
-				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
+			<LicenseListContext.Provider value={ context }>
+				<div className="licenses__container">
+					<div className="licenses__header-container">
+						<div className="licenses__header">
+							<LayoutHeader>
+								<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
-				<SelectPartnerKeyDropdown />
+								<SelectPartnerKeyDropdown />
 
-				<Button
-					href="/partner-portal/issue-license"
-					onClick={ onIssueNewLicenseClick }
-					primary
-					style={ { marginLeft: 'auto' } }
-				>
-					{ translate( 'Issue New License' ) }
-				</Button>
-			</LayoutHeader>
+								<Button
+									href="/partner-portal/issue-license"
+									onClick={ onIssueNewLicenseClick }
+									primary
+									style={ { marginLeft: 'auto' } }
+								>
+									{ translate( 'Issue New License' ) }
+								</Button>
+							</LayoutHeader>
+						</div>
+						<LicenseStateFilter />
+					</div>
+				</div>
 
-			{ showEmptyStateContent ? (
-				<OnboardingWidget isLicensesPage />
-			) : (
-				<LicenseListContext.Provider value={ context }>
-					<LicenseStateFilter />
-
-					<LicenseList />
-				</LicenseListContext.Provider>
-			) }
+				{ showEmptyStateContent ? (
+					<OnboardingWidget isLicensesPage />
+				) : (
+					<div className="licenses__content">
+						<LicenseSearch />
+						<LicenseList />
+					</div>
+				) }
+			</LicenseListContext.Provider>
 		</Layout>
 	);
 }

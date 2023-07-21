@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .licenses {
 	header.current-section {
 		padding: 0 16px;
@@ -5,5 +8,40 @@
 		button {
 			padding: 20px 8px;
 		}
+	}
+
+	.partner-portal-layout__container {
+		display: flex;
+		flex-direction: column;
+		// The -111px is to undo the padding of .layout__content (79px + 32px)
+		min-height: calc(100vh - 111px);
+	}
+}
+
+.licenses__header-container {
+	@include breakpoint-deprecated( ">660px" ) {
+		// We need these negative margin values because we want to make the container full-width,
+		// but our element is inside a limited-width parent.
+		margin-inline: -73px;
+		padding-inline: 73px;
+		border-bottom: 1px solid var(--color-primary-5);
+	}
+}
+
+.licenses__content {
+	flex: 1 1 100%;
+	padding-block-start: 8px;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding: 16px 73px;
+		// We need these negative margin values because we want to make the container full-width,
+		// but our element is inside a limited-width parent.
+		margin: 0 -73px -73px;
+		background: rgba(255, 255, 255, 0.5);
+	}
+
+	.search {
+		box-shadow: 0 0 0 1px var(--color-neutral-5);
+		margin-block-end: 8px;
 	}
 }
