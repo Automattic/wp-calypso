@@ -134,9 +134,9 @@ export function DomainCodePair( {
 		}
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
-	const domainActions = (
+	const domainActions = ( inputValidationTextDisplayed = true ) => (
 		<>
-			&nbsp;
+			{ inputValidationTextDisplayed ? <span>&nbsp;</span> : '' }
 			<Button
 				// Disable the delete button on initial state meaning. no domain, no auth and one row.
 				disabled={ ! domain && ! auth && domainCount === 1 }
@@ -234,7 +234,7 @@ export function DomainCodePair( {
 							<FormInputValidation
 								isError={ ! valid }
 								text={ message }
-								children={ domainActions }
+								children={ domainActions( true ) }
 							></FormInputValidation>
 						) }
 						{ message && loading && (
@@ -250,7 +250,7 @@ export function DomainCodePair( {
 								isError={ false }
 								text=""
 								isMuted={ true }
-								children={ domainCount > 1 && domainActions }
+								children={ domainCount > 1 && domainActions( false ) }
 							/>
 						) }
 					</div>
@@ -278,7 +278,7 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ ! valid }
 						text={ message }
-						children={ domainActions }
+						children={ domainActions( true ) }
 					></FormInputValidation>
 				) }
 				{ message && loading && (
@@ -294,7 +294,7 @@ export function DomainCodePair( {
 						isError={ false }
 						isMuted={ true }
 						text=""
-						children={ domainCount > 1 && domainActions }
+						children={ domainCount > 1 && domainActions( false ) }
 					/>
 				) }
 			</div>
