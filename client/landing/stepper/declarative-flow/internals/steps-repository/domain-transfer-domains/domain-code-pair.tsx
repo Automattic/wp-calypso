@@ -232,7 +232,9 @@ export function DomainCodePair( {
 							></FormInputValidation>
 						) }
 						{ message && loading && (
-							<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+							<div className="is-checking-domain">
+								<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+							</div>
 						) }
 						{ ! shouldReportError && ! loading && (
 							<FormInputValidation
@@ -271,7 +273,9 @@ export function DomainCodePair( {
 					></FormInputValidation>
 				) }
 				{ message && loading && (
-					<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+					<div className="is-checking-domain">
+						<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+					</div>
 				) }
 				{ ! shouldReportError && ! loading && (
 					<FormInputValidation
