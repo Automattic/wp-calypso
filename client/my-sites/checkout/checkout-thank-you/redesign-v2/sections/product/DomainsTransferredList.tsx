@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
 import { domainManagementRoot, domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
@@ -23,21 +24,22 @@ const DomainsTransferredList = ( { purchases, manageDomainUrl }: Props ) => {
 	return (
 		<>
 			<div className="domain-header-buttons">
-				<a
+				<Button
 					href="/setup/domain-transfer"
 					onClick={ () => handleUserClick( '/setup/domain-transfer' ) }
-					className="components-button is-secondary"
+					className="is-secondary"
 				>
 					{ __( 'Transfer more domains' ) }
-				</a>
+				</Button>
 
-				<a
+				<Button
 					href={ manageDomainUrl }
-					className="components-button is-primary manage-all-domains"
+					className="manage-all-domains"
 					onClick={ () => handleUserClick( '/domains/manage' ) }
+					variant="primary"
 				>
 					{ _n( 'Manage your domain', 'Manage your domains', purchases?.length ?? 0 ) }
-				</a>
+				</Button>
 			</div>
 			<div className="domain-complete-summary">
 				<ul className="domain-complete-list">
