@@ -30,7 +30,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 						<>
 							<span>
 								{ __(
-									'Enter your domain names and authorization codes below. You can transfer up to 50 domains at a time.'
+									'Enter your domain names and authorization codes below. You can transfer up to fifty domains at a time.'
 								) }
 							</span>
 						</>

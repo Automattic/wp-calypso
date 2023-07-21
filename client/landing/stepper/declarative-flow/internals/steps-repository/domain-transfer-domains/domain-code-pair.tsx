@@ -175,6 +175,8 @@ export function DomainCodePair( {
 							disabled={ valid }
 							id={ id }
 							value={ domain }
+							className="domains__domain-name-input-field"
+							placeholder={ __( 'Please enter the domain name and authorization code.' ) }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, {
 									domain: event.target.value.trim().toLowerCase(),
@@ -247,7 +249,6 @@ export function DomainCodePair( {
 							<FormInputValidation
 								isError={ false }
 								isMuted={ true }
-								text={ __( 'Please enter the domain name and authorization code.' ) }
 								children={ domainCount > 1 && domainActions }
 							/>
 						) }
@@ -291,7 +292,6 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ false }
 						isMuted={ true }
-						text={ __( 'Please enter the domain name and authorization code.' ) }
 						children={ domainCount > 1 && domainActions }
 					/>
 				) }
