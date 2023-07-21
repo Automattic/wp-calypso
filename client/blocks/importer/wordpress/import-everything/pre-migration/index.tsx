@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, Title } from '@automattic/onboarding';
@@ -7,12 +8,14 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
+import useWaitForAtomicTransfer from 'calypso/blocks/importer/hooks/use-wait-for-atomic-transfer';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import MigrationCredentialsForm from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-credentials-form';
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
 import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
 import { FormState } from 'calypso/components/advanced-credentials/form';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
@@ -74,13 +77,26 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 	};
 
-	const { sourceSiteId, sourceSite, fetchMigrationEnabledStatus, isFetchingData } =
-		useSiteMigrateInfo(
-			targetSite.ID,
-			sourceSiteSlug,
-			fetchMigrationEnabledOnMount,
-			onfetchCallback
-		);
+	const {
+		sourceSiteId,
+		sourceSite,
+		fetchMigrationEnabledStatus,
+		isFetchingData: isFetchingMigrationData,
+	} = useSiteMigrateInfo(
+		targetSite.ID,
+		sourceSiteSlug,
+		fetchMigrationEnabledOnMount,
+		onfetchCallback
+	);
+
+	const { waitForAtomicTransfer, isLoading: isWaitingForAtomicTransfer } = useWaitForAtomicTransfer(
+		targetSite.ID,
+		{ onSuccess: startImport }
+	);
+
+	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+		onSuccess: waitForAtomicTransfer,
+	} );
 
 	const credentials = useSelector( ( state ) =>
 		getJetpackCredentials( state, sourceSiteId, 'main' )
@@ -103,6 +119,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const onUpgradeAndMigrateClick = () => {
 		setContinueImport( true );
 		fetchMigrationEnabledStatus();
+	};
+
+	const onFreeTrialClick = () => {
+		addHostingTrial( targetSite.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
 	};
 
 	useEffect( () => {
@@ -246,8 +266,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				sourceSiteUrl={ sourceSiteUrl }
 				targetSite={ targetSite }
 				startImport={ onUpgradeAndMigrateClick }
+				onFreeTrialClick={ onFreeTrialClick }
 				onContentOnlyClick={ onContentOnlyClick }
-				isBusy={ isFetchingData }
+				isBusy={ isFetchingMigrationData || isAddingTrial || isWaitingForAtomicTransfer }
 			/>
 		);
 	}

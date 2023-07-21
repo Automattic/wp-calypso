@@ -15,6 +15,7 @@ interface Props {
 	sourceSiteUrl: URL;
 	targetSite: SiteDetails;
 	startImport: () => void;
+	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
 	isBusy: boolean;
 }
@@ -22,8 +23,15 @@ interface Props {
 export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
-	const { sourceSiteSlug, sourceSiteUrl, targetSite, startImport, onContentOnlyClick, isBusy } =
-		props;
+	const {
+		sourceSiteSlug,
+		sourceSiteUrl,
+		targetSite,
+		startImport,
+		onFreeTrialClick,
+		onContentOnlyClick,
+		isBusy,
+	} = props;
 
 	return (
 		<div
@@ -60,7 +68,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				<Button
 					borderless={ true }
 					className="action-buttons__borderless"
-					onClick={ () => undefined }
+					onClick={ onFreeTrialClick }
 				>
 					{ /* Untranslated until we've confirmed the design */ }
 					Try for free
