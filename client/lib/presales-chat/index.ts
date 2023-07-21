@@ -1,4 +1,8 @@
-import { useMessagingAvailability, useZendeskMessaging } from '@automattic/help-center/src/hooks';
+import {
+	useChatStatus,
+	useMessagingAvailability,
+	useZendeskMessaging,
+} from '@automattic/help-center/src/hooks';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -36,7 +40,8 @@ function getGroupName( keyType: KeyType ) {
 
 export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabilityCheck = false ) {
 	const isEnglishLocale = useIsEnglishLocale();
-	const isEligibleForPresalesChat = enabled && isEnglishLocale;
+	const { canConnectToZendesk } = useChatStatus();
+	const isEligibleForPresalesChat = enabled && isEnglishLocale && canConnectToZendesk;
 
 	const group = getGroupName( keyType );
 

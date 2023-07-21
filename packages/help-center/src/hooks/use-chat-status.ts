@@ -27,7 +27,7 @@ export default function useChatStatus(
 	const { status: zendeskStatus } = useZendeskConfig( isEligibleForChat );
 
 	return {
-		canConnectToZendesk: zendeskStatus !== 'error',
+		canConnectToZendesk: zendeskStatus !== 'error' && zendeskStatus !== 'loading',
 		hasActiveChats,
 		isChatAvailable: Boolean( chatAvailability?.is_available ),
 		isEligibleForChat,
