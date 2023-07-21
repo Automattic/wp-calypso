@@ -23,7 +23,7 @@ const SubdomainSuggestion = styled.div`
 
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
-	isLoadingSuggestedFreeDomain: boolean;
+	isLoadingSuggestedFreeDomain?: boolean;
 	wpcomFreeDomainSuggestion?: DomainSuggestion;
 } > = ( { paidDomainName, isLoadingSuggestedFreeDomain, wpcomFreeDomainSuggestion } ) => {
 	return (
