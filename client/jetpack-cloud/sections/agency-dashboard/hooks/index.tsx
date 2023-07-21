@@ -13,8 +13,8 @@ import useToggleActivateMonitorMutation from 'calypso/state/jetpack-agency-dashb
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import SitesOverviewContext from './sites-overview/context';
-import type { AllowedTypes, Site, UpdateMonitorSettingsParams } from './sites-overview/types';
+import SitesOverviewContext from '../sites-overview/context';
+import type { AllowedTypes, Site, UpdateMonitorSettingsParams } from '../sites-overview/types';
 
 const NOTIFICATION_DURATION = 3000;
 const DESKTOP_BREAKPOINT = '>1280px';
