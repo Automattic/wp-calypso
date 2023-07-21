@@ -46,8 +46,6 @@ const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 	}, [ dispatch ] );
 
 	useEffect( () => {
-		//console.log( 'a8c_cookie_banner_view site: ' + document.location.host );
-		//console.log( 'a8c_cookie_banner_view path: ' + document.location.pathname );
 		recordTracksEvent( 'a8c_cookie_banner_view', {
 			site: document.location.host,
 			path: document.location.pathname,
