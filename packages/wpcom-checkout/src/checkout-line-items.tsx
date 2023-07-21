@@ -774,8 +774,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 						} ),
 						interval: translate( 'billed annually' ),
 					},
-					comment:
-						'product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
+					comment: 'Domain transfer and billing interval, separated by a colon. ',
 				} ) }
 			</>
 		);
