@@ -1,7 +1,7 @@
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	setSignupCompleteSlug,
@@ -9,11 +9,11 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useQuery } from '../hooks/use-query';
-import { ONBOARD_STORE } from '../stores';
+import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { startedInHostingFlow } from '../utils/hosting-flow';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import type { Flow, ProvidedDependencies } from './internals/types';
-import type { OnboardSelect } from '@automattic/data-stores';
+import { Flow, ProvidedDependencies } from './internals/types';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
 
@@ -214,6 +214,17 @@ const hosting: Flow = {
 	},
 	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+
+		useLayoutEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				window.location.assign( '/start/hosting' );
+			}
+		}, [ userIsLoggedIn ] );
 
 		useEffect(
 			() => {

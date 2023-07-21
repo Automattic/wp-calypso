@@ -11,6 +11,13 @@ export interface Task {
 
 export type LaunchpadChecklist = Task[];
 
+export type LaunchpadTracksData = {
+	checklistSlug: string;
+	launchpadContext: string;
+	recordTracksEvent: ( event: string, properties: Record< string, unknown > ) => void;
+	tasklistCompleted: boolean;
+};
+
 export interface LaunchpadFlowTaskList {
 	[ string: string ]: string[];
 }
@@ -38,4 +45,13 @@ export interface LaunchpadResponse {
 	site_intent: string;
 	launchpad_screen: boolean | string;
 	checklist_statuses: LaunchpadStatuses[];
+}
+
+export interface LaunchpadTaskActionsProps {
+	siteSlug: string | null;
+	tasks: Task[];
+	tracksData: LaunchpadTracksData;
+	extraActions?: {
+		setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
+	};
 }

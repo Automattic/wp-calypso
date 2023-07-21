@@ -68,7 +68,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 	const availabilityNotice = getAvailabilityNotice(
 		domain,
 		validationResult?.status,
-		null,
+		validationResult,
 		true,
 		'_blank',
 		validationResult?.tld

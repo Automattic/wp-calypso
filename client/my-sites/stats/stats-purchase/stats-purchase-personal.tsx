@@ -16,6 +16,9 @@ interface PersonalPurchaseProps {
 	siteSlug: string;
 	sliderStep: number;
 	maxSliderPrice: number;
+	adminUrl: string;
+	redirectUri: string;
+	from: string;
 }
 
 const PersonalPurchase = ( {
@@ -26,6 +29,9 @@ const PersonalPurchase = ( {
 	siteSlug,
 	sliderStep,
 	maxSliderPrice,
+	adminUrl,
+	redirectUri,
+	from,
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -171,14 +177,25 @@ const PersonalPurchase = ( {
 				<Button
 					variant="primary"
 					disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
-					onClick={ () => gotoCheckoutPage( 'free', siteSlug ) }
+					onClick={ () =>
+						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
+					}
 				>
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</Button>
 			) : (
 				<Button
 					variant="primary"
-					onClick={ () => gotoCheckoutPage( 'pwyw', siteSlug, subscriptionValue ) }
+					onClick={ () =>
+						gotoCheckoutPage( {
+							from,
+							type: 'pwyw',
+							siteSlug,
+							adminUrl,
+							redirectUri,
+							price: subscriptionValue,
+						} )
+					}
 				>
 					{ translate( 'Get Jetpack Stats for %(value)s per month', {
 						args: {

@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import CommercialPurchase from './stats-purchase-commercial';
 import PersonalPurchase from './stats-purchase-personal';
 import StatsPurchaseSVG from './stats-purchase-svg';
@@ -41,7 +42,7 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 	);
 };
 
-const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
+const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redirectUri, from } ) => {
 	const [ subscriptionValue, setSubscriptionValue ] = useState(
 		PRICING_CONFIG.DEFAULT_STARTING_PRICE
 	);
@@ -49,6 +50,7 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 	const [ siteType, setSiteType ] = useState( null );
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
@@ -165,6 +167,9 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 											siteSlug={ siteSlug }
 											sliderStep={ sliderStep }
 											maxSliderPrice={ maxSliderPrice }
+											adminUrl={ adminUrl }
+											redirectUri={ redirectUri }
+											from={ from }
 										/>
 									) : (
 										<CommercialPurchase
@@ -172,6 +177,9 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 											currencyCode={ currencyCode }
 											siteSlug={ siteSlug }
 											commercialProduct={ commercialProduct }
+											adminUrl={ adminUrl }
+											redirectUri={ redirectUri }
+											from={ from }
 										/>
 									) }
 								</PanelRow>
@@ -194,12 +202,23 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 	);
 };
 
-const StatsPurchaseWizard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
+const StatsPurchaseWizard = ( {
+	siteSlug,
+	siteId,
+	commercialProduct,
+	pwywProduct,
+	redirectUri,
+	from,
+} ) => {
+	// redirectTo is a relative URI.
 	return (
 		<ProductCard
 			siteSlug={ siteSlug }
+			siteId={ siteId }
 			commercialProduct={ commercialProduct }
 			pwywProduct={ pwywProduct }
+			redirectUri={ redirectUri }
+			from={ from }
 		/>
 	);
 };

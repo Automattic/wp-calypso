@@ -16,6 +16,40 @@ $heading-font-family: "SF Pro Display", $sans;
 		display: none;
 	}
 
+	// Same style also on transfer-domains step
+	.bulk-domain-transfer__cta-container {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 32px;
+
+		.bulk-domain-transfer__cta {
+			justify-content: center;
+			color: var(--black-white-white, #fff);
+			height: 48px;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			border-radius: 0.25rem;
+			background: var(--blue-blue-50, #0675c4);
+			font-size: 0.875rem;
+			width: 240px;
+			font-weight: 500;
+
+			&:hover {
+				background: var(--studio-blue-60);
+			}
+
+			&:disabled {
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				border-radius: 0.25rem;
+				background: var(--gray-gray-5, #dcdcde);
+				opacity: 1;
+			}
+
+			@media (max-width: $break-medium ) {
+				width: 100%;
+			}
+		}
+	}
+
 	&.intro {
 		padding: 0;
 
@@ -78,8 +112,6 @@ $heading-font-family: "SF Pro Display", $sans;
 			}
 
 			.step-container__content {
-
-
 				flex-shrink: 0;
 
 				.select-items {
@@ -118,20 +150,6 @@ $heading-font-family: "SF Pro Display", $sans;
 					.select-items__item-learn-more {
 						text-decoration: underline;
 						color: var(--studio-gray-60);
-					}
-				}
-
-				.components-button {
-					border-radius: 4px;
-					font-size: $font-body-small;
-					font-weight: 500;
-					justify-content: center;
-					padding-bottom: 26px;
-					padding-top: 26px;
-					width: 187px;
-
-					@media (max-width: $break-medium ) {
-						width: 100%;
 					}
 				}
 			}

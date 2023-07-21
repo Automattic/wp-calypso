@@ -233,26 +233,25 @@ export default function IssueMultipleLicensesForm( {
 					</div>
 				</>
 			) }
-			{ config.isEnabled( 'jetpack/pro-dashboard-woo-extensions' ) && wooExtensions && (
+			{ config.isEnabled( 'jetpack/pro-dashboard-woo-extensions' ) && wooExtensions.length > 0 && (
 				<>
 					<hr className="issue-multiple-licenses-form__separator" />
 					<p className="issue-multiple-licenses-form__description">
 						{ translate( 'WooCommerce Extensions:' ) }
 					</p>
 					<div className="issue-multiple-licenses-form__bottom">
-						{ wooExtensions &&
-							wooExtensions.map( ( productOption, i ) => (
-								<LicenseProductCard
-									isMultiSelect
-									key={ productOption.slug }
-									product={ productOption }
-									onSelectProduct={ onSelectProduct }
-									isSelected={ selectedProductSlugs.includes( productOption.slug ) }
-									isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-									tabIndex={ 100 + i }
-									suggestedProduct={ suggestedProduct }
-								/>
-							) ) }
+						{ wooExtensions.map( ( productOption, i ) => (
+							<LicenseProductCard
+								isMultiSelect
+								key={ productOption.slug }
+								product={ productOption }
+								onSelectProduct={ onSelectProduct }
+								isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+								isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
+								tabIndex={ 100 + i }
+								suggestedProduct={ suggestedProduct }
+							/>
+						) ) }
 					</div>
 				</>
 			) }

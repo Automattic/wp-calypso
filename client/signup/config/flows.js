@@ -199,14 +199,8 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHostingFlowDestination( { siteId } ) {
-	return addQueryArgs(
-		{
-			'new-site': siteId,
-			'hosting-flow': true,
-		},
-		'/sites'
-	);
+function getHostingFlowDestination() {
+	return '/sites?hosting-flow=true';
 }
 
 const flows = generateFlows( {

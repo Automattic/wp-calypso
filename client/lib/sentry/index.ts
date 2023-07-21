@@ -118,6 +118,16 @@ function beforeBreadcrumb( breadcrumb: SentryApi.Breadcrumb ): SentryApi.Breadcr
 	return breadcrumb;
 }
 
+function shouldEnableSentry(): boolean {
+	// This flag overrides the other settings, always enabling Sentry:
+	if ( config.isEnabled( 'always-enable-sentry' ) ) {
+		return true;
+	}
+
+	// Only load for 10% of requests when Sentry is enabled in the environment:
+	return config.isEnabled( 'catch-js-errors' ) && Math.floor( Math.random() * 10 ) === 1;
+}
+
 interface SentryOptions {
 	beforeSend: ( e: SentryApi.Event ) => SentryApi.Event | null;
 	userId?: number;
@@ -132,13 +142,8 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 		}
 		state = { state: 'loading' };
 
-		// Enable Sentry only for 10% of requests. Disable if catch-js-errors is not available in the environment.
-		// When always-enable-sentry is available, bypass the other checks.
-		if (
-			! config.isEnabled( 'always-enable-sentry' ) &&
-			( ! config.isEnabled( 'catch-js-errors' ) || Math.floor( Math.random() * 10 ) !== 1 )
-		) {
-			// Set state to disabled to stop maintaining a queue of sentry method calls.
+		// Set state to disabled when we know we won't enable it for this request.
+		if ( ! shouldEnableSentry() ) {
 			state = { state: 'disabled' };
 			// Note that the `clearQueues()` call in the finally block is still
 			// executed after returning here, so cleanup does happen correctly.
