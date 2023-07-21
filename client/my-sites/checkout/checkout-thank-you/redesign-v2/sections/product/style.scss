@@ -81,6 +81,12 @@
 					border-radius: 2px;
 					border: 1px solid var(--studio-gray-5);
 
+					&.domain-complete-list-item-free {
+						p {
+							color: var(--green-green-50, #008a20);
+						}
+					}
+
 					&:not(:first-child) {
 						margin-top: 16px;
 					}

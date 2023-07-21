@@ -66,7 +66,7 @@ const DomainsTransferredList = ( { purchases, manageDomainUrl, currency = 'USD' 
 						<li
 							className={ joinClasses( [
 								'domain-complete-list-item',
-								priceInteger > 0 && 'is-summary',
+								priceInteger === 0 && 'domain-complete-list-item-free',
 							] ) }
 							key={ meta }
 						>
