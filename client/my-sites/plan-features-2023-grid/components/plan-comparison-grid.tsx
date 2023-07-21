@@ -463,7 +463,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				className={ getPlanClass( planName ) }
 				freePlan={ isFreePlan( planName ) }
 				isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
-				isPlaceholder={ planPropertiesObj.isPlaceholder }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planName={ planConstantObj.getTitle() }
