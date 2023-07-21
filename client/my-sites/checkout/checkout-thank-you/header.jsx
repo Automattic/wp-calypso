@@ -102,8 +102,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 				<>
 					<div>
 						{ _n(
-							"We got it from here! We'll send an email when your newly transferred domain is ready to use.",
-							"We got it from here! We'll send an email when your newly transferred domains are ready to use.",
+							"We got it from here! We'll send an email when your domain is ready to use.",
+							"We got it from here! We'll send an email when your domains are ready to use.",
 							purchases?.length
 						) }
 					</div>
