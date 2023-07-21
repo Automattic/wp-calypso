@@ -12,6 +12,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSiteProducts, { SiteProduct } from 'calypso/state/sites/selectors/get-site-products';
@@ -37,6 +38,7 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	// Determine whether a product is owned.
 	const isFreeOwned = useMemo( () => {
@@ -57,7 +59,8 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_PWYW_YEARLY )
 	) as ProductsList.ProductsListItem | null;
 
-	const isLoading = ! commercialProduct || ! pwywProduct;
+	// Get the currency code before rendering the pricing slider.
+	const isLoading = ! commercialProduct || ! pwywProduct || ! currencyCode;
 
 	return (
 		<Main fullWidthLayout>
@@ -68,7 +71,7 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 				from={ query.from ?? '' }
 			/>
 			<div className="stats">
-				<QueryProductsList />
+				<QueryProductsList type="jetpack" />
 				{
 					// TODO: style loading state
 				 }
