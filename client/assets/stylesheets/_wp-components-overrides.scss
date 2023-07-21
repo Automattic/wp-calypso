@@ -11,16 +11,14 @@
 }
 
 /* @wordpress/components Button overrides */
-a.components-button,
-button.components-button {
+.components-button {
 	&,
 	&:hover:not(:disabled) {
 		color: var(--color-neutral-70);
 	}
 }
 
-a.components-button.is-primary,
-button.components-button.is-primary {
+.components-button.is-primary {
 	background-color: var(--color-accent);
 	border-color: var(--color-accent);
 	color: var(--color-text-inverted);
@@ -42,8 +40,7 @@ button.components-button.is-primary {
 	}
 }
 
-a.components-button.is-secondary,
-button.components-button.is-secondary {
+.components-button.is-secondary {
 	background-color: var(--color-surface);
 	color: var(--color-neutral-70);
 	box-shadow: inset 0 0 0 1px var(--color-neutral-10);
@@ -67,8 +64,7 @@ button.components-button.is-secondary {
 	}
 }
 
-a.components-button.is-tertiary,
-button.components-button.is-tertiary {
+.components-button.is-tertiary {
 	color: var(--color-accent);
 
 	&:active:not(:disabled),
