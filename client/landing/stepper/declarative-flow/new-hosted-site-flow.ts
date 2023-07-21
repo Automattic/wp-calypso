@@ -7,6 +7,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -34,7 +35,8 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const { setSiteTitle, setPlanCartItem, setSiteGeoAffinity } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setSiteTitle, setPlanCartItem, setSiteGeoAffinity } =
+			useDispatch( ONBOARD_STORE );
 		const { siteGeoAffinity, planCartItem } = useSelect(
 			( select ) => ( {
 				siteGeoAffinity: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteGeoAffinity(),
@@ -42,6 +44,12 @@ const hosting: Flow = {
 			} ),
 			[]
 		);
+
+		const flowProgress = useSiteSetupFlowProgress( _currentStepSlug, 'host' );
+
+		if ( flowProgress ) {
+			setStepProgress( flowProgress );
+		}
 
 		const flowName = this.name;
 
