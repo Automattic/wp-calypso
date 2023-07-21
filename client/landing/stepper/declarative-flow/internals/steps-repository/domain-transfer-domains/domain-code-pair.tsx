@@ -135,9 +135,9 @@ export function DomainCodePair( {
 		}
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
-	const domainActions = (
+	const domainActions = ( inputValidationTextDisplayed = true ) => (
 		<>
-			&nbsp;
+			{ inputValidationTextDisplayed ? <span>&nbsp;</span> : '' }
 			<Button
 				// Disable the delete button on initial state meaning. no domain, no auth and one row.
 				disabled={ ! domain && ! auth && domainCount === 1 }
@@ -176,6 +176,8 @@ export function DomainCodePair( {
 							disabled={ valid }
 							id={ id }
 							value={ domain }
+							className="domains__domain-name-input-field"
+							placeholder={ __( 'Please enter the domain name and authorization code.' ) }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, {
 									domain: event.target.value.trim().toLowerCase(),
@@ -244,7 +246,7 @@ export function DomainCodePair( {
 							<FormInputValidation
 								isError={ ! valid }
 								text={ message }
-								children={ domainActions }
+								children={ domainActions( true ) }
 							></FormInputValidation>
 						) }
 						{ message && loading && (
@@ -258,9 +260,9 @@ export function DomainCodePair( {
 						{ ! shouldReportError && ! loading && (
 							<FormInputValidation
 								isError={ false }
+								text=""
 								isMuted={ true }
-								text={ __( 'Please enter the domain name and authorization code.' ) }
-								children={ domainCount > 1 && domainActions }
+								children={ domainCount > 1 && domainActions( false ) }
 							/>
 						) }
 					</div>
@@ -288,7 +290,7 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ ! valid }
 						text={ message }
-						children={ domainActions }
+						children={ domainActions( true ) }
 					></FormInputValidation>
 				) }
 				{ message && loading && (
@@ -303,8 +305,8 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ false }
 						isMuted={ true }
-						text={ __( 'Please enter the domain name and authorization code.' ) }
-						children={ domainCount > 1 && domainActions }
+						text=""
+						children={ domainCount > 1 && domainActions( false ) }
 					/>
 				) }
 			</div>

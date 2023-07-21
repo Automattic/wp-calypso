@@ -182,10 +182,21 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 		const totalPrice = getTotalPrice( domainsState );
 		if ( totalPrice ) {
+			const formattedTotalPrice = getFormattedTotalPrice( domainsState );
+
+			if ( numberOfValidDomains > 1 ) {
+				return sprintf(
+					/* translators: %1$s Number of valid domains, %2$s: total price formatted */
+					__( 'Transfer %1$s domains for %2$s' ),
+					numberOfValidDomains,
+					formattedTotalPrice
+				);
+			}
+
 			return sprintf(
 				/* translators: %s: total price formatted */
 				__( 'Transfer for %s' ),
-				getFormattedTotalPrice( domainsState )
+				formattedTotalPrice
 			);
 		}
 
