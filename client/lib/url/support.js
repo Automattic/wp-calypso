@@ -25,7 +25,6 @@ export const ECOMMERCE = `${ root }/ecommerce/`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES = `${ root }/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#pending`;
 export const INCOMING_DOMAIN_TRANSFER = `${ root }/incoming-domain-transfer/`;
-export const INCOMING_DOMAIN_TRANSFER_BEFORE_YOU_GET_STARTED = `${ root }/incoming-domain-transfer/#before-you-get-started`;
 export const INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK = `${ root }/incoming-domain-transfer/#step-1-unlock-your-domain`;
 export const INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE = `${ root }/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code`;
 export const INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID = `${ root }/incoming-domain-transfer/#faq-and-troubleshooting`;
