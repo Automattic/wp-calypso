@@ -43,12 +43,10 @@ export default function ToggleActivateMonitoring( {
 	const [ showNotificationSettings, setShowNotificationSettings ] = useState< boolean >( false );
 	const [ showTooltip, setShowTooltip ] = useState( false );
 
-	const isDowntimeMonitoringPaidTierEnabled = isEnabled(
-		'jetpack/pro-dashboard-monitor-paid-tier'
-	);
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
 	// TODO: Need to figure out if current site has no existing paid version of downtime monitoring.
-	const shouldDisplayUpgradePopover = status === 'success' && isDowntimeMonitoringPaidTierEnabled;
+	const shouldDisplayUpgradePopover = status === 'success' && isPaidTierEnabled;
 
 	const handleShowTooltip = () => {
 		setShowTooltip( true );
@@ -156,7 +154,7 @@ export default function ToggleActivateMonitoring( {
 		);
 	}
 
-	const displayablePopover = shouldDisplayUpgradePopover ? (
+	const upgradePopoverOrTooltip = shouldDisplayUpgradePopover ? (
 		<UpgradePopover
 			context={ statusContentRef.current }
 			isVisible={ showTooltip }
@@ -164,19 +162,17 @@ export default function ToggleActivateMonitoring( {
 			onClose={ handleHideTooltip }
 		/>
 	) : (
-		<>
-			{ tooltip && (
-				<Tooltip
-					id={ tooltipId }
-					context={ statusContentRef.current }
-					isVisible={ showTooltip }
-					position="bottom"
-					className="sites-overview__tooltip"
-				>
-					{ tooltip }
-				</Tooltip>
-			) }
-		</>
+		tooltip && (
+			<Tooltip
+				id={ tooltipId }
+				context={ statusContentRef.current }
+				isVisible={ showTooltip }
+				position="bottom"
+				className="sites-overview__tooltip"
+			>
+				{ tooltip }
+			</Tooltip>
+		)
 	);
 
 	return (
@@ -194,7 +190,7 @@ export default function ToggleActivateMonitoring( {
 			>
 				{ toggleContent }
 
-				{ displayablePopover }
+				{ upgradePopoverOrTooltip }
 			</span>
 
 			{ showNotificationSettings && (
