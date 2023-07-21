@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
@@ -261,6 +262,15 @@ export const post = ( context, next ) => {
 
 	// Set post type on state.posts.[ id ].type, so components like document head can read from it.
 	context.store.dispatch( { type: POST_EDIT, post: { type: postType }, siteId, postId } );
+
+	logToLogstash( {
+		feature: 'calypso_client',
+		message: 'e2e atomic auth redirect',
+		severity: 'debug',
+		extra: {
+			message: 'Rendering CalypsoifyIframe',
+		},
+	} );
 
 	context.primary = (
 		<CalypsoifyIframe
