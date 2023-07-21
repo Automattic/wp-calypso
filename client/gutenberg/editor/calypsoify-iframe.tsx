@@ -226,15 +226,15 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	};
 
 	onMessage = ( { data, origin }: MessageEvent ) => {
-		logToLogstash( {
-			feature: 'calypso_client',
-			message: 'e2e atomic auth redirect',
-			severity: 'debug',
-			extra: {
-				data: JSON.stringify( data ),
-				origin,
-			},
-		} );
+		// logToLogstash( {
+		// 	feature: 'calypso_client',
+		// 	message: 'e2e atomic auth redirect',
+		// 	severity: 'debug',
+		// 	extra: {
+		// 		data: JSON.stringify( data ),
+		// 		origin,
+		// 	},
+		// } );
 
 		if ( ! data || 'gutenbergIframeMessage' !== data.type ) {
 			return;
@@ -291,6 +291,17 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				multiple: true,
 			} );
 		}
+
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'e2e atomic auth redirect',
+			severity: 'debug',
+			extra: {
+				message: 'unknown message',
+				data,
+				origin,
+			},
+		} );
 
 		// any other message is unknown and may indicate a bug
 	};
