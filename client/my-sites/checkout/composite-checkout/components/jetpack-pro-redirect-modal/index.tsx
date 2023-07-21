@@ -64,12 +64,7 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 	}
 
 	return (
-		<Modal
-			open={ true }
-			onRequestClose={ dismissAndRecordEvent }
-			title=""
-			className="jetpack-pro-redirect-modal"
-		>
+		<Modal onRequestClose={ dismissAndRecordEvent } title="" className="jetpack-pro-redirect-modal">
 			<div className="jetpack-pro-redirect-modal__container">
 				<div className="jetpack-pro-redirect-modal__top-header">
 					<JetpackLogo size={ 22 } className="jetpack-pro-redirect-modal__logo" />
