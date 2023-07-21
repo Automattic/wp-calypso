@@ -11,6 +11,7 @@ import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { logToLogstash } from 'calypso/lib/logstash';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { navigate } from 'calypso/lib/navigate';
 import { withStopPerformanceTrackingProp } from 'calypso/lib/performance-tracking';
@@ -225,6 +226,16 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	};
 
 	onMessage = ( { data, origin }: MessageEvent ) => {
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'e2e atomic auth redirect',
+			severity: 'debug',
+			extra: {
+				data: JSON.stringify( data ),
+				origin,
+			},
+		} );
+
 		if ( ! data || 'gutenbergIframeMessage' !== data.type ) {
 			return;
 		}
