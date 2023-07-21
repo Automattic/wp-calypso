@@ -14,37 +14,11 @@ import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashb
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from '../sites-overview/context';
+import getRejectedAndFulfilledRequests from './get-rejected-and-fulfilled-requests';
 import type { AllowedTypes, Site, UpdateMonitorSettingsParams } from '../sites-overview/types';
 
 const NOTIFICATION_DURATION = 3000;
 const DESKTOP_BREAKPOINT = '>1280px';
-
-function getRejectedAndFulfilledRequests(
-	promises: any[],
-	requests: { site: { blog_id: number; url: string } }[]
-) {
-	const allSelectedSites: {
-		site: { blog_id: number; url: string };
-		status: 'rejected' | 'fulfilled';
-	}[] = [];
-
-	promises.forEach( ( promise, index ) => {
-		const { status } = promise;
-		const site = requests[ index ].site;
-		const item = {
-			site,
-			status,
-		};
-		allSelectedSites.push( item );
-	} );
-
-	const fulfilledRequests = allSelectedSites.filter(
-		( product ) => product.status === 'fulfilled'
-	);
-	const rejectedRequests = allSelectedSites.filter( ( product ) => product.status === 'rejected' );
-
-	return { fulfilledRequests, rejectedRequests };
-}
 
 export function useToggleActivateMonitor(
 	sites: Array< { blog_id: number; url: string } >
