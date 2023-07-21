@@ -35,7 +35,7 @@
 		"@automattic/site-picker": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
-		"@popperjs/core": "^2.10.2",
+		"@popperjs/core": "^2.11.8",
 		"@tanstack/react-query": "^4.29.1",
 		"@wordpress/base-styles": "^4.29.0",
 		"@wordpress/components": "^25.4.0",

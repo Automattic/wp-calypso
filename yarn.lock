@@ -876,7 +876,7 @@ __metadata:
     "@automattic/site-picker": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
-    "@popperjs/core": ^2.10.2
+    "@popperjs/core": ^2.11.8
     "@storybook/addon-backgrounds": ^7.0.18
     "@storybook/cli": ^7.0.18
     "@storybook/react": ^7.0.18
@@ -1510,7 +1510,7 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
-    "@popperjs/core": ^2.10.2
+    "@popperjs/core": ^2.11.8
     "@wordpress/base-styles": ^4.29.0
     "@wordpress/components": ^25.4.0
     "@wordpress/dom": ^3.38.0
@@ -1541,7 +1541,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
-    "@popperjs/core": ^2.10.2
+    "@popperjs/core": ^2.11.8
     "@storybook/cli": ^7.0.18
     "@storybook/react": ^7.0.18
     "@wordpress/base-styles": ^4.29.0
@@ -1802,7 +1802,7 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
     "@babel/core": ^7.17.5
-    "@popperjs/core": ^2.10.2
+    "@popperjs/core": ^2.11.8
     "@sentry/browser": ^7.54.0
     "@tanstack/eslint-plugin-query": ^4.29.8
     "@tanstack/react-query": ^4.29.1
@@ -4647,10 +4647,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@popperjs/core@npm:^2.10.2, @popperjs/core@npm:^2.5.4":
-  version: 2.10.2
-  resolution: "@popperjs/core@npm:2.10.2"
-  checksum: a626a586586f4589b958d02af9fab3c14cf4a865d3bce26a9b46a847eca6d975567914a3eb643a12516bfb6813023c9eaa4b57c98eff8de625b500816d5f91ac
+"@popperjs/core@npm:^2.11.8, @popperjs/core@npm:^2.5.4":
+  version: 2.11.8
+  resolution: "@popperjs/core@npm:2.11.8"
+  checksum: 4681e682abc006d25eb380d0cf3efc7557043f53b6aea7a5057d0d1e7df849a00e281cd8ea79c902a35a414d7919621fc2ba293ecec05f413598e0b23d5a1e63
   languageName: node
   linkType: hard
 
