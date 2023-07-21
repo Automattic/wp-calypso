@@ -12,7 +12,6 @@ export const useSitesDashboardImportSiteUrl = (
 		{
 			source: TRACK_SOURCE_NAME,
 			...additionalParameters,
-			'hosting-flow': isHostingFlow ? true : null,
 		},
 		isHostingFlow ? '/setup/import-hosted-site' : '/start/import'
 	);
