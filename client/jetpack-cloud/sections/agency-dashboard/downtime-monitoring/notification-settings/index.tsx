@@ -4,11 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import DashboardModalForm from '../../dashboard-modal-form';
-import {
-	useUpdateMonitorSettings,
-	useJetpackAgencyDashboardRecordTrackEvent,
-	useShowVerifiedBadge,
-} from '../../hooks';
+import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
 	availableNotificationDurations as durations,
@@ -21,6 +17,7 @@ import NotificationSettingsFormFooter from './form-content/footer';
 import MobilePushNotification from './form-content/mobile-push-notification';
 import NotificationDuration from './form-content/notification-duration';
 import SMSNotification from './form-content/sms-notification';
+import useShowVerifiedBadge from './use-show-verified-badge';
 import type {
 	MonitorSettings,
 	Site,
@@ -34,7 +31,6 @@ import type {
 	MonitorSettingsContact,
 	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
-
 import './style.scss';
 import '../style.scss';
 
