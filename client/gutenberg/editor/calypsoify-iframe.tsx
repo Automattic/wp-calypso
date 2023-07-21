@@ -226,22 +226,22 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	};
 
 	onMessage = ( { data, origin }: MessageEvent ) => {
-		// logToLogstash( {
-		// 	feature: 'calypso_client',
-		// 	message: 'e2e atomic auth redirect',
-		// 	severity: 'debug',
-		// 	extra: {
-		// 		data: JSON.stringify( data ),
-		// 		origin,
-		// 	},
-		// } );
-
 		if ( ! data || 'gutenbergIframeMessage' !== data.type ) {
 			return;
 		}
 
 		const isValidOrigin =
 			this.props.siteAdminUrl && this.props.siteAdminUrl.indexOf( origin ) === 0;
+
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'e2e atomic auth redirect',
+			severity: 'debug',
+			extra: {
+				origin,
+				isValidOrigin: isValidOrigin ? 'yes' : 'no',
+			},
+		} );
 
 		if ( ! isValidOrigin ) {
 			return;
