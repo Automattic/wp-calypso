@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { captureException } from 'calypso/lib/sentry';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
@@ -20,6 +21,7 @@ export function logStashLoadErrorEvent(
 	error: Error,
 	additionalData: Record< string, string | number | undefined > = {}
 ): Promise< void > {
+	captureException( error );
 	return logStashEvent( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,

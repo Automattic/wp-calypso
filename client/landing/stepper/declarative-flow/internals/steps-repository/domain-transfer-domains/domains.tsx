@@ -10,6 +10,7 @@ import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState } from 'react';
 import { v4 as uuid } from 'uuid';
+import QueryPlans from 'calypso/components/data/query-plans';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
@@ -193,6 +194,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	return (
 		<div className="bulk-domain-transfer__container">
+			{ /* QueryPlans required by getCurrentUserCurrencyCode in DomainCodePair */ }
+			<QueryPlans />
 			{ Object.entries( domainsState ).map( ( [ key, domain ], index ) => (
 				<DomainCodePair
 					key={ key }

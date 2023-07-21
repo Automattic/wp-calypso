@@ -12,28 +12,30 @@ import { getProductTitle, LICENSE_INFO_MODAL_ID } from '../utils';
 
 import './style.scss';
 
-interface Props {
+type Props = {
+	isBusy: boolean;
+	isDisabled: boolean;
 	tabIndex: number;
 	product: APIProductFamilyProduct;
-	onSelectProduct: ( value: APIProductFamilyProduct ) => void | null;
-}
+	onSelectProduct?: ( value: APIProductFamilyProduct ) => void;
+};
 
-export default function LicenseBundleCard( props: Props ) {
-	const { setParams, resetParams, getParamValue } = useURLQueryParams();
-	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
-
-	const { tabIndex, product, onSelectProduct } = props;
-	const productTitle = getProductTitle( product.name );
-	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
+const LicenseBundleCard = ( {
+	isBusy = false,
+	isDisabled = false,
+	tabIndex,
+	product,
+	onSelectProduct,
+}: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const onSelect = useCallback( () => {
-		onSelectProduct( product );
-	}, [ onSelectProduct, product ] );
-
+	const productTitle = getProductTitle( product.name );
 	const { description: productDescription } = useProductDescription( product.slug );
 
+	const { setParams, resetParams, getParamValue } = useURLQueryParams();
+	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
+	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
 	const onShowLightbox = useCallback(
 		( e: React.MouseEvent< HTMLElement > ) => {
 			e.stopPropagation();
@@ -60,6 +62,10 @@ export default function LicenseBundleCard( props: Props ) {
 		setShowLightbox( false );
 	}, [ resetParams ] );
 
+	const onSelect = useCallback( () => {
+		onSelectProduct?.( product );
+	}, [ onSelectProduct, product ] );
+
 	return (
 		<>
 			<div className="license-bundle-card">
@@ -77,6 +83,8 @@ export default function LicenseBundleCard( props: Props ) {
 					</div>
 					<Button
 						primary
+						busy={ isBusy }
+						disabled={ isDisabled }
 						className="license-bundle-card__select-license"
 						onClick={ onSelect }
 						tabIndex={ tabIndex }
@@ -96,8 +104,6 @@ export default function LicenseBundleCard( props: Props ) {
 			) }
 		</>
 	);
-}
-
-LicenseBundleCard.defaultProps = {
-	onSelectProduct: null,
 };
+
+export default LicenseBundleCard;

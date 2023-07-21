@@ -685,14 +685,6 @@ function wpcomPages( app ) {
 		res.redirect( redirectUrl );
 	} );
 
-	app.get( '/discover', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn && calypsoEnv !== 'development' ) {
-			res.redirect( config( 'discover_logged_out_redirect_url' ) );
-		} else {
-			next();
-		}
-	} );
-
 	app.get( '/plans', function ( req, res, next ) {
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;

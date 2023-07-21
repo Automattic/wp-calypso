@@ -28,7 +28,6 @@ type PlanFeaturesActionsButtonProps = {
 	current: boolean;
 	freePlan: boolean;
 	manageHref: string;
-	isPlaceholder?: boolean;
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
@@ -57,13 +56,11 @@ const DummyDisabledButton = styled.div`
 
 const SignupFlowPlanFeatureActionButton = ( {
 	freePlan,
-	isPlaceholder,
 	planName,
 	classes,
 	handleUpgradeButtonClick,
 }: {
 	freePlan: boolean;
-	isPlaceholder: boolean;
 	planName: TranslateResult;
 	classes: string;
 	handleUpgradeButtonClick: () => void;
@@ -82,7 +79,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	}
 
 	return (
-		<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+		<Button className={ classes } onClick={ handleUpgradeButtonClick }>
 			{ btnText }
 		</Button>
 	);
@@ -90,13 +87,11 @@ const SignupFlowPlanFeatureActionButton = ( {
 
 const LaunchPagePlanFeatureActionButton = ( {
 	freePlan,
-	isPlaceholder,
 	planName,
 	classes,
 	handleUpgradeButtonClick,
 }: {
 	freePlan: boolean;
-	isPlaceholder: boolean;
 	planName: TranslateResult;
 	classes: string;
 	handleUpgradeButtonClick: () => void;
@@ -105,7 +100,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 
 	if ( freePlan ) {
 		return (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+			<Button className={ classes } onClick={ handleUpgradeButtonClick }>
 				{ translate( 'Keep this plan', {
 					comment:
 						'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
@@ -115,7 +110,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	}
 
 	return (
-		<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+		<Button className={ classes } onClick={ handleUpgradeButtonClick }>
 			{ translate( 'Select %(plan)s', {
 				args: {
 					plan: planName,
@@ -130,7 +125,6 @@ const LaunchPagePlanFeatureActionButton = ( {
 
 const LoggedInPlansFeatureActionButton = ( {
 	freePlan,
-	isPlaceholder,
 	availableForPurchase,
 	classes,
 	handleUpgradeButtonClick,
@@ -143,7 +137,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	planActionOverrides,
 }: {
 	freePlan: boolean;
-	isPlaceholder: boolean;
 	availableForPurchase?: boolean;
 	classes: string;
 	handleUpgradeButtonClick: () => void;
@@ -194,7 +187,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
 	if (
-		( availableForPurchase || isPlaceholder ) &&
+		availableForPurchase &&
 		currentSitePlanSlug &&
 		! current &&
 		currentSitePlanSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY &&
@@ -211,7 +204,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	// If the current plan matches on a lower-term, then show an "Upgrade to..." button.
 	if (
-		( availableForPurchase || isPlaceholder ) &&
+		availableForPurchase &&
 		currentSitePlanSlug &&
 		! current &&
 		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug ) &&
@@ -219,11 +212,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	) {
 		if ( planMatches( planType, { term: TERM_TRIENNIALLY } ) ) {
 			return (
-				<Button
-					className={ classes }
-					onClick={ handleUpgradeButtonClick }
-					disabled={ isPlaceholder }
-				>
+				<Button className={ classes } onClick={ handleUpgradeButtonClick }>
 					{ buttonText || translate( 'Upgrade to Triennial' ) }
 				</Button>
 			);
@@ -231,11 +220,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planType, { term: TERM_BIENNIALLY } ) ) {
 			return (
-				<Button
-					className={ classes }
-					onClick={ handleUpgradeButtonClick }
-					disabled={ isPlaceholder }
-				>
+				<Button className={ classes } onClick={ handleUpgradeButtonClick }>
 					{ buttonText || translate( 'Upgrade to Biennial' ) }
 				</Button>
 			);
@@ -243,11 +228,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planType, { term: TERM_ANNUALLY } ) ) {
 			return (
-				<Button
-					className={ classes }
-					onClick={ handleUpgradeButtonClick }
-					disabled={ isPlaceholder }
-				>
+				<Button className={ classes } onClick={ handleUpgradeButtonClick }>
 					{ buttonText || translate( 'Upgrade to Yearly' ) }
 				</Button>
 			);
@@ -256,9 +237,9 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	const buttonTextFallback = buttonText ?? translate( 'Upgrade', { context: 'verb' } );
 
-	if ( availableForPurchase || isPlaceholder ) {
+	if ( availableForPurchase ) {
 		return (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+			<Button className={ classes } onClick={ handleUpgradeButtonClick }>
 				{ buttonTextFallback }
 			</Button>
 		);
@@ -288,7 +269,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	current = false,
 	freePlan = false,
 	manageHref,
-	isPlaceholder = false,
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
@@ -309,10 +289,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	} );
 
 	const handleUpgradeButtonClick = () => {
-		if ( isPlaceholder ) {
-			return;
-		}
-
 		if ( ! freePlan ) {
 			recordTracksEvent( 'calypso_plan_features_upgrade_click', {
 				current_plan: currentSitePlanSlug,
@@ -368,7 +344,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		return (
 			<LaunchPagePlanFeatureActionButton
 				freePlan={ freePlan }
-				isPlaceholder={ isPlaceholder }
 				planName={ planName }
 				classes={ classes }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
@@ -378,7 +353,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		return (
 			<SignupFlowPlanFeatureActionButton
 				freePlan={ freePlan }
-				isPlaceholder={ isPlaceholder }
 				planName={ planName }
 				classes={ classes }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
@@ -389,7 +363,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	return (
 		<LoggedInPlansFeatureActionButton
 			freePlan={ freePlan }
-			isPlaceholder={ isPlaceholder }
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }

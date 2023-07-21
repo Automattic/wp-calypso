@@ -32,6 +32,7 @@ export const CHECKLIST_KNOWN_TASKS = {
 	POST_SHARING_ENABLED: 'post_sharing_enabled',
 	INSTALL_CUSTOM_PLUGIN: 'install_custom_plugin',
 	SETUP_SSH: 'setup_ssh',
+	CART_ITEMS_ABANDONED: 'cart_items_abandoned',
 };
 
 // Transform the response to a data / schema calypso understands, eg filter out unknown tasks

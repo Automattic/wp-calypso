@@ -80,21 +80,18 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 					<div className="setting-option">
 						<div className="setting-option__toggle">
 							<ToggleControl
-								label={ translate( 'Set staging site.' ) }
+								label={ translate(
+									'{{strong}}Set this site as a Staging Site.{{/strong}} You will be able to copy any site to this staging site and test your changes safely.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
 								disabled={ isLoading }
 								checked={ isStaging }
 								onChange={ toggleStagingFlag }
 							/>
-						</div>
-						<div className="setting-option__description">
-							{ translate(
-								'{{strong}}Set this site as a Staging Site.{{/strong}} You will be able to copy any site to this staging site and test your changes safely.',
-								{
-									components: {
-										strong: <strong />,
-									},
-								}
-							) }
 						</div>
 					</div>
 				</Card>

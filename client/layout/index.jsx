@@ -200,14 +200,20 @@ class Layout extends Component {
 	}
 
 	shouldShowOdieAssistant() {
-		// We will only show the Odie Assistant under the "Upgrades" menu.
-		return (
-			[ 'plans', 'add-ons', 'domains', 'email', 'site-purchases', 'checkout' ].includes(
-				this.props.sectionName
-			) &&
-			! this.props.isOffline &&
-			config.isEnabled( 'odie' )
-		);
+		const eligibleSections = [
+			'plans',
+			'add-ons',
+			'domains',
+			'email',
+			'site-purchases',
+			'checkout',
+		];
+
+		if ( this.props.isOffline ) {
+			return false;
+		}
+
+		return eligibleSections.includes( this.props.sectionName );
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {

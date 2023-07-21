@@ -69,7 +69,7 @@ const theme: Theme = {
 		success: colorStudio.colors[ 'Green 30' ],
 		discount: colorStudio.colors[ 'Green 30' ],
 		disabledPaymentButtons: colorStudio.colors[ 'Gray 5' ],
-		disabledPaymentButtonsAccent: colorStudio.colors[ 'Gray 5' ],
+		disabledPaymentButtonsAccent: colorStudio.colors[ 'Gray 20' ],
 		disabledButtons: colorStudio.colors[ 'White' ],
 		borderColor: swatches.gray10,
 		borderColorLight: swatches.gray5,

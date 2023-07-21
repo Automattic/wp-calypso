@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
@@ -122,8 +122,11 @@ export default function IssueMultipleLicensesForm( {
 
 	const { submitForm, isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
+	const [ selectedBundle, setSelectedBundle ] = useState< APIProductFamilyProduct | null >( null );
 	const onSelectBundle = useCallback(
 		( product: APIProductFamilyProduct ) => {
+			setSelectedBundle( product );
+
 			// People aren't allowed to select anything else after selecting a bundle;
 			// thus, after someone selects a bundle, we immediately clear any existing
 			// selections and issue a license for the bundle
@@ -226,6 +229,8 @@ export default function IssueMultipleLicensesForm( {
 							<LicenseBundleCard
 								key={ productOption.slug }
 								product={ productOption }
+								isBusy={ ! isReady && selectedBundle?.slug === productOption.slug }
+								isDisabled={ ! isReady && selectedBundle?.slug !== productOption.slug }
 								onSelectProduct={ onSelectBundle }
 								tabIndex={ 100 + ( products?.length || 0 ) + i }
 							/>
@@ -233,26 +238,25 @@ export default function IssueMultipleLicensesForm( {
 					</div>
 				</>
 			) }
-			{ config.isEnabled( 'jetpack/pro-dashboard-woo-extensions' ) && wooExtensions && (
+			{ config.isEnabled( 'jetpack/pro-dashboard-woo-extensions' ) && wooExtensions.length > 0 && (
 				<>
 					<hr className="issue-multiple-licenses-form__separator" />
 					<p className="issue-multiple-licenses-form__description">
 						{ translate( 'WooCommerce Extensions:' ) }
 					</p>
 					<div className="issue-multiple-licenses-form__bottom">
-						{ wooExtensions &&
-							wooExtensions.map( ( productOption, i ) => (
-								<LicenseProductCard
-									isMultiSelect
-									key={ productOption.slug }
-									product={ productOption }
-									onSelectProduct={ onSelectProduct }
-									isSelected={ selectedProductSlugs.includes( productOption.slug ) }
-									isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-									tabIndex={ 100 + i }
-									suggestedProduct={ suggestedProduct }
-								/>
-							) ) }
+						{ wooExtensions.map( ( productOption, i ) => (
+							<LicenseProductCard
+								isMultiSelect
+								key={ productOption.slug }
+								product={ productOption }
+								onSelectProduct={ onSelectProduct }
+								isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+								isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
+								tabIndex={ 100 + i }
+								suggestedProduct={ suggestedProduct }
+							/>
+						) ) }
 					</div>
 				</>
 			) }
