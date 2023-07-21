@@ -2,33 +2,6 @@ import superagent from 'superagent';
 import { v4 as uuid } from 'uuid';
 const URL = require( 'url' );
 
-// we want to know if this user has opted out of tracking for analytics purposes
-// note that is only available in some countries
-// returns a boolean
-function isAnalyticsTrackingEnabled( request ) {
-	// Example of field sensitive_pixel_options in the cookie
-	// encoded: %7B%22version%22%3A20201224%2C%22ok%22%3Atrue%2C%22buckets%22%3A%7B%22essential%22%3Atrue%2C%22analytics%22%3Afalse%2C%22advertising%22%3Afalse%7D%7D
-	// decoded: {"version":20201224,"ok":true,"buckets":{"essential":true,"analytics":false,"advertising":false}}
-	const encodedPixelCookie = request?.cookies?.sensitive_pixel_options ?? null;
-
-	if ( encodedPixelCookie ) {
-		try {
-			const decodedPixelCookie = decodeURIComponent( encodedPixelCookie );
-			const jsonPixelCookie = JSON.parse( decodedPixelCookie );
-
-			// if there are no settings the analytics tracking is enabled
-			// it can only be false when explicitly set to false
-			return jsonPixelCookie?.buckets?.analytics ?? true;
-		} catch ( ex ) {
-			// if there is an error decoding we default to analytics being enabled
-			return true;
-		}
-	}
-
-	// analytics tracking is true by default
-	return true;
-}
-
 function getUserFromRequest( request ) {
 	// if user has a cookie, lets use that
 	const encodedUserCookie = request?.cookies?.wordpress_logged_in ?? null;
@@ -69,8 +42,6 @@ function getUserFromRequest( request ) {
 const analytics = {
 	tracks: {
 		createPixel: function ( data ) {
-			console.log( '----------------------------------------' );
-			console.log( 'createPixel', data );
 			data._rt = new Date().getTime();
 			data._ = '_';
 			const pixelUrl = URL.format( {
@@ -87,10 +58,6 @@ const analytics = {
 
 			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
 				console.warn( '- Event name must be prefixed by "calypso_"' );
-				return;
-			}
-
-			if ( ! isAnalyticsTrackingEnabled( req ) ) {
 				return;
 			}
 
