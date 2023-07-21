@@ -1,13 +1,13 @@
 import { useI18n } from '@wordpress/react-i18n';
 import EmptyContent from 'calypso/components/empty-content';
 import { MEDIA_QUERIES } from '../utils';
-import { CreateSiteCTA, MigrateSiteCTA } from './sites-dashboard-ctas';
+import { CreateSiteCTA, MigrateSiteCTA } from './hosting-flow-forking-ctas';
 
-interface EmptySitesDashboardProps {
+interface HostingFlowForkingPageProps {
 	siteCount: number;
 }
 
-export const EmptySitesDashboard = ( { siteCount }: EmptySitesDashboardProps ) => {
+export const HostingFlowForkingPage = ( { siteCount }: HostingFlowForkingPageProps ) => {
 	const { __ } = useI18n();
 
 	return (

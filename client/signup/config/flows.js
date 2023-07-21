@@ -200,22 +200,17 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 }
 
 function getHostingFlowDestination() {
-	let destination = '/sites';
-
 	const queryArgs = getQueryArgs();
 
 	if ( queryArgs.flow === 'new-hosted-site' ) {
-		destination = '/setup/new-hosted-site';
-	} else if ( queryArgs.flow === 'import-hosted-site' ) {
-		destination = '/setup/import-hosted-site';
+		return '/setup/new-hosted-site';
 	}
 
-	return addQueryArgs(
-		{
-			'hosting-flow': true,
-		},
-		destination
-	);
+	if ( queryArgs.flow === 'import-hosted-site' ) {
+		return '/setup/import-hosted-site';
+	}
+
+	return '/sites?hosting-flow=true';
 }
 
 const flows = generateFlows( {

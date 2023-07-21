@@ -11,7 +11,6 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
-import { useIsCurrentlyHostingFlow } from '../utils/hosting-flow';
 import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
@@ -48,7 +47,6 @@ const importHostedSiteFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const hostingFlow = useIsCurrentlyHostingFlow();
 		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
@@ -183,7 +181,7 @@ const importHostedSiteFlow: Flow = {
 		const goBack = () => {
 			switch ( _currentStep ) {
 				case 'import':
-					return window.location.assign( hostingFlow ? '/sites?hosting-flow=true' : '/sites' );
+					return window.location.assign( '/sites?hosting-flow=true' );
 
 				case 'importerWordpress':
 					// remove the siteSlug in case they want to change the destination site
