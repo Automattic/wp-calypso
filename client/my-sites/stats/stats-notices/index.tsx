@@ -76,8 +76,8 @@ export default function StatsNotices( {
 
 	return supportNewStatsNotices ? (
 		<>
-			<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 			<PostPurchaseNotices siteId={ siteId } statsPurchaseSuccess={ statsPurchaseSuccess } />
+			<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 		</>
 	) : (
 		<LegacyStatsNotices siteId={ siteId } />
