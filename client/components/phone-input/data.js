@@ -1647,13 +1647,11 @@ export const countries = {
 	},
 	DO: {
 		isoCode: 'DO',
-		dialCode: '18[024]9',
-		countryDialCode: '1',
-		regionCode: '8[024]9',
+		dialCode: '1',
 		areaCodes: [ '809', '829', '849' ],
 		nationalPrefix: '1',
 		priority: 3,
-		patternRegion: 'DO',
+		patternRegion: 'US',
 	},
 	DZ: {
 		isoCode: 'DZ',
@@ -1778,9 +1776,8 @@ export const countries = {
 	},
 	EH: {
 		isoCode: 'EH',
-		dialCode: '212528[89]',
+		dialCode: '212',
 		countryDialCode: '212',
-		regionCode: '528[89]',
 		nationalPrefix: '0',
 	},
 	ER: {
@@ -4565,13 +4562,12 @@ export const countries = {
 	},
 	PR: {
 		isoCode: 'PR',
-		dialCode: '1787|939',
+		dialCode: '1',
 		countryDialCode: '1',
-		regionCode: '787|939',
 		areaCodes: [ '787', '939' ],
 		nationalPrefix: '1',
 		priority: 1,
-		patternRegion: 'PR',
+		patternRegion: 'US',
 	},
 	PS: {
 		isoCode: 'PS',
@@ -4690,9 +4686,8 @@ export const countries = {
 	},
 	RE: {
 		isoCode: 'RE',
-		dialCode: '262262|69|8',
+		dialCode: '262',
 		countryDialCode: '262',
-		regionCode: '262|69|8',
 		nationalPrefix: '0',
 		patterns: [
 			{
@@ -5909,9 +5904,8 @@ export const countries = {
 	},
 	YT: {
 		isoCode: 'YT',
-		dialCode: '262269|63',
+		dialCode: '262',
 		countryDialCode: '262',
-		regionCode: '269|63',
 		nationalPrefix: '0',
 	},
 	ZA: {
