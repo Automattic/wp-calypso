@@ -208,15 +208,17 @@ export function DomainCodePair( {
 								{ __(
 									'Unique code proving ownership, needed for secure domain transfer between registrars.'
 								) }
-								<Button
-									href={ localizeUrl(
-										'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
-									) }
-									target="_blank"
-									variant="link"
-								>
-									<span className="learn-more-label">{ __( 'Learn more' ) }</span>
-								</Button>
+								<div>
+									<Button
+										href={ localizeUrl(
+											'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+										) }
+										target="_blank"
+										variant="link"
+									>
+										<span className="learn-more-label">{ __( 'Learn more' ) }</span>
+									</Button>
+								</div>
 							</InfoPopover>
 						</FormLabel>
 
