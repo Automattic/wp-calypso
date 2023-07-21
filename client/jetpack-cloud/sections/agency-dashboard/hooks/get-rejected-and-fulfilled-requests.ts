@@ -1,26 +1,28 @@
-export default function getRejectedAndFulfilledRequests(
-	promises: any[],
-	requests: { site: { blog_id: number; url: string } }[]
+type SelectedSite = {
+	blog_id: number;
+	url: string;
+};
+
+type Request = {
+	site: SelectedSite;
+};
+
+type Result = {
+	site: SelectedSite;
+	status: 'rejected' | 'fulfilled';
+};
+
+export default function getRejectedAndFulfilledRequests< T >(
+	promises: PromiseSettledResult< T >[],
+	requests: Request[]
 ) {
-	const allSelectedSites: {
-		site: { blog_id: number; url: string };
-		status: 'rejected' | 'fulfilled';
-	}[] = [];
+	const results: Result[] = promises.map( ( { status }, index ) => ( {
+		site: requests[ index ].site,
+		status,
+	} ) );
 
-	promises.forEach( ( promise, index ) => {
-		const { status } = promise;
-		const site = requests[ index ].site;
-		const item = {
-			site,
-			status,
-		};
-		allSelectedSites.push( item );
-	} );
-
-	const fulfilledRequests = allSelectedSites.filter(
-		( product ) => product.status === 'fulfilled'
-	);
-	const rejectedRequests = allSelectedSites.filter( ( product ) => product.status === 'rejected' );
-
-	return { fulfilledRequests, rejectedRequests };
+	return {
+		fulfilledRequests: results.filter( ( { status } ) => status === 'fulfilled' ),
+		rejectedRequests: results.filter( ( { status } ) => status === 'rejected' ),
+	};
 }
