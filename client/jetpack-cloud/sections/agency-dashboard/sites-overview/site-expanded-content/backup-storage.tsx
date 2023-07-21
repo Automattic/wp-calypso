@@ -9,9 +9,9 @@ import useDateOffsetForSite from 'calypso/lib/jetpack/hooks/use-date-offset-for-
 import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import { useDashboardAddRemoveLicense } from '../../hooks';
 import { DASHBOARD_LICENSE_TYPES, getExtractedBackupTitle } from '../utils';
 import ExpandedCard from './expanded-card';
+import useDashboardAddRemoveLicense from './use-dashboard-add-remove-license';
 import type { Site, Backup } from '../types';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { Moment } from 'moment';
