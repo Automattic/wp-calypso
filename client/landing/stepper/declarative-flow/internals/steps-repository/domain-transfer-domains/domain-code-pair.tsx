@@ -248,6 +248,7 @@ export function DomainCodePair( {
 						{ ! shouldReportError && ! loading && (
 							<FormInputValidation
 								isError={ false }
+								text=""
 								isMuted={ true }
 								children={ domainCount > 1 && domainActions }
 							/>
@@ -292,6 +293,7 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ false }
 						isMuted={ true }
+						text=""
 						children={ domainCount > 1 && domainActions }
 					/>
 				) }
