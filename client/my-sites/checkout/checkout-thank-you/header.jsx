@@ -98,7 +98,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
-		if ( isBulkDomainTransfer() ) {
+		if ( isBulkDomainTransfer( purchases ) ) {
 			return (
 				<>
 					<span>
@@ -539,7 +539,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 	getHeaderText() {
 		const { purchases, _n } = this.props;
 
-		if ( isBulkDomainTransfer() ) {
+		if ( isBulkDomainTransfer( purchases ) ) {
 			return _n(
 				'Your domain transfer has started',
 				'Your domain transfers has started',
