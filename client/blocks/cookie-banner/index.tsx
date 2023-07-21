@@ -26,6 +26,14 @@ const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 
 	const handleAccept = useCallback< CookieBannerProps[ 'onAccept' ] >(
 		( buckets ) => {
+			recordTracksEvent( 'a8c_cookie_banner_ok', {
+				site: document.location.host,
+				path: document.location.pathname,
+				essential: buckets.essential,
+				analytics: buckets.analytics,
+				advertising: buckets.advertising,
+			} );
+
 			setTrackingPrefs( { ok: true, buckets } );
 			// If the user is logged in, update their advertising opt-out setting
 			if ( isLoggedIn ) {
