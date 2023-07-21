@@ -58,14 +58,17 @@
 				border-radius: 4px;
 				color: var(--studio-gray-100); // Change text color
 				width: 100%;
+
+				// Prevent zoom in iPhone/Safari (ios only)
+				@supports (-webkit-overflow-scrolling: touch) {
+					font-size: 1rem;
+				}
 			}
 
 			&.promote-post-i2__search-bar-search {
 				height: 42px;
 			}
 		}
-
-
 	}
 }
 
