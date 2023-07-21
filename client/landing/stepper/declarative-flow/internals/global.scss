@@ -8,6 +8,14 @@
 @import "@automattic/onboarding/styles/variables";
 @import "@automattic/components/src/styles/typography";
 
+// WordPress.org components no longer user blue-50 as primary color.
+// This changes the primary color to blue-50 to match the WordPress.com colors.
+:root {
+	--wp-components-color-accent: var(--studio-blue-50);
+	--wp-components-color-accent-darker-20: var(--studio-blue-60);
+	--wp-components-color-accent-darker-10: var(--studio-blue-60);
+}
+
 /**
  * General onboarding styling
  */

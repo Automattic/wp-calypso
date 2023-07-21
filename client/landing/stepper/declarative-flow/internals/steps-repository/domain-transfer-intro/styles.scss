@@ -4,12 +4,6 @@
 $font-family: "SF Pro Text", $sans;
 $heading-font-family: "SF Pro Display", $sans;
 
-:root {
-	--wp-components-color-accent: var(--studio-blue-50);
-	--wp-components-color-accent-darker-20: var(--studio-blue-60);
-	--wp-components-color-accent-darker-10: var(--studio-blue-60);
-}
-
 .domain-transfer {
 	height: 100%;
 	padding: 60px 0 0;
