@@ -22,7 +22,7 @@ export type PlanProperties = {
 	rawPrice: number | null;
 	isMonthlyPlan: boolean;
 	tagline: string;
-	storageOptions: string[];
+	storageOptions: { key: string; planDefault: boolean; title: string }[];
 	storageFeatures: string[];
 	availableForPurchase: boolean;
 	current?: boolean;

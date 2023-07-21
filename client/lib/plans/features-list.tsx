@@ -6,6 +6,8 @@ import {
 	FEATURE_3GB_STORAGE,
 	FEATURE_1GB_STORAGE,
 	FEATURE_50GB_STORAGE,
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
 	FEATURE_6GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
@@ -296,6 +298,7 @@ import {
 	isBusinessPlan,
 	isFreePlan,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
@@ -319,7 +322,9 @@ export type FeatureObject = {
 	getCompareSubtitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
+	planDefault?: boolean;
 	getFeatureGroup?: () => string;
+	getQuantity?: () => number;
 };
 export type FeatureList = {
 	[ key: string ]: FeatureObject;
@@ -837,6 +842,7 @@ export const FEATURES_LIST: FeatureList = {
 		getCompareTitle: () => i18n.translate( '1 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+		planDefault: true,
 	},
 
 	[ FEATURE_3GB_STORAGE ]: {
@@ -857,6 +863,7 @@ export const FEATURES_LIST: FeatureList = {
 			} ),
 		getDescription: () =>
 			i18n.translate( 'Upload more images, audio, and documents to your website.' ),
+		planDefault: true,
 	},
 
 	[ FEATURE_13GB_STORAGE ]: {
@@ -870,14 +877,15 @@ export const FEATURES_LIST: FeatureList = {
 		getCompareTitle: () => i18n.translate( '13 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
+		planDefault: true,
 	},
 
 	[ FEATURE_50GB_STORAGE ]: {
 		getSlug: () => FEATURE_50GB_STORAGE,
 		getTitle: () => i18n.translate( '50 GB storage space' ),
-		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+		planDefault: true,
 	},
 
 	// TODO: Consider removing this because it is no longer standard on any plans
@@ -892,6 +900,7 @@ export const FEATURES_LIST: FeatureList = {
 		getCompareTitle: () => i18n.translate( '200 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
+		planDefault: true,
 	},
 
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
@@ -1769,6 +1778,22 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_50GB_STORAGE_ADD_ON ]: {
+		getSlug: () => PRODUCT_1GB_SPACE,
+		getQuantity: () => 50,
+		getTitle: () => i18n.translate( '50 GB storage add on' ),
+		getCompareTitle: () => i18n.translate( '100 GB' ),
+		getDescription: () =>
+			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+	},
+	[ FEATURE_100GB_STORAGE_ADD_ON ]: {
+		getSlug: () => PRODUCT_1GB_SPACE,
+		getQuantity: () => 100,
+		getTitle: () => i18n.translate( '100 GB storage add on' ),
+		getCompareTitle: () => i18n.translate( '150 GB' ),
+		getDescription: () =>
+			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,

@@ -41,7 +41,11 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import FoldableCard from 'calypso/components/foldable-card';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import {
+	FeatureObject,
+	getPlanFeaturesObject,
+	getFeatureByKey,
+} from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
@@ -918,7 +922,7 @@ export class PlanFeatures2023Grid extends Component<
 					return null;
 				}
 
-				const { planName, storageOptions, storageFeatures } = properties;
+				const { planName, storageOptions } = properties;
 				const shouldRenderStorageTitle =
 					storageOptions.length === 1 ||
 					( intervalType === 'monthly' && storageOptions.length !== 0 );
@@ -932,12 +936,14 @@ export class PlanFeatures2023Grid extends Component<
 						setSelectedStorage={ this.setSelectedStorage }
 					/>
 				) : (
-					storageFeatures.map( ( storageFeature: string ) => {
-						return (
-							<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-								{ getStorageStringFromFeature( storageFeature ) }
-							</div>
-						);
+					storageOptions.map( ( storageOption ) => {
+						if ( storageOption?.planDefault ) {
+							return (
+								<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
+									{ storageOption.title }
+								</div>
+							);
+						}
 					} )
 				);
 
@@ -982,7 +988,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 			intent,
 			isGlobalStylesOnPersonal,
 			showLegacyStorageFeature,
-			showUpgradeableStorage,
 		} = ownProps;
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = siteId
@@ -1089,7 +1094,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
-				// TODO: Rename get2023PricingGridSignupStorageOptions to get2023PricingGridSignupStorageFeatures
 				const storageFeatures =
 					( planConstantObj.get2023PricingGridSignupStorageOptions &&
 						planConstantObj.get2023PricingGridSignupStorageOptions(
@@ -1097,14 +1101,15 @@ const ConnectedPlanFeatures2023Grid = connect(
 							isCurrentPlan
 						) ) ||
 					[];
+				const storageOptions = storageFeatures.map( ( feature ) => {
+					const featureObject = getFeatureByKey( feature );
 
-				const storageAddOns =
-					( planConstantObj.get2023PricingGridSignupStorageAddOns &&
-						planConstantObj.get2023PricingGridSignupStorageAddOns() ) ||
-					[];
-				const storageOptions = showUpgradeableStorage
-					? [ ...storageFeatures, ...storageAddOns ]
-					: storageFeatures;
+					return {
+						key: feature,
+						planDefault: featureObject?.planDefault,
+						title: getStorageStringFromFeature( feature ),
+					};
+				} );
 				const availableForPurchase =
 					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 
@@ -1118,7 +1123,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 					rawPrice,
 					isMonthlyPlan,
 					tagline,
-					storageFeatures,
 					storageOptions,
 					cartItemForPlan: getCartItemForPlan( plan ),
 					current: isCurrentPlan,

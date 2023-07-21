@@ -1,14 +1,14 @@
 import { isEnabled } from '@automattic/calypso-config';
 import i18n, { getLocaleSlug, translate } from 'i18n-calypso';
 import {
-	PRODUCT_50GB_STORAGE_ADD_ON,
-	PRODUCT_100GB_STORAGE_ADD_ON,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
 	FEATURE_1GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_6GB_STORAGE,
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
@@ -1026,13 +1026,9 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		}
 
 		return isEnabled( 'plans/updated-storage-labels' )
-			? [ FEATURE_50GB_STORAGE ]
+			? [ FEATURE_50GB_STORAGE, FEATURE_50GB_STORAGE_ADD_ON, FEATURE_100GB_STORAGE_ADD_ON ]
 			: [ FEATURE_200GB_STORAGE ];
 	},
-	get2023PricingGridSignupStorageAddOns: () => [
-		PRODUCT_50GB_STORAGE_ADD_ON,
-		PRODUCT_100GB_STORAGE_ADD_ON,
-	],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getHostingSignupFeatures: ( term ) => () =>
 		compact( [
@@ -1612,13 +1608,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		}
 
 		return isEnabled( 'plans/updated-storage-labels' )
-			? [ FEATURE_50GB_STORAGE ]
+			? [ FEATURE_50GB_STORAGE, FEATURE_50GB_STORAGE_ADD_ON, FEATURE_100GB_STORAGE_ADD_ON ]
 			: [ FEATURE_200GB_STORAGE ];
 	},
-	get2023PricingGridSignupStorageAddOns: () => [
-		PRODUCT_50GB_STORAGE_ADD_ON,
-		PRODUCT_100GB_STORAGE_ADD_ON,
-	],
 	getHostingSignupFeatures: ( term ) => () =>
 		compact( [
 			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
