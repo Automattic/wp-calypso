@@ -44,7 +44,7 @@ const Cloudflare = () => {
 									{ translate( 'Jetpack Site Accelerator' ) }
 								</p>
 								<p>
-									{ translate( 'The CDN that comes built-in with WordPress.com Business plans' ) }
+									{ translate( 'The CDN that comes built-in with WordPress.com Business plans.' ) }
 								</p>
 								<p>
 									<a
