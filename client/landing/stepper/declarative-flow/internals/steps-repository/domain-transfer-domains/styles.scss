@@ -413,4 +413,10 @@
 		width: 150px;
 		@include placeholder();
 	}
+
+	button.components-button.bulk-domain-transfer__cta {
+		&:disabled {
+			background: var(--studio-gray-5);
+		}
+	}
 }
