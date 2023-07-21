@@ -169,6 +169,24 @@
 			text-decoration: underline;
 		}
 
+		.is-muted.is-checking-domain {
+			@keyframes animate-dots {
+				0% {
+					opacity: 0;
+				}
+				50% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			span::after {
+				content: "..";
+				animation: animate-dots 1.5s infinite;
+			}
+		}
+
 		@media (max-width: $break-medium ) {
 			margin-top: 0;
 
