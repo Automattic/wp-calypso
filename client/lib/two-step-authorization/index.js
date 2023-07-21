@@ -60,16 +60,6 @@ TwoStepAuthorization.prototype.fetch = function ( callback ) {
 
 TwoStepAuthorization.prototype.postLoginRequest = function ( endpoint, data ) {
 	if ( ! this.getTwoStepWebauthnNonce() ) {
-		logToLogstash( {
-			feature: 'calypso_client',
-			message: 'e2e atomic auth redirect',
-			severity: 'debug',
-			extra: {
-				message: 'Invalid nonce',
-				endpoint,
-			},
-		} );
-
 		return Promise.reject( 'Invalid nonce' );
 	}
 
@@ -86,6 +76,19 @@ TwoStepAuthorization.prototype.postLoginRequest = function ( endpoint, data ) {
 	for ( const key in requestData ) {
 		formData.set( key, requestData[ key ] );
 	}
+
+	logToLogstash( {
+		feature: 'calypso_client',
+		message: 'e2e atomic auth redirect',
+		severity: 'debug',
+		extra: {
+			requestData: {
+				data,
+				client_id: requestData.client_id,
+				two_step_nonce: requestData.two_step_nonce,
+			},
+		},
+	} );
 
 	return window
 		.fetch( url, {
