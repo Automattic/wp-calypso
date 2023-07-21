@@ -11,7 +11,7 @@
 	.checkout-thank-you__header {
 		.checkout-thank-you__header-content {
 			.domain-header-buttons {
-				margin-top: 40px;
+				margin-top: 32px;
 
 				a {
 					border-radius: 4px;
@@ -84,7 +84,7 @@
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
-				margin-top: 50px;
+				margin-top: 32px;
 
 				@media (max-width: $break-medium ) {
 					margin-top: 30px;
@@ -156,6 +156,7 @@
 					}
 
 					div.purchase-detail {
+						flex: 1;
 						width: unset;
 						max-width: unset;
 					}
