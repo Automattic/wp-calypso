@@ -191,6 +191,27 @@ export default function SitesOverview() {
 		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
 
+	const renderAddSiteIssueLicenseButtons = () => {
+		// do stuff
+		return (
+			<div className="sites-overview__add-site-issue-license-buttons">
+				<Button
+					className="sites-overview__issue-license-button"
+					href="/partner-portal/issue-license"
+				>
+					{ translate( 'Issue License' ) }
+				</Button>
+				<Button
+					primary
+					className="sites-overview__add-site-button"
+					href="https://wordpress.com/jetpack/connect"
+				>
+					{ translate( 'Add New Site' ) }
+				</Button>
+			</div>
+		);
+	};
+
 	const renderIssueLicenseButton = () => {
 		return (
 			<div className="sites-overview__licenses-buttons">
@@ -229,14 +250,17 @@ export default function SitesOverview() {
 		);
 	};
 
-	const showIssueLicenseButtonsLargeScreen =
-		isWithinBreakpoint( '>960px' ) && selectedLicensesCount > 0;
+	// const showIssueLicenseButtonsLargeScreen =
+	// 	isWithinBreakpoint( '>960px' ) && selectedLicensesCount < 1;
 
 	return (
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
 			<SidebarNavigation sectionTitle={ pageTitle } />
 			<div className="sites-overview__container">
+				{ isWithinBreakpoint( '<960px' ) &&
+					selectedLicensesCount < 1 &&
+					renderAddSiteIssueLicenseButtons() }
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
 						<SiteSurveyBanner isDashboardView />
@@ -244,10 +268,15 @@ export default function SitesOverview() {
 						<SiteDowntimeMonitoringUpgradeBanner />
 
 						{ data?.sites && <SiteAddLicenseNotification /> }
+						{ /* { console.log( 'license counter', selectedLicensesCount ) } */ }
 						<SiteContentHeader
-							content={ renderIssueLicenseButton() }
+							content={
+								selectedLicensesCount > 0
+									? renderIssueLicenseButton()
+									: renderAddSiteIssueLicenseButtons()
+							}
 							pageTitle={ pageTitle }
-							showStickyContent={ !! showIssueLicenseButtonsLargeScreen }
+							showStickyContent={ true }
 						/>
 						<SectionNav
 							applyUpdatedStyles

@@ -100,6 +100,43 @@
 		text-underline-offset: 3px;
 	}
 }
+
+
+.sites-overview__add-site-issue-license-buttons {
+	margin: 0 -32px -32px;
+	padding: 8px 48px;
+	flex: 1 1 100%;
+
+	button,
+	a {
+		font-size: 1rem;
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.sites-overview__issue-license-button {
+		margin-inline-end: 0;
+		margin-bottom: 8px;
+	}
+	@include breakpoint-deprecated( ">660px" ) {
+		display: inline-flex;
+		flex: auto;
+		justify-content: flex-end;
+		button,
+		a {
+			display: inline-block;
+			width: auto;
+			max-height: 2.5rem;
+		}
+
+		.sites-overview__issue-license-button {
+			// margin-inline-end: 32px;
+			margin-right: 8px;
+		}
+	}
+}
+
 .sites-overview__status-select-license,
 .sites-overview__status-unselect-license {
 	max-width: 100%;
