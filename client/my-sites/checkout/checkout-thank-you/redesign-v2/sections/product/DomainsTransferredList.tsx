@@ -1,13 +1,17 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useI18n } from '@wordpress/react-i18n';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import { connect } from 'react-redux';
+import { domainManagementRoot, domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import './style.scss';
+import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 type Props = {
 	purchases: ReceiptPurchase[] | undefined;
+	manageDomainUrl: string;
 };
 
-const DomainsTransferredList = ( { purchases }: Props ) => {
+const DomainsTransferredList = ( { purchases, manageDomainUrl }: Props ) => {
 	const { __, _n } = useI18n();
 
 	const handleUserClick = ( destination: string ) => {
@@ -28,7 +32,7 @@ const DomainsTransferredList = ( { purchases }: Props ) => {
 				</a>
 
 				<a
-					href="/domains/manage?filter=owned-by-me&sortKey=registered-until"
+					href={ manageDomainUrl }
 					className="components-button is-primary manage-all-domains"
 					onClick={ () => handleUserClick( '/domains/manage' ) }
 				>
@@ -51,4 +55,15 @@ const DomainsTransferredList = ( { purchases }: Props ) => {
 	);
 };
 
-export default DomainsTransferredList;
+export default connect( ( state, ownProps: { purchases: ReceiptPurchase[] } ) => {
+	let manageDomainUrl = '/domains/manage';
+	if ( ownProps.purchases?.length === 1 ) {
+		const { blogId, meta } = ownProps.purchases[ 0 ];
+		const siteSlug = getSiteSlug( state, blogId );
+		manageDomainUrl = domainManagementTransferIn( siteSlug ?? '', meta, domainManagementRoot() );
+	}
+
+	return {
+		manageDomainUrl,
+	};
+} )( DomainsTransferredList );

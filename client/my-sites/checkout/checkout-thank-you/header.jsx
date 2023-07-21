@@ -546,7 +546,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( this.isBulkDomainTransfer() ) {
 			return _n(
 				'Your domain transfer has started',
-				'Your domain transfers has started',
+				'Your domain transfers have started',
 				purchases?.length
 			);
 		}
@@ -590,7 +590,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 				) }
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
-						<h1 className="checkout-thank-you__header-heading">{ this.getHeaderText() }</h1>
+						<h1 className="checkout-thank-you__header-heading">
+							{ preventWidows( this.getHeaderText() ) }
+						</h1>
 						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
 							this.renderSimplifiedContent()
 						) : (
