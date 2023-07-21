@@ -3,7 +3,6 @@ import { localizeUrl, englishLocales } from '@automattic/i18n-utils';
 import i18n, { getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
-import { getDomainTransferErrorDescription } from 'calypso/lib/domains/utils/get-domain-transfer-error-description';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
@@ -590,11 +589,17 @@ export function resolveDomainStatus(
 					statusClass: 'status-warning',
 					status: translate( 'Complete setup' ),
 					icon: 'info',
-					noticeText: getDomainTransferErrorDescription(
-						domain.lastTransferError,
-						siteSlug as string,
-						domain.name,
-						translate
+					noticeText: translate(
+						'There was an error when initiating your domain transfer. Please {{a}}see the details or retry{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
+									/>
+								),
+							},
+						}
 					),
 					listStatusWeight: 600,
 				};
