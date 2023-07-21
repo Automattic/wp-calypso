@@ -1,3 +1,4 @@
+import { hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -15,6 +16,17 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 	const handleSubmit = () => {
 		submit?.();
 	};
+
+	const getTranslatedSubHeaderText = hasTranslation(
+		'Enter your domain names and authorization codes below. You can transfer up to fifty domains at a time.'
+	)
+		? __(
+				'Enter your domain names and authorization codes below. You can transfer up to fifty domains at a time.'
+		  )
+		: __(
+				'Enter your domain names and authorization codes below. You can transfer up to 50 domains at a time.'
+		  );
+
 	return (
 		<StepContainer
 			flowName={ flow }
@@ -28,11 +40,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 					headerText={ __( 'Add your domains' ) }
 					subHeaderText={
 						<>
-							<span>
-								{ __(
-									'Enter your domain names and authorization codes below. You can transfer up to fifty domains at a time.'
-								) }
-							</span>
+							<span>{ getTranslatedSubHeaderText }</span>
 						</>
 					}
 					align="center"
