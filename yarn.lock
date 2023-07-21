@@ -254,7 +254,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.7
     "@babel/register": ^7.17.0
     "@babel/runtime": ^7.17.2
-    "@emotion/babel-plugin": ^11.3.0
+    "@emotion/babel-plugin": ^11.11.0
     "@wordpress/babel-plugin-import-jsx-pragma": ^4.21.0
     babel-plugin-dynamic-import-node: ^2.3.3
     babel-plugin-transform-react-remove-prop-types: ^0.4.24
@@ -548,8 +548,8 @@ __metadata:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/color-studio": 2.5.0
-    "@emotion/react": ^11.4.1
-    "@emotion/styled": ^11.3.0
+    "@emotion/react": ^11.11.1
+    "@emotion/styled": ^11.11.0
     "@storybook/cli": ^7.0.18
     "@storybook/react": ^7.0.18
     "@testing-library/dom": ^8.13.0
@@ -1065,7 +1065,7 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/wpcom-checkout": "workspace:^"
-    "@emotion/styled": ^11.3.0
+    "@emotion/styled": ^11.11.0
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
     "@wordpress/i18n": ^4.38.0
@@ -1461,7 +1461,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@emotion/react": ^11.4.1
+    "@emotion/react": ^11.11.1
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
     "@wordpress/components": ^25.4.0
@@ -1758,7 +1758,7 @@ __metadata:
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
-    "@emotion/styled": ^11.3.0
+    "@emotion/styled": ^11.11.0
     "@stripe/stripe-js": ^1.53.0
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
@@ -2646,7 +2646,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-syntax-jsx@npm:^7.17.12, @babel/plugin-syntax-jsx@npm:^7.21.4, @babel/plugin-syntax-jsx@npm:^7.7.2":
+"@babel/plugin-syntax-jsx@npm:^7.21.4, @babel/plugin-syntax-jsx@npm:^7.7.2":
   version: 7.22.5
   resolution: "@babel/plugin-syntax-jsx@npm:7.22.5"
   dependencies:
@@ -3576,38 +3576,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/babel-plugin@npm:^11.10.0, @emotion/babel-plugin@npm:^11.3.0, @emotion/babel-plugin@npm:^11.7.1":
-  version: 11.10.0
-  resolution: "@emotion/babel-plugin@npm:11.10.0"
+"@emotion/babel-plugin@npm:^11.11.0":
+  version: 11.11.0
+  resolution: "@emotion/babel-plugin@npm:11.11.0"
   dependencies:
     "@babel/helper-module-imports": ^7.16.7
-    "@babel/plugin-syntax-jsx": ^7.17.12
     "@babel/runtime": ^7.18.3
-    "@emotion/hash": ^0.9.0
-    "@emotion/memoize": ^0.8.0
-    "@emotion/serialize": ^1.1.0
+    "@emotion/hash": ^0.9.1
+    "@emotion/memoize": ^0.8.1
+    "@emotion/serialize": ^1.1.2
     babel-plugin-macros: ^3.1.0
     convert-source-map: ^1.5.0
     escape-string-regexp: ^4.0.0
     find-root: ^1.1.0
     source-map: ^0.5.7
-    stylis: 4.0.13
-  peerDependencies:
-    "@babel/core": ^7.0.0
-  checksum: 6ed68e2423bf9a42ad60ffa3aa79a4241f93b278173d3fd8659424c055ce47a5cdfd2f1fba09e56d788cca7d0f95793d6f6ef60dd55be8ac5609992cf09cf909
+    stylis: 4.2.0
+  checksum: 89cbb6ec0e52c8ee9c2a4b9889ccd4fc3a75d28091d835bfac6d7c4565d3338621e23af0a85f3bcd133e1cae795c692e1dadada015784d4b0554aa5bb111df43
   languageName: node
   linkType: hard
 
-"@emotion/cache@npm:^11.10.0, @emotion/cache@npm:^11.7.1":
-  version: 11.10.1
-  resolution: "@emotion/cache@npm:11.10.1"
+"@emotion/cache@npm:^11.11.0, @emotion/cache@npm:^11.7.1":
+  version: 11.11.0
+  resolution: "@emotion/cache@npm:11.11.0"
   dependencies:
-    "@emotion/memoize": ^0.8.0
-    "@emotion/sheet": ^1.2.0
-    "@emotion/utils": ^1.2.0
-    "@emotion/weak-memoize": ^0.3.0
-    stylis: 4.0.13
-  checksum: 9d0819c5716ca39d08c9e428cea4f649788585ccea6aaf8a026411e398b83d6b68ee9114de68bb03b96b2bb17cb12dc3d52816f410bc64e1aa2d3b998ec549ce
+    "@emotion/memoize": ^0.8.1
+    "@emotion/sheet": ^1.2.2
+    "@emotion/utils": ^1.2.1
+    "@emotion/weak-memoize": ^0.3.1
+    stylis: 4.2.0
+  checksum: a23ab5ab2fd08e904698106d58ad3536fed51cc1aa0ef228e95bb640eaf11f560dbd91a395477b0d84e1e3c20150263764b4558517cf6576a89d2d6cc5253688
   languageName: node
   linkType: hard
 
@@ -3621,28 +3618,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/css@npm:^11.7.1, @emotion/css@npm:^11.9.0":
-  version: 11.10.0
-  resolution: "@emotion/css@npm:11.10.0"
+"@emotion/css@npm:^11.11.2, @emotion/css@npm:^11.7.1":
+  version: 11.11.2
+  resolution: "@emotion/css@npm:11.11.2"
   dependencies:
-    "@emotion/babel-plugin": ^11.10.0
-    "@emotion/cache": ^11.10.0
-    "@emotion/serialize": ^1.1.0
-    "@emotion/sheet": ^1.2.0
-    "@emotion/utils": ^1.2.0
-  peerDependencies:
-    "@babel/core": ^7.0.0
-  peerDependenciesMeta:
-    "@babel/core":
-      optional: true
-  checksum: a97d26c5a6b3887e11d8d4f15ce563242f9d2b080ab3777e18478d1f1f388b7b8067e59b85c65253a02a731cb4f79e1d6d12db2ce4e6ac42aab337dfb4947036
+    "@emotion/babel-plugin": ^11.11.0
+    "@emotion/cache": ^11.11.0
+    "@emotion/serialize": ^1.1.2
+    "@emotion/sheet": ^1.2.2
+    "@emotion/utils": ^1.2.1
+  checksum: 1300e64d60df0c88261fee614663cd5d2d0a77623dc79332814959b4486599c6fdc8c0af5d702994bf367acfcc0fb16d44b8b7935deb1ad622e588b1eb608d73
   languageName: node
   linkType: hard
 
-"@emotion/hash@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "@emotion/hash@npm:0.9.0"
-  checksum: 0910d3e9ec46cc780f691c96fb6f6f67b4f080b50ecf4f441bc4b33b5906e28099f530a368fe0b31c6bad38a857ac44df3c36f8978be603789d71330ac01af12
+"@emotion/hash@npm:^0.9.1":
+  version: 0.9.1
+  resolution: "@emotion/hash@npm:0.9.1"
+  checksum: cdafe5da63fc1137f3db6e232fdcde9188b2b47ee66c56c29137199642a4086f42382d866911cfb4833cae2cc00271ab45cad3946b024f67b527bb7fac7f4c9d
   languageName: node
   linkType: hard
 
@@ -3655,12 +3647,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/is-prop-valid@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@emotion/is-prop-valid@npm:1.1.2"
+"@emotion/is-prop-valid@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@emotion/is-prop-valid@npm:1.2.1"
   dependencies:
-    "@emotion/memoize": ^0.7.4
-  checksum: 3e658290a9ece7f6149b84e13144e414d5d0535773f78dd15ffabb28ea4aa37346afbf9be178289ecb2a39ec49890a0199da1b86388393de7644f80598a12da6
+    "@emotion/memoize": ^0.8.1
+  checksum: 7c2aabdf0ca9986ca25abc9dae711348308cf18d418d64ffa4c8ffd2114806c47f2e06ba8ee769f38ec67d65bd59ec73f34d94023e81baa1c43510ac86ccd5e6
   languageName: node
   linkType: hard
 
@@ -3692,93 +3684,82 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/memoize@npm:^0.7.4":
-  version: 0.7.5
-  resolution: "@emotion/memoize@npm:0.7.5"
-  checksum: 28d061ec9fb9b8c495d58b4e2dcc62207d75d4e8d8f4e6a0b42342d6e7c649d41461e807363d1a0a2c33d2235f6ee59dd6394fbec88b7da65e3d5852fc34387e
-  languageName: node
-  linkType: hard
-
-"@emotion/memoize@npm:^0.8.0, @emotion/memoize@npm:^0.8.1":
+"@emotion/memoize@npm:^0.8.1":
   version: 0.8.1
   resolution: "@emotion/memoize@npm:0.8.1"
   checksum: dffed372fc3b9fa2ba411e76af22b6bb686fb0cb07694fdfaa6dd2baeb0d5e4968c1a7caa472bfcf06a5997d5e7c7d16b90e993f9a6ffae79a2c3dbdc76dfe78
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.4.1, @emotion/react@npm:^11.7.1":
-  version: 11.9.0
-  resolution: "@emotion/react@npm:11.9.0"
+"@emotion/react@npm:^11.11.1, @emotion/react@npm:^11.7.1":
+  version: 11.11.1
+  resolution: "@emotion/react@npm:11.11.1"
   dependencies:
-    "@babel/runtime": ^7.13.10
-    "@emotion/babel-plugin": ^11.7.1
-    "@emotion/cache": ^11.7.1
-    "@emotion/serialize": ^1.0.3
-    "@emotion/utils": ^1.1.0
-    "@emotion/weak-memoize": ^0.2.5
+    "@babel/runtime": ^7.18.3
+    "@emotion/babel-plugin": ^11.11.0
+    "@emotion/cache": ^11.11.0
+    "@emotion/serialize": ^1.1.2
+    "@emotion/use-insertion-effect-with-fallbacks": ^1.0.1
+    "@emotion/utils": ^1.2.1
+    "@emotion/weak-memoize": ^0.3.1
     hoist-non-react-statics: ^3.3.1
   peerDependencies:
-    "@babel/core": ^7.0.0
     react: ">=16.8.0"
   peerDependenciesMeta:
-    "@babel/core":
-      optional: true
     "@types/react":
       optional: true
-  checksum: 97e3a17c73d46c6379e09e8c8bbd01d2e829a7db22099412afb60377779fed9c9d37589c0b74998fe510f8d52f2520e834b6836237701fcb9513165ef18a76b2
+  checksum: 1aea4d735b537fbfbeda828bbf929488a7e1b5b7d131f14aeede8737e92bb3b611e15fec353e97f85aed7a65a1c86a695a04ba6e9be905231beef6bd624cb705
   languageName: node
   linkType: hard
 
-"@emotion/serialize@npm:^1.0.2, @emotion/serialize@npm:^1.0.3, @emotion/serialize@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@emotion/serialize@npm:1.1.0"
+"@emotion/serialize@npm:^1.0.2, @emotion/serialize@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@emotion/serialize@npm:1.1.2"
   dependencies:
-    "@emotion/hash": ^0.9.0
-    "@emotion/memoize": ^0.8.0
-    "@emotion/unitless": ^0.8.0
-    "@emotion/utils": ^1.2.0
+    "@emotion/hash": ^0.9.1
+    "@emotion/memoize": ^0.8.1
+    "@emotion/unitless": ^0.8.1
+    "@emotion/utils": ^1.2.1
     csstype: ^3.0.2
-  checksum: a122fc4c34425bc76d0c72b14c8e0617ccc72709fbbed695c506ca493dc478df15eba0c1ec45807e7dd248430b2e0dbf8ba8fe9035832087138e0f8e51ac4100
+  checksum: d243e0e5abce8d2183d25a32ec89bf650ee741ebadb29e6405abde05d4e2ed446ba5b3f725a29833ad709d0d08f0a5c8d0532fdcd43f4b23d931d8b6d4f218c1
   languageName: node
   linkType: hard
 
-"@emotion/sheet@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@emotion/sheet@npm:1.2.0"
-  checksum: 8d759a5211e09ef260604fd97737641b00c4bc476974202f298dfc0ad3b1c42838b512ad55547296d0082a50ce9be68251a276d7d0cf97c93a53d287a087a1e5
+"@emotion/sheet@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "@emotion/sheet@npm:1.2.2"
+  checksum: 69827a1bfa43d7b188f1d8cea42163143a36312543fdade5257c459a2b3efd7ce386aac84ba152bc2517a4f7e54384c04800b26adb382bb284ac7e4ad40e584b
   languageName: node
   linkType: hard
 
-"@emotion/styled@npm:^11.3.0, @emotion/styled@npm:^11.6.0":
-  version: 11.8.1
-  resolution: "@emotion/styled@npm:11.8.1"
+"@emotion/styled@npm:^11.11.0, @emotion/styled@npm:^11.6.0":
+  version: 11.11.0
+  resolution: "@emotion/styled@npm:11.11.0"
   dependencies:
-    "@babel/runtime": ^7.13.10
-    "@emotion/babel-plugin": ^11.7.1
-    "@emotion/is-prop-valid": ^1.1.2
-    "@emotion/serialize": ^1.0.2
-    "@emotion/utils": ^1.1.0
+    "@babel/runtime": ^7.18.3
+    "@emotion/babel-plugin": ^11.11.0
+    "@emotion/is-prop-valid": ^1.2.1
+    "@emotion/serialize": ^1.1.2
+    "@emotion/use-insertion-effect-with-fallbacks": ^1.0.1
+    "@emotion/utils": ^1.2.1
   peerDependencies:
-    "@babel/core": ^7.0.0
     "@emotion/react": ^11.0.0-rc.0
     react: ">=16.8.0"
   peerDependenciesMeta:
-    "@babel/core":
-      optional: true
     "@types/react":
       optional: true
-  checksum: b8c9e917ac54454b6816b35c031b9368729393f62792e7498a26605c9349c6c16143ecfc0f99bd5eb0c503896811e39d12bc6c068061cd6b71db0992098b3589
+  checksum: a168bd7a8a6f254e54a321be4c7b7dd4bf65815e6570ba7c5a435b7d5aeebd76434e04886db7799a955817c8d5bf0103a3dcc3c785fba2bb53922320dda59a10
   languageName: node
   linkType: hard
 
-"@emotion/unitless@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "@emotion/unitless@npm:0.8.0"
-  checksum: 1f2cfb7c0ccb83c20b1c6d8d92a74a93da4b2a440f9a0d49ded08647faf299065a2ffde17e1335920fa10397b85f8635bbfe14f3cd29222a59ea81d978478072
+"@emotion/unitless@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "@emotion/unitless@npm:0.8.1"
+  checksum: a1ed508628288f40bfe6dd17d431ed899c067a899fa293a13afe3aed1d70fac0412b8a215fafab0b42829360db687fecd763e5f01a64ddc4a4b58ec3112ff548
   languageName: node
   linkType: hard
 
-"@emotion/use-insertion-effect-with-fallbacks@npm:^1.0.0":
+"@emotion/use-insertion-effect-with-fallbacks@npm:^1.0.0, @emotion/use-insertion-effect-with-fallbacks@npm:^1.0.1":
   version: 1.0.1
   resolution: "@emotion/use-insertion-effect-with-fallbacks@npm:1.0.1"
   peerDependencies:
@@ -3787,24 +3768,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/utils@npm:^1.0.0, @emotion/utils@npm:^1.1.0, @emotion/utils@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@emotion/utils@npm:1.2.0"
-  checksum: 7051cec83bb49688549667484058d3a19a30001fa3692c23f7a2e727c05121f952854e1196feb9ece4fa36914705ebf474edba833a2178bdc133c654b5e3ca7d
+"@emotion/utils@npm:^1.0.0, @emotion/utils@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@emotion/utils@npm:1.2.1"
+  checksum: db43ca803361740c14dfb1cca1464d10d27f4c8b40d3e8864e6932ccf375d1450778ff4e4eadee03fb97f2aeb18de9fae98294905596a12ff7d4cd1910414d8d
   languageName: node
   linkType: hard
 
-"@emotion/weak-memoize@npm:^0.2.5":
-  version: 0.2.5
-  resolution: "@emotion/weak-memoize@npm:0.2.5"
-  checksum: cabfaaecabbb407d323098afc0bb2dd2ec9aaea0672f8f2c54b84b99d5f8cc680356cf166583fd5593330ceef29f2c26554c2c65dff06c0a8f5f8c7da69d89f1
-  languageName: node
-  linkType: hard
-
-"@emotion/weak-memoize@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@emotion/weak-memoize@npm:0.3.0"
-  checksum: 1771687cc3b3280371de12698f1b78756c64654fc7d15ce76e1fb5d4adf9fd49d4411e41276bbfd5b521ef9cef647196aa9dca26f936c466fb80bf48491fa844
+"@emotion/weak-memoize@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "@emotion/weak-memoize@npm:0.3.1"
+  checksum: ed514b3cb94bbacece4ac2450d98898066c0a0698bdeda256e312405ca53634cb83c75889b25cd8bbbe185c80f4c05a1f0a0091e1875460ba6be61d0334f0b8a
   languageName: node
   linkType: hard
 
@@ -11110,10 +11084,10 @@ __metadata:
     "@automattic/wpcom-checkout": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
     "@babel/core": ^7.17.5
-    "@emotion/css": ^11.9.0
+    "@emotion/css": ^11.11.2
     "@emotion/jest": ^11.11.0
-    "@emotion/react": ^11.4.1
-    "@emotion/styled": ^11.3.0
+    "@emotion/react": ^11.11.1
+    "@emotion/styled": ^11.11.0
     "@github/webauthn-json": ^0.4.1
     "@sentry/react": ^7.54.0
     "@sentry/webpack-plugin": ^1.18.8
@@ -17177,8 +17151,8 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
-    "@emotion/react": ^11.4.1
-    "@emotion/styled": ^11.3.0
+    "@emotion/react": ^11.11.1
+    "@emotion/styled": ^11.11.0
     "@testing-library/react": ^14.0.0
     "@wordpress/base-styles": ^4.29.0
     "@wordpress/block-editor": ^12.6.0
@@ -28400,13 +28374,6 @@ __metadata:
   bin:
     stylelint: bin/stylelint.js
   checksum: 481df15d03b5c8b7f947abbec1c7214b1efc4ed2684308381f3398014d1911fa92b26895320a920bdd7167fee5da3c4c88e94eaed19b523587e9f62832a98cc1
-  languageName: node
-  linkType: hard
-
-"stylis@npm:4.0.13":
-  version: 4.0.13
-  resolution: "stylis@npm:4.0.13"
-  checksum: bd567c440b4f1acf8962b1b3aa7985c4e04d7badfe1e0f1c7ee2a60912de2718973850c524001a3d52f5fc9a0e3dcd204b8bd7e2d47d4934462e9f749fd9c7bc
   languageName: node
   linkType: hard
 

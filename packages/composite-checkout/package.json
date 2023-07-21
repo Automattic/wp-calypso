@@ -36,8 +36,8 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/composite-checkout#readme",
 	"dependencies": {
-		"@emotion/react": "^11.4.1",
-		"@emotion/styled": "^11.3.0",
+		"@emotion/react": "^11.11.1",
+		"@emotion/styled": "^11.11.0",
 		"@wordpress/i18n": "^4.38.0",
 		"@wordpress/react-i18n": "^3.36.0",
 		"debug": "^4.3.3",
