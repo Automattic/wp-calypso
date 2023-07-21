@@ -120,19 +120,23 @@
 		margin-bottom: 8px;
 	}
 	@include breakpoint-deprecated( ">660px" ) {
-		display: inline-flex;
-		flex: auto;
-		justify-content: flex-end;
+		margin: unset;
+		padding: unset;
+		flex: none;
+		margin-left: auto;
+		display: inline-block;
+		max-height: 40px;
 		button,
 		a {
 			display: inline-block;
 			width: auto;
-			max-height: 2.5rem;
+			font-size: 1rem;
 		}
 
 		.sites-overview__issue-license-button {
-			// margin-inline-end: 32px;
+			margin-inline-end: 32px;
 			margin-right: 8px;
+			margin-bottom: 8px;
 		}
 	}
 }
@@ -424,6 +428,7 @@
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
+		margin-right: 48px;
 		left: var(--sidebar-width-min);
 		padding: 0.5rem;
 	}
