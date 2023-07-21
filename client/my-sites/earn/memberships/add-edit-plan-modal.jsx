@@ -124,6 +124,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const [ editedSchedule, setEditedSchedule ] = useState( product?.renewal_schedule ?? '1 month' );
 	const [ focusedName, setFocusedName ] = useState( false );
 
+	const [ editedPrice, setEditedPrice ] = useState( false );
+
 	const isValidCurrencyAmount = ( currency, price ) =>
 		price >= minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency );
 
@@ -150,6 +152,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const handleCurrencyChange = ( event ) => {
 		const { value: currency } = event.currentTarget;
 		setCurrentCurrency( currency );
+		setEditedPrice( true );
 	};
 	const handlePriceChange = ( event ) => {
 		const value = parseFloat( event.currentTarget.value );
@@ -157,6 +160,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		if ( '' === event.currentTarget.value || ! isNaN( value ) ) {
 			setCurrentPrice( event.currentTarget.value );
 		}
+		setEditedPrice( true );
 	};
 	const handlePayWhatYouWant = ( newValue ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue ) => setEditedMultiplePerUser( newValue );
@@ -270,7 +274,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
 					) }
 				</FormFieldset>
-				{ editing && (
+				{ editing && editedPrice && (
 					<Notice
 						text={ translate(
 							'Updating the price will not affect existing subscribers, who will pay what they were originally charged on renewal.'
