@@ -26,50 +26,53 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		props;
 
 	return (
-		<>
-			<div
-				className={ classnames( 'import__import-everything', {
-					'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
-				} ) }
-			>
-				<div className="import__heading-title">
-					<Title>{ translate( 'Upgrade your plan' ) }</Title>
-					<SubTitle>
-						{ translate(
-							'Migrating themes, plugins, users, and settings requires a %(plan)s plan',
-							{
-								args: {
-									plan: plan?.getTitle() ?? '',
-								},
-							}
-						) }
-					</SubTitle>
-				</div>
-				<p>
-					{ translate(
-						'Your entire site %(from)s will be migrated to %(to)s, overriding the content in your destination site',
-						{
-							args: {
-								from: convertToFriendlyWebsiteName( sourceSiteUrl ),
-								to: convertToFriendlyWebsiteName( targetSite.URL ),
-							},
-						}
-					) }
-				</p>
-				<ConfirmUpgradePlan sourceSiteSlug={ sourceSiteSlug } targetSite={ targetSite } />
-				<div className="import__footer-button-container">
-					<NextButton isBusy={ isBusy } onClick={ () => startImport() }>
-						{ translate( 'Upgrade and migrate' ) }
-					</NextButton>
-					<Button
-						borderless={ true }
-						className="action-buttons__content-only"
-						onClick={ onContentOnlyClick }
-					>
-						{ translate( 'Use the content-only import option' ) }
-					</Button>
-				</div>
+		<div
+			className={ classnames( 'import__import-everything', {
+				'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
+			} ) }
+		>
+			<div className="import__heading-title">
+				<Title>{ translate( 'Upgrade your plan' ) }</Title>
+				<SubTitle>
+					{ translate( 'Migrating themes, plugins, users, and settings requires a %(plan)s plan', {
+						args: {
+							plan: plan?.getTitle() ?? '',
+						},
+					} ) }
+				</SubTitle>
 			</div>
-		</>
+			<p>
+				{ translate(
+					'Your entire site %(from)s will be migrated to %(to)s, overriding the content in your destination site',
+					{
+						args: {
+							from: convertToFriendlyWebsiteName( sourceSiteUrl ),
+							to: convertToFriendlyWebsiteName( targetSite.URL ),
+						},
+					}
+				) }
+			</p>
+			<ConfirmUpgradePlan sourceSiteSlug={ sourceSiteSlug } targetSite={ targetSite } />
+			<div className="import__footer-button-container">
+				<NextButton isBusy={ isBusy } onClick={ () => startImport() }>
+					{ translate( 'Upgrade and migrate' ) }
+				</NextButton>
+				<Button
+					borderless={ true }
+					className="action-buttons__borderless"
+					onClick={ () => undefined }
+				>
+					{ /* Untranslated until we've confirmed the design */ }
+					Try for free
+				</Button>
+				<Button
+					borderless={ true }
+					className="action-buttons__borderless"
+					onClick={ onContentOnlyClick }
+				>
+					{ translate( 'Use the content-only import option' ) }
+				</Button>
+			</div>
+		</div>
 	);
 };

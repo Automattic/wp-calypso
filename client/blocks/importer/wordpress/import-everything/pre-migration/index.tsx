@@ -139,7 +139,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 									button: (
 										<Button
 											borderless={ true }
-											className="action-buttons__content-only"
+											className="action-buttons__borderless"
 											onClick={ toggleCredentialsForm }
 										/>
 									),
