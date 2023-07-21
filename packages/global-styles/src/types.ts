@@ -18,15 +18,16 @@ export interface Typography {
 	lineHeight?: string;
 }
 
-export type SetConfig = ( callback: ( config: GlobalStylesObject ) => GlobalStylesObject ) => void;
+export type SetConfigCallback = ( config: GlobalStylesObject ) => GlobalStylesObject;
 
-export interface GlobalStylesContext {
-	user: GlobalStylesObject;
-	base?: GlobalStylesObject;
+export type SetConfig = ( callback: SetConfigCallback ) => void;
+
+export interface GlobalStylesContextObject {
+	user?: GlobalStylesObject;
+	base: GlobalStylesObject;
 	merged?: GlobalStylesObject;
 	setUserConfig?: SetConfig;
-	inline_css?: string;
-	isReady: boolean;
+	isReady?: boolean;
 }
 
 export interface GlobalStylesObject {

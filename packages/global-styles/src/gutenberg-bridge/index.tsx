@@ -8,7 +8,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import deepmerge from 'deepmerge';
 import { isPlainObject } from 'is-plain-object';
-import type { GlobalStylesObject, GlobalStylesContext } from '../types';
+import type { GlobalStylesObject, GlobalStylesContextObject } from '../types';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
@@ -24,7 +24,7 @@ const {
 	useGlobalStyle,
 } = unlock( blockEditorPrivateApis );
 
-const GlobalStylesContext: React.Context< GlobalStylesContext > = UntypedGSContext;
+const GlobalStylesContext: React.Context< GlobalStylesContextObject > = UntypedGSContext;
 
 const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user: GlobalStylesObject ) => {
 	return deepmerge( base, user, { isMergeableObject: isPlainObject } );
