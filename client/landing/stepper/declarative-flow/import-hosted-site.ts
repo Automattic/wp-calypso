@@ -232,7 +232,7 @@ const importHostedSiteFlow: Flow = {
 
 		useLayoutEffect( () => {
 			if ( ! userIsLoggedIn ) {
-				window.location.assign( '/start/hosting' );
+				window.location.assign( '/start/hosting?flow=import-hosted-site' );
 			}
 		}, [ userIsLoggedIn ] );
 	},
