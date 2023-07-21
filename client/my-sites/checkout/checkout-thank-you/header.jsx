@@ -40,6 +40,7 @@ import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgr
 import './style.scss';
 import Product from './redesign-v2/sections/Product';
 import getHeading from './redesign-v2/sections/get-heading';
+import { isBulkDomainTransfer } from './utils';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -97,7 +98,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
-		if ( this.isBulkDomainTransfer() ) {
+		if ( isBulkDomainTransfer() ) {
 			return (
 				<>
 					<span>
@@ -441,11 +442,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
-	isBulkDomainTransfer() {
-		const { purchases } = this.props;
-		return purchases?.every( isDomainTransfer );
-	}
-
 	getSearchButtonProps() {
 		const { translate, selectedSite, jetpackSearchCustomizeUrl, jetpackSearchDashboardUrl } =
 			this.props;
@@ -543,7 +539,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 	getHeaderText() {
 		const { purchases, _n } = this.props;
 
-		if ( this.isBulkDomainTransfer() ) {
+		if ( isBulkDomainTransfer() ) {
 			return _n(
 				'Your domain transfer has started',
 				'Your domain transfers has started',
@@ -603,7 +599,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 								primaryPurchase={ primaryPurchase }
 								siteID={ selectedSite?.ID }
 								purchases={ this.props.purchases }
-								isBulkDomainTransfer={ this.isBulkDomainTransfer() }
 							/>
 						) }
 						{ this.props.children }
