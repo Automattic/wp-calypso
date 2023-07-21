@@ -4,6 +4,7 @@ import version_compare from 'calypso/lib/version-compare';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
@@ -24,9 +25,14 @@ const TEAM51_OWNER_ID = 70055110;
  */
 const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => {
 	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
-	const isSiteVip = useSelector( ( state ) => isVipSite( state as object, siteId as number ) );
+	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
+	const isVip = useSelector(
+		( state ) =>
+			isVipSite( state as object, siteId as number ) || getSiteOption( state, siteId, 'is_vip' )
+	);
+
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state as object, siteId as number ) );
-	const isTeam51Site = useSelector(
+	const isOwnedByTeam51 = useSelector(
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
 	);
 
@@ -35,9 +41,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 
 	const showPaidStatsNotice =
 		config.isEnabled( 'stats/paid-stats' ) &&
-		! isSiteVip &&
+		! isVip &&
 		! isP2 &&
-		! isTeam51Site &&
+		! isOwnedByTeam51 &&
 		! hasPaidStats &&
 		hasLoadedPurchases;
 
