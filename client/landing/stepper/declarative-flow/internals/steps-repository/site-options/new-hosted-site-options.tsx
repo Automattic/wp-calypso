@@ -40,6 +40,9 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 	const [ shouldOverrideSiteTitle, setShouldOverrideSiteTitle ] = useState( false );
 
 	const { refetch, isFetching } = useGetSiteSuggestionsQuery( {
+		params: {
+			dictionary: 'hosting',
+		},
 		enabled: shouldOverrideSiteTitle,
 		refetchOnWindowFocus: false,
 		onSuccess: ( response ) => {
