@@ -27,6 +27,7 @@ $heading-font-family: "SF Pro Display", $sans;
 			width: 240px;
 			font-weight: 500;
 			justify-content: center;
+			border-radius: 4px;
 
 			@media (max-width: $break-medium ) {
 				width: 100%;
