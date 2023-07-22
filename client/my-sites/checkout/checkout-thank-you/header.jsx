@@ -100,18 +100,18 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( this.isBulkDomainTransfer() ) {
 			return (
 				<>
-					<span>
+					<div>
 						{ _n(
-							"We got it from here! We'll let you know when your newly transferred domain is ready to use.",
-							"We got it from here! We'll let you know when your newly transferred domains are ready to use.",
+							"We got it from here! We'll send an email when your domain is ready to use.",
+							"We got it from here! We'll send an email when your domains are ready to use.",
 							purchases?.length
 						) }
-					</span>{ ' ' }
-					<span>
+					</div>
+					<div>
 						{ translate( '{{strong}}It may take up to 5-10 days.{{/strong}}', {
 							components: { strong: <strong /> },
 						} ) }
-					</span>
+					</div>
 				</>
 			);
 		}

@@ -11,41 +11,32 @@
 	.checkout-thank-you__header {
 		.checkout-thank-you__header-content {
 			.domain-header-buttons {
-				margin-top: 40px;
-
-				a {
-					border-radius: 4px;
-					font-weight: 500;
-					font-size: 0.875rem;
-					padding: 10px 24px;
-					height: 48px;
-				}
+				margin-top: 32px;
 
 				.is-secondary {
+					border: 1px solid var(--studio-gray-10);
+					box-shadow: none;
+					color: var(--studio-gray-100);
 					margin-right: 20px;
-					border: 1px solid #c3c4c7;
-					box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
 					@media (max-width: $break-medium ) {
 						margin-right: 0;
 					}
 
 					&:hover {
-						color: unset;
-						box-shadow: none;
+						border: 1px solid var(--studio-gray-70);
 					}
 				}
 
-				.is-primary {
-					white-space: nowrap;
-					background: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
-					color: var(--wp-components-color-accent-inverted, #fff);
-					text-decoration: none;
-					text-shadow: none;
-					outline: 1px solid transparent;
-				}
-
 				.components-button {
+					border-radius: 4px;
+					font-weight: 500;
+					font-size: 0.875rem;
+					height: 48px;
+					justify-content: center;
+					padding: 10px 24px;
+					width: 240px;
+
 					@media (max-width: $break-medium ) {
 						width: 100%;
 						justify-content: center;
@@ -53,24 +44,11 @@
 				}
 
 				.manage-all-domains {
-					justify-content: center;
 					color: var(--black-white-white, #fff);
-					height: 48px;
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					border-radius: 0.25rem;
 					background: var(--blue-blue-50, #0675c4);
-					font-size: 0.875rem;
-					width: 240px;
 
 					&:hover {
 						background: var(--studio-blue-60);
-					}
-
-					&:disabled {
-						/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-						border-radius: 0.25rem;
-						background: var(--gray-gray-5, #dcdcde);
-						opacity: 1;
 					}
 
 					@media (max-width: $break-medium ) {
@@ -84,7 +62,7 @@
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
-				margin-top: 50px;
+				margin-top: 32px;
 
 				@media (max-width: $break-medium ) {
 					margin-top: 30px;
@@ -144,7 +122,7 @@
 				display: block;
 
 				>div {
-					padding: 0 20px;
+					padding: 0 25px;
 					margin-bottom: 50px;
 					justify-content: space-between;
 					flex-wrap: nowrap;
@@ -156,6 +134,7 @@
 					}
 
 					div.purchase-detail {
+						flex: 1;
 						width: unset;
 						max-width: unset;
 					}
