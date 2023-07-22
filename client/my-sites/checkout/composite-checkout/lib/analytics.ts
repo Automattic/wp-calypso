@@ -21,7 +21,7 @@ export function logStashLoadErrorEvent(
 	error: Error,
 	additionalData: Record< string, string | number | undefined > = {}
 ): Promise< void > {
-	captureException( error );
+	captureException( error.cause ? error.cause : error );
 	return logStashEvent( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,
