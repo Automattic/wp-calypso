@@ -72,7 +72,11 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 				{
 					// TODO: style loading state
 				 }
-				{ isLoading && <LoadingEllipsis /> }
+				{ isLoading && (
+					<div className="stats-purchase-page__loader">
+						<LoadingEllipsis />
+					</div>
+				) }
 				{ ! isLoading && (
 					<>
 						{ ( isFreeOwned || isCommercialOwned || isPWYWOwned ) && (
