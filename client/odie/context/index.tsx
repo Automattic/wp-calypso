@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import OdieAssistant from '..';
@@ -64,6 +66,8 @@ const OdieAssistantContext = createContext< OdieAssistantContextInterface >(
 // Custom hook to access the OdieAssistantContext
 const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 
+const allowedTreatmentSections = [ 'plans' ];
+
 // Create a provider component for the context
 const OdieAssistantProvider = ( {
 	sectionName,
@@ -72,6 +76,12 @@ const OdieAssistantProvider = ( {
 	sectionName: OdieAllowedSectionNames;
 	children: ReactNode;
 } ) => {
+	const [ , experimentAssignment ] = useExperiment( 'calypso_plans_wapuu_sales_agent_v0' );
+	const odieIsEnabled =
+		config.isEnabled( 'odie' ) ||
+		( experimentAssignment?.variationName === 'treatment' &&
+			allowedTreatmentSections.includes( sectionName ) );
+
 	const siteId = useSelector( getSelectedSiteId );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -134,7 +144,8 @@ const OdieAssistantProvider = ( {
 			} }
 		>
 			{ children }
-			<OdieAssistant botNameSlug="wapuu" simple />
+
+			{ odieIsEnabled && <OdieAssistant botNameSlug="wapuu" /> }
 		</OdieAssistantContext.Provider>
 	);
 };

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { OtherSupportAvailability, ChatAvailability } from './types';
+import { OtherSupportAvailability, ChatAvailability } from '../types';
 
 type ResponseType< T extends 'CHAT' | 'OTHER' > = T extends 'CHAT'
 	? ChatAvailability
@@ -17,7 +17,7 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 	enabled = true
 ) {
 	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >( {
-		queryKey: [ supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability' ],
+		queryKey: [ 'support-availability', supportType ],
 		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {

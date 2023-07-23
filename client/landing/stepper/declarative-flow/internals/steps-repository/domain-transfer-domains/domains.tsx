@@ -10,6 +10,7 @@ import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState } from 'react';
 import { v4 as uuid } from 'uuid';
+import QueryPlans from 'calypso/components/data/query-plans';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
@@ -85,7 +86,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const { setPendingAction, setDomainsTransferData, setShouldImportDomainTransferDnsRecords } =
 		useDispatch( ONBOARD_STORE );
 
-	const { __ } = useI18n();
+	const { __, _n } = useI18n();
 
 	const filledDomainValues = Object.values( domainsState ).filter( ( x ) => x.domain && x.auth );
 	const allGood = filledDomainValues.every( ( { valid } ) => valid );
@@ -181,10 +182,21 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 		const totalPrice = getTotalPrice( domainsState );
 		if ( totalPrice ) {
+			const formattedTotalPrice = getFormattedTotalPrice( domainsState );
+
+			if ( numberOfValidDomains > 1 ) {
+				return sprintf(
+					/* translators: %1$s Number of valid domains, %2$s: total price formatted */
+					__( 'Transfer %1$s domains for %2$s' ),
+					numberOfValidDomains,
+					formattedTotalPrice
+				);
+			}
+
 			return sprintf(
 				/* translators: %s: total price formatted */
 				__( 'Transfer for %s' ),
-				getFormattedTotalPrice( domainsState )
+				formattedTotalPrice
 			);
 		}
 
@@ -193,6 +205,8 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 	return (
 		<div className="bulk-domain-transfer__container">
+			{ /* QueryPlans required by getCurrentUserCurrencyCode in DomainCodePair */ }
+			<QueryPlans />
 			{ Object.entries( domainsState ).map( ( [ key, domain ], index ) => (
 				<DomainCodePair
 					key={ key }
@@ -214,23 +228,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					{ __( 'Add more' ) }
 				</Button>
 			) }
-			{ numberOfValidDomains > 0 && (
-				<>
-					<FormLabel
-						htmlFor="import-dns-records"
-						className="bulk-domain-transfer__import-dns-records"
-					>
-						<FormInputCheckbox
-							id="import-dns-records"
-							onChange={ ( event ) => {
-								setShouldImportDomainTransferDnsRecords( event.target.checked );
-							} }
-							checked={ storedDomainsState.shouldImportDnsRecords }
-						/>
-						<span>{ __( 'Import DNS records from these domains' ) }</span>
-					</FormLabel>
-				</>
-			) }
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }
@@ -240,6 +237,29 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					{ getTransferButtonText() }
 				</Button>
 			</div>
+			{ numberOfValidDomains > 0 && (
+				<div className="bulk-domain-transfer__import-dns-records">
+					<FormLabel
+						htmlFor="import-dns-records"
+						className="bulk-domain-transfer__import-dns-records-label"
+					>
+						<FormInputCheckbox
+							id="import-dns-records"
+							onChange={ ( event ) => {
+								setShouldImportDomainTransferDnsRecords( event.target.checked );
+							} }
+							checked={ storedDomainsState.shouldImportDnsRecords }
+						/>
+						<span>
+							{ _n(
+								'Import DNS records from this domain',
+								'Import DNS records from these domains',
+								domainCount
+							) }
+						</span>
+					</FormLabel>
+				</div>
+			) }
 			{ isEnabled( 'domain-transfer/faq' ) && (
 				<div className="bulk-domain-transfer__faqs">
 					<DomainTransferFAQ />

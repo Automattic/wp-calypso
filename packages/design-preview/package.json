@@ -34,7 +34,7 @@
 		"@automattic/global-styles": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
-		"@wordpress/components": "^25.1.0",
+		"@wordpress/components": "^25.3.0",
 		"@wordpress/html-entities": "^3.36.0",
 		"@wordpress/icons": "^9.26.0",
 		"@wordpress/react-i18n": "^3.33.0",

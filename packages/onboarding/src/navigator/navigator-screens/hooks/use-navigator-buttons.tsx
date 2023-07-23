@@ -13,14 +13,14 @@ const useNavigatorButtons = ( screens: NavigatorScreenObject[] ) => {
 
 	return (
 		<NavigatorItemGroup>
-			{ screens.map( ( { checked, icon, label, path, onSelect } ) => (
+			{ screens.map( ( { slug, checked, icon, label, path, onSelect } ) => (
 				<NavigationButtonAsItem
 					key={ path }
 					checked={ checked }
 					icon={ icon }
 					path={ path }
 					aria-label={ label }
-					onClick={ onSelect }
+					onClick={ () => onSelect?.( slug ) }
 				>
 					{ label }
 				</NavigationButtonAsItem>

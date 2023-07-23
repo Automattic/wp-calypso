@@ -30,7 +30,7 @@ const isProductOwned = ( ownedProducts: SiteProduct[] | null, searchedProduct: s
 		.includes( searchedProduct );
 };
 
-const StatsPurchasePage = () => {
+const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: string } } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -62,7 +62,11 @@ const StatsPurchasePage = () => {
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
-			<PageViewTracker path="/stats/purchase/:site" title="Stats > Purchase" />
+			<PageViewTracker
+				path="/stats/purchase/:site"
+				title="Stats > Purchase"
+				from={ query.from ?? '' }
+			/>
 			<div className="stats">
 				<QueryProductsList />
 				{
@@ -86,6 +90,9 @@ const StatsPurchasePage = () => {
 							siteSlug={ siteSlug }
 							commercialProduct={ commercialProduct }
 							pwywProduct={ pwywProduct }
+							siteId={ siteId }
+							redirectUri={ query.redirect_uri ?? '' }
+							from={ query.from ?? '' }
 						/>
 					</>
 				) }
