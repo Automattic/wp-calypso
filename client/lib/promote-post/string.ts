@@ -50,12 +50,15 @@ const BlazePressStrings = () => {
 	translate( "Use post's media" );
 	translate( 'Title' );
 	translate( 'Page title' );
-	translate( '%(charactersLeft)s character remaining', '%(charactersLeft)s characters remaining' );
+	translate( '%(charactersLeft)s character remaining', '%(charactersLeft)s characters remaining', {
+		count: 1,
+	} );
 	translate( 'Snippet' );
 	translate( 'Article Snippet' );
 	translate(
 		'%(snippetCharactersLeft)s character remaining',
-		'%(snippetCharactersLeft)s characters remaining'
+		'%(snippetCharactersLeft)s characters remaining',
+		{ count: 1 }
 	);
 	translate( 'Use + / - or simply drag the image to adjust it' );
 	translate( 'Apply' );
@@ -81,7 +84,8 @@ const BlazePressStrings = () => {
 	translate( 'Total' );
 	translate(
 		'Daily spend for %(durationDays)s-day duration',
-		'Daily spend for %(durationDays)s-day duration'
+		'Daily spend for %(durationDays)s-day duration',
+		{ count: 1 }
 	);
 	translate( 'Estimated people reached per day' );
 	translate( 'Start date' );
