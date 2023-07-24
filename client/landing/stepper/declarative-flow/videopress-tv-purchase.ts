@@ -5,10 +5,16 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import {
+	setSignupCompleteSlug,
+	persistSignupDestination,
+	setSignupCompleteFlowName,
+} from 'calypso/signup/storageUtils';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { PLANS_STORE, SITE_STORE, USER_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
 import ProcessingStep from './internals/steps-repository/processing-step';
+import VideoPressTvRedirectStep from './internals/steps-repository/videopress-tv-redirect';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect, SiteSelect, PlansSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -19,7 +25,10 @@ const videopressTvPurchase: Flow = {
 		return translate( 'VideoPress TV' );
 	},
 	useSteps() {
-		return [ { slug: 'processing', component: ProcessingStep } ];
+		return [
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'redirect', component: VideoPressTvRedirectStep },
+		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -33,6 +42,7 @@ const videopressTvPurchase: Flow = {
 		const name = this.name;
 		const locale = useLocale();
 		const { setPendingAction, setProgress, setSelectedSite } = useDispatch( ONBOARD_STORE );
+		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { supportedPlans } = useSupportedPlans( locale, 'MONTHLY' );
 		const _siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect(
@@ -84,10 +94,11 @@ const videopressTvPurchase: Flow = {
 
 			setIsVideoPressTvPurchasePending( true );
 
-			setSelectedSite( siteData?.ID );
 			// If the user is logged in, and the site belongs to them, and they are not on a plan, we need to add a pending action.
 			setPendingAction( async () => {
 				setProgress( 0 );
+				setSelectedSite( siteData?.ID || 0 );
+				setIntentOnSite( _siteSlug || '', VIDEOPRESS_TV_PURCHASE_FLOW );
 
 				// select the premium plan for now. This will be replaced with our video plan.
 				let planObject = supportedPlans.find( ( plan ) => 'premium' === plan.periodAgnosticSlug );
@@ -122,7 +133,12 @@ const videopressTvPurchase: Flow = {
 					.actions.addProductsToCart( productsToAdd )
 					.then( () => {
 						setProgress( 1.0 );
-						const redirectTo = encodeURIComponent( `${ _siteSlug }&message=purchase-complete` );
+						const redirectTo = encodeURIComponent(
+							`/setup/${ name }/redirect?siteSlug=${ _siteSlug }`
+						);
+						persistSignupDestination( redirectTo );
+						setSignupCompleteSlug( _siteSlug || '' );
+						setSignupCompleteFlowName( VIDEOPRESS_TV_PURCHASE_FLOW );
 
 						window.location.replace(
 							`/checkout/${ _siteSlug }?signup=1&redirect_to=${ redirectTo }`
@@ -146,6 +162,8 @@ const videopressTvPurchase: Flow = {
 					}
 					addVideoPressPendingAction();
 					break;
+				case 'redirect':
+					window.location.href = `https://${ _siteSlug }`;
 				default:
 					break;
 			}
@@ -161,12 +179,19 @@ const videopressTvPurchase: Flow = {
 
 		const goNext = () => {
 			switch ( _currentStep ) {
+				case 'redirect':
+					window.location.href = `https://${ _siteSlug }`;
 				default:
 					return navigate( 'processing' );
 			}
 		};
 
 		const goToStep = ( step: string ) => {
+			const siteBelongsToUser = siteData && userData && siteData.site_owner === userData.ID;
+			if ( 'redirect' === step && siteBelongsToUser ) {
+				window.location.href = `https://${ _siteSlug }`;
+			}
+
 			return navigate( step );
 		};
 
