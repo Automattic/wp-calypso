@@ -193,6 +193,21 @@
 	}
 }
 
+.jetpack-product-info__disclaimer-text {
+	font-size: 0.75rem;
+
+	&::before {
+		/* To match width and align with product feature bullet points */
+		display: inline-block;
+		width: 14px;
+		padding-inline-end: 6px;
+		text-align: center;
+
+		content: "*";
+		font-size: 1rem;
+	}
+}
+
 .jetpack-product-info__product-list {
 	border-block-end: 1px solid var(--studio-gray-5);
 	ul {
