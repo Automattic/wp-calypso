@@ -8,6 +8,7 @@ import {
 	isTranslatedIncompletely,
 	isDefaultLocale,
 	getLanguageSlugs,
+	getLanguageRouteParam,
 	localizeUrl,
 } from '@automattic/i18n-utils';
 import bodyParser from 'body-parser';
@@ -694,7 +695,8 @@ function wpcomPages( app ) {
 		}
 	} );
 
-	app.get( '/:locale/plans', function ( req, res ) {
+	const lang = getLanguageRouteParam( 'locale' );
+	app.get( [ `/${ lang }/plans` ], function ( req, res, next ) {
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
 			const ref = req.query?.ref;
@@ -705,32 +707,9 @@ function wpcomPages( app ) {
 					'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 				);
 			} else {
-				// if the `locale` is a Mag-16 language/Greek/Romanian
 				const pricingPage = 'https://wordpress.com/pricing/';
 				const refQuery = ref ? `?ref=${ ref }` : '';
 				const pricingPageUrl = localizeUrl( `${ pricingPage }${ refQuery }`, locale );
-				res.redirect( pricingPageUrl );
-			}
-		} else {
-			const queryParams = new URLSearchParams( req.query );
-			const queryString = queryParams.toString() ? '?' + queryParams.toString() : '';
-			res.redirect( '/plans' + queryString );
-		}
-	} );
-
-	app.get( '/plans', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn ) {
-			const queryFor = req.query?.for;
-			const ref = req.query?.ref;
-
-			if ( queryFor && 'jetpack' === queryFor ) {
-				res.redirect(
-					'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
-				);
-			} else {
-				const pricingPageUrl = ref
-					? `https://wordpress.com/pricing/?ref=${ ref }`
-					: 'https://wordpress.com/pricing/';
 				res.redirect( pricingPageUrl );
 			}
 		} else {
