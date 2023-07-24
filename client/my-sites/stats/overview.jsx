@@ -83,11 +83,9 @@ class StatsOverview extends Component {
 			);
 		} );
 
-		const date = moment()
-			.utcOffset( 0 ) // Don't have one site to choose a timezone from...
-			//.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
-			.format( 'YYYY-MM-DD' );
-		const query = { date, period }; // Makes a new object each render = bad
+		// Generate the current date in yyyy-mm-dd format, in UTC.
+		const date = new Date().toISOString().split( 'T' )[ 0 ];
+		const query = { date, period };
 
 		return (
 			<Main wideLayout>
