@@ -202,7 +202,7 @@ const PersonalPurchase = ( {
 							siteSlug,
 							adminUrl,
 							redirectUri,
-							price: subscriptionValue,
+							price: subscriptionValue / 2, //A step is half of the smallest unit
 						} )
 					}
 				>

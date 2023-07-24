@@ -39,7 +39,7 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redirectUri, from } ) => {
 	const commercialPlanPrice = commercialProduct?.cost;
 	const maxSliderPrice = commercialProduct.cost;
-	const sliderStepPrice = pwywProduct.cost / 2;
+	const sliderStepPrice = pwywProduct.cost / 2; //A step is half of the smallest unit
 
 	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
 	const defaultStartingValue = Math.ceil( steps * DEFAULT_STARTING_FRACTION );
