@@ -644,7 +644,7 @@ class ThemeSheet extends Component {
 						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
 					<div className="theme__sheet-main-actions">
-						{ config.isEnabled( 'themes/block-theme-previews-poc' ) && (
+						{ config.isEnabled( 'themes/block-theme-previews' ) && (
 							<LivePreviewButton
 								isActive={ isActive }
 								isAtomic={ isAtomic }
