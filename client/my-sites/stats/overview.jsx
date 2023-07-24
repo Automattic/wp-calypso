@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -15,7 +16,6 @@ import DatePicker from './stats-date-picker';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import PageViewTracker from './stats-page-view-tracker';
 import SiteOverview from './stats-site-overview';
-import QuerySiteStats from 'calypso/components/data/query-site-stats';
 
 class StatsOverview extends Component {
 	static propTypes = {
