@@ -19,6 +19,7 @@ import { convertErrorToString } from './composite-checkout/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
+	captureException( error.cause ? error.cause : error );
 	logToLogstash( {
 		feature: 'calypso_client',
 		message: 'composite checkout load error',
@@ -29,7 +30,6 @@ const logCheckoutError = ( error: Error ) => {
 			message: convertErrorToString( error ),
 		},
 	} );
-	captureException( error );
 };
 
 const CheckoutMainWrapperStyles = styled.div`
