@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
-import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
@@ -36,7 +35,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 	const isOwnedByTeam51 = useSelector(
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
 	);
-	const isWpcom = useSelector( isSiteWpcom );
 
 	// TODO: Display error messages on the notice.
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
@@ -47,8 +45,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 		! isP2 &&
 		! isOwnedByTeam51 &&
 		! hasPaidStats &&
-		! isWpcom; // TODO: remove this when we are ready to roll out to WPCOM sites.
-	hasLoadedPurchases;
+		hasLoadedPurchases;
 
 	return (
 		<>
@@ -87,8 +84,9 @@ export default function StatsNotices( {
 		getJetpackStatsAdminVersion( state, siteId )
 	);
 
+	// Only show notice on Odyssey stats for now as the styles don't match WPCOM.
 	const supportNewStatsNotices =
-		! isOdysseyStats ||
+		isOdysseyStats &&
 		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
 
 	return supportNewStatsNotices ? (
