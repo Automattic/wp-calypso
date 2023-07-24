@@ -11,9 +11,9 @@ import type { CalypsoDispatch } from 'calypso/state/types';
 
 export function convertErrorToString( error: Error ): string {
 	if ( error.cause ) {
-		return `${ error.message }; Cause: ${ error.cause }; Stack: ${ error.stack }`;
+		return `${ error }; Cause: ${ error.cause }; Stack: ${ error.stack }`;
 	}
-	return `${ error.message }; Stack: ${ error.stack }`;
+	return `${ error }; Stack: ${ error.stack }`;
 }
 
 export function logStashLoadErrorEvent(
