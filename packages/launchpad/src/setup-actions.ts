@@ -67,6 +67,11 @@ export const setUpActionsForTasks = ( {
 					setShareSiteModalIsOpen?.( true );
 				};
 				break;
+			case 'update_about_page':
+				action = () => {
+					window.location.assign( `/page/${ siteSlug }/${ task?.extra_data?.about_page_id }` );
+				};
+				break;
 		}
 
 		const actionDispatch = () => {
