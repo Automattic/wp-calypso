@@ -28,6 +28,10 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 				{ staleTime: Infinity }
 			);
 
+			const view_name = ( data as any ).view_name;
+			const multipleCardViews = [ 'VIEW_POST_PUBLISH', 'VIEW_SITE_SETUP' ];
+			const isSingleCardView = multipleCardViews.indexOf( view_name ) === -1;
+
 			return await wp.req.post(
 				{
 					path: `/sites/${ siteId }/home/layout/skip`,
@@ -35,9 +39,10 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 				},
 				{ query },
 				{
-					view: ( data as any ).view_name,
+					// Single card views are skipped by skipping the "view". These two endpoints allow skipping individual cards.
+					view: isSingleCardView ? view_name : undefined,
 					// temporarily prevent single card views from returning themself after skipping
-					card: ( data as any ).view_name === 'VIEW_POST_LAUNCH' ? card : undefined,
+					card: isSingleCardView ? undefined : card,
 					...( reminder && { reminder } ),
 				}
 			);
