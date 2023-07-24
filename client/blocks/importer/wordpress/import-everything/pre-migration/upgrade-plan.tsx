@@ -65,14 +65,16 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				<NextButton isBusy={ isBusy } onClick={ () => startImport() }>
 					{ translate( 'Upgrade and migrate' ) }
 				</NextButton>
-				<Button
-					borderless={ true }
-					className="action-buttons__borderless"
-					onClick={ onFreeTrialClick }
-				>
-					{ /* Untranslated until we've confirmed the design */ }
-					Try for free
-				</Button>
+				{ isEnabled( 'plans/migration-trial' ) && (
+					<Button
+						borderless={ true }
+						className="action-buttons__borderless"
+						onClick={ onFreeTrialClick }
+					>
+						{ /* Untranslated until we've confirmed the design */ }
+						Try for free
+					</Button>
+				) }
 				<Button
 					borderless={ true }
 					className="action-buttons__borderless"
