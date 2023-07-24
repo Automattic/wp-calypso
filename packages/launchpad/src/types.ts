@@ -1,3 +1,6 @@
+export interface TaskExtraData {
+	about_page_id?: number;
+}
 export interface Task {
 	id: string;
 	completed: boolean;
@@ -7,7 +10,7 @@ export interface Task {
 	badge_text?: string;
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
-	extra_data?: any;
+	extra_data?: TaskExtraData;
 }
 
 export type LaunchpadChecklist = Task[];
