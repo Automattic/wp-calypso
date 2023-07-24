@@ -66,11 +66,15 @@ export class AppBanner extends Component {
 		super( props );
 
 		let isDraftPostModalShown = false;
-		if (
-			typeof window !== 'undefined' &&
-			window.sessionStorage?.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
-		) {
-			isDraftPostModalShown = true;
+		try {
+			if (
+				typeof window !== 'undefined' &&
+				window.sessionStorage?.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
+			) {
+				isDraftPostModalShown = true;
+			}
+		} catch ( e ) {
+			isDraftPostModalShown = false;
 		}
 
 		let isLaunchpadEnabled = false;
