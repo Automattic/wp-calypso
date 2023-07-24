@@ -259,10 +259,6 @@ export default function SitesOverview() {
 		);
 	};
 
-	// const showIssueLicenseButtonsLargeScreen =
-	// 	isWithinBreakpoint( '>960px' ) && selectedLicensesCount < 1;
-	// console.log( 'selectedLicensesCounts', selectedLicensesCount );
-
 	return (
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
