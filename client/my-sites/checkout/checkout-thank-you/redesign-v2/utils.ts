@@ -1,5 +1,7 @@
-import { isDomainTransfer, isWpComPlan } from '@automattic/calypso-products';
+import { isWpComPlan } from '@automattic/calypso-products';
+import { ReceiptPurchase } from 'calypso/state/receipts/types';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
+import { isBulkDomainTransfer } from '../utils';
 
 /**
  * Determines whether the current checkout flow is for a redesign V2 purchase.
@@ -7,7 +9,7 @@ import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from 
  *
  * @returns {boolean} True if the checkout flow is for a redesign V2 purchase, false otherwise.
  */
-const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
+export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 	// Fallback to old design when there is a failed purchase.
 	const failedPurchases = getFailedPurchases( props );
 	if ( failedPurchases.length > 0 ) {
@@ -17,7 +19,7 @@ const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 	const purchases = getPurchases( props );
 
 	// We are in the bulk domain transfer flow.
-	if ( purchases.every( isDomainTransfer ) ) {
+	if ( isBulkDomainTransfer( purchases ) ) {
 		return true;
 	}
 
@@ -27,4 +29,11 @@ const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 	}
 	return false;
 };
-export default isRedesignV2;
+
+export function shouldShowConfettiExplosion( purchases: ReceiptPurchase[] ) {
+	if ( isBulkDomainTransfer( purchases ) ) {
+		return false;
+	}
+
+	return true;
+}

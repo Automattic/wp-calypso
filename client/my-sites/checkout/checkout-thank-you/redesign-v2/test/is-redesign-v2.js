@@ -1,5 +1,5 @@
 import { findPlansKeys, GROUP_WPCOM } from '@automattic/calypso-products';
-import isRedesignV2 from '../is-redesign-v2';
+import { isRedesignV2 } from '../utils';
 
 describe( 'isRedesignV2', () => {
 	it( 'should return false if there is a failed purchase', () => {
