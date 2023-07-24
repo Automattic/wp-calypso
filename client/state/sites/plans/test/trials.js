@@ -19,9 +19,12 @@ import {
 } from '../selectors';
 
 // Mock the config system
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
+jest.mock( '@automattic/calypso-config', () => {
+	const mock = () => '';
+	mock.isEnabled = jest.fn( () => true );
+
+	return mock;
+} );
 
 // Mock the Migration Trial feature flag (plans/migration-trial)
 const withTrialEnabled = () =>
