@@ -5,9 +5,9 @@ import type { LaunchpadTaskActionsProps, Task } from './types';
 export const setUpActionsForTasks = ( {
 	siteSlug,
 	tasks,
-	isAtomicSite,
 	tracksData,
 	extraActions,
+	isAtomicSite,
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
 	const { setShareSiteModalIsOpen } = extraActions || {};
