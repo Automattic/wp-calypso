@@ -14,8 +14,12 @@ interface PersonalPurchaseProps {
 	handlePlanSwap: ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
 	currencyCode: string;
 	siteSlug: string;
-	sliderStep: number;
-	maxSliderPrice: number;
+	sliderSettings: {
+		sliderStep: number;
+		maxSliderPrice: number;
+		uiEmojiHeartTier: number;
+		uiImageCelebrationTier: number;
+	};
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
@@ -27,8 +31,7 @@ const PersonalPurchase = ( {
 	handlePlanSwap,
 	currencyCode,
 	siteSlug,
-	sliderStep,
-	maxSliderPrice,
+	sliderSettings,
 	adminUrl,
 	redirectUri,
 	from,
@@ -37,15 +40,16 @@ const PersonalPurchase = ( {
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
+	const { sliderStep, maxSliderPrice, uiEmojiHeartTier, uiImageCelebrationTier } = sliderSettings;
 
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
 
-		if ( subscriptionValue <= PRICING_CONFIG.EMOJI_HEART_TIER ) {
+		if ( subscriptionValue <= uiEmojiHeartTier ) {
 			emoji = String.fromCodePoint( 0x1f60a ); /* Smiling face emoji */
-		} else if ( subscriptionValue < PRICING_CONFIG.IMAGE_CELEBRATION_PRICE ) {
+		} else if ( subscriptionValue < uiImageCelebrationTier ) {
 			emoji = String.fromCodePoint( 0x2764, 0xfe0f ); /* Heart emoji */
-		} else if ( subscriptionValue >= PRICING_CONFIG.IMAGE_CELEBRATION_PRICE ) {
+		} else if ( subscriptionValue >= uiImageCelebrationTier ) {
 			emoji = String.fromCodePoint( 0x1f525 ); /* Fire emoji */
 		}
 
