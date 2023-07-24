@@ -5,7 +5,7 @@ import Tooltip from 'calypso/components/tooltip';
 
 import './style.scss';
 
-export default function DisabledBadge() {
+export default function NotAvailableBadge() {
 	const translate = useTranslate();
 
 	const [ showPopover, setShowPopover ] = useState( false );
@@ -14,7 +14,7 @@ export default function DisabledBadge() {
 
 	return (
 		<span
-			className="disabled-badge-wrapper"
+			className="not-available-badge-wrapper"
 			onMouseEnter={ () => setShowPopover( true ) }
 			onMouseLeave={ () => setShowPopover( false ) }
 			onMouseDown={ () => setShowPopover( false ) }
@@ -22,15 +22,15 @@ export default function DisabledBadge() {
 			tabIndex={ 0 }
 			ref={ wrapperRef }
 		>
-			<Badge className="disabled-badge" type="success">
-				{ translate( 'Disabled' ) }
+			<Badge className="not-available-badge" type="success">
+				{ translate( 'Not Available' ) }
 			</Badge>
 
 			<Tooltip
 				context={ wrapperRef.current }
 				isVisible={ showPopover }
 				position="bottom"
-				className="disabled-badge__tooltip"
+				className="not-available-badge__tooltip"
 			>
 				{ translate( 'One of the selected sites does not have a Basic plan.' ) }
 			</Tooltip>

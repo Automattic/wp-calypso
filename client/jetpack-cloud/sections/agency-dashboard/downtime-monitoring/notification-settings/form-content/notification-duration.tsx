@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { availableNotificationDurations as durations } from '../../../sites-overview/utils';
-import DisabledBadge from '../../disabled-badge';
+import NotAvailableBadge from '../../not-available-badge';
 import { RestrictionType } from '../../types';
 import UpgradeBadge from '../../upgrade-badge';
 import type { MonitorDuration } from '../../../sites-overview/types';
@@ -58,9 +58,10 @@ export default function NotificationDuration( {
 						onClick={ () => selectDuration( duration ) }
 						disabled={ restriction !== 'none' && duration.isPaid }
 					>
-						{ duration.label }{ ' ' }
+						{ duration.label }
+						&nbsp;
 						{ duration.isPaid && restriction === 'upgrade_required' && <UpgradeBadge /> }
-						{ duration.isPaid && restriction === 'free_site_selected' && <DisabledBadge /> }
+						{ duration.isPaid && restriction === 'free_site_selected' && <NotAvailableBadge /> }
 					</SelectDropdown.Item>
 				) ) }
 			</SelectDropdown>

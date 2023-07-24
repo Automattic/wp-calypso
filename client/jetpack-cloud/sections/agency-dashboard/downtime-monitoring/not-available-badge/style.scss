@@ -1,4 +1,4 @@
-.badge.disabled-badge {
+.badge.not-available-badge {
 	border-radius: 4px;
 	cursor: pointer;
 	font-size: rem(10px);
@@ -12,12 +12,12 @@
 	background-color: var(--studio-gray-5);
 }
 
-.disabled-badge-wrapper {
+.not-available-badge-wrapper {
 	display: inline-flex;
 	align-items: center;
 }
 
-.disabled-badge__tooltip {
+.not-available-badge__tooltip {
 	.popover__arrow {
 		&::before {
 			border-bottom-color: var(--studio-gray-60) !important;

@@ -9,7 +9,7 @@ import {
 	StateMonitorSettingsEmail,
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
-import DisabledBadge from '../disabled-badge';
+import NotAvailableBadge from '../not-available-badge';
 import { RestrictionType } from '../types';
 import UpgradeBadge from '../upgrade-badge';
 import ContactListItem from './item';
@@ -100,7 +100,7 @@ export default function ContactList( {
 						</Button>
 
 						{ restriction === 'upgrade_required' && <UpgradeBadge /> }
-						{ restriction === 'free_site_selected' && <DisabledBadge /> }
+						{ restriction === 'free_site_selected' && <NotAvailableBadge /> }
 					</div>
 				) }
 
