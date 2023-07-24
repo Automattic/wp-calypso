@@ -130,6 +130,15 @@ export const setShowMessagingChat = function* () {
 	yield resetStore();
 };
 
+export const setShowSupportDoc = function* ( link: string, postId: number ) {
+	const params = new URLSearchParams( {
+		link,
+		postId: String( postId ),
+	} );
+	yield setInitialRoute( `/post/?${ params }` );
+	yield setShowHelpCenter( true );
+};
+
 export type HelpCenterAction =
 	| ReturnType<
 			| typeof setShowMessagingLauncher
