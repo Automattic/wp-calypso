@@ -63,12 +63,11 @@ import PopularBadge from './components/popular-badge';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
-import { PlanProperties, TransformedFeatureObject } from './types';
+import { PlanProperties, TransformedFeatureObject, SingleFreeDomainSuggestion } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { PlansIntent } from './grid-context';
 import type { GridPlan } from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import type { PlanActionOverrides } from './types';
-import type { DomainSuggestion } from '@automattic/data-stores';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
@@ -101,9 +100,7 @@ export type PlanFeatures2023GridProps = {
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
-	isLoadingSuggestedFreeDomain?: boolean;
-	wpcomFreeDomainSuggestion?: DomainSuggestion;
-	placeholder?: string;
+	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
 	intervalType?: string;
 	currentSitePlanSlug?: string | null;
 	hidePlansFeatureComparison?: boolean;
@@ -790,7 +787,6 @@ export class PlanFeatures2023Grid extends Component<
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const {
 			paidDomainName,
-			isLoadingSuggestedFreeDomain,
 			wpcomFreeDomainSuggestion,
 			translate,
 			hideUnavailableFeatures,
@@ -816,7 +812,6 @@ export class PlanFeatures2023Grid extends Component<
 							features={ features }
 							planName={ planName }
 							paidDomainName={ paidDomainName }
-							isLoadingSuggestedFreeDomain={ isLoadingSuggestedFreeDomain }
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }

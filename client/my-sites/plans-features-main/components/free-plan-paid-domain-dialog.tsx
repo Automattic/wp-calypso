@@ -9,7 +9,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import usePlanPrices from '../../plans/hooks/use-plan-prices';
 import { LoadingPlaceHolder } from './loading-placeholder';
-import type { DomainSuggestion } from '@automattic/data-stores';
+import type { SingleFreeDomainSuggestion } from 'calypso/my-sites/plan-features-2023-grid/types';
 
 const DialogContainer = styled.div`
 	padding: 24px;
@@ -119,7 +119,6 @@ const StyledButton = styled( Button )`
 
 export function FreePlanPaidDomainDialog( {
 	paidDomainName,
-	isLoadingSuggestedFreeDomain,
 	wpcomFreeDomainSuggestion,
 	suggestedPlanSlug,
 	onFreePlanSelected,
@@ -127,8 +126,7 @@ export function FreePlanPaidDomainDialog( {
 	onClose,
 }: {
 	paidDomainName: string;
-	isLoadingSuggestedFreeDomain: boolean;
-	wpcomFreeDomainSuggestion?: DomainSuggestion;
+	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
 	suggestedPlanSlug: PlanSlug;
 	onClose: () => void;
 	onFreePlanSelected: () => void;
@@ -198,11 +196,13 @@ export function FreePlanPaidDomainDialog( {
 					</RowWithBorder>
 					<Row>
 						<DomainName>
-							{ isLoadingSuggestedFreeDomain && <LoadingPlaceHolder /> }
-							{ wpcomFreeDomainSuggestion && <div>{ wpcomFreeDomainSuggestion.domain_name }</div> }
+							{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
+							{ wpcomFreeDomainSuggestion.entry && (
+								<div>{ wpcomFreeDomainSuggestion.entry.domain_name }</div>
+							) }
 						</DomainName>
 						<StyledButton
-							disabled={ isLoadingSuggestedFreeDomain || ! wpcomFreeDomainSuggestion }
+							disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.entry }
 							busy={ isBusy }
 							onClick={ handleFreeDomainClick }
 						>

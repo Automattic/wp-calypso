@@ -1,5 +1,6 @@
 import { applyTestFiltersToPlansList, PlanSlug } from '@automattic/calypso-products';
 import { FeatureObject } from 'calypso/lib/plans/features-list';
+import type { DomainSuggestion } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
 export type TransformedFeatureObject = FeatureObject & {
@@ -26,6 +27,11 @@ export type PlanProperties = {
 	availableForPurchase: boolean;
 	current?: boolean;
 	planActionOverrides?: PlanActionOverrides;
+};
+
+export type SingleFreeDomainSuggestion = {
+	isLoading: boolean;
+	entry?: DomainSuggestion;
 };
 
 export interface PlanActionOverrides {

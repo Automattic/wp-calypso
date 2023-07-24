@@ -6,7 +6,7 @@ import { LoadingPlaceHolder } from '../../plans-features-main/components/loading
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
-import type { DomainSuggestion } from '@automattic/data-stores';
+import type { SingleFreeDomainSuggestion } from 'calypso/my-sites/plan-features-2023-grid/types';
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {
@@ -23,14 +23,15 @@ const SubdomainSuggestion = styled.div`
 
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
-	isLoadingSuggestedFreeDomain?: boolean;
-	wpcomFreeDomainSuggestion?: DomainSuggestion;
-} > = ( { paidDomainName, isLoadingSuggestedFreeDomain, wpcomFreeDomainSuggestion } ) => {
+	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+} > = ( { paidDomainName, wpcomFreeDomainSuggestion } ) => {
 	return (
 		<SubdomainSuggestion>
 			<div className="is-domain-name">{ paidDomainName }</div>
-			{ isLoadingSuggestedFreeDomain && <LoadingPlaceHolder /> }
-			{ wpcomFreeDomainSuggestion && <div>{ wpcomFreeDomainSuggestion.domain_name }</div> }
+			{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
+			{ wpcomFreeDomainSuggestion.entry && (
+				<div>{ wpcomFreeDomainSuggestion.entry.domain_name }</div>
+			) }
 		</SubdomainSuggestion>
 	);
 };
@@ -39,15 +40,13 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planName: string;
 	paidDomainName?: string;
-	isLoadingSuggestedFreeDomain?: boolean;
-	wpcomFreeDomainSuggestion?: DomainSuggestion;
+	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
 } > = ( {
 	features,
 	planName,
 	paidDomainName,
-	isLoadingSuggestedFreeDomain,
 	wpcomFreeDomainSuggestion,
 	hideUnavailableFeatures,
 	selectedFeature,
@@ -101,7 +100,6 @@ const PlanFeatures2023GridFeatures: React.FC< {
 											<FreePlanCustomDomainFeature
 												key={ key }
 												paidDomainName={ paidDomainName as string }
-												isLoadingSuggestedFreeDomain={ isLoadingSuggestedFreeDomain }
 												wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 											/>
 										</Plans2023Tooltip>
