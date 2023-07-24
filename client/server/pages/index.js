@@ -696,7 +696,7 @@ function wpcomPages( app ) {
 	} );
 
 	const lang = getLanguageRouteParam( 'locale' );
-	app.get( [ `/${ lang }/plans` ], function ( req, res, next ) {
+	app.get( `/${ lang }/plans`, function ( req, res, next ) {
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
 			const ref = req.query?.ref;
