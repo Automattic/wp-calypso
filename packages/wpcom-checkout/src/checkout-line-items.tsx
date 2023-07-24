@@ -742,6 +742,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 
 	const isDomainRegistration = product.is_domain_registration;
 	const isDomainMapping = productSlug === 'domain_map';
+	const isDomainTransfer = productSlug === 'domain_transfer';
 
 	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
 		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
@@ -756,6 +757,24 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 					},
 					comment:
 						'premium label, product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
+				} ) }
+			</>
+		);
+	}
+
+	if ( isDomainTransfer ) {
+		return (
+			<>
+				{ translate( ' %(sublabel)s: %(interval)s %(cost)s ', {
+					args: {
+						sublabel: sublabel,
+						cost: formatCurrency( product.item_original_cost_integer, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+						interval: translate( 'billed annually' ),
+					},
+					comment: 'Domain transfer and billing interval, separated by a colon. ',
 				} ) }
 			</>
 		);

@@ -19,6 +19,9 @@ export const JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE =
 export const JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_BANNER_PREFERENCE =
 	'jetpack-dashboard-agency-program-downtime-monitoring-upgrade-banner-preference';
 
+export const JETPACK_DASHBOARD_CHECKOUT_REDIRECT_MODAL_DISMISSED =
+	'agency-program-checkout-redirect-modal-dismissed';
+
 /**
  * Returns preference associated with the key provided.
  */

@@ -11,9 +11,19 @@ interface CommercialPurchaseProps {
 	planValue: number;
 	currencyCode: string;
 	siteSlug: string;
+	adminUrl: string;
+	redirectUri: string;
+	from: string;
 }
 
-const CommercialPurchase = ( { planValue, currencyCode, siteSlug }: CommercialPurchaseProps ) => {
+const CommercialPurchase = ( {
+	planValue,
+	currencyCode,
+	siteSlug,
+	adminUrl,
+	redirectUri,
+	from,
+}: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const planPriceObject = getCurrencyObject( planValue, currencyCode );
 
@@ -76,7 +86,12 @@ const CommercialPurchase = ( { planValue, currencyCode, siteSlug }: CommercialPu
 				) }
 			</p>
 
-			<Button variant="primary" onClick={ () => gotoCheckoutPage( 'commercial', siteSlug ) }>
+			<Button
+				variant="primary"
+				onClick={ () =>
+					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+				}
+			>
 				{ translate( 'Get Jetpack Stats for %(value)s per month', {
 					args: {
 						value: formatCurrency( planValue, currencyCode ),

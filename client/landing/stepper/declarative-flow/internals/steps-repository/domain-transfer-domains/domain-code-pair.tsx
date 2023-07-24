@@ -1,15 +1,18 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useValidationMessage } from './use-validation-message';
 
 type Props = {
@@ -104,13 +107,15 @@ export function DomainCodePair( {
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
 
+	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
+
 	const {
 		valid,
 		loading,
 		message,
 		rawPrice = 0,
 		saleCost,
-		currencyCode = 'USD',
+		currencyCode = userCurrencyCode,
 		refetch,
 		errorStatus,
 	} = validation;
@@ -125,21 +130,21 @@ export function DomainCodePair( {
 		if ( shouldReportError && ! valid && message ) {
 			recordTracksEvent( 'calypso_domain_transfer_domain_error', {
 				domain,
-				error: errorStatus ? errorStatus : message,
+				error: errorStatus ? errorStatus : String( message ),
 			} );
 		}
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
-	const domainActions = (
+	const domainActions = ( inputValidationTextDisplayed = true ) => (
 		<>
-			&nbsp;
+			{ inputValidationTextDisplayed ? <span>&nbsp;</span> : '' }
 			<Button
 				// Disable the delete button on initial state meaning. no domain, no auth and one row.
 				disabled={ ! domain && ! auth && domainCount === 1 }
 				onClick={ () => onRemove( id ) }
 				variant="link"
 			>
-				<span className="delete-label">{ __( 'Discard Domain' ) }</span>
+				<span className="delete-label">{ __( 'Clear domain' ) }</span>
 			</Button>
 			<Button
 				title={ __( 'Refresh' ) }
@@ -150,7 +155,7 @@ export function DomainCodePair( {
 				} ) }
 				variant="link"
 			>
-				<span className="refresh-label">{ __( 'Refresh' ) }</span>
+				<span className="refresh-label">{ __( 'Try again' ) }</span>
 			</Button>
 		</>
 	);
@@ -171,6 +176,8 @@ export function DomainCodePair( {
 							disabled={ valid }
 							id={ id }
 							value={ domain }
+							className="domains__domain-name-input-field"
+							placeholder={ __( 'Please enter the domain name and authorization code.' ) }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, {
 									domain: event.target.value.trim().toLowerCase(),
@@ -203,6 +210,17 @@ export function DomainCodePair( {
 								{ __(
 									'Unique code proving ownership, needed for secure domain transfer between registrars.'
 								) }
+								<div>
+									<Button
+										href={ localizeUrl(
+											'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+										) }
+										target="_blank"
+										variant="link"
+									>
+										<span className="learn-more-label">{ __( 'Learn more' ) }</span>
+									</Button>
+								</div>
 							</InfoPopover>
 						</FormLabel>
 
@@ -228,18 +246,23 @@ export function DomainCodePair( {
 							<FormInputValidation
 								isError={ ! valid }
 								text={ message }
-								children={ domainActions }
+								children={ domainActions( true ) }
 							></FormInputValidation>
 						) }
 						{ message && loading && (
-							<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+							<FormInputValidation
+								className="is-checking-domain"
+								text={ message }
+								isError={ false }
+								isMuted={ true }
+							/>
 						) }
 						{ ! shouldReportError && ! loading && (
 							<FormInputValidation
 								isError={ false }
+								text=""
 								isMuted={ true }
-								text={ __( 'Please enter the domain name and authorization code.' ) }
-								children={ domainCount > 1 && domainActions }
+								children={ domainCount > 1 && domainActions( false ) }
 							/>
 						) }
 					</div>
@@ -267,18 +290,23 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ ! valid }
 						text={ message }
-						children={ domainActions }
+						children={ domainActions( true ) }
 					></FormInputValidation>
 				) }
 				{ message && loading && (
-					<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+					<FormInputValidation
+						className="is-checking-domain"
+						text={ message }
+						isError={ false }
+						isMuted={ true }
+					/>
 				) }
 				{ ! shouldReportError && ! loading && (
 					<FormInputValidation
 						isError={ false }
 						isMuted={ true }
-						text={ __( 'Please enter the domain name and authorization code.' ) }
-						children={ domainCount > 1 && domainActions }
+						text=""
+						children={ domainCount > 1 && domainActions( false ) }
 					/>
 				) }
 			</div>

@@ -40,6 +40,7 @@ import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgr
 import './style.scss';
 import Product from './redesign-v2/sections/Product';
 import getHeading from './redesign-v2/sections/get-heading';
+import { isBulkDomainTransfer } from './utils';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -97,21 +98,21 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
-		if ( this.isBulkDomainTransfer() ) {
+		if ( isBulkDomainTransfer( purchases ) ) {
 			return (
 				<>
-					<span>
+					<div>
 						{ _n(
-							"We got it from here! We'll let you know when your newly transferred domain is ready to use.",
-							"We got it from here! We'll let you know when your newly transferred domains are ready to use.",
+							"We got it from here! We'll send an email when your domain is ready to use.",
+							"We got it from here! We'll send an email when your domains are ready to use.",
 							purchases?.length
 						) }
-					</span>{ ' ' }
-					<span>
+					</div>
+					<div>
 						{ translate( '{{strong}}It may take up to 5-10 days.{{/strong}}', {
 							components: { strong: <strong /> },
 						} ) }
-					</span>
+					</div>
 				</>
 			);
 		}
@@ -441,11 +442,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
-	isBulkDomainTransfer() {
-		const { purchases } = this.props;
-		return purchases?.every( isDomainTransfer );
-	}
-
 	getSearchButtonProps() {
 		const { translate, selectedSite, jetpackSearchCustomizeUrl, jetpackSearchDashboardUrl } =
 			this.props;
@@ -543,10 +539,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 	getHeaderText() {
 		const { purchases, _n } = this.props;
 
-		if ( this.isBulkDomainTransfer() ) {
+		if ( isBulkDomainTransfer( purchases ) ) {
 			return _n(
 				'Your domain transfer has started',
-				'Your domain transfers has started',
+				'Your domain transfers have started',
 				purchases?.length
 			);
 		}
@@ -590,7 +586,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 				) }
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
-						<h1 className="checkout-thank-you__header-heading">{ this.getHeaderText() }</h1>
+						<h1 className="checkout-thank-you__header-heading">
+							{ preventWidows( this.getHeaderText() ) }
+						</h1>
 						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
 							this.renderSimplifiedContent()
 						) : (
@@ -603,7 +601,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 								primaryPurchase={ primaryPurchase }
 								siteID={ selectedSite?.ID }
 								purchases={ this.props.purchases }
-								isBulkDomainTransfer={ this.isBulkDomainTransfer() }
 							/>
 						) }
 						{ this.props.children }

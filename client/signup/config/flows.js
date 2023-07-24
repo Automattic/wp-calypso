@@ -1,5 +1,4 @@
 import {
-	DEFAULT_ASSEMBLER_DESIGN,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	WOOCOMMERCE_THEME,
@@ -116,7 +115,7 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
-	if ( isSiteAssemblerFlow( flowName ) && themeParameter === DEFAULT_ASSEMBLER_DESIGN.slug ) {
+	if ( isSiteAssemblerFlow( flowName ) ) {
 		// Check whether to go to the assembler. If not, go to the site editor directly
 		if ( shouldGoToAssembler() ) {
 			return addQueryArgs(
@@ -199,14 +198,18 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHostingFlowDestination( { siteId } ) {
-	return addQueryArgs(
-		{
-			'new-site': siteId,
-			'hosting-flow': true,
-		},
-		'/sites'
-	);
+function getHostingFlowDestination() {
+	const queryArgs = getQueryArgs();
+
+	if ( queryArgs.flow === 'new-hosted-site' ) {
+		return '/setup/new-hosted-site';
+	}
+
+	if ( queryArgs.flow === 'import-hosted-site' ) {
+		return '/setup/import-hosted-site';
+	}
+
+	return '/sites?hosting-flow=true';
 }
 
 const flows = generateFlows( {

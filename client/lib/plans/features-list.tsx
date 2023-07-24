@@ -231,6 +231,8 @@ import {
 	FEATURE_PREMIUM_CONTENT_JP,
 	FEATURE_SITE_ACTIVITY_LOG_JP,
 	FEATURE_DONATIONS_AND_TIPS_JP,
+	FEATURE_PAYPAL_JP,
+	FEATURE_PAYMENT_BUTTONS_JP,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_AUTOMATED_EMAIL_TRIGGERS,
 	FEATURE_CART_ABANDONMENT_EMAILS,
@@ -2286,6 +2288,19 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Donations and tips' ),
 		getDescription: () =>
 			i18n.translate( 'Allow your audience to support your work easily with donations and tips.' ),
+	},
+	[ FEATURE_PAYPAL_JP ]: {
+		getSlug: () => FEATURE_PAYPAL_JP,
+		getTitle: () => i18n.translate( 'Pay with PayPal' ),
+		getDescription: () => i18n.translate( 'Collect payments with PayPal.' ),
+	},
+	[ FEATURE_PAYMENT_BUTTONS_JP ]: {
+		getSlug: () => FEATURE_PAYMENT_BUTTONS_JP,
+		getTitle: () => i18n.translate( 'Payment buttons' ),
+		getDescription: () =>
+			i18n.translate(
+				'Collect payments from credit/debit cards securely from anywhere with Stripe.'
+			),
 	},
 	[ FEATURE_PREMIUM_STORE_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_STORE_THEMES,

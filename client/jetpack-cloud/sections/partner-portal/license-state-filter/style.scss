@@ -1,3 +1,45 @@
-.license-state-filter .section-nav__mobile-header-text .count {
-	margin-left: 8px;
+.license-state-filter {
+	.section-nav__mobile-header-text .count {
+		margin-left: 8px;
+	}
+
+	.select-dropdown__item.is-selected .count {
+		color: var(--color-text);
+	}
+
+	.select-dropdown__header {
+		border-width: 0;
+
+		.count {
+			top: 12.5px;
+		}
+
+		@include breakpoint-deprecated( ">660px" ) {
+			border-width: 1px;
+		}
+	}
+
+	.section-nav-tabs.is-dropdown {
+		width: 100%;
+		margin: 0 0 1px 0;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin-block-end: 12px;
+		}
+	}
+
+	.select-dropdown__options {
+		margin-inline: -1px;
+	}
+
+	.section-nav-tabs__dropdown .select-dropdown__container {
+		max-width: unset;
+		width: 100%;
+	}
+
+	.section-nav-tabs__dropdown {
+		// Since the search below the dropdown has z-index: 22,
+		// we need to make sure the dropdown is above it
+		z-index: 23;
+	}
 }

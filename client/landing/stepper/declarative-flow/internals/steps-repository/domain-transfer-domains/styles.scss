@@ -169,6 +169,31 @@
 			text-decoration: underline;
 		}
 
+
+		.components-button:has(.delete-label),
+		.components-button:has(.refresh-label) {
+			color: var(--gray-gray-100, #101517);
+			text-decoration-color: var(--gray-gray-100, #101517);
+		}
+
+		.is-muted.is-checking-domain {
+			@keyframes animate-dots {
+				0% {
+					opacity: 0;
+				}
+				50% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			span::after {
+				content: "..";
+				animation: animate-dots 1.5s infinite;
+			}
+		}
+
 		@media (max-width: $break-medium ) {
 			margin-top: 0;
 
@@ -183,11 +208,20 @@
 	}
 
 	.domains__domain-domain {
-		flex: 8;
+		flex: 0 0 420px;
+
+		.form-text-input::placeholder {
+			color: var(--gray-gray-20, #a7aaad);
+			font-size: 0.875rem;
+		}
+
+		@media (max-width: $break-medium ) {
+			flex: 1;
+		}
 	}
 
 	.domains__domain-key {
-		flex: 3;
+		flex: 0 0 240px;
 
 		.info-popover {
 			margin-left: 5px;
@@ -196,6 +230,10 @@
 
 		.info-popover:focus {
 			outline: 1px solid var(--studio-blue-50);
+		}
+
+		@media (max-width: $break-medium ) {
+			flex: 1;
 		}
 	}
 
@@ -319,13 +357,21 @@
 	.bulk-domain-transfer__container {
 
 		.bulk-domain-transfer__add-domain {
+			padding-left: 0;
 			font-size: 0.875rem;
 			font-weight: 500;
 			color: #0675c4;
 			margin-bottom: 22px;
 			margin-top: 2px;
+			overflow: hidden;
+
 			&:hover {
 				text-decoration: underline;
+			}
+
+			svg {
+				margin-left: -6px;
+				margin-right: 0;
 			}
 		}
 
@@ -375,39 +421,6 @@
 				margin-bottom: 50px;
 			}
 		}
-
-		.bulk-domain-transfer__cta-container {
-			display: flex;
-			justify-content: center;
-			margin-bottom: 32px;
-
-			.bulk-domain-transfer__cta {
-				justify-content: center;
-				color: var(--black-white-white, #fff);
-				height: 48px;
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				border-radius: 0.25rem;
-				background: var(--blue-blue-50, #0675c4);
-				font-size: 0.875rem;
-				width: 240px;
-
-				&:hover {
-					background: var(--studio-blue-60);
-				}
-
-				&:disabled {
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					border-radius: 0.25rem;
-					background: var(--gray-gray-5, #dcdcde);
-					opacity: 1;
-				}
-
-				@media (max-width: $break-medium ) {
-					width: 100%;
-				}
-			}
-		}
-
 	}
 
 	.domains__domain-info-and-validation {

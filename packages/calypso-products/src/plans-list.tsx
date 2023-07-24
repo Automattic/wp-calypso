@@ -408,6 +408,9 @@ import {
 	FEATURE_SELL_60_COUNTRIES,
 	FEATURE_SHIPPING_INTEGRATIONS,
 	FEATURE_THE_READER,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	FEATURE_PAYMENT_BUTTONS_JP,
+	FEATURE_PAYPAL_JP,
 } from './constants';
 import type {
 	BillingTerm,
@@ -555,12 +558,12 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_MULTI_SITE,
 		FEATURE_SECURITY_MALWARE,
 		FEATURE_SECURITY_DDOS,
-		FEATURE_PREMIUM_CONTENT_JP,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
 		FEATURE_PREMIUM_CONTENT_JP,
 		FEATURE_DONATIONS_AND_TIPS_JP,
+		FEATURE_PAYMENT_BUTTONS_JP,
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
@@ -569,6 +572,8 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonJetpackFeatureOverride: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
 		FEATURE_DONATIONS_AND_TIPS_JP,
+		FEATURE_PREMIUM_CONTENT_JP,
+		FEATURE_PAYMENT_BUTTONS_JP,
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
 		FEATURE_CONTACT_FORM_JP,
@@ -1404,6 +1409,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
+	get2023PlanComparisonJetpackFeatureOverride: () => [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1466,13 +1472,19 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Power your' +
 				' business website with custom plugins and themes,' +
-				' 200 GB storage, and the ability to remove WordPress.com branding.',
-			plansDescriptionHeadingComponent
+				' %(nmOfGB)s GB storage, and the ability to remove WordPress.com branding.',
+			{
+				...plansDescriptionHeadingComponent,
+				args: {
+					nmOfGB: isEnabled( 'plans/updated-storage-labels' ) ? '50' : '200',
+				},
+			}
 		),
 	getShortDescription: () =>
 		i18n.translate(
 			'Power your business website with custom plugins and themes,' +
-				' 200 GB storage, and the ability to remove WordPress.com branding.'
+				' %(nmOfGB)s GB storage, and the ability to remove WordPress.com branding.',
+			{ args: { nmOfGB: isEnabled( 'plans/updated-storage-labels' ) ? '50' : '200' } }
 		),
 	getTagline: () =>
 		i18n.translate(
@@ -2558,6 +2570,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_BUSINESS_MONTHLY,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1008,
 		getStoreSlug: () => PLAN_BUSINESS,
@@ -2585,6 +2598,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_WPCOM_PRO,
 				PLAN_WPCOM_PRO_2_YEARS,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1028,
 		getStoreSlug: () => PLAN_BUSINESS_2_YEARS,
@@ -2615,6 +2629,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_WPCOM_PRO,
 				PLAN_WPCOM_PRO_2_YEARS,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1048,
 		getStoreSlug: () => PLAN_BUSINESS_3_YEARS,
@@ -2640,6 +2655,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1021,
 		getStoreSlug: () => PLAN_ECOMMERCE_MONTHLY,
@@ -2669,6 +2685,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE_MONTHLY,
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
@@ -2700,6 +2717,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE_MONTHLY,
 				PLAN_ECOMMERCE,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
@@ -2808,6 +2826,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE,
 				PLAN_ECOMMERCE_2_YEARS,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1051,
 		getStoreSlug: () => PLAN_ECOMMERCE_3_YEARS,
@@ -3376,3 +3395,17 @@ PLANS_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
 	getDescription: () => i18n.translate( 'eCommerce free trial' ),
 	getTagline: () => i18n.translate( 'Get a taste of the world’s most popular eCommerce software.' ),
 };
+
+if ( isEnabled( 'plans/migration-trial' ) ) {
+	PLANS_LIST[ PLAN_MIGRATION_TRIAL_MONTHLY ] = {
+		...getPlanBusinessDetails(),
+		type: TYPE_BUSINESS,
+		group: GROUP_WPCOM,
+		getProductId: () => 1057,
+		getPathSlug: () => PLAN_MIGRATION_TRIAL_MONTHLY,
+		term: TERM_MONTHLY,
+		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
+		getStoreSlug: () => PLAN_MIGRATION_TRIAL_MONTHLY,
+		getTitle: () => i18n.translate( 'Business Trial' ),
+	};
+}

@@ -41,6 +41,9 @@ import {
 	JETPACK_SECURITY_T1_PLANS,
 	JETPACK_SECURITY_T2_PLANS,
 	JETPACK_COMPLETE_PLANS,
+	PRODUCT_JETPACK_STATS_MONTHLY,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
@@ -154,6 +157,65 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct >
 	[ PRODUCT_JETPACK_CRM_FREE_MONTHLY ]: EXTERNAL_PRODUCT_CRM_FREE_MONTHLY,
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
 	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,
+};
+
+// Jetpack Stats
+
+// TODO: We'll need to internationalize currencies like we did for the purchase page.
+const STATS_COMMERCIAL_PRICE = 10;
+const STATS_COMMERCIAL_CURRENCY = 'USD';
+
+export const INDIRECT_CHECKOUT_PRODUCT_STATS = (): SelectorProduct => ( {
+	productSlug: PRODUCT_JETPACK_STATS_MONTHLY,
+	term: TERM_MONTHLY,
+	displayTerm: TERM_ANNUALLY,
+	type: ITEM_TYPE_PRODUCT,
+	costProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
+	monthlyProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
+	iconSlug: 'jetpack_stats',
+	displayName: translate( 'Stats' ),
+	shortName: translate( 'Stats' ),
+	tagline: translate( 'Simple, yet powerful analytics' ),
+	displayPrice: STATS_COMMERCIAL_PRICE,
+	displayCurrency: STATS_COMMERCIAL_CURRENCY,
+	description: translate(
+		'With Jetpack Stats, you don’t need to be a data scientist to see how your site is performing.'
+	),
+	shortDescription: translate( 'Simple, yet powerful stats to grow your site.' ),
+	buttonLabel: translate( 'Get Stats' ),
+	features: {
+		items: [],
+	},
+	hidePrice: true,
+	// TODO: Refactor the checkout URL.
+	externalUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
+} );
+
+export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct => ( {
+	...INDIRECT_CHECKOUT_PRODUCT_STATS(),
+	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	term: TERM_ANNUALLY,
+	costProductSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+} );
+
+export const INDIRECT_CHECKOUT_PRODUCT_STATS_FREE = (): SelectorProduct => ( {
+	...INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY(),
+	isFree: true,
+	productSlug: PRODUCT_JETPACK_STATS_FREE,
+} );
+
+// List of products showcased in the Plans grid but not sold via checkout URL directly.
+export const INDIRECT_CHECKOUT_PRODUCTS_LIST = [
+	PRODUCT_JETPACK_STATS_MONTHLY,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE,
+];
+
+// Indirect checkout Product slugs to SelectorProduct.
+export const INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct > = {
+	[ PRODUCT_JETPACK_STATS_MONTHLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS,
+	[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY,
+	[ PRODUCT_JETPACK_STATS_FREE ]: INDIRECT_CHECKOUT_PRODUCT_STATS_FREE,
 };
 
 /**

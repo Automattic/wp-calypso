@@ -23,10 +23,16 @@ import VideoPressCelebrationModal from './video-celebration-modal';
 import WpcomNux from './welcome-modal/wpcom-nux';
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
-	'@wordpress/edit-site'
-);
+let unlock;
+try {
+	unlock = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+		'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
+		'@wordpress/edit-site'
+	).unlock;
+} catch ( error ) {
+	// eslint-disable-next-line no-console
+	console.error( 'Error: Unable to get the unlock api. Reason: %s', error );
+}
 
 function WelcomeTour() {
 	const [ showDraftPostModal ] = useState(
@@ -43,15 +49,19 @@ function WelcomeTour() {
 	} = useSelect( ( select ) => {
 		const welcomeGuideStoreSelect = select( 'automattic/wpcom-welcome-guide' );
 		const starterPageLayoutsStoreSelect = select( 'automattic/starter-page-layouts' );
-		const _canvasMode =
-			select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode();
+		let canvasMode;
+		if ( unlock && select( 'core/edit-site' ) ) {
+			canvasMode =
+				select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode();
+		}
+
 		return {
 			show: welcomeGuideStoreSelect.isWelcomeGuideShown(),
 			isLoaded: welcomeGuideStoreSelect.isWelcomeGuideStatusLoaded(),
 			variant: welcomeGuideStoreSelect.getWelcomeGuideVariant(),
 			isManuallyOpened: welcomeGuideStoreSelect.isWelcomeGuideManuallyOpened(),
 			isNewPageLayoutModalOpen: starterPageLayoutsStoreSelect?.isOpen(), // Handle the case where SPT is not initalized.
-			siteEditorCanvasMode: _canvasMode,
+			siteEditorCanvasMode: canvasMode,
 		};
 	}, [] );
 

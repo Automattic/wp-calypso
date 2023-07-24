@@ -6,6 +6,8 @@ import {
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	JETPACK_BACKUP_ADDON_PRODUCTS,
+	JETPACK_STATS_PRODUCTS,
+	PRODUCT_JETPACK_STATS_FREE,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 } from '@automattic/calypso-products';
@@ -101,6 +103,16 @@ export const getProductsToDisplay = ( {
 					product?.productSlug
 				)
 		)
+		// TODO: Identify a suitable Stats plan according to the site classification.
+		.filter( ( product ) => {
+			if (
+				( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( product?.productSlug )
+			) {
+				return product?.productSlug === PRODUCT_JETPACK_STATS_FREE;
+			}
+
+			return true;
+		} )
 		// Remove duplicates (only happens if the site somehow has the same product
 		// both purchased and included in a plan, very unlikely)
 		.filter( ( product ) => {

@@ -92,14 +92,15 @@ import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
-import isRedesignV2 from './redesign-v2/is-redesign-v2';
 import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
+import { isRedesignV2, shouldShowConfettiExplosion } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import './redesign-v2/style.scss';
+import { isBulkDomainTransfer } from './utils';
 import type { SitesPlansResult } from '../composite-checkout/hooks/product-variants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -238,7 +239,7 @@ export class CheckoutThankYou extends Component<
 			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
-		if ( this.isBulkDomainTransfer( getPurchases( this.props ) ) ) {
+		if ( isBulkDomainTransfer( getPurchases( this.props ) ) ) {
 			// We need to reset the store upon checkout completion, on the bulk domain transfer flow
 			// We do it dinamically to avoid loading unnecessary javascript if not necessary.
 			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
@@ -489,6 +490,7 @@ export class CheckoutThankYou extends Component<
 		let wasTitanEmailOnlyProduct = false;
 		let wasTitanEmailProduct = false;
 		let wasDomainOnly = false;
+		let wasBulkDomainTransfer = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
@@ -512,6 +514,7 @@ export class CheckoutThankYou extends Component<
 				purchases.every(
 					( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
 				);
+			wasBulkDomainTransfer = isBulkDomainTransfer( purchases );
 		} else if ( isStarterPlanEnabled() ) {
 			// Don't show the Happiness support until we figure out the user doesn't have a starter plan
 			showHappinessSupport = false;
@@ -580,7 +583,7 @@ export class CheckoutThankYou extends Component<
 					<PlanThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasDomainProduct && ! this.isBulkDomainTransfer( purchases ) ) {
+		} else if ( wasDomainProduct && ! wasBulkDomainTransfer ) {
 			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
 			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
 
@@ -629,7 +632,7 @@ export class CheckoutThankYou extends Component<
 			this.props.domainOnlySiteFlow &&
 			purchases.length > 0 &&
 			! failedPurchases.length &&
-			! this.isBulkDomainTransfer( purchases )
+			! wasBulkDomainTransfer
 		) {
 			return null;
 		}
@@ -644,12 +647,11 @@ export class CheckoutThankYou extends Component<
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 				{ this.isDataLoaded() &&
 					isRedesignV2( this.props ) &&
-					! this.isBulkDomainTransfer( purchases ) && <ConfettiAnimation delay={ 1000 } /> }
+					shouldShowConfettiExplosion( purchases ) && <ConfettiAnimation delay={ 1000 } /> }
 				{ isRedesignV2( this.props ) && (
 					<CheckoutMasterbar
 						siteId={ this.props.selectedSite?.ID }
 						siteSlug={ this.props.selectedSiteSlug }
-						isBulkDomainTransfer={ this.isBulkDomainTransfer( purchases ) }
 					/>
 				) }
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
@@ -707,10 +709,6 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
-	isBulkDomainTransfer( purchases: ReceiptPurchase[] ): boolean {
-		return purchases.every( isDomainTransfer );
-	}
-
 	/**
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
 	 * just performed by the user.
@@ -730,7 +728,7 @@ export class CheckoutThankYou extends Component<
 		}
 
 		// Check if it is the bulk domain transfer flow
-		if ( this.isBulkDomainTransfer( purchases ) ) {
+		if ( isBulkDomainTransfer( purchases ) ) {
 			return [
 				'domain-transfer-details',
 				...findPurchaseAndDomain( purchases, isDomainRegistration ),
@@ -854,7 +852,7 @@ export class CheckoutThankYou extends Component<
 					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
 							{ isRedesignV2( this.props ) ? (
-								<Footer isBulkDomainFlow={ this.isBulkDomainTransfer( purchases ) } />
+								<Footer purchases={ purchases } />
 							) : (
 								<PurchaseDetailsWrapper
 									{ ...this.props }

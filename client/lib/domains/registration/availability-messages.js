@@ -37,6 +37,11 @@ function getAvailabilityNotice(
 	let message;
 	let severity = 'error';
 
+	if ( isForTransferOnly && errorData?.transferrability ) {
+		// If we are getting messages for transfers, use the transferrability status
+		error = errorData?.transferrability;
+	}
+
 	switch ( error ) {
 		case domainAvailability.REGISTERED:
 			message = translate(

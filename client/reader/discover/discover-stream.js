@@ -1,11 +1,13 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
+import FormattedHeader from 'calypso/components/formatted-header';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
-import Stream from 'calypso/reader/stream';
+import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { useSelector } from 'calypso/state';
@@ -53,6 +55,19 @@ const DiscoverStream = ( props ) => {
 	);
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
 
+	const DiscoverHeader = () => (
+		<FormattedHeader
+			brandFont
+			headerText={ translate( 'Discover' ) }
+			subHeaderText={ translate( 'Explore new blogs that inspire, educate, and entertain.' ) }
+			align="left"
+			hasScreenOptions
+			className={ classNames( 'discover-stream-header', {
+				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
+			} ) }
+		/>
+	);
+
 	const streamSidebar = () => {
 		if ( ( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ) {
 			return (
@@ -79,6 +94,7 @@ const DiscoverStream = ( props ) => {
 
 	return (
 		<>
+			{ DiscoverHeader() }
 			<DiscoverNavigation
 				width={ props.width }
 				selectedTab={ selectedTab }

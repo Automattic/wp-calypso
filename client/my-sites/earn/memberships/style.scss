@@ -315,11 +315,13 @@
 .memberships__dialog-sections {
 	display: grid;
 	grid-template: "item" 1fr / 1fr;
+
+	* {
+		font-size: $font-body-small;
+	}
+
 	@include break-medium {
 		min-width: 580px;
-	}
-	.form-setting-explanation {
-		font-size: $font-body-small;
 	}
 	.memberships__dialog-advanced-options {
 		width: 100%;
@@ -337,11 +339,21 @@
 		.foldable-card__main {
 			display: block;
 			font-weight: 600;
-			font-size: $font-body-small;
 			.foldable-card__action {
 				right: unset;
 			}
 		}
+		fieldset {
+			margin-bottom: 0;
+		}
+
+		.foldable-card__expand .gridicon {
+			fill: var(--color-text);
+		}
+	}
+
+	.notice__content {
+		max-width: 500px;
 	}
 }
 

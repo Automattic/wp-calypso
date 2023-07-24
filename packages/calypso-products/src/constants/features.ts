@@ -104,6 +104,7 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
+export const FEATURE_STATS_PAID = 'stats-paid';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -369,6 +370,8 @@ export const FEATURE_PLUGIN_AUTOUPDATE_JP = 'plugin-autoupdate-jp';
 export const FEATURE_PREMIUM_CONTENT_JP = 'premium-content-jp';
 export const FEATURE_SITE_ACTIVITY_LOG_JP = 'site-activity-log-jp';
 export const FEATURE_DONATIONS_AND_TIPS_JP = 'donations-and-tips-jp';
+export const FEATURE_PAYPAL_JP = 'payments-paypal-jp';
+export const FEATURE_PAYMENT_BUTTONS_JP = 'payment-buttons-jp';
 export const FEATURE_AUTOMATTIC_DATACENTER_FAILOVER = 'automattic-datacenter-fail-over';
 export const FEATURE_PREMIUM_STORE_THEMES = 'premium-store-themes';
 export const FEATURE_STORE_DESIGN = 'store-design';
