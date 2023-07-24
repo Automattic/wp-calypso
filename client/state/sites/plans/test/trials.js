@@ -228,9 +228,7 @@ describe( 'trials', () => {
 			).toBeTruthy();
 
 			withTrialDisabled();
-			expect(
-				getMigrationTrialExpiration( state, siteId ).isSame( moment( expiryDate ) )
-			).toBeNull();
+			expect( getMigrationTrialExpiration( state, siteId ) ).toBeNull();
 		} );
 
 		test( 'Returns null when the trial purchase is not present', () => {
