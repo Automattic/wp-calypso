@@ -84,9 +84,8 @@ export default function StatsNotices( {
 		getJetpackStatsAdminVersion( state, siteId )
 	);
 
-	// Only show notice on Odyssey stats for now as the styles don't match WPCOM.
 	const supportNewStatsNotices =
-		isOdysseyStats &&
+		( ! isOdysseyStats && config.isEnabled( 'stats/paid-wpcom-stats' ) ) ||
 		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
 
 	return supportNewStatsNotices ? (
