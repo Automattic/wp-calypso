@@ -3,11 +3,16 @@ import { FunctionComponent, ReactNode, useLayoutEffect, useRef, useState } from 
 import FoldableCard from 'calypso/components/foldable-card';
 
 type Props = {
+	alwaysExpanded: boolean;
 	title: string;
 	children: ReactNode;
 };
 
-const JetpackProductInfoSection: FunctionComponent< Props > = ( { title, children } ) => {
+const JetpackProductInfoSection: FunctionComponent< Props > = ( {
+	alwaysExpanded = false,
+	title,
+	children,
+} ) => {
 	const isMobileViewport = useMobileBreakpoint();
 
 	const ref = useRef< HTMLDivElement | null >( null );
@@ -20,7 +25,7 @@ const JetpackProductInfoSection: FunctionComponent< Props > = ( { title, childre
 
 	return (
 		<div className="jetpack-product-info__section" key={ title }>
-			{ isMobileViewport ? (
+			{ isMobileViewport && ! alwaysExpanded ? (
 				<FoldableCard
 					hideSummary
 					header={ title }
