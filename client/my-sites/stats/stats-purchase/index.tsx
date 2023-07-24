@@ -68,7 +68,7 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 				from={ query.from ?? '' }
 			/>
 			<div className="stats">
-				<QueryProductsList />
+				<QueryProductsList type="jetpack" />
 				{
 					// TODO: style loading state
 				 }

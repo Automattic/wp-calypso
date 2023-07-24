@@ -164,7 +164,7 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 											subscriptionValue={ subscriptionValue }
 											setSubscriptionValue={ setSubscriptionValue }
 											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
-											currencyCode={ pwywProduct.currency_code }
+											currencyCode={ pwywProduct?.currency_code }
 											siteSlug={ siteSlug }
 											sliderSettings={ {
 												sliderStepPrice,
@@ -178,8 +178,8 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 										/>
 									) : (
 										<CommercialPurchase
-											planValue={ commercialProduct.cost }
-											currencyCode={ commercialProduct.currency_code }
+											planValue={ commercialProduct?.cost }
+											currencyCode={ commercialProduct?.currency_code }
 											siteSlug={ siteSlug }
 											commercialProduct={ commercialProduct }
 											adminUrl={ adminUrl }
