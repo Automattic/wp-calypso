@@ -23,6 +23,7 @@ export const countries = {
 		isoCode: 'TF',
 		dialCode: '262',
 		nationalPrefix: '0',
+		priority: 1,
 	},
 	HM: {
 		isoCode: 'HM',
@@ -1779,6 +1780,7 @@ export const countries = {
 		dialCode: '212',
 		countryDialCode: '212',
 		nationalPrefix: '0',
+		priority: 1,
 	},
 	ER: {
 		isoCode: 'ER',
@@ -3528,6 +3530,7 @@ export const countries = {
 		isoCode: 'MA',
 		dialCode: '212',
 		nationalPrefix: '0',
+		priority: 1,
 		patterns: [
 			{
 				match: '([5-7]\\d{2})(\\d{6})',
@@ -4689,6 +4692,7 @@ export const countries = {
 		dialCode: '262',
 		countryDialCode: '262',
 		nationalPrefix: '0',
+		priority: 1,
 		patterns: [
 			{
 				match: '([268]\\d{2})(\\d{2})(\\d{2})(\\d{2})',
@@ -5907,6 +5911,7 @@ export const countries = {
 		dialCode: '262',
 		countryDialCode: '262',
 		nationalPrefix: '0',
+		priority: 1,
 	},
 	ZA: {
 		isoCode: 'ZA',
@@ -6144,7 +6149,7 @@ export const dialCodeMap = {
 	95: [ 'MM' ],
 	98: [ 'IR' ],
 	211: [ 'SS' ],
-	212: [ 'MA' ],
+	212: [ 'MA, EH' ],
 	213: [ 'DZ' ],
 	216: [ 'TN' ],
 	218: [ 'LY' ],
@@ -6189,7 +6194,7 @@ export const dialCodeMap = {
 	258: [ 'MZ' ],
 	260: [ 'ZM' ],
 	261: [ 'MG' ],
-	262: [ 'TF' ],
+	262: [ 'TF, RE, YT' ],
 	263: [ 'ZW' ],
 	264: [ 'NA' ],
 	265: [ 'MW' ],
