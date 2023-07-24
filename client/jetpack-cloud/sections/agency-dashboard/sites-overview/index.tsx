@@ -192,21 +192,30 @@ export default function SitesOverview() {
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
 
 	const renderAddSiteIssueLicenseButtons = () => {
-		// do stuff
 		return (
 			<div className="sites-overview__add-site-issue-license-buttons">
 				<Button
 					className="sites-overview__issue-license-button"
 					href="/partner-portal/issue-license"
+					onClick={ () =>
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_issue_license_button_click', {} )
+						)
+					}
 				>
-					{ translate( 'Issue License' ) }
+					{ translate( 'Issue License', { context: 'button label' } ) }
 				</Button>
 				<Button
 					primary
 					className="sites-overview__add-site-button"
 					href="https://wordpress.com/jetpack/connect"
+					onClick={ () =>
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_add_site_button_click', {} )
+						)
+					}
 				>
-					{ translate( 'Add New Site' ) }
+					{ translate( 'Add New Site', { context: 'button label' } ) }
 				</Button>
 			</div>
 		);
@@ -252,6 +261,7 @@ export default function SitesOverview() {
 
 	// const showIssueLicenseButtonsLargeScreen =
 	// 	isWithinBreakpoint( '>960px' ) && selectedLicensesCount < 1;
+	// console.log( 'selectedLicensesCounts', selectedLicensesCount );
 
 	return (
 		<div className="sites-overview">
@@ -268,7 +278,6 @@ export default function SitesOverview() {
 						<SiteDowntimeMonitoringUpgradeBanner />
 
 						{ data?.sites && <SiteAddLicenseNotification /> }
-						{ /* { console.log( 'license counter', selectedLicensesCount ) } */ }
 						<SiteContentHeader
 							content={
 								selectedLicensesCount > 0
@@ -276,7 +285,7 @@ export default function SitesOverview() {
 									: renderAddSiteIssueLicenseButtons()
 							}
 							pageTitle={ pageTitle }
-							showStickyContent={ true }
+							showStickyContent={ selectedLicensesCount > 0 }
 						/>
 						<SectionNav
 							applyUpdatedStyles

@@ -106,6 +106,7 @@
 	margin: 0 -32px -32px;
 	padding: 8px 48px;
 	flex: 1 1 100%;
+	max-height: 8rem;
 
 	button,
 	a {
@@ -130,7 +131,6 @@
 		a {
 			display: inline-block;
 			width: auto;
-			font-size: 1rem;
 		}
 
 		.sites-overview__issue-license-button {
