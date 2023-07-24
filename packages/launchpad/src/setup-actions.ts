@@ -1,4 +1,5 @@
 import { isMobile } from '@automattic/viewport';
+import { addQueryArgs } from '@wordpress/url';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
 export const setUpActionsForTasks = ( {
@@ -86,7 +87,9 @@ export const setUpActionsForTasks = ( {
 			case 'enable_subscribers_modal':
 				action = () => {
 					const redirect = isAtomicSite
-						? `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/discussion`
+						? addQueryArgs( `https://${ siteSlug }/wp-admin/admin.php`, {
+								page: 'jetpack#/discussion#jp-settings-subscriptions',
+						  } )
 						: `/settings/reading/${ siteSlug }#newsletter-settings`;
 					window.location.assign( redirect );
 				};
