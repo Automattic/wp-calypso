@@ -1,5 +1,6 @@
 import wpcom from 'calypso/lib/wp';
 import {
+	ALL_SITES_STATS_RECEIVE,
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
@@ -24,6 +25,15 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
 		type: SITE_STATS_RECEIVE,
 		statType,
 		siteId,
+		query,
+		data,
+		date,
+	};
+}
+
+export function receiveAllSitesStats( query, data, date ) {
+	return {
+		type: ALL_SITES_STATS_RECEIVE,
 		query,
 		data,
 		date,
@@ -126,24 +136,9 @@ export function requestSiteStats( siteId, statType, query ) {
 		return requestStats
 			.then( ( data ) => {
 				if ( siteId === ALL_SITES_ID ) {
-					console.log( 'requestSiteStats: all sites: data', data );
-
-					///////// TEMP /////////
-					// TODO: Make a new action for this
-					const { stats } = data;
-					console.log( 'dispatching actions for each site..' );
-					for ( const siteId in stats ) {
-						if ( stats.hasOwnProperty( siteId ) ) {
-							const siteData = stats[ siteId ];
-							const singleStatType = 'statsSummary';
-							dispatch( receiveSiteStats( siteId, singleStatType, query, siteData, Date.now() ) );
-						}
-					}
-					console.log( 'finished dispatching.' );
-					///////// TEMP /////////
-				} else {
-					return dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) );
+					return dispatch( receiveAllSitesStats( query, data, Date.now() ) );
 				}
+				return dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) );
 			} )
 			.catch( ( error ) => {
 				dispatch( {
