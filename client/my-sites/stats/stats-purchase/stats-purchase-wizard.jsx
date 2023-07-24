@@ -46,7 +46,7 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 
 	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
 	// We need the exact position, otherwise the caculated pricing would not be the same as the one in the slider.
-	const defaultStartingValue = Math.ceil( steps * DEFAULT_STARTING_FRACTION );
+	const defaultStartingValue = Math.floor( steps * DEFAULT_STARTING_FRACTION );
 	const uiEmojiHeartTier = steps * UI_EMOJI_HEART_TIER_THRESHOLD;
 	const uiImageCelebrationTier = steps * UI_IMAGE_CELEBRATION_TIER_THRESHOLD;
 
