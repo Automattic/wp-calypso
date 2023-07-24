@@ -35,7 +35,6 @@ export type SettingsPageConnectedProps = {
 	purchase: Purchase | null;
 	whoisData: WhoisData[];
 	dns: DnsRequest;
-	sites: ( SiteDetails | null | undefined )[];
 };
 
 export type SettingsPageNameServerHocProps = {
