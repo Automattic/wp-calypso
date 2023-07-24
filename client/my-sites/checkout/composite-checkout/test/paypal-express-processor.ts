@@ -55,10 +55,6 @@ describe( 'payPalExpressProcessor', () => {
 			path: '/',
 			viewport: '0x0',
 		},
-		ad_conversion: {
-			ad_details: '',
-			sensitive_pixel_options: '',
-		},
 	};
 
 	beforeEach( () => {
@@ -283,10 +279,6 @@ describe( 'payPalExpressProcessor', () => {
 				path: '/checkout/no-site',
 				viewport: '0x0',
 			},
-			ad_conversion: {
-				ad_details: '',
-				sensitive_pixel_options: '',
-			},
 		} );
 	} );
 
@@ -319,10 +311,6 @@ describe( 'payPalExpressProcessor', () => {
 				locale: 'en',
 				path: '/checkout/no-site',
 				viewport: '0x0',
-			},
-			ad_conversion: {
-				ad_details: '',
-				sensitive_pixel_options: '',
 			},
 		} );
 	} );
