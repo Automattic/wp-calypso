@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import CommercialPurchase from './stats-purchase-commercial';
 import PersonalPurchase from './stats-purchase-personal';
@@ -51,7 +50,6 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
 	const [ siteType, setSiteType ] = useState( null );
 	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const personalLabel = translate( 'Personal site' );
@@ -162,7 +160,7 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 											subscriptionValue={ subscriptionValue }
 											setSubscriptionValue={ setSubscriptionValue }
 											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
-											currencyCode={ currencyCode }
+											currencyCode={ pwywProduct?.currency_code }
 											siteSlug={ siteSlug }
 											sliderSettings={ {
 												sliderStep,
@@ -176,8 +174,8 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 										/>
 									) : (
 										<CommercialPurchase
-											planValue={ commercialProduct.cost }
-											currencyCode={ currencyCode }
+											planValue={ commercialProduct?.cost }
+											currencyCode={ commercialProduct?.currency_code }
 											siteSlug={ siteSlug }
 											commercialProduct={ commercialProduct }
 											adminUrl={ adminUrl }
