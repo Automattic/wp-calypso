@@ -152,6 +152,15 @@ class ReaderShare extends Component {
 		}
 	};
 
+	// Hide jetpack sites without SSO enabled as they do not currently work with this feature.
+	// pe7F0s-X2-p2
+	sitesFilter = ( site ) => {
+		if ( site?.jetpack && ! site?.options?.active_modules?.includes( 'sso' ) ) {
+			return false;
+		}
+		return true;
+	};
+
 	render() {
 		const { onCopyLinkClick } = this.props;
 		const buttonClasses = classnames( {
@@ -220,6 +229,7 @@ class ReaderShare extends Component {
 								className="reader-share__site-selector"
 								onSiteSelect={ this.pickSiteToShareTo }
 								groups
+								filter={ this.sitesFilter }
 							/>
 						) }
 					</ReaderPopoverMenu>
