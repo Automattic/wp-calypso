@@ -82,6 +82,11 @@ export const setUpActionsForTasks = ( {
 					window.location.assign( `/subscribers/${ siteSlug }` );
 				};
 				break;
+			case 'enable_subscribers_modal':
+				action = () => {
+					window.location.assign( `/settings/reading/${ siteSlug }#newsletter-settings` );
+				};
+				break;
 		}
 
 		const actionDispatch = () => {
