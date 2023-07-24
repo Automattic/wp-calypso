@@ -38,7 +38,9 @@ import Notice from 'calypso/components/notice';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isExternal } from 'calypso/lib/url';
@@ -245,6 +247,16 @@ export class CheckoutThankYou extends Component<
 			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
 				dispatch( imports.ONBOARD_STORE ).resetOnboardStore()
 			);
+
+			if ( mayWeTrackByTracker( 'googleAds' ) ) {
+				const params: [ 'event', 'conversion', { send_to: string } ] = [
+					'event',
+					'conversion',
+					{ send_to: TRACKING_IDS.wpcomGoogleAdsGtagDomainTransferPurchase } as { send_to: string },
+				];
+				debug( 'recordOrderInGoogleAds: WPCom Domain Transfer Purchase', params );
+				window.gtag( ...params );
+			}
 		}
 
 		recordTracksEvent( 'calypso_checkout_thank_you_view' );
