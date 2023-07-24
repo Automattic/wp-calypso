@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import page from 'page';
 import { ClickableItemProps, MenuItemProps } from '../types';
 
 export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
@@ -43,9 +42,11 @@ const clickNavLinkEvent = ( target: HTMLElement ) => {
 	props.target = target.getAttribute( 'target' ) || '';
 	props.text = target.innerText || '';
 
-	const currentPage = page.current || '';
-	props.path = currentPage || '';
-	props.lp_name = currentPage.replace( /^\//, '' );
+	if ( typeof window !== 'undefined' && window.location ) {
+		const currentPage = window.location.pathname || '';
+		props.lp_name = currentPage.replace( /^\//, '' );
+		props.path = props.lp_name;
+	}
 
 	recordTracksEvent( 'calypso_link_click', props );
 };
