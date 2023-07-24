@@ -6,7 +6,7 @@ import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
-import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
+import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
@@ -202,7 +202,7 @@ const PersonalPurchase = ( {
 							siteSlug,
 							adminUrl,
 							redirectUri,
-							price: subscriptionValue / 2, //A step is half of the smallest unit
+							price: subscriptionValue / MIN_STEP_SPLITS,
 						} )
 					}
 				>

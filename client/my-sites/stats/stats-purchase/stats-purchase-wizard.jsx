@@ -21,6 +21,9 @@ const DEFAULT_STARTING_FRACTION = 0.6;
 const UI_EMOJI_HEART_TIER_THRESHOLD = 0.5;
 const UI_IMAGE_CELEBRATION_TIER_THRESHOLD = 0.8;
 
+// A step price is half of the smallest unit
+const MIN_STEP_SPLITS = 2;
+
 const TitleNode = ( { label, indicatorNumber, active } ) => {
 	return (
 		<>
@@ -39,7 +42,7 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redirectUri, from } ) => {
 	const commercialPlanPrice = commercialProduct?.cost;
 	const maxSliderPrice = commercialProduct.cost;
-	const sliderStepPrice = pwywProduct.cost / 2; //A step is half of the smallest unit
+	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
 	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
 	// We need the exact position, otherwise the caculated pricing would not be the same as the one in the slider.
@@ -225,4 +228,4 @@ const StatsPurchaseWizard = ( {
 	);
 };
 
-export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME };
+export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, MIN_STEP_SPLITS };
