@@ -877,8 +877,10 @@ a.masterbar__quick-language-switcher {
 .masterbar__secure-checkout {
 	display: flex;
 	align-items: center;
-	// margin-left: 24px;
 
+	@include breakpoint-deprecated( "<480px" ) {
+		flex: 1;
+	}
 	.masterbar__wpcom-wordmark {
 		color: var(--color-checkout-masterbar-text);
 		fill: var(--color-checkout-masterbar-text);
@@ -932,25 +934,25 @@ a.masterbar__quick-language-switcher {
 .masterbar__item-help-icons {
 	display: flex;
 
-	.chat-button {
-		order: 1;
+	@include breakpoint-deprecated( "<480px") {
+		flex: 1;
+		justify-content: flex-end;
+	}
 
-		@include breakpoint-deprecated( ">480px") {
-			display: none;
+	.chat-button {
+		display: none;
+
+		@include breakpoint-deprecated( "<480px") {
+			display: flex;
+			order: 1;
 		}
 	}
 }
 
 .masterbar__item-help {
-	// padding: 0 11px;
 	order: 2;
-
+	column-gap: 6px;
 	.masterbar--is-checkout & {
-		padding: 0 24px;
-
-		@include breakpoint-deprecated( "<480px" ) {
-			display: none;
-		}
 
 		&.is-active {
 			background: var(--color-checkout-masterbar-item-hover-background);
@@ -960,7 +962,6 @@ a.masterbar__quick-language-switcher {
 			box-shadow: none;
 		}
 	}
-
 
 	svg {
 		fill: var(--color-masterbar-text);
