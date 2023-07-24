@@ -133,7 +133,7 @@ export function requestSiteStats( siteId, statType, query ) {
 function requestAllSitesStatsSummary( dispatch, query ) {
 	console.log( '---------- requestAllSitesStatsSummary --------------', query );
 	wpcom.req
-		.get( { path: '/me/sites/stats/summary' }, query )
+		.get( { path: '/me/sites/stats/summary', apiNamespace: 'wpcom/v2' }, query )
 		.then( ( data ) => {
 			console.log( 'wait a minute.. we actually got data: ', data );
 			const { stats } = data;
