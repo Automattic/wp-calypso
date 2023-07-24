@@ -4,6 +4,7 @@ import type { LaunchpadTaskActionsProps, Task } from './types';
 export const setUpActionsForTasks = ( {
 	siteSlug,
 	tasks,
+	isAtomicSite,
 	tracksData,
 	extraActions,
 }: LaunchpadTaskActionsProps ): Task[] => {
@@ -84,7 +85,10 @@ export const setUpActionsForTasks = ( {
 				break;
 			case 'enable_subscribers_modal':
 				action = () => {
-					window.location.assign( `/settings/reading/${ siteSlug }#newsletter-settings` );
+					const redirect = isAtomicSite
+						? `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/discussion`
+						: `/settings/reading/${ siteSlug }#newsletter-settings`;
+					window.location.assign( redirect );
 				};
 				break;
 		}

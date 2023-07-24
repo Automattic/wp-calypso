@@ -54,6 +54,7 @@ export interface LaunchpadResponse {
 export interface LaunchpadTaskActionsProps {
 	siteSlug: string | null;
 	tasks: Task[];
+	isAtomicSite?: boolean;
 	tracksData: LaunchpadTracksData;
 	extraActions?: {
 		setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
