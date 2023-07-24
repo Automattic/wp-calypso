@@ -6,8 +6,6 @@ import classnames from 'classnames';
 import * as React from 'react';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
-import '../types-patch';
-
 import './style.scss';
 
 interface FeatureListItemContentWrapperProps {
@@ -210,7 +208,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 				<Button
 					className={ classnames( domainFeatureItem.wrapperClassName, className ) }
 					onClick={ onPickDomain }
-					isLink
+					variant="link"
 				>
 					{ children }
 				</Button>

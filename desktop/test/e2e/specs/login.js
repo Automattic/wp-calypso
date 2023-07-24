@@ -11,6 +11,15 @@ switch ( process.platform ) {
 		APP_PATH = path.join( __dirname, '../../../release/linux-unpacked/wpcom' );
 		break;
 	case 'darwin':
+		// On Apple Silicon, the output file is under a separate directory.
+		if ( process.arch.includes( 'arm' ) ) {
+			APP_PATH = path.join(
+				__dirname,
+				'../../../release/mac-arm64/WordPress.com.app/Contents/MacOS/WordPress.com'
+			);
+			break;
+		}
+		// Codepath for Intel architecture.
 		APP_PATH = path.join(
 			__dirname,
 			'../../../release/mac/WordPress.com.app/Contents/MacOS/WordPress.com'

@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import { onRetrievingFileInfoError } from './notices';
 import { parseBackupPathInfo } from './util';
 
 export const useBackupPathInfoQuery = (
@@ -8,6 +10,8 @@ export const useBackupPathInfoQuery = (
 	manifestPath: string,
 	extensionType = ''
 ) => {
+	const dispatch = useDispatch();
+
 	return useQuery( {
 		queryKey: [ 'jetpack-backup-path-info', siteId, rewindId, manifestPath, extensionType ],
 		queryFn: async () => {
@@ -27,5 +31,9 @@ export const useBackupPathInfoQuery = (
 		meta: { persist: false },
 		select: parseBackupPathInfo,
 		staleTime: Infinity,
+		retry: 2,
+		onError: () => {
+			dispatch( onRetrievingFileInfoError() );
+		},
 	} );
 };

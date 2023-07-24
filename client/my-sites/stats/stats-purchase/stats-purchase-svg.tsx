@@ -1,14 +1,20 @@
+import { useTranslate } from 'i18n-calypso';
+import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
+
 interface StatsPurchaseSVG {
-	isFree: boolean;
+	isFree: boolean | undefined;
 	hasHighlight: boolean;
 	extraMessage: boolean;
 }
 
 const StatsPurchaseSVG = ( {
-	isFree = false,
+	isFree,
 	hasHighlight = false,
 	extraMessage = false,
 }: StatsPurchaseSVG ) => {
+	const translate = useTranslate();
+	const message = translate( 'Thanks for being one of our biggest supporters!' );
+
 	return (
 		<>
 			<svg xmlns="http://www.w3.org/2000/svg" width="456" height="383" fill="none">
@@ -16,9 +22,9 @@ const StatsPurchaseSVG = ( {
 					<rect width="375.864" height="273" x="40" y="55" fill="#fff" rx="12.27" />
 					<path
 						fill="#101517"
-						fill-rule="evenodd"
+						fillRule="evenodd"
 						d="M91.053 101.218a2.687 2.687 0 1 0 0-5.374 2.687 2.687 0 0 0 0 5.374Zm0-1.612a1.075 1.075 0 1 0 0-2.15 1.075 1.075 0 0 0 0 2.15Z"
-						clip-rule="evenodd"
+						clipRule="evenodd"
 					/>
 					<path
 						fill="#101517"
@@ -26,11 +32,11 @@ const StatsPurchaseSVG = ( {
 					/>
 					<path
 						fill="#101517"
-						fill-rule="evenodd"
+						fillRule="evenodd"
 						d="M86.216 98.53a2.687 2.687 0 1 1-5.374.001 2.687 2.687 0 0 1 5.374 0Zm-1.612 0a1.075 1.075 0 1 1-2.15 0 1.075 1.075 0 0 1 2.15 0Z"
-						clip-rule="evenodd"
+						clipRule="evenodd"
 					/>
-					<g clip-path="url(#b)">
+					<g clipPath="url(#b)">
 						<rect
 							width="109.63"
 							height="24.721"
@@ -39,7 +45,7 @@ const StatsPurchaseSVG = ( {
 							transform="matrix(0 -1 -1 0 233.464 293.605)"
 						/>
 					</g>
-					<g clip-path="url(#c)">
+					<g clipPath="url(#c)">
 						<rect
 							width="152.622"
 							height="25.795"
@@ -48,7 +54,7 @@ const StatsPurchaseSVG = ( {
 							transform="matrix(0 -1 -1 0 200.146 293.605)"
 						/>
 					</g>
-					<g clip-path="url(#d)">
+					<g clipPath="url(#d)">
 						<rect
 							width="96.732"
 							height="24.721"
@@ -57,7 +63,7 @@ const StatsPurchaseSVG = ( {
 							transform="matrix(0 -1 -1 0 165.752 293.605)"
 						/>
 					</g>
-					<g clip-path="url(#e)">
+					<g clipPath="url(#e)">
 						<rect
 							width="119.303"
 							height="24.721"
@@ -66,7 +72,7 @@ const StatsPurchaseSVG = ( {
 							transform="matrix(0 -1 -1 0 132.433 293.605)"
 						/>
 					</g>
-					<g clip-path="url(#f)">
+					<g clipPath="url(#f)">
 						<rect
 							width="85.984"
 							height="24.721"
@@ -75,10 +81,9 @@ const StatsPurchaseSVG = ( {
 							transform="matrix(0 -1 -1 0 99.114 293.605)"
 						/>
 					</g>
-					{ isFree && (
+					{ !! isFree && (
 						<>
 							<g>
-								{ /* transition:fade */ }
 								<path
 									fill="#758391"
 									d="m321.328 165.094-.953-2.914h-4.148l-.969 2.914h-2.039l4-11.274h2.265l4.008 11.274h-2.164Zm-3.086-9.156-1.547 4.687h3.211l-1.531-4.687h-.133Zm7.028-2.118h4.226c3.352 0 5.305 2.047 5.305 5.586 0 3.617-1.93 5.688-5.305 5.688h-4.226V153.82Zm2.015 1.696v7.882h1.946c2.242 0 3.515-1.421 3.515-3.96 0-2.485-1.304-3.922-3.515-3.922h-1.946Z"
@@ -89,11 +94,11 @@ const StatsPurchaseSVG = ( {
 									x="268.858"
 									y="142.094"
 									stroke="#E9EFF5"
-									stroke-width="2"
+									strokeWidth="2"
 									rx="3"
 								/>
-								<circle cx="368" cy="101" r="18.25" stroke="#D63638" stroke-width="1.5" />
-								<path stroke="#D63638" stroke-width="1.5" d="m381.45 88.61-25.84 25.84" />
+								<circle cx="368" cy="101" r="18.25" stroke="#D63638" strokeWidth="1.5" />
+								<path stroke="#D63638" strokeWidth="1.5" d="m381.45 88.61-25.84 25.84" />
 							</g>
 						</>
 					) }
@@ -103,9 +108,9 @@ const StatsPurchaseSVG = ( {
 					/>
 					<path
 						fill="#101517"
-						fill-rule="evenodd"
+						fillRule="evenodd"
 						d="m361.716 99.818.473-.473h6.246v-5.508h-7.523v6.787l.804-.806Zm7.257 1.139h-6.116l-2.104 2.107a.852.852 0 0 1-1.454-.602v-9.163c0-.593.482-1.074 1.075-1.074h8.599c.593 0 1.074.48 1.074 1.074v6.584c0 .593-.481 1.074-1.074 1.074Zm5.106 8.534-.472-.473h-6.247v-5.508h7.524v6.787l-.805-.806Zm-7.256 1.14h6.116l2.103 2.106a.85.85 0 0 0 1.454-.602v-9.162c0-.594-.481-1.075-1.075-1.075h-8.598c-.594 0-1.075.481-1.075 1.075v6.583c0 .593.481 1.075 1.075 1.075Z"
-						clip-rule="evenodd"
+						clipRule="evenodd"
 						opacity=".5"
 					/>
 				</g>
@@ -161,10 +166,10 @@ const StatsPurchaseSVG = ( {
 						height="381.202"
 						x="-14.101"
 						y=".899"
-						color-interpolation-filters="sRGB"
+						colorInterpolationFilters="sRGB"
 						filterUnits="userSpaceOnUse"
 					>
-						<feFlood flood-opacity="0" result="BackgroundImageFix" />
+						<feFlood floodOpacity="0" result="BackgroundImageFix" />
 						<feColorMatrix
 							in="SourceAlpha"
 							result="hardAlpha"
@@ -181,10 +186,9 @@ const StatsPurchaseSVG = ( {
 
 			{ hasHighlight && (
 				<>
-					<div className="celebrate">
-						{ /* transition:fade */ }
+					<div className={ `${ COMPONENT_CLASS_NAME }__celebrate` }>
 						{ extraMessage && (
-							<p className="biggest-supporters">Thanks for being one of our biggest supporters!</p>
+							<p className={ `${ COMPONENT_CLASS_NAME }__biggest-supporters` }>{ message }</p>
 						) }
 						<svg xmlns="http://www.w3.org/2000/svg" width="456" height="596" fill="none">
 							<path
@@ -270,10 +274,10 @@ const StatsPurchaseSVG = ( {
 									height="47.513"
 									x="-16.697"
 									y="84.877"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
 									<feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="4.401" />
 								</filter>
@@ -283,10 +287,10 @@ const StatsPurchaseSVG = ( {
 									height="47.513"
 									x="415.408"
 									y="426.475"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
 									<feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="4.401" />
 								</filter>
@@ -296,10 +300,10 @@ const StatsPurchaseSVG = ( {
 									height="22.267"
 									x="128.573"
 									y="435.563"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
 									<feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="1.6" />
 								</filter>
@@ -309,10 +313,10 @@ const StatsPurchaseSVG = ( {
 									height="21.878"
 									x="319.822"
 									y="49.817"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
 									<feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="1.6" />
 								</filter>
@@ -322,10 +326,10 @@ const StatsPurchaseSVG = ( {
 									height="14.874"
 									x="368.372"
 									y="528.961"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
 									<feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="1.6" />
 								</filter>
@@ -335,10 +339,10 @@ const StatsPurchaseSVG = ( {
 									height="34.249"
 									x="440.844"
 									y="281.153"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
 									<feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="4.401" />
 								</filter>
@@ -348,10 +352,10 @@ const StatsPurchaseSVG = ( {
 									height="34.251"
 									x="417.357"
 									y="102.227"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
 									<feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="4.401" />
 								</filter>

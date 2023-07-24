@@ -1,6 +1,4 @@
-// import { subscribeIsDesktop } from '@automattic/viewport';
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
-import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import {
 	DOMAIN_UPSELL_FLOW,
@@ -27,25 +25,25 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { OnboardSelect } from '@automattic/data-stores';
-import type { PlansIntent } from 'calypso/my-sites/plans-features-main/hooks/use-plan-types-with-intent';
+import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
+import type { PlansIntent } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import './style.scss';
 
-type IntervalType = 'yearly' | 'monthly';
 interface Props {
+	shouldIncludeFAQ?: boolean;
 	flowName: string | null;
 	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
-	hostingFlow: boolean;
 }
 
-function getPlansIntent( flowName: string | null, hostingFlow: boolean ): PlansIntent | null {
+function getPlansIntent( flowName: string | null ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 		case DESIGN_FIRST_FLOW:
@@ -55,7 +53,7 @@ function getPlansIntent( flowName: string | null, hostingFlow: boolean ): PlansI
 		case LINK_IN_BIO_FLOW:
 			return 'plans-link-in-bio';
 		case NEW_HOSTED_SITE_FLOW:
-			return hostingFlow ? 'plans-new-hosted-site-hosting-flow' : 'plans-new-hosted-site';
+			return 'plans-new-hosted-site';
 		default:
 			return null;
 	}
@@ -75,8 +73,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
+	const { flowName } = props;
 
-	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem, setDomain, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const { __ } = useI18n();
@@ -87,8 +86,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
-	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
-	const plansIntent = getPlansIntent( props?.flowName, props.hostingFlow );
+	const isInSignup = flowName === DOMAIN_UPSELL_FLOW ? false : true;
+	const plansIntent = getPlansIntent( flowName );
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
@@ -110,7 +109,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		props.onSubmit?.( selectedPlan );
 	};
 
-	const getDomainName = () => {
+	const getPaidDomainName = () => {
 		return domainCartItem?.meta;
 	};
 
@@ -126,22 +125,12 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			</div>
 		);
 	};
-
-	const getIntervalType: () => IntervalType = () => {
-		const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
-		const intervalType = urlParts?.searchParams.get( 'intervalType' );
-		switch ( intervalType ) {
-			case 'monthly':
-			case 'yearly':
-				return intervalType as IntervalType;
-			default:
-				return 'yearly';
-		}
+	const replacePaidDomainWithFreeDomain = ( freeDomainSuggestion: DomainSuggestion ) => {
+		setDomain( freeDomainSuggestion );
+		setDomainCartItem( null );
 	};
 
 	const plansFeaturesList = () => {
-		const { flowName } = props;
-
 		if ( ! props.plansLoaded ) {
 			return renderLoading();
 		}
@@ -151,25 +140,27 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
+					showBiennialToggle={ isOnboardingPMFlow( flowName ) }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ onSelectPlan }
-					domainName={ getDomainName() }
+					paidDomainName={ getPaidDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
 					flowName={ flowName }
 					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ plansIntent }
+					replacePaidDomainWithFreeDomain={ replacePaidDomainWithFreeDomain }
 				/>
+				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>
 		);
 	};
 
 	const getHeaderText = () => {
-		const { flowName } = props;
 		if (
 			flowName === DOMAIN_UPSELL_FLOW ||
 			isNewHostedSiteCreationFlow( flowName ) ||
@@ -194,8 +185,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getSubHeaderText = () => {
-		const { flowName } = props;
-
 		const freePlanButton = (
 			<Button onClick={ handleFreePlanButtonClick } className="is-borderless" />
 		);
@@ -225,8 +214,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const plansFeaturesSelection = () => {
-		const { flowName } = props;
-
 		const headerText = getHeaderText();
 		const fallbackHeaderText = headerText;
 		const subHeaderText = getSubHeaderText();
@@ -267,6 +254,5 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 export default connect( ( state ) => {
 	return {
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		hostingFlow: startedInHostingFlow( state ),
 	};
 } )( localize( PlansWrapper ) );

@@ -9,7 +9,7 @@
 	color: var(--studio-gray-50);
 	flex-wrap: wrap;
 
-	@include break-mobile {
+	@include break-large {
 		display: flex;
 		align-items: flex-start;
 		padding: 20px 0;
@@ -22,7 +22,7 @@
 		font-weight: 500;
 		margin: 4px 0;
 
-		@include break-mobile {
+		@include break-large {
 			margin-top: 8px;
 		}
 
@@ -81,7 +81,7 @@
 .domain-row__mobile-container2 {
 	display: block;
 	font-size: $font-body-small;
-	@include break-mobile {
+	@include break-large {
 		display: none;
 	}
 }
@@ -94,7 +94,7 @@
 		display: inline;
 	}
 
-	@include break-mobile {
+	@include break-large {
 		display: none;
 	}
 }
@@ -177,7 +177,7 @@
 	overflow: hidden;
 	flex: 1;
 
-	@include break-mobile {
+	@include break-large {
 		flex: 10 10 0;
 		align-self: center;
 		font-size: $font-body-small;
@@ -189,7 +189,7 @@
 	overflow: hidden;
 	flex: 1;
 
-	@include break-mobile {
+	@include break-large {
 		flex: 83 83 0;
 		font-size: $font-body-small;
 		padding-top: 2px;
@@ -218,7 +218,7 @@
 			}
 		}
 
-		@include break-mobile {
+		@include break-large {
 			font-size: $font-body-small;
 		}
 	}
@@ -227,7 +227,7 @@
 		display: none;
 		font-size: $font-body-extra-small;
 
-		@include break-mobile {
+		@include break-large {
 			display: block;
 		}
 	}
@@ -236,7 +236,7 @@
 .domain-row__site-cell {
 	display: none;
 
-	@include break-mobile {
+	@include break-large {
 		flex: 70 70 0;
 		display: block;
 		align-items: center;
@@ -266,7 +266,7 @@
 .domain-row__status-cell {
 	display: none;
 
-	@include break-mobile {
+	@include break-large {
 		flex: 40 40 0;
 		display: block;
 		align-items: center;
@@ -284,7 +284,7 @@
 	display: none;
 	margin-left: 16px;
 
-	@include break-mobile {
+	@include break-large {
 		flex: 50 50 0;
 		margin: 0;
 		padding-top: 2px;
@@ -296,16 +296,16 @@
 .domain-row__mobile-extra-info {
 	display: inline;
 
-	@include break-mobile {
+	@include break-large {
 		display: none;
 	}
 }
 
 .domain-row__auto-renew-cell {
 	display: none;
-	flex: 30 30 0;
+	flex: 40 40 0;
 
-	@include break-mobile {
+	@include break-large {
 		display: flex;
 
 		.components-base-control__field {
@@ -318,7 +318,7 @@
 	display: none;
 	flex: 30 30 0;
 
-	@include break-mobile {
+	@include break-large {
 		display: block;
 		padding-top: 2px;
 	}
@@ -337,7 +337,7 @@
 	height: 42px;
 
 	.ellipsis-menu {
-		float: right;
+		margin: 0 auto;
 	}
 
 	.ellipsis-menu__toggle {
@@ -345,13 +345,10 @@
 		padding: 0;
 	}
 
-	@include break-mobile {
-		flex: 6 6 0;
+	@include break-large {
+		display: flex;
+		flex: 20 20 0;
 		margin: 0;
-
-		.button.is-borderless {
-			padding: 0 15px 10px 15px;
-		}
 	}
 }
 

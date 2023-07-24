@@ -369,6 +369,7 @@ export function site( context, next ) {
 			chartTab={ chartTab }
 			context={ context }
 			period={ rangeOfPeriod( activeFilter.period, date ) }
+			statsPurchaseSuccess={ queryOptions.statsPurchaseSuccess }
 		/>
 	);
 
@@ -642,7 +643,11 @@ export function emailSummary( context, next ) {
 
 export function purchase( context, next ) {
 	context.primary = (
-		<AsyncLoad require="calypso/my-sites/stats/stats-purchase" placeholder={ PageLoading } />
+		<AsyncLoad
+			require="calypso/my-sites/stats/stats-purchase"
+			placeholder={ PageLoading }
+			query={ context.query }
+		/>
 	);
 	next();
 }

@@ -1,24 +1,45 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Icon } from '@wordpress/components';
-import { check, trash, closeSmall, update } from '@wordpress/icons';
+import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
+import InfoPopover from 'calypso/components/info-popover';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useValidationMessage } from './use-validation-message';
 
 type Props = {
 	id: string;
 	domain: string;
 	auth: string;
-	onChange: ( id: string, value: { domain: string; auth: string; valid: boolean } ) => void;
+	onChange: (
+		id: string,
+		value: {
+			domain: string;
+			auth: string;
+			valid: boolean;
+			rawPrice: number;
+			saleCost?: number;
+			currencyCode: string;
+		}
+	) => void;
 	onRemove: ( id: string ) => void;
 	showLabels: boolean;
 	hasDuplicates: boolean;
-	showDelete: boolean;
+	domainCount: number;
+};
+
+type DomainPriceProps = {
+	rawPrice?: number;
+	saleCost?: number;
+	currencyCode: string;
 };
 
 const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolean ) => {
@@ -38,6 +59,40 @@ const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolea
 	);
 };
 
+const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceProps ) => {
+	const { __ } = useI18n();
+
+	if ( ! rawPrice ) {
+		return (
+			<div className="domains__domain-price-number disabled">
+				{ formatCurrency( 0, currencyCode, { stripZeros: true } ) }
+			</div>
+		);
+	}
+
+	if ( ! saleCost && saleCost !== 0 ) {
+		return (
+			<div className="domains__domain-price-number">
+				{ formatCurrency( rawPrice, currencyCode, { stripZeros: true } ) }
+			</div>
+		);
+	}
+
+	return (
+		<div className="domains__domain-price-value">
+			<div>
+				<span className="domains__domain-price-number">
+					{ formatCurrency( saleCost, currencyCode, { stripZeros: true } ) }
+				</span>
+				<span className="domains__domain-price-number raw-price">
+					{ formatCurrency( rawPrice, currencyCode, { stripZeros: true } ) }
+				</span>
+			</div>
+			<div className="domains__domain-price-text">{ __( 'First year free' ) }</div>
+		</div>
+	);
+};
+
 export function DomainCodePair( {
 	id,
 	domain,
@@ -46,32 +101,92 @@ export function DomainCodePair( {
 	onRemove,
 	showLabels,
 	hasDuplicates,
-	showDelete,
+	domainCount,
 }: Props ) {
 	const { __ } = useI18n();
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
 
-	const { valid, loading, message, refetch } = validation;
+	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
+
+	const {
+		valid,
+		loading,
+		message,
+		rawPrice = 0,
+		saleCost,
+		currencyCode = userCurrencyCode,
+		refetch,
+		errorStatus,
+	} = validation;
 
 	useEffect( () => {
-		onChange( id, { domain, auth, valid } );
-	}, [ domain, id, onChange, auth, valid, loading ] );
+		onChange( id, { domain, auth, valid, rawPrice, saleCost, currencyCode } );
+	}, [ domain, id, onChange, auth, valid, loading, rawPrice, saleCost, currencyCode ] );
 
 	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
 
+	useEffect( () => {
+		if ( shouldReportError && ! valid && message ) {
+			recordTracksEvent( 'calypso_domain_transfer_domain_error', {
+				domain,
+				error: errorStatus ? errorStatus : String( message ),
+			} );
+		}
+	}, [ shouldReportError, valid, domain, message, errorStatus ] );
+
+	const domainActions = ( inputValidationTextDisplayed = true ) => (
+		<>
+			{ inputValidationTextDisplayed ? <span>&nbsp;</span> : '' }
+			<Button
+				// Disable the delete button on initial state meaning. no domain, no auth and one row.
+				disabled={ ! domain && ! auth && domainCount === 1 }
+				onClick={ () => onRemove( id ) }
+				variant="link"
+			>
+				<span className="delete-label">{ __( 'Clear domain' ) }</span>
+			</Button>
+			<Button
+				title={ __( 'Refresh' ) }
+				disabled={ ! refetch }
+				onClick={ () => refetch?.() }
+				className={ classnames( 'domains__domain-refresh', {
+					'is-invisible-field': ! refetch,
+				} ) }
+				variant="link"
+			>
+				<span className="refresh-label">{ __( 'Try again' ) }</span>
+			</Button>
+		</>
+	);
 	return (
 		<div className="domains__domain-info-and-validation">
 			<div className="domains__domain-info">
 				<div className="domains__domain-domain">
 					<FormFieldset>
-						{ showLabels && <FormLabel htmlFor={ id }>{ __( 'Domain name' ) }</FormLabel> }
+						<FormLabel
+							className={ classnames( {
+								'is-first-row': showLabels,
+							} ) }
+							htmlFor={ id }
+						>
+							{ __( 'Domain name' ) }
+						</FormLabel>
 						<FormInput
 							disabled={ valid }
 							id={ id }
 							value={ domain }
+							className="domains__domain-name-input-field"
+							placeholder={ __( 'Please enter the domain name and authorization code.' ) }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-								onChange( id, { domain: event.target.value.trim().toLowerCase(), auth, valid } )
+								onChange( id, {
+									domain: event.target.value.trim().toLowerCase(),
+									auth,
+									valid,
+									rawPrice,
+									saleCost,
+									currencyCode,
+								} )
 							}
 						/>
 						{ domainInputFieldIcon( valid, shouldReportError ) }
@@ -79,54 +194,120 @@ export function DomainCodePair( {
 				</div>
 				<div className="domains__domain-key">
 					<FormFieldset>
-						{ showLabels && (
-							<FormLabel htmlFor={ id + '-auth' }>{ __( 'Authorization code' ) }</FormLabel>
-						) }
+						<FormLabel
+							className={ classnames( {
+								'is-first-row': showLabels,
+							} ) }
+							htmlFor={ id + '-auth' }
+						>
+							{ __( 'Authorization code' ) }
+							<InfoPopover
+								className={ classnames( {
+									'is-first-row': showLabels,
+								} ) }
+								position="right"
+							>
+								{ __(
+									'Unique code proving ownership, needed for secure domain transfer between registrars.'
+								) }
+								<div>
+									<Button
+										href={ localizeUrl(
+											'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+										) }
+										target="_blank"
+										variant="link"
+									>
+										<span className="learn-more-label">{ __( 'Learn more' ) }</span>
+									</Button>
+								</div>
+							</InfoPopover>
+						</FormLabel>
+
 						<FormInput
 							id={ id + '-auth' }
 							disabled={ valid || hasDuplicates }
 							value={ auth }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-								onChange( id, { domain, auth: event.target.value.trim(), valid } )
+								onChange( id, {
+									domain,
+									auth: event.target.value.trim(),
+									valid,
+									rawPrice,
+									saleCost,
+									currencyCode,
+								} )
 							}
 						/>
 						{ domainInputFieldIcon( valid, shouldReportError ) }
 					</FormFieldset>
-				</div>
-				<div className="domains__domain-controls">
-					<div className="domains__domain-refresh">
-						<FormFieldset>
-							<Button
-								title={ __( 'Refresh' ) }
-								disabled={ ! refetch }
-								icon={ update }
-								onClick={ () => refetch?.() }
+					<div className="domains__domain-validation is-mobile">
+						{ shouldReportError && (
+							<FormInputValidation
+								isError={ ! valid }
+								text={ message }
+								children={ domainActions( true ) }
+							></FormInputValidation>
+						) }
+						{ message && loading && (
+							<FormInputValidation
+								className="is-checking-domain"
+								text={ message }
+								isError={ false }
+								isMuted={ true }
 							/>
-							<FormLabel htmlFor={ id }>{ __( 'Refresh' ) }</FormLabel>
-						</FormFieldset>
-					</div>
-					<div className="domains__domain-delete">
-						<FormFieldset>
-							<Button
-								className={ classnames( { 'has-delete-button': showDelete } ) }
-								icon={ trash }
-								onClick={ () => onRemove( id ) }
+						) }
+						{ ! shouldReportError && ! loading && (
+							<FormInputValidation
+								isError={ false }
+								text=""
+								isMuted={ true }
+								children={ domainCount > 1 && domainActions( false ) }
 							/>
-							{ showDelete && (
-								<FormLabel className="delete-label" htmlFor={ id }>
-									{ __( 'Delete' ) }
-								</FormLabel>
-							) }
-						</FormFieldset>
+						) }
 					</div>
 				</div>
+				<div className="domains__domain-price">
+					<FormFieldset>
+						<FormLabel
+							className={ classnames( {
+								'is-first-row': showLabels,
+							} ) }
+							htmlFor={ id + '-price' }
+						>
+							{ __( 'Price' ) }
+						</FormLabel>
+						<DomainPrice
+							rawPrice={ rawPrice }
+							saleCost={ saleCost }
+							currencyCode={ currencyCode }
+						/>
+					</FormFieldset>
+				</div>
+			</div>
+			<div className="domains__domain-validation is-desktop">
 				{ shouldReportError && (
-					<FormInputValidation isError={ ! valid } text={ message }></FormInputValidation>
+					<FormInputValidation
+						isError={ ! valid }
+						text={ message }
+						children={ domainActions( true ) }
+					></FormInputValidation>
 				) }
 				{ message && loading && (
-					<div>
-						<FormExplanation>{ message }</FormExplanation>
-					</div>
+					<FormInputValidation
+						className="is-checking-domain"
+						text={ message }
+						isError={ false }
+						isMuted={ true }
+					/>
+				) }
+				{ ! shouldReportError && ! loading && (
+					<FormInputValidation
+						isError={ false }
+						isMuted={ true }
+						text=""
+						children={ domainCount > 1 && domainActions( false ) }
+					/>
 				) }
 			</div>
 		</div>

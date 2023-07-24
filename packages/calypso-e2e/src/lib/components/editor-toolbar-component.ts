@@ -16,7 +16,7 @@ const selectors = {
 	switchToDraftButton: `${ panel } button.editor-post-switch-to-draft`,
 
 	// Preview
-	previewButton: `${ panel } :text("View"):visible`,
+	previewButton: `${ panel } :text("Preview"):visible, [aria-label="Preview"]:visible`,
 	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
 		`button[role="menuitem"] span:text("${ target }")`,
 	previewPane: ( target: EditorPreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,

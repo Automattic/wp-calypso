@@ -7,12 +7,14 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import SearchInput from 'calypso/components/search';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import SearchFollowButton from 'calypso/reader/search-stream/search-follow-button';
 import { recordAction } from 'calypso/reader/stats';
@@ -23,6 +25,8 @@ import {
 	SORT_BY_LAST_UPDATED,
 } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
+import { getTransformedStreamItems } from 'calypso/state/reader/streams/selectors';
+import ReaderPopularSitesSidebar from '../stream/reader-popular-sites-sidebar';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import SiteResults from './site-results';
@@ -144,9 +148,7 @@ class SearchStream extends React.Component {
 			comment: 'A sort order, showing the most recent posts first.',
 		} );
 
-		const searchStreamResultsClasses = classnames( 'search-stream__results', {
-			'is-two-columns': !! query,
-		} );
+		const searchStreamResultsClasses = classnames( 'search-stream__results', 'is-two-columns' );
 
 		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
@@ -171,6 +173,13 @@ class SearchStream extends React.Component {
 					style={ { width: this.props.width } }
 					ref={ this.handleFixedAreaMounted }
 				>
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Search' ) }
+						subHeaderText={ translate( 'Search for specific topics, authors, or blogs.' ) }
+						align="left"
+						hasScreenOptions
+					/>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
@@ -198,17 +207,17 @@ class SearchStream extends React.Component {
 							</SegmentedControl.Item>
 						</SegmentedControl>
 					) }
-					{ ! hidePostsAndSites && query && (
-						<SearchStreamHeader
-							selected={ searchType }
-							onSelection={ this.handleSearchTypeSelection }
-							wideDisplay={ wideDisplay }
-						/>
-					) }
 					{ ! query && (
 						<BlankSuggestions
 							suggestions={ suggestionList }
 							trackTagsPageLinkClick={ this.trackTagsPageLinkClick }
+						/>
+					) }
+					{ ! hidePostsAndSites && (
+						<SearchStreamHeader
+							selected={ searchType }
+							onSelection={ this.handleSearchTypeSelection }
+							wideDisplay={ wideDisplay }
 						/>
 					) }
 				</div>
@@ -218,28 +227,38 @@ class SearchStream extends React.Component {
 						<div className="search-stream__post-results">
 							<PostResults { ...this.props } />
 						</div>
-						{ query && (
-							<div className="search-stream__site-results">
+						<div className="search-stream__site-results">
+							{ query && (
 								<SiteResults
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
 								/>
-							</div>
-						) }
+							) }
+							{ ! query && (
+								<ReaderPopularSitesSidebar
+									items={ this.props.items }
+									followSource={ READER_SEARCH_POPULAR_SITES }
+								/>
+							) }
+						</div>
 					</div>
 				) }
 				{ ! hidePostsAndSites && ! wideDisplay && (
 					<div className={ singleColumnResultsClasses }>
-						{ ( ( searchType === SEARCH_TYPES.POSTS || ! query ) && (
-							<PostResults { ...this.props } />
-						) ) || (
-							<SiteResults
-								query={ query }
-								sort={ pickSort( sortOrder ) }
-								onReceiveSearchResults={ this.setSearchFeeds }
-							/>
-						) }
+						{ ( searchType === SEARCH_TYPES.POSTS && <PostResults { ...this.props } /> ) ||
+							( query && (
+								<SiteResults
+									query={ query }
+									sort={ pickSort( sortOrder ) }
+									onReceiveSearchResults={ this.setSearchFeeds }
+								/>
+							) ) || (
+								<ReaderPopularSitesSidebar
+									items={ this.props.items }
+									followSource={ READER_SEARCH_POPULAR_SITES }
+								/>
+							) }
 					</div>
 				) }
 			</div>
@@ -263,6 +282,10 @@ export default connect(
 		readerAliasedFollowFeedUrl:
 			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
 		isLoggedIn: isUserLoggedIn( state ),
+		items: getTransformedStreamItems( state, {
+			streamKey: ownProps.streamKey,
+			recsStreamKey: ownProps.recsStreamKey,
+		} ),
 	} ),
 	{
 		recordReaderTracksEvent,

@@ -10,7 +10,7 @@ const selectors = {
 	customizeDesignButton: 'span:text("Customize site")',
 
 	// Activate modal
-	activateModal: '.themes__auto-loading-homepage-modal',
+	activateModal: '.themes__activation-modal',
 	activateModalButton: '.dialog__action-buttons button:has-text("Activate")',
 
 	// Thanks modal

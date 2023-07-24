@@ -51,7 +51,6 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"html-webpack-plugin": "^5.0.0-beta.4",
-		"jest": "^27.3.1",
 		"postcss": "^8.4.5",
 		"postcss-custom-properties": "^11.0.0",
 		"webpack": "^5.68.0",

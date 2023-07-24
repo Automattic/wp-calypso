@@ -76,7 +76,7 @@ class Block_Patterns_From_API {
 			foreach ( (array) $block_patterns as $pattern ) {
 				foreach ( (array) $pattern['categories'] as $slug => $category ) {
 					// Register categories from first pattern in each category.
-					if ( ! $pattern_categories[ $slug ] ) {
+					if ( ! isset( $pattern_categories[ $slug ] ) ) {
 						$pattern_categories[ $slug ] = array(
 							'label'       => $category['title'],
 							'description' => $category['description'],
@@ -162,7 +162,8 @@ class Block_Patterns_From_API {
 
 		$this->update_core_patterns_with_wpcom_categories();
 
-		$this->update_pattern_post_types();
+		// Temporarily removing the call to `update_pattern_post_types` while we investigate
+		// https://github.com/Automattic/wp-calypso/issues/79145.
 
 		return $results;
 	}

@@ -1,4 +1,7 @@
+@import "@automattic/components/src/styles/typography";
+
 :root {
+	--font-title-small: 20px;
 	--font-body: 16px;
 	--jp-black: #000;
 	--jp-gray-5: #dcdcde;
@@ -20,7 +23,7 @@
 	border-color: var(--jp-gray-5);
 	border-left-width: 6px;
 
-	padding: 24px 31px 27px 18px;
+	padding: 24px;
 }
 
 .notice-banner__icon-wrapper {
@@ -61,11 +64,15 @@
 }
 
 .notice-banner__main-content {
+	font-family: $font-sf-pro-text;
 	flex-grow: 1;
 }
 
 .notice-banner__title {
-	font-weight: 600;
+	font-family: $font-sf-pro-display;
+	font-weight: 500;
+	font-size: var(--font-title-small);
+	line-height: 30px;
 	margin-bottom: 8px;
 }
 
@@ -113,24 +120,38 @@
 
 	.notice-banner__action-button,
 	.notice-banner__action-link {
+		font-family: inherit;
+		font-size: var(--font-body);
+		font-weight: 600;
+		line-height: 24px;
 		cursor: pointer;
-
-		margin-top: 16px;
-		margin-right: 8px;
-	}
-
-	.notice-banner__action-button {
-		background-color: var(--jp-black);
-		border-radius: 4px;
-		color: var(--studio-white);
-		padding: 8px;
+		margin-top: 20px;
 	}
 
 	.notice-banner__action-link {
 		color: var(--jp-black);
-		text-decoration: underline;
 		font-weight: 600;
-		margin-left: 16px;
+		margin-left: 24px;
+
+		&:focus {
+			outline: none;
+			box-shadow: none;
+		}
+
+		& > span {
+			border-bottom: 1.5px solid var(--jp-black);
+		}
+
+		& > svg {
+			margin-left: 4px;
+		}
+	}
+
+	.notice-banner__action-button {
+		background-color: var(--jp-black);
+		color: var(--studio-white);
+		border-radius: 4px;
+		padding: 8px 24px;
 	}
 }
 
@@ -141,4 +162,11 @@
 	.notice-banner__icon {
 		fill: var(--jp-green);
 	}
+
+	.notice-banner__action-link {
+		color: var(--jp-green);
+		text-decoration: underline;
+	}
+
+
 }

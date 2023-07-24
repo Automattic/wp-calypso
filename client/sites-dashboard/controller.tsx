@@ -9,7 +9,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { hideMasterbar } from 'calypso/state/ui/actions';
-import { EmptySitesDashboard } from './components/empty-sites-dashboard';
+import { HostingFlowForkingPage } from './components/hosting-flow-forking-page';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from 'page';
@@ -47,18 +47,18 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 }
 
 export function maybeSitesDashboard( context: PageJSContext, next: () => void ) {
-	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
-
-	if ( context.query[ 'hosting-flow' ] || siteCount === 0 ) {
-		context.store.dispatch( hideMasterbar() );
-		return emptySites( context, siteCount, next );
+	if ( context.query[ 'hosting-flow' ] ) {
+		return hostingFlowForkingPage( context, next );
 	}
 
 	return sitesDashboard( context, next );
 }
 
-function emptySites( context: PageJSContext, siteCount: number, next: () => void ) {
-	const emptySitesDashboardGlobalStyles = css`
+function hostingFlowForkingPage( context: PageJSContext, next: () => void ) {
+	context.store.dispatch( hideMasterbar() );
+	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
+
+	const hostingFlowForkingPageGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #fff;
 
@@ -86,8 +86,8 @@ function emptySites( context: PageJSContext, siteCount: number, next: () => void
 	context.primary = (
 		<>
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
-			<Global styles={ emptySitesDashboardGlobalStyles } />
-			<EmptySitesDashboard siteCount={ siteCount } />
+			<Global styles={ hostingFlowForkingPageGlobalStyles } />
+			<HostingFlowForkingPage siteCount={ siteCount } />
 		</>
 	);
 

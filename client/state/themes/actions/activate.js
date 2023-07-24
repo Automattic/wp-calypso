@@ -6,12 +6,11 @@ import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
-import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/show-auto-loading-homepage-warning';
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
+import { showActivationModal } from 'calypso/state/themes/actions/theme-activation-modal';
 import {
 	getTheme,
-	hasAutoLoadingHomepageModalAccepted,
-	themeHasAutoLoadingHomepage,
+	hasActivationModalAccepted,
 	wasAtomicTransferDialogAccepted,
 	isExternallyManagedTheme,
 } from 'calypso/state/themes/selectors';
@@ -37,13 +36,7 @@ export function activate(
 	keepCurrentHomepage = false
 ) {
 	return ( dispatch, getState ) => {
-		let showModalCondition =
-			! isJetpackSite( getState(), siteId ) && ! isSiteAtomic( getState(), siteId );
-
-		if ( isEnabled( 'themes/atomic-homepage-replace' ) ) {
-			showModalCondition =
-				! isJetpackSite( getState(), siteId ) || isSiteAtomic( getState(), siteId );
-		} else {
+		if ( ! isEnabled( 'themes/atomic-homepage-replace' ) ) {
 			// Keep default behaviour on Atomic. See https://github.com/Automattic/wp-calypso/pull/65846#issuecomment-1192650587
 			keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
 		}
@@ -62,16 +55,10 @@ export function activate(
 		}
 
 		/**
-		 * Let's check if the theme will change the homepage of the site,
-		 * before to definitely start the theme-activating process,
-		 * allowing cancel it if it's desired.
+		 * Check whether the user has confirmed the activation.
 		 */
-		if (
-			themeHasAutoLoadingHomepage( getState(), themeId, siteId ) &&
-			showModalCondition &&
-			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
-		) {
-			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
+		if ( ! hasActivationModalAccepted( getState(), themeId ) ) {
+			return dispatch( showActivationModal( themeId ) );
 		}
 
 		/**

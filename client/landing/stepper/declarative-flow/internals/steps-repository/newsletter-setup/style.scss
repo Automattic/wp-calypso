@@ -47,4 +47,27 @@
 			margin-top: -2px;
 		}
 	}
+
+	.newsletter-setup-form {
+		textarea,
+		pre {
+			color: var(--studio-gray-100);
+			font-size: $font-body-small;
+			padding: 12px 16px;
+		}
+
+		textarea {
+			font-family: "SF Pro Text", $sans;
+			font-weight: 400;
+
+			&::placeholder {
+				color: var(--studio-gray-30);
+			}
+		}
+
+		pre {
+			border: none;
+			line-height: 20px;
+		}
+	}
 }

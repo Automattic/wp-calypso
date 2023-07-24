@@ -66,7 +66,10 @@ const SignupSuccess = () => {
 								<h2>{ translate( 'Learn More' ) }</h2>
 								<p>{ translate( 'Read more about selling on the WordPress.com marketplace.' ) }</p>
 							</div>
-							<Button isSecondary href="https://developer.wordpress.com/wordpress-com-marketplace/">
+							<Button
+								variant="secondary"
+								href="https://developer.wordpress.com/wordpress-com-marketplace/"
+							>
 								{ translate( 'Continue' ) }
 							</Button>
 						</div>
@@ -79,7 +82,7 @@ const SignupSuccess = () => {
 								<h2>{ translate( 'View the marketplace' ) }</h2>
 								<p>{ translate( 'Sign in to see what the marketplace has to offer.' ) }</p>
 							</div>
-							<Button isSecondary href="/plugins">
+							<Button variant="secondary" href="/plugins">
 								{ translate( 'Continue' ) }
 							</Button>
 						</div>
@@ -92,7 +95,7 @@ const SignupSuccess = () => {
 								<h2>{ translate( 'Developer Page' ) }</h2>
 								<p>{ translate( 'Learn more about building a WordPress.com integration.' ) }</p>
 							</div>
-							<Button isSecondary href="https://developer.wordpress.com">
+							<Button variant="secondary" href="https://developer.wordpress.com">
 								{ translate( 'Continue' ) }
 							</Button>
 						</div>

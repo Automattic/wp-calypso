@@ -120,13 +120,13 @@ const StyledButton = styled( Button )`
 `;
 
 export function FreePlanPaidDomainDialog( {
-	domainName,
+	paidDomainName,
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
 }: {
-	domainName: string;
+	paidDomainName: string;
 	suggestedPlanSlug: PlanSlug;
 	onClose: () => void;
 	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
@@ -141,7 +141,7 @@ export function FreePlanPaidDomainDialog( {
 		data: wordPressSubdomainSuggestions,
 		isInitialLoading,
 		isError,
-	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
+	} = DomainSuggestions.useGetWordPressSubdomain( paidDomainName );
 	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
 
 	function handlePaidPlanClick() {
@@ -152,7 +152,9 @@ export function FreePlanPaidDomainDialog( {
 	function handleFreeDomainClick() {
 		setIsBusy( true );
 		// Since this domain will not be available after it is selected, invalidate the cache.
-		queryClient.invalidateQueries( DomainSuggestions.getDomainSuggestionsQueryKey( domainName ) );
+		queryClient.invalidateQueries(
+			DomainSuggestions.getDomainSuggestionsQueryKey( paidDomainName )
+		);
 		if ( wordPressSubdomainSuggestions && wordPressSubdomainSuggestions.length ) {
 			onFreePlanSelected( wordPressSubdomainSuggestions[ 0 ] );
 		}
@@ -186,7 +188,7 @@ export function FreePlanPaidDomainDialog( {
 				<ButtonContainer>
 					<RowWithBorder>
 						<DomainName>
-							<div>{ domainName }</div>
+							<div>{ paidDomainName }</div>
 							<FreeDomainText>{ translate( 'Free for one year ' ) }</FreeDomainText>
 						</DomainName>
 						<StyledButton busy={ isBusy } primary onClick={ handlePaidPlanClick }>

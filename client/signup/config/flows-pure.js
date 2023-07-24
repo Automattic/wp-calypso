@@ -23,9 +23,8 @@ export function generateFlows( {
 			name: HOSTING_LP_FLOW,
 			steps: [ 'user-hosting' ],
 			destination: getHostingFlowDestination,
-			description:
-				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
-			lastModified: '2023-05-19',
+			description: 'Create an account and redirect the user to the hosted site flow forking step.',
+			lastModified: '2023-07-18',
 			showRecaptcha: true,
 		},
 		{
@@ -145,7 +144,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
-			lastModified: '2023-01-10',
+			lastModified: '2023-07-18',
 			showRecaptcha: true,
 		},
 		{

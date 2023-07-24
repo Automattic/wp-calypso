@@ -31,7 +31,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return \A8C\FSE\WPCOM_Domain_Upsell_Callout
 	 */
 	public static function init() {
-		if ( is_null( self::$instance ) ) {
+		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
 		return self::$instance;
@@ -83,7 +83,7 @@ class WPCOM_Domain_Upsell_Callout {
 	private function should_not_show_callout() {
 		$blog_id = defined( 'IS_WPCOM' ) && IS_WPCOM ? get_current_blog_id() : \Jetpack_Options::get_option( 'id' );
 
-		return $this->has_unlaunched_launchpad() || $this->blog_has_custom_domain( $blog_id ) || $this->user_has_email_unverified() || $this->blog_is_p2( $blog_id );
+		return $this->has_unlaunched_launchpad() || $this->blog_has_custom_domain( $blog_id ) || $this->user_has_email_unverified() || $this->blog_is_p2( $blog_id ) || $this->blog_is_wpcom_staging();
 	}
 
 	/**
@@ -167,6 +167,21 @@ class WPCOM_Domain_Upsell_Callout {
 	 */
 	private function blog_is_p2( $blog_id ) {
 		return defined( 'IS_ATOMIC' ) && IS_ATOMIC ? false : \WPForTeams\is_wpforteams_site( $blog_id );
+	}
+
+	/**
+	 * Check if the blog is a wpcom staging.
+	 *
+	 * @return boolean
+	 */
+	private function blog_is_wpcom_staging() {
+		if ( ! defined( 'IS_ATOMIC' ) || ! IS_ATOMIC ) {
+			return false;
+		}
+
+		$site_url = $this->get_domain_from_site_url();
+		// Only staging sites can be prefixed with 'staging-'.
+		return 'staging-' === substr( $site_url, 0, 8 );
 	}
 
 	/**

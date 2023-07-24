@@ -8,6 +8,7 @@ import {
 import { color, styles, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { COLOR_VARIATIONS_BLOCK_LIST } from '../constants';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { NavigatorScreenObject } from '@automattic/onboarding';
@@ -15,29 +16,39 @@ import type { NavigatorScreenObject } from '@automattic/onboarding';
 interface Props {
 	siteId: number;
 	stylesheet: string;
+	isVirtual?: boolean;
 	limitGlobalStyles?: boolean;
+	globalStylesInPersonalPlan: boolean;
 	variations?: StyleVariation[];
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	selectedVariation?: StyleVariation;
 	selectedColorVariation: GlobalStylesObject | null;
 	selectedFontVariation: GlobalStylesObject | null;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
+	onScreenSelect?: ( screenSlug: string ) => void;
+	onScreenBack?: ( screenSlug: string ) => void;
+	onScreenSubmit?: ( screenSlug: string ) => void;
 }
 
 const useScreens = ( {
 	siteId,
 	stylesheet,
+	isVirtual,
 	limitGlobalStyles,
+	globalStylesInPersonalPlan,
 	variations,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	selectedVariation,
 	selectedColorVariation,
 	selectedFontVariation,
 	onSelectVariation,
 	onSelectColorVariation,
 	onSelectFontVariation,
+	onScreenSelect,
+	onScreenBack,
+	onScreenSubmit,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -46,6 +57,7 @@ const useScreens = ( {
 			[
 				variations &&
 					variations.length > 0 && {
+						slug: 'style-variations',
 						checked: ! isDefaultGlobalStylesVariationSlug( selectedVariation?.slug ),
 						icon: styles,
 						label: translate( 'Styles' ),
@@ -57,28 +69,36 @@ const useScreens = ( {
 										key="style-variations"
 										globalStylesVariations={ variations as GlobalStylesObject[] }
 										selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
-										splitPremiumVariations={ splitPremiumVariations }
-										displayFreeLabel={ splitPremiumVariations }
+										splitDefaultVariation={ splitDefaultVariation }
+										displayFreeLabel={ splitDefaultVariation }
 										showOnlyHoverViewDefaultVariation={ false }
 										onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
 											onSelectVariation( globalStyleVariation as StyleVariation )
 										}
+										globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 									/>
 								</div>
 							</div>
 						),
 						actionText: translate( 'Save styles' ),
+						onSelect: onScreenSelect,
+						onBack: onScreenBack,
+						onSubmit: onScreenSubmit,
 					},
 				variations &&
 					variations.length === 0 &&
+					// Disable Colors for themes that don't play well with them. See pbxlJb-4cl-p2 for more context.
+					! isVirtual &&
+					! COLOR_VARIATIONS_BLOCK_LIST.includes( stylesheet ) &&
 					isEnabled( 'signup/design-picker-preview-colors' ) && {
+						slug: 'color-palettes',
 						checked: !! selectedColorVariation,
 						icon: color,
 						label: translate( 'Colors' ),
 						path: '/color-palettes',
 						title: translate( 'Colors' ),
 						description: translate(
-							'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+							'Discover your ideal color blend, from free to custom styles.'
 						),
 						content: (
 							<div className="design-preview__sidebar-variations">
@@ -93,18 +113,20 @@ const useScreens = ( {
 							</div>
 						),
 						actionText: translate( 'Save colors' ),
+						onSelect: onScreenSelect,
+						onBack: onScreenBack,
+						onSubmit: onScreenSubmit,
 					},
 				variations &&
 					variations.length === 0 &&
 					isEnabled( 'signup/design-picker-preview-fonts' ) && {
+						slug: 'font-pairings',
 						checked: !! selectedFontVariation,
 						icon: typography,
 						label: translate( 'Fonts' ),
 						path: '/font-pairings',
 						title: translate( 'Fonts' ),
-						description: translate(
-							'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-						),
+						description: translate( 'Elevate your design with expertly curated font pairings.' ),
 						content: (
 							<div key="font-variations" className="design-preview__sidebar-variations">
 								<FontPairingVariations
@@ -117,6 +139,9 @@ const useScreens = ( {
 							</div>
 						),
 						actionText: translate( 'Save fonts' ),
+						onSelect: onScreenSelect,
+						onBack: onScreenBack,
+						onSubmit: onScreenSubmit,
 					},
 			].filter( Boolean ) as NavigatorScreenObject[],
 		[

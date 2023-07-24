@@ -212,12 +212,6 @@ export function addNewPaymentMethod( context, next ) {
 }
 
 export function changePaymentMethod( context, next ) {
-	const state = context.store.getState();
-
-	if ( userHasNoSites( state ) ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/change/:cardId' );
-	}
-
 	const ChangePaymentMethodWrapper = () => {
 		const translate = useTranslate();
 		const logPurchasesError = useLogPurchasesError(

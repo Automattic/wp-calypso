@@ -8,6 +8,7 @@ import Button from 'calypso/components/forms/form-button';
 import missingCredentialsIcon from 'calypso/components/jetpack/daily-backup-status/missing-credentials.svg';
 import PopoverMenu from 'calypso/components/popover-menu';
 import { getActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
+import { SUCCESSFUL_BACKUP_ACTIVITIES } from 'calypso/lib/jetpack/backup-utils';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -24,12 +25,14 @@ type SingleSiteOwnProps = {
 	siteId: number;
 	siteSlug: string;
 	rewindId: string;
+	isSuccessfulBackup: boolean;
 };
 
 const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 	siteId,
 	siteSlug,
 	rewindId,
+	isSuccessfulBackup,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -99,7 +102,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 						</div>
 					</div>
 				) }
-				<ViewFilesButton siteSlug={ siteSlug } rewindId={ rewindId } />
+				{ isSuccessfulBackup && <ViewFilesButton siteSlug={ siteSlug } rewindId={ rewindId } /> }
 				<Button
 					borderless
 					compact
@@ -175,6 +178,9 @@ const ActionsButton: React.FC< OwnProps > = ( {
 	// to a valid restore/download point when they click an action button
 	const actionableRewindId = getActionableRewindId( activity );
 
+	// Let's validate if the activity is a successful backup so we could decide which actions to show.
+	const isSuccessfulBackup = SUCCESSFUL_BACKUP_ACTIVITIES.includes( activity?.activityName );
+
 	const isMultisite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	if ( isMultisite ) {
 		return (
@@ -197,6 +203,7 @@ const ActionsButton: React.FC< OwnProps > = ( {
 			siteId={ siteId }
 			siteSlug={ siteSlug ?? '' }
 			rewindId={ actionableRewindId ?? '' }
+			isSuccessfulBackup={ isSuccessfulBackup }
 		/>
 	);
 };

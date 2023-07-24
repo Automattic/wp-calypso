@@ -1061,7 +1061,7 @@ class SignupForm extends Component {
 				{ ! this.props.isReskinned && (
 					<LoggedOutFormLinks>
 						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ flowName === 'onboarding'
+							{ flowName === 'onboarding' || flowName === 'onboarding-pm'
 								? translate( 'Log in to create a site for your existing account.' )
 								: translate( 'Already have a WordPress.com account?' ) }
 						</LoggedOutFormLinkItem>

@@ -873,7 +873,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_50GB_STORAGE ]: {
 		getSlug: () => FEATURE_50GB_STORAGE,
 		getTitle: () => i18n.translate( '50 GB storage space' ),
-
+		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
@@ -2203,7 +2203,16 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_CONTENT_JP ]: {
 		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
-		getTitle: () => i18n.translate( 'Gated content' ),
+		getTitle: () => {
+			const localeSlug = i18n.getLocaleSlug();
+			const shouldShowNewString =
+				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
+				i18n.hasTranslation( 'Paid content gating' );
+
+			return shouldShowNewString
+				? i18n.translate( 'Paid content gating' )
+				: i18n.translate( 'Gated content' );
+		},
 		getDescription: () => i18n.translate( 'Sell access to premium content, right from your site.' ),
 	},
 	[ FEATURE_VIDEOPRESS_JP ]: {

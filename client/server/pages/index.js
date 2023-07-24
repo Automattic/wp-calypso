@@ -685,14 +685,6 @@ function wpcomPages( app ) {
 		res.redirect( redirectUrl );
 	} );
 
-	app.get( '/discover', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn && calypsoEnv !== 'development' ) {
-			res.redirect( config( 'discover_logged_out_redirect_url' ) );
-		} else {
-			next();
-		}
-	} );
-
 	app.get( '/plans', function ( req, res, next ) {
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
@@ -825,6 +817,18 @@ function wpcomPages( app ) {
 
 		// Otherwise, show them email subscriptions external landing page
 		res.redirect( 'https://wordpress.com/email-subscriptions' );
+	} );
+
+	// Redirects from the /start/domain-transfer flow to the new /setup/domain-transfer.
+	app.get( [ '/start/domain-transfer', '/start/domain-transfer/*' ], function ( req, res ) {
+		const redirectUrl = '/setup/domain-transfer';
+		res.redirect( 301, redirectUrl );
+	} );
+
+	// Redirects from /help/courses to https://wordpress.com/learn/courses.
+	app.get( '/help/courses', function ( req, res ) {
+		const redirectUrl = 'https://wordpress.com/learn/courses';
+		res.redirect( 301, redirectUrl );
 	} );
 }
 

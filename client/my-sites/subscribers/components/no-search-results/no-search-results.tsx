@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { useSelector } from 'calypso/state';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -7,22 +8,24 @@ import './style.scss';
 
 type NoSearchResultsProps = {
 	searchTerm: string;
-	setShowAddSubscribersModal: React.Dispatch< React.SetStateAction< boolean > >;
 };
 
-const NoSearchResults = ( { searchTerm, setShowAddSubscribersModal }: NoSearchResultsProps ) => {
+const NoSearchResults = ( { searchTerm }: NoSearchResultsProps ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, selectedSiteId ) );
+	const { setShowAddSubscribersModal } = useSubscribersPage();
 
 	return (
 		<div className="no-search-results">
 			<p className="no-search-results__heading">{ translate( '0 subscribers found' ) }</p>
-			<p className="no-search-results__query">
-				{ translate( '“%(searchTerm)s” did not match any current subscribers.', {
-					args: { searchTerm },
-					comment: '%(searchTerm)s is the search term the user entered.',
-				} ) }
-			</p>
+			{ searchTerm && (
+				<p className="no-search-results__query">
+					{ translate( '“%(searchTerm)s” did not match any current subscribers.', {
+						args: { searchTerm },
+						comment: '%(searchTerm)s is the search term the user entered.',
+					} ) }
+				</p>
+			) }
 			{ siteTitle && (
 				<p>
 					{ translate( 'Do you want to invite someone to join %(siteTitle)s?', {

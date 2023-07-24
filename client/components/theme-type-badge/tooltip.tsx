@@ -10,6 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import {
 	canUseTheme,
 	getThemeType,
@@ -53,7 +54,7 @@ const ThemeTypeBadgeTooltipUpgradeLink = ( {
 	};
 
 	return (
-		<LinkButton isLink onClick={ () => goToCheckout() }>
+		<LinkButton variant="link" onClick={ () => goToCheckout() }>
 			{ children }
 		</LinkButton>
 	);
@@ -71,6 +72,7 @@ const ThemeTypeBadgeTooltip = ( {
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
+	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
 	const isPurchased = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return false;
@@ -121,9 +123,15 @@ const ThemeTypeBadgeTooltip = ( {
 
 	let message;
 	if ( isLockedStyleVariation ) {
-		message = translate(
-			'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-		);
+		if ( globalStylesInPersonalPlan ) {
+			message = translate(
+				'Unlock this style, and tons of other features, by upgrading to a Personal plan.'
+			);
+		} else {
+			message = translate(
+				'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
+			);
+		}
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );
@@ -198,7 +206,7 @@ const ThemeTypeBadgeTooltip = ( {
 		} else if ( ! isPurchased && isIncludedCurrentPlan ) {
 			/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 			message = translate(
-				'This premium theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
+				'This theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
 				{
 					args: {
 						annualPrice: subscriptionPrices.year ?? '',
@@ -210,7 +218,7 @@ const ThemeTypeBadgeTooltip = ( {
 			message = createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
-					'This premium theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
+					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
 					{
 						args: {
 							annualPrice: subscriptionPrices.year ?? '',

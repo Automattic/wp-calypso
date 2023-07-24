@@ -22,8 +22,10 @@ const Intro: Step = function Intro( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-transfer-header"
-					headerText={ __( 'Transfer domains' ) }
-					subHeaderText={ __( 'Follow along these 3 steps to transfer domains to WordPress.com' ) }
+					headerText={ __( 'Transfer Your Domains' ) }
+					subHeaderText={ __(
+						'Follow these three simple steps to transfer your domains to WordPress.com.'
+					) }
 				/>
 			}
 			stepContent={ <IntroStep onSubmit={ handleSubmit } /> }
@@ -31,7 +33,7 @@ const Intro: Step = function Intro( { navigation } ) {
 			showHeaderJetpackPowered={ false }
 			showHeaderWooCommercePowered={ false }
 			showVideoPressPowered={ false }
-			showJetpackPowered={ true }
+			showJetpackPowered={ false }
 		/>
 	);
 };

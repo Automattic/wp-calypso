@@ -1,4 +1,6 @@
 import { Gridicon } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -11,7 +13,7 @@ import { useRecordExport } from '../../tracks';
 import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
-	siteId: number | null;
+	siteId: number | undefined;
 };
 
 const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) => {
@@ -20,10 +22,12 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
 	const buttonRef = useRef< HTMLButtonElement >( null );
 	const downloadCsvLink = addQueryArgs(
-		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'email' },
+		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'all' },
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
 	const recordExport = useRecordExport();
+	const locale = useLocale();
+	const { hasTranslation } = useI18n();
 
 	const onDownloadCsvClick = () => {
 		dispatch(
@@ -56,7 +60,11 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 				focusOnShow={ false }
 			>
 				<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>
-					{ translate( 'Download email subscribers as CSV' ) }
+					{ ( locale.startsWith( 'en' ) || hasTranslation( 'Download subscribers as CSV' ) ) &&
+						translate( 'Download subscribers as CSV' ) }
+					{ ! locale.startsWith( 'en' ) &&
+						! hasTranslation( 'Download subscribers as CSV' ) &&
+						translate( 'Download email subscribers as CSV' ) }
 				</PopoverMenuItem>
 			</PopoverMenu>
 		</div>

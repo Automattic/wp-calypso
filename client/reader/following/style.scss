@@ -1,3 +1,15 @@
+.formatted-header.is-left-align.has-screen-options.following-stream-header,
+.formatted-header.is-left-align.following-stream-header {
+	margin: 0 auto;
+	max-width: 600px;
+	&.reader-dual-column {
+		max-width: 968px; // Max width of dual column reader stream.
+	}
+	@media only screen and (max-width: 660px) {
+		margin: 30px 30px -15px;
+	}
+}
+
 .following .search {
 	margin-bottom: 0;
 }

@@ -30,8 +30,11 @@ describe( 'Help Center: Interact with Results', function () {
 			await supportComponent.openPopover();
 		} );
 
-		it( 'Search for domain-related help article', async function () {
-			await supportComponent.search( 'domain' );
+		it( 'Search for posts-related help article', async function () {
+			// We use domains below, but one of the domain-adjacent articles is currently broken:
+			// https://github.com/Automattic/wp-calypso/issues/79576
+			// Until that's fixed, let's steer clear and search a different topic.
+			await supportComponent.search( 'posts' );
 		} );
 
 		it( 'Click on the second Help Docs result', async function () {
@@ -45,6 +48,8 @@ describe( 'Help Center: Interact with Results', function () {
 	} );
 
 	describe( 'Navigate to Calypso Link', function () {
+		let popupPage: Page;
+
 		it( 'Close article and return to search results', async function () {
 			await supportComponent.goBack();
 		} );
@@ -58,11 +63,13 @@ describe( 'Help Center: Interact with Results', function () {
 		} );
 
 		it( 'Click on the first Calypso Link result', async function () {
+			const popupEvent = page.waitForEvent( 'popup' );
 			await supportComponent.clickResultByIndex( 'Calypso Link', 0 );
+			popupPage = await popupEvent;
 		} );
 
 		it( 'Calypso Link opens in a new page', async function () {
-			await page.waitForEvent( 'popup' );
+			expect( popupPage.url() ).not.toBe( page.url() );
 		} );
 	} );
 } );

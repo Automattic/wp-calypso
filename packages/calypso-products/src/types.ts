@@ -40,10 +40,10 @@ export interface WPComPlan extends Plan {
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
-	getPlanTagline?: () => string;
-	getNewsletterTagLine?: () => string;
-	getLinkInBioTagLine?: () => string;
-	getBlogOnboardingTagLine?: () => string;
+	getPlanTagline?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getNewsletterTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getLinkInBioTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getBlogOnboardingTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -200,7 +200,7 @@ export type Plan = BillingTerm & {
 	 * this feature list will be ignored in the plans comparison table only.
 	 * Context - pdgrnI-26j
 	 */
-	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
+	get2023PricingGridSignupWpcomFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
 
 	/**
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.
@@ -228,7 +228,10 @@ export type Plan = BillingTerm & {
 	 */
 	get2023PlanComparisonConditionalFeatures?: () => Feature[];
 
-	get2023PricingGridSignupStorageOptions?: () => Feature[];
+	get2023PricingGridSignupStorageOptions?: (
+		showLegacyStorageFeature?: boolean,
+		isCurrentPlan?: boolean
+	) => Feature[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
@@ -261,9 +264,9 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
-	getNewsletterSignupFeatures?: () => Feature[];
-	getLinkInBioSignupFeatures?: () => Feature[];
-	getBlogOnboardingSignupFeatures?: () => Feature[];
+	getNewsletterSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
+	getLinkInBioSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
+	getBlogOnboardingSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 };

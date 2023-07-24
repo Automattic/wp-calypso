@@ -1,63 +1,72 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Button, CheckboxControl, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
+import { Button, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import CommercialPurchase from './stats-purchase-commercial';
 import PersonalPurchase from './stats-purchase-personal';
 import StatsPurchaseSVG from './stats-purchase-svg';
 import './styles.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-wizard';
 const SCREEN_TYPE_SELECTION = 0;
-const SCREEN_PERSONAL_CHECKLIST = 1;
-const SCREEN_PURCHASE = 2;
+const SCREEN_PURCHASE = 1;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
-const FLAT_COMMERCIAL_PRICE = 10;
 
-// TODO: import
-const CommercialPurchase = () => {
+// TODO: Get pricing config from an API
+const PRICING_CONFIG = {
+	AVERAGE_PRICE_INFO: 6, // used to display how much a users pays on average (below price slider)
+};
+
+const TitleNode = ( { label, indicatorNumber, active } ) => {
 	return (
-		<div>
-			{ /* TODO: Add notice */ }
-
-			<p>${ `${ FLAT_COMMERCIAL_PRICE }` }/month</p>
-
-			<div className="benefits">
-				<ul className="included">
-					{ /* TODO: Translate the copy below */ }
-					<li>Instant access to upcoming features</li>
-					<li>Priority support</li>
-					<li>Ad-free experience</li>
-				</ul>
+		<>
+			<div
+				className={ classNames( `${ COMPONENT_CLASS_NAME }__card-title-indicator`, {
+					active: active,
+				} ) }
+			>
+				{ indicatorNumber }{ ' ' }
 			</div>
-
-			<p>
-				{ /* TODO: Translate the copy below */ }
-				By clicking the button below, you agree to our <a href="#">Terms of Service</a> and to{ ' ' }
-				<a href="#">share details</a> with WordPress.com.
-			</p>
-
-			<Button isPrimary>Get Jetpack Stats for ${ FLAT_COMMERCIAL_PRICE } per month</Button>
-		</div>
+			{ label }
+		</>
 	);
 };
 
-const ProductCard = ( { siteSlug } ) => {
-	const [ subscriptionValue, setSubscriptionValue ] = useState( 6 );
+const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redirectUri, from } ) => {
+	const commercialPlanPrice = commercialProduct?.cost;
+	const maxSliderPrice = commercialProduct.cost;
+	const sliderStep = pwywProduct.cost / 2;
+
+	const defaultStartingPrice = commercialPlanPrice * 0.6; // default position for PWYW slider // TODO: replace with AVERAGE_PRICE_INFO when it's dynamic
+	const uiEmojiHeartTier = commercialPlanPrice * 0.5; // value when slider emoji is changed to a heart emoji
+	const uiImageCelebrationTier = commercialPlanPrice * 0.8; // minimal price that enables image celebration image
+
+	const [ subscriptionValue, setSubscriptionValue ] = useState( defaultStartingPrice );
 	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
 	const [ siteType, setSiteType ] = useState( null );
-	const [ isAdsChecked, setAdsChecked ] = useState( false );
-	const [ isSellingChecked, setSellingChecked ] = useState( false );
-	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const translate = useTranslate();
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
 	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
 
-	const handleTypeClick = ( type ) => {
-		setSiteType( type );
-		setWizardStep( type === TYPE_PERSONAL ? SCREEN_PERSONAL_CHECKLIST : SCREEN_PURCHASE );
+	const setPersonalSite = () => {
+		setSiteType( TYPE_PERSONAL );
+		setWizardStep( SCREEN_PURCHASE );
+	};
+
+	const setCommercialSite = () => {
+		setSubscriptionValue( commercialPlanPrice );
+		setSiteType( TYPE_COMMERCIAL );
+		setWizardStep( SCREEN_PURCHASE );
 	};
 
 	const toggleFirstStep = ( toggleState ) => {
@@ -70,27 +79,43 @@ const ProductCard = ( { siteSlug } ) => {
 	};
 
 	// change the plan to commercial on the personal plan confirmation
-	const handlePlanSwap = () => {
-		setSiteType( TYPE_COMMERCIAL );
-		setWizardStep( SCREEN_PURCHASE );
+	const handlePlanSwap = ( e ) => {
+		e.preventDefault();
+		setCommercialSite();
 	};
+
+	const firstStepTitleNode = (
+		<TitleNode
+			indicatorNumber="1"
+			label={
+				! siteType
+					? translate( 'What site type is %(site)s?', {
+							args: {
+								site: siteSlug,
+							},
+					  } )
+					: selectedTypeLabel
+			}
+			active={ wizardStep === SCREEN_TYPE_SELECTION }
+		/>
+	);
+
+	const secondStepTitleNode = (
+		<TitleNode
+			indicatorNumber="2"
+			label={ translate( 'What is Jetpack Stats worth to you?' ) }
+			active={ wizardStep === SCREEN_PURCHASE }
+		/>
+	);
 
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
-			<Card className="jetpack-upsell-card">
+			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
-					<div className="left">
+					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>
 						<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` } header="Jetpack Stats">
 							<PanelBody
-								title={
-									! siteType
-										? translate( 'What site type is %(site)s?', {
-												args: {
-													site: siteSlug,
-												},
-										  } )
-										: selectedTypeLabel
-								}
+								title={ firstStepTitleNode }
 								initialOpen
 								onToggle={ ( shouldOpen ) => toggleFirstStep( shouldOpen ) }
 								opened={ wizardStep === SCREEN_TYPE_SELECTION }
@@ -106,111 +131,73 @@ const ProductCard = ( { siteSlug } ) => {
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-body--left` }>
 											<p>
 												{ translate(
-													`Sites and blogs used for hobby or personal use. Doesn't generate any money in a direct or an indirect way.`
+													`A hobby or personal site. You don't attempt to make money from your site in any way.`
 												) }
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-body--right` }>
 											<p>
 												{ translate(
-													`Sites and blogs used for commercial activities. Includes selling or advertising a product/service, person or business.`
+													`A site used for commercial activity. Your site sells or advertises a product or service.`
 												) }
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--left` }>
-											<Button isPrimary onClick={ () => handleTypeClick( TYPE_PERSONAL ) }>
+											<Button variant="primary" onClick={ setPersonalSite }>
 												{ translate( 'Personal site' ) }
 											</Button>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--right` }>
-											<Button isPrimary onClick={ () => handleTypeClick( TYPE_COMMERCIAL ) }>
+											<Button variant="primary" onClick={ setCommercialSite }>
 												{ translate( 'Commercial site' ) }
 											</Button>
 										</div>
 									</div>
 								</PanelRow>
 							</PanelBody>
-							<PanelBody opened={ wizardStep === SCREEN_PERSONAL_CHECKLIST }>
-								<PanelRow>
-									<div className="qualifications">
-										<p>
-											<strong>
-												{ translate( 'Please confirm non-commercial usage by checking each box:' ) }
-											</strong>
-										</p>
-										<p>
-											<ul>
-												<li>
-													<CheckboxControl
-														checked={ isAdsChecked }
-														label={ translate( `I don’t have ads on my site` ) }
-														onChange={ ( value ) => {
-															setAdsChecked( value );
-														} }
-													/>
-												</li>
-												<li>
-													<CheckboxControl
-														checked={ isSellingChecked }
-														label={ translate( `I don’t sell products/services on my site` ) }
-														onChange={ ( value ) => {
-															setSellingChecked( value );
-														} }
-													/>
-												</li>
-												<li>
-													<CheckboxControl
-														checked={ isBusinessChecked }
-														label={ translate( `I don’t promote a business on my site` ) }
-														onChange={ ( value ) => {
-															setBusinessChecked( value );
-														} }
-													/>
-												</li>
-											</ul>
-										</p>
-										<p>
-											{ translate( `If your site doesn’t meet these criteria,` ) }
-											<a href="#" onClick={ () => handlePlanSwap() }>
-												{ translate( `you will need to use the commercial plan` ) }
-											</a>
-											.
-										</p>
-										<p>
-											<Button
-												isPrimary
-												onClick={ () => setWizardStep( SCREEN_PURCHASE ) }
-												disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
-											>
-												{ translate( 'Confirm personal site' ) }
-											</Button>
-										</p>
-									</div>
-								</PanelRow>
-							</PanelBody>
-							<PanelBody
-								title="What is Jetpack Stats worth to you?"
-								opened={ wizardStep === SCREEN_PURCHASE }
-							>
+							<PanelBody title={ secondStepTitleNode } opened={ wizardStep === SCREEN_PURCHASE }>
 								<PanelRow>
 									{ siteType === TYPE_PERSONAL ? (
 										<PersonalPurchase
 											subscriptionValue={ subscriptionValue }
 											setSubscriptionValue={ setSubscriptionValue }
+											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
+											currencyCode={ currencyCode }
+											siteSlug={ siteSlug }
+											sliderSettings={ {
+												sliderStep,
+												maxSliderPrice,
+												uiEmojiHeartTier,
+												uiImageCelebrationTier,
+											} }
+											adminUrl={ adminUrl }
+											redirectUri={ redirectUri }
+											from={ from }
 										/>
 									) : (
-										<CommercialPurchase />
+										<CommercialPurchase
+											planValue={ commercialProduct.cost }
+											currencyCode={ currencyCode }
+											siteSlug={ siteSlug }
+											commercialProduct={ commercialProduct }
+											adminUrl={ adminUrl }
+											redirectUri={ redirectUri }
+											from={ from }
+										/>
 									) }
 								</PanelRow>
 							</PanelBody>
 						</Panel>
 					</div>
-					<div className="right">
+					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						<StatsPurchaseSVG
 							isFree={ subscriptionValue === 0 }
-							hasHighlight={ subscriptionValue >= 40 }
-							extraMessage={ subscriptionValue >= 90 }
+							hasHighlight={ subscriptionValue >= uiImageCelebrationTier }
+							extraMessage={ subscriptionValue >= uiImageCelebrationTier }
 						/>
+						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
+							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
+						</div>
 					</div>
 				</div>
 			</Card>
@@ -218,8 +205,25 @@ const ProductCard = ( { siteSlug } ) => {
 	);
 };
 
-const StatsPurchaseWizard = ( { siteSlug } ) => {
-	return <ProductCard siteSlug={ siteSlug } />;
+const StatsPurchaseWizard = ( {
+	siteSlug,
+	siteId,
+	commercialProduct,
+	pwywProduct,
+	redirectUri,
+	from,
+} ) => {
+	// redirectTo is a relative URI.
+	return (
+		<ProductCard
+			siteSlug={ siteSlug }
+			siteId={ siteId }
+			commercialProduct={ commercialProduct }
+			pwywProduct={ pwywProduct }
+			redirectUri={ redirectUri }
+			from={ from }
+		/>
+	);
 };
 
-export default StatsPurchaseWizard;
+export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, PRICING_CONFIG };

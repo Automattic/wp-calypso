@@ -485,7 +485,6 @@
 
 	@include breakpoint-deprecated( ">960px" ) {
 		flex-direction: column;
-		margin-top: -40px;
 		width: 50%;
 	}
 

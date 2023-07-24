@@ -1,3 +1,4 @@
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import type { SiteDetails } from '@automattic/data-stores';
 type FilterDomainsByOwnerType = (
@@ -23,6 +24,6 @@ export const filterDomainsByOwner: FilterDomainsByOwnerType = ( domains, filter 
 
 export const filterDomainOnlyDomains: FilterDomainsDomainOnlyType = ( domains, sites ) => {
 	return domains.filter( ( domain: ResponseDomain ) => {
-		return sites[ domain.blogId ].options?.is_domain_only;
+		return domain.type === domainTypes.REGISTERED && sites[ domain.blogId ].options?.is_domain_only;
 	} );
 };

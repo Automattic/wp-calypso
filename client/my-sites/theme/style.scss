@@ -18,8 +18,13 @@ $theme-sheet-content-max-width: 1462px;
 
 		.theme__sheet-web-preview {
 			@include breakpoint-deprecated( ">960px" ) {
-				height: calc(100vh - 96px);
 				top: calc(var(--masterbar-height) + 16px);
+			}
+
+			.theme-preview__frame-wrapper {
+				@include breakpoint-deprecated( ">960px" ) {
+					max-height: calc(100vh - 32px - var(--masterbar-height));
+				}
 			}
 		}
 	}
@@ -347,15 +352,11 @@ $theme-sheet-content-max-width: 1462px;
 	width: 98%;
 	z-index: 1;
 
-	// with width: 98%, gives 4:3 ratio before the image loads
-	// also x-browser issues, so it's smaller than 4:3 proper
-	min-height: 36.15vw; // 36.75vw would be correct, but Safari is slightly off
-
 	@include breakpoint-deprecated( "<960px" ) {
 		border-radius: 0;
 		box-shadow: none;
 		position: relative;
-		height: 100vw; // force proportions
+		max-height: 100vw;
 		overflow: hidden;
 		margin-top: 0;
 		top: 0;
@@ -383,20 +384,37 @@ $theme-sheet-content-max-width: 1462px;
 }
 
 .theme__sheet-web-preview {
+	$iframe-viewport-height: 1040px;
+	$iframe-viewport-height-scaled: calc($iframe-viewport-height / 2);
+
+	min-height: $iframe-viewport-height-scaled;
 	pointer-events: none;
 
 	@include breakpoint-deprecated( ">960px" ) {
-		height: calc(100vh - 64px);
 		pointer-events: all;
 		position: sticky;
 		top: 16px;
 
-		.theme-preview__frame-wrapper .theme-preview__frame {
-			height: 200%;
-			max-width: 200%;
-			transform: scale(0.5) !important;
-			width: 200%;
+		.theme-preview__frame-wrapper {
+			max-height: calc(100vh - var(--masterbar-height));
+
+			.theme-preview__frame {
+				height: 200%;
+				max-height: 200vh;
+				max-width: 200%;
+				min-height: $iframe-viewport-height-scaled;
+				transform: scale(0.5) !important;
+				width: 200%;
+			}
 		}
+	}
+
+	.theme-preview__container {
+		position: relative;
+	}
+
+	.theme-preview__frame {
+		transform: none !important;
 	}
 }
 

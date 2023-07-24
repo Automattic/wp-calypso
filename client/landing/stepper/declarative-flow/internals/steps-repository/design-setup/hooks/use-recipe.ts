@@ -1,8 +1,8 @@
-import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
+import { isDefaultGlobalStylesVariationSlug, isAssemblerDesign } from '@automattic/design-picker';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ONBOARD_STORE } from '../../../../../stores';
 import type { GlobalStyles, OnboardSelect, StarterDesigns } from '@automattic/data-stores';
@@ -38,17 +38,31 @@ const useRecipe = (
 		null
 	);
 
-	const hasSelectedGlobalStyles =
-		! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) ||
-		!! selectedColorVariation ||
-		!! selectedFontVariation;
+	const numOfSelectedGlobalStyles = [
+		! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ),
+		!! selectedColorVariation,
+		!! selectedFontVariation,
+	].filter( Boolean ).length;
 
 	const [ globalStyles, setGlobalStyles ] = useState< GlobalStylesObject | null >( null );
 
-	const preselectedTheme = searchParams.get( 'theme' );
-	const preselectedStyle = searchParams.get( 'style_variation' );
-	const preselectedColorVariationTitle = searchParams.get( 'color_variation_title' );
-	const preselectedFontVariationTitle = searchParams.get( 'font_variation_title' );
+	/**
+	 * Get the preselect data only when mounting and ignore any changes later.
+	 */
+	const {
+		preselectedTheme,
+		preselectedStyle,
+		preselectedColorVariationTitle,
+		preselectedFontVariationTitle,
+	} = useMemo(
+		() => ( {
+			preselectedTheme: searchParams.get( 'theme' ),
+			preselectedStyle: searchParams.get( 'style_variation' ),
+			preselectedColorVariationTitle: searchParams.get( 'color_variation_title' ),
+			preselectedFontVariationTitle: searchParams.get( 'font_variation_title' ),
+		} ),
+		[]
+	);
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
 
@@ -125,7 +139,7 @@ const useRecipe = (
 
 	const previewDesign = ( design: Design, styleVariation?: StyleVariation ) => {
 		// Redirect to Site Assembler if the design_type is set to "assembler".
-		const shouldGoToAssembler = isDesktop && design.design_type === 'assembler';
+		const shouldGoToAssembler = isDesktop && isAssemblerDesign( design );
 
 		recordPreviewDesign( design, styleVariation );
 
@@ -167,8 +181,10 @@ const useRecipe = (
 			return;
 		}
 
-		const requestedDesign = allDesigns.designs.find(
-			( design ) => design.recipe?.slug === preselectedTheme || design.slug === preselectedTheme
+		const requestedDesign = allDesigns.designs.find( ( design ) =>
+			design.is_virtual
+				? design.recipe?.slug === preselectedTheme
+				: design.slug === preselectedTheme
 		);
 		if ( ! requestedDesign ) {
 			return;
@@ -230,7 +246,7 @@ const useRecipe = (
 		selectedStyleVariation,
 		selectedColorVariation,
 		selectedFontVariation,
-		hasSelectedGlobalStyles,
+		numOfSelectedGlobalStyles,
 		globalStyles,
 		previewDesign,
 		previewDesignVariation,

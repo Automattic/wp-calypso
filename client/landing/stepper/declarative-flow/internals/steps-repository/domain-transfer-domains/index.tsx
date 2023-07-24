@@ -1,3 +1,5 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -11,10 +13,23 @@ import './styles.scss';
 const Intro: Step = function Intro( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const handleSubmit = () => {
 		submit?.();
 	};
+
+	const getTranslatedSubHeaderText =
+		hasTranslation(
+			'Enter your domain names and authorization codes below. You can transfer up to fifty domains at a time.'
+		) || isEnglishLocale
+			? __(
+					'Enter your domain names and authorization codes below. You can transfer up to fifty domains at a time.'
+			  )
+			: __(
+					'Enter your domain names and authorization codes below. You can transfer up to 50 domains at a time.'
+			  );
+
 	return (
 		<StepContainer
 			flowName={ flow }
@@ -25,8 +40,13 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-transfer-header"
-					headerText={ __( 'Add unlocked domains' ) }
-					align="left"
+					headerText={ __( 'Add your domains' ) }
+					subHeaderText={
+						<>
+							<span>{ getTranslatedSubHeaderText }</span>
+						</>
+					}
+					align="center"
 				/>
 			}
 			stepContent={
@@ -38,7 +58,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			showHeaderJetpackPowered={ false }
 			showHeaderWooCommercePowered={ false }
 			showVideoPressPowered={ false }
-			showJetpackPowered={ true }
+			showJetpackPowered={ false }
 		/>
 	);
 };

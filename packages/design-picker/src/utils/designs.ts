@@ -1,3 +1,4 @@
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import { DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import type { Design, DesignPreviewOptions } from '../types';
@@ -40,6 +41,9 @@ export const getDesignPreviewUrl = (
 			options.style_variation.slug !== 'default' && {
 				style_variation: options.style_variation.title,
 			} ),
+		...( options.viewport_unit_to_px && {
+			viewport_unit_to_px: options.viewport_unit_to_px,
+		} ),
 	} );
 
 	// The preview url is sometimes used in a `background-image: url()` CSS rule and unescaped
@@ -61,3 +65,9 @@ export const getDesignPreviewUrl = (
 
 	return url;
 };
+
+export const isAssemblerDesign = ( design?: Design ) => design?.design_type === 'assembler';
+
+// Go to the assembler only when the viewport width >= 960px as the it doesn't support small
+// screen for now.
+export const shouldGoToAssembler = () => isWithinBreakpoint( '>=960px' );

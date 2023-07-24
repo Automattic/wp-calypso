@@ -117,10 +117,11 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 							{ __( 'View' ) }
 						</a>
 						<Button
-							className="post-item__post-promote-button"
+							variant="primary"
 							isBusy={ loading }
 							disabled={ loading }
 							onClick={ onClickPromote }
+							className="post-item__post-promote-button"
 						>
 							{ __( 'Promote' ) }
 						</Button>
@@ -140,10 +141,11 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 			</td>
 			<td className="post-item__post-promote">
 				<Button
-					className="post-item__post-promote-button"
+					variant="primary"
 					isBusy={ loading }
 					disabled={ loading }
 					onClick={ onClickPromote }
+					className="post-item__post-promote-button"
 				>
 					{ __( 'Promote' ) }
 				</Button>

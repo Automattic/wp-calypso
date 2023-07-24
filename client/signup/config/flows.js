@@ -1,12 +1,12 @@
 import {
-	BLANK_CANVAS_DESIGN,
+	DEFAULT_ASSEMBLER_DESIGN,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	WOOCOMMERCE_THEME,
 	MARKETPLACE_THEME,
+	shouldGoToAssembler,
 } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
-import { isWithinBreakpoint } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -116,10 +116,9 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
-	if ( isSiteAssemblerFlow( flowName ) && themeParameter === BLANK_CANVAS_DESIGN.slug ) {
-		// Go to the site assembler flow if viewport width >= 960px as the layout doesn't support small
-		// screen for now.
-		if ( isWithinBreakpoint( '>=960px' ) ) {
+	if ( isSiteAssemblerFlow( flowName ) && themeParameter === DEFAULT_ASSEMBLER_DESIGN.slug ) {
+		// Check whether to go to the assembler. If not, go to the site editor directly
+		if ( shouldGoToAssembler() ) {
 			return addQueryArgs(
 				{
 					theme: themeParameter,
@@ -130,8 +129,14 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 			);
 		}
 
-		return `/site-editor/${ siteSlug }`;
+		const params = new URLSearchParams( {
+			canvas: 'edit',
+			assembler: '1',
+		} );
+
+		return `/site-editor/${ siteSlug }?${ params }`;
 	}
+
 	return `/home/${ siteSlug }`;
 }
 
@@ -194,14 +199,18 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHostingFlowDestination( { siteId } ) {
-	return addQueryArgs(
-		{
-			'new-site': siteId,
-			'hosting-flow': true,
-		},
-		'/sites'
-	);
+function getHostingFlowDestination() {
+	const queryArgs = getQueryArgs();
+
+	if ( queryArgs.flow === 'new-hosted-site' ) {
+		return '/setup/new-hosted-site';
+	}
+
+	if ( queryArgs.flow === 'import-hosted-site' ) {
+		return '/setup/import-hosted-site';
+	}
+
+	return '/sites?hosting-flow=true';
 }
 
 const flows = generateFlows( {

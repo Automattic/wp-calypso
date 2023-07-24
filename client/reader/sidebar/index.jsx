@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { hasTranslation } from '@wordpress/i18n';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
@@ -43,8 +44,6 @@ import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
-
-const isSubscriptionManagerEnabled = isEnabled( 'reader/subscription-management' );
 
 export class ReaderSidebar extends Component {
 	state = {};
@@ -141,7 +140,8 @@ export class ReaderSidebar extends Component {
 	};
 
 	renderSidebar() {
-		const { path, translate, teams } = this.props;
+		const { path, translate, teams, locale } = this.props;
+		const recentLabelTranslationReady = hasTranslation( 'Recent' ) || locale.startsWith( 'en' );
 		return (
 			<SidebarMenu>
 				<QueryReaderLists />
@@ -166,7 +166,7 @@ export class ReaderSidebar extends Component {
 					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
 						'sidebar-streams__following': true,
 					} ) }
-					label={ isSubscriptionManagerEnabled ? translate( 'Latest' ) : translate( 'Following' ) }
+					label={ recentLabelTranslationReady ? translate( 'Recent' ) : translate( 'Following' ) }
 					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 					customIcon={ <ReaderFollowingIcon /> }
 					link="/read"

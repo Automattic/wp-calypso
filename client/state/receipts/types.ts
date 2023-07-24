@@ -17,6 +17,7 @@ export interface ReceiptPurchase {
 	willAutoRenew: boolean;
 	saasRedirectUrl: string;
 	newQuantity: number | undefined;
+	blogId: number;
 }
 
 export interface FailedReceiptPurchase {

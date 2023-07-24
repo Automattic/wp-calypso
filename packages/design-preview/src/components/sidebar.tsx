@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { NavigatorScreens, useNavigatorButtons } from '@automattic/onboarding';
-import { useState } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
 import type { Category } from '@automattic/design-picker/src/types';
 import type { NavigatorScreenObject } from '@automattic/onboarding';
@@ -35,7 +36,7 @@ interface SidebarProps {
 	screens: NavigatorScreenObject[];
 	actionButtons: React.ReactNode;
 	onClickCategory?: ( category: Category ) => void;
-	onNavigatorPathChange?: ( path: string ) => void;
+	onNavigatorPathChange?: ( path?: string ) => void;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -55,61 +56,69 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
 	const navigatorButtons = useNavigatorButtons( screens );
 
+	const decodedDescription = useMemo(
+		() => ( description ? decodeEntities( description ) : undefined ),
+		[ description ]
+	);
+
+	const decodedShortDescription = useMemo(
+		() => ( shortDescription ? decodeEntities( shortDescription ) : undefined ),
+		[ shortDescription ]
+	);
+
 	return (
 		<div className="design-preview__sidebar">
-			<div className="design-preview__sidebar-content">
-				<NavigatorScreens screens={ screens } onNavigatorPathChange={ onNavigatorPathChange }>
-					<>
-						<div className="design-preview__sidebar-header">
-							<div className="design-preview__sidebar-title">
-								<h1>{ title }</h1>
-							</div>
-							{ author && (
-								<div className="design-preview__sidebar-author">
-									{ translate( 'By %(author)s', { args: { author } } ) }
-								</div>
-							) }
-							{ ( pricingBadge || categories.length > 0 ) && (
-								<div className="design-preview__sidebar-badges">
-									{ pricingBadge }
-									{ categories.map( ( category ) => (
-										<CategoryBadge
-											key={ category.slug }
-											category={ category }
-											onClick={ onClickCategory }
-										/>
-									) ) }
-								</div>
-							) }
-							{ ( description || shortDescription ) && (
-								<div className="design-preview__sidebar-description">
-									<p>
-										{ isShowDescriptionToggle ? (
-											<>
-												{ isShowFullDescription ? description : shortDescription }
-												<Button
-													borderless
-													onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
-												>
-													{ isShowFullDescription
-														? translate( 'Read less' )
-														: translate( 'Read more' ) }
-												</Button>
-											</>
-										) : (
-											description ?? shortDescription
-										) }
-									</p>
-								</div>
-							) }
+			<NavigatorScreens screens={ screens } onNavigatorPathChange={ onNavigatorPathChange }>
+				<>
+					<div className="design-preview__sidebar-header">
+						<div className="design-preview__sidebar-title">
+							<h1>{ title }</h1>
 						</div>
-						{ navigatorButtons }
-						{ actionButtons && (
-							<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
+						{ author && (
+							<div className="design-preview__sidebar-author">
+								{ translate( 'By %(author)s', { args: { author } } ) }
+							</div>
 						) }
-					</>
-				</NavigatorScreens>
-			</div>
+						{ ( pricingBadge || categories.length > 0 ) && (
+							<div className="design-preview__sidebar-badges">
+								{ pricingBadge }
+								{ categories.map( ( category ) => (
+									<CategoryBadge
+										key={ category.slug }
+										category={ category }
+										onClick={ onClickCategory }
+									/>
+								) ) }
+							</div>
+						) }
+						{ ( decodedDescription || decodedShortDescription ) && (
+							<div className="design-preview__sidebar-description">
+								<p>
+									{ isShowDescriptionToggle ? (
+										<>
+											{ isShowFullDescription ? decodedDescription : decodedShortDescription }
+											<Button
+												borderless
+												onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
+											>
+												{ isShowFullDescription
+													? translate( 'Read less' )
+													: translate( 'Read more' ) }
+											</Button>
+										</>
+									) : (
+										decodedDescription ?? decodedShortDescription
+									) }
+								</p>
+							</div>
+						) }
+					</div>
+					{ navigatorButtons }
+					{ actionButtons && (
+						<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
+					) }
+				</>
+			</NavigatorScreens>
 		</div>
 	);
 };

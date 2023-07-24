@@ -5,6 +5,11 @@ import { render, screen } from '@testing-library/react';
 import { NoSitesMessage } from '../no-sites-message';
 
 describe( '<NoSitesMessage>', () => {
+	test( '"Create your first site" message when status filter shows "all" sites', () => {
+		render( <NoSitesMessage status="all" statusSiteCount={ 0 } /> );
+		expect( screen.getByRole( 'link' ) ).toHaveTextContent( 'Create your first site' );
+	} );
+
 	test( '"You haven\'t launched a site" message when status filter shows "public" sites', () => {
 		render( <NoSitesMessage status="public" statusSiteCount={ 0 } /> );
 		expect( screen.getByText( "You haven't launched a site" ) ).toBeInTheDocument();

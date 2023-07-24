@@ -1,14 +1,18 @@
-import { PremiumBadge } from '@automattic/design-picker';
+import { PremiumBadge } from '@automattic/components';
 import {
 	__unstableComposite as Composite,
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
+import { InView, IntersectionObserverProps } from 'react-intersection-observer';
+import {
+	GlobalStylesContext,
+	mergeBaseAndUserConfigs,
+	withExperimentalBlockEditorProvider,
+} from '../../gutenberg-bridge';
 import { useColorPaletteVariations } from '../../hooks';
 import ColorPaletteVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -43,7 +47,6 @@ const ColorPaletteVariation = ( {
 			merged: mergeBaseAndUserConfigs( base, colorPaletteVariation ),
 		};
 	}, [ colorPaletteVariation, base ] );
-
 	return (
 		<CompositeItem
 			role="option"
@@ -61,11 +64,19 @@ const ColorPaletteVariation = ( {
 				} ) as string
 			}
 		>
-			<div className="global-styles-variation__item-preview">
-				<GlobalStylesContext.Provider value={ context }>
-					<ColorPaletteVariationPreview title={ colorPaletteVariation.title } />
-				</GlobalStylesContext.Provider>
-			</div>
+			<InView triggerOnce>
+				{
+					( ( { inView, ref } ) => (
+						<div className="global-styles-variation__item-preview" ref={ ref }>
+							{ ( isActive || inView ) && (
+								<GlobalStylesContext.Provider value={ context }>
+									<ColorPaletteVariationPreview title={ colorPaletteVariation.title } />
+								</GlobalStylesContext.Provider>
+							) }
+						</div>
+					) ) as IntersectionObserverProps[ 'children' ]
+				}
+			</InView>
 		</CompositeItem>
 	);
 };
@@ -102,7 +113,9 @@ const ColorPaletteVariations = ( {
 			</div>
 			<div className="global-styles-variations__group">
 				<h3 className="global-styles-variations__group-title">
-					{ translate( 'Custom styles' ) }
+					<span className="global-styles-variations__group-title-actual">
+						{ translate( 'Custom styles' ) }
+					</span>
 					{ limitGlobalStyles && (
 						<PremiumBadge
 							shouldHideTooltip
@@ -127,4 +140,4 @@ const ColorPaletteVariations = ( {
 	);
 };
 
-export default ColorPaletteVariations;
+export default withExperimentalBlockEditorProvider( ColorPaletteVariations );

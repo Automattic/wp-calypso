@@ -21,7 +21,8 @@ class NewsPack_Test extends TestCase {
 		ob_start();
 		newspack_blocks_render_block_carousel(
 			array(
-				'postsToShow' => 3,
+				'postsToShow'   => 3,
+				'slidesPerView' => 2,
 			)
 		);
 		ob_end_flush();
@@ -44,6 +45,8 @@ class NewsPack_Test extends TestCase {
 				'showImage'       => false,
 				'specificMode'    => 0,
 				'textColor'       => '',
+				'slidesPerView'   => false,
+				'textAlign'       => false,
 			)
 		);
 		ob_end_flush();

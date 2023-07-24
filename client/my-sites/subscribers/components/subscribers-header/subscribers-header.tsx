@@ -6,17 +6,12 @@ import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subs
 import { SubscribersHeaderPopover } from '../subscribers-header-popover';
 
 type SubscribersHeaderProps = {
-	selectedSiteId: number | null;
+	selectedSiteId: number | undefined;
 	navigationItems: Item[];
-	setShowAddSubscribersModal: React.Dispatch< React.SetStateAction< boolean > >;
 };
 
-const SubscribersHeader = ( {
-	navigationItems,
-	selectedSiteId,
-	setShowAddSubscribersModal,
-}: SubscribersHeaderProps ) => {
-	const { grandTotal } = useSubscribersPage();
+const SubscribersHeader = ( { navigationItems, selectedSiteId }: SubscribersHeaderProps ) => {
+	const { grandTotal, setShowAddSubscribersModal } = useSubscribersPage();
 
 	return (
 		<FixedNavigationHeader navigationItems={ navigationItems }>

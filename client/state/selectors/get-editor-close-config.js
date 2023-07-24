@@ -9,9 +9,9 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
  * @param {Object} state  Global state tree
  * @param {number|string|undefined|null} siteId Site ID
  * @param {string} postType The type of the current post being edited
- * @returns {{url: string; label: string}} The URL that should be used when the block editor close button is clicked
+ * @returns {{url: string; label: import('i18n-calypso').TranslateResult}} The URL that should be used when the block editor close button is clicked
  * @property {string} url The URL that should be used when the block editor close button is clicked
- * @property {string} label The label that should be used for the block editor back button
+ * @property {import('i18n-calypso').TranslateResult} label The label that should be used for the block editor back button
  */
 
 export default function getEditorCloseConfig( state, siteId, postType ) {

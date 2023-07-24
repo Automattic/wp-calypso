@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
+import { Design, isAssemblerDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -268,8 +268,8 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					const _selectedDesign = providedDependencies?.selectedDesign as Design;
-					if ( _selectedDesign?.design_type === 'assembler' ) {
+					const { selectedDesign: _selectedDesign, shouldGoToAssembler } = providedDependencies;
+					if ( isAssemblerDesign( _selectedDesign as Design ) && shouldGoToAssembler ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -286,7 +286,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if ( isBlankCanvasDesign( selectedDesign ) ) {
+					if ( isAssemblerDesign( selectedDesign ) ) {
 						const params = new URLSearchParams( {
 							canvas: 'edit',
 							assembler: '1',

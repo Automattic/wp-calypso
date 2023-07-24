@@ -1,5 +1,5 @@
-import { Button, Spinner } from '@automattic/components';
-import { Icon, home, info, redo, plus } from '@wordpress/icons';
+import { Badge, Button, Spinner } from '@automattic/components';
+import { Icon, home, info, redo } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -7,7 +7,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -19,7 +18,11 @@ import {
 	isDomainUpdateable,
 	resolveDomainStatus,
 } from 'calypso/lib/domains';
-import { type as domainTypes, domainInfoContext } from 'calypso/lib/domains/constants';
+import {
+	type as domainTypes,
+	domainInfoContext,
+	transferStatus,
+} from 'calypso/lib/domains/constants';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
 import { isRecentlyRegisteredAndDoesNotPointToWpcom } from 'calypso/lib/domains/utils/is-recently-registered-and-does-not-point-to-wpcom';
@@ -28,7 +31,6 @@ import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import {
-	createSiteFromDomainOnly,
 	domainManagementDns,
 	domainManagementEditContactInfo,
 	domainManagementList,
@@ -38,7 +40,7 @@ import {
 	emailManagement,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
-import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
@@ -100,7 +102,7 @@ class DomainRow extends PureComponent {
 		return (
 			<div className="domain-row__site-cell">
 				<Button href={ domainManagementList( site?.slug, currentRoute ) } plain>
-					{ site?.title || site?.slug }
+					{ ! site.options?.is_domain_only ? site?.title || site?.slug : '' }
 				</Button>
 			</div>
 		);
@@ -387,9 +389,15 @@ class DomainRow extends PureComponent {
 							? translate( 'View transfer' )
 							: translate( 'View settings' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
-						{ translate( 'Manage DNS' ) }
-					</PopoverMenuItem>
+					{ ! (
+						domain.type === domainTypes.SITE_REDIRECT ||
+						domain.transferStatus === transferStatus.PENDING_ASYNC
+					) &&
+						domain.canManageDnsRecords && (
+							<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
+								{ translate( 'Manage DNS' ) }
+							</PopoverMenuItem>
+						) }
 
 					{ domain.type === domainTypes.REGISTERED &&
 						( isDomainUpdateable( domain ) || isDomainInGracePeriod( domain ) ) && (
@@ -414,12 +422,6 @@ class DomainRow extends PureComponent {
 						>
 							<Icon icon={ redo } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ translate( 'Transfer to WordPress.com' ) }
-						</PopoverMenuItem>
-					) }
-					{ site.options?.is_domain_only && (
-						<PopoverMenuItem href={ createSiteFromDomainOnly( site.slug, site.siteId ) }>
-							<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-							{ translate( 'Create site' ) }
 						</PopoverMenuItem>
 					) }
 				</EllipsisMenu>
@@ -544,9 +546,9 @@ class DomainRow extends PureComponent {
 	}
 }
 
-function withOdysseusAssistantContext( Component ) {
+function withOdieAssistantContext( Component ) {
 	return function WrappedComponent( props ) {
-		const { sendNudge } = useOdysseusAssistantContext();
+		const { sendNudge } = useOdieAssistantContext();
 		return <Component { ...props } sendNudge={ sendNudge } />;
 	};
 }
@@ -556,4 +558,4 @@ export default connect( ( state ) => {
 	return {
 		currentRoute,
 	};
-} )( withOdysseusAssistantContext( localize( DomainRow ) ) );
+} )( withOdieAssistantContext( localize( DomainRow ) ) );

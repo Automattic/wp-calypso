@@ -1,8 +1,9 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, ComponentPropsWithoutRef } from 'react';
 import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	READER_EXPORT_TYPE_LIST,
@@ -20,11 +21,15 @@ type ExportResponse = {
 	opml: string;
 };
 
-type ReaderExportButtonProps = Button.ButtonProps & {
+type ReaderExportButtonProps = {
 	exportType?: ExportType;
 	filename?: string;
 	listId?: number;
 };
+
+// Note: since the Button must be disableable, it must not be a link. So we need to remove the link type variant from the accepted props.
+type RemoveAnchorButtonProps< T > = T extends { href: string } ? never : T;
+type AcceptedButtonProps = RemoveAnchorButtonProps< ComponentPropsWithoutRef< typeof Button > >;
 
 const ReaderExportButton = ( {
 	filename = 'reader-export.opml',
@@ -32,11 +37,12 @@ const ReaderExportButton = ( {
 	disabled,
 	listId,
 	...props
-}: ReaderExportButtonProps ) => {
+}: ReaderExportButtonProps & AcceptedButtonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
 	const isMounted = useRef( false );
-	const [ isExportInProgress, setExportInProgress ] = useState( false );
+	const [ isExportInProgress, setExportInProgress ] = useState< boolean >( false );
 
 	useEffect( () => {
 		isMounted.current = true;
@@ -93,7 +99,9 @@ const ReaderExportButton = ( {
 			{ ...props }
 		>
 			{ ! props.icon && <Gridicon icon="cloud-download" className="reader-export-button__icon" /> }
-			<span className="reader-export-button__label">{ translate( 'Export' ) }</span>
+			<span className="reader-export-button__label">
+				{ hasTranslation( 'Export OPML' ) ? translate( 'Export OPML' ) : translate( 'Export' ) }
+			</span>
 		</Button>
 	);
 };

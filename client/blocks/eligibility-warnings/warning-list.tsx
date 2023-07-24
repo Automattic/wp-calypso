@@ -1,8 +1,7 @@
-import { Card } from '@automattic/components';
+import { Card, Badge } from '@automattic/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
-import Badge from 'calypso/components/badge';
 import ExternalLink from 'calypso/components/external-link';
 import type { DomainNames, EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
