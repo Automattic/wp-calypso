@@ -33,6 +33,10 @@ export function requestFollow( action ) {
 }
 
 function handleRecommendedSiteFollowSuccess( recommendedSiteInfo ) {
+	if ( ! recommendedSiteInfo ) {
+		return [];
+	}
+
 	const { siteId, seed, siteTitle } = recommendedSiteInfo;
 	return [
 		followedRecommendedSite( { siteId, seed } ),
