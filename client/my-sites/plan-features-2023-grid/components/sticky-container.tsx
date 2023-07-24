@@ -1,10 +1,9 @@
 import { Global, css } from '@emotion/react';
-import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 import styled from '@emotion/styled';
-import { useRef, type ElementType, useState, useLayoutEffect } from 'react';
+import { useRef, type ElementType, useState, useLayoutEffect, ReactNode } from 'react';
 
 type Props = {
-	children: ( isStuck: boolean ) => EmotionJSX.Element[];
+	children: ( isStuck: boolean ) => ReactNode;
 	stickyClass?: string;
 	element?: ElementType;
 	stickyOffset?: number; // offset from the top of the scrolling container to control when the element should start sticking, default 0
