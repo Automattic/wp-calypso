@@ -5,21 +5,28 @@ import { useRef, type ElementType, useState, useLayoutEffect } from 'react';
 
 type Props = {
 	children: ( isStuck: boolean ) => EmotionJSX.Element[];
-	stickyClass: string;
+	stickyClass?: string;
 	element?: ElementType;
-	blockOffset: number;
+	stickyOffset?: number; // offset from the top of the scrolling container to control when the element should start sticking, default 0
+	topOffset?: number; // offset from the top of the scrolling container to control the position of the sticky element, default 0
 };
 
-const Container = styled.div< { blockOffset: number } >`
+const Container = styled.div< { topOffset: number } >`
 	position: sticky;
-	top: ${ ( props ) => props.blockOffset + 'px' };
+	top: ${ ( props ) => props.topOffset + 'px' };
 	z-index: 1;
 `;
 
 export function StickyContainer( props: Props ) {
+	const { stickyOffset = 0, topOffset = 0, stickyClass = '', element = 'div', children } = props;
+
 	const stickyRef = useRef( null );
 	const [ isStuck, setIsStuck ] = useState( false );
 
+	/**
+	 * This effect sets the value of `isStuck` state when it detects that
+	 * the element is sticky.
+	 */
 	useLayoutEffect( () => {
 		const observer = new IntersectionObserver(
 			( [ e ] ) => {
@@ -30,22 +37,19 @@ export function StickyContainer( props: Props ) {
 				}
 			},
 			{
-				rootMargin: `-${ props.blockOffset + 1 }px 0px 0px 0px`,
+				rootMargin: `-${ stickyOffset + 1 }px 0px 0px 0px`,
 				threshold: [ 0, 1 ],
 			}
 		);
 
-		const ref = stickyRef.current;
-
-		if ( ref ) {
-			observer.observe( ref );
+		if ( stickyRef.current ) {
+			observer.observe( stickyRef.current );
 		}
+
 		return () => {
-			if ( ref ) {
-				observer.unobserve( ref );
-			}
+			observer.disconnect();
 		};
-	}, [ props.blockOffset, props.stickyClass ] );
+	}, [ stickyOffset ] );
 
 	return (
 		<>
@@ -53,7 +57,7 @@ export function StickyContainer( props: Props ) {
 				styles={ css`
 					/**
 				 * .layout__content has overflow set to hidden, which prevents position: sticky from working.
-				 * Instead of removing it globally, this CSS only unsets the property when the StickyContainer is rendered.
+				 * Instead of removing it globally, this CSS only unsets the property when this component is rendered.
 				 */
 					.layout__content {
 						overflow: unset;
@@ -62,12 +66,12 @@ export function StickyContainer( props: Props ) {
 			/>
 			<Container
 				{ ...props }
-				as={ props.element ?? 'div' }
+				as={ element }
 				ref={ stickyRef }
-				blockOffset={ props.blockOffset }
-				className={ isStuck ? props.stickyClass : '' }
+				topOffset={ topOffset }
+				className={ isStuck ? stickyClass : '' }
 			>
-				{ props.children( isStuck ) }
+				{ children( isStuck ) }
 			</Container>
 		</>
 	);

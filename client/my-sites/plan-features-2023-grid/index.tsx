@@ -357,11 +357,10 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
 					<StickyContainer
-						stickyClass={
-							isInSignup ? 'is-sticky-top-buttons-row-signup' : 'is-sticky-top-buttons-row'
-						}
+						stickyClass="is-sticky-top-buttons-row"
 						element="tr"
-						blockOffset={ stickyRowOffset }
+						stickyOffset={ stickyRowOffset }
+						topOffset={ stickyRowOffset + ( isInSignup ? 0 : 20 ) }
 					>
 						{ ( isStuck: boolean ) => this.renderTopButtons( planPropertiesObj, { isStuck } ) }
 					</StickyContainer>
