@@ -164,11 +164,15 @@ class DomainSearchResults extends Component {
 
 			if ( isDomainOnly && ! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus ) ) {
 				domainUnavailableMessage = translate(
-					'{{strong}}%(domain)s{{/strong}} is already registered. Please try another search.',
+					'{{strong}}%(domain)s{{/strong}} is already registered. Do you own this domain? {{a}}Transfer it to WordPress.com{{/a}} now, or try another search.',
 					{
 						args: { domain },
 						components: {
 							strong: <strong />,
+							a: (
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
+								<a href="/setup/domain-transfer" />
+							),
 						},
 					}
 				);
