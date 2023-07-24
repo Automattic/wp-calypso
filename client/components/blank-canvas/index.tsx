@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
-import { useEffect } from 'react';
+import { MouseEventHandler, PropsWithChildren, ReactNode, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useDispatch } from 'react-redux';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -9,7 +9,11 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 import './style.scss';
 
-const BlankCanvas = ( { className, children } ) => {
+interface Props {
+	className?: string;
+	children: ReactNode;
+}
+const BlankCanvas = ( { className = '', children }: Props ) => {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -25,8 +29,18 @@ const BlankCanvas = ( { className, children } ) => {
 	);
 };
 
-BlankCanvas.Header = ( { backUrl, children, onBackClick } ) => (
-	<div className="blank-canvas__header">
+interface HeaderProps {
+	className?: string;
+	backUrl?: string;
+	onBackClick?: MouseEventHandler;
+}
+BlankCanvas.Header = ( {
+	className = '',
+	backUrl,
+	children,
+	onBackClick,
+}: PropsWithChildren< HeaderProps > ) => (
+	<div className={ `blank-canvas__header ${ className }` }>
 		<WordPressLogo />
 		{ ( backUrl || onBackClick ) && (
 			<Button
@@ -38,10 +52,16 @@ BlankCanvas.Header = ( { backUrl, children, onBackClick } ) => (
 				{ __( 'Back' ) }
 			</Button>
 		) }
-		{ children.length && <div className="blank-canvas__header-title">{ children }</div> }
+		{ children && <div className="blank-canvas__header-title">{ children }</div> }
 	</div>
 );
-BlankCanvas.Content = ( { children } ) => <div className="blank-canvas__content">{ children }</div>;
-BlankCanvas.Footer = ( { children } ) => <div className="blank-canvas__footer">{ children }</div>;
+
+BlankCanvas.Content = ( { children }: PropsWithChildren ) => (
+	<div className="blank-canvas__content">{ children }</div>
+);
+
+BlankCanvas.Footer = ( { children }: PropsWithChildren ) => (
+	<div className="blank-canvas__footer">{ children }</div>
+);
 
 export { BlankCanvas };
