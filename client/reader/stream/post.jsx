@@ -47,6 +47,7 @@ class ReaderPostCardAdapter extends Component {
 				isSelected={ this.props.isSelected }
 				followSource={ this.props.followSource }
 				showSiteName={ this.props.showSiteName }
+				isDiscoverStream={ this.props.isDiscoverStream }
 				postKey={ this.props.postKey }
 				compact={ this.props.compact }
 				showFollowButton={ this.props.showFollowButton }
