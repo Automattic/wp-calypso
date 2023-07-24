@@ -95,40 +95,13 @@ import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
+import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
-
-const LivePreviewButton = ( {
-	isActive,
-	isAtomic,
-	isExternallyManagedTheme,
-	isWporg,
-	showTryAndCustomize,
-	siteSlug,
-	stylesheet,
-} ) => {
-	if ( isActive ) {
-		return null;
-	}
-	if ( showTryAndCustomize ) {
-		return null;
-	}
-	if ( isAtomic ) {
-		return null;
-	}
-	if ( isExternallyManagedTheme || isWporg ) {
-		return null;
-	}
-	return (
-		<Button href={ `https://${ siteSlug }/wp-admin/site-editor.php?theme_preview=${ stylesheet }` }>
-			Live Preview (PoC)
-		</Button>
-	);
-};
 
 const noop = () => {};
 
