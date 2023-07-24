@@ -1,7 +1,8 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "../../videopress.scss";
 
-body.is-videopress-tv-stepper .videopress-tv.trial-exists {
+body.is-videopress-tv-stepper .videopress-tv.redirect,
+body.is-videopress-tv-purchase-stepper.videopress-tv-purchase.redirect {
 	justify-content: space-around;
 
 	.step-container__content {
@@ -10,7 +11,7 @@ body.is-videopress-tv-stepper .videopress-tv.trial-exists {
 	}
 }
 
-.videopress-tv-trial-exists__step-content {
+.videopress-tv-purchase-redirect__step-content {
 	display: flex;
 	justify-content: center;
 

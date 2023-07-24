@@ -13,7 +13,7 @@ const VideoPressTvRedirect: Step = function VideoPressTvRedirect( { data } ) {
 	const { __ } = useI18n();
 
 	const stepContent = (
-		<div className="videopress-tv-trial-exists__step-content intro__button-row">
+		<div className="videopress-tv-purchase-redirect__step-content intro__button-row">
 			<button
 				className="button intro__button is-primary"
 				onClick={ () => ( window.location.href = String( data?.url ) ) }
@@ -25,14 +25,14 @@ const VideoPressTvRedirect: Step = function VideoPressTvRedirect( { data } ) {
 
 	return (
 		<StepContainer
-			stepName="trial-exists"
+			stepName="redirect"
 			isWideLayout={ true }
 			hideBack={ true }
-			flowName="videopress-tv"
+			flowName="videopress-tv-purchase"
 			formattedHeader={
 				<FormattedHeader
-					id="videopress-tv-trial-exists-header"
-					headerText={ __( 'Redirecting To you VideoPress TV site' ) }
+					id="videopress-tv-purchase-redirect-header"
+					headerText={ __( 'Redirecting To you VideoPress TV video site' ) }
 					align="center"
 				/>
 			}
