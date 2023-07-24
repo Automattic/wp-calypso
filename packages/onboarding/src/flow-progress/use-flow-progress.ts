@@ -8,6 +8,7 @@ import {
 	ONBOARDING_PM_FLOW,
 	DOMAIN_TRANSFER,
 	VIDEOPRESS_TV_FLOW,
+	VIDEOPRESS_TV_PURCHASE_FLOW,
 } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
@@ -70,6 +71,9 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	[ VIDEOPRESS_TV_FLOW ]: {
 		intro: 0,
 		processing: 1,
+	},
+	[ VIDEOPRESS_TV_PURCHASE_FLOW ]: {
+		processing: 0,
 	},
 	sensei: {
 		senseiSetup: 1,

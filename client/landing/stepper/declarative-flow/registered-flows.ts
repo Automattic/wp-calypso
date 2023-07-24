@@ -9,6 +9,7 @@ import {
 	DOMAIN_TRANSFER,
 	ONBOARDING_PM_FLOW,
 	VIDEOPRESS_TV_FLOW,
+	VIDEOPRESS_TV_PURCHASE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -33,6 +34,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ VIDEOPRESS_TV_FLOW ]: () =>
 		import( /* webpackChunkName: "videopress-tv-flow" */ `../declarative-flow/videopress-tv` ),
+
+	[ VIDEOPRESS_TV_PURCHASE_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "videopress-tv-flow" */ `../declarative-flow/videopress-tv-purchase`
+		),
 
 	'link-in-bio': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),

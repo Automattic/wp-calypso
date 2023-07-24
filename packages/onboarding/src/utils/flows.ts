@@ -70,6 +70,8 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 		flowName &&
 			( isNewsletterOrLinkInBioFlow( flowName ) ||
 				VIDEOPRESS_FLOW === flowName ||
+				VIDEOPRESS_TV_FLOW === flowName ||
+				VIDEOPRESS_TV_PURCHASE_FLOW === flowName ||
 				ECOMMERCE_FLOW === flowName ||
 				FREE_FLOW === flowName )
 	);
