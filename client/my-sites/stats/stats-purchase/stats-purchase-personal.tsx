@@ -6,7 +6,7 @@ import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
-import { COMPONENT_CLASS_NAME, PRICING_CONFIG } from './stats-purchase-wizard';
+import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
@@ -15,7 +15,7 @@ interface PersonalPurchaseProps {
 	currencyCode: string;
 	siteSlug: string;
 	sliderSettings: {
-		sliderStep: number;
+		sliderStepPrice: number;
 		maxSliderPrice: number;
 		uiEmojiHeartTier: number;
 		uiImageCelebrationTier: number;
@@ -40,7 +40,10 @@ const PersonalPurchase = ( {
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
-	const { sliderStep, maxSliderPrice, uiEmojiHeartTier, uiImageCelebrationTier } = sliderSettings;
+	const { sliderStepPrice, maxSliderPrice, uiEmojiHeartTier, uiImageCelebrationTier } =
+		sliderSettings;
+
+	const [ defaultStartingValue ] = useState( subscriptionValue );
 
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
@@ -57,7 +60,10 @@ const PersonalPurchase = ( {
 			<div { ...props }>
 				{ translate( '%(value)s/month', {
 					args: {
-						value: formatCurrency( state?.valueNow || subscriptionValue, currencyCode ),
+						value: formatCurrency(
+							( state?.valueNow || subscriptionValue ) * sliderStepPrice,
+							currencyCode
+						),
 					},
 					comment: 'Price per month selected by the user via the pricing slider',
 				} ) }
@@ -86,14 +92,13 @@ const PersonalPurchase = ( {
 				value={ subscriptionValue }
 				renderThumb={ sliderLabel }
 				onChange={ setSubscriptionValue }
-				maxValue={ maxSliderPrice }
-				step={ sliderStep }
+				maxValue={ Math.floor( maxSliderPrice / sliderStepPrice ) }
 			/>
 
 			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
 				{ translate( 'Our users pay %(value)s per month on average', {
 					args: {
-						value: formatCurrency( PRICING_CONFIG.AVERAGE_PRICE_INFO, currencyCode ),
+						value: formatCurrency( defaultStartingValue * sliderStepPrice, currencyCode ),
 					},
 				} ) }
 			</p>
@@ -197,13 +202,13 @@ const PersonalPurchase = ( {
 							siteSlug,
 							adminUrl,
 							redirectUri,
-							price: subscriptionValue,
+							price: subscriptionValue / MIN_STEP_SPLITS,
 						} )
 					}
 				>
 					{ translate( 'Get Jetpack Stats for %(value)s per month', {
 						args: {
-							value: formatCurrency( subscriptionValue, currencyCode ),
+							value: formatCurrency( subscriptionValue * sliderStepPrice, currencyCode ),
 						},
 					} ) }
 				</Button>
