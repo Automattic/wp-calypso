@@ -57,6 +57,19 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 					expandSection={ expandSection }
 				/>
 			) }
+			{ isAdmin && (
+				<SidebarItem
+					tipTarget="posts"
+					customIcon={ showIcons && <JetpackIcons icon="activity-log" /> }
+					label={ translate( 'Posts', {
+						comment: 'Jetpack sidebar menu item',
+					} ) }
+					link={ `/posts/${ siteSlug }` }
+					onNavigate={ onNavigate( tracksEventNames.postsClicked ) }
+					selected={ currentPathMatches( `/posts/${ siteSlug }` ) }
+					expandSection={ expandSection }
+				></SidebarItem>
+			) }
 			{ isAdmin && ! isWPForTeamsSite && (
 				<SidebarItem
 					customIcon={ showIcons && <JetpackIcons icon="backup" /> }
