@@ -72,6 +72,11 @@ export const setUpActionsForTasks = ( {
 					window.location.assign( `/page/${ siteSlug }/${ task?.extra_data?.about_page_id }` );
 				};
 				break;
+			case 'customize_welcome_message':
+				action = () => {
+					window.location.assign( `/settings/reading/${ siteSlug }#newsletter-settings` );
+				};
+				break;
 		}
 
 		const actionDispatch = () => {
