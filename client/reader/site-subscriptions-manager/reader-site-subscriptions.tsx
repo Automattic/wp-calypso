@@ -57,9 +57,7 @@ const ReaderSiteSubscriptions = () => {
 
 	// Update url query when search term changes
 	useEffect( () => {
-		if ( debouncedSearchTerm ) {
-			setUrlQuery( SEARCH_KEY, debouncedSearchTerm );
-		}
+		setUrlQuery( SEARCH_KEY, debouncedSearchTerm );
 	}, [ debouncedSearchTerm ] );
 
 	useEffect( () => {
