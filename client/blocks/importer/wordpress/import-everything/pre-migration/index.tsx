@@ -8,12 +8,12 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
-import useWaitForAtomicTransfer from 'calypso/blocks/importer/hooks/use-wait-for-atomic-transfer';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import MigrationCredentialsForm from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-credentials-form';
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
 import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
 import { FormState } from 'calypso/components/advanced-credentials/form';
+import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
@@ -23,6 +23,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
+import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import ConfirmModal from './confirm-modal';
 import { CredentialsHelper } from './credentials-helper';
 import { StartImportTrackingProps } from './types';
@@ -89,13 +90,26 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		onfetchCallback
 	);
 
-	const { waitForAtomicTransfer, isLoading: isWaitingForAtomicTransfer } = useWaitForAtomicTransfer(
-		targetSite.ID,
-		{ onSuccess: startImport }
+	const [ queryTargetSitePlanStatus, setQueryTargetSitePlanStatus ] = useState<
+		'init' | 'fetching' | 'fetched'
+	>( 'init' );
+
+	const isRequestingTargetSitePlans = useSelector( ( state ) =>
+		isRequestingSitePlans( state, targetSite.ID )
 	);
 
+	useEffect( () => {
+		if ( queryTargetSitePlanStatus === 'fetching' && ! isRequestingTargetSitePlans ) {
+			setQueryTargetSitePlanStatus( 'fetched' );
+			setContinueImport( true );
+			fetchMigrationEnabledStatus();
+		}
+	}, [ queryTargetSitePlanStatus, isRequestingTargetSitePlans, fetchMigrationEnabledStatus ] );
+
 	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
-		onSuccess: waitForAtomicTransfer,
+		onSuccess: () => {
+			setQueryTargetSitePlanStatus( 'fetching' );
+		},
 	} );
 
 	const credentials = useSelector( ( state ) =>
@@ -261,15 +275,20 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 		// If the target site is not plan compatible, we show the upgrade plan screen
 		return (
-			<PreMigrationUpgradePlan
-				sourceSiteSlug={ sourceSiteSlug }
-				sourceSiteUrl={ sourceSiteUrl }
-				targetSite={ targetSite }
-				startImport={ onUpgradeAndMigrateClick }
-				onFreeTrialClick={ onFreeTrialClick }
-				onContentOnlyClick={ onContentOnlyClick }
-				isBusy={ isFetchingMigrationData || isAddingTrial || isWaitingForAtomicTransfer }
-			/>
+			<>
+				{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
+				<PreMigrationUpgradePlan
+					sourceSiteSlug={ sourceSiteSlug }
+					sourceSiteUrl={ sourceSiteUrl }
+					targetSite={ targetSite }
+					startImport={ onUpgradeAndMigrateClick }
+					onFreeTrialClick={ onFreeTrialClick }
+					onContentOnlyClick={ onContentOnlyClick }
+					isBusy={
+						isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
+					}
+				/>
+			</>
 		);
 	}
 
