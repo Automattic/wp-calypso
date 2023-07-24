@@ -1,5 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 
+.stats-purchase-page__loader {
+	display: flex;
+	justify-content: center;
+}
+
 .stats-purchase-wizard {
 	--font-body: 16px;
 	--jp-black: #000;

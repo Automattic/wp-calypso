@@ -351,6 +351,10 @@
 			fill: var(--color-text);
 		}
 	}
+
+	.notice__content {
+		max-width: 500px;
+	}
 }
 
 .memberships__dialog-section {

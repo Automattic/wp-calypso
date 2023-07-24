@@ -1,13 +1,18 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import { connect } from 'react-redux';
+import { domainManagementRoot, domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import './style.scss';
+import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 type Props = {
 	purchases: ReceiptPurchase[] | undefined;
+	manageDomainUrl: string;
 };
 
-const DomainsTransferredList = ( { purchases }: Props ) => {
+const DomainsTransferredList = ( { purchases, manageDomainUrl }: Props ) => {
 	const { __, _n } = useI18n();
 
 	const handleUserClick = ( destination: string ) => {
@@ -19,21 +24,22 @@ const DomainsTransferredList = ( { purchases }: Props ) => {
 	return (
 		<>
 			<div className="domain-header-buttons">
-				<a
+				<Button
 					href="/setup/domain-transfer"
 					onClick={ () => handleUserClick( '/setup/domain-transfer' ) }
-					className="components-button is-secondary"
+					className="is-secondary"
 				>
 					{ __( 'Transfer more domains' ) }
-				</a>
+				</Button>
 
-				<a
-					href="/domains/manage?filter=owned-by-me&sortKey=registered-until"
-					className="components-button is-primary manage-all-domains"
+				<Button
+					href={ manageDomainUrl }
+					className="manage-all-domains"
 					onClick={ () => handleUserClick( '/domains/manage' ) }
+					variant="primary"
 				>
 					{ _n( 'Manage your domain', 'Manage your domains', purchases?.length ?? 0 ) }
-				</a>
+				</Button>
 			</div>
 			<div className="domain-complete-summary">
 				<ul className="domain-complete-list">
@@ -51,4 +57,15 @@ const DomainsTransferredList = ( { purchases }: Props ) => {
 	);
 };
 
-export default DomainsTransferredList;
+export default connect( ( state, ownProps: { purchases: ReceiptPurchase[] } ) => {
+	let manageDomainUrl = '/domains/manage';
+	if ( ownProps.purchases?.length === 1 ) {
+		const { blogId, meta } = ownProps.purchases[ 0 ];
+		const siteSlug = getSiteSlug( state, blogId );
+		manageDomainUrl = domainManagementTransferIn( siteSlug ?? '', meta, domainManagementRoot() );
+	}
+
+	return {
+		manageDomainUrl,
+	};
+} )( DomainsTransferredList );

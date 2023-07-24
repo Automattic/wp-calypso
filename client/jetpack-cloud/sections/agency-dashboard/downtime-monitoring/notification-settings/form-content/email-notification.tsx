@@ -44,6 +44,7 @@ export default function EmailNotification( {
 							setEnableEmailNotification( isEnabled );
 						} }
 						checked={ enableEmailNotification }
+						className="notification-settings__toggle-control"
 					/>
 				</div>
 				<div className="notification-settings__toggle-content">

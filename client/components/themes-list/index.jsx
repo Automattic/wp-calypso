@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { PatternAssemblerCta, DEFAULT_ASSEMBLER_DESIGN } from '@automattic/design-picker';
+import { PatternAssemblerCta } from '@automattic/design-picker';
 import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
@@ -89,10 +89,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		// they're on the small screen because the Assembler doesn't support the small screen yet.
 		if ( ! isLoggedIn || shouldGoToAssemblerStep ) {
 			const basePathname = isLoggedIn ? '/setup' : '/start';
-			const params = new URLSearchParams( {
-				ref: 'calypshowcase',
-				theme: DEFAULT_ASSEMBLER_DESIGN.slug,
-			} );
+			const params = new URLSearchParams( { ref: 'calypshowcase' } );
 
 			if ( selectedSite?.slug ) {
 				params.set( 'siteSlug', selectedSite.slug );

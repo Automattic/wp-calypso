@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import SearchInput from 'calypso/components/search';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -172,6 +173,13 @@ class SearchStream extends React.Component {
 					style={ { width: this.props.width } }
 					ref={ this.handleFixedAreaMounted }
 				>
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Search' ) }
+						subHeaderText={ translate( 'Search for specific topics, authors, or blogs.' ) }
+						align="left"
+						hasScreenOptions
+					/>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
