@@ -1,9 +1,8 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ContactList from '../../contact-list';
-import NotAvailableBadge from '../../not-available-badge';
+import FeatureRestrictionBadge from '../../feature-restriction-badge';
 import { RestrictionType } from '../../types';
-import UpgradeBadge from '../../upgrade-badge';
 import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
 interface Props {
@@ -52,8 +51,7 @@ export default function SMSNotification( {
 					<div className="notification-settings__content-heading-with-beta">
 						<div className="notification-settings__content-heading">
 							{ translate( 'SMS Notification' ) }
-							{ restriction === 'upgrade_required' && <UpgradeBadge /> }
-							{ restriction === 'free_site_selected' && <NotAvailableBadge /> }
+							<FeatureRestrictionBadge restriction={ restriction } />
 						</div>
 					</div>
 					<div className="notification-settings__content-sub-heading">

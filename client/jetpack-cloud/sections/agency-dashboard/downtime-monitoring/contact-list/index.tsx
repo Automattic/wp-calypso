@@ -9,9 +9,8 @@ import {
 	StateMonitorSettingsEmail,
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
-import NotAvailableBadge from '../not-available-badge';
+import FeatureRestrictionBadge from '../feature-restriction-badge';
 import { RestrictionType } from '../types';
-import UpgradeBadge from '../upgrade-badge';
 import ContactListItem from './item';
 import { getContactActionEventName, getContactItemValue } from './utils';
 
@@ -99,8 +98,7 @@ export default function ContactList( {
 							{ addButtonLabel }
 						</Button>
 
-						{ restriction === 'upgrade_required' && <UpgradeBadge /> }
-						{ restriction === 'free_site_selected' && <NotAvailableBadge /> }
+						<FeatureRestrictionBadge restriction={ restriction } />
 					</div>
 				) }
 

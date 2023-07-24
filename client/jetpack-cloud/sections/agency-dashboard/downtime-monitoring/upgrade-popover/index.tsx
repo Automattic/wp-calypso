@@ -16,7 +16,7 @@ type Props = {
 	context: HTMLElement | null;
 	isVisible: boolean;
 	position?: string;
-	onClose: () => void;
+	onClose?: () => void;
 };
 
 export default function UpgradePopover( { context, isVisible, position, onClose }: Props ) {
@@ -35,7 +35,7 @@ export default function UpgradePopover( { context, isVisible, position, onClose 
 	);
 
 	const handleDismissPopover = () => {
-		onClose();
+		onClose?.();
 		savePreferenceType( 'dismiss' );
 	};
 

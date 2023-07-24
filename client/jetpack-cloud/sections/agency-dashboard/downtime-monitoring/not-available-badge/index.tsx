@@ -22,9 +22,7 @@ export default function NotAvailableBadge() {
 			tabIndex={ 0 }
 			ref={ wrapperRef }
 		>
-			<Badge className="not-available-badge" type="success">
-				{ translate( 'Not Available' ) }
-			</Badge>
+			<Badge className="not-available-badge">{ translate( 'Not Available' ) }</Badge>
 
 			<Tooltip
 				context={ wrapperRef.current }
