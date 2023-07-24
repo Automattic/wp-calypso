@@ -730,6 +730,7 @@ body.is-section-signup.is-white-signup,
 		justify-content: flex-start;
 		padding-top: 46px;
 		padding-bottom: 20px;
+		min-width: 0;
 
 		@include plans-2023-break-small {
 			padding-top: 34px;
