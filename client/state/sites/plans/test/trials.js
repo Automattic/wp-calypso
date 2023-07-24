@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -17,7 +18,26 @@ import {
 	isSiteOnMigrationTrial,
 } from '../selectors';
 
+// Mock the config system
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: jest.fn(),
+} ) );
+
+// Mock the Migration Trial feature flag (plans/migration-trial)
+const withTrialEnabled = () =>
+	config.isEnabled.mockImplementation( ( key ) => key === 'plans/migration-trial' );
+const withTrialDisabled = () =>
+	config.isEnabled.mockImplementation( ( key ) => key !== 'plans/migration-trial' );
+
 describe( 'trials', () => {
+	beforeEach( () => {
+		withTrialEnabled();
+	} );
+
+	afterEach( () => {
+		jest.resetAllMocks();
+	} );
+
 	function getState( plan, siteId ) {
 		return deepFreeze( {
 			...userState,
@@ -170,7 +190,11 @@ describe( 'trials', () => {
 
 			const state = getState( plan, siteId );
 
+			withTrialEnabled();
 			expect( isSiteOnMigrationTrial( state, siteId ) ).toBeTruthy();
+
+			withTrialDisabled();
+			expect( isSiteOnMigrationTrial( state, siteId ) ).toBeFalsy();
 		} );
 
 		test( 'Should return false when the migration trial is not in the purchases list', () => {
@@ -195,9 +219,15 @@ describe( 'trials', () => {
 
 			const state = getState( plan, siteId );
 
+			withTrialEnabled();
 			expect(
 				getMigrationTrialExpiration( state, siteId ).isSame( moment( expiryDate ) )
 			).toBeTruthy();
+
+			withTrialDisabled();
+			expect(
+				getMigrationTrialExpiration( state, siteId ).isSame( moment( expiryDate ) )
+			).toBeNull();
 		} );
 
 		test( 'Returns null when the trial purchase is not present', () => {
@@ -226,7 +256,11 @@ describe( 'trials', () => {
 
 			const state = getState( plan, siteId );
 
+			withTrialEnabled();
 			expect( getMigrationTrialDaysLeft( state, siteId ) ).toBe( 31 );
+
+			withTrialDisabled();
+			expect( getMigrationTrialDaysLeft( state, siteId ) ).toBeNull();
 		} );
 	} );
 
@@ -247,7 +281,11 @@ describe( 'trials', () => {
 
 			const state = getState( plan, siteId );
 
+			withTrialEnabled();
 			expect( isMigrationTrialExpired( state, siteId ) ).toBeTruthy();
+
+			withTrialDisabled();
+			expect( isMigrationTrialExpired( state, siteId ) ).toBeNull();
 		} );
 
 		test( 'The trial period should not be expired if is the same day', () => {
@@ -262,7 +300,11 @@ describe( 'trials', () => {
 
 			const state = getState( plan, siteId );
 
+			withTrialEnabled();
 			expect( isMigrationTrialExpired( state, siteId ) ).toBeFalsy();
+
+			withTrialDisabled();
+			expect( isMigrationTrialExpired( state, siteId ) ).toBeNull();
 		} );
 	} );
 } );
