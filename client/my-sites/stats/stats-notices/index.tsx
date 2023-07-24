@@ -35,7 +35,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
-	const isWpcom = useSelector( isSiteWpcom );
+	const isWpcom = useSelector( ( state ) => isSiteWpcom( state, siteId ) );
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state as object, siteId as number ) );
 	const isOwnedByTeam51 = useSelector(
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
