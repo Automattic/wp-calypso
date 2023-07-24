@@ -61,6 +61,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		_n: PropTypes.func.isRequired,
 		upgradeIntent: PropTypes.string,
 		isRedesignV2: PropTypes.bool,
+		currency: PropTypes.string,
 	};
 
 	isSearch() {
@@ -601,6 +602,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 								primaryPurchase={ primaryPurchase }
 								siteID={ selectedSite?.ID }
 								purchases={ this.props.purchases }
+								currency={ this.props.currency }
 							/>
 						) }
 						{ this.props.children }

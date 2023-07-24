@@ -8,9 +8,10 @@ const Product = ( {
 	primaryPurchase,
 	siteID,
 	purchases,
+	currency,
 }: ProductPlanProps & { purchases: ReceiptPurchase[] } ) => {
 	if ( isBulkDomainTransfer( purchases ) ) {
-		return <DomainsTransferredList purchases={ purchases } />;
+		return <DomainsTransferredList purchases={ purchases } currency={ currency } />;
 	}
 
 	return (

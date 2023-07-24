@@ -802,8 +802,14 @@ export class CheckoutThankYou extends Component<
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, siteUnlaunchedBeforeUpgrade, upgradeIntent, isSimplified, displayMode } =
-			this.props;
+		const {
+			selectedSite,
+			siteUnlaunchedBeforeUpgrade,
+			upgradeIntent,
+			isSimplified,
+			displayMode,
+			receipt,
+		} = this.props;
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
@@ -851,6 +857,7 @@ export class CheckoutThankYou extends Component<
 					displayMode={ displayMode }
 					purchases={ purchases }
 					isRedesignV2={ isRedesignV2( this.props ) }
+					currency={ receipt.data?.currency }
 				>
 					{ ! isRedesignV2( this.props ) && ! isSimplified && primaryPurchase && (
 						<CheckoutThankYouFeaturesHeader
