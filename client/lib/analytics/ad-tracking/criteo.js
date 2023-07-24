@@ -11,7 +11,7 @@ import './setup';
  * Records an event in Criteo
  *
  * @param {string} eventName - The name of the 'event' property such as 'viewItem' or 'viewBasket'
- * @param {Object} eventProps - Additional details about the event such as `{ item: '1' }`
+ * @param {Record<string, any>} eventProps - Additional details about the event such as `{ item: '1' }`
  * @returns {void}
  */
 export async function recordInCriteo( eventName, eventProps ) {
