@@ -36,6 +36,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getSites from 'calypso/state/selectors/get-sites';
 import { IAppState } from 'calypso/state/types';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
@@ -67,6 +68,7 @@ const Settings = ( {
 	selectedSite,
 	updateNameservers,
 	whoisData,
+	sites,
 }: SettingsPageProps ) => {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
@@ -137,6 +139,7 @@ const Settings = ( {
 	const renderStatusSection = () => {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
+			sites.length === sites.filter( ( site ) => site?.options?.is_domain_only ).length ||
 			domain.type === domainTypes.TRANSFER
 		) {
 			return null;
@@ -507,6 +510,7 @@ export default connect(
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			dns: getDomainDns( state, ownProps.selectedDomainName ),
+			sites: getSites( state ),
 		};
 	},
 	{
