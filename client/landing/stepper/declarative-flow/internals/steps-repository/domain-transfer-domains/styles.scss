@@ -209,15 +209,6 @@
 
 	.domains__domain-domain {
 		flex: 0 0 420px;
-
-		.form-text-input::placeholder {
-			color: var(--gray-gray-20, #a7aaad);
-			font-size: 0.875rem;
-		}
-
-		@media (max-width: $break-medium ) {
-			flex: 1;
-		}
 	}
 
 	.domains__domain-key {
@@ -231,9 +222,17 @@
 		.info-popover:focus {
 			outline: 1px solid var(--studio-blue-50);
 		}
+	}
 
+	.domains__domain-domain,
+	.domains__domain-key {
 		@media (max-width: $break-medium ) {
 			flex: 1;
+		}
+
+		.form-text-input::placeholder {
+			color: var(--gray-gray-20, #a7aaad) !important;
+			font-size: 0.875rem;
 		}
 	}
 
