@@ -36,8 +36,8 @@ import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
-import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
