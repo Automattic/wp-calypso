@@ -1,11 +1,13 @@
 import config from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
+import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FeedbackNotice from './feedback-notice';
@@ -30,7 +32,10 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 		( state ) =>
 			isVipSite( state as object, siteId as number ) || getSiteOption( state, siteId, 'is_vip' )
 	);
-
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+	const isWpcom = useSelector( isSiteWpcom );
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state as object, siteId as number ) );
 	const isOwnedByTeam51 = useSelector(
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
@@ -40,10 +45,15 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
 
 	const showPaidStatsNotice =
-		config.isEnabled( 'stats/paid-stats' ) &&
-		! isVip &&
-		! isP2 &&
-		! isOwnedByTeam51 &&
+		// Show the notice if the site is Jetpack or it is Odyssey Stats.
+		( ( config.isEnabled( 'stats/paid-stats' ) && ( isOdysseyStats || isSiteJetpackNotAtomic ) ) ||
+			// Gate notices for WPCOM sites behind a flag.
+			( config.isEnabled( 'stats/paid-wpcom-stats' ) &&
+				isWpcom &&
+				! isVip &&
+				! isP2 &&
+				! isOwnedByTeam51 ) ) &&
+		// Show the notice if the site has not purchased the paid stats product.
 		! hasPaidStats &&
 		hasLoadedPurchases;
 
@@ -85,7 +95,7 @@ export default function StatsNotices( {
 	);
 
 	const supportNewStatsNotices =
-		( ! isOdysseyStats && config.isEnabled( 'stats/paid-wpcom-stats' ) ) ||
+		! isOdysseyStats ||
 		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
 
 	return supportNewStatsNotices ? (
