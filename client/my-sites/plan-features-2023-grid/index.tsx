@@ -655,7 +655,7 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
-				const { planName, isPlaceholder, planConstantObj, current, currencyCode } = properties;
+				const { planName, planConstantObj, current, currencyCode } = properties;
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
 					'is-top-buttons',
