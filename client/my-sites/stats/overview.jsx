@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -9,12 +10,26 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import wpcom from 'calypso/lib/wp';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import DatePicker from './stats-date-picker';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import PageViewTracker from './stats-page-view-tracker';
 import SiteOverview from './stats-site-overview';
+
+// for using react-query in class components
+// should extract
+function Query( props ) {
+	return props.children(
+		useQuery( {
+			queryKey: props.queryKey,
+			queryFn: props.queryFn,
+		} )
+	);
+}
+
+const emptyObject = {};
 
 class StatsOverview extends Component {
 	static propTypes = {
@@ -24,9 +39,35 @@ class StatsOverview extends Component {
 		sites: PropTypes.array,
 	};
 
-	render() {
-		const { moment, path, period, sites, translate } = this.props;
+	generateSiteList = ( sitesSorted, data ) => {
+		const { moment, path, period } = this.props;
 		const statsPath = path === '/stats' ? '/stats/day' : path;
+		return sitesSorted.map( ( site, index ) => {
+			const summaryData = data && data.stats && data.stats[ site.ID ];
+			const gmtOffset = get( site, 'options.gmt_offset' );
+			const date = moment()
+				.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
+				.format( 'YYYY-MM-DD' );
+
+			return (
+				<Fragment key={ site.ID }>
+					{ ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) && (
+						<DatePicker period={ period } date={ date } />
+					) }
+					<SiteOverview
+						siteId={ site.ID }
+						path={ statsPath }
+						title={ site.title }
+						siteSlug={ site.slug }
+						summaryData={ summaryData || emptyObject }
+					/>
+				</Fragment>
+			);
+		} );
+	};
+
+	render() {
+		const { moment, period, sites, translate } = this.props;
 		const sitesSorted = sites.map( ( site ) => {
 			let momentSiteZone = moment();
 			const gmtOffset = get( site, 'options.gmt_offset' );
@@ -59,28 +100,7 @@ class StatsOverview extends Component {
 			return 0;
 		} );
 
-		const sitesList = sitesSorted.map( ( site, index ) => {
-			const gmtOffset = get( site, 'options.gmt_offset' );
-			const date = moment()
-				.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
-				.format( 'YYYY-MM-DD' );
-
-			return (
-				<Fragment key={ site.ID }>
-					{ ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) && (
-						<DatePicker period={ period } date={ date } />
-					) }
-					<SiteOverview
-						siteId={ site.ID }
-						period={ period }
-						date={ date }
-						path={ statsPath }
-						title={ site.title }
-						siteSlug={ site.slug }
-					/>
-				</Fragment>
-			);
-		} );
+		const date = new Date().toISOString().split( 'T' )[ 0 ];
 
 		return (
 			<Main wideLayout>
@@ -90,7 +110,23 @@ class StatsOverview extends Component {
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
 				<StatsNavigation selectedItem="traffic" interval={ period } isLegacy />
-				{ sites.length !== 0 ? sitesList : this.placeholders() }
+				<Query
+					queryKey={ [ 'stats', 'summary', 'all-sites', period, date ] }
+					queryFn={ () =>
+						wpcom.req.get( {
+							apiNamespace: 'wpcom/v2',
+							path: `/me/sites/stats/summary?period=${ period }&date=${ date }`,
+						} )
+					}
+				>
+					{ ( { data } ) => (
+						<>
+							{ sites.length !== 0
+								? this.generateSiteList( sitesSorted, data )
+								: this.placeholders() }
+						</>
+					) }
+				</Query>
 				<JetpackColophon />
 			</Main>
 		);
