@@ -9,11 +9,13 @@ import AkismetLogo from 'calypso/components/akismet-logo';
 import ChatButton from 'calypso/components/chat-button';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import MaterialIcon from 'calypso/components/material-icon';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { DefaultMasterbarContact } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled/default-contact';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Item from './item';
 import Masterbar from './masterbar';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -91,7 +93,11 @@ const CheckoutMasterbar = ( {
 		responseCart.products.map( ( product ) => product.product_name ).join( ', ' );
 
 	const handleClick = () => {
-		// Add tracks details here
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_masterbar_support_click', {
+				cart: responseCart.products.map( ( product ) => product.product_name ).join( ', ' ),
+			} )
+		);
 	};
 
 	return (
