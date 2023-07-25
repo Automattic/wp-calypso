@@ -1,6 +1,6 @@
 import { DomainSuggestions } from '@automattic/data-stores';
 
-function useSuggestedFreeDomainFromPaidDomain( paidDomainName?: string ): {
+export function useSuggestedFreeDomainFromPaidDomain( paidDomainName?: string ): {
 	isLoadingSuggestedFreeDomain: boolean;
 	wpcomFreeDomainSuggestion?: DomainSuggestions.DomainSuggestion;
 	invalidateDomainSuggestionCache: () => void;
@@ -9,13 +9,13 @@ function useSuggestedFreeDomainFromPaidDomain( paidDomainName?: string ): {
 		data: wordPressSubdomainSuggestions,
 		isInitialLoading,
 		isError,
+		invalidateCache: invalidateDomainSuggestionCache,
 	} = DomainSuggestions.useGetWordPressSubdomain( paidDomainName || '' );
 
 	return {
 		isLoadingSuggestedFreeDomain: isInitialLoading,
 		wpcomFreeDomainSuggestion: ( ! isError && wordPressSubdomainSuggestions?.[ 0 ] ) || undefined,
-		invalidateDomainSuggestionCache: () =>
-			paidDomainName && DomainSuggestions.invalidateCache( paidDomainName ),
+		invalidateDomainSuggestionCache,
 	};
 }
 

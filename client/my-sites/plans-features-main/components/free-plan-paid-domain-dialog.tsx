@@ -1,10 +1,8 @@
 import { PlanSlug, getPlan } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
-import { DomainSuggestions } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'calypso/state';
@@ -121,27 +119,25 @@ const StyledButton = styled( Button )`
 
 export function FreePlanPaidDomainDialog( {
 	paidDomainName,
+	isLoadingSuggestedFreeDomain,
+	wpcomFreeDomainSuggestion,
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
 }: {
 	paidDomainName: string;
+	isLoadingSuggestedFreeDomain: boolean;
+	wpcomFreeDomainSuggestion?: DomainSuggestion;
 	suggestedPlanSlug: PlanSlug;
 	onClose: () => void;
-	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
+	onFreePlanSelected: () => void;
 	onPlanSelected: () => void;
 } ) {
 	const translate = useTranslate();
-	const queryClient = useQueryClient();
 	const [ isBusy, setIsBusy ] = useState( false );
 	const planPrices = usePlanPrices( { planSlug: suggestedPlanSlug, returnMonthly: true } );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const {
-		data: wordPressSubdomainSuggestions,
-		isInitialLoading,
-		isError,
-	} = DomainSuggestions.useGetWordPressSubdomain( paidDomainName );
 	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
 
 	function handlePaidPlanClick() {
@@ -151,13 +147,7 @@ export function FreePlanPaidDomainDialog( {
 
 	function handleFreeDomainClick() {
 		setIsBusy( true );
-		// Since this domain will not be available after it is selected, invalidate the cache.
-		queryClient.invalidateQueries(
-			DomainSuggestions.getDomainSuggestionsQueryKey( paidDomainName )
-		);
-		if ( wordPressSubdomainSuggestions && wordPressSubdomainSuggestions.length ) {
-			onFreePlanSelected( wordPressSubdomainSuggestions[ 0 ] );
-		}
+		onFreePlanSelected();
 	}
 
 	return (
@@ -208,11 +198,11 @@ export function FreePlanPaidDomainDialog( {
 					</RowWithBorder>
 					<Row>
 						<DomainName>
-							{ isInitialLoading && <LoadingPlaceHolder /> }
-							{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
+							{ isLoadingSuggestedFreeDomain && <LoadingPlaceHolder /> }
+							{ wpcomFreeDomainSuggestion && <div>{ wpcomFreeDomainSuggestion.domain_name }</div> }
 						</DomainName>
 						<StyledButton
-							disabled={ isInitialLoading || ! wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }
+							disabled={ isLoadingSuggestedFreeDomain || ! wpcomFreeDomainSuggestion }
 							busy={ isBusy }
 							onClick={ handleFreeDomainClick }
 						>
