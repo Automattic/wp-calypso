@@ -177,7 +177,7 @@ export function DomainCodePair( {
 							id={ id }
 							value={ domain }
 							className="domains__domain-name-input-field"
-							placeholder={ __( 'Please enter the domain name and authorization code.' ) }
+							placeholder={ __( 'example.com' ) }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, {
 									domain: event.target.value.trim().toLowerCase(),
@@ -228,6 +228,7 @@ export function DomainCodePair( {
 							id={ id + '-auth' }
 							disabled={ valid || hasDuplicates }
 							value={ auth }
+							placeholder="123"
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, {
 									domain,

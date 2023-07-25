@@ -409,6 +409,8 @@ import {
 	FEATURE_SHIPPING_INTEGRATIONS,
 	FEATURE_THE_READER,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	FEATURE_PAYMENT_BUTTONS_JP,
+	FEATURE_PAYPAL_JP,
 } from './constants';
 import type {
 	BillingTerm,
@@ -556,12 +558,12 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_MULTI_SITE,
 		FEATURE_SECURITY_MALWARE,
 		FEATURE_SECURITY_DDOS,
-		FEATURE_PREMIUM_CONTENT_JP,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
 		FEATURE_PREMIUM_CONTENT_JP,
 		FEATURE_DONATIONS_AND_TIPS_JP,
+		FEATURE_PAYMENT_BUTTONS_JP,
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
@@ -570,6 +572,8 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonJetpackFeatureOverride: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
 		FEATURE_DONATIONS_AND_TIPS_JP,
+		FEATURE_PREMIUM_CONTENT_JP,
+		FEATURE_PAYMENT_BUTTONS_JP,
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
 		FEATURE_CONTACT_FORM_JP,
@@ -1405,6 +1409,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
+	get2023PlanComparisonJetpackFeatureOverride: () => [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -2540,6 +2545,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1018,
 		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,

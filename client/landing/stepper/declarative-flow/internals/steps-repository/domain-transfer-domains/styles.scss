@@ -11,10 +11,6 @@
 	align-items: center;
 	gap: 30px;
 
-	.flow-progress.progress-bar {
-		display: none;
-	}
-
 	button:disabled {
 		pointer-events: none;
 	}
@@ -48,6 +44,21 @@
 			.formatted-header__title {
 				font-size: 2.75rem;
 			}
+
+			.formatted-header__subtitle {
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				margin-top: 16px;
+				line-height: 20px;
+
+				span {
+					display: block;
+					@media (min-width: $break-medium ) {
+						width: 60%;
+					}
+				}
+			}
 		}
 
 		.step-container__navigation.action-buttons {
@@ -59,17 +70,6 @@
 			background-color: transparent;
 			border: none;
 			box-shadow: none;
-		}
-		.formatted-header__subtitle {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			span {
-				display: block;
-				@media (min-width: $break-medium ) {
-					width: 60%;
-				}
-			}
 		}
 
 		@media (min-width: $break-medium ) {
@@ -209,15 +209,6 @@
 
 	.domains__domain-domain {
 		flex: 0 0 420px;
-
-		.form-text-input::placeholder {
-			color: var(--gray-gray-20, #a7aaad);
-			font-size: 0.875rem;
-		}
-
-		@media (max-width: $break-medium ) {
-			flex: 1;
-		}
 	}
 
 	.domains__domain-key {
@@ -231,9 +222,17 @@
 		.info-popover:focus {
 			outline: 1px solid var(--studio-blue-50);
 		}
+	}
 
+	.domains__domain-domain,
+	.domains__domain-key {
 		@media (max-width: $break-medium ) {
 			flex: 1;
+		}
+
+		.form-text-input::placeholder {
+			color: var(--gray-gray-20, #a7aaad) !important;
+			font-size: 0.875rem;
 		}
 	}
 

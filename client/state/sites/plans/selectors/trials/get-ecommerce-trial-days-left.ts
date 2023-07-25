@@ -1,7 +1,6 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import getECommerceTrialExpiration from './get-ecommerce-trial-expiration';
 import type { AppState } from 'calypso/types';
-import type { Moment } from 'moment';
 
 /**
  * Get the number of days left in the ECommerce trial. If the trial is not active, returns null.

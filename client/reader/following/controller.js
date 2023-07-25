@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { getQueryString } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import page from 'page';
 import AsyncLoad from 'calypso/components/async-load';
@@ -10,7 +11,8 @@ const analyticsPageTitle = 'Reader';
 const exported = {
 	followingManage( context, next ) {
 		if ( isEnabled( 'subscription-management-redirect-following' ) ) {
-			return page.redirect( '/read/subscriptions' );
+			const queryString = getQueryString( window.location.href );
+			return page.redirect( '/read/subscriptions' + ( queryString ? '?' + queryString : '' ) );
 		}
 
 		const basePath = sectionify( context.path );

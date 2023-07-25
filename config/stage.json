@@ -154,6 +154,7 @@
 		"subscription-management-redirect-following": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/block-theme-previews-poc": false,
+		"themes/block-theme-previews": false,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,

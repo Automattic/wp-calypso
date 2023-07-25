@@ -39,6 +39,7 @@ export default function SMSNotification( {
 						}
 						onChange={ handleToggleClick }
 						checked={ enableSMSNotification }
+						className="notification-settings__toggle-control"
 					/>
 				</div>
 				<div className="notification-settings__toggle-content">
