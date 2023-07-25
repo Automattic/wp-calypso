@@ -11,6 +11,7 @@ import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
 	setSubscriptionValue: ( value: number ) => number;
+	defaultStartingValue: number;
 	handlePlanSwap: ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
 	currencyCode: string;
 	siteSlug: string;
@@ -28,6 +29,7 @@ interface PersonalPurchaseProps {
 const PersonalPurchase = ( {
 	subscriptionValue,
 	setSubscriptionValue,
+	defaultStartingValue,
 	handlePlanSwap,
 	currencyCode,
 	siteSlug,
@@ -42,8 +44,6 @@ const PersonalPurchase = ( {
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const { sliderStepPrice, maxSliderPrice, uiEmojiHeartTier, uiImageCelebrationTier } =
 		sliderSettings;
-
-	const [ defaultStartingValue ] = useState( subscriptionValue );
 
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;

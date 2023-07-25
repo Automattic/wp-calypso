@@ -161,6 +161,7 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 										<PersonalPurchase
 											subscriptionValue={ subscriptionValue }
 											setSubscriptionValue={ setSubscriptionValue }
+											defaultStartingValue={ defaultStartingValue }
 											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
 											currencyCode={ pwywProduct?.currency_code }
 											siteSlug={ siteSlug }
