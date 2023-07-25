@@ -192,10 +192,6 @@ export default function SitesOverview() {
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
 
 	const renderAddSiteIssueLicenseButtons = () => {
-		if ( emptyState ) {
-			return null;
-		}
-
 		return (
 			<div className="sites-overview__add-site-issue-license-buttons">
 				<Button
@@ -268,7 +264,6 @@ export default function SitesOverview() {
 			<DocumentHead title={ pageTitle } />
 			<SidebarNavigation sectionTitle={ pageTitle } />
 			<div className="sites-overview__container">
-				{ /* render the buttons in the body if on mobile */ }
 				{ isWithinBreakpoint( '<960px' ) &&
 					selectedLicensesCount < 1 &&
 					renderAddSiteIssueLicenseButtons() }
@@ -277,23 +272,18 @@ export default function SitesOverview() {
 						<SiteSurveyBanner isDashboardView />
 						<SiteWelcomeBanner isDashboardView />
 						<SiteDowntimeMonitoringUpgradeBanner />
-
 						{ data?.sites && <SiteAddLicenseNotification /> }
-
-						{ /* only render component on large screens */ }
-						{ isWithinBreakpoint( '>960px' ) && (
-							<SiteContentHeader
-								content={
-									selectedLicensesCount > 0
-										? renderIssueLicenseButton()
-										: renderAddSiteIssueLicenseButtons()
-								}
-								pageTitle={ pageTitle }
-								// Only renderIssueLicenseButton should be sticky.
-								showStickyContent={ selectedLicensesCount > 0 }
-							/>
-						) }
-
+						<SiteContentHeader
+							content={
+								// don't render content on mobile, we don't need it
+								selectedLicensesCount > 0 && isWithinBreakpoint( '>960px' )
+									? renderIssueLicenseButton()
+									: renderAddSiteIssueLicenseButtons()
+							}
+							pageTitle={ pageTitle }
+							// Only renderIssueLicenseButton should be sticky.
+							showStickyContent={ selectedLicensesCount > 0 }
+						/>
 						<SectionNav
 							applyUpdatedStyles
 							selectedText={
