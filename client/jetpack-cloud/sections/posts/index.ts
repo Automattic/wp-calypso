@@ -2,14 +2,14 @@ import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
 import { getSiteFragment } from 'calypso/lib/route';
 import { navigation, siteSelection } from 'calypso/my-sites/controller';
-import postsController from 'calypso/my-sites/posts/controller';
+import * as controller from './controller';
 
 export default function () {
 	page(
 		'/posts/:author(my)?/:status(published|drafts|scheduled|trashed)?/:domain?',
 		siteSelection,
 		navigation,
-		postsController.posts,
+		controller.posts,
 		makeLayout,
 		clientRender
 	);

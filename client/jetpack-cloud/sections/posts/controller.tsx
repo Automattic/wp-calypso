@@ -1,7 +1,9 @@
-import Posts from 'calypso/my-sites/posts/main';
+import { createElement } from 'react';
+/* import Posts from 'calypso/my-sites/posts/main'; */
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
 import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Posts from './main';
 
 export function posts( context, next ) {
 	const state = context.store.getState();
