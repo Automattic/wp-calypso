@@ -36,6 +36,7 @@ import usePlansWithIntent, {
 } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
+import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -68,7 +69,8 @@ export interface PlansFeaturesMainProps {
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
 	flowName?: string | null;
-	replacePaidDomainWithFreeDomain?: ( freeDomainSuggestion: DomainSuggestion ) => void;
+	removePaidDomain?: () => void;
+	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: DomainSuggestion ) => void;
 	intervalType?: IntervalType;
 	planTypeSelector?: 'customer' | 'interval';
 	withDiscount?: string;
@@ -97,6 +99,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	siteSlug?: string | null;
 	intent?: PlansIntent;
 	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+	isCustomDomainAllowedOnFreePlan?: boolean | null;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -140,6 +143,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		sitePlanSlug,
 		siteSlug,
 		intent,
+		isCustomDomainAllowedOnFreePlan,
 		showLegacyStorageFeature,
 	} = props;
 	const translate = useTranslate();
@@ -186,6 +190,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		currentSitePlanSlug: sitePlanSlug,
 		planActionOverrides,
 		intent,
+		isCustomDomainAllowedOnFreePlan,
 		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		showLegacyStorageFeature,
 	};
@@ -213,7 +218,8 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 const PlansFeaturesMain = ( {
 	paidDomainName,
 	flowName,
-	replacePaidDomainWithFreeDomain,
+	removePaidDomain,
+	setSiteUrlAsFreeDomainSuggestion,
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectToAddDomainFlow,
@@ -257,6 +263,7 @@ const PlansFeaturesMain = ( {
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
+	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( paidDomainName );
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -399,12 +406,16 @@ const PlansFeaturesMain = ( {
 					paidDomainName={ paidDomainName }
 					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 					suggestedPlanSlug={ PLAN_PERSONAL }
+					isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 					onClose={ toggleIsFreePlanPaidDomainDialogOpen }
 					onFreePlanSelected={ () => {
+						if ( ! isCustomDomainAllowedOnFreePlan ) {
+							removePaidDomain?.();
+						}
 						// Since this domain will not be available after it is selected, invalidate the cache.
 						invalidateDomainSuggestionCache();
-						wpcomFreeDomainSuggestion.entry &&
-							replacePaidDomainWithFreeDomain?.( wpcomFreeDomainSuggestion.entry );
+						wpcomFreeDomainSuggestion &&
+							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.entry );
 						onUpgradeClick?.( null );
 					} }
 					onPlanSelected={ () => {
@@ -454,6 +465,7 @@ const PlansFeaturesMain = ( {
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
 						intent={ intent }
+						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
 					/>
 				</>
