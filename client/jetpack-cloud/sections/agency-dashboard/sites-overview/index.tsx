@@ -274,6 +274,7 @@ export default function SitesOverview() {
 						<SiteDowntimeMonitoringUpgradeBanner />
 
 						{ data?.sites && <SiteAddLicenseNotification /> }
+
 						<SiteContentHeader
 							content={
 								selectedLicensesCount > 0
@@ -281,6 +282,7 @@ export default function SitesOverview() {
 									: renderAddSiteIssueLicenseButtons()
 							}
 							pageTitle={ pageTitle }
+							// Only renderIssueLicenseButton should be sticky.
 							showStickyContent={ selectedLicensesCount > 0 }
 						/>
 						<SectionNav

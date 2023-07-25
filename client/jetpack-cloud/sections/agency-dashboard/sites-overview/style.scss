@@ -35,6 +35,44 @@
 		border-bottom: 1px solid var(--color-primary-5);
 	}
 }
+.sites-overview__add-site-issue-license-buttons {
+	// We need these negative margin values because we want to make the container full-width,
+	// but our element is inside a limited-width parent.
+	margin: 0 -32px 8px;
+	padding: 8px 48px;
+
+	button,
+	a {
+		font-size: 1rem;
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.sites-overview__issue-license-button {
+		margin-inline-end: 0;
+		margin-bottom: 8px;
+	}
+	@include breakpoint-deprecated( ">660px" ) {
+		margin: unset;
+		padding: unset;
+		flex: none;
+		margin-left: auto;
+		display: inline-block;
+		max-height: 40px;
+		button,
+		a {
+			display: inline-block;
+			width: auto;
+		}
+
+		.sites-overview__issue-license-button {
+			margin-inline-end: 32px;
+			margin-right: 8px;
+			margin-bottom: 8px;
+		}
+	}
+}
 .sites-overview__content {
 	// We need these negative margin values because we want to make the container full-width,
 	// but our element is inside a limited-width parent.
@@ -101,45 +139,6 @@
 	}
 }
 
-
-.sites-overview__add-site-issue-license-buttons {
-	margin: 0 -32px -32px;
-	padding: 8px 48px;
-	flex: 1 1 100%;
-	max-height: 8rem;
-
-	button,
-	a {
-		font-size: 1rem;
-		display: block;
-		width: 100%;
-		box-sizing: border-box;
-	}
-
-	.sites-overview__issue-license-button {
-		margin-inline-end: 0;
-		margin-bottom: 8px;
-	}
-	@include breakpoint-deprecated( ">660px" ) {
-		margin: unset;
-		padding: unset;
-		flex: none;
-		margin-left: auto;
-		display: inline-block;
-		max-height: 40px;
-		button,
-		a {
-			display: inline-block;
-			width: auto;
-		}
-
-		.sites-overview__issue-license-button {
-			margin-inline-end: 32px;
-			margin-right: 8px;
-			margin-bottom: 8px;
-		}
-	}
-}
 
 .sites-overview__status-select-license,
 .sites-overview__status-unselect-license {
@@ -428,7 +427,6 @@
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
-		margin-right: 48px;
 		left: var(--sidebar-width-min);
 		padding: 0.5rem;
 	}
