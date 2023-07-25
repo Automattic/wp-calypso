@@ -22,6 +22,10 @@
 	background-color: var(--color-accent);
 	border-color: var(--color-accent);
 	color: var(--color-text-inverted);
+	border-radius: 4px;
+	font-size: 0.875rem;
+	font-weight: 500;
+	justify-content: center;
 
 	&:active:not(:disabled),
 	&:hover:not(:disabled),
@@ -35,8 +39,9 @@
 	&:disabled,
 	&.disabled {
 		color: var(--color-neutral-20);
-		background-color: var(--color-surface);
+		background-color: var(--gray-gray-5, #dcdcde);
 		border-color: var(--color-neutral-5);
+		opacity: 1;
 	}
 }
 
