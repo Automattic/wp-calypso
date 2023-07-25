@@ -41,6 +41,8 @@ const CommercialPurchase = ( {
 				<Button
 					variant="link"
 					href="https://jetpack.com/redirect/?source=learn-more-about-new-pricing"
+					target="_blank"
+					rel="noopener noreferrer"
 				>
 					{ translate( 'Learn more' ) }
 				</Button>
