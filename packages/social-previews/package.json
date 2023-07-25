@@ -41,9 +41,9 @@
 	},
 	"dependencies": {
 		"@emotion/react": "^11.4.1",
-		"@wordpress/components": "^23.0.0",
-		"@wordpress/element": "^5.0.0",
-		"@wordpress/i18n": "^4.22.0",
+		"@wordpress/components": "^25.3.0",
+		"@wordpress/element": "^5.13.0",
+		"@wordpress/i18n": "^4.36.0",
 		"classnames": "^2.3.1",
 		"prop-types": "^15.7.2",
 		"tslib": "^2.3.0"
@@ -53,7 +53,6 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^5.16.5",
 		"@testing-library/react": "^14.0.0",
-		"@types/wordpress__components": "^23.0.1",
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",

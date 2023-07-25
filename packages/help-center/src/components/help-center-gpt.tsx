@@ -2,7 +2,7 @@
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
-import { HelpCenterSelect, useJetpackSearchAIQuery } from '@automattic/data-stores';
+import { HelpCenterSelect } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -12,6 +12,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import stripTags from 'striptags';
 import './help-center-article-content.scss';
+import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useTyper } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 

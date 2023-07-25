@@ -1,3 +1,4 @@
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckboxControl, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -24,6 +25,7 @@ async function setIsBackup(
 
 export default function PaymentMethodBackupToggle( { card }: { card: StoredPaymentMethod } ) {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
 	const storedDetailsId = card.stored_details_id;
 	const initialIsBackup = !! card.is_backup;
 	const queryClient = useQueryClient();
@@ -73,22 +75,26 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 			<CheckboxControl
 				checked={ isBackup }
 				onChange={ toggleIsBackup }
-				label={ translate( 'Use as backup.{{supportLink /}}', {
-					components: {
-						supportLink: (
-							<InlineSupportLink
-								showText={ false }
-								supportContext="backup_payment_methods"
-								iconSize={ 16 }
-								supportLink={
-									isJetpackCloud()
-										? 'https://wordpress.com/support/payment/#backup-payment-methods'
-										: null
-								}
-							/>
-						),
-					},
-				} ) }
+				label={
+					translate( 'Use as backup.{{supportLink /}}', {
+						components: {
+							supportLink: (
+								<InlineSupportLink
+									showText={ false }
+									supportContext="backup_payment_methods"
+									iconSize={ 16 }
+									supportLink={
+										isJetpackCloud()
+											? localizeUrl(
+													'https://wordpress.com/support/payment/#backup-payment-methods'
+											  )
+											: null
+									}
+								/>
+							),
+						},
+					} ) as string
+				}
 			/>
 		</div>
 	);

@@ -42,6 +42,8 @@ import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
+	INDIRECT_CHECKOUT_PRODUCTS_LIST,
+	INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_PLAN,
 } from './constants';
@@ -76,6 +78,10 @@ function objectIsSelectorProduct(
 function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | undefined {
 	if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
 		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]();
+	}
+
+	if ( INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( slug ) ) {
+		return INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP[ slug ]();
 	}
 
 	if ( slugIsJetpackProductSlug( slug ) ) {

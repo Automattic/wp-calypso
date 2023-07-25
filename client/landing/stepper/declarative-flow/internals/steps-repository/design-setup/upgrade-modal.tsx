@@ -112,7 +112,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 						'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin. Upgrade to a Business plan to select this theme and unlock all its features. It’s %s per year with a 14-day money-back guarantee.',
 						{
 							components: {
-								link: <ExternalLink target="_blank" href="https://woocommerce.com/" />,
+								link: <ExternalLink children={ null } href="https://woocommerce.com/" />,
 							},
 							args: businessPlanPrice,
 						}

@@ -68,9 +68,10 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 	const availabilityNotice = getAvailabilityNotice(
 		domain,
 		validationResult?.status,
-		null,
+		validationResult,
 		true,
-		'_blank'
+		'_blank',
+		validationResult?.tld
 	);
 
 	// final success
@@ -78,7 +79,6 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: true,
 			loading: false,
-			message: __( 'This domain is unlocked and ready to be transferred.' ),
 			rawPrice: validationResult.raw_price,
 			saleCost: validationResult.sale_cost,
 			currencyCode: validationResult.currency_code,
@@ -103,6 +103,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			saleCost: validationResult?.sale_cost,
 			currencyCode: validationResult?.currency_code,
 			refetch,
+			errorStatus: validationResult?.status,
 		};
 	}
 
@@ -113,5 +114,6 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			'An unknown error occurred while checking the domain transferability. Please try again or contact support'
 		),
 		refetch,
+		errorStatus: null,
 	};
 }

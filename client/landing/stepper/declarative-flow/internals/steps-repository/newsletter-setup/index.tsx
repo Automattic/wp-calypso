@@ -115,6 +115,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
 					translatedText={ newsletterFormText }
+					className="newsletter-setup-form"
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }

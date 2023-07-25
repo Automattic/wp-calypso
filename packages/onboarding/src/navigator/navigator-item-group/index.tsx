@@ -1,5 +1,5 @@
 import {
-	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
 	__experimentalItemGroup as ItemGroup,
 } from '@wordpress/components';
 import './style.scss';
@@ -12,10 +12,10 @@ type Props = {
 const NavigatorItemGroup = ( { children, title }: Props ) => {
 	return (
 		<section className="navigator-item-group">
-			<HStack direction="column" alignment="top" spacing="0">
+			<VStack direction="column" justify="flex-start" alignment="stretch">
 				{ title && <h3 className="navigator-item-group__title">{ title }</h3> }
 				<ItemGroup>{ children }</ItemGroup>
-			</HStack>
+			</VStack>
 		</section>
 	);
 };

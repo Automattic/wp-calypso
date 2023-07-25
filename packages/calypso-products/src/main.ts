@@ -8,6 +8,7 @@ import {
 	TYPE_PRO,
 	TYPE_FREE,
 	TYPE_FLEXIBLE,
+	TYPE_JETPACK_STARTER,
 	TYPE_STARTER,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -346,6 +347,10 @@ export function isFlexiblePlan( planSlug: string ): boolean {
 
 export function isStarterPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_STARTER } );
+}
+
+export function isJetpackStarterPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_JETPACK_STARTER } );
 }
 
 export function isSecurityDailyPlan( planSlug: string ): boolean {

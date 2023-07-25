@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
-import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
+import { getOptionLabel, getUrlQuerySearchTerm } from 'calypso/landing/subscriptions/helpers';
 import { useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks/';
 import './styles/site-subscriptions-list-actions-bar.scss';
 
@@ -16,6 +16,8 @@ const getSortOptions = ( translate: ReturnType< typeof useTranslate > ) => [
 	{ value: SortBy.DateSubscribed, label: translate( 'Recently subscribed' ) },
 	{ value: SortBy.SiteName, label: translate( 'Site name' ) },
 ];
+
+const initialUrlQuerySearchTerm = getUrlQuerySearchTerm();
 
 const ListActionsBar = () => {
 	const translate = useTranslate();
@@ -31,6 +33,7 @@ const ListActionsBar = () => {
 				placeholder={ translate( 'Search by site name or address…' ) }
 				searchIcon={ <SearchIcon size={ 18 } /> }
 				onSearch={ setSearchTerm }
+				defaultValue={ initialUrlQuerySearchTerm }
 			/>
 
 			<SelectDropdown

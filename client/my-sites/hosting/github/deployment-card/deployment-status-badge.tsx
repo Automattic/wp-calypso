@@ -1,6 +1,6 @@
+import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import Badge from 'calypso/components/badge';
 import type { BadgeType } from '@automattic/components';
 
 interface DeploymentStatusBadgeProps {

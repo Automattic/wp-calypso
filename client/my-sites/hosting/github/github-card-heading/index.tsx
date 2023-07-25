@@ -1,5 +1,5 @@
+import { Badge } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import Badge from 'calypso/components/badge';
 import CardHeading from 'calypso/components/card-heading';
 import SocialLogo from 'calypso/components/social-logo';
 import './style.scss';

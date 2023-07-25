@@ -13,6 +13,7 @@ import {
 	isTitanMail,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
+import { withI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -37,8 +38,9 @@ import {
 } from 'calypso/state/sites/selectors';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 import './style.scss';
+import Product from './redesign-v2/sections/Product';
 import getHeading from './redesign-v2/sections/get-heading';
-import ProductPlan from './redesign-v2/sections/product/ProductPlan';
+import { isBulkDomainTransfer } from './utils';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -56,8 +58,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 		titanAppsUrlPrefix: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		_n: PropTypes.func.isRequired,
 		upgradeIntent: PropTypes.string,
 		isRedesignV2: PropTypes.bool,
+		currency: PropTypes.string,
 	};
 
 	isSearch() {
@@ -66,8 +70,15 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getText() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode } =
-			this.props;
+		const {
+			translate,
+			_n,
+			isDataLoaded,
+			hasFailedPurchases,
+			primaryPurchase,
+			displayMode,
+			purchases,
+		} = this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
@@ -85,6 +96,25 @@ export class CheckoutThankYouHeader extends PureComponent {
 						) }
 					</p>
 				</div>
+			);
+		}
+
+		if ( isBulkDomainTransfer( purchases ) ) {
+			return (
+				<>
+					<div>
+						{ _n(
+							"We got it from here! We'll send an email when your domain is ready to use.",
+							"We got it from here! We'll send an email when your domains are ready to use.",
+							purchases?.length
+						) }
+					</div>
+					<div>
+						{ translate( '{{strong}}It may take up to 5-10 days.{{/strong}}', {
+							components: { strong: <strong /> },
+						} ) }
+					</div>
+				</>
 			);
 		}
 
@@ -507,6 +537,23 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
+	getHeaderText() {
+		const { purchases, _n } = this.props;
+
+		if ( isBulkDomainTransfer( purchases ) ) {
+			return _n(
+				'Your domain transfer has started',
+				'Your domain transfers have started',
+				purchases?.length
+			);
+		}
+
+		return getHeading( {
+			...this.props,
+			isSearch: this.isSearch(),
+		} );
+	}
+
 	render() {
 		const {
 			isDataLoaded,
@@ -541,9 +588,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
 						<h1 className="checkout-thank-you__header-heading">
-							{ getHeading( { ...this.props, isSearch: this.isSearch() } ) }
+							{ preventWidows( this.getHeaderText() ) }
 						</h1>
-
 						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
 							this.renderSimplifiedContent()
 						) : (
@@ -551,10 +597,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 						) }
 
 						{ isRedesignV2 && (
-							<ProductPlan
-								siteSlug={ selectedSite.slug }
+							<Product
+								siteSlug={ selectedSite?.slug }
 								primaryPurchase={ primaryPurchase }
+								siteID={ selectedSite?.ID }
 								purchases={ this.props.purchases }
+								currency={ this.props.currency }
 							/>
 						) }
 						{ this.props.children }
@@ -616,4 +664,4 @@ export default connect(
 		recordStartTransferClickInThankYou,
 		recordTracksEvent,
 	}
-)( localize( CheckoutThankYouHeader ) );
+)( localize( withI18n( CheckoutThankYouHeader ) ) );

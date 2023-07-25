@@ -59,7 +59,6 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 
 	return isOpen ? (
 		<Modal
-			open={ isOpen }
 			overlayClassName="editor-checkout-modal"
 			onRequestClose={ onClose }
 			title={ String( translate( 'Checkout modal' ) ) }

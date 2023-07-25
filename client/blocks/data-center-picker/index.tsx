@@ -241,7 +241,7 @@ const DataCenterPicker = ( {
 					</span>
 					&nbsp;
 					<Button
-						isTertiary={ true }
+						variant="tertiary"
 						onClick={ () => {
 							onClickShowPicker();
 							setIsFormShowing( ! isFormShowing );
@@ -256,7 +256,7 @@ const DataCenterPicker = ( {
 				<Form>
 					<FormHeadingContainer>
 						<FormHeading>{ translate( 'Pick your primary data center' ) }</FormHeading>
-						<Button isTertiary={ true } onClick={ onCancel }>
+						<Button variant="tertiary" onClick={ onCancel }>
 							{ translate( 'Cancel' ) }
 						</Button>
 					</FormHeadingContainer>

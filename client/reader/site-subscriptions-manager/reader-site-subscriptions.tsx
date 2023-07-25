@@ -1,5 +1,7 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
@@ -7,6 +9,7 @@ import {
 	SiteSubscriptionsList,
 	SiteSubscriptionsListActionsBar,
 } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
+import { getUrlQuerySearchTerm } from 'calypso/landing/subscriptions/helpers';
 import {
 	useRecordSearchPerformed,
 	useRecordSearchByUrlPerformed,
@@ -15,9 +18,23 @@ import { resemblesUrl } from 'calypso/lib/url';
 import { RecommendedSites } from '../recommended-sites';
 import NotFoundSiteSubscriptions from './not-found-site-subscriptions';
 
+const SEARCH_KEY = 's';
+
+const setUrlQuery = ( key: string, value: string ) => {
+	const path = window.location.pathname + window.location.search;
+
+	if ( ! value ) {
+		return page.show( removeQueryArgs( path, key ) );
+	}
+
+	return page.show( addQueryArgs( path, { [ key ]: value } ) );
+};
+
+const initialUrlQuerySearchTerm = getUrlQuerySearchTerm();
+
 const ReaderSiteSubscriptions = () => {
 	const translate = useTranslate();
-	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
+	const { searchTerm, setSearchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
 	const siteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery();
 	const unsubscribedFeedsSearch = Reader.useUnsubscribedFeedsSearch();
 
@@ -28,6 +45,20 @@ const ReaderSiteSubscriptions = () => {
 	const recordSearchByUrlPerformed = useRecordSearchByUrlPerformed();
 
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 600 );
+
+	// Takes the ?s= url query search term and set it to the subscriptions query.
+	useEffect( () => {
+		if ( initialUrlQuerySearchTerm ) {
+			setSearchTerm( initialUrlQuerySearchTerm as string );
+		}
+		// This should only run once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	// Update url query when search term changes
+	useEffect( () => {
+		setUrlQuery( SEARCH_KEY, debouncedSearchTerm );
+	}, [ debouncedSearchTerm ] );
 
 	useEffect( () => {
 		if ( debouncedSearchTerm ) {

@@ -465,6 +465,11 @@ export const JETPACK_PLAN_UPGRADE_MAP: Record< string, string[] > = {
 	],
 };
 
+export const JETPACK_STARTER_UPGRADE_MAP: Record< string, string > = {
+	[ PLAN_JETPACK_STARTER_YEARLY ]: PLAN_JETPACK_SECURITY_T1_YEARLY,
+	[ PLAN_JETPACK_STARTER_MONTHLY ]: PLAN_JETPACK_SECURITY_T1_MONTHLY,
+};
+
 // Categories
 export const JETPACK_SECURITY_CATEGORY = 'jetpack_security_category';
 export const JETPACK_PERFORMANCE_CATEGORY = 'jetpack_performance_category';

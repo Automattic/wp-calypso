@@ -1,12 +1,12 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import moment from 'moment';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
 import {
 	SETTING_PRIMARY_DOMAIN,
-	INCOMING_DOMAIN_TRANSFER_STATUSES,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	GDPR_POLICIES,
 	DOMAIN_EXPIRATION,
@@ -15,6 +15,7 @@ import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainMappingSetup,
+	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
 import type { ResponseDomain } from './types';
@@ -566,14 +567,16 @@ export function resolveDomainStatus(
 					status: translate( 'Complete setup' ),
 					icon: 'info',
 					noticeText: translate(
-						'Please follow {{a}}these instructions{{/a}} to start the transfer.',
+						'You need to {{a}}start the domain transfer{{/a}} for your domain.',
 						{
 							components: {
 								a: (
 									<a
-										href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES ) }
-										rel="noopener noreferrer"
-										target="_blank"
+										href={ domainUseMyDomain(
+											siteSlug as string,
+											domain.name,
+											useMyDomainInputMode.startPendingTransfer
+										) }
 									/>
 								),
 							},

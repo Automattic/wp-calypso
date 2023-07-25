@@ -698,6 +698,7 @@ function wpcomPages( app ) {
 	const lang = getLanguageRouteParam( 'locale' );
 	app.get( `/${ lang }/plans`, function ( req, res, next ) {
 		const locale = req.params?.locale;
+
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
 			const ref = req.query?.ref;
@@ -840,6 +841,12 @@ function wpcomPages( app ) {
 	// Redirects from the /start/domain-transfer flow to the new /setup/domain-transfer.
 	app.get( [ '/start/domain-transfer', '/start/domain-transfer/*' ], function ( req, res ) {
 		const redirectUrl = '/setup/domain-transfer';
+		res.redirect( 301, redirectUrl );
+	} );
+
+	// Redirects from /help/courses to https://wordpress.com/learn/courses.
+	app.get( '/help/courses', function ( req, res ) {
+		const redirectUrl = 'https://wordpress.com/learn/courses';
 		res.redirect( 301, redirectUrl );
 	} );
 }

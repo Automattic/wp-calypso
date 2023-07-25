@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
 import {
+	FEATURE_STATS_PAID,
 	PRODUCT_JETPACK_AI_MONTHLY,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
@@ -21,6 +23,7 @@ import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billin
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
+import jetpackStatsIcon from '../icons/jetpack-stats';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
@@ -43,7 +46,6 @@ export interface AddOnMeta {
 // some memoization. executes far too many times
 const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 	const translate = useTranslate();
-	const aiAssistantAddOnIsEnabled = config.isEnabled( 'jetpack/ai-assistant-request-limit' );
 
 	const addOnsActive = [
 		{
@@ -97,6 +99,20 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 			featured: false,
 			purchased: false,
 		},
+		{
+			productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_STATS_PWYW_YEARLY ),
+			icon: jetpackStatsIcon,
+			overrides: null,
+			displayCost: translate( 'Varies', {
+				comment:
+					'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
+			} ),
+			featured: true,
+			description: translate(
+				'Upgrade Jetpack Stats to unlock upcoming features, priority support, and an ad-free experience.'
+			),
+		},
 	];
 
 	// if upgrade is bought - show as manage
@@ -132,15 +148,27 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 					return ( addOn.quantity ?? 0 ) >= Math.min( ...spaceUpgradesPurchased );
 				}
 
-				// remove the Jetpack AI add-on if the feature flag is not enabled for the current environment
-				if ( addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY && ! aiAssistantAddOnIsEnabled ) {
-					return false;
-				}
-
 				// remove the Jetpack AI add-on if the site already supports the feature
 				if (
 					addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
 					siteFeatures?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
+				) {
+					return false;
+				}
+
+				// TODO: Remove this check once paid stats is live.
+				// gate the Jetpack Stats add-on on a feature flag
+				if (
+					addOn.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY &&
+					! config.isEnabled( 'stats/paid-stats' )
+				) {
+					return false;
+				}
+
+				// remove Jetpack Stats add-on if the site already has a paid stats feature through a paid plan.
+				if (
+					addOn.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY &&
+					siteFeatures?.active?.includes( FEATURE_STATS_PAID )
 				) {
 					return false;
 				}

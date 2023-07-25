@@ -14,9 +14,9 @@ const InputChronoExample = localize(
 
 			componentDidMount() {
 				this.interval = setInterval( () => {
-					const date = this.props.moment( self.state.date );
+					const date = this.props.moment( this.state.date );
 					date.hours( date.hours() + 1 );
-					self.setState( { date: date } );
+					this.setState( { date: date } );
 				}, 1000 );
 			}
 

@@ -419,11 +419,6 @@ $mobile-card-max-width: 440px;
 		}
 	}
 
-	.is-placeholder {
-		width: 60%;
-		margin: 5px auto;
-	}
-
 	.plan-features-2023-grid__item-info {
 		display: flex;
 		flex-direction: column;
@@ -735,6 +730,7 @@ body.is-section-signup.is-white-signup,
 		justify-content: flex-start;
 		padding-top: 46px;
 		padding-bottom: 20px;
+		min-width: 0;
 
 		@include plans-2023-break-small {
 			padding-top: 34px;

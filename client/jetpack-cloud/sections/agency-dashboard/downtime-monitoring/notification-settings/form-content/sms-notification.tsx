@@ -31,7 +31,16 @@ export default function SMSNotification( {
 		<>
 			<div className="notification-settings__toggle-container">
 				<div className="notification-settings__toggle">
-					<ToggleControl onChange={ handleToggleClick } checked={ enableSMSNotification } />
+					<ToggleControl
+						label={
+							enableSMSNotification
+								? translate( 'Disable SMS notifications' )
+								: translate( 'Enable SMS notifications' )
+						}
+						onChange={ handleToggleClick }
+						checked={ enableSMSNotification }
+						className="notification-settings__toggle-control"
+					/>
 				</div>
 				<div className="notification-settings__toggle-content">
 					<div className="notification-settings__content-heading-with-beta">

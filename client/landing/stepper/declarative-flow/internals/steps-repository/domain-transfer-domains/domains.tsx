@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { DomainTransferData, DomainTransferForm } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { useDataLossWarning } from '@automattic/onboarding';
@@ -9,12 +10,14 @@ import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState } from 'react';
 import { v4 as uuid } from 'uuid';
+import QueryPlans from 'calypso/components/data/query-plans';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { ONBOARD_STORE } from '../../../../stores';
 import { DomainCodePair } from './domain-code-pair';
+import DomainTransferFAQ from './faqs';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 const MAX_DOMAINS = 50;
@@ -37,16 +40,24 @@ const defaultState: DomainTransferForm = {
 	},
 };
 
-const getFormattedTotalPrice = ( state: DomainTransferData ) => {
+const getTotalPrice = ( state: DomainTransferData ) => {
 	if ( Object.keys( state ).length > 0 ) {
-		const currencyCode = Object.values( state )[ 0 ].currencyCode;
-		const totalPrice = Object.values( state ).reduce( ( total, currentDomain ) => {
+		return Object.values( state ).reduce( ( total, currentDomain ) => {
 			if ( currentDomain.saleCost || currentDomain.saleCost === 0 ) {
 				return total + currentDomain.saleCost;
 			}
 
 			return total + currentDomain.rawPrice;
 		}, 0 );
+	}
+
+	return 0;
+};
+
+const getFormattedTotalPrice = ( state: DomainTransferData ) => {
+	if ( Object.keys( state ).length > 0 ) {
+		const currencyCode = Object.values( state )[ 0 ].currencyCode;
+		const totalPrice = getTotalPrice( state );
 
 		return formatCurrency( totalPrice, currencyCode ?? 'USD', { stripZeros: true } );
 	}
@@ -164,8 +175,38 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		setDomainsTransferData( newDomainsState );
 	}
 
+	function getTransferButtonText() {
+		if ( numberOfValidDomains === 0 ) {
+			return __( 'Transfer' );
+		}
+
+		const totalPrice = getTotalPrice( domainsState );
+		if ( totalPrice ) {
+			const formattedTotalPrice = getFormattedTotalPrice( domainsState );
+
+			if ( numberOfValidDomains > 1 ) {
+				return sprintf(
+					/* translators: %1$s Number of valid domains, %2$s: total price formatted */
+					__( 'Transfer %1$s domains for %2$s' ),
+					numberOfValidDomains,
+					formattedTotalPrice
+				);
+			}
+
+			return sprintf(
+				/* translators: %s: total price formatted */
+				__( 'Transfer for %s' ),
+				formattedTotalPrice
+			);
+		}
+
+		return __( 'Transfer for free' );
+	}
+
 	return (
 		<div className="bulk-domain-transfer__container">
+			{ /* QueryPlans required by getCurrentUserCurrencyCode in DomainCodePair */ }
+			<QueryPlans />
 			{ Object.entries( domainsState ).map( ( [ key, domain ], index ) => (
 				<DomainCodePair
 					key={ key }
@@ -174,6 +215,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					onRemove={ removeDomain }
 					domain={ domain.domain }
 					auth={ domain.auth }
+					domainCount={ domainCount }
 					showLabels={ index === 0 }
 					hasDuplicates={ Object.values( domainsState ).some(
 						( { domain: otherDomain }, otherIndex ) =>
@@ -183,38 +225,46 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			) ) }
 			{ domainCount < MAX_DOMAINS && (
 				<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-					{ __( 'Add another domain' ) }
+					{ __( 'Add more' ) }
 				</Button>
 			) }
-			<div className="bulk-domain-transfer__total-price">
-				<div>{ __( 'Total' ) }</div>
-				<div>{ getFormattedTotalPrice( domainsState ) }</div>
-			</div>
-			<FormLabel htmlFor="import-dns-records" className="bulk-domain-transfer__import-dns-records">
-				<FormInputCheckbox
-					id="import-dns-records"
-					onChange={ ( event ) => {
-						setShouldImportDomainTransferDnsRecords( event.target.checked );
-					} }
-					checked={ storedDomainsState.shouldImportDnsRecords }
-				/>
-				<span>{ __( 'Import DNS records from these domains' ) }</span>
-			</FormLabel>
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }
 					className="bulk-domain-transfer__cta"
 					onClick={ handleAddTransfer }
 				>
-					{ numberOfValidDomains === 0
-						? __( 'Transfer' )
-						: sprintf(
-								/* translators: %s: number valid domains */
-								_n( 'Transfer %s domain', 'Transfer %s domains', numberOfValidDomains ),
-								numberOfValidDomains
-						  ) }
+					{ getTransferButtonText() }
 				</Button>
 			</div>
+			{ numberOfValidDomains > 0 && (
+				<div className="bulk-domain-transfer__import-dns-records">
+					<FormLabel
+						htmlFor="import-dns-records"
+						className="bulk-domain-transfer__import-dns-records-label"
+					>
+						<FormInputCheckbox
+							id="import-dns-records"
+							onChange={ ( event ) => {
+								setShouldImportDomainTransferDnsRecords( event.target.checked );
+							} }
+							checked={ storedDomainsState.shouldImportDnsRecords }
+						/>
+						<span>
+							{ _n(
+								'Import DNS records from this domain',
+								'Import DNS records from these domains',
+								domainCount
+							) }
+						</span>
+					</FormLabel>
+				</div>
+			) }
+			{ isEnabled( 'domain-transfer/faq' ) && (
+				<div className="bulk-domain-transfer__faqs">
+					<DomainTransferFAQ />
+				</div>
+			) }
 		</div>
 	);
 };

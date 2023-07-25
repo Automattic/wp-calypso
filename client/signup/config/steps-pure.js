@@ -243,6 +243,9 @@ export function generateSteps( {
 			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				showBiennialToggle: true,
+			},
 		},
 
 		'plans-new': {
@@ -288,7 +291,7 @@ export function generateSteps( {
 			stepName: 'plans-business',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
+			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],
 			providesDependencies: [ 'cartItem' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,

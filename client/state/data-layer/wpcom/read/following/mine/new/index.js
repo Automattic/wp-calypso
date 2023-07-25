@@ -32,8 +32,13 @@ export function requestFollow( action ) {
 	);
 }
 
-function handleRecommendedSiteFollowSuccess( recommendedSiteInfo ) {
+function getRecommendedSiteFollowSuccessActions( recommendedSiteInfo ) {
+	if ( ! recommendedSiteInfo ) {
+		return [];
+	}
+
 	const { siteId, seed, siteTitle } = recommendedSiteInfo;
+
 	return [
 		followedRecommendedSite( { siteId, seed } ),
 		successNotice( translate( "Success! You're now subscribed to %s.", { args: siteTitle } ), {
@@ -51,7 +56,11 @@ export function receiveFollow( action, response ) {
 			requestFollowCompleted( action?.payload?.feedUrl ),
 		];
 
-		return [ ...actions, ...handleRecommendedSiteFollowSuccess( recommendedSiteInfo ) ];
+		if ( recommendedSiteInfo ) {
+			actions.push( ...getRecommendedSiteFollowSuccessActions( recommendedSiteInfo ) );
+		}
+
+		return actions;
 	}
 	return followError( action, response );
 }

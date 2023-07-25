@@ -314,7 +314,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							) }
 					</p>
 					<Button
-						isPrimary
+						variant="primary"
 						className="domain-picker__error-retry-btn"
 						onClick={ retryDomainSuggestionRequest }
 					>
@@ -436,7 +436,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							allDomainSuggestions?.length &&
 							allDomainSuggestions?.length > quantity && (
 								<div className="domain-picker__show-more">
-									<Button onClick={ () => setIsExpanded( true ) } isLink>
+									<Button onClick={ () => setIsExpanded( true ) } variant="link">
 										{ __( 'View more results', __i18n_text_domain__ ) }
 									</Button>
 								</div>

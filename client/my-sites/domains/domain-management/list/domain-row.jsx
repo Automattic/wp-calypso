@@ -1,4 +1,4 @@
-import { Button, Spinner } from '@automattic/components';
+import { Badge, Button, Spinner } from '@automattic/components';
 import { Icon, home, info, redo } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -41,7 +40,7 @@ import {
 	emailManagement,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
-import { useOdysseusAssistantContext } from 'calypso/odysseus/context';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
@@ -547,9 +546,9 @@ class DomainRow extends PureComponent {
 	}
 }
 
-function withOdysseusAssistantContext( Component ) {
+function withOdieAssistantContext( Component ) {
 	return function WrappedComponent( props ) {
-		const { sendNudge } = useOdysseusAssistantContext();
+		const { sendNudge } = useOdieAssistantContext();
 		return <Component { ...props } sendNudge={ sendNudge } />;
 	};
 }
@@ -559,4 +558,4 @@ export default connect( ( state ) => {
 	return {
 		currentRoute,
 	};
-} )( withOdysseusAssistantContext( localize( DomainRow ) ) );
+} )( withOdieAssistantContext( localize( DomainRow ) ) );

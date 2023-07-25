@@ -9,7 +9,6 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
-import { isOnboardingPMFlow } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import classNames from 'classnames';
@@ -83,6 +82,7 @@ export interface PlansFeaturesMainProps {
 	isPlansInsideStepper?: boolean;
 	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
+	showLegacyStorageFeature?: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
@@ -134,6 +134,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		sitePlanSlug,
 		siteSlug,
 		intent,
+		showLegacyStorageFeature,
 	} = props;
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -179,6 +180,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		planActionOverrides,
 		intent,
 		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
+		showLegacyStorageFeature,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -233,6 +235,7 @@ const PlansFeaturesMain = ( {
 	isPlansInsideStepper = false,
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
+	showLegacyStorageFeature = false,
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
@@ -280,9 +283,10 @@ const PlansFeaturesMain = ( {
 	const handleUpgradeClick = ( cartItemForPlan?: { product_slug: string } | null ) => {
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
-		// - only applicable to main onboarding flow (default `/start`)
+		// It only applies to main onboarding flow and the paid media flow at the moment.
+		// Standardizing it or not is TBD; see Automattic/growth-foundations#63 and pdgrnI-2nV-p2#comment-4110 for relevant discussion.
 		if (
-			( 'onboarding' === flowName || isOnboardingPMFlow( flowName ) ) &&
+			( 'onboarding' === flowName || 'onboarding-pm' === flowName ) &&
 			paidDomainName &&
 			! cartItemForPlan
 		) {
@@ -435,6 +439,7 @@ const PlansFeaturesMain = ( {
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
 						intent={ intent }
+						showLegacyStorageFeature={ showLegacyStorageFeature }
 					/>
 				</>
 			) }

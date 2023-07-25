@@ -81,7 +81,7 @@ const WpcomTourKitStepCard: React.FunctionComponent< WpcomTourStepRendererProps 
 					{ isLastStep ? (
 						<Button
 							className="wpcom-tour-kit-step-card__description"
-							isTertiary
+							variant="tertiary"
 							onClick={ () => onGoToStep( 0 ) }
 							ref={ setInitialFocusedElement }
 						>
