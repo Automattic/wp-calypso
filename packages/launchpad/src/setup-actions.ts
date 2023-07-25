@@ -21,15 +21,21 @@ export const setUpActionsForTasks = ( {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
 	const { setShareSiteModalIsOpen } = extraActions || {};
 
+	function mapTasks( task: Task, index: number ) {
+		task.order = index;
+	}
+
+	tasks.map( mapTasks );
+
 	//Record click events for tasks
-	const recordTaskClickTracksEvent = ( task: Task, order: number ) => {
+	const recordTaskClickTracksEvent = ( task: Task ) => {
 		recordTracksEvent( 'calypso_launchpad_task_clicked', {
 			checklist_slug: checklistSlug,
 			checklist_completed: tasklistCompleted,
 			task_id: task.id,
 			is_completed: task.completed,
 			context: launchpadContext,
-			order,
+			order: task.order,
 		} );
 	};
 
@@ -39,7 +45,7 @@ export const setUpActionsForTasks = ( {
 	const sortedTasks = [ ...completedTasks, ...incompleteTasks ];
 
 	// Add actions to sorted tasks.
-	return sortedTasks.map( ( task: Task, index: number ) => {
+	return sortedTasks.map( ( task: Task ) => {
 		let action: () => void;
 		let logMissingCalypsoPath = false;
 
@@ -140,7 +146,7 @@ export const setUpActionsForTasks = ( {
 		}
 
 		const actionDispatch = () => {
-			recordTaskClickTracksEvent( task, index );
+			recordTaskClickTracksEvent( task );
 			action?.();
 		};
 
