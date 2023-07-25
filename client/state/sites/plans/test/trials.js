@@ -60,16 +60,25 @@ describe( 'trials', () => {
 		} );
 	}
 
+	function getPlan( blogId, productSlug, expiryDate ) {
+		const ret = {
+			ID: 1,
+			productSlug,
+			blogId,
+			currentPlan: true,
+		};
+
+		if ( expiryDate ) {
+			ret.expiryDate = expiryDate;
+		}
+
+		return ret;
+	}
+
 	describe( '#isSiteOnECommerceTrial()', () => {
 		const siteId = 1337;
 		test( 'Should return true when the e-commerce trial is in the purchases list', () => {
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-				blogId: siteId,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_ECOMMERCE_TRIAL_MONTHLY );
 			const state = getState( plan, siteId );
 
 			expect( isSiteOnECommerceTrial( state, siteId ) ).toBeTruthy();
@@ -82,13 +91,7 @@ describe( 'trials', () => {
 		} );
 
 		test( 'Should return false when the site has a regular e-commerce plan', () => {
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_ECOMMERCE_MONTHLY,
-				blogId: siteId,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_ECOMMERCE_MONTHLY );
 			const state = getState( plan, siteId );
 
 			expect( isSiteOnECommerceTrial( state, siteId ) ).toBeFalsy();
@@ -99,15 +102,7 @@ describe( 'trials', () => {
 		const siteId = 1337;
 		test( 'Returns the expiration date', () => {
 			const expiryDate = '2022-02-10T00:00:00+00:00';
-
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiryDate,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_ECOMMERCE_TRIAL_MONTHLY, expiryDate );
 			const state = getState( plan, siteId );
 
 			expect(
@@ -117,7 +112,6 @@ describe( 'trials', () => {
 
 		test( 'Returns null when the trial purchase is not present', () => {
 			const plan = {};
-
 			const state = getState( plan, siteId );
 
 			expect( getECommerceTrialExpiration( state, siteId ) ).toBeNull();
@@ -130,15 +124,7 @@ describe( 'trials', () => {
 
 		test( 'Should return the correct number of days left before the trial expires', () => {
 			const expiryDate = '2022-02-10T00:00:00+00:00';
-
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiryDate,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_ECOMMERCE_TRIAL_MONTHLY, expiryDate );
 			const state = getState( plan, siteId );
 
 			expect( getECommerceTrialDaysLeft( state, siteId ) ).toBe( 31 );
@@ -151,15 +137,7 @@ describe( 'trials', () => {
 
 		test( 'The trial period should be expired', () => {
 			const expiryDate = '2022-01-09T00:00:00+00:00';
-
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiryDate,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_ECOMMERCE_TRIAL_MONTHLY, expiryDate );
 			const state = getState( plan, siteId );
 
 			expect( isECommerceTrialExpired( state, siteId ) ).toBeTruthy();
@@ -167,14 +145,7 @@ describe( 'trials', () => {
 
 		test( 'The trial period should not be expired if is the same day', () => {
 			const expiryDate = '2022-01-10T23:59:59+00:00';
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiryDate,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_ECOMMERCE_TRIAL_MONTHLY, expiryDate );
 			const state = getState( plan, siteId );
 
 			expect( isECommerceTrialExpired( state, siteId ) ).toBeFalsy();
@@ -184,13 +155,7 @@ describe( 'trials', () => {
 	describe( '#isSiteOnMigrationTrial()', () => {
 		const siteId = 1337;
 		test( 'Should return true when the migration trial is in the purchases list', () => {
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_MIGRATION_TRIAL_MONTHLY,
-				blogId: siteId,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_MIGRATION_TRIAL_MONTHLY );
 			const state = getState( plan, siteId );
 
 			withTrialEnabled();
@@ -211,15 +176,7 @@ describe( 'trials', () => {
 		const siteId = 1337;
 		test( 'Returns the expiration date', () => {
 			const expiryDate = '2022-02-10T00:00:00+00:00';
-
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_MIGRATION_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiryDate,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_MIGRATION_TRIAL_MONTHLY, expiryDate );
 			const state = getState( plan, siteId );
 
 			withTrialEnabled();
@@ -246,15 +203,7 @@ describe( 'trials', () => {
 
 		test( 'Should return the correct number of days left before the trial expires', () => {
 			const expiryDate = '2022-02-10T00:00:00+00:00';
-
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_MIGRATION_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiryDate,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_MIGRATION_TRIAL_MONTHLY, expiryDate );
 			const state = getState( plan, siteId );
 
 			withTrialEnabled();
@@ -271,15 +220,7 @@ describe( 'trials', () => {
 
 		test( 'The trial period should be expired', () => {
 			const expiryDate = '2022-01-09T00:00:00+00:00';
-
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_MIGRATION_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiryDate,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_MIGRATION_TRIAL_MONTHLY, expiryDate );
 			const state = getState( plan, siteId );
 
 			withTrialEnabled();
@@ -291,14 +232,7 @@ describe( 'trials', () => {
 
 		test( 'The trial period should not be expired if is the same day', () => {
 			const expiryDate = '2022-01-10T23:59:59+00:00';
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_MIGRATION_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiryDate,
-				currentPlan: true,
-			};
-
+			const plan = getPlan( siteId, PLAN_MIGRATION_TRIAL_MONTHLY, expiryDate );
 			const state = getState( plan, siteId );
 
 			withTrialEnabled();

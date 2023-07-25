@@ -1,7 +1,7 @@
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { getSite } from 'calypso/state/sites/selectors';
-import type { AppState } from 'calypso/types';
 import { getCurrentPlan } from '..';
+import type { AppState } from 'calypso/types';
 
 /**
  * Checks whether the current site is on the Woo Trial.

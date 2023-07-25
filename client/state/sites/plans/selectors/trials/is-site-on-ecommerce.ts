@@ -4,8 +4,8 @@ import {
 	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
 } from '@automattic/calypso-products';
-import type { AppState } from 'calypso/types';
 import { getCurrentPlan } from '..';
+import type { AppState } from 'calypso/types';
 
 /**
  * Checks whether the current site is on a paid Ecommerce plan.
