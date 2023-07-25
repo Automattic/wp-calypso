@@ -21,10 +21,13 @@ export const LivePreviewButton = ( {
 	isActive,
 	isAtomic,
 	isExternallyManagedTheme,
+	isSimple,
+	isThemeInstalledOnAtomicSite,
 	isWporg,
 	showTryAndCustomize,
 	siteSlug,
 	stylesheet,
+	themeType,
 } ) => {
 	// A user doesn't want to preview the active theme.
 	if ( isActive ) {
@@ -36,33 +39,40 @@ export const LivePreviewButton = ( {
 		return null;
 	}
 
-	// Disable Live Preview for 3rd party themes, as Block Theme Previews need a theme installed.
-	if ( isExternallyManagedTheme || isWporg ) {
-		return null;
-	}
-
-	// Block Theme Previews need the theme installed.
-	// TODO: Check if the theme is installed.
-	const isInstalled = true;
-	if ( isAtomic && ! isInstalled ) {
-		return null;
-	}
-
 	/**
-	 * Disable Live Preview for Premium/WooCommerce themes.
-	 * This should be updated as we implement the flow for them.
-	 *
-	 * @see https://github.com/Automattic/wp-calypso/issues/79223
-	 */
-	// TODO:
-
-	/**
-	 * Block Theme Previews does not support themes with a static page as a homepage.
+	 * Block Theme Previews do not support themes with a static page as a homepage
+	 * as the Site Editor cannot control Reading Settings.
 	 *
 	 * @see pekYwv-284-p2#background
 	 */
 	if ( isNotCompatibleThemes( stylesheet ) ) {
 		return null;
+	}
+
+	if ( isSimple ) {
+		/**
+		 * Disable Live Preview for 3rd party themes, as Block Theme Previews need a theme installed.
+		 * Note that BTP works on Atomic sites if a theme is installed.
+		 */
+		if ( isExternallyManagedTheme || isWporg ) {
+			return null;
+		}
+
+		/**
+		 * Disable Live Preview for Premium/WooCommerce themes.
+		 * This should be updated as we implement the flow for them.
+		 * Note that BTP works on Atomic sites if a theme is installed.
+		 *
+		 * @see https://github.com/Automattic/wp-calypso/issues/79223
+		 */
+		if ( themeType === 'premium' || themeType === 'woocommerce' ) {
+			return null;
+		}
+	} else if ( isAtomic ) {
+		// Block Theme Previews need the theme installed on Atomic sites.
+		if ( ! isThemeInstalledOnAtomicSite ) {
+			return null;
+		}
 	}
 
 	return (

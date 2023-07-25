@@ -34,6 +34,7 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryTheme from 'calypso/components/data/query-theme';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
 import HeaderCake from 'calypso/components/header-cake';
@@ -66,7 +67,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isSimpleSite } from 'calypso/state/sites/selectors';
 import {
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
@@ -81,10 +82,11 @@ import {
 	isWporgTheme,
 	getCanonicalTheme,
 	getPremiumThemePrice,
-	getThemeDetailsUrl,
-	getThemeRequestErrors,
-	getThemeForumUrl,
 	getThemeDemoUrl,
+	getThemeDetailsUrl,
+	getThemeForumUrl,
+	getThemeRequestErrors,
+	getThemeType,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -94,6 +96,7 @@ import {
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getTheme } from '../../state/themes/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
@@ -621,6 +624,9 @@ class ThemeSheet extends Component {
 			isExternallyManagedTheme,
 			isWporg,
 			isLoggedIn,
+			themeType,
+			isSimple,
+			isThemeInstalledOnAtomicSite,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -644,21 +650,24 @@ class ThemeSheet extends Component {
 						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
 					<div className="theme__sheet-main-actions">
+						{ shouldRenderButton &&
+							( this.shouldRenderUnlockStyleButton()
+								? this.renderUnlockStyleButton()
+								: this.renderButton() ) }
 						{ config.isEnabled( 'themes/block-theme-previews' ) && (
 							<LivePreviewButton
 								isActive={ isActive }
 								isAtomic={ isAtomic }
 								isExternallyManagedTheme={ isExternallyManagedTheme }
+								isSimple={ isSimple }
+								isThemeInstalledOnAtomicSite={ isThemeInstalledOnAtomicSite }
 								isWporg={ isWporg }
 								showTryAndCustomize={ showTryAndCustomize }
 								siteSlug={ siteSlug }
 								stylesheet={ stylesheet }
+								themeType={ themeType }
 							></LivePreviewButton>
 						) }
-						{ shouldRenderButton &&
-							( this.shouldRenderUnlockStyleButton()
-								? this.renderUnlockStyleButton()
-								: this.renderButton() ) }
 						{ this.shouldRenderPreviewButton() && (
 							<Button
 								onClick={ ( e ) => {
@@ -1362,6 +1371,7 @@ class ThemeSheet extends Component {
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
+				<QueryTheme themeId={ this.props.themeId } siteId={ siteId } />
 				<QueryProductsList />
 				<QueryUserPurchases />
 				{
@@ -1548,9 +1558,16 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
+		const themeType = config.isEnabled( 'themes/block-theme-previews' )
+			? getThemeType( state, themeId )
+			: undefined;
+
+		const isThemeInstalledOnAtomicSite = isAtomic && !! getTheme( state, siteId, themeId );
+
 		return {
 			...theme,
 			themeId,
+			themeType,
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
 			siteId,
@@ -1568,8 +1585,10 @@ export default connect(
 			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, themeId ),
+			isThemeInstalledOnAtomicSite,
 			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, themeId ),
+			isSimple: isSimpleSite( state, siteId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
