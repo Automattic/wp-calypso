@@ -6,7 +6,8 @@ import type { AppState } from 'calypso/types';
 import 'calypso/state/ui/init';
 
 /**
- * Return true if is user is able to use plugins on any of their sites.
+ * Return true if a user has sites that are able to be connected to domains.
+ * Returns false when a user has no sites or only self hosted Jetpack sites.
  *
  * @param state Global state tree
  */
