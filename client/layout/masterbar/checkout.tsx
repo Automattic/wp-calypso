@@ -95,7 +95,7 @@ const CheckoutMasterbar = ( {
 	const handleClick = () => {
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_masterbar_support_click', {
-				cart: responseCart.products.map( ( product ) => product.product_name ).join( ', ' ),
+				cart: JSON.stringify( responseCart ),
 			} )
 		);
 	};
