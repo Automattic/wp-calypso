@@ -98,6 +98,7 @@
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
 		"stats/paid-stats": false,
+		"stats/paid-wpcom-stats": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"themes/premium": true,
