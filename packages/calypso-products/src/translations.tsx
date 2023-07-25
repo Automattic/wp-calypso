@@ -157,6 +157,8 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	const backup = translate( 'VaultPress Backup' );
 	const search = translate( 'Site Search' );
 	const stats = translate( 'Stats' );
+	const statsFree = translate( 'Stats (Free)' );
+	const statsCommercial = translate( 'Stats (Commercial)' );
 	const scan = translate( 'Scan' );
 	const scanRealtime = (
 		<>
@@ -246,9 +248,9 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_WPCOM_SEARCH ]: search,
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: stats,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercial,
 		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: stats,
-		[ PRODUCT_JETPACK_STATS_FREE ]: stats,
+		[ PRODUCT_JETPACK_STATS_FREE ]: statsFree,
 		[ PRODUCT_JETPACK_SCAN ]: scan,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
