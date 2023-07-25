@@ -2,8 +2,8 @@
 
 import { merge, get } from 'lodash';
 import {
-	SITE_STATS_RECEIVE,
 	ALL_SITES_STATS_RECEIVE,
+	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
@@ -91,16 +91,16 @@ export const items = withSchemaValidation( itemSchema, ( state = {}, action ) =>
 			const { query, data } = action;
 			const newState = { ...state };
 
+			const statType = 'statsSummary'; // ??
+			const queryKey = getSerializedStatsQuery( query );
 			for ( const siteId in data.stats ) {
-				const siteData = data.stats[ siteId ];
-				const statType = 'statsSummary'; // ??
-				const queryKey = getSerializedStatsQuery( query );
-
 				newState[ siteId ] = {
 					...newState[ siteId ],
 					[ statType ]: {
-						...get( newState, [ siteId, statType ] ),
-						[ queryKey ]: siteData,
+						...( newState[ siteId ] && newState[ siteId ][ statType ]
+							? newState[ siteId ][ statType ]
+							: {} ),
+						[ queryKey ]: data.stats[ siteId ],
 					},
 				};
 			}

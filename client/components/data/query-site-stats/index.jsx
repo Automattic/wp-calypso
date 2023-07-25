@@ -36,7 +36,6 @@ class QuerySiteStats extends Component {
 			return;
 		}
 
-		console.log( 'requesting', siteId, statType, query );
 		this.props.requestSiteStats( siteId, statType, query );
 		this.clearInterval();
 		if ( heartbeat && isAutoRefreshAllowedForQuery( query ) ) {
