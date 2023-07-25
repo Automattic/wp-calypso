@@ -144,7 +144,13 @@ export class PlansStep extends Component {
 			);
 		}
 
-		const domainName = getDomainName( this.props.signupDependencies.domainItem );
+		const { signupDependencies } = this.props;
+		const isFreeSubDomainGenerated = ! signupDependencies.domainItem;
+		const paidDomainName = getDomainName( signupDependencies.domainItem );
+		const freeSubdomain =
+			isFreeSubDomainGenerated && signupDependencies.siteUrl
+				? `${ signupDependencies.siteUrl }.wordpress.com`
+				: null;
 
 		return (
 			<div>
@@ -155,7 +161,8 @@ export class PlansStep extends Component {
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
-					domainName={ domainName }
+					paidDomainName={ paidDomainName }
+					freeSubdomain={ freeSubdomain }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					plansWithScroll={ this.state.isDesktop }

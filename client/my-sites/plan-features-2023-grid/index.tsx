@@ -101,7 +101,8 @@ export type PlanFeatures2023GridProps = {
 	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	flowName?: string | null;
-	domainName?: string;
+	paidDomainName?: string;
+	freeSubdomain?: string;
 	placeholder?: string;
 	intervalType?: string;
 	currentSitePlanSlug?: string | null;
@@ -471,11 +472,11 @@ export class PlanFeatures2023Grid extends Component<
 		if ( isMonthlyPlan || isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 			return null;
 		}
-		const { domainName } = this.props;
+		const { paidDomainName } = this.props;
 
-		const displayText = domainName
+		const displayText = paidDomainName
 			? translate( '%(domainName)s is included', {
-					args: { domainName },
+					args: { paidDomainName },
 			  } )
 			: translate( 'Free domain for one year' );
 
@@ -802,7 +803,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { domainName, translate, hideUnavailableFeatures, selectedFeature } = this.props;
+		const { paidDomainName, translate, hideUnavailableFeatures, selectedFeature } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
 				! isWpcomEnterpriseGridPlan( properties.planName ) &&
@@ -822,7 +823,7 @@ export class PlanFeatures2023Grid extends Component<
 						<PlanFeatures2023GridFeatures
 							features={ features }
 							planName={ planName }
-							domainName={ domainName }
+							domainName={ paidDomainName }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
 						/>
@@ -840,7 +841,7 @@ export class PlanFeatures2023Grid extends Component<
 						<PlanFeatures2023GridFeatures
 							features={ jpFeatures }
 							planName={ planName }
-							domainName={ domainName }
+							domainName={ paidDomainName }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 						/>
 					</Container>

@@ -13,13 +13,14 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import usePlanPrices from '../../plans/hooks/use-plan-prices';
 import useIsCustomDomainAllowedOnFreePlan from '../hooks/use-is-custom-domain-allowed-on-free-plan';
 import { LoadingPlaceHolder } from './loading-placeholder';
+import { DialogFreeDomainFreePlan } from './plan-select-dialogs/free-domain-free-plan-doalog';
 import type { DomainSuggestion } from '@automattic/data-stores';
 
-const DialogContainer = styled.div`
+export const DialogContainer = styled.div`
 	padding: 24px;
 `;
 
-const Heading = styled.div`
+export const Heading = styled.div`
 	font-family: Recoleta;
 	color: var( --studio-gray-100 );
 	font-size: 22px;
@@ -32,7 +33,7 @@ const Heading = styled.div`
 	}
 `;
 
-const SubHeading = styled.div`
+export const SubHeading = styled.div`
 	margin-top: 8px;
 	font-family: 'SF Pro Text', sans-serif;
 	color: var( --studio-gray-60 );
@@ -46,7 +47,7 @@ const SubHeading = styled.div`
 	}
 `;
 
-const ButtonContainer = styled.div`
+export const ButtonContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	margin-top: 16px;
@@ -55,7 +56,7 @@ const ButtonContainer = styled.div`
 	}
 `;
 
-const Row = styled.div`
+export const Row = styled.div`
 	display: flex;
 	justify-content: space-between;
 	padding-top: 16px;
@@ -68,12 +69,12 @@ const Row = styled.div`
 	}
 `;
 
-const RowWithBorder = styled( Row )`
+export const RowWithBorder = styled( Row )`
 	border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
 	padding-bottom: 16px;
 `;
 
-const DomainName = styled.div`
+export const DomainName = styled.div`
 	font-size: 16px;
 	line-height: 20px;
 	letter-spacing: -0.24px;
@@ -85,7 +86,7 @@ const DomainName = styled.div`
 	}
 `;
 
-const FreeDomainText = styled.div`
+export const FreeDomainText = styled.div`
 	font-size: 14px;
 	line-height: 20px;
 	letter-spacing: -0.15px;
@@ -93,7 +94,7 @@ const FreeDomainText = styled.div`
 	margin-top: 4px;
 `;
 
-const StyledButton = styled( Button )`
+export const StyledButton = styled( Button )`
 	padding: 10px 24px;
 	border-radius: 4px;
 	font-weight: 500;
@@ -161,8 +162,9 @@ function GetSuggestedPlanSection( {
 	);
 }
 
-type DomainPlanDialogProps = {
-	domainName: string;
+export type DomainPlanDialogProps = {
+	paidDomainName?: string;
+	freeSubdomain?: string;
 	suggestedPlanSlug: PlanSlug;
 	onFreePlanSelected: ( domainSuggestion?: DomainSuggestion ) => void;
 	onPlanSelected: () => void;
@@ -191,7 +193,7 @@ function DialogPaidPlanIsRequired( {
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: DomainPlanDialogProps ) {
+}: { paidDomainName: string } & Omit< DomainPlanDialogProps, 'freeSubdomain' > ) {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const [ isBusy, setIsBusy ] = useState( false );
@@ -252,7 +254,7 @@ function DialogCustomDomainAndFreePlan( {
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: DomainPlanDialogProps ) {
+}: { paidDomainName: string } & Omit< DomainPlanDialogProps, 'freeSubdomain' > ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 	const { isInitialLoading, wpcomFreeDomainSuggestion } =
@@ -324,20 +326,42 @@ function DialogCustomDomainAndFreePlan( {
 }
 
 export function FreePlanPaidDomainDialog( {
-	domainName,
+	paidDomainName,
+	freeSubdomain,
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
 }: DomainPlanDialogProps & { onClose: () => void } ) {
 	const [ isLoadingAssignment, isCustomDomainAllowedOnFreePlan ] =
-		useIsCustomDomainAllowedOnFreePlan( domainName );
+		useIsCustomDomainAllowedOnFreePlan( paidDomainName );
 
-	const dialogCommonProps: DomainPlanDialogProps = {
-		domainName,
+	const dialogCommonProps: Omit< DomainPlanDialogProps, 'paidDomainName' | 'freeSubdomain' > = {
 		suggestedPlanSlug,
 		onFreePlanSelected,
 		onPlanSelected,
+	};
+
+	const DialogContent = () => {
+		if ( paidDomainName ) {
+			if ( isCustomDomainAllowedOnFreePlan ) {
+				return (
+					<DialogCustomDomainAndFreePlan
+						{ ...dialogCommonProps }
+						paidDomainName={ paidDomainName }
+					/>
+				);
+			}
+			return (
+				<DialogPaidPlanIsRequired { ...dialogCommonProps } paidDomainName={ paidDomainName } />
+			);
+		}
+		return (
+			<DialogFreeDomainFreePlan
+				{ ...dialogCommonProps }
+				freeSubdomain={ freeSubdomain as string }
+			/>
+		);
 	};
 
 	return (
@@ -358,13 +382,9 @@ export function FreePlanPaidDomainDialog( {
 					}
 				` }
 			/>
+
 			{ isLoadingAssignment && <LoadingPlaceHolder /> }
-			{ ! isLoadingAssignment &&
-				( isCustomDomainAllowedOnFreePlan ? (
-					<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
-				) : (
-					<DialogPaidPlanIsRequired { ...dialogCommonProps } />
-				) ) }
+			{ ! isLoadingAssignment && <DialogContent /> }
 		</Dialog>
 	);
 }

@@ -9,7 +9,6 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
-import { isOnboardingPMFlow } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import classNames from 'classnames';
@@ -61,7 +60,8 @@ export interface PlansFeaturesMainProps {
 	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
-	domainName?: string;
+	paidDomainName?: string;
+	freeSubdomain?: string;
 	flowName?: string | null;
 	replacePaidDomainWithFreeDomain?: ( freeDomainSuggestion: DomainSuggestion ) => void;
 	intervalType?: IntervalType;
@@ -115,7 +115,8 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	const {
 		plans,
 		visiblePlans,
-		domainName,
+		paidDomainName,
+		freeSubdomain,
 		isInSignup,
 		isLaunchPage,
 		flowName,
@@ -159,7 +160,8 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 	}
 
 	const asyncProps: PlanFeatures2023GridProps = {
-		domainName,
+		paidDomainName,
+		freeSubdomain,
 		isInSignup,
 		isLaunchPage,
 		onUpgradeClick,
@@ -200,7 +202,8 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 };
 
 const PlansFeaturesMain = ( {
-	domainName,
+	paidDomainName,
+	freeSubdomain,
 	flowName,
 	replacePaidDomainWithFreeDomain,
 	onUpgradeClick,
@@ -232,7 +235,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 }: PlansFeaturesMainProps ) => {
-	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
+	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( true );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -278,9 +281,9 @@ const PlansFeaturesMain = ( {
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// - only applicable to main onboarding flow (default `/start`)
 		if (
-			( 'onboarding' === flowName || isOnboardingPMFlow( flowName ) ) &&
-			domainName &&
-			! cartItemForPlan
+			( 'onboarding' === flowName || 'onboarding-pm' === flowName ) &&
+			! cartItemForPlan &&
+			( freeSubdomain || paidDomainName ) // During launch site flow neither freeSubdomain nor paidDomainName is available
 		) {
 			toggleIsFreePlanPaidDomainDialogOpen();
 			return;
@@ -376,9 +379,10 @@ const PlansFeaturesMain = ( {
 			<QueryPlans />
 			<QuerySites siteId={ siteId } />
 			<QuerySitePlans siteId={ siteId } />
-			{ domainName && isFreePlanPaidDomainDialogOpen && (
+			{ isFreePlanPaidDomainDialogOpen && (
 				<FreePlanPaidDomainDialog
-					domainName={ domainName }
+					freeSubdomain={ freeSubdomain }
+					paidDomainName={ paidDomainName }
 					suggestedPlanSlug={ PLAN_PERSONAL }
 					onClose={ toggleIsFreePlanPaidDomainDialogOpen }
 					onFreePlanSelected={ ( freeDomainSuggestion ) => {
