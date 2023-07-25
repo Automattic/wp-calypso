@@ -264,6 +264,7 @@ export default function SitesOverview() {
 			<DocumentHead title={ pageTitle } />
 			<SidebarNavigation sectionTitle={ pageTitle } />
 			<div className="sites-overview__container">
+				{ /* render the buttons in the body if on mobile */ }
 				{ isWithinBreakpoint( '<960px' ) &&
 					selectedLicensesCount < 1 &&
 					renderAddSiteIssueLicenseButtons() }
@@ -275,16 +276,20 @@ export default function SitesOverview() {
 
 						{ data?.sites && <SiteAddLicenseNotification /> }
 
-						<SiteContentHeader
-							content={
-								selectedLicensesCount > 0
-									? renderIssueLicenseButton()
-									: renderAddSiteIssueLicenseButtons()
-							}
-							pageTitle={ pageTitle }
-							// Only renderIssueLicenseButton should be sticky.
-							showStickyContent={ selectedLicensesCount > 0 }
-						/>
+						{ /* only render component on large screens */ }
+						{ isWithinBreakpoint( '>960px' ) && (
+							<SiteContentHeader
+								content={
+									selectedLicensesCount > 0
+										? renderIssueLicenseButton()
+										: renderAddSiteIssueLicenseButtons()
+								}
+								pageTitle={ pageTitle }
+								// Only renderIssueLicenseButton should be sticky.
+								showStickyContent={ selectedLicensesCount > 0 }
+							/>
+						) }
+
 						<SectionNav
 							applyUpdatedStyles
 							selectedText={
