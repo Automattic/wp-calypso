@@ -14,8 +14,10 @@ import {
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
-import LaunchpadIntentFreeNewsletter from 'calypso/my-sites/customer-home/cards/launchpad/intent-free-newsletter';
-import LaunchpadIntentPaidNewsletter from 'calypso/my-sites/customer-home/cards/launchpad/intent-paid-newsletter';
+import {
+	LaunchpadIntentFreeNewsletter,
+	LaunchpadIntentPaidNewsletter,
+} from 'calypso/my-sites/customer-home/cards/launchpad/intent-newsletter';
 import LaunchpadIntentWrite from 'calypso/my-sites/customer-home/cards/launchpad/intent-write';
 import LaunchpadKeepBuilding from 'calypso/my-sites/customer-home/cards/launchpad/keep-building';
 import LearnGrow from './learn-grow';

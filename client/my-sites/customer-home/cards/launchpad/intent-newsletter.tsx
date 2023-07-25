@@ -8,12 +8,10 @@ import CustomerHomeLaunchpad from '.';
 import type { Task } from '@automattic/launchpad';
 import type { AppState } from 'calypso/types';
 
-const checklistSlug = 'intent-free-newsletter';
-const launchpadContext = 'customer-home';
-
-const LaunchpadIntentFreeNewsletter = (): JSX.Element => {
+const LaunchpadIntentNewsletter = ( { checklistSlug }: { checklistSlug: string } ): JSX.Element => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
+	const launchpadContext = 'customer-home';
 
 	const {
 		data: { checklist },
@@ -36,4 +34,10 @@ const LaunchpadIntentFreeNewsletter = (): JSX.Element => {
 	);
 };
 
-export default LaunchpadIntentFreeNewsletter;
+export const LaunchpadIntentFreeNewsletter = (): JSX.Element => {
+	return <LaunchpadIntentNewsletter checklistSlug="intent-free-newsletter" />;
+};
+
+export const LaunchpadIntentPaidNewsletter = (): JSX.Element => {
+	return <LaunchpadIntentNewsletter checklistSlug="intent-paid-newsletter" />;
+};
