@@ -108,7 +108,6 @@ const PersonalPurchase = ( {
 					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
 						<li>{ translate( 'No access to upcoming features' ) }</li>
 						<li>{ translate( 'No priority support' ) }</li>
-						<li>{ translate( "You'll see upsells and ads in the Stats page" ) }</li>
 					</ul>
 				) : (
 					<>
@@ -116,7 +115,6 @@ const PersonalPurchase = ( {
 						<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 							<li>{ translate( 'Instant access to upcoming features' ) }</li>
 							<li>{ translate( 'Priority support' ) }</li>
-							<li>{ translate( 'Ad-free experience' ) }</li>
 						</ul>
 					</>
 				) }

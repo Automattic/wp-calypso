@@ -24,7 +24,7 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = () => {
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					"{{p}}You'll now get instant access to upcoming features, get priority support, and no ads in Jetpack Stats.{{/p}}",
+					"{{p}}You'll now get instant access to upcoming features and priority support.{{/p}}",
 					{
 						components: {
 							p: <p />,
