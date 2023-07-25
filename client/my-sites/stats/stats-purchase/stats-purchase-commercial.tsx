@@ -38,7 +38,12 @@ const CommercialPurchase = ( {
 				{ translate(
 					'Upgrade now to take advantage of the introductory flat rate. Starting in 2024, we will introduce metered billing. '
 				) }
-				<Button variant="link" href="#">
+				<Button
+					variant="link"
+					href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					{ translate( 'Learn more' ) }
 				</Button>
 			</div>
