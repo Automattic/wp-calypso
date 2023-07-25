@@ -25,6 +25,7 @@ import {
 	domainUseMyDomain,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
@@ -35,6 +36,7 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { IAppState } from 'calypso/state/types';
 import ConnectedDomainDetails from './cards/connected-domain-details';
@@ -76,6 +78,8 @@ const Settings = ( {
 			requestWhois( selectedDomainName );
 		}
 	}, [ contactInformation, selectedDomainName ] );
+
+	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
 
 	const renderBreadcrumbs = () => {
 		const previousPath = domainManagementList(
@@ -137,6 +141,7 @@ const Settings = ( {
 	const renderStatusSection = () => {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
+			! hasConnectableSites ||
 			domain.type === domainTypes.TRANSFER
 		) {
 			return null;
