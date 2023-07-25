@@ -12,7 +12,7 @@ type PendingPostConfirmResponse = {
 };
 
 const usePendingPostConfirmMutation = () => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 	const countCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 	return useMutation( {
