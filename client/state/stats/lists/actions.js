@@ -31,9 +31,10 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
 	};
 }
 
-export function receiveAllSitesStats( query, data, date ) {
+export function receiveAllSitesStats( statType, query, data, date ) {
 	return {
 		type: ALL_SITES_STATS_RECEIVE,
+		statType,
 		query,
 		data,
 		date,
@@ -136,7 +137,11 @@ export function requestSiteStats( siteId, statType, query ) {
 		return requestStats
 			.then( ( data ) => {
 				if ( siteId === ALL_SITES_ID ) {
-					return dispatch( receiveAllSitesStats( query, data, Date.now() ) );
+					let dispatchedStatType = statType;
+					if ( statType === 'allSitesStatsSummary' ) {
+						dispatchedStatType = 'statsSummary';
+					}
+					return dispatch( receiveAllSitesStats( dispatchedStatType, query, data, Date.now() ) );
 				}
 				return dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) );
 			} )

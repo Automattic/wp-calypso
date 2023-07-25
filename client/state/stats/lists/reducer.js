@@ -88,10 +88,9 @@ export const items = withSchemaValidation( itemSchema, ( state = {}, action ) =>
 		}
 
 		case ALL_SITES_STATS_RECEIVE: {
-			const { query, data } = action;
+			const { statType, query, data } = action;
 			const newState = { ...state };
 
-			const statType = 'statsSummary'; // ??
 			const queryKey = getSerializedStatsQuery( query );
 			for ( const siteId in data.stats ) {
 				newState[ siteId ] = {
