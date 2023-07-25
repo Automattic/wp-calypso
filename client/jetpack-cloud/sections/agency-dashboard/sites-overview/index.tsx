@@ -192,6 +192,10 @@ export default function SitesOverview() {
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
 
 	const renderAddSiteIssueLicenseButtons = () => {
+		if ( emptyState ) {
+			return null;
+		}
+
 		return (
 			<div className="sites-overview__add-site-issue-license-buttons">
 				<Button
