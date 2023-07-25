@@ -3,6 +3,8 @@ import {
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_ECOMMERCE_3_YEARS,
 } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import moment from 'moment';
@@ -16,6 +18,7 @@ import {
 	isMigrationTrialExpired,
 	isSiteOnECommerceTrial,
 	isSiteOnMigrationTrial,
+	isSiteOnWooExpressEcommerceTrial,
 } from '../selectors';
 
 // Mock the config system
@@ -95,6 +98,80 @@ describe( 'trials', () => {
 			const state = getState( plan, siteId );
 
 			expect( isSiteOnECommerceTrial( state, siteId ) ).toBeFalsy();
+		} );
+	} );
+
+	describe( '#isSiteOnWooExpressEcommerceTrial()', () => {
+		const siteId = 1337;
+		const getCustomState = ( productSlug ) => {
+			return deepFreeze( {
+				...userState,
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [
+								{
+									ID: 1,
+									productSlug: productSlug,
+									blogId: siteId,
+									currentPlan: true,
+								},
+							],
+						},
+					},
+					items: {
+						[ siteId ]: {
+							URL: 'https://example.wordpress.com',
+						},
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			} );
+		};
+
+		test( 'Should return true when the e-commerce trial is in the purchases list', () => {
+			expect(
+				isSiteOnWooExpressEcommerceTrial( getCustomState( PLAN_ECOMMERCE_TRIAL_MONTHLY ), siteId )
+			).toBeTruthy();
+		} );
+
+		test( 'Should return true when the e-commerce 3-year plan is in the purchases list', () => {
+			expect(
+				isSiteOnWooExpressEcommerceTrial( getCustomState( PLAN_ECOMMERCE_3_YEARS ), siteId )
+			).toBeTruthy();
+		} );
+
+		test( 'Should return true when the Woo Express medium plan is in the purchases list', () => {
+			expect(
+				isSiteOnWooExpressEcommerceTrial( getCustomState( PLAN_WOOEXPRESS_MEDIUM ), siteId )
+			).toBeTruthy();
+		} );
+
+		test( 'Should return true state is using site data instead of plans data', () => {
+			const state = deepFreeze( {
+				...userState,
+				sites: {
+					plans: {},
+					items: {
+						[ siteId ]: {
+							URL: 'https://example.wordpress.com',
+							plan: {
+								product_slug: PLAN_WOOEXPRESS_MEDIUM,
+							},
+						},
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			} );
+			expect( isSiteOnWooExpressEcommerceTrial( state, siteId ) ).toBeTruthy();
+		} );
+
+		test( 'Should return false when site does not have relevant plan', () => {
+			expect( isSiteOnWooExpressEcommerceTrial( getState( '' ), siteId ) ).toBeFalsy();
 		} );
 	} );
 
