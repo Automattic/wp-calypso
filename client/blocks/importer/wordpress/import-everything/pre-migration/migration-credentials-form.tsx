@@ -210,7 +210,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 					</NextButton>
 					<Button
 						borderless={ true }
-						className="action-buttons__content-only"
+						className="action-buttons__borderless"
 						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
 							e.preventDefault();
 

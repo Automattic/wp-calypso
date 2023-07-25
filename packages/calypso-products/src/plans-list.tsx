@@ -2545,6 +2545,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1018,
 		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,
