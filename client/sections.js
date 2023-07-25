@@ -500,6 +500,12 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'jetpack-cloud-posts',
+		paths: [ '/posts' ],
+		module: 'calypso/jetpack-cloud/sections/posts',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-cloud-agency-dashboard',
 		paths: [ '/dashboard' ],
 		module: 'calypso/jetpack-cloud/sections/agency-dashboard',
