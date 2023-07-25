@@ -104,7 +104,11 @@ const domainTransfer: Flow = {
 		const goBack = () => {
 			switch ( _currentStepSlug ) {
 				case 'domains':
-					return navigate( 'intro' );
+					if ( window.history.length === 0 ) {
+						return navigate( 'intro' );
+					}
+					window.history.back();
+					return;
 				default:
 					return;
 			}
