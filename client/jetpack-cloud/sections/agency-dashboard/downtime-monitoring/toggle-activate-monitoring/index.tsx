@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -9,6 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent, useToggleActivateMonitor } from '../../hooks';
 import NotificationSettings from '../notification-settings';
+import UpgradePopover from '../upgrade-popover';
 import type { AllowedStatusTypes, MonitorSettings, Site } from '../../sites-overview/types';
 
 import './style.scss';
@@ -40,6 +42,11 @@ export default function ToggleActivateMonitoring( {
 	const statuses = useSelector( getSiteMonitorStatuses );
 	const [ showNotificationSettings, setShowNotificationSettings ] = useState< boolean >( false );
 	const [ showTooltip, setShowTooltip ] = useState( false );
+
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
+
+	// TODO: Need to figure out if current site has no existing paid version of downtime monitoring.
+	const shouldDisplayUpgradePopover = status === 'success' && isPaidTierEnabled;
 
 	const handleShowTooltip = () => {
 		setShowTooltip( true );
@@ -147,19 +154,45 @@ export default function ToggleActivateMonitoring( {
 		);
 	}
 
+	const upgradePopoverOrTooltip = shouldDisplayUpgradePopover ? (
+		<UpgradePopover
+			context={ statusContentRef.current }
+			isVisible={ showTooltip }
+			position="bottom left"
+			onClose={ handleHideTooltip }
+		/>
+	) : (
+		tooltip && (
+			<Tooltip
+				id={ tooltipId }
+				context={ statusContentRef.current }
+				isVisible={ showTooltip }
+				position="bottom"
+				className="sites-overview__tooltip"
+			>
+				{ tooltip }
+			</Tooltip>
+		)
+	);
+
 	return (
 		<>
 			<span
+				className="toggle-activate-monitoring__toggle-button"
+				// We don't want to hide the tooltip when the user clicks on the
+				// upgrade popover since it has buttons that user can interact with.
+				onMouseDown={ shouldDisplayUpgradePopover ? undefined : handleHideTooltip }
+				onMouseEnter={ handleShowTooltip }
+				onMouseLeave={ handleHideTooltip }
 				ref={ statusContentRef }
 				role="button"
 				tabIndex={ 0 }
-				onMouseEnter={ handleShowTooltip }
-				onMouseLeave={ handleHideTooltip }
-				onMouseDown={ handleHideTooltip }
-				className="toggle-activate-monitoring__toggle-button"
 			>
 				{ toggleContent }
+
+				{ upgradePopoverOrTooltip }
 			</span>
+
 			{ showNotificationSettings && (
 				<NotificationSettings
 					onClose={ handleToggleNotificationSettings }
@@ -167,17 +200,6 @@ export default function ToggleActivateMonitoring( {
 					settings={ settings }
 					isLargeScreen={ isLargeScreen }
 				/>
-			) }
-			{ tooltip && (
-				<Tooltip
-					id={ tooltipId }
-					context={ statusContentRef.current }
-					isVisible={ showTooltip }
-					position="bottom"
-					className="sites-overview__tooltip"
-				>
-					{ tooltip }
-				</Tooltip>
 			) }
 		</>
 	);
