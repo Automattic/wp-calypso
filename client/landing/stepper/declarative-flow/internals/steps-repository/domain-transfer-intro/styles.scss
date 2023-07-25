@@ -12,10 +12,6 @@ $heading-font-family: "SF Pro Display", $sans;
 	display: flex;
 	align-items: center;
 
-	.flow-progress.progress-bar {
-		display: none;
-	}
-
 	// Same style also on transfer-domains step
 	.bulk-domain-transfer__cta-container {
 		display: flex;
