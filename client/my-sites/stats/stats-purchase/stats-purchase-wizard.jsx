@@ -192,7 +192,7 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 					</div>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						<StatsPurchaseSVG
-							isFree={ siteType === TYPE_PERSONAL && ! subscriptionValue === 0 }
+							isFree={ siteType === TYPE_PERSONAL && subscriptionValue === 0 }
 							hasHighlight={
 								siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier
 							}
