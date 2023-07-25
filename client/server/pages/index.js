@@ -697,10 +697,10 @@ function wpcomPages( app ) {
 
 	const lang = getLanguageRouteParam( 'locale' );
 	app.get( `/${ lang }/plans`, function ( req, res, next ) {
+		const locale = req.params?.locale;
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
 			const ref = req.query?.ref;
-			const locale = req.params?.locale;
 
 			if ( queryFor && 'jetpack' === queryFor ) {
 				res.redirect(
@@ -713,6 +713,12 @@ function wpcomPages( app ) {
 				res.redirect( pricingPageUrl );
 			}
 		} else {
+			if ( locale ) {
+				const queryParams = new URLSearchParams( req.query );
+				const queryString = queryParams.size ? '?' + queryParams.toString() : '';
+				res.redirect( `/plans${ queryString }` );
+				return;
+			}
 			next();
 		}
 	} );
