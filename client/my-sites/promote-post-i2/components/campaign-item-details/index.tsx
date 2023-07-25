@@ -254,13 +254,17 @@ export default function CampaignItemDetails( props: Props ) {
 
 			<header className="campaign-item-header">
 				<div>
-					<div className="campaign-item-breadcrumb">
-						{ ! isLoading ? (
-							<Breadcrumb items={ navigationItems as Item[] } compact={ isSmallScreen } />
-						) : (
-							<FlexibleSkeleton />
-						) }
-					</div>
+					{ ! isRunningInJetpack ? (
+						<div className="campaign-item-breadcrumb">
+							{ ! isLoading ? (
+								<Breadcrumb items={ navigationItems as Item[] } compact={ isSmallScreen } />
+							) : (
+								<FlexibleSkeleton />
+							) }
+						</div>
+					) : (
+						<div className="campaign-item-spacer" />
+					) }
 
 					<div className="campaign-item-details__header-title">
 						{ isLoading ? <FlexibleSkeleton /> : campaignTitleFormatted }
