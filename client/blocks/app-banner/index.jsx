@@ -73,8 +73,7 @@ export class AppBanner extends Component {
 			) {
 				isDraftPostModalShown = true;
 			}
-		} catch ( e ) {
-			isDraftPostModalShown = false;
+		} catch () {
 		}
 
 		let isLaunchpadEnabled = false;
