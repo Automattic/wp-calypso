@@ -48,6 +48,21 @@
 			.formatted-header__title {
 				font-size: 2.75rem;
 			}
+
+			.formatted-header__subtitle {
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				margin-top: 16px;
+				line-height: 20px;
+
+				span {
+					display: block;
+					@media (min-width: $break-medium ) {
+						width: 60%;
+					}
+				}
+			}
 		}
 
 		.step-container__navigation.action-buttons {
@@ -59,17 +74,6 @@
 			background-color: transparent;
 			border: none;
 			box-shadow: none;
-		}
-		.formatted-header__subtitle {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			span {
-				display: block;
-				@media (min-width: $break-medium ) {
-					width: 60%;
-				}
-			}
 		}
 
 		@media (min-width: $break-medium ) {

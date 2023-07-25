@@ -61,12 +61,12 @@ $heading-font-family: "SF Pro Display", $sans;
 			flex-direction: column;
 			gap: 0;
 			justify-content: flex-start;
-			margin-top: 24px;
 			padding-left: 20px;
 			padding-right: 20px;
 		}
 
 		.step-container.intro {
+			padding-top: 96px;
 			font-family: $font-family;
 			display: flex;
 			flex-direction: column;
@@ -74,16 +74,15 @@ $heading-font-family: "SF Pro Display", $sans;
 
 			@media (max-width: $break-medium ) {
 				padding: 0;
-				margin-top: 24px;
+				margin-top: 48px;
 			}
 
 			.step-container__header {
-				margin-bottom: 60px;
+				margin: 0;
 				text-align: center;
 
 				@media (max-width: $break-medium ) {
 					margin-top: 48px;
-					margin-bottom: 44px;
 				}
 
 				.formatted-header {
@@ -99,7 +98,7 @@ $heading-font-family: "SF Pro Display", $sans;
 					}
 
 					.formatted-header__subtitle {
-						color: #000;
+						color: var(--studio-gray-60);
 						margin-top: 16px;
 						text-align: center;
 
@@ -115,6 +114,7 @@ $heading-font-family: "SF Pro Display", $sans;
 				flex-shrink: 0;
 
 				.select-items {
+					margin-top: 32px;
 					margin-bottom: 32px;
 					padding-left: 0;
 					padding-right: 0;
