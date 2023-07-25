@@ -414,7 +414,7 @@ const PlansFeaturesMain = ( {
 						}
 						// Since this domain will not be available after it is selected, invalidate the cache.
 						invalidateDomainSuggestionCache();
-						wpcomFreeDomainSuggestion &&
+						wpcomFreeDomainSuggestion.entry &&
 							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.entry );
 						onUpgradeClick?.( null );
 					} }
