@@ -500,6 +500,13 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'jetpack-cloud-post',
+		paths: [ '/post', '/page', '/edit' ],
+		module: 'calypso/gutenberg/editor',
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'jetpack-cloud-posts',
 		paths: [ '/posts' ],
 		module: 'calypso/jetpack-cloud/sections/posts',
