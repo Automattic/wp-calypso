@@ -1,7 +1,7 @@
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import moment, { Moment } from 'moment';
 import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
-import { getCurrentPlan } from '.';
+import { getCurrentPlan } from '..';
 import type { AppState } from 'calypso/types';
 
 /**
