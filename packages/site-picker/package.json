@@ -24,9 +24,9 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
 		"@automattic/tour-kit": "workspace:^",
-		"@wordpress/dom": "^3.36.0",
-		"@wordpress/i18n": "^4.36.0",
-		"@wordpress/icons": "^9.26.0",
+		"@wordpress/dom": "^3.38.0",
+		"@wordpress/i18n": "^4.38.0",
+		"@wordpress/icons": "^9.29.0",
 		"classnames": "^2.3.1"
 	},
 	"peerDependencies": {
