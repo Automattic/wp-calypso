@@ -353,6 +353,8 @@ export interface ResponseCartProduct {
 	product_id: number;
 	currency: string;
 
+	product_name_en: string;
+
 	/**
 	 * The cart item's original price in the currency's smallest unit.
 	 *
