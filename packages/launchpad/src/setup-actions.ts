@@ -21,11 +21,11 @@ export const setUpActionsForTasks = ( {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
 	const { setShareSiteModalIsOpen } = extraActions || {};
 
-	function mapTasks( task: Task, index: number ) {
+	function mapTask( task: Task, index: number ) {
 		task.order = index;
 	}
 
-	tasks.map( mapTasks );
+	tasks.map( mapTask );
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
