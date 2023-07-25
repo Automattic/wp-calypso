@@ -25,14 +25,21 @@ export function StickyContainer( props: Props ) {
 	/**
 	 * This effect sets the value of `isStuck` state when it detects that
 	 * the element is sticky.
+	 * The top property of the root margin is set at -1px (plus optional offset).
+	 * So when position:sticky takes effect, the intersection ratio will always be ~99%
 	 */
 	useLayoutEffect( () => {
 		const observer = new IntersectionObserver(
-			( [ e ] ) => {
-				if ( e.intersectionRatio === 0 ) {
+			( [ entry ] ) => {
+				if ( entry.intersectionRatio === 0 ) {
+					// The element is out of view
+					setIsStuck( false );
+				} else if ( entry.intersectionRect.bottom === entry.rootBounds?.bottom ) {
+					// The element is intersecting, but it is at the bottom of the screen
 					setIsStuck( false );
 				} else {
-					setIsStuck( e.intersectionRatio < 1 );
+					// The element is in the "stuck" state
+					setIsStuck( entry.intersectionRatio < 1 );
 				}
 			},
 			{
