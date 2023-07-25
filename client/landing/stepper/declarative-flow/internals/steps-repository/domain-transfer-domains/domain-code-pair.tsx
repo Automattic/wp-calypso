@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -134,9 +135,9 @@ export function DomainCodePair( {
 		}
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
-	const domainActions = (
+	const domainActions = ( inputValidationTextDisplayed = true ) => (
 		<>
-			&nbsp;
+			{ inputValidationTextDisplayed ? <span>&nbsp;</span> : '' }
 			<Button
 				// Disable the delete button on initial state meaning. no domain, no auth and one row.
 				disabled={ ! domain && ! auth && domainCount === 1 }
@@ -175,6 +176,8 @@ export function DomainCodePair( {
 							disabled={ valid }
 							id={ id }
 							value={ domain }
+							className="domains__domain-name-input-field"
+							placeholder={ __( 'example.com' ) }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, {
 									domain: event.target.value.trim().toLowerCase(),
@@ -207,6 +210,17 @@ export function DomainCodePair( {
 								{ __(
 									'Unique code proving ownership, needed for secure domain transfer between registrars.'
 								) }
+								<div>
+									<Button
+										href={ localizeUrl(
+											'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+										) }
+										target="_blank"
+										variant="link"
+									>
+										<span className="learn-more-label">{ __( 'Learn more' ) }</span>
+									</Button>
+								</div>
 							</InfoPopover>
 						</FormLabel>
 
@@ -214,6 +228,7 @@ export function DomainCodePair( {
 							id={ id + '-auth' }
 							disabled={ valid || hasDuplicates }
 							value={ auth }
+							placeholder="123"
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, {
 									domain,
@@ -232,7 +247,7 @@ export function DomainCodePair( {
 							<FormInputValidation
 								isError={ ! valid }
 								text={ message }
-								children={ domainActions }
+								children={ domainActions( true ) }
 							></FormInputValidation>
 						) }
 						{ message && loading && (
@@ -246,9 +261,9 @@ export function DomainCodePair( {
 						{ ! shouldReportError && ! loading && (
 							<FormInputValidation
 								isError={ false }
+								text=""
 								isMuted={ true }
-								text={ __( 'Please enter the domain name and authorization code.' ) }
-								children={ domainCount > 1 && domainActions }
+								children={ domainCount > 1 && domainActions( false ) }
 							/>
 						) }
 					</div>
@@ -276,7 +291,7 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ ! valid }
 						text={ message }
-						children={ domainActions }
+						children={ domainActions( true ) }
 					></FormInputValidation>
 				) }
 				{ message && loading && (
@@ -291,8 +306,8 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ false }
 						isMuted={ true }
-						text={ __( 'Please enter the domain name and authorization code.' ) }
-						children={ domainCount > 1 && domainActions }
+						text=""
+						children={ domainCount > 1 && domainActions( false ) }
 					/>
 				) }
 			</div>

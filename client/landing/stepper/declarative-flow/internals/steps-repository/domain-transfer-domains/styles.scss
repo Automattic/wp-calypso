@@ -11,10 +11,6 @@
 	align-items: center;
 	gap: 30px;
 
-	.flow-progress.progress-bar {
-		display: none;
-	}
-
 	button:disabled {
 		pointer-events: none;
 	}
@@ -48,6 +44,21 @@
 			.formatted-header__title {
 				font-size: 2.75rem;
 			}
+
+			.formatted-header__subtitle {
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				margin-top: 16px;
+				line-height: 20px;
+
+				span {
+					display: block;
+					@media (min-width: $break-medium ) {
+						width: 60%;
+					}
+				}
+			}
 		}
 
 		.step-container__navigation.action-buttons {
@@ -59,17 +70,6 @@
 			background-color: transparent;
 			border: none;
 			box-shadow: none;
-		}
-		.formatted-header__subtitle {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			span {
-				display: block;
-				@media (min-width: $break-medium ) {
-					width: 60%;
-				}
-			}
 		}
 
 		@media (min-width: $break-medium ) {
@@ -169,6 +169,13 @@
 			text-decoration: underline;
 		}
 
+
+		.components-button:has(.delete-label),
+		.components-button:has(.refresh-label) {
+			color: var(--gray-gray-100, #101517);
+			text-decoration-color: var(--gray-gray-100, #101517);
+		}
+
 		.is-muted.is-checking-domain {
 			@keyframes animate-dots {
 				0% {
@@ -201,11 +208,11 @@
 	}
 
 	.domains__domain-domain {
-		flex: 8;
+		flex: 0 0 420px;
 	}
 
 	.domains__domain-key {
-		flex: 3;
+		flex: 0 0 240px;
 
 		.info-popover {
 			margin-left: 5px;
@@ -214,6 +221,18 @@
 
 		.info-popover:focus {
 			outline: 1px solid var(--studio-blue-50);
+		}
+	}
+
+	.domains__domain-domain,
+	.domains__domain-key {
+		@media (max-width: $break-medium ) {
+			flex: 1;
+		}
+
+		.form-text-input::placeholder {
+			color: var(--gray-gray-20, #a7aaad) !important;
+			font-size: 0.875rem;
 		}
 	}
 
@@ -337,13 +356,21 @@
 	.bulk-domain-transfer__container {
 
 		.bulk-domain-transfer__add-domain {
+			padding-left: 0;
 			font-size: 0.875rem;
 			font-weight: 500;
 			color: #0675c4;
 			margin-bottom: 22px;
 			margin-top: 2px;
+			overflow: hidden;
+
 			&:hover {
 				text-decoration: underline;
+			}
+
+			svg {
+				margin-left: -6px;
+				margin-right: 0;
 			}
 		}
 

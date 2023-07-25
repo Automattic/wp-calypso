@@ -71,6 +71,7 @@ export interface Purchase {
 	will_auto_renew?: boolean;
 	tax_vendor_info?: TaxVendorInfo;
 	blog_id: number;
+	price_integer?: number;
 }
 
 export interface TransactionRequest {

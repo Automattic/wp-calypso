@@ -151,3 +151,14 @@
 		margin-right: 7px;
 	}
 }
+
+// Visually hide the toggle control label by positioning
+// it far off-screen, making it effectively invisible.
+// It will be used by screen readers
+.notification-settings__toggle-control label {
+	position: absolute;
+	left: -9999px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}

@@ -14,6 +14,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	requestAddProduct,
 	requestUpdateProduct,
@@ -193,40 +194,44 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const onClose = ( reason ) => {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
+			const product_details = {
+				currency: currentCurrency,
+				price: currentPrice,
+				title: editedProductName,
+				interval: editedSchedule,
+				buyer_can_change_amount: editedPayWhatYouWant,
+				multiple_per_user: editedMultiplePerUser,
+				welcome_email_content: editedCustomConfirmationMessage,
+				subscribe_as_site_subscriber: editedPostsEmail,
+				type: editedMarkAsDonation,
+				is_editable: true,
+			};
 			addProduct(
 				siteId,
-				{
-					currency: currentCurrency,
-					price: currentPrice,
-					title: editedProductName,
-					interval: editedSchedule,
-					buyer_can_change_amount: editedPayWhatYouWant,
-					multiple_per_user: editedMultiplePerUser,
-					welcome_email_content: editedCustomConfirmationMessage,
-					subscribe_as_site_subscriber: editedPostsEmail,
-					type: editedMarkAsDonation,
-					is_editable: true,
-				},
+				product_details,
 				translate( 'Added "%s" payment plan.', { args: editedProductName } )
 			);
+			recordTracksEvent( 'calypso_earn_page_payment_added', product_details );
 		} else if ( reason === 'submit' && product && product.ID ) {
+			const product_details = {
+				ID: product.ID,
+				currency: currentCurrency,
+				price: currentPrice,
+				title: editedProductName,
+				interval: editedSchedule,
+				buyer_can_change_amount: editedPayWhatYouWant,
+				multiple_per_user: editedMultiplePerUser,
+				welcome_email_content: editedCustomConfirmationMessage,
+				subscribe_as_site_subscriber: editedPostsEmail,
+				type: editedMarkAsDonation,
+				is_editable: true,
+			};
 			updateProduct(
 				siteId,
-				{
-					ID: product.ID,
-					currency: currentCurrency,
-					price: currentPrice,
-					title: editedProductName,
-					interval: editedSchedule,
-					buyer_can_change_amount: editedPayWhatYouWant,
-					multiple_per_user: editedMultiplePerUser,
-					welcome_email_content: editedCustomConfirmationMessage,
-					subscribe_as_site_subscriber: editedPostsEmail,
-					type: editedMarkAsDonation,
-					is_editable: true,
-				},
+				product_details,
 				translate( 'Updated "%s" payment plan.', { args: editedProductName } )
 			);
+			recordTracksEvent( 'calypso_earn_page_payment_updated', product_details );
 		}
 		closeDialog();
 	};
@@ -240,6 +245,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		: translate( 'Edit payment options' );
 
 	const editing = product && product.ID;
+
+	recordTracksEvent( 'calypso_earn_page_payment_modal_show', { editing: editing } );
+
 	return (
 		<Dialog
 			isVisible={ true }

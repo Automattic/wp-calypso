@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, Title } from '@automattic/onboarding';
@@ -12,7 +13,9 @@ import MigrationCredentialsForm from 'calypso/blocks/importer/wordpress/import-e
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
 import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
 import { FormState } from 'calypso/components/advanced-credentials/form';
+import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
@@ -20,6 +23,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
+import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import ConfirmModal from './confirm-modal';
 import { CredentialsHelper } from './credentials-helper';
 import { StartImportTrackingProps } from './types';
@@ -74,13 +78,39 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 	};
 
-	const { sourceSiteId, sourceSite, fetchMigrationEnabledStatus, isFetchingData } =
-		useSiteMigrateInfo(
-			targetSite.ID,
-			sourceSiteSlug,
-			fetchMigrationEnabledOnMount,
-			onfetchCallback
-		);
+	const {
+		sourceSiteId,
+		sourceSite,
+		fetchMigrationEnabledStatus,
+		isFetchingData: isFetchingMigrationData,
+	} = useSiteMigrateInfo(
+		targetSite.ID,
+		sourceSiteSlug,
+		fetchMigrationEnabledOnMount,
+		onfetchCallback
+	);
+
+	const [ queryTargetSitePlanStatus, setQueryTargetSitePlanStatus ] = useState<
+		'init' | 'fetching' | 'fetched'
+	>( 'init' );
+
+	const isRequestingTargetSitePlans = useSelector( ( state ) =>
+		isRequestingSitePlans( state, targetSite.ID )
+	);
+
+	useEffect( () => {
+		if ( queryTargetSitePlanStatus === 'fetching' && ! isRequestingTargetSitePlans ) {
+			setQueryTargetSitePlanStatus( 'fetched' );
+			setContinueImport( true );
+			fetchMigrationEnabledStatus();
+		}
+	}, [ queryTargetSitePlanStatus, isRequestingTargetSitePlans, fetchMigrationEnabledStatus ] );
+
+	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+		onSuccess: () => {
+			setQueryTargetSitePlanStatus( 'fetching' );
+		},
+	} );
 
 	const credentials = useSelector( ( state ) =>
 		getJetpackCredentials( state, sourceSiteId, 'main' )
@@ -103,6 +133,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const onUpgradeAndMigrateClick = () => {
 		setContinueImport( true );
 		fetchMigrationEnabledStatus();
+	};
+
+	const onFreeTrialClick = () => {
+		addHostingTrial( targetSite.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
 	};
 
 	useEffect( () => {
@@ -139,7 +173,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 									button: (
 										<Button
 											borderless={ true }
-											className="action-buttons__content-only"
+											className="action-buttons__borderless"
 											onClick={ toggleCredentialsForm }
 										/>
 									),
@@ -241,14 +275,20 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 		// If the target site is not plan compatible, we show the upgrade plan screen
 		return (
-			<PreMigrationUpgradePlan
-				sourceSiteSlug={ sourceSiteSlug }
-				sourceSiteUrl={ sourceSiteUrl }
-				targetSite={ targetSite }
-				startImport={ onUpgradeAndMigrateClick }
-				onContentOnlyClick={ onContentOnlyClick }
-				isBusy={ isFetchingData }
-			/>
+			<>
+				{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
+				<PreMigrationUpgradePlan
+					sourceSiteSlug={ sourceSiteSlug }
+					sourceSiteUrl={ sourceSiteUrl }
+					targetSite={ targetSite }
+					startImport={ onUpgradeAndMigrateClick }
+					onFreeTrialClick={ onFreeTrialClick }
+					onContentOnlyClick={ onContentOnlyClick }
+					isBusy={
+						isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
+					}
+				/>
+			</>
 		);
 	}
 

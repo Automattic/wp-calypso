@@ -79,7 +79,6 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: true,
 			loading: false,
-			message: __( 'This domain is unlocked and ready to be transferred.' ),
 			rawPrice: validationResult.raw_price,
 			saleCost: validationResult.sale_cost,
 			currencyCode: validationResult.currency_code,
