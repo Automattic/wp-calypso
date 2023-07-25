@@ -40,7 +40,6 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 };
 
 const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redirectUri, from } ) => {
-	const commercialPlanPrice = commercialProduct?.cost;
 	const maxSliderPrice = commercialProduct.cost;
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
@@ -66,7 +65,6 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 	};
 
 	const setCommercialSite = () => {
-		setSubscriptionValue( commercialPlanPrice );
 		setSiteType( TYPE_COMMERCIAL );
 		setWizardStep( SCREEN_PURCHASE );
 	};
@@ -193,9 +191,13 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 					</div>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						<StatsPurchaseSVG
-							isFree={ subscriptionValue === 0 }
-							hasHighlight={ subscriptionValue >= uiImageCelebrationTier }
-							extraMessage={ subscriptionValue >= uiImageCelebrationTier }
+							isFree={ siteType === TYPE_PERSONAL && ! subscriptionValue === 0 }
+							hasHighlight={
+								siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier
+							}
+							extraMessage={
+								siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier
+							}
 						/>
 						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
 							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
