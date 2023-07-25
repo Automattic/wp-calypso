@@ -24,19 +24,34 @@ import {
 import { initGTMContainer, loadGTMContainer } from './gtm-container';
 import { loadTrackingScripts } from './load-tracking-scripts';
 import { isWooExpressUpgrade } from './woo';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { WpcomJetpackCartInfo } from 'calypso/lib/analytics/utils/split-wpcom-jetpack-cart-info';
 
 // Ensure setup has run.
 import './setup';
 
+declare global {
+	interface Window {
+		qp: ( ...args: string[] ) => void;
+		twq: ( ...args: any[] ) => void;
+		fbq: ( ...args: any[] ) => void;
+		gtag: ( ...args: any[] ) => void;
+		pintrk: ( ...args: any[] ) => void;
+		adRoll: { trackPurchase: () => void };
+		lintrk: ( key: string, val: Record< string, any > ) => void;
+		_qevents: any[];
+		uetq: any[];
+	}
+}
+
 /**
  * Tracks a purchase conversion
- *
- * @param {Object} cart - cart as `ResponseCart` object
- * @param {number} orderId - the order id
- * @param {string?} sitePlanSlug - product plan slug
- * @returns {void}
  */
-export async function recordOrder( cart, orderId, sitePlanSlug ) {
+export async function recordOrder(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	sitePlanSlug: string | null | undefined
+): Promise< void > {
 	await refreshCountryCodeCookieGdpr();
 
 	await loadTrackingScripts();
@@ -120,7 +135,6 @@ export async function recordOrder( cart, orderId, sitePlanSlug ) {
 				line_items: cart.products.map( ( product ) => ( {
 					product_name: product.product_name,
 					product_id: product.product_slug,
-					product_price: product.price,
 				} ) ),
 				order_id: orderId,
 			},
@@ -156,13 +170,12 @@ export async function recordOrder( cart, orderId, sitePlanSlug ) {
 
 /**
  * Records an order in Quantcast
- *
- * @param {Object} cart - cart as `ResponseCart` object
- * @param {number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
- * @returns {void}
  */
-function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInQuantcast(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
 	if ( ! mayWeTrackByTracker( 'quantcast' ) ) {
 		return;
 	}
@@ -175,7 +188,7 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
 				labels:
 					'_fp.event.Purchase Confirmation,_fp.pcat.' +
 					wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => product.product_slug ).join( ' ' ),
-				orderid: orderId.toString(),
+				orderid: orderId?.toString(),
 				revenue: wpcomJetpackCartInfo.wpcomCostUSD.toString(),
 				event: 'refresh',
 			};
@@ -198,7 +211,7 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
 					wpcomJetpackCartInfo.jetpackProducts
 						.map( ( product ) => product.product_slug )
 						.join( ' ' ),
-				orderid: orderId.toString(),
+				orderid: orderId?.toString(),
 				revenue: wpcomJetpackCartInfo.jetpackCostUSD.toString(),
 				event: 'refresh',
 			};
@@ -214,13 +227,12 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
 
 /**
  * Records an order in DCM Floodlight
- *
- * @param {Object} cart - cart as `ResponseCart` object
- * @param {number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
- * @returns {void}
  */
-function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInFloodlight(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
 	if ( ! mayWeTrackByTracker( 'floodlight' ) ) {
 		return;
 	}
@@ -273,13 +285,12 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 
 /**
  * Records an order in Facebook (a single event for the entire order)
- *
- * @param {Object} cart - cart as `ResponseCart` object
- * @param {number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
- * @returns {void}
  */
-function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInFacebook(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
 	if ( ! mayWeTrackByTracker( 'facebook' ) ) {
 		return;
 	}
@@ -292,7 +303,7 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 			// This gives us the billing frequency as a string, and combines yearly and multi-yearly into one bucket.
 			// Due to tracking-constraints in Facebook, this is needed. But we also supply the bill_period separately
 			// as this is used for other tracking purposes in Facebook.
-			const getFrequencyTypeForProduct = ( product ) => {
+			const getFrequencyTypeForProduct = ( product: ResponseCartProduct ) => {
 				switch ( product.bill_period ) {
 					case '31':
 						return 'monthly';
@@ -387,13 +398,12 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 
 /**
  * Records a signup|purchase in Bing.
- *
- * @param {Object} cart - cart as `ResponseCart` object.
- * @param {number} orderId - the order ID.
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
- * @returns {void}
  */
-function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInBing(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
 	// NOTE: `orderId` is not used at this time, but it could be useful in the near future.
 
 	if ( ! mayWeTrackByTracker( 'bing' ) ) {
@@ -433,13 +443,12 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
 
 /**
  * Records an order/sign_up in Google Ads Gtag
- *
- * @param {Object} cart - cart as `ResponseCart` object
- * @param {number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
- * @returns {void}
  */
-function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInGoogleAds(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
 	if ( ! mayWeTrackByTracker( 'googleAds' ) ) {
 		debug( 'recordOrderInGoogleAds: skipping as ad tracking is disallowed' );
 		return;
@@ -479,7 +488,11 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 	}
 }
 
-function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInGAEnhancedEcommerce(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
 	if ( ! mayWeTrackByTracker( 'gaEnhancedEcommerce' ) ) {
 		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] ad tracking is disallowed' );
 		return;
@@ -491,7 +504,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 	}
 
 	let products;
-	let brand;
+	let brand: string;
 	let totalCostUSD;
 
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
@@ -507,12 +520,18 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 		return;
 	}
 
-	const items = [];
+	const items: Array< {
+		id: string;
+		name: string;
+		quantity: number;
+		price: string;
+		brand: string;
+	} > = [];
 	products.map( ( product ) => {
 		items.push( {
 			id: product.product_id.toString(),
 			name: product.product_name_en.toString(),
-			quantity: parseInt( product.volume ),
+			quantity: parseInt( String( product.volume ) ),
 			price: ( costToUSD( product.cost, cart.currency ) ?? '' ).toString(),
 			brand,
 		} );
@@ -522,8 +541,8 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 		'event',
 		'purchase',
 		{
-			transaction_id: orderId.toString(),
-			value: parseFloat( totalCostUSD ),
+			transaction_id: orderId?.toString(),
+			value: parseFloat( String( totalCostUSD ) ),
 			currency: 'USD',
 			tax: parseFloat( cart.total_tax ?? 0 ),
 			coupon: cart.coupon?.toString() ?? '',
@@ -539,20 +558,19 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 
 /**
  * Records an order in the Jetpack.com GA4 Property
- *
- * @param {Object} cart - cart as `ResponseCart` object
- * @param {number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
- * @returns {void}
  */
-function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInJetpackGA(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
 	if ( ! mayWeTrackByTracker( 'ga' ) ) {
 		return;
 	}
 
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
 		fireEcommercePurchaseGA4(
-			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
+			cartToGaPurchase( String( orderId ), cart, wpcomJetpackCartInfo ),
 			Ga4PropertyGtag.JETPACK
 		);
 
@@ -569,7 +587,7 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 					( { product_id, product_name_en, cost, volume } ) => ( {
 						id: product_id.toString(),
 						name: product_name_en.toString(),
-						quantity: parseInt( volume ),
+						quantity: parseInt( String( volume ) ),
 						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
 						brand: GA_PRODUCT_BRAND_JETPACK,
 					} )
@@ -583,20 +601,19 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 
 /**
  * Records an order in the Akismet.com GA4 Property
- *
- * @param {Object} cart - cart as `ResponseCart` object
- * @param {number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM, Jetpack, and Akismet in the cart
- * @returns {void}
  */
-function recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInAkismetGA(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
 	if ( ! mayWeTrackByTracker( 'ga' ) ) {
 		return;
 	}
 
 	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
 		fireEcommercePurchaseGA4(
-			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
+			cartToGaPurchase( String( orderId ), cart, wpcomJetpackCartInfo ),
 			Ga4PropertyGtag.AKISMET
 		);
 
@@ -613,7 +630,7 @@ function recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo ) {
 					( { product_id, product_name_en, cost, volume } ) => ( {
 						id: product_id.toString(),
 						name: product_name_en.toString(),
-						quantity: parseInt( volume ),
+						quantity: parseInt( String( volume ) ),
 						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
 						brand: GA_PRODUCT_BRAND_AKISMET,
 					} )
@@ -627,13 +644,12 @@ function recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo ) {
 
 /**
  * Records an order in the WordPress.com GA4 Property
- *
- * @param {Object} cart - cart as `ResponseCart` object
- * @param {number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
- * @returns {void}
  */
-function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInWPcomGA4(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
 	if ( ! mayWeTrackByTracker( 'ga' ) ) {
 		return;
 	}
@@ -647,7 +663,7 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
 	}
 	// Firing both Jetpack and WPcom Purchases on WPcom (similar to enhanced ecommerce in UA).
 	fireEcommercePurchaseGA4(
-		cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
+		cartToGaPurchase( String( orderId ), cart, wpcomJetpackCartInfo ),
 		Ga4PropertyGtag.WPCOM
 	);
 	debug( 'recordOrderInWPcomGA4: Record WPcom Purchase in GA4' );
@@ -655,13 +671,12 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
 
 /**
  * Sends a purchase event to Google Tag Manager for Akismet purchases.
- *
- * @param {import('@automattic/shopping-cart').ResponseCart} cart
- * @param {string} orderId
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM, Akismet, and Jetpack in the cart
- * @returns {void}
  */
-function recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInAkismetGTM(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
 	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
 		// We ensure that we can track with GTM
 		if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
@@ -678,7 +693,7 @@ function recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo ) {
 					( { product_id, product_name, cost, volume, bill_period } ) => ( {
 						id: product_id.toString(),
 						name: product_name.toString(),
-						quantity: parseInt( volume ),
+						quantity: parseInt( String( volume ) ),
 						price: costToUSD( cost, cart.currency ) ?? 0,
 						billing_term: bill_period === '365' ? 'yearly' : 'monthly',
 					} )
@@ -695,14 +710,13 @@ function recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo ) {
 
 /**
  * Sends a purchase event to Google Tag Manager for eligible Woo Express upgrades.
- *
- * @param {import('@automattic/shopping-cart').ResponseCart} cart
- * @param {string} orderId
- * @param {string?} sitePlanSlug
- * @returns {void}
  */
-function recordOrderInWooGTM( cart, orderId, sitePlanSlug ) {
-	if ( ! isWooExpressUpgrade( cart, sitePlanSlug ) ) {
+function recordOrderInWooGTM(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	sitePlanSlug: string | null | undefined
+): void {
+	if ( ! isWooExpressUpgrade( cart, sitePlanSlug ?? undefined ) ) {
 		return;
 	}
 
@@ -727,9 +741,8 @@ function recordOrderInWooGTM( cart, orderId, sitePlanSlug ) {
 					items: cart.products.map( ( { product_id, product_name, cost, volume } ) => ( {
 						id: product_id.toString(),
 						name: product_name.toString(),
-						quantity: parseInt( volume ),
+						quantity: parseInt( String( volume ) ),
 						price: costToUSD( cost, cart.currency ) ?? 0,
-						billing_term: cart.billing?.interval_unit,
 					} ) ),
 					value: costToUSD( cart.total_cost_integer / 100, cart.currency ),
 				},
@@ -746,25 +759,18 @@ function recordOrderInWooGTM( cart, orderId, sitePlanSlug ) {
 
 /**
  * Records an order in Criteo
- *
- * @param {Object} cart - cart as `ResponseCart` object
- * @param {number} orderId - the order id
- * @returns {void}
  */
-function recordOrderInCriteo( cart, orderId ) {
+function recordOrderInCriteo( cart: ResponseCart, orderId: number | null | undefined ): void {
 	if ( ! mayWeTrackByTracker( 'criteo' ) ) {
 		return;
 	}
 
 	// @TODO Separate WPCOM from Jetpack events.
-	const params = [
-		'trackTransaction',
-		{
-			id: orderId,
-			currency: cart.currency,
-			item: cartToCriteoItems( cart ),
-		},
-	];
-	debug( 'recordOrderInCriteo:', params );
-	recordInCriteo( ...params );
+	const params = {
+		id: orderId,
+		currency: cart.currency,
+		item: cartToCriteoItems( cart ),
+	};
+	debug( 'recordOrderInCriteo:', 'trackTransaction', params );
+	recordInCriteo( 'trackTransaction', params );
 }

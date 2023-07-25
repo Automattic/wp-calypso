@@ -12,11 +12,6 @@ const debug = debugFactory( 'wpcom-proxy-request' );
  */
 const proxyOrigin = 'https://public-api.wordpress.com';
 
-/**
- * "Origin" of the current HTML page.
- */
-const origin = window.location.protocol + '//' + window.location.host;
-
 let onStreamRecord = null;
 
 /**
@@ -82,14 +77,6 @@ let buffered;
 const requests = {};
 
 /**
- * Are HTML5 XMLHttpRequest2 "progress" events supported?
- * See: http://goo.gl/xxYf6D
- */
-const supportsProgress = !! window.ProgressEvent && !! window.FormData;
-
-debug( 'using "origin": %o', origin );
-
-/**
  * Performs a "proxied REST API request". This happens by calling
  * `iframe.postMessage()` on the proxy iframe instance, which from there
  * takes care of WordPress.com user authentication (via the currently
@@ -114,7 +101,7 @@ const makeRequest = ( originalParams, fn ) => {
 	params.callback = id;
 	params.supports_args = true; // supports receiving variable amount of arguments
 	params.supports_error_obj = true; // better Error object info
-	params.supports_progress = supportsProgress; // supports receiving XHR "progress" events
+	params.supports_progress = true; // supports receiving XHR "progress" events
 
 	// force uppercase "method" since that's what the <iframe> is expecting
 	params.method = String( params.method || 'GET' ).toUpperCase();
@@ -306,6 +293,9 @@ function install() {
 
 	// create the <iframe>
 	iframe = document.createElement( 'iframe' );
+
+	const origin = window.location.origin;
+	debug( 'using "origin": %o', origin );
 
 	// set `src` and hide the iframe
 	iframe.src = proxyOrigin + '/wp-admin/rest-proxy/?v=2.0#' + origin;
