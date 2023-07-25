@@ -1,4 +1,6 @@
 import Posts from 'calypso/my-sites/posts/main';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function posts( context, next ) {
@@ -9,8 +11,25 @@ export function posts( context, next ) {
 	const category = context.query.category;
 	const tag = context.query.tag;
 
+	function shouldRedirectMyPosts() {
+		if ( ! author ) {
+			return false;
+		}
+		if ( areAllSitesSingleUser( state ) ) {
+			return true;
+		}
+		if ( isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId ) ) {
+			return true;
+		}
+	}
+
 	if ( ! siteId ) {
 		search = '';
+	}
+
+	if ( shouldRedirectMyPosts() ) {
+		page.redirect( context.path.replace( /\/my\b/, '' ) );
+		return;
 	}
 
 	context.primary = createElement( Posts, {
