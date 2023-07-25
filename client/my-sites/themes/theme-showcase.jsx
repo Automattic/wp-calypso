@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -529,12 +529,12 @@ class ThemeShowcase extends Component {
 				<ThemesHeader
 					title={
 						isLoggedIn
-							? translate( 'Themes' )
-							: translate( 'Find the perfect theme for your website' )
+							? this.props.translate( 'Themes' )
+							: this.props.translate( 'Find the perfect theme for your website' )
 					}
 					description={
 						isLoggedIn
-							? translate(
+							? this.props.translate(
 									'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 									{
 										components: {
@@ -544,7 +544,7 @@ class ThemeShowcase extends Component {
 										},
 									}
 							  )
-							: translate(
+							: this.props.translate(
 									'Beautiful and responsive WordPress.com themes. Choose from free and premium options for all types of websites. Then, activate the one that is right for you.'
 							  )
 					}
@@ -610,7 +610,7 @@ class ThemeShowcase extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
+const mapStateToProps = ( state, { siteId, filter, tier, vertical, translate } ) => {
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
@@ -618,8 +618,8 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),
-		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
+		description: getThemeShowcaseDescription( state, { filter, tier, vertical }, translate ),
+		title: getThemeShowcaseTitle( state, { filter, tier, vertical }, translate ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),
