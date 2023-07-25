@@ -831,6 +831,7 @@ export class PlanFeatures2023Grid extends Component<
 							features={ jpFeatures }
 							planName={ planName }
 							paidDomainName={ paidDomainName }
+							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 						/>
 					</Container>
