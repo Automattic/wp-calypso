@@ -110,6 +110,7 @@ describe( 'selectors', () => {
 				isRenewal: false,
 				meta: undefined,
 				mostRecentRenewDate: undefined,
+				ownershipId: NaN,
 				partnerKeyId: undefined,
 				partnerName: undefined,
 				partnerSlug: undefined,
