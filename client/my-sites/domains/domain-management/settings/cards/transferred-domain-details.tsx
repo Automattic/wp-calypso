@@ -103,7 +103,7 @@ const TransferredDomainDetails = ( {
 
 		return translate(
 			'Your transfer has been started and is waiting for authorization from your current ' +
-				'domain provider. This process can take up to 7 days. If you need to cancel or expedite the ' +
+				'domain provider. This process can take up to 5-10 days. If you need to cancel or expedite the ' +
 				'transfer please contact them for assistance.'
 		);
 	};
