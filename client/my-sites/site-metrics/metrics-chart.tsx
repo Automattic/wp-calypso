@@ -117,7 +117,7 @@ export default function UplotChartMetrics( {
 					},
 					{
 						fill: solidFill ? fillColor : getGradientFill( fillColor, scaleGradient ),
-						label: translate( 'HTTP requests per 1min' ),
+						label: translate( 'HTTP requests per sec' ),
 						stroke: '#3057DC',
 						width: 2,
 						paths: ( u, seriesIdx, idx0, idx1 ) => {
@@ -149,7 +149,16 @@ export default function UplotChartMetrics( {
 				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			};
-		}, [ fillColor, legendContainer, propOptions, scaleGradient, solidFill, spline, translate ] )
+		}, [
+			fillColor,
+			legendContainer,
+			period,
+			propOptions,
+			scaleGradient,
+			solidFill,
+			spline,
+			translate,
+		] )
 	);
 
 	useResize( uplot, uplotContainer );

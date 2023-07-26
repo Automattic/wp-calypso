@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UplotChartMetrics from './metrics-chart';
@@ -29,17 +30,23 @@ export function SiteMetricsData() {
 		return null;
 	};
 
-	// Extract timestamps and dimension-values using the reduce method
-	const formattedData: [ number[], unknown[] ] = data
-		? data.data.periods.reduce(
-				( acc: [ number[], unknown[] ], period ) => {
+	// State to hold the formatted data
+	const [ formattedData, setFormattedData ] = useState< [ number[], unknown[] ] >( [ [], [] ] );
+
+	useEffect( () => {
+		// Update the formattedData state when data changes
+		if ( data ) {
+			const newData = data.data.periods.reduce(
+				( acc, period ) => {
 					acc[ 0 ].push( period.timestamp );
 					acc[ 1 ].push( getDimensionValue( period ) );
 					return acc;
 				},
-				[ [], [] ]
-		  )
-		: [ [], [] ];
+				[ [], [] ] as [ number[], unknown[] ] // Define the correct initial value type
+			);
+			setFormattedData( newData );
+		}
+	}, [ data ] );
 
 	return {
 		formattedData,
