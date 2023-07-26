@@ -28,9 +28,7 @@ export default function EmailNotification( {
 }: Props ) {
 	const translate = useTranslate();
 
-	const isDowntimeMonitoringPaidTierEnabled = isEnabled(
-		'jetpack/pro-dashboard-monitor-paid-tier'
-	);
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
 	return (
 		<>
@@ -54,7 +52,7 @@ export default function EmailNotification( {
 					<div className="notification-settings__content-heading-with-beta">
 						<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
 					</div>
-					{ isDowntimeMonitoringPaidTierEnabled ? (
+					{ isPaidTierEnabled ? (
 						<>
 							<div className="notification-settings__content-sub-heading">
 								{ translate( 'Receive email notifications with one or more recipients.' ) }
@@ -70,7 +68,7 @@ export default function EmailNotification( {
 				</div>
 			</div>
 
-			{ enableEmailNotification && isDowntimeMonitoringPaidTierEnabled && (
+			{ enableEmailNotification && isPaidTierEnabled && (
 				<ContactList
 					type="email"
 					onAction={ toggleAddEmailModal }

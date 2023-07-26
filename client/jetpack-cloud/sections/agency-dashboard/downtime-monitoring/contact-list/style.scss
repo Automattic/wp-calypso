@@ -12,22 +12,22 @@
 	margin-block-start: 16px;
 	display: flex;
 	gap: 8px;
+}
 
-	&-button.button {
-		border-radius: 20px; /* stylelint-disable-line scales/radii */
-		color: var(--studio-gray-80);
-		display: flex;
-		align-items: center;
-		border-color: var(--studio-gray-80);
-		padding: 4px 8px;
+.contact-list__action-button.button {
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+	color: var(--studio-gray-80);
+	display: flex;
+	align-items: center;
+	border-color: var(--studio-gray-80);
+	padding: 4px 8px;
 
-		&:disabled {
-			background-color: var(--studio-white);
-			border-color: var(--studio-gray-5);
+	&:disabled {
+		background-color: var(--studio-white);
+		border-color: var(--studio-gray-5);
 
-			svg {
-				fill: var(--studio-gray-5);
-			}
+		svg {
+			fill: var(--studio-gray-5);
 		}
 	}
 }

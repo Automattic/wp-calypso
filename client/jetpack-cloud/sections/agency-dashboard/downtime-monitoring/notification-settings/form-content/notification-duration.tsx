@@ -58,7 +58,6 @@ export default function NotificationDuration( {
 						disabled={ restriction !== 'none' && duration.isPaid }
 					>
 						{ duration.label }
-						&nbsp;
 						{ duration.isPaid && <FeatureRestrictionBadge restriction={ restriction } /> }
 					</SelectDropdown.Item>
 				) ) }

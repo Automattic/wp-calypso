@@ -14,7 +14,7 @@ export default function UpgradeBadge() {
 
 	return (
 		<span
-			className="upgrade-badge-wrapper"
+			className="upgrade-badge__wrapper"
 			onMouseEnter={ () => setShowPopover( true ) }
 			onMouseLeave={ () => setShowPopover( false ) }
 			onMouseDown={ () => setShowPopover( false ) }

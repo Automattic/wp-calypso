@@ -99,16 +99,14 @@ export default function NotificationSettings( {
 		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
 
-	const isDowntimeMonitoringPaidTierEnabled = isEnabled(
-		'jetpack/pro-dashboard-monitor-paid-tier'
-	);
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
 	// TODO: Need to figure out if current site or one of the sites selected is on a free tier.
-	const hasDowntimeMonitoringPaidLicenses = false;
+	const hasPaidLicenses = false;
 
 	let restriction: RestrictionType = 'none';
 
-	if ( ! hasDowntimeMonitoringPaidLicenses ) {
+	if ( ! hasPaidLicenses ) {
 		// We need to set the restriction type to determine correct messaging.
 		restriction = isBulkUpdate ? 'free_site_selected' : 'upgrade_required';
 	}
@@ -351,7 +349,7 @@ export default function NotificationSettings( {
 				);
 
 				// We need to make sure that we are not setting a paid duration if there is no license.
-				if ( hasDowntimeMonitoringPaidLicenses || ! foundDuration?.isPaid ) {
+				if ( hasPaidLicenses || ! foundDuration?.isPaid ) {
 					setSelectedDuration( foundDuration );
 				}
 			}
@@ -372,7 +370,7 @@ export default function NotificationSettings( {
 			getAllPhoneItems,
 			handleSetEmailItems,
 			handleSetPhoneItems,
-			hasDowntimeMonitoringPaidLicenses,
+			hasPaidLicenses,
 			isMultipleEmailEnabled,
 			isSMSNotificationEnabled,
 		]
@@ -485,7 +483,7 @@ export default function NotificationSettings( {
 					restriction={ restriction }
 				/>
 
-				{ isDowntimeMonitoringPaidTierEnabled && (
+				{ isPaidTierEnabled && (
 					<SMSNotification
 						recordEvent={ recordEvent }
 						enableSMSNotification={ enableSMSNotification }

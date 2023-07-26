@@ -14,7 +14,7 @@ export default function NotAvailableBadge() {
 
 	return (
 		<span
-			className="not-available-badge-wrapper"
+			className="not-available-badge__wrapper"
 			onMouseEnter={ () => setShowPopover( true ) }
 			onMouseLeave={ () => setShowPopover( false ) }
 			onMouseDown={ () => setShowPopover( false ) }
