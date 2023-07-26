@@ -516,6 +516,23 @@ describe( '#localizeUrl', () => {
 		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', true ) ).toEqual(
 			'https://wordpress.com/plans/'
 		);
+
+		// Full path to a site plan
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'en', false )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'en', true )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'es', false )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'es', true )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
 	} );
 
 	test( 'WordPress.com new style support URLs', () => {
