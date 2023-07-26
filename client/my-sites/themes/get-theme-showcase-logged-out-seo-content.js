@@ -249,8 +249,15 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 	},
 };
 
+function findParsedFilter( filter ) {
+	const splitFilters = filter?.replace( 'subject:', '' )?.split( '+' ) || [];
+	const categories = Object.keys( THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT );
+	const parsedFilter = splitFilters.find( ( f ) => categories.includes( f ) );
+	return parsedFilter;
+}
+
 export default function getThemeShowcaseLoggedOutSeoContent( filter, tier ) {
-	const parsedFilter = filter?.replace( 'subject:', '' ) || 'recommended';
+	const parsedFilter = findParsedFilter( filter ) || 'recommended';
 	const parsedTier = tier || 'all';
 
 	const seoContent = THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT?.[ parsedFilter ]?.[ parsedTier ];
