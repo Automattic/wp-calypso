@@ -46,7 +46,7 @@ type PlanFeaturesActionsButtonProps = {
 	showMonthlyPrice: boolean;
 	siteId?: number | null;
 	isStuck: boolean;
-	isLargeCurrency: boolean;
+	isLargeCurrency?: boolean;
 	currencyCode: string;
 };
 
