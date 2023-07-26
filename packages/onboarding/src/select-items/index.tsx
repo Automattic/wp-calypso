@@ -7,7 +7,7 @@ import { TranslateResult } from 'i18n-calypso';
 export interface SelectItem< T > {
 	key: string;
 	title: TranslateResult;
-	badge: TranslateResult;
+	badge?: TranslateResult;
 	description: TranslateResult;
 	icon: React.ReactElement;
 	value: T;
@@ -32,11 +32,13 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 					<div className="select-items__item-info-wrapper">
 						<div className="select-items__item-info">
 							<h2 className="select-items__item-title">
-								{ preventWidows( title ) }
+								<span className="select-items__item-title-text">{ preventWidows( title ) }</span>
 								{ badge && (
-									<Badge className="free-domain__primary-badge" type="info-green">
-										{ preventWidows( badge ) }
-									</Badge>
+									<span className="select-items__item-title-badge">
+										<Badge className="free-domain__primary-badge" type="info-green">
+											{ preventWidows( badge ) }
+										</Badge>
+									</span>
 								) }
 							</h2>
 							<div className="select-items__item-description">{ preventWidows( description ) }</div>
