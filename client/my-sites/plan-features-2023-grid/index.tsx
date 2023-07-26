@@ -100,7 +100,7 @@ export type PlanFeatures2023GridProps = {
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
-	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	intervalType?: string;
 	currentSitePlanSlug?: string | null;
 	hidePlansFeatureComparison?: boolean;

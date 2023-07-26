@@ -29,6 +29,12 @@ export type PlanProperties = {
 	planActionOverrides?: PlanActionOverrides;
 };
 
+// FIXME:
+// As raised in https://github.com/Automattic/wp-calypso/pull/79678#discussion_r1273391589,
+// this name is not ideal for various reasons. "Single" is redundant, the data structure itself
+// also doesn't convey any restriction about whether it can only holds a `DomainSuggestion` from a free domain or not.
+// We need a better naming for the fact that it's a single DomainSuggestion together with a loading flag since
+// fetching for a domain suggestion is an async request.
 export type SingleFreeDomainSuggestion = {
 	isLoading: boolean;
 	entry?: DomainSuggestion;
