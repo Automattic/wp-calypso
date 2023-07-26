@@ -51,7 +51,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const siteIntentOption = site?.options?.site_intent ?? null;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
-	const stripeConnectUrl = useStripeConnectUrl( site?.ID, flow );
+	const stripeConnectUrl = useStripeConnectUrl( site?.ID, flow, 'launchpad' );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
 		useSiteGlobalStylesStatus( site?.ID );

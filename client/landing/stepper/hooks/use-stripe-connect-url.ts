@@ -15,12 +15,20 @@ type MembershipsData = {
 	connected_account_id: string | undefined;
 };
 
-const fetchMembershipsData = ( siteId: number ): Promise< MembershipsData > =>
-	wpcom.req.get( `/sites/${ siteId }/memberships/status`, { apiNamespace: 'wpcom/v2' } );
+const fetchMembershipsData = (
+	siteId: number,
+	source: string | null | undefined
+): Promise< MembershipsData > => {
+	const url = source
+		? `/sites/${ siteId }/memberships/status?source=${ source }`
+		: `/sites/${ siteId }/memberships/status`;
+	return wpcom.req.get( url, { apiNamespace: 'wpcom/v2' } );
+};
 
 export function useStripeConnectUrl(
 	siteId: number | undefined,
-	flow: string | null
+	flow: string | null,
+	source?: string | null | undefined
 ): StripeConnectUrl {
 	const [ stripeConnectUrl, setStripeConnectUrl ] = useState< StripeConnectUrl >( null );
 
@@ -36,11 +44,11 @@ export function useStripeConnectUrl(
 		// the stripe connect url - for newsletters sites
 		// with paid-subscribers goal
 		if ( siteId && isNewsletterFlow( flow ) && hasSubscriberGoal ) {
-			fetchMembershipsData( siteId ).then( ( { connect_url } ) => {
+			fetchMembershipsData( siteId, source ).then( ( { connect_url } ) => {
 				setStripeConnectUrl( connect_url || null );
 			} );
 		}
-	}, [ siteId, flow, hasSubscriberGoal ] );
+	}, [ siteId, flow, hasSubscriberGoal, source ] );
 
 	return stripeConnectUrl;
 }
