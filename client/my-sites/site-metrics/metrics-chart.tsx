@@ -1,6 +1,5 @@
 import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
 import useScaleGradient from '@automattic/components/src/chart-uplot/hooks/use-scale-gradient';
-import getDateFormat from '@automattic/components/src/chart-uplot/lib/get-date-format';
 import getGradientFill from '@automattic/components/src/chart-uplot/lib/get-gradient-fill';
 import getPeriodDateFormat from '@automattic/components/src/chart-uplot/lib/get-period-date-format';
 import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
@@ -22,6 +21,12 @@ interface UplotChartProps {
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
 	period?: string;
+}
+
+export function formatChatHour( date: Date ): string {
+	const hours = String( date.getHours() ).padStart( 2, '0' );
+	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
+	return `${ hours }:${ minutes }`;
 }
 
 export default function UplotChartMetrics( {
@@ -46,12 +51,11 @@ export default function UplotChartMetrics( {
 				...DEFAULT_DIMENSIONS,
 				// Set incoming dates as UTC.
 				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
-				fmtDate: ( chartDateStringTemplate: string ) => {
-					// first it cycles through all possible templates in case they are substitues
-
-					// the date for a specific point
-					return ( date ) =>
-						getDateFormat( chartDateStringTemplate, date, getLocaleSlug() || 'en' );
+				fmtDate: () => {
+					return ( date ) => {
+						const chatHour = formatChatHour( date );
+						return `${ chatHour }`;
+					};
 				},
 				axes: [
 					{
