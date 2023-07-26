@@ -63,7 +63,7 @@ import PopularBadge from './components/popular-badge';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
-import { PlanProperties, TransformedFeatureObject } from './types';
+import { PlanProperties, TransformedFeatureObject, SingleFreeDomainSuggestion } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { PlansIntent } from './grid-context';
 import type { GridPlan } from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
@@ -100,6 +100,7 @@ export type PlanFeatures2023GridProps = {
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
+	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	intervalType?: string;
 	currentSitePlanSlug?: string | null;
 	hidePlansFeatureComparison?: boolean;
@@ -784,7 +785,13 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { paidDomainName, translate, hideUnavailableFeatures, selectedFeature } = this.props;
+		const {
+			paidDomainName,
+			wpcomFreeDomainSuggestion,
+			translate,
+			hideUnavailableFeatures,
+			selectedFeature,
+		} = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
 				! isWpcomEnterpriseGridPlan( properties.planName ) &&
@@ -805,6 +812,7 @@ export class PlanFeatures2023Grid extends Component<
 							features={ features }
 							planName={ planName }
 							paidDomainName={ paidDomainName }
+							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
 						/>
@@ -823,6 +831,7 @@ export class PlanFeatures2023Grid extends Component<
 							features={ jpFeatures }
 							planName={ planName }
 							paidDomainName={ paidDomainName }
+							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 						/>
 					</Container>

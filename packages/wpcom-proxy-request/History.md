@@ -3,6 +3,7 @@
 ## Next / TBD
 
 - Don't modify a falsy boolean JSON response body by defaulting it.
+- Trigger request error when proxy iframe is not present and loaded.
 
 ## 7.0.4 / 2023-07-11
 

@@ -38,7 +38,7 @@ export class FreeSignupFlow {
 	 * @param {string} name Name of the site.
 	 */
 	async enterSiteName( name: string ): Promise< void > {
-		await this.page.getByRole( 'textbox', { name: 'My WebSite' } ).fill( name );
+		await this.page.getByRole( 'textbox', { name: 'Site name' } ).fill( name );
 	}
 
 	/**

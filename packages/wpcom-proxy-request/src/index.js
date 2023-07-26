@@ -207,6 +207,22 @@ export function requestAllBlogsAccess() {
  */
 
 function submitRequest( params ) {
+	// Sometimes the `iframe.contentWindow` is `null` even though the `iframe` has been correctly
+	// loaded. Can happen when some other buggy script removes it from the document.
+	if ( ! iframe.contentWindow ) {
+		debug( 'proxy iframe is not present in the document' );
+		// Look up the issuing XHR request and make it fail
+		const id = params.callback;
+		const xhr = requests[ id ];
+		delete requests[ id ];
+		reject(
+			xhr,
+			WPError( { status_code: 500, error_description: 'proxy iframe element is not loaded' } ),
+			{}
+		);
+		return;
+	}
+
 	debug( 'sending API request to proxy <iframe> %o', params );
 
 	// `formData` needs to be patched if it contains `File` objects to work around
