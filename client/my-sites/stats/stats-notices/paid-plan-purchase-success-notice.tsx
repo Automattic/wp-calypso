@@ -1,10 +1,11 @@
-/* eslint-disable no-console */
+import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 
 const PaidPlanPurchaseSuccessJetpackStatsNotice = () => {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
 	const dismissNotice = () => {
@@ -17,7 +18,11 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = () => {
 	}
 
 	return (
-		<div className="inner-notice-container has-odyssey-stats-bg-color">
+		<div
+			className={ `inner-notice-container has-odyssey-stats-bg-color ${
+				! isOdysseyStats && 'inner-notice-container--calypso'
+			}` }
+		>
 			<NoticeBanner
 				level="success"
 				title={ translate( 'Thank you for supporting Jetpack Stats!' ) }
