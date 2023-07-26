@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UplotChartMetrics from './metrics-chart';
@@ -5,8 +6,8 @@ import { useSiteMetricsQuery } from './use-metrics-query';
 
 export function SiteMetricsData() {
 	const siteId = useSelector( getSelectedSiteId );
-	const startTime = 1689078027;
-	const endTime = 1689682827;
+	const startTime = moment().subtract( 24, 'hours' ).unix();
+	const endTime = moment().unix();
 
 	const { data } = useSiteMetricsQuery( siteId, {
 		start: startTime,
