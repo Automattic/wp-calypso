@@ -9,4 +9,23 @@
 		vertical-align: middle;
 		display: inline-block;
 	}
+
+	&.inner-notice-container--emerald {
+		p,
+		button,
+		a {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 14px;
+		}
+
+		.notice-banner__action-button {
+			background-color: var(--color-accent);
+			border-color: var(--color-accent);
+			color: var(--color-text-inverted);
+		}
+
+		.notice-banner.is-info {
+			border-left-color: var(--color-accent);
+		}
+	}
 }

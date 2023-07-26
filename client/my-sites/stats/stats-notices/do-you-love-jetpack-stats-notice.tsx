@@ -65,7 +65,11 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 	}
 
 	return (
-		<div className="inner-notice-container has-odyssey-stats-bg-color">
+		<div
+			className={ `inner-notice-container has-odyssey-stats-bg-color ${
+				! isOdysseyStats && 'inner-notice-container--emerald'
+			}` }
+		>
 			<NoticeBanner
 				level="info"
 				title={ translate( 'Do you love Jetpack Stats?' ) }
