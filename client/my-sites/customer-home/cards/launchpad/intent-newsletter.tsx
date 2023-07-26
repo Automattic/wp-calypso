@@ -2,6 +2,7 @@ import { useLaunchpad } from '@automattic/data-stores';
 import { setUpActionsForTasks } from '@automattic/launchpad';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CustomerHomeLaunchpad from '.';
@@ -12,6 +13,9 @@ const LaunchpadIntentNewsletter = ( { checklistSlug }: { checklistSlug: string }
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
 	const launchpadContext = 'customer-home';
+	const isAtomicSite = useSelector( ( state: AppState ) => {
+		return ( siteId && isSiteAtomic( state, siteId ) ) as boolean;
+	} );
 
 	const {
 		data: { checklist },
@@ -23,7 +27,7 @@ const LaunchpadIntentNewsletter = ( { checklistSlug }: { checklistSlug: string }
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
 
 	const sortedTasksWithActions = ( tasks: Task[] ) => {
-		return setUpActionsForTasks( { tasks, siteSlug, tracksData } );
+		return setUpActionsForTasks( { tasks, siteSlug, tracksData, isAtomicSite } );
 	};
 
 	return (

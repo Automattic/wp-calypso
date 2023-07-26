@@ -87,9 +87,7 @@ export const setUpActionsForTasks = ( {
 			case 'enable_subscribers_modal':
 				action = () => {
 					const redirect = isAtomicSite
-						? addQueryArgs( `https://${ siteSlug }/wp-admin/admin.php`, {
-								page: 'jetpack#/discussion#jp-settings-subscriptions',
-						  } )
+						? `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/discussion`
 						: `/settings/reading/${ siteSlug }#newsletter-settings`;
 					window.location.assign( redirect );
 				};
