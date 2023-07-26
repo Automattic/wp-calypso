@@ -372,8 +372,14 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'isManageSiteFlow',
 				'signupDomainOrigin',
+				'siteUrl',
 			],
-			optionalDependencies: [ 'signupDomainOrigin', 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			optionalDependencies: [
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+				'signupDomainOrigin',
+				'siteUrl',
+			],
 			props: {
 				isDomainOnly: false,
 			},
@@ -400,7 +406,7 @@ export function generateSteps( {
 		'domain-only': {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem', 'signupDomainOrigin' ], // note: siteId, siteSlug are not provided when used in domain flow
-			optionalDependencies: [ 'signupDomainOrigin' ],
+			optionalDependencies: [ 'signupDomainOrigin', 'siteUrl' ],
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
@@ -410,7 +416,8 @@ export function generateSteps( {
 		'domains-store': {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem', 'siteUrl' ],
+			optionalDependencies: [ 'siteUrl' ],
 			props: {
 				isDomainOnly: false,
 				forceDesignType: 'store',
@@ -429,8 +436,14 @@ export function generateSteps( {
 				'useThemeHeadstart',
 				'shouldHideFreePlan',
 				'signupDomainOrigin',
+				'siteUrl',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart', 'signupDomainOrigin' ],
+			optionalDependencies: [
+				'shouldHideFreePlan',
+				'useThemeHeadstart',
+				'signupDomainOrigin',
+				'siteUrl',
+			],
 			props: {
 				isDomainOnly: false,
 			},

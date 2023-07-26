@@ -305,7 +305,8 @@ class DomainsStep extends Component {
 				{ domainItem },
 				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem,
-				signupDomainOrigin ? { signupDomainOrigin } : {}
+				signupDomainOrigin ? { signupDomainOrigin } : {},
+				{ siteUrl: suggestion.domain_name }
 			)
 		);
 
@@ -338,9 +339,14 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem, {
-				signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
-			} )
+			Object.assign(
+				{ domainItem },
+				useThemeHeadstartItem,
+				{
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
+				},
+				{ siteUrl: domain }
+			)
 		);
 
 		this.props.goToNextStep();
@@ -374,7 +380,7 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem )
+			Object.assign( { domainItem }, useThemeHeadstartItem, { siteUrl: domain } )
 		);
 
 		this.props.goToNextStep();
