@@ -86,7 +86,7 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			title: translate( 'Premium Business WordPress Themes' ),
 			header: translate( 'Choose premium themes for your business website.' ),
 			description: translate(
-				"Enhance your business website with the perfect premium paid theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+				"Enhance your business website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
 			),
 		},
 		marketplace: {
