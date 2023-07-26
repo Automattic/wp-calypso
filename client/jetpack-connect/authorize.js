@@ -532,6 +532,10 @@ export class JetpackAuthorize extends Component {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
 		}
 
+		if ( 'woocommerce-core-profiler' === from ) {
+			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );
+		}
+
 		return this.authorize();
 	};
 
