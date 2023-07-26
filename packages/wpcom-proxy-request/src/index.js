@@ -230,7 +230,7 @@ function submitRequest( params ) {
 		delete requests[ id ];
 		reject(
 			xhr,
-			new WPError( { status_code: 500, error_description: 'proxy iframe element is not loaded' } ),
+			WPError( { status_code: 500, error_description: 'proxy iframe element is not loaded' } ),
 			{}
 		);
 		return;
