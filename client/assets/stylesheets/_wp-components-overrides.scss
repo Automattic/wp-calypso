@@ -22,7 +22,7 @@
 	background-color: var(--color-accent);
 	border-color: var(--color-accent);
 	color: var(--color-text-inverted);
-	border-radius: 4px;
+	border-radius: 2px;
 	font-size: 0.875rem;
 	font-weight: 500;
 	justify-content: center;
@@ -107,11 +107,4 @@
 			background-color: var(--color-accent);
 		}
 	}
-}
-
-// WordPress.org components no longer use blue-50 as the primary color.
-// This changes the primary color to blue-50 to conform to the WordPress.com colors.
-body {
-	--color-accent: var(--studio-blue-50);
-	--color-accent-60: var(--studio-blue-60);
 }
