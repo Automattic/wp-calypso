@@ -1,7 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Button } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { transferStatus } from 'calypso/lib/domains/constants';
@@ -17,6 +18,7 @@ const TransferredDomainDetails = ( {
 	selectedSite,
 }: DetailsCardProps ) => {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const renderStartTransferButton = () => {
 		if ( ! domain.currentUserIsOwner || transferStatus.PENDING_START !== domain.transferStatus ) {
@@ -101,11 +103,21 @@ const TransferredDomainDetails = ( {
 				  );
 		}
 
-		return translate(
+		return hasTranslation(
 			'Your transfer has been started and is waiting for authorization from your current ' +
 				'domain provider. This process can take up to 5-10 days. If you need to cancel or expedite the ' +
 				'transfer please contact them for assistance.'
-		);
+		) || isEnglishLocale
+			? translate(
+					'Your transfer has been started and is waiting for authorization from your current ' +
+						'domain provider. This process can take up to 5-10 days. If you need to cancel or expedite the ' +
+						'transfer please contact them for assistance.'
+			  )
+			: translate(
+					'Your transfer has been started and is waiting for authorization from your current ' +
+						'domain provider. This process can take up to 7 days. If you need to cancel or expedite the ' +
+						'transfer please contact them for assistance.'
+			  );
 	};
 
 	return (
