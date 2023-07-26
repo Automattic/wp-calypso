@@ -1,12 +1,19 @@
-import config from '@automattic/calypso-config';
 import { getTld } from 'calypso/lib/domains';
+import { useExperiment } from 'calypso/lib/explat';
 
-const useIsCustomDomainAllowedOnFreePlan = ( domainName?: string ) => {
-	if ( ! domainName ) {
-		return false;
-	}
+const useIsCustomDomainAllowedOnFreePlan = (
+	flowName?: string,
+	domainName?: string
+): [ boolean, boolean ] => {
+	const [ isLoadingAssignment, experimentAssignment ] = useExperiment(
+		'calypso_onboarding_plans_dotblog_on_free_plan_202307',
+		{
+			isEligible:
+				flowName === 'onboarding' && domainName != null && getTld( domainName ) === 'blog',
+		}
+	);
 
-	return config.isEnabled( 'domains/blog-domain-free-plan' ) && getTld( domainName ) === 'blog';
+	return [ isLoadingAssignment, experimentAssignment?.variationName === 'treatment' ];
 };
 
 export default useIsCustomDomainAllowedOnFreePlan;

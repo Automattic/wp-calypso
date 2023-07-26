@@ -275,7 +275,8 @@ const PlansFeaturesMain = ( {
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
-	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( paidDomainName );
+	const [ isLoadingCustomDomainAllowedOnFreePlan, isCustomDomainAllowedOnFreePlan ] =
+		useIsCustomDomainAllowedOnFreePlan( flowName, paidDomainName );
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
