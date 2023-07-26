@@ -40,12 +40,16 @@ import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import usePlanUpgradeabilityCheck from './hooks/use-plan-upgradeability-check';
+import useSuggestedFreeDomainFromPaidDomain from './hooks/use-suggested-free-domain-from-paid-domain';
 import type { IntervalType } from './types';
 import type { PlansIntent } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
-import type { PlanActionOverrides } from 'calypso/my-sites/plan-features-2023-grid/types';
+import type {
+	PlanActionOverrides,
+	SingleFreeDomainSuggestion,
+} from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
@@ -92,6 +96,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	intent?: PlansIntent;
+	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -118,6 +123,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		planRecords,
 		visiblePlans,
 		paidDomainName,
+		wpcomFreeDomainSuggestion,
 		isInSignup,
 		isLaunchPage,
 		flowName,
@@ -163,6 +169,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 
 	const asyncProps: PlanFeatures2023GridProps = {
 		paidDomainName,
+		wpcomFreeDomainSuggestion,
 		isInSignup,
 		isLaunchPage,
 		onUpgradeClick,
@@ -361,6 +368,9 @@ const PlansFeaturesMain = ( {
 		hidePlanSelector = true;
 	}
 
+	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
+		useSuggestedFreeDomainFromPaidDomain( paidDomainName );
+
 	const planTypeSelectorProps = {
 		basePlansPath,
 		isStepperUpgradeFlow,
@@ -387,10 +397,14 @@ const PlansFeaturesMain = ( {
 			{ paidDomainName && isFreePlanPaidDomainDialogOpen && (
 				<FreePlanPaidDomainDialog
 					paidDomainName={ paidDomainName }
+					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 					suggestedPlanSlug={ PLAN_PERSONAL }
 					onClose={ toggleIsFreePlanPaidDomainDialogOpen }
-					onFreePlanSelected={ ( freeDomainSuggestion ) => {
-						replacePaidDomainWithFreeDomain?.( freeDomainSuggestion );
+					onFreePlanSelected={ () => {
+						// Since this domain will not be available after it is selected, invalidate the cache.
+						invalidateDomainSuggestionCache();
+						wpcomFreeDomainSuggestion.entry &&
+							replacePaidDomainWithFreeDomain?.( wpcomFreeDomainSuggestion.entry );
 						onUpgradeClick?.( null );
 					} }
 					onPlanSelected={ () => {
@@ -421,6 +435,7 @@ const PlansFeaturesMain = ( {
 						planRecords={ gridPlanRecords }
 						visiblePlans={ Object.keys( visiblePlans ) as PlanSlug[] }
 						paidDomainName={ paidDomainName }
+						wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
 						flowName={ flowName }
