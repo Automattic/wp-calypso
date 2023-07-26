@@ -213,7 +213,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		Object.keys( newDomainsState ).forEach( ( domainData ) => {
 			if ( newDomainsState[ domainData ].domain === newDomainTransferQueryArg ) {
 				duplicateDomain = true;
-				return;
 			}
 		} );
 
