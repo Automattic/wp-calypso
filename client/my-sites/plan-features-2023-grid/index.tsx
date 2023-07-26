@@ -73,7 +73,6 @@ import './style.scss';
 
 type PlanRowOptions = {
 	isMobile?: boolean;
-	previousProductNameShort?: string;
 };
 
 const Container = (
@@ -414,7 +413,6 @@ export class PlanFeatures2023Grid extends Component<
 				</FoldableCard>
 			);
 		};
-		let previousProductNameShort: string;
 
 		return planProperties
 			.filter( ( { isVisible } ) => isVisible )
@@ -451,14 +449,12 @@ export class PlanFeatures2023Grid extends Component<
 						>
 							{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
 								isMobile: true,
-								previousProductNameShort,
 							} ) }
 							{ this.renderPlanFeaturesList( [ properties ], { isMobile: true } ) }
 							{ this.renderPlanStorageOptions( [ properties ], { isMobile: true } ) }
 						</CardContainer>
 					</div>
 				);
-				previousProductNameShort = properties.product_name_short;
 				return planCardJsx;
 			} );
 	}
@@ -789,23 +785,19 @@ export class PlanFeatures2023Grid extends Component<
 		options?: PlanRowOptions
 	) {
 		const { translate } = this.props;
-		let previousPlanShortNameFromProperties: string;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
-				const { planName, product_name_short } = properties;
+				const { planName, previousProductName } = properties;
 				const shouldRenderEnterpriseLogos =
 					isWpcomEnterpriseGridPlan( planName ) || isWooExpressPlusPlan( planName );
 				const shouldShowFeatureTitle =
 					! isWpComFreePlan( planName ) && ! shouldRenderEnterpriseLogos;
-				const planShortName =
-					options?.previousProductNameShort || previousPlanShortNameFromProperties;
-				previousPlanShortNameFromProperties = product_name_short;
 				const title =
-					planShortName &&
+					previousProductName &&
 					translate( 'Everything in %(planShortName)s, plus:', {
-						args: { planShortName },
+						args: { planShortName: previousProductName },
 					} );
 				const classes = classNames(
 					'plan-features-2023-grid__common-title',
@@ -954,8 +946,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const selectedSiteSlug = getSiteSlug( state, siteId );
 
 		// TODO clk: plan properties should be passed through props instead of being calculated here
-		const planProperties: PlanProperties[] = ( Object.keys( planRecords ) as PlanSlug[] ).map(
-			( plan: PlanSlug ) => {
+		const planProperties: PlanProperties[] = ( Object.keys( planRecords ) as PlanSlug[] )
+			.map( ( plan: PlanSlug ) => {
 				const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
@@ -1046,7 +1038,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				} );
 
 				const isCurrentPlan = currentSitePlanSlug === plan;
-				const product_name_short =
+				const productNameShort =
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
@@ -1067,8 +1059,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					jpFeatures: jetpackFeaturesTransformed,
 					planConstantObj,
 					planName: plan,
-					// TODO clk: snake_case?
-					product_name_short,
+					productNameShort,
 					rawPrice,
 					isMonthlyPlan,
 					tagline,
@@ -1079,8 +1070,24 @@ const ConnectedPlanFeatures2023Grid = connect(
 					billingPeriod: planObject?.bill_period,
 					currencyCode: planObject?.currency_code,
 				};
-			}
-		);
+			} )
+			.map( ( properties, index, propertiesArray ) => {
+				// Set previousProductName to the product name of the previous visible plan before the current one.
+				let previousVisiblePlanIndex = index - 1;
+				while ( previousVisiblePlanIndex > -1 ) {
+					if ( propertiesArray[ previousVisiblePlanIndex ].isVisible ) {
+						break;
+					}
+					previousVisiblePlanIndex--;
+				}
+				if ( previousVisiblePlanIndex > -1 ) {
+					return {
+						...properties,
+						previousProductName: propertiesArray[ previousVisiblePlanIndex ].productNameShort,
+					};
+				}
+				return properties;
+			} );
 
 		const manageHref =
 			purchaseId && selectedSiteSlug
