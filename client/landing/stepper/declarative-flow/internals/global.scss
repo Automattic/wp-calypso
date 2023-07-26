@@ -168,6 +168,17 @@ button {
 			}
 		}
 	}
+
+	// While we don't standardize all Calypso interfaces, we need to override this for onboarding flows #79851
+	.components-button.is-primary {
+		&[disabled],
+		&:disabled,
+		&.disabled {
+			color: #fff;
+			background-color: var(--studio-blue-20);
+			border-color: var(--studio-blue-20);
+		}
+	}
 }
 
 .import-focused .step-container.site-picker {

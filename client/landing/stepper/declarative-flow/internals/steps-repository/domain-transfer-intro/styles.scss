@@ -22,6 +22,12 @@ $heading-font-family: "SF Pro Display", $sans;
 			height: 48px;
 			width: 240px;
 
+			// While we don't standardize all Calypso interfaces, we need to override this for domain transfer flow #79851
+			&:disabled {
+				background: var(--gray-gray-5, #dcdcde);
+				opacity: 1;
+			}
+
 			@media (max-width: $break-medium ) {
 				width: 100%;
 			}
