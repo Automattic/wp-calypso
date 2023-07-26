@@ -118,7 +118,7 @@ export default function UplotChartMetrics( {
 					{
 						fill: solidFill ? fillColor : getGradientFill( fillColor, scaleGradient ),
 						label: translate( 'HTTP requests per sec' ),
-						stroke: '#3057DC',
+						stroke: '#0675C4',
 						width: 2,
 						paths: ( u, seriesIdx, idx0, idx1 ) => {
 							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
