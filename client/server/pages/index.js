@@ -8,7 +8,6 @@ import {
 	isTranslatedIncompletely,
 	isDefaultLocale,
 	getLanguageSlugs,
-	getLanguageRouteParam,
 	localizeUrl,
 } from '@automattic/i18n-utils';
 import bodyParser from 'body-parser';
@@ -687,8 +686,7 @@ function wpcomPages( app ) {
 		res.redirect( redirectUrl );
 	} );
 
-	const lang = getLanguageRouteParam( 'locale' );
-	app.get( `/${ lang }/plans`, function ( req, res, next ) {
+	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/plans`, function ( req, res, next ) {
 		const locale = req.params?.locale;
 
 		if ( ! req.context.isLoggedIn ) {
