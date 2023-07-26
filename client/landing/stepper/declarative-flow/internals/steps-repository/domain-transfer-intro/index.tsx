@@ -1,3 +1,4 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -11,6 +12,7 @@ import './styles.scss';
 const Intro: Step = function Intro( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	usePresalesChat( 'wpcom' );
 
@@ -25,7 +27,9 @@ const Intro: Step = function Intro( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-transfer-header"
-					headerText={ __( 'Transfer your domains' ) }
+					headerText={
+						isEnglishLocale ? __( 'Transfer your domains' ) : __( 'Transfer Your Domains' )
+					}
 					subHeaderText={ __(
 						'Follow these three simple steps to transfer your domains to WordPress.com.'
 					) }
