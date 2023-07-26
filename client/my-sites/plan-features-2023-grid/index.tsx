@@ -650,6 +650,7 @@ export class PlanFeatures2023Grid extends Component<
 			translate,
 			planActionOverrides,
 			siteId,
+			isLargeCurrency,
 		} = this.props;
 
 		return planPropertiesObj
@@ -701,6 +702,7 @@ export class PlanFeatures2023Grid extends Component<
 							showMonthlyPrice={ true }
 							siteId={ siteId }
 							isStuck={ options?.isStuck || false }
+							isLargeCurrency={ isLargeCurrency }
 							currencyCode={ currencyCode || 'USD' }
 						/>
 					</Container>

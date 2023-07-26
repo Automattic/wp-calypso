@@ -46,6 +46,7 @@ type PlanFeaturesActionsButtonProps = {
 	showMonthlyPrice: boolean;
 	siteId?: number | null;
 	isStuck: boolean;
+	isLargeCurrency: boolean;
 	currencyCode: string;
 };
 
@@ -67,6 +68,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	classes,
 	priceString,
 	isStuck,
+	isLargeCurrency,
 	handleUpgradeButtonClick,
 }: {
 	freePlan: boolean;
@@ -74,6 +76,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	classes: string;
 	priceString: string | null;
 	isStuck: boolean;
+	isLargeCurrency: boolean;
 	handleUpgradeButtonClick: () => void;
 } ) => {
 	const translate = useTranslate();
@@ -81,7 +84,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 
 	if ( freePlan ) {
 		btnText = translate( 'Start with Free' );
-	} else if ( isStuck ) {
+	} else if ( isStuck && ! isLargeCurrency ) {
 		btnText = translate( 'Get %(plan)s – %(priceString)s', {
 			args: {
 				plan: planName,
@@ -111,6 +114,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	classes,
 	priceString,
 	isStuck,
+	isLargeCurrency,
 	handleUpgradeButtonClick,
 }: {
 	freePlan: boolean;
@@ -118,6 +122,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	classes: string;
 	priceString: string | null;
 	isStuck: boolean;
+	isLargeCurrency: boolean;
 	handleUpgradeButtonClick: () => void;
 } ) => {
 	const translate = useTranslate();
@@ -135,7 +140,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 
 	let buttonText;
 
-	if ( isStuck ) {
+	if ( isStuck && ! isLargeCurrency ) {
 		buttonText = translate( 'Select %(plan)s – %(priceString)s', {
 			args: {
 				plan: planName,
@@ -168,6 +173,8 @@ const LoggedInPlansFeatureActionButton = ( {
 	classes,
 	priceString,
 	isStuck,
+	isLargeCurrency,
+	planName,
 	handleUpgradeButtonClick,
 	planSlug,
 	current,
@@ -182,6 +189,8 @@ const LoggedInPlansFeatureActionButton = ( {
 	classes: string;
 	priceString: string | null;
 	isStuck: boolean;
+	isLargeCurrency: boolean;
+	planName: TranslateResult;
 	handleUpgradeButtonClick: () => void;
 	planSlug: string;
 	current?: boolean;
@@ -282,12 +291,17 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( buttonText ) {
 		buttonTextFallback = buttonText;
-	} else if ( isStuck ) {
+	} else if ( isStuck && ! isLargeCurrency ) {
 		buttonTextFallback = translate( 'Upgrade – %(priceString)s', {
 			context: 'verb',
 			args: { priceString: priceString ?? '' },
-			comment:
-				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Upgrade - $10',
+			comment: '%(priceString)s is the full price including the currency. Eg: Get Upgrade - $10',
+		} );
+	} else if ( isStuck && isLargeCurrency ) {
+		buttonTextFallback = translate( 'Upgrade – %(plan)s', {
+			context: 'verb',
+			args: { plan: planName ?? '' },
+			comment: '%(plan)s is the name of the plan ',
 		} );
 	} else {
 		buttonTextFallback = translate( 'Upgrade', { context: 'verb' } );
@@ -340,6 +354,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	siteId,
 	currencyCode,
 	isStuck,
+	isLargeCurrency,
 } ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
@@ -427,6 +442,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				classes={ classes }
 				priceString={ priceString }
 				isStuck={ isStuck }
+				isLargeCurrency={ isLargeCurrency }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 			/>
 		);
@@ -439,6 +455,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				classes={ classes }
 				priceString={ priceString }
 				isStuck={ isStuck }
+				isLargeCurrency={ isLargeCurrency }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 			/>
 		);
@@ -460,6 +477,8 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			planActionOverrides={ planActionOverrides }
 			priceString={ priceString }
 			isStuck={ isStuck }
+			isLargeCurrency={ isLargeCurrency }
+			planName={ planName }
 		/>
 	);
 };
