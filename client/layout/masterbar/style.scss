@@ -877,9 +877,11 @@ a.masterbar__quick-language-switcher {
 .masterbar__secure-checkout {
 	display: flex;
 	align-items: center;
+	margin-left: 24px;
 
 	@include breakpoint-deprecated( "<480px" ) {
 		flex: 1;
+		margin-left: 0;
 	}
 	.masterbar__wpcom-wordmark {
 		color: var(--color-checkout-masterbar-text);
@@ -952,6 +954,11 @@ a.masterbar__quick-language-switcher {
 .masterbar__item-help {
 	order: 2;
 	column-gap: 6px;
+	padding: 0 24px;
+
+	@include breakpoint-deprecated( "<480px") {
+		padding: 0;
+	}
 	.masterbar--is-checkout & {
 
 		&.is-active {
