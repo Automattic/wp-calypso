@@ -208,19 +208,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const setNewDomainFromQueryArg = () => {
 		let duplicateDomain = false;
 		const newDomainsState = { ...domainsState };
-		const singleDomainState = Object.keys( newDomainsState ).length === 1;
-
-		// Update the existing domain name if there is only one domain in the state and it is empty
-		if ( singleDomainState ) {
-			const domainData = Object.values( newDomainsState )[ 0 ];
-
-			if ( domainData.domain === '' ) {
-				domainData.domain = String( newDomainTransferQueryArg );
-				const updatedDomainData = { domainData };
-				setDomainsTransferData( updatedDomainData );
-				return;
-			}
-		}
 
 		// Check if the domain already exists in the state
 		Object.keys( newDomainsState ).forEach( ( domainData ) => {
