@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	LINK_IN_BIO_DOMAIN_FLOW,
 	START_WRITING_FLOW,
@@ -31,14 +32,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	videopress: () =>
 		import( /* webpackChunkName: "videopress-flow" */ '../declarative-flow/videopress' ),
-
-	[ VIDEOPRESS_TV_FLOW ]: () =>
-		import( /* webpackChunkName: "videopress-tv-flow" */ `../declarative-flow/videopress-tv` ),
-
-	[ VIDEOPRESS_TV_PURCHASE_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "videopress-tv-flow" */ `../declarative-flow/videopress-tv-purchase`
-		),
 
 	'link-in-bio': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
@@ -123,4 +116,19 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
 };
 
-export default availableFlows;
+const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
+	'videopress-tv'
+)
+	? {
+			[ VIDEOPRESS_TV_FLOW ]: () =>
+				import( /* webpackChunkName: "videopress-tv-flow" */ `../declarative-flow/videopress-tv` ),
+
+			[ VIDEOPRESS_TV_PURCHASE_FLOW ]: () =>
+				import(
+					/* webpackChunkName: "videopress-tv-flow" */
+					`../declarative-flow/videopress-tv-purchase`
+				),
+	  }
+	: {};
+
+export default { ...availableFlows, ...videoPressTvFlows };
