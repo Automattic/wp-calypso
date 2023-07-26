@@ -1,4 +1,4 @@
-import showBanner from 'calypso/jetpack-cloud/sections/utils/show-banner-util';
+import showBanner from 'calypso/jetpack-cloud/sections/utils/show-banner';
 import { useSelector } from 'calypso/state';
 import {
 	JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE as surveyBannerPreferenceName,
