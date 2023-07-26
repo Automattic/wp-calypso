@@ -1,7 +1,7 @@
 <?php
 /**
- * Title: Search Bar with Heading
- * Slug: happy-blocks/search
+ * Title: Education header
+ * Slug: happy-blocks/education-header
  * Categories: support
  *
  * @package happy-blocks
