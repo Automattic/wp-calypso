@@ -89,6 +89,14 @@ export default ( router ) => {
 		clientRender
 	);
 
+	router(
+		paths.managePurchaseByOwnership( ':ownershipId' ),
+		sidebar,
+		controller.managePurchaseByOwnership,
+		makeLayout,
+		clientRender
+	);
+
 	/**
 	 * The siteSelection middleware has been removed from this route.
 	 * No selected site!
