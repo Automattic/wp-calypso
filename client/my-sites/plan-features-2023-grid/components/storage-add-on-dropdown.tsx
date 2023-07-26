@@ -36,9 +36,9 @@ export const StorageAddOnDropdown = ( {
 	const defaultStorageOption = storageOptions.find(
 		( storageOption ) => storageOption?.planDefault
 	);
-	const selectedOptionKey = selectedStorage[ planName ] || defaultStorageOption?.key;
+	const selectedOptionKey = selectedStorage[ planName ] || defaultStorageOption?.key || '';
 	const selectedOption = {
-		key: selectedStorage[ planName ] || defaultStorageOption?.key,
+		key: selectedOptionKey,
 		name: getStorageStringFromFeature( selectedOptionKey ) || defaultStorageOption?.title,
 	};
 
@@ -47,7 +47,7 @@ export const StorageAddOnDropdown = ( {
 			label={ translate( 'Storage' ) }
 			options={ selectControlOptions }
 			value={ selectedOption }
-			onChange={ ( { selectedItem } ) => {
+			onChange={ ( { selectedItem }: { selectedItem: { key?: string } } ) => {
 				const updatedSelectedStorage = {
 					[ planName ]: selectedItem?.key || '',
 				} as PlanSelectedStorage;

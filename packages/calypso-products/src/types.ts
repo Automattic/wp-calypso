@@ -40,7 +40,7 @@ export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
 export type WPComStorageAddOnSlug = [
 	typeof FEATURE_50GB_STORAGE_ADD_ON,
 	typeof FEATURE_100GB_STORAGE_ADD_ON
-];
+][ number ];
 
 export interface WPComPlan extends Plan {
 	getAudience?: () => TranslateResult;
