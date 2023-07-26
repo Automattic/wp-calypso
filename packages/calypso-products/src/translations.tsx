@@ -156,7 +156,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	);
 	const backup = translate( 'VaultPress Backup' );
 	const search = translate( 'Site Search' );
-	const stats = translate( 'Stats' );
+	const stats = translate( 'Stats (Personal)' );
 	const statsFree = translate( 'Stats (Free)' );
 	const statsCommercial = translate( 'Stats (Commercial)' );
 	const scan = translate( 'Scan' );
