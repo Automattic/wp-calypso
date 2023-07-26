@@ -86,7 +86,7 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			title: translate( 'Premium Business WordPress Themes' ),
 			header: translate( 'Choose premium themes for your business website.' ),
 			description: translate(
-				"Enhance your business website with the premium paid theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+				"Enhance your business website with the perfect premium paid theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
 			),
 		},
 		marketplace: {
@@ -190,7 +190,7 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 	'link-in-bio': {
 		all: {
 			title: translate( 'Link in Bio WordPress Themes' ),
-			header: translate( 'Find the perfect theme for your about website.' ),
+			header: translate( 'Find the perfect theme for your link in bio website.' ),
 			description: translate(
 				"Start your link in bio website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 			),
