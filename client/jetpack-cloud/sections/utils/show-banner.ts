@@ -1,10 +1,9 @@
-import { ReactElement } from 'react';
 import type { Preference } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 const ONE_DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 
 interface Banner {
-	component: () => ReactElement;
+	component: () => JSX.Element;
 	preference: Preference;
 	showDays?: number;
 	hideBanner?: boolean;
@@ -31,7 +30,7 @@ const showBanner = ( banners: Banner[] ) => {
 		( banner ) => ! banner.preference?.dismiss && ! banner.hideBanner && shouldShowBanner( banner )
 	);
 
-	return banner?.component?.();
+	return banner?.component?.() ?? null;
 };
 
 export default showBanner;
