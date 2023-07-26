@@ -232,5 +232,5 @@ export const LICENSE_INFO_MODAL_ID = 'show_license_modal';
  * @returns boolean True if WC product, false if not
  */
 export function isWooCommerceProduct( keyOrSlug: string ) {
-	return keyOrSlug.startsWith( 'woocommerce-' );
+	return keyOrSlug.startsWith( 'woocommerce' );
 }
