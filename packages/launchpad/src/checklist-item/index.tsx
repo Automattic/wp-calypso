@@ -19,7 +19,9 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 
 	// Display task counter if task is incomplete and has the count properties;
 	const shouldDisplayTaskCounter =
-		! completed && task.target_repetitions && null !== task.repetition_count;
+		task.target_repetitions &&
+		null !== task.repetition_count &&
+		undefined !== task.repetition_count;
 
 	return (
 		<li
