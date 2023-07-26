@@ -208,7 +208,7 @@
 	}
 
 	.domains__domain-domain {
-		flex: 0 0 420px;
+		flex: 0 0 390px;
 	}
 
 	.domains__domain-key {
@@ -272,6 +272,7 @@
 				font-size: 0.75rem;
 				font-weight: 500;
 				line-height: 16px;
+				white-space: nowrap;
 			}
 		}
 	}
