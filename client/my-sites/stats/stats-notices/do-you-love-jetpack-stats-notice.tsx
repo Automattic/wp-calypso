@@ -67,7 +67,7 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 	return (
 		<div
 			className={ `inner-notice-container has-odyssey-stats-bg-color ${
-				! isOdysseyStats && 'inner-notice-container--emerald'
+				! isOdysseyStats && 'inner-notice-container--calypso'
 			}` }
 		>
 			<NoticeBanner
