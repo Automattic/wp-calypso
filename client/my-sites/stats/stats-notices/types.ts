@@ -1,5 +1,9 @@
+export interface PaidPlanPurchaseNoticeProps {
+	onNoticeViewed?: () => void;
+}
+
 export interface StatsNoticeProps {
-	siteId?: number | null;
+	siteId: number | null;
 	onNoticeViewed?: () => void;
 }
 
@@ -14,7 +18,7 @@ export interface FeedbackNoticeBodyProps extends NoticeBodyProps {
 
 export interface StatsNoticesProps {
 	siteId: number | null;
-	isOdysseyStats?: boolean;
+	isOdysseyStats: boolean;
 	statsPurchaseSuccess?: string;
 }
 
