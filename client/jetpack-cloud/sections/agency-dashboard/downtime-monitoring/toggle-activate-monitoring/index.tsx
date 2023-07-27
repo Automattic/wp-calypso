@@ -160,6 +160,7 @@ export default function ToggleActivateMonitoring( {
 			isVisible={ showTooltip }
 			position="bottom left"
 			onClose={ handleHideTooltip }
+			dismissibleWithPreference
 		/>
 	) : (
 		tooltip && (

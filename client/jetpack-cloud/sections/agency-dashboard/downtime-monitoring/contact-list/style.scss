@@ -6,25 +6,38 @@
 
 .contact-list {
 	margin: 16px 0 0;
+}
 
-	.contact-list__button {
-		margin-block-start: 16px;
-		border-radius: 20px; /* stylelint-disable-line scales/radii */
-		color: var(--studio-gray-80);
-		display: flex;
-		align-items: center;
-		width: fit-content;
-		border-color: var(--studio-gray-80);
-		padding: 4px 8px;
-	}
+.contact-list__action {
+	margin-block-start: 16px;
+	display: flex;
+	gap: 8px;
+}
 
-	.contact-list-item {
-		margin: 0;
-		height: 60px;
-		display: flex;
-		align-items: center;
-		padding: 16px;
+.contact-list__action-button.button {
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+	color: var(--studio-gray-80);
+	display: flex;
+	align-items: center;
+	border-color: var(--studio-gray-80);
+	padding: 4px 8px;
+
+	&:disabled {
+		background-color: var(--studio-white);
+		border-color: var(--studio-gray-5);
+
+		svg {
+			fill: var(--studio-gray-5);
+		}
 	}
+}
+
+.contact-list-item {
+	margin: 0;
+	height: 60px;
+	display: flex;
+	align-items: center;
+	padding: 16px;
 }
 
 .contact-list-item__content-container {
@@ -73,6 +86,12 @@
 	font-weight: 400;
 	font-size: 0.75rem;
 	line-height: 18px;
+	color: var(--studio-gray-50);
+}
+
+.contact-list__upgrade-message {
+	margin-block-start: 8px;
+	font-size: rem(12px);
 	color: var(--studio-gray-50);
 }
 
