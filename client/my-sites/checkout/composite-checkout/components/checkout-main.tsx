@@ -1,9 +1,5 @@
 import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
-import {
-	StripeSetupIntentIdProvider,
-	useStripe,
-	useStripeSetupIntentId,
-} from '@automattic/calypso-stripe';
+import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -11,7 +7,7 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useEffect, useMemo } from 'react';
+import { Fragment, useCallback, useMemo } from 'react';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -22,7 +18,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
@@ -109,7 +104,7 @@ export interface CheckoutMainProps {
 	customizedPreviousPath?: string;
 }
 
-function CheckoutMain( {
+export default function CheckoutMain( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
@@ -455,18 +450,6 @@ function CheckoutMain( {
 		]
 	);
 
-	const {
-		reload: reloadSetupIntentId,
-		setupIntentId: stripeSetupIntentId,
-		error: setupIntentError,
-	} = useStripeSetupIntentId();
-
-	useEffect( () => {
-		if ( setupIntentError ) {
-			reduxDispatch( errorNotice( setupIntentError.message ) );
-		}
-	}, [ setupIntentError, reduxDispatch ] );
-
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
@@ -477,7 +460,6 @@ function CheckoutMain( {
 			card: ( transactionData: unknown ) =>
 				multiPartnerCardProcessor( transactionData, dataForProcessor, {
 					translate,
-					stripeSetupIntentId,
 				} ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
@@ -502,7 +484,7 @@ function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[ dataForProcessor, translate, stripeSetupIntentId ]
+		[ dataForProcessor, translate ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
@@ -695,11 +677,8 @@ function CheckoutMain( {
 					error_message: String( transactionError ),
 				} )
 			);
-
-			// We need to regenerate the setup intent if the form was submitted.
-			reloadSetupIntentId();
 		},
-		[ reduxDispatch, translate, reloadSetupIntentId ]
+		[ reduxDispatch, translate ]
 	);
 
 	const handlePaymentRedirect = useCallback( () => {
@@ -835,24 +814,3 @@ function getAnalyticsPath(
 
 	return { analyticsPath, analyticsProps };
 }
-
-/**
- * This exists so that CheckoutMain can call useStripeSetupIntentId. It must be inside the CalypsoShoppingCartProvider.
- */
-function InnerCheckoutMainWrapper( props: CheckoutMainProps ) {
-	const cartKey = useCartKey();
-	const { responseCart, isLoading, isPendingUpdate } = useShoppingCart( cartKey );
-	const isPurchaseFree = responseCart.total_cost_integer === 0;
-	return (
-		<StripeSetupIntentIdProvider
-			fetchStripeSetupIntentId={ () =>
-				getStripeConfiguration( { needs_intent: true, source: 'checkout' } )
-			}
-			isDisabled={ ! isPurchaseFree || isLoading || isPendingUpdate }
-		>
-			<CheckoutMain { ...props } />
-		</StripeSetupIntentIdProvider>
-	);
-}
-
-export default InnerCheckoutMainWrapper;

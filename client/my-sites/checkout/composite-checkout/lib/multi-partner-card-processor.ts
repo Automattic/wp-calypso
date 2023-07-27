@@ -20,7 +20,7 @@ import {
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { StripeSetupIntentId, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 import type { LocalizeProps } from 'i18n-calypso';
@@ -238,7 +238,6 @@ async function ebanxCardProcessor(
 }
 
 export interface FreePurchaseData {
-	stripeSetupIntentId: StripeSetupIntentId | undefined;
 	translate: LocalizeProps[ 'translate' ];
 }
 
@@ -295,9 +294,9 @@ export default async function multiPartnerCardProcessor(
 				translate: freePurchaseData.translate,
 				stripe: dataForProcessor.stripe,
 				stripeConfiguration: dataForProcessor.stripeConfiguration,
-				stripeSetupIntentId: freePurchaseData?.stripeSetupIntentId,
 				cardNumberElement: submitData.cardNumberElement,
 				reduxDispatch: dataForProcessor.reduxDispatch,
+				isCheckout: true,
 				eventSource: '/checkout',
 			},
 			submitDataWithContactInfo

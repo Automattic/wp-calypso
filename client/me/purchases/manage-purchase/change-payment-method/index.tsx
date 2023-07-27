@@ -1,8 +1,4 @@
-import {
-	StripeHookProvider,
-	StripeSetupIntentIdProvider,
-	useStripe,
-} from '@automattic/calypso-stripe';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import page from 'page';
 import { Fragment, useEffect } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -121,11 +117,7 @@ export default function ChangePaymentMethodWrapper( props: ChangePaymentMethodPr
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<StripeSetupIntentIdProvider
-				fetchStripeSetupIntentId={ () => getStripeConfiguration( { needs_intent: true } ) }
-			>
-				<ChangePaymentMethod { ...props } />
-			</StripeSetupIntentIdProvider>
+			<ChangePaymentMethod { ...props } />
 		</StripeHookProvider>
 	);
 }
