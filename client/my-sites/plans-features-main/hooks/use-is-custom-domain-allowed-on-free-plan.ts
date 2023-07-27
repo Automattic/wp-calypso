@@ -2,7 +2,7 @@ import { getTld } from 'calypso/lib/domains';
 import { useExperiment } from 'calypso/lib/explat';
 
 const useIsCustomDomainAllowedOnFreePlan = (
-	flowName?: string,
+	flowName?: string | null,
 	domainName?: string
 ): [ boolean, boolean ] => {
 	const [ isLoadingAssignment, experimentAssignment ] = useExperiment(
