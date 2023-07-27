@@ -1,13 +1,37 @@
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector } from 'calypso/state';
+import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
+import { useSelector, useDispatch } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { warningNotice } from 'calypso/state/notices/actions';
 import type { UserData } from 'calypso/lib/user/user';
 
 const VerifyEmail = function SitePicker() {
+	const dispatch = useDispatch();
 	const { __ } = useI18n();
 	const user = useSelector( getCurrentUser ) as UserData;
+	const sendEmail = useSendEmailVerification();
+
+	const defaultButtonState = {
+		status: 'default',
+		text: __( 'Resend verification email' ),
+	};
+	const [ buttonState, setButtonState ] = useState( defaultButtonState );
+
+	const onResendEmail = async () => {
+		setButtonState( { status: 'processing', text: __( 'Sending…' ) } );
+		sendEmail()
+			.then( () => {
+				setButtonState( { status: 'success', text: __( 'Request sent!' ) } );
+				setTimeout( () => setButtonState( defaultButtonState ), 3000 );
+			} )
+			.catch( ( e ) => {
+				dispatch( warningNotice( e.message ) );
+				setButtonState( defaultButtonState );
+			} );
+	};
 
 	return (
 		<div className="verify-email--container">
@@ -21,7 +45,9 @@ const VerifyEmail = function SitePicker() {
 					{ email: user.email }
 				) }
 			</SubTitle>
-			<NextButton>{ __( 'Resend verification email' ) }</NextButton>
+			<NextButton isBusy={ buttonState.status === 'processing' } onClick={ onResendEmail }>
+				{ buttonState.text }
+			</NextButton>
 		</div>
 	);
 };
