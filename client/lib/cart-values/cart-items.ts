@@ -178,12 +178,6 @@ export function hasFreeCouponTransfersOnly( cart: ObjectWithProducts ): boolean 
 	return temp;
 }
 
-export function hasTransferProductOnly( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).every( ( item ) => {
-		return isDomainTransfer( item ) || isPartialCredits( item );
-	} );
-}
-
 export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter(
 		( product ) => product.product_slug === domainProductSlugs.TRANSFER_IN
