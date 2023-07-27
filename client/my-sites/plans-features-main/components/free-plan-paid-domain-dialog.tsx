@@ -5,7 +5,8 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import usePlanPrices from '../../plans/hooks/use-plan-prices';
@@ -167,6 +168,8 @@ type DomainPlanDialogProps = {
 	onPlanSelected: () => void;
 };
 
+const MODAL_VIEW_EVENT_NAME = 'calypso_free_plan_paid_domain_modal_view';
+
 function DialogPaidPlanIsRequired( {
 	paidDomainName,
 	wpcomFreeDomainSuggestion,
@@ -176,6 +179,12 @@ function DialogPaidPlanIsRequired( {
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
+
+	useEffect( () => {
+		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
+			dialog_type: 'paid_plan_is_required',
+		} );
+	}, [] );
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
@@ -233,6 +242,12 @@ function DialogCustomDomainAndFreePlan( {
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
+
+	useEffect( () => {
+		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
+			dialog_type: 'custom_domain_and_free_plan',
+		} );
+	}, [] );
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
