@@ -11,7 +11,7 @@ import {
 	NOTICE_CELEBRATE_SITE_COPY,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
 	NOTICE_STAGING_SITE,
-	NOTICE_OFFER_COUPON,
+	NOTICE_SPECIAL_20_COUPON,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_EARN_FEATURES,
 	TASK_GO_MOBILE_ANDROID,
@@ -50,7 +50,7 @@ import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import GoogleDomainOwners from 'calypso/my-sites/customer-home/cards/tasks/google-domain-owners';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
-import NoticeOfferCoupon from 'calypso/my-sites/customer-home/cards/tasks/notice-offer-coupon';
+import NoticeSpecial20Coupon from 'calypso/my-sites/customer-home/cards/tasks/notice-offer-coupon';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
@@ -71,7 +71,7 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
 	[ NOTICE_CELEBRATE_SITE_COPY ]: CelebrateSiteCopy,
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
-	[ NOTICE_OFFER_COUPON ]: NoticeOfferCoupon,
+	[ NOTICE_SPECIAL_20_COUPON ]: NoticeSpecial20Coupon,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
