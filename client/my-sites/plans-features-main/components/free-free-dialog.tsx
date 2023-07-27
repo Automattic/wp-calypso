@@ -3,9 +3,12 @@ import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { formatCurrency } from 'calypso/../packages/format-currency/src';
+import { SingleFreeDomainSuggestion } from 'calypso/my-sites/plan-features-2023-grid/types';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { useGetDotcomDomainSuggestion } from '../hooks/use-get-dotcom-domain-suggestion';
 import { DialogContainer } from './free-plan-paid-domain-dialog';
+import { LoadingPlaceHolder } from './loading-placeholder';
 
 export const Heading = styled.div`
 	font-family: Recoleta;
@@ -98,6 +101,20 @@ const CrossIcon = styled( Gridicon )`
 	color: #e53e3e;
 `;
 
+const LoadingPlaceHolderText = styled( LoadingPlaceHolder )`
+	width: 80px;
+	display: inline-block;
+	border-radius: 0;
+`;
+
+function DomainSuggestionText( { suggestion }: { suggestion: SingleFreeDomainSuggestion } ) {
+	return suggestion.isLoading ? (
+		<LoadingPlaceHolderText />
+	) : (
+		<strong>"{ suggestion?.entry?.domain_name }"</strong>
+	);
+}
+
 export function FreeFreeDialog( {
 	freeSubdomain,
 	onFreePlanSelected,
@@ -110,8 +127,11 @@ export function FreeFreeDialog( {
 	onPlanSelected: () => void;
 } ) {
 	const translate = useTranslate();
-	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
-
+	const userLocale = useSelector( getCurrentUserLocale );
+	const { suggestion, invalidateDomainSuggestionCache } = useGetDotcomDomainSuggestion( {
+		query: freeSubdomain,
+		locale: userLocale,
+	} );
 	return (
 		<Dialog
 			isBackdropVisible={ true }
@@ -183,22 +203,41 @@ export function FreeFreeDialog( {
 				</TextBox>
 				<TextBox>
 					{ translate(
-						'As a bonus, you will get a custom domain like "{{strong}} %(domaiName)s {{/strong}}" for free for {{break}}{{/break}} one year (%(domainPrice)s value).',
+						'As a bonus, you will get a custom domain like {{suggestion}}{{/suggestion}} {{break}}{{/break}} for free for one year (%(domainPrice)s value).',
 						{
-							components: { strong: <strong />, break: <br /> },
+							components: {
+								suggestion: <DomainSuggestionText suggestion={ suggestion } />,
+								break: <br />,
+							},
 							args: {
-								domaiName: 'mysite.com',
-								domainPrice: formatCurrency( 12, userCurrencyCode ),
+								domainPrice: formatCurrency(
+									suggestion?.entry?.raw_price ?? 0,
+									suggestion?.entry?.currency_code ?? 'USD'
+								),
 							},
 						}
 					) }
 				</TextBox>
+
 				<ButtonRow>
-					<StyledButton primary onClick={ onPlanSelected }>
+					<StyledButton
+						primary
+						onClick={ () => {
+							invalidateDomainSuggestionCache();
+							onPlanSelected();
+						} }
+					>
 						{ translate( 'Get the Personal plan' ) }
 					</StyledButton>
 
-					<StyledButton onClick={ onFreePlanSelected } borderless color="gray">
+					<StyledButton
+						onClick={ () => {
+							invalidateDomainSuggestionCache();
+							onFreePlanSelected();
+						} }
+						borderless
+						color="gray"
+					>
 						{ translate( 'Continue with Free' ) }
 					</StyledButton>
 				</ButtonRow>
