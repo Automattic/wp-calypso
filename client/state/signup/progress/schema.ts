@@ -32,6 +32,14 @@ export interface StepState {
 	status: 'completed' | 'processing' | 'pending' | 'in-progress' | 'invalid';
 	stepName: string;
 	wasSkipped?: boolean;
+	domainForm?: {
+		subdomainSearchResults: Array< {
+			domain_name: string;
+			isSubDomainSuggestion: boolean;
+			is_free: boolean;
+			vendor: 'dot';
+		} >;
+	};
 }
 
 export type ProgressState = Record< string, StepState >;

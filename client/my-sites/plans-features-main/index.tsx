@@ -1,12 +1,13 @@
+import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
+	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
-	getPlanPath,
-	PLAN_PERSONAL,
 	PlanSlug,
 	getPlanClass,
+	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -29,12 +30,15 @@ import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
+import { ProgressState } from 'calypso/state/signup/progress/schema';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import usePlansWithIntent, {
 	GridPlan,
 } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
+import { FreeFreeDialog } from './components/free-free-dialog';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
@@ -103,6 +107,14 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 };
+
+function getSubdomainUrlFromDependencyProgress( progress: ProgressState ) {
+	const domainSearchResult = progress.domains?.domainForm?.subdomainSearchResults[ 0 ];
+	if ( domainSearchResult ) {
+		return domainSearchResult.domain_name;
+	}
+	return null;
+}
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
 	const translate = useTranslate();
@@ -263,6 +275,7 @@ const PlansFeaturesMain = ( {
 	isSpotlightOnCurrentPlan,
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
+	const [ isFreeFreeUpsellOpen, setIsFreeFreeUpsellOpen ] = useState( false );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -279,6 +292,16 @@ const PlansFeaturesMain = ( {
 		flowName,
 		paidDomainName
 	);
+	/**
+	 * This is a temporary solution to extract the domain suggestion dependency from the signup progress.
+	 * Ideally the free subdomain should be funnelled as an explicit dependency which is being handled at
+	 * https://github.com/Automattic/wp-calypso/pull/79869
+	 * Once the PR is merged this code can be removed.
+	 */
+	const signupProgress = useSelector( getSignupProgress );
+	const freeSubdomain = getSubdomainUrlFromDependencyProgress( signupProgress );
+	/*****************************************************/
+	const isFreeDomainFreePlanModalActive = config.isEnabled( 'onboarding-pm/free-free-modal' );
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -314,13 +337,14 @@ const PlansFeaturesMain = ( {
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// It only applies to main onboarding flow and the paid media flow at the moment.
 		// Standardizing it or not is TBD; see Automattic/growth-foundations#63 and pdgrnI-2nV-p2#comment-4110 for relevant discussion.
-		if (
-			( 'onboarding' === flowName || 'onboarding-pm' === flowName ) &&
-			paidDomainName &&
-			! cartItemForPlan
-		) {
-			toggleIsFreePlanPaidDomainDialogOpen();
-			return;
+		if ( ( 'onboarding' === flowName || 'onboarding-pm' === flowName ) && ! cartItemForPlan ) {
+			if ( paidDomainName ) {
+				toggleIsFreePlanPaidDomainDialogOpen();
+				return;
+			} else if ( freeSubdomain && isFreeDomainFreePlanModalActive ) {
+				setIsFreeFreeUpsellOpen( true );
+				return;
+			}
 		}
 
 		if ( onUpgradeClick ) {
@@ -435,6 +459,19 @@ const PlansFeaturesMain = ( {
 						invalidateDomainSuggestionCache();
 						wpcomFreeDomainSuggestion.result &&
 							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
+						onUpgradeClick?.( null );
+					} }
+					onPlanSelected={ () => {
+						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
+						onUpgradeClick?.( cartItemForPlan );
+					} }
+				/>
+			) }
+			{ freeSubdomain && isFreeFreeUpsellOpen && (
+				<FreeFreeDialog
+					freeSubdomain={ freeSubdomain }
+					onClose={ () => setIsFreeFreeUpsellOpen( false ) }
+					onFreePlanSelected={ () => {
 						onUpgradeClick?.( null );
 					} }
 					onPlanSelected={ () => {
