@@ -1,6 +1,7 @@
 import {
 	getPlanClass,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_P2_FREE,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
@@ -185,12 +186,16 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
+	const isTrialPlan =
+		currentSitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
+		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
+
 	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
 	if (
 		availableForPurchase &&
 		currentSitePlanSlug &&
 		! current &&
-		currentSitePlanSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY &&
+		! isTrialPlan &&
 		currentPlanBillPeriod &&
 		gridPlanBillPeriod &&
 		currentPlanBillPeriod > gridPlanBillPeriod
@@ -208,7 +213,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		currentSitePlanSlug &&
 		! current &&
 		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug ) &&
-		currentSitePlanSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY
+		! isTrialPlan
 	) {
 		if ( planMatches( planType, { term: TERM_TRIENNIALLY } ) ) {
 			return (
