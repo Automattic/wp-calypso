@@ -205,10 +205,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	}
 
 	const RedirectToFirstStep = () => {
-		window.location.assign(
+		window.location.replace(
 			`/setup/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }`
 		);
-		return;
+		return null;
 	};
 
 	return (
