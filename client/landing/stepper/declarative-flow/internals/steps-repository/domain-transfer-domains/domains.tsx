@@ -8,7 +8,8 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useState } from 'react';
+import { getQueryArg } from '@wordpress/url';
+import { useCallback, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import QueryPlans from 'calypso/components/data/query-plans';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -67,6 +68,7 @@ const getFormattedTotalPrice = ( state: DomainTransferData ) => {
 
 const Domains: React.FC< Props > = ( { onSubmit } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
+	const newDomainTransferQueryArg = getQueryArg( window.location.search, 'new' );
 
 	const storedDomainsState = useSelect( ( select ) => {
 		const onboardSelect = select( ONBOARD_STORE ) as OnboardSelect;
@@ -202,6 +204,37 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 
 		return __( 'Transfer for free' );
 	}
+
+	const setNewDomainFromQueryArg = () => {
+		let duplicateDomain = false;
+		const newDomainsState = { ...domainsState };
+
+		// Check if the domain already exists in the state
+		Object.keys( newDomainsState ).forEach( ( domainData ) => {
+			if ( newDomainsState[ domainData ].domain === newDomainTransferQueryArg ) {
+				duplicateDomain = true;
+			}
+		} );
+
+		newDomainsState[ uuid() ] = {
+			domain: String( newDomainTransferQueryArg ),
+			auth: '',
+			valid: false,
+			rawPrice: 0,
+			saleCost: undefined,
+			currencyCode: undefined,
+		};
+
+		if ( ! duplicateDomain ) {
+			setDomainsTransferData( newDomainsState );
+		}
+	};
+
+	useEffect( () => {
+		if ( newDomainTransferQueryArg ) {
+			setNewDomainFromQueryArg();
+		}
+	}, [] );
 
 	return (
 		<div className="bulk-domain-transfer__container">
