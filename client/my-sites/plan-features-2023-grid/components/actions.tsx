@@ -442,7 +442,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				classes={ classes }
 				priceString={ priceString }
 				isStuck={ isStuck }
-				isLargeCurrency={ isLargeCurrency }
+				isLargeCurrency={ !! isLargeCurrency }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 			/>
 		);
@@ -455,7 +455,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				classes={ classes }
 				priceString={ priceString }
 				isStuck={ isStuck }
-				isLargeCurrency={ isLargeCurrency }
+				isLargeCurrency={ !! isLargeCurrency }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 			/>
 		);
@@ -477,7 +477,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			planActionOverrides={ planActionOverrides }
 			priceString={ priceString }
 			isStuck={ isStuck }
-			isLargeCurrency={ isLargeCurrency }
+			isLargeCurrency={ !! isLargeCurrency }
 			planName={ planName }
 		/>
 	);
