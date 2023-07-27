@@ -111,6 +111,12 @@ import type { DomainThankYouType } from 'calypso/my-sites/checkout/checkout-than
 import type { ReceiptState, ReceiptPurchase } from 'calypso/state/receipts/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
+declare global {
+	interface Window {
+		fbq?: ( ...args: unknown[] ) => void;
+	}
+}
+
 type ComponentAndPrimaryPurchaseAndDomain =
 	| []
 	| [ string | false ]
@@ -256,6 +262,14 @@ export class CheckoutThankYou extends Component<
 				];
 				debug( 'recordOrderInGoogleAds: WPCom Domain Transfer Purchase', params );
 				window.gtag( ...params );
+			}
+
+			// Custom conversion for Facebook Ads/audiences
+			if ( mayWeTrackByTracker( 'facebook' ) ) {
+				const params = [ 'trackCustom', 'BulkDomainTransfer', {} ];
+
+				debug( 'recordOrderInFacebookAds: WPCom Bulk Domain Transfer Purchase', params );
+				window.fbq && window.fbq( ...params );
 			}
 		}
 
