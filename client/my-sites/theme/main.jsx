@@ -92,6 +92,7 @@ import {
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
+	isFullSiteEditingTheme as getIsFullSiteEditingTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -627,6 +628,8 @@ class ThemeSheet extends Component {
 			themeType,
 			isSimple,
 			isThemeInstalledOnAtomicSite,
+			isFullSiteEditingTheme,
+			themeId,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -659,12 +662,14 @@ class ThemeSheet extends Component {
 								isActive={ isActive }
 								isAtomic={ isAtomic }
 								isExternallyManagedTheme={ isExternallyManagedTheme }
+								isFullSiteEditingTheme={ isFullSiteEditingTheme }
 								isSimple={ isSimple }
 								isThemeInstalledOnAtomicSite={ isThemeInstalledOnAtomicSite }
 								isWporg={ isWporg }
 								showTryAndCustomize={ showTryAndCustomize }
 								siteSlug={ siteSlug }
 								stylesheet={ stylesheet }
+								themeId={ themeId }
 								themeType={ themeType }
 							></LivePreviewButton>
 						) }
@@ -1564,6 +1569,10 @@ export default connect(
 
 		const isThemeInstalledOnAtomicSite = isAtomic && !! getTheme( state, siteId, themeId );
 
+		const isFullSiteEditingTheme = config.isEnabled( 'themes/block-theme-previews' )
+			? getIsFullSiteEditingTheme( state, themeId )
+			: undefined;
+
 		return {
 			...theme,
 			themeId,
@@ -1582,6 +1591,7 @@ export default connect(
 			isActive: isThemeActive( state, themeId, siteId ),
 			isJetpack,
 			isAtomic,
+			isFullSiteEditingTheme,
 			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, themeId ),

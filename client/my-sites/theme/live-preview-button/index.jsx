@@ -21,21 +21,22 @@ export const LivePreviewButton = ( {
 	isActive,
 	isAtomic,
 	isExternallyManagedTheme,
+	isFullSiteEditingTheme,
 	isSimple,
 	isThemeInstalledOnAtomicSite,
 	isWporg,
-	showTryAndCustomize,
 	siteSlug,
 	stylesheet,
 	themeType,
+	themeId,
 } ) => {
 	// A user doesn't want to preview the active theme.
 	if ( isActive ) {
 		return null;
 	}
 
-	// Block Theme Previews do not support Classic themes.
-	if ( showTryAndCustomize ) {
+	// A theme should be FullSiteEditing compatible to use Block Theme Previews.
+	if ( ! isFullSiteEditingTheme ) {
 		return null;
 	}
 
@@ -75,8 +76,11 @@ export const LivePreviewButton = ( {
 		}
 	}
 
+	const themePath = isAtomic ? themeId : stylesheet;
+
 	return (
-		<Button href={ `https://${ siteSlug }/wp-admin/site-editor.php?theme_preview=${ stylesheet }` }>
+			href={ `https://${ siteSlug }/wp-admin/site-editor.php?wp_theme_preview=${ themePath }` }
+		>
 			Live Preview
 		</Button>
 	);
