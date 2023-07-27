@@ -859,7 +859,11 @@ const WPCheckoutMainContent = styled.div`
 const WPCheckoutSidebarContent = styled.div`
 	background: ${ ( props ) => props.theme.colors.background };
 	grid-area: sidebar-content;
-	margin-top: var( --masterbar-checkout-height );
+	margin-top: var( --masterbar-height );
+
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		margin-top: var( --masterbar-checkout-height );
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: 0;
