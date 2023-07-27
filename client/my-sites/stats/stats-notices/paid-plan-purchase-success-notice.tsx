@@ -1,7 +1,8 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const PaidPlanPurchaseSuccessJetpackStatsNotice = () => {
 	const translate = useTranslate();
@@ -12,6 +13,14 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = () => {
 		// TODO: Remove the query string from the window URL without a refresh.
 		setNoticeDismissed( true );
 	};
+
+	useEffect( () => {
+		if ( ! noticeDismissed ) {
+			isOdysseyStats
+				? recordTracksEvent( 'jetpack_odyssey_stats_purchase_success_notice_viewed' )
+				: recordTracksEvent( 'calypso_stats_purchase_success_notice_viewed' );
+		}
+	}, [ noticeDismissed, isOdysseyStats ] );
 
 	if ( noticeDismissed ) {
 		return null;
