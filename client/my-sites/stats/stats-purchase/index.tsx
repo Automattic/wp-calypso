@@ -12,6 +12,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -53,6 +54,10 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 	const isPWYWOwned = useMemo( () => {
 		return isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
 	}, [ siteProducts ] );
+
+	if ( query?.from && query.from === 'jetpack-my-jetpack' ) {
+		recordTracksEvent( 'jetpack_odyssey_stats_my_jetpack_card_redirect' );
+	}
 
 	useEffect( () => {
 		if ( ! siteSlug ) {
