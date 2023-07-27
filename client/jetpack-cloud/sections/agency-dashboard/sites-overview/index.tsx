@@ -258,14 +258,13 @@ export default function SitesOverview() {
 		);
 	};
 
+	const isLargeScreen = isWithinBreakpoint( '>960px' );
+
 	return (
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
 			<SidebarNavigation sectionTitle={ pageTitle } />
 			<div className="sites-overview__container">
-				{ isWithinBreakpoint( '<960px' ) &&
-					selectedLicensesCount < 1 &&
-					renderAddSiteIssueLicenseButtons() }
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
 						<SiteSurveyBanner isDashboardView />
@@ -275,14 +274,17 @@ export default function SitesOverview() {
 						<SiteContentHeader
 							content={
 								// don't render content on mobile, we don't need it
-								selectedLicensesCount > 0 && isWithinBreakpoint( '>960px' )
+								isLargeScreen &&
+								( selectedLicensesCount > 0
 									? renderIssueLicenseButton()
-									: isWithinBreakpoint( '>960px' ) && renderAddSiteIssueLicenseButtons()
+									: renderAddSiteIssueLicenseButtons() )
 							}
 							pageTitle={ pageTitle }
 							// Only renderIssueLicenseButton should be sticky.
-							showStickyContent={ selectedLicensesCount > 0 && isWithinBreakpoint( '>960px' ) }
+							showStickyContent={ selectedLicensesCount > 0 && isLargeScreen }
 						/>
+
+						{ ! isLargeScreen && selectedLicensesCount < 1 && renderAddSiteIssueLicenseButtons() }
 						<SectionNav
 							applyUpdatedStyles
 							selectedText={
@@ -347,7 +349,7 @@ export default function SitesOverview() {
 					</div>
 				</div>
 			</div>
-			{ isWithinBreakpoint( '<960px' ) && selectedLicensesCount > 0 && (
+			{ ! isLargeScreen && selectedLicensesCount > 0 && (
 				<div className="sites-overview__issue-licenses-button-small-screen">
 					{ renderIssueLicenseButton() }
 				</div>
