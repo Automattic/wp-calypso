@@ -864,6 +864,8 @@ export class PlanFeatures2023Grid extends Component<
 			showPlansComparisonGrid,
 		} = this.props;
 
+		console.log( 'render', showPlansComparisonGrid, plansComparisonGridRef );
+
 		return (
 			<div className="plans-wrapper">
 				<QueryActivePromotions />

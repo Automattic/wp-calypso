@@ -12,7 +12,7 @@ import {
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
-import { useCallback, useLayoutEffect, useEffect, useRef, useState } from '@wordpress/element';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -571,15 +571,20 @@ const PlansFeaturesMain = ( {
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
 	};
 
-	useEffect( () => {
-		setTimeout( () => {
-			if ( showPlansComparisonGrid && plansComparisonGridRef.current ) {
-				scrollIntoViewport( plansComparisonGridRef.current, {
-					behavior: 'smooth',
-					scrollMode: 'if-needed',
-				} );
-			}
-		} );
+	useLayoutEffect( () => {
+		console.log( showPlansComparisonGrid, plansComparisonGridRef.current );
+		if ( showPlansComparisonGrid ) {
+			setTimeout( () => {
+				if ( plansComparisonGridRef.current ) {
+					scrollIntoViewport( plansComparisonGridRef.current, {
+						behavior: 'smooth',
+						scrollMode: 'if-needed',
+						block: 'nearest',
+						inline: 'nearest',
+					} );
+				}
+			}, 2000 );
+		}
 	}, [ showPlansComparisonGrid ] );
 
 	useEffect( () => {
