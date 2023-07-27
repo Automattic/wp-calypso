@@ -107,6 +107,23 @@ $heading-font-family: "SF Pro Display", $sans;
 
 					}
 
+					.free-domain__primary-badge {
+						border-radius: 4px;
+						margin-left: 12px;
+					}
+
+
+					@media ( max-width: $break-mobile ) {
+						.select-items__item-title-badge {
+							display: block;
+						}
+
+						.free-domain__primary-badge {
+							margin-left: 0;
+							margin-top: 8px;
+						}
+					}
+
 					.select-items__item-icon {
 						margin-right: 8px;
 
