@@ -183,6 +183,11 @@ export function useProductDescription( productSlug: string ): {
 			case 'jetpack-ai':
 				description = translate( 'Unleash the power of AI to boost your content creation.' );
 				break;
+			case 'jetpack-monitor':
+				description = translate(
+					'Swift 1-minute monitoring interval alerts, multiple email recipient and SMS notifications.'
+				);
+				break;
 			case 'woocommerce-bookings':
 				description = translate(
 					'Allow customers to book appointments, make reservations or rent equipment without leaving your site.'
