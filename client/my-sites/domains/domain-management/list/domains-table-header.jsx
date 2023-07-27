@@ -56,7 +56,7 @@ class DomainsTableHeader extends PureComponent {
 	};
 
 	renderSortIcon( column, sortKey, sortOrder ) {
-		if ( ! column?.isSortable || ! column?.supportsOrderSwitching ) {
+		if ( ! column?.isSortable ) {
 			return null;
 		}
 
