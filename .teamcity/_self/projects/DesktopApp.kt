@@ -101,7 +101,19 @@ object E2ETests : BuildType({
 
 				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
 				# Run tests
-				cd desktop && yarn run test:e2e --reporters=jest-teamcity --reporters=default
+				cd desktop
+
+				# Disable exit on error to support retries.
+				set +o errexit
+
+				# Run tests
+				yarn run test:e2e --reporters=jest-teamcity --reporters=default
+
+				# Restore exit on error.
+				set -o errexit
+
+				# Retry failed tests only.
+				yarn run test:e2e --reporters=jest-teamcity --reporters=default --onlyFailures
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
@@ -163,6 +175,16 @@ object E2ETests : BuildType({
 				+:*
 				-:pull*
 			""".trimIndent()
+			triggerRules = """
+				-:**.md
+				-:test/e2e/**
+				-:packages/calypso-e2e/**
+			""".trimIndent()
+		}
+		retryBuild {
+			attempts = 1
+			delaySeconds = 20
+			moveToTheQueueTop = true
 		}
 	}
 })
