@@ -1,10 +1,11 @@
 import { getTld } from 'calypso/lib/domains';
 import { useExperiment } from 'calypso/lib/explat';
+import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 
 const useIsCustomDomainAllowedOnFreePlan = (
 	flowName?: string | null,
 	domainName?: string
-): [ boolean, boolean ] => {
+): DataResponse< boolean > => {
 	const [ isLoadingAssignment, experimentAssignment ] = useExperiment(
 		'calypso_onboarding_plans_dotblog_on_free_plan_202307',
 		{
@@ -13,7 +14,10 @@ const useIsCustomDomainAllowedOnFreePlan = (
 		}
 	);
 
-	return [ isLoadingAssignment, experimentAssignment?.variationName === 'treatment' ];
+	return {
+		isLoading: isLoadingAssignment,
+		entry: experimentAssignment?.variationName === 'treatment',
+	};
 };
 
 export default useIsCustomDomainAllowedOnFreePlan;

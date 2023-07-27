@@ -101,7 +101,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	siteSlug?: string | null;
 	intent?: PlansIntent;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
-	isCustomDomainAllowedOnFreePlan?: boolean | null;
+	isCustomDomainAllowedOnFreePlan?: DataResponse< boolean >;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -275,8 +275,10 @@ const PlansFeaturesMain = ( {
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
-	const [ isLoadingCustomDomainAllowedOnFreePlan, isCustomDomainAllowedOnFreePlan ] =
-		useIsCustomDomainAllowedOnFreePlan( flowName, paidDomainName );
+	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan(
+		flowName,
+		paidDomainName
+	);
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -422,7 +424,11 @@ const PlansFeaturesMain = ( {
 					isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 					onClose={ toggleIsFreePlanPaidDomainDialogOpen }
 					onFreePlanSelected={ () => {
-						if ( ! isCustomDomainAllowedOnFreePlan ) {
+						if ( isCustomDomainAllowedOnFreePlan.isLoading ) {
+							return;
+						}
+
+						if ( ! isCustomDomainAllowedOnFreePlan.entry ) {
 							removePaidDomain?.();
 						}
 						// Since this domain will not be available after it is selected, invalidate the cache.

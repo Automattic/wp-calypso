@@ -10,7 +10,8 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import usePlanPrices from '../../plans/hooks/use-plan-prices';
 import { LoadingPlaceHolder } from './loading-placeholder';
-import type { SingleFreeDomainSuggestion } from 'calypso/my-sites/plan-features-2023-grid/types';
+import type { DomainSuggestion } from '@automattic/data-stores';
+import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 
 const DialogContainer = styled.div`
 	padding: 24px;
@@ -160,7 +161,7 @@ function SuggestedPlanSection( {
 
 type DomainPlanDialogProps = {
 	paidDomainName: string;
-	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	suggestedPlanSlug: PlanSlug;
 	onFreePlanSelected: () => void;
 	onPlanSelected: () => void;
@@ -306,7 +307,10 @@ export function FreePlanPaidDomainDialog( {
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
-}: DomainPlanDialogProps & { isCustomDomainAllowedOnFreePlan: boolean; onClose: () => void } ) {
+}: DomainPlanDialogProps & {
+	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
+	onClose: () => void;
+} ) {
 	const dialogCommonProps: DomainPlanDialogProps = {
 		paidDomainName,
 		wpcomFreeDomainSuggestion,
@@ -333,11 +337,13 @@ export function FreePlanPaidDomainDialog( {
 					}
 				` }
 			/>
-			{ isCustomDomainAllowedOnFreePlan ? (
-				<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
-			) : (
-				<DialogPaidPlanIsRequired { ...dialogCommonProps } />
-			) }
+			{ isCustomDomainAllowedOnFreePlan.isLoading && <LoadingPlaceHolder /> }
+			{ ! isCustomDomainAllowedOnFreePlan.isLoading &&
+				( isCustomDomainAllowedOnFreePlan.entry ? (
+					<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
+				) : (
+					<DialogPaidPlanIsRequired { ...dialogCommonProps } />
+				) ) }
 		</Dialog>
 	);
 }

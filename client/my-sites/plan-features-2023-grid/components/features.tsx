@@ -25,26 +25,29 @@ const SubdomainSuggestion = styled.div`
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
-	isCustomDomainAllowedOnFreePlan?: boolean | null;
+	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 } > = ( { paidDomainName, wpcomFreeDomainSuggestion, isCustomDomainAllowedOnFreePlan } ) => {
 	const translate = useTranslate();
+	const isLoading =
+		wpcomFreeDomainSuggestion.isLoading || isCustomDomainAllowedOnFreePlan.isLoading;
 
 	return (
 		<SubdomainSuggestion>
-			{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
-			{ isCustomDomainAllowedOnFreePlan ? (
-				<div>
-					{ translate( '%s will be a redirect', {
-						args: [ paidDomainName ],
-						comment: '%s is a domain name.',
-					} ) }
-				</div>
-			) : (
-				<>
-					<div className="is-domain-name">{ paidDomainName }</div>
-					<div>{ wpcomFreeDomainSuggestion.entry?.domain_name }</div>
-				</>
-			) }
+			{ isLoading && <LoadingPlaceHolder /> }
+			{ ! isLoading &&
+				( isCustomDomainAllowedOnFreePlan.entry ? (
+					<div>
+						{ translate( '%s will be a redirect', {
+							args: [ paidDomainName ],
+							comment: '%s is a domain name.',
+						} ) }
+					</div>
+				) : (
+					<>
+						<div className="is-domain-name">{ paidDomainName }</div>
+						<div>{ wpcomFreeDomainSuggestion.entry?.domain_name }</div>
+					</>
+				) ) }
 		</SubdomainSuggestion>
 	);
 };
@@ -56,7 +59,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
-	isCustomDomainAllowedOnFreePlan?: boolean | null;
+	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 } > = ( {
 	features,
 	planName,
