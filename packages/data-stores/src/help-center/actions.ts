@@ -1,4 +1,3 @@
-import { InitialEntry } from '@remix-run/router';
 import { apiFetch } from '@wordpress/data-controls';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
@@ -49,7 +48,7 @@ export const setUnreadCount = ( count: number ) =>
 		count,
 	} as const );
 
-export const setInitialRoute = ( route?: InitialEntry ) =>
+export const setInitialRoute = ( route?: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_INITIAL_ROUTE',
 		route,
@@ -134,6 +133,7 @@ export const setShowSupportDoc = function* ( link: string, postId: number ) {
 	const params = new URLSearchParams( {
 		link,
 		postId: String( postId ),
+		cacheBuster: String( Date.now() ),
 	} );
 	yield setInitialRoute( `/post/?${ params }` );
 	yield setShowHelpCenter( true );
