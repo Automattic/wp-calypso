@@ -183,7 +183,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					icon="info-outline"
 					status="is-error"
 					text={ translate(
-						'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress app.'
+						'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress or WooCommerce apps.'
 					) }
 				></Notice>
 			);
