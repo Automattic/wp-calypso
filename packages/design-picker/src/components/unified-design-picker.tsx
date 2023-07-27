@@ -189,6 +189,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 interface DesignPickerProps {
 	locale: string;
 	onDesignYourOwn: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	designs: Design[];
@@ -201,6 +202,7 @@ interface DesignPickerProps {
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
 	onDesignYourOwn,
+	onClickDesignYourOwnTopButton,
 	onPreview,
 	onChangeVariation,
 	designs,
@@ -232,7 +234,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					/>
 				) }
 				{ assemblerCtaData.shouldGoToAssemblerStep && (
-					<Button onClick={ () => onDesignYourOwn( DEFAULT_ASSEMBLER_DESIGN, true ) }>
+					<Button onClick={ () => onClickDesignYourOwnTopButton( DEFAULT_ASSEMBLER_DESIGN ) }>
 						{ assemblerCtaData.title }
 					</Button>
 				) }
@@ -271,6 +273,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 export interface UnifiedDesignPickerProps {
 	locale: string;
 	onDesignYourOwn: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
@@ -285,6 +288,7 @@ export interface UnifiedDesignPickerProps {
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
 	onDesignYourOwn,
+	onClickDesignYourOwnTopButton,
 	onPreview,
 	onChangeVariation,
 	onViewAllDesigns,
@@ -323,6 +327,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 				<DesignPicker
 					locale={ locale }
 					onDesignYourOwn={ onDesignYourOwn }
+					onClickDesignYourOwnTopButton={ onClickDesignYourOwnTopButton }
 					onPreview={ onPreview }
 					onChangeVariation={ onChangeVariation }
 					designs={ designs }
