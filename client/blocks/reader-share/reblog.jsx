@@ -1,11 +1,14 @@
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import SiteSelector from 'calypso/components/site-selector';
+import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 const ReaderReblogSelection = ( props ) => {
 	const hasSites = !! useSelector( getPrimarySiteId );
+	const translate = useTranslate();
 
 	const buildQuerystringForPost = ( post ) => {
 		const args = {};
@@ -33,11 +36,13 @@ const ReaderReblogSelection = ( props ) => {
 
 	return (
 		hasSites && (
-			<SiteSelector
-				className="reader-share__site-selector"
-				onSiteSelect={ pickSiteToShareTo }
-				groups
-			/>
+			<ReaderPopoverMenu { ...props.popoverProps } popoverTitle={ translate( 'Reblog on' ) }>
+				<SiteSelector
+					className="reader-share__site-selector"
+					onSiteSelect={ pickSiteToShareTo }
+					groups
+				/>
+			</ReaderPopoverMenu>
 		)
 	);
 };

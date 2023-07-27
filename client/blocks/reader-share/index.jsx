@@ -6,17 +6,13 @@ import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
-import ReaderFacebookIcon from 'calypso/reader/components/icons/facebook-icon';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
-import ReaderTwitterIcon from 'calypso/reader/components/icons/twitter-icon';
-import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { infoNotice } from 'calypso/state/notices/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import ReaderReblogSelection from './reblog';
+import ReaderSocialShareSelection from './social';
 import './style.scss';
 
 /**
@@ -134,6 +130,15 @@ class ReaderShare extends Component {
 			'is-active': this.state.showingMenu,
 		} );
 
+		const popoverProps = {
+			key: 'menu',
+			context: this.shareButton.current,
+			isVisible: this.state.showingMenu,
+			onClose: this.closeExternalShareMenu,
+			position: this.props.position,
+			className: 'popover reader-share__popover',
+		};
+
 		// The event.preventDefault() on the wrapping div is needed to prevent the
 		// full post opening when a share method is selected in the popover
 		return (
@@ -153,45 +158,16 @@ class ReaderShare extends Component {
 						iconSize: this.props.iconSize,
 					} ) }
 				</Button>
-				{ this.state.showingMenu && (
-					<ReaderPopoverMenu
-						key="menu"
-						context={ this.shareButton.current }
-						isVisible={ this.state.showingMenu }
-						onClose={ this.closeExternalShareMenu }
-						position={ this.props.position }
-						className="popover reader-share__popover"
-						popoverTitle={ translate( 'Share on' ) }
-					>
-						<PopoverMenuItem
-							action="facebook"
-							className="reader-share__popover-item"
-							title={ translate( 'Share on Facebook' ) }
-							focusOnHover={ false }
-						>
-							<ReaderFacebookIcon iconSize={ 20 } />
-							<span>Facebook</span>
-						</PopoverMenuItem>
-						<PopoverMenuItem
-							action="twitter"
-							className="reader-share__popover-item"
-							title={ translate( 'Share on Twitter' ) }
-							focusOnHover={ false }
-						>
-							<ReaderTwitterIcon iconSize={ 20 } />
-							<span>Twitter</span>
-						</PopoverMenuItem>
-						<PopoverMenuItemClipboard
-							action="copy_link"
-							text={ this.props.post.URL }
-							onCopy={ onCopyLinkClick }
-							icon="link"
-						>
-							{ translate( 'Copy link' ) }
-						</PopoverMenuItemClipboard>
-						<ReaderReblogSelection post={ this.props.post } />
-					</ReaderPopoverMenu>
-				) }
+				{ this.state.showingMenu &&
+					( ! this.props.isReblogSelection ? (
+						<ReaderSocialShareSelection
+							post={ this.props.post }
+							onCopyLinkClick={ onCopyLinkClick }
+							popoverProps={ popoverProps }
+						/>
+					) : (
+						<ReaderReblogSelection post={ this.props.post } popoverProps={ popoverProps } />
+					) ) }
 			</div>
 		);
 	}
