@@ -306,7 +306,7 @@ class DomainsStep extends Component {
 				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem,
 				signupDomainOrigin ? { signupDomainOrigin } : {},
-				{ siteUrl: suggestion.domain_name }
+				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {}
 			)
 		);
 
