@@ -50,7 +50,7 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
 import type {
 	PlanActionOverrides,
-	SingleFreeDomainSuggestion,
+	DataResponse,
 } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
@@ -100,7 +100,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	intent?: PlansIntent;
-	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	isCustomDomainAllowedOnFreePlan?: boolean | null;
 };
 

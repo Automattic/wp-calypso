@@ -6,7 +6,8 @@ import { LoadingPlaceHolder } from '../../plans-features-main/components/loading
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
-import type { SingleFreeDomainSuggestion } from 'calypso/my-sites/plan-features-2023-grid/types';
+import type { DomainSuggestion } from '@automattic/data-stores';
+import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {
@@ -23,7 +24,7 @@ const SubdomainSuggestion = styled.div`
 
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
-	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	isCustomDomainAllowedOnFreePlan?: boolean | null;
 } > = ( { paidDomainName, wpcomFreeDomainSuggestion, isCustomDomainAllowedOnFreePlan } ) => {
 	const translate = useTranslate();
@@ -52,7 +53,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planName: string;
 	paidDomainName?: string;
-	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan?: boolean | null;
