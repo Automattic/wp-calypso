@@ -1,3 +1,4 @@
+import { applyTestFiltersToPlansList, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -5,7 +6,9 @@ import { useTranslate } from 'i18n-calypso';
 import { formatCurrency } from 'calypso/../packages/format-currency/src';
 import { SingleFreeDomainSuggestion } from 'calypso/my-sites/plan-features-2023-grid/types';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { useGetDotcomDomainSuggestion } from '../hooks/use-get-dotcom-domain-suggestion';
 import { DialogContainer } from './free-plan-paid-domain-dialog';
 import { LoadingPlaceHolder } from './loading-placeholder';
@@ -108,7 +111,7 @@ const LoadingPlaceHolderText = styled( LoadingPlaceHolder )`
 `;
 
 function DomainSuggestionText( { suggestion }: { suggestion: SingleFreeDomainSuggestion } ) {
-	return suggestion.isLoading ? (
+	return suggestion.isLoading || ! suggestion?.entry?.domain_name ? (
 		<LoadingPlaceHolderText />
 	) : (
 		<strong>"{ suggestion?.entry?.domain_name }"</strong>
@@ -128,10 +131,16 @@ export function FreeFreeDialog( {
 } ) {
 	const translate = useTranslate();
 	const userLocale = useSelector( getCurrentUserLocale );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
 	const { suggestion, invalidateDomainSuggestionCache } = useGetDotcomDomainSuggestion( {
 		query: freeSubdomain,
 		locale: userLocale,
 	} );
+
+	const planConstantObj = applyTestFiltersToPlansList( PLAN_PERSONAL, undefined );
+	const planProductId = planConstantObj.getProductId();
+	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planProductId, true ) );
+
 	return (
 		<Dialog
 			isBackdropVisible={ true }
@@ -194,12 +203,18 @@ export function FreeFreeDialog( {
 					</ListItem>
 				</List>
 				<TextBox>
-					{ translate(
-						'Unlock these features with a Personal plan,starting at just $4/month, {{break}}{{/break}} with a 14-day money back guarantee.',
-						{
-							components: { break: <br /> },
-						}
-					) }
+					{ rawPrice &&
+						translate(
+							'Unlock these features with a Personal plan,starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
+							{
+								args: {
+									planPrice: formatCurrency( rawPrice, currencyCode, {
+										stripZeros: true,
+									} ),
+								},
+								components: { break: <br /> },
+							}
+						) }
 				</TextBox>
 				<TextBox>
 					{ translate(
@@ -212,7 +227,10 @@ export function FreeFreeDialog( {
 							args: {
 								domainPrice: formatCurrency(
 									suggestion?.entry?.raw_price ?? 0,
-									suggestion?.entry?.currency_code ?? 'USD'
+									suggestion?.entry?.currency_code ?? 'USD',
+									{
+										stripZeros: true,
+									}
 								),
 							},
 						}
@@ -242,7 +260,20 @@ export function FreeFreeDialog( {
 					</StyledButton>
 				</ButtonRow>
 				<TextBox fontSize={ 12 } color="gray">
-					Personal plan: $4 per month, $48 billed annually. Excluding taxes.
+					{ rawPrice &&
+						translate(
+							'Personal plan: %(planPrice)s per month, %(annualPlanPrice)s billed annually. Excluding taxes.',
+							{
+								args: {
+									planPrice: formatCurrency( rawPrice, currencyCode, {
+										stripZeros: true,
+									} ),
+									annualPlanPrice: formatCurrency( rawPrice * 12, currencyCode, {
+										stripZeros: true,
+									} ),
+								},
+							}
+						) }
 				</TextBox>
 			</DialogContainer>
 		</Dialog>
