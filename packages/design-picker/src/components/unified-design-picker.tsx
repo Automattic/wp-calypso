@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
@@ -13,7 +14,7 @@ import {
 	filterDesignsByCategory,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
-import PatternAssemblerCta from './pattern-assembler-cta';
+import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
@@ -217,15 +218,26 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		return designs;
 	}, [ designs, categorization?.selection ] );
 
+	const assemblerCtaData = usePatternAssemblerCtaData();
+
 	return (
 		<div>
-			{ categorization && hasCategories && (
-				<UnifiedDesignPickerCategoryFilter
-					categories={ categorization.categories }
-					onSelect={ categorization.onSelect }
-					selectedSlug={ categorization.selection }
-				/>
-			) }
+			<div className="design-picker__filters">
+				{ categorization && hasCategories && (
+					<UnifiedDesignPickerCategoryFilter
+						className="design-picker__category-filter"
+						categories={ categorization.categories }
+						onSelect={ categorization.onSelect }
+						selectedSlug={ categorization.selection }
+					/>
+				) }
+				{ assemblerCtaData.shouldGoToAssemblerStep && (
+					<Button onClick={ () => onDesignYourOwn( DEFAULT_ASSEMBLER_DESIGN, true ) }>
+						{ assemblerCtaData.title }
+					</Button>
+				) }
+			</div>
+
 			<div className="design-picker__grid">
 				{ filteredDesigns.map( ( design, index ) => {
 					if ( isBlankCanvasDesign( design ) ) {
