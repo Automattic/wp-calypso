@@ -101,20 +101,11 @@ object E2ETests : BuildType({
 				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
 
 				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
-				# Run tests
-				cd desktop
 
-				# Disable exit on error to support retries.
-				set +o errexit
+				cd desktop
 
 				# Run tests
 				yarn run test:e2e --reporters=jest-teamcity --reporters=default
-
-				# Restore exit on error.
-				set -o errexit
-
-				# Retry failed tests only.
-				yarn run test:e2e --reporters=jest-teamcity --reporters=default --onlyFailures
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
