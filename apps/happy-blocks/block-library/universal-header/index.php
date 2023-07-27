@@ -15,7 +15,8 @@ require_once WP_CONTENT_DIR . '/themes/h4/landing/marketing/pages/_common/lib/fu
 if ( ! isset( $args ) ) {
 	$args = array();
 }
-$happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
+$happy_blocks_is_english   = ( 0 === stripos( get_locale(), 'en' ) );
+$happy_blocks_current_page = $args['active_page'];
 ?>
 <div id="lpc-header-nav" class="lpc lpc-header-nav">
 	<div class="x-root lpc-header-nav-wrapper">
@@ -535,6 +536,25 @@ $happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 				</div>
 			</div>
 			<!-- Mobile menu ends here. -->
+		</div>
+	</div>
+</div>
+<!-- temporary -->
+<div class="universal-header-temporary-wpcom-nav-bar happy-blocks-mini-search happy-blocks-header is-<?php echo esc_html( $happy_blocks_current_page ); ?>">
+	<div class="happy-blocks-search-container">
+		<div class="happy-blocks-global-header-site__title">
+			<?php if ( $args['include_site_title'] ) : ?>
+			<div class="happy-blocks-global-header-site__title__wrapper">
+				<h1><?php echo esc_html( $args['site_title'] ); ?></h1>
+				<p><?php echo esc_html( $args['site_tagline'] ); ?></p>
+			</div>
+			<?php endif; ?>
+			<form class="<?php echo ! $args['include_site_title'] ? 'happy-blocks_inner_search' : ''; ?>" role="search"
+				method="get" action=""><label for="wp-block-search__input-1"
+					class="screen-reader-text"><?php echo esc_html( $args['search_placeholder'] ); ?></label>
+				<div class="happy-blocks-search__inside-wrapper"><input type="search" id="wp-block-search__input-1"
+						name="s" value="" placeholder="<?php echo esc_html( $args['search_placeholder'] ); ?>"></div>
+			</form>
 		</div>
 	</div>
 </div>
