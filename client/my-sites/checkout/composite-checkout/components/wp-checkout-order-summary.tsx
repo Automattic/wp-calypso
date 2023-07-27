@@ -399,7 +399,7 @@ function CheckoutSummaryFeaturesList( props: {
 						<WPCheckoutCheckIcon id="features-list-support-another-year" />
 						{ hasGoogleDomainsOnly
 							? translate( '1-year extension on your domain for $0' )
-							: translate( "We'll renew your domain for another year" ) }
+							: translate( '1-year extension on your domain' ) }
 					</CheckoutSummaryFeaturesListItem>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="features-list-support-privacy" />
