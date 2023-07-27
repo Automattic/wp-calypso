@@ -77,6 +77,7 @@ const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: PurchaseNoticesP
 			return;
 		}
 		const newUrl = removeStatsPurchaseSuccessParam( window.location.href );
+		// Odyssey would try to hack the URL on load to remove duplicate params. We need to wait for that to finish.
 		setTimeout( () => window.history.replaceState( null, '', newUrl ), 300 );
 	};
 
