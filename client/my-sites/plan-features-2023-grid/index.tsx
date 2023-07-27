@@ -33,16 +33,13 @@ import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { localize, LocalizedComponent, LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Component, createRef } from 'react';
-import { connect } from 'react-redux';
+import { LocalizeProps, useTranslate } from 'i18n-calypso';
+import { Component, ForwardedRef, forwardRef, createRef } from 'react';
+import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
-import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
-import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
@@ -94,7 +91,7 @@ const Container = (
 	);
 };
 
-export type PlanFeatures2023GridProps = {
+export interface PlanFeatures2023GridProps {
 	gridPlansForFeaturesGrid: GridPlan[];
 	gridPlansForComparisonGrid: GridPlan[];
 	gridPlanForSpotlight?: GridPlan;
@@ -125,26 +122,25 @@ export type PlanFeatures2023GridProps = {
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	showOdie?: () => void;
-};
-
-type PlanFeatures2023GridConnectedProps = {
-	translate: LocalizeProps[ 'translate' ];
-	recordTracksEvent: ( slug: string ) => void;
-	canUserPurchasePlan: boolean | null;
+	// temporary
+	showPlansComparisonGrid: boolean;
+	// temporary
+	toggleShowPlansComparisonGrid: () => void;
 	planTypeSelectorProps: PlanTypeSelectorProps;
+}
+
+interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
+	isLargeCurrency: boolean;
+	translate: LocalizeProps[ 'translate' ];
+	canUserPurchasePlan: boolean | null;
 	manageHref: string;
 	selectedSiteSlug: string | null;
 	isPlanUpgradeCreditEligible: boolean;
-	isGlobalStylesOnPersonal?: boolean;
-};
-
-type PlanFeatures2023GridType = PlanFeatures2023GridProps &
-	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode } & {
-		isLargeCurrency: boolean;
-	};
+	// temporary: element ref to scroll comparison grid into view once "Compare plans" button is clicked
+	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
+}
 
 type PlanFeatures2023GridState = {
-	showPlansComparisonGrid: boolean;
 	selectedStorage: PlanSelectedStorage;
 };
 
@@ -229,17 +225,10 @@ export class PlanFeatures2023Grid extends Component<
 	buttonRef: React.RefObject< HTMLButtonElement > = createRef< HTMLButtonElement >();
 
 	state: PlanFeatures2023GridState = {
-		showPlansComparisonGrid: false,
 		selectedStorage: {},
 	};
 
-	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
-
 	componentDidMount() {
-		// TODO clk: move these to PlansFeaturesMain (after Woo plans migrate)
-		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
-		retargetViewPlans();
-
 		this.observer = new IntersectionObserver( ( entries ) => {
 			entries.forEach( ( entry ) => {
 				if ( entry.isIntersecting ) {
@@ -260,12 +249,6 @@ export class PlanFeatures2023Grid extends Component<
 		}
 	}
 
-	toggleShowPlansComparisonGrid = () => {
-		this.setState( ( { showPlansComparisonGrid } ) => ( {
-			showPlansComparisonGrid: ! showPlansComparisonGrid,
-		} ) );
-	};
-
 	setSelectedStorage = ( updatedSelectedStorage: PlanSelectedStorage ) => {
 		this.setState( ( { selectedStorage } ) => ( {
 			selectedStorage: {
@@ -274,22 +257,6 @@ export class PlanFeatures2023Grid extends Component<
 			},
 		} ) );
 	};
-
-	componentDidUpdate(
-		prevProps: Readonly< PlanFeatures2023GridType >,
-		prevState: Readonly< PlanFeatures2023GridState >
-	) {
-		// If the "Compare plans" button is clicked, scroll to the plans comparison grid.
-		if (
-			prevState.showPlansComparisonGrid === false &&
-			this.plansComparisonGridContainerRef.current
-		) {
-			scrollIntoViewport( this.plansComparisonGridContainerRef.current, {
-				behavior: 'smooth',
-				scrollMode: 'if-needed',
-			} );
-		}
-	}
 
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
@@ -892,6 +859,9 @@ export class PlanFeatures2023Grid extends Component<
 			showLegacyStorageFeature,
 			usePricingMetaForGridPlans,
 			allFeaturesList,
+			plansComparisonGridRef,
+			toggleShowPlansComparisonGrid,
+			showPlansComparisonGrid,
 		} = this.props;
 
 		return (
@@ -929,16 +899,16 @@ export class PlanFeatures2023Grid extends Component<
 				</div>
 				{ ! hidePlansFeatureComparison && (
 					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-						<Button onClick={ this.toggleShowPlansComparisonGrid } ref={ this.buttonRef }>
-							{ this.state.showPlansComparisonGrid
+						<Button onClick={ toggleShowPlansComparisonGrid } ref={ this.buttonRef }>
+							{ showPlansComparisonGrid
 								? translate( 'Hide comparison' )
 								: translate( 'Compare plans' ) }
 						</Button>
 					</div>
 				) }
-				{ ! hidePlansFeatureComparison && this.state.showPlansComparisonGrid ? (
+				{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (
 					<div
-						ref={ this.plansComparisonGridContainerRef }
+						ref={ plansComparisonGridRef }
 						className="plan-features-2023-grid__plan-comparison-grid-container"
 					>
 						<PlansGridContextProvider
@@ -965,7 +935,7 @@ export class PlanFeatures2023Grid extends Component<
 								showLegacyStorageFeature={ showLegacyStorageFeature }
 							/>
 							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-								<Button onClick={ this.toggleShowPlansComparisonGrid }>
+								<Button onClick={ toggleShowPlansComparisonGrid }>
 									{ translate( 'Hide comparison' ) }
 								</Button>
 							</div>
@@ -977,67 +947,77 @@ export class PlanFeatures2023Grid extends Component<
 	}
 }
 
-const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures2023Grid > ) => {
-	return function ( props: PlanFeatures2023GridType ) {
+const WrappedPlanFeatures2023Grid = forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
+	function WrappedPlanFeatures2023Grid( props, ref ) {
+		const { siteId } = props;
+		const translate = useTranslate();
+		const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
+			props.siteId,
+			props.gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+		);
 		const isLargeCurrency = useIsLargeCurrency( {
 			gridPlans: props.gridPlansForFeaturesGrid,
 		} );
-		return <Component { ...props } isLargeCurrency={ isLargeCurrency } />;
-	};
-};
 
-/* eslint-disable wpcalypso/redux-no-bound-selectors */
-const ConnectedPlanFeatures2023Grid = connect(
-	( state: IAppState, ownProps: PlanFeatures2023GridType ) => {
-		const { siteId } = ownProps;
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
-		const canUserPurchasePlan = siteId
-			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-			: null;
-		const purchaseId = siteId && getCurrentPlanPurchaseId( state, siteId );
+		const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
+			siteId
+				? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+				: null
+		);
+		const purchaseId = useSelector( ( state: IAppState ) =>
+			siteId ? getCurrentPlanPurchaseId( state, siteId ) : null
+		);
 		// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
-		const selectedSiteSlug = getSiteSlug( state, siteId );
+		const selectedSiteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 
 		const manageHref =
 			purchaseId && selectedSiteSlug
 				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 				: `/plans/my-plan/${ siteId }`;
 
-		return {
-			canUserPurchasePlan,
-			manageHref,
-			selectedSiteSlug,
-		};
-	},
-	{
-		recordTracksEvent,
-	}
-)( withIsLargeCurrency( localize( PlanFeatures2023Grid ) ) );
-/* eslint-enable wpcalypso/redux-no-bound-selectors */
+		if ( props.isInSignup ) {
+			return (
+				<PlanFeatures2023Grid
+					{ ...props }
+					plansComparisonGridRef={ ref }
+					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+					isLargeCurrency={ isLargeCurrency }
+					canUserPurchasePlan={ canUserPurchasePlan }
+					manageHref={ manageHref }
+					selectedSiteSlug={ selectedSiteSlug }
+					translate={ translate }
+				/>
+			);
+		}
 
-const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
-	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-		props.siteId,
-		props.gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
-	);
-
-	if ( props.isInSignup ) {
 		return (
-			<ConnectedPlanFeatures2023Grid
-				{ ...props }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-			/>
+			<CalypsoShoppingCartProvider>
+				<PlanFeatures2023Grid
+					{ ...props }
+					plansComparisonGridRef={ ref }
+					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+					isLargeCurrency={ isLargeCurrency }
+					canUserPurchasePlan={ canUserPurchasePlan }
+					manageHref={ manageHref }
+					selectedSiteSlug={ selectedSiteSlug }
+					translate={ translate }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
 	}
-
-	return (
-		<CalypsoShoppingCartProvider>
-			<ConnectedPlanFeatures2023Grid
-				{ ...props }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-			/>
-		</CalypsoShoppingCartProvider>
-	);
-};
+);
 
 export default WrappedPlanFeatures2023Grid;
+
+// const PlanFeatures2023GridWithRef = forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
+// 	function PlanFeatures2023GridWithRef( props, ref ) {
+// 		return <PlanFeatures2023Grid { ...props } ref={ ref } />;
+// 	}
+// );
+
+// export default forwardRef(
+// 	( props: PlanFeatures2023GridProps, ref: ForwardedRef< HTMLDivElement > ) => (
+// 		<WrappedPlanFeatures2023Grid { ...props } ref={ ref } />
+// 	)
+// );

@@ -12,24 +12,27 @@ import {
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
-import { useCallback, useLayoutEffect, useState } from '@wordpress/element';
+import { useCallback, useLayoutEffect, useEffect, useRef, useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
 import useGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { useOdieAssistantContext } from 'calypso/odie/context';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -113,7 +116,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	showUpgradeableStorage: boolean;
 	gridPlansForComparisonGrid: GridPlan[];
 	gridPlansForFeaturesGrid: GridPlan[];
-	planTypeSelectorProps?: PlanTypeSelectorProps;
+	planTypeSelectorProps: PlanTypeSelectorProps;
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	intent?: PlansIntent;
@@ -121,6 +124,9 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 	isGlobalStylesOnPersonal?: boolean;
 	showOdie?: () => void;
+	plansComparisonGridRef: React.RefObject< HTMLDivElement >;
+	showPlansComparisonGrid: boolean;
+	toggleShowPlansComparisonGrid: () => void;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -170,6 +176,9 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		showUpgradeableStorage,
 		isGlobalStylesOnPersonal,
 		showOdie,
+		plansComparisonGridRef,
+		showPlansComparisonGrid,
+		toggleShowPlansComparisonGrid,
 	} = props;
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -267,16 +276,11 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		stickyRowOffset: masterbarHeight,
 		usePricingMetaForGridPlans,
 		allFeaturesList: FEATURES_LIST,
+		showPlansComparisonGrid,
+		toggleShowPlansComparisonGrid,
+		planTypeSelectorProps,
+		showOdie,
 	};
-
-	const asyncPlanFeatures2023Grid = (
-		<AsyncLoad
-			require="calypso/my-sites/plan-features-2023-grid"
-			{ ...asyncProps }
-			planTypeSelectorProps={ planTypeSelectorProps }
-			showOdie={ showOdie }
-		/>
-	);
 
 	return (
 		<div
@@ -285,7 +289,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 			} ) }
 			data-e2e-plans="wpcom"
 		>
-			{ asyncPlanFeatures2023Grid }
+			<PlanFeatures2023Grid { ...asyncProps } ref={ plansComparisonGridRef } />
 		</div>
 	);
 };
@@ -352,16 +356,6 @@ const PlansFeaturesMain = ( {
 		!! paidDomainName
 	);
 	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
-
-	let _customerType = chooseDefaultCustomerType( {
-		currentCustomerType: customerType,
-		selectedPlan,
-		currentPlan: { productSlug: currentPlan?.productSlug },
-	} );
-	// Make sure the plans for the default customer type can be purchased.
-	if ( _customerType === 'personal' && userCanUpgradeToPersonalPlan ) {
-		_customerType = 'business';
-	}
 
 	const { isVisible, setIsVisible, trackEvent } = useOdieAssistantContext();
 
@@ -534,6 +528,16 @@ const PlansFeaturesMain = ( {
 			: wpcomFreeDomainSuggestion.result?.domain_name,
 	};
 
+	let _customerType = chooseDefaultCustomerType( {
+		currentCustomerType: customerType,
+		selectedPlan,
+		currentPlan: { productSlug: currentPlan?.productSlug },
+	} );
+	// Make sure the plans for the default customer type can be purchased.
+	if ( _customerType === 'personal' && userCanUpgradeToPersonalPlan ) {
+		_customerType = 'business';
+	}
+
 	const planTypeSelectorProps = {
 		basePlansPath,
 		isStepperUpgradeFlow,
@@ -561,6 +565,27 @@ const PlansFeaturesMain = ( {
 	 * Check : https://github.com/Automattic/wp-calypso/pull/80232 for more details.
 	 */
 	const isSpotlightOnCurrentPlanAllowed = SPOTLIGHT_ENABLED_INTENTS.includes( intent );
+	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
+	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
+	const toggleShowPlansComparisonGrid = () => {
+		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
+	};
+
+	useEffect( () => {
+		setTimeout( () => {
+			if ( showPlansComparisonGrid && plansComparisonGridRef.current ) {
+				scrollIntoViewport( plansComparisonGridRef.current, {
+					behavior: 'smooth',
+					scrollMode: 'if-needed',
+				} );
+			}
+		} );
+	}, [ showPlansComparisonGrid ] );
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_wp_plans_test_view' );
+		retargetViewPlans();
+	}, [] );
 
 	return (
 		<div
@@ -673,6 +698,9 @@ const PlansFeaturesMain = ( {
 								setIsVisible( true );
 							}
 						} }
+						plansComparisonGridRef={ plansComparisonGridRef }
+						showPlansComparisonGrid={ showPlansComparisonGrid }
+						toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
 					/>
 				</>
 			) }
