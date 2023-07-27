@@ -583,6 +583,28 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.TRANSFER:
+			if ( domain.lastTransferError ) {
+				return {
+					statusText: translate( 'Complete setup' ),
+					statusClass: 'status-warning',
+					status: translate( 'Complete setup' ),
+					icon: 'info',
+					noticeText: translate(
+						'There was an error when initiating your domain transfer. Please {{a}}see the details or retry{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
+									/>
+								),
+							},
+						}
+					),
+					listStatusWeight: 600,
+				};
+			}
+
 			if ( domain.transferStatus === transferStatus.PENDING_START ) {
 				return {
 					statusText: translate( 'Complete setup' ),
