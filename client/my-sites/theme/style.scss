@@ -255,7 +255,7 @@ $theme-sheet-content-max-width: 1462px;
 	box-shadow: 0 1px var(--color-border-subtle);
 }
 
-.theme__sheet-action-bar.card {
+.header-cake.card.theme__sheet-action-bar {
 	box-shadow: none;
 	box-sizing: content-box;
 	margin: 0 auto;
@@ -270,7 +270,7 @@ $theme-sheet-content-max-width: 1462px;
 	}
 }
 
-.is-mobile-app-view .theme__sheet-action-bar.card {
+.is-mobile-app-view .header-cake.card.theme__sheet-action-bar {
 	display: none;
 }
 
