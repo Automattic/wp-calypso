@@ -284,7 +284,10 @@ export default function SitesOverview() {
 							showStickyContent={ selectedLicensesCount > 0 && isLargeScreen }
 						/>
 
-						{ ! isLargeScreen && selectedLicensesCount < 1 && renderAddSiteIssueLicenseButtons() }
+						{
+							// Render the add site and issue license buttons on mobile as a different component.
+							! isLargeScreen && renderAddSiteIssueLicenseButtons()
+						}
 						<SectionNav
 							applyUpdatedStyles
 							selectedText={
