@@ -898,6 +898,11 @@ a.masterbar__quick-language-switcher {
 	.masterbar__close-button {
 		flex: initial;
 		width: initial;
+		margin-right: 10px;
+
+		@include break-mobile {
+			margin-right: 0;
+		}
 	}
 
 	.masterbar__secure-checkout-text {
