@@ -2339,7 +2339,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Create, assign and list brands for products, and allow customers to view by brand.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_PRODUCT_ADD_ONS ]: {
@@ -2350,7 +2350,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Increase your revenue with add-ons like gift wrapping or personalizations like engraving.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ASSEMBLED_KITS ]: {
@@ -2361,7 +2361,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Give customers the freedom to build their own products utilizing your existing items.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_MIN_MAX_QTY ]: {
@@ -2370,7 +2370,7 @@ export const FEATURES_LIST: FeatureList = {
 
 		getDescription: () =>
 			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_STOCK_NOTIFS ]: {
@@ -2379,7 +2379,7 @@ export const FEATURES_LIST: FeatureList = {
 
 		getDescription: () =>
 			i18n.translate( 'Automatically notify customers when your products are restocked.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_DYNAMIC_UPSELLS ]: {
@@ -2390,7 +2390,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Earn more revenue with automated upsell and cross-sell product recommendations.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_LOYALTY_PROG ]: {
@@ -2401,7 +2401,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Boost organic sales with a customer referral program and offer free gifts or coupons as a reward.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CUSTOM_MARKETING_AUTOMATION ]: {
@@ -2412,7 +2412,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Advanced email marketing functionality, including subscriber segmentation, advanced analytics, and automation.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_BULK_DISCOUNTS ]: {
@@ -2420,7 +2420,7 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
 
 		getDescription: () => i18n.translate( 'Offer personalized packages and bulk discounts.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_INVENTORY_MGMT ]: {
@@ -2459,7 +2459,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Get real-time shipping prices, print labels and give your customers tracking codes.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	/* END: 2023 Pricing Grid Features */
