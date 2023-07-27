@@ -35,6 +35,7 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
+import { hasTransferProductOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -358,6 +359,9 @@ function CheckoutSummaryFeaturesList( props: {
 		isDomainTransfer( product )
 	);
 
+	const hasGoogleDomainsOnly =
+		hasTransferProductOnly( responseCart ) && responseCart?.sub_total_integer !== 0;
+
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
@@ -391,7 +395,9 @@ function CheckoutSummaryFeaturesList( props: {
 				<>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="features-list-support-another-year" />
-						{ translate( "We'll renew your domain for another year" ) }
+						{ hasGoogleDomainsOnly
+							? translate( '1-year extension on your domain for $0' )
+							: translate( "We'll renew your domain for another year" ) }
 					</CheckoutSummaryFeaturesListItem>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="features-list-support-privacy" />

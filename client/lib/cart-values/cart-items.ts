@@ -165,6 +165,10 @@ export function hasTransferProduct( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainTransfer );
 }
 
+export function hasTransferProductOnly( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).every( isDomainTransfer );
+}
+
 export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter(
 		( product ) => product.product_slug === domainProductSlugs.TRANSFER_IN
