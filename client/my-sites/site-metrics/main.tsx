@@ -17,7 +17,7 @@ export function SiteMetricsData() {
 	} );
 
 	// Function to get the dimension value for a specific key and period
-	const getDimensionValue = ( period: { timestamp?: number; dimension: any } ) => {
+	const getDimensionValue = ( period: { timestamp?: number; dimension?: any } ) => {
 		if ( period && Array.isArray( period?.dimension ) ) {
 			// If the dimension is an array, return 0
 			return 0;
@@ -54,11 +54,10 @@ export function SiteMetricsData() {
 }
 
 export function SiteMetrics() {
-	const siteId = useSelector( getSelectedSiteId );
 	const { formattedData } = SiteMetricsData();
 	return (
 		<>
-			<h2>Metrics for { siteId }</h2>
+			<h2>Atomic site</h2>
 			<UplotChartMetrics data={ formattedData }></UplotChartMetrics>
 		</>
 	);
