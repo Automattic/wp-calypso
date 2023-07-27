@@ -784,16 +784,24 @@ export class PlanFeatures2023Grid extends Component<
 		planPropertiesObj: PlanProperties[],
 		options?: PlanRowOptions
 	) {
-		const { translate } = this.props;
+		const { translate, planProperties } = this.props;
+		const visiblePlanPropertiesFullSet = planProperties.filter( ( { isVisible } ) => isVisible );
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
-				const { planName, previousProductName } = properties;
+				const { planName } = properties;
 				const shouldRenderEnterpriseLogos =
 					isWpcomEnterpriseGridPlan( planName ) || isWooExpressPlusPlan( planName );
 				const shouldShowFeatureTitle =
 					! isWpComFreePlan( planName ) && ! shouldRenderEnterpriseLogos;
+				const indexInPlanProperties = visiblePlanPropertiesFullSet.findIndex(
+					( { planName: name } ) => name === planName
+				);
+				const previousProductName =
+					indexInPlanProperties > 0
+						? visiblePlanPropertiesFullSet[ indexInPlanProperties - 1 ].productNameShort
+						: null;
 				const title =
 					previousProductName &&
 					translate( 'Everything in %(planShortName)s, plus:', {
@@ -946,8 +954,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const selectedSiteSlug = getSiteSlug( state, siteId );
 
 		// TODO clk: plan properties should be passed through props instead of being calculated here
-		const planProperties: PlanProperties[] = ( Object.keys( planRecords ) as PlanSlug[] )
-			.map( ( plan: PlanSlug ) => {
+		const planProperties: PlanProperties[] = ( Object.keys( planRecords ) as PlanSlug[] ).map(
+			( plan: PlanSlug ) => {
 				const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
@@ -1070,24 +1078,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 					billingPeriod: planObject?.bill_period,
 					currencyCode: planObject?.currency_code,
 				};
-			} )
-			.map( ( properties, index, propertiesArray ) => {
-				// Set previousProductName to the product name of the previous visible plan before the current one.
-				let previousVisiblePlanIndex = index - 1;
-				while ( previousVisiblePlanIndex > -1 ) {
-					if ( propertiesArray[ previousVisiblePlanIndex ].isVisible ) {
-						break;
-					}
-					previousVisiblePlanIndex--;
-				}
-				if ( previousVisiblePlanIndex > -1 ) {
-					return {
-						...properties,
-						previousProductName: propertiesArray[ previousVisiblePlanIndex ].productNameShort,
-					};
-				}
-				return properties;
-			} );
+			}
+		);
 
 		const manageHref =
 			purchaseId && selectedSiteSlug

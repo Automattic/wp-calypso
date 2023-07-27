@@ -27,7 +27,6 @@ export type PlanProperties = {
 	availableForPurchase: boolean;
 	current?: boolean;
 	planActionOverrides?: PlanActionOverrides;
-	previousProductName?: string;
 };
 
 // FIXME:
