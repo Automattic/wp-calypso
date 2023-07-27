@@ -1,4 +1,4 @@
-import announcementImage from 'calypso/assets/images/marketplace/notice-offer-coupon.svg';
+import announcementImage from 'calypso/assets/images/marketplace/notice-special-20-coupon.svg';
 import { NOTICE_SPECIAL_20_COUPON } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
