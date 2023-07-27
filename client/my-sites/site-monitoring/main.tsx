@@ -5,7 +5,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UplotChartMetrics from './metrics-chart';
 import { useSiteMetricsQuery } from './use-metrics-query';
 
-export function SiteMetricsData() {
+export function useSiteMetricsData() {
 	const siteId = useSelector( getSelectedSiteId );
 	const startTime = moment().subtract( 24, 'hours' ).unix();
 	const endTime = moment().unix();
@@ -54,7 +54,7 @@ export function SiteMetricsData() {
 }
 
 export function SiteMetrics() {
-	const { formattedData } = SiteMetricsData();
+	const { formattedData } = useSiteMetricsData();
 	return (
 		<>
 			<h2>Atomic site</h2>
