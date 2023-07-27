@@ -1,5 +1,4 @@
 import Search from '@automattic/search';
-import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
@@ -11,6 +10,7 @@ export type SearchOptions = {
 	search?: string;
 	filter?: {
 		status?: string;
+		postType?: string;
 	};
 	order?: {
 		orderBy: string;
@@ -23,7 +23,7 @@ interface Props {
 	handleSetSearch: ( search: SearchOptions ) => void;
 }
 
-type SortOption = {
+type DropdownOption = {
 	label: string;
 	value: string;
 };
@@ -44,7 +44,7 @@ const FILTER_OPTIONS_DEFAULT = '';
 export default function SearchBar( props: Props ) {
 	const { mode, handleSetSearch } = props;
 
-	const sortOptions: Array< SortOption > = [
+	const sortOptions: Array< DropdownOption > = [
 		{
 			label: translate( 'By title' ),
 			value: SORT_OPTIONS_BY_TITLE,
@@ -71,9 +71,24 @@ export default function SearchBar( props: Props ) {
 		},
 	];
 
+	const postTypeOptions: Array< DropdownOption > = [
+		{
+			label: translate( 'All' ),
+			value: '',
+		},
+		{
+			label: translate( 'Posts' ),
+			value: 'post',
+		},
+		{
+			label: translate( 'Pages' ),
+			value: 'page',
+		},
+	];
+
 	const [ searchInput, setSearchInput ] = React.useState< string | undefined >( '' );
 	const [ currentSortOption, setSortOption ] = React.useState( SORT_OPTIONS_DEFAULT );
-	const [ filterOption, setFilterOption ] = React.useState< string >( 'all' );
+	const [ filterOption, setFilterOption ] = React.useState< string >( FILTER_OPTIONS_DEFAULT );
 
 	const onChangeFilter = ( filter: string ) => {
 		setSortOption( SORT_OPTIONS_DEFAULT );
@@ -98,11 +113,22 @@ export default function SearchBar( props: Props ) {
 		} );
 	};
 
-	const onChangeOrderOption = ( sort: SortOption ) => {
+	const onChangePostTypeFilter = ( option: DropdownOption ) => {
+		setFilterOption( option.value );
+		handleSetSearch( {
+			search: searchInput || '',
+			order: currentSortOption,
+			filter: {
+				postType: option.value,
+			},
+		} );
+	};
+
+	const onChangeOrderOption = ( sort: DropdownOption ) => {
 		const newSearch = {
 			search: '',
 			filter: {
-				status: FILTER_OPTIONS_DEFAULT,
+				postType: filterOption,
 			},
 			order: {
 				orderBy: sort.value,
@@ -112,17 +138,36 @@ export default function SearchBar( props: Props ) {
 
 		setSearchInput( newSearch.search );
 		setSortOption( newSearch.order );
-		setFilterOption( newSearch.filter.status );
+		setFilterOption( filterOption );
 		handleSetSearch( newSearch );
 	};
 
+	const getSortLabel = () => {
+		const selectedOption = sortOptions.find(
+			( item ) => item.value === currentSortOption.orderBy
+		)?.label;
+
+		return selectedOption
+			? // translators: sortOption is something like Last published, Recently updated, etc.
+			  translate( 'Sort: %(sortOption)s', {
+					args: { sortOption: selectedOption },
+			  } )
+			: undefined;
+	};
+
+	const getPostTypeFilterLabel = () => {
+		const selectedOption = postTypeOptions.find( ( item ) => item.value === filterOption )?.label;
+
+		return selectedOption
+			? // translators: filterOption is something like All, Posts and Pages
+			  translate( 'Post type: %(filterOption)s', {
+					args: { filterOption: selectedOption },
+			  } )
+			: undefined;
+	};
+
 	return (
-		<div
-			className={ classNames(
-				'promote-post-i2__search-bar-wrapper',
-				`${ mode === 'posts' ? 'wide' : '' }`
-			) }
-		>
+		<div className="promote-post-i2__search-bar-wrapper">
 			<Search
 				searchIcon={ <SitesSearchIcon /> }
 				className="promote-post-i2__search-bar-search"
@@ -140,21 +185,33 @@ export default function SearchBar( props: Props ) {
 				} }
 			/>
 
-			{ mode === 'posts' && (
-				<SelectDropdown
-					className="promote-post-i2__search-bar-dropdown"
-					onSelect={ onChangeOrderOption }
-					options={ sortOptions }
-					initialSelected={ currentSortOption.orderBy }
-				/>
-			) }
+			<div className="promote-post-i2__search-bar-options">
+				{ mode === 'posts' && (
+					<>
+						<SelectDropdown
+							className="promote-post-i2__search-bar-dropdown post-type"
+							onSelect={ onChangePostTypeFilter }
+							options={ postTypeOptions }
+							initialSelected={ filterOption }
+							selectedText={ getPostTypeFilterLabel() }
+						/>
+						<SelectDropdown
+							className="promote-post-i2__search-bar-dropdown order-by"
+							onSelect={ onChangeOrderOption }
+							options={ sortOptions }
+							initialSelected={ currentSortOption.orderBy }
+							selectedText={ getSortLabel() }
+						/>
+					</>
+				) }
 
-			{ mode === 'campaigns' && (
-				<CampaignsFilter
-					handleChangeFilter={ onChangeFilter }
-					campaignsFilter={ filterOption as CampaignsFilterType }
-				/>
-			) }
+				{ mode === 'campaigns' && (
+					<CampaignsFilter
+						handleChangeFilter={ onChangeFilter }
+						campaignsFilter={ filterOption as CampaignsFilterType }
+					/>
+				) }
+			</div>
 		</div>
 	);
 }

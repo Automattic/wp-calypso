@@ -163,6 +163,10 @@ body.is-section-promote-post-i2 {
 			width: calc(100% - 32px);
 		}
 
+		th.posts-list__header-column {
+			display: none;
+		}
+
 		.post-item__post {
 			// Do not show the rest of columns on mobiles
 			&-type,
