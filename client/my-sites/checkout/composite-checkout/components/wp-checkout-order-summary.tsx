@@ -359,9 +359,7 @@ function CheckoutSummaryFeaturesList( props: {
 		isDomainTransfer( product )
 	);
 
-	// We don't currently pass down google domain detection in the cart
-	// we're relying on a subtotal of 0 to exclude carts with non-google products
-	const hasGoogleDomainsOnly = responseCart.products.every( ( product ) => {
+	const hasFreeCouponTransfersOnly = responseCart.products.every( ( product ) => {
 		return (
 			isDomainTransfer( product ) &&
 			product.is_sale_coupon_applied &&
@@ -402,7 +400,7 @@ function CheckoutSummaryFeaturesList( props: {
 				<>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="features-list-support-another-year" />
-						{ hasGoogleDomainsOnly && hasTransferProductOnly( responseCart )
+						{ hasFreeCouponTransfersOnly && hasTransferProductOnly( responseCart )
 							? translate( 'We absorb the cost and give you an extra year of free registration' )
 							: translate( '1-year extension on your domain' ) }
 					</CheckoutSummaryFeaturesListItem>
