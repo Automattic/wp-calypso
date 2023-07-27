@@ -359,8 +359,10 @@ function CheckoutSummaryFeaturesList( props: {
 		isDomainTransfer( product )
 	);
 
+	// We don't currently pass down google domain detection in the cart
+	// we're relying on a subtotal of 0 to exclude carts with non-google products
 	const hasGoogleDomainsOnly =
-		hasTransferProductOnly( responseCart ) && responseCart?.sub_total_integer !== 0;
+		hasTransferProductOnly( responseCart ) && responseCart?.sub_total_integer === 0;
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
