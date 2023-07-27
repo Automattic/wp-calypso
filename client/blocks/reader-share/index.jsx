@@ -170,7 +170,11 @@ class ReaderShare extends Component {
 							popoverProps={ popoverProps }
 						/>
 					) : (
-						<ReaderReblogSelection post={ this.props.post } popoverProps={ popoverProps } />
+						<ReaderReblogSelection
+							post={ this.props.post }
+							popoverProps={ popoverProps }
+							closeMenu={ this.closeMenu }
+						/>
 					) ) }
 			</div>
 		);

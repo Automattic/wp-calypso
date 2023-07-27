@@ -31,6 +31,7 @@ const ReaderReblogSelection = ( props ) => {
 			'reblog post',
 			'width=550,height=420,resizeable,scrollbars'
 		);
+		props.closeMenu();
 		return true;
 	};
 
