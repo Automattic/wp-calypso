@@ -2,11 +2,51 @@ import { Button } from '@automattic/components';
 
 /**
  * Hardcoded list of themes that are not compatible with Block Theme Previews.
- * This list should be removed once they are delisted/retired.
+ * This list should be removed once they are retired.
  *
- * TODO: Complete the list.
+ * @see pekYwv-284-p2
  */
-const NOT_COMPATIBLE_THEMES = [ 'pub/appleton' ];
+const NOT_COMPATIBLE_THEMES = [
+	'premium/alonso',
+	'premium/baxter',
+	'premium/byrne',
+	'premium/kerr',
+	'premium/munchies',
+	'premium/payton',
+	'premium/skivers',
+	'premium/thriving-artist',
+	'pub/ames',
+	'pub/antonia',
+	'pub/appleton',
+	'pub/arbutus',
+	'pub/attar',
+	'pub/barnett',
+	'pub/bennett',
+	'pub/calvin',
+	'pub/calyx',
+	'pub/course',
+	'pub/dorna',
+	'pub/farrow',
+	'pub/geologist-blue',
+	'pub/geologist-cream',
+	'pub/geologist-slate',
+	'pub/geologist-yellow',
+	'pub/hari',
+	'pub/heiwa',
+	'pub/jackson',
+	'pub/kingsley',
+	'pub/marl',
+	'pub/meraki',
+	'pub/quadrat-black',
+	'pub/quadrat-green',
+	'pub/quadrat-red',
+	'pub/quadrat-white',
+	'pub/quadrat-yellow',
+	'pub/quadrat',
+	'pub/russell',
+	'pub/seedlet-blocks',
+	'pub/winkel',
+];
 
 const isNotCompatibleThemes = ( stylesheet ) => {
 	return NOT_COMPATIBLE_THEMES.includes( stylesheet );
@@ -79,6 +119,7 @@ export const LivePreviewButton = ( {
 	const themePath = isAtomic ? themeId : stylesheet;
 
 	return (
+		<Button
 			href={ `https://${ siteSlug }/wp-admin/site-editor.php?wp_theme_preview=${ themePath }` }
 		>
 			Live Preview
