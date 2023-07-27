@@ -1,5 +1,6 @@
 export interface StatsNoticeProps {
-	siteId: number | null;
+	siteId?: number | null;
+	onNoticeViewed?: () => void;
 }
 
 export interface NoticeBodyProps {
@@ -19,10 +20,9 @@ export interface StatsNoticesProps {
 
 export interface NewStatsNoticesProps {
 	siteId: number | null;
-	isOdysseyStats?: boolean;
+	isOdysseyStats: boolean;
 }
 
-export interface PurchaseNoticesProps {
-	siteId: number | null;
+export interface PurchaseNoticesProps extends NewStatsNoticesProps {
 	statsPurchaseSuccess: string | undefined;
 }

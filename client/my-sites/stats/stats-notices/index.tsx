@@ -21,6 +21,29 @@ import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
 
+const removeStatsPurchaseSuccessParamCalypso = () => {
+	const newUrl = new URL( window.location.href );
+	newUrl.searchParams.delete( 'statsPurchaseSuccess' );
+
+	return window.history.replaceState( null, '', newUrl.toString() );
+};
+
+const removeStatsPurchaseSuccessParamOdyssey = () => {
+	// For Odyssey Stats, we simply update the hash which is equavalent to updating the URL.
+	const currentUrl = new URL( window.location.href );
+	const hashUrl = new URL( window.location.hash.substring( 2 ), window.location.origin );
+	hashUrl.searchParams.delete( 'statsPurchaseSuccess' );
+	currentUrl.hash = `#!${ hashUrl.toString() }`;
+	window.history.replaceState( null, '', currentUrl.toString() );
+};
+
+const removeStatsPurchaseSuccessParam = ( isOdysseyStats: boolean ) => {
+	if ( ! isOdysseyStats ) {
+		return removeStatsPurchaseSuccessParamCalypso();
+	}
+	removeStatsPurchaseSuccessParamOdyssey();
+};
+
 /**
  * New notices aim to support Calypso and Odyssey stats.
  * New notices are based on async API call and hence is faster than the old notices.
@@ -66,17 +89,29 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 	);
 };
 
-const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: PurchaseNoticesProps ) => {
+const PostPurchaseNotices = ( {
+	siteId,
+	statsPurchaseSuccess,
+	isOdysseyStats,
+}: PurchaseNoticesProps ) => {
 	// Check if the GET param is passed to show the Free or Paid plan purchase notices
 	const showFreePlanPurchaseSuccessNotice = statsPurchaseSuccess === 'free';
 	const showPaidPlanPurchaseSuccessNotice = statsPurchaseSuccess === 'paid';
 
+	const removeParam = () =>
+		statsPurchaseSuccess && removeStatsPurchaseSuccessParam( isOdysseyStats );
+
 	return (
 		<>
 			{ /* TODO: Consider combining/refactoring these components into a single component */ }
-			{ showPaidPlanPurchaseSuccessNotice && <PaidPlanPurchaseSuccessJetpackStatsNotice /> }
+			{ showPaidPlanPurchaseSuccessNotice && (
+				<PaidPlanPurchaseSuccessJetpackStatsNotice onNoticeViewed={ removeParam } />
+			) }
 			{ showFreePlanPurchaseSuccessNotice && (
-				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
+				<FreePlanPurchaseSuccessJetpackStatsNotice
+					siteId={ siteId }
+					onNoticeViewed={ removeParam }
+				/>
 			) }
 		</>
 	);
@@ -100,7 +135,11 @@ export default function StatsNotices( {
 
 	return supportNewStatsNotices ? (
 		<>
-			<PostPurchaseNotices siteId={ siteId } statsPurchaseSuccess={ statsPurchaseSuccess } />
+			<PostPurchaseNotices
+				siteId={ siteId }
+				statsPurchaseSuccess={ statsPurchaseSuccess }
+				isOdysseyStats={ isOdysseyStats }
+			/>
 			<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 		</>
 	) : (
