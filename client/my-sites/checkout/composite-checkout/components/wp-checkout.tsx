@@ -38,7 +38,6 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasDIFMProduct,
-	hasTransferProductOnly,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -66,7 +65,6 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
-import CheckoutHelpLink from './checkout-help-link';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
@@ -244,7 +242,6 @@ export default function WPCheckout( {
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
-	const isBulkTransfer = hasTransferProductOnly( responseCart );
 	const isGSuiteInCart = hasGoogleApps( responseCart );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
@@ -417,7 +414,6 @@ export default function WPCheckout( {
 									addItemToCart={ addItemToCart }
 									isCartPendingUpdate={ isCartPendingUpdate }
 								/>
-								{ ! isBulkTransfer && <CheckoutHelpLink /> }
 								<CheckoutNextSteps responseCart={ responseCart } />
 							</CheckoutSummaryBody>
 						</CheckoutErrorBoundary>
