@@ -46,7 +46,7 @@ const getSiteAssemblerUrl = ( {
 	shouldGoToAssemblerStep,
 	siteEditorUrl,
 } ) => {
-	if ( ! shouldGoToAssemblerStep ) {
+	if ( isLoggedIn && ! shouldGoToAssemblerStep ) {
 		return siteEditorUrl;
 	}
 
