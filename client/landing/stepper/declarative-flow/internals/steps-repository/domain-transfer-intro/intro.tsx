@@ -50,7 +50,8 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						description: (
 							<p>
 								{ __(
-									'Review your payment and contact details. Google Domains transfers and the first year are free.'
+									'Review your payment and contact details. When you transfer a domain from Google Domains, ' +
+										"we'll absorb the cost and give you an extra year of free registration."
 								) }
 							</p>
 						),
