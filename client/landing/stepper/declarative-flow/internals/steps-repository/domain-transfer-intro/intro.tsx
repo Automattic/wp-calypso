@@ -1,3 +1,4 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
@@ -9,7 +10,8 @@ interface Props {
 }
 
 const Intro: React.FC< Props > = ( { onSubmit } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	return (
 		<>
@@ -46,11 +48,19 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
+						badge: __( 'Free for Google Domains' ),
 						description: (
 							<p>
-								{ __(
-									'Review your payment and contact details. Google Domains transfers and the first year are free.'
-								) }
+								{ isEnglishLocale ||
+								hasTranslation(
+									"Review your payment and contact details. If you're transferring a domain from Google, we'll absorb the cost and give you an extra year of free registration."
+								)
+									? __(
+											"Review your payment and contact details. If you're transferring a domain from Google, we'll absorb the cost and give you an extra year of free registration."
+									  )
+									: __(
+											'Review your payment and contact details. Google Domains transfers and the first year are free.'
+									  ) }
 							</p>
 						),
 						icon: <Icon icon={ payment } />,
@@ -63,7 +73,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				onSelect={ onSubmit }
 			/>
 			<div className="bulk-domain-transfer__cta-container">
-				<Button className="bulk-domain-transfer__cta" onClick={ onSubmit }>
+				<Button variant="primary" className="bulk-domain-transfer__cta" onClick={ onSubmit }>
 					{ __( 'Get Started' ) }
 				</Button>
 			</div>

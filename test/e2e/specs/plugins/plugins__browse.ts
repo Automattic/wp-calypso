@@ -103,6 +103,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			'Search Engine Optimization',
 			envVariables.VIEWPORT_NAME !== 'mobile' ? true : false
 		);
+		await page.waitForURL( new RegExp( `/plugins/browse/seo/${ siteUrl }$` ) );
 	} );
 
 	it.each( [ 'Yoast SEO' ] )(

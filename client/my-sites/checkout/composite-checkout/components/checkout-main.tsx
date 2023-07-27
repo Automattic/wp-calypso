@@ -346,6 +346,7 @@ function CheckoutMain( {
 	} );
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
+		contactDetailsType,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,

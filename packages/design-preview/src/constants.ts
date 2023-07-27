@@ -5,6 +5,7 @@ export const COLOR_VARIATIONS_BLOCK_LIST = [
 	'pub/entry',
 	'pub/jinjang',
 	'pub/loudness',
+	'pub/nested',
 	'pub/tenaz',
 	'premium/skivers',
 ];
