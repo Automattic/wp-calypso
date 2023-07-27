@@ -1207,7 +1207,6 @@ class ThemeSheet extends Component {
 			siteId,
 			siteSlug,
 			retired,
-			styleVariations,
 			isBundledSoftwareSet,
 			translate,
 			isLoggedIn,
@@ -1421,7 +1420,7 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ styleVariations.length ? this.renderWebPreview() : this.renderScreenshot() }
+							{ ! isExternallyManagedTheme ? this.renderWebPreview() : this.renderScreenshot() }
 						</div>
 					) }
 				</div>
