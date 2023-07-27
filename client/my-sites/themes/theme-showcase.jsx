@@ -60,6 +60,21 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
+const staticFilters = {
+	MYTHEMES: {
+		key: 'my-themes',
+		text: translate( 'My Themes' ),
+	},
+	RECOMMENDED: {
+		key: 'recommended',
+		text: translate( 'Recommended' ),
+	},
+	ALL: {
+		key: 'all',
+		text: translate( 'All' ),
+	},
+};
+
 class ThemeShowcase extends Component {
 	constructor( props ) {
 		super( props );
@@ -103,6 +118,19 @@ class ThemeShowcase extends Component {
 		showUploadButton: true,
 	};
 
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		// Activate the "All" tab when searching on "Recommended", since the
+		// search might include some results that are not in the recommended
+		// themes (e.g. WP.org themes).
+		if ( nextProps.search && prevState.tabFilter.key === staticFilters.RECOMMENDED.key ) {
+			return {
+				tabFilter: staticFilters.ALL,
+			};
+		}
+
+		return null;
+	}
+
 	componentDidMount() {
 		const { themesBookmark } = this.props;
 		// Scroll to bookmark if applicable.
@@ -136,7 +164,7 @@ class ThemeShowcase extends Component {
 	}
 
 	isStaticFilter = ( tabFilter ) => {
-		return Object.values( this.getStaticFilters() ).some(
+		return Object.values( staticFilters ).some(
 			( staticFilter ) => tabFilter.key === staticFilter.key
 		);
 	};
@@ -157,28 +185,13 @@ class ThemeShowcase extends Component {
 			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
-		const staticFilters = this.getStaticFilters();
 		return {
 			...( shouldShowMyThemesFilter && {
 				MYTHEMES: staticFilters.MYTHEMES,
 			} ),
-			ALL: staticFilters.ALL,
+			RECOMMENDED: staticFilters.RECOMMENDED,
 			...this.subjectFilters,
-		};
-	};
-
-	getStaticFilters = () => {
-		return {
-			MYTHEMES: {
-				key: 'my-themes',
-				text: this.props.translate( 'My Themes' ),
-				order: 3,
-			},
-			ALL: {
-				key: 'all',
-				text: this.props.translate( 'Recommended' ),
-				order: 4,
-			},
+			ALL: staticFilters.ALL,
 		};
 	};
 
@@ -205,7 +218,7 @@ class ThemeShowcase extends Component {
 
 	findTabFilter = ( tabFilters, filterKey ) =>
 		Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) ||
-		this.getStaticFilters().ALL;
+		staticFilters.RECOMMENDED;
 
 	getTabFilterFromUrl = ( filterString = '' ) => {
 		const filterArray = filterString.split( '+' );
@@ -214,7 +227,7 @@ class ThemeShowcase extends Component {
 		);
 
 		if ( ! matches.length ) {
-			return this.findTabFilter( this.getStaticFilters(), this.state?.tabFilter.key );
+			return this.findTabFilter( staticFilters, this.state?.tabFilter.key );
 		}
 
 		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
@@ -292,15 +305,9 @@ class ThemeShowcase extends Component {
 	};
 
 	onTierSelect = ( { value: tier } ) => {
-		// Due to the search backend limitation, static filters other than "All"
-		// can only have "All" tier.
-		const staticFilters = this.getStaticFilters();
-		if (
-			tier !== 'all' &&
-			this.isStaticFilter( this.state.tabFilter ) &&
-			this.state.tabFilter.key !== staticFilters.ALL.key
-		) {
-			this.setState( { tabFilter: staticFilters.ALL } );
+		// Due to the search backend limitation, "My Themes" can only have "All" tier.
+		if ( tier !== 'all' && this.state.tabFilter.key === staticFilters.MYTHEMES.key ) {
+			this.setState( { tabFilter: staticFilters.RECOMMENDED } );
 		}
 
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
@@ -316,13 +323,8 @@ class ThemeShowcase extends Component {
 		trackClick( 'section nav filter', tabFilter );
 
 		let callback = () => null;
-		// Due to the search backend limitation, static filters other than "All"
-		// can only have "All" tier.
-		if (
-			this.isStaticFilter( tabFilter ) &&
-			tabFilter.key !== this.getStaticFilters().ALL.key &&
-			this.props.tier !== 'all'
-		) {
+		// Due to the search backend limitation, "My Themes" can only have "All" tier.
+		if ( tabFilter.key === staticFilters.MYTHEMES.key && this.props.tier !== 'all' ) {
 			callback = () => {
 				this.onTierSelect( { value: 'all' } );
 				this.scrollToSearchInput();
@@ -341,7 +343,15 @@ class ThemeShowcase extends Component {
 			? [ filterWithoutSubjects, subjectTerm ].join( '+' )
 			: filterWithoutSubjects;
 
-		page( this.constructUrl( { filter: newFilter } ) );
+		page(
+			this.constructUrl( {
+				filter: newFilter,
+				// Reset search term when activating the "Recommended" tab because
+				// WP.org themes (only visible when searching) don't appear in the
+				// recommended themes.
+				...( tabFilter.key === staticFilters.RECOMMENDED.key && { search: '' } ),
+			} )
+		);
 
 		this.setState( { tabFilter }, callback );
 	};
@@ -408,7 +418,6 @@ class ThemeShowcase extends Component {
 
 		const tabKey = this.state.tabFilter.key;
 
-		const staticFilters = this.getStaticFilters();
 		if (
 			tabKey !== staticFilters.MYTHEMES?.key &&
 			! isExpertBannerDissmissed &&
@@ -421,6 +430,7 @@ class ThemeShowcase extends Component {
 
 			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
 			switch ( tabKey ) {
+				case staticFilters.RECOMMENDED.key:
 				case staticFilters.ALL.key:
 					location = 'all-theme-banner';
 					refURLParam = 'themes';
@@ -435,7 +445,7 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.state.tabFilter.key;
 		switch ( tabKey ) {
-			case this.getStaticFilters().MYTHEMES?.key:
+			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
 			default:
 				return this.allThemes( { themeProps } );
