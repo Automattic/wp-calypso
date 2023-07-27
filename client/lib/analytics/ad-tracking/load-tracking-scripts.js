@@ -18,6 +18,7 @@ import {
 	OUTBRAIN_SCRIPT_URL,
 	PINTEREST_SCRIPT_URL,
 	GOOGLE_GTM_SCRIPT_URL,
+	PARSLEY_SCRIPT_URL,
 } from './constants';
 
 // Ensure setup has run.
@@ -102,6 +103,10 @@ function getTrackingScriptsToLoad() {
 
 	if ( mayWeInitTracker( 'googleTagManager' ) && isAkismetCheckout() ) {
 		scripts.push( GOOGLE_GTM_SCRIPT_URL + TRACKING_IDS.akismetGoogleTagManagerId );
+	}
+
+	if ( mayWeInitTracker( 'parsely' ) ) {
+		scripts.push( PARSLEY_SCRIPT_URL );
 	}
 
 	return scripts;
