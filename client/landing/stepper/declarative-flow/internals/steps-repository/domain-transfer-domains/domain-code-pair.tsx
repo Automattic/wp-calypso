@@ -12,6 +12,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useValidationMessage } from './use-validation-message';
 
@@ -160,7 +161,7 @@ export function DomainCodePair( {
 		</>
 	);
 	return (
-		<div className="domains__domain-info-and-validation">
+		<div className={ `domains__domain-info-and-validation ${ getLocaleSlug() }` }>
 			<div className="domains__domain-info">
 				<div className="domains__domain-domain">
 					<FormFieldset>
