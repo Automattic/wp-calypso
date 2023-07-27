@@ -7,6 +7,10 @@
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 13px;
 	font-weight: 500;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: none;
+	}
 }
 
 .reader-visit-link:hover,
