@@ -35,7 +35,10 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
+import {
+	hasFreeCouponTransfersOnly,
+	hasDomainProductsOnly,
+} from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -396,9 +399,22 @@ function CheckoutSummaryFeaturesList( props: {
 							? translate( 'We absorb the cost and give you an extra year of free registration' )
 							: translate( '1-year extension on your domain' ) }
 					</CheckoutSummaryFeaturesListItem>
+				</>
+			) }
+
+			{ hasDomainProductsOnly( responseCart ) && (
+				<>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="features-list-support-privacy" />
 						{ translate( 'Private domain registration and SSL certificate included for free' ) }
+					</CheckoutSummaryFeaturesListItem>
+					<CheckoutSummaryFeaturesListItem>
+						<WPCheckoutCheckIcon id="features-list-fast-dns" />
+						{ translate( 'Extremely fast DNS' ) }
+					</CheckoutSummaryFeaturesListItem>
+					<CheckoutSummaryFeaturesListItem>
+						<WPCheckoutCheckIcon id="features-list-fast-dns" />
+						{ translate( 'Manage everything you need in one place' ) }
 					</CheckoutSummaryFeaturesListItem>
 				</>
 			) }
@@ -593,12 +609,11 @@ function CheckoutSummaryChatIfAvailable( props: {
 	const currentPlanSlug = currentPlan?.productSlug;
 
 	const isChatAvailable =
-		props.hasDomainTransferInCart ||
-		( currentPlanSlug &&
-			( isWpComPremiumPlan( currentPlanSlug ) ||
-				isWpComBusinessPlan( currentPlanSlug ) ||
-				isWpComEcommercePlan( currentPlanSlug ) ) &&
-			! isMonthly( currentPlanSlug ) );
+		currentPlanSlug &&
+		( isWpComPremiumPlan( currentPlanSlug ) ||
+			isWpComBusinessPlan( currentPlanSlug ) ||
+			isWpComEcommercePlan( currentPlanSlug ) ) &&
+		! isMonthly( currentPlanSlug );
 
 	if ( ! isChatAvailable ) {
 		return null;
