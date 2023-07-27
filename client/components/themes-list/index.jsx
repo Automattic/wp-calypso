@@ -256,30 +256,31 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	}, [ upsellCardDisplayed ] );
 
 	// Design your own theme / homepage.
-	if ( assemblerCtaData.shouldGoToAssemblerStep ) {
-		if ( ! isLoggedIn || isFSEActive ) {
-			options.push( {
-				title: assemblerCtaData.title,
-				icon: addTemplate,
-				description: assemblerCtaData.subtitleLineTwo,
-				onClick: () =>
-					recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
-						site_plan: sitePlan,
-						search_term: searchTerm,
-						destination: assemblerCtaData.shouldGoToAssemblerStep ? 'assembler' : 'site-editor',
-					} ),
-				url: getSiteAssemblerUrl( {
-					isLoggedIn,
-					selectedSite,
-					shouldGoToAssemblerStep: assemblerCtaData.shouldGoToAssemblerStep,
-					siteEditorUrl,
+	if (
+		( isLoggedIn && isFSEActive ) ||
+		( ! isLoggedIn && assemblerCtaData.shouldGoToAssemblerStep )
+	) {
+		options.push( {
+			title: assemblerCtaData.title,
+			icon: addTemplate,
+			description: assemblerCtaData.subtitleLineTwo,
+			onClick: () =>
+				recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
+					site_plan: sitePlan,
+					search_term: searchTerm,
+					destination: assemblerCtaData.shouldGoToAssemblerStep ? 'assembler' : 'site-editor',
 				} ),
-				buttonText: assemblerCtaData.buttonText,
-			} );
-		}
+			url: getSiteAssemblerUrl( {
+				isLoggedIn,
+				selectedSite,
+				shouldGoToAssemblerStep: assemblerCtaData.shouldGoToAssemblerStep,
+				siteEditorUrl,
+			} ),
+			buttonText: assemblerCtaData.buttonText,
+		} );
 	} else {
 		// This should also start the Pattern Assembler, which is currently in development for
-		// the mobile viewport. Since there isn't any proper fallback for the meantime, we
+		// the logged-out showcase on mobile viewport. Since there isn't any proper fallback for the meantime, we
 		// just don't include this option.
 	}
 
