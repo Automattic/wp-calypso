@@ -113,7 +113,7 @@ import type { LocalizeProps } from 'i18n-calypso';
 
 declare global {
 	interface Window {
-		fbq?: ( ...args: unknown[] ) => void;
+		fbq: ( ...args: any[] ) => void;
 	}
 }
 
