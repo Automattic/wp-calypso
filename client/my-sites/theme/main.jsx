@@ -671,6 +671,7 @@ class ThemeSheet extends Component {
 								stylesheet={ stylesheet }
 								themeId={ themeId }
 								themeType={ themeType }
+								translate={ translate }
 							></LivePreviewButton>
 						) }
 						{ this.shouldRenderPreviewButton() && (

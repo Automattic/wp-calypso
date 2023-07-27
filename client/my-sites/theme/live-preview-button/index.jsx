@@ -69,6 +69,7 @@ export const LivePreviewButton = ( {
 	stylesheet,
 	themeType,
 	themeId,
+	translate,
 } ) => {
 	// A user doesn't want to preview the active theme.
 	if ( isActive ) {
@@ -122,7 +123,7 @@ export const LivePreviewButton = ( {
 		<Button
 			href={ `https://${ siteSlug }/wp-admin/site-editor.php?wp_theme_preview=${ themePath }` }
 		>
-			Live Preview
+			{ translate( 'Live Preview' ) }
 		</Button>
 	);
 };
