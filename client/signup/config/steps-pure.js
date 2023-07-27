@@ -81,8 +81,8 @@ export function generateSteps( {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
 			fulfilledStepCallback: isDomainFulfilled,
-			providesDependencies: [ 'domainItem', 'shouldHideFreePlan', 'signupDomainOrigin' ],
-			optionalDependencies: [ 'shouldHideFreePlan', 'signupDomainOrigin' ],
+			providesDependencies: [ 'domainItem', 'shouldHideFreePlan', 'signupDomainOrigin', 'siteUrl' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'signupDomainOrigin', 'siteUrl' ],
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
