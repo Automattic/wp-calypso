@@ -607,8 +607,8 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'site-metrics',
-		paths: [ '/site-metrics' ],
+		name: 'site-monitoring',
+		paths: [ '/site-monitoring' ],
 		module: 'calypso/my-sites/site-monitoring',
 		group: 'sites',
 	},
