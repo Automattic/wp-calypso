@@ -11,7 +11,9 @@ import type { JetpackProductSlug } from './types';
  * > findProductsKeys( { type: PRODUCT_JETPACK_BACKUP_DAILY } );
  * [PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY]
  */
-export function findProductKeys( query: Query = {} ): JetpackProductSlug[] {
+export function findProductKeys(
+	query: Query = {}
+): JetpackProductSlug[] | WooCommerceProductSlug[] {
 	return Object.values( PRODUCTS_LIST )
 		.map( ( { product_slug } ) => product_slug )
 		.filter( ( productSlug ) => productMatches( productSlug, query ) );
