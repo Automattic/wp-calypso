@@ -466,14 +466,11 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planName={ planConstantObj.getTitle() }
-				planSlug={ planName }
+				planType={ planName }
 				flowName={ flowName }
 				selectedSiteSlug={ selectedSiteSlug }
 				onUpgradeClick={ () => onUpgradeClick( planProperties ) }
 				planActionOverrides={ planActionOverrides }
-				currencyCode=""
-				showMonthlyPrice={ false }
-				isStuck={ false }
 			/>
 		</Cell>
 	);
