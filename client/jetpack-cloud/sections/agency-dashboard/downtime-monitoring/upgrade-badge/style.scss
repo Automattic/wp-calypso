@@ -1,0 +1,20 @@
+.badge.upgrade-badge {
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: rem(10px);
+	font-weight: bold;
+	padding: 0 6px;
+	text-align: center;
+	user-select: none;
+	text-transform: uppercase;
+
+	&.badge--success {
+		color: var(--studio-jetpack-green-50);
+		background-color: var(--studio-jetpack-green-5);
+	}
+}
+
+.upgrade-badge__wrapper {
+	display: inline-flex;
+	align-items: center;
+}

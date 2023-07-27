@@ -46,6 +46,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
+						badge: __( 'Google Domains: Free' ),
 						description: (
 							<p>
 								{ __(
@@ -63,7 +64,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				onSelect={ onSubmit }
 			/>
 			<div className="bulk-domain-transfer__cta-container">
-				<Button className="bulk-domain-transfer__cta" onClick={ onSubmit }>
+				<Button variant="primary" className="bulk-domain-transfer__cta" onClick={ onSubmit }>
 					{ __( 'Get Started' ) }
 				</Button>
 			</div>

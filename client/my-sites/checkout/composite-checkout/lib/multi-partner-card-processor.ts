@@ -11,6 +11,7 @@ import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/pay
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import existingCardProcessor from './existing-card-processor';
+import getContactDetailsType from './get-contact-details-type';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -266,6 +267,28 @@ export default async function multiPartnerCardProcessor(
 		if ( ! freePurchaseData?.translate ) {
 			throw new Error( 'Required free purchase data is missing' );
 		}
+
+		const contactDetailsType = getContactDetailsType( dataForProcessor.responseCart );
+		const submitDataWithContactInfo =
+			contactDetailsType === 'none'
+				? submitData
+				: {
+						...submitData,
+						// In `PaymentMethodSelector` which is used for adding new cards, the
+						// stripe payment method is passed `shouldShowTaxFields` which causes
+						// it to show required tax location fields in the payment method
+						// itself; that data is then submitted to the `assignNewCardProcessor`
+						// to send to Stripe as part of saving the card. However, in checkout
+						// we normally do not display those fields since they are already included in
+						// the billing details step. Therefore we must pass in the tax location
+						// data explicitly here so we can use `assignNewCardProcessor`.
+						countryCode: dataForProcessor.contactDetails?.countryCode?.value,
+						postalCode: getPostalCode( dataForProcessor.contactDetails ),
+						state: dataForProcessor.contactDetails?.state?.value,
+						city: dataForProcessor.contactDetails?.city?.value,
+						organization: dataForProcessor.contactDetails?.organization?.value,
+						address: dataForProcessor.contactDetails?.address1?.value,
+				  };
 		const newCardResponse = await assignNewCardProcessor(
 			{
 				purchase: undefined,
@@ -277,23 +300,7 @@ export default async function multiPartnerCardProcessor(
 				reduxDispatch: dataForProcessor.reduxDispatch,
 				eventSource: '/checkout',
 			},
-			{
-				...submitData,
-				// In `PaymentMethodSelector` which is used for adding new cards, the
-				// stripe payment method is passed `shouldShowTaxFields` which causes
-				// it to show required tax location fields in the payment method
-				// itself; that data is then submitted to the `assignNewCardProcessor`
-				// to send to Stripe as part of saving the card. However, in checkout
-				// we do not display those fields since they are already included in
-				// the billing details step. Therefore we must pass in the tax location
-				// data explicitly here so we can use `assignNewCardProcessor`.
-				countryCode: dataForProcessor.contactDetails?.countryCode?.value,
-				postalCode: getPostalCode( dataForProcessor.contactDetails ),
-				state: dataForProcessor.contactDetails?.state?.value,
-				city: dataForProcessor.contactDetails?.city?.value,
-				organization: dataForProcessor.contactDetails?.organization?.value,
-				address: dataForProcessor.contactDetails?.address1?.value,
-			}
+			submitDataWithContactInfo
 		);
 		if ( newCardResponse.type === PaymentProcessorResponseType.ERROR ) {
 			return newCardResponse;

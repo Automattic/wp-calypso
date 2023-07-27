@@ -15,6 +15,7 @@ const getStatsPurchaseURL = ( siteId: number | null ) => {
 
 const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
 	const dismissNotice = () => {
@@ -27,7 +28,11 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps
 	}
 
 	return (
-		<div className="inner-notice-container has-odyssey-stats-bg-color">
+		<div
+			className={ `inner-notice-container has-odyssey-stats-bg-color ${
+				! isOdysseyStats && 'inner-notice-container--calypso'
+			}` }
+		>
 			<NoticeBanner
 				level="success"
 				title={ translate( 'Thank you for using Jetpack Stats!' ) }
