@@ -548,7 +548,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function clickDesignYourOwnTopButton( design: Design ) {
 		recordTracksEvent(
-			'calypso_signup_design_your_own_top_button_click',
+			'calypso_signup_design_picker_design_your_own_top_button_click',
 			getDesignEventProps( { flow, intent, design } )
 		);
 		designYourOwn( design, true );
