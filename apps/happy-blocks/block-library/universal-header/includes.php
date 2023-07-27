@@ -26,6 +26,3 @@ $wpcom_nav_bar_css = wpcom_navbar_get_assets( is_rtl() ? 'view.rtl.css' : 'view.
 
 wp_enqueue_style( 'wpsupport3-wpcom-navbar-search-style', $wpcom_nav_bar_css['path'], array(), $wpcom_nav_bar_css['version'] );
 wp_enqueue_script( 'wpsupport3-wpcom-navbar-search-script', $wpcom_nav_bar_js['path'], array(), $wpcom_nav_bar_js['version'], true );
-
-// Temporary load styles from education header.
-require_once WP_CONTENT_DIR . '/a8c-plugins/happy-blocks/block-library/education-header/includes.php';
