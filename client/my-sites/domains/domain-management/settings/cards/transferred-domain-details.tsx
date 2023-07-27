@@ -49,7 +49,7 @@ const TransferredDomainDetails = ( {
 			return currentUserIsOwner
 				? translate(
 						'We tried to start a transfer for your domain {{strong}}%(domain)s{{/strong}} but we got the following error: {{br/}}{{br/}}{{p}}{{code}}%(lastTransferError)s{{/code}}{{/p}}' +
-							'Please {{a}}restart the transfer{{/a}} or contact your current domain provider for more details.',
+							'Please restart the transfer or contact your current domain provider for more details.',
 						{
 							args: {
 								domain: name,
@@ -60,7 +60,6 @@ const TransferredDomainDetails = ( {
 								br: <br />,
 								p: <p />,
 								code: <code />,
-								a: <a href={ getStartTransferHref( selectedSite.slug, name ) } />,
 							},
 						}
 				  )
