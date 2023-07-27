@@ -21,7 +21,9 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
-	useEffect( () => onNoticeViewed && onNoticeViewed() );
+	useEffect( () => {
+		onNoticeViewed && onNoticeViewed();
+	} );
 
 	const dismissNotice = () => setNoticeDismissed( true );
 

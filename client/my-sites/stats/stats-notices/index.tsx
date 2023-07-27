@@ -13,6 +13,7 @@ import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FeedbackNotice from './feedback-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
 import LegacyStatsNotices from './legacy-notices';
+import removeStatsPurchaseSuccessParam from './lib/remove-stats-purchase-success-param';
 import OptOutNotice from './opt-out-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import { NewStatsNoticesProps, StatsNoticesProps, PurchaseNoticesProps } from './types';
@@ -20,29 +21,6 @@ import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-pro
 import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
-
-const removeStatsPurchaseSuccessParamCalypso = () => {
-	const newUrl = new URL( window.location.href );
-	newUrl.searchParams.delete( 'statsPurchaseSuccess' );
-
-	return window.history.replaceState( null, '', newUrl.toString() );
-};
-
-const removeStatsPurchaseSuccessParamOdyssey = () => {
-	// For Odyssey Stats, we simply update the hash which is equavalent to updating the URL.
-	const currentUrl = new URL( window.location.href );
-	const hashUrl = new URL( window.location.hash.substring( 2 ), window.location.origin );
-	hashUrl.searchParams.delete( 'statsPurchaseSuccess' );
-	currentUrl.hash = `#!${ hashUrl.toString() }`;
-	window.history.replaceState( null, '', currentUrl.toString() );
-};
-
-const removeStatsPurchaseSuccessParam = ( isOdysseyStats: boolean ) => {
-	if ( ! isOdysseyStats ) {
-		return removeStatsPurchaseSuccessParamCalypso();
-	}
-	removeStatsPurchaseSuccessParamOdyssey();
-};
 
 /**
  * New notices aim to support Calypso and Odyssey stats.
@@ -89,17 +67,18 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 	);
 };
 
-const PostPurchaseNotices = ( {
-	siteId,
-	statsPurchaseSuccess,
-	isOdysseyStats,
-}: PurchaseNoticesProps ) => {
+const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: PurchaseNoticesProps ) => {
 	// Check if the GET param is passed to show the Free or Paid plan purchase notices
 	const showFreePlanPurchaseSuccessNotice = statsPurchaseSuccess === 'free';
 	const showPaidPlanPurchaseSuccessNotice = statsPurchaseSuccess === 'paid';
 
-	const removeParam = () =>
-		statsPurchaseSuccess && removeStatsPurchaseSuccessParam( isOdysseyStats );
+	const removeParam = () => {
+		if ( ! statsPurchaseSuccess ) {
+			return;
+		}
+		const newUrl = removeStatsPurchaseSuccessParam( window.location.href );
+		setTimeout( () => window.history.replaceState( null, '', newUrl ), 300 );
+	};
 
 	return (
 		<>
