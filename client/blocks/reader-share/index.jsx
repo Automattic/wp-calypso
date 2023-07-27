@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { defer } from 'lodash';
@@ -154,9 +154,13 @@ class ReaderShare extends Component {
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
 				>
-					{ ReaderShareIcon( {
-						iconSize: this.props.iconSize,
-					} ) }
+					{ ! this.props.isReblogSelection ? (
+						ReaderShareIcon( {
+							iconSize: this.props.iconSize,
+						} )
+					) : (
+						<Gridicon icon="reblog" size={ this.props.iconSize } />
+					) }
 				</Button>
 				{ this.state.showingMenu &&
 					( ! this.props.isReblogSelection ? (
