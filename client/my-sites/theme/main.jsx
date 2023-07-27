@@ -1217,6 +1217,7 @@ class ThemeSheet extends Component {
 			isMarketplaceThemeSubscribed,
 			isExternallyManagedTheme,
 			isThemeActivationSyncStarted,
+			isWpcomTheme,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
@@ -1420,7 +1421,9 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ ! isExternallyManagedTheme ? this.renderWebPreview() : this.renderScreenshot() }
+							{ isWpcomTheme && ! isExternallyManagedTheme
+								? this.renderWebPreview()
+								: this.renderScreenshot() }
 						</div>
 					) }
 				</div>
