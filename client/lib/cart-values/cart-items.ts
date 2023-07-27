@@ -166,7 +166,7 @@ export function hasTransferProduct( cart: ObjectWithProducts ): boolean {
 }
 
 export function hasFreeCouponTransfersOnly( cart: ObjectWithProducts ): boolean {
-	const temp = getAllCartItems( cart ).every( ( item ) => {
+	return getAllCartItems( cart ).every( ( item ) => {
 		return (
 			( isDomainTransfer( item ) &&
 				item.is_sale_coupon_applied &&
@@ -174,8 +174,6 @@ export function hasFreeCouponTransfersOnly( cart: ObjectWithProducts ): boolean 
 			isPartialCredits( item )
 		);
 	} );
-
-	return temp;
 }
 
 export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProduct[] {
