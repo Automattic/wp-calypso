@@ -913,29 +913,8 @@ a.masterbar__quick-language-switcher {
 .masterbar__item-help {
 	padding: 0 11px;
 
-	.masterbar--is-checkout & {
-		padding: 0 24px;
-
-		@include breakpoint-deprecated( "<480px" ) {
-			display: none;
-		}
-
-		&.is-active {
-			background: var(--color-checkout-masterbar-item-hover-background);
-		}
-
-		&:focus {
-			box-shadow: none;
-		}
-	}
-
 	svg {
 		fill: var(--color-masterbar-text);
-
-		.masterbar--is-checkout & {
-			fill: var(--color-checkout-masterbar-text);
-			margin-right: 6px;
-		}
 	}
 }
 
