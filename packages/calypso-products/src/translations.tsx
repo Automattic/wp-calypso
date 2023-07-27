@@ -794,6 +794,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const socialAdvancedLightboxDescription = translate(
 		'Easily share your website content on your social media channels from one place. Enjoy using the advanced plan for half price over the next year while we continue to develop the features.'
 	);
+	const monitorLightboxDescription = translate(
+		'Swift 1-minute monitoring interval alerts, multiple email recipient and SMS notifications.'
+	);
 
 	// WooCommerce Products
 	const woocommerceBookingsLightboxDescription = translate(
@@ -845,6 +848,8 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedLightboxDescription,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorLightboxDescription,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesLightboxDescription,
