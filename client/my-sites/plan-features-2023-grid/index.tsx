@@ -884,6 +884,7 @@ export class PlanFeatures2023Grid extends Component<
 							paidDomainName={ paidDomainName }
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
+							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						/>
 					</Container>
 				);

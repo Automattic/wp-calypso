@@ -101,7 +101,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	siteSlug?: string | null;
 	intent?: PlansIntent;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
-	isCustomDomainAllowedOnFreePlan?: DataResponse< boolean >;
+	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
