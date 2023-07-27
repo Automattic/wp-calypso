@@ -1,17 +1,16 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, DOMAIN_TRANSFER } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { DOMAIN_TRANSFER } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
-	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import {
 	Flow,
@@ -39,10 +38,6 @@ const domainTransfer: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
-			{
-				slug: 'complete',
-				asyncComponent: () => import( './internals/steps-repository/domain-transfer-complete' ),
-			},
 		];
 	},
 
@@ -61,14 +56,11 @@ const domainTransfer: Flow = {
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
 		const locale = useLocale();
-		setStepProgress( flowProgress );
 
 		const logInUrl =
 			locale && locale !== 'en'
@@ -92,17 +84,14 @@ const domainTransfer: Flow = {
 					return navigate( 'processing', undefined );
 				}
 				case 'processing': {
-					const destination = '/setup/domain-transfer/complete';
-					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( flowName );
-					const returnUrl = encodeURIComponent( destination );
 
 					const checkoutBackURL = new URL( '/setup/domain-transfer/domains', window.location.href );
 
 					// use replace instead of assign to remove the processing URL from history
 					return window.location.replace(
-						`/checkout/no-site?redirect_to=${ returnUrl }&signup=0&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
+						`/checkout/no-site?signup=0&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
 							checkoutBackURL.href
 						) }`
 					);
@@ -115,7 +104,11 @@ const domainTransfer: Flow = {
 		const goBack = () => {
 			switch ( _currentStepSlug ) {
 				case 'domains':
-					return navigate( 'intro' );
+					if ( window.history.length < 3 ) {
+						return navigate( 'intro' );
+					}
+					window.history.back();
+					return;
 				default:
 					return;
 			}

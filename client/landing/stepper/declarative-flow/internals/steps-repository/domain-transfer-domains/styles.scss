@@ -15,6 +15,14 @@
 		pointer-events: none;
 	}
 
+	.is-invisible-field {
+		visibility: hidden;
+		// On mobile, display:none, keeps the layout without breaking it
+		@media (max-width: $break-mobile ) {
+			display: none;
+		}
+	}
+
 	.components-button:focus:not(:disabled) {
 		border: 0;
 		outline: none;
@@ -36,6 +44,21 @@
 			.formatted-header__title {
 				font-size: 2.75rem;
 			}
+
+			.formatted-header__subtitle {
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				margin-top: 16px;
+				line-height: 20px;
+
+				span {
+					display: block;
+					@media (min-width: $break-medium ) {
+						width: 60%;
+					}
+				}
+			}
 		}
 
 		.step-container__navigation.action-buttons {
@@ -47,11 +70,6 @@
 			background-color: transparent;
 			border: none;
 			box-shadow: none;
-		}
-		.formatted-header__subtitle {
-			span {
-				display: block;
-			}
 		}
 
 		@media (min-width: $break-medium ) {
@@ -137,14 +155,43 @@
 	}
 
 	.domains__domain-validation {
-		margin-top: 12px;
-
 		&.is-mobile {
 			display: none;
+			margin-top: 5px;
 		}
 
 		&.is-desktop {
 			display: block;
+		}
+
+		button {
+			padding: 0 5px;
+			text-decoration: underline;
+		}
+
+
+		.components-button:has(.delete-label),
+		.components-button:has(.refresh-label) {
+			color: var(--gray-gray-100, #101517);
+			text-decoration-color: var(--gray-gray-100, #101517);
+		}
+
+		.is-muted.is-checking-domain {
+			@keyframes animate-dots {
+				0% {
+					opacity: 0;
+				}
+				50% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			span::after {
+				content: "..";
+				animation: animate-dots 1.5s infinite;
+			}
 		}
 
 		@media (max-width: $break-medium ) {
@@ -161,11 +208,11 @@
 	}
 
 	.domains__domain-domain {
-		flex: 7;
+		flex: 0 0 390px;
 	}
 
 	.domains__domain-key {
-		flex: 3;
+		flex: 0 0 240px;
 
 		.info-popover {
 			margin-left: 5px;
@@ -177,8 +224,20 @@
 		}
 	}
 
+	.domains__domain-domain,
+	.domains__domain-key {
+		@media (max-width: $break-medium ) {
+			flex: 1;
+		}
+
+		.form-text-input::placeholder {
+			color: var(--gray-gray-20, #a7aaad) !important;
+			font-size: 0.875rem;
+		}
+	}
+
 	.domains__domain-price {
-		flex: 2;
+		flex: 1;
 
 		.domains__domain-price-number {
 			align-items: center;
@@ -213,6 +272,7 @@
 				font-size: 0.75rem;
 				font-weight: 500;
 				line-height: 16px;
+				white-space: nowrap;
 			}
 		}
 	}
@@ -234,16 +294,12 @@
 
 			&.is-first-row {
 				display: inline-block;
-				margin-bottom: 16px;
 				white-space: nowrap;
+				line-height: 24px;
 			}
 
 			@media (max-width: $break-medium ) {
 				display: block;
-
-				&.is-first-row {
-					margin-bottom: 8px;
-				}
 			}
 		}
 
@@ -298,121 +354,77 @@
 		}
 	}
 
-
-	.domains__domain-controls {
-		display: flex;
-		gap: 16px;
-		flex: 1;
-
-		@media (min-width: $break-medium ) {
-			margin-left: -25px;
-		}
-
-		.domains__domain-refresh {
-			button {
-				cursor: pointer;
-			}
-
-			.refresh-label {
-				display: none;
-			}
-
-			@media (max-width: $break-medium ) {
-				.refresh-label {
-					display: block;
-				}
-			}
-		}
-
-		.domains__domain-delete {
-			button {
-				&:hover {
-					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
-				}
-			}
-
-			.delete-label {
-				display: none;
-			}
-
-			@media (max-width: $break-medium ) {
-				order: 1;
-
-				.delete-label {
-					display: block;
-				}
-			}
-		}
-	}
-
 	.bulk-domain-transfer__container {
 
 		.bulk-domain-transfer__add-domain {
+			padding-left: 0;
 			font-size: 0.875rem;
 			font-weight: 500;
 			color: #0675c4;
 			margin-bottom: 22px;
 			margin-top: 2px;
-		}
+			overflow: hidden;
 
-		.bulk-domain-transfer__total-price {
-			display: flex;
-			justify-content: space-between;
-			border-top: 1px solid rgba(220, 220, 222, 0.64);
-			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
-			font-weight: 500;
-			padding: 20px 0;
-			margin-bottom: 42px;
-
-			div:nth-of-type(1) {
-				flex: 9;
+			&:hover {
+				text-decoration: underline;
 			}
 
-			div:nth-of-type(2) {
-				flex: 3;
-				margin-left: 4px;
-
-				@media (max-width: $break-medium ) {
-					text-align: right;
-				}
+			svg {
+				margin-left: -6px;
+				margin-right: 0;
 			}
 		}
 
-		.bulk-domain-transfer__cta-container {
-			display: flex;
-			justify-content: center;
+		.bulk-domain-transfer__faqs {
+			.foldable-faq__question {
+				padding: 16px 0;
+			}
+			.foldable-faq__question-text {
+				font-size: 1rem;
+			}
+			h2 {
+				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+				font-size: 2rem;
+				margin: 24px 0;
+				text-align: center;
+			}
+			li {
+				font-size: 1rem;
+			}
+			section {
+				margin-top: 120px;
+			}
+			ul {
+				list-style: none;
+				margin: 0 0 48px 0;
+			}
+		}
+
+		.bulk-domain-transfer__import-dns-records {
+			text-align: center;
+
+			.form-checkbox {
+				float: none;
+			}
+
+			.form-label {
+				display: inline;
+			}
+
+			.form-checkbox + span {
+				display: inline;
+				margin-left: 0.5rem;
+				vertical-align: middle;
+			}
 
 			@media (max-width: $break-medium ) {
 				margin-bottom: 50px;
 			}
-
-			.bulk-domain-transfer__cta {
-				justify-content: center;
-				color: var(--black-white-white, #fff);
-				width: 157px;
-				height: 48px;
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				border-radius: 0.25rem;
-				background: var(--blue-blue-50, #0675c4);
-				font-size: 0.875rem;
-
-				&:disabled {
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					border-radius: 0.25rem;
-					background: var(--gray-gray-5, #dcdcde);
-					opacity: 1;
-				}
-
-				@media (max-width: $break-medium ) {
-					width: 100%;
-				}
-			}
 		}
-
 	}
 
 	.domains__domain-info-and-validation {
-		margin-bottom: 12px;
+		margin-bottom: 20px;
 
 		@media (max-width: $break-medium ) {
 			margin-bottom: 32px;
@@ -424,11 +436,21 @@
 		}
 
 		.form-input-validation {
-			padding-top: 0;
-			padding-bottom: 0;
+			margin-top: 5px;
+			padding: 0;
+
+			// remove icon
+			svg {
+				display: none;
+			}
 
 			a {
 				text-decoration: underline;
+			}
+
+			// Remove left-padding for first button to minimize padding when line wraps on mobile.
+			button:first-of-type {
+				padding-left: 0;
 			}
 		}
 	}

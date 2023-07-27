@@ -9,7 +9,7 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
-import { requestSite } from 'calypso/state/sites/actions';
+import { requestSite, receiveSiteFrontPage } from 'calypso/state/sites/actions';
 import { normalizeSettings } from './utils';
 import 'calypso/state/site-settings/init';
 import 'calypso/state/ui/init';
@@ -68,6 +68,7 @@ export function requestSiteSettings( siteId ) {
 				};
 
 				dispatch( receiveSiteSettings( siteId, savedSettings ) );
+				dispatch( receiveSiteOptions( siteId, savedSettings ) );
 				dispatch( {
 					type: SITE_SETTINGS_REQUEST_SUCCESS,
 					siteId,
@@ -110,5 +111,11 @@ export function saveSiteSettings( siteId, settings = {} ) {
 
 				return error;
 			} );
+	};
+}
+
+export function receiveSiteOptions( siteId, settings ) {
+	return ( dispatch ) => {
+		dispatch( receiveSiteFrontPage( siteId, settings ) );
 	};
 }

@@ -134,7 +134,6 @@ const ReaderExcerpt = ( { post } ) => {
 
 ReaderExcerpt.propTypes = {
 	post: PropTypes.object.isRequired,
-	isDiscover: PropTypes.bool,
 };
 
 export default ReaderExcerpt;

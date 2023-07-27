@@ -4,12 +4,15 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { InView, IntersectionObserverProps } from 'react-intersection-observer';
+import {
+	GlobalStylesContext,
+	mergeBaseAndUserConfigs,
+	withExperimentalBlockEditorProvider,
+} from '../../gutenberg-bridge';
 import { useFontPairingVariations } from '../../hooks';
 import FontPairingVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -41,10 +44,10 @@ const FontPairingVariation = ( {
 		return {
 			user: fontPairingVariation,
 			base,
-			merged: mergeBaseAndUserConfigs( base, fontPairingVariation ),
+			// When font paring isn't passed, it should be available on the base.
+			merged: ! fontPairingVariation ? base : mergeBaseAndUserConfigs( base, fontPairingVariation ),
 		};
 	}, [ fontPairingVariation, base ] );
-
 	return (
 		<CompositeItem
 			role="option"
@@ -90,7 +93,6 @@ const FontPairingVariations = ( {
 	// The theme font pairings don't include the default font pairing
 	const fontPairingVariations = useFontPairingVariations( siteId, stylesheet ) ?? [];
 	const composite = useCompositeState();
-
 	return (
 		<Composite
 			{ ...composite }
@@ -112,7 +114,9 @@ const FontPairingVariations = ( {
 			</div>
 			<div className="global-styles-variations__group">
 				<h3 className="global-styles-variations__group-title">
-					{ translate( 'Custom fonts' ) }
+					<span className="global-styles-variations__group-title-actual">
+						{ translate( 'Custom fonts' ) }
+					</span>
 					{ limitGlobalStyles && (
 						<PremiumBadge
 							shouldHideTooltip
@@ -137,4 +141,4 @@ const FontPairingVariations = ( {
 	);
 };
 
-export default FontPairingVariations;
+export default withExperimentalBlockEditorProvider( FontPairingVariations );

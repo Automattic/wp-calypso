@@ -1,4 +1,4 @@
-import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -9,15 +9,9 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
-const ToggleControl = OriginalToggleControl as React.ComponentType<
-	OriginalToggleControl.Props & {
-		disabled?: boolean;
-	}
->;
-
 type SubscribeModalSettingProps = {
 	value?: boolean;
-	handleToggle: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	disabled?: boolean;
 };
 

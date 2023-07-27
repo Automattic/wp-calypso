@@ -7,10 +7,10 @@ export const useDoNotSellContent = () => {
 	const localizeUrl = useLocalizeUrl();
 
 	const cookiePolicyLink = (
-		<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies/' ) } />
+		<ExternalLink children={ null } href={ localizeUrl( 'https://automattic.com/cookies/' ) } />
 	);
 	const privacyPolicyLink = (
-		<ExternalLink href={ localizeUrl( 'https://automattic.com/privacy/' ) } />
+		<ExternalLink children={ null } href={ localizeUrl( 'https://automattic.com/privacy/' ) } />
 	);
 	const contactLink = (
 		<ExternalLink href="mailto:contact@automattic.com">contact@automattic.com</ExternalLink>

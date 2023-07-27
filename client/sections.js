@@ -326,6 +326,7 @@ const sections = [
 		paths: [ '/discover' ],
 		module: 'calypso/reader/discover',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{

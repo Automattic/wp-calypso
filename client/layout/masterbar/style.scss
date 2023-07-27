@@ -919,6 +919,14 @@ a.masterbar__quick-language-switcher {
 		@include breakpoint-deprecated( "<480px" ) {
 			display: none;
 		}
+
+		&.is-active {
+			background: var(--color-checkout-masterbar-item-hover-background);
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
 	}
 
 	svg {

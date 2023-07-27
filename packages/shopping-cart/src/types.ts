@@ -353,6 +353,8 @@ export interface ResponseCartProduct {
 	product_id: number;
 	currency: string;
 
+	product_name_en: string;
+
 	/**
 	 * The cart item's original price in the currency's smallest unit.
 	 *
@@ -603,6 +605,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	selected_page_titles?: string[];
 	site_title?: string;
 	signup_flow?: string;
+	import_dns_records?: boolean;
 	signup?: boolean;
 	headstart_theme?: string;
 }

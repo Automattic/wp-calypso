@@ -32,6 +32,7 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 	return {
 		time_added_to_cart: Date.now(),
 		product_name: 'Replace me',
+		product_name_en: 'Replace me',
 		product_slug: 'replace-me',
 		currency: 'USD',
 		extra: {},

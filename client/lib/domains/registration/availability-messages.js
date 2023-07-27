@@ -23,9 +23,10 @@ function getAvailabilityNotice(
 	error,
 	errorData,
 	isForTransferOnly = false,
-	linksTarget = '_self'
+	linksTarget = '_self',
+	domainTld = ''
 ) {
-	const tld = domain ? getTld( domain ) : null;
+	const tld = domainTld || ( domain ? getTld( domain ) : null );
 	const { site, maintenanceEndTime, availabilityPreCheck } = errorData || {};
 
 	// The message is set only when there is a valid error
@@ -35,6 +36,11 @@ function getAvailabilityNotice(
 	// See for e.g., client/components/domains/register-domain-step/index.jsx
 	let message;
 	let severity = 'error';
+
+	if ( isForTransferOnly && errorData?.transferrability ) {
+		// If we are getting messages for transfers, use the transferrability status
+		error = errorData?.transferrability;
+	}
 
 	switch ( error ) {
 		case domainAvailability.REGISTERED:

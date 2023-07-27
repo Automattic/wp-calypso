@@ -1,21 +1,34 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { availableNotificationDurations as durations } from '../../../sites-overview/utils';
+import FeatureRestrictionBadge from '../../feature-restriction-badge';
+import { RestrictionType } from '../../types';
 import type { MonitorDuration } from '../../../sites-overview/types';
 
 interface Props {
 	selectedDuration?: MonitorDuration;
 	selectDuration: ( duration: MonitorDuration ) => void;
 	recordEvent: ( action: string, params?: object ) => void;
+	restriction?: RestrictionType;
 }
 
 export default function NotificationDuration( {
 	selectedDuration,
 	selectDuration,
 	recordEvent,
+	restriction,
 }: Props ) {
 	const translate = useTranslate();
+
+	const showPaidDuration = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
+
+	const selectableDuration = useMemo(
+		() => ( showPaidDuration ? durations : durations.filter( ( duration ) => ! duration.isPaid ) ),
+		[ showPaidDuration ]
+	);
 
 	return (
 		<div className="notification-settings__content-block">
@@ -37,13 +50,15 @@ export default function NotificationDuration( {
 				}
 				selectedText={ selectedDuration?.label }
 			>
-				{ durations.map( ( duration ) => (
+				{ selectableDuration.map( ( duration ) => (
 					<SelectDropdown.Item
 						key={ duration.time }
 						selected={ duration.time === selectedDuration?.time }
 						onClick={ () => selectDuration( duration ) }
+						disabled={ restriction !== 'none' && duration.isPaid }
 					>
 						{ duration.label }
+						{ duration.isPaid && <FeatureRestrictionBadge restriction={ restriction } /> }
 					</SelectDropdown.Item>
 				) ) }
 			</SelectDropdown>

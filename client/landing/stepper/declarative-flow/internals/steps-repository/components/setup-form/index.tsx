@@ -1,7 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { Button, FormInputValidation } from '@automattic/components';
-import { TextControl } from '@wordpress/components';
+import { FormInputValidation } from '@automattic/components';
+import { TextControl, Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import { Dispatch, FormEvent, ReactNode, SetStateAction, useEffect } from 'react';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -9,7 +10,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import type { SiteDetails } from '@automattic/data-stores';
-
 import './style.scss';
 
 interface TranslatedStrings {
@@ -36,6 +36,7 @@ interface SetupFormProps {
 	translatedText?: TranslatedStrings;
 	isLoading?: boolean;
 	isSubmitError?: boolean;
+	className?: string;
 	children?: ReactNode;
 }
 
@@ -54,6 +55,7 @@ const SetupForm = ( {
 	translatedText,
 	isLoading = false,
 	isSubmitError = false,
+	className = '',
 	children,
 }: SetupFormProps ) => {
 	const { __ } = useI18n();
@@ -73,8 +75,9 @@ const SetupForm = ( {
 		}
 	}, [ siteTitle, invalidSiteTitle, setInvalidSiteTitle ] );
 
+	const formClasses = classnames( 'setup-form__form', className );
 	return (
-		<form className="setup-form__form" onSubmit={ handleSubmit }>
+		<form className={ formClasses } onSubmit={ handleSubmit }>
 			<SiteIconWithPicker
 				site={ site }
 				placeholderText={ translatedText?.iconPlaceholder || __( 'Upload a profile image' ) }
@@ -125,6 +128,7 @@ const SetupForm = ( {
 			<Button
 				className={ `setup-form__submit ${ isTitleEmpty && 'disabled' }` }
 				disabled={ isLoading }
+				variant="primary"
 				type="submit"
 			>
 				{ isLoading ? __( 'Loading' ) : translatedText?.buttonText ?? __( 'Continue' ) }

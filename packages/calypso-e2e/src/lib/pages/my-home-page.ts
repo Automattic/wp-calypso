@@ -85,10 +85,17 @@ export class MyHomePage {
 	 * @returns {string} Suggested domain. Empty string if not found.
 	 */
 	async getSuggestedUpsellDomain(): Promise< string > {
-		const locator = this.anchor.locator( '.domain-upsell-illustration' );
+		// It's important to wait for an actual svg element to be present.
+		// The handling here is a little funky. We take a blank palceholder img, then we
+		// draw an SVG with just the text on top of it.
+		// There's a race condition where the placeholder img can render before the the text svg does.
+		const svgLocator = this.anchor.locator( '.domain-upsell-illustration svg' );
+
+		// But, innerText doesn't work on SVG nodes, so we need this locator to actually fetch the text.
+		const parentDivLocator = this.anchor.locator( '.domain-upsell-illustration' );
 		try {
-			await locator.waitFor();
-			return await locator.innerText();
+			await svgLocator.waitFor();
+			return await parentDivLocator.innerText();
 		} catch {
 			return '';
 		}

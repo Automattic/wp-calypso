@@ -1,6 +1,8 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ContactList from '../../contact-list';
+import FeatureRestrictionBadge from '../../feature-restriction-badge';
+import { RestrictionType } from '../../types';
 import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
 interface Props {
@@ -10,6 +12,7 @@ interface Props {
 	toggleModal: () => void;
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
 	verifiedItem?: { [ key: string ]: string };
+	restriction: RestrictionType;
 }
 
 export default function SMSNotification( {
@@ -19,6 +22,7 @@ export default function SMSNotification( {
 	toggleModal,
 	allPhoneItems,
 	verifiedItem,
+	restriction,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -31,12 +35,24 @@ export default function SMSNotification( {
 		<>
 			<div className="notification-settings__toggle-container">
 				<div className="notification-settings__toggle">
-					<ToggleControl onChange={ handleToggleClick } checked={ enableSMSNotification } />
+					<ToggleControl
+						label={
+							enableSMSNotification
+								? translate( 'Disable SMS notifications' )
+								: translate( 'Enable SMS notifications' )
+						}
+						onChange={ handleToggleClick }
+						checked={ enableSMSNotification }
+						className="notification-settings__toggle-control"
+						disabled={ restriction !== 'none' }
+					/>
 				</div>
 				<div className="notification-settings__toggle-content">
 					<div className="notification-settings__content-heading-with-beta">
-						<div className="notification-settings__content-heading">{ translate( 'Mobile' ) }</div>
-						<div className="notification-settings__beta-tag">{ translate( 'BETA' ) }</div>
+						<div className="notification-settings__content-heading">
+							{ translate( 'SMS Notification' ) }
+							<FeatureRestrictionBadge restriction={ restriction } />
+						</div>
 					</div>
 					<div className="notification-settings__content-sub-heading">
 						{ translate( 'Set up text messages to send to one or more people.' ) }

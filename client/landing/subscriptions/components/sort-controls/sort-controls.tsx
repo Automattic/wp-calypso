@@ -4,6 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useMemo } from 'react';
 import './styles.scss';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
 export type Option< T > = {
 	label: string;
 	value: T;
@@ -63,6 +66,7 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 							onClose();
 						} }
 						choices={ options }
+						onHover={ noop }
 					/>
 				</NavigableMenu>
 			) }

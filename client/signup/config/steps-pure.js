@@ -81,8 +81,8 @@ export function generateSteps( {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
 			fulfilledStepCallback: isDomainFulfilled,
-			providesDependencies: [ 'domainItem', 'shouldHideFreePlan' ],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			providesDependencies: [ 'domainItem', 'shouldHideFreePlan', 'signupDomainOrigin' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'signupDomainOrigin' ],
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
@@ -243,6 +243,9 @@ export function generateSteps( {
 			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				showBiennialToggle: true,
+			},
 		},
 
 		'plans-new': {
@@ -288,7 +291,7 @@ export function generateSteps( {
 			stepName: 'plans-business',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
+			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],
 			providesDependencies: [ 'cartItem' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,
@@ -368,8 +371,9 @@ export function generateSteps( {
 				'themeItem',
 				'shouldHideFreePlan',
 				'isManageSiteFlow',
+				'signupDomainOrigin',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			optionalDependencies: [ 'signupDomainOrigin', 'shouldHideFreePlan', 'isManageSiteFlow' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -395,7 +399,8 @@ export function generateSteps( {
 		},
 		'domain-only': {
 			stepName: 'domain-only',
-			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
+			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem', 'signupDomainOrigin' ], // note: siteId, siteSlug are not provided when used in domain flow
+			optionalDependencies: [ 'signupDomainOrigin' ],
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
@@ -423,8 +428,9 @@ export function generateSteps( {
 				'themeItem',
 				'useThemeHeadstart',
 				'shouldHideFreePlan',
+				'signupDomainOrigin',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart', 'signupDomainOrigin' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -434,7 +440,14 @@ export function generateSteps( {
 		'mailbox-domain': {
 			stepName: 'mailbox-domain',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'signupDomainOrigin',
+			],
+			optionalDependencies: [ 'signupDomainOrigin' ],
 			props: {
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 				get headerText() {

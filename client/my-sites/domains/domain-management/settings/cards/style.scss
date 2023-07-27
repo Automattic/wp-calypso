@@ -43,7 +43,7 @@
 			@include placeholder();
 		}
 
-		& .button:not(.is-primary) {
+		& .button:not(.is-primary):not(:disabled) {
 			color: var(--studio-gray-80);
 		}
 		& .button:not(:first-child) {

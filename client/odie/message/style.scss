@@ -1,0 +1,95 @@
+.odie-chatbox-message {
+	display: flex;
+	justify-content: space-between;
+	align-items: self-start;
+	margin-bottom: 8px;
+	max-width: 70%;
+	word-wrap: break-word;
+	padding: 12px;
+	border-radius: 4px;
+	font-size: $font-body-small;
+	line-height: 1.4;
+	color: #000;
+	flex-direction: column;
+}
+
+.odie-chatbox-message.odyssus-chatbox-message-user {
+	align-self: flex-end;
+	background-color: #dcf8c6;
+}
+
+.odie-chatbox-message.odyssus-chatbox-message-user > :last-child {
+	margin-bottom: 0;
+}
+
+.odie-chatbox-message.odyssus-chatbox-message-wapuu {
+	align-self: flex-start;
+	background-color: #f1f0f0;
+}
+
+
+.odie-chatbox-message-actions {
+	display: flex;
+	gap: 8px;
+	align-self: flex-end;
+	border: none;
+	background: transparent;
+	padding: 0;
+	margin: 0;
+	opacity: 1;
+	transform: scale(1);
+	visibility: visible;
+	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.odie-chatbox-message-action:focus {
+	outline: none;
+}
+
+.odie-chatbox-message-action {
+	cursor: pointer;
+	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.odie-chatbox-message-action:hover {
+	color: #0073aa;
+}
+
+.odie-chatbox-message-action.odie-chatbox-message-active-like {
+	animation: odie-chatbox-message-like-animation 0.3s ease-in-out forwards;
+	color: #0073aa;
+}
+
+.odie-chatbox-message-action.odie-chatbox-message-active-dislike {
+	animation: odie-chatbox-message-dislike-animation 0.3s ease-in-out forwards;
+	color: #0073aa;
+}
+
+.odie-chatbox-message-action.odie-chatbox-message-hide {
+	opacity: 0;
+	visibility: hidden;
+	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out 0.3s;
+}
+
+@keyframes odie-chatbox-message-like-animation {
+	0% {
+		transform: scale(1);
+	}
+	100% {
+		transform: scale(1.35) translateX(20px) rotate(-20deg);
+	}
+}
+
+@keyframes odie-chatbox-message-dislike-animation {
+	0% {
+		transform: scale(1);
+	}
+	100% {
+		transform: scale(1.35) rotate(-20deg);
+	}
+}
+
+.odie-chatbox-message-action-button {
+	display: inline;
+	padding: 0;
+}

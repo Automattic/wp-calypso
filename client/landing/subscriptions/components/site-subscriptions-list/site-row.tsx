@@ -1,9 +1,10 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { isValidId } from '@automattic/data-stores/src/reader';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
@@ -65,11 +66,10 @@ const SelectedNewPostDeliveryMethods = ( {
 	return <>{ selectedNewPostDeliveryMethods }</>;
 };
 
-type SiteRowProps = Reader.SiteSubscription & {
-	successNotice: typeof successNotice;
-};
+type SiteRowProps = Reader.SiteSubscription;
 
 const SiteRow = ( {
+	ID: subscriptionId,
 	blog_ID: blog_id,
 	feed_ID: feed_id,
 	name,
@@ -80,7 +80,6 @@ const SiteRow = ( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	isDeleted,
-	successNotice,
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -155,6 +154,10 @@ const SiteRow = ( {
 		}
 
 		if ( isSubscriptionsPortal ) {
+			if ( ! Reader.isValidId( blog_id ) ) {
+				// If it is a non-wpcom feed item, we want to open the reader's page for that feed
+				return `/read/feeds/${ feed_id }`;
+			}
 			return `/subscriptions/site/${ blog_id }`;
 		}
 	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal ] );
@@ -192,7 +195,7 @@ const SiteRow = ( {
 	};
 
 	return ! isDeleted ? (
-		<HStack as="li" alignItems="center" className="row" role="row">
+		<HStack as="li" alignment="center" className="row" role="row">
 			<span className="title-cell" role="cell">
 				<Link
 					className="title-icon"
@@ -201,13 +204,7 @@ const SiteRow = ( {
 						recordSiteIconClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
 					} }
 				>
-					<SiteIcon
-						iconUrl={ site_icon }
-						/* eslint-disable wpcalypso/jsx-gridicon-size */
-						defaultIcon={ <Gridicon key="globe-icon" icon="globe" size={ 40 } /> }
-						size={ 40 }
-						alt={ name }
-					/>
+					<SiteIcon iconUrl={ site_icon } size={ 40 } alt={ name } />
 				</Link>
 				<span className="title-column">
 					<Link
@@ -303,7 +300,12 @@ const SiteRow = ( {
 						unsubscribeInProgress.current = true;
 						unsubscribeCallback();
 						unsubscribe(
-							{ blog_id, url, doNotInvalidateSiteSubscriptions: true },
+							{
+								blog_id,
+								subscriptionId: Number( subscriptionId ),
+								url,
+								doNotInvalidateSiteSubscriptions: true,
+							},
 							{
 								onSuccess: () => {
 									unsubscribeInProgress.current = false;
@@ -322,10 +324,11 @@ const SiteRow = ( {
 						);
 					} }
 					unsubscribing={ unsubscribing }
+					isWpComSite={ isValidId( blog_id ) }
 				/>
 			</span>
 		</HStack>
 	) : null;
 };
 
-export default connect( null, { successNotice } )( SiteRow );
+export default SiteRow;

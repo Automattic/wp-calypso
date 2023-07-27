@@ -44,7 +44,7 @@ const ReaderUnsubscribedFeedItem = ( {
 	const translate = useTranslate();
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
 	return (
-		<HStack as="li" className="reader-unsubscribed-feed-item" alignItems="center" spacing={ 8 }>
+		<HStack as="li" className="reader-unsubscribed-feed-item" alignment="center" spacing={ 8 }>
 			<HStack className="reader-unsubscribed-feed-item__site-preview-h-stack" spacing={ 3 }>
 				{ isExternalLink ? (
 					<ExternalLink

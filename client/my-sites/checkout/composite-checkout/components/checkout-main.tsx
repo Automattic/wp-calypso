@@ -62,6 +62,7 @@ import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import { OnChangeItemVariant } from './item-variation-picker';
+import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -135,6 +136,7 @@ function CheckoutMain( {
 	customizedPreviousPath,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
+
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
@@ -344,6 +346,7 @@ function CheckoutMain( {
 	} );
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
+		contactDetailsType,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -767,6 +770,13 @@ function CheckoutMain( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 				/>
+				{
+					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
+					<JetpackProRedirectModal
+						redirectTo={ redirectTo }
+						productSourceFromUrl={ productSourceFromUrl }
+					/>
+				}
 			</CheckoutProvider>
 		</Fragment>
 	);
@@ -835,7 +845,9 @@ function InnerCheckoutMainWrapper( props: CheckoutMainProps ) {
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	return (
 		<StripeSetupIntentIdProvider
-			fetchStipeSetupIntentId={ getStripeConfiguration }
+			fetchStripeSetupIntentId={ () =>
+				getStripeConfiguration( { needs_intent: true, source: 'checkout' } )
+			}
 			isDisabled={ ! isPurchaseFree || isLoading || isPendingUpdate }
 		>
 			<CheckoutMain { ...props } />

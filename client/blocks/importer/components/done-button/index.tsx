@@ -27,8 +27,6 @@ const DoneButton: React.FunctionComponent< Props > = ( props ) => {
 		isPrimary = true,
 	} = props;
 
-	const isSecondary = isPrimary ? false : true;
-
 	function onButtonClick() {
 		onSiteViewClick?.();
 		job && siteId && resetImport && resetImport( siteId, job?.importerId );
@@ -36,8 +34,7 @@ const DoneButton: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<NextButton
-			isPrimary={ isPrimary }
-			isSecondary={ isSecondary }
+			variant={ isPrimary ? 'primary' : 'secondary' }
 			className={ className }
 			onClick={ onButtonClick }
 		>

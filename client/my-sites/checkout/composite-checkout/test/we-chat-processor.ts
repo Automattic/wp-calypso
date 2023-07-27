@@ -55,6 +55,10 @@ describe( 'weChatProcessor', () => {
 			path: '/',
 			viewport: '0x0',
 		},
+		ad_conversion: {
+			ad_details: '',
+			sensitive_pixel_options: '',
+		},
 	};
 
 	const redirect_url = 'https://test-redirect-url';

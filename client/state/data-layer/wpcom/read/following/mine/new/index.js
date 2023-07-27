@@ -15,8 +15,6 @@ import {
 } from 'calypso/state/reader/follows/actions';
 import { followedRecommendedSite } from 'calypso/state/reader/recommended-sites/actions';
 
-const isSubscriptionManagerEnabled = config.isEnabled( 'reader/subscription-management' );
-
 export function requestFollow( action ) {
 	const feedUrl = action.payload?.feedUrl;
 
@@ -34,8 +32,13 @@ export function requestFollow( action ) {
 	);
 }
 
-function handleRecommendedSiteFollowSuccess( recommendedSiteInfo ) {
+function getRecommendedSiteFollowSuccessActions( recommendedSiteInfo ) {
+	if ( ! recommendedSiteInfo ) {
+		return [];
+	}
+
 	const { siteId, seed, siteTitle } = recommendedSiteInfo;
+
 	return [
 		followedRecommendedSite( { siteId, seed } ),
 		successNotice( translate( "Success! You're now subscribed to %s.", { args: siteTitle } ), {
@@ -53,8 +56,8 @@ export function receiveFollow( action, response ) {
 			requestFollowCompleted( action?.payload?.feedUrl ),
 		];
 
-		if ( isSubscriptionManagerEnabled && recommendedSiteInfo ) {
-			return [ ...actions, ...handleRecommendedSiteFollowSuccess( recommendedSiteInfo ) ];
+		if ( recommendedSiteInfo ) {
+			actions.push( ...getRecommendedSiteFollowSuccessActions( recommendedSiteInfo ) );
 		}
 
 		return actions;

@@ -39,5 +39,6 @@ export const dependencyStoreSchema = {
 			theme: { type: 'string' },
 		},
 		theme: { type: 'string' },
+		signupDomainOrigin: { type: 'string' },
 	},
 };

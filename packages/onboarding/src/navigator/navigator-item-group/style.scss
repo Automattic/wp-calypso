@@ -3,14 +3,12 @@
 .navigator-item-group {
 	flex-shrink: 0;
 
-	.navigator-button__wrapper {
+	.components-item-group > div[role="listitem"] {
 		display: flex;
+	}
 
-		.navigator-button {
-			flex: 1;
-			// Expand sides out of wrapper in main screen
-			margin: 0 -11px;
-		}
+	.navigator-button {
+		flex-grow: 1;
 	}
 
 	&:nth-child(1 of &):nth-last-child(1 of &) {

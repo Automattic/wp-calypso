@@ -12,7 +12,6 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
@@ -39,17 +38,17 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
-import { getReaderTags } from 'calypso/state/reader/tags/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import './style.scss';
 
-const WIDE_DISPLAY_CUTOFF = 900;
+export const WIDE_DISPLAY_CUTOFF = 900;
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
@@ -59,10 +58,10 @@ const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 class ReaderStream extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		emptyContent: PropTypes.object,
+		emptyContent: PropTypes.func,
 		followSource: PropTypes.string,
 		forcePlaceholders: PropTypes.bool,
-		intro: PropTypes.object,
+		intro: PropTypes.func,
 		isDiscoverStream: PropTypes.bool,
 		isMain: PropTypes.bool,
 		onUpdatesShown: PropTypes.func,
@@ -72,8 +71,8 @@ class ReaderStream extends Component {
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
-		streamHeader: PropTypes.element,
-		streamSidebar: PropTypes.element,
+		streamHeader: PropTypes.func,
+		streamSidebar: PropTypes.func,
 		suppressSiteNameLink: PropTypes.bool,
 		trackScrollPage: PropTypes.func.isRequired,
 		translate: PropTypes.func,
@@ -97,6 +96,8 @@ class ReaderStream extends Component {
 	state = {
 		selectedTab: 'posts',
 	};
+
+	isMounted = false;
 
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
@@ -123,7 +124,6 @@ class ReaderStream extends Component {
 			this.props.requestPage( {
 				streamKey: this.props.recsStreamKey,
 				pageHandle: this.props.recsStream.pageHandle,
-				tags: this.props.recsStream.tags,
 			} );
 		}
 	}
@@ -176,6 +176,7 @@ class ReaderStream extends Component {
 		this.props.resetCardExpansions();
 		this.props.viewStream( streamKey, window.location.pathname );
 		this.fetchNextPage( {} );
+		this.isMounted = true;
 
 		window.addEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
@@ -365,12 +366,12 @@ class ReaderStream extends Component {
 	};
 
 	poll = () => {
-		const { streamKey, tags } = this.props;
-		this.props.requestPage( { streamKey, isPoll: true, tags } );
+		const { streamKey } = this.props;
+		this.props.requestPage( { streamKey, isPoll: true } );
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		const { streamKey, stream, startDate, tags } = props;
+		const { streamKey, stream, startDate } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
@@ -378,7 +379,7 @@ class ReaderStream extends Component {
 			props.trackScrollPage( pageId );
 		}
 		const pageHandle = stream.pageHandle || { before: startDate };
-		props.requestPage( { streamKey, pageHandle, tags } );
+		props.requestPage( { streamKey, pageHandle } );
 	};
 
 	showUpdates = () => {
@@ -443,7 +444,7 @@ class ReaderStream extends Component {
 					siteId={ primarySiteId }
 					showFollowButton={ this.props.showFollowButton }
 				/>
-				{ index === 0 && <PerformanceTrackerStop /> }
+				{ index === 0 && <ReaderPerformanceTrackerStop /> }
 			</Fragment>
 		);
 	};
@@ -452,7 +453,6 @@ class ReaderStream extends Component {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
-		const hasNoPosts = items.length === 0 && ! isRequesting;
 		let body;
 		let showingStream;
 
@@ -462,6 +462,8 @@ class ReaderStream extends Component {
 			isRequesting = true;
 		}
 
+		const hasNoPosts = this.isMounted && items.length === 0 && ! isRequesting;
+
 		const streamType = getStreamType( streamKey );
 
 		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
@@ -470,7 +472,7 @@ class ReaderStream extends Component {
 
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
-			body = this.props.emptyContent;
+			body = this.props.emptyContent?.();
 			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
 				body = <EmptyContent />;
 			}
@@ -492,26 +494,26 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			const sidebarContent = this.props.streamSidebar;
+			const sidebarContentFn = this.props.streamSidebar;
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
-			if ( ! sidebarContent || streamType === 'search' ) {
+			if ( ! sidebarContentFn || streamType === 'search' ) {
 				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
 						<div className="reader__content">
-							{ streamHeader }
+							{ streamHeader?.() }
 							{ bodyContent }
 						</div>
-						<div className="stream__right-column">{ sidebarContent }</div>
+						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
 				baseClassnames = classnames( 'reader-two-column', baseClassnames );
 			} else {
 				body = (
 					<>
-						{ streamHeader }
+						{ streamHeader?.() }
 						<div className="stream__header">
 							<SectionNav selectedText={ this.state.selectedTab }>
 								<NavTabs label={ translate( 'Status' ) }>
@@ -536,7 +538,7 @@ class ReaderStream extends Component {
 							<div className="reader__content">{ bodyContent }</div>
 						) }
 						{ this.state.selectedTab === 'sites' && (
-							<div className="stream__right-column">{ sidebarContent }</div>
+							<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 						) }
 					</>
 				);
@@ -556,7 +558,7 @@ class ReaderStream extends Component {
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
 				{ this.props.children }
-				{ showingStream && items.length ? this.props.intro : null }
+				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
 				{ showingStream && items.length && ! isRequesting ? <ListEnd /> : null }
 			</TopLevel>
@@ -586,7 +588,6 @@ export default connect(
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
-			tags: getReaderTags( state ),
 		};
 	},
 	{

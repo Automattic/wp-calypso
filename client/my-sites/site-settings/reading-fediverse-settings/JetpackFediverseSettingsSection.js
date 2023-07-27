@@ -17,7 +17,7 @@ export const JetpackFediverseSettingsSection = ( { siteId } ) => {
 			<QueryPlugins siteId={ siteId } />
 			<Card className="site-settings__card">
 				<p>
-					The fediverse is a network of social media sites like Mastodon and Pixelfed and Calckey
+					The fediverse is a network of social media sites like Mastodon and Pixelfed and Firefish
 					and Peertube and Pleroma, oh my!
 				</p>
 				<p>

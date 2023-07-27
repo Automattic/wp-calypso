@@ -8,7 +8,10 @@ export {
 	default as UnifiedDesignPicker,
 	DesignPreviewImage,
 } from './components/unified-design-picker';
-export { default as PatternAssemblerCta } from './components/pattern-assembler-cta';
+export {
+	default as PatternAssemblerCta,
+	usePatternAssemblerCtaData,
+} from './components/pattern-assembler-cta';
 export {
 	availableDesignsConfig,
 	getAvailableDesigns,
@@ -19,6 +22,7 @@ export {
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
+	shouldGoToAssembler,
 } from './utils';
 export {
 	FONT_PAIRINGS,

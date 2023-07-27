@@ -1,0 +1,210 @@
+.chatbox {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	width: 300px;
+	height: 400px;
+	background-color: #f8f9fa;
+	border-radius: 4px;
+	border: 1px solid #e0e0e0;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-end;  /* Align child elements to the bottom */
+	transform: translateX(0);
+	transition: transform 0.5s ease-in-out;
+	z-index: 998;
+}
+
+.chatbox-header {
+	width: 100%;
+	background-color: #23282d;
+	color: #fff;
+	border-radius: 4px;
+	text-indent: 16px;
+	line-height: 62px;
+	font-size: large;
+}
+
+.chatbox-show {
+	transform: translateX(0);
+}
+
+.chatbox-hide {
+	transform: translateX(calc(100% + 20px));
+}
+
+.chatbox-toggle {
+	padding: 0;
+	background-color: transparent;
+	z-index: 999;
+	transform: translateX(0);
+	transition: transform 0.5s ease-in-out;
+	outline: none !important;
+	box-shadow: none !important;
+	border: none !important;
+	position: fixed;
+	right: 248px;
+	bottom: 330px;
+}
+
+.chatbox-messages {
+	overflow-y: auto;
+	word-wrap: break-word;
+	padding: 12px;
+	border-radius: 4px;
+	font-size: medium;
+	max-width: 280px;
+	line-height: 1.4;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	max-height: 284px;
+	padding-bottom: 4px;
+}
+
+.chatbox-input-area {
+	display: flex;
+	justify-content: space-between;
+	align-items: top;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.chatbox-input {
+	padding-left: 8px;
+	width: 80%;
+}
+
+.chatbox-send-btn {
+	width: 18%;
+	height: 30px;
+	border: none;
+	background-color: #007bff;
+	color: #fff;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.chatbox-send-btn:hover {
+	background-color: #0056b3;
+}
+
+.wapuu-image {
+	width: 33%;
+	left: -18px;
+	top: -46px;
+}
+
+.wapuu-ear-image {
+	width: 18%;
+	left: -42px;
+	top: -23px;
+	transform-origin: 55px 6px;
+}
+
+.wapuu-animation-nudge {
+	animation: rotateEar 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 2 both;
+}
+
+@keyframes rotateEar {
+	0%,
+	100% {
+		transform: rotate(0);
+	}
+	15% {
+		transform: rotate(6deg);
+	}
+	30% {
+		transform: rotate(-6deg);
+	}
+	45% {
+		transform: rotate(3.6deg);
+	}
+	60% {
+		transform: rotate(-2.4deg);
+	}
+	75% {
+		transform: rotate(1.2deg);
+	}
+}
+
+.wapuu-tail-image {
+	width: 22%;
+	left: -15px;
+	top: 59px;
+	transform-origin: 16px 0;
+	rotate: 60deg;
+	z-index: 500;
+}
+
+.wapuu-animation-loading {
+	animation: pendulum-swing 2s ease-in-out infinite;
+}
+
+@keyframes pendulum-swing {
+	0% {
+		transform: rotate(15deg);
+	}
+	50% {
+		transform: rotate(-15deg);
+	}
+	100% {
+		transform: rotate(15deg);
+	}
+}
+
+.chat-box-message-container {
+	width: 100%;
+}
+
+.using-environment-badge {
+	bottom: 64px;
+}
+
+/* When chatbox is hidden */
+.chatbox-hide-vertical {
+	transform: translateY(calc(100% + 5px));
+}
+
+/* When chatbox is visible */
+.chatbox-show-vertical {
+	transform: translateY(0);
+}
+
+@keyframes fadeToColor {
+	0%,
+	10%,
+	30%,
+	50%,
+	70% {
+		color: #ece6f6;
+	}
+	20%,
+	40%,
+	60% {
+		color: #007cba;
+	}
+	80%,
+	90%,
+	100% {
+		color: #ece6f6;
+	}
+}
+
+.chatbox-attention {
+	animation: fadeToColor 4s linear infinite;
+}
+
+.chatbox-header-button {
+	color: #ece6f6;
+	border: none;
+	outline: none;
+	padding: 0;
+	cursor: pointer;
+	background: none;
+	font-size: large;
+	font-weight: normal;
+	text-align: left;
+	width: 100%;
+}

@@ -54,6 +54,7 @@ function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): 
 			  }
 			: null,
 		isCancelable: Boolean( purchase.is_cancelable ),
+		isDomain: Boolean( purchase.is_domain ),
 		isDomainRegistration: Boolean( purchase.is_domain_registration ),
 		isLocked: Boolean( purchase.is_locked ),
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),

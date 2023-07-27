@@ -3,6 +3,10 @@ import {
 	isJetpackPlanSlug,
 	isJetpackBackupSlug,
 	isJetpackScanSlug,
+	isJetpackAntiSpamSlug,
+	isJetpackSearchSlug,
+	isJetpackBoostSlug,
+	isJetpackVideoPressSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
@@ -117,6 +121,18 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 		);
 	};
 
+	const hasBenefitsToShow = ( productSlug: string ) => {
+		return (
+			isJetpackScanSlug( productSlug ) ||
+			isJetpackBackupSlug( productSlug ) ||
+			isJetpackAntiSpamSlug( productSlug ) ||
+			isJetpackSearchSlug( productSlug ) ||
+			isJetpackBoostSlug( productSlug ) ||
+			isJetpackVideoPressSlug( productSlug ) ||
+			isJetpackPlanSlug( productSlug )
+		);
+	};
+
 	const getCancelConsequenceByProduct = ( productSlug: string ) => {
 		if ( isJetpackScanSlug( productSlug ) ) {
 			return translate(
@@ -130,9 +146,13 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 			return translate(
 				"Once you remove your subscription, you will no longer have Jetpack's enhanced search experience."
 			);
+		} else if ( hasBenefitsToShow( productSlug ) ) {
+			return translate(
+				'Once you remove your subscription, you will lose access to the following:'
+			);
 		}
 
-		return translate( 'Once you remove your subscription, you will lose access to the following:' );
+		return '';
 	};
 
 	return (
@@ -149,7 +169,9 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 				isSecondary={ true }
 			/>
 
-			<JetpackBenefits siteId={ siteId } productSlug={ productSlug } />
+			{ hasBenefitsToShow( productSlug ) && (
+				<JetpackBenefits siteId={ siteId } productSlug={ productSlug } />
+			) }
 
 			{ isJetpackPlanSlug( productSlug ) && ( // show general benefits for plans
 				<div className="cancel-jetpack-form__jetpack-general-benefits">
