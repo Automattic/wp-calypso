@@ -48,7 +48,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						badge: __( 'Google Domains: Free' ),
+						badge: __( 'Free for Google Domains' ),
 						description: (
 							<p>
 								{ isEnglishLocale ||
