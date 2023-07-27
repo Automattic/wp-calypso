@@ -16,6 +16,8 @@ export interface PremiumGlobalStylesUpgradeModalProps {
 	closeModal: () => void;
 	isOpen: boolean;
 	tryStyle: () => void;
+	/** Now we have 3 types of global styles including style variations, color variations, and font variations */
+	numOfSelectedGlobalStyles?: number;
 }
 
 export default function PremiumGlobalStylesUpgradeModal( {
@@ -24,6 +26,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	closeModal,
 	isOpen,
 	tryStyle,
+	numOfSelectedGlobalStyles = 1,
 }: PremiumGlobalStylesUpgradeModalProps ) {
 	const translate = useTranslate();
 	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
@@ -45,11 +48,31 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	];
 	const displayFeatures = globalStylesInPersonalPlan ? personalFeatures : features;
 
+	const featureList = (
+		<div className="upgrade-modal__included">
+			<h2>
+				{ globalStylesInPersonalPlan
+					? translate( 'Included with your Personal plan' )
+					: translate( 'Included with your Premium plan' ) }
+			</h2>
+			<ul>
+				{ displayFeatures.map( ( feature, i ) => (
+					<li key={ i } className="upgrade-modal__included-item">
+						<Gridicon icon="checkmark" size={ 16 } />
+						{ feature }
+					</li>
+				) ) }
+			</ul>
+		</div>
+	);
+
 	return (
 		<>
 			<QueryProductsList />
 			<Dialog
-				className={ classNames( 'upgrade-modal', { loading: isLoading } ) }
+				className={ classNames( 'upgrade-modal', 'premium-global-styles-upgrade-modal', {
+					loading: isLoading,
+				} ) }
 				isFullScreen
 				isVisible={ isOpen }
 				onClose={ () => closeModal() }
@@ -64,19 +87,26 @@ export default function PremiumGlobalStylesUpgradeModal( {
 									<p>
 										{ globalStylesInPersonalPlan
 											? translate(
-													"You've selected a custom style that will only be visible to visitors after upgrading to the Personal plan or higher."
+													'You’ve selected a custom style that will only be visible to visitors after upgrading to the Personal plan or higher.',
+													'You’ve selected custom styles that will only be visible to visitors after upgrading to the Personal plan or higher.',
+													{ count: numOfSelectedGlobalStyles }
 											  )
 											: translate(
-													"You've selected a custom style that will only be visible to visitors after upgrading to the Premium plan or higher."
+													'You’ve selected a custom style that will only be visible to visitors after upgrading to the Premium plan or higher.',
+													'You’ve selected custom styles that will only be visible to visitors after upgrading to the Premium plan or higher.',
+													{ count: numOfSelectedGlobalStyles }
 											  ) }
 									</p>
 									<p>
 										{ translate(
-											'Upgrade now to unlock your custom style and get access to tons of other features. Or you can decide later and try it out first.'
+											'Upgrade now to unlock your custom style and get access to tons of other features. Or you can decide later and try it out first.',
+											'Upgrade now to unlock your custom styles and get access to tons of other features. Or you can decide later and try them out first.',
+											{ count: numOfSelectedGlobalStyles }
 										) }
 									</p>
 								</>
 							) }
+							{ featureList }
 							<div className="upgrade-modal__actions bundle">
 								<Button className="upgrade-modal__cancel" onClick={ () => tryStyle() }>
 									{ translate( 'Decide later' ) }
@@ -90,23 +120,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 								</Button>
 							</div>
 						</div>
-						<div className="upgrade-modal__col">
-							<div className="upgrade-modal__included">
-								<h2>
-									{ globalStylesInPersonalPlan
-										? translate( 'Included with your Personal plan' )
-										: translate( 'Included with your Premium plan' ) }
-								</h2>
-								<ul>
-									{ displayFeatures.map( ( feature, i ) => (
-										<li key={ i } className="upgrade-modal__included-item">
-											<Gridicon icon="checkmark" size={ 16 } />
-											{ feature }
-										</li>
-									) ) }
-								</ul>
-							</div>
-						</div>
+						<div className="upgrade-modal__col">{ featureList }</div>
 						<Button className="upgrade-modal__close" borderless onClick={ () => closeModal() }>
 							<Gridicon icon="cross" size={ 12 } />
 							<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>

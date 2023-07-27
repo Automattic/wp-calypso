@@ -6,7 +6,6 @@ import {
 	FREE_FLOW,
 	COPY_SITE_FLOW,
 	ONBOARDING_PM_FLOW,
-	DOMAIN_TRANSFER,
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 } from '../utils/flows';
@@ -23,10 +22,11 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		intro: 0,
 		user: 0,
 		newsletterSetup: 0,
-		domains: 1,
-		'plans-newsletter': 2,
-		subscribers: 3,
-		launchpad: 4,
+		newsletterGoals: 1,
+		domains: 2,
+		'plans-newsletter': 3,
+		subscribers: 4,
+		launchpad: 5,
 	},
 	[ LINK_IN_BIO_FLOW ]: {
 		intro: 0,
@@ -108,12 +108,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		processing: 4,
 		/** Phantom step that is outside stepper */
 		checkout: 5,
-	},
-	[ DOMAIN_TRANSFER ]: {
-		user: 0,
-		intro: 1,
-		domains: 2,
-		processing: 3,
 	},
 };
 

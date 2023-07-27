@@ -19,8 +19,10 @@ type ReaderUnsubscribedFeedItemProps = {
 	onDisplayUrlClick?: () => void;
 	onSubscribeClick?: () => void;
 	onTitleClick?: () => void;
+	onIconClick?: () => void;
 	subscribeDisabled?: boolean;
 	title?: string;
+	isExternalLink?: boolean;
 };
 
 const ReaderUnsubscribedFeedItem = ( {
@@ -33,30 +35,59 @@ const ReaderUnsubscribedFeedItem = ( {
 	onDisplayUrlClick,
 	onSubscribeClick,
 	onTitleClick,
+	onIconClick,
 	hasSubscribed = false,
 	subscribeDisabled = false,
+	isExternalLink = false,
 	title,
 }: ReaderUnsubscribedFeedItemProps ) => {
 	const translate = useTranslate();
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
 	return (
-		<HStack as="li" className="reader-unsubscribed-feed-item" alignItems="center" spacing={ 8 }>
+		<HStack as="li" className="reader-unsubscribed-feed-item" alignment="center" spacing={ 8 }>
 			<HStack className="reader-unsubscribed-feed-item__site-preview-h-stack" spacing={ 3 }>
-				<SiteIcon iconUrl={ iconUrl } defaultIcon={ defaultIcon } size={ 40 } />
-				<VStack className="reader-unsubscribed-feed-item__title-with-url-v-stack" spacing={ 0 }>
-					<a
-						className="reader-unsubscribed-feed-item__title"
+				{ isExternalLink ? (
+					<ExternalLink
+						className="reader-unsubscribed-feed-item__icon"
 						href={ feedUrl }
-						onClick={ onTitleClick } // TODO: track click
+						onClick={ onIconClick }
+						target="_blank"
 					>
-						{ title ? title : filteredDisplayUrl }
+						<SiteIcon iconUrl={ iconUrl } defaultIcon={ defaultIcon } size={ 40 } />
+					</ExternalLink>
+				) : (
+					<a
+						className="reader-unsubscribed-feed-item__icon"
+						href={ feedUrl }
+						onClick={ onIconClick }
+					>
+						<SiteIcon iconUrl={ iconUrl } defaultIcon={ defaultIcon } size={ 40 } />
 					</a>
+				) }
+				<VStack className="reader-unsubscribed-feed-item__title-with-url-v-stack" spacing={ 0 }>
+					{ isExternalLink ? (
+						<ExternalLink
+							className="reader-unsubscribed-feed-item__title"
+							href={ feedUrl }
+							target="_blank"
+							onClick={ onTitleClick }
+						>
+							{ title ? title : filteredDisplayUrl }
+						</ExternalLink>
+					) : (
+						<a
+							className="reader-unsubscribed-feed-item__title"
+							href={ feedUrl }
+							onClick={ onTitleClick }
+						>
+							{ title ? title : filteredDisplayUrl }
+						</a>
+					) }
 					<ExternalLink
 						className="reader-unsubscribed-feed-item__url"
 						href={ displayUrl }
-						rel="noreferrer noopener"
 						target="_blank"
-						onClick={ onDisplayUrlClick } // TODO: track click
+						onClick={ onDisplayUrlClick }
 					>
 						{ filteredDisplayUrl }
 					</ExternalLink>
@@ -64,7 +95,6 @@ const ReaderUnsubscribedFeedItem = ( {
 			</HStack>
 			<div className="reader-unsubscribed-feed-item__description">{ description }</div>
 			<div>
-				{ /* TODO: track click */ }
 				<Button
 					primary
 					disabled={ subscribeDisabled }

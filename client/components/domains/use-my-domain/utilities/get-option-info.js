@@ -109,7 +109,7 @@ export function getOptionInfo( {
 						__(
 							"We don't support transfers for domains ending with <strong>.%s</strong>, but you can connect it instead."
 						),
-						getTld( domain )
+						availability.tld || getTld( domain )
 					),
 					{ strong: createElement( 'strong' ) }
 				),

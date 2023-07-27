@@ -42,7 +42,13 @@ const plans: Step = function Plans( { navigation, flow } ) {
 			hideFormattedHeader={ true }
 			isLargeSkipLayout={ false }
 			hideBack={ ! isAllowedToGoBack }
-			stepContent={ <PlansWrapper flowName={ flow } onSubmit={ handleSubmit } /> }
+			stepContent={
+				<PlansWrapper
+					flowName={ flow }
+					onSubmit={ handleSubmit }
+					shouldIncludeFAQ={ isNewHostedSiteCreationFlow( flow ) }
+				/>
+			}
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

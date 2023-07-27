@@ -40,6 +40,7 @@ export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
 export const FEATURE_50GB_STORAGE = '50gb-storage';
 export const FEATURE_200GB_STORAGE = '200gb-storage';
+export const FEATURE_LEGACY_STORAGE_200GB = 'upload-space-200gb';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
 export const FEATURE_EMAIL_SUPPORT = 'email-support';
@@ -103,6 +104,7 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
+export const FEATURE_STATS_PAID = 'stats-paid';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -237,6 +239,7 @@ export const FEATURE_WOOCOMMERCE = 'woocommerce';
 export const FEATURE_SOCIAL_MEDIA_TOOLS = 'social-media-tools';
 
 // From class-wpcom-features.php in WPCOM
+export const WPCOM_FEATURES_AI_ASSISTANT = 'ai-assistant';
 export const WPCOM_FEATURES_AKISMET = 'akismet';
 export const WPCOM_FEATURES_ANTISPAM = 'antispam';
 export const WPCOM_FEATURES_ATOMIC = 'atomic';
@@ -367,6 +370,8 @@ export const FEATURE_PLUGIN_AUTOUPDATE_JP = 'plugin-autoupdate-jp';
 export const FEATURE_PREMIUM_CONTENT_JP = 'premium-content-jp';
 export const FEATURE_SITE_ACTIVITY_LOG_JP = 'site-activity-log-jp';
 export const FEATURE_DONATIONS_AND_TIPS_JP = 'donations-and-tips-jp';
+export const FEATURE_PAYPAL_JP = 'payments-paypal-jp';
+export const FEATURE_PAYMENT_BUTTONS_JP = 'payment-buttons-jp';
 export const FEATURE_AUTOMATTIC_DATACENTER_FAILOVER = 'automattic-datacenter-fail-over';
 export const FEATURE_PREMIUM_STORE_THEMES = 'premium-store-themes';
 export const FEATURE_STORE_DESIGN = 'store-design';

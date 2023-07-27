@@ -9,7 +9,7 @@ const useRecordSiteUnsubscribed = () => {
 	const { isReaderPortal } = useSubscriptionManagerContext();
 
 	const recordSiteUnsubscribed = ( tracksProps: {
-		blog_id: string;
+		blog_id?: string | null;
 		url: string;
 		source?: string;
 	} ) => {

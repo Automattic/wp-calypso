@@ -43,7 +43,9 @@ const Cloudflare = () => {
 								<p className="site-settings__cloudflare-title">
 									{ translate( 'Jetpack Site Accelerator' ) }
 								</p>
-								<p>{ translate( 'Comes built-in with WordPress.com Business plans.' ) }</p>
+								<p>
+									{ translate( 'The CDN that comes built-in with WordPress.com Business plans.' ) }
+								</p>
 								<p>
 									<a
 										onClick={ recordClick }
@@ -77,7 +79,7 @@ const Cloudflare = () => {
 								</p>
 								<p>
 									{ translate(
-										'An alternative to Jetpack CDN, with security-focused plans available for sites with a custom domain enabled.'
+										'An alternative to Jetpack Site Accelerator, with security-focused plans available for sites with a custom domain enabled.'
 									) }
 								</p>
 								<p>

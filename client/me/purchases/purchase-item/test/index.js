@@ -31,6 +31,26 @@ describe( 'PurchaseItem', () => {
 		} );
 	} );
 
+	describe( 'an in-app purchase', () => {
+		const purchase = {
+			isInAppPurchase: true,
+			isAutoRenewEnabled: false,
+		};
+
+		test( 'should not display warning', () => {
+			renderWithProvider( <PurchaseItem purchase={ purchase } /> );
+
+			expect(
+				screen.queryByText( 'You don’t have a payment method to renew this subscription' )
+			).toBeNull();
+		} );
+
+		test( 'should display in-app purchase as the payment method', () => {
+			renderWithProvider( <PurchaseItem purchase={ purchase } /> );
+			expect( screen.getByText( 'In-App Purchase' ) ).toBeInTheDocument();
+		} );
+	} );
+
 	test( 'should display warning if auto-renew is enabled but no payment method', () => {
 		const purchase = {
 			productSlug: 'business-bundle',

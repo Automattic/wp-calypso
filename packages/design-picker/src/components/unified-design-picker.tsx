@@ -24,7 +24,7 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 
 interface DesignPreviewImageProps {
 	design: Design;
-	locale: string;
+	locale?: string;
 	styleVariation?: StyleVariation;
 }
 
@@ -38,9 +38,9 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	return (
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
-				language: locale,
 				use_screenshot_overrides: true,
 				style_variation: styleVariation,
+				...( locale && { language: locale } ),
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""

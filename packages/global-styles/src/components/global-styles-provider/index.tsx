@@ -1,30 +1,30 @@
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
-import { isEmpty, mapValues } from 'lodash';
-import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useGetGlobalStylesBaseConfig } from '../../hooks';
+import { useState, useMemo, useCallback } from 'react';
+import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
+import { useGetGlobalStylesBaseConfig, useRegisterCoreBlocks } from '../../hooks';
 import type { GlobalStylesObject } from '../../types';
 
-const cleanEmptyObject = ( object: any ) => {
+const cleanEmptyObject = < T, >( object: T ) => {
 	if ( object === null || typeof object !== 'object' || Array.isArray( object ) ) {
 		return object;
 	}
-	const cleanedNestedObjects: any = Object.fromEntries(
-		Object.entries( mapValues( object, cleanEmptyObject ) ).filter( ( [ , value ] ) =>
-			Boolean( value )
-		)
+	const cleanedNestedObjects: T = Object.fromEntries(
+		Object.entries( object )
+			.map( ( [ key, value ] ) => [ key, cleanEmptyObject( value ) ] )
+			.filter( ( [ , value ] ) => value !== undefined )
 	);
-	return isEmpty( cleanedNestedObjects ) ? undefined : cleanedNestedObjects;
+
+	return Object.keys( cleanedNestedObjects ).length > 0 ? cleanedNestedObjects : undefined;
 };
 
-const useGlobalStylesUserConfig = () => {
+type SetConfig = ( callback: ( config: GlobalStylesObject ) => GlobalStylesObject ) => void;
+
+const useGlobalStylesUserConfig = (): [ boolean, GlobalStylesObject, SetConfig ] => {
 	const [ userConfig, setUserConfig ] = useState< GlobalStylesObject >( {
 		settings: {},
 		styles: {},
 	} );
-
-	const setConfig = useCallback(
-		( callback: ( config: GlobalStylesObject ) => GlobalStylesObject ) => {
+	const setConfig: SetConfig = useCallback(
+		( callback ) => {
 			setUserConfig( ( currentConfig ) => {
 				const updatedConfig = callback( currentConfig );
 				return {
@@ -35,28 +35,26 @@ const useGlobalStylesUserConfig = () => {
 		},
 		[ setUserConfig ]
 	);
-
-	return [ !! true, userConfig, setConfig ];
+	return [ true, userConfig, setConfig ];
 };
 
-const useGlobalStylesBaseConfig = ( siteId: number | string, stylesheet: string ) => {
+const useGlobalStylesBaseConfig = (
+	siteId: number | string,
+	stylesheet: string
+): [ boolean, GlobalStylesObject | undefined ] => {
 	const { data } = useGetGlobalStylesBaseConfig( siteId, stylesheet );
-
 	return [ !! data, data ];
 };
 
 const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) => {
 	const [ isUserConfigReady, userConfig, setUserConfig ] = useGlobalStylesUserConfig();
-
 	const [ isBaseConfigReady, baseConfig ] = useGlobalStylesBaseConfig( siteId, stylesheet );
-
 	const mergedConfig = useMemo( () => {
 		if ( ! baseConfig || ! userConfig ) {
 			return {};
 		}
 		return mergeBaseAndUserConfigs( baseConfig, userConfig );
 	}, [ userConfig, baseConfig ] );
-
 	const context = useMemo( () => {
 		return {
 			isReady: isUserConfigReady && isBaseConfigReady,
@@ -73,7 +71,6 @@ const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) =
 		isUserConfigReady,
 		isBaseConfigReady,
 	] );
-
 	return context;
 };
 
@@ -84,29 +81,13 @@ interface Props {
 	placeholder: JSX.Element | null;
 }
 
-let blocksRegistered = false;
-
 const GlobalStylesProvider = ( { siteId, stylesheet, children, placeholder = null }: Props ) => {
 	const context = useGlobalStylesContext( siteId, stylesheet );
+	const isBlocksRegistered = useRegisterCoreBlocks();
 
-	useEffect( () => {
-		if ( blocksRegistered ) {
-			return;
-		}
-
-		blocksRegistered = true;
-
-		// The block-level styles have effects only when the specific blocks are registered so we have to register core blocks.
-		// See https://github.com/WordPress/gutenberg/blob/16486bd946f918d581e4818b73ceaaed82349f71/packages/block-editor/src/components/global-styles/use-global-styles-output.js#L1190
-		import( '@wordpress/block-library' ).then(
-			( { registerCoreBlocks }: typeof import('@wordpress/block-library') ) => registerCoreBlocks()
-		);
-	}, [] );
-
-	if ( ! context.isReady ) {
+	if ( ! context.isReady || ! isBlocksRegistered ) {
 		return placeholder;
 	}
-
 	return (
 		<GlobalStylesContext.Provider value={ context }>{ children }</GlobalStylesContext.Provider>
 	);

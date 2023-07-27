@@ -6,7 +6,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { useEffect, Component } from 'react';
+import { useCallback, useEffect, Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -29,8 +29,7 @@ import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import OdysseusAssistant from 'calypso/odysseus';
-import { OdysseusAssistantProvider } from 'calypso/odysseus/context';
+import { OdieAssistantProvider } from 'calypso/odie/context';
 import { isOffline } from 'calypso/state/application/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -91,6 +90,9 @@ function SidebarScrollSynchronizer() {
 function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
+	const handleClose = useCallback( () => {
+		setShowHelpCenter( false );
+	}, [ setShowHelpCenter ] );
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -100,9 +102,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 		<AsyncLoad
 			require="@automattic/help-center"
 			placeholder={ null }
-			handleClose={ () => {
-				setShowHelpCenter( false );
-			} }
+			handleClose={ handleClose }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 		/>
@@ -200,15 +200,21 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
-	shouldShowOdysseusAssistant() {
-		// We will only show the Odysseus Assistant under the "Upgrades" menu.
-		return (
-			[ 'plans', 'add-ons', 'domains', 'email', 'site-purchases', 'checkout' ].includes(
-				this.props.sectionName
-			) &&
-			! this.props.isOffline &&
-			config.isEnabled( 'odysseus' )
-		);
+	shouldShowOdieAssistant() {
+		const eligibleSections = [
+			'plans',
+			'add-ons',
+			'domains',
+			'email',
+			'site-purchases',
+			'checkout',
+		];
+
+		if ( this.props.isOffline ) {
+			return false;
+		}
+
+		return eligibleSections.includes( this.props.sectionName );
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
@@ -318,11 +324,10 @@ class Layout extends Component {
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
-						{ this.shouldShowOdysseusAssistant() ? (
-							<OdysseusAssistantProvider sectionName={ this.props.sectionName }>
+						{ this.shouldShowOdieAssistant() ? (
+							<OdieAssistantProvider sectionName={ this.props.sectionName }>
 								{ this.props.primary }
-								<OdysseusAssistant />
-							</OdysseusAssistantProvider>
+							</OdieAssistantProvider>
 						) : (
 							this.props.primary
 						) }

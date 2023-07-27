@@ -9,12 +9,13 @@ import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { StatsNoticeProps } from './types';
 
-const getStatsPurchaseURL = ( siteId: number | null ) => {
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats`;
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
+	const from = isOdysseyStats ? 'jetpack' : 'calypso';
+	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats&from=${ from }-stats-upgrade-notice`;
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
 	}
+	// We use absolute path here as it runs in Odyssey as well.
 	return `https://wordpress.com${ purchasePath }`;
 };
 
@@ -43,8 +44,12 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 			: recordTracksEvent(
 					'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
 			  );
+		// TODO: use Jetpack Redirects for more precise tracking for Odyssey.
 		// Allow some time for the event to be recorded before redirecting.
-		setTimeout( () => ( window.location.href = getStatsPurchaseURL( siteId ) ), 250 );
+		setTimeout(
+			() => ( window.location.href = getStatsPurchaseURL( siteId, isOdysseyStats ) ),
+			250
+		);
 	};
 
 	useEffect( () => {
@@ -60,14 +65,18 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 	}
 
 	return (
-		<div className="inner-notice-container has-odyssey-stats-bg-color">
+		<div
+			className={ `inner-notice-container has-odyssey-stats-bg-color ${
+				! isOdysseyStats && 'inner-notice-container--calypso'
+			}` }
+		>
 			<NoticeBanner
 				level="info"
 				title={ translate( 'Do you love Jetpack Stats?' ) }
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					'{{p}}Upgrade Jetpack Stats to unlock upcoming features, priority support, and an ad-free experience.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
+					'{{p}}Upgrade Jetpack Stats to unlock upcoming features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
 					{
 						components: {
 							p: <p />,

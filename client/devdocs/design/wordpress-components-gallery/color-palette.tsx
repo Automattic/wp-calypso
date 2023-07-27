@@ -2,7 +2,7 @@ import { ColorPalette } from '@wordpress/components';
 import { useState } from 'react';
 
 const ColorPaletteExample = () => {
-	const colors: ColorPalette.Color[] = [
+	const colors = [
 		{ name: 'red', color: '#f00' },
 		{ name: 'white', color: '#fff' },
 		{ name: 'blue', color: '#00f' },

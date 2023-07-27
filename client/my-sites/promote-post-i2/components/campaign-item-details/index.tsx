@@ -1,18 +1,19 @@
 import config from '@automattic/calypso-config';
 import './style.scss';
 import {
+	Badge,
 	Button,
 	Dialog,
 	Gridicon,
 	HorizontalBarList,
 	HorizontalBarListItem,
 } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
-import Badge from 'calypso/components/badge';
 import Breadcrumb, { Item } from 'calypso/components/breadcrumb';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -220,7 +221,8 @@ export default function CampaignItemDetails( props: Props ) {
 			label: __( 'Contact support' ),
 			onClick: async () => {
 				setShowErrorDialog( false );
-				window.open( 'https://wordpress.com/support/', '_blank' );
+				const localizedUrl = localizeUrl( 'https://wordpress.com/support/' );
+				window.open( localizedUrl, '_blank' );
 			},
 		},
 		{
@@ -324,7 +326,7 @@ export default function CampaignItemDetails( props: Props ) {
 								components: {
 									wpcomTos: (
 										<a
-											href="https://wordpress.com/tos/"
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

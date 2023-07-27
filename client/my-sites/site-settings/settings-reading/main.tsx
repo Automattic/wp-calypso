@@ -102,7 +102,7 @@ type ReadingSettingsFormProps = {
 	fields: Fields;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	handleAutosavingToggle: ( field: string ) => () => void;
-	handleToggle: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	isAtomic: boolean | null;
 	isRequestingSettings: boolean;

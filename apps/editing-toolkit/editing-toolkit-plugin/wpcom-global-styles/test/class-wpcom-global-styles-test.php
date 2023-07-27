@@ -28,7 +28,7 @@ class WPCOM_Global_Styles_Test extends TestCase {
 		// Check that the custom color is blocked when Global Styles are limited.
 		add_filter( 'wpcom_force_limit_global_styles', '__return_true' );
 		$theme_json = apply_filters( 'wp_theme_json_data_user', new WP_Theme_JSON_Data( $user_data, 'custom' ) );
-		$this->assertEmpty( $theme_json->get_data()['styles']['color']['background'] );
+		$this->assertFalse( isset( $theme_json->get_data()['styles'] ) );
 		remove_filter( 'wpcom_force_limit_global_styles', '__return_true' );
 	}
 }

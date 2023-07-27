@@ -58,12 +58,21 @@
 	margin: 0;
 }
 
+.search-stream__fixed-area .formatted-header.is-left-align.has-screen-options {
+	@media only screen and (max-width: 660px) {
+		display: none;
+	}
+}
+
 .search-stream .search-stream__input-card.card {
 	margin-bottom: 0;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
+	border-radius: 4px;
 	@include breakpoint-deprecated( "<660px" ) {
-		border-radius: 0;
+		margin-top: 20px;
+
+		.search__icon-navigation {
+			border-radius: 4px;
+		}
 	}
 }
 

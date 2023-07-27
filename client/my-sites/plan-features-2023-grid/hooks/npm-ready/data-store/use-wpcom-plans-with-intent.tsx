@@ -22,7 +22,6 @@ export type PlansIntent =
 	| 'plans-newsletter'
 	| 'plans-link-in-bio'
 	| 'plans-new-hosted-site'
-	| 'plans-new-hosted-site-hosting-flow'
 	| 'plans-plugins'
 	| 'plans-jetpack-app'
 	| 'plans-import'
@@ -96,9 +95,6 @@ const useWpcomPlansWithIntent = ( {
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 			break;
 		case 'plans-new-hosted-site':
-			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
-			break;
-		case 'plans-new-hosted-site-hosting-flow':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-import':

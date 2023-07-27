@@ -1,5 +1,4 @@
 import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
-import { DomainSuggestions } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -7,6 +6,7 @@ import { LoadingPlaceHolder } from '../../plans-features-main/components/loading
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
+import type { SingleFreeDomainSuggestion } from 'calypso/my-sites/plan-features-2023-grid/types';
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {
@@ -21,18 +21,17 @@ const SubdomainSuggestion = styled.div`
 	}
 `;
 
-const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { domainName } ) => {
-	const {
-		data: wordPressSubdomainSuggestions,
-		isInitialLoading,
-		isError,
-	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
-
+const FreePlanCustomDomainFeature: React.FC< {
+	paidDomainName: string;
+	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+} > = ( { paidDomainName, wpcomFreeDomainSuggestion } ) => {
 	return (
 		<SubdomainSuggestion>
-			<div className="is-domain-name">{ domainName }</div>
-			{ isInitialLoading && <LoadingPlaceHolder /> }
-			{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
+			<div className="is-domain-name">{ paidDomainName }</div>
+			{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
+			{ wpcomFreeDomainSuggestion.entry && (
+				<div>{ wpcomFreeDomainSuggestion.entry.domain_name }</div>
+			) }
 		</SubdomainSuggestion>
 	);
 };
@@ -40,10 +39,18 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planName: string;
-	domainName?: string;
+	paidDomainName?: string;
+	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
-} > = ( { features, planName, domainName, hideUnavailableFeatures, selectedFeature } ) => {
+} > = ( {
+	features,
+	planName,
+	paidDomainName,
+	wpcomFreeDomainSuggestion,
+	hideUnavailableFeatures,
+	selectedFeature,
+} ) => {
 	const translate = useTranslate();
 	return (
 		<>
@@ -57,7 +64,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const isFreePlanAndCustomDomainFeature =
 					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && isFreePlan( planName );
 
-				if ( isFreePlanAndCustomDomainFeature && ! domainName ) {
+				if ( isFreePlanAndCustomDomainFeature && ! paidDomainName ) {
 					return null;
 				}
 
@@ -86,18 +93,19 @@ const PlanFeatures2023GridFeatures: React.FC< {
 									{ isFreePlanAndCustomDomainFeature ? (
 										<Plans2023Tooltip
 											text={ translate( '%s is not included', {
-												args: [ domainName as string ],
+												args: [ paidDomainName as string ],
 												comment: '%s is a domain name.',
 											} ) }
 										>
 											<FreePlanCustomDomainFeature
 												key={ key }
-												domainName={ domainName as string }
+												paidDomainName={ paidDomainName as string }
+												wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 											/>
 										</Plans2023Tooltip>
 									) : (
 										<Plans2023Tooltip text={ currentFeature.getDescription?.() }>
-											{ currentFeature.getTitle( domainName ) }
+											{ currentFeature.getTitle( paidDomainName ) }
 										</Plans2023Tooltip>
 									) }
 								</span>

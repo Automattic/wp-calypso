@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
@@ -20,23 +19,11 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						key: 'unlock',
 						title: __( 'Unlock your domains' ),
 						description: (
-							<>
-								<p>
-									{ __(
-										"Your current registrar's domain management interface should have an option for you to remove the lock."
-									) }
-								</p>
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/domains/incoming-domain-transfer/'
-									) }
-									target="_blank"
-									rel="noopener noreferrer"
-									className="select-items__item-learn-more"
-								>
-									{ __( 'Learn more' ) }
-								</a>
-							</>
+							<p>
+								{ __(
+									"Your current registrar's domain management interface should have an option for you to remove the lock."
+								) }
+							</p>
 						),
 						icon: <Icon icon={ unlock } />,
 						value: 'firstPost',
@@ -46,23 +33,11 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						key: 'setup',
 						title: __( 'Add domains' ),
 						description: (
-							<>
-								<p>
-									{ __(
-										'Add all domain names (along with their authorization codes) to start the transfer.'
-									) }
-								</p>
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/domains/incoming-domain-transfer/'
-									) }
-									target="_blank"
-									rel="noopener noreferrer"
-									className="select-items__item-learn-more"
-								>
-									{ __( 'Learn more' ) }
-								</a>
-							</>
+							<p>
+								{ __(
+									'Add all domain names (along with their authorization codes) to start the transfer.'
+								) }
+							</p>
 						),
 						icon: <Icon icon={ plus } />,
 						value: 'setup',
@@ -71,7 +46,14 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						description: <p>{ __( 'Add your contact and payment details.' ) }</p>,
+						badge: __( 'Google Domains: Free' ),
+						description: (
+							<p>
+								{ __(
+									'Review your payment and contact details. Google Domains transfers and the first year are free.'
+								) }
+							</p>
+						),
 						icon: <Icon icon={ payment } />,
 						value: 'finalize',
 						actionText: null,
@@ -81,9 +63,9 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				preventWidows={ preventWidows }
 				onSelect={ onSubmit }
 			/>
-			<div style={ { display: 'flex', justifyContent: 'center' } }>
-				<Button isPrimary onClick={ onSubmit }>
-					{ __( "I'm ready!" ) }
+			<div className="bulk-domain-transfer__cta-container">
+				<Button variant="primary" className="bulk-domain-transfer__cta" onClick={ onSubmit }>
+					{ __( 'Get Started' ) }
 				</Button>
 			</div>
 		</>

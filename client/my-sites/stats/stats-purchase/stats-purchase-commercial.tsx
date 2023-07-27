@@ -4,13 +4,26 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
+
 interface CommercialPurchaseProps {
 	planValue: number;
 	currencyCode: string;
+	siteSlug: string;
+	adminUrl: string;
+	redirectUri: string;
+	from: string;
 }
 
-const CommercialPurchase = ( { planValue, currencyCode }: CommercialPurchaseProps ) => {
+const CommercialPurchase = ( {
+	planValue,
+	currencyCode,
+	siteSlug,
+	adminUrl,
+	redirectUri,
+	from,
+}: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const planPriceObject = getCurrencyObject( planValue, currencyCode );
 
@@ -25,7 +38,12 @@ const CommercialPurchase = ( { planValue, currencyCode }: CommercialPurchaseProp
 				{ translate(
 					'Upgrade now to take advantage of the introductory flat rate. Starting in 2024, we will introduce metered billing. '
 				) }
-				<Button variant="link" href="#">
+				<Button
+					variant="link"
+					href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					{ translate( 'Learn more' ) }
 				</Button>
 			</div>
@@ -51,7 +69,6 @@ const CommercialPurchase = ( { planValue, currencyCode }: CommercialPurchaseProp
 				<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 					<li>{ translate( 'Instant access to upcoming features' ) }</li>
 					<li>{ translate( 'Priority support' ) }</li>
-					<li>{ translate( 'Ad-free experience' ) }</li>
 				</ul>
 			</div>
 
@@ -73,7 +90,12 @@ const CommercialPurchase = ( { planValue, currencyCode }: CommercialPurchaseProp
 				) }
 			</p>
 
-			<Button variant="primary">
+			<Button
+				variant="primary"
+				onClick={ () =>
+					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+				}
+			>
 				{ translate( 'Get Jetpack Stats for %(value)s per month', {
 					args: {
 						value: formatCurrency( planValue, currencyCode ),

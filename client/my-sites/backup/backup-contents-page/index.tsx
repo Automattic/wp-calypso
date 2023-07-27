@@ -44,7 +44,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 				<DocumentHead title={ translate( 'Backup contents' ) } />
 				{ isJetpackCloud() && <SidebarNavigation /> }
 				<Button
-					isLink
+					variant="link"
 					className="backup-contents-page__back-button is-borderless"
 					href={ backupMainPath( siteSlug ) }
 				>

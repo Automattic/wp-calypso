@@ -8,7 +8,6 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	isBusinessPlan,
-	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
@@ -64,7 +63,7 @@ import PopularBadge from './components/popular-badge';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
-import { PlanProperties, TransformedFeatureObject } from './types';
+import { PlanProperties, TransformedFeatureObject, SingleFreeDomainSuggestion } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { PlansIntent } from './grid-context';
 import type { GridPlan } from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
@@ -100,8 +99,8 @@ export type PlanFeatures2023GridProps = {
 	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	flowName?: string | null;
-	domainName?: string;
-	placeholder?: string;
+	paidDomainName?: string;
+	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	intervalType?: string;
 	currentSitePlanSlug?: string | null;
 	hidePlansFeatureComparison?: boolean;
@@ -113,6 +112,7 @@ export type PlanFeatures2023GridProps = {
 	selectedFeature?: string;
 	intent?: PlansIntent;
 	isGlobalStylesOnPersonal?: boolean;
+	showLegacyStorageFeature?: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -267,6 +267,7 @@ export class PlanFeatures2023Grid extends Component<
 			isGlobalStylesOnPersonal,
 			planRecords,
 			visiblePlans,
+			showLegacyStorageFeature,
 		} = this.props;
 		return (
 			<PlansGridContextProvider
@@ -321,6 +322,7 @@ export class PlanFeatures2023Grid extends Component<
 								selectedPlan={ selectedPlan }
 								selectedFeature={ selectedFeature }
 								isGlobalStylesOnPersonal={ isGlobalStylesOnPersonal }
+								showLegacyStorageFeature={ showLegacyStorageFeature }
 							/>
 							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 								<Button onClick={ this.toggleShowPlansComparisonGrid }>
@@ -456,11 +458,11 @@ export class PlanFeatures2023Grid extends Component<
 		if ( isMonthlyPlan || isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 			return null;
 		}
-		const { domainName } = this.props;
+		const { paidDomainName } = this.props;
 
-		const displayText = domainName
-			? translate( '%(domainName)s is included', {
-					args: { domainName },
+		const displayText = paidDomainName
+			? translate( '%(paidDomainName)s is included', {
+					args: { paidDomainName },
 			  } )
 			: translate( 'Free domain for one year' );
 
@@ -643,7 +645,7 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
-				const { planName, isPlaceholder, planConstantObj, current } = properties;
+				const { planName, planConstantObj, current } = properties;
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
 					'is-top-buttons',
@@ -675,7 +677,6 @@ export class PlanFeatures2023Grid extends Component<
 							freePlan={ isFreePlan( planName ) }
 							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
 							isWooExpressPlusPlan={ isWooExpressPlusPlan( planName ) }
-							isPlaceholder={ isPlaceholder ?? false }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
 							onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
@@ -784,7 +785,13 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { domainName, translate, hideUnavailableFeatures, selectedFeature } = this.props;
+		const {
+			paidDomainName,
+			wpcomFreeDomainSuggestion,
+			translate,
+			hideUnavailableFeatures,
+			selectedFeature,
+		} = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
 				! isWpcomEnterpriseGridPlan( properties.planName ) &&
@@ -804,7 +811,8 @@ export class PlanFeatures2023Grid extends Component<
 						<PlanFeatures2023GridFeatures
 							features={ features }
 							planName={ planName }
-							domainName={ domainName }
+							paidDomainName={ paidDomainName }
+							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
 						/>
@@ -822,7 +830,8 @@ export class PlanFeatures2023Grid extends Component<
 						<PlanFeatures2023GridFeatures
 							features={ jpFeatures }
 							planName={ planName }
-							domainName={ domainName }
+							paidDomainName={ paidDomainName }
+							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 						/>
 					</Container>
@@ -883,7 +892,6 @@ const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures
 const ConnectedPlanFeatures2023Grid = connect(
 	( state: IAppState, ownProps: PlanFeatures2023GridType ) => {
 		const {
-			placeholder,
 			planRecords,
 			visiblePlans,
 			isInSignup,
@@ -892,6 +900,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			selectedFeature,
 			intent,
 			isGlobalStylesOnPersonal,
+			showLegacyStorageFeature,
 		} = ownProps;
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = siteId
@@ -904,15 +913,10 @@ const ConnectedPlanFeatures2023Grid = connect(
 		// TODO clk: plan properties should be passed through props instead of being calculated here
 		const planProperties: PlanProperties[] = ( Object.keys( planRecords ) as PlanSlug[] ).map(
 			( plan: PlanSlug ) => {
-				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
 				const isMonthlyPlan = isMonthly( plan );
-
-				if ( placeholder || ( ! planObject && plan !== PLAN_ENTERPRISE_GRID_WPCOM ) ) {
-					isPlaceholder = true;
-				}
 
 				let planFeatures = [];
 				let jetpackFeatures: FeatureObject[] = [];
@@ -953,7 +957,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 				// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
-				let planFeaturesTransformed: Array< TransformedFeatureObject > = [];
+				const planFeaturesTransformed: Array< TransformedFeatureObject > = [];
 				let jetpackFeaturesTransformed: Array< TransformedFeatureObject > = [];
 				const topFeature = selectedFeature
 					? planFeatures.find( ( feature ) => feature.getSlug() === selectedFeature )
@@ -998,21 +1002,19 @@ const ConnectedPlanFeatures2023Grid = connect(
 					};
 				} );
 
-				// Strip annual-only features out for the site's /plans page
-				if ( isPlaceholder ) {
-					planFeaturesTransformed = planFeaturesTransformed.filter(
-						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
-					);
-				}
-
+				const isCurrentPlan = currentSitePlanSlug === plan;
 				const product_name_short =
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
 				const storageOptions =
 					( planConstantObj.get2023PricingGridSignupStorageOptions &&
-						planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
+						planConstantObj.get2023PricingGridSignupStorageOptions(
+							showLegacyStorageFeature,
+							isCurrentPlan
+						) ) ||
 					[];
+
 				const availableForPurchase =
 					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 
@@ -1020,7 +1022,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 					availableForPurchase,
 					features: planFeaturesTransformed,
 					jpFeatures: jetpackFeaturesTransformed,
-					isPlaceholder,
 					planConstantObj,
 					planName: plan,
 					// TODO clk: snake_case?
@@ -1030,7 +1031,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					tagline,
 					storageOptions,
 					cartItemForPlan: getCartItemForPlan( plan ),
-					current: currentSitePlanSlug === plan,
+					current: isCurrentPlan,
 					isVisible: visiblePlans.indexOf( plan ) !== -1,
 					billingPeriod: planObject?.bill_period,
 					currencyCode: planObject?.currency_code,
