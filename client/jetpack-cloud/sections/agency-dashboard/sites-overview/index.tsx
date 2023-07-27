@@ -199,7 +199,7 @@ export default function SitesOverview() {
 					href="/partner-portal/issue-license"
 					onClick={ () =>
 						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_issue_license_button_click', {} )
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_issue_license_button_click' )
 						)
 					}
 				>
@@ -207,11 +207,10 @@ export default function SitesOverview() {
 				</Button>
 				<Button
 					primary
-					className="sites-overview__add-site-button"
 					href="https://wordpress.com/jetpack/connect"
 					onClick={ () =>
 						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_add_site_button_click', {} )
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_add_site_button_click' )
 						)
 					}
 				>
@@ -278,11 +277,11 @@ export default function SitesOverview() {
 								// don't render content on mobile, we don't need it
 								selectedLicensesCount > 0 && isWithinBreakpoint( '>960px' )
 									? renderIssueLicenseButton()
-									: renderAddSiteIssueLicenseButtons()
+									: isWithinBreakpoint( '>960px' ) && renderAddSiteIssueLicenseButtons()
 							}
 							pageTitle={ pageTitle }
 							// Only renderIssueLicenseButton should be sticky.
-							showStickyContent={ selectedLicensesCount > 0 }
+							showStickyContent={ selectedLicensesCount > 0 && isWithinBreakpoint( '>960px' ) }
 						/>
 						<SectionNav
 							applyUpdatedStyles
