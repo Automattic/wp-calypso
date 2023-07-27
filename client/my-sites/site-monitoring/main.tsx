@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UplotChartMetrics from './metrics-chart';
@@ -7,8 +7,10 @@ import { useSiteMetricsQuery } from './use-metrics-query';
 
 export function useSiteMetricsData() {
 	const siteId = useSelector( getSelectedSiteId );
-	const startTime = moment().subtract( 24, 'hours' ).unix();
-	const endTime = moment().unix();
+
+	// Calculate the startTime and endTime using useMemo
+	const startTime = useMemo( () => moment().subtract( 24, 'hours' ).unix(), [] );
+	const endTime = useMemo( () => moment().unix(), [] );
 
 	const { data } = useSiteMetricsQuery( siteId, {
 		start: startTime,
@@ -30,29 +32,22 @@ export function useSiteMetricsData() {
 		return null;
 	};
 
-	// State to hold the formatted data
-	const [ formattedData, setFormattedData ] = useState< [ number[], unknown[] ] >( [ [], [] ] );
-
-	useEffect( () => {
-		// Update the formattedData state when data changes
-		if ( data ) {
-			const newData = data.data.periods.reduce(
+	// Process the data and set the formattedData state without using useMemo
+	const formattedData = data
+		? data.data.periods.reduce(
 				( acc, period ) => {
 					acc[ 0 ].push( period.timestamp );
 					acc[ 1 ].push( getDimensionValue( period ) );
 					return acc;
 				},
 				[ [], [] ] as [ number[], unknown[] ] // Define the correct initial value type
-			);
-			setFormattedData( newData );
-		}
-	}, [ data ] );
+		  )
+		: ( [ [], [] ] as [ number[], unknown[] ] ); // Return a default value when data is not available yet
 
 	return {
 		formattedData,
 	};
 }
-
 export function SiteMetrics() {
 	const { formattedData } = useSiteMetricsData();
 	return (
