@@ -170,7 +170,7 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	},
 	'wordpress.com/plans/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		// if logged in, or url.pathname contains characters after `/plans/`, don't rewrite
-		return isLoggedIn || url.pathname.length > '/plans/'.length
+		return isLoggedIn || url.pathname !== '/plans/'
 			? url
 			: prefixLocalizedUrlPath( localesForPricePlans )( url, localeSlug );
 	},

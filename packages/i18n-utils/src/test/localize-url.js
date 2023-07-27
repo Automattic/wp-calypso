@@ -509,7 +509,7 @@ describe( '#localizeUrl', () => {
 			'https://wordpress.com/plans/'
 		);
 
-		//Non Mag-16, Finnish
+		// Non Mag-16, Finnish
 		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', false ) ).toEqual(
 			'https://wordpress.com/plans/'
 		);
