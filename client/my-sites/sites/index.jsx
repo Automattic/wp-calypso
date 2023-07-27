@@ -148,8 +148,8 @@ class Sites extends Component {
 			case 'site-logs':
 				path = translate( 'Site Logs' );
 				break;
-			case 'site-metrics':
-				path = translate( 'Site Metrics' );
+			case 'site-monitoring':
+				path = translate( 'Site Monitoring' );
 				break;
 		}
 

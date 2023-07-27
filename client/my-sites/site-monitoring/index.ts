@@ -4,10 +4,10 @@ import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible, siteMetrics } from './controller';
 
 export default function () {
-	page( '/site-metrics', siteSelection, sites, makeLayout, clientRender );
+	page( '/site-monitoring', siteSelection, sites, makeLayout, clientRender );
 
 	page(
-		'/site-metrics/:siteId',
+		'/site-monitoring/:siteId',
 		siteSelection,
 		redirectHomeIfIneligible,
 		navigation,

@@ -609,7 +609,7 @@ const sections = [
 	{
 		name: 'site-metrics',
 		paths: [ '/site-metrics' ],
-		module: 'calypso/my-sites/site-metrics',
+		module: 'calypso/my-sites/site-monitoring',
 		group: 'sites',
 	},
 ];
