@@ -111,7 +111,7 @@ export type PlanFeatures2023GridProps = {
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
 	intent?: PlansIntent;
-	isCustomDomainAllowedOnFreePlan?: boolean | null;
+	isCustomDomainAllowedOnFreePlan?: boolean | null; // indicate when a custom domain is allowed to be used with the Free plan.
 	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
 };
