@@ -38,6 +38,7 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasDIFMProduct,
+	hasTransferProductOnly,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -243,6 +244,7 @@ export default function WPCheckout( {
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
+	const isBulkTransfer = hasTransferProductOnly( responseCart );
 	const isGSuiteInCart = hasGoogleApps( responseCart );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
@@ -415,7 +417,7 @@ export default function WPCheckout( {
 									addItemToCart={ addItemToCart }
 									isCartPendingUpdate={ isCartPendingUpdate }
 								/>
-								<CheckoutHelpLink />
+								{ ! isBulkTransfer && <CheckoutHelpLink /> }
 								<CheckoutNextSteps responseCart={ responseCart } />
 							</CheckoutSummaryBody>
 						</CheckoutErrorBoundary>
