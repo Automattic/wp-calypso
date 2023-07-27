@@ -1,23 +1,22 @@
 import {
-	getPlanClass,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_P2_FREE,
+	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
+	getPlanClass,
 	planMatches,
-	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
-import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import i18n, { TranslateResult, localize, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
+import { isTrialPlan } from 'calypso/state/sites/plans/selectors';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { PlanActionOverrides } from '../types';
 
@@ -186,16 +185,14 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	const isTrialPlan =
-		currentSitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
-		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
+	const isTrial = isTrialPlan( currentSitePlanSlug as string );
 
 	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
 	if (
 		availableForPurchase &&
 		currentSitePlanSlug &&
 		! current &&
-		! isTrialPlan &&
+		! isTrial &&
 		currentPlanBillPeriod &&
 		gridPlanBillPeriod &&
 		currentPlanBillPeriod > gridPlanBillPeriod
@@ -213,7 +210,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		currentSitePlanSlug &&
 		! current &&
 		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug ) &&
-		! isTrialPlan
+		! isTrial
 	) {
 		if ( planMatches( planType, { term: TERM_TRIENNIALLY } ) ) {
 			return (

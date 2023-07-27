@@ -1,4 +1,3 @@
-import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -10,6 +9,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { sectionify } from 'calypso/lib/route';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isTrialPlan } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -43,8 +43,8 @@ class PlansNavigation extends Component {
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = Boolean( site ) && isMobile();
 		const currentPlanSlug = site?.plan?.product_slug;
-		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-		const myPlanItemTitle = isEcommerceTrial ? translate( 'Free trial' ) : translate( 'My Plan' );
+		const isTrial = isTrialPlan( currentPlanSlug );
+		const myPlanItemTitle = isTrial ? translate( 'Free trial' ) : translate( 'My Plan' );
 
 		return (
 			site &&
