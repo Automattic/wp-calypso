@@ -29,8 +29,16 @@
 			display: none;
 			margin-top: 20px;
 
+			.post-item__actions-mobile {
+				display: flex;
+				justify-content: space-between;
+				margin-top: 20px;
+				width: 100%;
+			}
+
 			.post-item__stats-mobile,
 			.campaign-item__stats-mobile {
+				align-self: start;
 				@include blazepress-data-row-font-mobile;
 			}
 		}
