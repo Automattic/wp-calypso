@@ -1,4 +1,4 @@
-import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
+import { createStripePaymentMethod } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
@@ -14,6 +14,7 @@ import existingCardProcessor from './existing-card-processor';
 import getContactDetailsType from './get-contact-details-type';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
+import { doesTransactionResponseRequire3DS, handle3DSChallenge } from './stripe-3ds';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
@@ -136,23 +137,18 @@ async function stripeCardProcessor(
 	debug( 'sending stripe transaction', formattedTransactionData );
 	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
 		.then( async ( stripeResponse ) => {
-			if (
-				stripeResponse &&
-				'message' in stripeResponse &&
-				typeof stripeResponse.message !== 'string' &&
-				stripeResponse.message?.payment_intent_client_secret
-			) {
+			if ( doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				debug( 'transaction requires authentication' );
-				// 3DS authentication required
-				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
-				// If this fails, it will reject (throw) and we'll end up in the catch block below.
-				await confirmStripePaymentIntent(
+				await handle3DSChallenge(
+					reduxDispatch,
 					submitData.stripe,
 					stripeResponse.message.payment_intent_client_secret
 				);
-				// We must return the original authentication response in order to have
-				// access to the order_id so that we can display a pending page while
-				// we wait for Stripe to send a webhook to complete the purchase.
+				// We must return the original authentication response in order
+				// to have access to the order_id so that we can display a
+				// pending page while we wait for Stripe to send a webhook to
+				// complete the purchase so we do not return the result of
+				// confirming the payment intent and instead fall through.
 			}
 			return stripeResponse;
 		} )
