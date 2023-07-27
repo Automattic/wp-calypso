@@ -165,8 +165,23 @@ export function hasTransferProduct( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainTransfer );
 }
 
+export function hasFreeCouponTransfersOnly( cart: ObjectWithProducts ): boolean {
+	const temp = getAllCartItems( cart ).every( ( item ) => {
+		return (
+			( isDomainTransfer( item ) &&
+				item.is_sale_coupon_applied &&
+				item.item_subtotal_integer === 0 ) ||
+			isPartialCredits( item )
+		);
+	} );
+
+	return temp;
+}
+
 export function hasTransferProductOnly( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).every( isDomainTransfer );
+	return getAllCartItems( cart ).every( ( item ) => {
+		return isDomainTransfer( item ) || isPartialCredits( item );
+	} );
 }
 
 export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProduct[] {
