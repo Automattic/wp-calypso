@@ -3,13 +3,11 @@ import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { defer } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
-import SiteSelector from 'calypso/components/site-selector';
 import ReaderFacebookIcon from 'calypso/reader/components/icons/facebook-icon';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
 import ReaderTwitterIcon from 'calypso/reader/components/icons/twitter-icon';
@@ -18,7 +16,7 @@ import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { infoNotice } from 'calypso/state/notices/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-
+import ReaderReblogSelection from './reblog';
 import './style.scss';
 
 /**
@@ -51,22 +49,6 @@ const actionMap = {
 	},
 	copy_link() {},
 };
-
-function buildQuerystringForPost( post ) {
-	const args = {};
-
-	if ( post.content_embeds && post.content_embeds.length ) {
-		args.embed = post.content_embeds[ 0 ].embedUrl || post.content_embeds[ 0 ].src;
-	}
-
-	args.title = `${ post.title } — ${ post.site_name }`;
-	args.text = post.excerpt;
-	args.url = post.URL;
-	args.is_post_share = true; // There is a dependency on this here https://github.com/Automattic/wp-calypso/blob/a69ded693a99fa6a957b590b1a538f32a581eb8a/client/gutenberg/editor/controller.js#L209
-
-	const params = new URLSearchParams( args );
-	return params.toString();
-}
 
 class ReaderShare extends Component {
 	static propTypes = {
@@ -129,14 +111,6 @@ class ReaderShare extends Component {
 		if ( this.mounted ) {
 			this.deferMenuChange( false );
 		}
-	};
-
-	pickSiteToShareTo = ( slug ) => {
-		stats.recordAction( 'share_wordpress' );
-		stats.recordGaEvent( 'Clicked on Share to WordPress' );
-		stats.recordTrack( 'calypso_reader_share_to_site' );
-		page( `/post/${ slug }?` + buildQuerystringForPost( this.props.post ) );
-		return true;
 	};
 
 	closeExternalShareMenu = ( action ) => {
@@ -215,13 +189,7 @@ class ReaderShare extends Component {
 						>
 							{ translate( 'Copy link' ) }
 						</PopoverMenuItemClipboard>
-						{ this.props.hasSites && (
-							<SiteSelector
-								className="reader-share__site-selector"
-								onSiteSelect={ this.pickSiteToShareTo }
-								groups
-							/>
-						) }
+						<ReaderReblogSelection post={ this.props.post } />
 					</ReaderPopoverMenu>
 				) }
 			</div>
