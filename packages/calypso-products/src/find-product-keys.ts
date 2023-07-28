@@ -1,7 +1,7 @@
 import { productMatches } from './product-matches';
 import { PRODUCTS_LIST } from './products-list';
 import type { Query } from './product-matches';
-import type { JetpackProductSlug } from './types';
+import type { JetpackProductSlug, WooCommerceProductSlug } from './types';
 
 /**
  * Finds all keys of products matching a query
