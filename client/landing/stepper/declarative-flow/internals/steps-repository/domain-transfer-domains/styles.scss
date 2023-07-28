@@ -51,13 +51,6 @@
 				justify-content: center;
 				margin-top: 16px;
 				line-height: 20px;
-
-				span {
-					display: block;
-					@media (min-width: $break-medium ) {
-						width: 60%;
-					}
-				}
 			}
 		}
 

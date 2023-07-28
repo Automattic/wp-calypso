@@ -1,5 +1,3 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -14,22 +12,12 @@ import './styles.scss';
 const Intro: Step = function Intro( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
 
 	usePresalesChat( 'wpcom' );
 
 	const handleSubmit = () => {
 		submit?.();
 	};
-
-	const getTranslatedSubHeaderText = isEnglishLocale
-		? createInterpolateElement(
-				'Enter your domain names and authorization codes below. You<nbsp/>can transfer up to fifty domains at a time.',
-				{ nbsp: <>&nbsp;</> }
-		  )
-		: __(
-				'Enter your domain names and authorization codes below. You can transfer up to fifty domains at a time.'
-		  );
 
 	return (
 		<StepContainer
@@ -44,7 +32,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 					headerText={ __( 'Add your domains' ) }
 					subHeaderText={
 						<>
-							<span>{ getTranslatedSubHeaderText }</span>
+							<span>{ __( 'Enter your domain names and authorization codes below.' ) }</span>
 						</>
 					}
 					align="center"
