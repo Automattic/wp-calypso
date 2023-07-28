@@ -1,6 +1,7 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
-import { Button } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -12,6 +13,9 @@ interface Props {
 const Intro: React.FC< Props > = ( { onSubmit } ) => {
 	const { __, hasTranslation } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
+	const [ isOpen, setOpen ] = useState( false );
+	const openModal = () => setOpen( true );
+	const closeModal = () => setOpen( false );
 
 	return (
 		<>
@@ -21,11 +25,16 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						key: 'unlock',
 						title: __( 'Unlock your domains' ),
 						description: (
-							<p>
-								{ __(
-									"Your current registrar's domain management interface should have an option for you to remove the lock."
-								) }
-							</p>
+							<>
+								<p>
+									{ __(
+										"Your current registrar's domain management interface should have an option for you to remove the lock."
+									) }
+								</p>
+								<Button variant="link" onClick={ openModal }>
+									Learn More
+								</Button>
+							</>
 						),
 						icon: <Icon icon={ unlock } />,
 						value: 'firstPost',
@@ -72,6 +81,46 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				preventWidows={ preventWidows }
 				onSelect={ onSubmit }
 			/>
+			{ isOpen && (
+				<Modal
+					className="bulk-domain-transfer__google-instructions"
+					title="How to unlock your Google domains"
+					onRequestClose={ closeModal }
+					style={ { width: '500px' } }
+				>
+					<p>Follow these steps to transfer your domain from Google to WordPress.com:</p>
+					<details>
+						<summary>
+							<strong>1.</strong> Visit your{ ' ' }
+							<a href="https://domains.google.com/registrar/" target="_blank" rel="noreferrer">
+								Google Domains dashboard
+							</a>
+						</summary>
+						<p>...</p>
+					</details>
+					<details>
+						<summary>
+							<strong>2.</strong> Select your domain
+						</summary>
+						<p>Select the domain you want to transfer in the "My domains" section.</p>
+					</details>
+					<details>
+						<summary>
+							<strong>3.</strong> Go to "Registration settings"
+						</summary>
+						<p>In the "Registration settings" section, scroll down to the "Transfer out" panel.</p>
+					</details>
+					<details>
+						<summary>
+							<strong>4.</strong> Get auth code
+						</summary>
+						<p>
+							Click "Get auth code" and then "Unlock and continue". Copy the code that is shown to
+							your clipboard.
+						</p>
+					</details>
+				</Modal>
+			) }
 			<div className="bulk-domain-transfer__cta-container">
 				<Button variant="primary" className="bulk-domain-transfer__cta" onClick={ onSubmit }>
 					{ __( 'Get Started' ) }
