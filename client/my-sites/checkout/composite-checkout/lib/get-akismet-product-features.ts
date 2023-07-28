@@ -3,14 +3,19 @@ import {
 	isAkismetPersonal,
 	isAkismetPro,
 	isAkismetFree,
+	isAkismetEnterprise,
 	PRODUCT_AKISMET_PLUS_MONTHLY,
 	PRODUCT_AKISMET_PLUS_20K_MONTHLY,
 	PRODUCT_AKISMET_PLUS_30K_MONTHLY,
 	PRODUCT_AKISMET_PLUS_40K_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_350K_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_2M_MONTHLY,
 	PRODUCT_AKISMET_PLUS_YEARLY,
 	PRODUCT_AKISMET_PLUS_20K_YEARLY,
 	PRODUCT_AKISMET_PLUS_30K_YEARLY,
 	PRODUCT_AKISMET_PLUS_40K_YEARLY,
+	PRODUCT_AKISMET_ENTERPRISE_350K_YEARLY,
+	PRODUCT_AKISMET_ENTERPRISE_2M_YEARLY,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
@@ -22,7 +27,9 @@ type productString =
 	| 'pro_20k'
 	| 'pro_30k'
 	| 'pro_40k'
-	| 'business';
+	| 'business'
+	| 'enterprise_350k'
+	| 'enterprise_2m';
 
 function getFeatureStrings(
 	product: productString,
@@ -30,6 +37,11 @@ function getFeatureStrings(
 ): string[] {
 	const baseFeatures = [ translate( 'Comment and form spam protection' ) ];
 	const baseProFeatures = [ translate( 'Flexible API' ), translate( 'Product support' ) ];
+	const baseEnterpriseFeatures = [
+		translate( 'Flexible API' ),
+		translate( 'Unlimited sites' ),
+		translate( 'Priority support' ),
+	];
 
 	switch ( product ) {
 		case 'free':
@@ -45,13 +57,17 @@ function getFeatureStrings(
 		case 'pro_40k':
 			return [ ...baseFeatures, translate( '40K API calls per month' ), ...baseProFeatures ];
 		case 'business':
+			return [ ...baseFeatures, translate( '60K API calls per month' ), ...baseEnterpriseFeatures ];
+		case 'enterprise_350k':
 			return [
 				...baseFeatures,
-				translate( 'Flexible API' ),
-				translate( '60K API calls per month' ),
-				translate( 'Unlimited sites' ),
-				translate( 'Priority support' ),
+				translate( '350K API calls per month' ),
+				...baseEnterpriseFeatures,
 			];
+		case 'enterprise_2m':
+			return [ ...baseFeatures, translate( '2M API calls per month' ), ...baseEnterpriseFeatures ];
+		default:
+			return [];
 	}
 }
 
@@ -97,6 +113,24 @@ export default function getAkismetProductFeatures(
 
 	if ( isAkismetBusiness( product ) ) {
 		return getFeatureStrings( 'business', translate );
+	}
+
+	if ( isAkismetEnterprise( product ) ) {
+		const productSlug = product.product_slug;
+
+		if (
+			productSlug === PRODUCT_AKISMET_ENTERPRISE_350K_MONTHLY ||
+			productSlug === PRODUCT_AKISMET_ENTERPRISE_350K_YEARLY
+		) {
+			return getFeatureStrings( 'enterprise_350k', translate );
+		}
+
+		if (
+			productSlug === PRODUCT_AKISMET_ENTERPRISE_2M_MONTHLY ||
+			productSlug === PRODUCT_AKISMET_ENTERPRISE_2M_YEARLY
+		) {
+			return getFeatureStrings( 'enterprise_2m', translate );
+		}
 	}
 
 	return [];

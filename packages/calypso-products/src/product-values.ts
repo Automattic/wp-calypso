@@ -23,6 +23,7 @@ export { getProductYearlyVariant } from './get-product-yearly-variant';
 export { getProductFromSlug } from './get-product-from-slug';
 export { getProductsSlugs } from './get-products-slugs';
 export { isAddOn } from './is-add-on';
+export { isAkismetEnterprise } from './is-akismet-enterprise';
 export { isAkismetBusiness } from './is-akismet-business';
 export { isAkismetFree } from './is-akismet-free';
 export { isAkismetPersonal } from './is-akismet-personal';
