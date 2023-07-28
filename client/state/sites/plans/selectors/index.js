@@ -23,3 +23,4 @@ export { default as isMigrationTrialExpired } from './trials/is-migration-trial-
 export { default as isSiteOnEcommerce } from './trials/is-site-on-ecommerce';
 export { default as isSiteOnECommerceTrial } from './trials/is-site-on-ecommerce-trial';
 export { default as isSiteOnWooExpressEcommerceTrial } from './is-site-on-woo-express-ecommerce-trial';
+export { default as isTrialSite } from './trials/is-trial-site';
