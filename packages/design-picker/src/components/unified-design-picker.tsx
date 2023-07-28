@@ -234,7 +234,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					/>
 				) }
 				{ assemblerCtaData.shouldGoToAssemblerStep && (
-					<Button onClick={ () => onClickDesignYourOwnTopButton( DEFAULT_ASSEMBLER_DESIGN ) }>
+					<Button
+						className="design-picker__design-your-own-button"
+						onClick={ () => onClickDesignYourOwnTopButton( DEFAULT_ASSEMBLER_DESIGN ) }
+					>
 						{ assemblerCtaData.title }
 					</Button>
 				) }
