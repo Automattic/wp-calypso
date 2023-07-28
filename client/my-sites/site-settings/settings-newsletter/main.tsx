@@ -19,20 +19,8 @@ export type SubscriptionOptions = {
 };
 
 type Fields = {
-	jetpack_relatedposts_enabled?: boolean;
-	jetpack_relatedposts_show_context?: boolean;
-	jetpack_relatedposts_show_date?: boolean;
-	jetpack_relatedposts_show_headline?: boolean;
-	jetpack_relatedposts_show_thumbnails?: boolean;
-	page_for_posts?: string;
-	page_on_front?: string;
-	posts_per_page?: number;
-	posts_per_rss?: number;
-	rss_use_excerpt?: boolean;
-	show_on_front?: 'posts' | 'page';
 	subscription_options?: SubscriptionOptions;
 	wpcom_featured_image_in_email?: boolean;
-	wpcom_reader_views_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	sm_enabled?: boolean;
 };
@@ -43,39 +31,15 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 	}
 
 	const {
-		jetpack_relatedposts_enabled,
-		jetpack_relatedposts_show_context,
-		jetpack_relatedposts_show_date,
-		jetpack_relatedposts_show_headline,
-		jetpack_relatedposts_show_thumbnails,
-		page_for_posts,
-		page_on_front,
-		posts_per_page,
-		posts_per_rss,
-		rss_use_excerpt,
-		show_on_front,
 		subscription_options,
 		wpcom_featured_image_in_email,
-		wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		sm_enabled,
 	} = settings;
 
 	return {
-		jetpack_relatedposts_enabled: !! jetpack_relatedposts_enabled,
-		jetpack_relatedposts_show_context: !! jetpack_relatedposts_show_context,
-		jetpack_relatedposts_show_date: !! jetpack_relatedposts_show_date,
-		jetpack_relatedposts_show_headline: !! jetpack_relatedposts_show_headline,
-		jetpack_relatedposts_show_thumbnails: !! jetpack_relatedposts_show_thumbnails,
-		page_for_posts: page_for_posts ?? '',
-		page_on_front: page_on_front ?? '',
-		...( posts_per_page && { posts_per_page } ),
-		...( posts_per_rss && { posts_per_rss } ),
-		...( rss_use_excerpt && { rss_use_excerpt } ),
-		...( show_on_front && { show_on_front } ),
 		...( subscription_options && { subscription_options } ),
 		wpcom_featured_image_in_email: !! wpcom_featured_image_in_email,
-		wpcom_reader_views_enabled: !! wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		sm_enabled: !! sm_enabled,
 	};
