@@ -11,7 +11,6 @@ import './style.scss';
 
 type Props = {
 	purchases: ReceiptPurchase[] | undefined;
-	manageDomainUrl: string;
 	currency?: string;
 };
 
