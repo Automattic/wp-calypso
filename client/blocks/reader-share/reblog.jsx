@@ -36,7 +36,11 @@ const ReaderReblogSelection = ( props ) => {
 	};
 
 	return (
-		<ReaderPopoverMenu { ...props.popoverProps } popoverTitle={ translate( 'Reblog on' ) }>
+		<ReaderPopoverMenu
+			{ ...props.popoverProps }
+			popoverTitle={ translate( 'Reblog on' ) }
+			onClose={ props.closeMenu }
+		>
 			<SiteSelector
 				className="reader-share__site-selector"
 				onSiteSelect={ pickSiteToShareTo }
