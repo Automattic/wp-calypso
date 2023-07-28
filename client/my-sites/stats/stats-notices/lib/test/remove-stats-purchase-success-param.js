@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import removeStatsPurchaseSuccessParam from '../remove-stats-purchase-success-param';
 
 describe( 'removeStatsPurchaseSuccessParam', () => {

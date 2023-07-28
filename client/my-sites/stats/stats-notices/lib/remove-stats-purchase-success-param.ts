@@ -5,7 +5,7 @@ const removeStatsPurchaseSuccessParam = ( url: string ) => {
 
 	// Delete param in hash URL if any.
 	if ( currentUrl.hash ) {
-		const hashUrl = new URL( currentUrl.hash.substring( 2 ), window.location.origin );
+		const hashUrl = new URL( currentUrl.hash.substring( 2 ), currentUrl.origin );
 		hashUrl.searchParams.delete( 'statsPurchaseSuccess' );
 		currentUrl.hash = `#!${ hashUrl.pathname }${ hashUrl.search }`;
 	}
