@@ -1,7 +1,6 @@
-import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -9,43 +8,11 @@ import { connect } from 'react-redux';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
-import { infoNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import ReaderReblogSelection from './reblog';
 import ReaderSocialShareSelection from './social';
 import './style.scss';
-
-/**
- * Local variables
- */
-const actionMap = {
-	twitter( post ) {
-		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
-		const params = new URLSearchParams( {
-			text: post.title,
-			url: post.URL,
-		} );
-		baseUrl.search = params.toString();
-
-		const twitterUrl = baseUrl.href;
-
-		window.open( twitterUrl, 'twitter', 'width=550,height=420,resizeable,scrollbars' );
-	},
-	facebook( post ) {
-		const baseUrl = new URL( 'https://www.facebook.com/sharer.php' );
-		const params = new URLSearchParams( {
-			u: post.URL,
-			app_id: config( 'facebook_api_key' ),
-		} );
-		baseUrl.search = params.toString();
-
-		const facebookUrl = baseUrl.href;
-
-		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
-	},
-	copy_link() {},
-};
 
 class ReaderShare extends Component {
 	static propTypes = {
@@ -115,21 +82,7 @@ class ReaderShare extends Component {
 		}
 	};
 
-	closeExternalShareMenu = ( action ) => {
-		this.closeMenu();
-		const actionFunc = actionMap[ action ];
-		if ( actionFunc ) {
-			stats.recordAction( 'share_' + action );
-			stats.recordGaEvent( 'Clicked on Share to ' + action );
-			this.props.recordReaderTracksEvent( 'calypso_reader_share_action_picked', {
-				action: action,
-			} );
-			actionFunc( this.props.post );
-		}
-	};
-
 	render() {
-		const { onCopyLinkClick } = this.props;
 		const buttonClasses = classnames( {
 			'reader-share__button': true,
 			'ignore-click': true,
@@ -140,7 +93,6 @@ class ReaderShare extends Component {
 			key: 'menu',
 			context: this.shareButton.current,
 			isVisible: this.state.showingMenu,
-			onClose: this.closeExternalShareMenu,
 			position: this.props.position,
 			className: 'popover reader-share__popover',
 		};
@@ -172,8 +124,8 @@ class ReaderShare extends Component {
 					( ! this.props.isReblogSelection ? (
 						<ReaderSocialShareSelection
 							post={ this.props.post }
-							onCopyLinkClick={ onCopyLinkClick }
 							popoverProps={ popoverProps }
+							closeMenu={ this.closeMenu }
 						/>
 					) : (
 						<ReaderReblogSelection
@@ -193,17 +145,6 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-const mapDispatchToProps = { infoNotice, recordReaderTracksEvent };
+const mapDispatchToProps = { recordReaderTracksEvent };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const onCopyLinkClick = () => {
-		dispatchProps.infoNotice( translate( 'Link copied to clipboard.' ), { duration: 3000 } );
-	};
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onCopyLinkClick } );
-};
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	mergeProps
-)( localize( ReaderShare ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ReaderShare ) );
