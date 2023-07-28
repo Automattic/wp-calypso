@@ -1782,7 +1782,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_50GB_STORAGE_ADD_ON ]: {
 		getSlug: () => PRODUCT_1GB_SPACE,
 		getQuantity: () => 50,
-		getTitle: () => i18n.translate( '50 GB storage add on' ),
+		getTitle: () => i18n.translate( '50 GB storage add-on' ),
 		getCompareTitle: () => i18n.translate( '100 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
@@ -1790,7 +1790,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_100GB_STORAGE_ADD_ON ]: {
 		getSlug: () => PRODUCT_1GB_SPACE,
 		getQuantity: () => 100,
-		getTitle: () => i18n.translate( '100 GB storage add on' ),
+		getTitle: () => i18n.translate( '100 GB storage add-on' ),
 		getCompareTitle: () => i18n.translate( '150 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
