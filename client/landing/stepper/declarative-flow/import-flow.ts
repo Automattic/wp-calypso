@@ -198,6 +198,10 @@ const importFlow: Flow = {
 				case 'error':
 					return navigate( providedDependencies?.url as string );
 
+				case 'verifyEmail':
+					// TODO: handle verify email submission, navigate to the next step
+					return;
+
 				case 'sitePicker': {
 					switch ( providedDependencies?.action ) {
 						case 'update-query': {

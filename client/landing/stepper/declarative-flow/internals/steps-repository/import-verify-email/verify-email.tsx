@@ -3,15 +3,17 @@ import { useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
-import { useSelector, useDispatch } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { useDispatch } from 'calypso/state';
 import { warningNotice } from 'calypso/state/notices/actions';
 import type { UserData } from 'calypso/lib/user/user';
 
-const VerifyEmail = function SitePicker() {
+interface Props {
+	user: UserData;
+}
+const VerifyEmail = function VerifyEmail( props: Props ) {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
-	const user = useSelector( getCurrentUser ) as UserData;
+	const { user } = props;
 	const sendEmail = useSendEmailVerification();
 
 	const defaultButtonState = {
