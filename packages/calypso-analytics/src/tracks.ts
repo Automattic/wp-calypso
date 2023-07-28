@@ -175,6 +175,18 @@ export function identifyUser( userData: any ): any {
 export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
 
+	// We are using the same functions from client/lib/analytics
+	// Remember to check if we can avoid the code duplication
+	const trackingPrefs = getTrackingPrefs();
+	if ( ! trackingPrefs?.buckets.analytics ) {
+		debug(
+			'Analytics has been disabled - Ignoring event "%s" with actual props %o',
+			eventName,
+			eventProperties
+		);
+		return;
+	}
+
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
 		if (
 			! /^calypso(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
