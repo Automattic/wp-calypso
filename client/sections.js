@@ -611,6 +611,12 @@ const sections = [
 		module: 'calypso/my-sites/site-logs',
 		group: 'sites',
 	},
+	{
+		name: 'site-monitoring',
+		paths: [ '/site-monitoring' ],
+		module: 'calypso/my-sites/site-monitoring',
+		group: 'sites',
+	},
 ];
 
 module.exports = sections;
