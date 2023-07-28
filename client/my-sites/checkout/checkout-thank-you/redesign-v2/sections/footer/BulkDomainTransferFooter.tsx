@@ -13,7 +13,7 @@ const BulkDomainTransferFooter = () => {
 				description={ __(
 					'Check your inbox for an email from your current domain provider for instructions on how to speed up the transfer process.'
 				) }
-				buttonText={ __( 'Learn more expediting domain transfers' ) }
+				buttonText={ __( 'Learn about expediting domain transfers' ) }
 				href={ localizeUrl( 'https://wordpress.com/support/domains/incoming-domain-transfer/' ) }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_domain_transfer_complete_click', {
