@@ -58,6 +58,7 @@ const isNotCompatibleThemes = ( stylesheet ) => {
  * @see pbxlJb-3Uv-p2
  */
 export const LivePreviewButton = ( {
+	canUseTheme,
 	isActive,
 	isAtomic,
 	isExternallyManagedTheme,
@@ -67,7 +68,6 @@ export const LivePreviewButton = ( {
 	isWporg,
 	siteSlug,
 	stylesheet,
-	themeType,
 	themeId,
 	translate,
 } ) => {
@@ -101,13 +101,13 @@ export const LivePreviewButton = ( {
 		}
 
 		/**
-		 * Disable Live Preview for Premium/WooCommerce themes.
+		 * Disable Live Preview for themes that are not included in a plan.
 		 * This should be updated as we implement the flow for them.
 		 * Note that BTP works on Atomic sites if a theme is installed.
 		 *
 		 * @see https://github.com/Automattic/wp-calypso/issues/79223
 		 */
-		if ( themeType === 'premium' || themeType === 'woocommerce' ) {
+		if ( ! canUseTheme ) {
 			return null;
 		}
 	} else if ( isAtomic ) {

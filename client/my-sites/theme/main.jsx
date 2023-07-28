@@ -73,6 +73,7 @@ import {
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
 import {
+	canUseTheme as getCanUseTheme,
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
 	isThemePremium,
@@ -86,7 +87,6 @@ import {
 	getThemeDetailsUrl,
 	getThemeForumUrl,
 	getThemeRequestErrors,
-	getThemeType,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -625,10 +625,10 @@ class ThemeSheet extends Component {
 			isExternallyManagedTheme,
 			isWporg,
 			isLoggedIn,
-			themeType,
+			canUseTheme,
+			isFullSiteEditingTheme,
 			isSimple,
 			isThemeInstalledOnAtomicSite,
-			isFullSiteEditingTheme,
 			themeId,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
@@ -659,6 +659,7 @@ class ThemeSheet extends Component {
 								: this.renderButton() ) }
 						{ config.isEnabled( 'themes/block-theme-previews' ) && (
 							<LivePreviewButton
+								canUseTheme={ canUseTheme }
 								isActive={ isActive }
 								isAtomic={ isAtomic }
 								isExternallyManagedTheme={ isExternallyManagedTheme }
@@ -670,7 +671,6 @@ class ThemeSheet extends Component {
 								siteSlug={ siteSlug }
 								stylesheet={ stylesheet }
 								themeId={ themeId }
-								themeType={ themeType }
 								translate={ translate }
 							></LivePreviewButton>
 						) }
@@ -1564,10 +1564,6 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
-		const themeType = config.isEnabled( 'themes/block-theme-previews' )
-			? getThemeType( state, themeId )
-			: undefined;
-
 		const isThemeInstalledOnAtomicSite = isAtomic && !! getTheme( state, siteId, themeId );
 
 		const isFullSiteEditingTheme = config.isEnabled( 'themes/block-theme-previews' )
@@ -1577,7 +1573,6 @@ export default connect(
 		return {
 			...theme,
 			themeId,
-			themeType,
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
 			siteId,
@@ -1604,6 +1599,7 @@ export default connect(
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
+			canUseTheme: getCanUseTheme( state, themeId, siteId ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
