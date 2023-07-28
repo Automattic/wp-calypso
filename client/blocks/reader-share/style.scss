@@ -25,7 +25,9 @@
 	}
 
 	.gridicons-reblog {
+		height: 20px;
 		top: 0;
+		width: 20px;
 	}
 
 	&.is-active {
@@ -117,6 +119,7 @@
 		fill: var(--color-facebook);
 	}
 
+	&:focus,
 	&:hover {
 		.gridicon,
 		.reader-twitter,
