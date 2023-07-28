@@ -130,6 +130,7 @@ window.AppBoot = async () => {
 							placeholder={ null }
 							id="notices"
 						/>
+						<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 					</BrowserRouter>
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />

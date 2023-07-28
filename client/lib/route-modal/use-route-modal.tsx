@@ -36,12 +36,23 @@ const useRouteModal = ( queryKey: string, targetValue = '' ): RouteModalData => 
 			[ queryKey ]: currentValue,
 		};
 
+		// NOTE: /setup/domain-transfer/domains is inside the stepper framework which doesn't use page
+		// for routing.
+		if ( url.includes( '/setup/domain-transfer/domains' ) ) {
+			window.location.replace( addQueryArgs( queryParams, url ) );
+		}
+
 		// Note: addQueryArgs in wordpress/url has a bug which means we cannot use
 		// it. See https://github.com/Automattic/wp-calypso/issues/63185
 		page( addQueryArgs( queryParams, url ) );
 	};
 
 	const closeModal = () => {
+		// NOTE: /setup/domain-transfer/domains is inside the stepper framework which doesn't use page
+		// for routing.
+		if ( window.location.pathname.includes( '/setup/domain-transfer/domains' ) ) {
+			window.location.replace( '/setup/domain-transfer/domains' );
+		}
 		page( removeQueryArgs( previousRoute, queryKey ) );
 	};
 
