@@ -38,10 +38,16 @@ function getGroupName( keyType: KeyType ) {
 	}
 }
 
-export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabilityCheck = false ) {
+export function usePresalesChat(
+	keyType: KeyType,
+	enabled = true,
+	skipAvailabilityCheck = false,
+	skipEligibilityCheck = false
+) {
 	const isEnglishLocale = useIsEnglishLocale();
 	const { canConnectToZendesk } = useChatStatus();
-	const isEligibleForPresalesChat = enabled && isEnglishLocale && canConnectToZendesk;
+	const isEligibleForPresalesChat =
+		( enabled && isEnglishLocale && canConnectToZendesk ) || skipEligibilityCheck;
 
 	const group = getGroupName( keyType );
 
@@ -64,4 +70,18 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 		isLoading: isLoadingAvailability,
 		isPresalesChatAvailable,
 	};
+}
+
+// This function consolidates the options that are passed to usePresalesChat for better readability and backward compatibility.
+export function usePresalesChatWithOptions(
+	keyType: KeyType,
+	options: {
+		enabled?: boolean;
+		skipAvailabilityCheck?: boolean;
+		skipEligibilityCheck?: boolean;
+	} = {}
+) {
+	const { enabled = true, skipAvailabilityCheck = false, skipEligibilityCheck = false } = options;
+
+	return usePresalesChat( keyType, enabled, skipAvailabilityCheck, skipEligibilityCheck );
 }
