@@ -207,3 +207,11 @@ $heading-font-family: "SF Pro Display", $sans;
 		align-items: center;
 	}
 }
+
+.bulk-domain-transfer__google-instructions details {
+	margin-top: 18px;
+
+	p {
+		margin: 8px 0;
+	}
+}
