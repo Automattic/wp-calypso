@@ -281,7 +281,7 @@ export default function SitesOverview() {
 							}
 							pageTitle={ pageTitle }
 							// Only renderIssueLicenseButton should be sticky.
-							showStickyContent={ selectedLicensesCount > 0 && isLargeScreen }
+							showStickyContent={ ( selectedLicensesCount > 0 && isLargeScreen ) || false }
 						/>
 
 						{
