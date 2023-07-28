@@ -6,6 +6,7 @@ import {
 	getPlanPath,
 	PLAN_PERSONAL,
 	PlanSlug,
+	getPlanClass,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -87,6 +88,7 @@ export interface PlansFeaturesMainProps {
 	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
+	isSpotlightOnCurrentPlan?: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
@@ -141,6 +143,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		siteSlug,
 		intent,
 		showLegacyStorageFeature,
+		isSpotlightOnCurrentPlan,
 	} = props;
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -167,6 +170,13 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		};
 	}
 
+	let spotlightPlanSlug: PlanSlug | undefined;
+	if ( sitePlanSlug && isSpotlightOnCurrentPlan ) {
+		spotlightPlanSlug = Object.keys( planRecords ).find(
+			( planSlug ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
+		) as PlanSlug | undefined;
+	}
+
 	const asyncProps: PlanFeatures2023GridProps = {
 		paidDomainName,
 		wpcomFreeDomainSuggestion,
@@ -188,6 +198,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		intent,
 		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		showLegacyStorageFeature,
+		spotlightPlanSlug,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -243,6 +254,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
+	isSpotlightOnCurrentPlan,
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
@@ -455,6 +467,7 @@ const PlansFeaturesMain = ( {
 						siteSlug={ siteSlug }
 						intent={ intent }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
+						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlan }
 					/>
 				</>
 			) }

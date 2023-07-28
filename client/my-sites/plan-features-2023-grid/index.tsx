@@ -73,7 +73,6 @@ import './style.scss';
 
 type PlanRowOptions = {
 	isMobile?: boolean;
-	previousProductNameShort?: string;
 };
 
 const Container = (
@@ -113,6 +112,7 @@ export type PlanFeatures2023GridProps = {
 	intent?: PlansIntent;
 	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
+	spotlightPlanSlug?: PlanSlug;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -277,6 +277,7 @@ export class PlanFeatures2023Grid extends Component<
 			>
 				<div className="plans-wrapper">
 					<QueryActivePromotions />
+					{ this.renderSpotlightPlan() }
 					<div className="plan-features">
 						<div className="plan-features-2023-grid__content">
 							<div>
@@ -336,11 +337,17 @@ export class PlanFeatures2023Grid extends Component<
 		);
 	}
 
-	renderTable( planPropertiesObj: PlanProperties[] ) {
-		const { translate } = this.props;
+	renderTable( planProperties: PlanProperties[] ) {
+		const { translate, spotlightPlanSlug } = this.props;
+
+		// Do not render the spotlight plan if it exists
+		const planPropertiesToRender = planProperties.filter(
+			( { planName } ) => ! spotlightPlanSlug || spotlightPlanSlug !== planName
+		);
+
 		const tableClasses = classNames(
 			'plan-features-2023-grid__table',
-			`has-${ planPropertiesObj.filter( ( { isVisible } ) => isVisible ).length }-cols`
+			`has-${ planPropertiesToRender.filter( ( { isVisible } ) => isVisible ).length }-cols`
 		);
 
 		return (
@@ -349,38 +356,34 @@ export class PlanFeatures2023Grid extends Component<
 					{ translate( 'Available plans to choose from' ) }
 				</caption>
 				<tbody>
-					<tr>{ this.renderPlanLogos( planPropertiesObj ) }</tr>
-					<tr>{ this.renderPlanHeaders( planPropertiesObj ) }</tr>
-					<tr>{ this.renderPlanTagline( planPropertiesObj ) }</tr>
-					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
-					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
-					<tr>{ this.renderTopButtons( planPropertiesObj ) }</tr>
-					<tr>{ this.maybeRenderRefundNotice( planPropertiesObj ) }</tr>
-					<tr>{ this.renderPreviousFeaturesIncludedTitle( planPropertiesObj ) }</tr>
-					<tr>{ this.renderPlanFeaturesList( planPropertiesObj ) }</tr>
-					<tr>{ this.renderPlanStorageOptions( planPropertiesObj ) }</tr>
+					<tr>{ this.renderPlanLogos( planPropertiesToRender ) }</tr>
+					<tr>{ this.renderPlanHeaders( planPropertiesToRender ) }</tr>
+					<tr>{ this.renderPlanTagline( planPropertiesToRender ) }</tr>
+					<tr>{ this.renderPlanPrice( planPropertiesToRender ) }</tr>
+					<tr>{ this.renderBillingTimeframe( planPropertiesToRender ) }</tr>
+					<tr>{ this.renderTopButtons( planPropertiesToRender ) }</tr>
+					<tr>{ this.maybeRenderRefundNotice( planPropertiesToRender ) }</tr>
+					<tr>{ this.renderPreviousFeaturesIncludedTitle( planPropertiesToRender ) }</tr>
+					<tr>{ this.renderPlanFeaturesList( planPropertiesToRender ) }</tr>
+					<tr>{ this.renderPlanStorageOptions( planPropertiesToRender ) }</tr>
 				</tbody>
 			</table>
 		);
 	}
 
 	renderTabletView() {
-		const { planProperties } = this.props;
+		const { planProperties, spotlightPlanSlug } = this.props;
 		let plansToShow = [];
 
-		plansToShow = planProperties
-			.filter( ( { isVisible } ) => isVisible )
-			.map( ( properties ) => properties.planName );
+		plansToShow = planProperties.filter(
+			( { isVisible, planName } ) =>
+				// Do not render the spotlight plan if it exists
+				isVisible && ( ! spotlightPlanSlug || spotlightPlanSlug !== planName )
+		);
 
 		const numberOfPlansToShowOnTop = 4 === plansToShow.length ? 2 : 3;
-		const topRowPlans = plansToShow.slice( 0, numberOfPlansToShowOnTop );
-		const bottomRowPlans = plansToShow.slice( numberOfPlansToShowOnTop, plansToShow.length );
-		const planPropertiesForTopRow = planProperties.filter( ( properties: PlanProperties ) =>
-			topRowPlans.includes( properties.planName )
-		);
-		const planPropertiesForBottomRow = planProperties.filter( ( properties: PlanProperties ) =>
-			bottomRowPlans.includes( properties.planName )
-		);
+		const planPropertiesForTopRow = plansToShow.slice( 0, numberOfPlansToShowOnTop );
+		const planPropertiesForBottomRow = plansToShow.slice( numberOfPlansToShowOnTop );
 
 		return (
 			<>
@@ -397,7 +400,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderMobileView() {
-		const { planProperties, translate, selectedFeature } = this.props;
+		const { translate, selectedFeature, planProperties, spotlightPlanSlug } = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planName: string }
 		) => {
@@ -410,10 +413,16 @@ export class PlanFeatures2023Grid extends Component<
 				</FoldableCard>
 			);
 		};
-		let previousProductNameShort: string;
 
 		return planProperties
 			.filter( ( { isVisible } ) => isVisible )
+			.reduce( ( accPlanProperties, properties ) => {
+				// Bring the spotlight plan to the top
+				if ( spotlightPlanSlug && spotlightPlanSlug === properties.planName ) {
+					return [ properties ].concat( accPlanProperties );
+				}
+				return accPlanProperties.concat( properties );
+			}, [] as PlanProperties[] )
 			.map( ( properties: PlanProperties, index: number ) => {
 				const planCardClasses = classNames(
 					'plan-features-2023-grid__mobile-plan-card',
@@ -440,16 +449,46 @@ export class PlanFeatures2023Grid extends Component<
 						>
 							{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
 								isMobile: true,
-								previousProductNameShort,
 							} ) }
 							{ this.renderPlanFeaturesList( [ properties ], { isMobile: true } ) }
 							{ this.renderPlanStorageOptions( [ properties ], { isMobile: true } ) }
 						</CardContainer>
 					</div>
 				);
-				previousProductNameShort = properties.product_name_short;
 				return planCardJsx;
 			} );
+	}
+
+	/**
+	 * Similar to `renderMobileView` above.
+	 */
+	renderSpotlightPlan() {
+		const { spotlightPlanSlug, planProperties } = this.props;
+		const spotlightPlanProperties = planProperties.find(
+			( properties ) => spotlightPlanSlug && spotlightPlanSlug === properties.planName
+		);
+
+		if ( ! spotlightPlanProperties ) {
+			return;
+		}
+
+		const spotlightPlanClasses = classNames(
+			'plan-features-2023-grid__plan-spotlight-card',
+			getPlanClass( spotlightPlanProperties.planName )
+		);
+
+		return (
+			<div className="plan-features-2023-grid__plan-spotlight">
+				<div className={ spotlightPlanClasses }>
+					{ this.renderPlanLogos( [ spotlightPlanProperties ], { isMobile: true } ) }
+					{ this.renderPlanHeaders( [ spotlightPlanProperties ], { isMobile: true } ) }
+					{ this.renderPlanTagline( [ spotlightPlanProperties ], { isMobile: true } ) }
+					{ this.renderPlanPrice( [ spotlightPlanProperties ], { isMobile: true } ) }
+					{ this.renderBillingTimeframe( [ spotlightPlanProperties ], { isMobile: true } ) }
+					{ this.renderTopButtons( [ spotlightPlanProperties ], { isMobile: true } ) }
+				</div>
+			</div>
+		);
 	}
 
 	renderMobileFreeDomain( planName: string, isMonthlyPlan: boolean ) {
@@ -745,24 +784,28 @@ export class PlanFeatures2023Grid extends Component<
 		planPropertiesObj: PlanProperties[],
 		options?: PlanRowOptions
 	) {
-		const { translate } = this.props;
-		let previousPlanShortNameFromProperties: string;
+		const { translate, planProperties } = this.props;
+		const visiblePlanPropertiesFullSet = planProperties.filter( ( { isVisible } ) => isVisible );
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
-				const { planName, product_name_short } = properties;
+				const { planName } = properties;
 				const shouldRenderEnterpriseLogos =
 					isWpcomEnterpriseGridPlan( planName ) || isWooExpressPlusPlan( planName );
 				const shouldShowFeatureTitle =
 					! isWpComFreePlan( planName ) && ! shouldRenderEnterpriseLogos;
-				const planShortName =
-					options?.previousProductNameShort || previousPlanShortNameFromProperties;
-				previousPlanShortNameFromProperties = product_name_short;
+				const indexInPlanProperties = visiblePlanPropertiesFullSet.findIndex(
+					( { planName: name } ) => name === planName
+				);
+				const previousProductName =
+					indexInPlanProperties > 0
+						? visiblePlanPropertiesFullSet[ indexInPlanProperties - 1 ].productNameShort
+						: null;
 				const title =
-					planShortName &&
+					previousProductName &&
 					translate( 'Everything in %(planShortName)s, plus:', {
-						args: { planShortName },
+						args: { planShortName: previousProductName },
 					} );
 				const classes = classNames(
 					'plan-features-2023-grid__common-title',
@@ -1003,7 +1046,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				} );
 
 				const isCurrentPlan = currentSitePlanSlug === plan;
-				const product_name_short =
+				const productNameShort =
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
@@ -1024,8 +1067,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					jpFeatures: jetpackFeaturesTransformed,
 					planConstantObj,
 					planName: plan,
-					// TODO clk: snake_case?
-					product_name_short,
+					productNameShort,
 					rawPrice,
 					isMonthlyPlan,
 					tagline,
@@ -1045,7 +1087,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				: `/plans/my-plan/${ siteId }`;
 
 		return {
-			currentSitePlanSlug,
 			planProperties,
 			canUserPurchasePlan,
 			manageHref,
