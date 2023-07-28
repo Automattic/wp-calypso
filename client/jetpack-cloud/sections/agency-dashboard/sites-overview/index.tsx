@@ -191,7 +191,10 @@ export default function SitesOverview() {
 		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
 
-	const renderAddSiteIssueLicenseButtons = () => {
+	const AddSiteIssueLicenseButtons = () => {
+		const dispatch = useDispatch();
+		const translate = useTranslate();
+
 		return (
 			<div className="sites-overview__add-site-issue-license-buttons">
 				<Button
@@ -275,9 +278,11 @@ export default function SitesOverview() {
 							content={
 								// render content only on large screens, The buttons for small scren have their own section
 								isLargeScreen &&
-								( selectedLicensesCount > 0
-									? renderIssueLicenseButton()
-									: renderAddSiteIssueLicenseButtons() )
+								( selectedLicensesCount > 0 ? (
+									renderIssueLicenseButton()
+								) : (
+									<AddSiteIssueLicenseButtons />
+								) )
 							}
 							pageTitle={ pageTitle }
 							// Only renderIssueLicenseButton should be sticky.
@@ -286,7 +291,7 @@ export default function SitesOverview() {
 
 						{
 							// Render the add site and issue license buttons on mobile as a different component.
-							! isLargeScreen && renderAddSiteIssueLicenseButtons()
+							! isLargeScreen && <AddSiteIssueLicenseButtons />
 						}
 						<SectionNav
 							applyUpdatedStyles

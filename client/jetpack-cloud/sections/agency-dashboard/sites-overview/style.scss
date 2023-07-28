@@ -50,7 +50,7 @@
 	}
 
 	.sites-overview__issue-license-button {
-		margin-inline-end: 0;
+		margin-right: 0;
 		margin-bottom: 8px;
 	}
 	@include break-large {
@@ -67,7 +67,6 @@
 		}
 
 		.sites-overview__issue-license-button {
-			margin-inline-end: 32px;
 			margin-right: 8px;
 			margin-bottom: 8px;
 		}
