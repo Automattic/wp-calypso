@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -61,7 +61,14 @@ const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolea
 };
 
 const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceProps ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
+	const domainPriceText =
+		isEnglishLocale || hasTranslation( "We're paying" ) ? (
+			<div className="domains__domain-price-text">{ __( "We're paying" ) }&#8230;</div>
+		) : (
+			<div className="domains__domain-price-text">{ __( 'First year free' ) }</div>
+		);
 
 	if ( ! rawPrice ) {
 		return (
@@ -89,7 +96,7 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 					{ formatCurrency( rawPrice, currencyCode, { stripZeros: true } ) }
 				</span>
 			</div>
-			<div className="domains__domain-price-text">{ __( 'First year free' ) }</div>
+			{ domainPriceText }
 		</div>
 	);
 };
