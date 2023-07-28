@@ -32,7 +32,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 									) }
 								</p>
 								<Button variant="link" onClick={ openModal }>
-									Learn More
+									{ __( 'Show me how' ) }
 								</Button>
 							</>
 						),
