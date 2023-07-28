@@ -94,9 +94,8 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					<details>
 						<summary>
 							{ createInterpolateElement(
-								__( '<strong>Step 1:</strong> Visit your <a>Google Domains dashboard</a>' ),
+								__( 'Step 1: Visit your <a>Google Domains dashboard</a>' ),
 								{
-									strong: createElement( 'strong' ),
 									a: createElement( 'a', {
 										href: 'https://domains.google.com/registrar/',
 										target: '_blank',
@@ -112,15 +111,11 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						</p>
 					</details>
 					<details>
-						<summary>
-							<strong>Step 2:</strong> Select your domain
-						</summary>
+						<summary>{ __( 'Step 2: Select your domain' ) }</summary>
 						<p>{ __( 'Select the domain you want to transfer in the "My domains" section.' ) }</p>
 					</details>
 					<details>
-						<summary>
-							<strong>Step 3:</strong> Go to "Registration settings"
-						</summary>
+						<summary>{ __( 'Step 3 Go to "Registration settings"' ) }</summary>
 						<p>
 							{ __(
 								'In the "Registration settings" section, scroll down to the "Transfer out" panel.'
@@ -128,9 +123,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						</p>
 					</details>
 					<details>
-						<summary>
-							<strong>Step 4:</strong> Get auth code
-						</summary>
+						<summary>{ __( 'Step 4: Get auth code' ) }</summary>
 						<p>
 							{ __(
 								'Click "Get auth code" and then "Unlock and continue". Copy the code that is shown to your clipboard.'
