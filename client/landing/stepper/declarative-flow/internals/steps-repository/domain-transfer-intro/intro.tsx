@@ -53,10 +53,10 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 							<p>
 								{ isEnglishLocale ||
 								hasTranslation(
-									"Review your payment and contact details. If you're transferring a domain from Google, we'll absorb the cost and give you an extra year of free registration."
+									"When you transfer a domain from Google, we'll give you an additional year of free registration. We've also lowered our prices to match Google Domains."
 								)
 									? __(
-											"Review your payment and contact details. If you're transferring a domain from Google, we'll absorb the cost and give you an extra year of free registration."
+											"When you transfer a domain from Google, we'll give you an additional year of free registration. We've also lowered our prices to match Google Domains."
 									  )
 									: __(
 											'Review your payment and contact details. Google Domains transfers and the first year are free.'
