@@ -7,6 +7,7 @@ import { getPageViewParams } from './page-view-params';
 import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import debug from './utils/debug';
 import getDoNotTrack from './utils/do-not-track';
+import getTrackingPrefs from './utils/get-tracking-prefs';
 
 declare global {
 	interface Window {
