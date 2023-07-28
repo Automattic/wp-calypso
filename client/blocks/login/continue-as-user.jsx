@@ -52,7 +52,7 @@ function ContinueAsUser( {
 	const isLoading = validatingQueryURL || validatingPath;
 
 	const userName = currentUser.display_name || currentUser.username;
-
+	const domainTransferFlowURL = '/setup/domain-transfer/';
 	// Render ContinueAsUser straight away, even before validation.
 	// This helps avoid jarring layout shifts. It's not ideal that the link URL changes transparently
 	// like that, but it is better than the alternative, and in practice it should happen quicker than
@@ -99,6 +99,17 @@ function ContinueAsUser( {
 		</a>
 	);
 
+	const handleRedirection = () => {
+		// If the redirect URL is for the domain transfer flow, we need to replace the current URL
+		if ( validatedRedirectUrlFromQuery.startsWith( domainTransferFlowURL ) ) {
+			return window.location.replace( validatedRedirectUrlFromQuery );
+		} else if ( validatedRedirectPath.startsWith( domainTransferFlowURL ) ) {
+			return window.location.replace( validatedRedirectPath );
+		}
+		// Otherwise, we can just assign the URL
+		window.location.assign( validatedRedirectUrlFromQuery || validatedRedirectPath || '/' );
+	};
+
 	if ( isWooOAuth2Client ) {
 		return (
 			<div className="continue-as-user">
@@ -114,11 +125,7 @@ function ContinueAsUser( {
 							{ translate( 'Log in with a different WordPress.com account' ) }
 						</button>
 					</div>
-					<Button
-						busy={ isLoading }
-						primary
-						href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
-					>
+					<Button busy={ isLoading } primary onClick={ handleRedirection }>
 						{ `${ translate( 'Continue as', {
 							context: 'Continue as an existing WordPress.com user',
 						} ) } ${ userName }` }
@@ -132,11 +139,7 @@ function ContinueAsUser( {
 		<div className="continue-as-user">
 			<div className="continue-as-user__user-info">
 				{ gravatarLink }
-				<Button
-					busy={ isLoading }
-					primary
-					href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
-				>
+				<Button busy={ isLoading } primary onClick={ handleRedirection }>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
