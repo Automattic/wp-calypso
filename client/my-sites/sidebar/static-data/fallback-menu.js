@@ -554,6 +554,17 @@ export default function buildFallbackResponse( {
 						? `/settings/reading/${ siteDomain }`
 						: `https://${ siteDomain }/wp-admin/options-reading.php`,
 				},
+				...( config.isEnabled( 'settings/newsletter-settings-page' )
+					? [
+							{
+								parent: 'options-general.php',
+								slug: 'options-newsletter-php',
+								title: translate( 'Newsletter' ),
+								type: 'submenu-item',
+								url: `/settings/newsletter/${ siteDomain }`,
+							},
+					  ]
+					: [] ),
 				{
 					parent: 'options-general.php',
 					slug: 'options-domains-php',

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { isMobile } from '@automattic/viewport';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
@@ -74,7 +75,11 @@ export const setUpActionsForTasks = ( {
 				break;
 			case 'customize_welcome_message':
 				action = () => {
-					window.location.assign( `/settings/reading/${ siteSlug }#newsletter-settings` );
+					if ( config.isEnabled( 'settings/newsletter-settings-page' ) ) {
+						window.location.assign( `/settings/newsletter/${ siteSlug }` );
+					} else {
+						window.location.assign( `/settings/reading/${ siteSlug }#newsletter-settings` );
+					}
 				};
 				break;
 			case 'manage_subscribers':
