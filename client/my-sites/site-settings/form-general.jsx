@@ -53,6 +53,7 @@ import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
 	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
 	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
+	isTrialSite,
 } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
@@ -581,11 +582,6 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	isLaunchable() {
-		const { isSiteOnECommerceTrial, isSiteOnMigrationTrial } = this.props;
-		return ! isSiteOnECommerceTrial && ! isSiteOnMigrationTrial;
-	}
-
 	recordTracksEventForTrialNoticeClick = () => {
 		const { recordTracksEvent, isSiteOnECommerceTrial } = this.props;
 		const eventName = isSiteOnECommerceTrial
@@ -595,8 +591,9 @@ export class SiteSettingsFormGeneral extends Component {
 	};
 
 	getTrialUpsellNotice() {
-		const { translate, siteSlug, isSiteOnECommerceTrial, isSiteOnMigrationTrial } = this.props;
-		if ( this.isLaunchable() ) {
+		const { translate, siteSlug, isSiteOnECommerceTrial, isSiteOnMigrationTrial, isLaunchable } =
+			this.props;
+		if ( isLaunchable ) {
 			return null;
 		}
 		let noticeText;
@@ -641,6 +638,7 @@ export class SiteSettingsFormGeneral extends Component {
 			fields,
 			hasSitePreviewLink,
 			site,
+			isLaunchable,
 		} = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
@@ -655,7 +653,7 @@ export class SiteSettingsFormGeneral extends Component {
 			btnComponent = <Button>{ btnText }</Button>;
 		} else if ( isPaidPlan && siteDomains.length > 1 ) {
 			btnComponent = (
-				<Button onClick={ this.props.launchSite } disabled={ ! this.isLaunchable() }>
+				<Button onClick={ this.props.launchSite } disabled={ ! isLaunchable }>
 					{ btnText }
 				</Button>
 			);
@@ -991,6 +989,7 @@ const connectComponent = connect( ( state ) => {
 		hasSitePreviewLink: siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS ),
 		isSiteOnECommerceTrial: getIsSiteOnECommerceTrial( state, siteId ),
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
+		isLaunchable: ! isTrialSite( state, siteId ),
 	};
 }, mapDispatchToProps );
 
