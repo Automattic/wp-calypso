@@ -1,10 +1,12 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
-import { PropsWithChildren, useRef, useState } from 'react';
+import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 
 const HoverAreaContainer = styled.span`
 	max-width: 220px;
+	cursor: default;
 `;
 
 const StyledTooltip = styled( Tooltip )`
@@ -24,9 +26,27 @@ const StyledTooltip = styled( Tooltip )`
 	}
 `;
 
-export const Plans2023Tooltip = ( props: PropsWithChildren< { text?: TranslateResult } > ) => {
+export const Plans2023Tooltip = (
+	props: PropsWithChildren< {
+		text?: TranslateResult;
+		handleMobileTooltipTouch: ( value: TranslateResult ) => void;
+		mobileOpenTooltipText: TranslateResult;
+	} >
+) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const tooltipRef = useRef< HTMLDivElement >( null );
+	const isMobile = useMobileBreakpoint();
+
+	useEffect( () => {
+		if ( ! isMobile ) {
+			return;
+		}
+		props.mobileOpenTooltipText !== props.text && setIsVisible( false );
+	}, [ props.mobileOpenTooltipText, props.text, isMobile ] );
+	const handleTouchStart = () => {
+		setIsVisible( ( prevState ) => ! prevState );
+		props.text && props.handleMobileTooltipTouch( props.text );
+	};
 
 	if ( ! props.text ) {
 		return <>{ props.children }</>;
@@ -39,6 +59,7 @@ export const Plans2023Tooltip = ( props: PropsWithChildren< { text?: TranslateRe
 				ref={ tooltipRef }
 				onMouseEnter={ () => setIsVisible( true ) }
 				onMouseLeave={ () => setIsVisible( false ) }
+				onTouchStart={ handleTouchStart }
 			>
 				{ props.children }
 			</HoverAreaContainer>
@@ -47,6 +68,7 @@ export const Plans2023Tooltip = ( props: PropsWithChildren< { text?: TranslateRe
 				position="top"
 				context={ tooltipRef.current }
 				hideArrow
+				showOnMobile
 			>
 				{ props.text }
 			</StyledTooltip>

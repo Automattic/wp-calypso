@@ -33,7 +33,13 @@ import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { localize, LocalizedComponent, LocalizeProps, useTranslate } from 'i18n-calypso';
+import {
+	localize,
+	LocalizedComponent,
+	LocalizeProps,
+	useTranslate,
+	TranslateResult,
+} from 'i18n-calypso';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
@@ -135,6 +141,7 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
+	mobileOpenTooltipText: TranslateResult;
 };
 
 const PlanLogo: React.FunctionComponent< {
@@ -214,6 +221,7 @@ export class PlanFeatures2023Grid extends Component<
 > {
 	state = {
 		showPlansComparisonGrid: false,
+		mobileOpenTooltipText: '',
 	};
 
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
@@ -245,6 +253,10 @@ export class PlanFeatures2023Grid extends Component<
 			} );
 		}
 	}
+
+	handleMobileTooltipTouch = ( value: TranslateResult ): void => {
+		this.setState( { mobileOpenTooltipText: value } );
+	};
 
 	render() {
 		const {
@@ -815,6 +827,8 @@ export class PlanFeatures2023Grid extends Component<
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
+							handleMobileTooltipTouch={ this.handleMobileTooltipTouch }
+							mobileOpenTooltipText={ this.state.mobileOpenTooltipText }
 						/>
 						{ jpFeatures.length !== 0 && (
 							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
@@ -833,6 +847,8 @@ export class PlanFeatures2023Grid extends Component<
 							paidDomainName={ paidDomainName }
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
+							handleMobileTooltipTouch={ this.handleMobileTooltipTouch }
+							mobileOpenTooltipText={ this.state.mobileOpenTooltipText }
 						/>
 					</Container>
 				);

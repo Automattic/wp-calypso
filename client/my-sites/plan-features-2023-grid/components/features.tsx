@@ -1,7 +1,7 @@
 import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { LoadingPlaceHolder } from '../../plans-features-main/components/loading-placeholder';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
@@ -43,6 +43,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
+	handleMobileTooltipTouch: ( value: TranslateResult ) => void;
+	mobileOpenTooltipText: TranslateResult;
 } > = ( {
 	features,
 	planName,
@@ -50,8 +52,11 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	wpcomFreeDomainSuggestion,
 	hideUnavailableFeatures,
 	selectedFeature,
+	handleMobileTooltipTouch,
+	mobileOpenTooltipText,
 } ) => {
 	const translate = useTranslate();
+
 	return (
 		<>
 			{ features.map( ( currentFeature, featureIndex ) => {
@@ -104,7 +109,11 @@ const PlanFeatures2023GridFeatures: React.FC< {
 											/>
 										</Plans2023Tooltip>
 									) : (
-										<Plans2023Tooltip text={ currentFeature.getDescription?.() }>
+										<Plans2023Tooltip
+											text={ currentFeature.getDescription?.() }
+											handleMobileTooltipTouch={ handleMobileTooltipTouch }
+											mobileOpenTooltipText={ mobileOpenTooltipText }
+										>
 											{ currentFeature.getTitle( paidDomainName ) }
 										</Plans2023Tooltip>
 									) }
