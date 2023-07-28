@@ -123,7 +123,7 @@ export type PlanFeatures2023GridProps = {
 	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
 	spotlightPlanSlug?: PlanSlug;
-	showUpgradeableStorage: boolean;
+	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 };
 
 type PlanFeatures2023GridConnectedProps = {
