@@ -48,6 +48,7 @@ declare global {
 				};
 				isV2?: boolean;
 				hotjarSiteSettings?: object;
+				options?: object;
 			} ) => void;
 			strings: any;
 		};
@@ -70,6 +71,34 @@ export async function loadDSPWidgetJS(): Promise< void > {
 	// in order to ensure that translate calls are not removed from the production build.
 	await import( './string' );
 }
+
+const ANDROID_VERSION_HIDE_CAMPAIGNS_BUTTON = 22.9;
+
+const shouldHideGoToCampaignButton = () => {
+	// Android versions higher or equal than 22.9 should hide the button
+	// Trycatching it since user-agents can be changed to send custom data
+	try {
+		const userAgent = navigator.userAgent.toLowerCase();
+
+		// check if it's a wp-android device
+		if ( ! userAgent.includes( 'wp-android' ) ) {
+			return false;
+		}
+
+		// check if it's a version higher or equal than 22.9
+		const version = userAgent.split( '/' )[ 1 ];
+		const versionNumber = parseFloat( version );
+		return versionNumber >= ANDROID_VERSION_HIDE_CAMPAIGNS_BUTTON;
+	} catch ( e ) {
+		return false;
+	}
+};
+
+const getWidgetOptions = () => {
+	return {
+		hideGoToCampaignsButton: shouldHideGoToCampaignButton(),
+	};
+};
 
 export async function showDSP(
 	siteSlug: string | null,
@@ -121,6 +150,7 @@ export async function showDSP(
 					: undefined,
 				isV2,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
+				options: getWidgetOptions(),
 			} );
 		} else {
 			reject( false );
