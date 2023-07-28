@@ -226,5 +226,6 @@
 		"onboarding-2023-pricing-grid",
 		"domain-transfer"
 	],
-	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
+	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
+	"odie_widget_js_src": "https://widgets.wp.com/odie/widget.js"
 }
