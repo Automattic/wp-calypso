@@ -1,7 +1,7 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
 import { Button, Modal } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -88,35 +88,53 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					onRequestClose={ closeModal }
 					style={ { width: '500px' } }
 				>
-					<p>Follow these steps to transfer your domain from Google to WordPress.com:</p>
+					<p>
+						{ __( 'Follow these steps to transfer your domain from Google to WordPress.com:' ) }
+					</p>
 					<details>
 						<summary>
-							<strong>1.</strong> Visit your{ ' ' }
-							<a href="https://domains.google.com/registrar/" target="_blank" rel="noreferrer">
-								Google Domains dashboard
-							</a>
-						</summary>
-						<p>...</p>
-					</details>
-					<details>
-						<summary>
-							<strong>2.</strong> Select your domain
-						</summary>
-						<p>Select the domain you want to transfer in the "My domains" section.</p>
-					</details>
-					<details>
-						<summary>
-							<strong>3.</strong> Go to "Registration settings"
-						</summary>
-						<p>In the "Registration settings" section, scroll down to the "Transfer out" panel.</p>
-					</details>
-					<details>
-						<summary>
-							<strong>4.</strong> Get auth code
+							{ createInterpolateElement(
+								__( '<strong>Step 1.</strong> Visit your <a>Google Domains dashboard</a>' ),
+								{
+									strong: createElement( 'strong' ),
+									a: createElement( 'a', {
+										href: 'https://domains.google.com/registrar/',
+										target: '_blank',
+										rel: 'noreferrer',
+									} ),
+								}
+							) }
 						</summary>
 						<p>
-							Click "Get auth code" and then "Unlock and continue". Copy the code that is shown to
-							your clipboard.
+							{ __(
+								'Log in to your Google Domains dashboard to see a list of all of your registered domains.'
+							) }
+						</p>
+					</details>
+					<details>
+						<summary>
+							<strong>Step 2.</strong> Select your domain
+						</summary>
+						<p>{ __( 'Select the domain you want to transfer in the "My domains" section.' ) }</p>
+					</details>
+					<details>
+						<summary>
+							<strong>Step 3.</strong> Go to "Registration settings"
+						</summary>
+						<p>
+							{ __(
+								'In the "Registration settings" section, scroll down to the "Transfer out" panel.'
+							) }
+						</p>
+					</details>
+					<details>
+						<summary>
+							<strong>Step 4.</strong> Get auth code
+						</summary>
+						<p>
+							{ __(
+								'Click "Get auth code" and then "Unlock and continue". Copy the code that is shown to your clipboard.'
+							) }
 						</p>
 					</details>
 				</Modal>
