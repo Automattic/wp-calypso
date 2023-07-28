@@ -119,10 +119,13 @@ class ThemeShowcase extends Component {
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
+		const { search } = nextProps;
+		const { tabFilter } = prevState;
+
 		// Activate the "All" tab when searching on "Recommended", since the
 		// search might include some results that are not in the recommended
 		// themes (e.g. WP.org themes).
-		if ( nextProps.search && prevState.tabFilter.key === staticFilters.RECOMMENDED.key ) {
+		if ( search && tabFilter.key === staticFilters.RECOMMENDED.key ) {
 			return {
 				tabFilter: staticFilters.ALL,
 			};
