@@ -19,7 +19,7 @@ const PluginsAnnouncementModal = () => {
 		return null;
 	}
 
-	if ( ! siteId ) {
+	if ( ! selectedSiteUrl ) {
 		return null;
 	}
 
