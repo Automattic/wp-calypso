@@ -81,8 +81,8 @@ export function generateSteps( {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
 			fulfilledStepCallback: isDomainFulfilled,
-			providesDependencies: [ 'domainItem', 'shouldHideFreePlan', 'signupDomainOrigin', 'siteUrl' ],
-			optionalDependencies: [ 'shouldHideFreePlan', 'signupDomainOrigin', 'siteUrl' ],
+			providesDependencies: [ 'domainItem', 'shouldHideFreePlan', 'signupDomainOrigin' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'signupDomainOrigin' ],
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
@@ -372,14 +372,8 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'isManageSiteFlow',
 				'signupDomainOrigin',
-				'siteUrl',
 			],
-			optionalDependencies: [
-				'shouldHideFreePlan',
-				'isManageSiteFlow',
-				'signupDomainOrigin',
-				'siteUrl',
-			],
+			optionalDependencies: [ 'signupDomainOrigin', 'shouldHideFreePlan', 'isManageSiteFlow' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -406,7 +400,7 @@ export function generateSteps( {
 		'domain-only': {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem', 'signupDomainOrigin' ], // note: siteId, siteSlug are not provided when used in domain flow
-			optionalDependencies: [ 'signupDomainOrigin', 'siteUrl' ],
+			optionalDependencies: [ 'signupDomainOrigin' ],
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
@@ -416,8 +410,7 @@ export function generateSteps( {
 		'domains-store': {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem', 'siteUrl' ],
-			optionalDependencies: [ 'siteUrl' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 			props: {
 				isDomainOnly: false,
 				forceDesignType: 'store',
@@ -436,14 +429,8 @@ export function generateSteps( {
 				'useThemeHeadstart',
 				'shouldHideFreePlan',
 				'signupDomainOrigin',
-				'siteUrl',
 			],
-			optionalDependencies: [
-				'shouldHideFreePlan',
-				'useThemeHeadstart',
-				'signupDomainOrigin',
-				'siteUrl',
-			],
+			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart', 'signupDomainOrigin' ],
 			props: {
 				isDomainOnly: false,
 			},
