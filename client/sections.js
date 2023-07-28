@@ -155,6 +155,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'settings-newsletter',
+		paths: [ '/settings/newsletter' ],
+		module: 'calypso/my-sites/site-settings/settings-newsletter',
+		group: 'sites',
+	},
+	{
 		name: 'settings-security',
 		paths: [ '/settings/security' ],
 		module: 'calypso/my-sites/site-settings/settings-security',

@@ -4,19 +4,14 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import ReaderSettingsSection from '../reader-settings';
-import { FediverseSettingsSection } from '../reading-fediverse-settings';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
-import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
-import { SiteSettingsSection } from '../reading-site-settings';
 import wrapSettingsForm from '../wrap-settings-form';
 
-const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
+const isEnabled = config.isEnabled( 'settings/newsletter-settings-page' );
 
 export type SubscriptionOptions = {
 	invitation: string;
@@ -98,7 +93,7 @@ const connectComponent = connect( ( state: IAppState ) => {
 	};
 } );
 
-type ReadingSettingsFormProps = {
+type NewsletterSettingsFormProps = {
 	fields: Fields;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	handleAutosavingToggle: ( field: string ) => () => void;
@@ -113,64 +108,29 @@ type ReadingSettingsFormProps = {
 	updateFields: ( fields: Fields ) => void;
 };
 
-const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
+const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )(
 	connectComponent(
 		( {
 			fields,
-			onChangeField,
-			handleAutosavingToggle,
 			handleSubmitForm,
 			handleToggle,
-			isAtomic,
 			isRequestingSettings,
 			isSavingSettings,
 			settings,
-			siteIsJetpack,
-			siteUrl,
 			updateFields,
-		}: ReadingSettingsFormProps ) => {
+		}: NewsletterSettingsFormProps ) => {
 			const disabled = isRequestingSettings || isSavingSettings;
 			const savedSubscriptionOptions = settings?.subscription_options;
 			return (
 				<form onSubmit={ handleSubmitForm }>
-					<SiteSettingsSection
+					<NewsletterSettingsSection
 						fields={ fields }
-						onChangeField={ onChangeField }
 						handleToggle={ handleToggle }
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
-						isRequestingSettings={ isRequestingSettings }
 						isSavingSettings={ isSavingSettings }
+						savedSubscriptionOptions={ savedSubscriptionOptions }
 						updateFields={ updateFields }
-					/>
-					{ ! config.isEnabled( 'settings/newsletter-settings-page' ) && (
-						<NewsletterSettingsSection
-							fields={ fields }
-							handleToggle={ handleToggle }
-							handleSubmitForm={ handleSubmitForm }
-							disabled={ disabled }
-							isSavingSettings={ isSavingSettings }
-							savedSubscriptionOptions={ savedSubscriptionOptions }
-							updateFields={ updateFields }
-						/>
-					) }
-					<ReaderSettingsSection
-						fields={ fields }
-						handleAutosavingToggle={ handleAutosavingToggle }
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-						isAtomic={ isAtomic }
-						siteIsJetpack={ siteIsJetpack }
-					/>
-					{ config.isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
-					<RssFeedSettingsSection
-						fields={ fields }
-						onChangeField={ onChangeField }
-						handleSubmitForm={ handleSubmitForm }
-						updateFields={ updateFields }
-						disabled={ disabled }
-						isSavingSettings={ isSavingSettings }
-						siteUrl={ siteUrl }
 					/>
 				</form>
 			);
@@ -178,7 +138,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 	)
 );
 
-const ReadingSettings = () => {
+const NewsletterSettings = () => {
 	const translate = useTranslate();
 
 	if ( ! isEnabled ) {
@@ -186,13 +146,12 @@ const ReadingSettings = () => {
 	}
 
 	return (
-		<Main className="site-settings site-settings__reading-settings">
-			<ScreenOptionsTab wpAdminPath="options-reading.php" />
-			<DocumentHead title={ translate( 'Reading Settings' ) } />
-			<FormattedHeader brandFont headerText={ translate( 'Reading Settings' ) } align="left" />
-			<ReadingSettingsForm />
+		<Main>
+			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
+			<FormattedHeader brandFont headerText={ translate( 'Newsletter Settings' ) } align="left" />
+			<NewsletterSettingsForm />
 		</Main>
 	);
 };
 
-export default ReadingSettings;
+export default NewsletterSettings;
