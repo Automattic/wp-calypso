@@ -68,7 +68,7 @@
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
 		"full-site-editing/beta-opt-in": true,
-		"cookie-banner": false,
+		"cookie-banner": true,
 		"github-integration-i1": false,
 		"google-drive": true,
 		"google-my-business": true,
