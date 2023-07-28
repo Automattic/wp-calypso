@@ -4,6 +4,7 @@ import type {
 	GROUP_WPCOM,
 	WPCOM_PRODUCTS,
 	WPCOM_PLANS,
+	WPCOM_STORAGE_ADD_ONS,
 	PLAN_JETPACK_FREE,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_LEGACY_PLANS,
@@ -25,8 +26,6 @@ import type {
 	FEATURE_GROUP_MARKETING_EMAIL,
 	FEATURE_GROUP_SHIPPING,
 	WOOCOMMERCE_PRODUCTS,
-	FEATURE_50GB_STORAGE_ADD_ON,
-	FEATURE_100GB_STORAGE_ADD_ON,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
@@ -37,10 +36,7 @@ export type Feature = string;
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
 export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
-export type WPComStorageAddOnSlug = [
-	typeof FEATURE_50GB_STORAGE_ADD_ON,
-	typeof FEATURE_100GB_STORAGE_ADD_ON
-][ number ];
+export type WPComStorageAddOnSlug = ( typeof WPCOM_STORAGE_ADD_ONS )[ number ];
 
 export interface WPComPlan extends Plan {
 	getAudience?: () => TranslateResult;
