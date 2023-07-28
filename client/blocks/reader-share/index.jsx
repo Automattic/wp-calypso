@@ -130,6 +130,7 @@ class ReaderShare extends Component {
 					) : (
 						<ReaderReblogSelection
 							post={ this.props.post }
+							comment={ this.props.comment }
 							popoverProps={ popoverProps }
 							closeMenu={ this.closeMenu }
 						/>
