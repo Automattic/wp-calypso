@@ -109,11 +109,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 							purchases?.length
 						) }
 					</div>
-					<div>
-						{ translate( '{{strong}}It may take up to 5-10 days.{{/strong}}', {
-							components: { strong: <strong /> },
-						} ) }
-					</div>
 				</>
 			);
 		}
