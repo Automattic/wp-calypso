@@ -24,6 +24,12 @@
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	}
 
+	.gridicons-reblog {
+		height: 20px;
+		top: 0;
+		width: 20px;
+	}
+
 	&.is-active {
 		color: var(--color-primary);
 
@@ -113,6 +119,7 @@
 		fill: var(--color-facebook);
 	}
 
+	&:focus,
 	&:hover {
 		.gridicon,
 		.reader-twitter,

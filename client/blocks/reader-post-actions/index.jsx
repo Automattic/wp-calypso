@@ -6,7 +6,7 @@ import CommentButton from 'calypso/blocks/comment-button';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 import ShareButton from 'calypso/blocks/reader-share';
-import { shouldShowShare } from 'calypso/blocks/reader-share/helper';
+import { shouldShowShare, shouldShowReblog } from 'calypso/blocks/reader-share/helper';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import ReaderViews from 'calypso/blocks/reader-views';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
@@ -15,7 +15,9 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import * as stats from 'calypso/reader/stats';
+import { useSelector } from 'calypso/state';
 import { userCan } from 'calypso/state/posts/utils';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 import './style.scss';
 
@@ -37,6 +39,8 @@ const ReaderPostActions = ( props ) => {
 	} = props;
 
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
+
+	const hasSites = !! useSelector( getPrimarySiteId );
 
 	const openSuggestedFollowsModal = ( followClicked ) => {
 		setIsSuggestedFollowsModalOpen( followClicked );
@@ -110,6 +114,17 @@ const ReaderPostActions = ( props ) => {
 			{ shouldShowShare( post ) && (
 				<li className="reader-post-actions__item">
 					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
+				</li>
+			) }
+			{ shouldShowReblog( post, hasSites ) && (
+				<li className="reader-post-actions__item">
+					<ShareButton
+						post={ post }
+						position="bottom"
+						tagName="div"
+						iconSize={ iconSize }
+						isReblogSelection
+					/>
 				</li>
 			) }
 			{ shouldShowComments( post ) && (
