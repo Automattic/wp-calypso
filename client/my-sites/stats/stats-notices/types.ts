@@ -1,5 +1,9 @@
+export interface PaidPlanPurchaseSuccessJetpackStatsNoticeProps {
+	onNoticeViewed?: () => void;
+}
+
 export interface StatsNoticeProps {
-	siteId?: number | null;
+	siteId: number | null;
 	onNoticeViewed?: () => void;
 }
 
