@@ -91,6 +91,11 @@ export const LivePreviewButton = ( {
 		return null;
 	}
 
+	// Block Theme Previews need the theme installed on Atomic sites.
+	if ( isAtomic && ! isThemeInstalledOnAtomicSite ) {
+		return null;
+	}
+
 	if ( isSimple ) {
 		/**
 		 * Disable Live Preview for 3rd party themes, as Block Theme Previews need a theme installed.
@@ -108,11 +113,6 @@ export const LivePreviewButton = ( {
 		 * @see https://github.com/Automattic/wp-calypso/issues/79223
 		 */
 		if ( ! canUseTheme ) {
-			return null;
-		}
-	} else if ( isAtomic ) {
-		// Block Theme Previews need the theme installed on Atomic sites.
-		if ( ! isThemeInstalledOnAtomicSite ) {
 			return null;
 		}
 	}
