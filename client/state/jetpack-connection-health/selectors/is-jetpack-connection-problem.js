@@ -8,7 +8,7 @@ import 'calypso/state/jetpack-connection-health/init';
  * @returns {?boolean}               Whether the current site can have connection problem
  */
 export default function isJetpackConnectionProblem( state, siteId ) {
-	const connection_data = state.jetpackConnectionHealth[siteId];
+	const connection_data = state.jetpackConnectionHealth[ siteId ];
 
 	if ( ! connection_data ) {
 		return null;
