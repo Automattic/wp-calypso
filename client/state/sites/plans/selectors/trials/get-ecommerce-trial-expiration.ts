@@ -7,13 +7,11 @@ import type { AppState } from 'calypso/types';
 /**
  * Checks if the plan is an ecommerce trial.
  *
- * @param {SitePlanData | string} plan - Plan object
+ * @param {SitePlanData} plan - Plan object
  * @returns {boolean} returns true if the plan is an ecommerce trial
  */
-export function isECommerceTrialPlan( plan: SitePlanData | string ): boolean {
-	const productSlug = typeof plan === 'string' ? plan : plan.productSlug;
-
-	return productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+function isECommerceTrialPlan( plan: SitePlanData ): boolean {
+	return plan.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 }
 
 /**

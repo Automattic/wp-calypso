@@ -8,17 +8,11 @@ import type { AppState } from 'calypso/types';
 /**
  * Checks if the plan is a migration trial.
  *
- * @param {SitePlanData | string} plan - Plan object
+ * @param {SitePlanData} plan - Plan object
  * @returns {boolean} returns true if the plan is an migration trial
  */
-export function isMigrationTrialPlan( plan: SitePlanData | string ): boolean {
-	if ( ! isEnabled( 'plans/migration-trial' ) ) {
-		return false;
-	}
-
-	const productSlug = typeof plan === 'string' ? plan : plan.productSlug;
-
-	return productSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
+function isMigrationTrialPlan( plan: SitePlanData ): boolean {
+	return plan.productSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
 }
 
 /**
