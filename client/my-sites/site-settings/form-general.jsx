@@ -615,19 +615,16 @@ export class SiteSettingsFormGeneral extends Component {
 				}
 			);
 		} else if ( isSiteOnMigrationTrial ) {
-			noticeText = translate(
-				'Before you can share your stories with the world, you need to {{a}}pick a plan{{/a}}.',
-				{
-					components: {
-						a: (
-							<a
-								href={ `/plans/${ siteSlug }` }
-								onClick={ this.recordTracksEventForTrialNoticeClick }
-							/>
-						),
-					},
-				}
-			);
+			noticeText = translate( 'Ready to launch your site? {{a}}Upgrade to a paid plan{{/a}}.', {
+				components: {
+					a: (
+						<a
+							href={ `/plans/${ siteSlug }` }
+							onClick={ this.recordTracksEventForTrialNoticeClick }
+						/>
+					),
+				},
+			} );
 		}
 
 		return noticeText && <TrialUpsellNotice text={ noticeText } />;

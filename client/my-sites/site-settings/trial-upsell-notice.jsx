@@ -9,6 +9,7 @@ const TrialUpsellNotice = ( { text } ) => {
 			showDismiss={ false }
 			text={ text }
 			isCompact={ false }
+			status="is-warning"
 		/>
 	);
 };
