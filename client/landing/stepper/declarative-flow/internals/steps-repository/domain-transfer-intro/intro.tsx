@@ -113,11 +113,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						</p>
 					</details>
 					<details>
-						<summary>
-							{ createInterpolateElement( __( '<strong>Step 2:</strong> Select your domain' ), {
-								strong: <strong />,
-							} ) }
-						</summary>
+						<summary>{ __( 'Step 2: Select your domain' ) }</summary>
 						<p>{ __( 'Select the domain you want to transfer in the "My domains" section.' ) }</p>
 						<img
 							className="bulk-domain-transfer__instructions-image"
@@ -129,14 +125,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						/>
 					</details>
 					<details>
-						<summary>
-							{ createInterpolateElement(
-								__( '<strong>Step 3:</strong> Go to "Registration settings"' ),
-								{
-									strong: <strong />,
-								}
-							) }
-						</summary>
+						<summary>{ __( 'Step 3 Go to "Registration settings"' ) }</summary>
 						<p>
 							{ __(
 								'In the "Registration settings" section, scroll down to the "Transfer out" panel.'
@@ -153,11 +142,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						/>
 					</details>
 					<details>
-						<summary>
-							{ createInterpolateElement( __( '<strong>Step 4:</strong> Get auth code' ), {
-								strong: <strong />,
-							} ) }
-						</summary>
+						<summary>{ __( 'Step 4: Get auth code' ) }</summary>
 						<p>
 							{ __(
 								'Click "Get auth code" and then "Unlock and continue". Copy the code that is shown to your clipboard.'

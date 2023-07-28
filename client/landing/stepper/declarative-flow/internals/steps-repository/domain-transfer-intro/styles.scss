@@ -212,9 +212,11 @@ $heading-font-family: "SF Pro Display", $sans;
 	font-size: rem(14px);
 	width: 700px;
 	max-width: 90%;
+	margin: auto auto;
 
 	summary {
 		font-weight: bold;
+		cursor: pointer;
 	}
 
 	details {
