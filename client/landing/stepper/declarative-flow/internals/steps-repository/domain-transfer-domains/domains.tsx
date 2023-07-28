@@ -21,8 +21,6 @@ import { DomainCodePair } from './domain-code-pair';
 import DomainTransferFAQ from './faqs';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-const MAX_DOMAINS = 50;
-
 export interface Props {
 	onSubmit: () => void;
 }
@@ -256,11 +254,9 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					) }
 				/>
 			) ) }
-			{ domainCount < MAX_DOMAINS && (
-				<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-					{ __( 'Add more' ) }
-				</Button>
-			) }
+			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
+				{ __( 'Add more' ) }
+			</Button>
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }
