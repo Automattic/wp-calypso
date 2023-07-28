@@ -199,3 +199,21 @@ export const convertBytes = (
 
 	return { unitAmount: size.toFixed( decimals ), unit: units[ i ] };
 };
+
+/**
+ * Encodes a given text string to Base64 format.
+ *
+ * The function employs the TextEncoder to convert the input text into a UTF-8 byte sequence. This step ensures
+ * accurate encoding of multibyte characters, which are prevalent in scripts like Japanese and Chinese. Directly
+ * using window.btoa on such characters without UTF-8 encoding can lead to incorrect results, as btoa is designed
+ * for ASCII strings. By first encoding to UTF-8, we ensure a consistent and accurate Base64 representation for
+ * a wide range of texts.
+ *
+ * @param {string} text - The text string to be encoded, potentially including non-ASCII characters.
+ * @returns {string} The Base64 encoded representation of the input text.
+ */
+export const encodeToBase64 = ( text: string ): string => {
+	const encoder = new TextEncoder();
+	const charCodes = encoder.encode( text );
+	return window.btoa( String.fromCharCode( ...charCodes ) );
+};
