@@ -26,6 +26,7 @@ import {
 	isThemeActive,
 	isInstallingTheme,
 	prependThemeFilterKeys,
+	getThemeType,
 } from 'calypso/state/themes/selectors';
 import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
 import { addStyleVariation, trackClick, interlaceThemes } from './helpers';
@@ -49,6 +50,7 @@ class ThemesSelection extends Component {
 		] ),
 		getPremiumThemePrice: PropTypes.func,
 		getThemeDetailsUrl: PropTypes.func,
+		getThemeType: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		isLastPage: PropTypes.bool,
 		isRequesting: PropTypes.bool,
@@ -88,6 +90,7 @@ class ThemesSelection extends Component {
 			page_number: query.page,
 			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
 			action: snakeCase( action ),
+			theme_type: this.props.getThemeType( themeId ),
 		} );
 	};
 
@@ -124,6 +127,7 @@ class ThemesSelection extends Component {
 			results_rank: resultsRank + 1,
 			page_number: query.page,
 			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
+			theme_type: this.props.getThemeType( themeId ),
 		};
 
 		if ( variation ) {
@@ -307,6 +311,10 @@ function bindGetThemeDetailsUrl( state, siteId ) {
 	return ( themeId ) => getThemeDetailsUrl( state, themeId, siteId );
 }
 
+function bindGetThemeType( state ) {
+	return ( themeId ) => getThemeType( state, themeId );
+}
+
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
@@ -407,6 +415,7 @@ export const ConnectedThemesSelection = connect(
 			// redundant AJAX requests, we're not rendering these query components locally.
 			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
 			getThemeDetailsUrl: bindGetThemeDetailsUrl( state, siteId ),
+			getThemeType: bindGetThemeType( state ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,

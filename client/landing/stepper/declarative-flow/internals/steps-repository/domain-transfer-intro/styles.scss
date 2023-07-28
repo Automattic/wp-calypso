@@ -109,7 +109,9 @@ $heading-font-family: "SF Pro Display", $sans;
 
 					.free-domain__primary-badge {
 						border-radius: 4px;
-						margin-left: 12px;
+						margin-left: 16px;
+						vertical-align: middle;
+						font-size: rem(12px);
 					}
 
 

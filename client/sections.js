@@ -50,7 +50,12 @@ const sections = [
 	},
 	{
 		name: 'purchases',
-		paths: [ '/me/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
+		paths: [
+			'/me/purchases',
+			'/me/purchases-by-owner',
+			'/me/billing',
+			'/payment-methods/add-credit-card',
+		],
 		module: 'calypso/me/purchases',
 		group: 'me',
 	},

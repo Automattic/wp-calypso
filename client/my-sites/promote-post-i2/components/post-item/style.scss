@@ -191,12 +191,13 @@ body.is-section-promote-post-i2 {
 								@include blazepress-data-row-font-mobile;
 
 								display: block;
+								margin-bottom: 8px;
 							}
 
 							.post-item__post-title-content {
 								font-size: 0.875rem;
 								font-weight: 600;
-								line-height: 1.47;
+								line-height: 1.4285;
 							}
 						}
 					}

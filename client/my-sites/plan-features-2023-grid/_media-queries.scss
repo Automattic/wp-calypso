@@ -106,6 +106,14 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 			display: none;
 		}
 	}
+
+	.plan-features-2023-grid__plan-spotlight {
+		display: none;
+
+		@media ( min-width: $plans-2023-small-breakpoint ) {
+			display: block;
+		}
+	}
 }
 
 /**
@@ -137,6 +145,14 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 
 		@media ( min-width: ( $plans-2023-small-breakpoint + $plan-features-sidebar-width ) ) {
 			display: none;
+		}
+	}
+
+	.plan-features-2023-grid__plan-spotlight {
+		display: none;
+
+		@media ( min-width: $plans-2023-small-breakpoint + $plan-features-sidebar-width ) {
+			display: block;
 		}
 	}
 }

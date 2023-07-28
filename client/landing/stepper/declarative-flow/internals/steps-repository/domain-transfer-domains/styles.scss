@@ -51,13 +51,6 @@
 				justify-content: center;
 				margin-top: 16px;
 				line-height: 20px;
-
-				span {
-					display: block;
-					@media (min-width: $break-medium ) {
-						width: 60%;
-					}
-				}
 			}
 		}
 
@@ -138,11 +131,12 @@
 		display: flex;
 		gap: 20px;
 		align-items: flex-end;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 
 		@media (max-width: $break-medium ) {
 			align-items: normal;
 			flex-direction: column;
+			flex-wrap: wrap;
 		}
 
 		.form-fieldset {
@@ -208,7 +202,7 @@
 	}
 
 	.domains__domain-domain {
-		flex: 0 0 390px;
+		flex: 0 0 420px;
 	}
 
 	.domains__domain-key {
@@ -272,7 +266,6 @@
 				font-size: 0.75rem;
 				font-weight: 500;
 				line-height: 16px;
-				white-space: nowrap;
 			}
 		}
 	}
@@ -451,6 +444,13 @@
 			// Remove left-padding for first button to minimize padding when line wraps on mobile.
 			button:first-of-type {
 				padding-left: 0;
+			}
+		}
+
+		&.en,
+		&.en-gb {
+			.domains__domain-price-text {
+				white-space: nowrap;
 			}
 		}
 	}

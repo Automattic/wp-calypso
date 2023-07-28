@@ -1,3 +1,4 @@
+import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	FEATURE_PREMIUM_THEMES_V2,
@@ -523,7 +524,7 @@ class ThemeSheet extends Component {
 	}
 
 	renderWebPreview = () => {
-		const { locale, stylesheet, styleVariations, themeId } = this.props;
+		const { locale, siteSlug, stylesheet, styleVariations, themeId } = this.props;
 		const baseStyleVariation = styleVariations.find( ( style ) =>
 			isDefaultGlobalStylesVariationSlug( style.slug )
 		);
@@ -534,12 +535,21 @@ class ThemeSheet extends Component {
 			{ language: locale, viewport_unit_to_px: true }
 		);
 
+		// Normally, the ThemeWebPreview component will generate the iframe token via uuid.
+		// Given that this page supports SSR, using uuid will cause hydration mismatch.
+		// To avoid this, we pass a custom token that consists of the theme ID and user/anon ID.
+		const iframeToken = themeId;
+		if ( typeof document !== 'undefined' ) {
+			iframeToken.concat( '-', getTracksAnonymousUserId() ?? siteSlug );
+		}
+
 		return (
 			<div className="theme__sheet-web-preview">
 				<ThemeWebPreview
 					url={ url }
 					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
 					iframeScaleRatio={ 0.5 }
+					iframeToken={ iframeToken }
 					isShowFrameBorder={ false }
 					isShowDeviceSwitcher={ false }
 					isFitHeight
@@ -1207,7 +1217,6 @@ class ThemeSheet extends Component {
 			siteId,
 			siteSlug,
 			retired,
-			styleVariations,
 			isBundledSoftwareSet,
 			translate,
 			isLoggedIn,
@@ -1218,6 +1227,7 @@ class ThemeSheet extends Component {
 			isMarketplaceThemeSubscribed,
 			isExternallyManagedTheme,
 			isThemeActivationSyncStarted,
+			isWpcomTheme,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
@@ -1421,7 +1431,9 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ styleVariations.length ? this.renderWebPreview() : this.renderScreenshot() }
+							{ isWpcomTheme && ! isExternallyManagedTheme
+								? this.renderWebPreview()
+								: this.renderScreenshot() }
 						</div>
 					) }
 				</div>

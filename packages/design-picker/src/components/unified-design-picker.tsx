@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
@@ -13,7 +14,7 @@ import {
 	filterDesignsByCategory,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
-import PatternAssemblerCta from './pattern-assembler-cta';
+import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
@@ -188,6 +189,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 interface DesignPickerProps {
 	locale: string;
 	onDesignYourOwn: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	designs: Design[];
@@ -200,6 +202,7 @@ interface DesignPickerProps {
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
 	onDesignYourOwn,
+	onClickDesignYourOwnTopButton,
 	onPreview,
 	onChangeVariation,
 	designs,
@@ -217,15 +220,29 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		return designs;
 	}, [ designs, categorization?.selection ] );
 
+	const assemblerCtaData = usePatternAssemblerCtaData();
+
 	return (
 		<div>
-			{ categorization && hasCategories && (
-				<UnifiedDesignPickerCategoryFilter
-					categories={ categorization.categories }
-					onSelect={ categorization.onSelect }
-					selectedSlug={ categorization.selection }
-				/>
-			) }
+			<div className="design-picker__filters">
+				{ categorization && hasCategories && (
+					<UnifiedDesignPickerCategoryFilter
+						className="design-picker__category-filter"
+						categories={ categorization.categories }
+						onSelect={ categorization.onSelect }
+						selectedSlug={ categorization.selection }
+					/>
+				) }
+				{ assemblerCtaData.shouldGoToAssemblerStep && (
+					<Button
+						className="design-picker__design-your-own-button"
+						onClick={ () => onClickDesignYourOwnTopButton( DEFAULT_ASSEMBLER_DESIGN ) }
+					>
+						{ assemblerCtaData.title }
+					</Button>
+				) }
+			</div>
+
 			<div className="design-picker__grid">
 				{ filteredDesigns.map( ( design, index ) => {
 					if ( isBlankCanvasDesign( design ) ) {
@@ -259,6 +276,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 export interface UnifiedDesignPickerProps {
 	locale: string;
 	onDesignYourOwn: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
@@ -273,6 +291,7 @@ export interface UnifiedDesignPickerProps {
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
 	onDesignYourOwn,
+	onClickDesignYourOwnTopButton,
 	onPreview,
 	onChangeVariation,
 	onViewAllDesigns,
@@ -311,6 +330,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 				<DesignPicker
 					locale={ locale }
 					onDesignYourOwn={ onDesignYourOwn }
+					onClickDesignYourOwnTopButton={ onClickDesignYourOwnTopButton }
 					onPreview={ onPreview }
 					onChangeVariation={ onChangeVariation }
 					designs={ designs }

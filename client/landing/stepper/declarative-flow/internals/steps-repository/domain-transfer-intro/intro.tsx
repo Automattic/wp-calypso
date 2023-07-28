@@ -1,3 +1,4 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
@@ -9,7 +10,8 @@ interface Props {
 }
 
 const Intro: React.FC< Props > = ( { onSubmit } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	return (
 		<>
@@ -46,12 +48,19 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						badge: __( 'Google Domains: Free' ),
+						badge: __( 'Free for Google Domains' ),
 						description: (
 							<p>
-								{ __(
-									'Review your payment and contact details. Google Domains transfers and the first year are free.'
-								) }
+								{ isEnglishLocale ||
+								hasTranslation(
+									"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration."
+								)
+									? __(
+											"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration."
+									  )
+									: __(
+											'Review your payment and contact details. Google Domains transfers and the first year are free.'
+									  ) }
 							</p>
 						),
 						icon: <Icon icon={ payment } />,
