@@ -827,7 +827,7 @@ export class PlanFeatures2023Grid extends Component<
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
-							handleMobileTooltipTouch={ this.handleMobileTooltipTouch }
+							handleMobileTooltipTouch={ ( value ) => this.handleMobileTooltipTouch( value ) }
 							mobileOpenTooltipText={ this.state.mobileOpenTooltipText }
 						/>
 						{ jpFeatures.length !== 0 && (
@@ -847,7 +847,7 @@ export class PlanFeatures2023Grid extends Component<
 							paidDomainName={ paidDomainName }
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
-							handleMobileTooltipTouch={ this.handleMobileTooltipTouch }
+							handleMobileTooltipTouch={ ( value ) => this.handleMobileTooltipTouch( value ) }
 							mobileOpenTooltipText={ this.state.mobileOpenTooltipText }
 						/>
 					</Container>

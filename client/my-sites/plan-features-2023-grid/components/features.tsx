@@ -111,7 +111,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 									) : (
 										<Plans2023Tooltip
 											text={ currentFeature.getDescription?.() }
-											handleMobileTooltipTouch={ handleMobileTooltipTouch }
+											handleMobileTooltipTouch={ ( value ) => handleMobileTooltipTouch( value ) }
 											mobileOpenTooltipText={ mobileOpenTooltipText }
 										>
 											{ currentFeature.getTitle( paidDomainName ) }

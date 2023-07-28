@@ -43,10 +43,15 @@ export const Plans2023Tooltip = (
 		}
 		props.mobileOpenTooltipText !== props.text && setIsVisible( false );
 	}, [ props.mobileOpenTooltipText, props.text, isMobile ] );
-	const handleTouchStart = () => {
+
+	const handleTouchStart = ( e ) => {
+		e.stopPropagation();
+		e.preventDefault();
 		setIsVisible( ( prevState ) => ! prevState );
 		props.text && props.handleMobileTooltipTouch( props.text );
 	};
+
+	const stopPropagation = ( event ) => event.stopPropagation();
 
 	if ( ! props.text ) {
 		return <>{ props.children }</>;
@@ -60,6 +65,7 @@ export const Plans2023Tooltip = (
 				onMouseEnter={ () => setIsVisible( true ) }
 				onMouseLeave={ () => setIsVisible( false ) }
 				onTouchStart={ handleTouchStart }
+				onClick={ stopPropagation }
 			>
 				{ props.children }
 			</HoverAreaContainer>
