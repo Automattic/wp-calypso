@@ -39,6 +39,7 @@ export interface StepState {
 			is_free: boolean;
 			vendor: 'dot';
 		} >;
+		lastDomainSearched: string;
 	};
 }
 

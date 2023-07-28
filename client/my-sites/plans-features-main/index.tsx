@@ -108,12 +108,14 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 };
 
-function getSubdomainUrlFromDependencyProgress( progress: ProgressState ) {
-	const domainSearchResult = progress.domains?.domainForm?.subdomainSearchResults[ 0 ];
-	if ( domainSearchResult ) {
-		return domainSearchResult.domain_name;
-	}
-	return null;
+function getDomainStepInfoFromDependencyProgress( progress: ProgressState ) {
+	const domainForm = progress.domains?.domainForm;
+	const [ domainSearchResult ] = domainForm?.subdomainSearchResults || [];
+	const lastDomainSearched = domainForm?.lastDomainSearched;
+	return {
+		freeSubdomain: domainSearchResult?.domain_name,
+		lastDomainSearched,
+	};
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -299,7 +301,8 @@ const PlansFeaturesMain = ( {
 	 * Once the PR is merged this code can be removed.
 	 */
 	const signupProgress = useSelector( getSignupProgress );
-	const freeSubdomain = getSubdomainUrlFromDependencyProgress( signupProgress );
+	const { freeSubdomain, lastDomainSearched } =
+		getDomainStepInfoFromDependencyProgress( signupProgress );
 	/*****************************************************/
 	const isFreeDomainFreePlanModalActive = config.isEnabled( 'onboarding-pm/free-free-modal' );
 
@@ -470,6 +473,7 @@ const PlansFeaturesMain = ( {
 			{ freeSubdomain && isFreeFreeUpsellOpen && (
 				<FreeFreeDialog
 					freeSubdomain={ freeSubdomain }
+					lastDomainSearched={ lastDomainSearched }
 					onClose={ () => setIsFreeFreeUpsellOpen( false ) }
 					onFreePlanSelected={ () => {
 						onUpgradeClick?.( null );

@@ -123,8 +123,10 @@ export function FreeFreeDialog( {
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
+	lastDomainSearched,
 }: {
 	freeSubdomain: string;
+	lastDomainSearched: string;
 	onClose: () => void;
 	onFreePlanSelected: () => void;
 	onPlanSelected: () => void;
@@ -133,7 +135,7 @@ export function FreeFreeDialog( {
 	const userLocale = useSelector( getCurrentUserLocale );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
 	const { suggestion, invalidateDomainSuggestionCache } = useGetDotcomDomainSuggestion( {
-		query: freeSubdomain,
+		query: lastDomainSearched,
 		locale: userLocale,
 	} );
 
