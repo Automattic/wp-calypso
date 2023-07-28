@@ -22,6 +22,18 @@
 		flex-grow: 1;
 	}
 
+	.design-picker__filters {
+		display: flex;
+
+		.design-picker__category-filter {
+			flex: 1;
+		}
+
+		button {
+			height: 100%;
+		}
+	}
+
 	.design-picker__grid,
 	.design-picker__grid-minimal {
 		flex: 5;
