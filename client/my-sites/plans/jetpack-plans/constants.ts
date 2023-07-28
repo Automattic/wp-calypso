@@ -182,6 +182,12 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	costProductSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	term: TERM_ANNUALLY,
+
+	// Set the price directly with the translated string.
+	displayPriceText: translate( 'Varies', {
+		comment:
+			'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
+	} ),
 } );
 
 // TODO: We'll need to internationalize currencies like we did for the purchase page.

@@ -1,7 +1,7 @@
 import { Badge } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { Component, createElement } from 'react';
 
 import './style.scss';
@@ -169,7 +169,7 @@ export interface PlanPriceProps {
 	 *
 	 * Ignored if `rawPrice` is set and is an array.
 	 */
-	productDisplayPrice?: string;
+	productDisplayPrice?: string | TranslateResult;
 
 	/**
 	 * If set, the component will render a `span` instead of an `h4`.
