@@ -90,7 +90,13 @@ import {
 	PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
 } from './constants';
 import { getJetpackProductsShortNames } from './translations';
-import type { ProductSlug, JetpackProductSlug, WPComProductSlug, Product } from './types';
+import type {
+	ProductSlug,
+	JetpackProductSlug,
+	WPComProductSlug,
+	Product,
+	WooCommerceProductSlug,
+} from './types';
 
 const PRODUCT_SHORT_NAMES = getJetpackProductsShortNames();
 
@@ -638,7 +644,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 	},
 };
 
-export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< ProductSlug, Product > = {
+export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< WooCommerceProductSlug, Product > = {
 	[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: {
 		product_name: translate( 'WooCommerce Bookings' ),
 		product_slug: PRODUCT_WOOCOMMERCE_BOOKINGS,
@@ -646,6 +652,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< ProductSlug, Product > = {
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
+		getFeatures: () => [],
 		getProductId: () => 2700,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_BOOKINGS,
 	},
@@ -656,6 +663,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< ProductSlug, Product > = {
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
+		getFeatures: () => [],
 		getProductId: () => 2701,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS,
 	},
@@ -666,6 +674,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< ProductSlug, Product > = {
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
+		getFeatures: () => [],
 		getProductId: () => 2702,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES,
 	},
@@ -676,6 +685,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< ProductSlug, Product > = {
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
+		getFeatures: () => [],
 		getProductId: () => 2703,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
 	},
@@ -686,6 +696,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< ProductSlug, Product > = {
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
+		getFeatures: () => [],
 		getProductId: () => 2704,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
 	},
@@ -696,6 +707,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< ProductSlug, Product > = {
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
+		getFeatures: () => [],
 		getProductId: () => 2705,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
 	},
