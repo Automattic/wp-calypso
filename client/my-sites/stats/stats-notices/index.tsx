@@ -115,11 +115,7 @@ export default function StatsNotices( {
 
 	return supportNewStatsNotices ? (
 		<>
-			<PostPurchaseNotices
-				siteId={ siteId }
-				statsPurchaseSuccess={ statsPurchaseSuccess }
-				isOdysseyStats={ isOdysseyStats }
-			/>
+			<PostPurchaseNotices siteId={ siteId } statsPurchaseSuccess={ statsPurchaseSuccess } />
 			<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 		</>
 	) : (

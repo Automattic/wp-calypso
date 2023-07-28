@@ -24,7 +24,7 @@ export interface StatsNoticesProps {
 
 export interface NewStatsNoticesProps {
 	siteId: number | null;
-	isOdysseyStats: boolean;
+	isOdysseyStats?: boolean;
 }
 
 export interface PurchaseNoticesProps extends NewStatsNoticesProps {
