@@ -21,3 +21,27 @@ export function isWcMobileApp() {
 	}
 	return navigator.userAgent && /wc-(android|ios)/.test( navigator.userAgent );
 }
+
+const deviceUnknown = {
+	device: 'unknown',
+	version: 'unknown',
+};
+
+export function getMobileDeviceInfo() {
+	try {
+		const userAgent = navigator.userAgent.toLowerCase();
+		const regex = /wp-(android|iphone)\/(\d+.\d+)/;
+		const match = userAgent.match( regex );
+
+		if ( ! match ) {
+			return deviceUnknown;
+		}
+
+		return {
+			device: match[ 1 ],
+			version: match[ 2 ],
+		};
+	} catch ( e ) {
+		return deviceUnknown;
+	}
+}

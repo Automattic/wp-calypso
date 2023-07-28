@@ -3,7 +3,7 @@ import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso/types';
 import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getMobileDeviceInfo, isWpMobileApp } from 'calypso/lib/mobile-app';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -74,24 +74,18 @@ export async function loadDSPWidgetJS(): Promise< void > {
 
 const ANDROID_VERSION_HIDE_CAMPAIGNS_BUTTON = 22.9;
 
+type DeviceInfo = {
+	device: string;
+	version: string;
+};
+
 const shouldHideGoToCampaignButton = () => {
 	// Android versions higher or equal than 22.9 should hide the button
-	// Trycatching it since user-agents can be changed to send custom data
-	try {
-		const userAgent = navigator.userAgent.toLowerCase();
-
-		// check if it's a wp-android device
-		if ( ! userAgent.includes( 'wp-android' ) ) {
-			return false;
-		}
-
-		// check if it's a version higher or equal than 22.9
-		const version = userAgent.split( '/' )[ 1 ];
-		const versionNumber = parseFloat( version );
-		return versionNumber >= ANDROID_VERSION_HIDE_CAMPAIGNS_BUTTON;
-	} catch ( e ) {
-		return false;
-	}
+	const deviceInfo = getMobileDeviceInfo() as DeviceInfo;
+	return (
+		deviceInfo.device.includes( 'android' ) &&
+		parseFloat( deviceInfo?.version ) >= ANDROID_VERSION_HIDE_CAMPAIGNS_BUTTON
+	);
 };
 
 const getWidgetOptions = () => {
