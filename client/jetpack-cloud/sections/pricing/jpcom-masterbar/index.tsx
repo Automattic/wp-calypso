@@ -125,6 +125,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								tagline: translate( 'Advertise your best content' ),
 								href: `${ JETPACK_COM_BASE_URL }/blaze/`,
 							},
+							{
+								label: translate( 'Newsletter' ),
+								tagline: translate( 'Write once, reach all' ),
+								href: `${ JETPACK_COM_BASE_URL }/newsletter/`,
+							},
 						],
 					},
 				],
