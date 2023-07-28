@@ -72,7 +72,7 @@ export function CheckoutOrderSummary() {
 
 	return (
 		<CheckoutSummaryCard>
-			<CheckoutSummaryTitle>{ __( 'Purchase Details' ) }</CheckoutSummaryTitle>
+			<CheckoutSummaryTitle>{ __( 'Purchase Details ' ) }</CheckoutSummaryTitle>
 			<CheckoutSummaryAmountWrapper>
 				{ taxes.map( ( tax ) => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
