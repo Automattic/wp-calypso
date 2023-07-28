@@ -47,6 +47,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/',
 		post_id: 1988,
 	},
+	'domain-transfer-authorization-codes': {
+		link: 'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code',
+		post_id: 137759,
+	},
 	earn: {
 		link: 'https://wordpress.com/support/monetize-your-site/',
 		post_id: 120172,
