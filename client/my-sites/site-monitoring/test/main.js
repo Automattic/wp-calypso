@@ -26,7 +26,7 @@ const INITIAL_STATE = {
 		items: {},
 	},
 	ui: {
-		selectedSiteId: '1', // Replace this with the actual selected site ID
+		selectedSiteId: '1',
 	},
 };
 
@@ -78,5 +78,29 @@ describe( 'useSiteMetrics test', () => {
 			[ 1685577600 ], // Array of timestamps
 			[ 0 ], // Array of dimension values
 		] );
+	} );
+
+	it( 'should return formattedData for the case with an object for dimension', () => {
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: {
+					periods: [
+						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
+					],
+				},
+			},
+		} );
+
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>{ children }</Provider>
+			</QueryClientProvider>
+		);
+
+		const { result } = renderHook( () => useSiteMetricsData(), { wrapper } );
+
+		const { formattedData } = result.current;
+
+		expect( formattedData ).toEqual( [ [ 1685577600 ], [ 0.0030000000000000005 ] ] );
 	} );
 } );
