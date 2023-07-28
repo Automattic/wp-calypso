@@ -16,7 +16,7 @@ import LegacyStatsNotices from './legacy-notices';
 import removeStatsPurchaseSuccessParam from './lib/remove-stats-purchase-success-param';
 import OptOutNotice from './opt-out-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
-import { NewStatsNoticesProps, StatsNoticesProps, PurchaseNoticesProps } from './types';
+import { StatsNoticesProps } from './types';
 import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-products';
 import './style.scss';
 
@@ -26,7 +26,7 @@ const TEAM51_OWNER_ID = 70055110;
  * New notices aim to support Calypso and Odyssey stats.
  * New notices are based on async API call and hence is faster than the old notices.
  */
-const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => {
+const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
 	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
 	const isVip = useSelector(
@@ -67,7 +67,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: NewStatsNoticesProps ) => 
 	);
 };
 
-const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: PurchaseNoticesProps ) => {
+const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: StatsNoticesProps ) => {
 	// Check if the GET param is passed to show the Free or Paid plan purchase notices
 	const showFreePlanPurchaseSuccessNotice = statsPurchaseSuccess === 'free';
 	const showPaidPlanPurchaseSuccessNotice = statsPurchaseSuccess === 'paid';
