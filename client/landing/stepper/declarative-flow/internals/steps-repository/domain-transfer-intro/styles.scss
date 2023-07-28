@@ -208,10 +208,14 @@ $heading-font-family: "SF Pro Display", $sans;
 	}
 }
 
-.bulk-domain-transfer__google-instructions details {
-	margin-top: 18px;
+.bulk-domain-transfer__google-instructions {
+	font-size: rem(14px);
 
-	p {
-		margin: 8px 0;
+	details {
+		margin-top: 18px;
+
+		p {
+			margin: 8px 0 16px;
+		}
 	}
 }
