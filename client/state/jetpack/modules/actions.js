@@ -2,6 +2,7 @@ import { translate } from 'i18n-calypso';
 import { omit, mapValues } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
+	JETPACK_CONNECTION_HEALTH_PROBLEM,
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
@@ -157,6 +158,10 @@ export const fetchModuleList = ( siteId ) => {
 				} );
 			} )
 			.catch( ( error ) => {
+				dispatch( {
+					type: JETPACK_CONNECTION_HEALTH_PROBLEM,
+					siteId,
+				} );
 				dispatch( {
 					type: JETPACK_MODULES_REQUEST_FAILURE,
 					siteId,
