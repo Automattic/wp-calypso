@@ -1,7 +1,3 @@
-import {
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	PLAN_MIGRATION_TRIAL_MONTHLY,
-} from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -13,6 +9,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { sectionify } from 'calypso/lib/route';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -22,6 +19,7 @@ class PlansNavigation extends Component {
 		path: PropTypes.string.isRequired,
 		shouldShowNavigation: PropTypes.bool,
 		site: PropTypes.object,
+		isTrial: PropTypes.bool,
 	};
 
 	getSectionTitle( path ) {
@@ -41,14 +39,10 @@ class PlansNavigation extends Component {
 	}
 
 	render() {
-		const { site, shouldShowNavigation, translate } = this.props;
+		const { site, shouldShowNavigation, translate, isTrial } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = Boolean( site ) && isMobile();
-		const currentPlanSlug = site?.plan?.product_slug;
-		const isTrial =
-			currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
-			currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
 		const myPlanItemTitle = isTrial ? translate( 'Free trial' ) : translate( 'My Plan' );
 
 		return (
@@ -93,5 +87,6 @@ export default connect( ( state ) => {
 		isJetpack,
 		shouldShowNavigation: ! isOnFreePlan || ( isJetpack && ! isAtomic ),
 		site,
+		isTrial: isTrialSite( state, siteId ),
 	};
 } )( localize( PlansNavigation ) );
