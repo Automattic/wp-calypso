@@ -40,28 +40,9 @@ export function createCartSyncManager(
 		const mockedResponse = cloneDeep( response );
 		for ( const product of mockedResponse.products ) {
 			if ( product.is_domain_registration ) {
-				product.product_variants = [
-					{
-						introductory_offer_terms: {},
-						price_before_discounts_integer: 900,
-						price_integer: 900,
-						bill_period_in_months: 12,
-						currency: 'USD',
-						product_id: 6,
-						product_slug: 'domain_reg',
-						volume: 1,
-					},
-					{
-						introductory_offer_terms: {},
-						price_before_discounts_integer: 1600,
-						price_integer: 1600,
-						bill_period_in_months: 24,
-						currency: 'USD',
-						product_id: 6,
-						product_slug: 'domain_reg',
-						volume: 2,
-					},
-				];
+				for ( const variant of product.product_variants ) {
+					variant.volume = variant.bill_period_in_months / 12;
+				}
 			}
 		}
 
