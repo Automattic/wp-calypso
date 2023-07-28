@@ -1,9 +1,5 @@
-export interface PaidPlanPurchaseNoticeProps {
-	onNoticeViewed?: () => void;
-}
-
 export interface StatsNoticeProps {
-	siteId: number | null;
+	siteId?: number | null;
 	onNoticeViewed?: () => void;
 }
 
