@@ -1,6 +1,10 @@
 import moment from 'moment/moment';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
+import {
+	JETPACK_CONNECTION_HEALTH_PROBLEM,
+	JITM_DISMISS,
+	JITM_FETCH,
+} from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -122,6 +126,10 @@ export const receiveJITM = ( action, jitms ) => ( dispatch, getState ) => {
  */
 export const failedJITM = ( action ) => ( dispatch, getState ) => {
 	const siteId = action.siteId || action.site_id || getSelectedSiteId( getState() );
+	dispatch( {
+		type: JETPACK_CONNECTION_HEALTH_PROBLEM,
+		siteId,
+	} );
 	dispatch( clearJITM( siteId, action.messagePath ) );
 };
 
