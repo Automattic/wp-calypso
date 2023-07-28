@@ -1,4 +1,4 @@
-import getSite from './get-site';
+import 'calypso/state/jetpack-connection-health/init';
 
 /**
  * Returns true if the current site has possible Jetpack connection problem
@@ -8,11 +8,11 @@ import getSite from './get-site';
  * @returns {?boolean}               Whether the current site can have connection problem
  */
 export default function isJetpackConnectionProblem( state, siteId ) {
-	const site = getSite( state, siteId );
+	const connection_data = state.jetpackConnectionHealth[siteId];
 
-	if ( ! site ) {
+	if ( ! connection_data ) {
 		return null;
 	}
 
-	return site.jetpack_connection_problem;
+	return connection_data.jetpack_connection_problem;
 }
