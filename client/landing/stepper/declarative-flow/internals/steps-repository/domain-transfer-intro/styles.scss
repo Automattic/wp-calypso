@@ -210,6 +210,8 @@ $heading-font-family: "SF Pro Display", $sans;
 
 .bulk-domain-transfer__google-instructions {
 	font-size: rem(14px);
+	width: 700px;
+	max-width: 90%;
 
 	summary {
 		font-weight: bold;
@@ -222,4 +224,8 @@ $heading-font-family: "SF Pro Display", $sans;
 			margin: 8px 0 16px;
 		}
 	}
+}
+
+.bulk-domain-transfer__instructions-image {
+	border: 1px solid var(--color-neutral-10);
 }

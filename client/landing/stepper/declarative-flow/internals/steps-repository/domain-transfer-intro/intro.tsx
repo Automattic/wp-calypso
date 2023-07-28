@@ -4,6 +4,9 @@ import { Button, Modal } from '@wordpress/components';
 import { useState, createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import getAuthCode from 'calypso/assets/images/domains/get-auth-code.gif';
+import regSettings from 'calypso/assets/images/domains/gogole-reg-settings.gif';
+import pickDomain from 'calypso/assets/images/domains/pick-google-domain.gif';
 import { preventWidows } from 'calypso/lib/formatting';
 
 interface Props {
@@ -86,7 +89,6 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					className="bulk-domain-transfer__google-instructions"
 					title="How to unlock your Google domains"
 					onRequestClose={ closeModal }
-					style={ { width: '500px' } }
 				>
 					<p>
 						{ __( 'Follow these steps to transfer your domain from Google to WordPress.com:' ) }
@@ -111,24 +113,65 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						</p>
 					</details>
 					<details>
-						<summary>{ __( 'Step 2: Select your domain' ) }</summary>
+						<summary>
+							{ createInterpolateElement( __( '<strong>Step 2:</strong> Select your domain' ), {
+								strong: <strong />,
+							} ) }
+						</summary>
 						<p>{ __( 'Select the domain you want to transfer in the "My domains" section.' ) }</p>
+						<img
+							className="bulk-domain-transfer__instructions-image"
+							src={ pickDomain }
+							loading="lazy"
+							alt={ __( 'Select the domain you want to transfer in the "My domains" section.' ) }
+							width={ 737 }
+							height={ 410 }
+						/>
 					</details>
 					<details>
-						<summary>{ __( 'Step 3 Go to "Registration settings"' ) }</summary>
+						<summary>
+							{ createInterpolateElement(
+								__( '<strong>Step 3:</strong> Go to "Registration settings"' ),
+								{
+									strong: <strong />,
+								}
+							) }
+						</summary>
 						<p>
 							{ __(
 								'In the "Registration settings" section, scroll down to the "Transfer out" panel.'
 							) }
 						</p>
+						<img
+							className="bulk-domain-transfer__instructions-image"
+							src={ regSettings }
+							loading="lazy"
+							alt=""
+							aria-hidden="true"
+							width={ 737 }
+							height={ 410 }
+						/>
 					</details>
 					<details>
-						<summary>{ __( 'Step 4: Get auth code' ) }</summary>
+						<summary>
+							{ createInterpolateElement( __( '<strong>Step 4:</strong> Get auth code' ), {
+								strong: <strong />,
+							} ) }
+						</summary>
 						<p>
 							{ __(
 								'Click "Get auth code" and then "Unlock and continue". Copy the code that is shown to your clipboard.'
 							) }
 						</p>
+						<img
+							className="bulk-domain-transfer__instructions-image"
+							src={ getAuthCode }
+							loading="lazy"
+							alt=""
+							aria-hidden="true"
+							width={ 870 }
+							height={ 720 }
+						/>
 					</details>
 				</Modal>
 			) }
