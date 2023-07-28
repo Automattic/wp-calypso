@@ -71,7 +71,7 @@ export default function UplotChartMetrics( {
 					},
 					{
 						// y-axis
-						side: 3, // sets y axis side to left
+						side: 1, // sets y axis side to left
 						gap: 8,
 						space: 40,
 						size: 50,
