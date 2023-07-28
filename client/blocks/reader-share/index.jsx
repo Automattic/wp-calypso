@@ -10,6 +10,7 @@ import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { infoNotice } from 'calypso/state/notices/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import ReaderReblogSelection from './reblog';
 import ReaderSocialShareSelection from './social';
@@ -91,9 +92,14 @@ class ReaderShare extends Component {
 
 	toggle = () => {
 		if ( ! this.state.showingMenu ) {
-			stats.recordAction( 'open_share' );
-			stats.recordGaEvent( 'Opened Share' );
-			stats.recordTrack( 'calypso_reader_share_opened', {
+			const actionName = this.props.isReblogSelection ? 'open_reader_reblog' : 'open_share';
+			const eventName = this.props.isReblogSelection ? 'Opened Reader Reblog' : 'Opened Share';
+			const trackName = this.props.isReblogSelection
+				? 'calypso_reader_reblog_opened'
+				: 'calypso_reader_share_opened';
+			stats.recordAction( actionName );
+			stats.recordGaEvent( eventName );
+			this.props.recordReaderTracksEvent( trackName, {
 				has_sites: this.props.hasSites,
 			} );
 		}
@@ -115,7 +121,7 @@ class ReaderShare extends Component {
 		if ( actionFunc ) {
 			stats.recordAction( 'share_' + action );
 			stats.recordGaEvent( 'Clicked on Share to ' + action );
-			stats.recordTrack( 'calypso_reader_share_action_picked', {
+			this.props.recordReaderTracksEvent( 'calypso_reader_share_action_picked', {
 				action: action,
 			} );
 			actionFunc( this.props.post );
@@ -187,7 +193,7 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-const mapDispatchToProps = { infoNotice };
+const mapDispatchToProps = { infoNotice, recordReaderTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const onCopyLinkClick = () => {
