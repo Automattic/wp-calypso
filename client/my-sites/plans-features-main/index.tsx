@@ -56,7 +56,6 @@ import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-fro
 import type { IntervalType } from './types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
 import type {
 	GridPlan,
 	PlansIntent,
@@ -175,7 +174,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isSpotlightOnCurrentPlan,
 		showUpgradeableStorage,
 		isGlobalStylesOnPersonal,
-		showOdie,
 		plansComparisonGridRef,
 		showPlansComparisonGrid,
 		toggleShowPlansComparisonGrid,
@@ -249,39 +247,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		};
 	}, [] );
 
-	const asyncProps: PlanFeatures2023GridProps = {
-		paidDomainName,
-		wpcomFreeDomainSuggestion,
-		isInSignup,
-		isLaunchPage,
-		onUpgradeClick,
-		flowName,
-		selectedFeature,
-		selectedPlan,
-		siteId,
-		isReskinned,
-		intervalType,
-		hidePlansFeatureComparison,
-		hideUnavailableFeatures,
-		currentSitePlanSlug: sitePlanSlug,
-		planActionOverrides,
-		intent,
-		isCustomDomainAllowedOnFreePlan,
-		isGlobalStylesOnPersonal,
-		gridPlansForFeaturesGrid,
-		gridPlansForComparisonGrid,
-		showLegacyStorageFeature,
-		gridPlanForSpotlight,
-		showUpgradeableStorage,
-		stickyRowOffset: masterbarHeight,
-		usePricingMetaForGridPlans,
-		allFeaturesList: FEATURES_LIST,
-		showPlansComparisonGrid,
-		toggleShowPlansComparisonGrid,
-		planTypeSelectorProps,
-		showOdie,
-	};
-
 	return (
 		<div
 			className={ classNames( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
@@ -289,7 +254,38 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 			} ) }
 			data-e2e-plans="wpcom"
 		>
-			<PlanFeatures2023Grid { ...asyncProps } ref={ plansComparisonGridRef } />
+			<PlanFeatures2023Grid
+				paidDomainName={ paidDomainName }
+				wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+				isInSignup={ isInSignup }
+				isLaunchPage={ isLaunchPage }
+				onUpgradeClick={ onUpgradeClick }
+				flowName={ flowName }
+				selectedFeature={ selectedFeature }
+				selectedPlan={ selectedPlan }
+				siteId={ siteId }
+				isReskinned={ isReskinned }
+				intervalType={ intervalType }
+				hidePlansFeatureComparison={ hidePlansFeatureComparison }
+				hideUnavailableFeatures={ hideUnavailableFeatures }
+				currentSitePlanSlug={ sitePlanSlug }
+				planActionOverrides={ planActionOverrides }
+				intent={ intent }
+				isGlobalStylesOnPersonal={ isGlobalStylesOnPersonal }
+				gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
+				gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
+				showLegacyStorageFeature={ showLegacyStorageFeature }
+				gridPlanForSpotlight={ gridPlanForSpotlight }
+				showUpgradeableStorage={ showUpgradeableStorage }
+				stickyRowOffset={ masterbarHeight }
+				usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+				allFeaturesList={ FEATURES_LIST }
+				showPlansComparisonGrid={ showPlansComparisonGrid }
+				toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
+				planTypeSelectorProps={ planTypeSelectorProps }
+				ref={ plansComparisonGridRef }
+			/>
 		</div>
 	);
 };
@@ -572,7 +568,6 @@ const PlansFeaturesMain = ( {
 	};
 
 	useLayoutEffect( () => {
-		console.log( showPlansComparisonGrid, plansComparisonGridRef.current );
 		if ( showPlansComparisonGrid ) {
 			setTimeout( () => {
 				if ( plansComparisonGridRef.current ) {
@@ -583,7 +578,7 @@ const PlansFeaturesMain = ( {
 						inline: 'nearest',
 					} );
 				}
-			}, 2000 );
+			} );
 		}
 	}, [ showPlansComparisonGrid ] );
 
