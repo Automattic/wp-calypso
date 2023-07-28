@@ -1,9 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import formatCurrency from '@automattic/format-currency';
+import { englishLocales } from '@automattic/i18n-utils';
 import { joinClasses } from '@automattic/wpcom-checkout';
 import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import i18n, { getLocaleSlug } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { domainManagementRoot, domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -26,8 +28,12 @@ const DomainsTransferredList = ( { purchases, manageDomainUrl, currency = 'USD' 
 	};
 
 	const purchaseLabel = ( priceInteger: number ) => {
+		const hasTranslation =
+			englishLocales.includes( String( getLocaleSlug() ) ) ||
+			i18n.hasTranslation( 'We pay the first year' );
+
 		if ( priceInteger === 0 ) {
-			return __( 'Free for one year' );
+			return hasTranslation ? __( 'We pay the first year' ) : __( 'Free for one year' );
 		}
 
 		const priceFormatted = formatCurrency( priceInteger, currency, {
