@@ -97,12 +97,6 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 	}
 `;
 
-const GiftBadgeWrapper = styled.span`
-	@media ( max-width: 660px ) {
-		width: 100%;
-	}
-`;
-
 const GiftBadge = styled.span`
 	color: #234929;
 	background-color: #b8e6bf;
@@ -934,22 +928,20 @@ function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 	return null;
 }
 
-function GiftBadgeWithWrapper() {
+function GiftBadgeWithText() {
 	const translate = useTranslate();
-	return (
-		<GiftBadgeWrapper>
-			<GiftBadge>{ translate( 'Gift' ) }</GiftBadge>
-		</GiftBadgeWrapper>
-	);
+	return <GiftBadge>{ translate( 'Gift' ) }</GiftBadge>;
 }
 
-const OnlyMobileContainer = styled.div`
+const MobileGiftWrapper = styled.div`
+	display: block;
+	width: 100%;
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		display: none;
 	}
 `;
 
-const OnlyNotMobileContainer = styled.div`
+const DesktopGiftWrapper = styled.div`
 	display: none;
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		display: block;
@@ -1045,14 +1037,18 @@ function WPLineItem( {
 			data-e2e-product-slug={ productSlug }
 			data-product-type={ isPlan( product ) ? 'plan' : product.product_slug }
 		>
-			<OnlyMobileContainer>
-				{ responseCart.is_gift_purchase && <GiftBadgeWithWrapper /> }
-			</OnlyMobileContainer>
+			{ responseCart.is_gift_purchase && (
+				<MobileGiftWrapper>
+					<GiftBadgeWithText />
+				</MobileGiftWrapper>
+			) }
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
-				<OnlyNotMobileContainer>
-					{ responseCart.is_gift_purchase && <GiftBadgeWithWrapper /> }
-				</OnlyNotMobileContainer>
+				{ responseCart.is_gift_purchase && (
+					<DesktopGiftWrapper>
+						<GiftBadgeWithText />
+					</DesktopGiftWrapper>
+				) }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice
