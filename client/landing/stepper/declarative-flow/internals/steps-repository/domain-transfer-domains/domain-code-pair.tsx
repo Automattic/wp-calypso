@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -12,6 +11,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useValidationMessage } from './use-validation-message';
@@ -212,15 +212,12 @@ export function DomainCodePair( {
 									'Unique code proving ownership, needed for secure domain transfer between registrars.'
 								) }
 								<div>
-									<Button
-										href={ localizeUrl(
-											'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
-										) }
-										target="_blank"
-										variant="link"
+									<InlineSupportLink
+										supportContext="domain-transfer-authorization-codes"
+										showIcon={ false }
 									>
-										<span className="learn-more-label">{ __( 'Learn more' ) }</span>
-									</Button>
+										{ __( 'Learn more' ) }
+									</InlineSupportLink>
 								</div>
 							</InfoPopover>
 						</FormLabel>
