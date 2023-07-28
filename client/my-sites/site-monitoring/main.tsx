@@ -3,19 +3,19 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UplotChartMetrics from './metrics-chart';
-import { useSiteMetricsQuery } from './use-metrics-query';
+import { MetricsType, useSiteMetricsQuery } from './use-metrics-query';
 
-export function useSiteMetricsData() {
+export function useSiteMetricsData( start?: number, end?: number, metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
 
 	// Calculate the startTime and endTime using useMemo
-	const startTime = useMemo( () => moment().subtract( 24, 'hours' ).unix(), [] );
-	const endTime = useMemo( () => moment().unix(), [] );
+	const startTime = useMemo( () => start || moment().subtract( 24, 'hours' ).unix(), [ start ] );
+	const endTime = useMemo( () => end || moment().unix(), [ end ] );
 
 	const { data } = useSiteMetricsQuery( siteId, {
 		start: startTime,
 		end: endTime,
-		metric: 'requests_persec',
+		metric: metric || 'requests_persec',
 	} );
 
 	// Function to get the dimension value for a specific key and period
@@ -33,16 +33,15 @@ export function useSiteMetricsData() {
 	};
 
 	// Process the data and set the formattedData state without using useMemo
-	const formattedData = data
-		? data.data.periods.reduce(
-				( acc, period ) => {
-					acc[ 0 ].push( period.timestamp );
-					acc[ 1 ].push( getDimensionValue( period ) );
-					return acc;
-				},
-				[ [], [] ] as [ number[], unknown[] ] // Define the correct initial value type
-		  )
-		: ( [ [], [] ] as [ number[], unknown[] ] ); // Return a default value when data is not available yet
+	const formattedData =
+		data?.data?.periods?.reduce(
+			( acc, period ) => {
+				acc[ 0 ].push( period.timestamp );
+				acc[ 1 ].push( getDimensionValue( period ) );
+				return acc;
+			},
+			[ [], [] ] as [ number[], unknown[] ] // Define the correct initial value type
+		) || ( [ [], [] ] as [ number[], unknown[] ] ); // Return a default value when data is not available yet
 
 	return {
 		formattedData,
@@ -53,7 +52,7 @@ export function SiteMetrics() {
 	return (
 		<>
 			<h2>Atomic site</h2>
-			<UplotChartMetrics data={ formattedData }></UplotChartMetrics>
+			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
 		</>
 	);
 }

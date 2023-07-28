@@ -2,13 +2,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 
-interface SiteMetricsAPIResponse {
-	message: string;
+export type SiteMetricsAPIResponse = {
+	message?: string;
 	data: {
-		meta: MetaData;
+		meta?: MetaData;
 		periods: PeriodData[];
 	};
-}
+};
 
 export type PeriodData = {
 	timestamp: number;
@@ -46,12 +46,14 @@ export type DimensionParams = {
 };
 
 export type MetricsParams = {
-	metric?:
-		| 'requests_persec'
-		| 'response_bytes_persec'
-		| 'response_bytes_average'
-		| 'response_time_average';
+	metric?: MetricsType;
 };
+
+export type MetricsType =
+	| 'requests_persec'
+	| 'response_bytes_persec'
+	| 'response_bytes_average'
+	| 'response_time_average';
 
 export function useSiteMetricsQuery(
 	siteId: number | null | undefined,
