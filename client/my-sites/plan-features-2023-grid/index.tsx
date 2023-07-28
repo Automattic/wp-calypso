@@ -110,6 +110,7 @@ export type PlanFeatures2023GridProps = {
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
 	intent?: PlansIntent;
+	isCustomDomainAllowedOnFreePlan?: boolean | null; // indicate when a custom domain is allowed to be used with the Free plan.
 	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
 	spotlightPlanSlug?: PlanSlug;
@@ -838,6 +839,7 @@ export class PlanFeatures2023Grid extends Component<
 			translate,
 			hideUnavailableFeatures,
 			selectedFeature,
+			isCustomDomainAllowedOnFreePlan,
 		} = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
@@ -862,6 +864,7 @@ export class PlanFeatures2023Grid extends Component<
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
+							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						/>
 						{ jpFeatures.length !== 0 && (
 							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">

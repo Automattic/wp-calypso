@@ -24,13 +24,25 @@ const SubdomainSuggestion = styled.div`
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
 	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
-} > = ( { paidDomainName, wpcomFreeDomainSuggestion } ) => {
+	isCustomDomainAllowedOnFreePlan?: boolean | null;
+} > = ( { paidDomainName, wpcomFreeDomainSuggestion, isCustomDomainAllowedOnFreePlan } ) => {
+	const translate = useTranslate();
+
 	return (
 		<SubdomainSuggestion>
-			<div className="is-domain-name">{ paidDomainName }</div>
 			{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
-			{ wpcomFreeDomainSuggestion.entry && (
-				<div>{ wpcomFreeDomainSuggestion.entry.domain_name }</div>
+			{ isCustomDomainAllowedOnFreePlan ? (
+				<div>
+					{ translate( '%s will be a redirect', {
+						args: [ paidDomainName ],
+						comment: '%s is a domain name.',
+					} ) }
+				</div>
+			) : (
+				<>
+					<div className="is-domain-name">{ paidDomainName }</div>
+					<div>{ wpcomFreeDomainSuggestion.entry?.domain_name }</div>
+				</>
 			) }
 		</SubdomainSuggestion>
 	);
@@ -43,6 +55,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
+	isCustomDomainAllowedOnFreePlan?: boolean | null;
 } > = ( {
 	features,
 	planName,
@@ -50,8 +63,10 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	wpcomFreeDomainSuggestion,
 	hideUnavailableFeatures,
 	selectedFeature,
+	isCustomDomainAllowedOnFreePlan,
 } ) => {
 	const translate = useTranslate();
+
 	return (
 		<>
 			{ features.map( ( currentFeature, featureIndex ) => {
@@ -101,6 +116,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 												key={ key }
 												paidDomainName={ paidDomainName as string }
 												wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+												isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 											/>
 										</Plans2023Tooltip>
 									) : (
