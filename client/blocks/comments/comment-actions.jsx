@@ -59,6 +59,7 @@ const CommentActions = ( {
 					tagName="div"
 					iconSize={ 18 }
 					isReblogSelection
+					showReblogLabel
 				/>
 			) }
 			{ showCancelReplyButton && (

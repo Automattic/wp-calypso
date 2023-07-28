@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -97,6 +97,8 @@ class ReaderShare extends Component {
 			className: 'popover reader-share__popover',
 		};
 
+		const reblogTitle = this.props.comment && translate( "Turn this comment it's own post" );
+
 		// The event.preventDefault() on the wrapping div is needed to prevent the
 		// full post opening when a share method is selected in the popover
 		return (
@@ -117,7 +119,14 @@ class ReaderShare extends Component {
 							iconSize: this.props.iconSize,
 						} )
 					) : (
-						<Gridicon icon="reblog" size={ this.props.iconSize } />
+						<>
+							<Gridicon icon="reblog" size={ this.props.iconSize } title={ reblogTitle } />
+							{ this.props.showReblogLabel && (
+								<span className="reader-share__reblog-label" title={ reblogTitle }>
+									{ translate( 'Reblog' ) }
+								</span>
+							) }
+						</>
 					) }
 				</Button>
 				{ this.state.showingMenu &&
