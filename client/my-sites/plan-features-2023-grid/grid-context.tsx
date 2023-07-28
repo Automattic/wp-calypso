@@ -9,15 +9,18 @@ interface PlansGridContext {
 	intent?: PlansIntent;
 	planRecords: Record< PlanSlug, GridPlan >;
 	visiblePlans: PlanSlug[];
+	mobileOpenTooltipText: string;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
 
 const PlansGridContextProvider: React.FunctionComponent<
 	PlansGridContext & { children: React.ReactNode }
-> = ( { intent, planRecords, visiblePlans, children } ) => {
+> = ( { intent, planRecords, visiblePlans, mobileOpenTooltipText, children } ) => {
 	return (
-		<PlansGridContext.Provider value={ { intent, planRecords, visiblePlans } }>
+		<PlansGridContext.Provider
+			value={ { intent, planRecords, visiblePlans, mobileOpenTooltipText } }
+		>
 			{ children }
 		</PlansGridContext.Provider>
 	);

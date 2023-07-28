@@ -44,7 +44,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
 	handleMobileTooltipTouch: ( value: TranslateResult ) => void;
-	mobileOpenTooltipText: TranslateResult;
+	// mobileOpenTooltipText: TranslateResult;
 } > = ( {
 	features,
 	planName,
@@ -53,7 +53,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	hideUnavailableFeatures,
 	selectedFeature,
 	handleMobileTooltipTouch,
-	mobileOpenTooltipText,
+	// mobileOpenTooltipText,
 } ) => {
 	const translate = useTranslate();
 
@@ -111,8 +111,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 									) : (
 										<Plans2023Tooltip
 											text={ currentFeature.getDescription?.() }
-											handleMobileTooltipTouch={ ( value ) => handleMobileTooltipTouch( value ) }
-											mobileOpenTooltipText={ mobileOpenTooltipText }
+											handleMobileTooltipTouch={ handleMobileTooltipTouch }
+											// mobileOpenTooltipText={ mobileOpenTooltipText }
 										>
 											{ currentFeature.getTitle( paidDomainName ) }
 										</Plans2023Tooltip>

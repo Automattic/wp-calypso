@@ -3,10 +3,10 @@ import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
+import { usePlansGridContext } from '../grid-context';
 
 const HoverAreaContainer = styled.span`
 	max-width: 220px;
-	cursor: default;
 `;
 
 const StyledTooltip = styled( Tooltip )`
@@ -30,28 +30,30 @@ export const Plans2023Tooltip = (
 	props: PropsWithChildren< {
 		text?: TranslateResult;
 		handleMobileTooltipTouch: ( value: TranslateResult ) => void;
-		mobileOpenTooltipText: TranslateResult;
+		// mobileOpenTooltipText: TranslateResult;
 	} >
 ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const tooltipRef = useRef< HTMLDivElement >( null );
 	const isMobile = useMobileBreakpoint();
+	const { mobileOpenTooltipText } = usePlansGridContext();
 
 	useEffect( () => {
 		if ( ! isMobile ) {
 			return;
 		}
-		props.mobileOpenTooltipText !== props.text && setIsVisible( false );
-	}, [ props.mobileOpenTooltipText, props.text, isMobile ] );
+		// console.log(mobileOpenTooltipText);
+		mobileOpenTooltipText === props.text ? setIsVisible( true ) : setIsVisible( false );
+		// props.mobileOpenTooltipText !== props.text && setIsVisible( false );
+	}, [ mobileOpenTooltipText, props.text, isMobile ] );
 
-	const handleTouchStart = ( e ) => {
-		e.stopPropagation();
-		e.preventDefault();
-		setIsVisible( ( prevState ) => ! prevState );
+	const handleTouchStart = () => {
+		// e.stopPropagation();
+		// e.preventDefault();
+		// setIsVisible( ( prevState ) => ! prevState );
+
 		props.text && props.handleMobileTooltipTouch( props.text );
 	};
-
-	const stopPropagation = ( event ) => event.stopPropagation();
 
 	if ( ! props.text ) {
 		return <>{ props.children }</>;
@@ -62,10 +64,10 @@ export const Plans2023Tooltip = (
 			<HoverAreaContainer
 				className="plans-2023-tooltip__hover-area-container"
 				ref={ tooltipRef }
-				onMouseEnter={ () => setIsVisible( true ) }
-				onMouseLeave={ () => setIsVisible( false ) }
+				// onMouseEnter={ () => setIsVisible( true ) }
+				// onMouseLeave={ () => setIsVisible( false ) }
 				onTouchStart={ handleTouchStart }
-				onClick={ stopPropagation }
+				// onClick={ handleTouchStart }
 			>
 				{ props.children }
 			</HoverAreaContainer>

@@ -232,6 +232,17 @@ export class PlanFeatures2023Grid extends Component<
 		retargetViewPlans();
 	}
 
+	// shouldComponentUpdate( nextProps, nextState ) {
+	// 	console.log('prev: ');
+	// 	console.log(this.state.mobileOpenTooltipText);
+	// 	console.log('next: ' +nextState.mobileOpenTooltipText );
+	// 	if ( this.state.mobileOpenTooltipText !== nextState.mobileOpenTooltipText ) {
+	// 		return false;
+	// 	}
+
+	// 	return true;
+	// }
+
 	toggleShowPlansComparisonGrid = () => {
 		this.setState( ( { showPlansComparisonGrid } ) => ( {
 			showPlansComparisonGrid: ! showPlansComparisonGrid,
@@ -256,6 +267,9 @@ export class PlanFeatures2023Grid extends Component<
 
 	handleMobileTooltipTouch = ( value: TranslateResult ): void => {
 		this.setState( { mobileOpenTooltipText: value } );
+
+		// this.mobileOpenTooltipText = value;
+		// console.log(this.state.mobileOpenTooltipText);
 	};
 
 	render() {
@@ -286,6 +300,7 @@ export class PlanFeatures2023Grid extends Component<
 				intent={ intent }
 				planRecords={ planRecords }
 				visiblePlans={ visiblePlans }
+				mobileOpenTooltipText={ this.state.mobileOpenTooltipText }
 			>
 				<div className="plans-wrapper">
 					<QueryActivePromotions />
@@ -827,8 +842,8 @@ export class PlanFeatures2023Grid extends Component<
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
-							handleMobileTooltipTouch={ ( value ) => this.handleMobileTooltipTouch( value ) }
-							mobileOpenTooltipText={ this.state.mobileOpenTooltipText }
+							handleMobileTooltipTouch={ this.handleMobileTooltipTouch }
+							// mobileOpenTooltipText={ this.state.mobileOpenTooltipText }
 						/>
 						{ jpFeatures.length !== 0 && (
 							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
@@ -847,8 +862,8 @@ export class PlanFeatures2023Grid extends Component<
 							paidDomainName={ paidDomainName }
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
-							handleMobileTooltipTouch={ ( value ) => this.handleMobileTooltipTouch( value ) }
-							mobileOpenTooltipText={ this.state.mobileOpenTooltipText }
+							handleMobileTooltipTouch={ this.handleMobileTooltipTouch }
+							// mobileOpenTooltipText={ this.state.mobileOpenTooltipText }
 						/>
 					</Container>
 				);
