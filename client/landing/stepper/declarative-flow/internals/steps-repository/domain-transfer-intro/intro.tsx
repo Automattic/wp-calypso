@@ -8,7 +8,7 @@ import GoogleDomainsModal from '../../components/google-domains-transfer-instruc
 
 interface Props {
 	onSubmit: () => void;
-	variantSlug: string;
+	variantSlug: string | undefined;
 }
 
 const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {

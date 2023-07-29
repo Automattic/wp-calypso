@@ -7,7 +7,11 @@ import unlockDomainImgSrc from 'calypso/assets/images/domains/unlock-domain.png'
 
 import './style.scss';
 
-const GoogleDomainsModal = ( { children } ) => {
+type Props = {
+	children: React.ReactNode;
+};
+
+const GoogleDomainsModal: React.FC< Props > = ( { children } ) => {
 	const { __ } = useI18n();
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
