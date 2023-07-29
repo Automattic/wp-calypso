@@ -1,13 +1,10 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
-import { Button, Modal } from '@wordpress/components';
-import { useState, createElement, createInterpolateElement } from '@wordpress/element';
+import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import getAuthCodeImgSrc from 'calypso/assets/images/domains/get-auth-code.png';
-import pickDomainImgSrc from 'calypso/assets/images/domains/pick-google-domain.png';
-import unlockDomainImgSrc from 'calypso/assets/images/domains/unlock-domain.png';
 import { preventWidows } from 'calypso/lib/formatting';
+import GoogleDomainsModal from '../../components/google-domains-transfer-instructions';
 
 interface Props {
 	onSubmit: () => void;
@@ -16,9 +13,6 @@ interface Props {
 const Intro: React.FC< Props > = ( { onSubmit } ) => {
 	const { __, hasTranslation } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
-	const [ isOpen, setOpen ] = useState( false );
-	const openModal = () => setOpen( true );
-	const closeModal = () => setOpen( false );
 
 	return (
 		<>
@@ -34,9 +28,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 										"Your current registrar's domain management interface should have an option for you to remove the lock."
 									) }
 								</p>
-								<Button variant="link" onClick={ openModal }>
-									{ __( 'Show me how' ) }
-								</Button>
+								<GoogleDomainsModal>{ __( 'Show me how' ) }</GoogleDomainsModal>
 							</>
 						),
 						icon: <Icon icon={ unlock } />,
@@ -84,82 +76,6 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 				preventWidows={ preventWidows }
 				onSelect={ onSubmit }
 			/>
-			{ isOpen && (
-				<Modal
-					className="bulk-domain-transfer__google-instructions"
-					title="How to unlock your Google domains"
-					onRequestClose={ closeModal }
-				>
-					<p>
-						{ __( 'Follow these steps to transfer your domain from Google to WordPress.com:' ) }
-					</p>
-					<details>
-						<summary>
-							{ createInterpolateElement(
-								__( 'Step 1: Visit your <a>Google Domains dashboard</a>' ),
-								{
-									a: createElement( 'a', {
-										href: 'https://domains.google.com/registrar/',
-										target: '_blank',
-										rel: 'noreferrer',
-									} ),
-								}
-							) }
-						</summary>
-						<p>
-							{ __(
-								'Log in to your Google Domains dashboard to see a list of all of your registered domains.'
-							) }
-						</p>
-					</details>
-					<details>
-						<summary>{ __( 'Step 2: Select your domain' ) }</summary>
-						<p>{ __( 'Select the domain you want to transfer in the "My domains" section.' ) }</p>
-						<img
-							className="bulk-domain-transfer__instructions-image"
-							src={ pickDomainImgSrc }
-							loading="lazy"
-							alt={ __( 'Select the domain you want to transfer in the "My domains" section.' ) }
-							width={ 737 }
-							height={ 410 }
-						/>
-					</details>
-					<details open>
-						<summary>{ __( 'Step 3 Go to "Registration settings"' ) }</summary>
-						<p>
-							{ __(
-								'In the "Registration settings" section, scroll down to the "Transfer out" panel.'
-							) }
-						</p>
-						<img
-							className="bulk-domain-transfer__instructions-image"
-							src={ unlockDomainImgSrc }
-							loading="lazy"
-							alt=""
-							aria-hidden="true"
-							width={ 737 }
-							height={ 410 }
-						/>
-					</details>
-					<details>
-						<summary>{ __( 'Step 4: Get auth code' ) }</summary>
-						<p>
-							{ __(
-								'Click "Get auth code" and then "Unlock and continue". Copy the code that is shown to your clipboard.'
-							) }
-						</p>
-						<img
-							className="bulk-domain-transfer__instructions-image"
-							src={ getAuthCodeImgSrc }
-							loading="lazy"
-							alt=""
-							aria-hidden="true"
-							width={ 870 }
-							height={ 720 }
-						/>
-					</details>
-				</Modal>
-			) }
 			<div className="bulk-domain-transfer__cta-container">
 				<Button variant="primary" className="bulk-domain-transfer__cta" onClick={ onSubmit }>
 					{ __( 'Get Started' ) }

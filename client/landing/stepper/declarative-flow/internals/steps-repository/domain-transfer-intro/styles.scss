@@ -207,27 +207,3 @@ $heading-font-family: "SF Pro Display", $sans;
 		align-items: center;
 	}
 }
-
-.bulk-domain-transfer__google-instructions {
-	font-size: rem(14px);
-	width: 600px;
-	max-width: 95%;
-	margin: auto auto;
-
-	summary {
-		font-weight: bold;
-		cursor: pointer;
-	}
-
-	details {
-		margin-top: 18px;
-
-		p {
-			margin: 8px 0 16px;
-		}
-	}
-}
-
-.bulk-domain-transfer__instructions-image {
-	border: 1px solid var(--color-neutral-10);
-}
