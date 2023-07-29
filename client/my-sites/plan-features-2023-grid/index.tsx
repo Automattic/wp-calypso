@@ -41,11 +41,7 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import FoldableCard from 'calypso/components/foldable-card';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import {
-	FeatureObject,
-	getPlanFeaturesObject,
-	getFeatureByKey,
-} from 'calypso/lib/plans/features-list';
+import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
@@ -1102,7 +1098,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 						) ) ||
 					[];
 				const storageOptions = storageFeatures.map( ( feature ) => {
-					const featureObject = getFeatureByKey( feature );
+					const featureObject = getPlanFeaturesObject( [ feature ] )[ 0 ] || [];
 
 					return {
 						key: feature,
