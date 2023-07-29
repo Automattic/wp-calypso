@@ -1,4 +1,4 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -11,39 +11,16 @@ import './styles.scss';
 
 const Intro: Step = function Intro( { navigation, variantSlug } ) {
 	const { submit } = navigation;
-	const { __, hasTranslation } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
-
-	const getHeaderText = () => {
-		if ( variantSlug === 'google-transfer' ) {
-			return isEnglishLocale || hasTranslation( 'Transfer your Google Domains' )
-				? __( 'Transfer your Google domains' )
-				: __( 'Transfer your domains' );
-		}
-
-		return isEnglishLocale || hasTranslation( 'Transfer your domains' )
-			? __( 'Transfer your domains' )
-			: __( 'Transfer Your Domains' );
-	};
-
-	const getSubHeaderText = () => {
-		if ( variantSlug === 'google-transfer' ) {
-			return isEnglishLocale ||
-				hasTranslation(
-					'Follow these three simple steps to transfer your Google domains to WordPress.com.'
-				)
-				? __( 'Follow these three simple steps to transfer your Google domains to WordPress.com.' )
-				: __( 'Follow these three simple steps to transfer your domains to WordPress.com.' );
-		}
-
-		return __( 'Follow these three simple steps to transfer your domains to WordPress.com.' );
-	};
+	const { __ } = useI18n();
 
 	usePresalesChat( 'wpcom' );
 
 	const handleSubmit = () => {
 		submit?.();
 	};
+
+	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
+
 	return (
 		<StepContainer
 			hideBack
@@ -52,11 +29,21 @@ const Intro: Step = function Intro( { navigation, variantSlug } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-transfer-header"
-					headerText={ getHeaderText() }
-					subHeaderText={ getSubHeaderText() }
+					headerText={
+						isGoogleDomainsTransferFlow
+							? __( 'Transfer your Google domains' )
+							: __( 'Transfer Your Domains' )
+					}
+					subHeaderText={
+						isGoogleDomainsTransferFlow
+							? __(
+									'Follow these three simple steps to transfer your Google domains to WordPress.com.'
+							  )
+							: __( 'Follow these three simple steps to transfer your domains to WordPress.com.' )
+					}
 				/>
 			}
-			stepContent={ <IntroStep onSubmit={ handleSubmit } variantSlug={ variantSlug } /> }
+			stepContent={ <IntroStep onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ false }
 			showHeaderWooCommercePowered={ false }

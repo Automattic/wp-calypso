@@ -108,7 +108,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),
 
 	[ GOOGLE_TRANSFER ]: () =>
-		import( /* webpackChunkName: "domain-transfer" */ './google-transfer' ),
+		import( /* webpackChunkName: "google-transfer" */ './google-transfer' ),
 
 	[ 'plugin-bundle' ]: () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),

@@ -1,5 +1,5 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { IntentScreen } from '@automattic/onboarding';
+import { IntentScreen, GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -7,22 +7,12 @@ import { preventWidows } from 'calypso/lib/formatting';
 
 interface Props {
 	onSubmit: () => void;
-	variantSlug: string | undefined;
 }
 
 const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 	const { __, hasTranslation } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
-
-	const getFinalizeIntentBadgeText = () => {
-		if ( variantSlug === 'google-transfer' ) {
-			return isEnglishLocale || hasTranslation( "We'll pay one year" )
-				? __( "We'll pay one year" )
-				: __( 'Free for Google Domains' );
-		}
-
-		return __( 'Free for Google Domains' );
-	};
+	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 
 	return (
 		<>
@@ -59,7 +49,9 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						badge: getFinalizeIntentBadgeText(),
+						badge: isGoogleDomainsTransferFlow
+							? __( 'We pay the first year' )
+							: __( 'Free for Google Domains' ),
 						description: (
 							<p>
 								{ isEnglishLocale ||
