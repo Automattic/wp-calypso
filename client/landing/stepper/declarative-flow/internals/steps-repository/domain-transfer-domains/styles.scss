@@ -1,7 +1,8 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
-.domain-transfer {
+.domain-transfer,
+.google-domain-transfer {
 	height: 100%;
 	padding: 60px 0 0;
 	margin: 0 auto;

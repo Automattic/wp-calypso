@@ -4,7 +4,8 @@
 $font-family: "SF Pro Text", $sans;
 $heading-font-family: "SF Pro Display", $sans;
 
-.domain-transfer {
+.domain-transfer,
+.google-domain-transfer {
 	height: 100%;
 	padding: 60px 0 0;
 	margin: 0 auto;
@@ -98,6 +99,7 @@ $heading-font-family: "SF Pro Display", $sans;
 					padding-right: 0;
 
 					.select-items__item {
+						margin: 0 auto;
 						padding: 24px;
 
 						@media (max-width: $break-medium ) {

@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { preventWidows } from 'calypso/lib/formatting';
+import { isGoogleDomainsTransferFlow } from '../../../../utils/domain-transfer-flow';
 
 interface Props {
 	onSubmit: () => void;
@@ -48,7 +49,9 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						badge: __( 'Free for Google Domains' ),
+						badge: isGoogleDomainsTransferFlow()
+							? __( 'We pay the first year' )
+							: __( 'Free for Google Domains' ),
 						description: (
 							<p>
 								{ isEnglishLocale ||
