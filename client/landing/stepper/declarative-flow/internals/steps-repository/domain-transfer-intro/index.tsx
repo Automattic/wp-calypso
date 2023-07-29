@@ -9,10 +9,35 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
-const Intro: Step = function Intro( { navigation } ) {
+const Intro: Step = function Intro( { navigation, variantSlug } ) {
 	const { submit } = navigation;
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
+
+	const getHeaderText = () => {
+		if ( variantSlug === 'google-transfer' ) {
+			return isEnglishLocale || hasTranslation( 'Transfer your Google Domains' )
+				? __( 'Transfer your Google domains' )
+				: __( 'Transfer your domains' );
+		}
+
+		return isEnglishLocale || hasTranslation( 'Transfer your domains' )
+			? __( 'Transfer your domains' )
+			: __( 'Transfer Your Domains' );
+	};
+
+	const getSubHeaderText = () => {
+		if ( variantSlug === 'google-transfer' ) {
+			return isEnglishLocale ||
+				hasTranslation(
+					'Follow these three simple steps to transfer your Google domains to WordPress.com'
+				)
+				? __( 'Follow these three simple steps to transfer your Google domains to WordPress.com' )
+				: __( 'Follow these three simple steps to transfer your domains to WordPress.com.' );
+		}
+
+		return __( 'Follow these three simple steps to transfer your domains to WordPress.com.' );
+	};
 
 	usePresalesChat( 'wpcom' );
 
@@ -27,15 +52,11 @@ const Intro: Step = function Intro( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-transfer-header"
-					headerText={
-						isEnglishLocale ? __( 'Transfer your domains' ) : __( 'Transfer Your Domains' )
-					}
-					subHeaderText={ __(
-						'Follow these three simple steps to transfer your domains to WordPress.com.'
-					) }
+					headerText={ getHeaderText() }
+					subHeaderText={ getSubHeaderText() }
 				/>
 			}
-			stepContent={ <IntroStep onSubmit={ handleSubmit } /> }
+			stepContent={ <IntroStep onSubmit={ handleSubmit } variantSlug={ variantSlug } /> }
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ false }
 			showHeaderWooCommercePowered={ false }

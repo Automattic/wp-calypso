@@ -7,11 +7,22 @@ import { preventWidows } from 'calypso/lib/formatting';
 
 interface Props {
 	onSubmit: () => void;
+	variantSlug: string | undefined;
 }
 
-const Intro: React.FC< Props > = ( { onSubmit } ) => {
+const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 	const { __, hasTranslation } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
+
+	const getFinalizeIntentBadgeText = () => {
+		if ( variantSlug === 'google-transfer' ) {
+			return isEnglishLocale || hasTranslation( "We'll pay one year" )
+				? __( "We'll pay one year" )
+				: __( 'Free for Google Domains' );
+		}
+
+		return __( 'Free for Google Domains' );
+	};
 
 	return (
 		<>
@@ -48,7 +59,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						badge: __( 'Free for Google Domains' ),
+						badge: getFinalizeIntentBadgeText(),
 						description: (
 							<p>
 								{ isEnglishLocale ||
