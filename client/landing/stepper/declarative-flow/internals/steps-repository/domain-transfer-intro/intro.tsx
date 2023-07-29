@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { preventWidows } from 'calypso/lib/formatting';
+import GoogleDomainsModal from '../../components/google-domains-transfer-instructions';
 
 interface Props {
 	onSubmit: () => void;
@@ -22,11 +23,14 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 						key: 'unlock',
 						title: __( 'Unlock your domains' ),
 						description: (
-							<p>
-								{ __(
-									"Your current registrar's domain management interface should have an option for you to remove the lock."
-								) }
-							</p>
+							<>
+								<p>
+									{ __(
+										"Your current registrar's domain management interface should have an option for you to remove the lock."
+									) }
+								</p>
+								<GoogleDomainsModal>{ __( 'Show me how' ) }</GoogleDomainsModal>
+							</>
 						),
 						icon: <Icon icon={ unlock } />,
 						value: 'firstPost',

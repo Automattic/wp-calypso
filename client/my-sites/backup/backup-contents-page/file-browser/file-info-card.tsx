@@ -12,7 +12,7 @@ import { onPreparingDownloadError, onProcessingDownloadError } from './notices';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
-import { convertBytes } from './util';
+import { encodeToBase64, convertBytes } from './util';
 
 interface FileInfoCardProps {
 	siteId: number;
@@ -77,7 +77,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		setIsProcessingDownload( true );
 
 		if ( item.type !== 'archive' ) {
-			const manifestPath = window.btoa( item.manifestPath ?? '' );
+			const manifestPath = encodeToBase64( ( item.manifestPath as string ) ?? '' );
 			wp.req
 				.get( {
 					path: `/sites/${ siteId }/rewind/backup/${ item.period }/file/${ manifestPath }/url`,
