@@ -23,7 +23,7 @@ export const StorageAddOnDropdown = ( {
 		( acc: { key: string; name: string }[], storageOption ) => {
 			if ( storageOption.title ) {
 				acc.push( {
-					key: storageOption?.key,
+					key: storageOption?.slug,
 					name: storageOption.title,
 				} );
 			}
@@ -36,7 +36,7 @@ export const StorageAddOnDropdown = ( {
 	const defaultStorageOption = storageOptions.find(
 		( storageOption ) => storageOption?.planDefault
 	);
-	const selectedOptionKey = selectedStorage[ planName ] || defaultStorageOption?.key || '';
+	const selectedOptionKey = selectedStorage[ planName ] || defaultStorageOption?.slug || '';
 	const selectedOption = {
 		key: selectedOptionKey,
 		name: getStorageStringFromFeature( selectedOptionKey ) || defaultStorageOption?.title,

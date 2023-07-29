@@ -1101,7 +1101,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					const featureObject = getPlanFeaturesObject( [ feature ] )[ 0 ] || [];
 
 					return {
-						key: feature,
+						slug: feature,
 						planDefault: Boolean( featureObject?.planDefault ),
 						title: getStorageStringFromFeature( feature ),
 					};
