@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
@@ -38,6 +39,9 @@ function useMessagingBindings( hasActiveChats: boolean, isMessagingScriptLoaded:
 			setShowMessagingWidget( true );
 		} );
 		window.zE( 'messenger:on', 'close', function () {
+			if ( isMobile() ) {
+				setShowMessagingLauncher( false );
+			}
 			setShowMessagingWidget( false );
 		} );
 		window.zE( 'messenger:on', 'unreadMessages', function ( count ) {
