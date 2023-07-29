@@ -200,7 +200,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			);
 		}
 
-		return __( 'Transfer for free' );
+		return __( 'Start transfer' );
 	}
 
 	const setNewDomainFromQueryArg = () => {
