@@ -8,6 +8,7 @@ import GoogleDomainsModal from '../../components/google-domains-transfer-instruc
 
 interface Props {
 	onSubmit: () => void;
+	variantSlug: string;
 }
 
 const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
@@ -29,7 +30,9 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 										"Your current registrar's domain management interface should have an option for you to remove the lock."
 									) }
 								</p>
-								<GoogleDomainsModal>{ __( 'Show me how' ) }</GoogleDomainsModal>
+								{ isGoogleDomainsTransferFlow && (
+									<GoogleDomainsModal>{ __( 'Show me how' ) }</GoogleDomainsModal>
+								) }
 							</>
 						),
 						icon: <Icon icon={ unlock } />,
