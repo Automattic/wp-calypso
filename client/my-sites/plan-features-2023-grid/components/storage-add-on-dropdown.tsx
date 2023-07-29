@@ -1,5 +1,5 @@
 import { CustomSelectControl } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { PlanSelectedStorage } from '..';
 import { PlanProperties } from '../types';
 import { getStorageStringFromFeature } from '../util';
@@ -20,7 +20,7 @@ export const StorageAddOnDropdown = ( {
 
 	// TODO: Consider transforming storageOptions outside of this component
 	const selectControlOptions = storageOptions.reduce(
-		( acc: { key: string; name: string }[], storageOption ) => {
+		( acc: { key: string; name: TranslateResult }[], storageOption ) => {
 			const title = storageOption.feature?.getTitle();
 			if ( title ) {
 				acc.push( {

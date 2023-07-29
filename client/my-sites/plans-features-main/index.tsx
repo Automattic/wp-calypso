@@ -98,7 +98,6 @@ export interface PlansFeaturesMainProps {
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
-	showUpgradeableStorage: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
