@@ -30,9 +30,9 @@ const Intro: Step = function Intro( { navigation, variantSlug } ) {
 		if ( variantSlug === 'google-transfer' ) {
 			return isEnglishLocale ||
 				hasTranslation(
-					'Follow these three simple steps to transfer your Google domains to WordPress.com'
+					'Follow these three simple steps to transfer your Google domains to WordPress.com.'
 				)
-				? __( 'Follow these three simple steps to transfer your Google domains to WordPress.com' )
+				? __( 'Follow these three simple steps to transfer your Google domains to WordPress.com.' )
 				: __( 'Follow these three simple steps to transfer your domains to WordPress.com.' );
 		}
 
