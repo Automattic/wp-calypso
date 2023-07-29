@@ -63,10 +63,10 @@ const GoogleDomainsModal = ( { children } ) => {
 						/>
 					</details>
 					<details open>
-						<summary>{ __( 'Step 3 Go to "Registration settings"' ) }</summary>
+						<summary>{ __( 'Step 3: Unlock domain' ) }</summary>
 						<p>
 							{ __(
-								'In the "Registration settings" section, scroll down to the "Transfer out" panel.'
+								'In the "Registration settings" section, ensure that your domain is unlocked.'
 							) }
 						</p>
 						<img
@@ -83,7 +83,7 @@ const GoogleDomainsModal = ( { children } ) => {
 						<summary>{ __( 'Step 4: Get auth code' ) }</summary>
 						<p>
 							{ __(
-								'Click "Get auth code" and then "Unlock and continue". Copy the code that is shown to your clipboard.'
+								'Click "Get auth code" and then copy the code that is shown to your clipboard.'
 							) }
 						</p>
 						<img
