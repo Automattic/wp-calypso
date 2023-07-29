@@ -838,7 +838,7 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_1GB_STORAGE ]: {
 		getSlug: () => FEATURE_1GB_STORAGE,
-		getTitle: () => i18n.translate( '1GB storage space' ),
+		getTitle: () => i18n.translate( '1GB' ),
 		getCompareTitle: () => i18n.translate( '1 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
@@ -847,7 +847,7 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_3GB_STORAGE ]: {
 		getSlug: () => FEATURE_3GB_STORAGE,
-		getTitle: () => i18n.translate( '3 GB storage space' ),
+		getTitle: () => i18n.translate( '3 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
@@ -856,7 +856,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_6GB_STORAGE,
 		getCompareTitle: () => i18n.translate( '6 GB' ),
 		getTitle: () =>
-			i18n.translate( '{{strong}}6 GB{{/strong}} storage space', {
+			i18n.translate( '6 GB', {
 				components: {
 					strong: <strong />,
 				},
@@ -869,7 +869,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_13GB_STORAGE ]: {
 		getSlug: () => FEATURE_13GB_STORAGE,
 		getTitle: () =>
-			i18n.translate( '{{strong}}13 GB{{/strong}} storage space', {
+			i18n.translate( '13 GB', {
 				components: {
 					strong: <strong />,
 				},
@@ -882,7 +882,8 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_50GB_STORAGE ]: {
 		getSlug: () => FEATURE_50GB_STORAGE,
-		getTitle: () => i18n.translate( '50 GB storage space' ),
+		getTitle: () => i18n.translate( '50 GB' ),
+		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 		planDefault: true,
@@ -892,7 +893,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_200GB_STORAGE ]: {
 		getSlug: () => FEATURE_200GB_STORAGE,
 		getTitle: () =>
-			i18n.translate( '{{strong}}200 GB{{/strong}} storage space', {
+			i18n.translate( '200 GB', {
 				components: {
 					strong: <strong />,
 				},
@@ -1782,7 +1783,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_50GB_STORAGE_ADD_ON ]: {
 		getSlug: () => PRODUCT_1GB_SPACE,
 		getQuantity: () => 50,
-		getTitle: () => i18n.translate( '50 GB storage add-on' ),
+		getTitle: () => i18n.translate( '100 GB' ),
 		getCompareTitle: () => i18n.translate( '100 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
@@ -1790,7 +1791,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_100GB_STORAGE_ADD_ON ]: {
 		getSlug: () => PRODUCT_1GB_SPACE,
 		getQuantity: () => 100,
-		getTitle: () => i18n.translate( '100 GB storage add-on' ),
+		getTitle: () => i18n.translate( '150 GB' ),
 		getCompareTitle: () => i18n.translate( '150 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),

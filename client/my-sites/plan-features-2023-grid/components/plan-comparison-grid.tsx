@@ -342,7 +342,10 @@ type PlanComparisonGridHeaderProps = {
 type RestructuredFeatures = {
 	featureMap: Record< string, Set< string > >;
 	conditionalFeatureMap: Record< string, Set< string > >;
-	planStorageOptionsMap: Record< string, string >;
+	planStorageOptionsMap: Record<
+		string,
+		{ slug: string; planDefault: boolean; feature: FeatureObject } | undefined
+	>;
 };
 
 type RestructuredFootnotes = {
@@ -559,9 +562,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	const hasConditionalFeature = featureSlug
 		? restructuredFeatures.conditionalFeatureMap[ planName ].has( featureSlug )
 		: false;
-	const [ storageFeature ] = getPlanFeaturesObject( [
-		restructuredFeatures.planStorageOptionsMap[ planName ],
-	] );
+	const storageOption = restructuredFeatures.planStorageOptionsMap[ planName ];
 	const cellClasses = classNames(
 		'plan-comparison-grid__feature-group-row-cell',
 		'plan-comparison-grid__plan',
@@ -589,7 +590,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
 					<StorageButton className="plan-features-2023-grid__storage-button" key={ planName }>
-						{ storageFeature?.getCompareTitle?.() }
+						{ storageOption?.feature?.getCompareTitle?.() }
 					</StorageButton>
 				</>
 			) : (
@@ -854,7 +855,10 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		let previousPlan = null;
 		const planFeatureMap: Record< string, Set< string > > = {};
 		const conditionalFeatureMap: Record< string, Set< string > > = {};
-		const planStorageOptionsMap: Record< string, string > = {};
+		const planStorageOptionsMap: Record<
+			string,
+			{ slug: string; planDefault: boolean; feature: FeatureObject } | undefined
+		> = {};
 
 		for ( const plan of planProperties ?? [] ) {
 			const { planName } = plan;
@@ -890,8 +894,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				] );
 			}
 			previousPlan = planName;
-			const [ storageOption ] =
-				planObject.get2023PricingGridSignupStorageOptions?.( showLegacyStorageFeature ) ?? [];
+			const storageOption = plan.storageOptions.find( ( option ) => option.planDefault );
 			planStorageOptionsMap[ planName ] = storageOption;
 
 			conditionalFeatureMap[ planName ] = new Set(
