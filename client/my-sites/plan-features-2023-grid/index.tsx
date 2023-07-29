@@ -918,9 +918,11 @@ export class PlanFeatures2023Grid extends Component<
 				}
 
 				const { planName, storageOptions } = properties;
+
 				const shouldRenderStorageTitle =
 					storageOptions.length === 1 ||
-					( intervalType === 'monthly' && storageOptions.length !== 0 );
+					( intervalType === 'monthly' && storageOptions.length !== 0 ) ||
+					( ! showUpgradeableStorage && storageOptions.length !== 0 );
 				const canUpgradeStorageForPlan =
 					storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
 
