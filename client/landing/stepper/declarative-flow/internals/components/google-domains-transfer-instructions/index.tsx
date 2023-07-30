@@ -9,8 +9,8 @@ import './style.scss';
 
 type Props = {
 	children: React.ReactNode;
-	className: string | undefined;
-	focusedStep: number | undefined;
+	className?: string | undefined;
+	focusedStep?: number | undefined;
 };
 
 const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedStep } ) => {
