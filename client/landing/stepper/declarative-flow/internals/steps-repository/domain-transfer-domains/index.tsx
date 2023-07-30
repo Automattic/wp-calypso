@@ -9,7 +9,7 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
-const Intro: Step = function Intro( { navigation, flow } ) {
+const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
 
@@ -40,7 +40,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			}
 			stepContent={
 				<CalypsoShoppingCartProvider>
-					<TransferDomains onSubmit={ handleSubmit } />
+					<TransferDomains onSubmit={ handleSubmit } variantSlug={ variantSlug } />
 				</CalypsoShoppingCartProvider>
 			}
 			recordTracksEvent={ recordTracksEvent }

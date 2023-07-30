@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -14,6 +15,7 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import GoogleDomainsTransferInstructions from '../../components/google-domains-transfer-instructions';
 import { useValidationMessage } from './use-validation-message';
 
 type Props = {
@@ -35,6 +37,7 @@ type Props = {
 	showLabels: boolean;
 	hasDuplicates: boolean;
 	domainCount: number;
+	variantSlug: string | undefined;
 };
 
 type DomainPriceProps = {
@@ -99,6 +102,7 @@ export function DomainCodePair( {
 	showLabels,
 	hasDuplicates,
 	domainCount,
+	variantSlug,
 }: Props ) {
 	const { __ } = useI18n();
 
@@ -156,6 +160,23 @@ export function DomainCodePair( {
 			</Button>
 		</>
 	);
+
+	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
+
+	const authCodeLearnMoreAction = isGoogleDomainsTransferFlow ? (
+		<GoogleDomainsTransferInstructions>{ __( 'Show me how' ) }</GoogleDomainsTransferInstructions>
+	) : (
+		<Button
+			href={ localizeUrl(
+				'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+			) }
+			target="_blank"
+			variant="link"
+		>
+			<span className="learn-more-label">{ __( 'Learn more' ) }</span>
+		</Button>
+	);
+
 	return (
 		<div className={ `domains__domain-info-and-validation ${ getLocaleSlug() }` }>
 			<div className="domains__domain-info">
@@ -207,17 +228,7 @@ export function DomainCodePair( {
 								{ __(
 									'Unique code proving ownership, needed for secure domain transfer between registrars.'
 								) }
-								<div>
-									<Button
-										href={ localizeUrl(
-											'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
-										) }
-										target="_blank"
-										variant="link"
-									>
-										<span className="learn-more-label">{ __( 'Learn more' ) }</span>
-									</Button>
-								</div>
+								<div>{ authCodeLearnMoreAction }</div>
 							</InfoPopover>
 						</FormLabel>
 
