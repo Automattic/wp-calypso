@@ -168,7 +168,8 @@ type DomainPlanDialogProps = {
 	onPlanSelected: () => void;
 };
 
-const MODAL_VIEW_EVENT_NAME = 'calypso_free_plan_paid_domain_modal_view';
+// See p2-pbxNRc-2Ri#comment-4703 for more context
+const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
 
 function DialogPaidPlanIsRequired( {
 	paidDomainName,
