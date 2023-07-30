@@ -225,9 +225,13 @@ export function DomainCodePair( {
 								} ) }
 								position="right"
 							>
-								{ __(
-									'Unique code proving ownership, needed for secure domain transfer between registrars.'
-								) }
+								{ isGoogleDomainsTransferFlow
+									? __(
+											'A unique code you get from Google Domains that proves ownership of the domain.'
+									  )
+									: __(
+											'Unique code proving ownership, needed for secure domain transfer between registrars.'
+									  ) }
 								<div>{ authCodeLearnMoreAction }</div>
 							</InfoPopover>
 						</FormLabel>
