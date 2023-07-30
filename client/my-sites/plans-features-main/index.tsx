@@ -428,13 +428,13 @@ const PlansFeaturesMain = ( {
 							return;
 						}
 
-						if ( ! isCustomDomainAllowedOnFreePlan.entry ) {
+						if ( ! isCustomDomainAllowedOnFreePlan.result ) {
 							removePaidDomain?.();
 						}
 						// Since this domain will not be available after it is selected, invalidate the cache.
 						invalidateDomainSuggestionCache();
-						wpcomFreeDomainSuggestion.entry &&
-							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.entry );
+						wpcomFreeDomainSuggestion.result &&
+							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
 						onUpgradeClick?.( null );
 					} }
 					onPlanSelected={ () => {

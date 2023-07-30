@@ -16,7 +16,7 @@ const useIsCustomDomainAllowedOnFreePlan = (
 
 	return {
 		isLoading: isLoadingAssignment,
-		entry: experimentAssignment?.variationName === 'treatment',
+		result: experimentAssignment?.variationName === 'treatment',
 	};
 };
 

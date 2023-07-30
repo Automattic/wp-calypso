@@ -216,12 +216,12 @@ function DialogPaidPlanIsRequired( {
 				<Row>
 					<DomainName>
 						{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
-						{ wpcomFreeDomainSuggestion.entry && (
-							<div>{ wpcomFreeDomainSuggestion.entry.domain_name }</div>
+						{ wpcomFreeDomainSuggestion.result && (
+							<div>{ wpcomFreeDomainSuggestion.result.domain_name }</div>
 						) }
 					</DomainName>
 					<StyledButton
-						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.entry }
+						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
 						busy={ isBusy }
 						onClick={ handleFreeDomainClick }
 					>
@@ -292,17 +292,17 @@ function DialogCustomDomainAndFreePlan( {
 				<Row>
 					<DomainName>
 						{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
-						{ wpcomFreeDomainSuggestion.entry &&
+						{ wpcomFreeDomainSuggestion.result &&
 							translate( '%(paidDomainName)s redirects to %(wpcomFreeDomain)s', {
 								args: {
 									paidDomainName,
-									wpcomFreeDomain: wpcomFreeDomainSuggestion.entry.domain_name,
+									wpcomFreeDomain: wpcomFreeDomainSuggestion.result.domain_name,
 								},
 								comment: '%(wpcomFreeDomain)s is a WordPress.com subdomain, e.g. foo.wordpress.com',
 							} ) }
 					</DomainName>
 					<StyledButton
-						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.entry }
+						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
 						busy={ isBusy }
 						onClick={ handleFreePlanClick }
 					>
@@ -354,7 +354,7 @@ export function FreePlanPaidDomainDialog( {
 			/>
 			{ isCustomDomainAllowedOnFreePlan.isLoading && <LoadingPlaceHolder /> }
 			{ ! isCustomDomainAllowedOnFreePlan.isLoading &&
-				( isCustomDomainAllowedOnFreePlan.entry ? (
+				( isCustomDomainAllowedOnFreePlan.result ? (
 					<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
 				) : (
 					<DialogPaidPlanIsRequired { ...dialogCommonProps } />

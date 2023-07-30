@@ -35,7 +35,7 @@ const FreePlanCustomDomainFeature: React.FC< {
 		<SubdomainSuggestion>
 			{ isLoading && <LoadingPlaceHolder /> }
 			{ ! isLoading &&
-				( isCustomDomainAllowedOnFreePlan.entry ? (
+				( isCustomDomainAllowedOnFreePlan.result ? (
 					<div>
 						{ translate( '%s will be a redirect', {
 							args: [ paidDomainName ],
@@ -45,7 +45,7 @@ const FreePlanCustomDomainFeature: React.FC< {
 				) : (
 					<>
 						<div className="is-domain-name">{ paidDomainName }</div>
-						<div>{ wpcomFreeDomainSuggestion.entry?.domain_name }</div>
+						<div>{ wpcomFreeDomainSuggestion.result?.domain_name }</div>
 					</>
 				) ) }
 		</SubdomainSuggestion>

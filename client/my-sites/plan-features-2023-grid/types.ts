@@ -37,5 +37,5 @@ export interface PlanActionOverrides {
 
 export type DataResponse< T > = {
 	isLoading: boolean;
-	entry?: T;
+	result?: T;
 };

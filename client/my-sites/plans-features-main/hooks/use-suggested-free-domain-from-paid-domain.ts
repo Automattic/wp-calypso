@@ -15,7 +15,7 @@ export function useSuggestedFreeDomainFromPaidDomain( paidDomainName?: string ):
 	return {
 		wpcomFreeDomainSuggestion: {
 			isLoading: isInitialLoading,
-			entry: ( ! isError && wordPressSubdomainSuggestions?.[ 0 ] ) || undefined,
+			result: ( ! isError && wordPressSubdomainSuggestions?.[ 0 ] ) || undefined,
 		},
 		invalidateDomainSuggestionCache,
 	};
