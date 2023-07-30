@@ -9,9 +9,11 @@ import './style.scss';
 
 type Props = {
 	children: React.ReactNode;
+	className: string | undefined;
+	focusedStep: number | undefined;
 };
 
-const GoogleDomainsModal: React.FC< Props > = ( { children } ) => {
+const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedStep } ) => {
 	const { __ } = useI18n();
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
@@ -20,7 +22,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children } ) => {
 	return (
 		<>
 			<Button
-				className="google-domains-transfer-instructions__button"
+				className={ `google-domains-transfer-instructions__button ${ className }` }
 				variant="link"
 				onClick={ openModal }
 			>
@@ -35,7 +37,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children } ) => {
 					<p>
 						{ __( 'Follow these steps to transfer your domain from Google to WordPress.com:' ) }
 					</p>
-					<details>
+					<details open={ 1 === focusedStep }>
 						<summary>
 							{ createInterpolateElement(
 								__( 'Step 1: Visit your <a>Google Domains dashboard</a>' ),
@@ -54,7 +56,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children } ) => {
 							) }
 						</p>
 					</details>
-					<details>
+					<details open={ 2 === focusedStep }>
 						<summary>{ __( 'Step 2: Select your domain' ) }</summary>
 						<p>{ __( 'Select the domain you want to transfer in the "My domains" section.' ) }</p>
 						<img
@@ -66,7 +68,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children } ) => {
 							height={ 410 }
 						/>
 					</details>
-					<details open>
+					<details open={ 3 === focusedStep }>
 						<summary>{ __( 'Step 3: Unlock domain' ) }</summary>
 						<p>
 							{ __(
@@ -83,7 +85,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children } ) => {
 							height={ 410 }
 						/>
 					</details>
-					<details>
+					<details open={ 4 === focusedStep }>
 						<summary>{ __( 'Step 4: Get auth code' ) }</summary>
 						<p>
 							{ __(
@@ -104,6 +106,10 @@ const GoogleDomainsModal: React.FC< Props > = ( { children } ) => {
 			) }
 		</>
 	);
+};
+
+GoogleDomainsModal.defaultProps = {
+	focusedStep: 3,
 };
 
 export default GoogleDomainsModal;

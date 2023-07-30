@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { GOOGLE_TRANSFER } from '@automattic/onboarding';
@@ -163,20 +163,6 @@ export function DomainCodePair( {
 
 	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 
-	const authCodeLearnMoreAction = isGoogleDomainsTransferFlow ? (
-		<GoogleDomainsTransferInstructions>{ __( 'Show me how' ) }</GoogleDomainsTransferInstructions>
-	) : (
-		<Button
-			href={ localizeUrl(
-				'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
-			) }
-			target="_blank"
-			variant="link"
-		>
-			<span className="learn-more-label">{ __( 'Learn more' ) }</span>
-		</Button>
-	);
-
 	return (
 		<div className={ `domains__domain-info-and-validation ${ getLocaleSlug() }` }>
 			<div className="domains__domain-info">
@@ -219,21 +205,38 @@ export function DomainCodePair( {
 							htmlFor={ id + '-auth' }
 						>
 							{ __( 'Authorization code' ) }
-							<InfoPopover
-								className={ classnames( {
-									'is-first-row': showLabels,
-								} ) }
-								position="right"
-							>
-								{ isGoogleDomainsTransferFlow
-									? __(
-											'A unique code you get from Google Domains that proves ownership of the domain.'
-									  )
-									: __(
-											'Unique code proving ownership, needed for secure domain transfer between registrars.'
-									  ) }
-								<div>{ authCodeLearnMoreAction }</div>
-							</InfoPopover>
+							{ isGoogleDomainsTransferFlow ? (
+								<GoogleDomainsTransferInstructions
+									className={ classnames( {
+										'is-first-row': showLabels,
+									} ) }
+									focusedStep={ 4 }
+								>
+									<Gridicon icon="info-outline" size={ 18 } />
+								</GoogleDomainsTransferInstructions>
+							) : (
+								<InfoPopover
+									className={ classnames( {
+										'is-first-row': showLabels,
+									} ) }
+									position="right"
+								>
+									{ __(
+										'Unique code proving ownership, needed for secure domain transfer between registrars.'
+									) }
+									<div>
+										<Button
+											href={ localizeUrl(
+												'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+											) }
+											target="_blank"
+											variant="link"
+										>
+											<span className="learn-more-label">{ __( 'Learn more' ) }</span>
+										</Button>
+									</div>
+								</InfoPopover>
+							) }
 						</FormLabel>
 
 						<FormInput
