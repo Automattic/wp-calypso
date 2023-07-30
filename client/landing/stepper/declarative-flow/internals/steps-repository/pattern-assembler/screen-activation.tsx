@@ -24,7 +24,9 @@ const ScreenActivation = ( { onActivate }: Props ) => {
 				hideBack
 			/>
 			<div className="screen-container__body">
-				<strong className="screen-activation__heading">Content will be replaced</strong>
+				<strong className="screen-activation__heading">
+					{ translate( 'Content will be replaced' ) }
+				</strong>
 				<p className="screen-activation__description">
 					{ translate(
 						'After activation, this layout will replace your existing homepage. But you can still access your old content. {{a}}Learn more{{/a}}.',
