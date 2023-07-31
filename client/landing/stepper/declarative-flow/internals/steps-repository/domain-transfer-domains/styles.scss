@@ -165,7 +165,8 @@
 
 
 		.components-button:has(.delete-label),
-		.components-button:has(.refresh-label) {
+		.components-button:has(.refresh-label),
+		.components-button:has(.unlock-label), {
 			color: var(--gray-gray-100, #101517);
 			text-decoration-color: var(--gray-gray-100, #101517);
 		}
@@ -208,13 +209,15 @@
 	.domains__domain-key {
 		flex: 0 0 240px;
 
-		.info-popover {
+		.info-popover,
+		.google-domains-transfer-instructions__button {
+			color: var(--color-text-subtle);
 			margin-left: 5px;
 			padding: 2px;
-		}
 
-		.info-popover:focus {
-			outline: 1px solid var(--studio-blue-50);
+			&:focus {
+				outline: 1px solid var(--studio-blue-50);
+			}
 		}
 	}
 
@@ -296,7 +299,8 @@
 			}
 		}
 
-		.info-popover.is-first-row {
+		.info-popover.is-first-row,
+		.google-domains-transfer-instructions__button.is-first-row {
 			display: inline-block;
 
 			@media (max-width: $break-mobile ) {

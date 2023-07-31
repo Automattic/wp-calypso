@@ -11,6 +11,7 @@ import {
 	supportSiteLocales,
 	forumLocales,
 	magnificentNonEnLocales,
+	localesForPricePlans,
 	jetpackComLocales,
 	Locale,
 } from './locales';
@@ -166,6 +167,12 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	},
 	'wordpress.com/start/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
+	'wordpress.com/plans/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		// if logged in, or url.pathname contains characters after `/plans/`, don't rewrite
+		return isLoggedIn || url.pathname !== '/plans/'
+			? url
+			: prefixLocalizedUrlPath( localesForPricePlans )( url, localeSlug );
 	},
 	'wordpress.com/setup/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );

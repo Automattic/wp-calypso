@@ -27,7 +27,6 @@ import {
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
 import { getLabel, getSublabel } from './checkout-labels';
@@ -95,12 +94,6 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 } >`
 	.jetpack-partner-logo {
 		padding-bottom: 20px;
-	}
-`;
-
-const GiftBadgeWrapper = styled.span`
-	@media ( max-width: 660px ) {
-		width: 100%;
 	}
 `;
 
@@ -935,6 +928,26 @@ function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 	return null;
 }
 
+function GiftBadgeWithText() {
+	const translate = useTranslate();
+	return <GiftBadge>{ translate( 'Gift' ) }</GiftBadge>;
+}
+
+const MobileGiftWrapper = styled.div`
+	display: block;
+	width: 100%;
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		display: none;
+	}
+`;
+
+const DesktopGiftWrapper = styled.div`
+	display: none;
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		display: block;
+	}
+`;
+
 function WPLineItem( {
 	children,
 	product,
@@ -963,7 +976,6 @@ function WPLineItem( {
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const isMobile = useViewportMatch( 'small', '<' );
 	const hasBundledDomainsInCart = responseCart.products.some(
 		( product ) =>
 			( product.is_domain_registration || product.product_slug === 'domain_transfer' ) &&
@@ -1018,12 +1030,6 @@ function WPLineItem( {
 		products: [ product ],
 	} );
 
-	const giftBadgeElement = (
-		<GiftBadgeWrapper>
-			<GiftBadge>{ translate( 'Gift' ) }</GiftBadge>
-		</GiftBadgeWrapper>
-	);
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -1031,10 +1037,18 @@ function WPLineItem( {
 			data-e2e-product-slug={ productSlug }
 			data-product-type={ isPlan( product ) ? 'plan' : product.product_slug }
 		>
-			{ isMobile && responseCart.is_gift_purchase && giftBadgeElement }
+			{ responseCart.is_gift_purchase && (
+				<MobileGiftWrapper>
+					<GiftBadgeWithText />
+				</MobileGiftWrapper>
+			) }
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
-				{ ! isMobile && responseCart.is_gift_purchase && giftBadgeElement }
+				{ responseCart.is_gift_purchase && (
+					<DesktopGiftWrapper>
+						<GiftBadgeWithText />
+					</DesktopGiftWrapper>
+				) }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice

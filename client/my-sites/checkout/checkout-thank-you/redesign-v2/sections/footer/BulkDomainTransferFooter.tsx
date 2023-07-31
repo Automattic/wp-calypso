@@ -9,6 +9,19 @@ const BulkDomainTransferFooter = () => {
 	return (
 		<div>
 			<PurchaseDetail
+				title={ __( 'Want to speed this up?' ) }
+				description={ __(
+					'Check your inbox for an email from your current domain provider for instructions on how to speed up the transfer process.'
+				) }
+				buttonText={ __( 'Learn about expediting domain transfers' ) }
+				href={ localizeUrl( 'https://wordpress.com/support/domains/incoming-domain-transfer/' ) }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_domain_transfer_complete_click', {
+						destination: '/support/domains/incoming-domain-transfer/',
+					} )
+				}
+			/>
+			<PurchaseDetail
 				title={ __( 'Dive into domain essentials' ) }
 				description={ __(
 					"Unlock the domain world's secrets. Dive into our comprehensive resource to learn the basics of domains, from registration to management."
@@ -18,20 +31,6 @@ const BulkDomainTransferFooter = () => {
 				onClick={ () =>
 					recordTracksEvent( 'calypso_domain_transfer_complete_click', {
 						destination: '/support/domains',
-					} )
-				}
-			/>
-
-			<PurchaseDetail
-				title={ __( 'Consider moving your sites too?' ) }
-				description={ __(
-					'You can find step-by-step guides below that will help you move your site to WordPress.com'
-				) }
-				buttonText={ __( 'Learn more about site transfers' ) }
-				href={ localizeUrl( 'https://wordpress.com/support/moving-a-blog/' ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_domain_transfer_complete_click', {
-						destination: '/support/moving-a-blog',
 					} )
 				}
 			/>

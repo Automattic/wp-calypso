@@ -27,12 +27,10 @@ class SocialSignupForm extends Component {
 		flowName: PropTypes.string,
 		redirectToAfterLoginUrl: PropTypes.string,
 		loginUrl: PropTypes.string,
-		isDevAccount: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		compact: false,
-		isDevAccount: false,
 	};
 
 	handleAppleResponse = ( response ) => {
@@ -40,13 +38,14 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		const extraUserData = {
-			is_dev_account: this.props.isDevAccount,
-			...( response.user && {
+		let extraUserData = {};
+
+		if ( response.user ) {
+			extraUserData = {
 				user_name: response.user.name,
 				user_email: response.user.email,
-			} ),
-		};
+			};
+		}
 
 		this.props.handleResponse( 'apple', null, response.id_token, extraUserData );
 	};
@@ -60,9 +59,7 @@ class SocialSignupForm extends Component {
 			social_account_type: 'google',
 		} );
 
-		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token, {
-			is_dev_account: this.props.isDevAccount,
-		} );
+		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
 	};
 
 	trackSocialSignup = ( service ) => {

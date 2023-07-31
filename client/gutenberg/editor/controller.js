@@ -227,8 +227,8 @@ export const redirect = async ( context, next ) => {
 };
 
 function getPressThisData( query ) {
-	const { text, url, title, embed } = query;
-	return url ? { text, url, title, embed } : null;
+	const { url, comment_content, comment_author } = query;
+	return url ? { url, comment_content, comment_author } : null;
 }
 
 function getAnchorFmData( query ) {
