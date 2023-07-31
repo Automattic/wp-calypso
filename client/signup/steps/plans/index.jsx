@@ -29,7 +29,7 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getDomainName, getIntervalType } from './util';
+import { getIntervalType } from './util';
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -154,19 +154,22 @@ export class PlansStep extends Component {
 				</div>
 			);
 		}
-
-		const paidDomainName = getDomainName( this.props.signupDependencies.domainItem );
+		const { signupDependencies } = this.props;
+		const { siteUrl: freeSubdomain, lastDomainSearched, domainItem } = signupDependencies;
+		const paidDomainName = domainItem?.meta;
 
 		return (
 			<div>
 				{ errorDisplay }
 				<PlansFeaturesMain
+					paidDomainName={ paidDomainName }
+					freeSubdomain={ freeSubdomain }
+					lastDomainSearched={ lastDomainSearched }
 					siteId={ selectedSite?.ID }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
-					paidDomainName={ paidDomainName }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					plansWithScroll={ this.state.isDesktop }

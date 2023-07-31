@@ -2,11 +2,11 @@ import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
+	getPlanClass,
 	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
 	PlanSlug,
-	getPlanClass,
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
@@ -30,8 +30,6 @@ import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
-import { ProgressState } from 'calypso/state/signup/progress/schema';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -53,11 +51,12 @@ import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
 import type {
-	PlanActionOverrides,
 	DataResponse,
+	PlanActionOverrides,
 } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
+
 import './style.scss';
 
 export interface PlansFeaturesMainProps {
@@ -73,6 +72,8 @@ export interface PlansFeaturesMainProps {
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
+	freeSubdomain?: string;
+	lastDomainSearched?: string;
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: DomainSuggestion ) => void;
@@ -107,16 +108,6 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 };
-
-function getDomainStepInfoFromDependencyProgress( progress: ProgressState ) {
-	const domainForm = progress.domains?.domainForm;
-	const [ domainSearchResult ] = domainForm?.subdomainSearchResults || [];
-	const lastDomainSearched = domainForm?.lastDomainSearched;
-	return {
-		freeSubdomain: domainSearchResult?.domain_name,
-		lastDomainSearched,
-	};
-}
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
 	const translate = useTranslate();
@@ -242,6 +233,8 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 
 const PlansFeaturesMain = ( {
 	paidDomainName,
+	freeSubdomain,
+	lastDomainSearched,
 	flowName,
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
@@ -294,16 +287,7 @@ const PlansFeaturesMain = ( {
 		flowName,
 		paidDomainName
 	);
-	/**
-	 * This is a temporary solution to extract the domain suggestion dependency from the signup progress.
-	 * Ideally the free subdomain should be funnelled as an explicit dependency which is being handled at
-	 * https://github.com/Automattic/wp-calypso/pull/79869
-	 * Once the PR is merged this code can be removed.
-	 */
-	const signupProgress = useSelector( getSignupProgress );
-	const { freeSubdomain, lastDomainSearched } =
-		getDomainStepInfoFromDependencyProgress( signupProgress );
-	/*****************************************************/
+
 	const isFreeDomainFreePlanModalActive = config.isEnabled( 'onboarding-pm/free-free-modal' );
 
 	let _customerType = chooseDefaultCustomerType( {
@@ -470,7 +454,7 @@ const PlansFeaturesMain = ( {
 					} }
 				/>
 			) }
-			{ freeSubdomain && isFreeFreeUpsellOpen && (
+			{ freeSubdomain && lastDomainSearched && isFreeFreeUpsellOpen && (
 				<FreeFreeDialog
 					freeSubdomain={ freeSubdomain }
 					lastDomainSearched={ lastDomainSearched }

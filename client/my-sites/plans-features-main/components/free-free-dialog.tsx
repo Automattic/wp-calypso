@@ -2,9 +2,8 @@ import { applyTestFiltersToPlansList, PLAN_PERSONAL } from '@automattic/calypso-
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { formatCurrency } from 'calypso/../packages/format-currency/src';
-import { SingleFreeDomainSuggestion } from 'calypso/my-sites/plan-features-2023-grid/types';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -90,9 +89,7 @@ export const StyledButton = styled( Button )`
 		opacity: 0.85;
 		transition: 0.7s;
 	}
-	&:focus {
-		box-shadow: 0 0 0 2px var( --studio-white ), 0 0 0 4px var( --studio-blue-50 );
-	}
+
 	width: 100%;
 	@media ( min-width: 780px ) {
 		max-width: 260px;
@@ -110,12 +107,14 @@ const LoadingPlaceHolderText = styled( LoadingPlaceHolder )`
 	border-radius: 0;
 `;
 
-function DomainSuggestionText( { suggestion }: { suggestion: SingleFreeDomainSuggestion } ) {
-	return suggestion.isLoading || ! suggestion?.entry?.domain_name ? (
-		<LoadingPlaceHolderText />
-	) : (
-		<strong>"{ suggestion?.entry?.domain_name }"</strong>
-	);
+function LazyDisplayText( {
+	displayText,
+	isLoading,
+}: {
+	displayText: TranslateResult;
+	isLoading: boolean;
+} ) {
+	return isLoading ? <LoadingPlaceHolderText /> : <>{ displayText }</>;
 }
 
 export function FreeFreeDialog( {
@@ -223,7 +222,28 @@ export function FreeFreeDialog( {
 						'As a bonus, you will get a custom domain like {{suggestion}}{{/suggestion}} {{break}}{{/break}} for free for one year (%(domainPrice)s value).',
 						{
 							components: {
-								suggestion: <DomainSuggestionText suggestion={ suggestion } />,
+								suggestion: (
+									<LazyDisplayText
+										displayText={
+											suggestion.entry?.domain_name && (
+												<strong>"{ suggestion.entry?.domain_name }"</strong>
+											)
+										}
+										isLoading={ suggestion.isLoading || ! suggestion?.entry?.domain_name }
+									/>
+								),
+								suggestionPrice: (
+									<LazyDisplayText
+										displayText={ formatCurrency(
+											suggestion?.entry?.raw_price ?? 0,
+											suggestion?.entry?.currency_code ?? 'USD',
+											{
+												stripZeros: true,
+											}
+										) }
+										isLoading={ suggestion.isLoading || ! suggestion?.entry?.raw_price }
+									/>
+								),
 								break: <br />,
 							},
 							args: {
