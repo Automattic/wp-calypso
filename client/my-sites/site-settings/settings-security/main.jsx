@@ -34,9 +34,9 @@ export const SiteSettingsSecurity = ( {
 		return (
 			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {
-					args: { site: site.name || site.slug },
+					args: { site: site?.name || site?.slug },
 				} ) }
-				actionURL={ '/settings/general/' + site.slug }
+				actionURL={ '/settings/general/' + site?.slug }
 				title={ translate( 'No security configuration is required.' ) }
 				line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
@@ -65,7 +65,7 @@ export const SiteSettingsSecurity = ( {
 			/>
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showCredentials && <JetpackCredentials /> }
-			{ showJetpackBanner && <JetpackCredentialsBanner siteSlug={ site.slug } /> }
+			{ showJetpackBanner && <JetpackCredentialsBanner siteSlug={ site?.slug } /> }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
