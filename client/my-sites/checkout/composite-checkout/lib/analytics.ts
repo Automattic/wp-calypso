@@ -29,7 +29,7 @@ export function logStashLoadErrorEvent(
 	} );
 }
 
-export type DataForLog = Record< string, string > & { tags?: string[] };
+export type DataForLog = Record< string, string >;
 
 export function logStashEvent(
 	message: string,
