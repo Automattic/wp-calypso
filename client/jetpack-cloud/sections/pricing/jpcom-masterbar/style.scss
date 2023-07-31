@@ -133,8 +133,8 @@
 	@media ( max-width: 900px ) {
 		.header {
 			position: relative;
-			padding: 0;
-			height: 80px;
+			padding: 1.5rem 0;
+			height: auto;
 			background-color: var(--studio-white);
 		}
 	}
@@ -155,7 +155,6 @@
 	}
 
 	.header__content-wrapper {
-		position: absolute;
 		width: 100%;
 	}
 
