@@ -29,9 +29,11 @@ export function logStashLoadErrorEvent(
 	} );
 }
 
+export type DataForLog = Record< string, string > & { tags?: string[] };
+
 export function logStashEvent(
 	message: string,
-	dataForLog: Record< string, string > = {},
+	dataForLog: DataForLog,
 	severity: 'error' | 'warning' | 'info' = 'error'
 ): Promise< void > {
 	return logToLogstash( {
@@ -42,6 +44,7 @@ export function logStashEvent(
 			env: config( 'env_id' ),
 			...dataForLog,
 		},
+		tags: dataForLog.tags ?? [],
 	} );
 }
 
