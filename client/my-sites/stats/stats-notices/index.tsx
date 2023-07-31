@@ -13,7 +13,6 @@ import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FeedbackNotice from './feedback-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
 import LegacyStatsNotices from './legacy-notices';
-import removeStatsPurchaseSuccessParam from './lib/remove-stats-purchase-success-param';
 import OptOutNotice from './opt-out-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import { StatsNoticesProps } from './types';
@@ -72,26 +71,12 @@ const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: StatsNoticesProp
 	const showFreePlanPurchaseSuccessNotice = statsPurchaseSuccess === 'free';
 	const showPaidPlanPurchaseSuccessNotice = statsPurchaseSuccess === 'paid';
 
-	const removeParam = () => {
-		if ( ! statsPurchaseSuccess ) {
-			return;
-		}
-		const newUrl = removeStatsPurchaseSuccessParam( window.location.href );
-		// Odyssey would try to hack the URL on load to remove duplicate params. We need to wait for that to finish.
-		setTimeout( () => window.history.replaceState( null, '', newUrl ), 300 );
-	};
-
 	return (
 		<>
 			{ /* TODO: Consider combining/refactoring these components into a single component */ }
-			{ showPaidPlanPurchaseSuccessNotice && (
-				<PaidPlanPurchaseSuccessJetpackStatsNotice onNoticeViewed={ removeParam } />
-			) }
+			{ showPaidPlanPurchaseSuccessNotice && <PaidPlanPurchaseSuccessJetpackStatsNotice /> }
 			{ showFreePlanPurchaseSuccessNotice && (
-				<FreePlanPurchaseSuccessJetpackStatsNotice
-					siteId={ siteId }
-					onNoticeViewed={ removeParam }
-				/>
+				<FreePlanPurchaseSuccessJetpackStatsNotice siteId={ siteId } />
 			) }
 		</>
 	);
