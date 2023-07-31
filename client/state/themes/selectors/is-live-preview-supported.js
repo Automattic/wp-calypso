@@ -65,7 +65,7 @@ const isNotCompatibleThemes = ( themeId ) => {
 };
 
 /**
- * Live Preview leveraging Gutenberg's Block Theme Previews
+ * Check if Live Preview is supported.
  *
  * The scenarios where the Live Preview does NOT support;
  * - On both Simple and Atomic sites;
@@ -87,7 +87,7 @@ export const isLivePreviewSupported = ( state, { themeId, siteId } ) => {
 	}
 
 	// A theme should be FullSiteEditing compatible to use Block Theme Previews.
-	if ( ! isFullSiteEditingTheme( state, themeId, siteId ) ) {
+	if ( ! isFullSiteEditingTheme( state, themeId ) ) {
 		return false;
 	}
 
@@ -98,7 +98,7 @@ export const isLivePreviewSupported = ( state, { themeId, siteId } ) => {
 	 * @see pekYwv-284-p2#background
 	 */
 	if ( isNotCompatibleThemes( themeId ) ) {
-		return null;
+		return false;
 	}
 
 	// Block Theme Previews need the theme installed on Atomic sites.
