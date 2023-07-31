@@ -140,18 +140,7 @@ export function selectAlphabeticallySortedProductOptions(
 }
 
 export { default as isJetpackBundle } from './lib/is-jetpack-bundle';
-
-/**
- * Whether the licenses are assignable to WP multisite. This function uses key prefix to determine
- * if the license is compatible with multisite.
- *
- * @param {Array<string>} licenseKeys
- * @returns {boolean} indicating if the license keys are assignable to multisite
- */
-export function areLicenseKeysAssignableToMultisite( licenseKeys: Array< string > ): boolean {
-	// If any license keys are not Jetpack Backup or Scan, they can be assigned to multisite.
-	return licenseKeys.some( ( key ) => ! /^jetpack-(backup|scan)/.test( key ) );
-}
+export { default as areLicenseKeysAssignableToMultisite } from './lib/are-license-keys-assignable-to-multisite';
 
 export const LICENSE_INFO_MODAL_ID = 'show_license_modal';
 
