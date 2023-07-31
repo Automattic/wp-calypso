@@ -1,8 +1,13 @@
 import {
 	JETPACK_CONNECTION_HEALTHY,
 	JETPACK_CONNECTION_MAYBE_UNHEALTHY,
+	JETPACK_CONNECTION_UNHEALTHY,
 } from 'calypso/state/action-types';
-import { setJetpackConnectionHealthy, setJetpackConnectionMaybeUnhealthy } from '../actions';
+import {
+	setJetpackConnectionHealthy,
+	setJetpackConnectionMaybeUnhealthy,
+	setJetpackConnectionUnhealthy,
+} from '../actions';
 
 describe( 'action', () => {
 	describe( 'setJetpackConnectionHealthy', () => {
@@ -23,6 +28,18 @@ describe( 'action', () => {
 			expect( setTransferAction ).toEqual( {
 				type: JETPACK_CONNECTION_MAYBE_UNHEALTHY,
 				siteId: 1,
+			} );
+		} );
+	} );
+
+	describe( 'setJetpackConnectionUnhealthy', () => {
+		test( 'should return a jetpack unhealthy connection action', () => {
+			const setTransferAction = setJetpackConnectionUnhealthy( 1, 'foo_bar' );
+
+			expect( setTransferAction ).toEqual( {
+				type: JETPACK_CONNECTION_UNHEALTHY,
+				siteId: 1,
+				errorCode: 'foo_bar',
 			} );
 		} );
 	} );
