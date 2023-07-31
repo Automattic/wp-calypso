@@ -38,7 +38,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
-import type { PlanActionOverrides } from '../types';
+import type { PlanActionOverrides, StorageOption } from '../types';
 
 function DropdownIcon() {
 	return (
@@ -342,10 +342,7 @@ type PlanComparisonGridHeaderProps = {
 type RestructuredFeatures = {
 	featureMap: Record< string, Set< string > >;
 	conditionalFeatureMap: Record< string, Set< string > >;
-	planStorageOptionsMap: Record<
-		string,
-		{ slug: string; planDefault: boolean; feature: FeatureObject } | undefined
-	>;
+	planStorageOptionsMap: Record< string, StorageOption | undefined >;
 };
 
 type RestructuredFootnotes = {
@@ -590,7 +587,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
 					<StorageButton className="plan-features-2023-grid__storage-button" key={ planName }>
-						{ storageOption?.feature?.getCompareTitle?.() }
+						{ storageOption?.featureObject?.getCompareTitle?.() }
 					</StorageButton>
 				</>
 			) : (

@@ -937,7 +937,7 @@ export class PlanFeatures2023Grid extends Component<
 						if ( storageOption?.planDefault ) {
 							return (
 								<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-									{ storageOption.feature.getTitle() }
+									{ storageOption.featureObject.getTitle() }
 								</div>
 							);
 						}
