@@ -15,7 +15,7 @@ interface LogToLogstashParams {
 	message: string;
 	extra?: any;
 	site_id?: number;
-	tags?: string;
+	tags?: string[];
 	[ key: string ]: any;
 }
 

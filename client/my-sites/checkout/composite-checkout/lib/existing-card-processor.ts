@@ -121,7 +121,7 @@ export default async function existingCardProcessor(
 				'calypso_checkout_card_transaction_failed',
 				{
 					payment_intent_id: paymentIntentId ?? '',
-					tags: `payment_intent_id:${ paymentIntentId }`,
+					tags: [ `payment_intent_id:${ paymentIntentId }` ],
 				},
 				'info'
 			);
