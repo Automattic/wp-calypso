@@ -197,7 +197,6 @@
 		"subscription-management/comments-list-controls": true,
 		"subscription-management-redirect-following": true,
 		"themes/atomic-homepage-replace": true,
-		"themes/block-theme-previews-poc": true,
 		"themes/block-theme-previews": true,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,

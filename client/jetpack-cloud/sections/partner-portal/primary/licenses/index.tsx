@@ -69,10 +69,10 @@ export default function Licenses( {
 			<QueryJetpackPartnerPortalLicenseCounts />
 
 			{ isAgencyUser && (
-				<>
+				<div>
 					<SiteSurveyBanner />
 					<SiteWelcomeBanner bannerKey="licenses-page" />
-				</>
+				</div>
 			) }
 			<SiteAddLicenseNotification />
 

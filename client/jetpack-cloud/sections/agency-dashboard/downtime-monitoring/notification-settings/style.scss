@@ -177,3 +177,13 @@
 	height: 1px;
 	overflow: hidden;
 }
+
+.notification-settings__sms-counter {
+	color: var(--studio-gray-50);
+	font-size: 0.75rem;
+	margin-block-start: 8px;
+
+	&.notification-settings__sms-counter-limit-reached {
+		color: var(--color-scary-40);
+	}
+}

@@ -172,7 +172,6 @@ class StatsSite extends Component {
 			isOdysseyStats,
 			context,
 			moduleSettings,
-			statsPurchaseSuccess,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -242,7 +241,7 @@ class StatsSite extends Component {
 				<StatsNotices
 					siteId={ siteId }
 					isOdysseyStats={ isOdysseyStats }
-					statsPurchaseSuccess={ statsPurchaseSuccess }
+					statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
 				/>
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>

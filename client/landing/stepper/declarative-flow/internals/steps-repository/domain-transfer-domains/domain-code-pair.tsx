@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, englishLocales, useLocale } from '@automattic/i18n-utils';
 import { GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
@@ -16,7 +16,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import GoogleDomainsTransferInstructions from '../../components/google-domains-transfer-instructions';
+import GoogleDomainsModal from '../../components/google-domains-transfer-instructions';
 import { useValidationMessage } from './use-validation-message';
 
 type Props = {
@@ -65,7 +65,8 @@ const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolea
 };
 
 const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceProps ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 
 	if ( ! rawPrice ) {
 		return <div className="domains__domain-price-number disabled"></div>;
@@ -79,6 +80,11 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 		);
 	}
 
+	let pricetext = __( 'First year free' );
+	if ( englishLocales.includes( locale ) || hasTranslation( 'We pay the first year' ) ) {
+		pricetext = __( 'We pay the first year' );
+	}
+
 	return (
 		<div className="domains__domain-price-value">
 			<div>
@@ -89,7 +95,7 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 					{ formatCurrency( rawPrice, currencyCode, { stripZeros: true } ) }
 				</span>
 			</div>
-			<div className="domains__domain-price-text">{ __( 'First year free' ) }</div>
+			<div className="domains__domain-price-text">{ pricetext }</div>
 		</div>
 	);
 };
@@ -109,7 +115,6 @@ export function DomainCodePair( {
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
 	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
-
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
 	const {
@@ -144,14 +149,14 @@ export function DomainCodePair( {
 			{ isGoogleDomainsTransferFlow &&
 				// this means that the domain is locked and we need to show the instructions
 				errorStatus === domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE && (
-					<GoogleDomainsTransferInstructions
+					<GoogleDomainsModal
 						className={ classnames( {
 							'is-first-row': showLabels,
 						} ) }
 						focusedStep={ 3 }
 					>
 						{ __( 'How to unlock' ) }
-					</GoogleDomainsTransferInstructions>
+					</GoogleDomainsModal>
 				) }
 			<Button
 				// Disable the delete button on initial state meaning. no domain, no auth and one row.
@@ -174,6 +179,45 @@ export function DomainCodePair( {
 			</Button>
 		</>
 	);
+
+	const renderGoogleDomainsModal = () => {
+		return (
+			<GoogleDomainsModal
+				className={ classnames( {
+					'is-first-row': showLabels,
+				} ) }
+				focusedStep={ 4 }
+			>
+				<Gridicon icon="info-outline" size={ 18 } />
+			</GoogleDomainsModal>
+		);
+	};
+
+	const renderInfoPopover = () => {
+		return (
+			<InfoPopover
+				className={ classnames( {
+					'is-first-row': showLabels,
+				} ) }
+				position="right"
+			>
+				{ __(
+					'Unique code proving ownership, needed for secure domain transfer between registrars.'
+				) }
+				<div>
+					<Button
+						href={ localizeUrl(
+							'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+						) }
+						target="_blank"
+						variant="link"
+					>
+						<span className="learn-more-label">{ __( 'Learn more' ) }</span>
+					</Button>
+				</div>
+			</InfoPopover>
+		);
+	};
 
 	return (
 		<div className={ `domains__domain-info-and-validation ${ getLocaleSlug() }` }>
@@ -217,38 +261,7 @@ export function DomainCodePair( {
 							htmlFor={ id + '-auth' }
 						>
 							{ __( 'Authorization code' ) }
-							{ isGoogleDomainsTransferFlow ? (
-								<GoogleDomainsTransferInstructions
-									className={ classnames( {
-										'is-first-row': showLabels,
-									} ) }
-									focusedStep={ 4 }
-								>
-									<Gridicon icon="info-outline" size={ 18 } />
-								</GoogleDomainsTransferInstructions>
-							) : (
-								<InfoPopover
-									className={ classnames( {
-										'is-first-row': showLabels,
-									} ) }
-									position="right"
-								>
-									{ __(
-										'Unique code proving ownership, needed for secure domain transfer between registrars.'
-									) }
-									<div>
-										<Button
-											href={ localizeUrl(
-												'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
-											) }
-											target="_blank"
-											variant="link"
-										>
-											<span className="learn-more-label">{ __( 'Learn more' ) }</span>
-										</Button>
-									</div>
-								</InfoPopover>
-							) }
+							{ isGoogleDomainsTransferFlow ? renderGoogleDomainsModal() : renderInfoPopover() }
 						</FormLabel>
 
 						<FormInput
