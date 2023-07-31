@@ -13,6 +13,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import GoogleDomainsTransferInstructions from '../../components/google-domains-transfer-instructions';
@@ -107,6 +108,7 @@ export function DomainCodePair( {
 	const { __ } = useI18n();
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
+	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
@@ -139,6 +141,18 @@ export function DomainCodePair( {
 	const domainActions = ( inputValidationTextDisplayed = true ) => (
 		<>
 			{ inputValidationTextDisplayed ? <span>&nbsp;</span> : '' }
+			{ isGoogleDomainsTransferFlow &&
+				// this means that the domain is locked and we need to show the instructions
+				errorStatus === domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE && (
+					<GoogleDomainsTransferInstructions
+						className={ classnames( {
+							'is-first-row': showLabels,
+						} ) }
+						focusedStep={ 3 }
+					>
+						{ __( 'How to unlock' ) }
+					</GoogleDomainsTransferInstructions>
+				) }
 			<Button
 				// Disable the delete button on initial state meaning. no domain, no auth and one row.
 				disabled={ ! domain && ! auth && domainCount === 1 }
@@ -160,8 +174,6 @@ export function DomainCodePair( {
 			</Button>
 		</>
 	);
-
-	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 
 	return (
 		<div className={ `domains__domain-info-and-validation ${ getLocaleSlug() }` }>
