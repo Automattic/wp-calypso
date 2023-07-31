@@ -78,7 +78,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 							<source src="https://cldup.com/bYWgYH_hoP.mp4" type="video/mp4" />
 						</video>
 					</details>
-					<details open={ 4 === focusedStep }>
+					<details open={ 3 === focusedStep || 4 === focusedStep }>
 						<summary>{ __( 'Step 4: Get auth code' ) }</summary>
 						<p>
 							{ __(
