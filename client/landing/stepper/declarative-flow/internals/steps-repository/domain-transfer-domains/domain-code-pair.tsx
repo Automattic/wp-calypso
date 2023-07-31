@@ -144,41 +144,39 @@ export function DomainCodePair( {
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
 	const domainActions = () => (
-		<>
-			<span className="validation-actions">
-				{ isGoogleDomainsTransferFlow &&
-					// this means that the domain is locked and we need to show the instructions
-					errorStatus === domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE && (
-						<GoogleDomainsModal
-							className={ classnames( {
-								'is-first-row': showLabels,
-							} ) }
-							focusedStep={ 3 }
-						>
-							<span className="unlock-label">{ __( 'How to unlock' ) }</span>
-						</GoogleDomainsModal>
-					) }
-				<Button
-					// Disable the delete button on initial state meaning. no domain, no auth and one row.
-					disabled={ ! domain && ! auth && domainCount === 1 }
-					onClick={ () => onRemove( id ) }
-					variant="link"
-				>
-					<span className="delete-label">{ __( 'Clear domain' ) }</span>
-				</Button>
-				<Button
-					title={ __( 'Refresh' ) }
-					disabled={ ! refetch }
-					onClick={ () => refetch?.() }
-					className={ classnames( 'domains__domain-refresh', {
-						'is-invisible-field': ! refetch,
-					} ) }
-					variant="link"
-				>
-					<span className="refresh-label">{ __( 'Try again' ) }</span>
-				</Button>
-			</span>
-		</>
+		<span className="validation-actions">
+			{ isGoogleDomainsTransferFlow &&
+				// this means that the domain is locked and we need to show the instructions
+				errorStatus === domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE && (
+					<GoogleDomainsModal
+						className={ classnames( {
+							'is-first-row': showLabels,
+						} ) }
+						focusedStep={ 3 }
+					>
+						<span className="unlock-label">{ __( 'How to unlock' ) }</span>
+					</GoogleDomainsModal>
+				) }
+			<Button
+				// Disable the delete button on initial state meaning. no domain, no auth and one row.
+				disabled={ ! domain && ! auth && domainCount === 1 }
+				onClick={ () => onRemove( id ) }
+				variant="link"
+			>
+				<span className="delete-label">{ __( 'Clear domain' ) }</span>
+			</Button>
+			<Button
+				title={ __( 'Refresh' ) }
+				disabled={ ! refetch }
+				onClick={ () => refetch?.() }
+				className={ classnames( 'domains__domain-refresh', {
+					'is-invisible-field': ! refetch,
+				} ) }
+				variant="link"
+			>
+				<span className="refresh-label">{ __( 'Try again' ) }</span>
+			</Button>
+		</span>
 	);
 
 	const renderGoogleDomainsModal = () => {
