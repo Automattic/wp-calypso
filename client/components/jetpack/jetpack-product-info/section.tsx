@@ -2,9 +2,17 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { FunctionComponent, ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 
-type Props = {
-	alwaysExpanded?: boolean;
-	title: string;
+// `title` is required, except if the section is always expanded
+type Props = (
+	| {
+			alwaysExpanded?: false;
+			title: string;
+	  }
+	| {
+			alwaysExpanded: true;
+			title?: string;
+	  }
+ ) & {
 	children: ReactNode;
 };
 
