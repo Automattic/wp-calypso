@@ -96,19 +96,7 @@ export function internalToPublicLicenseSortField( internalSortField: LicenseSort
 	return internalSortFieldMap[ internalSortField ] || internalSortField;
 }
 
-/**
- * Check if the given URL belongs to the Partner Portal. If true, returns the URL, otherwise it returns the
- *  Partner Portal base URL: '/partner-portal'
- *
- * @param {string} returnToUrl The URL that
- * @returns {string} The right URL to return to
- */
-export function ensurePartnerPortalReturnUrl( returnToUrl: string ): string {
-	return returnToUrl && returnToUrl.startsWith( '/partner-portal' )
-		? returnToUrl
-		: '/partner-portal';
-}
-
+export { default as ensurePartnerPortalReturnUrl } from './lib/ensure-partner-portal-return-url';
 export { default as formatApiPartner } from './lib/format-api-partner';
 export { default as getProductTitle } from './lib/get-product-title';
 
