@@ -23,6 +23,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 export interface Props {
 	onSubmit: () => void;
+	variantSlug: string | undefined;
 }
 
 const defaultState: DomainTransferForm = {
@@ -64,7 +65,7 @@ const getFormattedTotalPrice = ( state: DomainTransferData ) => {
 	return 0;
 };
 
-const Domains: React.FC< Props > = ( { onSubmit } ) => {
+const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
 	const newDomainTransferQueryArg = getQueryArg( window.location.search, 'new' );
 
@@ -252,6 +253,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						( { domain: otherDomain }, otherIndex ) =>
 							otherDomain && otherDomain === domain.domain && otherIndex < index
 					) }
+					variantSlug={ variantSlug }
 				/>
 			) ) }
 			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
