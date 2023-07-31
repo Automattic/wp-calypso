@@ -133,6 +133,11 @@
 	.checklist-item__checkmark {
 		fill: var(--studio-gray-50);
 	}
+	.checklist-item__counter {
+		color: var(--studio-gray-50);
+		font-weight: 400;
+		margin-right: 0;
+	}
 }
 
 // pending tasks and completed enabled
