@@ -93,6 +93,11 @@ export default function CheckoutPaymentMethods( {
 		<CheckoutPaymentMethodsWrapper
 			className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }
 		>
+			<p>
+				{ __(
+					'We’re paying the first year of your domain transfer. We’ll use the payment information below to renew your domain transfer starting next year.'
+				) }
+			</p>
 			<RadioButtons>
 				{ paymentMethods.map( ( method ) => (
 					<CheckoutErrorBoundary
