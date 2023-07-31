@@ -45,6 +45,7 @@ const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
+const shouldHotReload = isDevelopment && process.env.CALYPSO_DISABLE_HOT_RELOAD !== 'true';
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -227,7 +228,7 @@ const webpackConfig = {
 				cacheIdentifier,
 				cacheCompression: false,
 				exclude: /node_modules\//,
-				plugins: isDevelopment ? [ require.resolve( 'react-refresh/babel' ) ] : [],
+				plugins: shouldHotReload ? [ require.resolve( 'react-refresh/babel' ) ] : [],
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
@@ -408,8 +409,8 @@ const webpackConfig = {
 					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
 				},
 			} ),
-		isDevelopment && new webpack.HotModuleReplacementPlugin(),
-		isDevelopment &&
+		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
+		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {
 				overlay: false,
 				exclude: [ /node_modules/, /devdocs/ ],

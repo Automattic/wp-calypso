@@ -369,7 +369,6 @@ export function site( context, next ) {
 			chartTab={ chartTab }
 			context={ context }
 			period={ rangeOfPeriod( activeFilter.period, date ) }
-			statsPurchaseSuccess={ queryOptions.statsPurchaseSuccess }
 		/>
 	);
 

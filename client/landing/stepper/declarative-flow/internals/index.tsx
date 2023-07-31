@@ -227,7 +227,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				<Route
 					path="*"
 					element={
-						<Navigate to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
+						<Navigate
+							to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` }
+							replace
+						/>
 					}
 				/>
 			</Routes>

@@ -24,7 +24,6 @@ import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
-import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import {
@@ -176,7 +175,6 @@ const Home = ( {
 			) : (
 				<>
 					<Primary cards={ layout.primary } />
-					<PluginsAnnouncementModal />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
 							<Secondary cards={ layout.secondary } siteId={ siteId } />

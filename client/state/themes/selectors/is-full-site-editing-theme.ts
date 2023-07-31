@@ -11,7 +11,7 @@ export function isFullSiteEditingTheme(
 	if ( ! themeId ) {
 		return false;
 	}
-	const theme = getTheme( state, 'wpcom', themeId );
+	const theme = getTheme( state, 'wpcom', themeId ) || getTheme( state, 'wporg', themeId );
 	if ( ! theme ) {
 		return false;
 	}

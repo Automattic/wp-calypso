@@ -21,10 +21,9 @@ import { DomainCodePair } from './domain-code-pair';
 import DomainTransferFAQ from './faqs';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-const MAX_DOMAINS = 50;
-
 export interface Props {
 	onSubmit: () => void;
+	variantSlug: string | undefined;
 }
 
 const defaultState: DomainTransferForm = {
@@ -66,7 +65,7 @@ const getFormattedTotalPrice = ( state: DomainTransferData ) => {
 	return 0;
 };
 
-const Domains: React.FC< Props > = ( { onSubmit } ) => {
+const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
 	const newDomainTransferQueryArg = getQueryArg( window.location.search, 'new' );
 
@@ -202,7 +201,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			);
 		}
 
-		return __( 'Transfer for free' );
+		return __( 'Start transfer' );
 	}
 
 	const setNewDomainFromQueryArg = () => {
@@ -254,13 +253,12 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						( { domain: otherDomain }, otherIndex ) =>
 							otherDomain && otherDomain === domain.domain && otherIndex < index
 					) }
+					variantSlug={ variantSlug }
 				/>
 			) ) }
-			{ domainCount < MAX_DOMAINS && (
-				<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-					{ __( 'Add more' ) }
-				</Button>
-			) }
+			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
+				{ __( 'Add more' ) }
+			</Button>
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }

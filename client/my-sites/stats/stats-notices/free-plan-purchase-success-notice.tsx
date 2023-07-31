@@ -1,27 +1,48 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null ) => {
-	const purchasePath = `/stats/purchase/${ siteId }`;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const from = isOdysseyStats ? 'jetpack' : 'calypso';
+	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-free-stats-purchase-success-notice`;
+
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
 	}
 	return `https://wordpress.com${ purchasePath }`;
 };
 
-const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
+const handleUpgradeClick = (
+	event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
+	upgradeUrl: string,
+	isOdysseyStats: boolean
+) => {
+	event.preventDefault();
+
+	isOdysseyStats
+		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_success_banner_upgrade_clicked' )
+		: recordTracksEvent( 'calypso_stats_purchase_success_banner_upgrade_clicked' );
+
+	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
+};
+
+const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
+	siteId,
+	onNoticeViewed,
+}: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
-	const dismissNotice = () => {
-		// TODO: Remove the query string from the window URL without a refresh.
-		setNoticeDismissed( true );
-	};
+	useEffect( () => {
+		onNoticeViewed && onNoticeViewed();
+	} );
+
+	const dismissNotice = () => setNoticeDismissed( true );
 
 	if ( noticeDismissed ) {
 		return null;
@@ -45,6 +66,9 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps
 							p: <p />,
 							jetpackStatsProductLink: (
 								<a
+									onClick={ ( e ) =>
+										handleUpgradeClick( e, getStatsPurchaseURL( siteId ), isOdysseyStats )
+									}
 									className="notice-banner__action-link"
 									href={ getStatsPurchaseURL( siteId ) }
 									target="_blank"

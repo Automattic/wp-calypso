@@ -21,6 +21,23 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
+async function fetchStripeSetupIntentId( source: string ): Promise< StripeSetupIntentId > {
+	const configuration = await wp.req.get( '/me/stripe-configuration', {
+		needs_intent: true,
+		source,
+	} );
+	const intentId: string | undefined =
+		configuration?.setup_intent_id && typeof configuration.setup_intent_id === 'string'
+			? configuration.setup_intent_id
+			: undefined;
+	if ( ! intentId ) {
+		throw new Error(
+			'Error loading new payment method intent. Received invalid data from the server.'
+		);
+	}
+	return intentId;
+}
+
 const wpcomAssignPaymentMethod = (
 	subscriptionId: string,
 	stored_details_id: string
@@ -64,19 +81,19 @@ export async function assignNewCardProcessor(
 		translate,
 		stripe,
 		stripeConfiguration,
-		stripeSetupIntentId,
 		cardNumberElement,
 		reduxDispatch,
 		eventSource,
+		isCheckout,
 	}: {
 		purchase: Purchase | undefined;
 		translate: LocalizeProps[ 'translate' ];
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
-		stripeSetupIntentId: StripeSetupIntentId | undefined;
 		cardNumberElement: StripeCardNumberElement | undefined;
 		reduxDispatch: CalypsoDispatch;
 		eventSource?: string;
+		isCheckout?: boolean;
 	},
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
@@ -84,7 +101,7 @@ export async function assignNewCardProcessor(
 		if ( ! isNewCardDataValid( submitData ) ) {
 			throw new Error( 'Credit Card data is invalid' );
 		}
-		if ( ! stripe || ! stripeConfiguration || ! stripeSetupIntentId ) {
+		if ( ! stripe || ! stripeConfiguration ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
 		}
 		if ( ! cardNumberElement ) {
@@ -153,6 +170,9 @@ export async function assignNewCardProcessor(
 
 		reduxDispatch( recordFormSubmitEvent( { purchase, useForAllSubscriptions } ) );
 
+		const stripeSetupIntentId = await fetchStripeSetupIntentId(
+			isCheckout ? 'checkout' : 'not-checkout'
+		);
 		const formFieldValues = {
 			country: countryCode,
 			postal_code: postalCode ?? '',
@@ -168,11 +188,6 @@ export async function assignNewCardProcessor(
 		if ( ! token ) {
 			throw new Error( String( translate( 'Failed to add card.' ) ) );
 		}
-
-		// If we've reached this point in the code and anything after this fails,
-		// we must regenerate the payment intent, which is done by calling `reload`
-		// as returned by `useStripeSetupIntentId` from
-		// `@automattic/calypso-stripe`.
 
 		if ( purchase ) {
 			const result = await updateCreditCard( {

@@ -19,6 +19,7 @@ import {
 	AssertConditionState,
 } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
+
 const domainTransfer: Flow = {
 	name: DOMAIN_TRANSFER,
 	get title() {
@@ -87,7 +88,12 @@ const domainTransfer: Flow = {
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( flowName );
 
-					const checkoutBackURL = new URL( '/setup/domain-transfer/domains', window.location.href );
+					const checkoutBackURL = new URL(
+						typeof this.variantSlug !== 'undefined'
+							? `/setup/${ this.variantSlug }/domains`
+							: '/setup/domain-transfer/domains',
+						window.location.href
+					);
 
 					// use replace instead of assign to remove the processing URL from history
 					return window.location.replace(
@@ -104,11 +110,7 @@ const domainTransfer: Flow = {
 		const goBack = () => {
 			switch ( _currentStepSlug ) {
 				case 'domains':
-					if ( window.history.length < 3 ) {
-						return navigate( 'intro' );
-					}
-					window.history.back();
-					return;
+					return navigate( 'intro' );
 				default:
 					return;
 			}

@@ -418,39 +418,3 @@ function load_wpcom_domain_upsell_callout() {
 	require_once __DIR__ . '/wpcom-domain-upsell-callout/class-wpcom-domain-upsell-callout.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_domain_upsell_callout' );
-/**
- * Shows a confirm prompt when the plugin is about to be deactivated on a unlaunched site.
- *
- * This will filter the FSE actions on the plugin manager list to add the confirm
- * prompt on the click event of the action=deactivate.
- *
- * The option launch-status exists only on wpcom sites.
- *
- * @TODO: Remove after coming-soon is migrated to the new jetpack-mu-wpcom plugin
- */
-if ( has_action( 'plugins_loaded', 'Jetpack\Mu_Wpcom\load_coming_soon' ) === false ) {
-	add_filter(
-		'plugin_action_links_' . plugin_basename( __FILE__ ),
-		function ( $actions ) {
-			$unlaunched = get_option( 'launch-status' ) === 'unlaunched';
-
-			if ( $unlaunched ) {
-				$actions = array_map(
-					function ( $action ) {
-						$message = __( 'Disabling this plugin will make your site public.', 'full-site-editing' );
-						$confirm = "confirm('$message') ? null : event.preventDefault()";
-
-						return str_replace(
-							'<a href="plugins.php?action=deactivate',
-							"<a onclick=\"$confirm\" href=\"plugins.php?action=deactivate",
-							$action
-						);
-					},
-					$actions
-				);
-			}
-
-			return $actions;
-		}
-	);
-}

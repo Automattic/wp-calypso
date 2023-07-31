@@ -7,7 +7,7 @@ import {
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	JETPACK_BACKUP_ADDON_PRODUCTS,
 	JETPACK_STATS_PRODUCTS,
-	PRODUCT_JETPACK_STATS_FREE,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 } from '@automattic/calypso-products';
@@ -108,7 +108,7 @@ export const getProductsToDisplay = ( {
 			if (
 				( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( product?.productSlug )
 			) {
-				return product?.productSlug === PRODUCT_JETPACK_STATS_FREE;
+				return product?.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY;
 			}
 
 			return true;

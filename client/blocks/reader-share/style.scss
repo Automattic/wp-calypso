@@ -1,34 +1,43 @@
-.reader-share__button.button {
-	color: var(--color-text-subtle);
-	display: flex;
-	align-items: center;
-	padding: 0;
+.reader-share {
+	.reader-share__button.button {
+		color: var(--color-text-subtle);
+		display: flex;
+		align-items: center;
+		padding: 0;
+		font-size: $font-body-small;
+		font-weight: 400;
+		gap: 4px;
 
-	&:hover,
-	&:active {
-		color: var(--color-primary);
-	}
-
-	&:focus {
-		outline: thin dotted;
-	}
-
-	&.is-borderless {
-		.gridicon {
-			margin-right: 0;
-			margin-top: 0;
+		&:hover,
+		&:active {
+			color: var(--color-primary);
 		}
-	}
 
-	.gridicon {
-		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	}
+		&:focus {
+			outline: thin dotted;
+		}
 
-	&.is-active {
-		color: var(--color-primary);
+		&.is-borderless {
+			.gridicon {
+				margin-right: 0;
+				margin-top: 0;
+			}
+		}
 
 		.gridicon {
-			fill: var(--color-primary);
+			transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		}
+
+		.gridicons-reblog {
+			top: 0;
+		}
+
+		&.is-active {
+			color: var(--color-primary);
+
+			.gridicon {
+				fill: var(--color-primary);
+			}
 		}
 	}
 }
@@ -113,6 +122,7 @@
 		fill: var(--color-facebook);
 	}
 
+	&:focus,
 	&:hover {
 		.gridicon,
 		.reader-twitter,

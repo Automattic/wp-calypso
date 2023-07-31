@@ -50,7 +50,11 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { launchSite } from 'calypso/state/sites/launch/actions';
-import { isSiteOnECommerceTrial as getIsSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
+import {
+	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
+	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
+	isTrialSite,
+} from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
 	isJetpackSite,
@@ -64,6 +68,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import Masterbar from './masterbar';
 import SiteIconSetting from './site-icon-setting';
+import TrialUpsellNotice from './trial-upsell-notice';
 import wrapSettingsForm from './wrap-settings-form';
 
 export class SiteSettingsFormGeneral extends Component {
@@ -577,6 +582,51 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	recordTracksEventForTrialNoticeClick = () => {
+		const { recordTracksEvent, isSiteOnECommerceTrial } = this.props;
+		const eventName = isSiteOnECommerceTrial
+			? `calypso_ecommerce_trial_launch_banner_click`
+			: `calypso_migration_trial_launch_banner_click`;
+		recordTracksEvent( eventName );
+	};
+
+	getTrialUpsellNotice() {
+		const { translate, siteSlug, isSiteOnECommerceTrial, isSiteOnMigrationTrial, isLaunchable } =
+			this.props;
+		if ( isLaunchable ) {
+			return null;
+		}
+		let noticeText;
+		if ( isSiteOnECommerceTrial ) {
+			noticeText = translate(
+				'Before you can share your store with the world, you need to {{a}}pick a plan{{/a}}.',
+				{
+					components: {
+						a: (
+							<a
+								href={ `/plans/${ siteSlug }` }
+								onClick={ this.recordTracksEventForTrialNoticeClick }
+							/>
+						),
+					},
+				}
+			);
+		} else if ( isSiteOnMigrationTrial ) {
+			noticeText = translate( 'Ready to launch your site? {{a}}Upgrade to a paid plan{{/a}}.', {
+				components: {
+					a: (
+						<a
+							href={ `/plans/${ siteSlug }` }
+							onClick={ this.recordTracksEventForTrialNoticeClick }
+						/>
+					),
+				},
+			} );
+		}
+
+		return noticeText && <TrialUpsellNotice text={ noticeText } />;
+	}
+
 	renderLaunchSite() {
 		const {
 			translate,
@@ -588,8 +638,7 @@ export class SiteSettingsFormGeneral extends Component {
 			fields,
 			hasSitePreviewLink,
 			site,
-			isSiteOnECommerceTrial,
-			recordTracksEvent,
+			isLaunchable,
 		} = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
@@ -598,8 +647,6 @@ export class SiteSettingsFormGeneral extends Component {
 		const btnText = translate( 'Launch site' );
 		let querySiteDomainsComponent;
 		let btnComponent;
-		let eCommerceTrialUpsell;
-		const isLaunchable = ! isSiteOnECommerceTrial;
 
 		if ( 0 === siteDomains.length ) {
 			querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
@@ -630,33 +677,11 @@ export class SiteSettingsFormGeneral extends Component {
 
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
-		if ( isSiteOnECommerceTrial ) {
-			const recordTracksEventForClick = () =>
-				recordTracksEvent( 'calypso_ecommerce_trial_launch_banner_click' );
-			const eCommerceTrialUpsellText = translate(
-				'Before you can share your store with the world, you need to {{a}}pick a plan{{/a}}.',
-				{
-					components: {
-						a: <a href={ `/plans/${ siteSlug }` } onClick={ recordTracksEventForClick } />,
-					},
-				}
-			);
-			eCommerceTrialUpsell = (
-				<Notice
-					className="site-settings__ecommerce-trial-notice"
-					icon="info"
-					showDismiss={ false }
-					text={ eCommerceTrialUpsellText }
-					isCompact={ false }
-				/>
-			);
-		}
-
 		return (
 			<>
 				<SettingsSectionHeader title={ translate( 'Launch site' ) } />
 				<LaunchCard>
-					{ eCommerceTrialUpsell }
+					{ this.getTrialUpsellNotice() }
 					<div className="site-settings__general-settings-launch-site">
 						<div className="site-settings__general-settings-launch-site-text">
 							<p>
@@ -963,6 +988,8 @@ const connectComponent = connect( ( state ) => {
 		hasSubscriptionGifting: siteHasFeature( state, siteId, WPCOM_FEATURES_SUBSCRIPTION_GIFTING ),
 		hasSitePreviewLink: siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS ),
 		isSiteOnECommerceTrial: getIsSiteOnECommerceTrial( state, siteId ),
+		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
+		isLaunchable: ! isTrialSite( state, siteId ),
 	};
 }, mapDispatchToProps );
 
