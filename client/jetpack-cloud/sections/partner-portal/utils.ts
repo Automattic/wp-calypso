@@ -3,12 +3,7 @@ import {
 	LicenseFilter,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import {
-	APIPartner,
-	Partner,
-	APIProductFamily,
-	APIProductFamilyProduct,
-} from 'calypso/state/partner-portal/types';
+import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 /**
  * Noop which can be reused (e.g. in equality checks).
@@ -131,24 +126,7 @@ export function ensurePartnerPortalReturnUrl( returnToUrl: string ): string {
 		: '/partner-portal';
 }
 
-/**
- * Format an APIPartner instance to a store-friendly Partner instance.
- *
- * @param {APIPartner} partner API partner object to format.
- * @returns {Partner} Formatted store-friendly Partner object.
- */
-export function formatApiPartner( partner: APIPartner ): Partner {
-	return {
-		...partner,
-		keys: partner.keys.map( ( key ) => ( {
-			id: key.id,
-			name: key.name,
-			oAuth2Token: key.oauth2_token,
-			disabledOn: key.disabled_on,
-			hasLicenses: key.has_licenses,
-		} ) ),
-	};
-}
+export { default as formatApiPartner } from './lib/format-api-partner';
 
 /**
  * Format the string by removing Jetpack, (, ) from the product name
