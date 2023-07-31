@@ -154,12 +154,7 @@ async function stripeCardProcessor(
 			return stripeResponse;
 		} )
 		.then( ( stripeResponse ) => {
-			const hasPaymentIntent =
-				stripeResponse &&
-				'message' in stripeResponse &&
-				typeof stripeResponse.message !== 'string' &&
-				stripeResponse?.message?.payment_intent_client_secret;
-			if ( stripeResponse.redirect_url && ! hasPaymentIntent ) {
+			if ( stripeResponse.redirect_url && ! doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
 			return makeSuccessResponse( stripeResponse );
