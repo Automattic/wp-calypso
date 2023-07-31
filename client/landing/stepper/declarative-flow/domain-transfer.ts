@@ -87,7 +87,12 @@ const domainTransfer: Flow = {
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( flowName );
 
-					const checkoutBackURL = new URL( '/setup/domain-transfer/domains', window.location.href );
+					const checkoutBackURL = new URL(
+						'google-transfer' === this.variantSlug
+							? '/setup/google-transfer/domains'
+							: '/setup/domain-transfer/domains',
+						window.location.href
+					);
 
 					// use replace instead of assign to remove the processing URL from history
 					return window.location.replace(
