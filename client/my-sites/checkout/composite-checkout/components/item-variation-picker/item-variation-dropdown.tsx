@@ -98,9 +98,16 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	const [ open, setOpen ] = useState( false );
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
-	const selectedVariantIndexRaw = variants.findIndex(
-		( variant ) => variant.productId === selectedItem.product_id
-	);
+	// WIP | We need a way to differentiate between products that have the same product_slug but different volumes such as domain_reg
+	const isDomainReg = selectedItem.product_id === 6 || selectedItem.product_id === 76;
+
+	const selectedVariantIndexRaw = variants.findIndex( ( variant ) => {
+		if ( isDomainReg ) {
+			return variant.volume === selectedItem.volume;
+		}
+
+		return variant.productId === selectedItem.product_id;
+	} );
 	// findIndex returns -1 if it fails and we want null.
 	const selectedVariantIndex = selectedVariantIndexRaw > -1 ? selectedVariantIndexRaw : null;
 
