@@ -1,0 +1,22 @@
+.trial-plan--container {
+	max-width: 692px;
+	text-align: center;
+	margin: auto;
+
+	.onboarding-title {
+		margin-bottom: 0.5rem;
+	}
+
+	.onboarding-subtitle {
+		margin-bottom: 2rem;
+	}
+
+	p {
+		color: var(--studio-gray-100);
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+}
