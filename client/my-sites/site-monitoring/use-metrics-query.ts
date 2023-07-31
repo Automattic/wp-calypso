@@ -87,6 +87,7 @@ export function useSiteMetricsQuery(
 		meta: {
 			persist: false,
 		},
+		staleTime: Infinity,
 	} );
 
 	const { refetch, ...remainingQueryResults } = queryResult;
