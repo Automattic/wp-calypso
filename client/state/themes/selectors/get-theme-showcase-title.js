@@ -13,7 +13,7 @@ export function getThemeShowcaseTitle(
 	if ( vertical ) {
 		const verticalName = get( getThemeFilterTerm( state, 'subject', vertical ), 'name' );
 		if ( verticalName ) {
-			/* translators: %(verticalName)s will be replaced by a vertical name */
+			/* translators: %(verticalName)s will be replaced by a vertical name, e.g. "Business", "Portfolio" */
 			return translate( '%(verticalName)s WordPress Themes', {
 				args: {
 					verticalName,

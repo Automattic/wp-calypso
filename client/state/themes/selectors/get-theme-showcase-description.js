@@ -16,7 +16,7 @@ export function getThemeShowcaseDescription(
 			return description;
 		}
 
-		/* translators: %(vertical)s will be replaced by a vertical name */
+		/* translators: %(vertical)s will be replaced by a vertical name, e.g. "Business", "Portfolio" */
 		return translate(
 			'Discover %(vertical)s WordPress Themes on the WordPress.com Showcase. ' +
 				'Here you can browse and find the best WordPress designs available on ' +
