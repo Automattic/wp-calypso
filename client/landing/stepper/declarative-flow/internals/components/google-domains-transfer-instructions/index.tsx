@@ -1,9 +1,7 @@
 import { Button, Modal } from '@wordpress/components';
 import { useState, createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import getAuthCodeImgSrc from 'calypso/assets/images/domains/get-auth-code.png';
 import pickDomainImgSrc from 'calypso/assets/images/domains/pick-google-domain.png';
-import unlockDomainImgSrc from 'calypso/assets/images/domains/unlock-domain.png';
 
 import './style.scss';
 
@@ -75,15 +73,10 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 								'In the "Registration settings" section, ensure that your domain is unlocked.'
 							) }
 						</p>
-						<img
-							className="google-domains-transfer-instructions__image"
-							src={ unlockDomainImgSrc }
-							loading="lazy"
-							alt=""
-							aria-hidden="true"
-							width={ 737 }
-							height={ 410 }
-						/>
+						{ /* eslint-disable jsx-a11y/media-has-caption */ }
+						<video autoPlay loop>
+							<source src="https://cldup.com/bYWgYH_hoP.mp4" type="video/mp4" />
+						</video>
 					</details>
 					<details open={ 4 === focusedStep }>
 						<summary>{ __( 'Step 4: Get auth code' ) }</summary>
@@ -92,15 +85,11 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 								'Click "Get auth code" and then copy the code that is shown to your clipboard.'
 							) }
 						</p>
-						<img
-							className="google-domains-transfer-instructions__image"
-							src={ getAuthCodeImgSrc }
-							loading="lazy"
-							alt=""
-							aria-hidden="true"
-							width={ 870 }
-							height={ 720 }
-						/>
+						{ /* eslint-disable jsx-a11y/media-has-caption */ }
+						<video autoPlay loop>
+							<source src="https://cldup.com/IM6wEuLIbc.mp4" type="video/mp4" />
+							<track />
+						</video>
 					</details>
 				</Modal>
 			) }
