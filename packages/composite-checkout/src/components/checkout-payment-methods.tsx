@@ -156,7 +156,7 @@ function GoogleDomainsCopy() {
 		return (
 			<GoogleDomainsCopyStyle>
 				{ __(
-					'We’re paying the first year of your domain transfer. We’ll use the payment information below to renew your domain transfer starting next year.'
+					"We're paying the first year of your domain transfer. We'll use the payment information below to renew your domain transfer starting next year."
 				) }
 			</GoogleDomainsCopyStyle>
 		);
