@@ -1599,7 +1599,7 @@ export default connect(
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
-			canUseTheme: getCanUseTheme( state, themeId, siteId ),
+			canUseTheme: getCanUseTheme( state, siteId, themeId ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
