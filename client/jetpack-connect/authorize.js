@@ -452,7 +452,7 @@ export class JetpackAuthorize extends Component {
 				window.location.href = e.target.href;
 				break;
 			case this.isWooCoreProfiler():
-				recordTracksEvent( 'calypso_jpc_different_user_click' );
+				recordTracksEvent( 'calypso_jpc_wc_coreprofiler_different_user_click' );
 				window.location.href = e.target.href;
 				break;
 			default:
