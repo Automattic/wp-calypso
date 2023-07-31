@@ -262,8 +262,9 @@ class DomainsStep extends Component {
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		const suggestion = this.props.step.suggestion;
-
+		const { step } = this.props;
+		const { suggestion } = step;
+		const { lastDomainSearched } = step.domainForm;
 		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
 
 		const siteUrl =
@@ -306,7 +307,8 @@ class DomainsStep extends Component {
 				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem,
 				signupDomainOrigin ? { signupDomainOrigin } : {},
-				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {}
+				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
+				lastDomainSearched ? { lastDomainSearched } : {}
 			)
 		);
 
