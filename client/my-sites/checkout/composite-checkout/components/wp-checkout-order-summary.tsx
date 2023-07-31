@@ -25,7 +25,7 @@ import {
 	useFormStatus,
 } from '@automattic/composite-checkout';
 import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
-import { useShoppingCart, hasFreeCouponTransfersOnly } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
@@ -35,6 +35,7 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
+import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
