@@ -15,7 +15,7 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import GoogleDomainsTransferInstructions from '../../components/google-domains-transfer-instructions';
+import GoogleDomainsModal from '../../components/google-domains-transfer-instructions';
 import { useValidationMessage } from './use-validation-message';
 
 type Props = {
@@ -163,6 +163,45 @@ export function DomainCodePair( {
 
 	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 
+	const renderGoogleDomainsModal = () => {
+		return (
+			<GoogleDomainsModal
+				className={ classnames( {
+					'is-first-row': showLabels,
+				} ) }
+				focusedStep={ 4 }
+			>
+				<Gridicon icon="info-outline" size={ 18 } />
+			</GoogleDomainsModal>
+		);
+	};
+
+	const renderInfoPopover = () => {
+		return (
+			<InfoPopover
+				className={ classnames( {
+					'is-first-row': showLabels,
+				} ) }
+				position="right"
+			>
+				{ __(
+					'Unique code proving ownership, needed for secure domain transfer between registrars.'
+				) }
+				<div>
+					<Button
+						href={ localizeUrl(
+							'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+						) }
+						target="_blank"
+						variant="link"
+					>
+						<span className="learn-more-label">{ __( 'Learn more' ) }</span>
+					</Button>
+				</div>
+			</InfoPopover>
+		);
+	};
+
 	return (
 		<div className={ `domains__domain-info-and-validation ${ getLocaleSlug() }` }>
 			<div className="domains__domain-info">
@@ -205,38 +244,7 @@ export function DomainCodePair( {
 							htmlFor={ id + '-auth' }
 						>
 							{ __( 'Authorization code' ) }
-							{ isGoogleDomainsTransferFlow ? (
-								<GoogleDomainsTransferInstructions
-									className={ classnames( {
-										'is-first-row': showLabels,
-									} ) }
-									focusedStep={ 4 }
-								>
-									<Gridicon icon="info-outline" size={ 18 } />
-								</GoogleDomainsTransferInstructions>
-							) : (
-								<InfoPopover
-									className={ classnames( {
-										'is-first-row': showLabels,
-									} ) }
-									position="right"
-								>
-									{ __(
-										'Unique code proving ownership, needed for secure domain transfer between registrars.'
-									) }
-									<div>
-										<Button
-											href={ localizeUrl(
-												'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
-											) }
-											target="_blank"
-											variant="link"
-										>
-											<span className="learn-more-label">{ __( 'Learn more' ) }</span>
-										</Button>
-									</div>
-								</InfoPopover>
-							) }
+							{ isGoogleDomainsTransferFlow ? renderGoogleDomainsModal() : renderInfoPopover() }
 						</FormLabel>
 
 						<FormInput
