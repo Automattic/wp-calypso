@@ -32,7 +32,7 @@ export function useSiteMetricsData( start?: number, end?: number, metric?: Metri
 		return null;
 	};
 
-	// Process the data and set the formattedData state without using useMemo
+	// Process the data in the format accepted by uPlot
 	const formattedData =
 		data?.data?.periods?.reduce(
 			( acc, period ) => {
@@ -40,8 +40,8 @@ export function useSiteMetricsData( start?: number, end?: number, metric?: Metri
 				acc[ 1 ].push( getDimensionValue( period ) );
 				return acc;
 			},
-			[ [], [] ] as [ number[], unknown[] ] // Define the correct initial value type
-		) || ( [ [], [] ] as [ number[], unknown[] ] ); // Return a default value when data is not available yet
+			[ [], [] ] as [ number[], number[] ] // Define the correct initial value type
+		) || ( [ [], [] ] as [ number[], number[] ] ); // Return a default value when data is not available yet
 
 	return {
 		formattedData,
