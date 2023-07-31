@@ -84,9 +84,9 @@ class StatsOverview extends Component {
 			);
 		} );
 
-		// Generate the current date in yyyy-mm-dd format, in UTC.
-		const date = new Date().toISOString().split( 'T' )[ 0 ];
-		const query = { date, period };
+		// By passing an empty date, we allow the API to choose the current date for
+		// each blog adjusted by its timezone.
+		const query = { date: '', period };
 
 		return (
 			<Main wideLayout>

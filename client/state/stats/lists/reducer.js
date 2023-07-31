@@ -91,8 +91,16 @@ export const items = withSchemaValidation( itemSchema, ( state = {}, action ) =>
 			const { statType, query, data } = action;
 			const newState = { ...state };
 
-			const queryKey = getSerializedStatsQuery( query );
 			for ( const siteId in data.stats ) {
+				// We can receive data for different dates from different sites,
+				// since they might have different timezones, so we need to
+				// recompute the query key for each site.
+				const newQuery = {
+					...query,
+					date: data.stats[ siteId ].date,
+				};
+				const queryKey = getSerializedStatsQuery( newQuery );
+
 				newState[ siteId ] = {
 					...newState[ siteId ],
 					[ statType ]: {
