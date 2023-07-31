@@ -64,14 +64,14 @@ export function useSiteMetricsQuery(
 
 	if ( previousSiteId !== siteId ) {
 		queryClient.removeQueries( {
-			queryKey: buildPartialQueryKey( previousSiteId ),
+			queryKey: [ previousSiteId ],
 		} );
 
 		setPreviousSiteId( siteId );
 	}
 
 	const queryResult = useQuery< SiteMetricsAPIResponse >( {
-		queryKey: buildQueryKey( siteId, params ),
+		queryKey: [ siteId, params.start, params.end, params.metric, params.dimension ],
 		queryFn: () => {
 			const path = `/sites/${ siteId }/hosting/metrics`;
 			return wpcom.req.get(
@@ -95,18 +95,4 @@ export function useSiteMetricsQuery(
 	return {
 		...remainingQueryResults,
 	};
-
-	function buildPartialQueryKey( siteId: number | null | undefined ) {
-		return [ siteId ];
-	}
-
-	function buildQueryKey( siteId: number | null | undefined, params: SiteMetricsParams ) {
-		return [
-			...buildPartialQueryKey( siteId ),
-			params.start,
-			params.end,
-			params.metric,
-			params.dimension,
-		];
-	}
 }
