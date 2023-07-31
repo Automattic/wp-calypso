@@ -3,11 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { useDispatch } from 'calypso/state';
-import {
-	setJetpackConnectionHealthy,
-	setJetpackConnectionUnhealthy,
-} from 'calypso/state/jetpack-connection-health/actions';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
 
 interface Props {
@@ -16,7 +11,6 @@ interface Props {
 
 export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const [ isErrorCheckJetpackConnectionHealth, setIsErrorCheckJetpackConnectionHealth ] =
 		useState( false );
@@ -25,13 +19,6 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		useCheckJetpackConnectionHealth( siteId, {
 			onError: () => {
 				setIsErrorCheckJetpackConnectionHealth( true );
-			},
-			onSuccess: ( data ) => {
-				if ( data?.is_healthy ) {
-					dispatch( setJetpackConnectionHealthy( siteId ) );
-				} else {
-					dispatch( setJetpackConnectionUnhealthy( siteId, data?.error ?? '' ) );
-				}
 			},
 		} );
 

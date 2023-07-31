@@ -1,5 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import {
+	setJetpackConnectionHealthy,
+	setJetpackConnectionUnhealthy,
+} from 'calypso/state/jetpack-connection-health/actions';
 
 export const JETPACK_CONNECTION_HEALTH_QUERY_KEY = 'jetpack-connection-health';
 
@@ -17,6 +22,7 @@ export const useCheckJetpackConnectionHealth = (
 	siteId: number,
 	options: UseCheckJetpackConnectionHealthOptions
 ) => {
+	const dispatch = useDispatch();
 	return useQuery< JetpackConnectionHealth, unknown, JetpackConnectionHealth >( {
 		queryKey: [ JETPACK_CONNECTION_HEALTH_QUERY_KEY, siteId ],
 		queryFn: () =>
@@ -29,6 +35,12 @@ export const useCheckJetpackConnectionHealth = (
 		},
 		staleTime: 10 * 1000,
 		onError: options?.onError,
-		onSuccess: options?.onSuccess,
+		onSuccess: ( data ) => {
+			if ( data?.is_healthy ) {
+				dispatch( setJetpackConnectionHealthy( siteId ) );
+			} else {
+				dispatch( setJetpackConnectionUnhealthy( siteId, data?.error ?? '' ) );
+			}
+		},
 	} );
 };
