@@ -89,7 +89,8 @@ export default async function existingCardProcessor(
 				await handle3DSChallenge(
 					reduxDispatch,
 					stripe,
-					stripeResponse.message.payment_intent_client_secret
+					stripeResponse.message.payment_intent_client_secret,
+					stripeResponse.message.payment_intent_id
 				);
 				// We must return the original authentication response in order
 				// to have access to the order_id so that we can display a
