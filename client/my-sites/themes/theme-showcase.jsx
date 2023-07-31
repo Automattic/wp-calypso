@@ -263,7 +263,7 @@ class ThemeShowcase extends Component {
 		// Activate the "All" tab when searching on "Recommended", since the
 		// search might include some results that are not in the recommended
 		// themes (e.g. WP.org themes).
-		if ( prevSearch !== search && tabFilter.key === staticFilters.RECOMMENDED.key ) {
+		if ( search && prevSearch !== search && tabFilter.key === staticFilters.RECOMMENDED.key ) {
 			tabFilter = staticFilters.ALL;
 		}
 
