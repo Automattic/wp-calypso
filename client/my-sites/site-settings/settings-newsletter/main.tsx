@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -10,8 +9,6 @@ import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import wrapSettingsForm from '../wrap-settings-form';
-
-const isEnabled = config.isEnabled( 'settings/newsletter-settings-page' );
 
 export type SubscriptionOptions = {
 	invitation: string;
@@ -104,10 +101,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )(
 
 const NewsletterSettings = () => {
 	const translate = useTranslate();
-
-	if ( ! isEnabled ) {
-		return null;
-	}
 
 	return (
 		<Main>
