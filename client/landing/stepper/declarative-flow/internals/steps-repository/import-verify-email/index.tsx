@@ -1,6 +1,7 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { useSelector } from 'calypso/state';
@@ -15,11 +16,16 @@ const ImportVerifyEmail: Step = function ImportVerifyEmail( { navigation } ) {
 	const dispatch = useDispatch();
 	const { goBack, submit } = navigation;
 	const user = useSelector( getCurrentUser ) as UserData;
+	const site = useSite();
 
 	// Check if the email is verified and submit it for the next step
 	useEffect( () => {
 		user.email_verified && submit?.();
 	}, [ user ] );
+
+	if ( ! site ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -35,7 +41,7 @@ const ImportVerifyEmail: Step = function ImportVerifyEmail( { navigation } ) {
 				skipButtonAlign="top"
 				goBack={ goBack }
 				isHorizontalLayout={ false }
-				stepContent={ <VerifyEmail user={ user } /> }
+				stepContent={ <VerifyEmail user={ user } site={ site } /> }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</>
