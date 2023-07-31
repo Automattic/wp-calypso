@@ -155,7 +155,7 @@ export function DomainCodePair( {
 						} ) }
 						focusedStep={ 3 }
 					>
-						{ __( 'How to unlock' ) }
+						<span className="unlock-label">{ __( 'How to unlock' ) }</span>
 					</GoogleDomainsModal>
 				) }
 			<Button
