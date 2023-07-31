@@ -4,7 +4,6 @@ import {
 	campaignDetails,
 	promoteWidget,
 	promotedPosts,
-	checkValidTabInNavigation,
 } from 'calypso/my-sites/promote-post-i2/controller';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -19,8 +18,8 @@ const siteSelection = ( context, next ) => {
 	next( context, next );
 };
 
-const blazePage = ( url, ...controller ) => {
-	page( url, ...controller, siteSelection, makeLayout, clientRender );
+const blazePage = ( url, controller ) => {
+	page( url, controller, siteSelection, makeLayout, clientRender );
 };
 
 const redirectToReadyToPromote = () => {
@@ -32,23 +31,13 @@ export default function ( pageBase = '/' ) {
 
 	blazePage( getAdvertisingDashboardPath( '/:site' ), promotedPosts );
 
-	blazePage(
-		getAdvertisingDashboardPath( '/:tab/:site' ),
-		checkValidTabInNavigation,
-		promotedPosts
-	);
+	blazePage( getAdvertisingDashboardPath( '/:site/promote/:item' ), promoteWidget );
 
-	blazePage( getAdvertisingDashboardPath( '/campaigns/:campaignId/:site' ), campaignDetails );
+	blazePage( getAdvertisingDashboardPath( '/:site/:tab' ), promotedPosts );
 
-	blazePage( getAdvertisingDashboardPath( '/promote/:item/:site' ), promoteWidget );
+	blazePage( getAdvertisingDashboardPath( '/:site/:tab/promote/:item' ), promoteWidget );
 
-	blazePage( getAdvertisingDashboardPath( '/:tab/promote/:item/:site' ), promoteWidget );
-
-	// Compatibility: Redirects to new navigation style
-	page( getAdvertisingDashboardPath( '/:site/:tab/promote/:item' ), ( { params } ) => {
-		const { site, tab, item } = params;
-		page.redirect( getAdvertisingDashboardPath( `/${ tab }/promote/${ item }/${ site }` ) );
-	} );
+	blazePage( getAdvertisingDashboardPath( '/:site?/campaigns/:campaignId' ), campaignDetails );
 
 	// Anything else should redirect to default advertising dashboard page
 	blazePage( '*', redirectToReadyToPromote );

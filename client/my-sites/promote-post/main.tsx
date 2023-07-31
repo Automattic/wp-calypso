@@ -271,7 +271,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ selectedTab === 'campaigns' ? (
 				<>
 					<PageViewTracker
-						path={ getAdvertisingDashboardPath( '/campaigns/:site' ) }
+						path={ getAdvertisingDashboardPath( '/:site/campaigns' ) }
 						title="Advertising > Campaigns"
 					/>
 					<CampaignsList
@@ -285,7 +285,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				</>
 			) : (
 				<PageViewTracker
-					path={ getAdvertisingDashboardPath( '/posts/:site' ) }
+					path={ getAdvertisingDashboardPath( '/:site/posts' ) }
 					title="Advertising > Ready to Blaze"
 				/>
 			) }

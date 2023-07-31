@@ -3,12 +3,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import {
-	promoteWidget,
-	promotedPosts,
-	campaignDetails,
-	checkValidTabInNavigation,
-} from './controller';
+import { promoteWidget, promotedPosts, campaignDetails } from './controller';
 import { getAdvertisingDashboardPath } from './utils';
 
 export const redirectToPrimarySite = ( context, next ) => {
@@ -21,23 +16,11 @@ export const redirectToPrimarySite = ( context, next ) => {
 	const state = context.store.getState();
 	const primarySiteSlug = getPrimarySiteSlug( state );
 	if ( primarySiteSlug !== null ) {
-		page( `${ context.pathname }/${ primarySiteSlug }` );
+		page( getAdvertisingDashboardPath( `/${ primarySiteSlug }` ) );
 	} else {
 		siteSelection( context, next );
 		page( getAdvertisingDashboardPath( '' ) );
 	}
-};
-
-const promotePage = ( url, controller ) => {
-	page(
-		url,
-		redirectToPrimarySite,
-		siteSelection,
-		navigation,
-		controller,
-		makeLayout,
-		clientRender
-	);
 };
 
 export default () => {
@@ -50,8 +33,17 @@ export default () => {
 	);
 
 	page(
-		getAdvertisingDashboardPath( '/:tab?/:site?' ),
-		checkValidTabInNavigation,
+		getAdvertisingDashboardPath( '/:site?/promote/:item?' ),
+		redirectToPrimarySite,
+		siteSelection,
+		navigation,
+		promoteWidget,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		getAdvertisingDashboardPath( '/:site?/:tab?' ),
 		redirectToPrimarySite,
 		siteSelection,
 		navigation,
@@ -60,9 +52,22 @@ export default () => {
 		clientRender
 	);
 
-	promotePage( getAdvertisingDashboardPath( '/campaigns/:campaignId/:site?' ), campaignDetails );
+	page(
+		getAdvertisingDashboardPath( '/:site?/campaigns/:campaignId' ),
+		redirectToPrimarySite,
+		campaignDetails,
+		navigation,
+		makeLayout,
+		clientRender
+	);
 
-	promotePage( getAdvertisingDashboardPath( '/promote/:item?/:site?' ), promoteWidget );
-
-	promotePage( getAdvertisingDashboardPath( '/:tab?/promote/:item?/:site?' ), promoteWidget );
+	page(
+		getAdvertisingDashboardPath( '/:site?/:tab?/promote/:item?' ),
+		redirectToPrimarySite,
+		siteSelection,
+		navigation,
+		promoteWidget,
+		makeLayout,
+		clientRender
+	);
 };

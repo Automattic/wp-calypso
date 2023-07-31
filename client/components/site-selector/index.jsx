@@ -569,11 +569,6 @@ const navigateToSite =
 				}
 			}
 
-			// Defaults to /advertising/campaigns when switching sites in the 3rd level
-			if ( path.match( /^\/advertising\/campaigns\/\d+/ ) ) {
-				path = '/advertising/campaigns';
-			}
-
 			// Jetpack Cloud: default to /backups/ when in the details of a particular backup
 			if ( path.match( /^\/backup\/.*\/(download|restore|contents)/ ) ) {
 				path = '/backup';

@@ -19,7 +19,7 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint }: Props ) => {
 
 	const onOpenPromoteWidget = useCallback( () => {
 		if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-			page( getAdvertisingDashboardPath( `/posts/promote/${ keyValue }/${ siteSlug }` ) );
+			page( getAdvertisingDashboardPath( `/${ siteSlug }/posts/promote/${ keyValue }` ) );
 		} else {
 			openModal();
 		}

@@ -31,7 +31,7 @@ export const redirectToPrimarySite = ( context, next ) => {
 	const state = context.store.getState();
 	const primarySiteSlug = getPrimarySiteSlug( state );
 	if ( primarySiteSlug !== null ) {
-		page( `${ context.pathname }/${ primarySiteSlug }` );
+		page( getAdvertisingDashboardPath( `/${ primarySiteSlug }` ) );
 	} else {
 		siteSelection( context, next );
 		page( getAdvertisingDashboardPath( '' ) );

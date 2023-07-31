@@ -76,7 +76,7 @@ export default function CampaignItem( props: Props ) {
 		</Badge>
 	);
 	const openCampaignURL = getAdvertisingDashboardPath(
-		`/campaigns/${ campaign.campaign_id }/${ selectedSiteSlug }`
+		`/${ selectedSiteSlug }/campaigns/${ campaign.campaign_id }`
 	);
 
 	const navigateToDetailsPage = ( event: React.MouseEvent< HTMLElement > ) => {
