@@ -1,6 +1,8 @@
 import type { CartActionError } from './errors';
 import type { Dispatch } from 'react';
 
+export type ObjectWithProducts = Pick< ResponseCart, 'products' >;
+
 export type ShoppingCartReducerDispatch = ( action: ShoppingCartAction ) => void;
 
 export type ShoppingCartReducer = (

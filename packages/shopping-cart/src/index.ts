@@ -6,4 +6,8 @@ export * from './shopping-cart-manager';
 export * from './empty-carts';
 export * from './types';
 export * from './errors';
-export { convertResponseCartToRequestCart } from './cart-functions';
+export {
+	convertResponseCartToRequestCart,
+	isPartialCredits,
+	hasFreeCouponTransfersOnly,
+} from './cart-functions';

@@ -1,5 +1,4 @@
-import { isDomainTransfer } from '@automattic/calypso-products';
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart, hasFreeCouponTransfersOnly } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -143,16 +142,7 @@ function GoogleDomainsCopy() {
 	const { __ } = useI18n();
 	const { responseCart } = useShoppingCart( 'no-site' );
 
-	const hasFreeCouponTransfersOnly = responseCart.products?.every( ( item ) => {
-		return (
-			( isDomainTransfer( item ) &&
-				item.is_sale_coupon_applied &&
-				item.item_subtotal_integer === 0 ) ||
-			'wordpress-com-credits' === item.product_slug
-		);
-	} );
-
-	if ( hasFreeCouponTransfersOnly ) {
+	if ( hasFreeCouponTransfersOnly( responseCart ) ) {
 		return (
 			<GoogleDomainsCopyStyle>
 				{ __(

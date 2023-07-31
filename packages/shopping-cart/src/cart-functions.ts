@@ -1,5 +1,7 @@
+import { isDomainTransfer } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import { getEmptyResponseCart } from './empty-carts';
+import { ObjectWithProducts } from './types';
 import type {
 	TempResponseCart,
 	CartLocation,
@@ -323,4 +325,24 @@ export async function findCartKeyFromSiteSlug(
 	} catch {
 		return 'no-site';
 	}
+}
+
+/**
+ * Determines whether a cart item is partial credits
+ */
+export function isPartialCredits( cartItem: ResponseCartProduct ): boolean {
+	return cartItem.product_slug === 'wordpress-com-credits';
+}
+
+export function hasFreeCouponTransfersOnly( cart: ObjectWithProducts | null ): boolean {
+	return Boolean(
+		cart?.products?.every( ( item ) => {
+			return (
+				( isDomainTransfer( item ) &&
+					item.is_sale_coupon_applied &&
+					item.item_subtotal_integer === 0 ) ||
+				isPartialCredits( item )
+			);
+		} )
+	);
 }

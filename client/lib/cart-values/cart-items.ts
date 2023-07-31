@@ -44,6 +44,7 @@ import {
 	isAkismetProduct,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
+import { isPartialCredits } from '@automattic/shopping-cart';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
@@ -55,9 +56,8 @@ import type {
 	RequestCartProductExtra,
 	GSuiteProductUser,
 	MinimalRequestCartProduct,
+	ObjectWithProducts,
 } from '@automattic/shopping-cart';
-
-export type ObjectWithProducts = Pick< ResponseCart, 'products' >;
 
 export function getAllCartItems( cart?: ObjectWithProducts ): ResponseCartProduct[] {
 	return ( cart && cart.products ) || [];
@@ -163,17 +163,6 @@ export function hasRenewalItem( cart: ObjectWithProducts ): boolean {
 
 export function hasTransferProduct( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainTransfer );
-}
-
-export function hasFreeCouponTransfersOnly( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).every( ( item ) => {
-		return (
-			( isDomainTransfer( item ) &&
-				item.is_sale_coupon_applied &&
-				item.item_subtotal_integer === 0 ) ||
-			isPartialCredits( item )
-		);
-	} );
 }
 
 export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProduct[] {
@@ -670,13 +659,6 @@ export function updatePrivacyForDomain< T extends MinimalRequestCartProduct >(
 			privacy: value,
 		},
 	};
-}
-
-/**
- * Determines whether a cart item is partial credits
- */
-function isPartialCredits( cartItem: ResponseCartProduct ): boolean {
-	return cartItem.product_slug === 'wordpress-com-credits';
 }
 
 /**
