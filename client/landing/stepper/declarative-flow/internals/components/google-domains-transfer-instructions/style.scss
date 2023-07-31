@@ -2,7 +2,7 @@
 	font-size: rem(14px);
 	width: 600px;
 	max-width: 95%;
-	max-height: 95%;
+	max-height: 75vh;
 	margin: auto auto;
 
 	summary {
@@ -17,8 +17,9 @@
 			margin: 8px 0 16px;
 		}
 	}
-}
 
-.google-domains-transfer-instructions__image {
-	border: 1px solid var(--color-neutral-10);
+	video {
+		max-width: 100%;
+		height: auto;
+	}
 }
