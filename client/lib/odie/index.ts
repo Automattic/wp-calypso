@@ -6,6 +6,7 @@ declare global {
 	interface Window {
 		Odie?: {
 			render: ( params: {
+				authToken: string;
 				domNode?: HTMLElement | null;
 				locale?: string;
 				hotjarSiteSettings?: object;
@@ -39,6 +40,7 @@ export async function showOdie( domNodeOrId?: HTMLElement | string | null, local
 	return new Promise( ( resolve, reject ) => {
 		if ( window.Odie ) {
 			window.Odie.render( {
+				authToken: 'wpcom-proxy-request',
 				domNode: typeof domNodeOrId !== 'string' ? domNodeOrId : undefined,
 				locale,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
