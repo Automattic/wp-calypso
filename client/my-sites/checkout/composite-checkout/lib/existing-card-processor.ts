@@ -5,7 +5,7 @@ import {
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import { recordTransactionBeginAnalytics, logStashEvent } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import { doesTransactionResponseRequire3DS, handle3DSChallenge } from './stripe-3ds';
@@ -82,15 +82,17 @@ export default async function existingCardProcessor(
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
 
+	let paymentIntentId: string | undefined = undefined;
 	return submitWpcomTransaction( formattedTransactionData, dataForProcessor )
 		.then( async ( stripeResponse ) => {
 			if ( doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				debug( 'transaction requires authentication' );
+				paymentIntentId = stripeResponse.message.payment_intent_id;
 				await handle3DSChallenge(
 					reduxDispatch,
 					stripe,
 					stripeResponse.message.payment_intent_client_secret,
-					stripeResponse.message.payment_intent_id
+					paymentIntentId
 				);
 				// We must return the original authentication response in order
 				// to have access to the order_id so that we can display a
@@ -110,6 +112,15 @@ export default async function existingCardProcessor(
 		} )
 		.catch( ( error ) => {
 			debug( 'transaction failed' );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_card_transaction_failed', {
+					payment_intent_id: paymentIntentId ?? '',
+				} )
+			);
+			logStashEvent( 'calypso_checkout_card_transaction_failed', {
+				payment_intent_id: paymentIntentId ?? '',
+			} );
+
 			// Errors here are "expected" errors, meaning that they (hopefully) come
 			// from the endpoint and not from some bug in the frontend code.
 			return makeErrorResponse( error.message );

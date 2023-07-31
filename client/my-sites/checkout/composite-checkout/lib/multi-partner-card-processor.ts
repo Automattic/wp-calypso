@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/payment-method-selector/assignment-processor-functions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import { logStashEvent, recordTransactionBeginAnalytics } from '../lib/analytics';
 import existingCardProcessor from './existing-card-processor';
 import getContactDetailsType from './get-contact-details-type';
 import getDomainDetails from './get-domain-details';
@@ -135,15 +135,17 @@ async function stripeCardProcessor(
 		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
+	let paymentIntentId: string | undefined = undefined;
 	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
 		.then( async ( stripeResponse ) => {
 			if ( doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				debug( 'transaction requires authentication' );
+				paymentIntentId = stripeResponse.message.payment_intent_id;
 				await handle3DSChallenge(
 					reduxDispatch,
 					submitData.stripe,
 					stripeResponse.message.payment_intent_client_secret,
-					stripeResponse.message.payment_intent_id
+					paymentIntentId
 				);
 				// We must return the original authentication response in order
 				// to have access to the order_id so that we can display a
@@ -161,6 +163,15 @@ async function stripeCardProcessor(
 		} )
 		.catch( ( error ) => {
 			debug( 'transaction failed' );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_card_transaction_failed', {
+					payment_intent_id: paymentIntentId ?? '',
+				} )
+			);
+			logStashEvent( 'calypso_checkout_card_transaction_failed', {
+				payment_intent_id: paymentIntentId ?? '',
+			} );
+
 			// Errors here are "expected" errors, meaning that they (hopefully) come
 			// from the endpoint and not from some bug in the frontend code.
 			return makeErrorResponse( error.message );
