@@ -8,6 +8,7 @@ import {
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
 	ONBOARDING_PM_FLOW,
+	GOOGLE_TRANSFER,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -105,6 +106,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ DOMAIN_TRANSFER ]: () =>
 		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),
+
+	[ GOOGLE_TRANSFER ]: () =>
+		import( /* webpackChunkName: "google-transfer" */ './google-transfer' ),
 
 	[ 'plugin-bundle' ]: () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),

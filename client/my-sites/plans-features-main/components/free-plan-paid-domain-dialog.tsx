@@ -5,12 +5,14 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import usePlanPrices from '../../plans/hooks/use-plan-prices';
 import { LoadingPlaceHolder } from './loading-placeholder';
-import type { SingleFreeDomainSuggestion } from 'calypso/my-sites/plan-features-2023-grid/types';
+import type { DomainSuggestion } from '@automattic/data-stores';
+import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 
 const DialogContainer = styled.div`
 	padding: 24px;
@@ -160,11 +162,14 @@ function SuggestedPlanSection( {
 
 type DomainPlanDialogProps = {
 	paidDomainName: string;
-	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	suggestedPlanSlug: PlanSlug;
 	onFreePlanSelected: () => void;
 	onPlanSelected: () => void;
 };
+
+// See p2-pbxNRc-2Ri#comment-4703 for more context
+const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
 
 function DialogPaidPlanIsRequired( {
 	paidDomainName,
@@ -175,6 +180,12 @@ function DialogPaidPlanIsRequired( {
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
+
+	useEffect( () => {
+		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
+			dialog_type: 'paid_plan_is_required',
+		} );
+	}, [] );
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
@@ -206,12 +217,12 @@ function DialogPaidPlanIsRequired( {
 				<Row>
 					<DomainName>
 						{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
-						{ wpcomFreeDomainSuggestion.entry && (
-							<div>{ wpcomFreeDomainSuggestion.entry.domain_name }</div>
+						{ wpcomFreeDomainSuggestion.result && (
+							<div>{ wpcomFreeDomainSuggestion.result.domain_name }</div>
 						) }
 					</DomainName>
 					<StyledButton
-						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.entry }
+						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
 						busy={ isBusy }
 						onClick={ handleFreeDomainClick }
 					>
@@ -232,6 +243,12 @@ function DialogCustomDomainAndFreePlan( {
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
+
+	useEffect( () => {
+		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
+			dialog_type: 'custom_domain_and_free_plan',
+		} );
+	}, [] );
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
@@ -276,17 +293,17 @@ function DialogCustomDomainAndFreePlan( {
 				<Row>
 					<DomainName>
 						{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
-						{ wpcomFreeDomainSuggestion.entry &&
+						{ wpcomFreeDomainSuggestion.result &&
 							translate( '%(paidDomainName)s redirects to %(wpcomFreeDomain)s', {
 								args: {
 									paidDomainName,
-									wpcomFreeDomain: wpcomFreeDomainSuggestion.entry.domain_name,
+									wpcomFreeDomain: wpcomFreeDomainSuggestion.result.domain_name,
 								},
 								comment: '%(wpcomFreeDomain)s is a WordPress.com subdomain, e.g. foo.wordpress.com',
 							} ) }
 					</DomainName>
 					<StyledButton
-						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.entry }
+						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
 						busy={ isBusy }
 						onClick={ handleFreePlanClick }
 					>
@@ -306,7 +323,10 @@ export function FreePlanPaidDomainDialog( {
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
-}: DomainPlanDialogProps & { isCustomDomainAllowedOnFreePlan: boolean; onClose: () => void } ) {
+}: DomainPlanDialogProps & {
+	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
+	onClose: () => void;
+} ) {
 	const dialogCommonProps: DomainPlanDialogProps = {
 		paidDomainName,
 		wpcomFreeDomainSuggestion,
@@ -333,11 +353,13 @@ export function FreePlanPaidDomainDialog( {
 					}
 				` }
 			/>
-			{ isCustomDomainAllowedOnFreePlan ? (
-				<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
-			) : (
-				<DialogPaidPlanIsRequired { ...dialogCommonProps } />
-			) }
+			{ isCustomDomainAllowedOnFreePlan.isLoading && <LoadingPlaceHolder /> }
+			{ ! isCustomDomainAllowedOnFreePlan.isLoading &&
+				( isCustomDomainAllowedOnFreePlan.result ? (
+					<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
+				) : (
+					<DialogPaidPlanIsRequired { ...dialogCommonProps } />
+				) ) }
 		</Dialog>
 	);
 }

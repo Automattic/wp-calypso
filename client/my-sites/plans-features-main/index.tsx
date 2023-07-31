@@ -50,7 +50,7 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
 import type {
 	PlanActionOverrides,
-	SingleFreeDomainSuggestion,
+	DataResponse,
 } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
@@ -100,8 +100,8 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	intent?: PlansIntent;
-	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
-	isCustomDomainAllowedOnFreePlan?: boolean | null;
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
+	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -275,7 +275,10 @@ const PlansFeaturesMain = ( {
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
-	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( paidDomainName );
+	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan(
+		flowName,
+		paidDomainName
+	);
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -421,13 +424,17 @@ const PlansFeaturesMain = ( {
 					isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 					onClose={ toggleIsFreePlanPaidDomainDialogOpen }
 					onFreePlanSelected={ () => {
-						if ( ! isCustomDomainAllowedOnFreePlan ) {
+						if ( isCustomDomainAllowedOnFreePlan.isLoading ) {
+							return;
+						}
+
+						if ( ! isCustomDomainAllowedOnFreePlan.result ) {
 							removePaidDomain?.();
 						}
 						// Since this domain will not be available after it is selected, invalidate the cache.
 						invalidateDomainSuggestionCache();
-						wpcomFreeDomainSuggestion.entry &&
-							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.entry );
+						wpcomFreeDomainSuggestion.result &&
+							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
 						onUpgradeClick?.( null );
 					} }
 					onPlanSelected={ () => {

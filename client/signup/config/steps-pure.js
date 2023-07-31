@@ -142,7 +142,6 @@ export function generateSteps( {
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				isPasswordless: true,
-				showIsDevAccountCheckbox: true,
 			},
 		},
 
