@@ -143,11 +143,11 @@ export default function CampaignItemDetails( props: Props ) {
 	const navigationItems = [
 		{
 			label: translate( 'Advertising' ),
-			href: getAdvertisingDashboardPath( `/${ selectedSiteSlug }/campaigns` ),
+			href: getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ),
 		},
 		{
 			label: campaignTitleFormatted || '',
-			href: getAdvertisingDashboardPath( `${ selectedSiteSlug }/campaigns/${ campaignId }` ),
+			href: getAdvertisingDashboardPath( `/campaigns/${ campaignId }/${ selectedSiteSlug }` ),
 		},
 	];
 

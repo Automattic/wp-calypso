@@ -18,6 +18,7 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SITE_PRODUCTS_WITH_FEATURES,
+	WOOCOMMERCE_EXTENSIONS_PRODUCTS,
 	objectIsProduct,
 	Plan,
 	Product,
@@ -61,6 +62,10 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
 	 ).includes( slug );
 }
 
+function slugIsWooCommerceProductSlug( slug: string ) {
+	return slug in WOOCOMMERCE_EXTENSIONS_PRODUCTS;
+}
+
 function objectIsSelectorProduct(
 	item: Plan | Product | SelectorProduct | Record< string, unknown >
 ): item is SelectorProduct {
@@ -86,6 +91,10 @@ function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | u
 
 	if ( slugIsJetpackProductSlug( slug ) ) {
 		return ( JETPACK_SITE_PRODUCTS_WITH_FEATURES as Record< string, Product > )[ slug ];
+	}
+
+	if ( slugIsWooCommerceProductSlug( slug ) ) {
+		return ( WOOCOMMERCE_EXTENSIONS_PRODUCTS as Record< string, Product > )[ slug ];
 	}
 
 	if ( slugIsJetpackPlanSlug( slug ) ) {

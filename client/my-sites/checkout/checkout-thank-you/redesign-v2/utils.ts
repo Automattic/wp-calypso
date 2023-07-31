@@ -32,7 +32,7 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 
 export function shouldShowConfettiExplosion( purchases: ReceiptPurchase[] ) {
 	if ( isBulkDomainTransfer( purchases ) ) {
-		return false;
+		return true;
 	}
 
 	return true;

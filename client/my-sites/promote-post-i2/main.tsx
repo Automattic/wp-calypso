@@ -33,7 +33,9 @@ import PostsListBanner from './components/posts-list-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 
-export type TabType = 'posts' | 'campaigns' | 'credits';
+export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
+
+export type TabType = ( typeof TAB_OPTIONS )[ number ];
 export type TabOption = {
 	id: TabType;
 	name: string;
@@ -252,7 +254,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ selectedTab === 'campaigns' && (
 				<>
 					<PageViewTracker
-						path={ getAdvertisingDashboardPath( '/:site/campaigns' ) }
+						path={ getAdvertisingDashboardPath( '/campaigns/:site' ) }
 						title="Advertising > Campaigns"
 					/>
 					<CampaignsList
@@ -272,7 +274,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ selectedTab === 'credits' && (
 				<>
 					<PageViewTracker
-						path={ getAdvertisingDashboardPath( '/:site/credits' ) }
+						path={ getAdvertisingDashboardPath( '/credits/:site' ) }
 						title="Advertising > Credits"
 					/>
 					<CreditBalance balance={ creditBalance } />
@@ -283,7 +285,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && (
 				<>
 					<PageViewTracker
-						path={ getAdvertisingDashboardPath( '/:site/posts' ) }
+						path={ getAdvertisingDashboardPath( '/posts/:site' ) }
 						title="Advertising > Ready to Promote"
 					/>
 					<PostsList

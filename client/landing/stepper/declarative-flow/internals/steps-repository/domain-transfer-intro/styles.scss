@@ -113,6 +113,10 @@ $heading-font-family: "SF Pro Display", $sans;
 						margin-left: 16px;
 						vertical-align: middle;
 						font-size: rem(12px);
+
+						@media (max-width: $break-mobile) {
+							height: auto;
+						}
 					}
 
 
