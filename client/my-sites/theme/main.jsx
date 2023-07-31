@@ -81,6 +81,7 @@ import {
 	isWpcomTheme as isThemeWpcom,
 	isWporgTheme,
 	getCanonicalTheme,
+	getLivePreviewUrl,
 	getPremiumThemePrice,
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
@@ -615,12 +616,9 @@ class ThemeSheet extends Component {
 			retired,
 			softLaunched,
 			translate,
-			siteSlug,
-			stylesheet,
-			isAtomic,
 			isLoggedIn,
 			isLivePreviewSupported,
-			themeId,
+			livePreviewUrl,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -649,11 +647,8 @@ class ThemeSheet extends Component {
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
 						<LivePreviewButton
-							isAtomic={ isAtomic }
 							isLivePreviewSupported={ isLivePreviewSupported }
-							siteSlug={ siteSlug }
-							stylesheet={ stylesheet }
-							themeId={ themeId }
+							livePreviewUrl={ livePreviewUrl }
 							translate={ translate }
 						></LivePreviewButton>
 						{ this.shouldRenderPreviewButton() && (
@@ -1547,8 +1542,12 @@ export default connect(
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
 		const isLivePreviewSupported = config.isEnabled( 'themes/block-theme-previews' )
-			? getIsLivePreviewSupported( state, { themeId, siteId } )
+			? getIsLivePreviewSupported( state, themeId, siteId )
 			: false;
+
+		const livePreviewUrl = config.isEnabled( 'themes/block-theme-previews' )
+			? getLivePreviewUrl( state, themeId, siteId )
+			: undefined;
 
 		return {
 			...theme,
@@ -1558,6 +1557,7 @@ export default connect(
 			siteId,
 			siteSlug,
 			backPath,
+			livePreviewUrl,
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isWporg: isWporgTheme( state, themeId ),

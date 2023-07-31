@@ -5,25 +5,9 @@ import { Button } from '@automattic/components';
  *
  * @see pbxlJb-3Uv-p2
  */
-export const LivePreviewButton = ( {
-	isAtomic,
-	isLivePreviewSupported,
-	siteSlug,
-	stylesheet,
-	themeId,
-	translate,
-} ) => {
+export const LivePreviewButton = ( { isLivePreviewSupported, translate, livePreviewUrl } ) => {
 	if ( ! isLivePreviewSupported ) {
 		return null;
 	}
-
-	const themePath = isAtomic ? themeId : stylesheet;
-
-	return (
-		<Button
-			href={ `https://${ siteSlug }/wp-admin/site-editor.php?wp_theme_preview=${ themePath }` }
-		>
-			{ translate( 'Live Preview' ) }
-		</Button>
-	);
+	return <Button href={ livePreviewUrl }>{ translate( 'Live Preview' ) }</Button>;
 };
