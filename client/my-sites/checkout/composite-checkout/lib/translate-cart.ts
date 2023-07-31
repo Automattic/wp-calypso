@@ -3,6 +3,7 @@ import {
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from '@automattic/calypso-products';
 import { isValueTruthy, getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
+import cookie from 'cookie';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	readWPCOMPaymentMethodClass,
@@ -134,6 +135,19 @@ function addRegistrationDataToGSuiteCartProduct(
 	};
 }
 
+/**
+ * This function is used to get the value of the sensitive_pixel_options cookie.
+ *
+ * @returns String with the value of the sensitive_pixel_options cookie, or an empty string if the cookie is not present.
+ */
+function getConversionValuesFromCookies(): { ad_details: string; sensitive_pixel_options: string } {
+	const cookies = typeof document !== 'undefined' ? cookie.parse( document.cookie ) : {};
+	return {
+		ad_details: cookies.ad_details || '',
+		sensitive_pixel_options: cookies.sensitive_pixel_options || '', // sensitive_pixel_options
+	};
+}
+
 export function createTransactionEndpointRequestPayload( {
 	cart,
 	country,
@@ -192,5 +206,6 @@ export function createTransactionEndpointRequestPayload( {
 			eventSource,
 		},
 		tos: getToSAcceptancePayload(),
+		ad_conversion: getConversionValuesFromCookies(),
 	};
 }

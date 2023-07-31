@@ -1,18 +1,20 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import formatCurrency from '@automattic/format-currency';
+import { englishLocales } from '@automattic/i18n-utils';
+import { joinClasses } from '@automattic/wpcom-checkout';
 import { Button } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { connect } from 'react-redux';
-import { domainManagementRoot, domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import './style.scss';
+import i18n, { getLocaleSlug } from 'i18n-calypso';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import './style.scss';
 
 type Props = {
 	purchases: ReceiptPurchase[] | undefined;
-	manageDomainUrl: string;
+	currency?: string;
 };
 
-const DomainsTransferredList = ( { purchases, manageDomainUrl }: Props ) => {
+const DomainsTransferredList = ( { purchases, currency = 'USD' }: Props ) => {
 	const { __, _n } = useI18n();
 
 	const handleUserClick = ( destination: string ) => {
@@ -21,6 +23,25 @@ const DomainsTransferredList = ( { purchases, manageDomainUrl }: Props ) => {
 		} );
 	};
 
+	const purchaseLabel = ( priceInteger: number ) => {
+		const hasTranslation =
+			englishLocales.includes( String( getLocaleSlug() ) ) ||
+			i18n.hasTranslation( 'We pay the first year' );
+
+		if ( priceInteger === 0 ) {
+			return hasTranslation ? __( 'We pay the first year' ) : __( 'Free for one year' );
+		}
+
+		const priceFormatted = formatCurrency( priceInteger, currency, {
+			stripZeros: true,
+			isSmallestUnit: true,
+		} );
+		return sprintf(
+			/* translators: %1$s: price formatted */
+			__( '%1$s for one year' ),
+			priceFormatted
+		);
+	};
 	return (
 		<>
 			<div className="domain-header-buttons">
@@ -33,7 +54,7 @@ const DomainsTransferredList = ( { purchases, manageDomainUrl }: Props ) => {
 				</Button>
 
 				<Button
-					href={ manageDomainUrl }
+					href="/domains/manage"
 					className="manage-all-domains"
 					onClick={ () => handleUserClick( '/domains/manage' ) }
 					variant="primary"
@@ -43,12 +64,18 @@ const DomainsTransferredList = ( { purchases, manageDomainUrl }: Props ) => {
 			</div>
 			<div className="domain-complete-summary">
 				<ul className="domain-complete-list">
-					{ purchases?.map( ( { meta } ) => (
-						<li className="domain-complete-list-item" key={ meta }>
+					{ purchases?.map( ( { meta, priceInteger } ) => (
+						<li
+							className={ joinClasses( [
+								'domain-complete-list-item',
+								priceInteger === 0 && 'domain-complete-list-item-free',
+							] ) }
+							key={ meta }
+						>
 							<div>
 								<h2>{ meta }</h2>
 							</div>
-							<p>{ __( 'Auto-renew enabled' ) }</p>
+							<p>{ purchaseLabel( priceInteger ) }</p>
 						</li>
 					) ) }
 				</ul>
@@ -57,15 +84,4 @@ const DomainsTransferredList = ( { purchases, manageDomainUrl }: Props ) => {
 	);
 };
 
-export default connect( ( state, ownProps: { purchases: ReceiptPurchase[] } ) => {
-	let manageDomainUrl = '/domains/manage';
-	if ( ownProps.purchases?.length === 1 ) {
-		const { blogId, meta } = ownProps.purchases[ 0 ];
-		const siteSlug = getSiteSlug( state, blogId );
-		manageDomainUrl = domainManagementTransferIn( siteSlug ?? '', meta, domainManagementRoot() );
-	}
-
-	return {
-		manageDomainUrl,
-	};
-} )( DomainsTransferredList );
+export default DomainsTransferredList;

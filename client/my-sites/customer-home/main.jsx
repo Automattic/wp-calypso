@@ -1,4 +1,4 @@
-import { isEcommerce, isFreePlanProduct } from '@automattic/calypso-products/src';
+import { isFreePlanProduct } from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
@@ -24,7 +24,6 @@ import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
-import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import {
@@ -33,8 +32,11 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import getRequest from 'calypso/state/selectors/get-request';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
@@ -55,6 +57,9 @@ const Home = ( {
 	trackViewSiteAction,
 	sitePlan,
 	isNew7DUser,
+	isSiteWooExpressEcommerceTrial,
+	ssoModuleActive,
+	fetchingJetpackModules,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
@@ -119,7 +124,11 @@ const Home = ( {
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
 	// while doing the redirection.
-	if ( isEcommerce( sitePlan ) && ( isRequestingSitePlugins || hasWooCommerceInstalled ) ) {
+	if (
+		isSiteWooExpressEcommerceTrial &&
+		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
+		( fetchingJetpackModules || ssoModuleActive )
+	) {
 		return <WooCommerceHomePlaceholder />;
 	}
 
@@ -166,7 +175,6 @@ const Home = ( {
 			) : (
 				<>
 					<Primary cards={ layout.primary } />
-					<PluginsAnnouncementModal />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
 							<Secondary cards={ layout.secondary } siteId={ siteId } />
@@ -198,6 +206,9 @@ Home.propTypes = {
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
+	isSiteWooExpressEcommerceTrial: PropTypes.bool.isRequired,
+	ssoModuleActive: PropTypes.bool.isRequired,
+	fetchingJetpackModules: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state ) => {
@@ -215,6 +226,9 @@ const mapStateToProps = ( state ) => {
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
+		isSiteWooExpressEcommerceTrial: isSiteOnWooExpressEcommerceTrial( state, siteId ),
+		ssoModuleActive: !! isJetpackModuleActive( state, siteId, 'sso' ),
+		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 	};
 };

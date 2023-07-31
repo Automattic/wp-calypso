@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ALL_PERSONAL_FEATURES,
@@ -72,6 +73,7 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	PLAN_WPCOM_PRO_2_YEARS,
 	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 } from '../src/constants';
 import {
 	getPlan,
@@ -114,7 +116,12 @@ import {
 	isWooExpressPlusPlan,
 } from '../src/index';
 
-const PLANS_LIST = getPlans();
+jest.mock( '@automattic/calypso-config', () => {
+	const mock = () => '';
+	mock.isEnabled = jest.fn( () => true );
+
+	return mock;
+} );
 
 describe( 'isFreePlan', () => {
 	test( 'should return true for free plans', () => {
@@ -768,11 +775,13 @@ describe( 'getPlanClass', () => {
 
 describe( 'getPlan', () => {
 	test( 'should return a proper plan - by key', () => {
-		expect( getPlan( PLAN_PERSONAL ) ).toEqual( PLANS_LIST[ PLAN_PERSONAL ] );
+		const plansList = getPlans();
+		expect( getPlan( PLAN_PERSONAL ) ).toEqual( plansList[ PLAN_PERSONAL ] );
 	} );
 
 	test( 'should return a proper plan - by value', () => {
-		expect( getPlan( PLANS_LIST[ PLAN_PERSONAL ] ) ).toEqual( PLANS_LIST[ PLAN_PERSONAL ] );
+		const plansList = getPlans();
+		expect( getPlan( plansList[ PLAN_PERSONAL ] ) ).toEqual( plansList[ PLAN_PERSONAL ] );
 	} );
 
 	test( 'should return undefined for invalid plan - by key', () => {
@@ -1021,11 +1030,20 @@ describe( 'findSimilarPlansKeys', () => {
 				type: TYPE_BUSINESS,
 				group: GROUP_WPCOM,
 			} )
-		).toEqual( [ PLAN_BUSINESS_MONTHLY ] );
+		).toEqual( [ PLAN_BUSINESS_MONTHLY, PLAN_MIGRATION_TRIAL_MONTHLY ] );
 	} );
 } );
 
 describe( 'findPlansKeys', () => {
+	beforeEach( () => {
+		// Enable migration trials mock
+		config.isEnabled.mockImplementation( ( key ) => key === 'plans/migration-trial' );
+	} );
+
+	afterEach( () => {
+		jest.resetAllMocks();
+	} );
+
 	test( 'all matching plans keys - by term', () => {
 		expect( findPlansKeys( { term: TERM_BIENNIALLY } ) ).toEqual( [
 			PLAN_BLOGGER_2_YEARS,
@@ -1069,7 +1087,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
 		] );
-		expect( findPlansKeys( { term: TERM_MONTHLY } ) ).toEqual( [
+
+		const termMonthlyPaid = [
 			PLAN_PERSONAL_MONTHLY,
 			PLAN_PREMIUM_MONTHLY,
 			PLAN_BUSINESS_MONTHLY,
@@ -1088,7 +1107,10 @@ describe( 'findPlansKeys', () => {
 			PLAN_P2_PLUS,
 			PLAN_WPCOM_PRO_MONTHLY,
 			PLAN_ECOMMERCE_TRIAL_MONTHLY,
-		] );
+			PLAN_MIGRATION_TRIAL_MONTHLY,
+		];
+
+		expect( findPlansKeys( { term: TERM_MONTHLY } ) ).toEqual( termMonthlyPaid );
 	} );
 
 	test( 'all matching plans keys - by type', () => {
@@ -1124,6 +1146,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS_3_YEARS,
 			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
+			PLAN_MIGRATION_TRIAL_MONTHLY,
 		] );
 	} );
 
@@ -1162,6 +1185,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_WPCOM_PRO_MONTHLY,
 			PLAN_WPCOM_PRO_2_YEARS,
 			PLAN_ECOMMERCE_TRIAL_MONTHLY,
+			PLAN_MIGRATION_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK } ) ).toEqual( [
 			PLAN_JETPACK_FREE,
@@ -1209,6 +1233,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_BUSINESS_3_YEARS,
+			PLAN_MIGRATION_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_BLOGGER } ) ).toEqual( [] );
 		expect( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_PERSONAL } ) ).toEqual( [

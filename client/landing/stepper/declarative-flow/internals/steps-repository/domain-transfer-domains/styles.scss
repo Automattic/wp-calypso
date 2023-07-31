@@ -11,10 +11,6 @@
 	align-items: center;
 	gap: 30px;
 
-	.flow-progress.progress-bar {
-		display: none;
-	}
-
 	button:disabled {
 		pointer-events: none;
 	}
@@ -48,6 +44,14 @@
 			.formatted-header__title {
 				font-size: 2.75rem;
 			}
+
+			.formatted-header__subtitle {
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				margin-top: 16px;
+				line-height: 20px;
+			}
 		}
 
 		.step-container__navigation.action-buttons {
@@ -59,17 +63,6 @@
 			background-color: transparent;
 			border: none;
 			box-shadow: none;
-		}
-		.formatted-header__subtitle {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			span {
-				display: block;
-				@media (min-width: $break-medium ) {
-					width: 60%;
-				}
-			}
 		}
 
 		@media (min-width: $break-medium ) {
@@ -138,11 +131,12 @@
 		display: flex;
 		gap: 20px;
 		align-items: flex-end;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 
 		@media (max-width: $break-medium ) {
 			align-items: normal;
 			flex-direction: column;
+			flex-wrap: wrap;
 		}
 
 		.form-fieldset {
@@ -171,7 +165,8 @@
 
 
 		.components-button:has(.delete-label),
-		.components-button:has(.refresh-label) {
+		.components-button:has(.refresh-label),
+		.components-button:has(.unlock-label), {
 			color: var(--gray-gray-100, #101517);
 			text-decoration-color: var(--gray-gray-100, #101517);
 		}
@@ -209,31 +204,32 @@
 
 	.domains__domain-domain {
 		flex: 0 0 420px;
-
-		.form-text-input::placeholder {
-			color: var(--gray-gray-20, #a7aaad);
-			font-size: 0.875rem;
-		}
-
-		@media (max-width: $break-medium ) {
-			flex: 1;
-		}
 	}
 
 	.domains__domain-key {
 		flex: 0 0 240px;
 
-		.info-popover {
+		.info-popover,
+		.google-domains-transfer-instructions__button {
+			color: var(--color-text-subtle);
 			margin-left: 5px;
 			padding: 2px;
-		}
 
-		.info-popover:focus {
-			outline: 1px solid var(--studio-blue-50);
+			&:focus {
+				outline: 1px solid var(--studio-blue-50);
+			}
 		}
+	}
 
+	.domains__domain-domain,
+	.domains__domain-key {
 		@media (max-width: $break-medium ) {
 			flex: 1;
+		}
+
+		.form-text-input::placeholder {
+			color: var(--gray-gray-20, #a7aaad) !important;
+			font-size: 0.875rem;
 		}
 	}
 
@@ -303,7 +299,8 @@
 			}
 		}
 
-		.info-popover.is-first-row {
+		.info-popover.is-first-row,
+		.google-domains-transfer-instructions__button.is-first-row {
 			display: inline-block;
 
 			@media (max-width: $break-mobile ) {
@@ -451,6 +448,13 @@
 			// Remove left-padding for first button to minimize padding when line wraps on mobile.
 			button:first-of-type {
 				padding-left: 0;
+			}
+		}
+
+		&.en,
+		&.en-gb {
+			.domains__domain-price-text {
+				white-space: nowrap;
 			}
 		}
 	}

@@ -15,6 +15,7 @@ export type ProductPlanProps = {
 	siteSlug: string;
 	primaryPurchase: ReceiptPurchase;
 	siteID: number;
+	currency?: string;
 };
 const ProductPlan = ( { siteSlug, primaryPurchase, siteID }: ProductPlanProps ) => {
 	const isLoadingPurchases = useSelector(

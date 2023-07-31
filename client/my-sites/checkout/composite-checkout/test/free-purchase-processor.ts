@@ -62,6 +62,10 @@ describe( 'freePurchaseProcessor', () => {
 			path: '/',
 			viewport: '0x0',
 		},
+		ad_conversion: {
+			ad_details: '',
+			sensitive_pixel_options: '',
+		},
 	};
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {

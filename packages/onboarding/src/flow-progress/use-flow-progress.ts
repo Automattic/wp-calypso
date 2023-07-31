@@ -6,7 +6,6 @@ import {
 	FREE_FLOW,
 	COPY_SITE_FLOW,
 	ONBOARDING_PM_FLOW,
-	DOMAIN_TRANSFER,
 } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
@@ -100,12 +99,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		processing: 4,
 		/** Phantom step that is outside stepper */
 		checkout: 5,
-	},
-	[ DOMAIN_TRANSFER ]: {
-		user: 0,
-		intro: 1,
-		domains: 2,
-		processing: 3,
 	},
 };
 

@@ -299,7 +299,7 @@ export default function CampaignItemDetails( props: Props ) {
 				</div>
 
 				<div>
-					{ ! isLoading && status === 'finished' && (
+					{ ! isLoading && ! isSmallScreen && (
 						<Button
 							className="campaign-item-promote-again-button"
 							primary

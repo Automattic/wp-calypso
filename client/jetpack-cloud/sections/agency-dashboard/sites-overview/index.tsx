@@ -191,6 +191,38 @@ export default function SitesOverview() {
 		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
 
+	const AddSiteIssueLicenseButtons = () => {
+		const dispatch = useDispatch();
+		const translate = useTranslate();
+
+		return (
+			<div className="sites-overview__add-site-issue-license-buttons">
+				<Button
+					className="sites-overview__issue-license-button"
+					href="/partner-portal/issue-license"
+					onClick={ () =>
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_issue_license_button_click' )
+						)
+					}
+				>
+					{ translate( 'Issue License', { context: 'button label' } ) }
+				</Button>
+				<Button
+					primary
+					href="https://wordpress.com/jetpack/connect"
+					onClick={ () =>
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_add_site_button_click' )
+						)
+					}
+				>
+					{ translate( 'Add New Site', { context: 'button label' } ) }
+				</Button>
+			</div>
+		);
+	};
+
 	const renderIssueLicenseButton = () => {
 		return (
 			<div className="sites-overview__licenses-buttons">
@@ -229,8 +261,7 @@ export default function SitesOverview() {
 		);
 	};
 
-	const showIssueLicenseButtonsLargeScreen =
-		isWithinBreakpoint( '>960px' ) && selectedLicensesCount > 0;
+	const isLargeScreen = isWithinBreakpoint( '>960px' );
 
 	return (
 		<div className="sites-overview">
@@ -242,13 +273,26 @@ export default function SitesOverview() {
 						<SiteSurveyBanner isDashboardView />
 						<SiteWelcomeBanner isDashboardView />
 						<SiteDowntimeMonitoringUpgradeBanner />
-
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader
-							content={ renderIssueLicenseButton() }
+							content={
+								// render content only on large screens, The buttons for small scren have their own section
+								isLargeScreen &&
+								( selectedLicensesCount > 0 ? (
+									renderIssueLicenseButton()
+								) : (
+									<AddSiteIssueLicenseButtons />
+								) )
+							}
 							pageTitle={ pageTitle }
-							showStickyContent={ !! showIssueLicenseButtonsLargeScreen }
+							// Only renderIssueLicenseButton should be sticky.
+							showStickyContent={ !! ( selectedLicensesCount > 0 && isLargeScreen ) }
 						/>
+
+						{
+							// Render the add site and issue license buttons on mobile as a different component.
+							! isLargeScreen && <AddSiteIssueLicenseButtons />
+						}
 						<SectionNav
 							applyUpdatedStyles
 							selectedText={
@@ -313,7 +357,7 @@ export default function SitesOverview() {
 					</div>
 				</div>
 			</div>
-			{ isWithinBreakpoint( '<960px' ) && selectedLicensesCount > 0 && (
+			{ ! isLargeScreen && selectedLicensesCount > 0 && (
 				<div className="sites-overview__issue-licenses-button-small-screen">
 					{ renderIssueLicenseButton() }
 				</div>

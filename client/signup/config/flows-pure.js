@@ -13,6 +13,7 @@ export function generateFlows( {
 	getEmailSignupFlowDestination = noop,
 	getChecklistThemeDestination = noop,
 	getWithThemeDestination = noop,
+	getWithPluginDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
@@ -105,6 +106,15 @@ export function generateFlows( {
 			description: 'Preselect a theme to activate/buy from an external source with the assembler.',
 			lastModified: '2023-02-06',
 			showRecaptcha: true,
+		},
+		{
+			name: 'with-plugin',
+			steps: [ 'user', 'domains', 'plans-business' ],
+			destination: getWithPluginDestination,
+			description: 'Preselect a plugin to activate/buy, a Business plan is needed',
+			lastModified: '2023-07-19',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'plugin', 'billing_period' ],
 		},
 		{
 			name: 'onboarding',

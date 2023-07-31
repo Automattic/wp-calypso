@@ -1,9 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	StripeHookProvider,
-	StripeSetupIntentIdProvider,
-	useStripe,
-} from '@automattic/calypso-stripe';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -170,11 +166,7 @@ export function SiteLevelAddNewPaymentMethod( props: { siteSlug: string } ) {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<StripeSetupIntentIdProvider
-				fetchStripeSetupIntentId={ () => getStripeConfiguration( { needs_intent: true } ) }
-			>
-				<SiteLevelAddNewPaymentMethodForm { ...props } />
-			</StripeSetupIntentIdProvider>
+			<SiteLevelAddNewPaymentMethodForm { ...props } />
 		</StripeHookProvider>
 	);
 }

@@ -120,7 +120,8 @@
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
-		"stats/paid-stats": false,
+		"stats/paid-stats": true,
+		"stats/paid-wpcom-stats": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
@@ -133,7 +134,6 @@
 		"subscription-management/comments-list-controls": true,
 		"subscription-management-redirect-following": true,
 		"themes/atomic-homepage-replace": true,
-		"themes/block-theme-previews-poc": true,
 		"themes/block-theme-previews": true,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
@@ -147,7 +147,8 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": true,
+		"yolo/hosting-metrics-i1": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

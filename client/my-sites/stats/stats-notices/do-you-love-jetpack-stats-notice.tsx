@@ -32,6 +32,10 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 	);
 
 	const dismissNotice = () => {
+		isOdysseyStats
+			? recordTracksEvent( 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_dismissed' )
+			: recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed' );
+
 		setNoticeDismissed( true );
 		postponeNoticeAsync();
 	};
@@ -65,14 +69,18 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 	}
 
 	return (
-		<div className="inner-notice-container has-odyssey-stats-bg-color">
+		<div
+			className={ `inner-notice-container has-odyssey-stats-bg-color ${
+				! isOdysseyStats && 'inner-notice-container--calypso'
+			}` }
+		>
 			<NoticeBanner
 				level="info"
 				title={ translate( 'Do you love Jetpack Stats?' ) }
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					'{{p}}Upgrade Jetpack Stats to unlock upcoming features, priority support, and an ad-free experience.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
+					'{{p}}Upgrade Jetpack Stats to unlock upcoming features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
 					{
 						components: {
 							p: <p />,

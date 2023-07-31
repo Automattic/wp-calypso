@@ -1,7 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { SubscriptionOptions } from '../settings-reading/main';
@@ -50,12 +50,16 @@ export const NewsletterSettingsSection = ( {
 	// This makes sure the form fields hold the current value after saving.
 	useEffect( () => {
 		updateFields( { subscription_options: savedSubscriptionOptions } );
+
+		// If the URL has a hash, scroll to it.
+		scrollToAnchor( { offset: 15 } );
 	}, [ savedSubscriptionOptions ] );
 
 	return (
 		<>
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
+				id="newsletter-settings"
 				title={ translate( 'Newsletter settings' ) }
 				showButton
 				onButtonClick={ handleSubmitForm }
@@ -76,7 +80,7 @@ export const NewsletterSettingsSection = ( {
 					disabled={ disabled }
 				/>
 			</Card>
-			{ isEnabled( 'newsletter/subscribe-modal' ) && isNewsletterSite && (
+			{ isNewsletterSite && (
 				<Card className="site-settings__card">
 					<SubscribeModalSetting
 						value={ sm_enabled }

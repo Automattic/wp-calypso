@@ -8,7 +8,8 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useState } from 'react';
+import { getQueryArg } from '@wordpress/url';
+import { useCallback, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import QueryPlans from 'calypso/components/data/query-plans';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -20,10 +21,9 @@ import { DomainCodePair } from './domain-code-pair';
 import DomainTransferFAQ from './faqs';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-const MAX_DOMAINS = 50;
-
 export interface Props {
 	onSubmit: () => void;
+	variantSlug: string | undefined;
 }
 
 const defaultState: DomainTransferForm = {
@@ -65,8 +65,9 @@ const getFormattedTotalPrice = ( state: DomainTransferData ) => {
 	return 0;
 };
 
-const Domains: React.FC< Props > = ( { onSubmit } ) => {
+const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
+	const newDomainTransferQueryArg = getQueryArg( window.location.search, 'new' );
 
 	const storedDomainsState = useSelect( ( select ) => {
 		const onboardSelect = select( ONBOARD_STORE ) as OnboardSelect;
@@ -200,8 +201,39 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			);
 		}
 
-		return __( 'Transfer for free' );
+		return __( 'Start transfer' );
 	}
+
+	const setNewDomainFromQueryArg = () => {
+		let duplicateDomain = false;
+		const newDomainsState = { ...domainsState };
+
+		// Check if the domain already exists in the state
+		Object.keys( newDomainsState ).forEach( ( domainData ) => {
+			if ( newDomainsState[ domainData ].domain === newDomainTransferQueryArg ) {
+				duplicateDomain = true;
+			}
+		} );
+
+		newDomainsState[ uuid() ] = {
+			domain: String( newDomainTransferQueryArg ),
+			auth: '',
+			valid: false,
+			rawPrice: 0,
+			saleCost: undefined,
+			currencyCode: undefined,
+		};
+
+		if ( ! duplicateDomain ) {
+			setDomainsTransferData( newDomainsState );
+		}
+	};
+
+	useEffect( () => {
+		if ( newDomainTransferQueryArg ) {
+			setNewDomainFromQueryArg();
+		}
+	}, [] );
 
 	return (
 		<div className="bulk-domain-transfer__container">
@@ -221,17 +253,17 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						( { domain: otherDomain }, otherIndex ) =>
 							otherDomain && otherDomain === domain.domain && otherIndex < index
 					) }
+					variantSlug={ variantSlug }
 				/>
 			) ) }
-			{ domainCount < MAX_DOMAINS && (
-				<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-					{ __( 'Add more' ) }
-				</Button>
-			) }
+			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
+				{ __( 'Add more' ) }
+			</Button>
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }
 					className="bulk-domain-transfer__cta"
+					variant="primary"
 					onClick={ handleAddTransfer }
 				>
 					{ getTransferButtonText() }

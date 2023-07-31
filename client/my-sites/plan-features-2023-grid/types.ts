@@ -18,7 +18,7 @@ export type PlanProperties = {
 	isVisible: boolean;
 	planConstantObj: ReturnType< typeof applyTestFiltersToPlansList >;
 	planName: PlanSlug;
-	product_name_short: string;
+	productNameShort: string;
 	rawPrice: number | null;
 	isMonthlyPlan: boolean;
 	tagline: string;
@@ -34,3 +34,11 @@ export interface PlanActionOverrides {
 		text: TranslateResult;
 	};
 }
+
+// A generic type representing the response of an async request.
+// It's probably generic enough to be put outside of the pricing grid package,
+// but at the moment it's located here to reduce its scope of influence.
+export type DataResponse< T > = {
+	isLoading: boolean;
+	result?: T;
+};

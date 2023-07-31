@@ -6,14 +6,20 @@ import {
 	SECTION_LEARN_GROW,
 	FEATURE_SUPPORT,
 	SECTION_BLOGGING_PROMPT,
-	LAUNCHPAD_KEEP_BUILDING,
+	LAUNCHPAD_INTENT_BUILD,
 	LAUNCHPAD_INTENT_WRITE,
+	LAUNCHPAD_INTENT_FREE_NEWSLETTER,
+	LAUNCHPAD_INTENT_PAID_NEWSLETTER,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
+import LaunchpadIntentBuild from 'calypso/my-sites/customer-home/cards/launchpad/intent-build';
+import {
+	LaunchpadIntentFreeNewsletter,
+	LaunchpadIntentPaidNewsletter,
+} from 'calypso/my-sites/customer-home/cards/launchpad/intent-newsletter';
 import LaunchpadIntentWrite from 'calypso/my-sites/customer-home/cards/launchpad/intent-write';
-import LaunchpadKeepBuilding from 'calypso/my-sites/customer-home/cards/launchpad/keep-building';
 import LearnGrow from './learn-grow';
 
 const cardComponents = {
@@ -22,8 +28,10 @@ const cardComponents = {
 	[ SECTION_LEARN_GROW ]: LearnGrow,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ FEATURE_SUPPORT ]: HelpSearch,
-	[ LAUNCHPAD_KEEP_BUILDING ]: LaunchpadKeepBuilding,
+	[ LAUNCHPAD_INTENT_BUILD ]: LaunchpadIntentBuild,
 	[ LAUNCHPAD_INTENT_WRITE ]: LaunchpadIntentWrite,
+	[ LAUNCHPAD_INTENT_FREE_NEWSLETTER ]: LaunchpadIntentFreeNewsletter,
+	[ LAUNCHPAD_INTENT_PAID_NEWSLETTER ]: LaunchpadIntentPaidNewsletter,
 };
 
 const Secondary = ( { cards, siteId } ) => {

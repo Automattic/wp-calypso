@@ -120,8 +120,7 @@ const useModifiedActionPrimary = (
 			text: translate( 'Upgrade Stats' ),
 			handler: () => {
 				// Navigate to the stats purchase page, scrolled to the top.
-				// TODO: Remove "?flags=stats/paid-stats" once the new stats purchase page is live.
-				page.show( `/stats/purchase/${ siteSlug }?flags=stats/paid-stats` );
+				page.show( `/stats/purchase/${ siteSlug }` );
 				window.scrollTo( 0, 0 );
 			},
 		};

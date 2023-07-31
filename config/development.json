@@ -124,7 +124,6 @@
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"newsletter/stats": true,
-		"newsletter/subscribe-modal": true,
 		"oauth": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
@@ -185,6 +184,7 @@
 		"stats/new-video-summary": true,
 		"stats/subscribers-chart-section": false,
 		"stats/paid-stats": true,
+		"stats/paid-wpcom-stats": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
@@ -197,7 +197,6 @@
 		"subscription-management/comments-list-controls": true,
 		"subscription-management-redirect-following": true,
 		"themes/atomic-homepage-replace": true,
-		"themes/block-theme-previews-poc": true,
 		"themes/block-theme-previews": true,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
@@ -212,6 +211,7 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"yolo/hosting-metrics-i1": true
 	}
 }

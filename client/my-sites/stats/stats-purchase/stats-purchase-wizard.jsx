@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import CommercialPurchase from './stats-purchase-commercial';
@@ -17,10 +18,12 @@ const SCREEN_PURCHASE = 1;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
 
-// TODO: Get pricing config from an API
-const PRICING_CONFIG = {
-	AVERAGE_PRICE_INFO: 6, // used to display how much a users pays on average (below price slider)
-};
+const DEFAULT_STARTING_FRACTION = 0.6;
+const UI_EMOJI_HEART_TIER_THRESHOLD = 0.5;
+const UI_IMAGE_CELEBRATION_TIER_THRESHOLD = 0.8;
+
+// A step price is half of the smallest unit
+const MIN_STEP_SPLITS = 2;
 
 const TitleNode = ( { label, indicatorNumber, active } ) => {
 	return (
@@ -38,15 +41,16 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 };
 
 const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redirectUri, from } ) => {
-	const commercialPlanPrice = commercialProduct?.cost;
 	const maxSliderPrice = commercialProduct.cost;
-	const sliderStep = pwywProduct.cost / 2;
+	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
-	const defaultStartingPrice = commercialPlanPrice * 0.6; // default position for PWYW slider // TODO: replace with AVERAGE_PRICE_INFO when it's dynamic
-	const uiEmojiHeartTier = commercialPlanPrice * 0.5; // value when slider emoji is changed to a heart emoji
-	const uiImageCelebrationTier = commercialPlanPrice * 0.8; // minimal price that enables image celebration image
+	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
+	// We need the exact position, otherwise the caculated pricing would not be the same as the one in the slider.
+	const defaultStartingValue = Math.floor( steps * DEFAULT_STARTING_FRACTION );
+	const uiEmojiHeartTier = steps * UI_EMOJI_HEART_TIER_THRESHOLD;
+	const uiImageCelebrationTier = steps * UI_IMAGE_CELEBRATION_TIER_THRESHOLD;
 
-	const [ subscriptionValue, setSubscriptionValue ] = useState( defaultStartingPrice );
+	const [ subscriptionValue, setSubscriptionValue ] = useState( defaultStartingValue );
 	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
 	const [ siteType, setSiteType ] = useState( null );
 	const translate = useTranslate();
@@ -57,12 +61,15 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
 
 	const setPersonalSite = () => {
+		recordTracksEvent( `calypso_stats_personal_plan_selected` );
+
 		setSiteType( TYPE_PERSONAL );
 		setWizardStep( SCREEN_PURCHASE );
 	};
 
 	const setCommercialSite = () => {
-		setSubscriptionValue( commercialPlanPrice );
+		recordTracksEvent( `calypso_stats_commercial_plan_selected` );
+
 		setSiteType( TYPE_COMMERCIAL );
 		setWizardStep( SCREEN_PURCHASE );
 	};
@@ -79,6 +86,8 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 	// change the plan to commercial on the personal plan confirmation
 	const handlePlanSwap = ( e ) => {
 		e.preventDefault();
+		recordTracksEvent( `calypso_stats_plan_switched_from_personal_to_commercial` );
+
 		setCommercialSite();
 	};
 
@@ -159,11 +168,12 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 										<PersonalPurchase
 											subscriptionValue={ subscriptionValue }
 											setSubscriptionValue={ setSubscriptionValue }
+											defaultStartingValue={ defaultStartingValue }
 											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
 											currencyCode={ pwywProduct?.currency_code }
 											siteSlug={ siteSlug }
 											sliderSettings={ {
-												sliderStep,
+												sliderStepPrice,
 												maxSliderPrice,
 												uiEmojiHeartTier,
 												uiImageCelebrationTier,
@@ -189,9 +199,13 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 					</div>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						<StatsPurchaseSVG
-							isFree={ subscriptionValue === 0 }
-							hasHighlight={ subscriptionValue >= uiImageCelebrationTier }
-							extraMessage={ subscriptionValue >= uiImageCelebrationTier }
+							isFree={ siteType === TYPE_PERSONAL && subscriptionValue === 0 }
+							hasHighlight={
+								siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier
+							}
+							extraMessage={
+								siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier
+							}
 						/>
 						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
 							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
@@ -224,4 +238,4 @@ const StatsPurchaseWizard = ( {
 	);
 };
 
-export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, PRICING_CONFIG };
+export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, MIN_STEP_SPLITS };

@@ -546,6 +546,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	}
 
+	function clickDesignYourOwnTopButton( design: Design ) {
+		recordTracksEvent(
+			'calypso_signup_design_picker_design_your_own_top_button_click',
+			getDesignEventProps( { flow, intent, design } )
+		);
+		designYourOwn( design, true );
+	}
+
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
 		if ( ! isAssemblerDesign( _selectedDesign ) ) {
@@ -735,6 +743,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			designs={ designs }
 			locale={ locale }
 			onDesignYourOwn={ designYourOwn }
+			onClickDesignYourOwnTopButton={ clickDesignYourOwnTopButton }
 			onPreview={ previewDesign }
 			onChangeVariation={ onChangeVariation }
 			onViewAllDesigns={ trackAllDesignsView }

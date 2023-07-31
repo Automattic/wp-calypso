@@ -18,6 +18,7 @@ interface ThemePreviewProps {
 	inlineCss?: string;
 	viewportWidth?: number;
 	iframeScaleRatio?: number;
+	iframeToken?: string;
 	isFitHeight?: boolean;
 	isShowFrameBorder?: boolean;
 	isShowDeviceSwitcher?: boolean;
@@ -35,6 +36,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	inlineCss,
 	viewportWidth,
 	iframeScaleRatio = 1,
+	iframeToken,
 	isFitHeight,
 	isShowFrameBorder,
 	isShowDeviceSwitcher,
@@ -47,7 +49,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	const [ isFullyLoaded, setIsFullyLoaded ] = useState( ! isUrlWpcomApi( url ) );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
-	const calypso_token = useMemo( () => uuid(), [] );
+	const calypso_token = useMemo( () => iframeToken || uuid(), [ iframeToken ] );
 	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : iframeScaleRatio;
 
 	const wrapperHeight = useMemo( () => {

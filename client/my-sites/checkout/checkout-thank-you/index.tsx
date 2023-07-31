@@ -38,7 +38,9 @@ import Notice from 'calypso/components/notice';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isExternal } from 'calypso/lib/url';
@@ -108,6 +110,12 @@ import type { UserData } from 'calypso/lib/user/user';
 import type { DomainThankYouType } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import type { ReceiptState, ReceiptPurchase } from 'calypso/state/receipts/types';
 import type { LocalizeProps } from 'i18n-calypso';
+
+declare global {
+	interface Window {
+		fbq: ( ...args: any[] ) => void;
+	}
+}
 
 type ComponentAndPrimaryPurchaseAndDomain =
 	| []
@@ -245,6 +253,24 @@ export class CheckoutThankYou extends Component<
 			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
 				dispatch( imports.ONBOARD_STORE ).resetOnboardStore()
 			);
+
+			if ( mayWeTrackByTracker( 'googleAds' ) ) {
+				const params: [ 'event', 'conversion', { send_to: string } ] = [
+					'event',
+					'conversion',
+					{ send_to: TRACKING_IDS.wpcomGoogleAdsGtagDomainTransferPurchase } as { send_to: string },
+				];
+				debug( 'recordOrderInGoogleAds: WPCom Domain Transfer Purchase', params );
+				window.gtag( ...params );
+			}
+
+			// Custom conversion for Facebook Ads/audiences
+			if ( mayWeTrackByTracker( 'facebook' ) ) {
+				const params = [ 'trackCustom', 'BulkDomainTransfer', {} ];
+
+				debug( 'recordOrderInFacebookAds: WPCom Bulk Domain Transfer Purchase', params );
+				window.fbq && window.fbq( ...params );
+			}
 		}
 
 		recordTracksEvent( 'calypso_checkout_thank_you_view' );
@@ -790,8 +816,14 @@ export class CheckoutThankYou extends Component<
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, siteUnlaunchedBeforeUpgrade, upgradeIntent, isSimplified, displayMode } =
-			this.props;
+		const {
+			selectedSite,
+			siteUnlaunchedBeforeUpgrade,
+			upgradeIntent,
+			isSimplified,
+			displayMode,
+			receipt,
+		} = this.props;
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
@@ -839,6 +871,7 @@ export class CheckoutThankYou extends Component<
 					displayMode={ displayMode }
 					purchases={ purchases }
 					isRedesignV2={ isRedesignV2( this.props ) }
+					currency={ receipt.data?.currency }
 				>
 					{ ! isRedesignV2( this.props ) && ! isSimplified && primaryPurchase && (
 						<CheckoutThankYouFeaturesHeader

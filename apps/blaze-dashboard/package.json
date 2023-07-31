@@ -53,7 +53,7 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^4.19.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^4.21.0",
 		"autoprefixer": "^10.2.5",
 		"gettext-parser": "^6.0.0",
 		"html-webpack-plugin": "^5.0.0-beta.4",

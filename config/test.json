@@ -97,7 +97,8 @@
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
-		"stats/paid-stats": false,
+		"stats/paid-stats": true,
+		"stats/paid-wpcom-stats": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"themes/premium": true,
@@ -105,6 +106,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"yolo/hosting-metrics-i1": true
 	}
 }

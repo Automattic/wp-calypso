@@ -1,25 +1,28 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import { setUpActionsForTasks } from '@automattic/launchpad';
 import { useState } from 'react';
-import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ShareSiteModal from '../../components/share-site-modal';
 import CustomerHomeLaunchpad from '.';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Task } from '@automattic/launchpad';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
-const checklistSlug = 'keep-building';
 const launchpadContext = 'customer-home';
+const checklistSlug = 'intent-build';
 
-interface LaunchpadKeepBuildingProps {
-	site: SiteDetails | null;
-}
+const LaunchpadIntentBuild = (): JSX.Element => {
+	const siteId = useSelector( getSelectedSiteId ) || undefined;
+	// The type definition for getSite is incorrect, it returns a SiteDetails object
+	const site = useSelector(
+		( state: AppState ) => getSite( state as object, siteId ) as any as SiteDetails
+	);
 
-const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Element => {
 	const siteSlug = site?.slug || null;
 
 	const {
@@ -51,12 +54,4 @@ const LaunchpadKeepBuilding = ( { site }: LaunchpadKeepBuildingProps ): JSX.Elem
 	);
 };
 
-const ConnectedLaunchpadKeepBuilding = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state ) || undefined;
-	// The type definition for getSite is incorrect, it returns a SiteDetails object
-	const site = getSite( state as object, siteId ) as any as SiteDetails;
-
-	return { site };
-} )( LaunchpadKeepBuilding );
-
-export default ConnectedLaunchpadKeepBuilding;
+export default LaunchpadIntentBuild;
