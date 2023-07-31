@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 export const JETPACK_CONNECTION_HEALTH_QUERY_KEY = 'jetpack-connection-health';
@@ -8,7 +8,15 @@ export interface JetpackConnectionHealth {
 	error: string;
 }
 
-export const useCheckJetpackConnectionHealth = ( siteId: number, options: UseQueryOptions ) => {
+interface UseCheckJetpackConnectionHealthOptions {
+	onError?: () => void;
+	onSuccess?: ( data: JetpackConnectionHealth | undefined ) => void;
+}
+
+export const useCheckJetpackConnectionHealth = (
+	siteId: number,
+	options: UseCheckJetpackConnectionHealthOptions
+) => {
 	return useQuery< JetpackConnectionHealth, unknown, JetpackConnectionHealth >( {
 		queryKey: [ JETPACK_CONNECTION_HEALTH_QUERY_KEY, siteId ],
 		queryFn: () =>
