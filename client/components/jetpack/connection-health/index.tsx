@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { JETPACK_CONNECTION_HEALTHY } from 'calypso/state/action-types';
+import { useDispatch } from 'calypso/state';
+import { setJetpackConnectionHealthy } from 'calypso/state/jetpack-connection-health/actions';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
 
 interface Props {
@@ -22,11 +22,10 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			onError: () => {
 				setIsCheckJetpackConnectionHealth( true );
 			},
-			onSuccess: () => {
-				dispatch( {
-					type: JETPACK_CONNECTION_HEALTHY,
-					siteId,
-				} );
+			onSuccess: ( data ) => {
+				if ( data?.is_healthy ) {
+					dispatch( setJetpackConnectionHealthy( siteId ) );
+				}
 			},
 		} );
 

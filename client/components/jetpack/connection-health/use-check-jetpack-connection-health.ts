@@ -24,5 +24,6 @@ export const useCheckJetpackConnectionHealth = ( siteId: number, options: UseQue
 		},
 		staleTime: 10 * 1000,
 		onError: options?.onError,
+		onSuccess: options?.onSuccess,
 	} );
 };
