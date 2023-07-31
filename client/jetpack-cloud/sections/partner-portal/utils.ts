@@ -177,19 +177,7 @@ export function selectAlphabeticallySortedProductOptions(
 	return sortBy( selectProductOptions( families ), ( product ) => product.name );
 }
 
-export const JETPACK_BUNDLES = [
-	'jetpack-complete',
-	'jetpack-security-t1',
-	'jetpack-security-t2',
-	'jetpack-starter',
-];
-
-export function isJetpackBundle( product: APIProductFamilyProduct | string ) {
-	if ( typeof product === 'string' ) {
-		return JETPACK_BUNDLES.includes( product );
-	}
-	return product.family_slug === 'jetpack-packs';
-}
+export { default as isJetpackBundle } from './lib/is-jetpack-bundle';
 
 /**
  * Whether the licenses are assignable to WP multisite. This function uses key prefix to determine
