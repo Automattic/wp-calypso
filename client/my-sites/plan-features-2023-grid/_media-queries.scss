@@ -72,47 +72,6 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 	}
 }
 
-@mixin plans-2023-break-small() {
-	body.is-section-stepper &,
-	body.is-section-signup.is-white-signup & {
-		@media ( min-width: $plans-2023-small-breakpoint ) {
-			@content;
-		}
-	}
-
-	.is-section-plans:not(.is-sidebar-collapsed) & {
-		@media ( min-width: $plans-2023-small-breakpoint + $plan-features-sidebar-width ) {
-			@content;
-		}
-	}
-
-	.is-section-plans.is-sidebar-collapsed & {
-		@media ( min-width: $plans-2023-small-breakpoint ) {
-			@content;
-		}
-	}
-}
-
-@mixin plans-2023-break-medium() {
-	body.is-section-stepper &,
-	body.is-section-signup.is-white-signup & {
-		@media ( min-width: $plans-2023-medium-breakpoint ) {
-			@content;
-		}
-	}
-
-	.is-section-plans:not(.is-sidebar-collapsed) & {
-		@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
-			@content;
-		}
-	}
-
-	.is-section-plans.is-sidebar-collapsed & {
-		@media ( min-width: $plans-2023-medium-breakpoint ) {
-			@content;
-		}
-	}
-}
 
 @mixin plans-section-break-medium() {
 	.is-section-plans:not(.is-sidebar-collapsed) & {
