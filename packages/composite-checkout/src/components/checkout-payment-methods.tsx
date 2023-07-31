@@ -1,11 +1,10 @@
+import { isDomainTransfer } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useCallback, useContext } from 'react';
-import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutContext from '../lib/checkout-context';
 import joinClasses from '../lib/join-classes';
 import { useAvailablePaymentMethodIds } from '../lib/payment-methods';
@@ -142,9 +141,18 @@ const GoogleDomainsCopyStyle = styled.p`
 `;
 function GoogleDomainsCopy() {
 	const { __ } = useI18n();
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
-	if ( hasFreeCouponTransfersOnly( responseCart ) ) {
+	const { responseCart } = useShoppingCart( 'no-site' );
+
+	const hasFreeCouponTransfersOnly = responseCart.products?.every( ( item ) => {
+		return (
+			( isDomainTransfer( item ) &&
+				item.is_sale_coupon_applied &&
+				item.item_subtotal_integer === 0 ) ||
+			'wordpress-com-credits' === item.product_slug
+		);
+	} );
+
+	if ( hasFreeCouponTransfersOnly ) {
 		return (
 			<GoogleDomainsCopyStyle>
 				{ __(
