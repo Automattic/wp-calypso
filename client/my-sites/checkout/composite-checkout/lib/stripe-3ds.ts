@@ -26,7 +26,7 @@ export async function handle3DSChallenge(
 export function doesTransactionResponseRequire3DS(
 	response: unknown
 ): response is TransactionResponseRequiringAction {
-	if ( ! response || typeof response === 'object' ) {
+	if ( ! response || typeof response !== 'object' ) {
 		return false;
 	}
 
