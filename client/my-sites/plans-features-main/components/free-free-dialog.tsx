@@ -44,7 +44,7 @@ const ButtonRow = styled.div`
 	margin: 16px 0;
 `;
 
-const TextBox = styled.div< { fontSize?: number; bold?: boolean; color?: string } >`
+const TextBox = styled.div< { fontSize?: number; bold?: boolean; color?: 'gray' } >`
 	font-size: ${ ( { fontSize } ) => fontSize || 14 }px;
 	font-weight: ${ ( { bold } ) => ( bold ? 600 : 400 ) };
 	line-height: 20px;
