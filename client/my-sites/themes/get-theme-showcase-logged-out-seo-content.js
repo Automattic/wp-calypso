@@ -12,7 +12,7 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			title: translate( 'WordPress Themes' ),
 			header: translate( 'Find the perfect theme for your website.' ),
 			description: translate(
-				'Beautiful and responsive WordPress themes. Choose from free and premium options for all types of websites. Then, activate the one that’s best for you.'
+				"Beautiful and responsive WordPress themes. Choose from free and premium options for all types of websites. Then, activate the one that's best for you."
 			),
 		},
 		free: {
