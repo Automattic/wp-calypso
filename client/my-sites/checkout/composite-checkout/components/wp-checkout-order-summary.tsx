@@ -393,7 +393,7 @@ function CheckoutSummaryFeaturesList( props: {
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="features-list-support-another-year" />
 						{ hasFreeCouponTransfersOnly( responseCart )
-							? translate( 'We pay for the first year' )
+							? translate( "Transfer is free and we'll pay for an extra year of registration." )
 							: translate( '1-year extension on your domain' ) }
 					</CheckoutSummaryFeaturesListItem>
 					<CheckoutSummaryFeaturesListItem>
