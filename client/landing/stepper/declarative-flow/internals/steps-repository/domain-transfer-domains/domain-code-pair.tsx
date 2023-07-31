@@ -81,8 +81,8 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 	}
 
 	let pricetext = __( 'First year free' );
-	if ( englishLocales.includes( locale ) || hasTranslation( 'We pay the first year' ) ) {
-		pricetext = __( 'We pay the first year' );
+	if ( englishLocales.includes( locale ) || hasTranslation( 'We’ve paid for an extra year' ) ) {
+		pricetext = __( 'We’ve paid for an extra year' );
 	}
 
 	return (

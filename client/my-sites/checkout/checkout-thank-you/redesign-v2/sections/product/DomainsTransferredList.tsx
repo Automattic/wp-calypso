@@ -26,10 +26,10 @@ const DomainsTransferredList = ( { purchases, currency = 'USD' }: Props ) => {
 	const purchaseLabel = ( priceInteger: number ) => {
 		const hasTranslation =
 			englishLocales.includes( String( getLocaleSlug() ) ) ||
-			i18n.hasTranslation( 'We pay the first year' );
+			i18n.hasTranslation( 'We’ve paid for an extra year' );
 
 		if ( priceInteger === 0 ) {
-			return hasTranslation ? __( 'We pay the first year' ) : __( 'Free for one year' );
+			return hasTranslation ? __( 'We’ve paid for an extra year' ) : __( 'Free for one year' );
 		}
 
 		const priceFormatted = formatCurrency( priceInteger, currency, {
