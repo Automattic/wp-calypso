@@ -159,31 +159,31 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 	},
 	about: {
 		all: {
-			title: translate( 'About WordPress Themes' ),
-			header: translate( 'Find the perfect theme for your about website.' ),
+			title: translate( 'About Me WordPress Themes' ),
+			header: translate( 'Find the perfect theme for your About Me website.' ),
 			description: translate(
-				"Start your about website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+				"Start your About Me website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 			),
 		},
 		free: {
-			title: translate( 'Free About WordPress Themes' ),
-			header: translate( 'Discover the perfect free theme for your about website.' ),
+			title: translate( 'Free About Me WordPress Themes' ),
+			header: translate( 'Discover the perfect free theme for your About Me website.' ),
 			description: translate(
-				"Launch your about website with the perfect free theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+				"Launch your About Me website with the perfect free theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 			),
 		},
 		premium: {
-			title: translate( 'Premium About WordPress Themes' ),
-			header: translate( 'Choose premium themes for your about website.' ),
+			title: translate( 'Premium About Me WordPress Themes' ),
+			header: translate( 'Choose premium themes for your About Me website.' ),
 			description: translate(
-				"Enhance your about website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+				"Enhance your About Me website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
 			),
 		},
 		marketplace: {
-			title: translate( 'Paid About WordPress Themes' ),
-			header: translate( 'Select paid themes for your about website.' ),
+			title: translate( 'Paid About Me WordPress Themes' ),
+			header: translate( 'Select paid themes for your About Me website.' ),
 			description: translate(
-				"Improve your about website with the perfect paid theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+				"Improve your About Me website with the perfect paid theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 			),
 		},
 	},
