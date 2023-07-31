@@ -177,7 +177,8 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 	// TODO: Refactor the checkout URL.
 	externalUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
 
-	// The Stats PWYW product should be shown as Stats (Personal) in the purchased Plans grid, which would be more specific than just Stats.
+	// The Stats PWYW product in the Plans grid is shown as `Stats` but also referred to `Stats (Personal)`,
+	// which aligns with the naming in packages/calypso-products/src/translations.tsx.
 	displayName: translate( 'Stats' ),
 	shortName: translate( 'Stats' ),
 	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
