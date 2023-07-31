@@ -68,6 +68,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	hideUnavailableFeatures,
 	selectedFeature,
 	isCustomDomainAllowedOnFreePlan,
+	handleMobileTouchStart,
 } ) => {
 	const translate = useTranslate();
 
@@ -124,7 +125,10 @@ const PlanFeatures2023GridFeatures: React.FC< {
 											/>
 										</Plans2023Tooltip>
 									) : (
-										<Plans2023Tooltip text={ currentFeature.getDescription?.() }>
+										<Plans2023Tooltip
+											text={ currentFeature.getDescription?.() }
+											handleMobileTouchStart={ handleMobileTouchStart }
+										>
 											{ currentFeature.getTitle( paidDomainName ) }
 										</Plans2023Tooltip>
 									) }

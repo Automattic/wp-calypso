@@ -37,19 +37,30 @@ export const Plans2023Tooltip = ( props: PropsWithChildren< { text?: TranslateRe
 			<HoverAreaContainer
 				className="plans-2023-tooltip__hover-area-container"
 				ref={ tooltipRef }
-				onMouseEnter={ () => setIsVisible( true ) }
-				onMouseLeave={ () => setIsVisible( false ) }
+				onMouseEnter={ () =>
+					props.handleMobileTouchStart( {
+						tooltipVisible: true,
+						tooltipContext: tooltipRef.current,
+						tooltipText: props.text,
+					} )
+				}
+				onMouseLeave={ () =>
+					props.handleMobileTouchStart( {
+						tooltipVisible: false,
+						tooltipContext: tooltipRef.current,
+						tooltipText: props.text,
+					} )
+				}
+				onTouchStart={ () =>
+					props.handleMobileTouchStart( {
+						tooltipVisible: true,
+						tooltipContext: tooltipRef.current,
+						tooltipText: props.text,
+					} )
+				}
 			>
 				{ props.children }
 			</HoverAreaContainer>
-			<StyledTooltip
-				isVisible={ isVisible }
-				position="top"
-				context={ tooltipRef.current }
-				hideArrow
-			>
-				{ props.text }
-			</StyledTooltip>
 		</>
 	);
 };

@@ -71,6 +71,8 @@ import type { PlanActionOverrides } from './types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
+import styled from '@emotion/styled';
+import Tooltip from 'calypso/components/tooltip';
 
 type PlanRowOptions = {
 	isTableCell?: boolean;
@@ -216,6 +218,9 @@ export class PlanFeatures2023Grid extends Component<
 > {
 	state = {
 		showPlansComparisonGrid: false,
+		tooltipVisible: false,
+		tooltipContext: null,
+		tooltipText: '',
 	};
 
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
@@ -247,6 +252,27 @@ export class PlanFeatures2023Grid extends Component<
 			} );
 		}
 	}
+
+	handleMobileTouchStart = ( { tooltipVisible, tooltipContext, tooltipText } ) => {
+		this.setState( { tooltipVisible, tooltipContext, tooltipText } );
+	};
+
+	// StyledTooltip = styled( Tooltip )`
+	// &.tooltip.popover .popover__inner {
+	// 	background: var( --color-masterbar-background );
+	// 	text-align: start;
+	// 	border-radius: 4px;
+	// 	min-height: 32px;
+	// 	width: 210px;
+	// 	align-items: center;
+	// 	font-style: normal;
+	// 	font-weight: 400;
+	// 	font-size: 1em;
+	// 	padding: 8px 10px;
+	// 	top: -8px;
+	// 	overflow-wrap: break-word;
+	// }
+	// `;
 
 	render() {
 		const {
@@ -335,6 +361,15 @@ export class PlanFeatures2023Grid extends Component<
 						</div>
 					) : null }
 				</div>
+
+				<Tooltip
+					isVisible={ this.state.tooltipVisible }
+					position="top"
+					context={ this.state.tooltipContext }
+					hideArrow
+				>
+					{ this.state.tooltipText }
+				</Tooltip>
 			</PlansGridContextProvider>
 		);
 	}
@@ -866,6 +901,7 @@ export class PlanFeatures2023Grid extends Component<
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
 							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+							handleMobileTouchStart={ this.handleMobileTouchStart }
 						/>
 						{ jpFeatures.length !== 0 && (
 							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
