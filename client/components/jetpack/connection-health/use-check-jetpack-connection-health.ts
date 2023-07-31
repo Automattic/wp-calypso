@@ -24,9 +24,6 @@ export const useCheckJetpackConnectionHealth = (
 				path: `/sites/${ siteId }/jetpack-connection-health`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		select: ( data ) => {
-			return data;
-		},
 		meta: {
 			persist: false,
 		},
