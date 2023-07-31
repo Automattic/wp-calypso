@@ -80,7 +80,7 @@ const isNotCompatibleThemes = ( themeId ) => {
  *
  * @see pbxlJb-3Uv-p2
  */
-export const isLivePreviewSupported = ( state, { themeId, siteId } ) => {
+export const isLivePreviewSupported = ( state, themeId, siteId ) => {
 	// A user doesn't want to preview the active theme.
 	if ( isThemeActive( state, themeId, siteId ) ) {
 		return false;
