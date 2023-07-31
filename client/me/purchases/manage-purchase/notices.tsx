@@ -1055,7 +1055,7 @@ class PurchaseNotice extends Component<
 						{
 							args: {
 								expiry: daysToExpiry,
-								productType: productType,
+								productType: productType as string,
 							},
 						}
 					)
