@@ -15,6 +15,8 @@ import {
 	HOSTING_CLEAR_CACHE_REQUEST,
 	HOSTING_STATIC_FILE_404_REQUEST,
 	HOSTING_STATIC_FILE_404_SET_REQUEST,
+	HOSTING_WP_VERSION_REQUEST,
+	HOSTING_WP_VERSION_SET_REQUEST,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/hosting/restore-database-password';
@@ -23,6 +25,7 @@ import 'calypso/state/data-layer/wpcom/sites/hosting/sftp-user';
 import 'calypso/state/data-layer/wpcom/sites/hosting/ssh-access';
 import 'calypso/state/data-layer/wpcom/sites/hosting/php-version';
 import 'calypso/state/data-layer/wpcom/sites/hosting/static-file-404';
+import 'calypso/state/data-layer/wpcom/sites/hosting/wp-version';
 import 'calypso/state/data-layer/wpcom/sites/hosting/clear-cache';
 import 'calypso/state/hosting/init';
 
@@ -113,6 +116,23 @@ export const getAtomicGeoAffinity = ( siteId ) => ( {
 export const getAtomicPhpVersion = ( siteId ) => ( {
 	type: HOSTING_PHP_VERSION_REQUEST,
 	siteId,
+} );
+
+export const getAtomicWpVersion = ( siteId ) => ( {
+	type: HOSTING_WP_VERSION_REQUEST,
+	siteId,
+} );
+
+export const updateAtomicWpVersion = ( siteId, version ) => ( {
+	type: HOSTING_WP_VERSION_SET_REQUEST,
+	siteId,
+	version,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+			requestKey: `${ HOSTING_WP_VERSION_SET_REQUEST }-${ siteId }`,
+		},
+	},
 } );
 
 export const updateAtomicStaticFile404 = ( siteId, setting ) => ( {
