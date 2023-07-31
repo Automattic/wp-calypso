@@ -29,8 +29,8 @@ export type BlazePressPromotionProps = {
 
 export function goToOriginalEndpoint() {
 	const { pathname } = getUrlParts( window.location.href );
-	const index = pathname.indexOf( '/promote' );
-	page( index < 0 ? pathname : pathname.substring( 0, index ) );
+	const index = pathname.indexOf( '/promote/' );
+	page( index < 0 ? pathname : pathname.replace( /\/promote\/.*?\//, '/' ) );
 }
 
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
@@ -66,7 +66,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const onClose = ( goToCampaigns?: boolean ) => {
 		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 		if ( goToCampaigns ) {
-			page( getAdvertisingDashboardPath( `/${ siteSlug }/campaigns` ) );
+			page( getAdvertisingDashboardPath( `/campaigns/${ siteSlug }` ) );
 		} else {
 			queryClient && queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 			if ( previousRoute ) {

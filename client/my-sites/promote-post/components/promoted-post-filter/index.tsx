@@ -27,7 +27,7 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 					return (
 						<NavItem
 							key={ id }
-							path={ getAdvertisingDashboardPath( `/${ selectedSiteSlug }/${ id }` ) }
+							path={ getAdvertisingDashboardPath( `/${ id }/${ selectedSiteSlug }` ) }
 							selected={ selectedTab === id }
 							children={ name }
 						/>
