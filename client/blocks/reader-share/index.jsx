@@ -97,7 +97,7 @@ class ReaderShare extends Component {
 			className: 'popover reader-share__popover',
 		};
 
-		const reblogTitle = this.props.comment && translate( "Turn this comment into its own post" );
+		const reblogTitle = this.props.comment && translate( 'Turn this comment into its own post' );
 
 		// The event.preventDefault() on the wrapping div is needed to prevent the
 		// full post opening when a share method is selected in the popover
