@@ -4,7 +4,10 @@ import { useState } from 'react';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useDispatch } from 'calypso/state';
-import { setJetpackConnectionHealthy } from 'calypso/state/jetpack-connection-health/actions';
+import {
+	setJetpackConnectionHealthy,
+	setJetpackConnectionUnhealthy,
+} from 'calypso/state/jetpack-connection-health/actions';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
 
 interface Props {
@@ -26,6 +29,8 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			onSuccess: ( data ) => {
 				if ( data?.is_healthy ) {
 					dispatch( setJetpackConnectionHealthy( siteId ) );
+				} else {
+					dispatch( setJetpackConnectionUnhealthy( siteId, data?.error ?? '' ) );
 				}
 			},
 		} );
