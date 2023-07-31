@@ -71,7 +71,7 @@ export function useSiteMetricsQuery(
 	}
 
 	const queryResult = useQuery< SiteMetricsAPIResponse >( {
-		queryKey: [ siteId, params.start, params.end, params.metric, params.dimension ],
+		queryKey: buildQueryKey( siteId, params ),
 		queryFn: () => {
 			const path = `/sites/${ siteId }/hosting/metrics`;
 			return wpcom.req.get(
@@ -95,4 +95,8 @@ export function useSiteMetricsQuery(
 	return {
 		...remainingQueryResults,
 	};
+
+	function buildQueryKey( siteId: number | null | undefined, params: SiteMetricsParams ) {
+		return [ siteId, params.start, params.end, params.metric, params.dimension ];
+	}
 }
