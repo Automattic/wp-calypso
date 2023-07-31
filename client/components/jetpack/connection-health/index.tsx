@@ -40,7 +40,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 
 	return (
 		<Notice
-			status="is-warning"
+			status="is-error"
 			showDismiss={ false }
 			text={ translate( 'Jetpack connection failed.' ) }
 		>
