@@ -3,7 +3,7 @@ import { FunctionComponent, ReactNode, useLayoutEffect, useRef, useState } from 
 import FoldableCard from 'calypso/components/foldable-card';
 
 type Props = {
-	alwaysExpanded: boolean;
+	alwaysExpanded?: boolean;
 	title: string;
 	children: ReactNode;
 };
