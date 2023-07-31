@@ -1407,6 +1407,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/shopping-cart@workspace:packages/shopping-cart"
   dependencies:
+    "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
