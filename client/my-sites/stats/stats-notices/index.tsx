@@ -87,12 +87,14 @@ const PostPurchaseNotices = ( {
 		// Ensure it runs only once.
 		setParamRemoved( true );
 		const newUrlObj = removeStatsPurchaseSuccessParam( window.location.href, !! isOdysseyStats );
-		if ( isOdysseyStats ) {
-			// We need to update the page base if it changed. Otherwise, pagejs won't be able to find the routes.
-			page.base( `${ newUrlObj.pathname }${ newUrlObj.search }` );
-		}
 		// Odyssey would try to hack the URL on load to remove duplicate params. We need to wait for that to finish.
-		setTimeout( () => window.history.replaceState( null, '', newUrlObj.toString() ), 300 );
+		setTimeout( () => {
+			window.history.replaceState( null, '', newUrlObj.toString() );
+			if ( isOdysseyStats ) {
+				// We need to update the page base if it changed. Otherwise, pagejs won't be able to find the routes.
+				page.base( `${ newUrlObj.pathname }${ newUrlObj.search }` );
+			}
+		}, 300 );
 	};
 
 	return (
