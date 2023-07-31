@@ -176,7 +176,7 @@ export class AuthFormHeader extends Component {
 				default:
 					if ( wooDnaConfig.getFlowName() === 'woodna:woocommerce-payments' ) {
 						return translate(
-							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
+							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooPayments'
 						);
 					}
 					return translate( 'Approve your connection' );

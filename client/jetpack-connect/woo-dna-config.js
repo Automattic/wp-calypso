@@ -20,7 +20,7 @@ export default ( query ) =>
 		getFlowName: () => 'woodna:' + query.from,
 
 		/**
-		 * @returns {string} Name of the service/plugin the user is signing up for. For example, "WooCommerce Payments".
+		 * @returns {string} Name of the service/plugin the user is signing up for. For example, "WooPayments".
 		 */
 		getServiceName: () => query.woodna_service_name,
 
