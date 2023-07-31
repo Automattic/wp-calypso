@@ -1,9 +1,7 @@
-import sortBy from 'lodash/sortBy';
 import {
 	LicenseFilter,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import valueToEnum from './lib/value-to-enum';
 
 /**
@@ -99,17 +97,7 @@ export function internalToPublicLicenseSortField( internalSortField: LicenseSort
 export { default as ensurePartnerPortalReturnUrl } from './lib/ensure-partner-portal-return-url';
 export { default as formatApiPartner } from './lib/format-api-partner';
 export { default as getProductTitle } from './lib/get-product-title';
-
-export function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
-	return families.flatMap( ( family ) => family.products );
-}
-
-export function selectAlphabeticallySortedProductOptions(
-	families: APIProductFamily[]
-): APIProductFamilyProduct[] {
-	return sortBy( selectProductOptions( families ), ( product ) => product.name );
-}
-
+export { default as selectAlphabeticallySortedProductOptions } from './lib/select-alphabetically-sorted-product-options';
 export { default as isJetpackBundle } from './lib/is-jetpack-bundle';
 export { default as areLicenseKeysAssignableToMultisite } from './lib/are-license-keys-assignable-to-multisite';
 
