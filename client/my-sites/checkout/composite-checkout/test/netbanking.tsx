@@ -65,6 +65,11 @@ function ResetNetbankingStoreFields() {
 	} );
 }
 
+jest.mock( '@automattic/shopping-cart', () => ( {
+	...jest.requireActual( '@automattic/shopping-cart' ),
+	useShoppingCart: jest.fn( () => true ),
+} ) );
+
 describe( 'Netbanking payment method', () => {
 	it( 'renders a netbanking option', async () => {
 		const paymentMethod = getPaymentMethod();

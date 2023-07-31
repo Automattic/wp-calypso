@@ -66,6 +66,11 @@ function ResetCreditCardStoreFields() {
 	} );
 }
 
+jest.mock( '@automattic/shopping-cart', () => ( {
+	...jest.requireActual( '@automattic/shopping-cart' ),
+	useShoppingCart: jest.fn( () => true ),
+} ) );
+
 describe( 'Credit card payment method', () => {
 	it( 'renders a credit card option', async () => {
 		const store = createCreditCardPaymentMethodStore( {} );
