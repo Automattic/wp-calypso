@@ -66,6 +66,7 @@ import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject, DataResponse } from './types';
+import { getStorageStringFromFeature } from './util';
 import type { PlansIntent } from './grid-context';
 import type { GridPlan } from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import type { PlanActionOverrides } from './types';
@@ -937,7 +938,7 @@ export class PlanFeatures2023Grid extends Component<
 						if ( storageOption?.planDefault ) {
 							return (
 								<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-									{ storageOption.featureObject.getTitle() }
+									{ getStorageStringFromFeature( storageOption?.slug ) }
 								</div>
 							);
 						}
@@ -1104,7 +1105,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					return {
 						slug: featureSlug,
 						planDefault: Boolean( featureObject?.planDefault ),
-						feature: featureObject,
+						featureObject: featureObject,
 					};
 				} );
 				const availableForPurchase =

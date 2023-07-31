@@ -21,7 +21,7 @@ export const StorageAddOnDropdown = ( {
 	// TODO: Consider transforming storageOptions outside of this component
 	const selectControlOptions = storageOptions.reduce(
 		( acc: { key: string; name: TranslateResult }[], storageOption ) => {
-			const title = storageOption.featureObject?.getTitle();
+			const title = getStorageStringFromFeature( storageOption.slug );
 			if ( title ) {
 				acc.push( {
 					key: storageOption?.slug,
@@ -40,10 +40,8 @@ export const StorageAddOnDropdown = ( {
 	const selectedOptionKey = selectedStorage[ planName ] || defaultStorageOption?.slug || '';
 	const selectedOption = {
 		key: selectedOptionKey,
-		name:
-			getStorageStringFromFeature( selectedOptionKey ) || defaultStorageOption?.feature.getTitle(),
+		name: getStorageStringFromFeature( selectedOptionKey ),
 	};
-
 	return (
 		<CustomSelectControl
 			label={ translate( 'Storage' ) }
