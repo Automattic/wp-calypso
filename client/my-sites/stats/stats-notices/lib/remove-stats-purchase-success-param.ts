@@ -1,15 +1,15 @@
-const removeStatsPurchaseSuccessParam = ( url: string ) => {
+const getUrlwithStatsPurchaseSuccessParamRemoved = ( url: string, isOdysseyStats: boolean ) => {
 	// Delete param in GET params.
 	const currentUrl = new URL( url );
 	currentUrl.searchParams.delete( 'statsPurchaseSuccess' );
 
-	// Delete param in hash URL if any.
-	if ( currentUrl.hash ) {
+	// Delete param in hash URL for Odyssey Stats if any.
+	if ( isOdysseyStats && currentUrl.hash.startsWith( '#!' ) ) {
 		const hashUrl = new URL( currentUrl.hash.substring( 2 ), currentUrl.origin );
 		hashUrl.searchParams.delete( 'statsPurchaseSuccess' );
 		currentUrl.hash = `#!${ hashUrl.pathname }${ hashUrl.search }`;
 	}
-	return currentUrl.toString();
+	return currentUrl;
 };
 
-export { removeStatsPurchaseSuccessParam as default };
+export { getUrlwithStatsPurchaseSuccessParamRemoved as default };
