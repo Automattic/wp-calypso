@@ -1,8 +1,11 @@
+import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useCallback, useContext } from 'react';
+import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutContext from '../lib/checkout-context';
 import joinClasses from '../lib/join-classes';
 import { useAvailablePaymentMethodIds } from '../lib/payment-methods';
@@ -93,11 +96,7 @@ export default function CheckoutPaymentMethods( {
 		<CheckoutPaymentMethodsWrapper
 			className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }
 		>
-			<p>
-				{ __(
-					'We’re paying the first year of your domain transfer. We’ll use the payment information below to renew your domain transfer starting next year.'
-				) }
-			</p>
+			<GoogleDomainsCopy />
 			<RadioButtons>
 				{ paymentMethods.map( ( method ) => (
 					<CheckoutErrorBoundary
@@ -134,6 +133,27 @@ export function CheckoutPaymentMethodsTitle() {
 	const paymentMethodLabelInactive = __( 'Payment method' );
 
 	return <>{ ! isActive && isComplete ? paymentMethodLabelInactive : paymentMethodLabelActive }</>;
+}
+
+const GoogleDomainsCopyStyle = styled.p`
+	font-size: 14px;
+	color: ${ ( props ) => props.theme.colors.textColor };
+	margin: 0 0 16px;
+`;
+function GoogleDomainsCopy() {
+	const { __ } = useI18n();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	if ( hasFreeCouponTransfersOnly( responseCart ) ) {
+		return (
+			<GoogleDomainsCopyStyle>
+				{ __(
+					'We’re paying the first year of your domain transfer. We’ll use the payment information below to renew your domain transfer starting next year.'
+				) }
+			</GoogleDomainsCopyStyle>
+		);
+	}
+	return null;
 }
 
 function PaymentMethod( {
