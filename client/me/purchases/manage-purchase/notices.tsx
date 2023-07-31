@@ -6,6 +6,7 @@ import {
 	isDomainRegistration,
 	isMonthly,
 	isAkismetFreeProduct,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
@@ -284,7 +285,7 @@ class PurchaseNotice extends Component<
 	};
 
 	renderPurchaseExpiringNotice() {
-		const EXCLUDED_PRODUCTS = [ 'ecommerce-trial-bundle-monthly' ];
+		const EXCLUDED_PRODUCTS = [ PLAN_ECOMMERCE_TRIAL_MONTHLY ];
 		const {
 			moment,
 			purchase,
@@ -1066,7 +1067,7 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 
-		if ( purchase.productSlug === 'ecommerce-trial-bundle-monthly' ) {
+		if ( purchase.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ) {
 			return this.renderECommerceTrialNotice();
 		}
 
