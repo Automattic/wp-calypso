@@ -67,13 +67,12 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { getSiteSlug, isJetpackSite, isSimpleSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
 import {
-	canUseTheme as getCanUseTheme,
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
 	isThemePremium,
@@ -92,12 +91,11 @@ import {
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
-	isFullSiteEditingTheme as getIsFullSiteEditingTheme,
+	isLivePreviewSupported as getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getTheme } from '../../state/themes/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
@@ -620,15 +618,8 @@ class ThemeSheet extends Component {
 			siteSlug,
 			stylesheet,
 			isAtomic,
-			isActive,
-			showTryAndCustomize,
-			isExternallyManagedTheme,
-			isWporg,
 			isLoggedIn,
-			canUseTheme,
-			isFullSiteEditingTheme,
-			isSimple,
-			isThemeInstalledOnAtomicSite,
+			isLivePreviewSupported,
 			themeId,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
@@ -657,23 +648,14 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
-						{ config.isEnabled( 'themes/block-theme-previews' ) && (
-							<LivePreviewButton
-								canUseTheme={ canUseTheme }
-								isActive={ isActive }
-								isAtomic={ isAtomic }
-								isExternallyManagedTheme={ isExternallyManagedTheme }
-								isFullSiteEditingTheme={ isFullSiteEditingTheme }
-								isSimple={ isSimple }
-								isThemeInstalledOnAtomicSite={ isThemeInstalledOnAtomicSite }
-								isWporg={ isWporg }
-								showTryAndCustomize={ showTryAndCustomize }
-								siteSlug={ siteSlug }
-								stylesheet={ stylesheet }
-								themeId={ themeId }
-								translate={ translate }
-							></LivePreviewButton>
-						) }
+						<LivePreviewButton
+							isAtomic={ isAtomic }
+							isLivePreviewSupported={ isLivePreviewSupported }
+							siteSlug={ siteSlug }
+							stylesheet={ stylesheet }
+							themeId={ themeId }
+							translate={ translate }
+						></LivePreviewButton>
 						{ this.shouldRenderPreviewButton() && (
 							<Button
 								onClick={ ( e ) => {
@@ -1564,11 +1546,9 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
-		const isThemeInstalledOnAtomicSite = isAtomic && !! getTheme( state, siteId, themeId );
-
-		const isFullSiteEditingTheme = config.isEnabled( 'themes/block-theme-previews' )
-			? getIsFullSiteEditingTheme( state, themeId )
-			: undefined;
+		const isLivePreviewSupported = config.isEnabled( 'themes/block-theme-previews' )
+			? getIsLivePreviewSupported( state, { themeId, siteId } )
+			: false;
 
 		return {
 			...theme,
@@ -1587,19 +1567,16 @@ export default connect(
 			isActive: isThemeActive( state, themeId, siteId ),
 			isJetpack,
 			isAtomic,
-			isFullSiteEditingTheme,
+			isLivePreviewSupported,
 			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, themeId ),
-			isThemeInstalledOnAtomicSite,
 			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, themeId ),
-			isSimple: isSimpleSite( state, siteId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
-			canUseTheme: getCanUseTheme( state, siteId, themeId ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
