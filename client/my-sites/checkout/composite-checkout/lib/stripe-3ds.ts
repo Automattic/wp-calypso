@@ -16,9 +16,13 @@ export async function handle3DSChallenge(
 			payment_intent_id: paymentIntentId,
 		} )
 	);
-	logStashEvent( 'calypso_checkout_modal_authorization', {
-		payment_intent_id: paymentIntentId,
-	} );
+	logStashEvent(
+		'calypso_checkout_modal_authorization',
+		{
+			payment_intent_id: paymentIntentId,
+		},
+		'info'
+	);
 	// If this fails, it will reject (throw).
 	await confirmStripePaymentIntent( stripe, paymentIntentClientSecret );
 }

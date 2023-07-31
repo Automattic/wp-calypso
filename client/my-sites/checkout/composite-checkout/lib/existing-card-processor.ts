@@ -117,9 +117,13 @@ export default async function existingCardProcessor(
 					payment_intent_id: paymentIntentId ?? '',
 				} )
 			);
-			logStashEvent( 'calypso_checkout_card_transaction_failed', {
-				payment_intent_id: paymentIntentId ?? '',
-			} );
+			logStashEvent(
+				'calypso_checkout_card_transaction_failed',
+				{
+					payment_intent_id: paymentIntentId ?? '',
+				},
+				'info'
+			);
 
 			// Errors here are "expected" errors, meaning that they (hopefully) come
 			// from the endpoint and not from some bug in the frontend code.
