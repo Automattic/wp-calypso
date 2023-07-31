@@ -325,6 +325,7 @@ export type FeatureObject = {
 	planDefault?: boolean;
 	getFeatureGroup?: () => string;
 	getQuantity?: () => number;
+	getUnitProductSlug?: () => string;
 };
 export type FeatureList = {
 	[ key: string ]: FeatureObject;
@@ -1781,18 +1782,20 @@ export const FEATURES_LIST: FeatureList = {
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_50GB_STORAGE_ADD_ON ]: {
-		getSlug: () => PRODUCT_1GB_SPACE,
+		getSlug: () => FEATURE_50GB_STORAGE_ADD_ON,
+		getUnitProductSlug: () => PRODUCT_1GB_SPACE,
 		getQuantity: () => 50,
-		getTitle: () => i18n.translate( '100 GB' ),
-		getCompareTitle: () => i18n.translate( '100 GB' ),
+		getTitle: () => i18n.translate( '50 GB' ),
+		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
 	[ FEATURE_100GB_STORAGE_ADD_ON ]: {
-		getSlug: () => PRODUCT_1GB_SPACE,
+		getSlug: () => FEATURE_100GB_STORAGE_ADD_ON,
+		getUnitProductSlug: () => PRODUCT_1GB_SPACE,
 		getQuantity: () => 100,
-		getTitle: () => i18n.translate( '150 GB' ),
-		getCompareTitle: () => i18n.translate( '150 GB' ),
+		getTitle: () => i18n.translate( '100 GB' ),
+		getCompareTitle: () => i18n.translate( '100 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
