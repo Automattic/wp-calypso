@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
@@ -11,6 +12,20 @@ const getStatsPurchaseURL = ( siteId: number | null ) => {
 		return purchasePath;
 	}
 	return `https://wordpress.com${ purchasePath }`;
+};
+
+const handleUpgradeClick = (
+	event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
+	siteUrl: string,
+	isOdysseyStats: boolean
+) => {
+	event.preventDefault();
+
+	isOdysseyStats
+		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_success_banner_upgrade_clicked' )
+		: recordTracksEvent( 'calypso_stats_purchase_success_banner_upgrade_clicked' );
+
+	setTimeout( () => ( window.location.href = siteUrl ), 250 );
 };
 
 const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
@@ -49,6 +64,9 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
 							p: <p />,
 							jetpackStatsProductLink: (
 								<a
+									onClick={ ( e ) =>
+										handleUpgradeClick( e, getStatsPurchaseURL( siteId ), isOdysseyStats )
+									}
 									className="notice-banner__action-link"
 									href={ getStatsPurchaseURL( siteId ) }
 									target="_blank"
