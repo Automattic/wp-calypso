@@ -60,7 +60,7 @@ export function getEnhancedTasks(
 		( isBlogOnboardingFlow( flow ) ? planCartItem?.product_slug : null ) ??
 		site?.plan?.product_slug;
 
-	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
+	const translatedPlanName = ( productSlug && PLANS_LIST[ productSlug ]?.getTitle() ) || '';
 
 	const firstPostPublished = Boolean(
 		tasks?.find( ( task ) => task.id === 'first_post_published' )?.completed
