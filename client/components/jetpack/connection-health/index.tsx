@@ -15,13 +15,13 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ isErrorCheckJetpackConnectionHealth, setIsCheckJetpackConnectionHealth ] =
+	const [ isErrorCheckJetpackConnectionHealth, setIsErrorCheckJetpackConnectionHealth ] =
 		useState( false );
 
 	const { data: jetpackConnectionHealth, isLoading: isLoadingJetpackConnectionHealth } =
 		useCheckJetpackConnectionHealth( siteId, {
 			onError: () => {
-				setIsCheckJetpackConnectionHealth( true );
+				setIsErrorCheckJetpackConnectionHealth( true );
 			},
 			onSuccess: ( data ) => {
 				if ( data?.is_healthy ) {
