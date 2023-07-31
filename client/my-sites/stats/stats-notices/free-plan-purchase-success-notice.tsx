@@ -18,7 +18,7 @@ const getStatsPurchaseURL = ( siteId: number | null ) => {
 
 const handleUpgradeClick = (
 	event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
-	siteUrl: string,
+	upgradeUrl: string,
 	isOdysseyStats: boolean
 ) => {
 	event.preventDefault();
@@ -27,7 +27,7 @@ const handleUpgradeClick = (
 		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_success_banner_upgrade_clicked' )
 		: recordTracksEvent( 'calypso_stats_purchase_success_banner_upgrade_clicked' );
 
-	setTimeout( () => ( window.location.href = siteUrl ), 250 );
+	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
 };
 
 const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
