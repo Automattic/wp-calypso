@@ -103,17 +103,21 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return (
 				<>
 					<div>
-						{ _n(
-							'We got it from here. Your domain is being transferred with no downtime.',
-							'We got it from here! Your domain is being transferred with no downtime.',
-							purchases?.length
+						{ preventWidows(
+							_n(
+								'We got it from here. Your domain is being transferred with no downtime.',
+								'We got it from here! Your domain is being transferred with no downtime.',
+								purchases?.length
+							)
 						) }
 					</div>
 					<div>
-						{ _n(
-							"We'll send an email when your domain is ready to use.",
-							"We'll send an email when your domains are ready to use.",
-							purchases?.length
+						{ preventWidows(
+							_n(
+								"We'll send an email when your domain is ready to use.",
+								"We'll send an email when your domains are ready to use.",
+								purchases?.length
+							)
 						) }
 					</div>
 				</>
