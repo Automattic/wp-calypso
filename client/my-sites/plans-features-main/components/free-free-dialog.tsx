@@ -108,13 +108,13 @@ const LoadingPlaceHolderText = styled( LoadingPlaceHolder )`
 `;
 
 function LazyDisplayText( {
-	displayText,
+	displayText = '',
 	isLoading,
 }: {
-	displayText: TranslateResult;
+	displayText?: TranslateResult;
 	isLoading: boolean;
 } ) {
-	return isLoading ? <LoadingPlaceHolderText /> : <>{ displayText }</>;
+	return isLoading || ! displayText ? <LoadingPlaceHolderText /> : <>{ displayText }</>;
 }
 
 export function FreeFreeDialog( {
@@ -133,10 +133,11 @@ export function FreeFreeDialog( {
 	const translate = useTranslate();
 	const userLocale = useSelector( getCurrentUserLocale );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
-	const { suggestion, invalidateDomainSuggestionCache } = useGetDotcomDomainSuggestion( {
+	const { suggestionResponse, invalidateDomainSuggestionCache } = useGetDotcomDomainSuggestion( {
 		query: lastDomainSearched,
 		locale: userLocale,
 	} );
+	const { result: suggestion } = suggestionResponse;
 
 	const planConstantObj = applyTestFiltersToPlansList( PLAN_PERSONAL, undefined );
 	const planProductId = planConstantObj.getProductId();
@@ -219,41 +220,30 @@ export function FreeFreeDialog( {
 				</TextBox>
 				<TextBox>
 					{ translate(
-						'As a bonus, you will get a custom domain like {{suggestion}}{{/suggestion}} {{break}}{{/break}} for free for one year (%(domainPrice)s value).',
+						'As a bonus, you will get a custom domain like {{suggestion}}{{/suggestion}} {{break}}{{/break}} for free for one year ({{suggestionPrice}}{{/suggestionPrice}} value).',
 						{
 							components: {
 								suggestion: (
 									<LazyDisplayText
 										displayText={
-											suggestion.entry?.domain_name && (
-												<strong>"{ suggestion.entry?.domain_name }"</strong>
-											)
+											suggestion?.domain_name && <strong>"{ suggestion?.domain_name }"</strong>
 										}
-										isLoading={ suggestion.isLoading || ! suggestion?.entry?.domain_name }
+										isLoading={ suggestionResponse.isLoading || ! suggestion?.domain_name }
 									/>
 								),
 								suggestionPrice: (
 									<LazyDisplayText
 										displayText={ formatCurrency(
-											suggestion?.entry?.raw_price ?? 0,
-											suggestion?.entry?.currency_code ?? 'USD',
+											suggestion?.raw_price ?? 0,
+											suggestion?.currency_code ?? 'USD',
 											{
 												stripZeros: true,
 											}
 										) }
-										isLoading={ suggestion.isLoading || ! suggestion?.entry?.raw_price }
+										isLoading={ suggestionResponse.isLoading || ! suggestion?.raw_price }
 									/>
 								),
 								break: <br />,
-							},
-							args: {
-								domainPrice: formatCurrency(
-									suggestion?.entry?.raw_price ?? 0,
-									suggestion?.entry?.currency_code ?? 'USD',
-									{
-										stripZeros: true,
-									}
-								),
 							},
 						}
 					) }
