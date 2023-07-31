@@ -21,7 +21,7 @@ const ImportVerifyEmail: Step = function ImportVerifyEmail( { navigation } ) {
 	// Check if the email is verified and submit it for the next step
 	useEffect( () => {
 		user.email_verified && submit?.();
-	}, [ user ] );
+	}, [ user, submit ] );
 
 	if ( ! site ) {
 		return null;
