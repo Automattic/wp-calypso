@@ -8,7 +8,7 @@ import { StatsNoticeProps } from './types';
 const getStatsPurchaseURL = ( siteId: number | null ) => {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-free-stats-purchase-success-upgrade-notice`;
+	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-free-stats-purchase-success-notice`;
 
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
