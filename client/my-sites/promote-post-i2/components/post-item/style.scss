@@ -181,6 +181,7 @@ body.is-section-promote-post-i2 {
 						&-mobile {
 							display: flex;
 							justify-content: space-between;
+							flex-direction: column;
 						}
 
 						.post-item__post-title {
@@ -211,14 +212,21 @@ body.is-section-promote-post-i2 {
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link,
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link:visited {
 			@include blazepress-data-row-font-mobile;
-
-			margin-right: 4px;
+			border-radius: 4px;
+			display: inline-block;
+			flex-grow: 1;
+			height: 40px;
+			line-height: 22px;
+			margin-right: 8px;
+			text-decoration: none;
 		}
 
 		// Promote link
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
-			height: 26px;
-			margin-left: 5px;
+			display: inline-block;
+			flex-grow: 1;
+			height: 40px;
+			margin-left: 8px;
 		}
 	}
 }

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null ) => {
@@ -13,15 +13,19 @@ const getStatsPurchaseURL = ( siteId: number | null ) => {
 	return `https://wordpress.com${ purchasePath }`;
 };
 
-const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
+const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
+	siteId,
+	onNoticeViewed,
+}: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
-	const dismissNotice = () => {
-		// TODO: Remove the query string from the window URL without a refresh.
-		setNoticeDismissed( true );
-	};
+	useEffect( () => {
+		onNoticeViewed && onNoticeViewed();
+	} );
+
+	const dismissNotice = () => setNoticeDismissed( true );
 
 	if ( noticeDismissed ) {
 		return null;

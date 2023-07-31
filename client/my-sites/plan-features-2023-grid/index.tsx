@@ -63,11 +63,12 @@ import PopularBadge from './components/popular-badge';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
-import { PlanProperties, TransformedFeatureObject, SingleFreeDomainSuggestion } from './types';
+import { PlanProperties, TransformedFeatureObject, DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { PlansIntent } from './grid-context';
 import type { GridPlan } from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import type { PlanActionOverrides } from './types';
+import type { DomainSuggestion } from '@automattic/data-stores';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
@@ -99,7 +100,7 @@ export type PlanFeatures2023GridProps = {
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
-	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	intervalType?: string;
 	currentSitePlanSlug?: string | null;
 	hidePlansFeatureComparison?: boolean;
@@ -110,6 +111,7 @@ export type PlanFeatures2023GridProps = {
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
 	intent?: PlansIntent;
+	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
 	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
 	spotlightPlanSlug?: PlanSlug;
@@ -838,6 +840,7 @@ export class PlanFeatures2023Grid extends Component<
 			translate,
 			hideUnavailableFeatures,
 			selectedFeature,
+			isCustomDomainAllowedOnFreePlan,
 		} = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
@@ -862,6 +865,7 @@ export class PlanFeatures2023Grid extends Component<
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
 							selectedFeature={ selectedFeature }
+							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						/>
 						{ jpFeatures.length !== 0 && (
 							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
@@ -880,6 +884,7 @@ export class PlanFeatures2023Grid extends Component<
 							paidDomainName={ paidDomainName }
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
+							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						/>
 					</Container>
 				);

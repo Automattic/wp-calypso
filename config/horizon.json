@@ -148,7 +148,8 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": true,
+		"yolo/hosting-metrics-i1": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

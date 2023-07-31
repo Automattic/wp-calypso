@@ -32,6 +32,10 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 	);
 
 	const dismissNotice = () => {
+		isOdysseyStats
+			? recordTracksEvent( 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_dismissed' )
+			: recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed' );
+
 		setNoticeDismissed( true );
 		postponeNoticeAsync();
 	};

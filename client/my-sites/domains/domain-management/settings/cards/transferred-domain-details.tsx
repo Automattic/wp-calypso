@@ -141,13 +141,11 @@ const TransferredDomainDetails = ( {
 
 		return hasTranslation(
 			'Your transfer has been started and is waiting for authorization from your current ' +
-				'domain provider. This process can take up to 5-10 days. If you need to cancel or expedite the ' +
-				'transfer please contact them for assistance.'
+				"domain provider. Your current domain provider should allow you to speed this process up, either through their website or an email they've already sent you."
 		) || isEnglishLocale
 			? translate(
 					'Your transfer has been started and is waiting for authorization from your current ' +
-						'domain provider. This process can take up to 5-10 days. If you need to cancel or expedite the ' +
-						'transfer please contact them for assistance.'
+						"domain provider. Your current domain provider should allow you to speed this process up, either through their website or an email they've already sent you."
 			  )
 			: translate(
 					'Your transfer has been started and is waiting for authorization from your current ' +

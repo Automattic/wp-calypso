@@ -1,5 +1,9 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { BackupPathInfoResponse, FileBrowserItemInfo } from '../types';
-import { convertBytes, parseBackupPathInfo } from '../util';
+import { convertBytes, encodeToBase64, parseBackupPathInfo } from '../util';
 
 describe( 'convertBytes', () => {
 	it( 'should correctly convert bytes to KB', () => {
@@ -81,5 +85,37 @@ describe( 'parseBackupPathInfo', () => {
 
 		const result = parseBackupPathInfo( payload );
 		expect( result ).toEqual( expected );
+	} );
+} );
+
+describe( 'encodeToBase64', () => {
+	it( 'should return Base64 encoded string for English text', () => {
+		const text = 'Hello, World!';
+		const encoded = encodeToBase64( text );
+		expect( encoded ).toBe( 'SGVsbG8sIFdvcmxkIQ==' );
+	} );
+
+	it( 'should return Base64 encoded string for Spanish text', () => {
+		const text = '¡Hola, Piña!';
+		const encoded = encodeToBase64( text );
+		expect( encoded ).toBe( 'wqFIb2xhLCBQacOxYSE=' );
+	} );
+
+	it( 'should return Base64 encoded string for Japanese text', () => {
+		const text = 'こんにちは、世界!';
+		const encoded = encodeToBase64( text );
+		expect( encoded ).toBe( '44GT44KT44Gr44Gh44Gv44CB5LiW55WMIQ==' );
+	} );
+
+	it( 'should return Base64 encoded string for Chinese text', () => {
+		const text = '你好，世界！';
+		const encoded = encodeToBase64( text );
+		expect( encoded ).toBe( '5L2g5aW977yM5LiW55WM77yB' );
+	} );
+
+	it( 'should return Base64 encoded string for Arabic text', () => {
+		const text = 'مرحبا، العالم!';
+		const encoded = encodeToBase64( text );
+		expect( encoded ).toBe( '2YXYsdit2KjYp9iMINin2YTYudin2YTZhSE=' );
 	} );
 } );
