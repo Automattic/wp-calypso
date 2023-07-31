@@ -30,10 +30,10 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			),
 		},
 		marketplace: {
-			title: translate( 'Paid WordPress Themes' ),
-			header: translate( 'Find the perfect paid WordPress theme for your blog or website.' ),
+			title: translate( 'Partner WordPress Themes' ),
+			header: translate( 'Find the perfect partner WordPress theme for your blog or website.' ),
 			description: translate(
-				"Browse all paid themes for WordPress.com. Activate the one that's right for you, risk-free for 14 days."
+				"Browse all partner themes for WordPress.com. Activate the one that's right for you, risk-free for 14 days."
 			),
 		},
 	},
@@ -60,10 +60,10 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			),
 		},
 		marketplace: {
-			title: translate( 'Paid Blog WordPress Themes' ),
-			header: translate( 'Select paid themes for your blog.' ),
+			title: translate( 'Partner Blog WordPress Themes' ),
+			header: translate( 'Select partner themes for your blog.' ),
 			description: translate(
-				"Improve your blog with the perfect paid theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+				"Improve your blog with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 			),
 		},
 	},
@@ -90,10 +90,10 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			),
 		},
 		marketplace: {
-			title: translate( 'Paid Business WordPress Themes' ),
-			header: translate( 'Select paid themes for your business website.' ),
+			title: translate( 'Partner Business WordPress Themes' ),
+			header: translate( 'Select partner themes for your business website.' ),
 			description: translate(
-				"Improve your business website with the perfect paid theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+				"Improve your business website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 			),
 		},
 	},
@@ -120,10 +120,10 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			),
 		},
 		marketplace: {
-			title: translate( 'Paid Portfolio WordPress Themes' ),
-			header: translate( 'Select paid themes for your portfolio.' ),
+			title: translate( 'Partner Portfolio WordPress Themes' ),
+			header: translate( 'Select partner themes for your portfolio.' ),
 			description: translate(
-				"Improve your portfolio website with the perfect paid theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+				"Improve your portfolio website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 			),
 		},
 	},
@@ -150,10 +150,10 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			),
 		},
 		marketplace: {
-			title: translate( 'Paid Store WordPress Themes' ),
-			header: translate( 'Select paid themes for your online store.' ),
+			title: translate( 'Partner Store WordPress Themes' ),
+			header: translate( 'Select partner themes for your online store.' ),
 			description: translate(
-				"Improve your online store with the perfect paid theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+				"Improve your online store with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 			),
 		},
 	},
@@ -180,10 +180,10 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			),
 		},
 		marketplace: {
-			title: translate( 'Paid About Me WordPress Themes' ),
-			header: translate( 'Select paid themes for your About Me website.' ),
+			title: translate( 'Partner About Me WordPress Themes' ),
+			header: translate( 'Select partner themes for your About Me website.' ),
 			description: translate(
-				"Improve your About Me website with the perfect paid theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+				"Improve your About Me website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 			),
 		},
 	},
@@ -210,10 +210,10 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			),
 		},
 		marketplace: {
-			title: translate( 'Paid Link in Bio WordPress Themes' ),
-			header: translate( 'Select paid themes for your link in bio website.' ),
+			title: translate( 'Partner Link in Bio WordPress Themes' ),
+			header: translate( 'Select partner themes for your link in bio website.' ),
 			description: translate(
-				"Improve your link in bio website with the perfect paid theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+				"Improve your link in bio website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 			),
 		},
 	},
@@ -240,10 +240,10 @@ const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = {
 			),
 		},
 		marketplace: {
-			title: translate( 'Paid Newsletter WordPress Themes' ),
-			header: translate( 'Select paid themes for your site-hosted newsletter.' ),
+			title: translate( 'Partner Newsletter WordPress Themes' ),
+			header: translate( 'Select partner themes for your site-hosted newsletter.' ),
 			description: translate(
-				"Improve your newsletter with the perfect paid theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+				"Improve your newsletter with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 			),
 		},
 	},
