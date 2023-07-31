@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Notice from 'calypso/components/notice';
@@ -43,7 +44,12 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			showDismiss={ false }
 			text={ translate( 'Jetpack connection failed.' ) }
 		>
-			<NoticeAction href="#" external>
+			<NoticeAction
+				href={ localizeUrl(
+					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
+				) }
+				external
+			>
 				Attempt reconnection
 			</NoticeAction>
 		</Notice>
