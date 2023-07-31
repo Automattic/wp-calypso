@@ -127,23 +127,7 @@ export function ensurePartnerPortalReturnUrl( returnToUrl: string ): string {
 }
 
 export { default as formatApiPartner } from './lib/format-api-partner';
-
-/**
- * Format the string by removing Jetpack, (, ) from the product name
- *
- * @param product Product name
- * @returns Product title
- */
-export function getProductTitle( product: string ): string {
-	if ( 'Jetpack AI' === product ) {
-		return 'AI Assistant';
-	}
-
-	if ( 'Jetpack Stats (Commercial license)' === product ) {
-		return 'Stats';
-	}
-	return product.replace( /(?:Jetpack\s|[)(])/gi, '' );
-}
+export { default as getProductTitle } from './lib/get-product-title';
 
 export function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
 	return families.flatMap( ( family ) => family.products );
