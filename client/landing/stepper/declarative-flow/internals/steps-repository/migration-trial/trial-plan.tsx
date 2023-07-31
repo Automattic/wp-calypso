@@ -6,6 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { useSelector } from 'calypso/state';
+import useUnsupportedTrialFeatureList from './hooks/use-unsupported-trial-feature-list';
 
 interface Props {
 	site: SiteDetails;
@@ -16,6 +17,8 @@ const TrialPlan = function TrialPlan( props: Props ) {
 	const targetSiteEligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, site?.ID )
 	);
+
+	const unsupportedTrialFeatureList = useUnsupportedTrialFeatureList();
 	const planType = targetSiteEligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
 	const plan = getPlan( planType );
 
@@ -44,6 +47,20 @@ const TrialPlan = function TrialPlan( props: Props ) {
 					}
 				) }
 			</p>
+
+			<div className="trial-plan--details">
+				<div className="trial-plan--details-name">
+					<h3 className="plan-title">{ __( 'Trial' ) }</h3>
+					<h4 className="plan-duration">{ __( '7 days' ) }</h4>
+				</div>
+				<div className="trial-plan--details-features">
+					<ul>
+						{ unsupportedTrialFeatureList.map( ( feature, i ) => (
+							<li key={ i }>{ feature }</li>
+						) ) }
+					</ul>
+				</div>
+			</div>
 
 			<NextButton>{ __( 'Start the trial and migrate' ) }</NextButton>
 		</div>
