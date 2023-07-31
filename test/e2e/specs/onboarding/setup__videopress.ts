@@ -19,7 +19,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () => {
 	const testUser = DataHelper.getNewTestUser( {
-		usernamePrefix: 'videoprss_onboarding', // removed the `e` from `press` because `videopress` is a blocked term for subdomains.
+		usernamePrefix: 'videoprss_onboarding', // removed the `e` from `press` because `videopress` is a blocked term for domains.
 	} );
 	const emailClient = new EmailClient();
 	let page: Page;
