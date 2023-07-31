@@ -118,22 +118,6 @@ class ThemeShowcase extends Component {
 		showUploadButton: true,
 	};
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		const { search } = nextProps;
-		const { tabFilter } = prevState;
-
-		// Activate the "All" tab when searching on "Recommended", since the
-		// search might include some results that are not in the recommended
-		// themes (e.g. WP.org themes).
-		if ( search && tabFilter.key === staticFilters.RECOMMENDED.key ) {
-			return {
-				tabFilter: staticFilters.ALL,
-			};
-		}
-
-		return null;
-	}
-
 	componentDidMount() {
 		const { themesBookmark } = this.props;
 		// Scroll to bookmark if applicable.
@@ -260,19 +244,30 @@ class ThemeShowcase extends Component {
 
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
-		const { filterToTermTable } = this.props;
+		const { filterToTermTable, search: prevSearch } = this.props;
 
 		const filters = searchBoxContent.match( filterRegex ) || [];
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 		const filterString = compact( validFilters ).join( '+' );
 
+		const search = searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim();
+
 		const url = this.constructUrl( {
 			filter: filterString,
 			// Strip filters and excess whitespace
-			search: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
+			search,
 		} );
 
-		this.setState( { tabFilter: this.getTabFilterFromUrl( filterString ) } );
+		let tabFilter = this.getTabFilterFromUrl( filterString );
+
+		// Activate the "All" tab when searching on "Recommended", since the
+		// search might include some results that are not in the recommended
+		// themes (e.g. WP.org themes).
+		if ( prevSearch !== search && tabFilter.key === staticFilters.RECOMMENDED.key ) {
+			tabFilter = staticFilters.ALL;
+		}
+
+		this.setState( { tabFilter } );
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -346,15 +341,7 @@ class ThemeShowcase extends Component {
 			? [ filterWithoutSubjects, subjectTerm ].join( '+' )
 			: filterWithoutSubjects;
 
-		page(
-			this.constructUrl( {
-				filter: newFilter,
-				// Reset search term when activating the "Recommended" tab because
-				// WP.org themes (only visible when searching) don't appear in the
-				// recommended themes.
-				...( tabFilter.key === staticFilters.RECOMMENDED.key && { search: '' } ),
-			} )
-		);
+		page( this.constructUrl( { filter: newFilter } ) );
 
 		this.setState( { tabFilter }, callback );
 	};
