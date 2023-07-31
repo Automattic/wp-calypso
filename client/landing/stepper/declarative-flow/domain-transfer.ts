@@ -19,6 +19,7 @@ import {
 	AssertConditionState,
 } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
+
 const domainTransfer: Flow = {
 	name: DOMAIN_TRANSFER,
 	get title() {
@@ -88,8 +89,8 @@ const domainTransfer: Flow = {
 					setSignupCompleteFlowName( flowName );
 
 					const checkoutBackURL = new URL(
-						'google-transfer' === this.variantSlug
-							? '/setup/google-transfer/domains'
+						typeof this.variantSlug !== 'undefined'
+							? `/setup/${ this.variantSlug }/domains`
 							: '/setup/domain-transfer/domains',
 						window.location.href
 					);
