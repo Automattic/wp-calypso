@@ -20,6 +20,7 @@ export async function handle3DSChallenge(
 		'calypso_checkout_modal_authorization',
 		{
 			payment_intent_id: paymentIntentId,
+			tags: [ `payment_intent_id:${ paymentIntentId }` ],
 		},
 		'info'
 	);
