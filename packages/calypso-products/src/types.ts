@@ -24,6 +24,7 @@ import type {
 	FEATURE_GROUP_PAYMENTS,
 	FEATURE_GROUP_MARKETING_EMAIL,
 	FEATURE_GROUP_SHIPPING,
+	WOOCOMMERCE_PRODUCTS,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
@@ -87,6 +88,9 @@ export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
+// WooCommerce
+export type WooCommerceProductSlug = ( typeof WOOCOMMERCE_PRODUCTS )[ number ];
+
 export type SelectorProductFeaturesItem = {
 	slug: string;
 	icon?:
@@ -129,7 +133,7 @@ export type IncompleteJetpackPlan = Partial< JetpackPlan > &
 export type JetpackProductCategory = ( typeof JETPACK_PRODUCT_CATEGORIES )[ number ];
 
 // All
-export type ProductSlug = WPComProductSlug | JetpackProductSlug;
+export type ProductSlug = WPComProductSlug | JetpackProductSlug | WooCommerceProductSlug;
 export type PlanSlug = WPComPlanSlug | JetpackPlanSlug;
 export type PurchasableItemSlug = WPComPurchasableItemSlug | JetpackPurchasableItemSlug;
 
