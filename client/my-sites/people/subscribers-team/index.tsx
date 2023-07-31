@@ -1,6 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { localizeUrl, useLocale } from '@automattic/i18n-utils';
-import { useI18n } from '@wordpress/react-i18n/';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -50,48 +48,6 @@ function SubscribersTeam( props: Props ) {
 	) as unknown as FollowersQuery;
 	const usersQuery = useUsersQuery( site?.ID, teamFetchOptions ) as unknown as UsersQuery;
 
-	const locale = useLocale();
-	const { hasTranslation } = useI18n();
-
-	const getSubheaderText = () => {
-		const subHeaderTextOld = translate(
-			'Invite subscribers and team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
-			{
-				components: {
-					learnMore: (
-						<InlineSupportLink
-							showIcon={ false }
-							supportLink={ localizeUrl( 'https://wordpress.com/support/invite-people/' ) }
-						/>
-					),
-				},
-			}
-		);
-
-		const subHeaderTextNew = translate(
-			'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
-			{
-				components: {
-					learnMore: (
-						<InlineSupportLink
-							showIcon={ false }
-							supportLink={ localizeUrl( 'https://wordpress.com/support/invite-people/' ) }
-						/>
-					),
-				},
-			}
-		);
-
-		const useNewSubHeaderText =
-			isEnabled( 'subscribers-page-new' ) &&
-			( locale.startsWith( 'en' ) ||
-				hasTranslation(
-					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.'
-				) );
-
-		return useNewSubHeaderText ? subHeaderTextNew : subHeaderTextOld;
-	};
-
 	return (
 		<Main>
 			<ScreenOptionsTab wpAdminPath="users.php" />
@@ -99,7 +55,19 @@ function SubscribersTeam( props: Props ) {
 				brandFont
 				className="people__page-heading"
 				headerText={ translate( 'Users' ) }
-				subHeaderText={ getSubheaderText() }
+				subHeaderText={ translate(
+					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
+					{
+						components: {
+							learnMore: (
+								<InlineSupportLink
+									showIcon={ false }
+									supportLink={ localizeUrl( 'https://wordpress.com/support/invite-people/' ) }
+								/>
+							),
+						},
+					}
+				) }
 				align="left"
 				hasScreenOptions
 			/>

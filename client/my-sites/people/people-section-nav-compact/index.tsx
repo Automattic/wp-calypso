@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -24,20 +23,12 @@ function PeopleSectionNavCompact( props: Props ) {
 			title: translate( 'Team' ),
 			path: '/people/team/' + site?.slug,
 		},
-		{
-			id: 'subscribers',
-			title: translate( 'Subscribers' ),
-			path: '/people/subscribers/' + site?.slug,
-		},
 	];
 
 	return (
 		<>
 			<NavTabs>
 				{ filters.map( function ( filterItem ) {
-					if ( isEnabled( 'subscribers-page-new' ) && filterItem.id === 'subscribers' ) {
-						return null;
-					}
 					return (
 						<NavItem
 							key={ filterItem.id }
