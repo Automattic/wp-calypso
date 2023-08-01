@@ -143,9 +143,8 @@ export function DomainCodePair( {
 		}
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
-	const domainActions = ( inputValidationTextDisplayed = true ) => (
-		<>
-			{ inputValidationTextDisplayed ? <span>&nbsp;</span> : '' }
+	const domainActions = () => (
+		<span className="validation-actions">
 			{ isGoogleDomainsTransferFlow &&
 				// this means that the domain is locked and we need to show the instructions
 				errorStatus === domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE && (
@@ -177,7 +176,7 @@ export function DomainCodePair( {
 			>
 				<span className="refresh-label">{ __( 'Try again' ) }</span>
 			</Button>
-		</>
+		</span>
 	);
 
 	const renderGoogleDomainsModal = () => {
@@ -287,7 +286,7 @@ export function DomainCodePair( {
 							<FormInputValidation
 								isError={ ! valid }
 								text={ message }
-								children={ domainActions( true ) }
+								children={ domainActions() }
 							></FormInputValidation>
 						) }
 						{ message && loading && (
@@ -303,7 +302,7 @@ export function DomainCodePair( {
 								isError={ false }
 								text=""
 								isMuted={ true }
-								children={ domainCount > 1 && domainActions( false ) }
+								children={ domainCount > 1 && domainActions() }
 							/>
 						) }
 					</div>
@@ -331,7 +330,7 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ ! valid }
 						text={ message }
-						children={ domainActions( true ) }
+						children={ domainActions() }
 					></FormInputValidation>
 				) }
 				{ message && loading && (
@@ -347,7 +346,7 @@ export function DomainCodePair( {
 						isError={ false }
 						isMuted={ true }
 						text=""
-						children={ domainCount > 1 && domainActions( false ) }
+						children={ domainCount > 1 && domainActions() }
 					/>
 				) }
 			</div>
