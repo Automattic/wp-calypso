@@ -96,7 +96,7 @@ import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
-import { isRedesignV2, shouldShowConfettiExplosion } from './redesign-v2/utils';
+import { isRedesignV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
@@ -671,9 +671,9 @@ export class CheckoutThankYou extends Component<
 				} ) }
 			>
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				{ this.isDataLoaded() &&
-					isRedesignV2( this.props ) &&
-					shouldShowConfettiExplosion( purchases ) && <ConfettiAnimation delay={ 1000 } /> }
+				{ this.isDataLoaded() && isRedesignV2( this.props ) && (
+					<ConfettiAnimation delay={ 1000 } />
+				) }
 				{ isRedesignV2( this.props ) && (
 					<CheckoutMasterbar
 						siteId={ this.props.selectedSite?.ID }
