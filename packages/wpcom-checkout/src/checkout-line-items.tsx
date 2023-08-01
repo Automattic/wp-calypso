@@ -17,6 +17,7 @@ import {
 	isDIFMProduct,
 	isTieredVolumeSpaceAddon,
 } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import {
 	CheckoutModal,
 	FormStatus,
@@ -26,6 +27,7 @@ import {
 	LineItem as LineItemType,
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
@@ -117,6 +119,11 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	justify-content: space-between;
 	flex-wrap: wrap;
 	gap: 2px 10px;
+`;
+
+const UpgradeCreditInformationLineItem = styled( LineItemMeta )< { theme?: Theme } >`
+	justify-content: flex-start;
+	gap: 4px;
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
@@ -772,6 +779,16 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
+const UpgradeCreditHelpIconLink = () => (
+	<a
+		href={ localizeUrl( 'https://wordpress.com/support/manage-purchases/#upgrade-credit' ) }
+		target="_blank"
+		rel="help noreferrer"
+	>
+		<Gridicon icon="help-outline" size={ 18 } />
+	</a>
+);
+
 function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const origCost = product.item_original_subtotal_integer;
@@ -797,17 +814,23 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isMonthlyProduct( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				{ translate(
+					'Upgrade Credit: %(upgradeCredit)s applied in first month only {{UpgradeCreditHelpIconLink}}{{/UpgradeCreditHelpIconLink}}',
+					{
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						components: {
+							UpgradeCreditHelpIconLink: <UpgradeCreditHelpIconLink />,
+						},
+						args: {
+							upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					}
+				) }
 			</>
 		);
 	}
@@ -815,17 +838,23 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isYearly( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				{ translate(
+					'Upgrade Credit: %(upgradeCredit)s applied in first year only {{UpgradeCreditHelpIconLink}}{{/UpgradeCreditHelpIconLink}}',
+					{
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						components: {
+							UpgradeCreditHelpIconLink: <UpgradeCreditHelpIconLink />,
+						},
+						args: {
+							upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					}
+				) }
 			</>
 		);
 	}
@@ -833,17 +862,23 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isBiennially( product ) || isTriennially( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						discount: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				{ translate(
+					'Upgrade Credit: %(discount)s applied in first term only {{UpgradeCreditHelpIconLink}}{{/UpgradeCreditHelpIconLink}}',
+					{
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						components: {
+							UpgradeCreditHelpIconLink: <UpgradeCreditHelpIconLink />,
+						},
+						args: {
+							discount: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					}
+				) }
 			</>
 		);
 	}
@@ -1055,9 +1090,9 @@ function CheckoutLineItem( {
 
 			{ product && ! containsPartnerCoupon && (
 				<>
-					<LineItemMeta>
+					<UpgradeCreditInformationLineItem>
 						<UpgradeCreditInformation product={ product } />
-					</LineItemMeta>
+					</UpgradeCreditInformationLineItem>
 					<LineItemMeta>
 						<LineItemSublabelAndPrice product={ product } />
 						<DomainDiscountCallout product={ product } />
