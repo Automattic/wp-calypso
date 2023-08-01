@@ -13,9 +13,9 @@ import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
 import EcommerceTrialIncluded from './ecommerce-trial-included';
 import EcommerceTrialNotIncluded from './ecommerce-trial-not-included';
 
-import './style.scss';
+import './trial-current-plan.scss';
 
-const ECommerceTrialCurrentPlan = () => {
+const TrialCurrentPlan = () => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const translate = useTranslate();
@@ -109,4 +109,4 @@ const ECommerceTrialCurrentPlan = () => {
 	);
 };
 
-export default ECommerceTrialCurrentPlan;
+export default TrialCurrentPlan;

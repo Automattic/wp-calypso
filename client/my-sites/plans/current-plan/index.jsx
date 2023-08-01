@@ -16,6 +16,7 @@ import {
 	isFreePlanProduct,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	isFreePlan,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
@@ -63,8 +64,8 @@ import VideoPressProductThankYou from './current-plan-thank-you/jetpack-videopre
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
-import ECommerceTrialCurrentPlan from './ecommerce-trial';
 import PurchasesListing from './purchases-listing';
+import TrialCurrentPlan from './trials/trial-current-plan';
 
 import './style.scss';
 
@@ -194,8 +195,8 @@ class CurrentPlan extends Component {
 		);
 	}
 
-	renderEcommerceTrialPage() {
-		return <ECommerceTrialCurrentPlan />;
+	renderTrialPage() {
+		return <TrialCurrentPlan />;
 	}
 
 	render() {
@@ -215,6 +216,8 @@ class CurrentPlan extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const isMigrationTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
+		const isTrial = isEcommerceTrial || isMigrationTrial;
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
@@ -295,7 +298,7 @@ class CurrentPlan extends Component {
 								</Notice>
 							) }
 
-							{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
+							{ isTrial ? this.renderTrialPage() : this.renderMain() }
 
 							<TrackComponentView eventName="calypso_plans_my_plan_view" />
 						</Main>
