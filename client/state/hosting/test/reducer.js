@@ -131,7 +131,7 @@ describe( 'reducer', () => {
 				staticFile404: null,
 				isLoadingSftpUsers: false,
 				isLoadingSshAccess: false,
-				isFetchingWpVersion: null,
+				isFetchingWpVersion: false,
 				wpVersion: null,
 			},
 		} );
@@ -149,7 +149,7 @@ describe( 'reducer', () => {
 				staticFile404: null,
 				isLoadingSftpUsers: false,
 				isLoadingSshAccess: false,
-				isFetchingWpVersion: null,
+				isFetchingWpVersion: false,
 				wpVersion: null,
 			},
 		};
@@ -170,7 +170,7 @@ describe( 'reducer', () => {
 				staticFile404: null,
 				isLoadingSftpUsers: false,
 				isLoadingSshAccess: false,
-				isFetchingWpVersion: null,
+				isFetchingWpVersion: false,
 				wpVersion: null,
 			},
 			9876543: {
@@ -183,7 +183,7 @@ describe( 'reducer', () => {
 				staticFile404: null,
 				isLoadingSftpUsers: false,
 				isLoadingSshAccess: false,
-				isFetchingWpVersion: null,
+				isFetchingWpVersion: false,
 				wpVersion: null,
 			},
 		} );
