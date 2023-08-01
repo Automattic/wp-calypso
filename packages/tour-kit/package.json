@@ -33,7 +33,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
-		"@popperjs/core": "^2.10.2",
+		"@popperjs/core": "^2.11.8",
 		"@wordpress/base-styles": "^4.29.0",
 		"@wordpress/components": "^25.4.0",
 		"@wordpress/dom": "^3.38.0",
@@ -52,7 +52,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/cli": "^7.0.18",
 		"@storybook/react": "^7.0.18",
-		"typescript": "^4.7.4"
+		"typescript": "^5.1.6"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.5.0",

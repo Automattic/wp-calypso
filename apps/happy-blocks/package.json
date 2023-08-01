@@ -33,7 +33,7 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@automattic/wpcom-template-parts": "workspace:^",
-		"@emotion/styled": "^11.3.0",
+		"@emotion/styled": "^11.11.0",
 		"@wordpress/base-styles": "^4.29.0",
 		"@wordpress/block-editor": "^12.6.0",
 		"@wordpress/blocks": "^12.15.0",
@@ -48,7 +48,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
-		"@emotion/react": "^11.4.1",
+		"@emotion/react": "^11.11.1",
 		"@testing-library/react": "^14.0.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^2.21.0",
 		"copy-webpack-plugin": "^10.1.0",
