@@ -1,4 +1,4 @@
-import { CircularProgressBar } from '@automattic/components';
+import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
@@ -65,14 +65,29 @@ const CustomerHomeLaunchpad = ( {
 				<h2 className="customer-home-launchpad__title">
 					{ translate( 'Next steps for your site' ) }
 				</h2>
-				<div className="customer-home-launchpad__progress-bar-container">
-					<CircularProgressBar
-						size={ 40 }
-						enableDesktopScaling
-						numberOfSteps={ numberOfSteps }
-						currentStep={ completedSteps }
-					/>
-				</div>
+				{ numberOfSteps > completedSteps ? (
+					<div className="customer-home-launchpad__progress-bar-container">
+						<CircularProgressBar
+							size={ 40 }
+							enableDesktopScaling
+							numberOfSteps={ numberOfSteps }
+							currentStep={ completedSteps }
+						/>
+					</div>
+				) : (
+					<div className="customer-home-launchpad__dismiss-button">
+						<span> { translate( 'Dismiss guide' ) } </span>
+						<Button
+							className="themes__activation-modal-close-icon"
+							borderless
+							onClick={ () => {
+								alert( 1 );
+							} }
+						>
+							<Gridicon icon="cross" size={ 12 } />
+						</Button>
+					</div>
+				) }
 			</div>
 			<Launchpad siteSlug={ siteSlug } checklistSlug={ checklistSlug } taskFilter={ taskFilter } />
 		</div>

@@ -22,5 +22,21 @@
 			font-weight: 500;
 			font-family: $font-sf-pro-display;
 		}
+
+		.customer-home-launchpad__dismiss-button {
+			align-items: center;
+			display: flex;
+
+			span {
+				padding-right: 8px;
+			}
+			button {
+				padding: 0;
+				height: 24px;
+				svg {
+					top: 3px;
+				}
+			}
+		}
 	}
 }
