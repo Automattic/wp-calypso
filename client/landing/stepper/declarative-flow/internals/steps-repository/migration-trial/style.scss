@@ -130,7 +130,14 @@
 	}
 
 	.button-container {
+		width: 100%;
+		position: relative;
+		left: -1.5rem;
+		right: -1.5rem;
+		bottom: -1rem;
+		padding: 1rem 1.5rem;
 		text-align: end;
+		border-top: 1px solid var(--studio-gray-5);
 
 		.action_buttons__button {
 			min-width: 120px;
