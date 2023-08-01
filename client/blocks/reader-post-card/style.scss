@@ -14,10 +14,14 @@
 
 .reader-post-card.card {
 	border-bottom: 5px solid var(--color-neutral-0);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
 	box-shadow: none;
 	margin: 0;
-	padding: 20px 0;
+	margin-bottom: 16px;
+	padding: 16px;
 	position: relative;
+	background: var(–studio-white);
 
 	@include breakpoint-deprecated( ">660px" ) {
 		border-bottom: 1px solid #e9e9ea;
