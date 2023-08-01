@@ -3,7 +3,7 @@ import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso/types';
 import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getMobileDeviceInfo, isWpMobileApp } from 'calypso/lib/mobile-app';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -48,6 +48,7 @@ declare global {
 				};
 				isV2?: boolean;
 				hotjarSiteSettings?: object;
+				options?: object;
 			} ) => void;
 			strings: any;
 		};
@@ -70,6 +71,28 @@ export async function loadDSPWidgetJS(): Promise< void > {
 	// in order to ensure that translate calls are not removed from the production build.
 	await import( './string' );
 }
+
+const ANDROID_VERSION_HIDE_CAMPAIGNS_BUTTON = 22.9;
+
+type DeviceInfo = {
+	device: string;
+	version: string;
+};
+
+const shouldHideGoToCampaignButton = () => {
+	// Android versions higher or equal than 22.9 should hide the button
+	const deviceInfo = getMobileDeviceInfo() as DeviceInfo;
+	return (
+		deviceInfo.device.includes( 'android' ) &&
+		parseFloat( deviceInfo?.version ) >= ANDROID_VERSION_HIDE_CAMPAIGNS_BUTTON
+	);
+};
+
+const getWidgetOptions = () => {
+	return {
+		hideGoToCampaignsButton: shouldHideGoToCampaignButton(),
+	};
+};
 
 export async function showDSP(
 	siteSlug: string | null,
@@ -121,6 +144,7 @@ export async function showDSP(
 					: undefined,
 				isV2,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
+				options: getWidgetOptions(),
 			} );
 		} else {
 			reject( false );

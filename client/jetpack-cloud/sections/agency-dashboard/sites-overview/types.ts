@@ -1,3 +1,5 @@
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
@@ -160,11 +162,12 @@ export interface RowMetaData {
 	eventName: string | undefined;
 }
 
-export type PreferenceType = 'dismiss' | 'view';
+export type PreferenceType = 'dismiss' | 'view' | 'view_date';
 
 export type Preference = {
 	dismiss?: boolean;
 	view?: boolean;
+	view_date?: string;
 };
 
 export type StatusEventNames = {
@@ -214,6 +217,7 @@ export interface DashboardDataContextInterface {
 		phoneNumbers: Array< string >;
 		refetchIfFailed: () => void;
 	};
+	products: APIProductFamilyProduct[];
 }
 
 export type AgencyDashboardFilterOption =

@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import ContactList from '../../contact-list';
 import FeatureRestrictionBadge from '../../feature-restriction-badge';
 import { RestrictionType } from '../../types';
+import UpgradeLink from '../../upgrade-link';
 import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
 interface Props {
@@ -57,6 +58,11 @@ export default function SMSNotification( {
 					<div className="notification-settings__content-sub-heading">
 						{ translate( 'Set up text messages to send to one or more people.' ) }
 					</div>
+					{ restriction === 'upgrade_required' && (
+						<div>
+							<UpgradeLink />
+						</div>
+					) }
 				</div>
 			</div>
 			{ enableSMSNotification && (

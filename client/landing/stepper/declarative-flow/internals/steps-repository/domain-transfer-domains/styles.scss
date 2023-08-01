@@ -163,14 +163,24 @@
 			text-decoration: underline;
 		}
 
-
-		.components-button:has(.delete-label),
-		.components-button:has(.refresh-label),
-		.components-button:has(.unlock-label), {
-			color: var(--gray-gray-100, #101517);
-			text-decoration-color: var(--gray-gray-100, #101517);
+		.validation-actions {
+			margin-left: 5px;
+			@media (max-width: $break-medium ) {
+				display: block;
+				margin-left: 0;
+			}
+			.components-button:has(.delete-label),
+			.components-button:has(.refresh-label),
+			.components-button:has(.unlock-label), {
+				color: var(--studio-gray-100, #101517);
+				text-decoration-color: var(--studio-gray-100, #101517);
+				@media (max-width: $break-medium ) {
+					&.is-first-row {
+						margin-left: 0;
+					}
+				}
+			}
 		}
-
 		.is-muted.is-checking-domain {
 			@keyframes animate-dots {
 				0% {

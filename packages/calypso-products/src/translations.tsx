@@ -38,6 +38,7 @@ import {
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_AI_MONTHLY,
+	PRODUCT_JETPACK_AI_YEARLY,
 	JETPACK_TAG_FOR_VIDEOGRAPHERS,
 	JETPACK_TAG_FOR_ALL_SITES,
 	JETPACK_TAG_FOR_BLOGGERS,
@@ -142,6 +143,7 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 			context: 'Jetpack product name',
 		} ),
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI' ),
+		[ PRODUCT_JETPACK_AI_YEARLY ]: translate( 'AI' ),
 	};
 };
 
@@ -238,6 +240,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistant,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
@@ -312,6 +315,7 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistant,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
@@ -378,6 +382,10 @@ export const getJetpackProductsTaglines = (): Record<
 	);
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: {
+			default: aiAssistantTagLine,
+			owned: aiAssistantOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_AI_YEARLY ]: {
 			default: aiAssistantTagLine,
 			owned: aiAssistantOwnedTagLine,
 		},
@@ -578,6 +586,7 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantDescription,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeDescription,
@@ -641,6 +650,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantShortDescription,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeShortDescription,
@@ -706,6 +716,7 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantFeaturedText,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupFeaturedText,
@@ -789,6 +800,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupLightboxDescription,
@@ -1041,6 +1053,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantIncludesInfo,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1,
@@ -1221,6 +1234,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantBenefits,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupBenefits,

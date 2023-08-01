@@ -1,4 +1,6 @@
 import config from '@automattic/calypso-config';
+import page from 'page';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
@@ -67,18 +69,32 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	);
 };
 
-const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: StatsNoticesProps ) => {
+const PostPurchaseNotices = ( {
+	siteId,
+	statsPurchaseSuccess,
+	isOdysseyStats,
+}: StatsNoticesProps ) => {
 	// Check if the GET param is passed to show the Free or Paid plan purchase notices
 	const showFreePlanPurchaseSuccessNotice = statsPurchaseSuccess === 'free';
 	const showPaidPlanPurchaseSuccessNotice = statsPurchaseSuccess === 'paid';
 
+	const [ paramRemoved, setParamRemoved ] = useState( false );
+
 	const removeParam = () => {
-		if ( ! statsPurchaseSuccess ) {
+		if ( ! statsPurchaseSuccess || paramRemoved ) {
 			return;
 		}
-		const newUrl = removeStatsPurchaseSuccessParam( window.location.href );
+		// Ensure it runs only once.
+		setParamRemoved( true );
+		const newUrlObj = removeStatsPurchaseSuccessParam( window.location.href, !! isOdysseyStats );
 		// Odyssey would try to hack the URL on load to remove duplicate params. We need to wait for that to finish.
-		setTimeout( () => window.history.replaceState( null, '', newUrl ), 300 );
+		setTimeout( () => {
+			window.history.replaceState( null, '', newUrlObj.toString() );
+			if ( isOdysseyStats ) {
+				// We need to update the page base if it changed. Otherwise, pagejs won't be able to find the routes.
+				page.base( `${ newUrlObj.pathname }${ newUrlObj.search }` );
+			}
+		}, 300 );
 	};
 
 	return (
@@ -115,7 +131,11 @@ export default function StatsNotices( {
 
 	return supportNewStatsNotices ? (
 		<>
-			<PostPurchaseNotices siteId={ siteId } statsPurchaseSuccess={ statsPurchaseSuccess } />
+			<PostPurchaseNotices
+				siteId={ siteId }
+				statsPurchaseSuccess={ statsPurchaseSuccess }
+				isOdysseyStats={ isOdysseyStats }
+			/>
 			<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 		</>
 	) : (
