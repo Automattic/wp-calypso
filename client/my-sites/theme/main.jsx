@@ -1541,13 +1541,8 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
-		const isLivePreviewSupported = config.isEnabled( 'themes/block-theme-previews' )
-			? getIsLivePreviewSupported( state, themeId, siteId )
-			: false;
-
-		const livePreviewUrl = config.isEnabled( 'themes/block-theme-previews' )
-			? getLivePreviewUrl( state, themeId, siteId )
-			: undefined;
+		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
+		const livePreviewUrl = getLivePreviewUrl( state, themeId, siteId );
 
 		return {
 			...theme,
