@@ -120,6 +120,7 @@ export function DomainCodePair( {
 	const {
 		valid,
 		loading,
+		shouldLogError = true,
 		message,
 		rawPrice = 0,
 		saleCost,
@@ -135,7 +136,7 @@ export function DomainCodePair( {
 	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
 
 	useEffect( () => {
-		if ( shouldReportError && ! valid && message ) {
+		if ( shouldLogError && shouldReportError ) {
 			recordTracksEvent( 'calypso_domain_transfer_domain_error', {
 				domain,
 				error: errorStatus ? errorStatus : String( message ),
