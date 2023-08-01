@@ -4,13 +4,15 @@ import formatCurrency from '@automattic/format-currency';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { DialogContainer } from './free-plan-paid-domain-dialog';
+import { DialogContainer, MODAL_VIEW_EVENT_NAME } from './free-plan-paid-domain-dialog';
 import { LoadingPlaceHolder } from './loading-placeholder';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -161,6 +163,12 @@ export function FreePlanFreeDomainDialog( {
 		monthlyPlanPriceObject.discountedRawPrice || monthlyPlanPriceObject.rawPrice;
 	const annualPlanPrice =
 		annualPlanPriceObject.discountedRawPrice || annualPlanPriceObject.rawPrice;
+
+	useEffect( () => {
+		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
+			dialog_type: 'paid_plan_is_required',
+		} );
+	}, [] );
 
 	return (
 		<Dialog

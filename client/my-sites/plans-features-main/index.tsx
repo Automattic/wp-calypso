@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
@@ -41,6 +40,7 @@ import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dia
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
+import { useIsPlanUpsellEnabledOnFreeDomain } from './hooks/use-is-plan-upsell-enabled-on-free-domain';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -293,8 +293,10 @@ const PlansFeaturesMain = ( {
 		flowName,
 		paidDomainName
 	);
-
-	const isFreeDomainFreePlanModalEnabled = config.isEnabled( 'onboarding-pm/free-free-modal' );
+	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain(
+		flowName,
+		signupFlowSubdomain
+	);
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -330,11 +332,25 @@ const PlansFeaturesMain = ( {
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// It only applies to main onboarding flow and the paid media flow at the moment.
 		// Standardizing it or not is TBD; see Automattic/growth-foundations#63 and pdgrnI-2nV-p2#comment-4110 for relevant discussion.
-		if ( ( 'onboarding' === flowName || 'onboarding-pm' === flowName ) && ! cartItemForPlan ) {
+		if ( ! cartItemForPlan ) {
+			/**
+			 * Delay showing modal until the experiments have loaded
+			 */
+			if (
+				isCustomDomainAllowedOnFreePlan.isLoading ||
+				isPlanUpsellEnabledOnFreeDomain.isLoading
+			) {
+				return;
+			}
+
+			/**
+			 * After the experiments are loaded now open the relevant modal based on previous step parameters
+			 */
 			if ( paidDomainName ) {
 				toggleIsFreePlanPaidDomainDialogOpen();
 				return;
-			} else if ( isFreeDomainFreePlanModalEnabled ) {
+			}
+			if ( isPlanUpsellEnabledOnFreeDomain.result ) {
 				setIsFreeFreeUpsellOpen( true );
 				return;
 			}
