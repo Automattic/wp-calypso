@@ -131,6 +131,8 @@ describe( 'reducer', () => {
 				staticFile404: null,
 				isLoadingSftpUsers: false,
 				isLoadingSshAccess: false,
+				isFetchingWpVersion: false,
+				wpVersion: null,
 			},
 		} );
 	} );
@@ -147,6 +149,8 @@ describe( 'reducer', () => {
 				staticFile404: null,
 				isLoadingSftpUsers: false,
 				isLoadingSshAccess: false,
+				isFetchingWpVersion: false,
+				wpVersion: null,
 			},
 		};
 		const state = reducer( previousState, {
@@ -166,6 +170,8 @@ describe( 'reducer', () => {
 				staticFile404: null,
 				isLoadingSftpUsers: false,
 				isLoadingSshAccess: false,
+				isFetchingWpVersion: false,
+				wpVersion: null,
 			},
 			9876543: {
 				lastCacheClearTimestamp: null,
@@ -177,6 +183,8 @@ describe( 'reducer', () => {
 				staticFile404: null,
 				isLoadingSftpUsers: false,
 				isLoadingSshAccess: false,
+				isFetchingWpVersion: false,
+				wpVersion: null,
 			},
 		} );
 	} );
