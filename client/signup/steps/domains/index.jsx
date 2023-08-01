@@ -263,8 +263,9 @@ class DomainsStep extends Component {
 			: {};
 
 		const { step } = this.props;
+		const { lastDomainSearched } = step.domainForm ?? {};
+
 		const { suggestion } = step;
-		const { lastDomainSearched } = step.domainForm;
 		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
 
 		const siteUrl =
