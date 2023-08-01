@@ -1042,7 +1042,7 @@ class PurchaseNotice extends Component<
 		const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
 		const productType =
 			productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY
-				? 'ecommerce'
+				? translate( 'ecommerce' )
 				: getPlan( PLAN_BUSINESS )?.getTitle();
 		return (
 			<Notice
