@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import {
@@ -81,6 +82,10 @@ const isNotCompatibleThemes = ( themeId ) => {
  * @see pbxlJb-3Uv-p2
  */
 export const isLivePreviewSupported = ( state, themeId, siteId ) => {
+	if ( ! config.isEnabled( 'themes/block-theme-previews' ) ) {
+		return false;
+	}
+
 	// A user doesn't want to preview the active theme.
 	if ( isThemeActive( state, themeId, siteId ) ) {
 		return false;
