@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UplotChartMetrics from './metrics-chart';
-import { MetricsType, useSiteMetricsQuery } from './use-metrics-query';
+import { MetricsType, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
 
 export function useSiteMetricsData( start?: number, end?: number, metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
@@ -19,11 +19,11 @@ export function useSiteMetricsData( start?: number, end?: number, metric?: Metri
 	} );
 
 	// Function to get the dimension value for a specific key and period
-	const getDimensionValue = ( period: { timestamp?: number; dimension?: any } ) => {
-		if ( period && Array.isArray( period?.dimension ) ) {
+	const getDimensionValue = ( period: PeriodData ) => {
+		if ( Array.isArray( period?.dimension ) ) {
 			// If the dimension is an array, return 0
 			return 0;
-		} else if ( period && period.dimension && typeof period?.dimension === 'object' ) {
+		} else if ( typeof period?.dimension === 'object' ) {
 			// If the dimension is an object, try to find and return the dimension value
 			const firstKey = Object.keys( period.dimension )[ 0 ];
 			return firstKey ? period.dimension[ firstKey ] : null;
@@ -40,8 +40,8 @@ export function useSiteMetricsData( start?: number, end?: number, metric?: Metri
 				acc[ 1 ].push( getDimensionValue( period ) );
 				return acc;
 			},
-			[ [], [] ] as [ number[], number[] ] // Define the correct initial value type
-		) || ( [ [], [] ] as [ number[], number[] ] ); // Return a default value when data is not available yet
+			[ [], [] ] as Array< Array< number | null > > // Define the correct initial value type
+		) || ( [ [], [] ] as Array< Array< number | null > > ); // Return a default value when data is not available yet
 
 	return {
 		formattedData,
