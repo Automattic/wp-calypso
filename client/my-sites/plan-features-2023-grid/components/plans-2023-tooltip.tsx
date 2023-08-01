@@ -1,6 +1,7 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
-import { PropsWithChildren, useRef, useState } from 'react';
+import { Dispatch, PropsWithChildren, SetStateAction, useEffect, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 
 const HoverAreaContainer = styled.span`
@@ -24,21 +25,42 @@ const StyledTooltip = styled( Tooltip )`
 	}
 `;
 
-export const Plans2023Tooltip = ( props: PropsWithChildren< { text?: TranslateResult } > ) => {
+export const Plans2023Tooltip = (
+	props: PropsWithChildren< {
+		text?: TranslateResult;
+		setActiveTooltipId: Dispatch< SetStateAction< string > >;
+		activeTooltipId: string;
+		id: string;
+	} >
+) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const tooltipRef = useRef< HTMLDivElement >( null );
+	const isDesktop = useDesktopBreakpoint();
+
+	useEffect( () => {
+		props.activeTooltipId === props.id ? setIsVisible( true ) : setIsVisible( false );
+	}, [ props.activeTooltipId, props.id ] );
 
 	if ( ! props.text ) {
 		return <>{ props.children }</>;
 	}
+
+	const getMobileActiveTooltip = () => {
+		if ( props.activeTooltipId === props.id ) {
+			return '';
+		}
+
+		return props.id;
+	};
 
 	return (
 		<>
 			<HoverAreaContainer
 				className="plans-2023-tooltip__hover-area-container"
 				ref={ tooltipRef }
-				onMouseEnter={ () => setIsVisible( true ) }
-				onMouseLeave={ () => setIsVisible( false ) }
+				onMouseEnter={ () => isDesktop && props.setActiveTooltipId( props.id ) }
+				onMouseLeave={ () => isDesktop && props.setActiveTooltipId( '' ) }
+				onTouchStart={ () => ! isDesktop && props.setActiveTooltipId( getMobileActiveTooltip() ) }
 			>
 				{ props.children }
 			</HoverAreaContainer>
@@ -47,6 +69,7 @@ export const Plans2023Tooltip = ( props: PropsWithChildren< { text?: TranslateRe
 				position="top"
 				context={ tooltipRef.current }
 				hideArrow
+				showOnMobile
 			>
 				{ props.text }
 			</StyledTooltip>

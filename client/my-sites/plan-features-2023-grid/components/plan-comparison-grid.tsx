@@ -662,12 +662,14 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	isHighlighted,
 	intervalType,
 } ) => {
+	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
 		'is-storage-feature': isStorageFeature,
 	} );
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
+	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
 
 	return (
 		<Row
@@ -677,14 +679,24 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 		>
 			<RowTitleCell key="feature-name" className="is-feature-group-row-title-cell">
 				{ isStorageFeature ? (
-					<Plans2023Tooltip text={ translate( 'Space to store your photos, media, and more.' ) }>
+					<Plans2023Tooltip
+						text={ translate( 'Space to store your photos, media, and more.' ) }
+						setActiveTooltipId={ setActiveTooltipId }
+						activeTooltipId={ activeTooltipId }
+						id={ tooltipId }
+					>
 						{ translate( 'Storage' ) }
 					</Plans2023Tooltip>
 				) : (
 					<>
 						{ feature && (
 							<>
-								<Plans2023Tooltip text={ feature.getDescription?.() }>
+								<Plans2023Tooltip
+									text={ feature.getDescription?.() }
+									setActiveTooltipId={ setActiveTooltipId }
+									activeTooltipId={ activeTooltipId }
+									id={ tooltipId }
+								>
 									{ feature.getTitle() }
 									{ footnote && (
 										<FeatureFootnote>
