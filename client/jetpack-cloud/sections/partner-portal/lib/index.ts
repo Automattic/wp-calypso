@@ -1,4 +1,5 @@
 export { noop, LICENSE_INFO_MODAL_ID } from './constants';
+export { default as getProductSlugFromLicenseKey } from './get-product-slug-from-license-key';
 export { default as getLicenseState } from './get-license-state';
 export { default as valueToEnum } from './value-to-enum';
 export { publicToInternalLicenseFilter, internalToPublicLicenseFilter } from './license-filters';
