@@ -45,6 +45,8 @@ This hook internally calls `usePresalesChat`, passing it the properties from the
 
 Here is an example of how to use the `usePresalesChatWithOptions` hook:
 
+<!-- eslint-disable -->
+
 ```javascript
 usePresalesChatWithOptions( 'jpGeneral', {
 	enabled: true,
