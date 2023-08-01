@@ -81,12 +81,13 @@ export const transferDomainAction: AuthCodeValidationHandler =
 					await startInboundTransfer( selectedSite.ID, domain, authCode );
 					page( domainManagementTransferIn( selectedSite.slug, domain ) );
 				} catch ( error ) {
-					const errorMessage =
+					const errorMessage = error instanceof Error ? error.message : String( error );
+					const message =
 						transferDomainError.GENERIC_ERROR +
 						' ' +
 						__( 'Error message: ' ) +
-						`"${ error.message }"`;
-					onDone( { message: errorMessage } );
+						`"${ errorMessage }"`;
+					onDone( { message } );
 				}
 			};
 
