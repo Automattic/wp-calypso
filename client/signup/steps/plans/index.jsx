@@ -155,7 +155,7 @@ export class PlansStep extends Component {
 			);
 		}
 		const { signupDependencies } = this.props;
-		const { siteUrl: freeSubdomain, lastDomainSearched, domainItem } = signupDependencies;
+		const { siteUrl: freeSubdomain, domainItem } = signupDependencies;
 		const paidDomainName = domainItem?.meta;
 
 		return (
@@ -164,7 +164,6 @@ export class PlansStep extends Component {
 				<PlansFeaturesMain
 					paidDomainName={ paidDomainName }
 					freeSubdomain={ freeSubdomain }
-					lastDomainSearched={ lastDomainSearched }
 					siteId={ selectedSite?.ID }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }

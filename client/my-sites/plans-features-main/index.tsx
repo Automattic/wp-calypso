@@ -73,7 +73,6 @@ export interface PlansFeaturesMainProps {
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
 	freeSubdomain?: string;
-	lastDomainSearched?: string;
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: DomainSuggestion ) => void;
@@ -234,7 +233,6 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 const PlansFeaturesMain = ( {
 	paidDomainName,
 	freeSubdomain,
-	lastDomainSearched,
 	flowName,
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
@@ -454,10 +452,9 @@ const PlansFeaturesMain = ( {
 					} }
 				/>
 			) }
-			{ freeSubdomain && lastDomainSearched && isFreeFreeUpsellOpen && (
+			{ freeSubdomain && isFreeFreeUpsellOpen && (
 				<FreeFreeDialog
 					freeSubdomain={ freeSubdomain }
-					lastDomainSearched={ lastDomainSearched }
 					onClose={ () => setIsFreeFreeUpsellOpen( false ) }
 					onFreePlanSelected={ () => {
 						onUpgradeClick?.( null );

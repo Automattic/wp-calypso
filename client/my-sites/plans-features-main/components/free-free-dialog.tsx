@@ -6,9 +6,7 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { formatCurrency } from 'calypso/../packages/format-currency/src';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { useGetDotcomDomainSuggestion } from '../hooks/use-get-dotcom-domain-suggestion';
 import { DialogContainer } from './free-plan-paid-domain-dialog';
 import { LoadingPlaceHolder } from './loading-placeholder';
 
@@ -122,22 +120,14 @@ export function FreeFreeDialog( {
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
-	lastDomainSearched,
 }: {
 	freeSubdomain: string;
-	lastDomainSearched: string;
 	onClose: () => void;
 	onFreePlanSelected: () => void;
 	onPlanSelected: () => void;
 } ) {
 	const translate = useTranslate();
-	const userLocale = useSelector( getCurrentUserLocale );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
-	const { suggestionResponse, invalidateDomainSuggestionCache } = useGetDotcomDomainSuggestion( {
-		query: lastDomainSearched,
-		locale: userLocale,
-	} );
-	const { result: suggestion } = suggestionResponse;
 
 	const planConstantObj = applyTestFiltersToPlansList( PLAN_PERSONAL, undefined );
 	const planProductId = planConstantObj.getProductId();
@@ -173,7 +163,7 @@ export function FreeFreeDialog( {
 						</div>
 						<TextBox>
 							{ translate(
-								'{{strong}}No free custom domain:{{/strong}} Your site will be shown to visitors as %(freeSubdomain)s',
+								'{{strong}}No free custom domain:{{/strong}} Your site will be shown to visitors as {{strong}}[%(freeSubdomain)s]{{/strong}}',
 								{
 									args: {
 										freeSubdomain,
@@ -239,31 +229,16 @@ export function FreeFreeDialog( {
 				</TextBox>
 				<TextBox>
 					{ translate(
-						'As a bonus, you will get a custom domain - like {{suggestion}}{{/suggestion}} - {{break}}{{/break}} free for the first year ({{suggestionPrice}}{{/suggestionPrice}} value).',
+						'As a bonus, you will get a custom domain - {{strong}}like yourgroovydomain.com{{/strong}} - {{break}}{{/break}} free for the first year ({{suggestionPrice}}{{/suggestionPrice}} value).',
 						{
 							components: {
-								suggestion: (
-									<LazyDisplayText
-										displayText={
-											suggestion?.domain_name && (
-												<strong>
-													<i>"{ suggestion?.domain_name }"</i>
-												</strong>
-											)
-										}
-										isLoading={ suggestionResponse.isLoading || ! suggestion?.domain_name }
-									/>
-								),
+								strong: <strong></strong>,
 								suggestionPrice: (
 									<LazyDisplayText
-										displayText={ formatCurrency(
-											suggestion?.raw_price ?? 0,
-											suggestion?.currency_code ?? 'USD',
-											{
-												stripZeros: true,
-											}
-										) }
-										isLoading={ suggestionResponse.isLoading || ! suggestion?.raw_price }
+										displayText={ formatCurrency( 12, currencyCode, {
+											stripZeros: true,
+										} ) }
+										isLoading={ ! currencyCode }
 									/>
 								),
 								break: <br />,
@@ -276,7 +251,6 @@ export function FreeFreeDialog( {
 					<StyledButton
 						primary
 						onClick={ () => {
-							invalidateDomainSuggestionCache();
 							onPlanSelected();
 						} }
 					>
@@ -285,7 +259,6 @@ export function FreeFreeDialog( {
 
 					<StyledButton
 						onClick={ () => {
-							invalidateDomainSuggestionCache();
 							onFreePlanSelected();
 						} }
 						borderless
