@@ -56,12 +56,12 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 					</details>
 					<details open={ 2 === focusedStep }>
 						<summary>{ __( 'Step 2: Select your domain' ) }</summary>
-						<p>{ __( 'Select the domain you want to transfer in the "My domains" section.' ) }</p>
+						<p>{ __( "Click on the name of the domain that you'd like to transfer." ) }</p>
 						<img
 							className="google-domains-transfer-instructions__image"
 							src={ pickDomainImgSrc }
 							loading="lazy"
-							alt={ __( 'Select the domain you want to transfer in the "My domains" section.' ) }
+							alt={ __( "Click on the name of the domain that you'd like to transfer." ) }
 							width={ 737 }
 							height={ 410 }
 						/>
