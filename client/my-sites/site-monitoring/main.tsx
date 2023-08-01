@@ -1,24 +1,28 @@
-import moment from 'moment';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { TimeDateChartPicker } from './date-time-charts-picker';
+import { TimeDateChartPicker, calculateTimeRange } from './date-time-charts-picker';
 import UplotChartMetrics from './metrics-chart';
 import { MetricsType, useSiteMetricsQuery } from './use-metrics-query';
-
-function calculateTimeRange(): { start: number; end: number } {
-	const now = moment().unix();
-	const start = moment().subtract( 24, 'hours' ).unix();
-	const end = now;
-
-	return { start, end };
-}
 
 export function useSiteMetricsData( metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
 
+	// State to store the selected time range
+	const [ selectedTimeRange, setSelectedTimeRange ] = useState( null );
+
+	// Function to handle the time range selection
+	const handleTimeRangeChange = ( timeRange ) => {
+		setSelectedTimeRange( timeRange );
+	};
+
+	// Call the `calculateTimeRange` function with the default selected option '1'
+	const defaultTimeRange = calculateTimeRange( '1' );
+
 	// Calculate the startTime and endTime using useMemo to memoize the result
-	const { start, end } = useMemo( () => calculateTimeRange(), [] );
+	const { start, end } = useMemo( () => {
+		return selectedTimeRange || defaultTimeRange;
+	}, [ defaultTimeRange, selectedTimeRange ] );
 
 	const { data } = useSiteMetricsQuery( siteId, {
 		start,
@@ -53,15 +57,16 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 
 	return {
 		formattedData,
+		handleTimeRangeChange,
 	};
 }
 export function SiteMetrics() {
-	const { formattedData } = useSiteMetricsData();
+	const { formattedData, handleTimeRangeChange } = useSiteMetricsData();
 
 	return (
 		<>
 			<h2>Atomic site</h2>
-			<TimeDateChartPicker></TimeDateChartPicker>
+			<TimeDateChartPicker onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartPicker>
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
 		</>
 	);

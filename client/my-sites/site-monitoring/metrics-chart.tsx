@@ -51,12 +51,12 @@ export default function UplotChartMetrics( {
 				...DEFAULT_DIMENSIONS,
 				// Set incoming dates as UTC.
 				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
-				fmtDate: () => {
-					return ( date ) => {
-						const chatHour = formatChatHour( date );
-						return `${ chatHour }`;
-					};
-				},
+				//	fmtDate: () => {
+				//		return ( date ) => {
+				//			const chatHour = formatChatHour( date );
+				//			return `${ chatHour }`;
+				//		};
+				//	},
 				axes: [
 					{
 						// x-axis
