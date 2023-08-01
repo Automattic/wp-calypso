@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
-import { isDefaultGlobalStylesVariationSlug } from '@automattic/global-styles';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
@@ -8,6 +7,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG, DEFAULT_ASSEMBLER_DESIGN } from '../constants';
 import {
+	asyncIsDefaultGlobalStylesVariationSlug,
 	getDesignPreviewUrl,
 	getMShotOptions,
 	isBlankCanvasDesign,
@@ -154,7 +154,9 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 
 	const { style_variations = [] } = design;
 	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
-	const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
+	const isDefaultVariation = asyncIsDefaultGlobalStylesVariationSlug(
+		selectedStyleVariation?.slug
+	);
 
 	const isLockedStyleVariation =
 		( ! design.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
