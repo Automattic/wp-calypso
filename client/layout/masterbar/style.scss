@@ -881,7 +881,6 @@ a.masterbar__quick-language-switcher {
 
 	@include breakpoint-deprecated( "<480px" ) {
 		flex: 1;
-		margin-left: 0;
 	}
 	.masterbar__wpcom-wordmark {
 		color: var(--color-checkout-masterbar-text);
@@ -936,6 +935,10 @@ a.masterbar__quick-language-switcher {
 .masterbar__item-help-icons {
 	display: flex;
 
+	div {
+		order: 1;
+	}
+
 	@include breakpoint-deprecated( "<480px") {
 		flex: 1;
 		justify-content: flex-end;
@@ -946,7 +949,7 @@ a.masterbar__quick-language-switcher {
 
 		@include breakpoint-deprecated( "<480px") {
 			display: flex;
-			order: 1;
+			order: 0;
 		}
 	}
 }
