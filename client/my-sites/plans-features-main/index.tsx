@@ -286,7 +286,7 @@ const PlansFeaturesMain = ( {
 		paidDomainName
 	);
 
-	const isFreeDomainFreePlanModalActive = config.isEnabled( 'onboarding-pm/free-free-modal' );
+	const isFreeDomainFreePlanModalEnabled = config.isEnabled( 'onboarding-pm/free-free-modal' );
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -326,7 +326,7 @@ const PlansFeaturesMain = ( {
 			if ( paidDomainName ) {
 				toggleIsFreePlanPaidDomainDialogOpen();
 				return;
-			} else if ( freeSubdomain && isFreeDomainFreePlanModalActive ) {
+			} else if ( freeSubdomain && isFreeDomainFreePlanModalEnabled ) {
 				setIsFreeFreeUpsellOpen( true );
 				return;
 			}
