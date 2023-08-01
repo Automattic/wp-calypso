@@ -3,7 +3,6 @@ import { addQueryArgs } from '@wordpress/url';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
 export const setUpActionsForTasks = ( {
-	siteSlug,
 	tasks,
 	tracksData,
 	extraActions,
@@ -47,11 +46,6 @@ export const setUpActionsForTasks = ( {
 				case 'share_site':
 					action = () => {
 						setShareSiteModalIsOpen?.( true );
-					};
-					break;
-				case 'manage_subscribers':
-					action = () => {
-						window.location.assign( `/subscribers/${ siteSlug }` );
 					};
 					break;
 			}
