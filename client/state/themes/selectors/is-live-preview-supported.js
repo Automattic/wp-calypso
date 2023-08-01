@@ -92,7 +92,7 @@ export const isLivePreviewSupported = ( state, themeId, siteId ) => {
 	}
 
 	// A theme should be FullSiteEditing compatible to use Block Theme Previews.
-	if ( ! isFullSiteEditingTheme( state, themeId ) ) {
+	if ( ! isFullSiteEditingTheme( state, themeId, siteId ) ) {
 		return false;
 	}
 
