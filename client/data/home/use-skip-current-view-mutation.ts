@@ -29,7 +29,7 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 			);
 
 			const view_name = ( data as any ).view_name;
-			const multipleCardViews = [ 'VIEW_POST_PUBLISH', 'VIEW_SITE_SETUP' ];
+			const multipleCardViews = [ 'VIEW_POST_LAUNCH', 'VIEW_SITE_SETUP' ];
 			const isSingleCardView = multipleCardViews.indexOf( view_name ) === -1;
 
 			return await wp.req.post(
