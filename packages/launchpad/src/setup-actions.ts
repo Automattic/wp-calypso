@@ -1,4 +1,5 @@
 import { isMobile } from '@automattic/viewport';
+import { addQueryArgs } from '@wordpress/url';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
 export const setUpActionsForTasks = ( {
@@ -6,6 +7,7 @@ export const setUpActionsForTasks = ( {
 	tasks,
 	tracksData,
 	extraActions,
+	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
 	const { setShareSiteModalIsOpen } = extraActions || {};
@@ -30,58 +32,29 @@ export const setUpActionsForTasks = ( {
 	return sortedTasks.map( ( task: Task ) => {
 		let action: () => void;
 
-		switch ( task.id ) {
-			case 'site_title':
-				action = () => {
-					window.location.assign( `/settings/general/${ siteSlug }` );
-				};
-				break;
+		if ( uiContext === 'calypso' && task.calypso_path !== undefined ) {
+			let targetPath = task.calypso_path;
 
-			case 'domain_claim':
-			case 'domain_upsell':
-			case 'domain_customize':
-				action = () => {
-					window.location.assign( `/domains/add/${ siteSlug }` );
-				};
-				break;
-			case 'drive_traffic':
-				action = () => {
-					const url = isMobile()
-						? `/marketing/connections/${ siteSlug }`
-						: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
-					window.location.assign( url );
-				};
-				break;
-			case 'add_new_page':
-				action = () => {
-					window.location.assign( `/page/${ siteSlug }` );
-				};
-				break;
-			case 'edit_page':
-				action = () => {
-					window.location.assign( `/pages/${ siteSlug }` );
-				};
-				break;
-			case 'share_site':
-				action = () => {
-					setShareSiteModalIsOpen?.( true );
-				};
-				break;
-			case 'update_about_page':
-				action = () => {
-					window.location.assign( `/page/${ siteSlug }/${ task?.extra_data?.about_page_id }` );
-				};
-				break;
-			case 'customize_welcome_message':
-				action = () => {
-					window.location.assign( `/settings/reading/${ siteSlug }#newsletter-settings` );
-				};
-				break;
-			case 'manage_subscribers':
-				action = () => {
-					window.location.assign( `/subscribers/${ siteSlug }` );
-				};
-				break;
+			if ( task.id === 'drive_traffic' && ! isMobile() ) {
+				targetPath = addQueryArgs( targetPath, { tour: 'marketingConnectionsTour' } );
+			}
+
+			action = () => {
+				window.location.assign( targetPath );
+			};
+		} else {
+			switch ( task.id ) {
+				case 'share_site':
+					action = () => {
+						setShareSiteModalIsOpen?.( true );
+					};
+					break;
+				case 'manage_subscribers':
+					action = () => {
+						window.location.assign( `/subscribers/${ siteSlug }` );
+					};
+					break;
+			}
 		}
 
 		const actionDispatch = () => {
