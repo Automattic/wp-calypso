@@ -251,6 +251,7 @@ class Layout extends Component {
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
+			'is-reader-stream': this.props.isReaderStream,
 			'is-wccom-oauth-flow': isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom,
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
 			woo: this.props.isWooCoreProfilerFlow,
@@ -368,6 +369,10 @@ export default withCurrentRoute(
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
+		const isReaderStream =
+			currentRoute.startsWith( '/read' ) ||
+			currentRoute.startsWith( '/discover' ) ||
+			currentRoute.startsWith( '/activities/likes' );
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
@@ -410,6 +415,7 @@ export default withCurrentRoute(
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
+			isReaderStream,
 			isWooCoreProfilerFlow,
 			isEligibleForJITM,
 			oauth2Client,

@@ -371,3 +371,8 @@ body.is-focus-sites {
 		outline: 1px solid var(--color-sidebar-border);
 	}
 }
+
+// Ensure reader streams have the neutral background.
+.layout.is-reader-stream .layout__content {
+	background-color: var(--color-neutral-0);
+}
