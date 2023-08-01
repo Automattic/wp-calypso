@@ -229,10 +229,11 @@ export function FreeFreeDialog( {
 				</TextBox>
 				<TextBox>
 					{ translate(
-						'As a bonus, you will get a custom domain - {{strong}}like yourgroovydomain.com{{/strong}} - {{break}}{{/break}} free for the first year ({{suggestionPrice}}{{/suggestionPrice}} value).',
+						'As a bonus, you will get a custom domain - like {{strong}}{{italic}}yourgroovydomain.com{{/italic}}{{/strong}} - {{break}}{{/break}} free for the first year ({{suggestionPrice}}{{/suggestionPrice}} value).',
 						{
 							components: {
 								strong: <strong></strong>,
+								italic: <i></i>,
 								suggestionPrice: (
 									<LazyDisplayText
 										displayText={ formatCurrency( 12, currencyCode, {
