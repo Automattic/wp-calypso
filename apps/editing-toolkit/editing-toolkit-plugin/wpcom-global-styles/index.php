@@ -388,9 +388,10 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 
 	switch_to_blog( $blog_id );
 
-	$note = 'See https://wp.me/p7DVsv-fY6#comment-44778';
+	$note = 'Automated sticker. See https://wp.me/p7DVsv-fY6#comment-44778';
+	$user = 'a8c'; // A non-empty string avoids storing the current user as author of the sticker change.
 
-	add_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', $note, null, $blog_id );
+	add_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', $note, $user, $blog_id );
 
 	$global_styles_used = false;
 
@@ -408,7 +409,7 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 	}
 
 	if ( $global_styles_used ) {
-		add_blog_sticker( 'wpcom-premium-global-styles-exempt', $note, null, $blog_id );
+		add_blog_sticker( 'wpcom-premium-global-styles-exempt', $note, $user, $blog_id );
 	}
 
 	restore_current_blog();
@@ -662,13 +663,14 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 		 * in the Personal plan.
 		 */
 		$has_personal_plan = wpcom_site_has_personal_plan( $blog_id );
-		$note              = 'See https://wp.me/paYJgx-3yE';
+		$note              = 'Automated sticker. See https://wp.me/paYJgx-3yE';
+		$user              = 'a8c'; // A non-empty string avoids storing the current user as author of the sticker change.
 		if ( $has_personal_plan ) {
 			if ( ! wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
-				add_blog_sticker( 'wpcom-global-styles-personal-plan', $note, null, $blog_id );
+				add_blog_sticker( 'wpcom-global-styles-personal-plan', $note, $user, $blog_id );
 			}
 		} else {
-			remove_blog_sticker( 'wpcom-global-styles-personal-plan', $note, null, $blog_id );
+			remove_blog_sticker( 'wpcom-global-styles-personal-plan', $note, $user, $blog_id );
 		}
 		return $has_personal_plan;
 	}
