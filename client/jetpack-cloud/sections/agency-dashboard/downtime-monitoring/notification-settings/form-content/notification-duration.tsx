@@ -62,7 +62,7 @@ export default function NotificationDuration( {
 						{ duration.isPaid && (
 							<>
 								<FeatureRestrictionBadge restriction={ restriction } />
-								<UpgradeLink isInline />
+								{ restriction === 'upgrade_required' && <UpgradeLink isInline /> }
 							</>
 						) }
 					</SelectDropdown.Item>

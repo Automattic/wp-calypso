@@ -58,9 +58,11 @@ export default function SMSNotification( {
 					<div className="notification-settings__content-sub-heading">
 						{ translate( 'Set up text messages to send to one or more people.' ) }
 					</div>
-					<div>
-						<UpgradeLink />
-					</div>
+					{ restriction === 'upgrade_required' && (
+						<div>
+							<UpgradeLink />
+						</div>
+					) }
 				</div>
 			</div>
 			{ enableSMSNotification && (

@@ -27,7 +27,7 @@ export default function UpgradeLink( { isInline = false } ) {
 
 	return (
 		<Button
-			className={ classNames( 'upgrade-link', { 'upgrade-link__inline': isInline } ) }
+			className={ classNames( 'upgrade-link', { 'is-inline': isInline } ) }
 			borderless
 			compact
 			onClick={ handleOnClick }
