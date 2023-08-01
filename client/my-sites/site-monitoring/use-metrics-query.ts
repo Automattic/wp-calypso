@@ -97,6 +97,13 @@ export function useSiteMetricsQuery(
 	};
 
 	function buildQueryKey( siteId: number | null | undefined, params: SiteMetricsParams ) {
-		return [ siteId, params.start, params.end, params.metric, params.dimension ];
+		return [
+			'SITE_MONITORING_METRICS_QUERY',
+			siteId,
+			params.start,
+			params.end,
+			params.metric,
+			params.dimension,
+		];
 	}
 }
