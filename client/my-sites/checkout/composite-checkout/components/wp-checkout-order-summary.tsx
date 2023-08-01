@@ -37,6 +37,7 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
@@ -358,6 +359,8 @@ function CheckoutSummaryFeaturesList( props: {
 	const hasDomainTransferProduct = responseCart.products.some( ( product ) =>
 		isDomainTransfer( product )
 	);
+
+	usePresalesChat( 'wpcom', hasDomainTransferProduct );
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>

@@ -46,6 +46,7 @@ export default function useZendeskMessaging(
 				}
 				return;
 			}
+			window.zE( 'messenger', 'hide' );
 
 			setMessagingScriptLoaded( true );
 		}
