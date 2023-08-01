@@ -8,7 +8,6 @@ import {
 } from './constants';
 import { recordPageViewInFloodlight } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
-// import { loadParselyTracker } from './parsely';
 
 // Ensure setup has run.
 import './setup';
@@ -79,15 +78,6 @@ export async function retarget( urlPath ) {
 		debug( 'retarget: [AdRoll]' );
 		window.adRoll.trackPageview();
 	}
-
-	// Parsely
-	// if ( mayWeTrackByTracker( 'parsely' ) ) {
-	// 	debug( 'retarget: [Parsely]' );
-	// 	loadParselyTracker().then( ( res ) => {
-	// 		console.log( 'parsely loaded' );
-	// 	} );
-	// 	// window.parsely.trackPageview();
-	// }
 
 	// Rate limited retargeting (secondary trackers)
 

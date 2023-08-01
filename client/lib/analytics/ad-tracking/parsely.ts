@@ -3,6 +3,19 @@ import { mayWeInitTracker } from '../tracker-buckets';
 import { PARSLEY_SCRIPT_URL } from './constants';
 
 /**
+ * We'll be accessing PARSELY from the window object.
+ */
+declare global {
+	interface Window {
+		PARSELY: {
+			conversions: {
+				trackPurchase: ( label: string ) => void;
+			};
+		};
+	}
+}
+
+/**
  * Loads the Parsely script, if the user has consented to tracking,
  * and tracking is allowed by the current environment.
  *
