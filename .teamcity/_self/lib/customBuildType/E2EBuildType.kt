@@ -71,7 +71,6 @@ open class E2EBuildType(
 		val buildTriggers = buildTriggers
 		val buildDependencies = buildDependencies
 		val params = params
-		val addWpcomVcsRoot = addWpcomVcsRoot
 		val buildSteps = buildSteps
 
 		id( buildId )
@@ -88,9 +87,6 @@ open class E2EBuildType(
 
 		vcs {
 			root(Settings.WpCalypso)
-			if (addWpcomVcsRoot) {
-				root(AbsoluteId("wpcom"), "-:.")
-			}
 			cleanCheckout = true
 		}
 
