@@ -40,17 +40,3 @@ The `usePresalesChatWithOptions` hook provides a more readable and maintainable 
   - `skipEligibilityCheck: boolean` - If `true`, the hook will skip the check for chat eligibility. Defaults to `false`.
 
 This hook internally calls `usePresalesChat`, passing it the properties from the `options` object.
-
-## Example Usage
-
-Here is an example of how to use the `usePresalesChatWithOptions` hook:
-
-<!-- eslint-disable -->
-
-```javascript
-usePresalesChatWithOptions( 'jpGeneral', {
-	enabled: true,
-	skipAvailabilityCheck: false,
-	skipEligibilityCheck: true,
-} );
-```
