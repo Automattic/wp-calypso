@@ -275,6 +275,7 @@ const importFlow: Flow = {
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
 				case 'verifyEmail':
+				case 'migrationTrial':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 			}
 		};
