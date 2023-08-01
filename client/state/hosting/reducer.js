@@ -78,7 +78,7 @@ const phpVersion = ( state = null, { type, version } ) => {
 	return state;
 };
 
-const isFetchingWpVersion = ( state = null, { type } ) => {
+const isFetchingWpVersion = ( state = false, { type } ) => {
 	switch ( type ) {
 		case HOSTING_WP_VERSION_REQUEST:
 			return true;
