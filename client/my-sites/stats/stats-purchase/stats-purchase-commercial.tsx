@@ -40,7 +40,7 @@ const CommercialPurchase = ( {
 				) }
 				<Button
 					variant="link"
-					href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
+					href="https://jetpack.com/support/jetpack-stats/free-or-paid/"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
