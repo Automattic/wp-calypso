@@ -8,7 +8,7 @@ export {
 export {
 	publicToInternalLicenseSortField,
 	internalToPublicLicenseSortField,
-} from './lib/license-sorters';
+} from './lib/license-sort-fields';
 export { default as ensurePartnerPortalReturnUrl } from './lib/ensure-partner-portal-return-url';
 export { default as formatApiPartner } from './lib/format-api-partner';
 export { default as getProductTitle } from './lib/get-product-title';

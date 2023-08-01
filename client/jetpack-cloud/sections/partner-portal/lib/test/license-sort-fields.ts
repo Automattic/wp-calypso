@@ -2,7 +2,7 @@ import { LicenseSortField } from '../../types';
 import {
 	publicToInternalLicenseSortField,
 	internalToPublicLicenseSortField,
-} from '../license-sorters';
+} from '../license-sort-fields';
 
 const ALL_SORT_FIELD_MAPPINGS = [
 	{

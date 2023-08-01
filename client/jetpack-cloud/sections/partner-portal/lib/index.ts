@@ -5,7 +5,7 @@ export { publicToInternalLicenseFilter, internalToPublicLicenseFilter } from './
 export {
 	publicToInternalLicenseSortField,
 	internalToPublicLicenseSortField,
-} from './license-sorters';
+} from './license-sort-fields';
 export { default as ensurePartnerPortalReturnUrl } from './ensure-partner-portal-return-url';
 export { default as formatApiPartner } from './format-api-partner';
 export { default as getProductTitle } from './get-product-title';
