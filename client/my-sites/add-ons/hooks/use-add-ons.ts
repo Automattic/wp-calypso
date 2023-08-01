@@ -36,7 +36,7 @@ export interface AddOnMeta {
 	icon: JSX.Element;
 	featured?: boolean; // irrelevant to "featureSlugs"
 	name: string | null;
-	quantity?: number;
+	quantity?: number; // used for determining checkout costs for quantity based products
 	description: string | null;
 	displayCost: TranslateResult | null;
 	purchased?: boolean;
@@ -77,10 +77,11 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 		},
 		{
 			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 50 ),
 			icon: spaceUpgradeIcon,
 			quantity: 50,
 			name: translate( '50 GB Storage' ),
-			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
+			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE ),
 			description: translate(
 				'Make more space for high-quality photos, videos, and other media. '
 			),
@@ -89,10 +90,11 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 		},
 		{
 			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 100 ),
 			icon: spaceUpgradeIcon,
 			quantity: 100,
 			name: translate( '100 GB Storage' ),
-			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
+			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE ),
 			description: translate(
 				'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
 			),

@@ -15,6 +15,7 @@ import {
 	PlanSlug,
 	isWooExpressPlusPlan,
 	WPComStorageAddOnSlug,
+	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import {
 	JetpackLogo,
@@ -64,6 +65,7 @@ import PopularBadge from './components/popular-badge';
 import { StorageAddOnDropdown } from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
+import useAddOns from './hooks/use-add-ons';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject, DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
@@ -138,6 +140,7 @@ type PlanFeatures2023GridConnectedProps = {
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode } & {
 		isLargeCurrency: boolean;
+		storageAddOns: boolean;
 	};
 
 type PlanFeatures2023GridState = {
@@ -918,14 +921,14 @@ export class PlanFeatures2023Grid extends Component<
 					return null;
 				}
 
-				const { planName, storageOptions } = properties;
+				const { planName, storageFeatures, storageAddOns } = properties;
 
 				const shouldRenderStorageTitle =
-					storageOptions.length === 1 ||
-					( intervalType !== 'yearly' && storageOptions.length > 0 ) ||
-					( ! showUpgradeableStorage && storageOptions.length > 0 );
+					! storageAddOns ||
+					( intervalType !== 'yearly' && storageFeatures.length > 0 ) ||
+					( ! showUpgradeableStorage && storageFeatures.length > 0 );
 				const canUpgradeStorageForPlan =
-					storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
+					storageAddOns.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
 
 				const storageJSX = canUpgradeStorageForPlan ? (
 					<StorageAddOnDropdown
@@ -934,14 +937,14 @@ export class PlanFeatures2023Grid extends Component<
 						setSelectedStorage={ this.setSelectedStorage }
 					/>
 				) : (
-					storageOptions.map( ( storageOption ) => {
-						if ( ! storageOption?.isAddOn ) {
-							return (
-								<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-									{ getStorageStringFromFeature( storageOption?.slug ) }
-								</div>
-							);
-						}
+					storageFeatures.map( ( storageFeature: string ) => {
+						// if ( ! storageOption?.isAddOn ) {
+						return (
+							<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
+								{ getStorageStringFromFeature( storageFeature ) }
+							</div>
+						);
+						// }
 					} )
 				);
 
@@ -1112,7 +1115,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 					rawPrice,
 					isMonthlyPlan,
 					tagline,
-					storageOptions,
+					storageAddOns: ownProps.storageAddOns,
+					storageFeatures,
 					cartItemForPlan: getCartItemForPlan( plan ),
 					current: isCurrentPlan,
 					isVisible: visiblePlans.indexOf( plan ) !== -1,
@@ -1146,11 +1150,17 @@ const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 		props.visiblePlans
 	);
 
+	// TODO: Can move this into a high order component
+	const storageAddOns = useAddOns( props.siteId as number ).filter(
+		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
+	);
+
 	if ( props.isInSignup ) {
 		return (
 			<ConnectedPlanFeatures2023Grid
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				storageAddOns={ storageAddOns }
 			/>
 		);
 	}
@@ -1160,6 +1170,7 @@ const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 			<ConnectedPlanFeatures2023Grid
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				storageAddOns={ storageAddOns }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
