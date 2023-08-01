@@ -1,3 +1,5 @@
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
@@ -215,6 +217,7 @@ export interface DashboardDataContextInterface {
 		phoneNumbers: Array< string >;
 		refetchIfFailed: () => void;
 	};
+	products: APIProductFamilyProduct[];
 }
 
 export type AgencyDashboardFilterOption =
