@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	useSyncGlobalStylesUserConfig,
 	getVariationTitle,
@@ -19,7 +18,7 @@ import { useState, useRef, useMemo } from 'react';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
-import { activateOrInstallThenActivate, setActiveTheme } from 'calypso/state/themes/actions';
+import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
@@ -53,7 +52,6 @@ import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
-import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import type { FC } from 'react';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
@@ -74,7 +72,7 @@ const PatternAssembler = ( {
 	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
-	const { applyThemeWithPatterns, assembleSite } = useDispatch( SITE_STORE );
+	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect(
@@ -380,41 +378,33 @@ const PatternAssembler = ( {
 			return;
 		}
 
-		if ( isEnabled( 'pattern-assembler/logged-in-showcase' ) ) {
-			setPendingAction( () =>
-				Promise.resolve()
-					.then( () =>
-						reduxDispatch(
-							activateOrInstallThenActivate(
-								themeId,
-								site?.ID,
-								'assembler',
-								false,
-								false
-							) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
-						)
+		setPendingAction( () =>
+			Promise.resolve()
+				.then( () =>
+					reduxDispatch(
+						activateOrInstallThenActivate(
+							themeId,
+							site?.ID,
+							'assembler',
+							false,
+							false
+						) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 					)
-					.then( ( activeThemeStylesheet: string ) =>
-						assembleSite( siteSlugOrId, activeThemeStylesheet, {
-							homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
-							headerHtml: header?.html,
-							footerHtml: footer?.html,
-							globalStyles: syncedGlobalStylesUserConfig,
-							// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
-							// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
-							shouldResetContent: isNewSite && hasBlogPatterns,
-							// All sites using the assembler set the option wpcom_site_setup
-							siteSetupOption: design.is_virtual ? 'assembler-virtual-theme' : 'assembler',
-						} )
-					)
-			);
-		} else {
-			setPendingAction( () =>
-				applyThemeWithPatterns( siteSlugOrId, design, syncedGlobalStylesUserConfig ).then(
-					( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID, theme ) )
 				)
-			);
-		}
+				.then( ( activeThemeStylesheet: string ) =>
+					assembleSite( siteSlugOrId, activeThemeStylesheet, {
+						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
+						headerHtml: header?.html,
+						footerHtml: footer?.html,
+						globalStyles: syncedGlobalStylesUserConfig,
+						// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
+						// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
+						shouldResetContent: isNewSite && hasBlogPatterns,
+						// All sites using the assembler set the option wpcom_site_setup
+						siteSetupOption: design.is_virtual ? 'assembler-virtual-theme' : 'assembler',
+					} )
+				)
+		);
 
 		recordSelectedDesign( { flow, intent, design } );
 		submit?.();

@@ -38,6 +38,7 @@ export interface Purchase {
 	isRenewal: boolean;
 	meta?: string;
 	mostRecentRenewDate?: string;
+	ownershipId?: number;
 	partnerName: string | undefined;
 	partnerSlug: string | undefined;
 	payment: PurchasePayment | PurchasePaymentWithCreditCard | PurchasePaymentWithPayPal;
@@ -200,6 +201,7 @@ export interface RawPurchase {
 	is_renewable: boolean;
 	is_renewal: boolean;
 	meta: string | undefined;
+	ownership_id: number | undefined;
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
 	partner_key_id: number | undefined;

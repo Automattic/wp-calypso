@@ -27,6 +27,7 @@ import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import ManagePurchase from './manage-purchase';
+import { ManagePurchaseByOwnership } from './manage-purchase/manage-purchase-by-ownership';
 import PurchasesList from './purchases-list';
 import titles from './titles';
 import VatInfoPage from './vat-info';
@@ -203,6 +204,28 @@ export function managePurchase( context, next ) {
 	} );
 
 	context.primary = <ManagePurchasesWrapper />;
+	next();
+}
+
+export function managePurchaseByOwnership( context, next ) {
+	const ManagePurchasesByOwnershipWrapper = localize( () => {
+		const classes = 'manage-purchase';
+
+		return (
+			<PurchasesWrapper title={ titles.managePurchase }>
+				<Main wideLayout className={ classes }>
+					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<PageViewTracker
+						path="/me/purchases/:ownershipId"
+						title="Purchases > Manage Purchase by Ownership"
+					/>
+					<ManagePurchaseByOwnership ownershipId={ parseInt( context.params.ownershipId, 10 ) } />
+				</Main>
+			</PurchasesWrapper>
+		);
+	} );
+
+	context.primary = <ManagePurchasesByOwnershipWrapper />;
 	next();
 }
 

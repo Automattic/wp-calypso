@@ -55,4 +55,8 @@
 	.follow-button__label {
 		display: none;
 	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-right: 18px;
+	}
 }

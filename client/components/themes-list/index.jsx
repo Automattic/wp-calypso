@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { PatternAssemblerCta, usePatternAssemblerCtaData } from '@automattic/design-picker';
@@ -88,9 +87,6 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		} )
 	);
 
-	const isPatternAssemblerCTAEnabled =
-		! isLoggedIn || isEnabled( 'pattern-assembler/logged-in-showcase' );
-
 	const fetchNextPage = useCallback(
 		( options ) => {
 			props.fetchNextPage( options );
@@ -141,7 +137,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ isPatternAssemblerCTAEnabled && tabFilter !== 'my-themes' && props.themes.length > 0 && (
+			{ tabFilter !== 'my-themes' && props.themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
 			) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }

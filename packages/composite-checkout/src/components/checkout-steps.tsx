@@ -386,6 +386,7 @@ function CheckoutStepGroupWrapper( {
 export const CheckoutStep = ( {
 	activeStepContent,
 	activeStepFooter,
+	activeStepHeader,
 	completeStepContent,
 	titleContent,
 	stepId,
@@ -472,6 +473,7 @@ export const CheckoutStep = ( {
 			}
 			activeStepContent={
 				<>
+					{ activeStepHeader }
 					{ activeStepContent }
 					{ activeStepFooter }
 				</>

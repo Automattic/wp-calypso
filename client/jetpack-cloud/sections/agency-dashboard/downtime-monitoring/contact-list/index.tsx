@@ -10,6 +10,7 @@ import {
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
 import FeatureRestrictionBadge from '../feature-restriction-badge';
+import SMSCounter from '../notification-settings/form-content/sms-counter';
 import { RestrictionType } from '../types';
 import ContactListItem from './item';
 import { getContactActionEventName, getContactItemValue } from './utils';
@@ -64,6 +65,8 @@ export default function ContactList( {
 		}
 	}, [ items.length, type ] );
 
+	const showSMSCounter = false;
+
 	return (
 		<>
 			{ type === 'sms' && ! items.length && (
@@ -107,6 +110,7 @@ export default function ContactList( {
 						{ translate( 'Multiple email recipients is part of the Basic plan.' ) }
 					</div>
 				) }
+				{ showSMSCounter && type === 'sms' && <SMSCounter /> }
 			</div>
 		</>
 	);

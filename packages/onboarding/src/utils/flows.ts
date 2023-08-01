@@ -28,6 +28,7 @@ export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 export const DOMAIN_TRANSFER = 'domain-transfer';
+export const GOOGLE_TRANSFER = 'google-transfer';
 export const ONBOARDING_PM_FLOW = 'onboarding-media';
 
 export const isOnboardingPMFlow = ( flowName: string | null | undefined ) => {

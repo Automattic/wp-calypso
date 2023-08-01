@@ -36,10 +36,10 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	type,
 } ) => {
 	const {
-		data: { is_enabled: isLaunchpadKeepBuildingEnabled },
-	} = useLaunchpad( selectedSiteSlug, 'keep-building' );
+		data: { is_enabled: isLaunchpadIntentBuildEnabled },
+	} = useLaunchpad( selectedSiteSlug, 'intent-build' );
 	const launchpadScreen = useSiteOption( 'launchpad_screen' );
-	const redirectTo = isLaunchpadKeepBuildingEnabled ? 'home' : 'setup';
+	const redirectTo = isLaunchpadIntentBuildEnabled ? 'home' : 'setup';
 	const siteIntent = useSiteOption( 'site_intent' );
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];

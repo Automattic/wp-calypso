@@ -124,7 +124,6 @@
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"newsletter/stats": true,
-		"newsletter/subscribe-modal": true,
 		"oauth": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
@@ -139,7 +138,6 @@
 		"p2/p2-plus": true,
 		"page/export": true,
 		"pattern-assembler/all-patterns-category": true,
-		"pattern-assembler/logged-in-showcase": true,
 		"pattern-assembler/show-waitlist-patterns": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
@@ -198,7 +196,6 @@
 		"subscription-management/comments-list-controls": true,
 		"subscription-management-redirect-following": true,
 		"themes/atomic-homepage-replace": true,
-		"themes/block-theme-previews-poc": true,
 		"themes/block-theme-previews": true,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
@@ -213,6 +210,7 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"yolo/hosting-metrics-i1": true
 	}
 }

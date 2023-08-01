@@ -125,6 +125,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	externalUrl?: string;
 	displayTerm?: Duration;
 	displayPrice?: number;
+	displayPriceText?: TranslateResult | null;
 	displayCurrency?: string;
 	displayFrom?: boolean;
 	belowPriceText?: TranslateResult;
