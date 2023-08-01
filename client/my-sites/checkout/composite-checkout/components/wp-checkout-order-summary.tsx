@@ -522,6 +522,16 @@ function CheckoutSummaryAkismetProductFeatures( { product }: { product: Response
 	const translate = useTranslate();
 	const productFeatures = getAkismetProductFeatures( product, translate );
 
+	let yearlySavingsPercentage = 0;
+
+	// If intro offer is not present and there are only two variants, then show the yearly savings.
+	if ( ! product?.introductory_offer_terms?.enabled && product?.product_variants.length === 2 ) {
+		const monthlyCost = product.product_variants[ 0 ].price_before_discounts_integer;
+		const yearlyCost = product.product_variants[ 1 ].price_before_discounts_integer;
+
+		yearlySavingsPercentage = Math.round( ( 1 - yearlyCost / ( monthlyCost * 12 ) ) * 100 );
+	}
+
 	return (
 		<>
 			{ productFeatures.map( ( feature ) => {
@@ -532,6 +542,18 @@ function CheckoutSummaryAkismetProductFeatures( { product }: { product: Response
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
+
+			{ yearlySavingsPercentage > 0 && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="yearly_savings" />
+					{ translate( '%(yearlySavingsPercentage)s%% price reduction for yearly term', {
+						args: {
+							yearlySavingsPercentage,
+						},
+						comment: 'the percentage the user saves by buying yearly',
+					} ) }
+				</CheckoutSummaryFeaturesListItem>
+			) }
 		</>
 	);
 }
