@@ -160,11 +160,12 @@ export interface RowMetaData {
 	eventName: string | undefined;
 }
 
-export type PreferenceType = 'dismiss' | 'view';
+export type PreferenceType = 'dismiss' | 'view' | 'view_date';
 
 export type Preference = {
 	dismiss?: boolean;
 	view?: boolean;
+	view_date?: string;
 };
 
 export type StatusEventNames = {
