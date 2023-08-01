@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -47,11 +48,15 @@ class SiteIndicator extends Component {
 	showIndicator() {
 		const { siteIsAutomatedTransfer, siteIsJetpack, userCanManage } = this.props;
 
+		// Existing Jetpack Error UX was enabled only for non-Atomic Jetpack sites
+		// We want to enable it for all Jetpack sites, but keep it behind a feature flag
+		const isJetpackErrorUxEnabled = isEnabled( 'yolo/jetpack-error-ux-i1' );
+
 		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
 		return (
 			userCanManage &&
 			siteIsJetpack &&
-			! siteIsAutomatedTransfer &&
+			( ! siteIsAutomatedTransfer || isJetpackErrorUxEnabled ) &&
 			( this.hasUpdate() || this.hasError() )
 		);
 	}

@@ -44,3 +44,46 @@ export const requestConnectionStatus = ( siteId ) => {
 			} );
 	};
 };
+
+/**
+ * Request the Jetpack connection status for a certain site.
+ *
+ * It's a second version, using the new Jetpack connection health endpoint.
+ *
+ * @param  {number}       siteId  ID of the site.
+ * @returns {Function}          Action thunk to request the Jetpack connection status when called.
+ */
+export const requestConnectionStatusV2 = ( siteId ) => {
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_CONNECTION_STATUS_REQUEST,
+			siteId,
+		} );
+
+		return wp.req
+			.get( {
+				path: `/sites/${ siteId }/jetpack-connection-health`,
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( ( response ) => {
+				dispatch( {
+					type: SITE_CONNECTION_STATUS_RECEIVE,
+					siteId,
+					status: !! response.is_healthy,
+					error: response?.error,
+				} );
+
+				dispatch( {
+					type: SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
+					siteId,
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: SITE_CONNECTION_STATUS_REQUEST_FAILURE,
+					siteId,
+					error,
+				} );
+			} );
+	};
+};

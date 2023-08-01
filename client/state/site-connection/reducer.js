@@ -41,7 +41,23 @@ export const requesting = ( state = {}, action ) => {
 	return state;
 };
 
+export const errors = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_CONNECTION_STATUS_RECEIVE: {
+			const { siteId, error } = action;
+
+			return {
+				...state,
+				[ siteId ]: error,
+			};
+		}
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	items,
 	requesting,
+	errors,
 } );
