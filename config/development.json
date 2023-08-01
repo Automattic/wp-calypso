@@ -137,7 +137,6 @@
 		"onboarding/import-redesign": true,
 		"p2/p2-plus": true,
 		"page/export": true,
-		"pattern-assembler/all-patterns-category": true,
 		"pattern-assembler/show-waitlist-patterns": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
