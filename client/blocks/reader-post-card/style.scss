@@ -21,7 +21,6 @@
 	margin-bottom: 16px;
 	padding: 16px;
 	position: relative;
-	background: var(–studio-white);
 
 	@include breakpoint-deprecated( ">660px" ) {
 		border-bottom: 1px solid #e9e9ea;
