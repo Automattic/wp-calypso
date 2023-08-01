@@ -2,19 +2,27 @@ import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { TimeDateChartPicker } from './date-time-charts-picker';
 import UplotChartMetrics from './metrics-chart';
 import { MetricsType, useSiteMetricsQuery } from './use-metrics-query';
 
-export function useSiteMetricsData( start?: number, end?: number, metric?: MetricsType ) {
+function calculateTimeRange(): { start: number; end: number } {
+	const now = moment().unix();
+	const start = moment().subtract( 24, 'hours' ).unix();
+	const end = now;
+
+	return { start, end };
+}
+
+export function useSiteMetricsData( metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
 
-	// Calculate the startTime and endTime using useMemo
-	const startTime = useMemo( () => start || moment().subtract( 24, 'hours' ).unix(), [ start ] );
-	const endTime = useMemo( () => end || moment().unix(), [ end ] );
+	// Calculate the startTime and endTime using useMemo to memoize the result
+	const { start, end } = useMemo( () => calculateTimeRange(), [] );
 
 	const { data } = useSiteMetricsQuery( siteId, {
-		start: startTime,
-		end: endTime,
+		start,
+		end,
 		metric: metric || 'requests_persec',
 	} );
 
@@ -49,9 +57,11 @@ export function useSiteMetricsData( start?: number, end?: number, metric?: Metri
 }
 export function SiteMetrics() {
 	const { formattedData } = useSiteMetricsData();
+
 	return (
 		<>
 			<h2>Atomic site</h2>
+			<TimeDateChartPicker></TimeDateChartPicker>
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
 		</>
 	);
