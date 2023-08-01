@@ -137,7 +137,12 @@ const WebServerSettingsCard = ( {
 					<p className="web-server-settings-card__wp-version-description">
 						{ translate(
 							'Every WordPress.com site runs the latest WordPress version. ' +
-								'For testing purposes, you can switch to the beta version of the next WordPress release on your staging site.'
+								'For testing purposes, you can switch to the beta version of the next WordPress release on {{a}}your staging site{{/a}}.',
+							{
+								components: {
+									a: <a href="#staging-site" />,
+								},
+							}
 						) }
 					</p>
 				) }
