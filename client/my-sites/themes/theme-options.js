@@ -35,6 +35,8 @@ import {
 	isExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes,
 	isWpcomTheme,
+	getLivePreviewUrl,
+	isLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 
@@ -240,7 +242,17 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		} ),
 		action: tryAndCustomizeAction,
 		hideForTheme: ( state, themeId, siteId ) =>
+			// Hide the Try & Customize when the Live Preview is supported.
+			isLivePreviewSupported( state, themeId, siteId ) ||
 			! shouldShowTryAndCustomize( state, themeId, siteId ),
+	};
+
+	const livePreview = {
+		label: translate( 'Live Preview', {
+			comment: 'label for previewing a block theme',
+		} ),
+		getUrl: ( state, themeId, siteId ) => getLivePreviewUrl( state, themeId, siteId ),
+		hideForTheme: ( state, themeId, siteId ) => ! isLivePreviewSupported( state, themeId, siteId ),
 	};
 
 	const preview = {
@@ -287,6 +299,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 
 	return {
 		customize,
+		livePreview,
 		preview,
 		purchase,
 		subscribe,
