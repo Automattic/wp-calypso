@@ -10,6 +10,8 @@ import {
 
 const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( siteId && ! isRequestingSiteConnectionStatus( getState(), siteId ) ) {
+		// Existing Jetpack Error UX in the sidebar is enabled only for non-Atomic Jetpack sites, and we may
+		// enable it for all Jetpack sites at some point. For now, we want to use new API endpoint.
 		const isJetpackErrorUxEnabled = isEnabled( 'yolo/jetpack-error-ux-i1' );
 		if ( isJetpackErrorUxEnabled ) {
 			dispatch( requestConnectionStatusV2( siteId ) );
