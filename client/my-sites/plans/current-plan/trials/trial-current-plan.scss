@@ -1,7 +1,8 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/woo-commerce";
 
-body.is-section-plans.is-ecommerce-trial-plan {
+body.is-section-plans.is-ecommerce-trial-plan,
+body.is-section-plans.is-migration-trial-plan {
 
 	// Overwrite section nav styles so they look like the desktop version on mobile as well
 	.section-nav {
@@ -120,11 +121,11 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 		}
 
-		.e-commerce-trial-current-plan__banner-wrapper {
+		.trial-current-plan__banner-wrapper {
 			margin: 20px 0;
 		}
 
-		.e-commerce-trial-current-plan__section-title {
+		.trial-current-plan__section-title {
 			font-size: $font-title-medium;
 			text-align: center;
 			font-weight: 400;
@@ -143,7 +144,7 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			}
 		}
 
-		.e-commerce-trial-current-plan__section-subtitle {
+		.trial-current-plan__section-subtitle {
 			text-align: center;
 			font-size: $font-body;
 			color: var(--color-neutral-40);
@@ -156,7 +157,7 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			}
 		}
 
-		.e-commerce-trial-current-plan__included-wrapper {
+		.trial-current-plan__included-wrapper {
 			display: flex;
 			flex-flow: row wrap;
 			list-style: none;
@@ -166,7 +167,7 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			@media (max-width: $break-mobile) {
 				padding: 0 20px;
 
-				.e-commerce-trial-current-plan__included-view-all {
+				.trial-current-plan__included-view-all {
 					color: var(--color-accent);
 					font-size: $woo-font-body-extra-small;
 					border: 0;
@@ -182,7 +183,7 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			}
 		}
 
-		.e-commerce-trial-current-plan__more-wrapper {
+		.trial-current-plan__more-wrapper {
 			display: flex;
 			flex-flow: row wrap;
 			list-style: none;
@@ -197,7 +198,7 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			}
 		}
 
-		.e-commerce-trial-current-plan__cta-wrapper {
+		.trial-current-plan__cta-wrapper {
 			text-align: center;
 			margin-bottom: 30px;
 
