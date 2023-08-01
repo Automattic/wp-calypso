@@ -72,6 +72,10 @@ function useMessagingBindings( hasActiveChats: boolean, isMessagingScriptLoaded:
 
 const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -102,7 +106,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { hasActiveChats, isEligibleForChat } = useChatStatus( 'wpcom_messaging', false );
 	const { isMessagingScriptLoaded } = useZendeskMessaging(
 		'zendesk_support_chat_key',
-		isEligibleForChat || hasActiveChats,
+		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
 		isEligibleForChat && hasActiveChats
 	);
 
