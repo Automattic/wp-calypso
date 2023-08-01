@@ -44,7 +44,7 @@ import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import usePlanUpgradeabilityCheck from './hooks/use-plan-upgradeability-check';
-import useSuggestedFreeDomainFromPaidDomain from './hooks/use-suggested-free-domain-from-paid-domain';
+import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type { IntervalType } from './types';
 import type { PlansIntent } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import type { DomainSuggestion } from '@automattic/data-stores';
@@ -73,6 +73,8 @@ export interface PlansFeaturesMainProps {
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
 	freeSubdomain?: string;
+	siteTitle?: string;
+	username?: string;
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: DomainSuggestion ) => void;
@@ -233,6 +235,8 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 const PlansFeaturesMain = ( {
 	paidDomainName,
 	freeSubdomain,
+	siteTitle,
+	username,
 	flowName,
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
@@ -326,7 +330,7 @@ const PlansFeaturesMain = ( {
 			if ( paidDomainName ) {
 				toggleIsFreePlanPaidDomainDialogOpen();
 				return;
-			} else if ( freeSubdomain && isFreeDomainFreePlanModalEnabled ) {
+			} else if ( isFreeDomainFreePlanModalEnabled ) {
 				setIsFreeFreeUpsellOpen( true );
 				return;
 			}
@@ -400,7 +404,7 @@ const PlansFeaturesMain = ( {
 	}
 
 	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
-		useSuggestedFreeDomainFromPaidDomain( paidDomainName );
+		useGetFreeSubdomainSuggestion( paidDomainName || siteTitle || username || 'wpsite' );
 
 	const planTypeSelectorProps = {
 		basePlansPath,
@@ -452,17 +456,24 @@ const PlansFeaturesMain = ( {
 					} }
 				/>
 			) }
-			{ freeSubdomain && isFreeFreeUpsellOpen && (
+			{ isFreeFreeUpsellOpen && (
 				<FreeFreeDialog
 					suggestedPlanSlug={ PLAN_PERSONAL }
 					freeSubdomain={ freeSubdomain }
+					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 					onClose={ () => setIsFreeFreeUpsellOpen( false ) }
 					onFreePlanSelected={ () => {
 						onUpgradeClick?.( null );
+						if ( ! freeSubdomain && wpcomFreeDomainSuggestion.result ) {
+							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
+						}
 					} }
 					onPlanSelected={ () => {
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
 						onUpgradeClick?.( cartItemForPlan );
+						if ( ! freeSubdomain && wpcomFreeDomainSuggestion.result ) {
+							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
+						}
 					} }
 				/>
 			) }

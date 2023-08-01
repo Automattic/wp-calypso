@@ -155,15 +155,16 @@ export class PlansStep extends Component {
 			);
 		}
 		const { signupDependencies } = this.props;
-		const { siteUrl: freeSubdomain, domainItem } = signupDependencies;
+		const { siteUrl, domainItem, siteTitle, username } = signupDependencies;
 		const paidDomainName = domainItem?.meta;
-
 		return (
 			<div>
 				{ errorDisplay }
 				<PlansFeaturesMain
 					paidDomainName={ paidDomainName }
-					freeSubdomain={ freeSubdomain }
+					freeSubdomain={ ! domainItem ? siteUrl : undefined }
+					siteTitle={ siteTitle }
+					username={ username }
 					siteId={ selectedSite?.ID }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }

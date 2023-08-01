@@ -1,15 +1,19 @@
 import { domainProductSlugs, getPlan, PlanSlug } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon } from '@automattic/components';
+import { DomainSuggestion } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { DialogContainer } from './free-plan-paid-domain-dialog';
+import { LoadingPlaceHolder } from './loading-placeholder';
+import type { TranslateResult } from 'i18n-calypso';
 
 export const Heading = styled.div`
 	font-family: Recoleta;
@@ -100,6 +104,22 @@ const CrossIcon = styled( Gridicon )`
 	color: #e53e3e;
 `;
 
+const LoadingPlaceHolderText = styled( LoadingPlaceHolder )`
+	width: 80px;
+	display: inline-block;
+	border-radius: 0;
+`;
+
+function LazyDisplayText( {
+	displayText = '',
+	isLoading,
+}: {
+	displayText?: TranslateResult;
+	isLoading: boolean;
+} ) {
+	return isLoading || ! displayText ? <LoadingPlaceHolderText /> : <>{ displayText }</>;
+}
+
 /**
  * Adds a dialog to the free plan selection flow that explains the benefits of the paid plan
  * The FreeFreeDialog can be read as the modal to show when you
@@ -108,12 +128,14 @@ const CrossIcon = styled( Gridicon )`
  */
 export function FreeFreeDialog( {
 	freeSubdomain,
+	wpcomFreeDomainSuggestion,
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
 	suggestedPlanSlug,
 }: {
-	freeSubdomain: string;
+	freeSubdomain?: string;
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	onClose: () => void;
 	onFreePlanSelected: () => void;
 	onPlanSelected: () => void;
@@ -170,12 +192,19 @@ export function FreeFreeDialog( {
 						</div>
 						<TextBox>
 							{ translate(
-								'{{strong}}No free custom domain:{{/strong}} Your site will be shown to visitors as {{strong}}%(freeSubdomain)s{{/strong}}',
+								'{{strong}}No free custom domain:{{/strong}} Your site will be shown to visitors as {{strong}}{{subdomain}}{{/subdomain}}{{/strong}}',
 								{
-									args: {
-										freeSubdomain,
+									components: {
+										strong: <strong></strong>,
+										subdomain: (
+											<LazyDisplayText
+												displayText={
+													freeSubdomain ?? wpcomFreeDomainSuggestion.result?.domain_name
+												}
+												isLoading={ wpcomFreeDomainSuggestion.isLoading }
+											/>
+										),
 									},
-									components: { strong: <strong></strong> },
 								}
 							) }
 						</TextBox>
