@@ -26,6 +26,7 @@ import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-ho
 import getRequest from 'calypso/state/selectors/get-request';
 import { isFetchingAtomicHostingGeoAffinity } from 'calypso/state/selectors/is-fetching-atomic-hosting-geo-affinity';
 import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fetching-atomic-hosting-wp-version';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -57,6 +58,7 @@ const WebServerSettingsCard = ( {
 	isUpdatingPhpVersion,
 	isUpdatingStaticFile404,
 	isUpdatingWpVersion,
+	isWpcomStagingSite,
 	siteId,
 	geoAffinity,
 	staticFile404,
@@ -99,33 +101,45 @@ const WebServerSettingsCard = ( {
 		return (
 			<FormFieldset>
 				<FormLabel>{ translate( 'WordPress version' ) }</FormLabel>
-				<FormSelect
-					disabled={ disabled || isUpdatingWpVersion }
-					className="web-server-settings-card__wp-version-select"
-					onChange={ ( event ) => setSelectedWpVersion( event.target.value ) }
-					value={ selectedWpVersionValue }
-				>
-					{ getWpVersions().map( ( option ) => {
-						return (
-							<option
-								disabled={ option.value === wpVersion }
-								value={ option.value }
-								key={ option.label }
+				{ isWpcomStagingSite && (
+					<>
+						<FormSelect
+							disabled={ disabled || isUpdatingWpVersion }
+							className="web-server-settings-card__wp-version-select"
+							onChange={ ( event ) => setSelectedWpVersion( event.target.value ) }
+							value={ selectedWpVersionValue }
+						>
+							{ getWpVersions().map( ( option ) => {
+								return (
+									<option
+										disabled={ option.value === wpVersion }
+										value={ option.value }
+										key={ option.label }
+									>
+										{ option.label }
+									</option>
+								);
+							} ) }
+						</FormSelect>
+						{ ! isWpVersionButtonDisabled && (
+							<Button
+								className="web-server-settings-card__wp-set-version"
+								onClick={ () => updateWpVersion( siteId, selectedWpVersion ) }
+								busy={ isUpdatingWpVersion }
+								disabled={ isUpdatingWpVersion }
 							>
-								{ option.label }
-							</option>
-						);
-					} ) }
-				</FormSelect>
-				{ ! isWpVersionButtonDisabled && (
-					<Button
-						className="web-server-settings-card__wp-set-version"
-						onClick={ () => updateWpVersion( siteId, selectedWpVersion ) }
-						busy={ isUpdatingWpVersion }
-						disabled={ isUpdatingWpVersion }
-					>
-						<span>{ translate( 'Update WordPress version' ) }</span>
-					</Button>
+								<span>{ translate( 'Update WordPress version' ) }</span>
+							</Button>
+						) }
+					</>
+				) }
+				{ ! isWpcomStagingSite && (
+					<p className="web-server-settings-card__wp-version-description">
+						{ translate(
+							'Every WordPress.com site runs the latest WordPress version. ' +
+								'For testing purposes, you can switch to the next WordPress beta on your staging site.'
+						) }
+					</p>
 				) }
 			</FormFieldset>
 		);
@@ -389,6 +403,7 @@ const WebServerSettingsCard = ( {
 export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
+		const isWpcomStagingSite = isSiteWpcomStaging( state, siteId );
 		const geoAffinity = getAtomicHostingGeoAffinity( state, siteId );
 		const phpVersion = getAtomicHostingPhpVersion( state, siteId );
 		const wpVersion = getAtomicHostingWpVersion( state, siteId );
@@ -405,6 +420,7 @@ export default connect(
 				getRequest( state, updateAtomicStaticFile404( siteId, null ) )?.isLoading ?? false,
 			isUpdatingWpVersion:
 				getRequest( state, updateAtomicWpVersion( siteId, null ) )?.isLoading ?? false,
+			isWpcomStagingSite,
 			siteId,
 			geoAffinity,
 			staticFile404,
