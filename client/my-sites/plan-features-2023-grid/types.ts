@@ -9,7 +9,7 @@ export type TransformedFeatureObject = FeatureObject & {
 
 export type StorageOption = {
 	slug: string;
-	planDefault: boolean;
+	isAddOn: boolean;
 	featureObject: FeatureObject;
 };
 

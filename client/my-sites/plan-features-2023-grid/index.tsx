@@ -935,7 +935,7 @@ export class PlanFeatures2023Grid extends Component<
 					/>
 				) : (
 					storageOptions.map( ( storageOption ) => {
-						if ( storageOption?.planDefault ) {
+						if ( ! storageOption?.isAddOn ) {
 							return (
 								<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
 									{ getStorageStringFromFeature( storageOption?.slug ) }
@@ -1104,7 +1104,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 					return {
 						slug: featureSlug,
-						planDefault: Boolean( featureObject?.planDefault ),
+						isAddOn: Boolean( featureObject?.isAddOn ),
 						featureObject: featureObject,
 					};
 				} );

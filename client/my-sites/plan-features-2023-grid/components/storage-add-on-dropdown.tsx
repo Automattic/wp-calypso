@@ -34,9 +34,7 @@ export const StorageAddOnDropdown = ( {
 		[]
 	);
 
-	const defaultStorageOption = storageOptions.find(
-		( storageOption ) => storageOption?.planDefault
-	);
+	const defaultStorageOption = storageOptions.find( ( storageOption ) => ! storageOption?.isAddOn );
 	const selectedOptionKey = selectedStorage[ planName ] || defaultStorageOption?.slug || '';
 	const selectedOption = {
 		key: selectedOptionKey,

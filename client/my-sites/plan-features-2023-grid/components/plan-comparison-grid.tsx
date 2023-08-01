@@ -852,10 +852,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		let previousPlan = null;
 		const planFeatureMap: Record< string, Set< string > > = {};
 		const conditionalFeatureMap: Record< string, Set< string > > = {};
-		const planStorageOptionsMap: Record<
-			string,
-			{ slug: string; planDefault: boolean; feature: FeatureObject } | undefined
-		> = {};
+		const planStorageOptionsMap: Record< string, StorageOption | undefined > = {};
 
 		for ( const plan of planProperties ?? [] ) {
 			const { planName } = plan;
@@ -891,7 +888,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				] );
 			}
 			previousPlan = planName;
-			const storageOption = plan.storageOptions.find( ( option ) => option.planDefault );
+			const storageOption = plan.storageOptions.find( ( option ) => ! option.isAddOn );
 			planStorageOptionsMap[ planName ] = storageOption;
 
 			conditionalFeatureMap[ planName ] = new Set(
