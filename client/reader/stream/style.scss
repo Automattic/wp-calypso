@@ -667,7 +667,7 @@
 				width: 225px;
 			}
 			.stream__two-column &::after {
-				@include long-content-fade( $size: 5% );
+				@include long-content-fade( $size: 5%, $color: var(--color-neutral-0) );
 			}
 		}
 	}
