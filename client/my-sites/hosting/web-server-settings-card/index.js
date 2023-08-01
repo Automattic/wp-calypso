@@ -229,7 +229,7 @@ const WebServerSettingsCard = ( {
 			<FormFieldset>
 				<FormLabel>{ translate( 'WordPress version' ) }</FormLabel>
 				<FormSelect
-					disabled={ disabled || isUpdatingPhpVersion }
+					disabled={ disabled || isUpdatingWpVersion }
 					className="web-server-settings-card__wp-version-select"
 					onChange={ ( event ) => setSelectedWpVersion( event.target.value ) }
 					value={ selectedWpVersionValue }
