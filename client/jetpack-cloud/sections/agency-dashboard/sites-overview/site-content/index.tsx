@@ -7,12 +7,12 @@ import Pagination from 'calypso/components/pagination';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { addQueryArgs } from 'calypso/lib/url';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
 import {
 	useDashboardShowLargeScreen,
 	useJetpackAgencyDashboardRecordTrackEvent,
 } from '../../hooks';
+import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
@@ -42,6 +42,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 
 	const { isBulkManagementActive, currentLicenseInfo, hideLicenseInfo } =
 		useContext( SitesOverviewContext );
+	const { products } = useContext( DashboardDataContext );
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, ! isMobile );
 
@@ -56,8 +57,6 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 	const isLargeScreen = useDashboardShowLargeScreen( siteTableRef, ref );
 
 	const firstColumn = siteColumns[ 0 ];
-
-	const { data: products } = useProductsQuery();
 
 	const currentLicenseProductSlug = currentLicenseInfo
 		? getProductSlugFromProductType( currentLicenseInfo )
