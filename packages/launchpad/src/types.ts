@@ -59,5 +59,5 @@ export interface LaunchpadTaskActionsProps {
 	extraActions?: {
 		setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
 	};
-	uiContext: 'calypso';
+	uiContext?: 'calypso';
 }
