@@ -18,10 +18,12 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
 	const step2Text = useHasEnTranslation()(
-		'Select the domain you want to transfer in the "My domains" section.'
+		'Click on the name of the domain that you\'d like to transfer in the "My domains" section.'
 	)
-		? __( 'Select the domain you want to transfer in the "My domains" section.' )
-		: __( "Click on the name of the domain that you'd like to transfer." );
+		? __(
+				'Click on the name of the domain that you\'d like to transfer in the "My domains" section.'
+		  )
+		: __( 'Select the domain you want to transfer in the "My domains" section.' );
 
 	return (
 		<>
