@@ -163,7 +163,7 @@ export function FreeFreeDialog( {
 						</div>
 						<TextBox>
 							{ translate(
-								'{{strong}}No free custom domain:{{/strong}} Your site will be shown to visitors as {{strong}}[%(freeSubdomain)s]{{/strong}}',
+								'{{strong}}No free custom domain:{{/strong}} Your site will be shown to visitors as {{strong}}%(freeSubdomain)s{{/strong}}',
 								{
 									args: {
 										freeSubdomain,
