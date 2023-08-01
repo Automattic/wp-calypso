@@ -54,6 +54,7 @@ import {
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -174,6 +175,8 @@ const allAkismetFeatures = new Set(
 	}, [] )
 );
 
+const queryClient = new QueryClient();
+
 describe( 'WPCheckoutOrderSummary', () => {
 	let container: HTMLDivElement | null;
 	let MyCheckoutSummary: FC< { cartChanges: Partial< ResponseCart > } >;
@@ -232,7 +235,11 @@ describe( 'WPCheckoutOrderSummary', () => {
 					products: [ product ],
 				};
 
-				render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
+				render(
+					<QueryClientProvider client={ queryClient }>
+						<MyCheckoutSummary cartChanges={ cartChanges } />
+					</QueryClientProvider>
+				);
 
 				await waitFor( () => {
 					productFeatures.map( ( feature ) => {
@@ -260,7 +267,11 @@ describe( 'WPCheckoutOrderSummary', () => {
 				products: allAkismetProducts,
 			};
 
-			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
+			render(
+				<QueryClientProvider client={ queryClient }>
+					<MyCheckoutSummary cartChanges={ cartChanges } />
+				</QueryClientProvider>
+			);
 
 			await waitFor( () => {
 				allAkismetFeatures.forEach( ( feature ) => {
@@ -272,7 +283,11 @@ describe( 'WPCheckoutOrderSummary', () => {
 		test( 'No feature list items show up if the cart is empty', async () => {
 			const cartChanges = { products: [] };
 
-			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
+			render(
+				<QueryClientProvider client={ queryClient }>
+					<MyCheckoutSummary cartChanges={ cartChanges } />
+				</QueryClientProvider>
+			);
 
 			await waitFor( async () => {
 				allAkismetFeatures.forEach( ( feature ) => {
@@ -294,7 +309,11 @@ describe( 'WPCheckoutOrderSummary', () => {
 					products: [ product ],
 				};
 
-				render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
+				render(
+					<QueryClientProvider client={ queryClient }>
+						<MyCheckoutSummary cartChanges={ cartChanges } />
+					</QueryClientProvider>
+				);
 
 				await waitFor( () => {
 					productFeatures.map( ( feature ) => {
@@ -321,7 +340,11 @@ describe( 'WPCheckoutOrderSummary', () => {
 				products: allJetpackProducts,
 			};
 
-			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
+			render(
+				<QueryClientProvider client={ queryClient }>
+					<MyCheckoutSummary cartChanges={ cartChanges } />
+				</QueryClientProvider>
+			);
 
 			await waitFor( async () => {
 				allJetpackFeatures.forEach( ( feature ) => {
@@ -333,7 +356,11 @@ describe( 'WPCheckoutOrderSummary', () => {
 		test( 'No feature list items show up if the cart is empty', async () => {
 			const cartChanges = { products: [] };
 
-			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
+			render(
+				<QueryClientProvider client={ queryClient }>
+					<MyCheckoutSummary cartChanges={ cartChanges } />
+				</QueryClientProvider>
+			);
 
 			await waitFor( async () => {
 				allJetpackFeatures.forEach( ( feature ) => {
