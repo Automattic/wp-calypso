@@ -1,6 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { selectAlphabeticallySortedProductOptions } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import selectAlphabeticallySortedProductOptions from 'calypso/jetpack-cloud/sections/partner-portal/lib/select-alphabetically-sorted-product-options';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
