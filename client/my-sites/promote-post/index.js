@@ -1,5 +1,6 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { addQueryArgs } from 'calypso/lib/url';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import {
 	campaignDetails,
@@ -41,6 +42,18 @@ export default () => {
 	);
 
 	promotePage( getAdvertisingDashboardPath( '/campaigns/:campaignId/:site?' ), campaignDetails );
+
+	// Compatibility: Redirects request from clients that are using the old navigation style
+	page( getAdvertisingDashboardPath( '/:site/campaigns/:campaignId' ), ( context ) => {
+		const { site, campaignId } = context.params;
+		const urlQueryArgs = context.query;
+		page.redirect(
+			addQueryArgs(
+				urlQueryArgs,
+				getAdvertisingDashboardPath( `/campaigns/${ campaignId }/${ site }` )
+			)
+		);
+	} );
 
 	promotePage( getAdvertisingDashboardPath( '/promote/:item?/:site?' ), promoteWidget );
 

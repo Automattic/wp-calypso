@@ -1,5 +1,6 @@
 import page from 'page';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
+import { addQueryArgs } from 'calypso/lib/url';
 import CampaignItemPage from 'calypso/my-sites/promote-post-i2/components/campaign-item-page';
 import PromotedPostsRedesignI2, { TAB_OPTIONS } from 'calypso/my-sites/promote-post-i2/main';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -10,7 +11,10 @@ import { getAdvertisingDashboardPath } from './utils';
 export const checkValidTabInNavigation = ( context, next ) => {
 	const { site, tab } = context.params;
 	if ( site && tab && ! TAB_OPTIONS.includes( tab ) ) {
-		return page.redirect( getAdvertisingDashboardPath( `/${ site }/${ tab }` ) );
+		const urlQueryArgs = context.query;
+		return page.redirect(
+			addQueryArgs( urlQueryArgs, getAdvertisingDashboardPath( `/${ site }/${ tab }` ) )
+		);
 	}
 
 	next();

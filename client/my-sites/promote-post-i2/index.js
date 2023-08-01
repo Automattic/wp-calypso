@@ -1,6 +1,6 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { getSiteFragment } from 'calypso/lib/route';
+import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import {
@@ -61,6 +61,17 @@ export default () => {
 	);
 
 	promotePage( getAdvertisingDashboardPath( '/campaigns/:campaignId/:site?' ), campaignDetails );
+
+	page( getAdvertisingDashboardPath( '/:site/campaigns/:campaignId' ), ( context ) => {
+		const { site, campaignId } = context.params;
+		const urlQueryArgs = context.query;
+		page.redirect(
+			addQueryArgs(
+				urlQueryArgs,
+				getAdvertisingDashboardPath( `/campaigns/${ campaignId }/${ site }` )
+			)
+		);
+	} );
 
 	promotePage( getAdvertisingDashboardPath( '/promote/:item?/:site?' ), promoteWidget );
 
