@@ -164,24 +164,22 @@ export function FreeFreeDialog( {
 			<DialogContainer>
 				<Heading>{ translate( "Don't miss out" ) }</Heading>
 				<TextBox>
-					{ translate( 'With a Free plan, you miss out on a lot of great features:' ) }
+					{ translate( "With a Free plan, you'll miss out on a lot of great features:" ) }
 				</TextBox>
 				<List>
 					<ListItem>
 						<div>
 							<CrossIcon icon="cross" size={ 24 } />
 						</div>
-						<TextBox bold>
-							No free custom domain: Your site will be shown to visitors as { freeSubdomain }
-						</TextBox>
-					</ListItem>
-					<ListItem>
-						<div>
-							<CrossIcon icon="cross" size={ 24 } />
-						</div>
-						<TextBox bold>
+						<TextBox>
 							{ translate(
-								'No ad-free experience: Your visitors will see external ads on your site.'
+								'{{strong}}No free custom domain:{{/strong}} Your site will be shown to visitors as %(freeSubdomain)s',
+								{
+									args: {
+										freeSubdomain,
+									},
+									components: { strong: <strong></strong> },
+								}
 							) }
 						</TextBox>
 					</ListItem>
@@ -189,17 +187,38 @@ export function FreeFreeDialog( {
 						<div>
 							<CrossIcon icon="cross" size={ 24 } />
 						</div>
-						<TextBox bold>
-							{ translate( 'No unlimited professional customer support (only community forums)' ) }
+						<TextBox>
+							{ translate(
+								'{{strong}}No ad-free experience:{{/strong}} Your visitors will see external ads on your site.',
+								{
+									components: { strong: <strong></strong> },
+								}
+							) }
 						</TextBox>
 					</ListItem>
 					<ListItem>
 						<div>
 							<CrossIcon icon="cross" size={ 24 } />
 						</div>
-						<TextBox bold>
+						<TextBox>
 							{ translate(
-								'No extra storage. You only get 1GB for photos, videos, media, and documents.'
+								'{{strong}}No unlimited professional customer support{{/strong}} (only community forums)',
+								{
+									components: { strong: <strong></strong> },
+								}
+							) }
+						</TextBox>
+					</ListItem>
+					<ListItem>
+						<div>
+							<CrossIcon icon="cross" size={ 24 } />
+						</div>
+						<TextBox>
+							{ translate(
+								'{{strong}}No extra storage:{{/strong}} You only get 1GB for photos, videos, media, and documents.',
+								{
+									components: { strong: <strong></strong> },
+								}
 							) }
 						</TextBox>
 					</ListItem>
@@ -207,26 +226,30 @@ export function FreeFreeDialog( {
 				<TextBox>
 					{ rawPrice &&
 						translate(
-							'Unlock these features with a Personal plan,starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
+							'Unlock {{strong}}all of{{/strong}} these features with a Personal plan,starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
 							{
 								args: {
 									planPrice: formatCurrency( rawPrice, currencyCode, {
 										stripZeros: true,
 									} ),
 								},
-								components: { break: <br /> },
+								components: { break: <br />, strong: <strong></strong> },
 							}
 						) }
 				</TextBox>
 				<TextBox>
 					{ translate(
-						'As a bonus, you will get a custom domain like {{suggestion}}{{/suggestion}} {{break}}{{/break}} for free for one year ({{suggestionPrice}}{{/suggestionPrice}} value).',
+						'As a bonus, you will get a custom domain - like {{suggestion}}{{/suggestion}} - {{break}}{{/break}} free for the first year ({{suggestionPrice}}{{/suggestionPrice}} value).',
 						{
 							components: {
 								suggestion: (
 									<LazyDisplayText
 										displayText={
-											suggestion?.domain_name && <strong>"{ suggestion?.domain_name }"</strong>
+											suggestion?.domain_name && (
+												<strong>
+													<i>"{ suggestion?.domain_name }"</i>
+												</strong>
+											)
 										}
 										isLoading={ suggestionResponse.isLoading || ! suggestion?.domain_name }
 									/>
