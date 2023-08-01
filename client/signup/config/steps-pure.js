@@ -309,7 +309,7 @@ export function generateSteps( {
 		},
 
 		'plans-business-with-plugin': {
-			stepName: 'plans-business',
+			stepName: 'plans-business-with-plugin',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],
