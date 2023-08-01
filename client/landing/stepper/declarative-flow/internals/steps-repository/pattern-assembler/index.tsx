@@ -46,7 +46,7 @@ import ScreenFontPairings from './screen-font-pairings';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
-import { encodePatternId } from './utils';
+import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
 import type { StepProps } from '../../types';
@@ -249,17 +249,17 @@ const PatternAssembler = ( {
 		}
 	};
 
-	const replaceSection = ( pattern: Pattern ) => {
-		if ( sectionPosition !== null ) {
+	const replaceSection = ( pattern: Pattern, position: number | null = sectionPosition ) => {
+		if ( position !== null ) {
 			setSections( [
-				...sections.slice( 0, sectionPosition ),
+				...sections.slice( 0, position ),
 				{
 					...pattern,
-					key: sections[ sectionPosition ].key,
+					key: sections[ position ].key,
 				},
-				...sections.slice( sectionPosition + 1 ),
+				...sections.slice( position + 1 ),
 			] );
-			updateActivePatternPosition( sectionPosition );
+			updateActivePatternPosition( position );
 			noticeOperations.showPatternInsertedNotice( pattern );
 		}
 	};
@@ -310,24 +310,7 @@ const PatternAssembler = ( {
 		selectedCategory?: string | null
 	) => {
 		if ( selectedPattern ) {
-			// Inject the selected pattern category or the first category
-			// to be used in tracks and as selected pattern name.
-			const [ firstCategory ] = Object.keys( selectedPattern.categories );
-			selectedPattern.category = categories.find( ( { name } ) => {
-				if ( selectedCategory === CATEGORY_ALL_SLUG ) {
-					return name === firstCategory;
-				}
-				return name === ( selectedCategory || firstCategory );
-			} );
-
-			if ( selectedCategory === CATEGORY_ALL_SLUG ) {
-				// Use 'all' rather than 'featured' as slug for tracks.
-				// Use the first category label as selected pattern name.
-				selectedPattern.category = {
-					name: 'all',
-					label: selectedPattern.category?.label,
-				};
-			}
+			injectCategoryToPattern( selectedPattern, categories, selectedCategory );
 
 			trackEventPatternSelect( {
 				patternType: type,
@@ -495,6 +478,23 @@ const PatternAssembler = ( {
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
+	const onShuffle = ( type: string, pattern: Pattern, position?: number ) => {
+		const [ firstCategory ] = Object.keys( pattern.categories );
+		const selectedCategory = pattern.category?.name || firstCategory;
+		const patterns =
+			patternsMapByCategory[ selectedCategory ] || patternsMapByCategory[ CATEGORY_ALL_SLUG ];
+		const shuffledPattern = getShuffledPattern( patterns, pattern );
+		injectCategoryToPattern( shuffledPattern, categories, selectedCategory );
+
+		if ( type === 'header' ) {
+			updateHeader( shuffledPattern );
+		} else if ( type === 'footer' ) {
+			updateFooter( shuffledPattern );
+		} else {
+			replaceSection( shuffledPattern, position );
+		}
+	};
+
 	const onScreenColorsSelect = ( variation: GlobalStylesObject | null ) => {
 		setColorVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_PREVIEW_CLICK, {
@@ -629,6 +629,7 @@ const PatternAssembler = ( {
 				onMoveDownSection={ onMoveDownSection }
 				onDeleteHeader={ onDeleteHeader }
 				onDeleteFooter={ onDeleteFooter }
+				onShuffle={ onShuffle }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
