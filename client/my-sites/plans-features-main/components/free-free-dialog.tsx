@@ -97,6 +97,9 @@ export const StyledButton = styled( Button )`
 	@media ( min-width: 780px ) {
 		max-width: 260px;
 		width: unset;
+		&:last-child {
+			max-width: 190px;
+		}
 	}
 `;
 
@@ -152,12 +155,13 @@ export function FreeFreeDialog( {
 		planSlug: suggestedPlanSlug,
 		returnMonthly: true,
 	} );
-	const monthlyPlanPrice =
-		monthlyPlanPriceObject.discountedRawPrice || monthlyPlanPriceObject.rawPrice;
 	const annualPlanPriceObject = usePlanPrices( {
 		planSlug: suggestedPlanSlug,
 		returnMonthly: false,
 	} );
+
+	const monthlyPlanPrice =
+		monthlyPlanPriceObject.discountedRawPrice || monthlyPlanPriceObject.rawPrice;
 	const annualPlanPrice =
 		annualPlanPriceObject.discountedRawPrice || annualPlanPriceObject.rawPrice;
 
@@ -311,7 +315,7 @@ export function FreeFreeDialog( {
 				<TextBox fontSize={ 12 } color="gray">
 					{ planTitle &&
 						translate(
-							'%(planTitle)s plan: %(monthlyPlanPrice)d per month, %(annualPlanPrice)d billed annually. Excluding taxes.',
+							'%(planTitle)s plan: %(monthlyPlanPrice)s per month, %(annualPlanPrice)s billed annually. Excluding taxes.',
 							{
 								args: {
 									planTitle,
