@@ -74,6 +74,63 @@ const WebServerSettingsCard = ( {
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
 
+	const getWpVersions = () => {
+		return [
+			{
+				label: translate( 'Latest' ),
+				value: 'latest',
+			},
+			{
+				label: translate( 'Beta' ),
+				value: 'beta',
+			},
+		];
+	};
+
+	const getWpVersionContent = () => {
+		if ( isGettingWpVersion ) {
+			return;
+		}
+
+		const isWpVersionButtonDisabled =
+			disabled || ! selectedWpVersion || selectedWpVersion === wpVersion;
+		const selectedWpVersionValue = selectedWpVersion || wpVersion || ( disabled && 'latest' );
+
+		return (
+			<FormFieldset>
+				<FormLabel>{ translate( 'WordPress version' ) }</FormLabel>
+				<FormSelect
+					disabled={ disabled || isUpdatingWpVersion }
+					className="web-server-settings-card__wp-version-select"
+					onChange={ ( event ) => setSelectedWpVersion( event.target.value ) }
+					value={ selectedWpVersionValue }
+				>
+					{ getWpVersions().map( ( option ) => {
+						return (
+							<option
+								disabled={ option.value === phpVersion }
+								value={ option.value }
+								key={ option.label }
+							>
+								{ option.label }
+							</option>
+						);
+					} ) }
+				</FormSelect>
+				{ ! isWpVersionButtonDisabled && (
+					<Button
+						className="web-server-settings-card__wp-set-version"
+						onClick={ () => updateWpVersion( siteId, selectedWpVersion ) }
+						busy={ isUpdatingWpVersion }
+						disabled={ isUpdatingWpVersion }
+					>
+						<span>{ translate( 'Update WordPress version' ) }</span>
+					</Button>
+				) }
+			</FormFieldset>
+		);
+	};
+
 	const getGeoAffinityContent = () => {
 		if ( isGettingGeoAffinity || ! geoAffinity ) {
 			return;
@@ -152,19 +209,6 @@ const WebServerSettingsCard = ( {
 		];
 	};
 
-	const getWpVersions = () => {
-		return [
-			{
-				label: translate( 'Latest' ),
-				value: 'latest',
-			},
-			{
-				label: translate( 'Beta' ),
-				value: 'beta',
-			},
-		];
-	};
-
 	const getPhpVersionContent = () => {
 		if ( isGettingPhpVersion ) {
 			return;
@@ -209,51 +253,6 @@ const WebServerSettingsCard = ( {
 						disabled={ isUpdatingPhpVersion }
 					>
 						<span>{ translate( 'Update PHP version' ) }</span>
-					</Button>
-				) }
-			</FormFieldset>
-		);
-	};
-
-	const getWpVersionContent = () => {
-		if ( isGettingWpVersion ) {
-			return;
-		}
-
-		const isWpVersionButtonDisabled =
-			disabled || ! selectedWpVersion || selectedWpVersion === wpVersion;
-		const selectedWpVersionValue =
-			selectedWpVersion || wpVersion || ( disabled && recommendedValue );
-
-		return (
-			<FormFieldset>
-				<FormLabel>{ translate( 'WordPress version' ) }</FormLabel>
-				<FormSelect
-					disabled={ disabled || isUpdatingWpVersion }
-					className="web-server-settings-card__wp-version-select"
-					onChange={ ( event ) => setSelectedWpVersion( event.target.value ) }
-					value={ selectedWpVersionValue }
-				>
-					{ getWpVersions().map( ( option ) => {
-						return (
-							<option
-								disabled={ option.value === phpVersion }
-								value={ option.value }
-								key={ option.label }
-							>
-								{ option.label }
-							</option>
-						);
-					} ) }
-				</FormSelect>
-				{ ! isWpVersionButtonDisabled && (
-					<Button
-						className="web-server-settings-card__wp-set-version"
-						onClick={ () => updateWpVersion( siteId, selectedWpVersion ) }
-						busy={ isUpdatingWpVersion }
-						disabled={ isUpdatingWpVersion }
-					>
-						<span>{ translate( 'Update WordPress version' ) }</span>
 					</Button>
 				) }
 			</FormFieldset>
@@ -378,9 +377,9 @@ const WebServerSettingsCard = ( {
 					'For sites with specialized needs, fine-tune how the web server runs your website.'
 				) }
 			</p>
+			{ ! isLoading && getWpVersionContent() }
 			{ ! isLoading && getGeoAffinityContent() }
 			{ ! isLoading && getPhpVersionContent() }
-			{ ! isLoading && getWpVersionContent() }
 			{ ! isLoading && getStaticFile404Content() }
 			{ isLoading && getPlaceholderContent() }
 		</Card>
