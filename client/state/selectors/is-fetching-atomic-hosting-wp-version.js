@@ -8,5 +8,5 @@ import 'calypso/state/hosting/init';
  * @returns {boolean}
  */
 export function isFetchingAtomicHostingWpVersion( state, siteId ) {
-	return state.atomicHosting?.[ siteId ]?.isFetchingWpVersion;
+	return state.atomicHosting?.[ siteId ]?.isFetchingWpVersion ?? false;
 }
