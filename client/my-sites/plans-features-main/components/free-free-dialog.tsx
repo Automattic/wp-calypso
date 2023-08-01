@@ -1,14 +1,15 @@
-import { applyTestFiltersToPlansList, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { domainProductSlugs, getPlan, PlanSlug } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { formatCurrency } from 'calypso/../packages/format-currency/src';
+import { useTranslate } from 'i18n-calypso';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { DialogContainer } from './free-plan-paid-domain-dialog';
-import { LoadingPlaceHolder } from './loading-placeholder';
 
 export const Heading = styled.div`
 	font-family: Recoleta;
@@ -99,39 +100,44 @@ const CrossIcon = styled( Gridicon )`
 	color: #e53e3e;
 `;
 
-const LoadingPlaceHolderText = styled( LoadingPlaceHolder )`
-	width: 80px;
-	display: inline-block;
-	border-radius: 0;
-`;
-
-function LazyDisplayText( {
-	displayText = '',
-	isLoading,
-}: {
-	displayText?: TranslateResult;
-	isLoading: boolean;
-} ) {
-	return isLoading || ! displayText ? <LoadingPlaceHolderText /> : <>{ displayText }</>;
-}
-
+/**
+ * Adds a dialog to the free plan selection flow that explains the benefits of the paid plan
+ * The FreeFreeDialog can be read as the modal to show when you
+ * 1 - Select the free subdomain
+ * 2 - Select the free plan
+ */
 export function FreeFreeDialog( {
 	freeSubdomain,
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
+	suggestedPlanSlug,
 }: {
 	freeSubdomain: string;
 	onClose: () => void;
 	onFreePlanSelected: () => void;
 	onPlanSelected: () => void;
+	suggestedPlanSlug: PlanSlug;
 } ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
-
-	const planConstantObj = applyTestFiltersToPlansList( PLAN_PERSONAL, undefined );
-	const planProductId = planConstantObj.getProductId();
-	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planProductId, true ) );
+	const domainRegistrationProduct = useSelector( ( state ) =>
+		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
+	);
+	const domainProductCost = domainRegistrationProduct?.cost;
+	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
+	const monthlyPlanPriceObject = usePlanPrices( {
+		planSlug: suggestedPlanSlug,
+		returnMonthly: true,
+	} );
+	const monthlyPlanPrice =
+		monthlyPlanPriceObject.discountedRawPrice || monthlyPlanPriceObject.rawPrice;
+	const annualPlanPriceObject = usePlanPrices( {
+		planSlug: suggestedPlanSlug,
+		returnMonthly: false,
+	} );
+	const annualPlanPrice =
+		annualPlanPriceObject.discountedRawPrice || annualPlanPriceObject.rawPrice;
 
 	return (
 		<Dialog
@@ -152,6 +158,7 @@ export function FreeFreeDialog( {
 				` }
 			/>
 			<DialogContainer>
+				<QueryProductsList />
 				<Heading>{ translate( "Don't miss out" ) }</Heading>
 				<TextBox>
 					{ translate( "With a Free plan, you'll miss out on a lot of great features:" ) }
@@ -214,12 +221,13 @@ export function FreeFreeDialog( {
 					</ListItem>
 				</List>
 				<TextBox>
-					{ rawPrice &&
+					{ planTitle &&
 						translate(
-							'Unlock {{strong}}all of{{/strong}} these features with a Personal plan,starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
+							'Unlock {{strong}}all of{{/strong}} these features with a %(planTitle)s plan,starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
 							{
 								args: {
-									planPrice: formatCurrency( rawPrice, currencyCode, {
+									planTitle,
+									planPrice: formatCurrency( monthlyPlanPrice, currencyCode, {
 										stripZeros: true,
 									} ),
 								},
@@ -228,24 +236,22 @@ export function FreeFreeDialog( {
 						) }
 				</TextBox>
 				<TextBox>
-					{ translate(
-						'As a bonus, you will get a custom domain - like {{strong}}{{italic}}yourgroovydomain.com{{/italic}}{{/strong}} - {{break}}{{/break}} free for the first year ({{suggestionPrice}}{{/suggestionPrice}} value).',
-						{
-							components: {
-								strong: <strong></strong>,
-								italic: <i></i>,
-								suggestionPrice: (
-									<LazyDisplayText
-										displayText={ formatCurrency( 12, currencyCode, {
-											stripZeros: true,
-										} ) }
-										isLoading={ ! currencyCode }
-									/>
-								),
-								break: <br />,
-							},
-						}
-					) }
+					{ domainProductCost &&
+						translate(
+							'As a bonus, you will get a custom domain - like {{strong}}{{italic}}yourgroovydomain.com{{/italic}}{{/strong}} - {{break}}{{/break}} free for the first year (%(domainPrice)s value).',
+							{
+								args: {
+									domainPrice: formatCurrency( domainProductCost, currencyCode, {
+										stripZeros: true,
+									} ),
+								},
+								components: {
+									strong: <strong></strong>,
+									italic: <i></i>,
+									break: <br />,
+								},
+							}
+						) }
 				</TextBox>
 
 				<ButtonRow>
@@ -255,7 +261,12 @@ export function FreeFreeDialog( {
 							onPlanSelected();
 						} }
 					>
-						{ translate( 'Get the Personal plan' ) }
+						{ planTitle &&
+							translate( 'Get the %(planTitle)s plan', {
+								args: {
+									planTitle,
+								},
+							} ) }
 					</StyledButton>
 
 					<StyledButton
@@ -269,15 +280,16 @@ export function FreeFreeDialog( {
 					</StyledButton>
 				</ButtonRow>
 				<TextBox fontSize={ 12 } color="gray">
-					{ rawPrice &&
+					{ planTitle &&
 						translate(
-							'Personal plan: %(planPrice)s per month, %(annualPlanPrice)s billed annually. Excluding taxes.',
+							'%(planTitle)s plan: %(monthlyPlanPrice)d per month, %(annualPlanPrice)d billed annually. Excluding taxes.',
 							{
 								args: {
-									planPrice: formatCurrency( rawPrice, currencyCode, {
+									planTitle,
+									monthlyPlanPrice: formatCurrency( monthlyPlanPrice, currencyCode, {
 										stripZeros: true,
 									} ),
-									annualPlanPrice: formatCurrency( rawPrice * 12, currencyCode, {
+									annualPlanPrice: formatCurrency( annualPlanPrice, currencyCode, {
 										stripZeros: true,
 									} ),
 								},

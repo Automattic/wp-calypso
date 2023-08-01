@@ -454,6 +454,7 @@ const PlansFeaturesMain = ( {
 			) }
 			{ freeSubdomain && isFreeFreeUpsellOpen && (
 				<FreeFreeDialog
+					suggestedPlanSlug={ PLAN_PERSONAL }
 					freeSubdomain={ freeSubdomain }
 					onClose={ () => setIsFreeFreeUpsellOpen( false ) }
 					onFreePlanSelected={ () => {
