@@ -108,7 +108,7 @@ const WebServerSettingsCard = ( {
 					{ getWpVersions().map( ( option ) => {
 						return (
 							<option
-								disabled={ option.value === phpVersion }
+								disabled={ option.value === wpVersion }
 								value={ option.value }
 								key={ option.label }
 							>
