@@ -370,7 +370,8 @@ export default withCurrentRoute(
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const isReaderStream =
-			currentRoute.startsWith( '/read' ) ||
+			( currentRoute.startsWith( '/read' ) &&
+				! currentRoute.startsWith( '/read/notifications' ) ) ||
 			currentRoute.startsWith( '/discover' ) ||
 			currentRoute.startsWith( '/activities/likes' );
 		const isWooCoreProfilerFlow =
