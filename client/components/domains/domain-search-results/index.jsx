@@ -171,7 +171,7 @@ class DomainSearchResults extends Component {
 							strong: <strong />,
 							a: (
 								// eslint-disable-next-line jsx-a11y/anchor-is-valid
-								<a href="/setup/domain-transfer" />
+								<a href={ `/setup/domain-transfer?new=${ domain ?? '' }` } />
 							),
 						},
 					}
