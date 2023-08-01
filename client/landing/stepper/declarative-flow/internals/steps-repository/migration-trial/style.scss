@@ -107,3 +107,34 @@
 		}
 	}
 }
+
+.trial-plan-features-modal {
+	.components-modal__header {
+		padding: 1rem 1.5rem !important;
+	}
+
+	.components-modal__content {
+		padding: 0 1.5rem 1rem 1.5rem !important;
+	}
+
+	ul {
+		margin-top: 0;
+	}
+
+	li {
+		color: var(--studio-gray-40);
+
+		svg {
+			fill: var(--color-success);
+		}
+	}
+
+	.button-container {
+		text-align: end;
+
+		.action_buttons__button {
+			min-width: 120px;
+			border-radius: 4px;
+		}
+	}
+}
