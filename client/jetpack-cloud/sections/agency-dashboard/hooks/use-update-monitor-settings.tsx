@@ -5,7 +5,7 @@ import { useDispatch } from 'calypso/state';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from '../sites-overview/context';
-import getRejectedAndFulfilledRequests from './get-rejected-and-fulfilled-requests';
+import getRejectedAndFulfilledRequests from './get-rejected-and-fulfilled-requests-util';
 import type { Site, UpdateMonitorSettingsParams } from '../sites-overview/types';
 
 const NOTIFICATION_DURATION = 3000;

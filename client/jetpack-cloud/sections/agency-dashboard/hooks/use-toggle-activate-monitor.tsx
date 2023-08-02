@@ -6,7 +6,7 @@ import { setSiteMonitorStatus } from 'calypso/state/jetpack-agency-dashboard/act
 import useToggleActivateMonitorMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-toggle-activate-monitor-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from '../sites-overview/context';
-import getRejectedAndFulfilledRequests from './get-rejected-and-fulfilled-requests';
+import getRejectedAndFulfilledRequests from './get-rejected-and-fulfilled-requests-util';
 import type { Site } from '../sites-overview/types';
 
 const NOTIFICATION_DURATION = 3000;
