@@ -34,7 +34,7 @@ function toMonthlyPrice( plan: WPComPlan ) {
 }
 
 /**
- * @deprecated
+ * @deprecated use the hook at client/my-sites/plans/hooks/use-plan-prices.tsx#usePlanPrices instead.
  */
 export default function usePlanPrices( plans: WPComPlan[] ): PlanPrices[] {
 	return useSelector( ( state: IAppState ) => {

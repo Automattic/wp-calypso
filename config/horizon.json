@@ -78,6 +78,7 @@
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"newsletter/stats": true,
+		"onboarding-pm/free-free-modal": true,
 		"onboarding/import-light-url-screen": true,
 		"onboarding/import-redesign": true,
 		"p2/p2-plus": true,
