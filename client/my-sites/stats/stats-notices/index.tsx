@@ -143,7 +143,9 @@ export default function StatsNotices( {
 				statsPurchaseSuccess={ statsPurchaseSuccess }
 				isOdysseyStats={ isOdysseyStats }
 			/>
-			<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
+			{ ! statsPurchaseSuccess && (
+				<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
+			) }
 		</>
 	) : (
 		<LegacyStatsNotices siteId={ siteId } />
