@@ -7,12 +7,14 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import PostComments from 'calypso/blocks/comments';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
+import { requestPostComments } from 'calypso/state/comments/actions';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import DisplayTypes from 'calypso/state/reader/posts/display-types';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -264,12 +266,23 @@ class ReaderPostCard extends Component {
 			);
 		}
 
+		const commentGoo = () => {
+			if ( ! post.discussion?.comments_open ) {
+				return;
+			}
+			// TODO - check if we already have them before requesting?
+			this.props.requestPostComments( { siteId: post.site_ID, postId: post.ID } );
+			// Find a way to only show most recent comment and make expandable.
+			return <PostComments post={ { ID: post.ID, site_ID: site?.ID } } shouldPollForNewComments />;
+		};
+
 		const onClick = ! isPhotoPost ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
+				{ commentGoo() }
 			</Card>
 		);
 	}
@@ -288,5 +301,5 @@ export default connect(
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 		teams: getReaderTeams( state ),
 	} ),
-	{ expandCard: expandCardAction }
+	{ expandCard: expandCardAction, requestPostComments }
 )( ReaderPostCard );
