@@ -110,7 +110,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 			} ),
 			featured: true,
 			description: translate(
-				'Upgrade Jetpack Stats to unlock upcoming features, priority support, and an ad-free experience.'
+				'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
 			),
 		},
 	];
