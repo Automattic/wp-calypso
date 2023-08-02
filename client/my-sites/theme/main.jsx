@@ -608,16 +608,16 @@ class ThemeSheet extends Component {
 	renderHeader = () => {
 		const {
 			author,
+			isLoggedIn,
+			isWpcomTheme,
 			isWPForTeamsSite,
+			isWporg,
 			name,
 			retired,
-			softLaunched,
-			translate,
-			isLoggedIn,
-			themeId,
 			siteId,
-			isWpcomTheme,
-			isWporg,
+			softLaunched,
+			themeId,
+			translate,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -646,12 +646,12 @@ class ThemeSheet extends Component {
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
 						<LivePreviewButton
-							themeId={ themeId }
 							/**
 							 * Pass the siteId that QueryCanonicalTheme component will use to fetch the theme.
 							 * This avoids LivePreviewButton appearing a moment later.
 							 */
 							siteId={ ( isWpcomTheme && 'wpcom' ) || ( isWporg && 'wporg' ) || siteId }
+							themeId={ themeId }
 						/>
 						{ this.shouldRenderPreviewButton() && (
 							<Button
