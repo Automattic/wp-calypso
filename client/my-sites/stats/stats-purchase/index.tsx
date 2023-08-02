@@ -2,6 +2,7 @@ import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
+	TYPE_PERSONAL,
 } from '@automattic/calypso-products';
 import { ProductsList } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
@@ -14,12 +15,16 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isRequestingSites } from 'calypso/state/sites/selectors';
 import getSiteProducts, { SiteProduct } from 'calypso/state/sites/selectors/get-site-products';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
-import StatsPurchaseWizard from './stats-purchase-wizard';
+import StatsPurchaseWizard, {
+	SCREEN_PURCHASE,
+	SCREEN_TYPE_SELECTION,
+	TYPE_COMMERCIAL,
+} from './stats-purchase-wizard';
 
 const isProductOwned = ( ownedProducts: SiteProduct[] | null, searchedProduct: string ) => {
 	if ( ! ownedProducts ) {
@@ -42,6 +47,7 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 	);
 
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
+	const isRequestingSiteProducts = useSelector( isRequestingSites );
 
 	// Determine whether a product is owned.
 	const isFreeOwned = useMemo( () => {
@@ -75,7 +81,15 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_PWYW_YEARLY )
 	) as ProductsList.ProductsListItem | null;
 
-	const isLoading = ! commercialProduct || ! pwywProduct;
+	const isLoading =
+		! commercialProduct || ! pwywProduct || ( ! siteProducts && isRequestingSiteProducts );
+
+	const [ initialStep, initialSiteType ] = useMemo( () => {
+		if ( isPWYWOwned && ! isCommercialOwned ) {
+			return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
+		}
+		return [ SCREEN_TYPE_SELECTION, TYPE_PERSONAL ];
+	}, [ isPWYWOwned, isCommercialOwned ] );
 
 	return (
 		<Main fullWidthLayout>
@@ -111,6 +125,8 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 							siteId={ siteId }
 							redirectUri={ query.redirect_uri ?? '' }
 							from={ query.from ?? '' }
+							initialStep={ initialStep }
+							initialSiteType={ initialSiteType }
 						/>
 					</>
 				) }

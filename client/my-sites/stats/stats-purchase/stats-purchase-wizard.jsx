@@ -2,7 +2,7 @@
 import { Button, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -13,10 +13,10 @@ import StatsPurchaseSVG from './stats-purchase-svg';
 import './styles.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-wizard';
-const SCREEN_TYPE_SELECTION = 0;
-const SCREEN_PURCHASE = 1;
-const TYPE_PERSONAL = 'Personal';
-const TYPE_COMMERCIAL = 'Commercial';
+export const SCREEN_TYPE_SELECTION = 0;
+export const SCREEN_PURCHASE = 1;
+export const TYPE_PERSONAL = 'Personal';
+export const TYPE_COMMERCIAL = 'Commercial';
 
 const DEFAULT_STARTING_FRACTION = 0.6;
 const UI_EMOJI_HEART_TIER_THRESHOLD = 0.5;
@@ -40,7 +40,16 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 	);
 };
 
-const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redirectUri, from } ) => {
+const ProductCard = ( {
+	siteSlug,
+	siteId,
+	commercialProduct,
+	pwywProduct,
+	redirectUri,
+	from,
+	initialStep,
+	initialSiteType,
+} ) => {
 	const maxSliderPrice = commercialProduct.cost;
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
@@ -51,8 +60,8 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 	const uiImageCelebrationTier = steps * UI_IMAGE_CELEBRATION_TIER_THRESHOLD;
 
 	const [ subscriptionValue, setSubscriptionValue ] = useState( defaultStartingValue );
-	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
-	const [ siteType, setSiteType ] = useState( null );
+	const [ wizardStep, setWizardStep ] = useState( initialStep );
+	const [ siteType, setSiteType ] = useState( initialSiteType );
 	const translate = useTranslate();
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -224,6 +233,8 @@ const StatsPurchaseWizard = ( {
 	pwywProduct,
 	redirectUri,
 	from,
+	initialStep,
+	initialSiteType,
 } ) => {
 	// redirectTo is a relative URI.
 	return (
@@ -234,6 +245,8 @@ const StatsPurchaseWizard = ( {
 			pwywProduct={ pwywProduct }
 			redirectUri={ redirectUri }
 			from={ from }
+			initialStep={ initialStep }
+			initialSiteType={ initialSiteType }
 		/>
 	);
 };
