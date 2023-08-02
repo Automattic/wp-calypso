@@ -2,7 +2,6 @@ import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
-	TYPE_PERSONAL,
 } from '@automattic/calypso-products';
 import { ProductsList } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
@@ -24,6 +23,7 @@ import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
 	TYPE_COMMERCIAL,
+	TYPE_PERSONAL,
 } from './stats-purchase-wizard';
 
 const isProductOwned = ( ownedProducts: SiteProduct[] | null, searchedProduct: string ) => {
