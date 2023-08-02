@@ -1,17 +1,18 @@
 import { PlanSlug, getPlan } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
-import { DomainSuggestions } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import usePlanPrices from '../../plans/hooks/use-plan-prices';
 import { LoadingPlaceHolder } from './loading-placeholder';
 import type { DomainSuggestion } from '@automattic/data-stores';
+import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 
 const DialogContainer = styled.div`
 	padding: 24px;
@@ -119,30 +120,72 @@ const StyledButton = styled( Button )`
 	}
 `;
 
-export function FreePlanPaidDomainDialog( {
+function SuggestedPlanSection( {
 	paidDomainName,
 	suggestedPlanSlug,
-	onFreePlanSelected,
-	onPlanSelected,
-	onClose,
+	onButtonClick,
+	isBusy,
 }: {
 	paidDomainName: string;
 	suggestedPlanSlug: PlanSlug;
-	onClose: () => void;
-	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
-	onPlanSelected: () => void;
+	onButtonClick: () => void;
+	isBusy: boolean;
 } ) {
 	const translate = useTranslate();
-	const queryClient = useQueryClient();
-	const [ isBusy, setIsBusy ] = useState( false );
 	const planPrices = usePlanPrices( { planSlug: suggestedPlanSlug, returnMonthly: true } );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const {
-		data: wordPressSubdomainSuggestions,
-		isInitialLoading,
-		isError,
-	} = DomainSuggestions.useGetWordPressSubdomain( paidDomainName );
 	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
+
+	return (
+		<>
+			<DomainName>
+				<div>{ paidDomainName }</div>
+				<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
+			</DomainName>
+			<StyledButton busy={ isBusy } primary onClick={ onButtonClick }>
+				{ currencyCode &&
+					translate( 'Get %(planTitle)s - %(planPrice)s/month', {
+						comment: 'Eg: Get Personal - $4/month',
+						args: {
+							planTitle: planTitle as string,
+							planPrice: formatCurrency(
+								planPrices.discountedRawPrice || planPrices.rawPrice,
+								currencyCode,
+								{ stripZeros: true }
+							),
+						},
+					} ) }
+			</StyledButton>
+		</>
+	);
+}
+
+type DomainPlanDialogProps = {
+	paidDomainName: string;
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
+	suggestedPlanSlug: PlanSlug;
+	onFreePlanSelected: () => void;
+	onPlanSelected: () => void;
+};
+
+// See p2-pbxNRc-2Ri#comment-4703 for more context
+const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
+
+function DialogPaidPlanIsRequired( {
+	paidDomainName,
+	wpcomFreeDomainSuggestion,
+	suggestedPlanSlug,
+	onFreePlanSelected,
+	onPlanSelected,
+}: DomainPlanDialogProps ) {
+	const translate = useTranslate();
+	const [ isBusy, setIsBusy ] = useState( false );
+
+	useEffect( () => {
+		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
+			dialog_type: 'paid_plan_is_required',
+		} );
+	}, [] );
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
@@ -151,14 +194,146 @@ export function FreePlanPaidDomainDialog( {
 
 	function handleFreeDomainClick() {
 		setIsBusy( true );
-		// Since this domain will not be available after it is selected, invalidate the cache.
-		queryClient.invalidateQueries(
-			DomainSuggestions.getDomainSuggestionsQueryKey( paidDomainName )
-		);
-		if ( wordPressSubdomainSuggestions && wordPressSubdomainSuggestions.length ) {
-			onFreePlanSelected( wordPressSubdomainSuggestions[ 0 ] );
-		}
+		onFreePlanSelected();
 	}
+
+	return (
+		<DialogContainer>
+			<Heading>{ translate( 'A paid plan is required for your domain.' ) }</Heading>
+			<SubHeading>
+				{ translate(
+					'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
+				) }
+			</SubHeading>
+			<ButtonContainer>
+				<RowWithBorder>
+					<SuggestedPlanSection
+						paidDomainName={ paidDomainName }
+						suggestedPlanSlug={ suggestedPlanSlug }
+						isBusy={ isBusy }
+						onButtonClick={ handlePaidPlanClick }
+					/>
+				</RowWithBorder>
+				<Row>
+					<DomainName>
+						{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
+						{ wpcomFreeDomainSuggestion.result && (
+							<div>{ wpcomFreeDomainSuggestion.result.domain_name }</div>
+						) }
+					</DomainName>
+					<StyledButton
+						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
+						busy={ isBusy }
+						onClick={ handleFreeDomainClick }
+					>
+						{ translate( 'Continue with Free plan' ) }
+					</StyledButton>
+				</Row>
+			</ButtonContainer>
+		</DialogContainer>
+	);
+}
+
+function DialogCustomDomainAndFreePlan( {
+	paidDomainName,
+	wpcomFreeDomainSuggestion,
+	suggestedPlanSlug,
+	onFreePlanSelected,
+	onPlanSelected,
+}: DomainPlanDialogProps ) {
+	const translate = useTranslate();
+	const [ isBusy, setIsBusy ] = useState( false );
+
+	useEffect( () => {
+		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
+			dialog_type: 'custom_domain_and_free_plan',
+		} );
+	}, [] );
+
+	function handlePaidPlanClick() {
+		setIsBusy( true );
+		onPlanSelected();
+	}
+
+	function handleFreePlanClick() {
+		setIsBusy( true );
+		onFreePlanSelected();
+	}
+
+	return (
+		<DialogContainer>
+			<Heading>{ translate( 'A paid plan is required for a custom primary domain.' ) }</Heading>
+			<SubHeading>
+				{ translate(
+					'Your custom domain can only be used as the primary domain with a paid plan and is free for the first year with an annual paid plan. For more details, please read {{a}}our support document{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/domains/set-a-primary-address/'
+									) }
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+			</SubHeading>
+			<ButtonContainer>
+				<RowWithBorder>
+					<SuggestedPlanSection
+						paidDomainName={ paidDomainName }
+						suggestedPlanSlug={ suggestedPlanSlug }
+						isBusy={ isBusy }
+						onButtonClick={ handlePaidPlanClick }
+					/>
+				</RowWithBorder>
+				<Row>
+					<DomainName>
+						{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
+						{ wpcomFreeDomainSuggestion.result &&
+							translate( '%(paidDomainName)s redirects to %(wpcomFreeDomain)s', {
+								args: {
+									paidDomainName,
+									wpcomFreeDomain: wpcomFreeDomainSuggestion.result.domain_name,
+								},
+								comment: '%(wpcomFreeDomain)s is a WordPress.com subdomain, e.g. foo.wordpress.com',
+							} ) }
+					</DomainName>
+					<StyledButton
+						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
+						busy={ isBusy }
+						onClick={ handleFreePlanClick }
+					>
+						{ translate( 'Continue with Free plan' ) }
+					</StyledButton>
+				</Row>
+			</ButtonContainer>
+		</DialogContainer>
+	);
+}
+
+export function FreePlanPaidDomainDialog( {
+	paidDomainName,
+	wpcomFreeDomainSuggestion,
+	suggestedPlanSlug,
+	isCustomDomainAllowedOnFreePlan,
+	onFreePlanSelected,
+	onPlanSelected,
+	onClose,
+}: DomainPlanDialogProps & {
+	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
+	onClose: () => void;
+} ) {
+	const dialogCommonProps: DomainPlanDialogProps = {
+		paidDomainName,
+		wpcomFreeDomainSuggestion,
+		suggestedPlanSlug,
+		onFreePlanSelected,
+		onPlanSelected,
+	};
 
 	return (
 		<Dialog
@@ -178,49 +353,13 @@ export function FreePlanPaidDomainDialog( {
 					}
 				` }
 			/>
-			<DialogContainer>
-				<Heading>{ translate( 'A paid plan is required for your domain.' ) }</Heading>
-				<SubHeading>
-					{ translate(
-						'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
-					) }
-				</SubHeading>
-				<ButtonContainer>
-					<RowWithBorder>
-						<DomainName>
-							<div>{ paidDomainName }</div>
-							<FreeDomainText>{ translate( 'Free for one year ' ) }</FreeDomainText>
-						</DomainName>
-						<StyledButton busy={ isBusy } primary onClick={ handlePaidPlanClick }>
-							{ currencyCode &&
-								translate( 'Get %(planTitle)s - %(planPrice)s/month', {
-									comment: 'Eg: Get Personal - $4/month',
-									args: {
-										planTitle: planTitle as string,
-										planPrice: formatCurrency(
-											planPrices.discountedRawPrice || planPrices.rawPrice,
-											currencyCode,
-											{ stripZeros: true }
-										),
-									},
-								} ) }
-						</StyledButton>
-					</RowWithBorder>
-					<Row>
-						<DomainName>
-							{ isInitialLoading && <LoadingPlaceHolder /> }
-							{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
-						</DomainName>
-						<StyledButton
-							disabled={ isInitialLoading || ! wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }
-							busy={ isBusy }
-							onClick={ handleFreeDomainClick }
-						>
-							{ translate( 'Continue with Free plan' ) }
-						</StyledButton>
-					</Row>
-				</ButtonContainer>
-			</DialogContainer>
+			{ isCustomDomainAllowedOnFreePlan.isLoading && <LoadingPlaceHolder /> }
+			{ ! isCustomDomainAllowedOnFreePlan.isLoading &&
+				( isCustomDomainAllowedOnFreePlan.result ? (
+					<DialogCustomDomainAndFreePlan { ...dialogCommonProps } />
+				) : (
+					<DialogPaidPlanIsRequired { ...dialogCommonProps } />
+				) ) }
 		</Dialog>
 	);
 }

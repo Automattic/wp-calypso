@@ -116,12 +116,18 @@ export type WPCOMTransactionEndpointRequestPayload = {
 	payment: WPCOMTransactionEndpointPaymentDetails;
 	domainDetails?: DomainContactDetails;
 	tos?: ToSAcceptanceTrackingDetails;
+	ad_conversion?: AdConversionDetails;
 };
 
 export type ToSAcceptanceTrackingDetails = {
 	path: string;
 	locale: string;
 	viewport: string;
+};
+
+export type AdConversionDetails = {
+	ad_details: string;
+	sensitive_pixel_options: string; // sensitive_pixel_options
 };
 
 export type WPCOMTransactionEndpointPaymentDetails = {
@@ -224,6 +230,7 @@ export type PayPalExpressEndpointRequestPayload = {
 	country: string;
 	postalCode: string;
 	tos?: ToSAcceptanceTrackingDetails;
+	ad_conversion?: AdConversionDetails;
 };
 
 export type PayPalExpressEndpointResponse = unknown;

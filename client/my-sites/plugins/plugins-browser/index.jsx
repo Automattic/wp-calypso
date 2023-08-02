@@ -14,7 +14,6 @@ import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
-import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -149,7 +148,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				}
 			/>
 
-			<PluginsAnnouncementModal />
 			{ ! hideHeader && (
 				<PluginsNavigationHeader
 					navigationHeaderRef={ navigationHeaderRef }

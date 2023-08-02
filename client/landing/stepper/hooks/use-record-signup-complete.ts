@@ -2,7 +2,7 @@ import { isDomainTransfer, isDomainMapping } from '@automattic/calypso-products'
 import { useSelect } from '@wordpress/data';
 import { useCallback } from 'react';
 import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { recordSignupComplete } from 'calypso/lib/analytics/signup';
+import { SIGNUP_DOMAIN_ORIGIN, recordSignupComplete } from 'calypso/lib/analytics/signup';
 import { useSite } from './use-site';
 import type { UserSelect, OnboardSelect } from '@automattic/data-stores';
 
@@ -61,6 +61,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 				hasPaidDomainItem && domainCartItem ? isDomainMapping( domainCartItem ) : undefined,
 			isTransfer:
 				hasPaidDomainItem && domainCartItem ? isDomainTransfer( domainCartItem ) : undefined,
+			signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 		} );
 	}, [ domainCartItem, flow, planCartItem, selectedDomain, siteCount, siteId, theme ] );
 };

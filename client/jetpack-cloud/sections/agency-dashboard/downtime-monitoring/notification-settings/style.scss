@@ -46,6 +46,9 @@
 }
 
 .notification-settings__content-heading {
+	display: flex;
+	gap: 4px;
+	align-items: center;
 	font-size: 0.875rem;
 	line-height: 17px;
 	margin-block-end: 8px;
@@ -58,6 +61,18 @@
 .notification-settings__content-block {
 	margin-block-start: 24px;
 	position: relative;
+}
+
+.notification-settings__content-block .select-dropdown__item.is-disabled {
+	opacity: 1;
+
+	.select-dropdown__item-text {
+		color: var(--studio-gray-20);
+	}
+}
+
+.notification-settings__content-block .select-dropdown__item .badge {
+	margin-inline-start: 4px;
 }
 
 .notification-settings__link {
@@ -161,4 +176,14 @@
 	width: 1px;
 	height: 1px;
 	overflow: hidden;
+}
+
+.notification-settings__sms-counter {
+	color: var(--studio-gray-50);
+	font-size: 0.75rem;
+	margin-block-start: 8px;
+
+	&.notification-settings__sms-counter-limit-reached {
+		color: var(--color-scary-40);
+	}
 }

@@ -35,7 +35,9 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
+import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
@@ -358,6 +360,8 @@ function CheckoutSummaryFeaturesList( props: {
 		isDomainTransfer( product )
 	);
 
+	usePresalesChat( 'wpcom', hasDomainTransferProduct );
+
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
@@ -391,7 +395,9 @@ function CheckoutSummaryFeaturesList( props: {
 				<>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="features-list-support-another-year" />
-						{ translate( "We'll renew your domain for another year" ) }
+						{ hasFreeCouponTransfersOnly( responseCart )
+							? translate( "Transfer is free and we'll pay for an extra year of registration." )
+							: translate( '1-year extension on your domain' ) }
 					</CheckoutSummaryFeaturesListItem>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon id="features-list-support-privacy" />
@@ -519,6 +525,16 @@ function CheckoutSummaryAkismetProductFeatures( { product }: { product: Response
 	const translate = useTranslate();
 	const productFeatures = getAkismetProductFeatures( product, translate );
 
+	let yearlySavingsPercentage = 0;
+
+	// If intro offer is not present and there are only two variants, then show the yearly savings.
+	if ( ! product?.introductory_offer_terms?.enabled && product?.product_variants.length === 2 ) {
+		const monthlyCost = product.product_variants[ 0 ].price_before_discounts_integer;
+		const yearlyCost = product.product_variants[ 1 ].price_before_discounts_integer;
+
+		yearlySavingsPercentage = Math.round( ( 1 - yearlyCost / ( monthlyCost * 12 ) ) * 100 );
+	}
+
 	return (
 		<>
 			{ productFeatures.map( ( feature ) => {
@@ -529,6 +545,18 @@ function CheckoutSummaryAkismetProductFeatures( { product }: { product: Response
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
+
+			{ yearlySavingsPercentage > 0 && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="yearly_savings" />
+					{ translate( '%(yearlySavingsPercentage)s%% price reduction for yearly term', {
+						args: {
+							yearlySavingsPercentage,
+						},
+						comment: 'the percentage the user saves by buying yearly',
+					} ) }
+				</CheckoutSummaryFeaturesListItem>
+			) }
 		</>
 	);
 }

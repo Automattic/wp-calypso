@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { stringify } from 'qs';
 import wpcomProxyRequest from 'wpcom-proxy-request';
 import { getFormattedPrice, normalizeDomainSuggestionQuery } from './utils';
@@ -6,7 +6,7 @@ import type { DomainSuggestion, DomainSuggestionSelectorOptions } from './types'
 
 const STALE_TIME = 1000 * 60 * 5; // 5 minutes
 
-export function getDomainSuggestionsQueryKey(
+function getDomainSuggestionsQueryKey(
 	search: string,
 	options: DomainSuggestionSelectorOptions = {}
 ) {
@@ -18,8 +18,10 @@ export function useGetDomainSuggestions(
 	searchOptions: DomainSuggestionSelectorOptions = {},
 	queryOptions = {}
 ) {
-	return useQuery( {
-		queryKey: getDomainSuggestionsQueryKey( search, searchOptions ),
+	const queryKey = getDomainSuggestionsQueryKey( search, searchOptions );
+	const queryClient = useQueryClient();
+	const result = useQuery( {
+		queryKey,
 		queryFn: async () => {
 			const queryObject = normalizeDomainSuggestionQuery( search, searchOptions );
 			if ( ! queryObject.query ) {
@@ -53,6 +55,11 @@ export function useGetDomainSuggestions(
 		staleTime: STALE_TIME,
 		...queryOptions,
 	} );
+
+	return {
+		...result,
+		invalidateCache: () => queryClient.invalidateQueries( queryKey ),
+	};
 }
 
 /**

@@ -15,6 +15,7 @@ import {
 	getSiteCountText,
 } from '../../sites-overview/utils';
 import ContactEditor from '../contact-editor';
+import { RestrictionType } from '../types';
 import EmailNotification from './form-content/email-notification';
 import NotificationSettingsFormFooter from './form-content/footer';
 import MobilePushNotification from './form-content/mobile-push-notification';
@@ -98,8 +99,17 @@ export default function NotificationSettings( {
 		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
 
-	// TODO: Need to figure out where to fetch site license information from.
-	const hasDowntimeMonitoringPaidLicense = false;
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
+
+	// TODO: Need to figure out if current site or one of the sites selected is on a free tier.
+	const hasPaidLicenses = false;
+
+	let restriction: RestrictionType = 'none';
+
+	if ( ! hasPaidLicenses ) {
+		// We need to set the restriction type to determine correct messaging.
+		restriction = isBulkUpdate ? 'free_site_selected' : 'upgrade_required';
+	}
 
 	const isContactListMatch = (
 		list1: ReadonlyArray< MonitorSettingsContact >,
@@ -339,7 +349,7 @@ export default function NotificationSettings( {
 				);
 
 				// We need to make sure that we are not setting a paid duration if there is no license.
-				if ( hasDowntimeMonitoringPaidLicense || ! foundDuration?.isPaid ) {
+				if ( hasPaidLicenses || ! foundDuration?.isPaid ) {
 					setSelectedDuration( foundDuration );
 				}
 			}
@@ -360,7 +370,7 @@ export default function NotificationSettings( {
 			getAllPhoneItems,
 			handleSetEmailItems,
 			handleSetPhoneItems,
-			hasDowntimeMonitoringPaidLicense,
+			hasPaidLicenses,
 			isMultipleEmailEnabled,
 			isSMSNotificationEnabled,
 		]
@@ -470,9 +480,10 @@ export default function NotificationSettings( {
 					recordEvent={ recordEvent }
 					selectedDuration={ selectedDuration }
 					selectDuration={ selectDuration }
-					enablePaidDurations={ hasDowntimeMonitoringPaidLicense }
+					restriction={ restriction }
 				/>
-				{ isSMSNotificationEnabled && (
+
+				{ isPaidTierEnabled && (
 					<SMSNotification
 						recordEvent={ recordEvent }
 						enableSMSNotification={ enableSMSNotification }
@@ -480,13 +491,10 @@ export default function NotificationSettings( {
 						toggleModal={ toggleAddSMSModal }
 						allPhoneItems={ allPhoneItems }
 						verifiedItem={ verifiedItem }
+						restriction={ restriction }
 					/>
 				) }
-				<MobilePushNotification
-					recordEvent={ recordEvent }
-					enableMobileNotification={ enableMobileNotification }
-					setEnableMobileNotification={ setEnableMobileNotification }
-				/>
+
 				<EmailNotification
 					recordEvent={ recordEvent }
 					verifiedItem={ verifiedItem }
@@ -495,6 +503,13 @@ export default function NotificationSettings( {
 					defaultUserEmailAddresses={ defaultUserEmailAddresses }
 					toggleAddEmailModal={ toggleAddEmailModal }
 					allEmailItems={ allEmailItems }
+					restriction={ restriction }
+				/>
+
+				<MobilePushNotification
+					recordEvent={ recordEvent }
+					enableMobileNotification={ enableMobileNotification }
+					setEnableMobileNotification={ setEnableMobileNotification }
 				/>
 			</div>
 			<NotificationSettingsFormFooter

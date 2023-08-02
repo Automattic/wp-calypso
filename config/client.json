@@ -28,6 +28,7 @@
 	"stats/new-video-summary",
 	"stats/subscribers-chart-section",
 	"stats/paid-stats",
+	"stats/paid-wpcom-stats",
 	"wpcom_concierge_schedule_id",
 	"wpcom_signup_id",
 	"wpcom_signup_key",

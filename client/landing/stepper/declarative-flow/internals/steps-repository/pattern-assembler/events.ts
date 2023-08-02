@@ -50,6 +50,8 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	PATTERN_MOVEDOWN_CLICK: 'calypso_signup_pattern_assembler_pattern_movedown_click',
 	PATTERN_REPLACE_CLICK: 'calypso_signup_pattern_assembler_pattern_replace_click',
 	PATTERN_DELETE_CLICK: 'calypso_signup_pattern_assembler_pattern_delete_click',
+	PATTERN_SHUFFLE_CLICK: 'calypso_signup_pattern_assembler_pattern_shuffle_click',
+
 	PREVIEW_DEVICE_CLICK: 'calypso_signup_pattern_assembler_preview_device_click',
 
 	/**

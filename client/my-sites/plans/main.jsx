@@ -278,6 +278,7 @@ class Plans extends Component {
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
+				isSpotlightOnCurrentPlan={ ! this.props.isDomainAndPlanPackageFlow }
 			/>
 		);
 	}

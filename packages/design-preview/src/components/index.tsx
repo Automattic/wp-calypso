@@ -31,7 +31,7 @@ interface DesignPreviewProps {
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
-	onGlobalStylesChange: ( globalStyles: GlobalStylesObject | null ) => void;
+	onGlobalStylesChange: ( globalStyles?: GlobalStylesObject | null ) => void;
 	limitGlobalStyles: boolean;
 	globalStylesInPersonalPlan: boolean;
 	onNavigatorPathChange?: ( path?: string ) => void;

@@ -540,6 +540,7 @@ describe( 'actions', () => {
 									source: 'unknown',
 									style_variation_slug: '',
 									theme: 'twentysixteen',
+									theme_type: 'free',
 								},
 								service: 'tracks',
 							},

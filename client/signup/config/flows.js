@@ -162,6 +162,16 @@ function getWithThemeDestination( {
 	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
 }
 
+function getWithPluginDestination( { siteSlug, pluginParameter, pluginBillingPeriod } ) {
+	// send to the thank you page when find a billing period (marketplace)
+	if ( pluginBillingPeriod ) {
+		return `/marketplace/thank-you/${ siteSlug }?plugins=${ pluginParameter }`;
+	}
+
+	// otherwise send to installation page
+	return `/marketplace/plugin/${ pluginParameter }/install/${ siteSlug }`;
+}
+
 function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
 }
@@ -221,6 +231,7 @@ const flows = generateFlows( {
 	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
 	getWithThemeDestination,
+	getWithPluginDestination,
 	getEditorDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,

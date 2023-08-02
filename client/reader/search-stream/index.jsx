@@ -45,7 +45,7 @@ const SpacerDiv = withDimensions( ( { width, height } ) => (
 	<div
 		style={ {
 			width: `${ width }px`,
-			height: `${ height - 73 }px`,
+			height: `${ height - 38 }px`,
 		} }
 	/>
 ) );

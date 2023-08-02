@@ -346,6 +346,7 @@ class AllDomains extends Component {
 				label: translate( 'Status' ),
 				isSortable: true,
 				initialSortOrder: -1,
+				supportsOrderSwitching: true,
 				sortFunctions: [
 					( first, second, sortOrder ) => {
 						const { listStatusWeight: firstStatusWeight } = resolveDomainStatus(

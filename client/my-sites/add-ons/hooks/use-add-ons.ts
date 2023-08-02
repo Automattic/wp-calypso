@@ -156,11 +156,11 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 					return false;
 				}
 
-				// TODO: Remove this check once paid stats is live.
+				// TODO: Remove this check once paid WPCOM stats is live.
 				// gate the Jetpack Stats add-on on a feature flag
 				if (
 					addOn.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY &&
-					! config.isEnabled( 'stats/paid-stats' )
+					! config.isEnabled( 'stats/paid-wpcom-stats' )
 				) {
 					return false;
 				}

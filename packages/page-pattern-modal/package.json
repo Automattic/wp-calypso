@@ -29,12 +29,12 @@
 	"dependencies": {
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@wordpress/block-editor": "^12.3.0",
-		"@wordpress/blocks": "^12.12.0",
-		"@wordpress/components": "^25.3.0",
-		"@wordpress/compose": "^6.12.0",
-		"@wordpress/element": "^5.13.0",
-		"@wordpress/i18n": "^4.36.0",
+		"@wordpress/block-editor": "^12.6.0",
+		"@wordpress/blocks": "^12.15.0",
+		"@wordpress/components": "^25.4.0",
+		"@wordpress/compose": "^6.15.0",
+		"@wordpress/element": "^5.15.0",
+		"@wordpress/i18n": "^4.38.0",
 		"classnames": "^2.3.1",
 		"debug": "^4.3.3",
 		"lodash": "^4.17.21"
@@ -46,7 +46,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"resize-observer-polyfill": "1.5.1",
-		"typescript": "^4.7.4"
+		"typescript": "^5.1.6"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.5.0",

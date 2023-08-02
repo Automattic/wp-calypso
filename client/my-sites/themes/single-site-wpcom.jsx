@@ -5,10 +5,8 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	FEATURE_PREMIUM_THEMES_V2,
 } from '@automattic/calypso-products';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import i18n from 'i18n-calypso';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -29,23 +27,17 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 
 	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
 	const upsellUrl = `/plans/${ siteSlug }`;
-	const isEnglishLocale = useIsEnglishLocale();
 	let upsellBanner = null;
 	if ( displayUpsellBanner ) {
 		if ( isEnabled( 'themes/premium' ) ) {
 			if ( [ PLAN_PERSONAL, PLAN_FREE ].includes( currentPlan.productSlug ) ) {
-				const bannerTitle =
-					isEnglishLocale ||
-					i18n.hasTranslation( 'Unlock premium themes with our Premium and Business plans!' )
-						? translate( 'Unlock premium themes with our Premium and Business plans!' )
-						: translate( 'Unlock ALL premium themes with our Premium and Business plans!' );
 				upsellBanner = (
 					<UpsellNudge
 						className="themes__showcase-banner"
 						event="calypso_themes_list_premium_themes"
-						feature={ WPCOM_FEATURES_PREMIUM_THEMES }
+						feature={ FEATURE_PREMIUM_THEMES_V2 }
 						plan={ PLAN_PREMIUM }
-						title={ bannerTitle }
+						title={ translate( 'Unlock premium themes with our Premium and Business plans!' ) }
 						callToAction={ translate( 'Upgrade now' ) }
 						showIcon={ true }
 					/>

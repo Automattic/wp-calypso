@@ -9,6 +9,10 @@ import {
 	StateMonitorSettingsEmail,
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
+import FeatureRestrictionBadge from '../feature-restriction-badge';
+import SMSCounter from '../notification-settings/form-content/sms-counter';
+import { RestrictionType } from '../types';
+import UpgradeLink from '../upgrade-link';
 import ContactListItem from './item';
 import { getContactActionEventName, getContactItemValue } from './utils';
 
@@ -23,6 +27,7 @@ export type Props = {
 	recordEvent?: ( action: string, params?: object ) => void;
 	type: AllowedMonitorContactTypes;
 	verifiedItemKey?: string;
+	restriction?: RestrictionType;
 };
 
 export default function ContactList( {
@@ -31,6 +36,7 @@ export default function ContactList( {
 	recordEvent,
 	type,
 	verifiedItemKey,
+	restriction = 'none',
 }: Props ) {
 	const translate = useTranslate();
 
@@ -60,6 +66,8 @@ export default function ContactList( {
 		}
 	}, [ items.length, type ] );
 
+	const showSMSCounter = false;
+
 	return (
 		<>
 			{ type === 'sms' && ! items.length && (
@@ -81,12 +89,30 @@ export default function ContactList( {
 						showVerifiedBadge={ getContactItemValue( type, item ) === verifiedItemKey }
 					/>
 				) ) }
+
 				{ showAddButton && (
-					<Button compact className="contact-list__button" onClick={ onAddContact }>
-						<Icon size={ 18 } icon={ plus } />
-						{ addButtonLabel }
-					</Button>
+					<div className="contact-list__action">
+						<Button
+							compact
+							className="contact-list__action-button"
+							onClick={ onAddContact }
+							disabled={ restriction !== 'none' }
+						>
+							<Icon size={ 18 } icon={ plus } />
+							{ addButtonLabel }
+						</Button>
+
+						<FeatureRestrictionBadge restriction={ restriction } />
+					</div>
 				) }
+
+				{ showAddButton && restriction === 'upgrade_required' && type === 'email' && (
+					<div className="contact-list__upgrade-message">
+						{ translate( 'Multiple email recipients is part of the Basic plan.' ) }
+						<UpgradeLink isInline />
+					</div>
+				) }
+				{ showSMSCounter && type === 'sms' && <SMSCounter /> }
 			</div>
 		</>
 	);

@@ -62,6 +62,10 @@
 					height: 36px !important;
 				}
 
+				.section-nav-tab__text .count {
+					line-height: 1.43;
+				}
+
 				.section-nav-tab__link {
 					padding: 8px 0;
 				}
@@ -158,11 +162,17 @@
 $break-medium-expanded-menu: $break-medium + 272px;
 @media screen and (max-width: $break-medium-expanded-menu) {
 	body #wpcontent .jp-blaze-dashboard .promote-post-i2 {
-		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
-			padding: 12px;
-			line-height: 16px;
-			font-weight: 600;
-			font-size: 0.75rem;
+		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile {
+			.button.post-item__view-link {
+				border: 1px solid var(--studio-gray-50);
+				line-height: 38px;
+			}
+			button.post-item__post-promote-button {
+				font-size: 0.75rem;
+				font-weight: 600;
+				line-height: 16px;
+				padding: 12px;
+			}
 		}
 	}
 }

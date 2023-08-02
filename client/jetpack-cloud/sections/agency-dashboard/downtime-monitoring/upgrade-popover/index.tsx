@@ -14,18 +14,25 @@ import './style.scss';
 
 type Props = {
 	context: HTMLElement | null;
+	dismissibleWithPreference?: boolean;
 	isVisible: boolean;
 	position?: string;
-	onClose: () => void;
+	onClose?: () => void;
 };
 
-export default function UpgradePopover( { context, isVisible, position, onClose }: Props ) {
+export default function UpgradePopover( {
+	context,
+	dismissibleWithPreference,
+	isVisible,
+	position,
+	onClose,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const preference = useSelector( ( state ) => getPreference( state, tooltipPreference ) );
 
-	const isDismissed = preference?.dismiss;
+	const isDismissed = dismissibleWithPreference ? preference?.dismiss : false;
 
 	const savePreferenceType = useCallback(
 		( type: PreferenceType ) => {
@@ -35,8 +42,11 @@ export default function UpgradePopover( { context, isVisible, position, onClose 
 	);
 
 	const handleDismissPopover = () => {
-		onClose();
-		savePreferenceType( 'dismiss' );
+		onClose?.();
+
+		if ( dismissibleWithPreference ) {
+			savePreferenceType( 'dismiss' );
+		}
 	};
 
 	const handleClose = () => {
@@ -63,9 +73,11 @@ export default function UpgradePopover( { context, isVisible, position, onClose 
 			position={ position }
 		>
 			<h2 className="upgrade-popover__heading">{ translate( 'Maximise uptime' ) }</h2>
-			<Button borderless className="upgrade-popover__close-button">
-				<Icon icon={ close } onClick={ handleClose } size={ 16 } />
-			</Button>
+			{ dismissibleWithPreference && (
+				<Button borderless className="upgrade-popover__close-button">
+					<Icon icon={ close } onClick={ handleClose } size={ 16 } />
+				</Button>
+			) }
 
 			<ul className="upgrade-popover__list">
 				<li>{ translate( '1 minute monitoring interval' ) }</li>

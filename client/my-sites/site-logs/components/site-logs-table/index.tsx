@@ -1,3 +1,4 @@
+import { usePrevious } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { memo, useMemo } from 'react';
@@ -12,22 +13,25 @@ type SiteLogs = SiteLogsData[ 'logs' ];
 
 interface SiteLogsTableProps {
 	logs?: SiteLogs;
+	logType?: string;
 	isLoading?: boolean;
 }
 
 export const SiteLogsTable = memo( function SiteLogsTable( {
 	logs,
+	logType,
 	isLoading,
 }: SiteLogsTableProps ) {
 	const { __ } = useI18n();
 	const columns = useSiteColumns( logs );
 	const siteGmtOffset = useCurrentSiteGmtOffset();
+	const previousLogType = usePrevious( logType );
 
 	const logsWithKeys = useMemo( () => {
 		return generateRowKeys( logs );
 	}, [ logs ] );
 
-	if ( isLoading && ! logsWithKeys.length ) {
+	if ( isLoading && logType !== previousLogType ) {
 		return <Skeleton />;
 	}
 

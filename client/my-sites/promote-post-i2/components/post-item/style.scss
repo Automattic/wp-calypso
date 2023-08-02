@@ -163,6 +163,10 @@ body.is-section-promote-post-i2 {
 			width: calc(100% - 32px);
 		}
 
+		th.posts-list__header-column {
+			display: none;
+		}
+
 		.post-item__post {
 			// Do not show the rest of columns on mobiles
 			&-type,
@@ -181,6 +185,7 @@ body.is-section-promote-post-i2 {
 						&-mobile {
 							display: flex;
 							justify-content: space-between;
+							flex-direction: column;
 						}
 
 						.post-item__post-title {
@@ -191,12 +196,13 @@ body.is-section-promote-post-i2 {
 								@include blazepress-data-row-font-mobile;
 
 								display: block;
+								margin-bottom: 8px;
 							}
 
 							.post-item__post-title-content {
 								font-size: 0.875rem;
 								font-weight: 600;
-								line-height: 1.47;
+								line-height: 1.4285;
 							}
 						}
 					}
@@ -210,14 +216,21 @@ body.is-section-promote-post-i2 {
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link,
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link:visited {
 			@include blazepress-data-row-font-mobile;
-
-			margin-right: 4px;
+			border-radius: 4px;
+			display: inline-block;
+			flex-grow: 1;
+			height: 40px;
+			line-height: 22px;
+			margin-right: 8px;
+			text-decoration: none;
 		}
 
 		// Promote link
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
-			height: 26px;
-			margin-left: 5px;
+			display: inline-block;
+			flex-grow: 1;
+			height: 40px;
+			margin-left: 8px;
 		}
 	}
 }

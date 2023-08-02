@@ -11,6 +11,7 @@ import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getPluginPurchased, getSoftwareSlug, getSaasRedirectUrl } from 'calypso/lib/plugins/utils';
+import { setQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/route';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
@@ -146,7 +147,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	}, [ displayManageSitePluginsModal ] );
 
 	const onIntervalSwitcherChange = useCallback(
-		( interval ) => dispatch( setBillingInterval( interval ) ),
+		( interval ) => {
+			setQueryArgs( { interval: interval?.toLowerCase() } );
+			dispatch( setBillingInterval( interval ) );
+		},
 		[ dispatch ]
 	);
 
@@ -199,6 +203,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 				) }
 				{ ! selectedSite && ! isLoggedIn && (
 					<GetStartedButton
+						plugin={ plugin }
+						isMarketplaceProduct={ isMarketplaceProduct }
 						onClick={ () => {
 							dispatch(
 								recordTracksEvent( 'calypso_plugin_details_get_started_click', {
@@ -434,7 +440,13 @@ function PrimaryButton( {
 	}, [ dispatch, plugin, isLoggedIn ] );
 
 	if ( ! isLoggedIn ) {
-		return <GetStartedButton onClick={ onClick } />;
+		return (
+			<GetStartedButton
+				onClick={ onClick }
+				plugin={ plugin }
+				isMarketplaceProduct={ isMarketplaceProduct }
+			/>
+		);
 	}
 	if ( plugin.isSaasProduct ) {
 		return (
@@ -459,15 +471,18 @@ function PrimaryButton( {
 	);
 }
 
-function GetStartedButton( { onClick } ) {
+function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
+	const billingPeriod = useSelector( getBillingInterval );
 
 	const startUrl = addQueryArgs(
 		{
 			ref: sectionName + '-lp',
+			plugin: plugin.slug,
+			billing_period: isMarketplaceProduct ? billingPeriod : '',
 		},
-		'/start/business'
+		'/start/with-plugin'
 	);
 	return (
 		<Button

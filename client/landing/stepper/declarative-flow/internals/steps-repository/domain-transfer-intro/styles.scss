@@ -19,26 +19,8 @@ $heading-font-family: "SF Pro Display", $sans;
 		margin-bottom: 32px;
 
 		.bulk-domain-transfer__cta {
-			justify-content: center;
-			color: var(--black-white-white, #fff);
 			height: 48px;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			border-radius: 0.25rem;
-			background: var(--blue-blue-50, #0675c4);
-			font-size: 0.875rem;
 			width: 240px;
-			font-weight: 500;
-
-			&:hover {
-				background: var(--studio-blue-60);
-			}
-
-			&:disabled {
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				border-radius: 0.25rem;
-				background: var(--gray-gray-5, #dcdcde);
-				opacity: 1;
-			}
 
 			@media (max-width: $break-medium ) {
 				width: 100%;
@@ -117,12 +99,36 @@ $heading-font-family: "SF Pro Display", $sans;
 
 					.select-items__item {
 						padding: 24px;
+						margin: 0 auto;
 
 						@media (max-width: $break-medium ) {
 							padding: 16px;
 							width: inherit;
 						}
 
+					}
+
+					.free-domain__primary-badge {
+						border-radius: 4px;
+						margin-left: 16px;
+						vertical-align: middle;
+						font-size: rem(12px);
+
+						@media (max-width: $break-mobile) {
+							height: auto;
+						}
+					}
+
+
+					@media ( max-width: $break-mobile ) {
+						.select-items__item-title-badge {
+							display: block;
+						}
+
+						.free-domain__primary-badge {
+							margin-left: 0;
+							margin-top: 8px;
+						}
 					}
 
 					.select-items__item-icon {

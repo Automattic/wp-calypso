@@ -40,7 +40,7 @@ const CommercialPurchase = ( {
 				) }
 				<Button
 					variant="link"
-					href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
+					href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-site-types"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
@@ -84,7 +84,14 @@ const CommercialPurchase = ( {
 									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 								/>
 							),
-							b: <Button variant="link" href="#" />,
+							b: (
+								<Button
+									variant="link"
+									target="_blank"
+									rel="noopener noreferrer"
+									href={ localizeUrl( 'https://jetpack.com/support/what-data-does-jetpack-sync/' ) }
+								/>
+							),
 						},
 					}
 				) }

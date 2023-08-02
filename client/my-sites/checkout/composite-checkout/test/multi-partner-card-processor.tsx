@@ -16,6 +16,7 @@ import {
 	mockCreateAccountSiteNotCreatedResponse,
 	planWithoutDomain,
 	getBasicCart,
+	mockLogStashEndpoint,
 } from './util';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -143,6 +144,10 @@ describe( 'multiPartnerCardProcessor', () => {
 			path: '/',
 			viewport: '0x0',
 		},
+		ad_conversion: {
+			ad_details: '',
+			sensitive_pixel_options: '',
+		},
 	};
 
 	const basicExpectedEbanxRequest = {
@@ -185,6 +190,10 @@ describe( 'multiPartnerCardProcessor', () => {
 		stripeConfiguration,
 		responseCart: cart,
 	};
+
+	beforeEach( () => {
+		mockLogStashEndpoint();
+	} );
 
 	it( 'throws an error if there is no paymentPartner', async () => {
 		const submitData = {};

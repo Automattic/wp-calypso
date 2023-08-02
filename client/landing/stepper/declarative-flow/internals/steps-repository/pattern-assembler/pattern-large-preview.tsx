@@ -23,6 +23,7 @@ interface Props {
 	onMoveDownSection: ( position: number ) => void;
 	onDeleteHeader: () => void;
 	onDeleteFooter: () => void;
+	onShuffle: ( type: string, pattern: Pattern, position?: number ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
@@ -39,6 +40,7 @@ const PatternLargePreview = ( {
 	onMoveDownSection,
 	onDeleteHeader,
 	onDeleteFooter,
+	onShuffle,
 	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
@@ -95,11 +97,12 @@ const PatternLargePreview = ( {
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
 		const key = type === 'section' ? pattern.key : type;
+		const handleShuffle = () => onShuffle( type, pattern, position );
 		const getActionBarProps = () => {
 			if ( type === 'header' ) {
-				return { onDelete: onDeleteHeader };
+				return { onDelete: onDeleteHeader, onShuffle: handleShuffle };
 			} else if ( type === 'footer' ) {
-				return { onDelete: onDeleteFooter };
+				return { onDelete: onDeleteFooter, onShuffle: handleShuffle };
 			}
 
 			return {
@@ -108,6 +111,7 @@ const PatternLargePreview = ( {
 				onDelete: () => onDeleteSection( position ),
 				onMoveUp: () => onMoveUpSection( position ),
 				onMoveDown: () => onMoveDownSection( position ),
+				onShuffle: handleShuffle,
 			};
 		};
 
@@ -128,6 +132,7 @@ const PatternLargePreview = ( {
 				/>
 				<PatternActionBar
 					patternType={ type }
+					category={ pattern.category }
 					isRemoveButtonTextOnly
 					source="large_preview"
 					{ ...getActionBarProps() }

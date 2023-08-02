@@ -1,5 +1,4 @@
 import { isWpComPlan } from '@automattic/calypso-products';
-import { ReceiptPurchase } from 'calypso/state/receipts/types';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
 import { isBulkDomainTransfer } from '../utils';
 
@@ -29,11 +28,3 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 	}
 	return false;
 };
-
-export function shouldShowConfettiExplosion( purchases: ReceiptPurchase[] ) {
-	if ( isBulkDomainTransfer( purchases ) ) {
-		return false;
-	}
-
-	return true;
-}

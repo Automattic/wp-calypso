@@ -1,5 +1,3 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -11,27 +9,15 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
-const Intro: Step = function Intro( { navigation, flow } ) {
+const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
 
-	usePresalesChat( 'wpcom' );
+	usePresalesChat( 'wpcom', true, true );
 
 	const handleSubmit = () => {
 		submit?.();
 	};
-
-	const getTranslatedSubHeaderText =
-		hasTranslation(
-			'Enter your domain names and authorization codes below. You can transfer up to fifty domains at a time.'
-		) || isEnglishLocale
-			? __(
-					'Enter your domain names and authorization codes below. You can transfer up to fifty domains at a time.'
-			  )
-			: __(
-					'Enter your domain names and authorization codes below. You can transfer up to 50 domains at a time.'
-			  );
 
 	return (
 		<StepContainer
@@ -46,7 +32,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 					headerText={ __( 'Add your domains' ) }
 					subHeaderText={
 						<>
-							<span>{ getTranslatedSubHeaderText }</span>
+							<span>{ __( 'Enter your domain names and authorization codes below.' ) }</span>
 						</>
 					}
 					align="center"
@@ -54,7 +40,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			}
 			stepContent={
 				<CalypsoShoppingCartProvider>
-					<TransferDomains onSubmit={ handleSubmit } />
+					<TransferDomains onSubmit={ handleSubmit } variantSlug={ variantSlug } />
 				</CalypsoShoppingCartProvider>
 			}
 			recordTracksEvent={ recordTracksEvent }

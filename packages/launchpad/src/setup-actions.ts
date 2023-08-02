@@ -77,6 +77,11 @@ export const setUpActionsForTasks = ( {
 					window.location.assign( `/settings/reading/${ siteSlug }#newsletter-settings` );
 				};
 				break;
+			case 'manage_subscribers':
+				action = () => {
+					window.location.assign( `/subscribers/${ siteSlug }` );
+				};
+				break;
 		}
 
 		const actionDispatch = () => {

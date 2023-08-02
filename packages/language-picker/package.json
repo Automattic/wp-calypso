@@ -30,10 +30,10 @@
 		"@automattic/languages": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@babel/runtime": "^7.17.2",
-		"@wordpress/base-styles": "^4.27.0",
-		"@wordpress/components": "^25.3.0",
-		"@wordpress/i18n": "^4.36.0",
-		"@wordpress/react-i18n": "^3.33.0"
+		"@wordpress/base-styles": "^4.29.0",
+		"@wordpress/components": "^25.4.0",
+		"@wordpress/i18n": "^4.38.0",
+		"@wordpress/react-i18n": "^3.36.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.5.0",
@@ -48,6 +48,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.7.4"
+		"typescript": "^5.1.6"
 	}
 }

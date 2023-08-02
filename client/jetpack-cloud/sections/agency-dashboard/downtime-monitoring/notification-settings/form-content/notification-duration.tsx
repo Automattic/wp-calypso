@@ -4,20 +4,23 @@ import { useMemo } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { availableNotificationDurations as durations } from '../../../sites-overview/utils';
+import FeatureRestrictionBadge from '../../feature-restriction-badge';
+import UpgradeLink from '../../upgrade-link';
 import type { MonitorDuration } from '../../../sites-overview/types';
+import type { RestrictionType } from '../../types';
 
 interface Props {
-	enablePaidDurations?: boolean;
 	selectedDuration?: MonitorDuration;
 	selectDuration: ( duration: MonitorDuration ) => void;
 	recordEvent: ( action: string, params?: object ) => void;
+	restriction?: RestrictionType;
 }
 
 export default function NotificationDuration( {
-	enablePaidDurations,
 	selectedDuration,
 	selectDuration,
 	recordEvent,
+	restriction,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -53,9 +56,15 @@ export default function NotificationDuration( {
 						key={ duration.time }
 						selected={ duration.time === selectedDuration?.time }
 						onClick={ () => selectDuration( duration ) }
-						disabled={ duration.isPaid && ! enablePaidDurations }
+						disabled={ restriction !== 'none' && duration.isPaid }
 					>
 						{ duration.label }
+						{ duration.isPaid && (
+							<>
+								<FeatureRestrictionBadge restriction={ restriction } />
+								{ restriction === 'upgrade_required' && <UpgradeLink isInline /> }
+							</>
+						) }
 					</SelectDropdown.Item>
 				) ) }
 			</SelectDropdown>

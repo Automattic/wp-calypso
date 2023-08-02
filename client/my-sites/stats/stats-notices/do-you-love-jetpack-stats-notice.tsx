@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { JETPACK_STATS_PRODUCT_LANDING_PAGE_URL } from '@automattic/calypso-products';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -32,6 +31,10 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 	);
 
 	const dismissNotice = () => {
+		isOdysseyStats
+			? recordTracksEvent( 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_dismissed' )
+			: recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed' );
+
 		setNoticeDismissed( true );
 		postponeNoticeAsync();
 	};
@@ -65,7 +68,11 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 	}
 
 	return (
-		<div className="inner-notice-container has-odyssey-stats-bg-color">
+		<div
+			className={ `inner-notice-container has-odyssey-stats-bg-color ${
+				! isOdysseyStats && 'inner-notice-container--calypso'
+			}` }
+		>
 			<NoticeBanner
 				level="info"
 				title={ translate( 'Do you love Jetpack Stats?' ) }
@@ -86,7 +93,7 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 							learnMoreLink: (
 								<a
 									className="notice-banner__action-link"
-									href={ JETPACK_STATS_PRODUCT_LANDING_PAGE_URL }
+									href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
 									target="_blank"
 									rel="noreferrer"
 								/>

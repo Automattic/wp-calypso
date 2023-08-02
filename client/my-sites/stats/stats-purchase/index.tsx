@@ -5,7 +5,8 @@ import {
 } from '@automattic/calypso-products';
 import { ProductsList } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import page from 'page';
+import { useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -15,6 +16,7 @@ import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSiteProducts, { SiteProduct } from 'calypso/state/sites/selectors/get-site-products';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
 import StatsPurchaseWizard from './stats-purchase-wizard';
@@ -35,6 +37,9 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 
@@ -48,6 +53,19 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 	const isPWYWOwned = useMemo( () => {
 		return isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
 	}, [ siteProducts ] );
+
+	useEffect( () => {
+		if ( ! siteSlug ) {
+			return;
+		}
+		const trafficPageUrl = `/stats/day/${ siteSlug }`;
+		// Redirect to Calypso Stats if:
+		// - the site is not Jetpack.
+		// - the site already has a commercial stats plan.
+		if ( ! isSiteJetpackNotAtomic || isCommercialOwned ) {
+			page.redirect( trafficPageUrl );
+		}
+	}, [ siteSlug, isCommercialOwned, isSiteJetpackNotAtomic ] );
 
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_MONTHLY )
