@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import CelebrationIcon from 'calypso/assets/images/jetpack/celebration-icon.svg';
 import Banner from 'calypso/components/banner';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -9,6 +9,7 @@ import {
 	getJetpackDashboardPreference as getPreference,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
+import SitesOverviewContext from '../context';
 import { PreferenceType } from '../types';
 
 import './style.scss';
@@ -16,6 +17,8 @@ import './style.scss';
 export default function SiteDowntimeMonitoringUpgradeBanner() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const { showLicenseInfo } = useContext( SitesOverviewContext );
 
 	const preferenceName = JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_BANNER_PREFERENCE;
 
@@ -52,6 +55,7 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 		savePreferenceType( 'dismiss', true );
 
 		// TODO: We need to record event here
+		showLicenseInfo( 'monitor' );
 	};
 
 	return (

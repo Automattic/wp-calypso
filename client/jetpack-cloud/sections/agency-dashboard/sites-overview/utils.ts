@@ -484,6 +484,7 @@ export const getProductSlugFromProductType = ( type: string ): string | undefine
 		backup: 'jetpack-backup-t1',
 		boost: 'jetpack-boost',
 		scan: 'jetpack-scan',
+		monitor: 'jetpack-monitor',
 	};
 
 	return slugs[ type ];
