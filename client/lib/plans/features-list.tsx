@@ -854,24 +854,14 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_6GB_STORAGE ]: {
 		getSlug: () => FEATURE_6GB_STORAGE,
 		getCompareTitle: () => i18n.translate( '6 GB' ),
-		getTitle: () =>
-			i18n.translate( '6 GB', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
+		getTitle: () => i18n.translate( '6 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Upload more images, audio, and documents to your website.' ),
 	},
 
 	[ FEATURE_13GB_STORAGE ]: {
 		getSlug: () => FEATURE_13GB_STORAGE,
-		getTitle: () =>
-			i18n.translate( '13 GB', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
+		getTitle: () => i18n.translate( '13 GB' ),
 		getCompareTitle: () => i18n.translate( '13 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
@@ -888,12 +878,7 @@ export const FEATURES_LIST: FeatureList = {
 	// TODO: Consider removing this because it is no longer standard on any plans
 	[ FEATURE_200GB_STORAGE ]: {
 		getSlug: () => FEATURE_200GB_STORAGE,
-		getTitle: () =>
-			i18n.translate( '200 GB', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
+		getTitle: () => i18n.translate( '200 GB' ),
 		getCompareTitle: () => i18n.translate( '200 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
