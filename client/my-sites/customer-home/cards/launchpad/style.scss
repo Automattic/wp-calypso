@@ -24,17 +24,18 @@
 		}
 
 		.customer-home-launchpad__dismiss-button {
-			align-items: center;
-			display: flex;
-
-			span {
-				padding-right: 8px;
-			}
 			button {
+				align-items: center;
+				display: flex;
 				padding: 0;
 				height: 24px;
+
+				div {
+					padding-right: 8px;
+				}
+
 				svg {
-					top: 3px;
+					top: 2px;
 				}
 			}
 		}
