@@ -1,6 +1,6 @@
-import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import ActionCard from 'calypso/components/action-card';
 import useLicenseDownloadUrlMutation from 'calypso/components/data/query-jetpack-partner-portal-licenses/use-license-download-url-mutation';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -19,15 +19,17 @@ export default function WooProductDownload( { licenseKey, allProducts } ) {
 			onError: ( error: Error ) => dispatch( errorNotice( error.message ) ),
 		} );
 		dispatch( recordTracksEvent( 'calypso_partner_portal_download_from_assign' ) );
-	}, [ dispatch, downloadUrl.mutate ] );
+	}, [ dispatch, downloadUrl ] );
 
 	return (
-		<li>
-			<h5>{ product && product.name }</h5>
-			<pre>{ licenseKey }</pre>
-			<Button compact { ...( downloadUrl.isLoading ? { busy: true } : {} ) } onClick={ download }>
-				{ translate( 'Download' ) }
-			</Button>
-		</li>
+		<div className="download-products-list">
+			<ActionCard
+				className="download-products-list__woo-license"
+				headerText={ product.name }
+				mainText={ licenseKey }
+				buttonText={ translate( 'Download' ) }
+				buttonOnClick={ download }
+			/>
+		</div>
 	);
 }
