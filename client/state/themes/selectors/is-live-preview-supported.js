@@ -81,7 +81,7 @@ const isNotCompatibleThemes = ( themeId ) => {
  *
  * @see pbxlJb-3Uv-p2
  */
-export const isLivePreviewSupported = ( state, themeId, siteId ) => {
+export const getIsLivePreviewSupported = ( state, themeId, siteId ) => {
 	if ( ! config.isEnabled( 'themes/block-theme-previews' ) ) {
 		return false;
 	}

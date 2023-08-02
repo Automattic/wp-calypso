@@ -81,7 +81,6 @@ import {
 	isWpcomTheme as isThemeWpcom,
 	isWporgTheme,
 	getCanonicalTheme,
-	getLivePreviewUrl,
 	getPremiumThemePrice,
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
@@ -92,7 +91,6 @@ import {
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
-	isLivePreviewSupported as getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -617,8 +615,8 @@ class ThemeSheet extends Component {
 			softLaunched,
 			translate,
 			isLoggedIn,
-			isLivePreviewSupported,
-			livePreviewUrl,
+			themeId,
+			siteId,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -646,11 +644,8 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
-						<LivePreviewButton
-							isLivePreviewSupported={ isLivePreviewSupported }
-							livePreviewUrl={ livePreviewUrl }
-							translate={ translate }
-						></LivePreviewButton>
+						{ /* WIP */ }
+						<LivePreviewButton themeId={ themeId } siteId={ siteId } />
 						{ this.shouldRenderPreviewButton() && (
 							<Button
 								onClick={ ( e ) => {
@@ -1541,9 +1536,6 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
-		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
-		const livePreviewUrl = getLivePreviewUrl( state, themeId, siteId );
-
 		return {
 			...theme,
 			themeId,
@@ -1552,7 +1544,6 @@ export default connect(
 			siteId,
 			siteSlug,
 			backPath,
-			livePreviewUrl,
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isWporg: isWporgTheme( state, themeId ),
@@ -1562,7 +1553,6 @@ export default connect(
 			isActive: isThemeActive( state, themeId, siteId ),
 			isJetpack,
 			isAtomic,
-			isLivePreviewSupported,
 			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, themeId ),
