@@ -125,7 +125,6 @@
 		"network-connection": true,
 		"newsletter/stats": true,
 		"oauth": false,
-		"onboarding-pm/free-free-modal": true,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
