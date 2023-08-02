@@ -1,4 +1,6 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize, translate } from 'i18n-calypso';
+import page from 'page';
 import { FunctionComponent } from 'react';
 import advancedDesignTools from 'calypso/assets/images/plans/wpcom/migration-trial/advanced-design-tools.svg';
 import beautifulThemes from 'calypso/assets/images/plans/wpcom/migration-trial/beautiful-themes.svg';
@@ -8,6 +10,9 @@ import jetpackBackupsAndRestores from 'calypso/assets/images/plans/wpcom/migrati
 import newsletters from 'calypso/assets/images/plans/wpcom/migration-trial/newsletters.svg';
 import seoTools from 'calypso/assets/images/plans/wpcom/migration-trial/seo-tools.svg';
 import spamProtection from 'calypso/assets/images/plans/wpcom/migration-trial/spam-protection.svg';
+import { useSelector } from 'calypso/state';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import FeatureIncludedCard from '../feature-included-card';
 
 interface Props {
@@ -17,6 +22,10 @@ interface Props {
 const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 	const { translate, displayAll = true } = props;
 
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
 	// TODO: translate when final copy is available
 	const allIncludedFeatures = [
 		{
@@ -25,6 +34,7 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			illustration: beautifulThemes,
 			showButton: true,
 			buttonText: translate( 'Browse themes' ),
+			buttonClick: () => page.redirect( `/themes/${ siteSlug }` ),
 		},
 		{
 			title: translate( 'Advanced Design Tools' ),
@@ -34,6 +44,7 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			illustration: advancedDesignTools,
 			showButton: true,
 			buttonText: translate( 'Design your blog' ),
+			buttonClick: () => ( location.href = siteAdminUrl + 'site-editor.php' ),
 		},
 		{
 			title: translate( 'Newsletters' ),
@@ -43,6 +54,7 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			illustration: newsletters,
 			showButton: true,
 			buttonText: translate( 'Setup a newsletter' ),
+			buttonClick: () => page.redirect( `/setup/newsletter/intro?siteSlug=${ siteSlug }` ),
 		},
 		{
 			title: translate( 'Jetpack backups and restores' ),
@@ -51,7 +63,8 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			),
 			illustration: jetpackBackupsAndRestores,
 			showButton: true,
-			buttonText: '(TBD)',
+			buttonText: 'View your backup activity',
+			buttonClick: () => page.redirect( `/backup/${ siteSlug }` ),
 		},
 		{
 			title: translate( 'Spam protection' ),
@@ -61,6 +74,7 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			illustration: spamProtection,
 			showButton: true,
 			buttonText: translate( 'Keep your site safe' ),
+			buttonClick: () => ( location.href = siteAdminUrl + 'admin.php?page=akismet-key-config' ),
 		},
 		{
 			title: translate( 'SEO tools' ),
@@ -68,6 +82,8 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			illustration: seoTools,
 			showButton: true,
 			buttonText: translate( 'Increase visibility' ),
+			buttonClick: () =>
+				( location.href = localizeUrl( 'https://wordpress.com/support/seo-tools/' ) ),
 		},
 		{
 			title: translate( 'Google Analytics' ),
@@ -75,6 +91,8 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			illustration: googleAnalytics,
 			showButton: true,
 			buttonText: translate( 'Connect Google Analytics' ),
+			buttonClick: () =>
+				( location.href = localizeUrl( 'https://wordpress.com/support/google-analytics/' ) ),
 		},
 		{
 			title: translate( 'Best-in-class hosting' ),
@@ -97,8 +115,9 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 					illustration={ feature.illustration }
 					title={ feature.title }
 					text={ feature.text }
-					showButton={ false }
+					showButton={ feature.showButton }
 					buttonText={ feature.buttonText }
+					buttonClick={ feature.buttonClick }
 				></FeatureIncludedCard>
 			) ) }
 		</>
